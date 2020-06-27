@@ -1,7 +1,6 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) do10((void()*) do10::fn)
 do10: scope:[do10]  from main main::@1
@@ -19,10 +18,6 @@ do10::@1: scope:[do10]  from do10 do10::@1
 do10::@return: scope:[do10]  from do10::@1
   return 
   to:@return
-@1: scope:[]  from @begin
-  (volatile byte*) msg ← (byte*) 0
-  (volatile byte) idx ← (byte) 0
-  to:@2
 
 (void()) hello()
 hello: scope:[hello]  from
@@ -41,7 +36,7 @@ hello::@return: scope:[hello]  from hello::@1
   to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   (volatile byte*) msg ← (const to_nomodify byte*) msg1
   (void()*) do10::fn#0 ← (const void()*) main::f
   call do10 
@@ -56,20 +51,30 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte*) msg ← (byte*) 0
+  (volatile byte) idx ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) do10((void()*) do10::fn)
 (bool~) do10::$1
 (label) do10::@1
@@ -111,7 +116,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values (void()*) do10::fn#2 (void()*) do10::fn#3
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) do10::$1 [6] if((byte) do10::i#1!=rangelast(0,9)) goto do10::@1
-Simple Condition (bool~) hello::$0 [16] if((byte) 0!=*((volatile byte*) msg + (byte) hello::i#1)) goto hello::@1
+Simple Condition (bool~) hello::$0 [14] if((byte) 0!=*((volatile byte*) msg + (byte) hello::i#1)) goto hello::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) do10::i#0 = 0
 Constant (const byte) hello::i#0 = 0
@@ -143,15 +148,14 @@ Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
 Added new block during phi lifting do10::@2(between do10::@1 and do10::@1)
 Added new block during phi lifting hello::@2(between hello::@1 and hello::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of do10
 Adding NOP phi() at start of hello
 CALL GRAPH
-Calls in [] to main:4 
+Calls in [_start] to main:4 
 Calls in [main] to do10:8 do10:10 
 Calls in [do10] to hello:15 
 
@@ -159,33 +163,35 @@ Created 2 initial phi equivalence classes
 Coalesced [19] do10::i#3 ← do10::i#1
 Coalesced [27] hello::i#3 ← hello::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) do10::@2
 Culled Empty Block (label) hello::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of do10
 Adding NOP phi() at start of hello
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (volatile byte*) msg ← (byte*) 0
   [2] (volatile byte) idx ← (byte) 0
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [3] phi()
   [4] call main 
-  to:@end
-@end: scope:[]  from @2
-  [5] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [5] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   [6] (volatile byte*) msg ← (const to_nomodify byte*) msg1
   [7] call do10 
   to:main::@1
@@ -229,6 +235,7 @@ hello::@return: scope:[hello]  from hello::@1
 null depth in calling loop Loop head: do10::@1 tails: do10::@1 blocks: do10::@1  in scope hello
 
 VARIABLE REGISTER WEIGHTS
+(void()) _start()
 (void()) do10((void()*) do10::fn)
 (void()*) do10::fn
 (byte) do10::i
@@ -263,37 +270,38 @@ Target platform is c64basic / MOS6502X
 // Tests calling into a function pointer with local variables
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label msg = 4
   .label idx = 6
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte*) msg ← (byte*) 0 -- pbuz1=pbuc1 
-  lda #<0
-  sta.z msg
-  lda #>0
-  sta.z msg+1
-  // [2] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z idx
-  // [3] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [4] call main 
-  jsr main
-  // [5] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte*) msg ← (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z msg
+    lda #>0
+    sta.z msg+1
+    // [2] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx
+    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [4] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [5] return 
+    rts
+}
   // main
 main: {
     // [6] (volatile byte*) msg ← (const to_nomodify byte*) msg1 -- pbuz1=pbuc1 
@@ -420,15 +428,17 @@ Uplift Scope [hello] 250,002.5: zp[1]:3 [ hello::i#2 hello::i#1 ]
 Uplift Scope [] 16,666.94: zp[1]:6 [ idx ] 14,287.57: zp[2]:4 [ msg ] 
 Uplift Scope [do10] 2,502.5: zp[1]:2 [ do10::i#2 do10::i#1 ] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [hello] best 853 combination reg byte y [ hello::i#2 hello::i#1 ] 
-Uplifting [] best 853 combination zp[1]:6 [ idx ] zp[2]:4 [ msg ] 
-Uplifting [do10] best 853 combination zp[1]:2 [ do10::i#2 do10::i#1 ] 
-Uplifting [main] best 853 combination 
+Uplifting [hello] best 859 combination reg byte y [ hello::i#2 hello::i#1 ] 
+Uplifting [] best 859 combination zp[1]:6 [ idx ] zp[2]:4 [ msg ] 
+Uplifting [do10] best 859 combination zp[1]:2 [ do10::i#2 do10::i#1 ] 
+Uplifting [main] best 859 combination 
+Uplifting [_start] best 859 combination 
 Attempting to uplift remaining variables inzp[1]:6 [ idx ]
-Uplifting [] best 853 combination zp[1]:6 [ idx ] 
+Uplifting [] best 859 combination zp[1]:6 [ idx ] 
 Attempting to uplift remaining variables inzp[1]:2 [ do10::i#2 do10::i#1 ]
-Uplifting [do10] best 853 combination zp[1]:2 [ do10::i#2 do10::i#1 ] 
+Uplifting [do10] best 859 combination zp[1]:2 [ do10::i#2 do10::i#1 ] 
 Allocated (was zp[2]:4) zp[2]:3 [ msg ]
 Allocated (was zp[1]:6) zp[1]:5 [ idx ]
 
@@ -437,37 +447,38 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests calling into a function pointer with local variables
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label msg = 3
   .label idx = 5
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte*) msg ← (byte*) 0 -- pbuz1=pbuc1 
-  lda #<0
-  sta.z msg
-  lda #>0
-  sta.z msg+1
-  // [2] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z idx
-  // [3] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [4] call main 
-  jsr main
-  // [5] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte*) msg ← (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z msg
+    lda #>0
+    sta.z msg+1
+    // [2] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx
+    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [4] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [5] return 
+    rts
+}
   // main
 main: {
     // [6] (volatile byte*) msg ← (const to_nomodify byte*) msg1 -- pbuz1=pbuc1 
@@ -564,9 +575,9 @@ hello: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
@@ -579,14 +590,13 @@ Removing instruction lda #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b1 with __b1
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Removing instruction __b1_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction do10_from_main:
 Removing instruction __b1:
 Removing instruction do10_from___b1:
@@ -596,18 +606,16 @@ Removing instruction __breturn:
 Removing instruction __b1_from_hello:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 Removing instruction jmp __b1
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*) 1024
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (void()) do10((void()*) do10::fn)
 (label) do10::@1
 (label) do10::@return
@@ -642,30 +650,31 @@ Score: 633
 // Tests calling into a function pointer with local variables
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label msg = 3
   .label idx = 5
-  // @begin
-__bbegin:
-  // @1
-  // msg
-  // [1] (volatile byte*) msg ← (byte*) 0 -- pbuz1=pbuc1 
-  lda #<0
-  sta.z msg
-  sta.z msg+1
-  // idx = 0
-  // [2] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-  sta.z idx
-  // [3] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [4] call main 
-  jsr main
-  rts
-  // [5] phi from @2 to @end [phi:@2->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // msg
+    // [1] (volatile byte*) msg ← (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z msg
+    sta.z msg+1
+    // idx = 0
+    // [2] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    sta.z idx
+    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [4] call main 
+    jsr main
+    // _start::@return
+    // [5] return 
+    rts
+}
   // main
 main: {
     // msg = msg1

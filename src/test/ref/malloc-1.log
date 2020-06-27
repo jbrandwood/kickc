@@ -1,45 +1,28 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
-@1: scope:[]  from @begin
-  (byte*) heap_head#0 ← (const byte*) HEAP_TOP
-  to:@2
 
 (void*()) malloc((word) malloc::size)
-malloc: scope:[malloc]  from @2
-  (word) malloc::size#1 ← phi( @2/(word) malloc::size#0 )
-  (byte*) heap_head#4 ← phi( @2/(byte*) heap_head#7 )
-  (byte*~) malloc::$0 ← (byte*) heap_head#4 - (word) malloc::size#1
+malloc: scope:[malloc]  from _start::_init1
+  (word) malloc::size#1 ← phi( _start::_init1/(word) malloc::size#0 )
+  (byte*) heap_head#5 ← phi( _start::_init1/(byte*) heap_head#2 )
+  (byte*~) malloc::$0 ← (byte*) heap_head#5 - (word) malloc::size#1
   (byte*) malloc::mem#0 ← (byte*~) malloc::$0
-  (byte*) heap_head#1 ← (byte*) malloc::mem#0
+  (byte*) heap_head#0 ← (byte*) malloc::mem#0
   (void*) malloc::return#0 ← ((void*)) (byte*) malloc::mem#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
-  (byte*) heap_head#5 ← phi( malloc/(byte*) heap_head#1 )
+  (byte*) heap_head#6 ← phi( malloc/(byte*) heap_head#0 )
   (void*) malloc::return#3 ← phi( malloc/(void*) malloc::return#0 )
   (void*) malloc::return#1 ← (void*) malloc::return#3
-  (byte*) heap_head#2 ← (byte*) heap_head#5
+  (byte*) heap_head#1 ← (byte*) heap_head#6
   return 
   to:@return
-@2: scope:[]  from @1
-  (byte*) heap_head#7 ← phi( @1/(byte*) heap_head#0 )
-  (word) malloc::size#0 ← (number) $200
-  call malloc 
-  (void*) malloc::return#2 ← (void*) malloc::return#1
-  to:@4
-@4: scope:[]  from @2
-  (byte*) heap_head#6 ← phi( @2/(byte*) heap_head#2 )
-  (void*) malloc::return#4 ← phi( @2/(void*) malloc::return#2 )
-  (void*~) $0 ← (void*) malloc::return#4
-  (byte*) heap_head#3 ← (byte*) heap_head#6
-  (word*) WORDS#0 ← ((word*)) (void*~) $0
-  to:@3
 
 (void()) main()
-main: scope:[main]  from @3
-  (word*) WORDS#1 ← phi( @3/(word*) WORDS#2 )
-  (word*) main::w#0 ← (word*) WORDS#1
+main: scope:[main]  from _start::@1
+  (word*) WORDS#2 ← phi( _start::@1/(word*) WORDS#4 )
+  (word*) main::w#0 ← (word*) WORDS#2
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -54,23 +37,41 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@3: scope:[]  from @4
-  (word*) WORDS#2 ← phi( @4/(word*) WORDS#0 )
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte*) heap_head#2 ← (const byte*) HEAP_TOP
+  (word) malloc::size#0 ← (number) $200
+  call malloc 
+  (void*) malloc::return#2 ← (void*) malloc::return#1
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::_init1
+  (byte*) heap_head#7 ← phi( _start::_init1/(byte*) heap_head#1 )
+  (void*) malloc::return#4 ← phi( _start::_init1/(void*) malloc::return#2 )
+  (void*~) _start::_init1_$0 ← (void*) malloc::return#4
+  (byte*) heap_head#3 ← (byte*) heap_head#7
+  (word*) WORDS#0 ← ((word*)) (void*~) _start::_init1_$0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::@2
+  (byte*) heap_head#10 ← phi( _start::@2/(byte*) heap_head#3 )
+  (word*) WORDS#4 ← phi( _start::@2/(word*) WORDS#0 )
   call main 
-  to:@5
-@5: scope:[]  from @3
-  to:@end
-@end: scope:[]  from @5
+  to:_start::@3
+_start::@3: scope:[_start]  from _start::@1
+  (word*) WORDS#5 ← phi( _start::@1/(word*) WORDS#4 )
+  (byte*) heap_head#9 ← phi( _start::@1/(byte*) heap_head#10 )
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@3
+  (word*) WORDS#3 ← phi( _start::@3/(word*) WORDS#5 )
+  (byte*) heap_head#8 ← phi( _start::@3/(byte*) heap_head#9 )
+  (byte*) heap_head#4 ← (byte*) heap_head#8
+  (word*) WORDS#1 ← (word*) WORDS#3
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(void*~) $0
-(label) @1
-(label) @2
-(label) @3
-(label) @4
-(label) @5
-(label) @begin
-(label) @end
 (const byte*) HEAP_TOP = (byte*)(number) $a000
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
@@ -81,15 +82,28 @@ SYMBOL TABLE SSA
 (word*) WORDS#0
 (word*) WORDS#1
 (word*) WORDS#2
+(word*) WORDS#3
+(word*) WORDS#4
+(word*) WORDS#5
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@3
+(label) _start::@return
+(label) _start::_init1
+(void*~) _start::_init1_$0
 (byte*) heap_head
 (byte*) heap_head#0
 (byte*) heap_head#1
+(byte*) heap_head#10
 (byte*) heap_head#2
 (byte*) heap_head#3
 (byte*) heap_head#4
 (byte*) heap_head#5
 (byte*) heap_head#6
 (byte*) heap_head#7
+(byte*) heap_head#8
+(byte*) heap_head#9
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -121,7 +135,7 @@ Adding number conversion cast (unumber) $200 in (word) malloc::size#0 ← (numbe
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (void*) malloc::return#0 ← (void*)(byte*) malloc::mem#0
 Inlining cast (word) malloc::size#0 ← (unumber)(number) $200
-Inlining cast (word*) WORDS#0 ← (word*)(void*~) $0
+Inlining cast (word*) WORDS#0 ← (word*)(void*~) _start::_init1_$0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 40960
 Simplifying constant integer cast $200
@@ -130,26 +144,25 @@ Finalized unsigned number type (word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias malloc::mem#0 = malloc::$0 
 Alias malloc::return#0 = malloc::return#3 malloc::return#1 
-Alias heap_head#1 = heap_head#5 heap_head#2 
-Alias heap_head#0 = heap_head#7 
+Alias heap_head#0 = heap_head#6 heap_head#1 
 Alias malloc::return#2 = malloc::return#4 
-Alias heap_head#3 = heap_head#6 
-Alias WORDS#0 = WORDS#2 
+Alias heap_head#10 = heap_head#3 heap_head#7 heap_head#9 heap_head#8 heap_head#4 
+Alias WORDS#0 = WORDS#4 WORDS#5 WORDS#3 WORDS#1 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) heap_head#4 (byte*) heap_head#0
+Identical Phi Values (byte*) heap_head#5 (byte*) heap_head#2
 Identical Phi Values (word) malloc::size#1 (word) malloc::size#0
-Identical Phi Values (byte*) heap_head#3 (byte*) heap_head#1
-Identical Phi Values (word*) WORDS#1 (word*) WORDS#0
+Identical Phi Values (word*) WORDS#2 (word*) WORDS#0
+Identical Phi Values (byte*) heap_head#10 (byte*) heap_head#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [20] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
+Simple Condition (bool~) main::$0 [13] if((byte) main::i#1!=rangelast(0,$ff)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) heap_head#0 = HEAP_TOP
-Constant (const word) malloc::size#0 = $200
 Constant (const byte) main::i#0 = 0
+Constant (const byte*) heap_head#2 = HEAP_TOP
+Constant (const word) malloc::size#0 = $200
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [18] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [20] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
-Eliminating unused variable (byte*) heap_head#1 and assignment [1] (byte*) heap_head#1 ← (byte*) malloc::mem#0
+Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$ff)) goto main::@1 to (number) 0
+Eliminating unused variable (byte*) heap_head#0 and assignment [1] (byte*) heap_head#0 ← (byte*) malloc::mem#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding number conversion cast (unumber) 0 in if((byte) main::i#1!=(number) 0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -157,76 +170,73 @@ Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte*) malloc::mem#0 ← (const byte*) heap_head#0 - (const word) malloc::size#0
+Constant right-side identified [0] (byte*) malloc::mem#0 ← (const byte*) heap_head#2 - (const word) malloc::size#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) malloc::mem#0 = heap_head#0-malloc::size#0
+Constant (const byte*) malloc::mem#0 = heap_head#2-malloc::size#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) malloc::return#0 = (void*)malloc::mem#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const void*) malloc::return#2 = malloc::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const void*) $0 = malloc::return#2
+Constant (const void*) _start::_init1_$0 = malloc::return#2
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word*) WORDS#0 = (word*)$0
+Constant (const word*) WORDS#0 = (word*)_start::_init1_$0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word*) main::w#0 = WORDS#0
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with different constant siblings (const void*) malloc::return#2
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const word*) main::w#0
-Constant inlined heap_head#0 = (const byte*) HEAP_TOP
+Constant inlined _start::_init1_$0 = (const void*) malloc::return#0
 Constant inlined main::i#0 = (byte) 0
 Constant inlined malloc::return#2 = (const void*) malloc::return#0
-Constant inlined $0 = (const void*) malloc::return#0
+Constant inlined heap_head#2 = (const byte*) HEAP_TOP
 Constant inlined main::w#0 = (const word*) WORDS#0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @4
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @5
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::_init1
+Adding NOP phi() at start of _start::@2
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@3
 Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
 CALL GRAPH
-Calls in [] to malloc:3 main:6 
+Calls in [_start] to malloc:2 main:5 
 
 Created 2 initial phi equivalence classes
-Coalesced [16] main::i#3 ← main::i#1
-Coalesced [17] main::w#3 ← main::w#1
+Coalesced [15] main::i#3 ← main::i#1
+Coalesced [16] main::w#3 ← main::w#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @1
-Culled Empty Block (label) @4
-Culled Empty Block (label) @5
+Culled Empty Block (label) _start::@2
+Culled Empty Block (label) _start::@3
 Culled Empty Block (label) main::@2
-Renumbering block @2 to @1
-Renumbering block @3 to @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::_init1
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] phi()
   [2] call malloc 
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [3] phi()
   [4] call main 
-  to:@end
-@end: scope:[]  from @2
-  [5] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [5] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   [6] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -242,7 +252,7 @@ main::@return: scope:[main]  from main::@1
   to:@return
 
 (void*()) malloc((word) malloc::size)
-malloc: scope:[malloc]  from @1
+malloc: scope:[malloc]  from _start::_init1
   [13] phi()
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
@@ -252,6 +262,7 @@ malloc::@return: scope:[malloc]  from malloc
 
 VARIABLE REGISTER WEIGHTS
 (word*) WORDS
+(void()) _start()
 (byte*) heap_head
 (void()) main()
 (byte) main::i
@@ -280,38 +291,39 @@ Target platform is c64basic / MOS6502X
 // Experiments with malloc() - a word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call malloc 
-  // [13] phi from @1 to malloc [phi:@1->malloc]
-malloc_from___b1:
-  jsr malloc
-  // [3] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [4] call main 
-  // [6] phi from @2 to main [phi:@2->main]
-main_from___b2:
-  jsr main
-  // [5] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    // [1] phi from _start to _start::_init1 [phi:_start->_start::_init1]
+  _init1_from__start:
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [2] call malloc 
+    // [13] phi from _start::_init1 to malloc [phi:_start::_init1->malloc]
+  malloc_from__init1:
+    jsr malloc
+    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [4] call main 
+    // [6] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [5] return 
+    rts
+}
   // main
 main: {
     .label w = 3
@@ -390,12 +402,14 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 252.5: zp[1]:2 [ main::i#2 main::i#1 ] 218.83: zp[2]:3 [ main::w#2 main::w#1 ] 
 Uplift Scope [RADIX] 
 Uplift Scope [malloc] 
+Uplift Scope [_start] 
 Uplift Scope [] 
 
-Uplifting [main] best 713 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:3 [ main::w#2 main::w#1 ] 
-Uplifting [RADIX] best 713 combination 
-Uplifting [malloc] best 713 combination 
-Uplifting [] best 713 combination 
+Uplifting [main] best 719 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:3 [ main::w#2 main::w#1 ] 
+Uplifting [RADIX] best 719 combination 
+Uplifting [malloc] best 719 combination 
+Uplifting [_start] best 719 combination 
+Uplifting [] best 719 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ main::w#2 main::w#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -403,38 +417,39 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Experiments with malloc() - a word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call malloc 
-  // [13] phi from @1 to malloc [phi:@1->malloc]
-malloc_from___b1:
-  jsr malloc
-  // [3] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [4] call main 
-  // [6] phi from @2 to main [phi:@2->main]
-main_from___b2:
-  jsr main
-  // [5] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    // [1] phi from _start to _start::_init1 [phi:_start->_start::_init1]
+  _init1_from__start:
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [2] call malloc 
+    // [13] phi from _start::_init1 to malloc [phi:_start::_init1->malloc]
+  malloc_from__init1:
+    jsr malloc
+    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [4] call main 
+    // [6] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [5] return 
+    rts
+}
   // main
 main: {
     .label w = 2
@@ -497,38 +512,31 @@ malloc: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction malloc_from___b1:
-Removing instruction __b2_from___b1:
-Removing instruction main_from___b2:
-Removing instruction __bend_from___b2:
+Removing instruction _init1_from__start:
+Removing instruction malloc_from__init1:
+Removing instruction __b1_from__init1:
+Removing instruction main_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) HEAP_TOP = (byte*) 40960
 (const byte) RADIX::BINARY = (number) 2
 (const byte) RADIX::DECIMAL = (number) $a
@@ -537,6 +545,10 @@ FINAL SYMBOL TABLE
 (const byte) SIZEOF_WORD = (byte) 2
 (word*) WORDS
 (const word*) WORDS#0 WORDS = (word*)(const void*) malloc::return#0
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (byte*) heap_head
 (void()) main()
 (label) main::@1
@@ -567,29 +579,30 @@ Score: 590
 // Experiments with malloc() - a word array
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // malloc(0x200)
-  // [2] call malloc 
-  // [13] phi from @1 to malloc [phi:@1->malloc]
-  jsr malloc
-  // [3] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [4] call main 
-  // [6] phi from @2 to main [phi:@2->main]
-  jsr main
-  rts
-  // [5] phi from @2 to @end [phi:@2->@end]
-  // @end
+  // _start
+_start: {
+    // [1] phi from _start to _start::_init1 [phi:_start->_start::_init1]
+    // _start::_init1
+    // malloc(0x200)
+    // [2] call malloc 
+    // [13] phi from _start::_init1 to malloc [phi:_start::_init1->malloc]
+    jsr malloc
+    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [4] call main 
+    // [6] phi from _start::@1 to main [phi:_start::@1->main]
+    jsr main
+    // _start::@return
+    // [5] return 
+    rts
+}
   // main
 main: {
     .label w = 2

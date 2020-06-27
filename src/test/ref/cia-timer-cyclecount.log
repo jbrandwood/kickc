@@ -1,8 +1,7 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (dword()) clock()
 clock: scope:[clock]  from main::@3
@@ -110,7 +109,7 @@ print_char_at::@return: scope:[print_char_at]  from print_char_at
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   if(true) goto main::@2
@@ -137,18 +136,22 @@ main::@5: scope:[main]  from main::@4
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
 (const nomodify dword*) CIA2_TIMER_AB = (dword*)(number) $dd04
 (const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCLES = (byte) 0
@@ -248,6 +251,11 @@ SYMBOL TABLE SSA
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (dword()) clock()
 (number~) clock::$0
 (label) clock::@return
@@ -405,6 +413,13 @@ Eliminating unused constant (const nomodify byte) CIA_TIMER_CONTROL_A_COUNT_CYCL
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [19] (byte*) print_uint_at::at#1 ← (const byte*) print_ulong_at::at#0 + (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) print_uint_at::at#1 = print_ulong_at::at#0+4
@@ -415,10 +430,6 @@ Constant inlined print_ulong_at::at#0 = (const nomodify byte*) SCREEN
 Constant inlined print_uint_at::at#1 = (const nomodify byte*) SCREEN+(byte) 4
 Constant inlined print_uint_at::at#0 = (const nomodify byte*) SCREEN
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -427,25 +438,23 @@ Adding NOP phi() at start of print_ulong_at::@2
 Adding NOP phi() at start of print_uint_at::@2
 Adding NOP phi() at start of print_uchar_at::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to clock_start:8 clock:10 print_ulong_at:15 
-Calls in [print_ulong_at] to print_uint_at:19 print_uint_at:22 
-Calls in [print_uint_at] to print_uchar_at:30 print_uchar_at:35 
-Calls in [print_uchar_at] to print_char_at:44 print_char_at:50 
+Calls in [main] to clock_start:3 clock:5 print_ulong_at:10 
+Calls in [print_ulong_at] to print_uint_at:14 print_uint_at:17 
+Calls in [print_uint_at] to print_uchar_at:25 print_uchar_at:30 
+Calls in [print_uchar_at] to print_char_at:39 print_char_at:45 
 
 Created 6 initial phi equivalence classes
-Coalesced [18] print_uint_at::w#4 ← print_uint_at::w#0
-Coalesced [21] print_uint_at::w#5 ← print_uint_at::w#1
-Coalesced [28] print_uchar_at::b#4 ← print_uchar_at::b#0
-Coalesced [29] print_uchar_at::at#4 ← print_uchar_at::at#0
-Coalesced [33] print_uchar_at::b#5 ← print_uchar_at::b#1
-Coalesced [34] print_uchar_at::at#5 ← print_uchar_at::at#1
-Coalesced [42] print_char_at::ch#3 ← print_char_at::ch#0
-Coalesced [43] print_char_at::at#3 ← print_char_at::at#0
-Coalesced [48] print_char_at::ch#4 ← print_char_at::ch#1
-Coalesced [49] print_char_at::at#4 ← print_char_at::at#1
+Coalesced [13] print_uint_at::w#4 ← print_uint_at::w#0
+Coalesced [16] print_uint_at::w#5 ← print_uint_at::w#1
+Coalesced [23] print_uchar_at::b#4 ← print_uchar_at::b#0
+Coalesced [24] print_uchar_at::at#4 ← print_uchar_at::at#0
+Coalesced [28] print_uchar_at::b#5 ← print_uchar_at::b#1
+Coalesced [29] print_uchar_at::at#5 ← print_uchar_at::at#1
+Coalesced [37] print_char_at::ch#3 ← print_char_at::ch#0
+Coalesced [38] print_char_at::at#3 ← print_char_at::at#0
+Coalesced [43] print_char_at::ch#4 ← print_char_at::ch#1
+Coalesced [44] print_char_at::at#4 ← print_char_at::at#1
 Coalesced down to 6 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) print_ulong_at::@2
@@ -454,120 +463,108 @@ Culled Empty Block (label) print_uchar_at::@2
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] phi()
-  [6] call clock_start 
+  [1] phi()
+  [2] call clock_start 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   asm { nop  }
-  [8] call clock 
-  [9] (dword) clock::return#2 ← (dword) clock::return#0
+  [4] call clock 
+  [5] (dword) clock::return#2 ← (dword) clock::return#0
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (dword~) main::$1 ← (dword) clock::return#2
-  [11] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT
-  [12] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0
-  [13] call print_ulong_at 
+  [6] (dword~) main::$1 ← (dword) clock::return#2
+  [7] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT
+  [8] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0
+  [9] call print_ulong_at 
   to:main::@1
 
 (void()) print_ulong_at((dword) print_ulong_at::dw , (byte*) print_ulong_at::at)
 print_ulong_at: scope:[print_ulong_at]  from main::@3
-  [14] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0
-  [15] call print_uint_at 
+  [10] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0
+  [11] call print_uint_at 
   to:print_ulong_at::@1
 print_ulong_at::@1: scope:[print_ulong_at]  from print_ulong_at
-  [16] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0
-  [17] call print_uint_at 
+  [12] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0
+  [13] call print_uint_at 
   to:print_ulong_at::@return
 print_ulong_at::@return: scope:[print_ulong_at]  from print_ulong_at::@1
-  [18] return 
+  [14] return 
   to:@return
 
 (void()) print_uint_at((word) print_uint_at::w , (byte*) print_uint_at::at)
 print_uint_at: scope:[print_uint_at]  from print_ulong_at print_ulong_at::@1
-  [19] (byte*) print_uint_at::at#2 ← phi( print_ulong_at/(const nomodify byte*) SCREEN print_ulong_at::@1/(const nomodify byte*) SCREEN+(byte) 4 )
-  [19] (word) print_uint_at::w#2 ← phi( print_ulong_at/(word) print_uint_at::w#0 print_ulong_at::@1/(word) print_uint_at::w#1 )
-  [20] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2
-  [21] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2
-  [22] call print_uchar_at 
+  [15] (byte*) print_uint_at::at#2 ← phi( print_ulong_at/(const nomodify byte*) SCREEN print_ulong_at::@1/(const nomodify byte*) SCREEN+(byte) 4 )
+  [15] (word) print_uint_at::w#2 ← phi( print_ulong_at/(word) print_uint_at::w#0 print_ulong_at::@1/(word) print_uint_at::w#1 )
+  [16] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2
+  [17] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2
+  [18] call print_uchar_at 
   to:print_uint_at::@1
 print_uint_at::@1: scope:[print_uint_at]  from print_uint_at
-  [23] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2
-  [24] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2
-  [25] call print_uchar_at 
+  [19] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2
+  [20] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2
+  [21] call print_uchar_at 
   to:print_uint_at::@return
 print_uint_at::@return: scope:[print_uint_at]  from print_uint_at::@1
-  [26] return 
+  [22] return 
   to:@return
 
 (void()) print_uchar_at((byte) print_uchar_at::b , (byte*) print_uchar_at::at)
 print_uchar_at: scope:[print_uchar_at]  from print_uint_at print_uint_at::@1
-  [27] (byte*) print_uchar_at::at#2 ← phi( print_uint_at/(byte*) print_uchar_at::at#0 print_uint_at::@1/(byte*) print_uchar_at::at#1 )
-  [27] (byte) print_uchar_at::b#2 ← phi( print_uint_at/(byte) print_uchar_at::b#0 print_uint_at::@1/(byte) print_uchar_at::b#1 )
-  [28] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4
-  [29] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0)
-  [30] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2
-  [31] call print_char_at 
+  [23] (byte*) print_uchar_at::at#2 ← phi( print_uint_at/(byte*) print_uchar_at::at#0 print_uint_at::@1/(byte*) print_uchar_at::at#1 )
+  [23] (byte) print_uchar_at::b#2 ← phi( print_uint_at/(byte) print_uchar_at::b#0 print_uint_at::@1/(byte) print_uchar_at::b#1 )
+  [24] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4
+  [25] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0)
+  [26] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2
+  [27] call print_char_at 
   to:print_uchar_at::@1
 print_uchar_at::@1: scope:[print_uchar_at]  from print_uchar_at
-  [32] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f
-  [33] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1
-  [34] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2)
-  [35] call print_char_at 
+  [28] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f
+  [29] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1
+  [30] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2)
+  [31] call print_char_at 
   to:print_uchar_at::@return
 print_uchar_at::@return: scope:[print_uchar_at]  from print_uchar_at::@1
-  [36] return 
+  [32] return 
   to:@return
 
 (void()) print_char_at((byte) print_char_at::ch , (byte*) print_char_at::at)
 print_char_at: scope:[print_char_at]  from print_uchar_at print_uchar_at::@1
-  [37] (byte*) print_char_at::at#2 ← phi( print_uchar_at/(byte*) print_char_at::at#0 print_uchar_at::@1/(byte*) print_char_at::at#1 )
-  [37] (byte) print_char_at::ch#2 ← phi( print_uchar_at/(byte) print_char_at::ch#0 print_uchar_at::@1/(byte) print_char_at::ch#1 )
-  [38] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2
+  [33] (byte*) print_char_at::at#2 ← phi( print_uchar_at/(byte*) print_char_at::at#0 print_uchar_at::@1/(byte*) print_char_at::at#1 )
+  [33] (byte) print_char_at::ch#2 ← phi( print_uchar_at/(byte) print_char_at::ch#0 print_uchar_at::@1/(byte) print_char_at::ch#1 )
+  [34] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2
   to:print_char_at::@return
 print_char_at::@return: scope:[print_char_at]  from print_char_at
-  [39] return 
+  [35] return 
   to:@return
 
 (dword()) clock()
 clock: scope:[clock]  from main::@2
-  [40] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
+  [36] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB)
   to:clock::@return
 clock::@return: scope:[clock]  from clock
-  [41] return 
+  [37] return 
   to:@return
 
 (void()) clock_start()
 clock_start: scope:[clock_start]  from main::@1
-  [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0
-  [43] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  [44] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff
-  [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-  [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START
+  [38] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0
+  [39] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  [40] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff
+  [41] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+  [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START
   to:clock_start::@return
 clock_start::@return: scope:[clock_start]  from clock_start
-  [47] return 
+  [43] return 
   to:@return
 
 
@@ -658,44 +655,44 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (dword()) clock()
 (dword) clock::return
-(dword) clock::return#0 367.33333333333337
-(dword) clock::return#2 202.0
+(dword) clock::return#0 37.33333333333333
+(dword) clock::return#2 22.0
 (void()) clock_start()
 (void()) main()
-(dword~) main::$1 202.0
+(dword~) main::$1 22.0
 (dword) main::cyclecount
-(dword) main::cyclecount#0 202.0
+(dword) main::cyclecount#0 22.0
 (void()) print_char_at((byte) print_char_at::ch , (byte*) print_char_at::at)
 (byte*) print_char_at::at
-(byte*) print_char_at::at#0 200002.0
-(byte*) print_char_at::at#1 100001.0
-(byte*) print_char_at::at#2 1200003.0
+(byte*) print_char_at::at#0 20002.0
+(byte*) print_char_at::at#1 10001.0
+(byte*) print_char_at::at#2 120003.0
 (byte) print_char_at::ch
-(byte) print_char_at::ch#0 100001.0
-(byte) print_char_at::ch#1 200002.0
-(byte) print_char_at::ch#2 1200003.0
+(byte) print_char_at::ch#0 10001.0
+(byte) print_char_at::ch#1 20002.0
+(byte) print_char_at::ch#2 120003.0
 (void()) print_uchar_at((byte) print_uchar_at::b , (byte*) print_uchar_at::at)
-(byte~) print_uchar_at::$0 200002.0
-(byte~) print_uchar_at::$2 100001.0
+(byte~) print_uchar_at::$0 20002.0
+(byte~) print_uchar_at::$2 10001.0
 (byte*) print_uchar_at::at
-(byte*) print_uchar_at::at#0 20002.0
-(byte*) print_uchar_at::at#1 20002.0
-(byte*) print_uchar_at::at#2 36667.33333333333
+(byte*) print_uchar_at::at#0 2002.0
+(byte*) print_uchar_at::at#1 2002.0
+(byte*) print_uchar_at::at#2 3667.333333333333
 (byte) print_uchar_at::b
-(byte) print_uchar_at::b#0 10001.0
-(byte) print_uchar_at::b#1 10001.0
-(byte) print_uchar_at::b#2 44000.8
+(byte) print_uchar_at::b#0 1001.0
+(byte) print_uchar_at::b#1 1001.0
+(byte) print_uchar_at::b#2 4400.8
 (void()) print_uint_at((word) print_uint_at::w , (byte*) print_uint_at::at)
 (byte*) print_uint_at::at
-(byte*) print_uint_at::at#2 4000.4
+(byte*) print_uint_at::at#2 400.4
 (word) print_uint_at::w
-(word) print_uint_at::w#0 2002.0
-(word) print_uint_at::w#1 2002.0
-(word) print_uint_at::w#2 5501.0
+(word) print_uint_at::w#0 202.0
+(word) print_uint_at::w#1 202.0
+(word) print_uint_at::w#2 551.0
 (void()) print_ulong_at((dword) print_ulong_at::dw , (byte*) print_ulong_at::at)
 (byte*) print_ulong_at::at
 (dword) print_ulong_at::dw
-(dword) print_ulong_at::dw#0 701.0
+(dword) print_ulong_at::dw#0 71.0
 
 Initial phi equivalence classes
 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ]
@@ -762,33 +759,17 @@ Target platform is c64basic / MOS6502X
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = $10
     .label cyclecount = $14
-    // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+    // [1] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   __b1_from_main:
   __b1_from___b3:
     jmp __b1
     // main::@1
   __b1:
-    // [6] call clock_start 
+    // [2] call clock_start 
     // Reset & start the CIA#2 timer A+B
     jsr clock_start
     jmp __b2
@@ -796,9 +777,9 @@ main: {
   __b2:
     // asm { nop  }
     nop
-    // [8] call clock 
+    // [4] call clock 
     jsr clock
-    // [9] (dword) clock::return#2 ← (dword) clock::return#0 -- vduz1=vduz2 
+    // [5] (dword) clock::return#2 ← (dword) clock::return#0 -- vduz1=vduz2 
     lda.z clock.return
     sta.z clock.return_1
     lda.z clock.return+1
@@ -810,7 +791,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [10] (dword~) main::$1 ← (dword) clock::return#2 -- vduz1=vduz2 
+    // [6] (dword~) main::$1 ← (dword) clock::return#2 -- vduz1=vduz2 
     lda.z clock.return_1
     sta.z __1
     lda.z clock.return_1+1
@@ -819,7 +800,7 @@ main: {
     sta.z __1+2
     lda.z clock.return_1+3
     sta.z __1+3
-    // [11] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz2_minus_vduc1 
+    // [7] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz2_minus_vduc1 
     lda.z __1
     sec
     sbc #<CLOCKS_PER_INIT
@@ -833,7 +814,7 @@ main: {
     lda.z __1+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
-    // [12] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0 -- vduz1=vduz2 
+    // [8] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0 -- vduz1=vduz2 
     lda.z cyclecount
     sta.z print_ulong_at.dw
     lda.z cyclecount+1
@@ -842,7 +823,7 @@ main: {
     sta.z print_ulong_at.dw+2
     lda.z cyclecount+3
     sta.z print_ulong_at.dw+3
-    // [13] call print_ulong_at 
+    // [9] call print_ulong_at 
     // Print cycle count
     jsr print_ulong_at
     jmp __b1_from___b3
@@ -852,43 +833,43 @@ main: {
 // print_ulong_at(dword zp($18) dw)
 print_ulong_at: {
     .label dw = $18
-    // [14] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 -- vwuz1=_hi_vduz2 
+    // [10] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 -- vwuz1=_hi_vduz2 
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
     sta.z print_uint_at.w+1
-    // [15] call print_uint_at 
-    // [19] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
+    // [11] call print_uint_at 
+    // [15] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
   print_uint_at_from_print_ulong_at:
-    // [19] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [19] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
+    // [15] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __b1
     // print_ulong_at::@1
   __b1:
-    // [16] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 -- vwuz1=_lo_vduz2 
+    // [12] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 -- vwuz1=_lo_vduz2 
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
     sta.z print_uint_at.w+1
-    // [17] call print_uint_at 
-    // [19] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
+    // [13] call print_uint_at 
+    // [15] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
   print_uint_at_from___b1:
-    // [19] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN+(byte) 4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN+(byte) 4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [19] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
+    // [15] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __breturn
     // print_ulong_at::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
 }
   // print_uint_at
@@ -897,27 +878,27 @@ print_ulong_at: {
 print_uint_at: {
     .label w = 2
     .label at = 4
-    // [20] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2 -- vbuz1=_hi_vwuz2 
+    // [16] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z print_uchar_at.b
-    // [21] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 -- pbuz1=pbuz2 
+    // [17] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_uchar_at.at
     lda.z at+1
     sta.z print_uchar_at.at+1
-    // [22] call print_uchar_at 
-    // [27] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
+    // [18] call print_uchar_at 
+    // [23] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
   print_uchar_at_from_print_uint_at:
-    // [27] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [27] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
+    // [23] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
+    // [23] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __b1
     // print_uint_at::@1
   __b1:
-    // [23] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2 -- vbuz1=_lo_vwuz2 
+    // [19] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_uchar_at.b
-    // [24] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 -- pbuz1=pbuz2_plus_vbuc1 
+    // [20] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2
     clc
     adc.z at
@@ -925,16 +906,16 @@ print_uint_at: {
     lda #0
     adc.z at+1
     sta.z print_uchar_at.at+1
-    // [25] call print_uchar_at 
-    // [27] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
+    // [21] call print_uchar_at 
+    // [23] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
   print_uchar_at_from___b1:
-    // [27] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [27] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
+    // [23] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
+    // [23] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __breturn
     // print_uint_at::@return
   __breturn:
-    // [26] return 
+    // [22] return 
     rts
 }
   // print_uchar_at
@@ -945,37 +926,37 @@ print_uchar_at: {
     .label __2 = $1d
     .label b = 6
     .label at = 7
-    // [28] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
+    // [24] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z b
     lsr
     lsr
     lsr
     lsr
     sta.z __0
-    // [29] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [25] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __0
     lda print_hextab,y
     sta.z print_char_at.ch
-    // [30] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 -- pbuz1=pbuz2 
+    // [26] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
-    // [31] call print_char_at 
+    // [27] call print_char_at 
   // Table of hexadecimal digits
-    // [37] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
+    // [33] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
   print_char_at_from_print_uchar_at:
-    // [37] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [37] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
+    // [33] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
+    // [33] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __b1
     // print_uchar_at::@1
   __b1:
-    // [32] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [28] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z b
     sta.z __2
-    // [33] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+    // [29] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z at
     clc
     adc #1
@@ -983,20 +964,20 @@ print_uchar_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [34] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [30] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __2
     lda print_hextab,y
     sta.z print_char_at.ch
-    // [35] call print_char_at 
-    // [37] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
+    // [31] call print_char_at 
+    // [33] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
   print_char_at_from___b1:
-    // [37] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [37] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
+    // [33] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
+    // [33] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __breturn
     // print_uchar_at::@return
   __breturn:
-    // [36] return 
+    // [32] return 
     rts
 }
   // print_char_at
@@ -1005,14 +986,14 @@ print_uchar_at: {
 print_char_at: {
     .label ch = 9
     .label at = $a
-    // [38] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuz2 
+    // [34] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuz2 
     lda.z ch
     ldy #0
     sta (at),y
     jmp __breturn
     // print_char_at::@return
   __breturn:
-    // [39] return 
+    // [35] return 
     rts
 }
   // clock
@@ -1021,7 +1002,7 @@ print_char_at: {
 clock: {
     .label return = $1e
     .label return_1 = $c
-    // [40] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
+    // [36] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -1038,21 +1019,21 @@ clock: {
     jmp __breturn
     // clock::@return
   __breturn:
-    // [41] return 
+    // [37] return 
     rts
 }
   // clock_start
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [38] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // [43] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [39] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // [44] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+    // [40] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -1061,64 +1042,64 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-    // [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [41] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     jmp __breturn
     // clock_start::@return
   __breturn:
-    // [47] return 
+    // [43] return 
     rts
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] (dword) clock::return#2 ← (dword) clock::return#0 [ clock::return#2 ] ( main:2 [ clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [10] (dword~) main::$1 ← (dword) clock::return#2 [ main::$1 ] ( main:2 [ main::$1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [11] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] ( main:2 [ main::cyclecount#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [12] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0 [ print_ulong_at::dw#0 ] ( main:2 [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [14] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( main:2::print_ulong_at:13 [ print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [16] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( main:2::print_ulong_at:13 [ print_uint_at::w#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [21] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( main:2::print_ulong_at:13::print_uint_at:15 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
+Statement [5] (dword) clock::return#2 ← (dword) clock::return#0 [ clock::return#2 ] (  [ clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [6] (dword~) main::$1 ← (dword) clock::return#2 [ main::$1 ] (  [ main::$1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [7] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] (  [ main::cyclecount#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [8] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0 [ print_ulong_at::dw#0 ] (  [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [10] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( print_ulong_at:9 [ print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [12] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( print_ulong_at:9 [ print_uint_at::w#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [17] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( print_ulong_at:9::print_uint_at:11 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ]
-Statement [24] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( main:2::print_ulong_at:13::print_uint_at:15 [ print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17 [ print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
-Statement [28] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [30] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [20] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( print_ulong_at:9::print_uint_at:11 [ print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  print_ulong_at:9::print_uint_at:13 [ print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
+Statement [24] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [26] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ]
-Statement [32] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [33] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [28] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [29] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:29 [ print_uchar_at::$2 ]
-Statement [38] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 [ ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22::print_char_at:31 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22::print_char_at:31 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25::print_char_at:31 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25::print_char_at:31 [ print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22::print_char_at:35 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22::print_char_at:35 [ print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25::print_char_at:35 [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25::print_char_at:35 [ ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [34] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 [ ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18::print_char_at:27 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18::print_char_at:27 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21::print_char_at:27 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21::print_char_at:27 [ print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:18::print_char_at:31 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18::print_char_at:31 [ print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21::print_char_at:31 [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21::print_char_at:31 [ ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ]
-Statement [40] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:8 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [43] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [44] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [9] (dword) clock::return#2 ← (dword) clock::return#0 [ clock::return#2 ] ( main:2 [ clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [10] (dword~) main::$1 ← (dword) clock::return#2 [ main::$1 ] ( main:2 [ main::$1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [11] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] ( main:2 [ main::cyclecount#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [12] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0 [ print_ulong_at::dw#0 ] ( main:2 [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
-Statement [14] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( main:2::print_ulong_at:13 [ print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [16] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( main:2::print_ulong_at:13 [ print_uint_at::w#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
-Statement [21] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( main:2::print_ulong_at:13::print_uint_at:15 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
-Statement [24] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( main:2::print_ulong_at:13::print_uint_at:15 [ print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17 [ print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
-Statement [28] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [30] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
-Statement [32] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [33] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25 [ print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25 [ print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
-Statement [38] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 [ ] ( main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22::print_char_at:31 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22::print_char_at:31 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25::print_char_at:31 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25::print_char_at:31 [ print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:22::print_char_at:35 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:22::print_char_at:35 [ print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:15::print_uchar_at:25::print_char_at:35 [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  main:2::print_ulong_at:13::print_uint_at:17::print_uchar_at:25::print_char_at:35 [ ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [40] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( main:2::clock:8 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
-Statement [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [43] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [44] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
-Statement [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( main:2::clock_start:6 [ ] { }  ) always clobbers reg byte a 
+Statement [36] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( clock:4 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [38] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [39] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [40] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [41] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [5] (dword) clock::return#2 ← (dword) clock::return#0 [ clock::return#2 ] (  [ clock::return#2 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [6] (dword~) main::$1 ← (dword) clock::return#2 [ main::$1 ] (  [ main::$1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [7] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT [ main::cyclecount#0 ] (  [ main::cyclecount#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [8] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0 [ print_ulong_at::dw#0 ] (  [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } }  ) always clobbers reg byte a 
+Statement [10] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 [ print_ulong_at::dw#0 print_uint_at::w#0 ] ( print_ulong_at:9 [ print_ulong_at::dw#0 print_uint_at::w#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [12] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 [ print_uint_at::w#1 ] ( print_ulong_at:9 [ print_uint_at::w#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } }  ) always clobbers reg byte a 
+Statement [17] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] ( print_ulong_at:9::print_uint_at:11 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#0 print_uchar_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } }  ) always clobbers reg byte a 
+Statement [20] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 [ print_uchar_at::b#1 print_uchar_at::at#1 ] ( print_ulong_at:9::print_uint_at:11 [ print_ulong_at::dw#0 print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  print_ulong_at:9::print_uint_at:13 [ print_uchar_at::b#1 print_uchar_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } }  ) always clobbers reg byte a 
+Statement [24] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::b#2 print_uchar_at::at#2 print_uchar_at::$0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [26] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::b#2 print_uchar_at::at#2 print_char_at::ch#0 print_char_at::at#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  ) always clobbers reg byte a 
+Statement [28] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f [ print_uchar_at::at#2 print_uchar_at::$2 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::at#2 print_uchar_at::$2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [29] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 [ print_uchar_at::$2 print_char_at::at#1 ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21 [ print_ulong_at::dw#0 print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21 [ print_uchar_at::$2 print_char_at::at#1 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a 
+Statement [34] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 [ ] ( print_ulong_at:9::print_uint_at:11::print_uchar_at:18::print_char_at:27 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18::print_char_at:27 [ print_uint_at::w#2 print_uint_at::at#2 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uint_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21::print_char_at:27 [ print_ulong_at::dw#0 print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21::print_char_at:27 [ print_uchar_at::b#2 print_uchar_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_char_at::ch#0 = print_char_at::ch#2 } { print_char_at::at#0 = print_char_at::at#2 print_uchar_at::at#2 print_uchar_at::at#1 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:18::print_char_at:31 [ print_ulong_at::dw#0 print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:18::print_char_at:31 [ print_uint_at::w#2 print_uint_at::at#2 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#0 = print_uchar_at::b#2 } { print_uchar_at::at#0 = print_uchar_at::at#2 print_uint_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:11::print_uchar_at:21::print_char_at:31 [ print_ulong_at::dw#0 ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#0 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  print_ulong_at:9::print_uint_at:13::print_uchar_at:21::print_char_at:31 [ ] { { print_ulong_at::dw#0 = main::cyclecount#0 } { print_uint_at::w#1 = print_uint_at::w#2 } { print_uchar_at::b#1 = print_uchar_at::b#2 } { print_uchar_at::at#1 = print_uchar_at::at#2 } { print_char_at::ch#1 = print_char_at::ch#2 } { print_char_at::at#1 = print_char_at::at#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [36] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) [ clock::return#0 ] ( clock:4 [ clock::return#0 ] { { clock::return#0 = clock::return#2 } }  ) always clobbers reg byte a 
+Statement [38] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [39] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [40] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [41] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
+Statement [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START [ ] ( clock_start:2 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ print_uint_at::at#2 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] : zp[1]:6 , reg byte x , 
@@ -1134,12 +1115,12 @@ Potential registers zp[1]:29 [ print_uchar_at::$2 ] : zp[1]:29 , reg byte x , re
 Potential registers zp[4]:30 [ clock::return#0 ] : zp[4]:30 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print_char_at] 1,500,006: zp[1]:9 [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ] 1,500,006: zp[2]:10 [ print_char_at::at#2 print_char_at::at#0 print_char_at::at#1 ] 
-Uplift Scope [print_uchar_at] 200,002: zp[1]:28 [ print_uchar_at::$0 ] 100,001: zp[1]:29 [ print_uchar_at::$2 ] 76,671.33: zp[2]:7 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] 64,002.8: zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
-Uplift Scope [print_uint_at] 9,505: zp[2]:2 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] 4,000.4: zp[2]:4 [ print_uint_at::at#2 ] 
-Uplift Scope [print_ulong_at] 701: zp[4]:24 [ print_ulong_at::dw#0 ] 
-Uplift Scope [clock] 367.33: zp[4]:30 [ clock::return#0 ] 202: zp[4]:12 [ clock::return#2 ] 
-Uplift Scope [main] 202: zp[4]:16 [ main::$1 ] 202: zp[4]:20 [ main::cyclecount#0 ] 
+Uplift Scope [print_char_at] 150,006: zp[1]:9 [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ] 150,006: zp[2]:10 [ print_char_at::at#2 print_char_at::at#0 print_char_at::at#1 ] 
+Uplift Scope [print_uchar_at] 20,002: zp[1]:28 [ print_uchar_at::$0 ] 10,001: zp[1]:29 [ print_uchar_at::$2 ] 7,671.33: zp[2]:7 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] 6,402.8: zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
+Uplift Scope [print_uint_at] 955: zp[2]:2 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] 400.4: zp[2]:4 [ print_uint_at::at#2 ] 
+Uplift Scope [print_ulong_at] 71: zp[4]:24 [ print_ulong_at::dw#0 ] 
+Uplift Scope [clock] 37.33: zp[4]:30 [ clock::return#0 ] 22: zp[4]:12 [ clock::return#2 ] 
+Uplift Scope [main] 22: zp[4]:16 [ main::$1 ] 22: zp[4]:20 [ main::cyclecount#0 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -1147,20 +1128,20 @@ Uplift Scope [clock_start]
 Uplift Scope [RADIX] 
 Uplift Scope [] 
 
-Uplifting [print_char_at] best 1739 combination reg byte x [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ] zp[2]:10 [ print_char_at::at#2 print_char_at::at#0 print_char_at::at#1 ] 
-Uplifting [print_uchar_at] best 1731 combination reg byte a [ print_uchar_at::$0 ] reg byte y [ print_uchar_at::$2 ] zp[2]:7 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
-Uplifting [print_uint_at] best 1731 combination zp[2]:2 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] zp[2]:4 [ print_uint_at::at#2 ] 
-Uplifting [print_ulong_at] best 1731 combination zp[4]:24 [ print_ulong_at::dw#0 ] 
-Uplifting [clock] best 1731 combination zp[4]:30 [ clock::return#0 ] zp[4]:12 [ clock::return#2 ] 
-Uplifting [main] best 1731 combination zp[4]:16 [ main::$1 ] zp[4]:20 [ main::cyclecount#0 ] 
-Uplifting [MOS6526_CIA] best 1731 combination 
-Uplifting [MOS6569_VICII] best 1731 combination 
-Uplifting [MOS6581_SID] best 1731 combination 
-Uplifting [clock_start] best 1731 combination 
-Uplifting [RADIX] best 1731 combination 
-Uplifting [] best 1731 combination 
+Uplifting [print_char_at] best 1727 combination reg byte x [ print_char_at::ch#2 print_char_at::ch#0 print_char_at::ch#1 ] zp[2]:10 [ print_char_at::at#2 print_char_at::at#0 print_char_at::at#1 ] 
+Uplifting [print_uchar_at] best 1719 combination reg byte a [ print_uchar_at::$0 ] reg byte y [ print_uchar_at::$2 ] zp[2]:7 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
+Uplifting [print_uint_at] best 1719 combination zp[2]:2 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ] zp[2]:4 [ print_uint_at::at#2 ] 
+Uplifting [print_ulong_at] best 1719 combination zp[4]:24 [ print_ulong_at::dw#0 ] 
+Uplifting [clock] best 1719 combination zp[4]:30 [ clock::return#0 ] zp[4]:12 [ clock::return#2 ] 
+Uplifting [main] best 1719 combination zp[4]:16 [ main::$1 ] zp[4]:20 [ main::cyclecount#0 ] 
+Uplifting [MOS6526_CIA] best 1719 combination 
+Uplifting [MOS6569_VICII] best 1719 combination 
+Uplifting [MOS6581_SID] best 1719 combination 
+Uplifting [clock_start] best 1719 combination 
+Uplifting [RADIX] best 1719 combination 
+Uplifting [] best 1719 combination 
 Attempting to uplift remaining variables inzp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ]
-Uplifting [print_uchar_at] best 1731 combination zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
+Uplifting [print_uchar_at] best 1719 combination zp[1]:6 [ print_uchar_at::b#2 print_uchar_at::b#0 print_uchar_at::b#1 ] 
 Coalescing zero page register [ zp[2]:4 [ print_uint_at::at#2 ] ] with [ zp[2]:7 [ print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ] ] - score: 2
 Coalescing zero page register [ zp[4]:12 [ clock::return#2 ] ] with [ zp[4]:16 [ main::$1 ] ] - score: 1
 Coalescing zero page register [ zp[4]:12 [ clock::return#2 main::$1 ] ] with [ zp[4]:30 [ clock::return#0 ] ] - score: 1
@@ -1191,33 +1172,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = 9
     .label cyclecount = 9
-    // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+    // [1] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
   __b1_from_main:
   __b1_from___b3:
     jmp __b1
     // main::@1
   __b1:
-    // [6] call clock_start 
+    // [2] call clock_start 
     // Reset & start the CIA#2 timer A+B
     jsr clock_start
     jmp __b2
@@ -1225,14 +1190,14 @@ main: {
   __b2:
     // asm { nop  }
     nop
-    // [8] call clock 
+    // [4] call clock 
     jsr clock
-    // [9] (dword) clock::return#2 ← (dword) clock::return#0
+    // [5] (dword) clock::return#2 ← (dword) clock::return#0
     jmp __b3
     // main::@3
   __b3:
-    // [10] (dword~) main::$1 ← (dword) clock::return#2
-    // [11] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // [6] (dword~) main::$1 ← (dword) clock::return#2
+    // [7] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -1246,8 +1211,8 @@ main: {
     lda.z cyclecount+3
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
-    // [12] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0
-    // [13] call print_ulong_at 
+    // [8] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0
+    // [9] call print_ulong_at 
     // Print cycle count
     jsr print_ulong_at
     jmp __b1_from___b3
@@ -1257,43 +1222,43 @@ main: {
 // print_ulong_at(dword zp(9) dw)
 print_ulong_at: {
     .label dw = 9
-    // [14] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 -- vwuz1=_hi_vduz2 
+    // [10] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 -- vwuz1=_hi_vduz2 
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
     sta.z print_uint_at.w+1
-    // [15] call print_uint_at 
-    // [19] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
+    // [11] call print_uint_at 
+    // [15] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
   print_uint_at_from_print_ulong_at:
-    // [19] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [19] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
+    // [15] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __b1
     // print_ulong_at::@1
   __b1:
-    // [16] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 -- vwuz1=_lo_vduz2 
+    // [12] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 -- vwuz1=_lo_vduz2 
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
     sta.z print_uint_at.w+1
-    // [17] call print_uint_at 
-    // [19] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
+    // [13] call print_uint_at 
+    // [15] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
   print_uint_at_from___b1:
-    // [19] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN+(byte) 4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
+    // [15] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN+(byte) 4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [19] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
+    // [15] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     jmp __breturn
     // print_ulong_at::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
 }
   // print_uint_at
@@ -1302,23 +1267,23 @@ print_ulong_at: {
 print_uint_at: {
     .label w = 2
     .label at = 4
-    // [20] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2 -- vbuz1=_hi_vwuz2 
+    // [16] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z print_uchar_at.b
-    // [21] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2
-    // [22] call print_uchar_at 
-    // [27] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
+    // [17] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2
+    // [18] call print_uchar_at 
+    // [23] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
   print_uchar_at_from_print_uint_at:
-    // [27] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [27] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
+    // [23] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
+    // [23] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __b1
     // print_uint_at::@1
   __b1:
-    // [23] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2 -- vbuz1=_lo_vwuz2 
+    // [19] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_uchar_at.b
-    // [24] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [20] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z print_uchar_at.at
@@ -1326,16 +1291,16 @@ print_uint_at: {
     bcc !+
     inc.z print_uchar_at.at+1
   !:
-    // [25] call print_uchar_at 
-    // [27] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
+    // [21] call print_uchar_at 
+    // [23] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
   print_uchar_at_from___b1:
-    // [27] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [27] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
+    // [23] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
+    // [23] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     jmp __breturn
     // print_uint_at::@return
   __breturn:
-    // [26] return 
+    // [22] return 
     rts
 }
   // print_uchar_at
@@ -1344,35 +1309,35 @@ print_uint_at: {
 print_uchar_at: {
     .label b = 6
     .label at = 4
-    // [28] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
+    // [24] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
     lda.z b
     lsr
     lsr
     lsr
     lsr
-    // [29] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [25] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
-    // [30] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 -- pbuz1=pbuz2 
+    // [26] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
-    // [31] call print_char_at 
+    // [27] call print_char_at 
   // Table of hexadecimal digits
-    // [37] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
+    // [33] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
   print_char_at_from_print_uchar_at:
-    // [37] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [37] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
+    // [33] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
+    // [33] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __b1
     // print_uchar_at::@1
   __b1:
-    // [32] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
+    // [28] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and.z b
     tay
-    // [33] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+    // [29] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z at
     clc
     adc #1
@@ -1380,18 +1345,18 @@ print_uchar_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [34] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [30] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
-    // [35] call print_char_at 
-    // [37] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
+    // [31] call print_char_at 
+    // [33] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
   print_char_at_from___b1:
-    // [37] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [37] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
+    // [33] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
+    // [33] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     jmp __breturn
     // print_uchar_at::@return
   __breturn:
-    // [36] return 
+    // [32] return 
     rts
 }
   // print_char_at
@@ -1399,14 +1364,14 @@ print_uchar_at: {
 // print_char_at(byte register(X) ch, byte* zp(7) at)
 print_char_at: {
     .label at = 7
-    // [38] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
+    // [34] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (at),y
     jmp __breturn
     // print_char_at::@return
   __breturn:
-    // [39] return 
+    // [35] return 
     rts
 }
   // clock
@@ -1414,7 +1379,7 @@ print_char_at: {
 // This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
 clock: {
     .label return = 9
-    // [40] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
+    // [36] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -1431,21 +1396,21 @@ clock: {
     jmp __breturn
     // clock::@return
   __breturn:
-    // [41] return 
+    // [37] return 
     rts
 }
   // clock_start
 // Reset & start the processor clock time. The value can be read using clock().
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
-    // [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [38] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // [43] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [39] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // [44] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+    // [40] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -1454,24 +1419,22 @@ clock_start: {
     sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
-    // [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [41] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     jmp __breturn
     // clock_start::@return
   __breturn:
-    // [47] return 
+    // [43] return 
     rts
 }
   // File Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
@@ -1486,15 +1449,9 @@ Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b3 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction print_uint_at_from_print_ulong_at:
@@ -1513,13 +1470,8 @@ Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
 (const nomodify dword*) CIA2_TIMER_AB = (dword*) 56580
 (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A = (byte) $40
@@ -1619,56 +1571,56 @@ FINAL SYMBOL TABLE
 (dword()) clock()
 (label) clock::@return
 (dword) clock::return
-(dword) clock::return#0 return zp[4]:9 367.33333333333337
-(dword) clock::return#2 return zp[4]:9 202.0
+(dword) clock::return#0 return zp[4]:9 37.33333333333333
+(dword) clock::return#2 return zp[4]:9 22.0
 (void()) clock_start()
 (label) clock_start::@return
 (void()) main()
-(dword~) main::$1 zp[4]:9 202.0
+(dword~) main::$1 zp[4]:9 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (dword) main::cyclecount
-(dword) main::cyclecount#0 cyclecount zp[4]:9 202.0
+(dword) main::cyclecount#0 cyclecount zp[4]:9 22.0
 (void()) print_char_at((byte) print_char_at::ch , (byte*) print_char_at::at)
 (label) print_char_at::@return
 (byte*) print_char_at::at
-(byte*) print_char_at::at#0 at zp[2]:7 200002.0
-(byte*) print_char_at::at#1 at zp[2]:7 100001.0
-(byte*) print_char_at::at#2 at zp[2]:7 1200003.0
+(byte*) print_char_at::at#0 at zp[2]:7 20002.0
+(byte*) print_char_at::at#1 at zp[2]:7 10001.0
+(byte*) print_char_at::at#2 at zp[2]:7 120003.0
 (byte) print_char_at::ch
-(byte) print_char_at::ch#0 reg byte x 100001.0
-(byte) print_char_at::ch#1 reg byte x 200002.0
-(byte) print_char_at::ch#2 reg byte x 1200003.0
+(byte) print_char_at::ch#0 reg byte x 10001.0
+(byte) print_char_at::ch#1 reg byte x 20002.0
+(byte) print_char_at::ch#2 reg byte x 120003.0
 (const to_nomodify byte*) print_hextab[]  = (byte*) "0123456789abcdef"z
 (void()) print_uchar_at((byte) print_uchar_at::b , (byte*) print_uchar_at::at)
-(byte~) print_uchar_at::$0 reg byte a 200002.0
-(byte~) print_uchar_at::$2 reg byte y 100001.0
+(byte~) print_uchar_at::$0 reg byte a 20002.0
+(byte~) print_uchar_at::$2 reg byte y 10001.0
 (label) print_uchar_at::@1
 (label) print_uchar_at::@return
 (byte*) print_uchar_at::at
-(byte*) print_uchar_at::at#0 at zp[2]:4 20002.0
-(byte*) print_uchar_at::at#1 at zp[2]:4 20002.0
-(byte*) print_uchar_at::at#2 at zp[2]:4 36667.33333333333
+(byte*) print_uchar_at::at#0 at zp[2]:4 2002.0
+(byte*) print_uchar_at::at#1 at zp[2]:4 2002.0
+(byte*) print_uchar_at::at#2 at zp[2]:4 3667.333333333333
 (byte) print_uchar_at::b
-(byte) print_uchar_at::b#0 b zp[1]:6 10001.0
-(byte) print_uchar_at::b#1 b zp[1]:6 10001.0
-(byte) print_uchar_at::b#2 b zp[1]:6 44000.8
+(byte) print_uchar_at::b#0 b zp[1]:6 1001.0
+(byte) print_uchar_at::b#1 b zp[1]:6 1001.0
+(byte) print_uchar_at::b#2 b zp[1]:6 4400.8
 (void()) print_uint_at((word) print_uint_at::w , (byte*) print_uint_at::at)
 (label) print_uint_at::@1
 (label) print_uint_at::@return
 (byte*) print_uint_at::at
-(byte*) print_uint_at::at#2 at zp[2]:4 4000.4
+(byte*) print_uint_at::at#2 at zp[2]:4 400.4
 (word) print_uint_at::w
-(word) print_uint_at::w#0 w zp[2]:2 2002.0
-(word) print_uint_at::w#1 w zp[2]:2 2002.0
-(word) print_uint_at::w#2 w zp[2]:2 5501.0
+(word) print_uint_at::w#0 w zp[2]:2 202.0
+(word) print_uint_at::w#1 w zp[2]:2 202.0
+(word) print_uint_at::w#2 w zp[2]:2 551.0
 (void()) print_ulong_at((dword) print_ulong_at::dw , (byte*) print_ulong_at::at)
 (label) print_ulong_at::@1
 (label) print_ulong_at::@return
 (byte*) print_ulong_at::at
 (dword) print_ulong_at::dw
-(dword) print_ulong_at::dw#0 dw zp[4]:9 701.0
+(dword) print_ulong_at::dw#0 dw zp[4]:9 71.0
 
 zp[2]:2 [ print_uint_at::w#2 print_uint_at::w#0 print_uint_at::w#1 ]
 zp[2]:4 [ print_uint_at::at#2 print_uchar_at::at#2 print_uchar_at::at#0 print_uchar_at::at#1 ]
@@ -1704,22 +1656,15 @@ Score: 869
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label __1 = 9
     .label cyclecount = 9
-    // [5] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
+    // [1] phi from main main::@3 to main::@1 [phi:main/main::@3->main::@1]
     // main::@1
   __b1:
     // clock_start()
-    // [6] call clock_start 
+    // [2] call clock_start 
     // Reset & start the CIA#2 timer A+B
     jsr clock_start
     // main::@2
@@ -1727,13 +1672,13 @@ main: {
     // asm { nop  }
     nop
     // clock()
-    // [8] call clock 
+    // [4] call clock 
     jsr clock
-    // [9] (dword) clock::return#2 ← (dword) clock::return#0
+    // [5] (dword) clock::return#2 ← (dword) clock::return#0
     // main::@3
-    // [10] (dword~) main::$1 ← (dword) clock::return#2
+    // [6] (dword~) main::$1 ← (dword) clock::return#2
     // cyclecount = clock()-CLOCKS_PER_INIT
-    // [11] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
+    // [7] (dword) main::cyclecount#0 ← (dword~) main::$1 - (const nomodify dword) CLOCKS_PER_INIT -- vduz1=vduz1_minus_vduc1 
     lda.z cyclecount
     sec
     sbc #<CLOCKS_PER_INIT
@@ -1748,8 +1693,8 @@ main: {
     sbc #>CLOCKS_PER_INIT>>$10
     sta.z cyclecount+3
     // print_ulong_at(cyclecount, SCREEN)
-    // [12] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0
-    // [13] call print_ulong_at 
+    // [8] (dword) print_ulong_at::dw#0 ← (dword) main::cyclecount#0
+    // [9] call print_ulong_at 
     // Print cycle count
     jsr print_ulong_at
     jmp __b1
@@ -1760,39 +1705,39 @@ main: {
 print_ulong_at: {
     .label dw = 9
     // print_uint_at(>dw, at)
-    // [14] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 -- vwuz1=_hi_vduz2 
+    // [10] (word) print_uint_at::w#0 ← > (dword) print_ulong_at::dw#0 -- vwuz1=_hi_vduz2 
     lda.z dw+2
     sta.z print_uint_at.w
     lda.z dw+3
     sta.z print_uint_at.w+1
-    // [15] call print_uint_at 
-    // [19] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
-    // [19] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
+    // [11] call print_uint_at 
+    // [15] phi from print_ulong_at to print_uint_at [phi:print_ulong_at->print_uint_at]
+    // [15] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN [phi:print_ulong_at->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z print_uint_at.at
     lda #>SCREEN
     sta.z print_uint_at.at+1
-    // [19] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
+    // [15] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#0 [phi:print_ulong_at->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     // print_ulong_at::@1
     // print_uint_at(<dw, at+4)
-    // [16] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 -- vwuz1=_lo_vduz2 
+    // [12] (word) print_uint_at::w#1 ← < (dword) print_ulong_at::dw#0 -- vwuz1=_lo_vduz2 
     lda.z dw
     sta.z print_uint_at.w
     lda.z dw+1
     sta.z print_uint_at.w+1
-    // [17] call print_uint_at 
-    // [19] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
-    // [19] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN+(byte) 4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
+    // [13] call print_uint_at 
+    // [15] phi from print_ulong_at::@1 to print_uint_at [phi:print_ulong_at::@1->print_uint_at]
+    // [15] phi (byte*) print_uint_at::at#2 = (const nomodify byte*) SCREEN+(byte) 4 [phi:print_ulong_at::@1->print_uint_at#0] -- pbuz1=pbuc1 
     lda #<SCREEN+4
     sta.z print_uint_at.at
     lda #>SCREEN+4
     sta.z print_uint_at.at+1
-    // [19] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
+    // [15] phi (word) print_uint_at::w#2 = (word) print_uint_at::w#1 [phi:print_ulong_at::@1->print_uint_at#1] -- register_copy 
     jsr print_uint_at
     // print_ulong_at::@return
     // }
-    // [18] return 
+    // [14] return 
     rts
 }
   // print_uint_at
@@ -1802,21 +1747,21 @@ print_uint_at: {
     .label w = 2
     .label at = 4
     // print_uchar_at(>w, at)
-    // [20] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2 -- vbuz1=_hi_vwuz2 
+    // [16] (byte) print_uchar_at::b#0 ← > (word) print_uint_at::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z print_uchar_at.b
-    // [21] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2
-    // [22] call print_uchar_at 
-    // [27] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
-    // [27] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
-    // [27] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
+    // [17] (byte*) print_uchar_at::at#0 ← (byte*) print_uint_at::at#2
+    // [18] call print_uchar_at 
+    // [23] phi from print_uint_at to print_uchar_at [phi:print_uint_at->print_uchar_at]
+    // [23] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#0 [phi:print_uint_at->print_uchar_at#0] -- register_copy 
+    // [23] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#0 [phi:print_uint_at->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     // print_uint_at::@1
     // print_uchar_at(<w, at+2)
-    // [23] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2 -- vbuz1=_lo_vwuz2 
+    // [19] (byte) print_uchar_at::b#1 ← < (word) print_uint_at::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z print_uchar_at.b
-    // [24] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [20] (byte*) print_uchar_at::at#1 ← (byte*) print_uint_at::at#2 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z print_uchar_at.at
@@ -1824,14 +1769,14 @@ print_uint_at: {
     bcc !+
     inc.z print_uchar_at.at+1
   !:
-    // [25] call print_uchar_at 
-    // [27] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
-    // [27] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
-    // [27] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
+    // [21] call print_uchar_at 
+    // [23] phi from print_uint_at::@1 to print_uchar_at [phi:print_uint_at::@1->print_uchar_at]
+    // [23] phi (byte*) print_uchar_at::at#2 = (byte*) print_uchar_at::at#1 [phi:print_uint_at::@1->print_uchar_at#0] -- register_copy 
+    // [23] phi (byte) print_uchar_at::b#2 = (byte) print_uchar_at::b#1 [phi:print_uint_at::@1->print_uchar_at#1] -- register_copy 
     jsr print_uchar_at
     // print_uint_at::@return
     // }
-    // [26] return 
+    // [22] return 
     rts
 }
   // print_uchar_at
@@ -1841,35 +1786,35 @@ print_uchar_at: {
     .label b = 6
     .label at = 4
     // b>>4
-    // [28] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
+    // [24] (byte~) print_uchar_at::$0 ← (byte) print_uchar_at::b#2 >> (byte) 4 -- vbuaa=vbuz1_ror_4 
     lda.z b
     lsr
     lsr
     lsr
     lsr
     // print_char_at(print_hextab[b>>4], at)
-    // [29] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
+    // [25] (byte) print_char_at::ch#0 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$0) -- vbuxx=pbuc1_derefidx_vbuaa 
     tay
     ldx print_hextab,y
-    // [30] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 -- pbuz1=pbuz2 
+    // [26] (byte*) print_char_at::at#0 ← (byte*) print_uchar_at::at#2 -- pbuz1=pbuz2 
     lda.z at
     sta.z print_char_at.at
     lda.z at+1
     sta.z print_char_at.at+1
-    // [31] call print_char_at 
+    // [27] call print_char_at 
   // Table of hexadecimal digits
-    // [37] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
-    // [37] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
-    // [37] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
+    // [33] phi from print_uchar_at to print_char_at [phi:print_uchar_at->print_char_at]
+    // [33] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#0 [phi:print_uchar_at->print_char_at#0] -- register_copy 
+    // [33] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#0 [phi:print_uchar_at->print_char_at#1] -- register_copy 
     jsr print_char_at
     // print_uchar_at::@1
     // b&$f
-    // [32] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
+    // [28] (byte~) print_uchar_at::$2 ← (byte) print_uchar_at::b#2 & (byte) $f -- vbuyy=vbuz1_band_vbuc1 
     lda #$f
     and.z b
     tay
     // print_char_at(print_hextab[b&$f], at+1)
-    // [33] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+    // [29] (byte*) print_char_at::at#1 ← (byte*) print_uchar_at::at#2 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z at
     clc
     adc #1
@@ -1877,16 +1822,16 @@ print_uchar_at: {
     lda.z at+1
     adc #0
     sta.z print_char_at.at+1
-    // [34] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [30] (byte) print_char_at::ch#1 ← *((const to_nomodify byte*) print_hextab + (byte~) print_uchar_at::$2) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx print_hextab,y
-    // [35] call print_char_at 
-    // [37] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
-    // [37] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
-    // [37] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
+    // [31] call print_char_at 
+    // [33] phi from print_uchar_at::@1 to print_char_at [phi:print_uchar_at::@1->print_char_at]
+    // [33] phi (byte*) print_char_at::at#2 = (byte*) print_char_at::at#1 [phi:print_uchar_at::@1->print_char_at#0] -- register_copy 
+    // [33] phi (byte) print_char_at::ch#2 = (byte) print_char_at::ch#1 [phi:print_uchar_at::@1->print_char_at#1] -- register_copy 
     jsr print_char_at
     // print_uchar_at::@return
     // }
-    // [36] return 
+    // [32] return 
     rts
 }
   // print_char_at
@@ -1895,13 +1840,13 @@ print_uchar_at: {
 print_char_at: {
     .label at = 7
     // *(at) = ch
-    // [38] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
+    // [34] *((byte*) print_char_at::at#2) ← (byte) print_char_at::ch#2 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (at),y
     // print_char_at::@return
     // }
-    // [39] return 
+    // [35] return 
     rts
 }
   // clock
@@ -1910,7 +1855,7 @@ print_char_at: {
 clock: {
     .label return = 9
     // 0xffffffff - *CIA2_TIMER_AB
-    // [40] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
+    // [36] (dword) clock::return#0 ← (dword) $ffffffff - *((const nomodify dword*) CIA2_TIMER_AB) -- vduz1=vduc1_minus__deref_pduc2 
     lda #<$ffffffff
     sec
     sbc CIA2_TIMER_AB
@@ -1926,7 +1871,7 @@ clock: {
     sta.z return+3
     // clock::@return
     // }
-    // [41] return 
+    // [37] return 
     rts
 }
   // clock_start
@@ -1934,16 +1879,16 @@ clock: {
 // This uses CIA #2 Timer A+B on the C64
 clock_start: {
     // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [38] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Setup CIA#2 timer A to count (down) CPU cycles
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    // [43] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [39] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
     // *CIA2_TIMER_AB = 0xffffffff
-    // [44] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
+    // [40] *((const nomodify dword*) CIA2_TIMER_AB) ← (dword) $ffffffff -- _deref_pduc1=vduc2 
     lda #<$ffffffff
     sta CIA2_TIMER_AB
     lda #>$ffffffff
@@ -1953,16 +1898,16 @@ clock_start: {
     lda #>$ffffffff>>$10
     sta CIA2_TIMER_AB+3
     // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    // [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
+    // [41] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START|(const nomodify byte) CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
     // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
+    // [42] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (const nomodify byte) CIA_TIMER_CONTROL_START -- _deref_pbuc1=vbuc2 
     lda #CIA_TIMER_CONTROL_START
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // clock_start::@return
     // }
-    // [47] return 
+    // [43] return 
     rts
 }
   // File Data

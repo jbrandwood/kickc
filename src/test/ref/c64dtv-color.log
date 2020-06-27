@@ -1,11 +1,10 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   asm { sei  }
   *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE
   *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF
@@ -43,18 +42,22 @@ main::@6: scope:[main]  from main::@5 main::@6
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte) DTV_BADLINE_OFF = (byte) $20
 (const nomodify byte) DTV_BORDER_OFF = (byte) 2
@@ -148,6 +151,11 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const nomodify byte*) RASTER = (byte*)(number) $d012
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (bool~) main::$0
 (bool~) main::$2
@@ -200,8 +208,15 @@ Resolved ranged next value [18] main::c#1 ← ++ main::c#2 to ++
 Resolved ranged comparison value [20] if(main::c#1!=rangelast(0,$f)) goto main::@6 to (number) $10
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) 0 in if((byte) main::r#1!=(number) 0) goto main::@4
-Adding number conversion cast (unumber) $10 in if((byte) main::c#1!=(number) $10) goto main::@6
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 0 in [9] if((byte) main::r#1!=(number) 0) goto main::@4
+Adding number conversion cast (unumber) $10 in [14] if((byte) main::c#1!=(number) $10) goto main::@6
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast $10
@@ -216,20 +231,14 @@ Constant inlined main::c#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@7(between main::@4 and main::@4)
 Added new block during phi lifting main::@8(between main::@6 and main::@6)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@5
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 2 initial phi equivalence classes
-Coalesced [22] main::c#3 ← main::c#1
-Coalesced [23] main::r#3 ← main::r#1
+Coalesced [17] main::c#3 ← main::c#1
+Coalesced [18] main::r#3 ← main::r#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) main::@8
@@ -238,46 +247,34 @@ Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
 Renumbering block main::@6 to main::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from
   asm { sei  }
-  [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE
-  [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF
+  [1] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE
+  [2] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@4
-  [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1
+  [3] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0
+  [4] *((const nomodify byte*) BG_COLOR) ← (byte) 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
-  [9] (byte) main::r#2 ← phi( main::@2/(byte) $31 main::@3/(byte) main::r#1 )
+  [5] (byte) main::r#2 ← phi( main::@2/(byte) $31 main::@3/(byte) main::r#1 )
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
-  [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
-  [12] (byte) main::r#1 ← ++ (byte) main::r#2
-  [13] if((byte) main::r#1!=(byte) 0) goto main::@3
+  [7] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  [8] (byte) main::r#1 ← ++ (byte) main::r#2
+  [9] if((byte) main::r#1!=(byte) 0) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@4
-  [14] (byte) main::c#2 ← phi( main::@3/(byte) 0 main::@4/(byte) main::c#1 )
-  [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2)
-  [16] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2)
-  [17] (byte) main::c#1 ← ++ (byte) main::c#2
-  [18] if((byte) main::c#1!=(byte) $10) goto main::@4
+  [10] (byte) main::c#2 ← phi( main::@3/(byte) 0 main::@4/(byte) main::c#1 )
+  [11] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2)
+  [12] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2)
+  [13] (byte) main::c#1 ← ++ (byte) main::c#2
+  [14] if((byte) main::c#1!=(byte) $10) goto main::@4
   to:main::@1
 
 
@@ -368,11 +365,11 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
 (byte) main::c
-(byte) main::c#1 1501.5
-(byte) main::c#2 2002.0000000000002
+(byte) main::c#1 151.5
+(byte) main::c#2 201.99999999999997
 (byte) main::r
-(byte) main::r#1 1501.5
-(byte) main::r#2 667.3333333333334
+(byte) main::r#1 151.5
+(byte) main::r#2 67.33333333333333
 
 Initial phi equivalence classes
 [ main::r#2 main::r#1 ]
@@ -404,55 +401,41 @@ Target platform is c64basic / MOS6502X
   .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label r = 2
     .label c = 3
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-    // [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BG_COLOR
-    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [5] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
     lda #$31
     sta.z r
     jmp __b3
-    // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+    // [5] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   __b3_from___b3:
-    // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [5] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
@@ -482,37 +465,37 @@ main: {
     nop
     nop
     nop
-    // [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
-    // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuz1=_inc_vbuz1 
+    // [8] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuz1=_inc_vbuz1 
     inc.z r
-    // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
+    // [9] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
     lda.z r
     cmp #0
     bne __b3_from___b3
-    // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
-    // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
     jmp __b4
   // Rotate palette
-    // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
+    // [10] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
   __b4_from___b4:
-    // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
+    // [10] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [11] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z c
     lda palette,y
     sta DTV_PALETTE,y
-    // [16] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    // [12] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
     ldx.z c
     inc palette,x
-    // [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c
     bne __b4_from___b4
@@ -522,32 +505,32 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::c#2 main::c#1 ]
-Statement [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) [ main::c#2 ] ( main:2 [ main::c#2 ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::r#2 main::r#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::c#2 main::c#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 3,503.5: zp[1]:3 [ main::c#2 main::c#1 ] 2,168.83: zp[1]:2 [ main::r#2 main::r#1 ] 
+Uplift Scope [main] 353.5: zp[1]:3 [ main::c#2 main::c#1 ] 218.83: zp[1]:2 [ main::r#2 main::r#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [main] best 11689 combination reg byte x [ main::c#2 main::c#1 ] reg byte x [ main::r#2 main::r#1 ] 
-Uplifting [MOS6526_CIA] best 11689 combination 
-Uplifting [MOS6569_VICII] best 11689 combination 
-Uplifting [MOS6581_SID] best 11689 combination 
-Uplifting [] best 11689 combination 
+Uplifting [main] best 11677 combination reg byte x [ main::c#2 main::c#1 ] reg byte x [ main::r#2 main::r#1 ] 
+Uplifting [MOS6526_CIA] best 11677 combination 
+Uplifting [MOS6569_VICII] best 11677 combination 
+Uplifting [MOS6581_SID] best 11677 combination 
+Uplifting [] best 11677 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -569,52 +552,38 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
-    // [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BG_COLOR
-    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [5] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #$31
     jmp __b3
-    // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+    // [5] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   __b3_from___b3:
-    // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [5] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
@@ -644,33 +613,33 @@ main: {
     nop
     nop
     nop
-    // [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
-    // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
+    // [8] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
+    // [9] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b3_from___b3
-    // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
-    // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
+    // [10] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b4
   // Rotate palette
-    // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
+    // [10] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
   __b4_from___b4:
-    // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
+    // [10] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [11] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
-    // [16] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+    // [12] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc palette,x
-    // [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
+    // [14] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne __b4_from___b4
     jmp __b1
@@ -680,36 +649,24 @@ main: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b3_from___b3 with __b3
 Replacing label __b4_from___b4 with __b4
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b3_from___b3:
 Removing instruction __b4_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b2:
 Removing instruction __b3_from___b2:
 Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b3
 Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte) DTV_BADLINE_OFF = (byte) $20
 (const nomodify byte) DTV_BORDER_OFF = (byte) 2
@@ -809,12 +766,12 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (byte) main::c
-(byte) main::c#1 reg byte x 1501.5
-(byte) main::c#2 reg byte x 2002.0000000000002
+(byte) main::c#1 reg byte x 151.5
+(byte) main::c#2 reg byte x 201.99999999999997
 (const byte*) main::palette[(number) $10]  = { (byte) 0, (byte) 1, (byte) 2, (byte) 3, (byte) 4, (byte) 5, (byte) 6, (byte) 7, (byte) 8, (byte) 9, (byte) $a, (byte) $b, (byte) $c, (byte) $d, (byte) $e, (byte) $f }
 (byte) main::r
-(byte) main::r#1 reg byte x 1501.5
-(byte) main::r#2 reg byte x 667.3333333333334
+(byte) main::r#1 reg byte x 151.5
+(byte) main::r#2 reg byte x 67.33333333333333
 
 reg byte x [ main::r#2 main::r#1 ]
 reg byte x [ main::c#2 main::c#1 ]
@@ -842,43 +799,37 @@ Score: 10174
   .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // asm
     // asm { sei  }
     sei
     // *DTV_FEATURE = DTV_FEATURE_ENABLE
-    // [5] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) DTV_FEATURE) ← (const nomodify byte) DTV_FEATURE_ENABLE -- _deref_pbuc1=vbuc2 
     lda #DTV_FEATURE_ENABLE
     sta DTV_FEATURE
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_BORDER_OFF | DTV_BADLINE_OFF
-    // [6] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) DTV_CONTROL) ← (const nomodify byte) DTV_HIGHCOLOR|(const nomodify byte) DTV_BORDER_OFF|(const nomodify byte) DTV_BADLINE_OFF -- _deref_pbuc1=vbuc2 
     lda #DTV_HIGHCOLOR|DTV_BORDER_OFF|DTV_BADLINE_OFF
     sta DTV_CONTROL
     // main::@1
   __b1:
     // while(*RASTER!=$40)
-    // [7] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*((const nomodify byte*) RASTER)!=(byte) $40) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$40
     cmp RASTER
     bne __b1
     // main::@2
     // *BG_COLOR = 0
-    // [8] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     // Create rasterbars
     lda #0
     sta BG_COLOR
-    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // [9] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
+    // [5] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [5] phi (byte) main::r#2 = (byte) $31 [phi:main::@2->main::@3#0] -- vbuxx=vbuc1 
     ldx #$31
-    // [9] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-    // [9] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [5] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+    // [5] phi (byte) main::r#2 = (byte) main::r#1 [phi:main::@3->main::@3#0] -- register_copy 
     // main::@3
   __b3:
     // asm
@@ -909,33 +860,33 @@ main: {
     nop
     nop
     // (*BG_COLOR)++;
-    // [11] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // for (byte r : $31..$ff)
-    // [12] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
+    // [8] (byte) main::r#1 ← ++ (byte) main::r#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [13] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
+    // [9] if((byte) main::r#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b3
-    // [14] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-    // [14] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
+    // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [10] phi (byte) main::c#2 = (byte) 0 [phi:main::@3->main::@4#0] -- vbuxx=vbuc1 
     ldx #0
   // Rotate palette
-    // [14] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
-    // [14] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
+    // [10] phi from main::@4 to main::@4 [phi:main::@4->main::@4]
+    // [10] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@4->main::@4#0] -- register_copy 
     // main::@4
   __b4:
     // DTV_PALETTE[c] = palette[c]
-    // [15] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [11] *((const nomodify byte*) DTV_PALETTE + (byte) main::c#2) ← *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda palette,x
     sta DTV_PALETTE,x
     // palette[c]++;
-    // [16] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
+    // [12] *((const byte*) main::palette + (byte) main::c#2) ← ++ *((const byte*) main::palette + (byte) main::c#2) -- pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx 
     inc palette,x
     // for(byte c : 0..$f)
-    // [17] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [18] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
+    // [14] if((byte) main::c#1!=(byte) $10) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$10
     bne __b4
     jmp __b1

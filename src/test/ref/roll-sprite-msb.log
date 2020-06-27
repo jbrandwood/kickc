@@ -1,11 +1,9 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (word) main::xpos#0 ← (word) $c8
   (byte) main::s#0 ← (byte) 0
   to:main::@1
@@ -56,18 +54,18 @@ position_sprite::@2: scope:[position_sprite]  from position_sprite
 position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@2
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -155,6 +153,9 @@ SYMBOL TABLE SSA
 (const nomodify byte*) SPRITES_XMSB = (byte*)(number) $d010
 (const nomodify byte*) SPRITES_XPOS = (byte*)(number) $d000
 (const nomodify byte*) SPRITES_YPOS = (byte*)(number) $d001
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -254,7 +255,12 @@ Constant (const byte) position_sprite::y#0 = $32
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [8] main::s#1 ← ++ main::s#2 to ++
 Resolved ranged comparison value [10] if(main::s#1!=rangelast(0,7)) goto main::@1 to (number) 8
-Adding number conversion cast (unumber) 8 in if((byte) main::s#1!=(number) 8) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 8 in [6] if((byte) main::s#1!=(number) 8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
@@ -270,76 +276,58 @@ Constant inlined main::xpos#0 = (word) $c8
 Constant inlined main::s#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to position_sprite:9 
+Calls in [main] to position_sprite:4 
 
 Created 2 initial phi equivalence classes
-Coalesced [14] main::s#4 ← main::s#1
-Coalesced [15] main::xpos#4 ← main::xpos#1
+Coalesced [9] main::s#4 ← main::s#1
+Coalesced [10] main::xpos#4 ← main::xpos#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (word) main::xpos#2 ← phi( main/(word) $c8 main::@2/(word) main::xpos#1 )
-  [5] (byte) main::s#2 ← phi( main/(byte) 0 main::@2/(byte) main::s#1 )
-  [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2
-  [7] (word) position_sprite::x#0 ← (word) main::xpos#2
-  [8] call position_sprite 
+  [1] (word) main::xpos#2 ← phi( main/(word) $c8 main::@2/(word) main::xpos#1 )
+  [1] (byte) main::s#2 ← phi( main/(byte) 0 main::@2/(byte) main::s#1 )
+  [2] (byte) position_sprite::spriteno#0 ← (byte) main::s#2
+  [3] (word) position_sprite::x#0 ← (word) main::xpos#2
+  [4] call position_sprite 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a
-  [10] (byte) main::s#1 ← ++ (byte) main::s#2
-  [11] if((byte) main::s#1!=(byte) 8) goto main::@1
+  [5] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a
+  [6] (byte) main::s#1 ← ++ (byte) main::s#2
+  [7] if((byte) main::s#1!=(byte) 8) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [12] return 
+  [8] return 
   to:@return
 
 (void()) position_sprite((byte) position_sprite::spriteno , (word) position_sprite::x , (byte) position_sprite::y)
 position_sprite: scope:[position_sprite]  from main::@1
-  [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1
-  [14] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0
-  [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0
-  [16] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2
-  [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1
+  [9] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1
+  [10] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0
+  [11] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0
+  [12] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2
+  [13] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1
   to:position_sprite::@2
 position_sprite::@2: scope:[position_sprite]  from position_sprite
-  [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0
-  [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff
-  [20] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5
+  [14] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0
+  [15] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff
+  [16] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5
   to:position_sprite::@return
 position_sprite::@return: scope:[position_sprite]  from position_sprite::@1 position_sprite::@2
-  [21] return 
+  [17] return 
   to:@return
 position_sprite::@1: scope:[position_sprite]  from position_sprite
-  [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0
-  [23] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6
+  [18] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0
+  [19] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6
   to:position_sprite::@return
 
 
@@ -430,21 +418,21 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
 (byte) main::s
-(byte) main::s#1 151.5
-(byte) main::s#2 60.599999999999994
+(byte) main::s#1 16.5
+(byte) main::s#2 6.6000000000000005
 (word) main::xpos
-(word) main::xpos#1 67.33333333333333
-(word) main::xpos#2 75.75
+(word) main::xpos#1 7.333333333333333
+(word) main::xpos#2 8.25
 (void()) position_sprite((byte) position_sprite::spriteno , (word) position_sprite::x , (byte) position_sprite::y)
-(byte~) position_sprite::$1 1001.0
-(byte~) position_sprite::$2 2002.0
-(byte~) position_sprite::$4 2002.0
-(byte~) position_sprite::$5 2002.0
-(byte~) position_sprite::$6 2002.0
+(byte~) position_sprite::$1 101.0
+(byte~) position_sprite::$2 202.0
+(byte~) position_sprite::$4 202.0
+(byte~) position_sprite::$5 202.0
+(byte~) position_sprite::$6 202.0
 (byte) position_sprite::spriteno
-(byte) position_sprite::spriteno#0 443.42857142857144
+(byte) position_sprite::spriteno#0 44.85714285714286
 (word) position_sprite::x
-(word) position_sprite::x#0 420.59999999999997
+(word) position_sprite::x#0 42.599999999999994
 (byte) position_sprite::y
 
 Initial phi equivalence classes
@@ -489,58 +477,42 @@ Target platform is c64basic / MOS6502X
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label xpos = 3
     .label s = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (word) main::xpos#2 = (word) $c8 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [1] phi (word) main::xpos#2 = (word) $c8 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<$c8
     sta.z xpos
     lda #>$c8
     sta.z xpos+1
-    // [5] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z s
     jmp __b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [1] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuz2 
+    // [2] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuz2 
     lda.z s
     sta.z position_sprite.spriteno
-    // [7] (word) position_sprite::x#0 ← (word) main::xpos#2 -- vwuz1=vwuz2 
+    // [3] (word) position_sprite::x#0 ← (word) main::xpos#2 -- vwuz1=vwuz2 
     lda.z xpos
     sta.z position_sprite.x
     lda.z xpos+1
     sta.z position_sprite.x+1
-    // [8] call position_sprite 
+    // [4] call position_sprite 
     jsr position_sprite
     jmp __b2
     // main::@2
   __b2:
-    // [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
+    // [5] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
     adc.z xpos
@@ -548,16 +520,16 @@ main: {
     bcc !+
     inc.z xpos+1
   !:
-    // [10] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuz1=_inc_vbuz1 
     inc.z s
-    // [11] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [7] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z s
     bne __b1_from___b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // position_sprite
@@ -571,22 +543,22 @@ position_sprite: {
     .label __6 = $c
     .label spriteno = 5
     .label x = 6
-    // [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [9] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z spriteno
     asl
     sta.z __1
-    // [14] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [10] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #y
     ldy.z __1
     sta SPRITES_YPOS,y
-    // [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuz1=_lo_vwuz2 
+    // [11] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuz1=_lo_vwuz2 
     lda.z x
     sta.z __2
-    // [16] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [12] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __2
     ldy.z __1
     sta SPRITES_XPOS,y
-    // [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
+    // [13] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
     lda.z x+1
     bne __b1
     lda.z x
@@ -597,7 +569,7 @@ position_sprite: {
     jmp __b2
     // position_sprite::@2
   __b2:
-    // [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
+    // [14] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
     lda #1
     ldy.z spriteno
     cpy #0
@@ -608,22 +580,22 @@ position_sprite: {
     bne !-
   !e:
     sta.z __4
-    // [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuz1=vbuz2_bxor_vbuc1 
+    // [15] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuz1=vbuz2_bxor_vbuc1 
     lda #$ff
     eor.z __4
     sta.z __5
-    // [20] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
+    // [16] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuz1 
     lda SPRITES_XMSB
     and.z __5
     sta SPRITES_XMSB
     jmp __breturn
     // position_sprite::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
     // position_sprite::@1
   __b1:
-    // [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
+    // [18] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuz1=vbuc1_rol_vbuz2 
     lda #1
     ldy.z spriteno
     cpy #0
@@ -634,7 +606,7 @@ position_sprite: {
     bne !-
   !e:
     sta.z __6
-    // [23] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
+    // [19] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuz1 
     lda SPRITES_XMSB
     ora.z __6
     sta SPRITES_XMSB
@@ -643,29 +615,29 @@ position_sprite: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] (word) position_sprite::x#0 ← (word) main::xpos#2 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] ( main:2 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [3] (word) position_sprite::x#0 ← (word) main::xpos#2 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] (  [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::s#2 main::s#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ position_sprite::spriteno#0 ]
-Statement [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a [ main::s#2 main::xpos#1 ] ( main:2 [ main::s#2 main::xpos#1 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [5] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a [ main::s#2 main::xpos#1 ] (  [ main::s#2 main::xpos#1 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ position_sprite::$1 ]
-Statement [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 [ position_sprite::spriteno#0 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$4 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::$4 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff [ position_sprite::$5 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::$5 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 [ ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$6 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::$6 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [23] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 [ ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [7] (word) position_sprite::x#0 ← (word) main::xpos#2 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] ( main:2 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a [ main::s#2 main::xpos#1 ] ( main:2 [ main::s#2 main::xpos#1 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 [ position_sprite::spriteno#0 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$4 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::$4 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff [ position_sprite::$5 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::$5 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 [ ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$6 ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 position_sprite::$6 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
-Statement [23] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 [ ] ( main:2::position_sprite:8 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [13] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 [ position_sprite::spriteno#0 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [14] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$4 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::$4 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [15] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff [ position_sprite::$5 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::$5 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 [ ] ( position_sprite:4 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [18] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$6 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::$6 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 [ ] ( position_sprite:4 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [3] (word) position_sprite::x#0 ← (word) main::xpos#2 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] (  [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [5] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a [ main::s#2 main::xpos#1 ] (  [ main::s#2 main::xpos#1 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 [ position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 position_sprite::x#0 position_sprite::$1 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [13] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 [ position_sprite::spriteno#0 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::spriteno#0 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [14] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$4 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::$4 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [15] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff [ position_sprite::$5 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::$5 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 [ ] ( position_sprite:4 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [18] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 [ position_sprite::$6 ] ( position_sprite:4 [ main::s#2 main::xpos#2 position_sprite::$6 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 [ ] ( position_sprite:4 [ main::s#2 main::xpos#2 ] { { position_sprite::spriteno#0 = main::s#2 } { position_sprite::x#0 = main::xpos#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::s#2 main::s#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::xpos#2 main::xpos#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ position_sprite::spriteno#0 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -677,24 +649,24 @@ Potential registers zp[1]:11 [ position_sprite::$5 ] : zp[1]:11 , reg byte a , r
 Potential registers zp[1]:12 [ position_sprite::$6 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [position_sprite] 2,002: zp[1]:9 [ position_sprite::$2 ] 2,002: zp[1]:10 [ position_sprite::$4 ] 2,002: zp[1]:11 [ position_sprite::$5 ] 2,002: zp[1]:12 [ position_sprite::$6 ] 1,001: zp[1]:8 [ position_sprite::$1 ] 443.43: zp[1]:5 [ position_sprite::spriteno#0 ] 420.6: zp[2]:6 [ position_sprite::x#0 ] 
-Uplift Scope [main] 212.1: zp[1]:2 [ main::s#2 main::s#1 ] 143.08: zp[2]:3 [ main::xpos#2 main::xpos#1 ] 
+Uplift Scope [position_sprite] 202: zp[1]:9 [ position_sprite::$2 ] 202: zp[1]:10 [ position_sprite::$4 ] 202: zp[1]:11 [ position_sprite::$5 ] 202: zp[1]:12 [ position_sprite::$6 ] 101: zp[1]:8 [ position_sprite::$1 ] 44.86: zp[1]:5 [ position_sprite::spriteno#0 ] 42.6: zp[2]:6 [ position_sprite::x#0 ] 
+Uplift Scope [main] 23.1: zp[1]:2 [ main::s#2 main::s#1 ] 15.58: zp[2]:3 [ main::xpos#2 main::xpos#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [position_sprite] best 937 combination reg byte a [ position_sprite::$2 ] reg byte a [ position_sprite::$4 ] reg byte a [ position_sprite::$5 ] reg byte a [ position_sprite::$6 ] zp[1]:8 [ position_sprite::$1 ] zp[1]:5 [ position_sprite::spriteno#0 ] zp[2]:6 [ position_sprite::x#0 ] 
+Uplifting [position_sprite] best 925 combination reg byte a [ position_sprite::$2 ] reg byte a [ position_sprite::$4 ] reg byte a [ position_sprite::$5 ] reg byte a [ position_sprite::$6 ] zp[1]:8 [ position_sprite::$1 ] zp[1]:5 [ position_sprite::spriteno#0 ] zp[2]:6 [ position_sprite::x#0 ] 
 Limited combination testing to 100 combinations of 2304 possible.
-Uplifting [main] best 817 combination reg byte x [ main::s#2 main::s#1 ] zp[2]:3 [ main::xpos#2 main::xpos#1 ] 
-Uplifting [MOS6526_CIA] best 817 combination 
-Uplifting [MOS6569_VICII] best 817 combination 
-Uplifting [MOS6581_SID] best 817 combination 
-Uplifting [] best 817 combination 
+Uplifting [main] best 805 combination reg byte x [ main::s#2 main::s#1 ] zp[2]:3 [ main::xpos#2 main::xpos#1 ] 
+Uplifting [MOS6526_CIA] best 805 combination 
+Uplifting [MOS6569_VICII] best 805 combination 
+Uplifting [MOS6581_SID] best 805 combination 
+Uplifting [] best 805 combination 
 Attempting to uplift remaining variables inzp[1]:8 [ position_sprite::$1 ]
-Uplifting [position_sprite] best 810 combination reg byte y [ position_sprite::$1 ] 
+Uplifting [position_sprite] best 798 combination reg byte y [ position_sprite::$1 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ position_sprite::spriteno#0 ]
-Uplifting [position_sprite] best 810 combination zp[1]:5 [ position_sprite::spriteno#0 ] 
+Uplifting [position_sprite] best 798 combination zp[1]:5 [ position_sprite::spriteno#0 ] 
 Coalescing zero page register [ zp[2]:3 [ main::xpos#2 main::xpos#1 ] ] with [ zp[2]:6 [ position_sprite::x#0 ] ] - score: 1
 Allocated (was zp[2]:3) zp[2]:2 [ main::xpos#2 main::xpos#1 position_sprite::x#0 ]
 Allocated (was zp[1]:5) zp[1]:4 [ position_sprite::spriteno#0 ]
@@ -710,51 +682,35 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label xpos = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (word) main::xpos#2 = (word) $c8 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [1] phi (word) main::xpos#2 = (word) $c8 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<$c8
     sta.z xpos
     lda #>$c8
     sta.z xpos+1
-    // [5] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [1] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
+    // [2] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
     stx.z position_sprite.spriteno
-    // [7] (word) position_sprite::x#0 ← (word) main::xpos#2
-    // [8] call position_sprite 
+    // [3] (word) position_sprite::x#0 ← (word) main::xpos#2
+    // [4] call position_sprite 
     jsr position_sprite
     jmp __b2
     // main::@2
   __b2:
-    // [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
+    // [5] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
     adc.z xpos
@@ -762,15 +718,15 @@ main: {
     bcc !+
     inc.z xpos+1
   !:
-    // [10] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [11] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [7] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne __b1_from___b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // position_sprite
@@ -779,18 +735,18 @@ position_sprite: {
     .const y = $32
     .label spriteno = 4
     .label x = 2
-    // [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuyy=vbuz1_rol_1 
+    // [9] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuyy=vbuz1_rol_1 
     lda.z spriteno
     asl
     tay
-    // [14] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [10] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #y
     sta SPRITES_YPOS,y
-    // [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuaa=_lo_vwuz1 
+    // [11] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
-    // [16] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [12] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SPRITES_XPOS,y
-    // [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
+    // [13] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
     lda.z x+1
     bne __b1
     lda.z x
@@ -801,7 +757,7 @@ position_sprite: {
     jmp __b2
     // position_sprite::@2
   __b2:
-    // [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
+    // [14] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy.z spriteno
     cpy #0
@@ -811,19 +767,19 @@ position_sprite: {
     dey
     bne !-
   !e:
-    // [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuaa=vbuaa_bxor_vbuc1 
+    // [15] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuaa=vbuaa_bxor_vbuc1 
     eor #$ff
-    // [20] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
+    // [16] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
     sta SPRITES_XMSB
     jmp __breturn
     // position_sprite::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
     // position_sprite::@1
   __b1:
-    // [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
+    // [18] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy.z spriteno
     cpy #0
@@ -833,7 +789,7 @@ position_sprite: {
     dey
     bne !-
   !e:
-    // [23] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuaa 
+    // [19] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuaa 
     ora SPRITES_XMSB
     sta SPRITES_XMSB
     jmp __breturn
@@ -842,29 +798,19 @@ position_sprite: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b2 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b2:
 Removing instruction __breturn:
 Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction jmp __b1
@@ -873,9 +819,6 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -968,24 +911,24 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 (byte) main::s
-(byte) main::s#1 reg byte x 151.5
-(byte) main::s#2 reg byte x 60.599999999999994
+(byte) main::s#1 reg byte x 16.5
+(byte) main::s#2 reg byte x 6.6000000000000005
 (word) main::xpos
-(word) main::xpos#1 xpos zp[2]:2 67.33333333333333
-(word) main::xpos#2 xpos zp[2]:2 75.75
+(word) main::xpos#1 xpos zp[2]:2 7.333333333333333
+(word) main::xpos#2 xpos zp[2]:2 8.25
 (void()) position_sprite((byte) position_sprite::spriteno , (word) position_sprite::x , (byte) position_sprite::y)
-(byte~) position_sprite::$1 reg byte y 1001.0
-(byte~) position_sprite::$2 reg byte a 2002.0
-(byte~) position_sprite::$4 reg byte a 2002.0
-(byte~) position_sprite::$5 reg byte a 2002.0
-(byte~) position_sprite::$6 reg byte a 2002.0
+(byte~) position_sprite::$1 reg byte y 101.0
+(byte~) position_sprite::$2 reg byte a 202.0
+(byte~) position_sprite::$4 reg byte a 202.0
+(byte~) position_sprite::$5 reg byte a 202.0
+(byte~) position_sprite::$6 reg byte a 202.0
 (label) position_sprite::@1
 (label) position_sprite::@2
 (label) position_sprite::@return
 (byte) position_sprite::spriteno
-(byte) position_sprite::spriteno#0 spriteno zp[1]:4 443.42857142857144
+(byte) position_sprite::spriteno#0 spriteno zp[1]:4 44.85714285714286
 (word) position_sprite::x
-(word) position_sprite::x#0 x zp[2]:2 420.59999999999997
+(word) position_sprite::x#0 x zp[2]:2 42.599999999999994
 (byte) position_sprite::y
 (const byte) position_sprite::y#0 y = (byte) $32
 
@@ -1012,38 +955,31 @@ Score: 555
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label xpos = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (word) main::xpos#2 = (word) $c8 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (word) main::xpos#2 = (word) $c8 [phi:main->main::@1#0] -- vwuz1=vwuc1 
     lda #<$c8
     sta.z xpos
     lda #>$c8
     sta.z xpos+1
-    // [5] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::s#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [5] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi (word) main::xpos#2 = (word) main::xpos#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::s#2 = (byte) main::s#1 [phi:main::@2->main::@1#1] -- register_copy 
     // main::@1
   __b1:
     // position_sprite(s, xpos, 50)
-    // [6] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
+    // [2] (byte) position_sprite::spriteno#0 ← (byte) main::s#2 -- vbuz1=vbuxx 
     stx.z position_sprite.spriteno
-    // [7] (word) position_sprite::x#0 ← (word) main::xpos#2
-    // [8] call position_sprite 
+    // [3] (word) position_sprite::x#0 ← (word) main::xpos#2
+    // [4] call position_sprite 
     jsr position_sprite
     // main::@2
     // xpos += 10
-    // [9] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
+    // [5] (word) main::xpos#1 ← (word) main::xpos#2 + (byte) $a -- vwuz1=vwuz1_plus_vbuc1 
     lda #$a
     clc
     adc.z xpos
@@ -1052,14 +988,14 @@ main: {
     inc.z xpos+1
   !:
     // for(byte s: 0..7)
-    // [10] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::s#1 ← ++ (byte) main::s#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [11] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [7] if((byte) main::s#1!=(byte) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne __b1
     // main::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
 }
   // position_sprite
@@ -1069,22 +1005,22 @@ position_sprite: {
     .label spriteno = 4
     .label x = 2
     // spriteno * 2
-    // [13] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuyy=vbuz1_rol_1 
+    // [9] (byte~) position_sprite::$1 ← (byte) position_sprite::spriteno#0 << (byte) 1 -- vbuyy=vbuz1_rol_1 
     lda.z spriteno
     asl
     tay
     // SPRITES_YPOS[spriteno * 2] = y
-    // [14] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuyy=vbuc2 
+    // [10] *((const nomodify byte*) SPRITES_YPOS + (byte~) position_sprite::$1) ← (const byte) position_sprite::y#0 -- pbuc1_derefidx_vbuyy=vbuc2 
     lda #y
     sta SPRITES_YPOS,y
     // <x
-    // [15] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuaa=_lo_vwuz1 
+    // [11] (byte~) position_sprite::$2 ← < (word) position_sprite::x#0 -- vbuaa=_lo_vwuz1 
     lda.z x
     // SPRITES_XPOS[spriteno * 2] = <x
-    // [16] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
+    // [12] *((const nomodify byte*) SPRITES_XPOS + (byte~) position_sprite::$1) ← (byte~) position_sprite::$2 -- pbuc1_derefidx_vbuyy=vbuaa 
     sta SPRITES_XPOS,y
     // if (x > 255)
-    // [17] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
+    // [13] if((word) position_sprite::x#0>(byte) $ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
     lda.z x+1
     bne __b1
     lda.z x
@@ -1094,7 +1030,7 @@ position_sprite: {
   !:
     // position_sprite::@2
     // 1 << spriteno
-    // [18] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
+    // [14] (byte~) position_sprite::$4 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy.z spriteno
     cpy #0
@@ -1105,20 +1041,20 @@ position_sprite: {
     bne !-
   !e:
     // (1 << spriteno) ^ $ff
-    // [19] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuaa=vbuaa_bxor_vbuc1 
+    // [15] (byte~) position_sprite::$5 ← (byte~) position_sprite::$4 ^ (byte) $ff -- vbuaa=vbuaa_bxor_vbuc1 
     eor #$ff
     // *SPRITES_XMSB &= (1 << spriteno) ^ $ff
-    // [20] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
+    // [16] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) & (byte~) position_sprite::$5 -- _deref_pbuc1=_deref_pbuc1_band_vbuaa 
     and SPRITES_XMSB
     sta SPRITES_XMSB
     // position_sprite::@return
     // }
-    // [21] return 
+    // [17] return 
     rts
     // position_sprite::@1
   __b1:
     // 1 << spriteno
-    // [22] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
+    // [18] (byte~) position_sprite::$6 ← (byte) 1 << (byte) position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy.z spriteno
     cpy #0
@@ -1129,7 +1065,7 @@ position_sprite: {
     bne !-
   !e:
     // *SPRITES_XMSB |= 1 << spriteno
-    // [23] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuaa 
+    // [19] *((const nomodify byte*) SPRITES_XMSB) ← *((const nomodify byte*) SPRITES_XMSB) | (byte~) position_sprite::$6 -- _deref_pbuc1=_deref_pbuc1_bor_vbuaa 
     ora SPRITES_XMSB
     sta SPRITES_XMSB
     rts

@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   asm { sei  }
   *((const byte*) PROCPORT) ← (number) $32
   (byte*) main::chargen#0 ← (const byte*) CHARGEN
@@ -140,23 +139,32 @@ main::@12: scope:[main]  from main::@11
 main::@return: scope:[main]  from main::@12
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) CHARGEN = (byte*)(number) $d000
 (const byte*) CHARSET4 = (byte*)(number) $2800
 (const byte*) D018 = (byte*)(number) $d018
 (const byte*) PROCPORT = (byte*)(number) 1
 (const byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (const byte*) bits_count[]  = { (byte) 0, (byte) 1, (byte) 1, (byte) 2, (byte) 1, (byte) 2, (byte) 2, (byte) 3, (byte) 1, (byte) 2, (byte) 2, (byte) 3, (byte) 2, (byte) 3, (byte) 3, (byte) 4 }
 (void()) main()
 (byte*~) main::$0
@@ -493,7 +501,14 @@ Resolved ranged next value [62] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [64] if(main::i#1!=rangelast(0,$ff)) goto main::@11 to (number) 0
 Simplifying expression containing zero 1 in [26] (byte) main::bits_gen#2 ← (const byte) main::bits_gen#0 + (byte) 1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Adding number conversion cast (unumber) 0 in if((byte) main::i#1!=(number) 0) goto main::@11
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 0 in [53] if((byte) main::i#1!=(number) 0) goto main::@11
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
@@ -531,185 +546,167 @@ Added new block during phi lifting main::@14(between main::@2 and main::@3)
 Added new block during phi lifting main::@15(between main::@3 and main::@4)
 Added new block during phi lifting main::@16(between main::@4 and main::@5)
 Added new block during phi lifting main::@17(between main::@11 and main::@11)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@6
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 7 initial phi equivalence classes
-Coalesced [28] main::bits_gen#18 ← main::bits_gen#4
-Coalesced [39] main::bits_gen#20 ← main::bits_gen#6
-Coalesced [49] main::bits_gen#22 ← main::bits_gen#8
-Coalesced [64] main::i#3 ← main::i#1
-Coalesced [65] main::chargen#11 ← main::chargen#1
-Coalesced [66] main::charset4#11 ← main::charset4#1
-Coalesced [67] main::bits_gen#21 ← main::bits_gen#16
-Coalesced [68] main::bits_gen#19 ← main::bits_gen#14
-Coalesced [69] main::bits_gen#17 ← main::bits_gen#1
+Coalesced [23] main::bits_gen#18 ← main::bits_gen#4
+Coalesced [34] main::bits_gen#20 ← main::bits_gen#6
+Coalesced [44] main::bits_gen#22 ← main::bits_gen#8
+Coalesced [59] main::i#3 ← main::i#1
+Coalesced [60] main::chargen#11 ← main::chargen#1
+Coalesced [61] main::charset4#11 ← main::charset4#1
+Coalesced [62] main::bits_gen#21 ← main::bits_gen#16
+Coalesced [63] main::bits_gen#19 ← main::bits_gen#14
+Coalesced [64] main::bits_gen#17 ← main::bits_gen#1
 Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@17
 Culled Empty Block (label) main::@13
 Culled Empty Block (label) main::@16
 Culled Empty Block (label) main::@15
 Culled Empty Block (label) main::@14
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@6
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from
   asm { sei  }
-  [5] *((const byte*) PROCPORT) ← (byte) $32
+  [1] *((const byte*) PROCPORT) ← (byte) $32
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  [6] (byte*) main::charset4#10 ← phi( main/(const byte*) CHARSET4 main::@5/(byte*) main::charset4#1 )
-  [6] (byte*) main::chargen#10 ← phi( main/(const byte*) CHARGEN main::@5/(byte*) main::chargen#1 )
-  [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1
-  [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60
-  [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60
-  [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2
-  [11] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3
-  [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1
-  [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2
-  [14] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6)
-  [15] if((byte) main::bits#0<(byte) 2) goto main::@2
+  [2] (byte*) main::charset4#10 ← phi( main/(const byte*) CHARSET4 main::@5/(byte*) main::charset4#1 )
+  [2] (byte*) main::chargen#10 ← phi( main/(const byte*) CHARGEN main::@5/(byte*) main::chargen#1 )
+  [3] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1
+  [4] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60
+  [5] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60
+  [6] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2
+  [7] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3
+  [8] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1
+  [9] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2
+  [10] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6)
+  [11] if((byte) main::bits#0<(byte) 2) goto main::@2
   to:main::@6
 main::@6: scope:[main]  from main::@1
-  [16] phi()
+  [12] phi()
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@6
-  [17] (byte) main::bits_gen#9 ← phi( main::@1/(byte) 0 main::@6/(byte) 1 )
-  [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1
-  [19] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18
-  [20] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18
-  [21] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2
-  [22] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13
-  [23] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1
-  [24] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15)
-  [25] if((byte) main::bits#1<(byte) 2) goto main::@3
+  [13] (byte) main::bits_gen#9 ← phi( main::@1/(byte) 0 main::@6/(byte) 1 )
+  [14] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1
+  [15] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18
+  [16] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18
+  [17] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2
+  [18] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13
+  [19] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1
+  [20] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15)
+  [21] if((byte) main::bits#1<(byte) 2) goto main::@3
   to:main::@7
 main::@7: scope:[main]  from main::@2
-  [26] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1
+  [22] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@7
-  [27] (byte) main::bits_gen#11 ← phi( main::@2/(byte) main::bits_gen#1 main::@7/(byte) main::bits_gen#4 )
-  [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1
-  [29] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6
-  [30] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1
-  [31] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6
-  [32] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1
-  [33] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23
-  [34] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24)
-  [35] if((byte) main::bits#2<(byte) 2) goto main::@4
+  [23] (byte) main::bits_gen#11 ← phi( main::@2/(byte) main::bits_gen#1 main::@7/(byte) main::bits_gen#4 )
+  [24] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1
+  [25] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6
+  [26] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1
+  [27] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6
+  [28] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1
+  [29] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23
+  [30] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24)
+  [31] if((byte) main::bits#2<(byte) 2) goto main::@4
   to:main::@8
 main::@8: scope:[main]  from main::@3
-  [36] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1
+  [32] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@8
-  [37] (byte) main::bits_gen#13 ← phi( main::@3/(byte) main::bits_gen#14 main::@8/(byte) main::bits_gen#6 )
-  [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1
-  [39] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1
-  [40] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2
-  [41] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1
-  [42] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31
-  [43] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32)
-  [44] if((byte) main::bits#3<(byte) 2) goto main::@5
+  [33] (byte) main::bits_gen#13 ← phi( main::@3/(byte) main::bits_gen#14 main::@8/(byte) main::bits_gen#6 )
+  [34] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1
+  [35] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1
+  [36] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2
+  [37] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1
+  [38] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31
+  [39] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32)
+  [40] if((byte) main::bits#3<(byte) 2) goto main::@5
   to:main::@9
 main::@9: scope:[main]  from main::@4
-  [45] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1
+  [41] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@9
-  [46] (byte) main::bits_gen#15 ← phi( main::@4/(byte) main::bits_gen#16 main::@9/(byte) main::bits_gen#8 )
-  [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1
-  [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7
-  [49] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10
-  [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2
-  [51] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1
+  [42] (byte) main::bits_gen#15 ← phi( main::@4/(byte) main::bits_gen#16 main::@9/(byte) main::bits_gen#8 )
+  [43] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1
+  [44] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7
+  [45] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10
+  [46] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2
+  [47] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1
   to:main::@10
 main::@10: scope:[main]  from main::@5
-  [52] *((const byte*) PROCPORT) ← (byte) $37
+  [48] *((const byte*) PROCPORT) ← (byte) $37
   asm { cli  }
   to:main::@11
 main::@11: scope:[main]  from main::@10 main::@11
-  [54] (byte) main::i#2 ← phi( main::@10/(byte) 0 main::@11/(byte) main::i#1 )
-  [55] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2
-  [56] (byte) main::i#1 ← ++ (byte) main::i#2
-  [57] if((byte) main::i#1!=(byte) 0) goto main::@11
+  [50] (byte) main::i#2 ← phi( main::@10/(byte) 0 main::@11/(byte) main::i#1 )
+  [51] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2
+  [52] (byte) main::i#1 ← ++ (byte) main::i#2
+  [53] if((byte) main::i#1!=(byte) 0) goto main::@11
   to:main::@12
 main::@12: scope:[main]  from main::@11
-  [58] *((const byte*) D018) ← (byte) $19
+  [54] *((const byte*) D018) ← (byte) $19
   to:main::@return
 main::@return: scope:[main]  from main::@12
-  [59] return 
+  [55] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$1 67.33333333333333
-(byte~) main::$11 67.33333333333333
-(byte~) main::$12 202.0
-(byte~) main::$13 202.0
-(byte~) main::$14 202.0
-(byte~) main::$15 202.0
-(byte~) main::$2 202.0
-(byte~) main::$20 202.0
-(byte~) main::$21 67.33333333333333
-(byte~) main::$22 202.0
-(byte~) main::$23 202.0
-(byte~) main::$24 202.0
-(byte~) main::$29 202.0
-(byte~) main::$3 202.0
-(byte~) main::$30 101.0
-(byte~) main::$31 202.0
-(byte~) main::$32 202.0
-(byte~) main::$4 202.0
-(byte~) main::$5 202.0
-(byte~) main::$6 202.0
+(byte~) main::$1 7.333333333333333
+(byte~) main::$11 7.333333333333333
+(byte~) main::$12 22.0
+(byte~) main::$13 22.0
+(byte~) main::$14 22.0
+(byte~) main::$15 22.0
+(byte~) main::$2 22.0
+(byte~) main::$20 22.0
+(byte~) main::$21 7.333333333333333
+(byte~) main::$22 22.0
+(byte~) main::$23 22.0
+(byte~) main::$24 22.0
+(byte~) main::$29 22.0
+(byte~) main::$3 22.0
+(byte~) main::$30 11.0
+(byte~) main::$31 22.0
+(byte~) main::$32 22.0
+(byte~) main::$4 22.0
+(byte~) main::$5 22.0
+(byte~) main::$6 22.0
 (byte) main::bits
-(byte) main::bits#0 202.0
-(byte) main::bits#1 202.0
-(byte) main::bits#2 202.0
-(byte) main::bits#3 202.0
+(byte) main::bits#0 22.0
+(byte) main::bits#1 22.0
+(byte) main::bits#2 22.0
+(byte) main::bits#3 22.0
 (byte) main::bits_gen
-(byte) main::bits_gen#1 37.875
-(byte) main::bits_gen#11 303.0
-(byte) main::bits_gen#13 303.0
-(byte) main::bits_gen#14 37.875
-(byte) main::bits_gen#15 303.0
-(byte) main::bits_gen#16 43.285714285714285
-(byte) main::bits_gen#4 202.0
-(byte) main::bits_gen#6 202.0
-(byte) main::bits_gen#7 202.0
-(byte) main::bits_gen#8 202.0
-(byte) main::bits_gen#9 101.0
+(byte) main::bits_gen#1 4.125
+(byte) main::bits_gen#11 33.0
+(byte) main::bits_gen#13 33.0
+(byte) main::bits_gen#14 4.125
+(byte) main::bits_gen#15 33.0
+(byte) main::bits_gen#16 4.714285714285714
+(byte) main::bits_gen#4 22.0
+(byte) main::bits_gen#6 22.0
+(byte) main::bits_gen#7 22.0
+(byte) main::bits_gen#8 22.0
+(byte) main::bits_gen#9 11.0
 (byte*) main::chargen
-(byte*) main::chargen#1 151.5
-(byte*) main::chargen#10 16.068181818181817
+(byte*) main::chargen#1 16.5
+(byte*) main::chargen#10 1.75
 (byte*) main::chargen1
-(byte*) main::chargen1#0 14.852941176470589
+(byte*) main::chargen1#0 1.6176470588235294
 (byte*) main::charset4
-(byte*) main::charset4#1 67.33333333333333
-(byte*) main::charset4#10 7.046511627906977
+(byte*) main::charset4#1 7.333333333333333
+(byte*) main::charset4#10 0.7674418604651163
 (byte) main::i
-(byte) main::i#1 151.5
-(byte) main::i#2 202.0
+(byte) main::i#1 16.5
+(byte) main::i#2 22.0
 
 Initial phi equivalence classes
 [ main::chargen#10 main::chargen#1 ]
@@ -826,20 +823,6 @@ Target platform is c64basic / MOS6502X
   .label PROCPORT = 1
   .label D018 = $d018
   .label CHARSET4 = $2800
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = $d
@@ -877,30 +860,30 @@ main: {
     .label bits_gen_4 = 6
     // asm { sei  }
     sei
-    // [5] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [1] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte*) main::charset4#10 = (const byte*) CHARSET4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::charset4#10 = (const byte*) CHARSET4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET4
     sta.z charset4
     lda #>CHARSET4
     sta.z charset4+1
-    // [6] phi (byte*) main::chargen#10 = (const byte*) CHARGEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::chargen#10 = (const byte*) CHARGEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta.z chargen
     lda #>CHARGEN
     sta.z chargen+1
     jmp __b1
-    // [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [2] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   __b1_from___b5:
-    // [6] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
-    // [6] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [2] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [2] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+    // [3] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z chargen
     clc
     adc #1
@@ -908,211 +891,211 @@ main: {
     lda.z chargen+1
     adc #0
     sta.z chargen1+1
-    // [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [4] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$60
     ldy #0
     and (chargen),y
     sta.z __1
-    // [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [5] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$60
     ldy #0
     and (chargen1),y
     sta.z __2
-    // [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 -- vbuz1=vbuz2_ror_2 
+    // [6] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 -- vbuz1=vbuz2_ror_2 
     lda.z __2
     lsr
     lsr
     sta.z __3
-    // [11] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 -- vbuz1=vbuz2_bor_vbuz3 
+    // [7] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __1
     ora.z __3
     sta.z __4
-    // [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
+    // [8] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
     lda.z __4
     lsr
     sta.z __5
-    // [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 -- vbuz1=vbuz2_ror_2 
+    // [9] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 -- vbuz1=vbuz2_ror_2 
     lda.z __5
     lsr
     lsr
     sta.z __6
-    // [14] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [10] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __6
     lda bits_count,y
     sta.z bits
-    // [15] if((byte) main::bits#0<(byte) 2) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [11] if((byte) main::bits#0<(byte) 2) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z bits
     cmp #2
     bcc __b2_from___b1
-    // [16] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
+    // [12] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
   __b6_from___b1:
     jmp __b6
     // main::@6
   __b6:
-    // [17] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
+    // [13] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   __b2_from___b6:
-    // [17] phi (byte) main::bits_gen#9 = (byte) 1 [phi:main::@6->main::@2#0] -- vbuz1=vbuc1 
+    // [13] phi (byte) main::bits_gen#9 = (byte) 1 [phi:main::@6->main::@2#0] -- vbuz1=vbuc1 
     lda #1
     sta.z bits_gen_4
     jmp __b2
-    // [17] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [13] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [17] phi (byte) main::bits_gen#9 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    // [13] phi (byte) main::bits_gen#9 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z bits_gen_4
     jmp __b2
     // main::@2
   __b2:
-    // [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [14] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z bits_gen_4
     asl
     sta.z bits_gen
-    // [19] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [15] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$18
     ldy #0
     and (chargen),y
     sta.z __11
-    // [20] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [16] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$18
     ldy #0
     and (chargen1),y
     sta.z __12
-    // [21] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 -- vbuz1=vbuz2_ror_2 
+    // [17] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 -- vbuz1=vbuz2_ror_2 
     lda.z __12
     lsr
     lsr
     sta.z __13
-    // [22] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13 -- vbuz1=vbuz2_bor_vbuz3 
+    // [18] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __11
     ora.z __13
     sta.z __14
-    // [23] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
+    // [19] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
     lda.z __14
     lsr
     sta.z __15
-    // [24] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [20] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __15
     lda bits_count,y
     sta.z bits_1
-    // [25] if((byte) main::bits#1<(byte) 2) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
+    // [21] if((byte) main::bits#1<(byte) 2) goto main::@3 -- vbuz1_lt_vbuc1_then_la1 
     lda.z bits_1
     cmp #2
     bcc __b3_from___b2
     jmp __b7
     // main::@7
   __b7:
-    // [26] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1 -- vbuz1=vbuz1_plus_1 
+    // [22] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1 -- vbuz1=vbuz1_plus_1 
     inc.z bits_gen
-    // [27] phi from main::@2 main::@7 to main::@3 [phi:main::@2/main::@7->main::@3]
+    // [23] phi from main::@2 main::@7 to main::@3 [phi:main::@2/main::@7->main::@3]
   __b3_from___b2:
   __b3_from___b7:
-    // [27] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@7->main::@3#0] -- register_copy 
+    // [23] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@7->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [24] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z bits_gen
     asl
     sta.z bits_gen_1
-    // [29] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [25] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #6
     ldy #0
     and (chargen),y
     sta.z __20
-    // [30] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [26] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __20
     asl
     sta.z __21
-    // [31] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [27] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #6
     ldy #0
     and (chargen1),y
     sta.z __22
-    // [32] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
+    // [28] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 -- vbuz1=vbuz2_ror_1 
     lda.z __22
     lsr
     sta.z __23
-    // [33] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23 -- vbuz1=vbuz2_bor_vbuz3 
+    // [29] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __21
     ora.z __23
     sta.z __24
-    // [34] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [30] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __24
     lda bits_count,y
     sta.z bits_2
-    // [35] if((byte) main::bits#2<(byte) 2) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+    // [31] if((byte) main::bits#2<(byte) 2) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda.z bits_2
     cmp #2
     bcc __b4_from___b3
     jmp __b8
     // main::@8
   __b8:
-    // [36] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1 -- vbuz1=vbuz1_plus_1 
+    // [32] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1 -- vbuz1=vbuz1_plus_1 
     inc.z bits_gen_1
-    // [37] phi from main::@3 main::@8 to main::@4 [phi:main::@3/main::@8->main::@4]
+    // [33] phi from main::@3 main::@8 to main::@4 [phi:main::@3/main::@8->main::@4]
   __b4_from___b3:
   __b4_from___b8:
-    // [37] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@8->main::@4#0] -- register_copy 
+    // [33] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@8->main::@4#0] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [34] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z bits_gen_1
     asl
     sta.z bits_gen_3
-    // [39] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [35] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #1
     ldy #0
     and (chargen),y
     sta.z __29
-    // [40] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [36] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z __29
     asl
     asl
     sta.z __30
-    // [41] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [37] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #1
     ldy #0
     and (chargen1),y
     sta.z __31
-    // [42] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31 -- vbuz1=vbuz2_bor_vbuz3 
+    // [38] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __30
     ora.z __31
     sta.z __32
-    // [43] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [39] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __32
     lda bits_count,y
     sta.z bits_3
-    // [44] if((byte) main::bits#3<(byte) 2) goto main::@5 -- vbuz1_lt_vbuc1_then_la1 
+    // [40] if((byte) main::bits#3<(byte) 2) goto main::@5 -- vbuz1_lt_vbuc1_then_la1 
     lda.z bits_3
     cmp #2
     bcc __b5_from___b4
     jmp __b9
     // main::@9
   __b9:
-    // [45] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1 -- vbuz1=vbuz1_plus_1 
+    // [41] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1 -- vbuz1=vbuz1_plus_1 
     inc.z bits_gen_3
-    // [46] phi from main::@4 main::@9 to main::@5 [phi:main::@4/main::@9->main::@5]
+    // [42] phi from main::@4 main::@9 to main::@5 [phi:main::@4/main::@9->main::@5]
   __b5_from___b4:
   __b5_from___b9:
-    // [46] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#16 [phi:main::@4/main::@9->main::@5#0] -- register_copy 
+    // [42] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#16 [phi:main::@4/main::@9->main::@5#0] -- register_copy 
     jmp __b5
     // main::@5
   __b5:
-    // [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [43] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z bits_gen_3
     asl
     sta.z bits_gen_2
-    // [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 -- _deref_pbuz1=vbuz2 
+    // [44] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 -- _deref_pbuz1=vbuz2 
     lda.z bits_gen_2
     ldy #0
     sta (charset4),y
-    // [49] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 -- pbuz1=_inc_pbuz1 
+    // [45] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 -- pbuz1=_inc_pbuz1 
     inc.z charset4
     bne !+
     inc.z charset4+1
   !:
-    // [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [46] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z chargen
@@ -1120,7 +1103,7 @@ main: {
     bcc !+
     inc.z chargen+1
   !:
-    // [51] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [47] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda.z chargen+1
     cmp #>CHARGEN+$800
     bcc __b1_from___b5
@@ -1132,117 +1115,117 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [52] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [48] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm { cli  }
     cli
-    // [54] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
+    // [50] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
   __b11_from___b10:
-    // [54] phi (byte) main::i#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
+    // [50] phi (byte) main::i#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b11
-    // [54] phi from main::@11 to main::@11 [phi:main::@11->main::@11]
+    // [50] phi from main::@11 to main::@11 [phi:main::@11->main::@11]
   __b11_from___b11:
-    // [54] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@11->main::@11#0] -- register_copy 
+    // [50] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@11->main::@11#0] -- register_copy 
     jmp __b11
     // main::@11
   __b11:
-    // [55] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [51] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
-    // [56] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [52] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [57] if((byte) main::i#1!=(byte) 0) goto main::@11 -- vbuz1_neq_0_then_la1 
+    // [53] if((byte) main::i#1!=(byte) 0) goto main::@11 -- vbuz1_neq_0_then_la1 
     lda.z i
     cmp #0
     bne __b11_from___b11
     jmp __b12
     // main::@12
   __b12:
-    // [58] *((const byte*) D018) ← (byte) $19 -- _deref_pbuc1=vbuc2 
+    // [54] *((const byte*) D018) ← (byte) $19 -- _deref_pbuc1=vbuc2 
     lda #$19
     sta D018
     jmp __breturn
     // main::@return
   __breturn:
-    // [59] return 
+    // [55] return 
     rts
 }
   // File Data
   bits_count: .byte 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const byte*) PROCPORT) ← (byte) $32 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] *((const byte*) PROCPORT) ← (byte) $32 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:13 [ main::$1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:13 [ main::$1 ]
-Statement [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] { }  ) always clobbers reg byte a 
-Statement [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [8] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [14] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ]
 Removing always clobbered register reg byte y as potential for zp[1]:7 [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ]
-Statement [20] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:20 [ main::$11 ]
 Removing always clobbered register reg byte y as potential for zp[1]:20 [ main::$11 ]
-Statement [21] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] { }  ) always clobbers reg byte a 
-Statement [23] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] { }  ) always clobbers reg byte a 
-Statement [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] { }  ) always clobbers reg byte a 
-Statement [29] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [17] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] { }  ) always clobbers reg byte a 
+Statement [19] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] { }  ) always clobbers reg byte a 
+Statement [24] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] { }  ) always clobbers reg byte a 
+Statement [25] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ]
 Removing always clobbered register reg byte y as potential for zp[1]:8 [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ]
-Statement [30] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] { }  ) always clobbers reg byte a 
-Statement [31] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [26] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] { }  ) always clobbers reg byte a 
+Statement [27] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:27 [ main::$21 ]
 Removing always clobbered register reg byte y as potential for zp[1]:27 [ main::$21 ]
-Statement [32] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] { }  ) always clobbers reg byte a 
-Statement [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] { }  ) always clobbers reg byte a 
-Statement [39] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [28] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] { }  ) always clobbers reg byte a 
+Statement [34] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] { }  ) always clobbers reg byte a 
+Statement [35] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ]
 Removing always clobbered register reg byte y as potential for zp[1]:9 [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ]
-Statement [40] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] { }  ) always clobbers reg byte a 
-Statement [41] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [36] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] (  [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:33 [ main::$30 ]
 Removing always clobbered register reg byte y as potential for zp[1]:33 [ main::$30 ]
-Statement [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] { }  ) always clobbers reg byte a 
-Statement [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 [ main::chargen#10 main::charset4#10 ] ( main:2 [ main::chargen#10 main::charset4#10 ] { }  ) always clobbers reg byte y 
-Statement [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
-Statement [51] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
-Statement [52] *((const byte*) PROCPORT) ← (byte) $37 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [58] *((const byte*) D018) ← (byte) $19 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) PROCPORT) ← (byte) $32 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] { }  ) always clobbers reg byte a 
-Statement [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [20] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [21] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] { }  ) always clobbers reg byte a 
-Statement [23] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] { }  ) always clobbers reg byte a 
-Statement [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] { }  ) always clobbers reg byte a 
-Statement [29] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [30] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] { }  ) always clobbers reg byte a 
-Statement [31] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [32] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] { }  ) always clobbers reg byte a 
-Statement [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] { }  ) always clobbers reg byte a 
-Statement [39] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [40] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] ( main:2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] { }  ) always clobbers reg byte a 
-Statement [41] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] ( main:2 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] { }  ) always clobbers reg byte a 
-Statement [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 [ main::chargen#10 main::charset4#10 ] ( main:2 [ main::chargen#10 main::charset4#10 ] { }  ) always clobbers reg byte y 
-Statement [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
-Statement [51] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 [ main::chargen#1 main::charset4#1 ] ( main:2 [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
-Statement [52] *((const byte*) PROCPORT) ← (byte) $37 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [58] *((const byte*) D018) ← (byte) $19 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [43] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] (  [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] { }  ) always clobbers reg byte a 
+Statement [44] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 [ main::chargen#10 main::charset4#10 ] (  [ main::chargen#10 main::charset4#10 ] { }  ) always clobbers reg byte y 
+Statement [46] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 [ main::chargen#1 main::charset4#1 ] (  [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
+Statement [47] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 [ main::chargen#1 main::charset4#1 ] (  [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
+Statement [48] *((const byte*) PROCPORT) ← (byte) $37 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [54] *((const byte*) D018) ← (byte) $19 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const byte*) PROCPORT) ← (byte) $32 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$1 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [8] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [14] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$12 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [17] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$11 main::$13 ] { }  ) always clobbers reg byte a 
+Statement [19] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#1 main::$15 ] { }  ) always clobbers reg byte a 
+Statement [24] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 ] { }  ) always clobbers reg byte a 
+Statement [25] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$20 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [26] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 ] { }  ) always clobbers reg byte a 
+Statement [27] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$22 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [28] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#14 main::$21 main::$23 ] { }  ) always clobbers reg byte a 
+Statement [34] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 ] { }  ) always clobbers reg byte a 
+Statement [35] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$29 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [36] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] (  [ main::chargen#10 main::charset4#10 main::chargen1#0 main::bits_gen#16 main::$30 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] (  [ main::chargen#10 main::charset4#10 main::bits_gen#16 main::$30 main::$31 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [43] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] (  [ main::chargen#10 main::charset4#10 main::bits_gen#7 ] { }  ) always clobbers reg byte a 
+Statement [44] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 [ main::chargen#10 main::charset4#10 ] (  [ main::chargen#10 main::charset4#10 ] { }  ) always clobbers reg byte y 
+Statement [46] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 [ main::chargen#1 main::charset4#1 ] (  [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
+Statement [47] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 [ main::chargen#1 main::charset4#1 ] (  [ main::chargen#1 main::charset4#1 ] { }  ) always clobbers reg byte a 
+Statement [48] *((const byte*) PROCPORT) ← (byte) $37 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [54] *((const byte*) D018) ← (byte) $19 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::chargen#10 main::chargen#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::charset4#10 main::charset4#1 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ main::bits_gen#9 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
@@ -1278,70 +1261,70 @@ Potential registers zp[1]:36 [ main::bits#3 ] : zp[1]:36 , reg byte a , reg byte
 Potential registers zp[1]:37 [ main::bits_gen#7 ] : zp[1]:37 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 548.29: zp[1]:9 [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ] 542.88: zp[1]:7 [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ] 542.88: zp[1]:8 [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ] 353.5: zp[1]:10 [ main::i#2 main::i#1 ] 202: zp[1]:14 [ main::$2 ] 202: zp[1]:15 [ main::$3 ] 202: zp[1]:16 [ main::$4 ] 202: zp[1]:17 [ main::$5 ] 202: zp[1]:18 [ main::$6 ] 202: zp[1]:19 [ main::bits#0 ] 202: zp[1]:21 [ main::$12 ] 202: zp[1]:22 [ main::$13 ] 202: zp[1]:23 [ main::$14 ] 202: zp[1]:24 [ main::$15 ] 202: zp[1]:25 [ main::bits#1 ] 202: zp[1]:26 [ main::$20 ] 202: zp[1]:28 [ main::$22 ] 202: zp[1]:29 [ main::$23 ] 202: zp[1]:30 [ main::$24 ] 202: zp[1]:31 [ main::bits#2 ] 202: zp[1]:32 [ main::$29 ] 202: zp[1]:34 [ main::$31 ] 202: zp[1]:35 [ main::$32 ] 202: zp[1]:36 [ main::bits#3 ] 202: zp[1]:37 [ main::bits_gen#7 ] 167.57: zp[2]:2 [ main::chargen#10 main::chargen#1 ] 101: zp[1]:6 [ main::bits_gen#9 ] 101: zp[1]:33 [ main::$30 ] 74.38: zp[2]:4 [ main::charset4#10 main::charset4#1 ] 67.33: zp[1]:13 [ main::$1 ] 67.33: zp[1]:20 [ main::$11 ] 67.33: zp[1]:27 [ main::$21 ] 14.85: zp[2]:11 [ main::chargen1#0 ] 
+Uplift Scope [main] 59.71: zp[1]:9 [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ] 59.12: zp[1]:7 [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ] 59.12: zp[1]:8 [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ] 38.5: zp[1]:10 [ main::i#2 main::i#1 ] 22: zp[1]:14 [ main::$2 ] 22: zp[1]:15 [ main::$3 ] 22: zp[1]:16 [ main::$4 ] 22: zp[1]:17 [ main::$5 ] 22: zp[1]:18 [ main::$6 ] 22: zp[1]:19 [ main::bits#0 ] 22: zp[1]:21 [ main::$12 ] 22: zp[1]:22 [ main::$13 ] 22: zp[1]:23 [ main::$14 ] 22: zp[1]:24 [ main::$15 ] 22: zp[1]:25 [ main::bits#1 ] 22: zp[1]:26 [ main::$20 ] 22: zp[1]:28 [ main::$22 ] 22: zp[1]:29 [ main::$23 ] 22: zp[1]:30 [ main::$24 ] 22: zp[1]:31 [ main::bits#2 ] 22: zp[1]:32 [ main::$29 ] 22: zp[1]:34 [ main::$31 ] 22: zp[1]:35 [ main::$32 ] 22: zp[1]:36 [ main::bits#3 ] 22: zp[1]:37 [ main::bits_gen#7 ] 18.25: zp[2]:2 [ main::chargen#10 main::chargen#1 ] 11: zp[1]:6 [ main::bits_gen#9 ] 11: zp[1]:33 [ main::$30 ] 8.1: zp[2]:4 [ main::charset4#10 main::charset4#1 ] 7.33: zp[1]:13 [ main::$1 ] 7.33: zp[1]:20 [ main::$11 ] 7.33: zp[1]:27 [ main::$21 ] 1.62: zp[2]:11 [ main::chargen1#0 ] 
 Uplift Scope [] 
 
-Uplifting [] best 5103 combination 
+Uplifting [] best 5091 combination 
 Attempting to uplift remaining variables inzp[1]:9 [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ]
-Uplifting [main] best 5053 combination reg byte x [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ] 
+Uplifting [main] best 5041 combination reg byte x [ main::bits_gen#15 main::bits_gen#16 main::bits_gen#8 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ]
-Uplifting [main] best 5003 combination reg byte x [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ] 
+Uplifting [main] best 4991 combination reg byte x [ main::bits_gen#11 main::bits_gen#1 main::bits_gen#4 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ]
-Uplifting [main] best 4953 combination reg byte x [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ] 
+Uplifting [main] best 4941 combination reg byte x [ main::bits_gen#13 main::bits_gen#14 main::bits_gen#6 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ main::i#2 main::i#1 ]
-Uplifting [main] best 4833 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [main] best 4821 combination reg byte x [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:14 [ main::$2 ]
-Uplifting [main] best 4773 combination reg byte a [ main::$2 ] 
+Uplifting [main] best 4761 combination reg byte a [ main::$2 ] 
 Attempting to uplift remaining variables inzp[1]:15 [ main::$3 ]
-Uplifting [main] best 4713 combination reg byte a [ main::$3 ] 
+Uplifting [main] best 4701 combination reg byte a [ main::$3 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ main::$4 ]
-Uplifting [main] best 4653 combination reg byte a [ main::$4 ] 
+Uplifting [main] best 4641 combination reg byte a [ main::$4 ] 
 Attempting to uplift remaining variables inzp[1]:17 [ main::$5 ]
-Uplifting [main] best 4593 combination reg byte a [ main::$5 ] 
+Uplifting [main] best 4581 combination reg byte a [ main::$5 ] 
 Attempting to uplift remaining variables inzp[1]:18 [ main::$6 ]
-Uplifting [main] best 4553 combination reg byte a [ main::$6 ] 
+Uplifting [main] best 4541 combination reg byte a [ main::$6 ] 
 Attempting to uplift remaining variables inzp[1]:19 [ main::bits#0 ]
-Uplifting [main] best 4493 combination reg byte a [ main::bits#0 ] 
+Uplifting [main] best 4481 combination reg byte a [ main::bits#0 ] 
 Attempting to uplift remaining variables inzp[1]:21 [ main::$12 ]
-Uplifting [main] best 4433 combination reg byte a [ main::$12 ] 
+Uplifting [main] best 4421 combination reg byte a [ main::$12 ] 
 Attempting to uplift remaining variables inzp[1]:22 [ main::$13 ]
-Uplifting [main] best 4373 combination reg byte a [ main::$13 ] 
+Uplifting [main] best 4361 combination reg byte a [ main::$13 ] 
 Attempting to uplift remaining variables inzp[1]:23 [ main::$14 ]
-Uplifting [main] best 4313 combination reg byte a [ main::$14 ] 
+Uplifting [main] best 4301 combination reg byte a [ main::$14 ] 
 Attempting to uplift remaining variables inzp[1]:24 [ main::$15 ]
-Uplifting [main] best 4273 combination reg byte a [ main::$15 ] 
+Uplifting [main] best 4261 combination reg byte a [ main::$15 ] 
 Attempting to uplift remaining variables inzp[1]:25 [ main::bits#1 ]
-Uplifting [main] best 4213 combination reg byte a [ main::bits#1 ] 
+Uplifting [main] best 4201 combination reg byte a [ main::bits#1 ] 
 Attempting to uplift remaining variables inzp[1]:26 [ main::$20 ]
-Uplifting [main] best 4153 combination reg byte a [ main::$20 ] 
+Uplifting [main] best 4141 combination reg byte a [ main::$20 ] 
 Attempting to uplift remaining variables inzp[1]:28 [ main::$22 ]
-Uplifting [main] best 4093 combination reg byte a [ main::$22 ] 
+Uplifting [main] best 4081 combination reg byte a [ main::$22 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ main::$23 ]
-Uplifting [main] best 4033 combination reg byte a [ main::$23 ] 
+Uplifting [main] best 4021 combination reg byte a [ main::$23 ] 
 Attempting to uplift remaining variables inzp[1]:30 [ main::$24 ]
-Uplifting [main] best 3993 combination reg byte a [ main::$24 ] 
+Uplifting [main] best 3981 combination reg byte a [ main::$24 ] 
 Attempting to uplift remaining variables inzp[1]:31 [ main::bits#2 ]
-Uplifting [main] best 3933 combination reg byte a [ main::bits#2 ] 
+Uplifting [main] best 3921 combination reg byte a [ main::bits#2 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ main::$29 ]
-Uplifting [main] best 3873 combination reg byte a [ main::$29 ] 
+Uplifting [main] best 3861 combination reg byte a [ main::$29 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ main::$31 ]
-Uplifting [main] best 3813 combination reg byte a [ main::$31 ] 
+Uplifting [main] best 3801 combination reg byte a [ main::$31 ] 
 Attempting to uplift remaining variables inzp[1]:35 [ main::$32 ]
-Uplifting [main] best 3773 combination reg byte a [ main::$32 ] 
+Uplifting [main] best 3761 combination reg byte a [ main::$32 ] 
 Attempting to uplift remaining variables inzp[1]:36 [ main::bits#3 ]
-Uplifting [main] best 3713 combination reg byte a [ main::bits#3 ] 
+Uplifting [main] best 3701 combination reg byte a [ main::bits#3 ] 
 Attempting to uplift remaining variables inzp[1]:37 [ main::bits_gen#7 ]
-Uplifting [main] best 3653 combination reg byte a [ main::bits_gen#7 ] 
+Uplifting [main] best 3641 combination reg byte a [ main::bits_gen#7 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ main::bits_gen#9 ]
-Uplifting [main] best 3563 combination reg byte a [ main::bits_gen#9 ] 
+Uplifting [main] best 3551 combination reg byte a [ main::bits_gen#9 ] 
 Attempting to uplift remaining variables inzp[1]:33 [ main::$30 ]
-Uplifting [main] best 3563 combination zp[1]:33 [ main::$30 ] 
+Uplifting [main] best 3551 combination zp[1]:33 [ main::$30 ] 
 Attempting to uplift remaining variables inzp[1]:13 [ main::$1 ]
-Uplifting [main] best 3563 combination zp[1]:13 [ main::$1 ] 
+Uplifting [main] best 3551 combination zp[1]:13 [ main::$1 ] 
 Attempting to uplift remaining variables inzp[1]:20 [ main::$11 ]
-Uplifting [main] best 3563 combination zp[1]:20 [ main::$11 ] 
+Uplifting [main] best 3551 combination zp[1]:20 [ main::$11 ] 
 Attempting to uplift remaining variables inzp[1]:27 [ main::$21 ]
-Uplifting [main] best 3563 combination zp[1]:27 [ main::$21 ] 
+Uplifting [main] best 3551 combination zp[1]:27 [ main::$21 ] 
 Allocated (was zp[2]:11) zp[2]:6 [ main::chargen1#0 ]
 Allocated (was zp[1]:13) zp[1]:8 [ main::$1 ]
 Allocated (was zp[1]:20) zp[1]:9 [ main::$11 ]
@@ -1360,20 +1343,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT = 1
   .label D018 = $d018
   .label CHARSET4 = $2800
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = 8
@@ -1385,30 +1354,30 @@ main: {
     .label chargen = 2
     // asm { sei  }
     sei
-    // [5] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [1] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte*) main::charset4#10 = (const byte*) CHARSET4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::charset4#10 = (const byte*) CHARSET4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET4
     sta.z charset4
     lda #>CHARSET4
     sta.z charset4+1
-    // [6] phi (byte*) main::chargen#10 = (const byte*) CHARGEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::chargen#10 = (const byte*) CHARGEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta.z chargen
     lda #>CHARGEN
     sta.z chargen+1
     jmp __b1
-    // [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [2] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   __b1_from___b5:
-    // [6] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
-    // [6] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [2] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [2] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+    // [3] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z chargen
     clc
     adc #1
@@ -1416,170 +1385,170 @@ main: {
     lda.z chargen+1
     adc #0
     sta.z chargen1+1
-    // [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [4] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$60
     ldy #0
     and (chargen),y
     sta.z __1
-    // [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [5] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$60
     ldy #0
     and (chargen1),y
-    // [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
+    // [6] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
-    // [11] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    // [7] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
-    // [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    // [8] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
-    // [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
+    // [9] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
-    // [14] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [10] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
-    // [15] if((byte) main::bits#0<(byte) 2) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
+    // [11] if((byte) main::bits#0<(byte) 2) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b2_from___b1
-    // [16] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
+    // [12] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
   __b6_from___b1:
     jmp __b6
     // main::@6
   __b6:
-    // [17] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
+    // [13] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
   __b2_from___b6:
-    // [17] phi (byte) main::bits_gen#9 = (byte) 1 [phi:main::@6->main::@2#0] -- vbuaa=vbuc1 
+    // [13] phi (byte) main::bits_gen#9 = (byte) 1 [phi:main::@6->main::@2#0] -- vbuaa=vbuc1 
     lda #1
     jmp __b2
-    // [17] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [13] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [17] phi (byte) main::bits_gen#9 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
+    // [13] phi (byte) main::bits_gen#9 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
     lda #0
     jmp __b2
     // main::@2
   __b2:
-    // [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 -- vbuxx=vbuaa_rol_1 
+    // [14] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
-    // [19] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [15] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$18
     ldy #0
     and (chargen),y
     sta.z __11
-    // [20] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [16] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$18
     ldy #0
     and (chargen1),y
-    // [21] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
+    // [17] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
-    // [22] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13 -- vbuaa=vbuz1_bor_vbuaa 
+    // [18] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __11
-    // [23] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    // [19] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
-    // [24] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [20] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
-    // [25] if((byte) main::bits#1<(byte) 2) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
+    // [21] if((byte) main::bits#1<(byte) 2) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b3_from___b2
     jmp __b7
     // main::@7
   __b7:
-    // [26] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1 -- vbuxx=vbuxx_plus_1 
+    // [22] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
-    // [27] phi from main::@2 main::@7 to main::@3 [phi:main::@2/main::@7->main::@3]
+    // [23] phi from main::@2 main::@7 to main::@3 [phi:main::@2/main::@7->main::@3]
   __b3_from___b2:
   __b3_from___b7:
-    // [27] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@7->main::@3#0] -- register_copy 
+    // [23] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@7->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [24] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
-    // [29] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [25] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #6
     ldy #0
     and (chargen),y
-    // [30] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 -- vbuz1=vbuaa_rol_1 
+    // [26] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 -- vbuz1=vbuaa_rol_1 
     asl
     sta.z __21
-    // [31] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [27] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #6
     ldy #0
     and (chargen1),y
-    // [32] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    // [28] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
-    // [33] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23 -- vbuaa=vbuz1_bor_vbuaa 
+    // [29] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __21
-    // [34] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [30] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
-    // [35] if((byte) main::bits#2<(byte) 2) goto main::@4 -- vbuaa_lt_vbuc1_then_la1 
+    // [31] if((byte) main::bits#2<(byte) 2) goto main::@4 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b4_from___b3
     jmp __b8
     // main::@8
   __b8:
-    // [36] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1 -- vbuxx=vbuxx_plus_1 
+    // [32] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
-    // [37] phi from main::@3 main::@8 to main::@4 [phi:main::@3/main::@8->main::@4]
+    // [33] phi from main::@3 main::@8 to main::@4 [phi:main::@3/main::@8->main::@4]
   __b4_from___b3:
   __b4_from___b8:
-    // [37] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@8->main::@4#0] -- register_copy 
+    // [33] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@8->main::@4#0] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [34] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
-    // [39] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [35] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #1
     ldy #0
     and (chargen),y
-    // [40] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 -- vbuz1=vbuaa_rol_2 
+    // [36] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 -- vbuz1=vbuaa_rol_2 
     asl
     asl
     sta.z __30
-    // [41] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [37] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #1
     ldy #0
     and (chargen1),y
-    // [42] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31 -- vbuaa=vbuz1_bor_vbuaa 
+    // [38] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __30
-    // [43] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [39] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
-    // [44] if((byte) main::bits#3<(byte) 2) goto main::@5 -- vbuaa_lt_vbuc1_then_la1 
+    // [40] if((byte) main::bits#3<(byte) 2) goto main::@5 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b5_from___b4
     jmp __b9
     // main::@9
   __b9:
-    // [45] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1 -- vbuxx=vbuxx_plus_1 
+    // [41] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
-    // [46] phi from main::@4 main::@9 to main::@5 [phi:main::@4/main::@9->main::@5]
+    // [42] phi from main::@4 main::@9 to main::@5 [phi:main::@4/main::@9->main::@5]
   __b5_from___b4:
   __b5_from___b9:
-    // [46] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#16 [phi:main::@4/main::@9->main::@5#0] -- register_copy 
+    // [42] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#16 [phi:main::@4/main::@9->main::@5#0] -- register_copy 
     jmp __b5
     // main::@5
   __b5:
-    // [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [43] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 -- _deref_pbuz1=vbuaa 
+    // [44] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (charset4),y
-    // [49] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 -- pbuz1=_inc_pbuz1 
+    // [45] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 -- pbuz1=_inc_pbuz1 
     inc.z charset4
     bne !+
     inc.z charset4+1
   !:
-    // [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [46] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z chargen
@@ -1587,7 +1556,7 @@ main: {
     bcc !+
     inc.z chargen+1
   !:
-    // [51] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [47] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda.z chargen+1
     cmp #>CHARGEN+$800
     bcc __b1_from___b5
@@ -1599,48 +1568,46 @@ main: {
     jmp __b10
     // main::@10
   __b10:
-    // [52] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [48] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm { cli  }
     cli
-    // [54] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
+    // [50] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
   __b11_from___b10:
-    // [54] phi (byte) main::i#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuxx=vbuc1 
+    // [50] phi (byte) main::i#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b11
-    // [54] phi from main::@11 to main::@11 [phi:main::@11->main::@11]
+    // [50] phi from main::@11 to main::@11 [phi:main::@11->main::@11]
   __b11_from___b11:
-    // [54] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@11->main::@11#0] -- register_copy 
+    // [50] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@11->main::@11#0] -- register_copy 
     jmp __b11
     // main::@11
   __b11:
-    // [55] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [51] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [56] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [52] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [57] if((byte) main::i#1!=(byte) 0) goto main::@11 -- vbuxx_neq_0_then_la1 
+    // [53] if((byte) main::i#1!=(byte) 0) goto main::@11 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b11_from___b11
     jmp __b12
     // main::@12
   __b12:
-    // [58] *((const byte*) D018) ← (byte) $19 -- _deref_pbuc1=vbuc2 
+    // [54] *((const byte*) D018) ← (byte) $19 -- _deref_pbuc1=vbuc2 
     lda #$19
     sta D018
     jmp __breturn
     // main::@return
   __breturn:
-    // [59] return 
+    // [55] return 
     rts
 }
   // File Data
   bits_count: .byte 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b6
 Removing instruction jmp __b2
@@ -1666,9 +1633,6 @@ Replacing label __b5_from___b4 with __b5
 Replacing label __b1_from___b5 with __b1
 Replacing label __b1_from___b5 with __b1
 Replacing label __b11_from___b11 with __b11
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b5:
 Removing instruction __b6_from___b1:
 Removing instruction __b2_from___b6:
@@ -1680,8 +1644,6 @@ Removing instruction __b5_from___b4:
 Removing instruction __b5_from___b9:
 Removing instruction __b11_from___b11:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b6:
 Removing instruction __b7:
@@ -1692,8 +1654,6 @@ Removing instruction __b11_from___b10:
 Removing instruction __b12:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Relabelling long label __b2_from___b1 to __b6
 Succesful ASM optimization Pass5RelabelLongLabels
 Removing instruction jmp __b1
@@ -1703,9 +1663,6 @@ Fixing long branch [127] bcc __b1 to bcs
 Fixing long branch [133] bcc __b1 to bcs
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) CHARGEN = (byte*) 53248
 (const byte*) CHARSET4 = (byte*) 10240
 (const byte*) D018 = (byte*) 53272
@@ -1713,26 +1670,26 @@ FINAL SYMBOL TABLE
 (const byte*) SCREEN = (byte*) 1024
 (const byte*) bits_count[]  = { (byte) 0, (byte) 1, (byte) 1, (byte) 2, (byte) 1, (byte) 2, (byte) 2, (byte) 3, (byte) 1, (byte) 2, (byte) 2, (byte) 3, (byte) 2, (byte) 3, (byte) 3, (byte) 4 }
 (void()) main()
-(byte~) main::$1 zp[1]:8 67.33333333333333
-(byte~) main::$11 zp[1]:9 67.33333333333333
-(byte~) main::$12 reg byte a 202.0
-(byte~) main::$13 reg byte a 202.0
-(byte~) main::$14 reg byte a 202.0
-(byte~) main::$15 reg byte a 202.0
-(byte~) main::$2 reg byte a 202.0
-(byte~) main::$20 reg byte a 202.0
-(byte~) main::$21 zp[1]:10 67.33333333333333
-(byte~) main::$22 reg byte a 202.0
-(byte~) main::$23 reg byte a 202.0
-(byte~) main::$24 reg byte a 202.0
-(byte~) main::$29 reg byte a 202.0
-(byte~) main::$3 reg byte a 202.0
-(byte~) main::$30 zp[1]:11 101.0
-(byte~) main::$31 reg byte a 202.0
-(byte~) main::$32 reg byte a 202.0
-(byte~) main::$4 reg byte a 202.0
-(byte~) main::$5 reg byte a 202.0
-(byte~) main::$6 reg byte a 202.0
+(byte~) main::$1 zp[1]:8 7.333333333333333
+(byte~) main::$11 zp[1]:9 7.333333333333333
+(byte~) main::$12 reg byte a 22.0
+(byte~) main::$13 reg byte a 22.0
+(byte~) main::$14 reg byte a 22.0
+(byte~) main::$15 reg byte a 22.0
+(byte~) main::$2 reg byte a 22.0
+(byte~) main::$20 reg byte a 22.0
+(byte~) main::$21 zp[1]:10 7.333333333333333
+(byte~) main::$22 reg byte a 22.0
+(byte~) main::$23 reg byte a 22.0
+(byte~) main::$24 reg byte a 22.0
+(byte~) main::$29 reg byte a 22.0
+(byte~) main::$3 reg byte a 22.0
+(byte~) main::$30 zp[1]:11 11.0
+(byte~) main::$31 reg byte a 22.0
+(byte~) main::$32 reg byte a 22.0
+(byte~) main::$4 reg byte a 22.0
+(byte~) main::$5 reg byte a 22.0
+(byte~) main::$6 reg byte a 22.0
 (label) main::@1
 (label) main::@10
 (label) main::@11
@@ -1747,33 +1704,33 @@ FINAL SYMBOL TABLE
 (label) main::@9
 (label) main::@return
 (byte) main::bits
-(byte) main::bits#0 reg byte a 202.0
-(byte) main::bits#1 reg byte a 202.0
-(byte) main::bits#2 reg byte a 202.0
-(byte) main::bits#3 reg byte a 202.0
+(byte) main::bits#0 reg byte a 22.0
+(byte) main::bits#1 reg byte a 22.0
+(byte) main::bits#2 reg byte a 22.0
+(byte) main::bits#3 reg byte a 22.0
 (byte) main::bits_gen
-(byte) main::bits_gen#1 reg byte x 37.875
-(byte) main::bits_gen#11 reg byte x 303.0
-(byte) main::bits_gen#13 reg byte x 303.0
-(byte) main::bits_gen#14 reg byte x 37.875
-(byte) main::bits_gen#15 reg byte x 303.0
-(byte) main::bits_gen#16 reg byte x 43.285714285714285
-(byte) main::bits_gen#4 reg byte x 202.0
-(byte) main::bits_gen#6 reg byte x 202.0
-(byte) main::bits_gen#7 reg byte a 202.0
-(byte) main::bits_gen#8 reg byte x 202.0
-(byte) main::bits_gen#9 reg byte a 101.0
+(byte) main::bits_gen#1 reg byte x 4.125
+(byte) main::bits_gen#11 reg byte x 33.0
+(byte) main::bits_gen#13 reg byte x 33.0
+(byte) main::bits_gen#14 reg byte x 4.125
+(byte) main::bits_gen#15 reg byte x 33.0
+(byte) main::bits_gen#16 reg byte x 4.714285714285714
+(byte) main::bits_gen#4 reg byte x 22.0
+(byte) main::bits_gen#6 reg byte x 22.0
+(byte) main::bits_gen#7 reg byte a 22.0
+(byte) main::bits_gen#8 reg byte x 22.0
+(byte) main::bits_gen#9 reg byte a 11.0
 (byte*) main::chargen
-(byte*) main::chargen#1 chargen zp[2]:2 151.5
-(byte*) main::chargen#10 chargen zp[2]:2 16.068181818181817
+(byte*) main::chargen#1 chargen zp[2]:2 16.5
+(byte*) main::chargen#10 chargen zp[2]:2 1.75
 (byte*) main::chargen1
-(byte*) main::chargen1#0 chargen1 zp[2]:6 14.852941176470589
+(byte*) main::chargen1#0 chargen1 zp[2]:6 1.6176470588235294
 (byte*) main::charset4
-(byte*) main::charset4#1 charset4 zp[2]:4 67.33333333333333
-(byte*) main::charset4#10 charset4 zp[2]:4 7.046511627906977
+(byte*) main::charset4#1 charset4 zp[2]:4 7.333333333333333
+(byte*) main::charset4#10 charset4 zp[2]:4 0.7674418604651163
 (byte) main::i
-(byte) main::i#1 reg byte x 151.5
-(byte) main::i#2 reg byte x 202.0
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 22.0
 
 zp[2]:2 [ main::chargen#10 main::chargen#1 ]
 zp[2]:4 [ main::charset4#10 main::charset4#1 ]
@@ -1824,12 +1781,6 @@ Score: 3108
   .label PROCPORT = 1
   .label D018 = $d018
   .label CHARSET4 = $2800
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label __1 = 8
@@ -1843,27 +1794,27 @@ main: {
     // asm { sei  }
     sei
     // *PROCPORT = $32
-    // [5] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
+    // [1] *((const byte*) PROCPORT) ← (byte) $32 -- _deref_pbuc1=vbuc2 
     lda #$32
     sta PROCPORT
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-    // [6] phi (byte*) main::charset4#10 = (const byte*) CHARSET4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi (byte*) main::charset4#10 = (const byte*) CHARSET4 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<CHARSET4
     sta.z charset4
     lda #>CHARSET4
     sta.z charset4+1
-    // [6] phi (byte*) main::chargen#10 = (const byte*) CHARGEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::chargen#10 = (const byte*) CHARGEN [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<CHARGEN
     sta.z chargen
     lda #>CHARGEN
     sta.z chargen+1
-    // [6] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-    // [6] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
-    // [6] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [2] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [2] phi (byte*) main::charset4#10 = (byte*) main::charset4#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [2] phi (byte*) main::chargen#10 = (byte*) main::chargen#1 [phi:main::@5->main::@1#1] -- register_copy 
     // main::@1
   __b1:
     // chargen1 = chargen+1
-    // [7] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 -- pbuz1=pbuz2_plus_1 
+    // [3] (byte*) main::chargen1#0 ← (byte*) main::chargen#10 + (byte) 1 -- pbuz1=pbuz2_plus_1 
     lda.z chargen
     clc
     adc #1
@@ -1872,183 +1823,183 @@ main: {
     adc #0
     sta.z chargen1+1
     // *chargen & %01100000
-    // [8] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [4] (byte~) main::$1 ← *((byte*) main::chargen#10) & (byte) $60 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$60
     ldy #0
     and (chargen),y
     sta.z __1
     // *chargen1 & %01100000
-    // [9] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [5] (byte~) main::$2 ← *((byte*) main::chargen1#0) & (byte) $60 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$60
     and (chargen1),y
     // (*chargen1 & %01100000)/4
-    // [10] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
+    // [6] (byte~) main::$3 ← (byte~) main::$2 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
     // (*chargen & %01100000) | (*chargen1 & %01100000)/4
-    // [11] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    // [7] (byte~) main::$4 ← (byte~) main::$1 | (byte~) main::$3 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
     // ((*chargen & %01100000) | (*chargen1 & %01100000)/4)/2
-    // [12] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    // [8] (byte~) main::$5 ← (byte~) main::$4 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
     // ((*chargen & %01100000) | (*chargen1 & %01100000)/4)/2/4
-    // [13] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
+    // [9] (byte~) main::$6 ← (byte~) main::$5 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
     // bits = bits_count[((*chargen & %01100000) | (*chargen1 & %01100000)/4)/2/4]
-    // [14] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [10] (byte) main::bits#0 ← *((const byte*) bits_count + (byte~) main::$6) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
     // if(bits>=2)
-    // [15] if((byte) main::bits#0<(byte) 2) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
+    // [11] if((byte) main::bits#0<(byte) 2) goto main::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b6
-    // [16] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
+    // [12] phi from main::@1 to main::@6 [phi:main::@1->main::@6]
     // main::@6
-    // [17] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
-    // [17] phi (byte) main::bits_gen#9 = (byte) 1 [phi:main::@6->main::@2#0] -- vbuaa=vbuc1 
+    // [13] phi from main::@6 to main::@2 [phi:main::@6->main::@2]
+    // [13] phi (byte) main::bits_gen#9 = (byte) 1 [phi:main::@6->main::@2#0] -- vbuaa=vbuc1 
     lda #1
     jmp __b2
-    // [17] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [13] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b6:
-    // [17] phi (byte) main::bits_gen#9 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
+    // [13] phi (byte) main::bits_gen#9 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
     lda #0
     // main::@2
   __b2:
     // bits_gen = bits_gen*2
-    // [18] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 -- vbuxx=vbuaa_rol_1 
+    // [14] (byte) main::bits_gen#1 ← (byte) main::bits_gen#9 << (byte) 1 -- vbuxx=vbuaa_rol_1 
     asl
     tax
     // *chargen & %00011000
-    // [19] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
+    // [15] (byte~) main::$11 ← *((byte*) main::chargen#10) & (byte) $18 -- vbuz1=_deref_pbuz2_band_vbuc1 
     lda #$18
     ldy #0
     and (chargen),y
     sta.z __11
     // *chargen1 & %00011000
-    // [20] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [16] (byte~) main::$12 ← *((byte*) main::chargen1#0) & (byte) $18 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$18
     and (chargen1),y
     // (*chargen1 & %00011000)/4
-    // [21] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
+    // [17] (byte~) main::$13 ← (byte~) main::$12 >> (byte) 2 -- vbuaa=vbuaa_ror_2 
     lsr
     lsr
     // (*chargen & %00011000) | (*chargen1 & %00011000)/4
-    // [22] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13 -- vbuaa=vbuz1_bor_vbuaa 
+    // [18] (byte~) main::$14 ← (byte~) main::$11 | (byte~) main::$13 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __11
     // ((*chargen & %00011000) | (*chargen1 & %00011000)/4)/2
-    // [23] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    // [19] (byte~) main::$15 ← (byte~) main::$14 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
     // bits = bits_count[((*chargen & %00011000) | (*chargen1 & %00011000)/4)/2]
-    // [24] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [20] (byte) main::bits#1 ← *((const byte*) bits_count + (byte~) main::$15) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
     // if(bits>=2)
-    // [25] if((byte) main::bits#1<(byte) 2) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
+    // [21] if((byte) main::bits#1<(byte) 2) goto main::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b3
     // main::@7
     // bits_gen = bits_gen + 1
-    // [26] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1 -- vbuxx=vbuxx_plus_1 
+    // [22] (byte) main::bits_gen#4 ← (byte) main::bits_gen#1 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
-    // [27] phi from main::@2 main::@7 to main::@3 [phi:main::@2/main::@7->main::@3]
-    // [27] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@7->main::@3#0] -- register_copy 
+    // [23] phi from main::@2 main::@7 to main::@3 [phi:main::@2/main::@7->main::@3]
+    // [23] phi (byte) main::bits_gen#11 = (byte) main::bits_gen#1 [phi:main::@2/main::@7->main::@3#0] -- register_copy 
     // main::@3
   __b3:
     // bits_gen = bits_gen*2
-    // [28] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [24] (byte) main::bits_gen#14 ← (byte) main::bits_gen#11 << (byte) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
     // *chargen & %00000110
-    // [29] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [25] (byte~) main::$20 ← *((byte*) main::chargen#10) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #6
     ldy #0
     and (chargen),y
     // (*chargen & %00000110)*2
-    // [30] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 -- vbuz1=vbuaa_rol_1 
+    // [26] (byte~) main::$21 ← (byte~) main::$20 << (byte) 1 -- vbuz1=vbuaa_rol_1 
     asl
     sta.z __21
     // *chargen1 & %00000110
-    // [31] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [27] (byte~) main::$22 ← *((byte*) main::chargen1#0) & (byte) 6 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #6
     and (chargen1),y
     // (*chargen1 & %00000110)/2
-    // [32] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
+    // [28] (byte~) main::$23 ← (byte~) main::$22 >> (byte) 1 -- vbuaa=vbuaa_ror_1 
     lsr
     // (*chargen & %00000110)*2 | (*chargen1 & %00000110)/2
-    // [33] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23 -- vbuaa=vbuz1_bor_vbuaa 
+    // [29] (byte~) main::$24 ← (byte~) main::$21 | (byte~) main::$23 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __21
     // bits = bits_count[((*chargen & %00000110)*2 | (*chargen1 & %00000110)/2)]
-    // [34] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [30] (byte) main::bits#2 ← *((const byte*) bits_count + (byte~) main::$24) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
     // if(bits>=2)
-    // [35] if((byte) main::bits#2<(byte) 2) goto main::@4 -- vbuaa_lt_vbuc1_then_la1 
+    // [31] if((byte) main::bits#2<(byte) 2) goto main::@4 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b4
     // main::@8
     // bits_gen = bits_gen + 1
-    // [36] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1 -- vbuxx=vbuxx_plus_1 
+    // [32] (byte) main::bits_gen#6 ← (byte) main::bits_gen#14 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
-    // [37] phi from main::@3 main::@8 to main::@4 [phi:main::@3/main::@8->main::@4]
-    // [37] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@8->main::@4#0] -- register_copy 
+    // [33] phi from main::@3 main::@8 to main::@4 [phi:main::@3/main::@8->main::@4]
+    // [33] phi (byte) main::bits_gen#13 = (byte) main::bits_gen#14 [phi:main::@3/main::@8->main::@4#0] -- register_copy 
     // main::@4
   __b4:
     // bits_gen = bits_gen*2
-    // [38] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [34] (byte) main::bits_gen#16 ← (byte) main::bits_gen#13 << (byte) 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
     // *chargen & %00000001
-    // [39] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [35] (byte~) main::$29 ← *((byte*) main::chargen#10) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #1
     ldy #0
     and (chargen),y
     // (*chargen & %00000001)*4
-    // [40] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 -- vbuz1=vbuaa_rol_2 
+    // [36] (byte~) main::$30 ← (byte~) main::$29 << (byte) 2 -- vbuz1=vbuaa_rol_2 
     asl
     asl
     sta.z __30
     // *chargen1 & %00000001
-    // [41] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [37] (byte~) main::$31 ← *((byte*) main::chargen1#0) & (byte) 1 -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #1
     and (chargen1),y
     // (*chargen & %00000001)*4 | (*chargen1 & %00000001)
-    // [42] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31 -- vbuaa=vbuz1_bor_vbuaa 
+    // [38] (byte~) main::$32 ← (byte~) main::$30 | (byte~) main::$31 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __30
     // bits = bits_count[((*chargen & %00000001)*4 | (*chargen1 & %00000001))]
-    // [43] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32) -- vbuaa=pbuc1_derefidx_vbuaa 
+    // [39] (byte) main::bits#3 ← *((const byte*) bits_count + (byte~) main::$32) -- vbuaa=pbuc1_derefidx_vbuaa 
     tay
     lda bits_count,y
     // if(bits>=2)
-    // [44] if((byte) main::bits#3<(byte) 2) goto main::@5 -- vbuaa_lt_vbuc1_then_la1 
+    // [40] if((byte) main::bits#3<(byte) 2) goto main::@5 -- vbuaa_lt_vbuc1_then_la1 
     cmp #2
     bcc __b5
     // main::@9
     // bits_gen = bits_gen + 1
-    // [45] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1 -- vbuxx=vbuxx_plus_1 
+    // [41] (byte) main::bits_gen#8 ← (byte) main::bits_gen#16 + (byte) 1 -- vbuxx=vbuxx_plus_1 
     inx
-    // [46] phi from main::@4 main::@9 to main::@5 [phi:main::@4/main::@9->main::@5]
-    // [46] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#16 [phi:main::@4/main::@9->main::@5#0] -- register_copy 
+    // [42] phi from main::@4 main::@9 to main::@5 [phi:main::@4/main::@9->main::@5]
+    // [42] phi (byte) main::bits_gen#15 = (byte) main::bits_gen#16 [phi:main::@4/main::@9->main::@5#0] -- register_copy 
     // main::@5
   __b5:
     // bits_gen = bits_gen*2
-    // [47] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [43] (byte) main::bits_gen#7 ← (byte) main::bits_gen#15 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // *charset4 = bits_gen
-    // [48] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 -- _deref_pbuz1=vbuaa 
+    // [44] *((byte*) main::charset4#10) ← (byte) main::bits_gen#7 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (charset4),y
     // charset4++;
-    // [49] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 -- pbuz1=_inc_pbuz1 
+    // [45] (byte*) main::charset4#1 ← ++ (byte*) main::charset4#10 -- pbuz1=_inc_pbuz1 
     inc.z charset4
     bne !+
     inc.z charset4+1
   !:
     // chargen = chargen+2
-    // [50] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
+    // [46] (byte*) main::chargen#1 ← (byte*) main::chargen#10 + (byte) 2 -- pbuz1=pbuz1_plus_vbuc1 
     lda #2
     clc
     adc.z chargen
@@ -2057,7 +2008,7 @@ main: {
     inc.z chargen+1
   !:
     // while (chargen<CHARGEN+$800)
-    // [51] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
+    // [47] if((byte*) main::chargen#1<(const byte*) CHARGEN+(word) $800) goto main::@1 -- pbuz1_lt_pbuc1_then_la1 
     lda.z chargen+1
     cmp #>CHARGEN+$800
     bcs !__b1+
@@ -2072,37 +2023,37 @@ main: {
   !:
     // main::@10
     // *PROCPORT = $37
-    // [52] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
+    // [48] *((const byte*) PROCPORT) ← (byte) $37 -- _deref_pbuc1=vbuc2 
     lda #$37
     sta PROCPORT
     // asm
     // asm { cli  }
     cli
-    // [54] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
-    // [54] phi (byte) main::i#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuxx=vbuc1 
+    // [50] phi from main::@10 to main::@11 [phi:main::@10->main::@11]
+    // [50] phi (byte) main::i#2 = (byte) 0 [phi:main::@10->main::@11#0] -- vbuxx=vbuc1 
     ldx #0
-    // [54] phi from main::@11 to main::@11 [phi:main::@11->main::@11]
-    // [54] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@11->main::@11#0] -- register_copy 
+    // [50] phi from main::@11 to main::@11 [phi:main::@11->main::@11]
+    // [50] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@11->main::@11#0] -- register_copy 
     // main::@11
   __b11:
     // SCREEN[i] = i
-    // [55] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [51] *((const byte*) SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // for(byte i : 0..255)
-    // [56] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [52] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [57] if((byte) main::i#1!=(byte) 0) goto main::@11 -- vbuxx_neq_0_then_la1 
+    // [53] if((byte) main::i#1!=(byte) 0) goto main::@11 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b11
     // main::@12
     // *D018 = $19
-    // [58] *((const byte*) D018) ← (byte) $19 -- _deref_pbuc1=vbuc2 
+    // [54] *((const byte*) D018) ← (byte) $19 -- _deref_pbuc1=vbuc2 
     lda #$19
     sta D018
     // main::@return
     // }
-    // [59] return 
+    // [55] return 
     rts
 }
   // File Data

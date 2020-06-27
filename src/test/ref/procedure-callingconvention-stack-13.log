@@ -8,11 +8,9 @@ Calling convention STACK_CALL adding stack push stackpush(byte) ← 6
 Calling convention STACK_CALL adding stack push stackpush(byte) ← pow2::$1
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   stackpush(byte) ← (number) 6
   callexecute pow2 
   (byte~) main::$0 ← stackpull(byte)
@@ -46,20 +44,23 @@ pow2::@return: scope:[pow2]  from pow2::@1 pow2::@2
   stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (const word) STACK_BASE = (word) $103
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (byte~) main::$0
 (label) main::@return
@@ -112,73 +113,60 @@ Simple Condition (bool~) pow2::$0 [7] if((byte) pow2::n#0==(byte) 0) goto pow2::
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) pow2::return#0 = 1
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) pow2::return#0
 Constant inlined pow2::return#0 = (byte) 1
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of pow2::@1
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to pow2:6 
-Calls in [pow2] to pow2:14 
+Calls in [pow2] to pow2:4 
+Calls in [main] to pow2:13 
 
 Created 1 initial phi equivalence classes
-Coalesced [17] pow2::return#3 ← pow2::return#1
+Coalesced [7] pow2::return#3 ← pow2::return#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) pow2::@1
 Renumbering block pow2::@2 to pow2::@1
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
-
-(void()) main()
-main: scope:[main]  from @1
-  [4] stackpush(byte) ← (byte) 6
-  [5] callexecute pow2 
-  [6] (byte~) main::$0 ← stackpull(byte)
-  [7] *((const nomodify byte*) SCREEN) ← (byte~) main::$0
-  to:main::@return
-main::@return: scope:[main]  from main
-  [8] return 
-  to:@return
 
 __stackcall (byte()) pow2((byte) pow2::n)
 pow2: scope:[pow2]  from
-  [9] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N)
-  [10] if((byte) pow2::n#0==(byte) 0) goto pow2::@return
+  [0] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N)
+  [1] if((byte) pow2::n#0==(byte) 0) goto pow2::@return
   to:pow2::@1
 pow2::@1: scope:[pow2]  from pow2
-  [11] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1
-  [12] stackpush(byte) ← (byte~) pow2::$1
-  [13] callexecute pow2 
-  [14] (byte) pow2::c#0 ← stackpull(byte)
-  [15] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0
+  [2] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1
+  [3] stackpush(byte) ← (byte~) pow2::$1
+  [4] callexecute pow2 
+  [5] (byte) pow2::c#0 ← stackpull(byte)
+  [6] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0
   to:pow2::@return
 pow2::@return: scope:[pow2]  from pow2 pow2::@1
-  [16] (byte) pow2::return#2 ← phi( pow2/(byte) 1 pow2::@1/(byte) pow2::return#1 )
-  [17] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2
-  [18] return 
+  [7] (byte) pow2::return#2 ← phi( pow2/(byte) 1 pow2::@1/(byte) pow2::return#1 )
+  [8] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2
+  [9] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from
+  [10] stackpush(byte) ← (byte) 6
+  [11] callexecute pow2 
+  [12] (byte~) main::$0 ← stackpull(byte)
+  [13] *((const nomodify byte*) SCREEN) ← (byte~) main::$0
+  to:main::@return
+main::@return: scope:[main]  from main
+  [14] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$0 22.0
+(byte~) main::$0 4.0
 __stackcall (byte()) pow2((byte) pow2::n)
 (byte~) pow2::$1 22.0
 (byte) pow2::c
@@ -191,21 +179,21 @@ __stackcall (byte()) pow2((byte) pow2::n)
 
 Initial phi equivalence classes
 [ pow2::return#2 pow2::return#1 ]
-Added variable main::$0 to live range equivalence class [ main::$0 ]
 Added variable pow2::n#0 to live range equivalence class [ pow2::n#0 ]
 Added variable pow2::$1 to live range equivalence class [ pow2::$1 ]
 Added variable pow2::c#0 to live range equivalence class [ pow2::c#0 ]
+Added variable main::$0 to live range equivalence class [ main::$0 ]
 Complete equivalence classes
 [ pow2::return#2 pow2::return#1 ]
-[ main::$0 ]
 [ pow2::n#0 ]
 [ pow2::$1 ]
 [ pow2::c#0 ]
+[ main::$0 ]
 Allocated zp[1]:2 [ pow2::return#2 pow2::return#1 ]
-Allocated zp[1]:3 [ main::$0 ]
-Allocated zp[1]:4 [ pow2::n#0 ]
-Allocated zp[1]:5 [ pow2::$1 ]
-Allocated zp[1]:6 [ pow2::c#0 ]
+Allocated zp[1]:3 [ pow2::n#0 ]
+Allocated zp[1]:4 [ pow2::$1 ]
+Allocated zp[1]:5 [ pow2::c#0 ]
+Allocated zp[1]:6 [ main::$0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -219,119 +207,105 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
-  // main
-main: {
-    .label __0 = 3
-    // [4] stackpush(byte) ← (byte) 6 -- _stackpushbyte_=vbuc1 
-    lda #6
-    pha
-    // [5] callexecute pow2  -- jsr 
-    jsr pow2
-    // [6] (byte~) main::$0 ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
-    pla
-    sta.z __0
-    // [7] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
-    lda.z __0
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
-}
   // pow2
-// pow2(byte zp(4) n)
+// pow2(byte zp(3) n)
 pow2: {
     .const OFFSET_STACK_N = 0
     .const OFFSET_STACK_RETURN = 0
-    .label __1 = 5
-    .label n = 4
-    .label c = 6
+    .label __1 = 4
+    .label n = 3
+    .label c = 5
     .label return = 2
-    // [9] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) -- vbuz1=_stackidxbyte_vbuc1 
+    // [0] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) -- vbuz1=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
     sta.z n
-    // [10] if((byte) pow2::n#0==(byte) 0) goto pow2::@return -- vbuz1_eq_0_then_la1 
+    // [1] if((byte) pow2::n#0==(byte) 0) goto pow2::@return -- vbuz1_eq_0_then_la1 
     lda.z n
     cmp #0
     beq __breturn_from_pow2
     jmp __b1
     // pow2::@1
   __b1:
-    // [11] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1 -- vbuz1=vbuz2_minus_1 
+    // [2] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1 -- vbuz1=vbuz2_minus_1 
     ldx.z n
     dex
     stx.z __1
-    // [12] stackpush(byte) ← (byte~) pow2::$1 -- _stackpushbyte_=vbuz1 
+    // [3] stackpush(byte) ← (byte~) pow2::$1 -- _stackpushbyte_=vbuz1 
     lda.z __1
     pha
-    // [13] callexecute pow2  -- jsr 
+    // [4] callexecute pow2  -- jsr 
     jsr pow2
-    // [14] (byte) pow2::c#0 ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
+    // [5] (byte) pow2::c#0 ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
     pla
     sta.z c
-    // [15] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 -- vbuz1=vbuz2_plus_vbuz2 
+    // [6] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 -- vbuz1=vbuz2_plus_vbuz2 
     lda.z c
     asl
     sta.z return
-    // [16] phi from pow2::@1 to pow2::@return [phi:pow2::@1->pow2::@return]
+    // [7] phi from pow2::@1 to pow2::@return [phi:pow2::@1->pow2::@return]
   __breturn_from___b1:
-    // [16] phi (byte) pow2::return#2 = (byte) pow2::return#1 [phi:pow2::@1->pow2::@return#0] -- register_copy 
+    // [7] phi (byte) pow2::return#2 = (byte) pow2::return#1 [phi:pow2::@1->pow2::@return#0] -- register_copy 
     jmp __breturn
-    // [16] phi from pow2 to pow2::@return [phi:pow2->pow2::@return]
+    // [7] phi from pow2 to pow2::@return [phi:pow2->pow2::@return]
   __breturn_from_pow2:
-    // [16] phi (byte) pow2::return#2 = (byte) 1 [phi:pow2->pow2::@return#0] -- vbuz1=vbuc1 
+    // [7] phi (byte) pow2::return#2 = (byte) 1 [phi:pow2->pow2::@return#0] -- vbuz1=vbuc1 
     lda #1
     sta.z return
     jmp __breturn
     // pow2::@return
   __breturn:
-    // [17] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 -- _stackidxbyte_vbuc1=vbuz1 
+    // [8] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 -- _stackidxbyte_vbuc1=vbuz1 
     lda.z return
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
-    // [18] return 
+    // [9] return 
+    rts
+}
+  // main
+main: {
+    .label __0 = 6
+    // [10] stackpush(byte) ← (byte) 6 -- _stackpushbyte_=vbuc1 
+    lda #6
+    pha
+    // [11] callexecute pow2  -- jsr 
+    jsr pow2
+    // [12] (byte~) main::$0 ← stackpull(byte) -- vbuz1=_stackpullbyte_ 
+    pla
+    sta.z __0
+    // [13] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    lda.z __0
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] stackpush(byte) ← (byte) 6 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte~) main::$0 ← stackpull(byte) [ main::$0 ] ( main:2 [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [9] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) [ pow2::n#0 ] ( main:2::pow2:5 [ pow2::n#0 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [14] (byte) pow2::c#0 ← stackpull(byte) [ pow2::c#0 ] ( main:2::pow2:5 [ pow2::c#0 ] { }  ) always clobbers reg byte a 
-Statement [15] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 [ pow2::return#1 ] ( main:2::pow2:5 [ pow2::return#1 ] { }  ) always clobbers reg byte a 
-Statement [17] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 [ ] ( main:2::pow2:5 [ ] { }  ) always clobbers reg byte x 
+Statement [0] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) [ pow2::n#0 ] ( pow2:11 [ pow2::n#0 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [5] (byte) pow2::c#0 ← stackpull(byte) [ pow2::c#0 ] ( pow2:11 [ pow2::c#0 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 [ pow2::return#1 ] ( pow2:11 [ pow2::return#1 ] { }  ) always clobbers reg byte a 
+Statement [8] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 [ ] ( pow2:11 [ ] { }  ) always clobbers reg byte x 
+Statement [10] stackpush(byte) ← (byte) 6 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] (byte~) main::$0 ← stackpull(byte) [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ pow2::return#2 pow2::return#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:4 [ pow2::n#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:5 [ pow2::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ pow2::c#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ pow2::n#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ pow2::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ pow2::c#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ main::$0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [pow2] 44: zp[1]:2 [ pow2::return#2 pow2::return#1 ] 33: zp[1]:6 [ pow2::c#0 ] 22: zp[1]:5 [ pow2::$1 ] 16.5: zp[1]:4 [ pow2::n#0 ] 
-Uplift Scope [main] 22: zp[1]:3 [ main::$0 ] 
+Uplift Scope [pow2] 44: zp[1]:2 [ pow2::return#2 pow2::return#1 ] 33: zp[1]:5 [ pow2::c#0 ] 22: zp[1]:4 [ pow2::$1 ] 16.5: zp[1]:3 [ pow2::n#0 ] 
+Uplift Scope [main] 4: zp[1]:6 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [pow2] best 99 combination reg byte a [ pow2::return#2 pow2::return#1 ] reg byte a [ pow2::c#0 ] reg byte a [ pow2::$1 ] reg byte a [ pow2::n#0 ] 
+Uplifting [pow2] best 87 combination reg byte a [ pow2::return#2 pow2::return#1 ] reg byte a [ pow2::c#0 ] reg byte a [ pow2::$1 ] reg byte a [ pow2::n#0 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [main] best 93 combination reg byte a [ main::$0 ] 
-Uplifting [] best 93 combination 
+Uplifting [main] best 81 combination reg byte a [ main::$0 ] 
+Uplifting [] best 81 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -344,111 +318,84 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
-  // main
-main: {
-    // [4] stackpush(byte) ← (byte) 6 -- _stackpushbyte_=vbuc1 
-    lda #6
-    pha
-    // [5] callexecute pow2  -- jsr 
-    jsr pow2
-    // [6] (byte~) main::$0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
-    pla
-    // [7] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
-}
   // pow2
 // pow2(byte register(A) n)
 pow2: {
     .const OFFSET_STACK_N = 0
     .const OFFSET_STACK_RETURN = 0
-    // [9] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) -- vbuaa=_stackidxbyte_vbuc1 
+    // [0] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
-    // [10] if((byte) pow2::n#0==(byte) 0) goto pow2::@return -- vbuaa_eq_0_then_la1 
+    // [1] if((byte) pow2::n#0==(byte) 0) goto pow2::@return -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __breturn_from_pow2
     jmp __b1
     // pow2::@1
   __b1:
-    // [11] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1 -- vbuaa=vbuaa_minus_1 
+    // [2] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1 -- vbuaa=vbuaa_minus_1 
     sec
     sbc #1
-    // [12] stackpush(byte) ← (byte~) pow2::$1 -- _stackpushbyte_=vbuaa 
+    // [3] stackpush(byte) ← (byte~) pow2::$1 -- _stackpushbyte_=vbuaa 
     pha
-    // [13] callexecute pow2  -- jsr 
+    // [4] callexecute pow2  -- jsr 
     jsr pow2
-    // [14] (byte) pow2::c#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    // [5] (byte) pow2::c#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
-    // [15] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 -- vbuaa=vbuaa_plus_vbuaa 
+    // [6] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 -- vbuaa=vbuaa_plus_vbuaa 
     asl
-    // [16] phi from pow2::@1 to pow2::@return [phi:pow2::@1->pow2::@return]
+    // [7] phi from pow2::@1 to pow2::@return [phi:pow2::@1->pow2::@return]
   __breturn_from___b1:
-    // [16] phi (byte) pow2::return#2 = (byte) pow2::return#1 [phi:pow2::@1->pow2::@return#0] -- register_copy 
+    // [7] phi (byte) pow2::return#2 = (byte) pow2::return#1 [phi:pow2::@1->pow2::@return#0] -- register_copy 
     jmp __breturn
-    // [16] phi from pow2 to pow2::@return [phi:pow2->pow2::@return]
+    // [7] phi from pow2 to pow2::@return [phi:pow2->pow2::@return]
   __breturn_from_pow2:
-    // [16] phi (byte) pow2::return#2 = (byte) 1 [phi:pow2->pow2::@return#0] -- vbuaa=vbuc1 
+    // [7] phi (byte) pow2::return#2 = (byte) 1 [phi:pow2->pow2::@return#0] -- vbuaa=vbuc1 
     lda #1
     jmp __breturn
     // pow2::@return
   __breturn:
-    // [17] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
+    // [8] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
-    // [18] return 
+    // [9] return 
+    rts
+}
+  // main
+main: {
+    // [10] stackpush(byte) ← (byte) 6 -- _stackpushbyte_=vbuc1 
+    lda #6
+    pha
+    // [11] callexecute pow2  -- jsr 
+    jsr pow2
+    // [12] (byte~) main::$0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    pla
+    // [13] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
-Removing instruction __breturn:
 Removing instruction __b1:
 Removing instruction __breturn_from___b1:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Relabelling long label __breturn_from_pow2 to __b1
 Succesful ASM optimization Pass5RelabelLongLabels
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*) 1024
 (const word) STACK_BASE = (word) $103
 (void()) main()
-(byte~) main::$0 reg byte a 22.0
+(byte~) main::$0 reg byte a 4.0
 (label) main::@return
 __stackcall (byte()) pow2((byte) pow2::n)
 (byte~) pow2::$1 reg byte a 22.0
@@ -465,10 +412,10 @@ __stackcall (byte()) pow2((byte) pow2::n)
 (byte) pow2::return#2 reg byte a 22.0
 
 reg byte a [ pow2::return#2 pow2::return#1 ]
-reg byte a [ main::$0 ]
 reg byte a [ pow2::n#0 ]
 reg byte a [ pow2::$1 ]
 reg byte a [ pow2::c#0 ]
+reg byte a [ main::$0 ]
 
 
 FINAL ASSEMBLER
@@ -484,72 +431,67 @@ Score: 72
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
-  // main
-main: {
-    // pow2(6)
-    // [4] stackpush(byte) ← (byte) 6 -- _stackpushbyte_=vbuc1 
-    lda #6
-    pha
-    // [5] callexecute pow2  -- jsr 
-    jsr pow2
-    // [6] (byte~) main::$0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
-    pla
-    // *SCREEN = pow2(6)
-    // [7] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
-    sta SCREEN
-    // main::@return
-    // }
-    // [8] return 
-    rts
-}
   // pow2
 // pow2(byte register(A) n)
 pow2: {
     .const OFFSET_STACK_N = 0
     .const OFFSET_STACK_RETURN = 0
-    // [9] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) -- vbuaa=_stackidxbyte_vbuc1 
+    // }
+    // [0] (byte) pow2::n#0 ← stackidx(byte,(const byte) pow2::OFFSET_STACK_N) -- vbuaa=_stackidxbyte_vbuc1 
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
     // if (n == 0)
-    // [10] if((byte) pow2::n#0==(byte) 0) goto pow2::@return -- vbuaa_eq_0_then_la1 
+    // [1] if((byte) pow2::n#0==(byte) 0) goto pow2::@return -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b1
     // pow2::@1
     // n-1
-    // [11] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1 -- vbuaa=vbuaa_minus_1 
+    // [2] (byte~) pow2::$1 ← (byte) pow2::n#0 - (byte) 1 -- vbuaa=vbuaa_minus_1 
     sec
     sbc #1
     // pow2(n-1)
-    // [12] stackpush(byte) ← (byte~) pow2::$1 -- _stackpushbyte_=vbuaa 
+    // [3] stackpush(byte) ← (byte~) pow2::$1 -- _stackpushbyte_=vbuaa 
     pha
-    // [13] callexecute pow2  -- jsr 
+    // [4] callexecute pow2  -- jsr 
     jsr pow2
     // c = pow2(n-1)
-    // [14] (byte) pow2::c#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    // [5] (byte) pow2::c#0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
     pla
     // return c+c;
-    // [15] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 -- vbuaa=vbuaa_plus_vbuaa 
+    // [6] (byte) pow2::return#1 ← (byte) pow2::c#0 + (byte) pow2::c#0 -- vbuaa=vbuaa_plus_vbuaa 
     asl
-    // [16] phi from pow2::@1 to pow2::@return [phi:pow2::@1->pow2::@return]
-    // [16] phi (byte) pow2::return#2 = (byte) pow2::return#1 [phi:pow2::@1->pow2::@return#0] -- register_copy 
+    // [7] phi from pow2::@1 to pow2::@return [phi:pow2::@1->pow2::@return]
+    // [7] phi (byte) pow2::return#2 = (byte) pow2::return#1 [phi:pow2::@1->pow2::@return#0] -- register_copy 
     jmp __breturn
-    // [16] phi from pow2 to pow2::@return [phi:pow2->pow2::@return]
+    // [7] phi from pow2 to pow2::@return [phi:pow2->pow2::@return]
   __b1:
-    // [16] phi (byte) pow2::return#2 = (byte) 1 [phi:pow2->pow2::@return#0] -- vbuaa=vbuc1 
+    // [7] phi (byte) pow2::return#2 = (byte) 1 [phi:pow2->pow2::@return#0] -- vbuaa=vbuc1 
     lda #1
     // pow2::@return
   __breturn:
     // }
-    // [17] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
+    // [8] stackidx(byte,(const byte) pow2::OFFSET_STACK_RETURN) ← (byte) pow2::return#2 -- _stackidxbyte_vbuc1=vbuaa 
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
-    // [18] return 
+    // [9] return 
+    rts
+}
+  // main
+main: {
+    // pow2(6)
+    // [10] stackpush(byte) ← (byte) 6 -- _stackpushbyte_=vbuc1 
+    lda #6
+    pha
+    // [11] callexecute pow2  -- jsr 
+    jsr pow2
+    // [12] (byte~) main::$0 ← stackpull(byte) -- vbuaa=_stackpullbyte_ 
+    pla
+    // *SCREEN = pow2(6)
+    // [13] *((const nomodify byte*) SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // main::@return
+    // }
+    // [14] return 
     rts
 }
   // File Data

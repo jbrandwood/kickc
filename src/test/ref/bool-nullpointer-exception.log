@@ -1,48 +1,60 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (bool) framedone#0 ← true
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
-  (bool) framedone#9 ← phi( @1/(bool) framedone#8 )
+main: scope:[main]  from _start::@1
+  (bool) framedone#11 ← phi( _start::@1/(bool) framedone#10 )
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (bool) framedone#7 ← phi( main/(bool) framedone#9 main::@3/(bool) framedone#1 )
+  (bool) framedone#9 ← phi( main/(bool) framedone#11 main::@3/(bool) framedone#0 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1 main::@2
-  (bool) framedone#4 ← phi( main::@1/(bool) framedone#7 main::@2/(bool) framedone#4 )
-  (bool~) main::$0 ← ! (bool) framedone#4
+  (bool) framedone#5 ← phi( main::@1/(bool) framedone#9 main::@2/(bool) framedone#5 )
+  (bool~) main::$0 ← ! (bool) framedone#5
   if((bool~) main::$0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  (bool) framedone#1 ← false
+  (bool) framedone#0 ← false
   to:main::@1
 main::@return: scope:[main]  from main::@1
-  (bool) framedone#5 ← phi( main::@1/(bool) framedone#7 )
-  (bool) framedone#2 ← (bool) framedone#5
+  (bool) framedone#6 ← phi( main::@1/(bool) framedone#9 )
+  (bool) framedone#1 ← (bool) framedone#6
   return 
   to:@return
-@1: scope:[]  from @begin
-  (bool) framedone#8 ← phi( @begin/(bool) framedone#0 )
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (bool) framedone#2 ← true
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  (bool) framedone#10 ← phi( _start::_init1/(bool) framedone#2 )
   call main 
-  to:@2
-@2: scope:[]  from @1
-  (bool) framedone#6 ← phi( @1/(bool) framedone#2 )
-  (bool) framedone#3 ← (bool) framedone#6
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  (bool) framedone#7 ← phi( _start::@1/(bool) framedone#1 )
+  (bool) framedone#3 ← (bool) framedone#7
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  (bool) framedone#8 ← phi( _start::@2/(bool) framedone#3 )
+  (bool) framedone#4 ← (bool) framedone#8
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (bool) framedone
 (bool) framedone#0
 (bool) framedone#1
+(bool) framedone#10
+(bool) framedone#11
 (bool) framedone#2
 (bool) framedone#3
 (bool) framedone#4
@@ -58,79 +70,68 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@return
 
-Alias framedone#2 = framedone#5 framedone#7 
-Alias framedone#0 = framedone#8 
-Alias framedone#3 = framedone#6 
+Alias framedone#1 = framedone#6 framedone#9 
+Alias framedone#10 = framedone#2 
+Alias framedone#3 = framedone#7 framedone#8 framedone#4 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (bool) framedone#9 (bool) framedone#0
-Identical Phi Values (bool) framedone#4 (bool) framedone#2
-Identical Phi Values (bool) framedone#3 (bool) framedone#2
+Identical Phi Values (bool) framedone#11 (bool) framedone#10
+Identical Phi Values (bool) framedone#5 (bool) framedone#1
+Identical Phi Values (bool) framedone#3 (bool) framedone#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Rewriting ! if()-condition to reversed if() [5] (bool~) main::$0 ← ! (bool) framedone#2
+Rewriting ! if()-condition to reversed if() [4] (bool~) main::$0 ← ! (bool) framedone#1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const bool) framedone#0 = true
-Constant (const bool) framedone#1 = false
+Constant (const bool) framedone#0 = false
+Constant (const bool) framedone#10 = true
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [3] if(true) goto main::@2
+if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const bool) framedone#0
-Inlining constant with var siblings (const bool) framedone#1
-Constant inlined framedone#1 = false
-Constant inlined framedone#0 = true
+Inlining constant with var siblings (const bool) framedone#10
+Constant inlined framedone#10 = true
+Constant inlined framedone#0 = false
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (bool) framedone#2 ← phi( main/true main::@2/false )
+  [1] (bool) framedone#1 ← phi( main/true main::@2/false )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [6] if((bool) framedone#2) goto main::@1
+  [2] if((bool) framedone#1) goto main::@1
   to:main::@2
 
 
 VARIABLE REGISTER WEIGHTS
 (bool) framedone
-(bool) framedone#2 500.5
+(bool) framedone#1 50.5
 (void()) main()
 
 Initial phi equivalence classes
-[ framedone#2 ]
+[ framedone#1 ]
 Complete equivalence classes
-[ framedone#2 ]
-Allocated zp[1]:2 [ framedone#2 ]
+[ framedone#1 ]
+Allocated zp[1]:2 [ framedone#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -142,33 +143,17 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label framedone = 2
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboz1=vboc1 
+    // [1] phi (bool) framedone#1 = true [phi:main->main::@1#0] -- vboz1=vboc1 
     lda #1
     sta.z framedone
     jmp __b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboz1=vboc1 
+    // [1] phi (bool) framedone#1 = false [phi:main::@2->main::@1#0] -- vboz1=vboc1 
     lda #0
     sta.z framedone
     jmp __b1
@@ -177,7 +162,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] if((bool) framedone#2) goto main::@1 -- vboz1_then_la1 
+    // [2] if((bool) framedone#1) goto main::@1 -- vboz1_then_la1 
     lda.z framedone
     cmp #0
     bne __b1_from___b2
@@ -186,14 +171,14 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp[1]:2 [ framedone#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ framedone#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 500.5: zp[1]:2 [ framedone#2 ] 
+Uplift Scope [] 50.5: zp[1]:2 [ framedone#1 ] 
 Uplift Scope [main] 
 
-Uplifting [] best 892 combination reg byte a [ framedone#2 ] 
-Uplifting [main] best 892 combination 
+Uplifting [] best 880 combination reg byte a [ framedone#1 ] 
+Uplifting [main] best 880 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -203,32 +188,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboaa=vboc1 
+    // [1] phi (bool) framedone#1 = true [phi:main->main::@1#0] -- vboaa=vboc1 
     lda #1
     jmp __b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
+    // [1] phi (bool) framedone#1 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
     lda #0
     jmp __b1
     // main::@1
@@ -236,7 +205,7 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] if((bool) framedone#2) goto main::@1 -- vboaa_then_la1 
+    // [2] if((bool) framedone#1) goto main::@1 -- vboaa_then_la1 
     cmp #0
     bne __b1_from___b2
     jmp __b2
@@ -245,37 +214,24 @@ main: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1 with __b2
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Relabelling long label __b1_from___b2 to __b1
 Succesful ASM optimization Pass5RelabelLongLabels
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (bool) framedone
-(bool) framedone#2 reg byte a 500.5
+(bool) framedone#1 reg byte a 50.5
 (void()) main()
 (label) main::@1
 (label) main::@2
 
-reg byte a [ framedone#2 ]
+reg byte a [ framedone#1 ]
 
 
 FINAL ASSEMBLER
@@ -288,28 +244,21 @@ Score: 820
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (bool) framedone#2 = true [phi:main->main::@1#0] -- vboaa=vboc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (bool) framedone#1 = true [phi:main->main::@1#0] -- vboaa=vboc1 
     lda #1
     jmp __b2
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1:
-    // [5] phi (bool) framedone#2 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
+    // [1] phi (bool) framedone#1 = false [phi:main::@2->main::@1#0] -- vboaa=vboc1 
     lda #0
     // main::@1
     // main::@2
   __b2:
     // while(!framedone)
-    // [6] if((bool) framedone#2) goto main::@1 -- vboaa_then_la1 
+    // [2] if((bool) framedone#1) goto main::@1 -- vboaa_then_la1 
     cmp #0
     bne __b1
     jmp __b2

@@ -1,11 +1,10 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 Eliminating unused variable with no statement (struct TIME_OF_DAY~) main::$2
 Unwinding list assignment { (byte~) main::$2_TENTHS, (byte~) main::$2_SEC, (byte~) main::$2_MIN, (byte~) main::$2_HOURS } ← { (byte) tod_read::return_TENTHS, (byte) tod_read::return_SEC, (byte) tod_read::return_MIN, (byte) tod_read::return_HOURS }
 Unwinding list assignment { (byte) tod_read::return_TENTHS#2, (byte) tod_read::return_SEC#2, (byte) tod_read::return_MIN#2, (byte) tod_read::return_HOURS#2 } ← { (byte) tod_read::return_TENTHS#1, (byte) tod_read::return_SEC#1, (byte) tod_read::return_MIN#1, (byte) tod_read::return_HOURS#1 }
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
@@ -88,14 +87,6 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) conio_cursor_x ← (byte) 0
-  (byte) conio_cursor_y ← (byte) 0
-  (byte*) conio_line_text ← (const nomodify byte*) CONIO_SCREEN_TEXT
-  (byte*) conio_line_color ← (const nomodify byte*) CONIO_SCREEN_COLORS
-  (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
-  (byte) conio_scroll_enable ← (byte) 1
-  to:@2
 
 (void()) gotoxy((byte) gotoxy::x , (byte) gotoxy::y)
 gotoxy: scope:[gotoxy]  from cscroll::@2 main::@2
@@ -345,7 +336,7 @@ tod_str::@return: scope:[tod_str]  from tod_str
   to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
   (byte) tod_init::tod_SEC#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_SEC)
   (byte) tod_init::tod_MIN#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_MIN)
@@ -397,19 +388,28 @@ main::@7: scope:[main]  from main::@6
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte) conio_cursor_x ← (byte) 0
+  (byte) conio_cursor_y ← (byte) 0
+  (byte*) conio_line_text ← (const nomodify byte*) CONIO_SCREEN_TEXT
+  (byte*) conio_line_color ← (const nomodify byte*) CONIO_SCREEN_COLORS
+  (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
+  (byte) conio_scroll_enable ← (byte) 1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte*) COLORRAM = (byte*)(number) $d800
 (const nomodify byte*) CONIO_SCREEN_COLORS = (const nomodify byte*) COLORRAM
@@ -516,6 +516,11 @@ SYMBOL TABLE SSA
 (byte) TIME_OF_DAY::SEC
 (byte) TIME_OF_DAY::TENTHS
 (struct TIME_OF_DAY) TOD_ZERO loadstore = { TENTHS: (byte) 0, SEC: (byte) 0, MIN: (byte) 0, HOURS: (byte) 0 }
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (byte) conio_cursor_x loadstore
 (byte) conio_cursor_y loadstore
 (byte*) conio_line_color loadstore
@@ -977,10 +982,10 @@ Inferred type updated to byte in (unumber~) tod_str::$11 ← (byte) '0' + (byte~
 Inferred type updated to byte in (unumber~) tod_str::$14 ← (byte) tod_str::tod_TENTHS#1 & (byte) $f
 Inferred type updated to byte in (unumber~) tod_str::$15 ← (byte) '0' + (byte~) tod_str::$14
 Inversing boolean not [20] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [19] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [46] (bool~) gotoxy::$1 ← (byte) gotoxy::y#3 <= (byte) $19 from [45] (bool~) gotoxy::$0 ← (byte) gotoxy::y#3 > (byte) $19
-Inversing boolean not [50] (bool~) gotoxy::$3 ← (byte) gotoxy::x#3 < (byte) $28 from [49] (bool~) gotoxy::$2 ← (byte) gotoxy::x#3 >= (byte) $28
-Inversing boolean not [76] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [75] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
-Inversing boolean not [87] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [86] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
+Inversing boolean not [40] (bool~) gotoxy::$1 ← (byte) gotoxy::y#3 <= (byte) $19 from [39] (bool~) gotoxy::$0 ← (byte) gotoxy::y#3 > (byte) $19
+Inversing boolean not [44] (bool~) gotoxy::$3 ← (byte) gotoxy::x#3 < (byte) $28 from [43] (bool~) gotoxy::$2 ← (byte) gotoxy::x#3 >= (byte) $28
+Inversing boolean not [70] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [69] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
+Inversing boolean not [81] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [80] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -1048,18 +1053,18 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memcpy::$1 [7] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Simple Condition (bool~) memset::$1 [14] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [21] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) gotoxy::$1 [33] if((byte) gotoxy::y#3<=(byte) $19) goto gotoxy::@1
-Simple Condition (bool~) gotoxy::$3 [36] if((byte) gotoxy::x#3<(byte) $28) goto gotoxy::@2
-Simple Condition (bool~) cputc::$0 [51] if((byte) cputc::c#0==(byte) '
+Simple Condition (bool~) gotoxy::$1 [27] if((byte) gotoxy::y#3<=(byte) $19) goto gotoxy::@1
+Simple Condition (bool~) gotoxy::$3 [30] if((byte) gotoxy::x#3<(byte) $28) goto gotoxy::@2
+Simple Condition (bool~) cputc::$0 [45] if((byte) cputc::c#0==(byte) '
 ') goto cputc::@1
-Simple Condition (bool~) cputc::$2 [57] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
-Simple Condition (bool~) cscroll::$1 [67] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
-Simple Condition (bool~) cscroll::$7 [69] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [103] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
-Simple Condition (bool~) main::$5 [155] if((number) 0!=(number) 1) goto main::@2
+Simple Condition (bool~) cputc::$2 [51] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
+Simple Condition (bool~) cscroll::$1 [61] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
+Simple Condition (bool~) cscroll::$7 [63] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
+Simple Condition (bool~) cputs::$1 [97] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) main::$5 [149] if((number) 0!=(number) 1) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [72] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
-Constant right-side identified [77] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [66] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [71] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) gotoxy::y#0 = 0
 Constant (const byte) gotoxy::x#0 = 0
@@ -1088,19 +1093,19 @@ Constant (const byte*) tod_str::return#2 = tod_str::return#0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const to_nomodify byte*) cputs::s#1 = tod_str::return#2
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [69] if((byte) 0!=(const byte) conio_scroll_enable) goto cscroll::@3
-if() condition always true - replacing block destination [155] if((number) 0!=(number) 1) goto main::@2
+if() condition always true - replacing block destination [63] if((byte) 0!=(const byte) conio_scroll_enable) goto cscroll::@3
+if() condition always true - replacing block destination [149] if((number) 0!=(number) 1) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [33] if((byte) gotoxy::y#3<=(byte) $19) goto gotoxy::@1
-Simplifying expression containing zero tod_buffer in [125] *((const byte*) tod_buffer + (byte) 0) ← (byte~) tod_str::$1
-Simplifying expression containing zero (byte*)&TOD_ZERO in [149] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
+Rewriting conditional comparison [27] if((byte) gotoxy::y#3<=(byte) $19) goto gotoxy::@1
+Simplifying expression containing zero tod_buffer in [119] *((const byte*) tod_buffer + (byte) 0) ← (byte~) tod_str::$1
+Simplifying expression containing zero (byte*)&TOD_ZERO in [143] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (void*) memcpy::return#2 and assignment [55] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memcpy::return#3 and assignment [57] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memset::return#2 and assignment [59] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [61] (void*) memset::return#3 ← (void*) memset::str#3
-Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#0 and assignment [85] (struct TIME_OF_DAY) tod_read::return#0 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
-Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#1 and assignment [86] (struct TIME_OF_DAY) tod_read::return#1 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
+Eliminating unused variable (void*) memcpy::return#2 and assignment [51] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memcpy::return#3 and assignment [53] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memset::return#2 and assignment [55] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [57] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#0 and assignment [81] (struct TIME_OF_DAY) tod_read::return#0 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
+Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#1 and assignment [82] (struct TIME_OF_DAY) tod_read::return#1 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
 Eliminating unused constant (const byte) cputs::c#0
 Eliminating unused constant (const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS
 Eliminating unused constant (const byte) conio_scroll_enable
@@ -1124,8 +1129,8 @@ Alias candidate removed (volatile)conio_line_color = gotoxy::$6
 Identical Phi Values (byte) gotoxy::y#3 (const byte) gotoxy::y#2
 Identical Phi Values (byte) gotoxy::x#3 (const byte) gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-if() condition always true - replacing block destination [26] if((const byte) gotoxy::y#2<(byte) $19+(byte) 1) goto gotoxy::@1
-if() condition always true - replacing block destination [28] if((const byte) gotoxy::x#2<(byte) $28) goto gotoxy::@2
+if() condition always true - replacing block destination [22] if((const byte) gotoxy::y#2<(byte) $19+(byte) 1) goto gotoxy::@1
+if() condition always true - replacing block destination [24] if((const byte) gotoxy::x#2<(byte) $28) goto gotoxy::@2
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) gotoxy::x#1
 Eliminating unused constant (const byte) gotoxy::y#1
@@ -1140,7 +1145,7 @@ Alias candidate removed (volatile)conio_line_color = gotoxy::$6
 Identical Phi Values (byte) gotoxy::y#4 (const byte) gotoxy::y#2
 Identical Phi Values (byte) gotoxy::x#4 (const byte) gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [29] (word~) gotoxy::$7 ← (word)(const byte) gotoxy::y#2
+Constant right-side identified [25] (word~) gotoxy::$7 ← (word)(const byte) gotoxy::y#2
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) gotoxy::$7 = (word)gotoxy::y#2
 Successful SSA optimization Pass2ConstantIdentification
@@ -1151,14 +1156,14 @@ Eliminating unused constant (const byte) gotoxy::x#0
 Successful SSA optimization PassNEliminateUnusedVars
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
-Constant right-side identified [27] (word) gotoxy::line_offset#0 ← (const word) gotoxy::$7 * (byte) $28
+Constant right-side identified [23] (word) gotoxy::line_offset#0 ← (const word) gotoxy::$7 * (byte) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) gotoxy::line_offset#0 = gotoxy::$7*$28
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying constant evaluating to zero (const word) gotoxy::$7*(byte) $28 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero CONIO_SCREEN_TEXT in [28] (byte*~) gotoxy::$5 ← (const nomodify byte*) CONIO_SCREEN_TEXT + (const word) gotoxy::line_offset#0
-Simplifying expression containing zero CONIO_SCREEN_COLORS in [30] (byte*~) gotoxy::$6 ← (const nomodify byte*) CONIO_SCREEN_COLORS + (const word) gotoxy::line_offset#0
+Simplifying expression containing zero CONIO_SCREEN_TEXT in [24] (byte*~) gotoxy::$5 ← (const nomodify byte*) CONIO_SCREEN_TEXT + (const word) gotoxy::line_offset#0
+Simplifying expression containing zero CONIO_SCREEN_COLORS in [26] (byte*~) gotoxy::$6 ← (const nomodify byte*) CONIO_SCREEN_COLORS + (const word) gotoxy::line_offset#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const word) gotoxy::$7
 Eliminating unused constant (const word) gotoxy::line_offset#0
@@ -1222,10 +1227,9 @@ Identical Phi Values (word) memset::num#2 (byte) $28
 Successful SSA optimization Pass2IdenticalPhiElimination
 if() condition always false - eliminating [9] if((byte) $28<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -1248,7 +1252,7 @@ Adding NOP phi() at start of memcpy::@3
 Adding NOP phi() at start of gotoxy
 Adding NOP phi() at start of gotoxy::@1
 CALL GRAPH
-Calls in [] to main:6 
+Calls in [_start] to main:6 
 Calls in [main] to tod_init:13 gotoxy:17 tod_read:19 tod_str:28 cputs:30 
 Calls in [cputs] to cputc:39 
 Calls in [cputc] to cputln:47 cputln:51 
@@ -1261,7 +1265,7 @@ Coalesced [83] memset::dst#5 ← memset::dst#1
 Coalesced [95] memcpy::src#5 ← memcpy::src#1
 Coalesced [96] memcpy::dst#5 ← memcpy::dst#1
 Coalesced down to 8 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@7
@@ -1286,9 +1290,8 @@ Renumbering block main::@2 to main::@1
 Renumbering block main::@4 to main::@2
 Renumbering block main::@5 to main::@3
 Renumbering block main::@6 to main::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@4
@@ -1302,24 +1305,27 @@ Adding NOP phi() at start of cscroll::@4
 Adding NOP phi() at start of gotoxy
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (byte) conio_cursor_x ← (byte) 0
   [2] (byte) conio_cursor_y ← (byte) 0
   [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN
   [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [5] phi()
   [6] call main 
-  to:@end
-@end: scope:[]  from @2
-  [7] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [7] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   [8] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO)
   [9] (byte) tod_init::tod_SEC#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_SEC)
   [10] (byte) tod_init::tod_MIN#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_MIN)
@@ -1635,6 +1641,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) TIME_OF_DAY::SEC
 (byte) TIME_OF_DAY::TENTHS
 (struct TIME_OF_DAY) TOD_ZERO loadstore = { TENTHS: (byte) 0, SEC: (byte) 0, MIN: (byte) 0, HOURS: (byte) 0 }
+(void()) _start()
 (byte) conio_cursor_x loadstore 405432.6756756757
 (byte) conio_cursor_y loadstore 6037754.867924528
 (byte*) conio_line_color loadstore 4333353.098039215
@@ -1906,7 +1913,7 @@ Target platform is c64basic / MOS6502X
 // Currently C64/PLUS4/VIC20 platforms are supported
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -1925,48 +1932,49 @@ Target platform is c64basic / MOS6502X
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = $11
-  .label conio_cursor_y = $12
-  .label conio_line_text = $13
-  .label conio_line_color = $15
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = $11
   // The current cursor y-position
-  lda #0
-  sta.z conio_cursor_y
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = $12
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $13
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [6] call main 
-  jsr main
-  // [7] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label conio_line_color = $15
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_y
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [6] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [7] return 
+    rts
+}
   // main
 main: {
     // [8] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO) -- vbuz1=_deref_pbuc1 
@@ -2783,99 +2791,101 @@ Uplift Scope [cputln]
 Uplift Scope [cscroll] 
 Uplift Scope [TIME_OF_DAY] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [memcpy] best 123791 combination zp[2]:13 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:15 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:39 [ memcpy::src_end#0 ] zp[2]:9 [ memcpy::source#2 ] zp[2]:11 [ memcpy::destination#2 ] 
-Uplifting [memset] best 122785 combination zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:37 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::str#3 ] 
-Uplifting [] best 122785 combination zp[1]:18 [ conio_cursor_y ] zp[2]:21 [ conio_line_color ] zp[2]:19 [ conio_line_text ] zp[1]:17 [ conio_cursor_x ] mem[4] [ TOD_ZERO ] 
-Uplifting [cputc] best 122479 combination reg byte a [ cputc::c#0 ] 
-Uplifting [cputs] best 121579 combination zp[2]:2 [ cputs::s#2 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
-Uplifting [tod_read] best 121480 combination reg byte y [ tod_read::return_TENTHS#0 ] reg byte x [ tod_read::return_SEC#0 ] reg byte a [ tod_read::return_MIN#0 ] zp[1]:57 [ tod_read::return_HOURS#0 ] zp[1]:27 [ tod_read::return_TENTHS#2 ] zp[1]:28 [ tod_read::return_SEC#2 ] zp[1]:29 [ tod_read::return_MIN#2 ] zp[1]:30 [ tod_read::return_HOURS#2 ] 
+Uplifting [memcpy] best 123797 combination zp[2]:13 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:15 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:39 [ memcpy::src_end#0 ] zp[2]:9 [ memcpy::source#2 ] zp[2]:11 [ memcpy::destination#2 ] 
+Uplifting [memset] best 122791 combination zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:37 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::str#3 ] 
+Uplifting [] best 122791 combination zp[1]:18 [ conio_cursor_y ] zp[2]:21 [ conio_line_color ] zp[2]:19 [ conio_line_text ] zp[1]:17 [ conio_cursor_x ] mem[4] [ TOD_ZERO ] 
+Uplifting [cputc] best 122485 combination reg byte a [ cputc::c#0 ] 
+Uplifting [cputs] best 121585 combination zp[2]:2 [ cputs::s#2 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
+Uplifting [tod_read] best 121486 combination reg byte y [ tod_read::return_TENTHS#0 ] reg byte x [ tod_read::return_SEC#0 ] reg byte a [ tod_read::return_MIN#0 ] zp[1]:57 [ tod_read::return_HOURS#0 ] zp[1]:27 [ tod_read::return_TENTHS#2 ] zp[1]:28 [ tod_read::return_SEC#2 ] zp[1]:29 [ tod_read::return_MIN#2 ] zp[1]:30 [ tod_read::return_HOURS#2 ] 
 Limited combination testing to 100 combinations of 65536 possible.
-Uplifting [tod_init] best 121468 combination reg byte y [ tod_init::tod_HOURS#0 ] reg byte x [ tod_init::tod_MIN#0 ] zp[1]:24 [ tod_init::tod_SEC#0 ] zp[1]:23 [ tod_init::tod_TENTHS#0 ] 
-Uplifting [MOS6526_CIA] best 121468 combination 
-Uplifting [MOS6569_VICII] best 121468 combination 
-Uplifting [MOS6581_SID] best 121468 combination 
-Uplifting [gotoxy] best 121468 combination 
-Uplifting [cputln] best 121468 combination 
-Uplifting [cscroll] best 121468 combination 
-Uplifting [TIME_OF_DAY] best 121468 combination 
-Uplifting [main] best 121468 combination 
+Uplifting [tod_init] best 121474 combination reg byte y [ tod_init::tod_HOURS#0 ] reg byte x [ tod_init::tod_MIN#0 ] zp[1]:24 [ tod_init::tod_SEC#0 ] zp[1]:23 [ tod_init::tod_TENTHS#0 ] 
+Uplifting [MOS6526_CIA] best 121474 combination 
+Uplifting [MOS6569_VICII] best 121474 combination 
+Uplifting [MOS6581_SID] best 121474 combination 
+Uplifting [gotoxy] best 121474 combination 
+Uplifting [cputln] best 121474 combination 
+Uplifting [cscroll] best 121474 combination 
+Uplifting [TIME_OF_DAY] best 121474 combination 
+Uplifting [main] best 121474 combination 
+Uplifting [_start] best 121474 combination 
 Attempting to uplift remaining variables inzp[1]:18 [ conio_cursor_y ]
-Uplifting [] best 121468 combination zp[1]:18 [ conio_cursor_y ] 
+Uplifting [] best 121474 combination zp[1]:18 [ conio_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:17 [ conio_cursor_x ]
-Uplifting [] best 121468 combination zp[1]:17 [ conio_cursor_x ] 
+Uplifting [] best 121474 combination zp[1]:17 [ conio_cursor_x ] 
 Attempting to uplift remaining variables inzp[1]:41 [ tod_str::$0 ]
-Uplifting [tod_str] best 121464 combination reg byte a [ tod_str::$0 ] 
+Uplifting [tod_str] best 121470 combination reg byte a [ tod_str::$0 ] 
 Attempting to uplift remaining variables inzp[1]:42 [ tod_str::$1 ]
-Uplifting [tod_str] best 121458 combination reg byte a [ tod_str::$1 ] 
+Uplifting [tod_str] best 121464 combination reg byte a [ tod_str::$1 ] 
 Attempting to uplift remaining variables inzp[1]:43 [ tod_str::$2 ]
-Uplifting [tod_str] best 121454 combination reg byte a [ tod_str::$2 ] 
+Uplifting [tod_str] best 121460 combination reg byte a [ tod_str::$2 ] 
 Attempting to uplift remaining variables inzp[1]:44 [ tod_str::$3 ]
-Uplifting [tod_str] best 121448 combination reg byte a [ tod_str::$3 ] 
+Uplifting [tod_str] best 121454 combination reg byte a [ tod_str::$3 ] 
 Attempting to uplift remaining variables inzp[1]:45 [ tod_str::$4 ]
-Uplifting [tod_str] best 121444 combination reg byte a [ tod_str::$4 ] 
+Uplifting [tod_str] best 121450 combination reg byte a [ tod_str::$4 ] 
 Attempting to uplift remaining variables inzp[1]:46 [ tod_str::$5 ]
-Uplifting [tod_str] best 121438 combination reg byte a [ tod_str::$5 ] 
+Uplifting [tod_str] best 121444 combination reg byte a [ tod_str::$5 ] 
 Attempting to uplift remaining variables inzp[1]:47 [ tod_str::$6 ]
-Uplifting [tod_str] best 121434 combination reg byte a [ tod_str::$6 ] 
+Uplifting [tod_str] best 121440 combination reg byte a [ tod_str::$6 ] 
 Attempting to uplift remaining variables inzp[1]:48 [ tod_str::$7 ]
-Uplifting [tod_str] best 121428 combination reg byte a [ tod_str::$7 ] 
+Uplifting [tod_str] best 121434 combination reg byte a [ tod_str::$7 ] 
 Attempting to uplift remaining variables inzp[1]:49 [ tod_str::$8 ]
-Uplifting [tod_str] best 121424 combination reg byte a [ tod_str::$8 ] 
+Uplifting [tod_str] best 121430 combination reg byte a [ tod_str::$8 ] 
 Attempting to uplift remaining variables inzp[1]:50 [ tod_str::$9 ]
-Uplifting [tod_str] best 121418 combination reg byte a [ tod_str::$9 ] 
+Uplifting [tod_str] best 121424 combination reg byte a [ tod_str::$9 ] 
 Attempting to uplift remaining variables inzp[1]:51 [ tod_str::$10 ]
-Uplifting [tod_str] best 121414 combination reg byte a [ tod_str::$10 ] 
+Uplifting [tod_str] best 121420 combination reg byte a [ tod_str::$10 ] 
 Attempting to uplift remaining variables inzp[1]:52 [ tod_str::$11 ]
-Uplifting [tod_str] best 121408 combination reg byte a [ tod_str::$11 ] 
+Uplifting [tod_str] best 121414 combination reg byte a [ tod_str::$11 ] 
 Attempting to uplift remaining variables inzp[1]:53 [ tod_str::$12 ]
-Uplifting [tod_str] best 121404 combination reg byte a [ tod_str::$12 ] 
+Uplifting [tod_str] best 121410 combination reg byte a [ tod_str::$12 ] 
 Attempting to uplift remaining variables inzp[1]:54 [ tod_str::$13 ]
-Uplifting [tod_str] best 121398 combination reg byte a [ tod_str::$13 ] 
+Uplifting [tod_str] best 121404 combination reg byte a [ tod_str::$13 ] 
 Attempting to uplift remaining variables inzp[1]:55 [ tod_str::$14 ]
-Uplifting [tod_str] best 121394 combination reg byte a [ tod_str::$14 ] 
+Uplifting [tod_str] best 121400 combination reg byte a [ tod_str::$14 ] 
 Attempting to uplift remaining variables inzp[1]:56 [ tod_str::$15 ]
-Uplifting [tod_str] best 121388 combination reg byte a [ tod_str::$15 ] 
+Uplifting [tod_str] best 121394 combination reg byte a [ tod_str::$15 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ tod_str::tod_HOURS#0 ]
-Uplifting [tod_str] best 121356 combination reg byte x [ tod_str::tod_HOURS#0 ] 
+Uplifting [tod_str] best 121362 combination reg byte x [ tod_str::tod_HOURS#0 ] 
 Attempting to uplift remaining variables inzp[1]:33 [ tod_str::tod_MIN#0 ]
-Uplifting [tod_str] best 121324 combination reg byte y [ tod_str::tod_MIN#0 ] 
+Uplifting [tod_str] best 121330 combination reg byte y [ tod_str::tod_MIN#0 ] 
 Attempting to uplift remaining variables inzp[1]:57 [ tod_read::return_HOURS#0 ]
-Uplifting [tod_read] best 121324 combination zp[1]:57 [ tod_read::return_HOURS#0 ] 
+Uplifting [tod_read] best 121330 combination zp[1]:57 [ tod_read::return_HOURS#0 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ tod_str::tod_SEC#0 ]
-Uplifting [tod_str] best 121324 combination zp[1]:32 [ tod_str::tod_SEC#0 ] 
+Uplifting [tod_str] best 121330 combination zp[1]:32 [ tod_str::tod_SEC#0 ] 
 Attempting to uplift remaining variables inzp[1]:31 [ tod_str::tod_TENTHS#0 ]
-Uplifting [tod_str] best 121324 combination zp[1]:31 [ tod_str::tod_TENTHS#0 ] 
+Uplifting [tod_str] best 121330 combination zp[1]:31 [ tod_str::tod_TENTHS#0 ] 
 Attempting to uplift remaining variables inzp[1]:27 [ tod_read::return_TENTHS#2 ]
-Uplifting [tod_read] best 121264 combination reg byte y [ tod_read::return_TENTHS#2 ] 
+Uplifting [tod_read] best 121270 combination reg byte y [ tod_read::return_TENTHS#2 ] 
 Attempting to uplift remaining variables inzp[1]:28 [ tod_read::return_SEC#2 ]
-Uplifting [tod_read] best 121204 combination reg byte x [ tod_read::return_SEC#2 ] 
+Uplifting [tod_read] best 121210 combination reg byte x [ tod_read::return_SEC#2 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ tod_read::return_MIN#2 ]
-Uplifting [tod_read] best 121204 combination zp[1]:29 [ tod_read::return_MIN#2 ] 
+Uplifting [tod_read] best 121210 combination zp[1]:29 [ tod_read::return_MIN#2 ] 
 Attempting to uplift remaining variables inzp[1]:30 [ tod_read::return_HOURS#2 ]
-Uplifting [tod_read] best 121164 combination reg byte a [ tod_read::return_HOURS#2 ] 
+Uplifting [tod_read] best 121170 combination reg byte a [ tod_read::return_HOURS#2 ] 
 Attempting to uplift remaining variables inzp[1]:24 [ tod_init::tod_SEC#0 ]
-Uplifting [tod_init] best 121164 combination zp[1]:24 [ tod_init::tod_SEC#0 ] 
+Uplifting [tod_init] best 121170 combination zp[1]:24 [ tod_init::tod_SEC#0 ] 
 Attempting to uplift remaining variables inzp[1]:23 [ tod_init::tod_TENTHS#0 ]
-Uplifting [tod_init] best 121164 combination zp[1]:23 [ tod_init::tod_TENTHS#0 ] 
+Uplifting [tod_init] best 121170 combination zp[1]:23 [ tod_init::tod_TENTHS#0 ] 
 Coalescing zero page register [ zp[2]:4 [ memset::str#3 ] ] with [ zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ memcpy::source#2 ] ] with [ zp[2]:13 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:11 [ memcpy::destination#2 ] ] with [ zp[2]:15 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] with [ zp[2]:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ]
-Coalescing zero page register [ zp[1]:29 [ tod_read::return_MIN#2 ] ] with [ zp[1]:23 [ tod_init::tod_TENTHS#0 ] ]
-Coalescing zero page register [ zp[1]:31 [ tod_str::tod_TENTHS#0 ] ] with [ zp[1]:24 [ tod_init::tod_SEC#0 ] ]
+Coalescing zero page register [ zp[1]:23 [ tod_init::tod_TENTHS#0 ] ] with [ zp[1]:17 [ conio_cursor_x ] ]
+Coalescing zero page register [ zp[1]:24 [ tod_init::tod_SEC#0 ] ] with [ zp[1]:18 [ conio_cursor_y ] ]
 Coalescing zero page register [ zp[2]:37 [ memset::end#0 ] ] with [ zp[2]:11 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ]
-Coalescing zero page register [ zp[1]:57 [ tod_read::return_HOURS#0 ] ] with [ zp[1]:32 [ tod_str::tod_SEC#0 ] ]
+Coalescing zero page register [ zp[1]:57 [ tod_read::return_HOURS#0 ] ] with [ zp[1]:31 [ tod_str::tod_TENTHS#0 ] ]
 Allocated (was zp[2]:9) zp[2]:4 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
-Allocated (was zp[1]:17) zp[1]:6 [ conio_cursor_x ]
-Allocated (was zp[1]:18) zp[1]:7 [ conio_cursor_y ]
-Allocated (was zp[2]:19) zp[2]:8 [ conio_line_text ]
-Allocated (was zp[2]:21) zp[2]:10 [ conio_line_color ]
-Allocated (was zp[1]:29) zp[1]:12 [ tod_read::return_MIN#2 tod_init::tod_TENTHS#0 ]
-Allocated (was zp[1]:31) zp[1]:13 [ tod_str::tod_TENTHS#0 tod_init::tod_SEC#0 ]
+Allocated (was zp[2]:19) zp[2]:6 [ conio_line_text ]
+Allocated (was zp[2]:21) zp[2]:8 [ conio_line_color ]
+Allocated (was zp[1]:23) zp[1]:10 [ tod_init::tod_TENTHS#0 conio_cursor_x ]
+Allocated (was zp[1]:24) zp[1]:11 [ tod_init::tod_SEC#0 conio_cursor_y ]
+Allocated (was zp[1]:29) zp[1]:12 [ tod_read::return_MIN#2 ]
+Allocated (was zp[1]:32) zp[1]:13 [ tod_str::tod_SEC#0 ]
 Allocated (was zp[2]:37) zp[2]:14 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 Allocated (was zp[2]:39) zp[2]:16 [ memcpy::src_end#0 ]
-Allocated (was zp[1]:57) zp[1]:18 [ tod_read::return_HOURS#0 tod_str::tod_SEC#0 ]
+Allocated (was zp[1]:57) zp[1]:18 [ tod_read::return_HOURS#0 tod_str::tod_TENTHS#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2887,7 +2897,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Currently C64/PLUS4/VIC20 platforms are supported
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -2906,48 +2916,49 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = 6
-  .label conio_cursor_y = 7
-  .label conio_line_text = 8
-  .label conio_line_color = $a
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = $a
   // The current cursor y-position
-  lda #0
-  sta.z conio_cursor_y
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = $b
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = 6
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [6] call main 
-  jsr main
-  // [7] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label conio_line_color = 8
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_y
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [6] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [7] return 
+    rts
+}
   // main
 main: {
     // [8] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO) -- vbuz1=_deref_pbuc1 
@@ -3343,10 +3354,10 @@ memcpy: {
 }
   // tod_str
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($d) tod_TENTHS, byte zp($12) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+// tod_str(byte zp($12) tod_TENTHS, byte zp($d) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $d
-    .label tod_SEC = $12
+    .label tod_TENTHS = $12
+    .label tod_SEC = $d
     // [83] (byte~) tod_str::$0 ← (byte) tod_str::tod_HOURS#0 >> (byte) 4 -- vbuaa=vbuxx_ror_4 
     txa
     lsr
@@ -3483,10 +3494,10 @@ gotoxy: {
   // tod_init
 // Initialize time-of-day clock
 // This uses the MOS6526 CIA#1
-// tod_init(byte zp($c) tod_TENTHS, byte zp($d) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
+// tod_init(byte zp($a) tod_TENTHS, byte zp($b) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
 tod_init: {
-    .label tod_TENTHS = $c
-    .label tod_SEC = $d
+    .label tod_TENTHS = $a
+    .label tod_SEC = $b
     // [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set 50hz (this assumes PAL!) (bit7=1)
     lda #$80
@@ -3523,9 +3534,9 @@ tod_init: {
   TOD_ZERO: .byte 0, 0, 0, 0
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
@@ -3562,9 +3573,7 @@ Replacing label __b1_from___b4 with __b1
 Replacing label __b1_from_cputc with __b1
 Replacing label __b2_from___b3 with __b2
 Replacing label __b1_from___b2 with __b1
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Removing instruction __b1_from_main:
 Removing instruction __b1_from___b4:
 Removing instruction gotoxy_from___b1:
@@ -3586,8 +3595,9 @@ Removing instruction __b2_from___b3:
 Removing instruction __b1_from_memcpy:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __b4:
@@ -3613,14 +3623,8 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte*) COLORRAM = (byte*) 55296
 (const nomodify byte*) DEFAULT_SCREEN = (byte*) 1024
@@ -3723,10 +3727,14 @@ FINAL SYMBOL TABLE
 (byte) TIME_OF_DAY::SEC
 (byte) TIME_OF_DAY::TENTHS
 (struct TIME_OF_DAY) TOD_ZERO loadstore mem[4] = { TENTHS: (byte) 0, SEC: (byte) 0, MIN: (byte) 0, HOURS: (byte) 0 }
-(byte) conio_cursor_x loadstore zp[1]:6 405432.6756756757
-(byte) conio_cursor_y loadstore zp[1]:7 6037754.867924528
-(byte*) conio_line_color loadstore zp[2]:10 4333353.098039215
-(byte*) conio_line_text loadstore zp[2]:8 4250019.384615384
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
+(byte) conio_cursor_x loadstore zp[1]:10 405432.6756756757
+(byte) conio_cursor_y loadstore zp[1]:11 6037754.867924528
+(byte*) conio_line_color loadstore zp[2]:8 4333353.098039215
+(byte*) conio_line_text loadstore zp[2]:6 4250019.384615384
 (void()) cputc((byte) cputc::c)
 (label) cputc::@1
 (label) cputc::@2
@@ -3811,9 +3819,9 @@ FINAL SYMBOL TABLE
 (byte) tod_init::tod_MIN
 (byte) tod_init::tod_MIN#0 reg byte x 22.4
 (byte) tod_init::tod_SEC
-(byte) tod_init::tod_SEC#0 tod_SEC zp[1]:13 16.0
+(byte) tod_init::tod_SEC#0 tod_SEC zp[1]:11 16.0
 (byte) tod_init::tod_TENTHS
-(byte) tod_init::tod_TENTHS#0 tod_TENTHS zp[1]:12 12.444444444444443
+(byte) tod_init::tod_TENTHS#0 tod_TENTHS zp[1]:10 12.444444444444443
 (struct TIME_OF_DAY()) tod_read()
 (label) tod_read::@return
 (byte) tod_read::hours
@@ -3862,24 +3870,24 @@ FINAL SYMBOL TABLE
 (byte) tod_str::tod_MIN
 (byte) tod_str::tod_MIN#0 reg byte y 191.1818181818182
 (byte) tod_str::tod_SEC
-(byte) tod_str::tod_SEC#0 tod_SEC zp[1]:18 116.83333333333334
+(byte) tod_str::tod_SEC#0 tod_SEC zp[1]:13 116.83333333333334
 (byte) tod_str::tod_TENTHS
-(byte) tod_str::tod_TENTHS#0 tod_TENTHS zp[1]:13 84.12
+(byte) tod_str::tod_TENTHS#0 tod_TENTHS zp[1]:18 84.12
 
 zp[2]:2 [ cputs::s#2 cputs::s#0 ]
 reg byte x [ memset::c#4 ]
 zp[2]:4 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
-zp[1]:6 [ conio_cursor_x ]
-zp[1]:7 [ conio_cursor_y ]
-zp[2]:8 [ conio_line_text ]
-zp[2]:10 [ conio_line_color ]
+zp[2]:6 [ conio_line_text ]
+zp[2]:8 [ conio_line_color ]
+zp[1]:10 [ tod_init::tod_TENTHS#0 conio_cursor_x ]
+zp[1]:11 [ tod_init::tod_SEC#0 conio_cursor_y ]
 reg byte x [ tod_init::tod_MIN#0 ]
 reg byte y [ tod_init::tod_HOURS#0 ]
 reg byte y [ tod_read::return_TENTHS#2 ]
 reg byte x [ tod_read::return_SEC#2 ]
-zp[1]:12 [ tod_read::return_MIN#2 tod_init::tod_TENTHS#0 ]
+zp[1]:12 [ tod_read::return_MIN#2 ]
 reg byte a [ tod_read::return_HOURS#2 ]
-zp[1]:13 [ tod_str::tod_TENTHS#0 tod_init::tod_SEC#0 ]
+zp[1]:13 [ tod_str::tod_SEC#0 ]
 reg byte y [ tod_str::tod_MIN#0 ]
 reg byte x [ tod_str::tod_HOURS#0 ]
 reg byte a [ cputs::c#1 ]
@@ -3902,7 +3910,7 @@ reg byte a [ tod_str::$12 ]
 reg byte a [ tod_str::$13 ]
 reg byte a [ tod_str::$14 ]
 reg byte a [ tod_str::$15 ]
-zp[1]:18 [ tod_read::return_HOURS#0 tod_str::tod_SEC#0 ]
+zp[1]:18 [ tod_read::return_HOURS#0 tod_str::tod_TENTHS#0 ]
 reg byte a [ tod_read::return_MIN#0 ]
 reg byte x [ tod_read::return_SEC#0 ]
 reg byte y [ tod_read::return_TENTHS#0 ]
@@ -3921,7 +3929,7 @@ Score: 106271
 // Currently C64/PLUS4/VIC20 platforms are supported
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -3940,44 +3948,45 @@ Score: 106271
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = 6
-  .label conio_cursor_y = 7
-  .label conio_line_text = 8
-  .label conio_line_color = $a
-  // @begin
-__bbegin:
-  // @1
-  // conio_cursor_x = 0
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = $a
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = $b
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = 6
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [6] call main 
-  jsr main
-  rts
-  // [7] phi from @2 to @end [phi:@2->@end]
-  // @end
+  .label conio_line_color = 8
+  // _start
+_start: {
+    // _start::_init1
+    // conio_cursor_x = 0
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [6] call main 
+    jsr main
+    // _start::@return
+    // [7] return 
+    rts
+}
   // main
 main: {
     // tod_init(TOD_ZERO)
@@ -4353,10 +4362,10 @@ memcpy: {
 }
   // tod_str
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($d) tod_TENTHS, byte zp($12) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+// tod_str(byte zp($12) tod_TENTHS, byte zp($d) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $d
-    .label tod_SEC = $12
+    .label tod_TENTHS = $12
+    .label tod_SEC = $d
     // tod.HOURS>>4
     // [83] (byte~) tod_str::$0 ← (byte) tod_str::tod_HOURS#0 >> (byte) 4 -- vbuaa=vbuxx_ror_4 
     txa
@@ -4520,10 +4529,10 @@ gotoxy: {
   // tod_init
 // Initialize time-of-day clock
 // This uses the MOS6526 CIA#1
-// tod_init(byte zp($c) tod_TENTHS, byte zp($d) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
+// tod_init(byte zp($a) tod_TENTHS, byte zp($b) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
 tod_init: {
-    .label tod_TENTHS = $c
-    .label tod_SEC = $d
+    .label tod_TENTHS = $a
+    .label tod_SEC = $b
     // CIA1->TIMER_A_CONTROL |= 0x80
     // [119] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set 50hz (this assumes PAL!) (bit7=1)

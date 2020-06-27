@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@3
   if(true) goto main::@2
@@ -49,19 +48,28 @@ mode::@3: scope:[mode]  from mode::@2
 mode::@return: scope:[mode]  from mode::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) B = (byte*)(number) $1000
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -98,10 +106,13 @@ Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Removing unused block mode::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -114,13 +125,11 @@ Adding NOP phi() at start of mode
 Adding NOP phi() at start of mode::@1
 Adding NOP phi() at start of mode::@3
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to menu:8 
-Calls in [menu] to mode:13 
+Calls in [main] to menu:3 
+Calls in [menu] to mode:8 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) menu::@1
@@ -130,9 +139,6 @@ Renumbering block main::@2 to main::@1
 Renumbering block menu::@2 to menu::@1
 Renumbering block mode::@2 to mode::@1
 Renumbering block mode::@3 to mode::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of menu
@@ -141,46 +147,37 @@ Adding NOP phi() at start of mode
 Adding NOP phi() at start of mode::@2
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] phi()
-  [6] call menu 
+  [1] phi()
+  [2] call menu 
   to:main::@1
 
 (void()) menu()
 menu: scope:[menu]  from main::@1
-  [7] phi()
+  [3] phi()
   to:menu::@1
 menu::@1: scope:[menu]  from menu
-  [8] phi()
-  [9] call mode 
+  [4] phi()
+  [5] call mode 
   to:menu::@return
 menu::@return: scope:[menu]  from menu::@1
-  [10] return 
+  [6] return 
   to:@return
 
 (void()) mode()
 mode: scope:[mode]  from menu::@1
-  [11] phi()
+  [7] phi()
   to:mode::@1
 mode::@1: scope:[mode]  from mode mode::@1 mode::@2
-  [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1
+  [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1
   to:mode::@2
 mode::@2: scope:[mode]  from mode::@1
-  [13] phi()
+  [9] phi()
   to:mode::@1
 
 
@@ -202,51 +199,35 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label B = $1000
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
   __b1_from___b1:
     jmp __b1
     // main::@1
   __b1:
-    // [6] call menu 
-    // [7] phi from main::@1 to menu [phi:main::@1->menu]
+    // [2] call menu 
+    // [3] phi from main::@1 to menu [phi:main::@1->menu]
   menu_from___b1:
     jsr menu
     jmp __b1_from___b1
 }
   // menu
 menu: {
-    // [8] phi from menu to menu::@1 [phi:menu->menu::@1]
+    // [4] phi from menu to menu::@1 [phi:menu->menu::@1]
   __b1_from_menu:
     jmp __b1
     // menu::@1
   __b1:
-    // [9] call mode 
-    // [11] phi from menu::@1 to mode [phi:menu::@1->mode]
+    // [5] call mode 
+    // [7] phi from menu::@1 to mode [phi:menu::@1->mode]
   mode_from___b1:
     jsr mode
     jmp __breturn
     // menu::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
 }
   // mode
@@ -254,11 +235,11 @@ mode: {
     jmp __b1
     // mode::@1
   __b1:
-    // [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne __b1
-    // [13] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
+    // [9] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
   __b2_from___b1:
     jmp __b2
     // mode::@2
@@ -268,7 +249,7 @@ mode: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 [ ] ( main:2::menu:6::mode:9 [ ] { }  ) always clobbers reg byte a 
+Statement [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 [ ] ( menu:2::mode:5 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -276,10 +257,10 @@ Uplift Scope [menu]
 Uplift Scope [mode] 
 Uplift Scope [] 
 
-Uplifting [main] best 8929 combination 
-Uplifting [menu] best 8929 combination 
-Uplifting [mode] best 8929 combination 
-Uplifting [] best 8929 combination 
+Uplifting [main] best 8917 combination 
+Uplifting [menu] best 8917 combination 
+Uplifting [mode] best 8917 combination 
+Uplifting [] best 8917 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -290,51 +271,35 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label B = $1000
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
   __b1_from___b1:
     jmp __b1
     // main::@1
   __b1:
-    // [6] call menu 
-    // [7] phi from main::@1 to menu [phi:main::@1->menu]
+    // [2] call menu 
+    // [3] phi from main::@1 to menu [phi:main::@1->menu]
   menu_from___b1:
     jsr menu
     jmp __b1_from___b1
 }
   // menu
 menu: {
-    // [8] phi from menu to menu::@1 [phi:menu->menu::@1]
+    // [4] phi from menu to menu::@1 [phi:menu->menu::@1]
   __b1_from_menu:
     jmp __b1
     // menu::@1
   __b1:
-    // [9] call mode 
-    // [11] phi from menu::@1 to mode [phi:menu::@1->mode]
+    // [5] call mode 
+    // [7] phi from menu::@1 to mode [phi:menu::@1->mode]
   mode_from___b1:
     jsr mode
     jmp __breturn
     // menu::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
 }
   // mode
@@ -342,11 +307,11 @@ mode: {
     jmp __b1
     // mode::@1
   __b1:
-    // [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne __b1
-    // [13] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
+    // [9] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
   __b2_from___b1:
     jmp __b2
     // mode::@2
@@ -357,18 +322,12 @@ mode: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction __b1_from___b1:
 Removing instruction menu_from___b1:
@@ -376,19 +335,12 @@ Removing instruction __b1_from_menu:
 Removing instruction mode_from___b1:
 Removing instruction __b2_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) B = (byte*) 4096
 (void()) main()
 (label) main::@1
@@ -412,35 +364,28 @@ Score: 8551
 .pc = $80d "Program"
   // Global Constants & labels
   .label B = $1000
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
     // main::@1
   __b1:
     // menu()
-    // [6] call menu 
-    // [7] phi from main::@1 to menu [phi:main::@1->menu]
+    // [2] call menu 
+    // [3] phi from main::@1 to menu [phi:main::@1->menu]
     jsr menu
     jmp __b1
 }
   // menu
 menu: {
-    // [8] phi from menu to menu::@1 [phi:menu->menu::@1]
+    // [4] phi from menu to menu::@1 [phi:menu->menu::@1]
     // menu::@1
     // mode()
-    // [9] call mode 
-    // [11] phi from menu::@1 to mode [phi:menu::@1->mode]
+    // [5] call mode 
+    // [7] phi from menu::@1 to mode [phi:menu::@1->mode]
     jsr mode
     // menu::@return
     // }
-    // [10] return 
+    // [6] return 
     rts
 }
   // mode
@@ -448,11 +393,11 @@ mode: {
     // mode::@1
   __b1:
     // if(*B == 0)
-    // [12] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne __b1
-    // [13] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
+    // [9] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
     // mode::@2
     jmp __b1
 }

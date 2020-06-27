@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   call testBytes 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -81,18 +79,21 @@ testSBytes: scope:[testSBytes]  from main::@1
 testSBytes::@return: scope:[testSBytes]  from testSBytes
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -220,6 +221,11 @@ Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) testBytes::idx#13 and assignment [28] (byte) testBytes::idx#13 ← ++ (byte) testBytes::idx#12
 Eliminating unused variable (byte) testSBytes::idx#12 and assignment [53] (byte) testSBytes::idx#12 ← ++ (byte) testSBytes::idx#11
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [4] (byte) testBytes::idx#1 ← ++ (const byte) testBytes::idx#0
 Constant right-side identified [30] (byte) testSBytes::idx#1 ← ++ (const byte) testSBytes::idx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -411,88 +417,70 @@ Simplifying constant integer increment ++8
 Simplifying constant integer increment ++9
 Simplifying constant integer increment ++$a
 Successful SSA optimization Pass2ConstantSimplification
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to testBytes:6 testSBytes:8 
+Calls in [main] to testBytes:1 testSBytes:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call testBytes 
+main: scope:[main]  from
+  [0] phi()
+  [1] call testBytes 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call testSBytes 
+  [2] phi()
+  [3] call testSBytes 
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [8] return 
+  [4] return 
   to:@return
 
 (void()) testSBytes()
 testSBytes: scope:[testSBytes]  from main::@1
-  [9] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c
-  [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6
-  [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6
-  [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708
-  [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6
-  [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6
-  [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2
-  [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1
-  [17] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9
-  [18] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc
-  [19] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5
-  [20] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c
+  [5] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c
+  [6] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6
+  [7] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6
+  [8] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708
+  [9] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6
+  [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6
+  [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2
+  [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1
+  [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9
+  [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc
+  [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5
+  [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c
   to:testSBytes::@return
 testSBytes::@return: scope:[testSBytes]  from testSBytes
-  [21] return 
+  [17] return 
   to:@return
 
 (void()) testBytes()
 testBytes: scope:[testBytes]  from main
-  [22] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c
-  [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6
-  [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6
-  [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708
-  [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6
-  [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6
-  [28] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2
-  [29] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1
-  [30] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c
-  [31] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8
-  [32] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9
-  [33] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5
-  [34] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c
+  [18] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c
+  [19] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6
+  [20] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6
+  [21] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708
+  [22] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6
+  [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6
+  [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2
+  [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1
+  [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c
+  [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8
+  [28] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9
+  [29] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5
+  [30] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c
   to:testBytes::@return
 testBytes::@return: scope:[testBytes]  from testBytes
-  [35] return 
+  [31] return 
   to:@return
 
 
@@ -515,162 +503,146 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call testBytes 
+    // [1] call testBytes 
     jsr testBytes
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call testSBytes 
+    // [3] call testSBytes 
     jsr testSBytes
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // testSBytes
 testSBytes: {
     // Constant values resolvable to signed bytes
     .label SCREEN = $428
-    // [9] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c -- _deref_pbsc1=vbsc2 
+    // [5] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c -- _deref_pbsc1=vbsc2 
     lda #-$c
     sta SCREEN
-    // [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 -- _deref_pbsc1=vbsc2 
+    // [6] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-6-6
     sta SCREEN+1
-    // [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 -- _deref_pbsc1=vbsc2 
+    // [7] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-$12+6
     sta SCREEN+2
-    // [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 -- _deref_pbsc1=vbsc2 
+    // [8] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 -- _deref_pbsc1=vbsc2 
     lda #-$714+$708
     sta SCREEN+3
-    // [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 -- _deref_pbsc1=vbsc2 
+    // [9] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-1-2-3-6
     sta SCREEN+4
-    // [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 -- _deref_pbsc1=vbsc2 
+    // [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-2*6
     sta SCREEN+5
-    // [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 -- _deref_pbsc1=vbsc2 
+    // [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 -- _deref_pbsc1=vbsc2 
     lda #-3<<2
     sta SCREEN+6
-    // [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 -- _deref_pbsc1=vbsc2 
+    // [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 -- _deref_pbsc1=vbsc2 
     lda #-$18>>1
     sta SCREEN+7
-    // [17] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 -- _deref_pbsc1=vbsc2 
+    // [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 -- _deref_pbsc1=vbsc2 
     lda #-4&-9
     sta SCREEN+8
-    // [18] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc -- _deref_pbsc1=vbsc2 
+    // [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc -- _deref_pbsc1=vbsc2 
     lda #-$10|-$fc
     sta SCREEN+9
-    // [19] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 -- _deref_pbsc1=vbsc2 
+    // [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 -- _deref_pbsc1=vbsc2 
     lda #(-2-2)*$f/5
     sta SCREEN+$a
-    // [20] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c -- _deref_pbsc1=vbsc2 
+    // [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c -- _deref_pbsc1=vbsc2 
     lda #$ff&$1000-$c
     sta SCREEN+$b
     jmp __breturn
     // testSBytes::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
 }
   // testBytes
 testBytes: {
     // Constant values resolvable to bytes
     .label SCREEN = $400
-    // [22] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c -- _deref_pbuc1=vbuc2 
+    // [18] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c -- _deref_pbuc1=vbuc2 
     lda #$c
     sta SCREEN
-    // [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 -- _deref_pbuc1=vbuc2 
+    // [19] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 -- _deref_pbuc1=vbuc2 
     lda #6+6
     sta SCREEN+1
-    // [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 -- _deref_pbuc1=vbuc2 
+    // [20] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 -- _deref_pbuc1=vbuc2 
     lda #$12-6
     sta SCREEN+2
-    // [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 -- _deref_pbuc1=vbuc2 
+    // [21] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 -- _deref_pbuc1=vbuc2 
     lda #$714-$708
     sta SCREEN+3
-    // [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 -- _deref_pbuc1=vbuc2 
+    // [22] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 -- _deref_pbuc1=vbuc2 
     lda #1+2+3+6
     sta SCREEN+4
-    // [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 -- _deref_pbuc1=vbuc2 
     lda #2*6
     sta SCREEN+5
-    // [28] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 -- _deref_pbuc1=vbuc2 
+    // [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 -- _deref_pbuc1=vbuc2 
     lda #3<<2
     sta SCREEN+6
-    // [29] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 -- _deref_pbuc1=vbuc2 
+    // [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 -- _deref_pbuc1=vbuc2 
     lda #$18>>1
     sta SCREEN+7
-    // [30] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c -- _deref_pbuc1=vbuc2 
+    // [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c -- _deref_pbuc1=vbuc2 
     lda #$f&$1c
     sta SCREEN+8
-    // [31] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 -- _deref_pbuc1=vbuc2 
+    // [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 -- _deref_pbuc1=vbuc2 
     lda #4|8
     sta SCREEN+9
-    // [32] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 -- _deref_pbuc1=vbuc2 
+    // [28] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 -- _deref_pbuc1=vbuc2 
     lda #5^9
     sta SCREEN+$a
-    // [33] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 -- _deref_pbuc1=vbuc2 
+    // [29] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 -- _deref_pbuc1=vbuc2 
     lda #(2+2)*$f/5
     sta SCREEN+$b
-    // [34] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c -- _deref_pbuc1=vbuc2 
+    // [30] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c -- _deref_pbuc1=vbuc2 
     lda #$ff&$1000+$c
     sta SCREEN+$c
     jmp __breturn
     // testBytes::@return
   __breturn:
-    // [35] return 
+    // [31] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [17] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [19] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c [ ] ( main:2::testSBytes:7 [ ] { }  ) always clobbers reg byte a 
-Statement [22] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [29] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [30] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [31] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [32] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [33] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
-Statement [34] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c [ ] ( main:2::testBytes:5 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c [ ] ( testSBytes:3 [ ] { }  ) always clobbers reg byte a 
+Statement [18] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [19] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [21] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [22] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [29] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
+Statement [30] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c [ ] ( testBytes:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -678,10 +650,10 @@ Uplift Scope [testBytes]
 Uplift Scope [testSBytes] 
 Uplift Scope [] 
 
-Uplifting [main] best 204 combination 
-Uplifting [testBytes] best 204 combination 
-Uplifting [testSBytes] best 204 combination 
-Uplifting [] best 204 combination 
+Uplifting [main] best 192 combination 
+Uplifting [testBytes] best 192 combination 
+Uplifting [testSBytes] best 192 combination 
+Uplifting [] best 192 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -691,164 +663,135 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call testBytes 
+    // [1] call testBytes 
     jsr testBytes
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call testSBytes 
+    // [3] call testSBytes 
     jsr testSBytes
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // testSBytes
 testSBytes: {
     // Constant values resolvable to signed bytes
     .label SCREEN = $428
-    // [9] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c -- _deref_pbsc1=vbsc2 
+    // [5] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c -- _deref_pbsc1=vbsc2 
     lda #-$c
     sta SCREEN
-    // [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 -- _deref_pbsc1=vbsc2 
+    // [6] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-6-6
     sta SCREEN+1
-    // [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 -- _deref_pbsc1=vbsc2 
+    // [7] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-$12+6
     sta SCREEN+2
-    // [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 -- _deref_pbsc1=vbsc2 
+    // [8] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 -- _deref_pbsc1=vbsc2 
     lda #-$714+$708
     sta SCREEN+3
-    // [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 -- _deref_pbsc1=vbsc2 
+    // [9] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-1-2-3-6
     sta SCREEN+4
-    // [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 -- _deref_pbsc1=vbsc2 
+    // [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-2*6
     sta SCREEN+5
-    // [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 -- _deref_pbsc1=vbsc2 
+    // [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 -- _deref_pbsc1=vbsc2 
     lda #-3<<2
     sta SCREEN+6
-    // [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 -- _deref_pbsc1=vbsc2 
+    // [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 -- _deref_pbsc1=vbsc2 
     lda #-$18>>1
     sta SCREEN+7
-    // [17] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 -- _deref_pbsc1=vbsc2 
+    // [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 -- _deref_pbsc1=vbsc2 
     lda #-4&-9
     sta SCREEN+8
-    // [18] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc -- _deref_pbsc1=vbsc2 
+    // [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc -- _deref_pbsc1=vbsc2 
     lda #-$10|-$fc
     sta SCREEN+9
-    // [19] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 -- _deref_pbsc1=vbsc2 
+    // [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 -- _deref_pbsc1=vbsc2 
     lda #(-2-2)*$f/5
     sta SCREEN+$a
-    // [20] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c -- _deref_pbsc1=vbsc2 
+    // [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c -- _deref_pbsc1=vbsc2 
     lda #$ff&$1000-$c
     sta SCREEN+$b
     jmp __breturn
     // testSBytes::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
 }
   // testBytes
 testBytes: {
     // Constant values resolvable to bytes
     .label SCREEN = $400
-    // [22] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c -- _deref_pbuc1=vbuc2 
+    // [18] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c -- _deref_pbuc1=vbuc2 
     lda #$c
     sta SCREEN
-    // [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 -- _deref_pbuc1=vbuc2 
+    // [19] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 -- _deref_pbuc1=vbuc2 
     lda #6+6
     sta SCREEN+1
-    // [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 -- _deref_pbuc1=vbuc2 
+    // [20] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 -- _deref_pbuc1=vbuc2 
     lda #$12-6
     sta SCREEN+2
-    // [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 -- _deref_pbuc1=vbuc2 
+    // [21] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 -- _deref_pbuc1=vbuc2 
     lda #$714-$708
     sta SCREEN+3
-    // [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 -- _deref_pbuc1=vbuc2 
+    // [22] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 -- _deref_pbuc1=vbuc2 
     lda #1+2+3+6
     sta SCREEN+4
-    // [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 -- _deref_pbuc1=vbuc2 
     lda #2*6
     sta SCREEN+5
-    // [28] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 -- _deref_pbuc1=vbuc2 
+    // [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 -- _deref_pbuc1=vbuc2 
     lda #3<<2
     sta SCREEN+6
-    // [29] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 -- _deref_pbuc1=vbuc2 
+    // [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 -- _deref_pbuc1=vbuc2 
     lda #$18>>1
     sta SCREEN+7
-    // [30] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c -- _deref_pbuc1=vbuc2 
+    // [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c -- _deref_pbuc1=vbuc2 
     lda #$f&$1c
     sta SCREEN+8
-    // [31] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 -- _deref_pbuc1=vbuc2 
+    // [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 -- _deref_pbuc1=vbuc2 
     lda #4|8
     sta SCREEN+9
-    // [32] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 -- _deref_pbuc1=vbuc2 
+    // [28] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 -- _deref_pbuc1=vbuc2 
     lda #5^9
     sta SCREEN+$a
-    // [33] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 -- _deref_pbuc1=vbuc2 
+    // [29] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 -- _deref_pbuc1=vbuc2 
     lda #(2+2)*$f/5
     sta SCREEN+$b
-    // [34] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c -- _deref_pbuc1=vbuc2 
+    // [30] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c -- _deref_pbuc1=vbuc2 
     lda #$ff&$1000+$c
     sta SCREEN+$c
     jmp __breturn
     // testBytes::@return
   __breturn:
-    // [35] return 
+    // [31] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -873,26 +816,19 @@ Score: 180
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // testBytes()
-    // [5] call testBytes 
+    // [1] call testBytes 
     jsr testBytes
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // testSBytes()
-    // [7] call testSBytes 
+    // [3] call testSBytes 
     jsr testSBytes
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // testSBytes
@@ -900,56 +836,56 @@ testSBytes: {
     // Constant values resolvable to signed bytes
     .label SCREEN = $428
     // SCREEN[idx++] = -12
-    // [9] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c -- _deref_pbsc1=vbsc2 
+    // [5] *((const nomodify signed byte*) testSBytes::SCREEN) ← (signed byte) -$c -- _deref_pbsc1=vbsc2 
     lda #-$c
     sta SCREEN
     // SCREEN[idx++] = -6-6
-    // [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 -- _deref_pbsc1=vbsc2 
+    // [6] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 1) ← (signed byte)(number) -6-(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-6-6
     sta SCREEN+1
     // SCREEN[idx++] = -18+6
-    // [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 -- _deref_pbsc1=vbsc2 
+    // [7] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 2) ← (signed byte)(number) -$12+(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-$12+6
     sta SCREEN+2
     // SCREEN[idx++] = -1812+1800
-    // [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 -- _deref_pbsc1=vbsc2 
+    // [8] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 3) ← (signed byte)(number) -$714+(number) $708 -- _deref_pbsc1=vbsc2 
     lda #-$714+$708
     sta SCREEN+3
     // SCREEN[idx++] = -1-2-3-6
-    // [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 -- _deref_pbsc1=vbsc2 
+    // [9] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 4) ← (signed byte)(number) -1-(number) 2-(number) 3-(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-1-2-3-6
     sta SCREEN+4
     // SCREEN[idx++] = -2*6
-    // [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 -- _deref_pbsc1=vbsc2 
+    // [10] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 5) ← (signed byte)(number) -2*(number) 6 -- _deref_pbsc1=vbsc2 
     lda #-2*6
     sta SCREEN+5
     // SCREEN[idx++] = -3<<2
-    // [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 -- _deref_pbsc1=vbsc2 
+    // [11] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 6) ← (signed byte)(number) -3<<(number) 2 -- _deref_pbsc1=vbsc2 
     lda #-3<<2
     sta SCREEN+6
     // SCREEN[idx++] = -24>>1
-    // [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 -- _deref_pbsc1=vbsc2 
+    // [12] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 7) ← (signed byte)(number) -$18>>(number) 1 -- _deref_pbsc1=vbsc2 
     lda #-$18>>1
     sta SCREEN+7
     // SCREEN[idx++] = -4&-9
-    // [17] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 -- _deref_pbsc1=vbsc2 
+    // [13] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 8) ← (signed byte)(number) -4&(number) -9 -- _deref_pbsc1=vbsc2 
     lda #-4&-9
     sta SCREEN+8
     // SCREEN[idx++] = -0x10|-0xfc
-    // [18] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc -- _deref_pbsc1=vbsc2 
+    // [14] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) 9) ← (signed byte)(number) -$10|(number) -$fc -- _deref_pbsc1=vbsc2 
     lda #-$10|-$fc
     sta SCREEN+9
     // SCREEN[idx++] = (-2-2)*(15/5)
-    // [19] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 -- _deref_pbsc1=vbsc2 
+    // [15] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $a) ← (signed byte)(number) -2-(number) 2*(number) $f/(number) 5 -- _deref_pbsc1=vbsc2 
     lda #(-2-2)*$f/5
     sta SCREEN+$a
     // SCREEN[idx++] = (signed byte)(4096-12)
-    // [20] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c -- _deref_pbsc1=vbsc2 
+    // [16] *((const nomodify signed byte*) testSBytes::SCREEN+(byte) $b) ← (signed byte)(number) $1000-(number) $c -- _deref_pbsc1=vbsc2 
     lda #$ff&$1000-$c
     sta SCREEN+$b
     // testSBytes::@return
     // }
-    // [21] return 
+    // [17] return 
     rts
 }
   // testBytes
@@ -957,60 +893,60 @@ testBytes: {
     // Constant values resolvable to bytes
     .label SCREEN = $400
     // SCREEN[idx++] = 12
-    // [22] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c -- _deref_pbuc1=vbuc2 
+    // [18] *((const nomodify byte*) testBytes::SCREEN) ← (byte) $c -- _deref_pbuc1=vbuc2 
     lda #$c
     sta SCREEN
     // SCREEN[idx++] = 6+6
-    // [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 -- _deref_pbuc1=vbuc2 
+    // [19] *((const nomodify byte*) testBytes::SCREEN+(byte) 1) ← (byte)(number) 6+(number) 6 -- _deref_pbuc1=vbuc2 
     lda #6+6
     sta SCREEN+1
     // SCREEN[idx++] = 18-6
-    // [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 -- _deref_pbuc1=vbuc2 
+    // [20] *((const nomodify byte*) testBytes::SCREEN+(byte) 2) ← (byte)(number) $12-(number) 6 -- _deref_pbuc1=vbuc2 
     lda #$12-6
     sta SCREEN+2
     // SCREEN[idx++] = 1812-1800
-    // [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 -- _deref_pbuc1=vbuc2 
+    // [21] *((const nomodify byte*) testBytes::SCREEN+(byte) 3) ← (byte)(number) $714-(number) $708 -- _deref_pbuc1=vbuc2 
     lda #$714-$708
     sta SCREEN+3
     // SCREEN[idx++] = 1+2+3+6
-    // [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 -- _deref_pbuc1=vbuc2 
+    // [22] *((const nomodify byte*) testBytes::SCREEN+(byte) 4) ← (byte)(number) 1+(number) 2+(number) 3+(number) 6 -- _deref_pbuc1=vbuc2 
     lda #1+2+3+6
     sta SCREEN+4
     // SCREEN[idx++] = 2*6
-    // [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) testBytes::SCREEN+(byte) 5) ← (byte)(number) 2*(number) 6 -- _deref_pbuc1=vbuc2 
     lda #2*6
     sta SCREEN+5
     // SCREEN[idx++] = 3<<2
-    // [28] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 -- _deref_pbuc1=vbuc2 
+    // [24] *((const nomodify byte*) testBytes::SCREEN+(byte) 6) ← (byte)(number) 3<<(number) 2 -- _deref_pbuc1=vbuc2 
     lda #3<<2
     sta SCREEN+6
     // SCREEN[idx++] = 24>>1
-    // [29] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 -- _deref_pbuc1=vbuc2 
+    // [25] *((const nomodify byte*) testBytes::SCREEN+(byte) 7) ← (byte)(number) $18>>(number) 1 -- _deref_pbuc1=vbuc2 
     lda #$18>>1
     sta SCREEN+7
     // SCREEN[idx++] = 15&28
-    // [30] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c -- _deref_pbuc1=vbuc2 
+    // [26] *((const nomodify byte*) testBytes::SCREEN+(byte) 8) ← (byte)(number) $f&(number) $1c -- _deref_pbuc1=vbuc2 
     lda #$f&$1c
     sta SCREEN+8
     // SCREEN[idx++] = 4|8
-    // [31] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 -- _deref_pbuc1=vbuc2 
+    // [27] *((const nomodify byte*) testBytes::SCREEN+(byte) 9) ← (byte)(number) 4|(number) 8 -- _deref_pbuc1=vbuc2 
     lda #4|8
     sta SCREEN+9
     // SCREEN[idx++] = 5^9
-    // [32] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 -- _deref_pbuc1=vbuc2 
+    // [28] *((const nomodify byte*) testBytes::SCREEN+(byte) $a) ← (byte)(number) 5^(number) 9 -- _deref_pbuc1=vbuc2 
     lda #5^9
     sta SCREEN+$a
     // SCREEN[idx++] = (2+2)*(15/5)
-    // [33] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 -- _deref_pbuc1=vbuc2 
+    // [29] *((const nomodify byte*) testBytes::SCREEN+(byte) $b) ← (byte)(number) 2+(number) 2*(number) $f/(number) 5 -- _deref_pbuc1=vbuc2 
     lda #(2+2)*$f/5
     sta SCREEN+$b
     // SCREEN[idx++] = (byte)(4096+12)
-    // [34] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c -- _deref_pbuc1=vbuc2 
+    // [30] *((const nomodify byte*) testBytes::SCREEN+(byte) $c) ← (byte)(number) $1000+(number) $c -- _deref_pbuc1=vbuc2 
     lda #$ff&$1000+$c
     sta SCREEN+$c
     // testBytes::@return
     // }
-    // [35] return 
+    // [31] return 
     rts
 }
   // File Data

@@ -1,11 +1,9 @@
 Setting inferred volatile on symbol affected by address-of (word*) main::q ← &(word) main::p
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
   (byte~) main::$0 ← < *((const word*) main::q)
   *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
@@ -15,18 +13,21 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -47,51 +48,38 @@ Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
-  [5] (byte~) main::$0 ← < *((const word*) main::q)
-  [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0
-  [7] (byte~) main::$1 ← > *((const word*) main::q)
-  [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
+main: scope:[main]  from
+  [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
+  [1] (byte~) main::$0 ← < *((const word*) main::q)
+  [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0
+  [3] (byte~) main::$1 ← > *((const word*) main::q)
+  [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
-  [9] return 
+  [5] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$0 22.0
-(byte~) main::$1 22.0
-(volatile word) main::p loadstore 110.0
+(byte~) main::$0 4.0
+(byte~) main::$1 4.0
+(volatile word) main::p loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::p to live range equivalence class [ main::p ]
@@ -114,20 +102,6 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -135,43 +109,43 @@ main: {
     .label p = 2
     .label __0 = 4
     .label __1 = 5
-    // [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
     sta.z p+1
-    // [5] (byte~) main::$0 ← < *((const word*) main::q) -- vbuz1=_lo__deref_pwuc1 
+    // [1] (byte~) main::$0 ← < *((const word*) main::q) -- vbuz1=_lo__deref_pwuc1 
     lda.z q
     sta.z __0
-    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
+    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
     sta SCREEN
-    // [7] (byte~) main::$1 ← > *((const word*) main::q) -- vbuz1=_hi__deref_pwuc1 
+    // [3] (byte~) main::$1 ← > *((const word*) main::q) -- vbuz1=_hi__deref_pwuc1 
     lda.z q+1
     sta.z __1
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 110: zp[2]:2 [ main::p ] 22: zp[1]:4 [ main::$0 ] 22: zp[1]:5 [ main::$1 ] 
+Uplift Scope [main] 20: zp[2]:2 [ main::p ] 4: zp[1]:4 [ main::$0 ] 4: zp[1]:5 [ main::$1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 45 combination zp[2]:2 [ main::p ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
-Uplifting [] best 45 combination 
+Uplifting [main] best 33 combination zp[2]:2 [ main::p ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] 
+Uplifting [] best 33 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -181,72 +155,45 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
     sta.z p+1
-    // [5] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
+    // [1] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
     lda.z q
-    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [7] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
+    // [3] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
     lda.z q+1
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
-(byte~) main::$0 reg byte a 22.0
-(byte~) main::$1 reg byte a 22.0
+(byte~) main::$0 reg byte a 4.0
+(byte~) main::$1 reg byte a 4.0
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*) 1024
-(volatile word) main::p loadstore zp[2]:2 110.0
+(volatile word) main::p loadstore zp[2]:2 20.0
 (const word*) main::q = &(volatile word) main::p
 
 zp[2]:2 [ main::p ]
@@ -264,38 +211,32 @@ Score: 30
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
     // p = { 2, 3 }
-    // [4] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
     sta.z p+1
     // <*q
-    // [5] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
+    // [1] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
     lda.z q
     // SCREEN[0] = <*q
-    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // >*q
-    // [7] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
+    // [3] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
     lda.z q+1
     // SCREEN[1] = >*q
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // main::@return
     // }
-    // [9] return 
+    // [5] return 
     rts
 }
   // File Data

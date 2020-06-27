@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte) main::i#0 ← (byte) $64
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -35,19 +34,28 @@ nest::@1: scope:[nest]  from nest nest::@1
 nest::@return: scope:[nest]  from nest::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (bool~) main::$1
 (label) main::@1
@@ -85,6 +93,13 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte) main::i#0 = $64
 Constant (const byte) nest::j#0 = $64
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) nest::j#0
 Constant inlined main::i#0 = (byte) $64
@@ -92,80 +107,62 @@ Constant inlined nest::j#0 = (byte) $64
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Added new block during phi lifting nest::@2(between nest::@1 and nest::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of nest
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to nest:7 
+Calls in [main] to nest:2 
 
 Created 2 initial phi equivalence classes
-Coalesced [11] main::i#4 ← main::i#1
-Coalesced [18] nest::j#3 ← nest::j#1
+Coalesced [6] main::i#4 ← main::i#1
+Coalesced [13] nest::j#3 ← nest::j#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) nest::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of nest
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte) $64 main::@2/(byte) main::i#1 )
-  [6] call nest 
+  [1] (byte) main::i#2 ← phi( main/(byte) $64 main::@2/(byte) main::i#1 )
+  [2] call nest 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte) main::i#1 ← -- (byte) main::i#2
-  [8] if((byte) main::i#1>(byte) 0) goto main::@1
+  [3] (byte) main::i#1 ← -- (byte) main::i#2
+  [4] if((byte) main::i#1>(byte) 0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [9] return 
+  [5] return 
   to:@return
 
 (void()) nest()
 nest: scope:[nest]  from main::@1
-  [10] phi()
+  [6] phi()
   to:nest::@1
 nest::@1: scope:[nest]  from nest nest::@1
-  [11] (byte) nest::j#2 ← phi( nest/(byte) $64 nest::@1/(byte) nest::j#1 )
-  [12] *((const byte*) SCREEN) ← (byte) nest::j#2
-  [13] (byte) nest::j#1 ← -- (byte) nest::j#2
-  [14] if((byte) nest::j#1>(byte) 0) goto nest::@1
+  [7] (byte) nest::j#2 ← phi( nest/(byte) $64 nest::@1/(byte) nest::j#1 )
+  [8] *((const byte*) SCREEN) ← (byte) nest::j#2
+  [9] (byte) nest::j#1 ← -- (byte) nest::j#2
+  [10] if((byte) nest::j#1>(byte) 0) goto nest::@1
   to:nest::@return
 nest::@return: scope:[nest]  from nest::@1
-  [15] return 
+  [11] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::i
-(byte) main::i#1 151.5
-(byte) main::i#2 101.0
+(byte) main::i#1 16.5
+(byte) main::i#2 11.0
 (void()) nest()
 (byte) nest::j
-(byte) nest::j#1 150001.5
-(byte) nest::j#2 150001.5
+(byte) nest::j#1 15001.5
+(byte) nest::j#2 15001.5
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -185,82 +182,66 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #$64
     sta.z i
     jmp __b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] call nest 
-    // [10] phi from main::@1 to nest [phi:main::@1->nest]
+    // [2] call nest 
+    // [6] phi from main::@1 to nest [phi:main::@1->nest]
   nest_from___b1:
     jsr nest
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuz1=_dec_vbuz1 
+    // [3] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuz1=_dec_vbuz1 
     dec.z i
-    // [8] if((byte) main::i#1>(byte) 0) goto main::@1 -- vbuz1_gt_0_then_la1 
+    // [4] if((byte) main::i#1>(byte) 0) goto main::@1 -- vbuz1_gt_0_then_la1 
     lda.z i
     bne __b1_from___b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // nest
 nest: {
     .label j = 3
-    // [11] phi from nest to nest::@1 [phi:nest->nest::@1]
+    // [7] phi from nest to nest::@1 [phi:nest->nest::@1]
   __b1_from_nest:
-    // [11] phi (byte) nest::j#2 = (byte) $64 [phi:nest->nest::@1#0] -- vbuz1=vbuc1 
+    // [7] phi (byte) nest::j#2 = (byte) $64 [phi:nest->nest::@1#0] -- vbuz1=vbuc1 
     lda #$64
     sta.z j
     jmp __b1
-    // [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
+    // [7] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
   __b1_from___b1:
-    // [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
+    // [7] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
     jmp __b1
     // nest::@1
   __b1:
-    // [12] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuz1 
+    // [8] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuz1 
     lda.z j
     sta SCREEN
-    // [13] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuz1=_dec_vbuz1 
+    // [9] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuz1=_dec_vbuz1 
     dec.z j
-    // [14] if((byte) nest::j#1>(byte) 0) goto nest::@1 -- vbuz1_gt_0_then_la1 
+    // [10] if((byte) nest::j#1>(byte) 0) goto nest::@1 -- vbuz1_gt_0_then_la1 
     lda.z j
     bne __b1_from___b1
     jmp __breturn
     // nest::@return
   __breturn:
-    // [15] return 
+    // [11] return 
     rts
 }
   // File Data
@@ -270,13 +251,13 @@ Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg
 Potential registers zp[1]:3 [ nest::j#2 nest::j#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [nest] 300,003: zp[1]:3 [ nest::j#2 nest::j#1 ] 
-Uplift Scope [main] 252.5: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [nest] 30,003: zp[1]:3 [ nest::j#2 nest::j#1 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [nest] best 2428 combination reg byte x [ nest::j#2 nest::j#1 ] 
-Uplifting [main] best 2358 combination reg byte y [ main::i#2 main::i#1 ] 
-Uplifting [] best 2358 combination 
+Uplifting [nest] best 2416 combination reg byte x [ nest::j#2 nest::j#1 ] 
+Uplifting [main] best 2346 combination reg byte y [ main::i#2 main::i#1 ] 
+Uplifting [] best 2346 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -286,84 +267,66 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #$64
     jmp __b1
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] call nest 
-    // [10] phi from main::@1 to nest [phi:main::@1->nest]
+    // [2] call nest 
+    // [6] phi from main::@1 to nest [phi:main::@1->nest]
   nest_from___b1:
     jsr nest
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuyy=_dec_vbuyy 
+    // [3] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuyy=_dec_vbuyy 
     dey
-    // [8] if((byte) main::i#1>(byte) 0) goto main::@1 -- vbuyy_gt_0_then_la1 
+    // [4] if((byte) main::i#1>(byte) 0) goto main::@1 -- vbuyy_gt_0_then_la1 
     cpy #0
     bne __b1_from___b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // nest
 nest: {
-    // [11] phi from nest to nest::@1 [phi:nest->nest::@1]
+    // [7] phi from nest to nest::@1 [phi:nest->nest::@1]
   __b1_from_nest:
-    // [11] phi (byte) nest::j#2 = (byte) $64 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
+    // [7] phi (byte) nest::j#2 = (byte) $64 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
     ldx #$64
     jmp __b1
-    // [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
+    // [7] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
   __b1_from___b1:
-    // [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
+    // [7] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
     jmp __b1
     // nest::@1
   __b1:
-    // [12] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
+    // [8] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN
-    // [13] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuxx=_dec_vbuxx 
+    // [9] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuxx=_dec_vbuxx 
     dex
-    // [14] if((byte) nest::j#1>(byte) 0) goto nest::@1 -- vbuxx_gt_0_then_la1 
+    // [10] if((byte) nest::j#1>(byte) 0) goto nest::@1 -- vbuxx_gt_0_then_la1 
     cpx #0
     bne __b1_from___b1
     jmp __breturn
     // nest::@return
   __breturn:
-    // [15] return 
+    // [11] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
@@ -372,46 +335,35 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b2 with __b1
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b2:
 Removing instruction nest_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b2:
 Removing instruction __breturn:
 Removing instruction __b1_from_nest:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte y 151.5
-(byte) main::i#2 reg byte y 101.0
+(byte) main::i#1 reg byte y 16.5
+(byte) main::i#2 reg byte y 11.0
 (void()) nest()
 (label) nest::@1
 (label) nest::@return
 (byte) nest::j
-(byte) nest::j#1 reg byte x 150001.5
-(byte) nest::j#2 reg byte x 150001.5
+(byte) nest::j#1 reg byte x 15001.5
+(byte) nest::j#2 reg byte x 15001.5
 
 reg byte y [ main::i#2 main::i#1 ]
 reg byte x [ nest::j#2 nest::j#1 ]
@@ -427,59 +379,52 @@ Score: 1353
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) $64 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #$64
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // nest()
-    // [6] call nest 
-    // [10] phi from main::@1 to nest [phi:main::@1->nest]
+    // [2] call nest 
+    // [6] phi from main::@1 to nest [phi:main::@1->nest]
     jsr nest
     // main::@2
     // while (--i>0)
-    // [7] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuyy=_dec_vbuyy 
+    // [3] (byte) main::i#1 ← -- (byte) main::i#2 -- vbuyy=_dec_vbuyy 
     dey
-    // [8] if((byte) main::i#1>(byte) 0) goto main::@1 -- vbuyy_gt_0_then_la1 
+    // [4] if((byte) main::i#1>(byte) 0) goto main::@1 -- vbuyy_gt_0_then_la1 
     cpy #0
     bne __b1
     // main::@return
     // }
-    // [9] return 
+    // [5] return 
     rts
 }
   // nest
 nest: {
-    // [11] phi from nest to nest::@1 [phi:nest->nest::@1]
-    // [11] phi (byte) nest::j#2 = (byte) $64 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
+    // [7] phi from nest to nest::@1 [phi:nest->nest::@1]
+    // [7] phi (byte) nest::j#2 = (byte) $64 [phi:nest->nest::@1#0] -- vbuxx=vbuc1 
     ldx #$64
-    // [11] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
-    // [11] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
+    // [7] phi from nest::@1 to nest::@1 [phi:nest::@1->nest::@1]
+    // [7] phi (byte) nest::j#2 = (byte) nest::j#1 [phi:nest::@1->nest::@1#0] -- register_copy 
     // nest::@1
   __b1:
     // *SCREEN = j
-    // [12] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
+    // [8] *((const byte*) SCREEN) ← (byte) nest::j#2 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // while (--j>0)
-    // [13] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuxx=_dec_vbuxx 
+    // [9] (byte) nest::j#1 ← -- (byte) nest::j#2 -- vbuxx=_dec_vbuxx 
     dex
-    // [14] if((byte) nest::j#1>(byte) 0) goto nest::@1 -- vbuxx_gt_0_then_la1 
+    // [10] if((byte) nest::j#1>(byte) 0) goto nest::@1 -- vbuxx_gt_0_then_la1 
     cpx #0
     bne __b1
     // nest::@return
     // }
-    // [15] return 
+    // [11] return 
     rts
 }
   // File Data

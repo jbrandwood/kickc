@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   call bool_const_if 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -81,19 +79,22 @@ bool_const_inline::@2: scope:[bool_const_inline]  from bool_const_inline
 bool_const_inline::@return: scope:[bool_const_inline]  from bool_const_inline::@1 bool_const_inline::@2
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) bool_const_if()
 (label) bool_const_if::@1
 (label) bool_const_if::@2
@@ -254,13 +255,14 @@ Removing unused block bool_const_inline::@4
 Removing unused block bool_const_vars::@6
 Removing unused block bool_const_inline::@5
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -272,20 +274,15 @@ Adding NOP phi() at start of bool_const_vars::@4
 Adding NOP phi() at start of bool_const_vars::@3
 Adding NOP phi() at start of bool_const_if
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to bool_const_if:6 bool_const_vars:8 bool_const_inline:10 
+Calls in [main] to bool_const_if:1 bool_const_vars:3 bool_const_inline:5 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) bool_const_vars::@5
 Culled Empty Block (label) bool_const_vars::@4
 Culled Empty Block (label) bool_const_vars::@3
 Renumbering block bool_const_vars::@2 to bool_const_vars::@1
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -294,64 +291,55 @@ Adding NOP phi() at start of bool_const_vars
 Adding NOP phi() at start of bool_const_if
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call bool_const_if 
+main: scope:[main]  from
+  [0] phi()
+  [1] call bool_const_if 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call bool_const_vars 
+  [2] phi()
+  [3] call bool_const_vars 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] phi()
-  [9] call bool_const_inline 
+  [4] phi()
+  [5] call bool_const_inline 
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [10] return 
+  [6] return 
   to:@return
 
 (void()) bool_const_inline()
 bool_const_inline: scope:[bool_const_inline]  from main::@2
-  [11] phi()
+  [7] phi()
   to:bool_const_inline::@1
 bool_const_inline::@1: scope:[bool_const_inline]  from bool_const_inline
-  [12] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't'
+  [8] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't'
   to:bool_const_inline::@return
 bool_const_inline::@return: scope:[bool_const_inline]  from bool_const_inline::@1
-  [13] return 
+  [9] return 
   to:@return
 
 (void()) bool_const_vars()
 bool_const_vars: scope:[bool_const_vars]  from main::@1
-  [14] phi()
+  [10] phi()
   to:bool_const_vars::@1
 bool_const_vars::@1: scope:[bool_const_vars]  from bool_const_vars
-  [15] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f'
+  [11] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f'
   to:bool_const_vars::@return
 bool_const_vars::@return: scope:[bool_const_vars]  from bool_const_vars::@1
-  [16] return 
+  [12] return 
   to:@return
 
 (void()) bool_const_if()
 bool_const_if: scope:[bool_const_if]  from main
-  [17] phi()
+  [13] phi()
   to:bool_const_if::@1
 bool_const_if::@1: scope:[bool_const_if]  from bool_const_if
-  [18] *((const nomodify byte*) SCREEN) ← (byte) 't'
+  [14] *((const nomodify byte*) SCREEN) ← (byte) 't'
   to:bool_const_if::@return
 bool_const_if::@return: scope:[bool_const_if]  from bool_const_if::@1
-  [19] return 
+  [15] return 
   to:@return
 
 
@@ -377,50 +365,34 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call bool_const_if 
-    // [17] phi from main to bool_const_if [phi:main->bool_const_if]
+    // [1] call bool_const_if 
+    // [13] phi from main to bool_const_if [phi:main->bool_const_if]
   bool_const_if_from_main:
     jsr bool_const_if
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call bool_const_vars 
-    // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    // [3] call bool_const_vars 
+    // [10] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
   bool_const_vars_from___b1:
     jsr bool_const_vars
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [9] call bool_const_inline 
-    // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
+    // [5] call bool_const_inline 
+    // [7] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
   bool_const_inline_from___b2:
     jsr bool_const_inline
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
 }
   // bool_const_inline
@@ -429,13 +401,13 @@ bool_const_inline: {
     jmp __b1
     // bool_const_inline::@1
   __b1:
-    // [12] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN+2
     jmp __breturn
     // bool_const_inline::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // bool_const_vars
@@ -444,13 +416,13 @@ bool_const_vars: {
     jmp __b1
     // bool_const_vars::@1
   __b1:
-    // [15] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
+    // [11] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
     lda #'f'
     sta SCREEN+1
     jmp __breturn
     // bool_const_vars::@return
   __breturn:
-    // [16] return 
+    // [12] return 
     rts
 }
   // bool_const_if
@@ -459,21 +431,21 @@ bool_const_if: {
     jmp __b1
     // bool_const_if::@1
   __b1:
-    // [18] *((const nomodify byte*) SCREEN) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [14] *((const nomodify byte*) SCREEN) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN
     jmp __breturn
     // bool_const_if::@return
   __breturn:
-    // [19] return 
+    // [15] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' [ ] ( main:2::bool_const_inline:9 [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' [ ] ( main:2::bool_const_vars:7 [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((const nomodify byte*) SCREEN) ← (byte) 't' [ ] ( main:2::bool_const_if:5 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' [ ] ( bool_const_inline:5 [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' [ ] ( bool_const_vars:3 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify byte*) SCREEN) ← (byte) 't' [ ] ( bool_const_if:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -482,11 +454,11 @@ Uplift Scope [bool_const_vars]
 Uplift Scope [bool_const_inline] 
 Uplift Scope [] 
 
-Uplifting [main] best 180 combination 
-Uplifting [bool_const_if] best 180 combination 
-Uplifting [bool_const_vars] best 180 combination 
-Uplifting [bool_const_inline] best 180 combination 
-Uplifting [] best 180 combination 
+Uplifting [main] best 168 combination 
+Uplifting [bool_const_if] best 168 combination 
+Uplifting [bool_const_vars] best 168 combination 
+Uplifting [bool_const_inline] best 168 combination 
+Uplifting [] best 168 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -497,50 +469,34 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call bool_const_if 
-    // [17] phi from main to bool_const_if [phi:main->bool_const_if]
+    // [1] call bool_const_if 
+    // [13] phi from main to bool_const_if [phi:main->bool_const_if]
   bool_const_if_from_main:
     jsr bool_const_if
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call bool_const_vars 
-    // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    // [3] call bool_const_vars 
+    // [10] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
   bool_const_vars_from___b1:
     jsr bool_const_vars
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [9] call bool_const_inline 
-    // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
+    // [5] call bool_const_inline 
+    // [7] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
   bool_const_inline_from___b2:
     jsr bool_const_inline
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
 }
   // bool_const_inline
@@ -549,13 +505,13 @@ bool_const_inline: {
     jmp __b1
     // bool_const_inline::@1
   __b1:
-    // [12] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN+2
     jmp __breturn
     // bool_const_inline::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // bool_const_vars
@@ -564,13 +520,13 @@ bool_const_vars: {
     jmp __b1
     // bool_const_vars::@1
   __b1:
-    // [15] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
+    // [11] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
     lda #'f'
     sta SCREEN+1
     jmp __breturn
     // bool_const_vars::@return
   __breturn:
-    // [16] return 
+    // [12] return 
     rts
 }
   // bool_const_if
@@ -579,20 +535,18 @@ bool_const_if: {
     jmp __b1
     // bool_const_if::@1
   __b1:
-    // [18] *((const nomodify byte*) SCREEN) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [14] *((const nomodify byte*) SCREEN) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN
     jmp __breturn
     // bool_const_if::@return
   __breturn:
-    // [19] return 
+    // [15] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
@@ -603,17 +557,11 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction bool_const_vars_from___b1:
 Removing instruction __b2_from___b1:
 Removing instruction bool_const_inline_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction bool_const_if_from_main:
 Removing instruction __b1:
 Removing instruction __b2:
@@ -625,13 +573,8 @@ Removing instruction __breturn:
 Removing instruction __b1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*) 1024
 (void()) bool_const_if()
 (label) bool_const_if::@1
@@ -663,34 +606,27 @@ Score: 60
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // bool_const_if()
-    // [5] call bool_const_if 
-    // [17] phi from main to bool_const_if [phi:main->bool_const_if]
+    // [1] call bool_const_if 
+    // [13] phi from main to bool_const_if [phi:main->bool_const_if]
     jsr bool_const_if
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // bool_const_vars()
-    // [7] call bool_const_vars 
-    // [14] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
+    // [3] call bool_const_vars 
+    // [10] phi from main::@1 to bool_const_vars [phi:main::@1->bool_const_vars]
     jsr bool_const_vars
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // bool_const_inline()
-    // [9] call bool_const_inline 
-    // [11] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
+    // [5] call bool_const_inline 
+    // [7] phi from main::@2 to bool_const_inline [phi:main::@2->bool_const_inline]
     jsr bool_const_inline
     // main::@return
     // }
-    // [10] return 
+    // [6] return 
     rts
 }
   // bool_const_inline
@@ -698,12 +634,12 @@ main: {
 bool_const_inline: {
     // bool_const_inline::@1
     // SCREEN[2] = 't'
-    // [12] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN+2
     // bool_const_inline::@return
     // }
-    // [13] return 
+    // [9] return 
     rts
 }
   // bool_const_vars
@@ -711,12 +647,12 @@ bool_const_inline: {
 bool_const_vars: {
     // bool_const_vars::@1
     // SCREEN[1] = 'f'
-    // [15] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
+    // [11] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'f' -- _deref_pbuc1=vbuc2 
     lda #'f'
     sta SCREEN+1
     // bool_const_vars::@return
     // }
-    // [16] return 
+    // [12] return 
     rts
 }
   // bool_const_if
@@ -724,12 +660,12 @@ bool_const_vars: {
 bool_const_if: {
     // bool_const_if::@1
     // SCREEN[0] = 't'
-    // [18] *((const nomodify byte*) SCREEN) ← (byte) 't' -- _deref_pbuc1=vbuc2 
+    // [14] *((const nomodify byte*) SCREEN) ← (byte) 't' -- _deref_pbuc1=vbuc2 
     lda #'t'
     sta SCREEN
     // bool_const_if::@return
     // }
-    // [19] return 
+    // [15] return 
     rts
 }
   // File Data

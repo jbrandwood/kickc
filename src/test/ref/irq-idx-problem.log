@@ -1,12 +1,11 @@
 Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN)(void()) table_driven_irq()
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   asm { sei  }
   *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
@@ -19,9 +18,6 @@ main: scope:[main]  from @2
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
-  (volatile byte) irq_idx ← (byte) 0
-  to:@2
 
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
@@ -68,19 +64,23 @@ table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@4 t
 table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@2 table_driven_irq::@3
   if(true) goto table_driven_irq::@1
   to:table_driven_irq::@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte) irq_idx ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const byte*) IRQ_CHANGE_IDX[]  = { (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT }
@@ -180,6 +180,11 @@ SYMBOL TABLE SSA
 (const nomodify byte*) VIC_BASE = (byte*)(number) $d000
 (const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
 (const nomodify byte) VIC_SIZE = (byte) $30
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (volatile byte) irq_idx loadstore
 (void()) main()
 (label) main::@return
@@ -245,18 +250,18 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in (unumber~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (word) $3f8
 Inferred type updated to word in (unumber~) table_driven_irq::$5 ← (word~) table_driven_irq::$4 - (const nomodify byte) VIC_SIZE
-Inversing boolean not [28] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 >= *((const nomodify byte*) RASTER) from [27] (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const nomodify byte*) RASTER)
+Inversing boolean not [27] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 >= *((const nomodify byte*) RASTER) from [26] (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const nomodify byte*) RASTER)
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias table_driven_irq::val#0 = table_driven_irq::val#1 table_driven_irq::val#4 table_driven_irq::val#2 table_driven_irq::val#3 
 Alias table_driven_irq::idx#0 = table_driven_irq::idx#1 table_driven_irq::idx#2 table_driven_irq::idx#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) table_driven_irq::$0 [14] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2
-Simple Condition (bool~) table_driven_irq::$1 [17] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
-Simple Condition (bool~) table_driven_irq::$3 [24] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return
+Simple Condition (bool~) table_driven_irq::$0 [13] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2
+Simple Condition (bool~) table_driven_irq::$1 [16] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
+Simple Condition (bool~) table_driven_irq::$3 [23] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-if() condition always true - replacing block destination [27] if(true) goto table_driven_irq::@1
+if() condition always true - replacing block destination [26] if(true) goto table_driven_irq::@1
 Successful SSA optimization Pass2ConstantIfs
-De-inlining pointer[w] to *(pointer+w)   [20] *((const nomodify byte*) SCREEN + (word~) table_driven_irq::$5) ← (byte) table_driven_irq::val#0
+De-inlining pointer[w] to *(pointer+w)   [19] *((const nomodify byte*) SCREEN + (word~) table_driven_irq::$5) ← (byte) table_driven_irq::val#0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -266,47 +271,48 @@ Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias table_driven_irq::idx#0 = table_driven_irq::$5 
 Successful SSA optimization Pass2AliasElimination
-Converting *(pointer+n) to pointer[n] [17] *((byte*~) table_driven_irq::$6) ← (byte) table_driven_irq::val#0  -- *(SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0)
+Converting *(pointer+n) to pointer[n] [16] *((byte*~) table_driven_irq::$6) ← (byte) table_driven_irq::val#0  -- *(SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0)
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (byte*~) table_driven_irq::$6 and assignment [16] (byte*~) table_driven_irq::$6 ← (const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0
+Eliminating unused variable (byte*~) table_driven_irq::$6 and assignment [15] (byte*~) table_driven_irq::$6 ← (const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0
 Successful SSA optimization PassNEliminateUnusedVars
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of table_driven_irq
 Adding NOP phi() at start of table_driven_irq::@4
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [_start] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) table_driven_irq::@4
 Renumbering block table_driven_irq::@5 to table_driven_irq::@4
 Renumbering block table_driven_irq::@6 to table_driven_irq::@5
 Renumbering block table_driven_irq::@7 to table_driven_irq::@6
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of table_driven_irq
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (volatile byte) irq_idx ← (byte) 0
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [2] phi()
   [3] call main 
-  to:@end
-@end: scope:[]  from @2
-  [4] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   asm { sei  }
   [6] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   [7] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
@@ -437,6 +443,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) _start()
 (volatile byte) irq_idx loadstore 6.0
 (void()) main()
 interrupt(KERNEL_MIN)(void()) table_driven_irq()
@@ -466,7 +473,7 @@ Target platform is c64basic / MOS6502X
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -489,26 +496,27 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z irq_idx
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z irq_idx
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     // asm { sei  }
@@ -661,15 +669,17 @@ Uplift Scope [MOS6526_CIA]
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [table_driven_irq] best 762 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
-Uplifting [] best 762 combination zp[1]:2 [ irq_idx ] 
-Uplifting [MOS6526_CIA] best 762 combination 
-Uplifting [MOS6569_VICII] best 762 combination 
-Uplifting [MOS6581_SID] best 762 combination 
-Uplifting [main] best 762 combination 
+Uplifting [table_driven_irq] best 768 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
+Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
+Uplifting [MOS6526_CIA] best 768 combination 
+Uplifting [MOS6569_VICII] best 768 combination 
+Uplifting [MOS6581_SID] best 768 combination 
+Uplifting [main] best 768 combination 
+Uplifting [_start] best 768 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_idx ]
-Uplifting [] best 762 combination zp[1]:2 [ irq_idx ] 
+Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -679,7 +689,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -702,26 +712,27 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z irq_idx
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z irq_idx
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     // asm { sei  }
@@ -827,9 +838,9 @@ table_driven_irq: {
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b4
@@ -840,12 +851,11 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #IRQ_RASTER
 Removing instruction ldy.z irq_idx
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b4:
 Removing instruction __b5:
@@ -853,17 +863,11 @@ Removing instruction __b6:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Skipping double jump to $ea81 in bcs __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [72] bcs $ea81 to bcc
+Fixing long branch [73] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
 (const byte*) IRQ_CHANGE_IDX[]  = { (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT }
@@ -963,6 +967,10 @@ FINAL SYMBOL TABLE
 (const nomodify byte*) VIC_BASE = (byte*) 53248
 (const nomodify byte*) VIC_CONTROL = (byte*) 53265
 (const nomodify byte) VIC_SIZE = (byte) $30
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (volatile byte) irq_idx loadstore zp[1]:2 6.0
 (void()) main()
 (label) main::@return
@@ -994,7 +1002,7 @@ Score: 604
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -1017,20 +1025,21 @@ Score: 604
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
-  // @begin
-__bbegin:
-  // @1
-  // irq_idx = 0
-  // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z irq_idx
-  // [2] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [3] call main 
-  jsr main
-  rts
-  // [4] phi from @2 to @end [phi:@2->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // irq_idx = 0
+    // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z irq_idx
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
     // asm

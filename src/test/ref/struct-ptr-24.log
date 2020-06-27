@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (struct fileentry*) main::file#0 ← (struct fileentry*) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -38,18 +37,22 @@ PrintName::@1: scope:[PrintName]  from PrintName
 PrintName::@return: scope:[PrintName]  from PrintName PrintName::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (void()) PrintName((struct fileentry*) PrintName::file)
 (bool~) PrintName::$0
 (bool~) PrintName::$1
@@ -59,6 +62,11 @@ SYMBOL TABLE SSA
 (struct fileentry*) PrintName::file#0
 (struct fileentry*) PrintName::file#1
 (const byte) SIZEOF_STRUCT_FILEENTRY = (byte) 2
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (const struct fileentry*) dir = (struct fileentry*) 0
 (byte) fileentry::bError
 (byte) fileentry::bFlag
@@ -96,79 +104,68 @@ Simple Condition (bool~) PrintName::$1 [10] if((struct fileentry*) PrintName::fi
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const struct fileentry*) main::file#0 = (struct fileentry*) 0
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const struct fileentry*) main::file#0
 Constant inlined main::file#0 = (struct fileentry*) 0
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to PrintName:10 
+Calls in [main] to PrintName:5 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::file#5 ← main::file#1
+Coalesced [7] main::file#5 ← main::file#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (struct fileentry*) main::file#2 ← phi( main/(struct fileentry*) 0 main::@3/(struct fileentry*) main::file#1 )
-  [6] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2
+  [1] (struct fileentry*) main::file#2 ← phi( main/(struct fileentry*) 0 main::@3/(struct fileentry*) main::file#1 )
+  [2] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [7] return 
+  [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2
-  [9] call PrintName 
+  [4] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2
+  [5] call PrintName 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY
+  [6] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY
   to:main::@1
 
 (void()) PrintName((struct fileentry*) PrintName::file)
 PrintName: scope:[PrintName]  from main::@2
-  [11] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return
+  [7] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return
   to:PrintName::@1
 PrintName::@1: scope:[PrintName]  from PrintName
-  [12] *((byte*) 199) ← (byte) 1
+  [8] *((byte*) 199) ← (byte) 1
   to:PrintName::@return
 PrintName::@return: scope:[PrintName]  from PrintName PrintName::@1
-  [13] return 
+  [9] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) PrintName((struct fileentry*) PrintName::file)
 (struct fileentry*) PrintName::file
-(struct fileentry*) PrintName::file#0 1102.0
+(struct fileentry*) PrintName::file#0 112.0
 (byte) fileentry::bError
 (byte) fileentry::bFlag
 (void()) main()
 (struct fileentry*) main::file
-(struct fileentry*) main::file#1 202.0
-(struct fileentry*) main::file#2 101.0
+(struct fileentry*) main::file#1 22.0
+(struct fileentry*) main::file#2 11.0
 
 Initial phi equivalence classes
 [ main::file#2 main::file#1 ]
@@ -190,28 +187,12 @@ Target platform is c64basic / MOS6502X
   .const SIZEOF_STRUCT_FILEENTRY = 2
   .label filesEnd = 0
   .label dir = 0
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label file = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (struct fileentry*) main::file#2 = (struct fileentry*) 0 [phi:main->main::@1#0] -- pssz1=pssc1 
+    // [1] phi (struct fileentry*) main::file#2 = (struct fileentry*) 0 [phi:main->main::@1#0] -- pssz1=pssc1 
     lda #<0
     sta.z file
     lda #>0
@@ -219,7 +200,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 -- pssz1_neq_pssc1_then_la1 
+    // [2] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 -- pssz1_neq_pssc1_then_la1 
     lda.z file+1
     cmp #>filesEnd
     bne __b2
@@ -229,21 +210,21 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
-    // [8] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2 -- pssz1=pssz2 
+    // [4] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2 -- pssz1=pssz2 
     lda.z file
     sta.z PrintName.file
     lda.z file+1
     sta.z PrintName.file+1
-    // [9] call PrintName 
+    // [5] call PrintName 
     jsr PrintName
     jmp __b3
     // main::@3
   __b3:
-    // [10] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY -- pssz1=pssz1_plus_vbuc1 
+    // [6] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_FILEENTRY
     clc
     adc.z file
@@ -251,16 +232,16 @@ main: {
     bcc !+
     inc.z file+1
   !:
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (struct fileentry*) main::file#2 = (struct fileentry*) main::file#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (struct fileentry*) main::file#2 = (struct fileentry*) main::file#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // PrintName
 // PrintName(struct fileentry* zp(4) file)
 PrintName: {
     .label file = 4
-    // [11] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return -- pssz1_neq_pssc1_then_la1 
+    // [7] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return -- pssz1_neq_pssc1_then_la1 
     lda.z file+1
     cmp #>dir
     bne __breturn
@@ -270,36 +251,36 @@ PrintName: {
     jmp __b1
     // PrintName::@1
   __b1:
-    // [12] *((byte*) 199) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((byte*) 199) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta $c7
     jmp __breturn
     // PrintName::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 [ main::file#2 ] ( main:2 [ main::file#2 ] { }  ) always clobbers reg byte a 
-Statement [8] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2 [ main::file#2 PrintName::file#0 ] ( main:2 [ main::file#2 PrintName::file#0 ] { { PrintName::file#0 = main::file#2 } }  ) always clobbers reg byte a 
-Statement [10] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY [ main::file#1 ] ( main:2 [ main::file#1 ] { }  ) always clobbers reg byte a 
-Statement [11] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return [ ] ( main:2::PrintName:9 [ main::file#2 ] { { PrintName::file#0 = main::file#2 } }  ) always clobbers reg byte a 
-Statement [12] *((byte*) 199) ← (byte) 1 [ ] ( main:2::PrintName:9 [ main::file#2 ] { { PrintName::file#0 = main::file#2 } }  ) always clobbers reg byte a 
+Statement [2] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 [ main::file#2 ] (  [ main::file#2 ] { }  ) always clobbers reg byte a 
+Statement [4] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2 [ main::file#2 PrintName::file#0 ] (  [ main::file#2 PrintName::file#0 ] { { PrintName::file#0 = main::file#2 } }  ) always clobbers reg byte a 
+Statement [6] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY [ main::file#1 ] (  [ main::file#1 ] { }  ) always clobbers reg byte a 
+Statement [7] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return [ ] ( PrintName:5 [ main::file#2 ] { { PrintName::file#0 = main::file#2 } }  ) always clobbers reg byte a 
+Statement [8] *((byte*) 199) ← (byte) 1 [ ] ( PrintName:5 [ main::file#2 ] { { PrintName::file#0 = main::file#2 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::file#2 main::file#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ PrintName::file#0 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [PrintName] 1,102: zp[2]:4 [ PrintName::file#0 ] 
-Uplift Scope [main] 303: zp[2]:2 [ main::file#2 main::file#1 ] 
+Uplift Scope [PrintName] 112: zp[2]:4 [ PrintName::file#0 ] 
+Uplift Scope [main] 33: zp[2]:2 [ main::file#2 main::file#1 ] 
 Uplift Scope [fileentry] 
 Uplift Scope [] 
 
-Uplifting [PrintName] best 776 combination zp[2]:4 [ PrintName::file#0 ] 
-Uplifting [main] best 776 combination zp[2]:2 [ main::file#2 main::file#1 ] 
-Uplifting [fileentry] best 776 combination 
-Uplifting [] best 776 combination 
+Uplifting [PrintName] best 764 combination zp[2]:4 [ PrintName::file#0 ] 
+Uplifting [main] best 764 combination zp[2]:2 [ main::file#2 main::file#1 ] 
+Uplifting [fileentry] best 764 combination 
+Uplifting [] best 764 combination 
 Coalescing zero page register [ zp[2]:2 [ main::file#2 main::file#1 ] ] with [ zp[2]:4 [ PrintName::file#0 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -312,28 +293,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SIZEOF_STRUCT_FILEENTRY = 2
   .label filesEnd = 0
   .label dir = 0
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label file = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (struct fileentry*) main::file#2 = (struct fileentry*) 0 [phi:main->main::@1#0] -- pssz1=pssc1 
+    // [1] phi (struct fileentry*) main::file#2 = (struct fileentry*) 0 [phi:main->main::@1#0] -- pssz1=pssc1 
     lda #<0
     sta.z file
     lda #>0
@@ -341,7 +306,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 -- pssz1_neq_pssc1_then_la1 
+    // [2] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 -- pssz1_neq_pssc1_then_la1 
     lda.z file+1
     cmp #>filesEnd
     bne __b2
@@ -351,17 +316,17 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
-    // [8] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2
-    // [9] call PrintName 
+    // [4] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2
+    // [5] call PrintName 
     jsr PrintName
     jmp __b3
     // main::@3
   __b3:
-    // [10] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY -- pssz1=pssz1_plus_vbuc1 
+    // [6] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_FILEENTRY
     clc
     adc.z file
@@ -369,16 +334,16 @@ main: {
     bcc !+
     inc.z file+1
   !:
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (struct fileentry*) main::file#2 = (struct fileentry*) main::file#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (struct fileentry*) main::file#2 = (struct fileentry*) main::file#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // PrintName
 // PrintName(struct fileentry* zp(2) file)
 PrintName: {
     .label file = 2
-    // [11] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return -- pssz1_neq_pssc1_then_la1 
+    // [7] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return -- pssz1_neq_pssc1_then_la1 
     lda.z file+1
     cmp #>dir
     bne __breturn
@@ -388,20 +353,18 @@ PrintName: {
     jmp __b1
     // PrintName::@1
   __b1:
-    // [12] *((byte*) 199) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((byte*) 199) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta $c7
     jmp __breturn
     // PrintName::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b3
@@ -410,31 +373,19 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __b3:
 Removing instruction __b1_from___b3:
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) PrintName((struct fileentry*) PrintName::file)
 (label) PrintName::@1
 (label) PrintName::@return
 (struct fileentry*) PrintName::file
-(struct fileentry*) PrintName::file#0 file zp[2]:2 1102.0
+(struct fileentry*) PrintName::file#0 file zp[2]:2 112.0
 (const byte) SIZEOF_STRUCT_FILEENTRY = (byte) 2
 (const struct fileentry*) dir = (struct fileentry*) 0
 (byte) fileentry::bError
@@ -446,8 +397,8 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (struct fileentry*) main::file
-(struct fileentry*) main::file#1 file zp[2]:2 202.0
-(struct fileentry*) main::file#2 file zp[2]:2 101.0
+(struct fileentry*) main::file#1 file zp[2]:2 22.0
+(struct fileentry*) main::file#2 file zp[2]:2 11.0
 
 zp[2]:2 [ main::file#2 main::file#1 PrintName::file#0 ]
 
@@ -464,25 +415,18 @@ Score: 528
   .const SIZEOF_STRUCT_FILEENTRY = 2
   .label filesEnd = 0
   .label dir = 0
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label file = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (struct fileentry*) main::file#2 = (struct fileentry*) 0 [phi:main->main::@1#0] -- pssz1=pssc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (struct fileentry*) main::file#2 = (struct fileentry*) 0 [phi:main->main::@1#0] -- pssz1=pssc1 
     lda #<0
     sta.z file
     sta.z file+1
     // main::@1
   __b1:
     // while(file != filesEnd)
-    // [6] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 -- pssz1_neq_pssc1_then_la1 
+    // [2] if((struct fileentry*) main::file#2!=(const struct fileentry*) filesEnd) goto main::@2 -- pssz1_neq_pssc1_then_la1 
     lda.z file+1
     cmp #>filesEnd
     bne __b2
@@ -491,17 +435,17 @@ main: {
     bne __b2
     // main::@return
     // }
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
     // PrintName(file)
-    // [8] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2
-    // [9] call PrintName 
+    // [4] (struct fileentry*) PrintName::file#0 ← (struct fileentry*) main::file#2
+    // [5] call PrintName 
     jsr PrintName
     // main::@3
     // ++file;
-    // [10] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY -- pssz1=pssz1_plus_vbuc1 
+    // [6] (struct fileentry*) main::file#1 ← (struct fileentry*) main::file#2 + (const byte) SIZEOF_STRUCT_FILEENTRY -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_FILEENTRY
     clc
     adc.z file
@@ -509,8 +453,8 @@ main: {
     bcc !+
     inc.z file+1
   !:
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (struct fileentry*) main::file#2 = (struct fileentry*) main::file#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi (struct fileentry*) main::file#2 = (struct fileentry*) main::file#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // PrintName
@@ -518,7 +462,7 @@ main: {
 PrintName: {
     .label file = 2
     // if (file == dir)
-    // [11] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return -- pssz1_neq_pssc1_then_la1 
+    // [7] if((struct fileentry*) PrintName::file#0!=(const struct fileentry*) dir) goto PrintName::@return -- pssz1_neq_pssc1_then_la1 
     lda.z file+1
     cmp #>dir
     bne __breturn
@@ -527,13 +471,13 @@ PrintName: {
     bne __breturn
     // PrintName::@1
     // *(BYTE *)0xC7 = 1
-    // [12] *((byte*) 199) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [8] *((byte*) 199) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta $c7
     // PrintName::@return
   __breturn:
     // }
-    // [13] return 
+    // [9] return 
     rts
 }
   // File Data

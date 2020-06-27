@@ -1,11 +1,9 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte*) fillscreen::screen#0 ← (const nomodify byte*) SCREEN
   (byte) fillscreen::fill#0 ← (number) $20
   call fillscreen 
@@ -110,18 +108,18 @@ fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -212,6 +210,9 @@ SYMBOL TABLE SSA
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (const to_nomodify byte*) TEXT[]  = (byte*) "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (byte*~) fillscreen::$0
 (bool~) fillscreen::$1
@@ -377,6 +378,11 @@ if() condition always true - replacing block destination [18] if(true) goto main
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [22] (byte*~) fillscreen::$0 ← (const byte*) fillscreen::screen#0 + (word) $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) fillscreen::$0 = fillscreen::screen#0+$3e8
@@ -402,33 +408,27 @@ Successful SSA optimization Pass2AliasElimination
 Added new block during phi lifting main::@12(between main::@1 and main::@1)
 Added new block during phi lifting main::@13(between main::@3 and main::@5)
 Added new block during phi lifting main::@14(between main::@8 and main::@10)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@11
 Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of fillscreen
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to fillscreen:6 
+Calls in [main] to fillscreen:1 
 
 Created 8 initial phi equivalence classes
-Coalesced [20] main::c#4 ← main::c#1
-Coalesced [24] main::nxt#14 ← main::nxt#1
-Coalesced [28] main::scroll#13 ← main::scroll#4
-Coalesced [29] main::nxt#13 ← main::nxt#11
-Coalesced [30] main::c#3 ← main::c#0
-Coalesced [31] main::nxt#16 ← main::nxt#10
-Coalesced [34] main::i#4 ← main::i#1
-Coalesced [35] main::scroll#14 ← main::scroll#1
-Coalesced (already) [36] main::nxt#15 ← main::nxt#10
-Coalesced (already) [37] main::scroll#12 ← main::scroll#7
-Coalesced (already) [38] main::nxt#12 ← main::nxt#10
-Coalesced [45] fillscreen::cursor#4 ← fillscreen::cursor#1
+Coalesced [15] main::c#4 ← main::c#1
+Coalesced [19] main::nxt#14 ← main::nxt#1
+Coalesced [23] main::scroll#13 ← main::scroll#4
+Coalesced [24] main::nxt#13 ← main::nxt#11
+Coalesced [25] main::c#3 ← main::c#0
+Coalesced [26] main::nxt#16 ← main::nxt#10
+Coalesced [29] main::i#4 ← main::i#1
+Coalesced [30] main::scroll#14 ← main::scroll#1
+Coalesced (already) [31] main::nxt#15 ← main::nxt#10
+Coalesced (already) [32] main::scroll#12 ← main::scroll#7
+Coalesced (already) [33] main::nxt#12 ← main::nxt#10
+Coalesced [40] fillscreen::cursor#4 ← fillscreen::cursor#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) main::@14
@@ -440,83 +440,71 @@ Renumbering block main::@7 to main::@6
 Renumbering block main::@8 to main::@7
 Renumbering block main::@9 to main::@8
 Renumbering block main::@10 to main::@9
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of fillscreen
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call fillscreen 
+main: scope:[main]  from
+  [0] phi()
+  [1] call fillscreen 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@4
-  [6] (byte*) main::nxt#10 ← phi( main::@1/(byte*) main::nxt#10 main/(const to_nomodify byte*) TEXT main::@4/(byte*) main::nxt#11 )
-  [6] (byte) main::scroll#7 ← phi( main::@1/(byte) main::scroll#7 main/(byte) 7 main::@4/(byte) main::scroll#4 )
-  [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1
+  [2] (byte*) main::nxt#10 ← phi( main::@1/(byte*) main::nxt#10 main/(const to_nomodify byte*) TEXT main::@4/(byte*) main::nxt#11 )
+  [2] (byte) main::scroll#7 ← phi( main::@1/(byte) main::scroll#7 main/(byte) 7 main::@4/(byte) main::scroll#4 )
+  [3] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [8] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2
+  [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR)
-  [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7
-  [11] if((byte) main::scroll#1!=(byte) $ff) goto main::@4
+  [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR)
+  [6] (byte) main::scroll#1 ← -- (byte) main::scroll#7
+  [7] if((byte) main::scroll#1!=(byte) $ff) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@3 main::@6
-  [12] (byte) main::i#2 ← phi( main::@3/(byte) 0 main::@6/(byte) main::i#1 )
-  [13] if((byte) main::i#2!=(byte) $27) goto main::@6
+  [8] (byte) main::i#2 ← phi( main::@3/(byte) 0 main::@6/(byte) main::i#1 )
+  [9] if((byte) main::i#2!=(byte) $27) goto main::@6
   to:main::@7
 main::@7: scope:[main]  from main::@5
-  [14] (byte) main::c#0 ← *((byte*) main::nxt#10)
-  [15] if((byte) main::c#0!=(byte) 0) goto main::@9
+  [10] (byte) main::c#0 ← *((byte*) main::nxt#10)
+  [11] if((byte) main::c#0!=(byte) 0) goto main::@9
   to:main::@8
 main::@8: scope:[main]  from main::@7
-  [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT)
+  [12] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT)
   to:main::@9
 main::@9: scope:[main]  from main::@7 main::@8
-  [17] (byte*) main::nxt#4 ← phi( main::@7/(byte*) main::nxt#10 main::@8/(const to_nomodify byte*) TEXT )
-  [17] (byte) main::c#2 ← phi( main::@7/(byte) main::c#0 main::@8/(byte) main::c#1 )
-  [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2
-  [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
+  [13] (byte*) main::nxt#4 ← phi( main::@7/(byte*) main::nxt#10 main::@8/(const to_nomodify byte*) TEXT )
+  [13] (byte) main::c#2 ← phi( main::@7/(byte) main::c#0 main::@8/(byte) main::c#1 )
+  [14] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2
+  [15] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@9
-  [20] (byte*) main::nxt#11 ← phi( main::@9/(byte*) main::nxt#1 main::@3/(byte*) main::nxt#10 )
-  [20] (byte) main::scroll#4 ← phi( main::@9/(byte) 7 main::@3/(byte) main::scroll#1 )
-  [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4
-  [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR)
+  [16] (byte*) main::nxt#11 ← phi( main::@9/(byte*) main::nxt#1 main::@3/(byte*) main::nxt#10 )
+  [16] (byte) main::scroll#4 ← phi( main::@9/(byte) 7 main::@3/(byte) main::scroll#1 )
+  [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4
+  [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR)
   to:main::@1
 main::@6: scope:[main]  from main::@5
-  [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2)
-  [24] (byte) main::i#1 ← ++ (byte) main::i#2
+  [19] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2)
+  [20] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@5
 
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 fillscreen: scope:[fillscreen]  from main
-  [25] phi()
+  [21] phi()
   to:fillscreen::@1
 fillscreen::@1: scope:[fillscreen]  from fillscreen fillscreen::@2
-  [26] (byte*) fillscreen::cursor#2 ← phi( fillscreen/(const nomodify byte*) SCREEN fillscreen::@2/(byte*) fillscreen::cursor#1 )
-  [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2
+  [22] (byte*) fillscreen::cursor#2 ← phi( fillscreen/(const nomodify byte*) SCREEN fillscreen::@2/(byte*) fillscreen::cursor#1 )
+  [23] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2
   to:fillscreen::@return
 fillscreen::@return: scope:[fillscreen]  from fillscreen::@1
-  [28] return 
+  [24] return 
   to:@return
 fillscreen::@2: scope:[fillscreen]  from fillscreen::@1
-  [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0
-  [30] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2
+  [25] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0
+  [26] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2
   to:fillscreen::@1
 
 
@@ -607,27 +595,27 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) fillscreen((byte*) fillscreen::screen , (byte) fillscreen::fill)
 (byte*) fillscreen::cursor
-(byte*) fillscreen::cursor#1 2002.0
-(byte*) fillscreen::cursor#2 1334.6666666666667
+(byte*) fillscreen::cursor#1 202.0
+(byte*) fillscreen::cursor#2 134.66666666666666
 (byte) fillscreen::fill
 (byte*) fillscreen::screen
 (void()) main()
 (byte) main::c
-(byte) main::c#0 151.5
-(byte) main::c#1 202.0
-(byte) main::c#2 303.0
+(byte) main::c#0 16.5
+(byte) main::c#1 22.0
+(byte) main::c#2 33.0
 (byte) main::i
-(byte) main::i#1 2002.0
-(byte) main::i#2 1668.3333333333335
+(byte) main::i#1 202.0
+(byte) main::i#2 168.33333333333331
 (byte*) main::nxt
-(byte*) main::nxt#1 202.0
-(byte*) main::nxt#10 200.49999999999997
-(byte*) main::nxt#11 101.0
-(byte*) main::nxt#4 101.0
+(byte*) main::nxt#1 22.0
+(byte*) main::nxt#10 20.500000000000004
+(byte*) main::nxt#11 11.0
+(byte*) main::nxt#4 11.0
 (byte) main::scroll
-(byte) main::scroll#1 151.5
-(byte) main::scroll#4 101.0
-(byte) main::scroll#7 551.0
+(byte) main::scroll#1 16.5
+(byte) main::scroll#4 11.0
+(byte) main::scroll#7 56.0
 
 Initial phi equivalence classes
 [ main::scroll#7 main::scroll#4 main::scroll#1 ]
@@ -664,22 +652,6 @@ Target platform is c64basic / MOS6502X
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label line = SCREEN+$28
@@ -687,147 +659,147 @@ main: {
     .label i = 3
     .label c = 4
     .label nxt = 5
-    // [5] call fillscreen 
-    // [25] phi from main to fillscreen [phi:main->fillscreen]
+    // [1] call fillscreen 
+    // [21] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [2] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #7
     sta.z scroll
     jmp __b1
   // Wait for raster
-    // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
+    // [2] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
   __b1_from___b1:
   __b1_from___b4:
-    // [6] phi (byte*) main::nxt#10 = (byte*) main::nxt#10 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
-    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
+    // [2] phi (byte*) main::nxt#10 = (byte*) main::nxt#10 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
+    // [2] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     jmp __b3
     // main::@3
   __b3:
-    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuz1=_dec_vbuz1 
+    // [6] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuz1=_dec_vbuz1 
     dec.z scroll
-    // [11] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [7] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #$ff
     cmp.z scroll
     bne __b4_from___b3
-    // [12] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
+    // [8] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
   __b5_from___b3:
-    // [12] phi (byte) main::i#2 = (byte) 0 [phi:main::@3->main::@5#0] -- vbuz1=vbuc1 
+    // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@3->main::@5#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b5
   // Hard scroll
     // main::@5
   __b5:
-    // [13] if((byte) main::i#2!=(byte) $27) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#2!=(byte) $27) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
     lda #$27
     cmp.z i
     bne __b6
     jmp __b7
     // main::@7
   __b7:
-    // [14] (byte) main::c#0 ← *((byte*) main::nxt#10) -- vbuz1=_deref_pbuz2 
+    // [10] (byte) main::c#0 ← *((byte*) main::nxt#10) -- vbuz1=_deref_pbuz2 
     // Render next char
     ldy #0
     lda (nxt),y
     sta.z c
-    // [15] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuz1_neq_0_then_la1 
+    // [11] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuz1_neq_0_then_la1 
     lda.z c
     cmp #0
     bne __b9_from___b7
     jmp __b8
     // main::@8
   __b8:
-    // [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuz1=_deref_pbuc1 
+    // [12] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuz1=_deref_pbuc1 
     lda TEXT
     sta.z c
-    // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
+    // [13] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
   __b9_from___b8:
-    // [17] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
+    // [13] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    // [17] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
+    // [13] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
     jmp __b9
-    // [17] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
+    // [13] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
   __b9_from___b7:
-    // [17] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
-    // [17] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@7->main::@9#1] -- register_copy 
+    // [13] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
+    // [13] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@7->main::@9#1] -- register_copy 
     jmp __b9
     // main::@9
   __b9:
-    // [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
+    // [14] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuz1 
     lda.z c
     sta line+$27
-    // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
+    // [15] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
     inc.z nxt
     bne !+
     inc.z nxt+1
   !:
-    // [20] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
+    // [16] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
   __b4_from___b9:
-    // [20] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
-    // [20] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuz1=vbuc1 
+    // [16] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
+    // [16] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuz1=vbuc1 
     lda #7
     sta.z scroll
     jmp __b4
-    // [20] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
-    // [20] phi (byte*) main::nxt#11 = (byte*) main::nxt#10 [phi:main::@3->main::@4#0] -- register_copy 
-    // [20] phi (byte) main::scroll#4 = (byte) main::scroll#1 [phi:main::@3->main::@4#1] -- register_copy 
+    // [16] phi (byte*) main::nxt#11 = (byte*) main::nxt#10 [phi:main::@3->main::@4#0] -- register_copy 
+    // [16] phi (byte) main::scroll#4 = (byte) main::scroll#1 [phi:main::@3->main::@4#1] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuz1 
+    // [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuz1 
     lda.z scroll
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    // [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1_from___b4
     // main::@6
   __b6:
-    // [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [19] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda line+1,y
     sta line,y
-    // [24] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [12] phi from main::@6 to main::@5 [phi:main::@6->main::@5]
+    // [8] phi from main::@6 to main::@5 [phi:main::@6->main::@5]
   __b5_from___b6:
-    // [12] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@5#0] -- register_copy 
+    // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@5#0] -- register_copy 
     jmp __b5
 }
   // fillscreen
 fillscreen: {
     .const fill = $20
     .label cursor = 7
-    // [26] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [22] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   __b1_from_fillscreen:
-    // [26] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [22] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -835,7 +807,7 @@ fillscreen: {
     jmp __b1
     // fillscreen::@1
   __b1:
-    // [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [23] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -847,22 +819,22 @@ fillscreen: {
     jmp __breturn
     // fillscreen::@return
   __breturn:
-    // [28] return 
+    // [24] return 
     rts
     // fillscreen::@2
   __b2:
-    // [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+    // [25] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-    // [30] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [26] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [26] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
+    // [22] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
   __b1_from___b2:
-    // [26] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
+    // [22] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -870,20 +842,20 @@ fillscreen: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [3] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] (  [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ]
-Statement [8] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] ( main:2 [ main::nxt#10 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] (  [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [10] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] (  [ main::nxt#10 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] (  [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::i#2 main::i#1 ]
-Statement [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
-Statement [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
-Statement [8] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] ( main:2 [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] ( main:2 [ main::nxt#10 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] ( main:2 [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
-Statement [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( main:2::fillscreen:5 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [23] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( fillscreen:1 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
+Statement [25] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( fillscreen:1 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 [ main::scroll#7 main::nxt#10 ] (  [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 [ main::scroll#7 main::nxt#10 ] (  [ main::scroll#7 main::nxt#10 ] { }  ) always clobbers reg byte a 
+Statement [10] (byte) main::c#0 ← *((byte*) main::nxt#10) [ main::nxt#10 main::c#0 ] (  [ main::nxt#10 main::c#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) [ main::nxt#10 main::i#2 ] (  [ main::nxt#10 main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [23] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 [ fillscreen::cursor#2 ] ( fillscreen:1 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a 
+Statement [25] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 [ fillscreen::cursor#2 ] ( fillscreen:1 [ fillscreen::cursor#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::i#2 main::i#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::c#2 main::c#0 main::c#1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -891,19 +863,19 @@ Potential registers zp[2]:5 [ main::nxt#4 main::nxt#10 main::nxt#11 main::nxt#1 
 Potential registers zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] : zp[2]:7 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 3,670.33: zp[1]:3 [ main::i#2 main::i#1 ] 803.5: zp[1]:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] 656.5: zp[1]:4 [ main::c#2 main::c#0 main::c#1 ] 604.5: zp[2]:5 [ main::nxt#4 main::nxt#10 main::nxt#11 main::nxt#1 ] 
-Uplift Scope [fillscreen] 3,336.67: zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
+Uplift Scope [main] 370.33: zp[1]:3 [ main::i#2 main::i#1 ] 83.5: zp[1]:2 [ main::scroll#7 main::scroll#4 main::scroll#1 ] 71.5: zp[1]:4 [ main::c#2 main::c#0 main::c#1 ] 64.5: zp[2]:5 [ main::nxt#4 main::nxt#10 main::nxt#11 main::nxt#1 ] 
+Uplift Scope [fillscreen] 336.67: zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [main] best 8284 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::scroll#7 main::scroll#4 main::scroll#1 ] reg byte x [ main::c#2 main::c#0 main::c#1 ] zp[2]:5 [ main::nxt#4 main::nxt#10 main::nxt#11 main::nxt#1 ] 
-Uplifting [fillscreen] best 8284 combination zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
-Uplifting [MOS6526_CIA] best 8284 combination 
-Uplifting [MOS6569_VICII] best 8284 combination 
-Uplifting [MOS6581_SID] best 8284 combination 
-Uplifting [] best 8284 combination 
+Uplifting [main] best 8272 combination reg byte x [ main::i#2 main::i#1 ] reg byte x [ main::scroll#7 main::scroll#4 main::scroll#1 ] reg byte x [ main::c#2 main::c#0 main::c#1 ] zp[2]:5 [ main::nxt#4 main::nxt#10 main::nxt#11 main::nxt#1 ] 
+Uplifting [fillscreen] best 8272 combination zp[2]:7 [ fillscreen::cursor#2 fillscreen::cursor#1 ] 
+Uplifting [MOS6526_CIA] best 8272 combination 
+Uplifting [MOS6569_VICII] best 8272 combination 
+Uplifting [MOS6581_SID] best 8272 combination 
+Uplifting [] best 8272 combination 
 Allocated (was zp[2]:5) zp[2]:2 [ main::nxt#4 main::nxt#10 main::nxt#11 main::nxt#1 ]
 Allocated (was zp[2]:7) zp[2]:4 [ fillscreen::cursor#2 fillscreen::cursor#1 ]
 
@@ -923,157 +895,141 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label line = SCREEN+$28
     .label nxt = 2
-    // [5] call fillscreen 
-    // [25] phi from main to fillscreen [phi:main->fillscreen]
+    // [1] call fillscreen 
+    // [21] phi from main to fillscreen [phi:main->fillscreen]
   fillscreen_from_main:
     jsr fillscreen
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [2] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #7
     jmp __b1
   // Wait for raster
-    // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
+    // [2] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
   __b1_from___b1:
   __b1_from___b4:
-    // [6] phi (byte*) main::nxt#10 = (byte*) main::nxt#10 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
-    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
+    // [2] phi (byte*) main::nxt#10 = (byte*) main::nxt#10 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
+    // [2] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     jmp __b3
     // main::@3
   __b3:
-    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuxx=_dec_vbuxx 
+    // [6] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuxx=_dec_vbuxx 
     dex
-    // [11] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
+    // [7] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
     bne __b4_from___b3
-    // [12] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
+    // [8] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
   __b5_from___b3:
-    // [12] phi (byte) main::i#2 = (byte) 0 [phi:main::@3->main::@5#0] -- vbuxx=vbuc1 
+    // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@3->main::@5#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b5
   // Hard scroll
     // main::@5
   __b5:
-    // [13] if((byte) main::i#2!=(byte) $27) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#2!=(byte) $27) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$27
     bne __b6
     jmp __b7
     // main::@7
   __b7:
-    // [14] (byte) main::c#0 ← *((byte*) main::nxt#10) -- vbuxx=_deref_pbuz1 
+    // [10] (byte) main::c#0 ← *((byte*) main::nxt#10) -- vbuxx=_deref_pbuz1 
     // Render next char
     ldy #0
     lda (nxt),y
     tax
-    // [15] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuxx_neq_0_then_la1 
+    // [11] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b9_from___b7
     jmp __b8
     // main::@8
   __b8:
-    // [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuxx=_deref_pbuc1 
+    // [12] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuxx=_deref_pbuc1 
     ldx TEXT
-    // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
+    // [13] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
   __b9_from___b8:
-    // [17] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
+    // [13] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    // [17] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
+    // [13] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
     jmp __b9
-    // [17] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
+    // [13] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
   __b9_from___b7:
-    // [17] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
-    // [17] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@7->main::@9#1] -- register_copy 
+    // [13] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
+    // [13] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@7->main::@9#1] -- register_copy 
     jmp __b9
     // main::@9
   __b9:
-    // [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
+    // [14] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
-    // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
+    // [15] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
     inc.z nxt
     bne !+
     inc.z nxt+1
   !:
-    // [20] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
+    // [16] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
   __b4_from___b9:
-    // [20] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
-    // [20] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuxx=vbuc1 
+    // [16] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
+    // [16] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuxx=vbuc1 
     ldx #7
     jmp __b4
-    // [20] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
-    // [20] phi (byte*) main::nxt#11 = (byte*) main::nxt#10 [phi:main::@3->main::@4#0] -- register_copy 
-    // [20] phi (byte) main::scroll#4 = (byte) main::scroll#1 [phi:main::@3->main::@4#1] -- register_copy 
+    // [16] phi (byte*) main::nxt#11 = (byte*) main::nxt#10 [phi:main::@3->main::@4#0] -- register_copy 
+    // [16] phi (byte) main::scroll#4 = (byte) main::scroll#1 [phi:main::@3->main::@4#1] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
+    // [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
     stx VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    // [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1_from___b4
     // main::@6
   __b6:
-    // [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [19] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda line+1,x
     sta line,x
-    // [24] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] phi from main::@6 to main::@5 [phi:main::@6->main::@5]
+    // [8] phi from main::@6 to main::@5 [phi:main::@6->main::@5]
   __b5_from___b6:
-    // [12] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@5#0] -- register_copy 
+    // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@5#0] -- register_copy 
     jmp __b5
 }
   // fillscreen
 fillscreen: {
     .const fill = $20
     .label cursor = 4
-    // [26] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [22] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
   __b1_from_fillscreen:
-    // [26] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [22] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -1081,7 +1037,7 @@ fillscreen: {
     jmp __b1
     // fillscreen::@1
   __b1:
-    // [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [23] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -1093,22 +1049,22 @@ fillscreen: {
     jmp __breturn
     // fillscreen::@return
   __breturn:
-    // [28] return 
+    // [24] return 
     rts
     // fillscreen::@2
   __b2:
-    // [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+    // [25] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
-    // [30] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [26] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [26] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
+    // [22] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
   __b1_from___b2:
-    // [26] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
+    // [22] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -1116,8 +1072,6 @@ fillscreen: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
@@ -1133,17 +1087,11 @@ Replacing label __b1_from___b1 with __b1
 Replacing label __b4_from___b3 with __b4
 Replacing label __b9_from___b7 with __b9
 Replacing label __b1_from___b4 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Removing instruction __b1_from___b4:
 Removing instruction __b9_from___b7:
 Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction fillscreen_from_main:
 Removing instruction __b1_from_main:
 Removing instruction __b3:
@@ -1157,17 +1105,12 @@ Removing instruction __b1_from_fillscreen:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Removing instruction jmp __b9
 Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -1263,8 +1206,8 @@ FINAL SYMBOL TABLE
 (label) fillscreen::@2
 (label) fillscreen::@return
 (byte*) fillscreen::cursor
-(byte*) fillscreen::cursor#1 cursor zp[2]:4 2002.0
-(byte*) fillscreen::cursor#2 cursor zp[2]:4 1334.6666666666667
+(byte*) fillscreen::cursor#1 cursor zp[2]:4 202.0
+(byte*) fillscreen::cursor#2 cursor zp[2]:4 134.66666666666666
 (byte) fillscreen::fill
 (const byte) fillscreen::fill#0 fill = (byte) $20
 (byte*) fillscreen::screen
@@ -1279,22 +1222,22 @@ FINAL SYMBOL TABLE
 (label) main::@8
 (label) main::@9
 (byte) main::c
-(byte) main::c#0 reg byte x 151.5
-(byte) main::c#1 reg byte x 202.0
-(byte) main::c#2 reg byte x 303.0
+(byte) main::c#0 reg byte x 16.5
+(byte) main::c#1 reg byte x 22.0
+(byte) main::c#2 reg byte x 33.0
 (byte) main::i
-(byte) main::i#1 reg byte x 2002.0
-(byte) main::i#2 reg byte x 1668.3333333333335
+(byte) main::i#1 reg byte x 202.0
+(byte) main::i#2 reg byte x 168.33333333333331
 (const nomodify byte*) main::line = (const nomodify byte*) SCREEN+(byte) $28
 (byte*) main::nxt
-(byte*) main::nxt#1 nxt zp[2]:2 202.0
-(byte*) main::nxt#10 nxt zp[2]:2 200.49999999999997
-(byte*) main::nxt#11 nxt zp[2]:2 101.0
-(byte*) main::nxt#4 nxt zp[2]:2 101.0
+(byte*) main::nxt#1 nxt zp[2]:2 22.0
+(byte*) main::nxt#10 nxt zp[2]:2 20.500000000000004
+(byte*) main::nxt#11 nxt zp[2]:2 11.0
+(byte*) main::nxt#4 nxt zp[2]:2 11.0
 (byte) main::scroll
-(byte) main::scroll#1 reg byte x 151.5
-(byte) main::scroll#4 reg byte x 101.0
-(byte) main::scroll#7 reg byte x 551.0
+(byte) main::scroll#1 reg byte x 16.5
+(byte) main::scroll#4 reg byte x 11.0
+(byte) main::scroll#7 reg byte x 56.0
 
 reg byte x [ main::scroll#7 main::scroll#4 main::scroll#1 ]
 reg byte x [ main::i#2 main::i#1 ]
@@ -1321,138 +1264,131 @@ Score: 6262
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label line = SCREEN+$28
     .label nxt = 2
     // fillscreen(SCREEN, $20)
-    // [5] call fillscreen 
-    // [25] phi from main to fillscreen [phi:main->fillscreen]
+    // [1] call fillscreen 
+    // [21] phi from main to fillscreen [phi:main->fillscreen]
     jsr fillscreen
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-    // [6] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi (byte*) main::nxt#10 = (const to_nomodify byte*) TEXT [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    // [6] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [2] phi (byte) main::scroll#7 = (byte) 7 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #7
   // Wait for raster
-    // [6] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
-    // [6] phi (byte*) main::nxt#10 = (byte*) main::nxt#10 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
-    // [6] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
+    // [2] phi from main::@1 main::@4 to main::@1 [phi:main::@1/main::@4->main::@1]
+    // [2] phi (byte*) main::nxt#10 = (byte*) main::nxt#10 [phi:main::@1/main::@4->main::@1#0] -- register_copy 
+    // [2] phi (byte) main::scroll#7 = (byte) main::scroll#7 [phi:main::@1/main::@4->main::@1#1] -- register_copy 
     // main::@1
   __b1:
     // while(VICII->RASTER!=$fe)
-    // [7] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b1
     // main::@2
   __b2:
     // while(VICII->RASTER!=$ff)
-    // [8] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [4] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     bne __b2
     // main::@3
     // ++VICII->BG_COLOR;
-    // [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // if(--scroll==$ff)
-    // [10] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuxx=_dec_vbuxx 
+    // [6] (byte) main::scroll#1 ← -- (byte) main::scroll#7 -- vbuxx=_dec_vbuxx 
     dex
-    // [11] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
+    // [7] if((byte) main::scroll#1!=(byte) $ff) goto main::@4 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$ff
     bne __b4
-    // [12] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
-    // [12] phi (byte) main::i#2 = (byte) 0 [phi:main::@3->main::@5#0] -- vbuxx=vbuc1 
+    // [8] phi from main::@3 to main::@5 [phi:main::@3->main::@5]
+    // [8] phi (byte) main::i#2 = (byte) 0 [phi:main::@3->main::@5#0] -- vbuxx=vbuc1 
     ldx #0
   // Hard scroll
     // main::@5
   __b5:
     // for(char i=0;i!=39;i++)
-    // [13] if((byte) main::i#2!=(byte) $27) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
+    // [9] if((byte) main::i#2!=(byte) $27) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$27
     bne __b6
     // main::@7
     // c = *nxt
-    // [14] (byte) main::c#0 ← *((byte*) main::nxt#10) -- vbuxx=_deref_pbuz1 
+    // [10] (byte) main::c#0 ← *((byte*) main::nxt#10) -- vbuxx=_deref_pbuz1 
     // Render next char
     ldy #0
     lda (nxt),y
     tax
     // if(c==0)
-    // [15] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuxx_neq_0_then_la1 
+    // [11] if((byte) main::c#0!=(byte) 0) goto main::@9 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b9
     // main::@8
     // c = *nxt
-    // [16] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuxx=_deref_pbuc1 
+    // [12] (byte) main::c#1 ← *((const to_nomodify byte*) TEXT) -- vbuxx=_deref_pbuc1 
     ldx TEXT
-    // [17] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
-    // [17] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
+    // [13] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
+    // [13] phi (byte*) main::nxt#4 = (const to_nomodify byte*) TEXT [phi:main::@8->main::@9#0] -- pbuz1=pbuc1 
     lda #<TEXT
     sta.z nxt
     lda #>TEXT
     sta.z nxt+1
-    // [17] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
-    // [17] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
-    // [17] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
-    // [17] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@7->main::@9#1] -- register_copy 
+    // [13] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@8->main::@9#1] -- register_copy 
+    // [13] phi from main::@7 to main::@9 [phi:main::@7->main::@9]
+    // [13] phi (byte*) main::nxt#4 = (byte*) main::nxt#10 [phi:main::@7->main::@9#0] -- register_copy 
+    // [13] phi (byte) main::c#2 = (byte) main::c#0 [phi:main::@7->main::@9#1] -- register_copy 
     // main::@9
   __b9:
     // line[39] = c
-    // [18] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
+    // [14] *((const nomodify byte*) main::line+(byte) $27) ← (byte) main::c#2 -- _deref_pbuc1=vbuxx 
     stx line+$27
     // nxt++;
-    // [19] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
+    // [15] (byte*) main::nxt#1 ← ++ (byte*) main::nxt#4 -- pbuz1=_inc_pbuz1 
     inc.z nxt
     bne !+
     inc.z nxt+1
   !:
-    // [20] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
-    // [20] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
-    // [20] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuxx=vbuc1 
+    // [16] phi from main::@9 to main::@4 [phi:main::@9->main::@4]
+    // [16] phi (byte*) main::nxt#11 = (byte*) main::nxt#1 [phi:main::@9->main::@4#0] -- register_copy 
+    // [16] phi (byte) main::scroll#4 = (byte) 7 [phi:main::@9->main::@4#1] -- vbuxx=vbuc1 
     ldx #7
-    // [20] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-    // [20] phi (byte*) main::nxt#11 = (byte*) main::nxt#10 [phi:main::@3->main::@4#0] -- register_copy 
-    // [20] phi (byte) main::scroll#4 = (byte) main::scroll#1 [phi:main::@3->main::@4#1] -- register_copy 
+    // [16] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [16] phi (byte*) main::nxt#11 = (byte*) main::nxt#10 [phi:main::@3->main::@4#0] -- register_copy 
+    // [16] phi (byte) main::scroll#4 = (byte) main::scroll#1 [phi:main::@3->main::@4#1] -- register_copy 
     // main::@4
   __b4:
     // VICII->CONTROL2 = scroll
-    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
+    // [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) main::scroll#4 -- _deref_pbuc1=vbuxx 
     stx VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     // --VICII->BG_COLOR;
-    // [22] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [18] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
     // main::@6
   __b6:
     // line[i]=line[i+1]
-    // [23] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [19] *((const nomodify byte*) main::line + (byte) main::i#2) ← *((const nomodify byte*) main::line+(byte) 1 + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda line+1,x
     sta line,x
     // for(char i=0;i!=39;i++)
-    // [24] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [20] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] phi from main::@6 to main::@5 [phi:main::@6->main::@5]
-    // [12] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@5#0] -- register_copy 
+    // [8] phi from main::@6 to main::@5 [phi:main::@6->main::@5]
+    // [8] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@5#0] -- register_copy 
     jmp __b5
 }
   // fillscreen
 fillscreen: {
     .const fill = $20
     .label cursor = 4
-    // [26] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
-    // [26] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
+    // [22] phi from fillscreen to fillscreen::@1 [phi:fillscreen->fillscreen::@1]
+    // [22] phi (byte*) fillscreen::cursor#2 = (const nomodify byte*) SCREEN [phi:fillscreen->fillscreen::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z cursor
     lda #>SCREEN
@@ -1460,7 +1396,7 @@ fillscreen: {
     // fillscreen::@1
   __b1:
     // for( char* cursor = screen; cursor < screen+1000; cursor++)
-    // [27] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
+    // [23] if((byte*) fillscreen::cursor#2<(const nomodify byte*) SCREEN+(word) $3e8) goto fillscreen::@2 -- pbuz1_lt_pbuc1_then_la1 
     lda.z cursor+1
     cmp #>SCREEN+$3e8
     bcc __b2
@@ -1471,23 +1407,23 @@ fillscreen: {
   !:
     // fillscreen::@return
     // }
-    // [28] return 
+    // [24] return 
     rts
     // fillscreen::@2
   __b2:
     // *cursor = fill
-    // [29] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
+    // [25] *((byte*) fillscreen::cursor#2) ← (const byte) fillscreen::fill#0 -- _deref_pbuz1=vbuc1 
     lda #fill
     ldy #0
     sta (cursor),y
     // for( char* cursor = screen; cursor < screen+1000; cursor++)
-    // [30] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
+    // [26] (byte*) fillscreen::cursor#1 ← ++ (byte*) fillscreen::cursor#2 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [26] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
-    // [26] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
+    // [22] phi from fillscreen::@2 to fillscreen::@1 [phi:fillscreen::@2->fillscreen::@1]
+    // [22] phi (byte*) fillscreen::cursor#2 = (byte*) fillscreen::cursor#1 [phi:fillscreen::@2->fillscreen::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

@@ -1,12 +1,11 @@
 Resolved forward reference fn1 to (void()) fn1()
 Resolved forward reference fn2 to (void()) fn2()
+Resolved forward reference ff to (const byte*) ff
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start
   (void()*) main::f#0 ← (void()*) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -32,17 +31,12 @@ main::@5: scope:[main]  from main::@2
 main::@4: scope:[main]  from main::@3 main::@5
   (byte) main::i#4 ← phi( main::@3/(byte) main::i#5 main::@5/(byte) main::i#6 )
   (void()*) main::f#3 ← phi( main::@3/(void()*) main::f#1 main::@5/(void()*) main::f#2 )
-  kickasm( uses main::f#3) {{ jsr ff
+  kickasm( uses main::f#3 uses ff) {{ jsr ff
          }}
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
-  kickasm() {{ ff:
-    jmp (main.f)
- }}
-  to:@2
 
 (void()) fn1()
 fn1: scope:[fn1]  from
@@ -59,19 +53,23 @@ fn2: scope:[fn2]  from
 fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(const byte*) ff[]  = kickasm {{ jmp (main.f)
+ }}
 (void()) fn1()
 (label) fn1::@return
 (const nomodify byte*) fn1::BORDER_COLOR = (byte*)(number) $d020
@@ -132,6 +130,11 @@ Eliminating unused constant (const void()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const void()*) main::f#1
 Inlining constant with var siblings (const void()*) main::f#2
@@ -139,91 +142,68 @@ Constant inlined main::i#0 = (byte) 0
 Constant inlined main::f#2 = &(void()) fn2()
 Constant inlined main::f#1 = &(void()) fn1()
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@3
 CALL GRAPH
-Calls in [] to main:3 
 
 Created 2 initial phi equivalence classes
-Coalesced [14] main::i#7 ← main::i#1
+Coalesced [12] main::i#7 ← main::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @3
 Culled Empty Block (label) main::@5
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  kickasm() {{ ff:
-    jmp (main.f)
- }}
-  to:@2
-@2: scope:[]  from @1
-  [2] phi()
-  [3] call main 
-  to:@end
-@end: scope:[]  from @2
-  [4] phi()
-
-(void()) main()
-main: scope:[main]  from @2
-  [5] phi()
-  to:main::@1
-main::@1: scope:[main]  from main main::@4
-  [6] (byte) main::i#2 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [7] (byte) main::i#1 ← ++ (byte) main::i#2
-  [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1
-  [9] if((byte~) main::$0==(byte) 0) goto main::@3
-  to:main::@4
-main::@3: scope:[main]  from main::@2
-  [10] phi()
-  to:main::@4
-main::@4: scope:[main]  from main::@2 main::@3
-  [11] (void()*) main::f#3 ← phi( main::@3/&(void()) fn1() main::@2/&(void()) fn2() )
-  kickasm( uses main::f#3) {{ jsr ff
-         }}
-  to:main::@1
 
 (void()) fn2()
 fn2: scope:[fn2]  from
-  [13] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
+  [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
-  [14] return 
+  [1] return 
   to:@return
 
 (void()) fn1()
 fn1: scope:[fn1]  from
-  [15] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
-  [16] return 
+  [3] return 
   to:@return
+
+(void()) main()
+main: scope:[main]  from
+  [4] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@4/(byte) main::i#1 )
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [6] (byte) main::i#1 ← ++ (byte) main::i#2
+  [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1
+  [8] if((byte~) main::$0==(byte) 0) goto main::@3
+  to:main::@4
+main::@3: scope:[main]  from main::@2
+  [9] phi()
+  to:main::@4
+main::@4: scope:[main]  from main::@2 main::@3
+  [10] (void()*) main::f#3 ← phi( main::@3/&(void()) fn1() main::@2/&(void()) fn2() )
+  kickasm( uses main::f#3 uses ff) {{ jsr ff
+         }}
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) fn1()
 (void()) fn2()
 (void()) main()
-(byte~) main::$0 202.0
+(byte~) main::$0 22.0
 (void()*) main::f
 (void()*) main::f#3
 (byte) main::i
-(byte) main::i#1 50.5
-(byte) main::i#2 202.0
+(byte) main::i#1 5.5
+(byte) main::i#2 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -246,37 +226,36 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // kickasm() {{ ff:     jmp (main.f)  }}
-  ff:
-    jmp (main.f)
-
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  // [5] phi from @2 to main [phi:@2->main]
-main_from___b2:
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // fn2
+fn2: {
+    .label BG_COLOR = $d021
+    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    jmp __breturn
+    // fn2::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label BORDER_COLOR = $d020
+    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __breturn
+    // fn1::@return
+  __breturn:
+    // [3] return 
+    rts
+}
   // main
 main: {
     .label __0 = 5
     .label i = 2
     .label f = 3
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
@@ -285,32 +264,32 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
     sta.z __0
-    // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
+    // [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuz1_eq_0_then_la1 
     lda.z __0
     cmp #0
     beq __b3_from___b2
-    // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   __b4_from___b2:
-    // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+    // [10] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
     jmp __b4
-    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
-    // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+    // [10] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z f
     lda #>fn1
@@ -318,37 +297,19 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // kickasm( uses main::f#3) {{ jsr ff          }}
+    // kickasm( uses main::f#3 uses ff) {{ jsr ff          }}
     jsr ff
         
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // [13] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // fn2::@return
-  __breturn:
-    // [14] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [15] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [16] return 
-    rts
-}
   // File Data
+// Inline KickAsm function
+ff:
+jmp (main.f)
+
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
@@ -356,15 +317,15 @@ Potential registers zp[2]:3 [ main::f#3 ] : zp[2]:3 ,
 Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 252.5: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [main] best 3393 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp[2]:3 [ main::f#3 ] 
-Uplifting [fn1] best 3393 combination 
-Uplifting [fn2] best 3393 combination 
-Uplifting [] best 3393 combination 
+Uplifting [main] best 3095 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp[2]:3 [ main::f#3 ] 
+Uplifting [fn1] best 3095 combination 
+Uplifting [fn2] best 3095 combination 
+Uplifting [] best 3095 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ main::f#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -375,35 +336,34 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // kickasm() {{ ff:     jmp (main.f)  }}
-  ff:
-    jmp (main.f)
-
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  // [5] phi from @2 to main [phi:@2->main]
-main_from___b2:
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // fn2
+fn2: {
+    .label BG_COLOR = $d021
+    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    jmp __breturn
+    // fn2::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label BORDER_COLOR = $d020
+    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __breturn
+    // fn1::@return
+  __breturn:
+    // [3] return 
+    rts
+}
   // main
 main: {
     .label f = 2
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
@@ -411,30 +371,30 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
+    // [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3_from___b2
-    // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
   __b4_from___b2:
-    // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+    // [10] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
     jmp __b4
-    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
-    // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+    // [10] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z f
     lda #>fn1
@@ -442,76 +402,44 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // kickasm( uses main::f#3) {{ jsr ff          }}
+    // kickasm( uses main::f#3 uses ff) {{ jsr ff          }}
     jsr ff
         
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // [13] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // fn2::@return
-  __breturn:
-    // [14] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [15] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [16] return 
-    rts
-}
   // File Data
+// Inline KickAsm function
+ff:
+jmp (main.f)
+
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __b4
-Removing instruction jmp __breturn
-Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b3_from___b2 with __b3
 Replacing label __b1 with __b2
 Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction main_from___b2:
-Removing instruction __bend_from___b2:
-Removing instruction __b1:
 Removing instruction __b3_from___b2:
 Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction __b1_from_main:
 Removing instruction __b4_from___b2:
 Removing instruction __b1_from___b4:
-Removing instruction __breturn:
-Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(const byte*) ff[]  = kickasm {{ jmp (main.f)
+ }}
 (void()) fn1()
 (label) fn1::@return
 (const nomodify byte*) fn1::BORDER_COLOR = (byte*) 53280
@@ -519,7 +447,7 @@ FINAL SYMBOL TABLE
 (label) fn2::@return
 (const nomodify byte*) fn2::BG_COLOR = (byte*) 53281
 (void()) main()
-(byte~) main::$0 reg byte a 202.0
+(byte~) main::$0 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -527,8 +455,8 @@ FINAL SYMBOL TABLE
 (void()*) main::f
 (void()*) main::f#3 f zp[2]:2
 (byte) main::i
-(byte) main::i#1 reg byte x 50.5
-(byte) main::i#2 reg byte x 202.0
+(byte) main::i#1 reg byte x 5.5
+(byte) main::i#2 reg byte x 22.0
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::f#3 ]
@@ -536,7 +464,7 @@ reg byte a [ main::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 3225
+Score: 2969
 
   // File Comments
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
@@ -545,51 +473,60 @@ Score: 3225
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // @1
-  // kickasm
-  // kickasm() {{ ff:     jmp (main.f)  }}
-  ff:
-    jmp (main.f)
-
-  // [2] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [3] call main 
-  // [5] phi from @2 to main [phi:@2->main]
-  // [4] phi from @2 to @end [phi:@2->@end]
-  // @end
+  // fn2
+fn2: {
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    // fn2::@return
+    // }
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    // fn1::@return
+    // }
+    // [3] return 
+    rts
+}
   // main
 main: {
     .label f = 2
-    // [6] phi from main to main::@1 [phi:main->main::@1]
-    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
     // main::@2
   __b2:
     // ++i;
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // i&1
-    // [8] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
     // if((i&1)==0)
-    // [9] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
+    // [8] if((byte~) main::$0==(byte) 0) goto main::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3
-    // [11] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
-    // [11] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
+    // [10] phi from main::@2 to main::@4 [phi:main::@2->main::@4]
+    // [10] phi (void()*) main::f#3 = &(void()) fn2() [phi:main::@2->main::@4#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z f
     lda #>fn2
     sta.z f+1
     jmp __b4
-    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
   __b3:
-    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-    // [11] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
+    // [10] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [10] phi (void()*) main::f#3 = &(void()) fn1() [phi:main::@3->main::@4#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z f
     lda #>fn1
@@ -597,34 +534,16 @@ main: {
     // main::@4
   __b4:
     // kickasm
-    // kickasm( uses main::f#3) {{ jsr ff          }}
+    // kickasm( uses main::f#3 uses ff) {{ jsr ff          }}
     jsr ff
         
-    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
+    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b2
 }
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // (*BG_COLOR)++;
-    // [13] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // fn2::@return
-    // }
-    // [14] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // (*BORDER_COLOR)++;
-    // [15] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    // fn1::@return
-    // }
-    // [16] return 
-    rts
-}
   // File Data
+// Inline KickAsm function
+ff:
+jmp (main.f)
+
 

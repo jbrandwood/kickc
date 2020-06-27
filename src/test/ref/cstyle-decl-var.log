@@ -1,43 +1,55 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte) idx#0 ← (byte) 0
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
-  (byte) idx#6 ← phi( @1/(byte) idx#9 )
-  *((const nomodify byte*) SCREEN + (byte) idx#6) ← (byte) 'c'
-  (byte) idx#1 ← ++ (byte) idx#6
-  *((const nomodify byte*) SCREEN + (byte) idx#1) ← (byte) 'm'
+main: scope:[main]  from _start::@1
+  (byte) idx#7 ← phi( _start::@1/(byte) idx#11 )
+  *((const nomodify byte*) SCREEN + (byte) idx#7) ← (byte) 'c'
+  (byte) idx#0 ← ++ (byte) idx#7
+  *((const nomodify byte*) SCREEN + (byte) idx#0) ← (byte) 'm'
+  (byte) idx#1 ← ++ (byte) idx#0
+  *((const nomodify byte*) SCREEN + (byte) idx#1) ← (byte) 'l'
   (byte) idx#2 ← ++ (byte) idx#1
-  *((const nomodify byte*) SCREEN + (byte) idx#2) ← (byte) 'l'
-  (byte) idx#3 ← ++ (byte) idx#2
   to:main::@return
 main::@return: scope:[main]  from main
-  (byte) idx#7 ← phi( main/(byte) idx#3 )
-  (byte) idx#4 ← (byte) idx#7
+  (byte) idx#8 ← phi( main/(byte) idx#2 )
+  (byte) idx#3 ← (byte) idx#8
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) idx#9 ← phi( @begin/(byte) idx#0 )
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte) idx#4 ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  (byte) idx#11 ← phi( _start::_init1/(byte) idx#4 )
   call main 
-  to:@2
-@2: scope:[]  from @1
-  (byte) idx#8 ← phi( @1/(byte) idx#4 )
-  (byte) idx#5 ← (byte) idx#8
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  (byte) idx#9 ← phi( _start::@1/(byte) idx#3 )
+  (byte) idx#5 ← (byte) idx#9
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  (byte) idx#10 ← phi( _start::@2/(byte) idx#5 )
+  (byte) idx#6 ← (byte) idx#10
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (byte) idx
 (byte) idx#0
 (byte) idx#1
+(byte) idx#10
+(byte) idx#11
 (byte) idx#2
 (byte) idx#3
 (byte) idx#4
@@ -51,33 +63,40 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias idx#3 = idx#7 idx#4 
-Alias idx#0 = idx#9 
-Alias idx#5 = idx#8 
+Alias idx#2 = idx#8 idx#3 
+Alias idx#11 = idx#4 
+Alias idx#10 = idx#5 idx#9 idx#6 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) idx#6 (byte) idx#0
-Identical Phi Values (byte) idx#5 (byte) idx#3
+Identical Phi Values (byte) idx#7 (byte) idx#11
+Identical Phi Values (byte) idx#10 (byte) idx#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte) idx#0 = 0
+Constant (const byte) idx#11 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [2] *((const nomodify byte*) SCREEN + (const byte) idx#0) ← (byte) 'c'
+Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (const byte) idx#11) ← (byte) 'c'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) idx#3 and assignment [5] (byte) idx#3 ← ++ (byte) idx#2
+Eliminating unused variable (byte) idx#2 and assignment [5] (byte) idx#2 ← ++ (byte) idx#1
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [1] (byte) idx#1 ← ++ (const byte) idx#0
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [1] (byte) idx#0 ← ++ (const byte) idx#11
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) idx#0 = ++idx#11
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [2] (byte) idx#1 ← ++ (const byte) idx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) idx#1 = ++idx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [2] (byte) idx#2 ← ++ (const byte) idx#1
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) idx#2 = ++idx#1
-Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings (const byte) idx#11
 Inlining constant with different constant siblings (const byte) idx#0
 Inlining constant with different constant siblings (const byte) idx#1
-Inlining constant with different constant siblings (const byte) idx#2
-Constant inlined idx#2 = ++++(byte) 0
-Constant inlined idx#0 = (byte) 0
-Constant inlined idx#1 = ++(byte) 0
+Constant inlined idx#11 = (byte) 0
+Constant inlined idx#0 = ++(byte) 0
+Constant inlined idx#1 = ++++(byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+++0)
 Consolidated array index constant in *(SCREEN+++++0)
@@ -87,39 +106,21 @@ Simplifying constant integer increment ++0
 Successful SSA optimization Pass2ConstantSimplification
 Simplifying constant integer increment ++1
 Successful SSA optimization Pass2ConstantSimplification
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const nomodify byte*) SCREEN) ← (byte) 'c'
-  [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm'
-  [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l'
+main: scope:[main]  from
+  [0] *((const nomodify byte*) SCREEN) ← (byte) 'c'
+  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm'
+  [2] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l'
   to:main::@return
 main::@return: scope:[main]  from main
-  [7] return 
+  [3] return 
   to:@return
 
 
@@ -141,51 +142,37 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   // The actual declarations
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 // And a little code using them
 main: {
-    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta SCREEN
-    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta SCREEN+1
-    // [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #'l'
     sta SCREEN+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const nomodify byte*) SCREEN) ← (byte) 'c' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 39 combination 
-Uplifting [] best 39 combination 
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -197,60 +184,33 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   // The actual declarations
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 // And a little code using them
 main: {
-    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta SCREEN
-    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta SCREEN+1
-    // [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #'l'
     sta SCREEN+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*) 1024
 (byte) idx
 (void()) main()
@@ -270,30 +230,24 @@ Score: 24
   // Global Constants & labels
   // The actual declarations
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 // And a little code using them
 main: {
     // SCREEN[idx++] = 'c'
-    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta SCREEN
     // SCREEN[idx++] = 'm'
-    // [5] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta SCREEN+1
     // SCREEN[idx++] = 'l'
-    // [6] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #'l'
     sta SCREEN+2
     // main::@return
     // }
-    // [7] return 
+    // [3] return 
     rts
 }
   // File Data

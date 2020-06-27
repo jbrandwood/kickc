@@ -1,11 +1,10 @@
 Fixing struct type size struct Entry to 3
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (struct Entry*) main::entry0#0 ← (const struct Entry*) ENTRIES
   (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_STRUCT_ENTRY
   (struct Entry*~) main::$0 ← (const struct Entry*) ENTRIES + (number~) main::$5
@@ -67,24 +66,33 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const struct Entry*) ENTRIES = (struct Entry*)(number) $1000
 (struct Entry*) Entry::next
 (byte) Entry::value
 (const byte) OFFSET_STRUCT_ENTRY_NEXT = (byte) 1
 (const byte) OFFSET_STRUCT_ENTRY_VALUE = (byte) 0
 (const byte) SIZEOF_STRUCT_ENTRY = (byte) 3
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (struct Entry*~) main::$0
 (struct Entry*~) main::$1
@@ -219,6 +227,13 @@ Eliminating unused variable (struct Entry**~) main::$15 and assignment [31] (str
 Eliminating unused variable (struct Entry**~) main::$16 and assignment [38] (struct Entry**~) main::$16 ← (struct Entry**~) main::$26 + (const byte) OFFSET_STRUCT_ENTRY_NEXT
 Eliminating unused constant (const byte) OFFSET_STRUCT_ENTRY_VALUE
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [0] (struct Entry*) main::entry1#0 ← (const struct Entry*) ENTRIES + (const byte) main::$5
 Constant right-side identified [1] (struct Entry*) main::entry2#0 ← (const struct Entry*) ENTRIES + (const byte) main::$6
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -253,63 +268,45 @@ Consolidated array index constant in *((struct Entry**)ENTRIES+OFFSET_STRUCT_ENT
 Consolidated array index constant in *((struct Entry**)main::entry2#0+OFFSET_STRUCT_ENTRY_NEXT)
 Consolidated array index constant in *((struct Entry**)main::entry1#0+OFFSET_STRUCT_ENTRY_NEXT)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 2 initial phi equivalence classes
-Coalesced [26] main::entry#4 ← main::entry#1
-Coalesced [27] main::idx#7 ← main::idx#4
+Coalesced [21] main::entry#4 ← main::entry#1
+Coalesced [22] main::idx#7 ← main::idx#4
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0
-  [5] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1
-  [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0
-  [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2
-  [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0
-  [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3
+main: scope:[main]  from
+  [0] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0
+  [1] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1
+  [2] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0
+  [3] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2
+  [4] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0
+  [5] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [10] (byte) main::idx#5 ← phi( main/(byte) 0 main::@2/(byte) main::idx#4 )
-  [10] (struct Entry*) main::entry#2 ← phi( main/(const struct Entry*) ENTRIES main::@2/(struct Entry*) main::entry#1 )
-  [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2
+  [6] (byte) main::idx#5 ← phi( main/(byte) 0 main::@2/(byte) main::idx#4 )
+  [6] (struct Entry*) main::entry#2 ← phi( main/(const struct Entry*) ENTRIES main::@2/(struct Entry*) main::entry#1 )
+  [7] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [12] return 
+  [8] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2)
-  [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2
-  [15] (byte) main::idx#1 ← ++ (byte) main::idx#5
-  [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT)
-  [17] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3
-  [18] (byte) main::idx#2 ← ++ (byte) main::idx#1
-  [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT)
-  [20] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4
-  [21] (byte) main::idx#3 ← ++ (byte) main::idx#2
-  [22] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' '
-  [23] (byte) main::idx#4 ← ++ (byte) main::idx#3
-  [24] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT)
+  [9] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2)
+  [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2
+  [11] (byte) main::idx#1 ← ++ (byte) main::idx#5
+  [12] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT)
+  [13] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3
+  [14] (byte) main::idx#2 ← ++ (byte) main::idx#1
+  [15] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT)
+  [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4
+  [17] (byte) main::idx#3 ← ++ (byte) main::idx#2
+  [18] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' '
+  [19] (byte) main::idx#4 ← ++ (byte) main::idx#3
+  [20] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT)
   to:main::@1
 
 
@@ -317,21 +314,21 @@ VARIABLE REGISTER WEIGHTS
 (struct Entry*) Entry::next
 (byte) Entry::value
 (void()) main()
-(byte~) main::$2 202.0
-(byte~) main::$3 202.0
-(byte~) main::$4 202.0
+(byte~) main::$2 22.0
+(byte~) main::$3 22.0
+(byte~) main::$4 22.0
 (struct Entry*) main::entry
-(struct Entry*) main::entry#1 202.0
-(struct Entry*) main::entry#2 15.538461538461538
+(struct Entry*) main::entry#1 22.0
+(struct Entry*) main::entry#2 1.6923076923076923
 (struct Entry*) main::entry0
 (struct Entry*) main::entry1
 (struct Entry*) main::entry2
 (byte) main::idx
-(byte) main::idx#1 101.0
-(byte) main::idx#2 101.0
-(byte) main::idx#3 151.5
-(byte) main::idx#4 101.0
-(byte) main::idx#5 75.75
+(byte) main::idx#1 11.0
+(byte) main::idx#2 11.0
+(byte) main::idx#3 16.5
+(byte) main::idx#4 11.0
+(byte) main::idx#5 8.25
 
 Initial phi equivalence classes
 [ main::entry#2 main::entry#1 ]
@@ -372,20 +369,6 @@ Target platform is c64basic / MOS6502X
   .const SIZEOF_STRUCT_ENTRY = 3
   .const OFFSET_STRUCT_ENTRY_NEXT = 1
   .label ENTRIES = $1000
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     // Run through the linked list
@@ -400,36 +383,36 @@ main: {
     .label idx_2 = $a
     .label idx_3 = 4
     .label entry = 2
-    // [4] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 -- _deref_pptc1=pssc2 
+    // [0] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 -- _deref_pptc1=pssc2 
     lda #<entry2
     sta ENTRIES+OFFSET_STRUCT_ENTRY_NEXT
     lda #>entry2
     sta ENTRIES+OFFSET_STRUCT_ENTRY_NEXT+1
-    // [5] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta ENTRIES
-    // [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 -- _deref_pptc1=pssc2 
+    // [2] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 -- _deref_pptc1=pssc2 
     lda #<entry1
     sta entry2+OFFSET_STRUCT_ENTRY_NEXT
     lda #>entry1
     sta entry2+OFFSET_STRUCT_ENTRY_NEXT+1
-    // [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta entry2
-    // [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 -- _deref_pptc1=pssc2 
+    // [4] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 -- _deref_pptc1=pssc2 
     lda #<0
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT
     lda #>0
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT+1
-    // [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta entry1
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [10] phi (byte) main::idx#5 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::idx#5 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z idx_3
-    // [10] phi (struct Entry*) main::entry#2 = (const struct Entry*) ENTRIES [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [6] phi (struct Entry*) main::entry#2 = (const struct Entry*) ENTRIES [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<ENTRIES
     sta.z entry
     lda #>ENTRIES
@@ -437,7 +420,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
+    // [7] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
     lda.z entry+1
     cmp #>0
     bne __b2
@@ -447,57 +430,57 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
     // main::@2
   __b2:
-    // [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) -- vbuz1=vbuc1_plus__deref_pbuz2 
+    // [9] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) -- vbuz1=vbuc1_plus__deref_pbuz2 
     lda #'0'
     clc
     ldy #0
     adc (entry),y
     sta.z __2
-    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __2
     ldy.z idx_3
     sta SCREEN,y
-    // [15] (byte) main::idx#1 ← ++ (byte) main::idx#5 -- vbuz1=_inc_vbuz2 
+    // [11] (byte) main::idx#1 ← ++ (byte) main::idx#5 -- vbuz1=_inc_vbuz2 
     ldy.z idx_3
     iny
     sty.z idx
-    // [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuz1=_lo_pptz2_derefidx_vbuc1 
+    // [12] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuz1=_lo_pptz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
     sta.z __3
-    // [17] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [13] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __3
     ldy.z idx
     sta SCREEN,y
-    // [18] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
+    // [14] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
     ldy.z idx
     iny
     sty.z idx_1
-    // [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuz1=_hi_pptz2_derefidx_vbuc1 
+    // [15] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuz1=_hi_pptz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT+1
     lda (entry),y
     sta.z __4
-    // [20] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __4
     ldy.z idx_1
     sta SCREEN,y
-    // [21] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz2 
+    // [17] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz2 
     ldy.z idx_1
     iny
     sty.z idx_2
-    // [22] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [18] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #' '
     ldy.z idx_2
     sta SCREEN,y
-    // [23] (byte) main::idx#4 ← ++ (byte) main::idx#3 -- vbuz1=_inc_vbuz2 
+    // [19] (byte) main::idx#4 ← ++ (byte) main::idx#3 -- vbuz1=_inc_vbuz2 
     ldy.z idx_2
     iny
     sty.z idx_3
-    // [24] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- pssz1=pptz1_derefidx_vbuc1 
+    // [20] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- pssz1=pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
     pha
@@ -506,46 +489,46 @@ main: {
     sta.z entry+1
     pla
     sta.z entry
-    // [10] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [6] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [10] phi (byte) main::idx#5 = (byte) main::idx#4 [phi:main::@2->main::@1#0] -- register_copy 
-    // [10] phi (struct Entry*) main::entry#2 = (struct Entry*) main::entry#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [6] phi (byte) main::idx#5 = (byte) main::idx#4 [phi:main::@2->main::@1#0] -- register_copy 
+    // [6] phi (struct Entry*) main::entry#2 = (struct Entry*) main::entry#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] ( main:2 [ main::entry#2 main::idx#5 ] { }  ) always clobbers reg byte a 
+Statement [0] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] (  [ main::entry#2 main::idx#5 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::idx#5 main::idx#4 ]
-Statement [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) [ main::entry#2 main::idx#5 main::$2 ] ( main:2 [ main::entry#2 main::idx#5 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) [ main::entry#2 main::idx#5 main::$2 ] (  [ main::entry#2 main::idx#5 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::idx#5 main::idx#4 ]
-Statement [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#1 main::$3 ] ( main:2 [ main::entry#2 main::idx#1 main::$3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#1 main::$3 ] (  [ main::entry#2 main::idx#1 main::$3 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::idx#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ main::idx#1 ]
-Statement [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#2 main::$4 ] ( main:2 [ main::entry#2 main::idx#2 main::$4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [15] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#2 main::$4 ] (  [ main::entry#2 main::idx#2 main::$4 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ main::idx#2 ]
 Removing always clobbered register reg byte y as potential for zp[1]:8 [ main::idx#2 ]
-Statement [22] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' [ main::entry#2 main::idx#3 ] ( main:2 [ main::entry#2 main::idx#3 ] { }  ) always clobbers reg byte a 
+Statement [18] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' [ main::entry#2 main::idx#3 ] (  [ main::entry#2 main::idx#3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::idx#3 ]
-Statement [24] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#1 main::idx#4 ] ( main:2 [ main::entry#1 main::idx#4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [4] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] ( main:2 [ main::entry#2 main::idx#5 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) [ main::entry#2 main::idx#5 main::$2 ] ( main:2 [ main::entry#2 main::idx#5 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#1 main::$3 ] ( main:2 [ main::entry#2 main::idx#1 main::$3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#2 main::$4 ] ( main:2 [ main::entry#2 main::idx#2 main::$4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [22] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' [ main::entry#2 main::idx#3 ] ( main:2 [ main::entry#2 main::idx#3 ] { }  ) always clobbers reg byte a 
-Statement [24] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#1 main::idx#4 ] ( main:2 [ main::entry#1 main::idx#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [20] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#1 main::idx#4 ] (  [ main::entry#1 main::idx#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 [ main::entry#2 main::idx#5 ] (  [ main::entry#2 main::idx#5 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) [ main::entry#2 main::idx#5 main::$2 ] (  [ main::entry#2 main::idx#5 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#1 main::$3 ] (  [ main::entry#2 main::idx#1 main::$3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [15] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#2 main::idx#2 main::$4 ] (  [ main::entry#2 main::idx#2 main::$4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [18] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' [ main::entry#2 main::idx#3 ] (  [ main::entry#2 main::idx#3 ] { }  ) always clobbers reg byte a 
+Statement [20] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) [ main::entry#1 main::idx#4 ] (  [ main::entry#1 main::idx#4 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::entry#2 main::entry#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::idx#5 main::idx#4 ] : zp[1]:4 , reg byte x , 
 Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -556,20 +539,20 @@ Potential registers zp[1]:9 [ main::$4 ] : zp[1]:9 , reg byte a , reg byte x , r
 Potential registers zp[1]:10 [ main::idx#3 ] : zp[1]:10 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 217.54: zp[2]:2 [ main::entry#2 main::entry#1 ] 202: zp[1]:5 [ main::$2 ] 202: zp[1]:7 [ main::$3 ] 202: zp[1]:9 [ main::$4 ] 176.75: zp[1]:4 [ main::idx#5 main::idx#4 ] 151.5: zp[1]:10 [ main::idx#3 ] 101: zp[1]:6 [ main::idx#1 ] 101: zp[1]:8 [ main::idx#2 ] 
+Uplift Scope [main] 23.69: zp[2]:2 [ main::entry#2 main::entry#1 ] 22: zp[1]:5 [ main::$2 ] 22: zp[1]:7 [ main::$3 ] 22: zp[1]:9 [ main::$4 ] 19.25: zp[1]:4 [ main::idx#5 main::idx#4 ] 16.5: zp[1]:10 [ main::idx#3 ] 11: zp[1]:6 [ main::idx#1 ] 11: zp[1]:8 [ main::idx#2 ] 
 Uplift Scope [Entry] 
 Uplift Scope [] 
 
-Uplifting [main] best 1547 combination zp[2]:2 [ main::entry#2 main::entry#1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] reg byte a [ main::$4 ] reg byte x [ main::idx#5 main::idx#4 ] zp[1]:10 [ main::idx#3 ] zp[1]:6 [ main::idx#1 ] zp[1]:8 [ main::idx#2 ] 
+Uplifting [main] best 1535 combination zp[2]:2 [ main::entry#2 main::entry#1 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] reg byte a [ main::$4 ] reg byte x [ main::idx#5 main::idx#4 ] zp[1]:10 [ main::idx#3 ] zp[1]:6 [ main::idx#1 ] zp[1]:8 [ main::idx#2 ] 
 Limited combination testing to 100 combinations of 1536 possible.
-Uplifting [Entry] best 1547 combination 
-Uplifting [] best 1547 combination 
+Uplifting [Entry] best 1535 combination 
+Uplifting [] best 1535 combination 
 Attempting to uplift remaining variables inzp[1]:10 [ main::idx#3 ]
-Uplifting [main] best 1457 combination reg byte x [ main::idx#3 ] 
+Uplifting [main] best 1445 combination reg byte x [ main::idx#3 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ main::idx#1 ]
-Uplifting [main] best 1367 combination reg byte x [ main::idx#1 ] 
+Uplifting [main] best 1355 combination reg byte x [ main::idx#1 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ main::idx#2 ]
-Uplifting [main] best 1277 combination reg byte x [ main::idx#2 ] 
+Uplifting [main] best 1265 combination reg byte x [ main::idx#2 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -582,20 +565,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SIZEOF_STRUCT_ENTRY = 3
   .const OFFSET_STRUCT_ENTRY_NEXT = 1
   .label ENTRIES = $1000
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     // Run through the linked list
@@ -603,35 +572,35 @@ main: {
     .label entry1 = ENTRIES+1*SIZEOF_STRUCT_ENTRY
     .label entry2 = ENTRIES+2*SIZEOF_STRUCT_ENTRY
     .label entry = 2
-    // [4] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 -- _deref_pptc1=pssc2 
+    // [0] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 -- _deref_pptc1=pssc2 
     lda #<entry2
     sta ENTRIES+OFFSET_STRUCT_ENTRY_NEXT
     lda #>entry2
     sta ENTRIES+OFFSET_STRUCT_ENTRY_NEXT+1
-    // [5] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta ENTRIES
-    // [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 -- _deref_pptc1=pssc2 
+    // [2] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 -- _deref_pptc1=pssc2 
     lda #<entry1
     sta entry2+OFFSET_STRUCT_ENTRY_NEXT
     lda #>entry1
     sta entry2+OFFSET_STRUCT_ENTRY_NEXT+1
-    // [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta entry2
-    // [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 -- _deref_pptc1=pssc2 
+    // [4] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 -- _deref_pptc1=pssc2 
     lda #<0
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT
     lda #>0
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT+1
-    // [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta entry1
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [10] phi (byte) main::idx#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi (byte) main::idx#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [10] phi (struct Entry*) main::entry#2 = (const struct Entry*) ENTRIES [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [6] phi (struct Entry*) main::entry#2 = (const struct Entry*) ENTRIES [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<ENTRIES
     sta.z entry
     lda #>ENTRIES
@@ -639,7 +608,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
+    // [7] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
     lda.z entry+1
     cmp #>0
     bne __b2
@@ -649,39 +618,39 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
     // main::@2
   __b2:
-    // [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) -- vbuaa=vbuc1_plus__deref_pbuz1 
+    // [9] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) -- vbuaa=vbuc1_plus__deref_pbuz1 
     lda #'0'
     clc
     ldy #0
     adc (entry),y
-    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-    // [15] (byte) main::idx#1 ← ++ (byte) main::idx#5 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) main::idx#1 ← ++ (byte) main::idx#5 -- vbuxx=_inc_vbuxx 
     inx
-    // [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_lo_pptz1_derefidx_vbuc1 
+    // [12] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_lo_pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
-    // [17] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [13] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-    // [18] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
+    // [14] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
     inx
-    // [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_hi_pptz1_derefidx_vbuc1 
+    // [15] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_hi_pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT+1
     lda (entry),y
-    // [20] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-    // [21] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+    // [17] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [22] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [18] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
-    // [23] (byte) main::idx#4 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
+    // [19] (byte) main::idx#4 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
-    // [24] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- pssz1=pptz1_derefidx_vbuc1 
+    // [20] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- pssz1=pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
     pha
@@ -690,66 +659,53 @@ main: {
     sta.z entry+1
     pla
     sta.z entry
-    // [10] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [6] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [10] phi (byte) main::idx#5 = (byte) main::idx#4 [phi:main::@2->main::@1#0] -- register_copy 
-    // [10] phi (struct Entry*) main::entry#2 = (struct Entry*) main::entry#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [6] phi (byte) main::idx#5 = (byte) main::idx#4 [phi:main::@2->main::@1#0] -- register_copy 
+    // [6] phi (struct Entry*) main::entry#2 = (struct Entry*) main::entry#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const struct Entry*) ENTRIES = (struct Entry*) 4096
 (struct Entry*) Entry::next
 (byte) Entry::value
 (const byte) OFFSET_STRUCT_ENTRY_NEXT = (byte) 1
 (const byte) SIZEOF_STRUCT_ENTRY = (byte) 3
 (void()) main()
-(byte~) main::$2 reg byte a 202.0
-(byte~) main::$3 reg byte a 202.0
-(byte~) main::$4 reg byte a 202.0
+(byte~) main::$2 reg byte a 22.0
+(byte~) main::$3 reg byte a 22.0
+(byte~) main::$4 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*) 1024
 (struct Entry*) main::entry
-(struct Entry*) main::entry#1 entry zp[2]:2 202.0
-(struct Entry*) main::entry#2 entry zp[2]:2 15.538461538461538
+(struct Entry*) main::entry#1 entry zp[2]:2 22.0
+(struct Entry*) main::entry#2 entry zp[2]:2 1.6923076923076923
 (struct Entry*) main::entry0
 (struct Entry*) main::entry1
 (const struct Entry*) main::entry1#0 entry1 = (const struct Entry*) ENTRIES+(byte) 1*(const byte) SIZEOF_STRUCT_ENTRY
 (struct Entry*) main::entry2
 (const struct Entry*) main::entry2#0 entry2 = (const struct Entry*) ENTRIES+(byte) 2*(const byte) SIZEOF_STRUCT_ENTRY
 (byte) main::idx
-(byte) main::idx#1 reg byte x 101.0
-(byte) main::idx#2 reg byte x 101.0
-(byte) main::idx#3 reg byte x 151.5
-(byte) main::idx#4 reg byte x 101.0
-(byte) main::idx#5 reg byte x 75.75
+(byte) main::idx#1 reg byte x 11.0
+(byte) main::idx#2 reg byte x 11.0
+(byte) main::idx#3 reg byte x 16.5
+(byte) main::idx#4 reg byte x 11.0
+(byte) main::idx#5 reg byte x 8.25
 
 zp[2]:2 [ main::entry#2 main::entry#1 ]
 reg byte x [ main::idx#5 main::idx#4 ]
@@ -774,12 +730,6 @@ Score: 1203
   .const SIZEOF_STRUCT_ENTRY = 3
   .const OFFSET_STRUCT_ENTRY_NEXT = 1
   .label ENTRIES = $1000
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // Run through the linked list
@@ -788,38 +738,38 @@ main: {
     .label entry2 = ENTRIES+2*SIZEOF_STRUCT_ENTRY
     .label entry = 2
     // entry0->next = entry2
-    // [4] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 -- _deref_pptc1=pssc2 
+    // [0] *((struct Entry**)(const struct Entry*) ENTRIES+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry2#0 -- _deref_pptc1=pssc2 
     lda #<entry2
     sta ENTRIES+OFFSET_STRUCT_ENTRY_NEXT
     lda #>entry2
     sta ENTRIES+OFFSET_STRUCT_ENTRY_NEXT+1
     // entry0->value = 1
-    // [5] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const struct Entry*) ENTRIES) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta ENTRIES
     // entry2->next = entry1
-    // [6] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 -- _deref_pptc1=pssc2 
+    // [2] *((struct Entry**)(const struct Entry*) main::entry2#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (const struct Entry*) main::entry1#0 -- _deref_pptc1=pssc2 
     lda #<entry1
     sta entry2+OFFSET_STRUCT_ENTRY_NEXT
     lda #>entry1
     sta entry2+OFFSET_STRUCT_ENTRY_NEXT+1
     // entry2->value = 2
-    // [7] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const struct Entry*) main::entry2#0) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta entry2
     // entry1->next = 0
-    // [8] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 -- _deref_pptc1=pssc2 
+    // [4] *((struct Entry**)(const struct Entry*) main::entry1#0+(const byte) OFFSET_STRUCT_ENTRY_NEXT) ← (struct Entry*) 0 -- _deref_pptc1=pssc2 
     lda #<0
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT
     sta entry1+OFFSET_STRUCT_ENTRY_NEXT+1
     // entry1->value = 3
-    // [9] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const struct Entry*) main::entry1#0) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta entry1
-    // [10] phi from main to main::@1 [phi:main->main::@1]
-    // [10] phi (byte) main::idx#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi (byte) main::idx#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [10] phi (struct Entry*) main::entry#2 = (const struct Entry*) ENTRIES [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [6] phi (struct Entry*) main::entry#2 = (const struct Entry*) ENTRIES [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<ENTRIES
     sta.z entry
     lda #>ENTRIES
@@ -827,7 +777,7 @@ main: {
     // main::@1
   __b1:
     // while(entry)
-    // [11] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
+    // [7] if((struct Entry*)(word) 0!=(struct Entry*) main::entry#2) goto main::@2 -- pssc1_neq_pssz1_then_la1 
     lda.z entry+1
     cmp #>0
     bne __b2
@@ -836,51 +786,51 @@ main: {
     bne __b2
     // main::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
     // main::@2
   __b2:
     // '0'+entry->value
-    // [13] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) -- vbuaa=vbuc1_plus__deref_pbuz1 
+    // [9] (byte~) main::$2 ← (byte) '0' + *((byte*)(struct Entry*) main::entry#2) -- vbuaa=vbuc1_plus__deref_pbuz1 
     lda #'0'
     clc
     ldy #0
     adc (entry),y
     // SCREEN[idx++] = '0'+entry->value
-    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#5) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // SCREEN[idx++] = '0'+entry->value;
-    // [15] (byte) main::idx#1 ← ++ (byte) main::idx#5 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) main::idx#1 ← ++ (byte) main::idx#5 -- vbuxx=_inc_vbuxx 
     inx
     // <entry->next
-    // [16] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_lo_pptz1_derefidx_vbuc1 
+    // [12] (byte~) main::$3 ← < *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_lo_pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
     // SCREEN[idx++] = <entry->next
-    // [17] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [13] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte~) main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // SCREEN[idx++] = <entry->next;
-    // [18] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
+    // [14] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
     inx
     // >entry->next
-    // [19] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_hi_pptz1_derefidx_vbuc1 
+    // [15] (byte~) main::$4 ← > *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- vbuaa=_hi_pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT+1
     lda (entry),y
     // SCREEN[idx++] = >entry->next
-    // [20] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // SCREEN[idx++] = >entry->next;
-    // [21] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+    // [17] (byte) main::idx#3 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = ' '
-    // [22] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [18] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta SCREEN,x
     // SCREEN[idx++] = ' ';
-    // [23] (byte) main::idx#4 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
+    // [19] (byte) main::idx#4 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
     // entry = entry->next
-    // [24] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- pssz1=pptz1_derefidx_vbuc1 
+    // [20] (struct Entry*) main::entry#1 ← *((struct Entry**)(struct Entry*) main::entry#2 + (const byte) OFFSET_STRUCT_ENTRY_NEXT) -- pssz1=pptz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_ENTRY_NEXT
     lda (entry),y
     pha
@@ -889,9 +839,9 @@ main: {
     sta.z entry+1
     pla
     sta.z entry
-    // [10] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [10] phi (byte) main::idx#5 = (byte) main::idx#4 [phi:main::@2->main::@1#0] -- register_copy 
-    // [10] phi (struct Entry*) main::entry#2 = (struct Entry*) main::entry#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [6] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [6] phi (byte) main::idx#5 = (byte) main::idx#4 [phi:main::@2->main::@1#0] -- register_copy 
+    // [6] phi (struct Entry*) main::entry#2 = (struct Entry*) main::entry#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

@@ -1,9 +1,8 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN (const byte*) LOGO 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@4 main::@5
@@ -48,17 +47,9 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@1: scope:[]  from @begin
-  kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
-    .for (var y=0; y<6	; y++)
-        .for (var x=0;x<40; x++)
-            .for(var cp=0; cp<8; cp++)
-                .byte logoPic.getMulticolorByte(x,cp+y*8)
- }}
-  to:@2
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
   *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY
   *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1)
@@ -122,25 +113,33 @@ main::@3: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) COLS = (byte*)(number) $d800
 (const nomodify byte*) D016 = (byte*)(number) $d016
 (const nomodify byte*) D018 = (byte*)(number) $d018
 (const nomodify byte) DARK_GREY = (byte) $b
-(const byte*) LOGO = (byte*)(number) $2000
+(const byte*) LOGO[(number) 6*(number) $28*(number) 8]  = kickasm {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+    .for (var y=0; y<6	; y++)
+        .for (var x=0;x<40; x++)
+            .for(var cp=0; cp<8; cp++)
+                .byte logoPic.getMulticolorByte(x,cp+y*8)
+ }}
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -234,6 +233,11 @@ SYMBOL TABLE SSA
 (const nomodify byte) VIC_CSEL = (byte) 8
 (const nomodify byte) VIC_MCM = (byte) $10
 (const nomodify byte) WHITE = (byte) 1
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (byte~) main::$0
 (bool~) main::$3
@@ -344,7 +348,6 @@ Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 8192
 Simplifying constant integer cast 0
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
@@ -391,12 +394,12 @@ Identical Phi Values (void*) memset::return#0 (void*) memset::str#3
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) main::$3 [45] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
+Simple Condition (bool~) main::$3 [44] if((byte) main::ch#1!=rangelast(0,$ef)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [30] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
-Constant right-side identified [32] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
-Constant right-side identified [37] (word) memset::num#1 ← (unumber)(number) $28*(number) $19
-Constant right-side identified [47] (byte*~) main::$7 ← (const byte*) SCREEN + (word) $3e7
+Constant right-side identified [29] (void*) memset::str#0 ← (void*)(const byte*) SCREEN
+Constant right-side identified [31] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [36] (word) memset::num#1 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [46] (byte*~) main::$7 ← (const byte*) SCREEN + (word) $3e7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::toD0181_screen#0 = SCREEN
 Constant (const byte*) main::toD0181_gfx#0 = LOGO
@@ -411,42 +414,49 @@ Constant (const byte*) main::$7 = SCREEN+$3e7
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const word) main::toD0181_$7 = (word)main::toD0181_screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_gfx#0 in [24] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
+Constant value identified (word)main::toD0181_gfx#0 in [23] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [46] if(true) goto main::@3
+if() condition always true - replacing block destination [45] if(true) goto main::@3
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [43] main::ch#1 ← ++ main::ch#2 to ++
-Resolved ranged comparison value [45] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
-Eliminating unused variable (void*) memset::return#2 and assignment [25] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [27] (void*) memset::return#3 ← (void*) memset::str#3
+Resolved ranged next value [42] main::ch#1 ← ++ main::ch#2 to ++
+Resolved ranged comparison value [44] if(main::ch#1!=rangelast(0,$ef)) goto main::@1 to (number) $f0
+Eliminating unused variable (void*) memset::return#2 and assignment [24] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [26] (void*) memset::return#3 ← (void*) memset::str#3
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) $f0 in if((byte) main::ch#1!=(number) $f0) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) $f0 in [28] if((byte) main::ch#1!=(number) $f0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $f0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $f0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [15] (word~) main::toD0181_$0 ← (const word) main::toD0181_$7 & (word) $3fff
-Constant right-side identified [18] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
+Constant right-side identified [14] (word~) main::toD0181_$0 ← (const word) main::toD0181_$7 & (word) $3fff
+Constant right-side identified [17] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::toD0181_$0 = main::toD0181_$7&$3fff
 Constant (const byte) main::toD0181_$3 = >(word)main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [15] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 * (byte) 4
-Constant right-side identified [17] (byte~) main::toD0181_$4 ← (const byte) main::toD0181_$3 / (byte) 4
+Constant right-side identified [14] (word~) main::toD0181_$1 ← (const word) main::toD0181_$0 * (byte) 4
+Constant right-side identified [16] (byte~) main::toD0181_$4 ← (const byte) main::toD0181_$3 / (byte) 4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) main::toD0181_$1 = main::toD0181_$0*4
 Constant (const byte) main::toD0181_$4 = main::toD0181_$3/4
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [15] (byte~) main::toD0181_$2 ← > (const word) main::toD0181_$1
-Constant right-side identified [16] (byte~) main::toD0181_$5 ← (const byte) main::toD0181_$4 & (byte) $f
+Constant right-side identified [14] (byte~) main::toD0181_$2 ← > (const word) main::toD0181_$1
+Constant right-side identified [15] (byte~) main::toD0181_$5 ← (const byte) main::toD0181_$4 & (byte) $f
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toD0181_$2 = >main::toD0181_$1
 Constant (const byte) main::toD0181_$5 = main::toD0181_$4&$f
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [15] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$2 | (const byte) main::toD0181_$5
+Constant right-side identified [14] (byte) main::toD0181_return#0 ← (const byte) main::toD0181_$2 | (const byte) main::toD0181_$5
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::toD0181_return#0 = main::toD0181_$2|main::toD0181_$5
 Successful SSA optimization Pass2ConstantIdentification
@@ -483,10 +493,6 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 if() condition always false - eliminating [1] if((word)(number) $28*(number) $19<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
 Added new block during phi lifting main::@7(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
 Adding NOP phi() at start of main::@5
@@ -494,14 +500,12 @@ Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:3 
-Calls in [main] to memset:14 memset:16 
+Calls in [main] to memset:8 memset:10 
 
 Created 4 initial phi equivalence classes
-Coalesced [25] main::ch#3 ← main::ch#1
-Coalesced [35] memset::dst#5 ← memset::dst#1
+Coalesced [19] main::ch#3 ← main::ch#1
+Coalesced [29] memset::dst#5 ← memset::dst#1
 Coalesced down to 4 phi equivalence classes
-Culled Empty Block (label) @3
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@2
@@ -513,80 +517,60 @@ Renumbering block memset::@4 to memset::@3
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::@4
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
-    .for (var y=0; y<6	; y++)
-        .for (var x=0;x<40; x++)
-            .for(var cp=0; cp<8; cp++)
-                .byte logoPic.getMulticolorByte(x,cp+y*8)
- }}
-  to:@2
-@2: scope:[]  from @1
-  [2] phi()
-  [3] call main 
-  to:@end
-@end: scope:[]  from @2
-  [4] phi()
 
 (void()) main()
-main: scope:[main]  from @2
-  [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
-  [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY
-  [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1)
-  [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK
+main: scope:[main]  from
+  [0] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE
+  [1] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY
+  [2] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1)
+  [3] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK
   to:main::toD0181
 main::toD0181: scope:[main]  from main
-  [9] phi()
+  [4] phi()
   to:main::@3
 main::@3: scope:[main]  from main::toD0181
-  [10] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
-  [11] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL
-  [12] call memset 
+  [5] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
+  [6] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL
+  [7] call memset 
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  [13] phi()
-  [14] call memset 
+  [8] phi()
+  [9] call memset 
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@4
-  [15] (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@4/(byte) 0 )
-  [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
-  [17] (byte) main::ch#1 ← ++ (byte) main::ch#2
-  [18] if((byte) main::ch#1!=(byte) $f0) goto main::@1
+  [10] (byte) main::ch#2 ← phi( main::@1/(byte) main::ch#1 main::@4/(byte) 0 )
+  [11] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2
+  [12] (byte) main::ch#1 ← ++ (byte) main::ch#2
+  [13] if((byte) main::ch#1!=(byte) $f0) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7)
+  [14] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7)
   kickasm() {{ inc $d020  }}
   to:main::@2
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main::@3 main::@4
-  [21] (byte) memset::c#4 ← phi( main::@3/(const nomodify byte) BLACK main::@4/(const nomodify byte) WHITE|(byte) 8 )
-  [21] (void*) memset::str#3 ← phi( main::@3/(void*)(const byte*) SCREEN main::@4/(void*)(const nomodify byte*) COLS )
+  [16] (byte) memset::c#4 ← phi( main::@3/(const nomodify byte) BLACK main::@4/(const nomodify byte) WHITE|(byte) 8 )
+  [16] (void*) memset::str#3 ← phi( main::@3/(void*)(const byte*) SCREEN main::@4/(void*)(const nomodify byte*) COLS )
   to:memset::@1
 memset::@1: scope:[memset]  from memset
-  [22] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19
-  [23] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+  [17] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19
+  [18] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
   to:memset::@2
 memset::@2: scope:[memset]  from memset::@1 memset::@3
-  [24] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
-  [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
+  [19] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
+  [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@2
-  [26] return 
+  [21] return 
   to:@return
 memset::@3: scope:[memset]  from memset::@2
-  [27] *((byte*) memset::dst#2) ← (byte) memset::c#4
-  [28] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [22] *((byte*) memset::dst#2) ← (byte) memset::c#4
+  [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@2
 
 
@@ -677,20 +661,20 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
 (byte) main::ch
-(byte) main::ch#1 151.5
-(byte) main::ch#2 202.0
+(byte) main::ch#1 16.5
+(byte) main::ch#2 22.0
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
 (byte*) main::toD0181_screen
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
-(byte) memset::c#4 143.0
+(byte) memset::c#4 14.428571428571429
 (byte*) memset::dst
-(byte*) memset::dst#1 2002.0
-(byte*) memset::dst#2 1368.3333333333335
-(byte*) memset::dst#4 202.0
+(byte*) memset::dst#1 202.0
+(byte*) memset::dst#2 138.33333333333331
+(byte*) memset::dst#4 22.0
 (byte*) memset::end
-(byte*) memset::end#0 183.66666666666669
+(byte*) memset::end#0 18.666666666666664
 (word) memset::num
 (void*) memset::return
 (void*) memset::str
@@ -742,42 +726,23 @@ Target platform is c64basic / MOS6502X
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
-  .label LOGO = $2000
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     .label ch = 2
-    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
-    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
-    // [9] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [4] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
     // main::toD0181
@@ -785,67 +750,67 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [10] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [11] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta D016
-    // [12] call memset 
-    // [21] phi from main::@3 to memset [phi:main::@3->memset]
+    // [7] call memset 
+    // [16] phi from main::@3 to memset [phi:main::@3->memset]
   memset_from___b3:
-    // [21] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:main::@3->memset#0] -- vbuz1=vbuc1 
+    // [16] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:main::@3->memset#0] -- vbuz1=vbuc1 
     lda #BLACK
     sta.z memset.c
-    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [16] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
     sta.z memset.str+1
     jsr memset
-    // [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [14] call memset 
-    // [21] phi from main::@4 to memset [phi:main::@4->memset]
+    // [9] call memset 
+    // [16] phi from main::@4 to memset [phi:main::@4->memset]
   memset_from___b4:
-    // [21] phi (byte) memset::c#4 = (const nomodify byte) WHITE|(byte) 8 [phi:main::@4->memset#0] -- vbuz1=vbuc1 
+    // [16] phi (byte) memset::c#4 = (const nomodify byte) WHITE|(byte) 8 [phi:main::@4->memset#0] -- vbuz1=vbuc1 
     lda #WHITE|8
     sta.z memset.c
-    // [21] phi (void*) memset::str#3 = (void*)(const nomodify byte*) COLS [phi:main::@4->memset#1] -- pvoz1=pvoc1 
+    // [16] phi (void*) memset::str#3 = (void*)(const nomodify byte*) COLS [phi:main::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memset.str
     lda #>COLS
     sta.z memset.str+1
     jsr memset
-    // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [15] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
+    // [10] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z ch
     jmp __b1
-    // [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [10] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [11] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z ch
     tya
     sta SCREEN,y
-    // [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuz1=_inc_vbuz1 
     inc.z ch
-    // [18] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [13] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$f0
     cmp.z ch
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // kickasm() {{ inc $d020  }}
     inc $d020 
@@ -862,7 +827,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [22] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 -- pbuz1=pbuz2_plus_vwuc1 
+    // [17] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z str
     clc
     adc #<$28*$19
@@ -870,19 +835,19 @@ memset: {
     lda.z str+1
     adc #>$28*$19
     sta.z end+1
-    // [23] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
+    // [18] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
     lda.z str
     sta.z dst
     lda.z str+1
     sta.z dst+1
-    // [24] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [19] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [24] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [19] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -892,15 +857,15 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [26] return 
+    // [21] return 
     rts
     // memset::@3
   __b3:
-    // [27] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
+    // [22] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
     lda.z c
     ldy #0
     sta (dst),y
-    // [28] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
@@ -908,8 +873,9 @@ memset: {
     jmp __b2_from___b3
 }
   // File Data
-.pc = LOGO "LOGO"
-  .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+.pc = $2000 "LOGO"
+LOGO:
+.var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -917,28 +883,28 @@ memset: {
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [22] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::memset:12 [ memset::str#3 memset::c#4 memset::end#0 ] { }  main:3::memset:14 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [0] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [17] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 [ memset::str#3 memset::c#4 memset::end#0 ] ( memset:7 [ memset::str#3 memset::c#4 memset::end#0 ] { }  memset:9 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ memset::c#4 ]
-Statement [23] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::memset:12 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  main:3::memset:14 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::memset:12 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::memset:14 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::memset:12 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::memset:14 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [18] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( memset:7 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  memset:9 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( memset:7 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  memset:9 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [22] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( memset:7 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  memset:9 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ memset::c#4 ]
-Statement [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [22] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:3::memset:12 [ memset::str#3 memset::c#4 memset::end#0 ] { }  main:3::memset:14 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Statement [23] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:3::memset:12 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  main:3::memset:14 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::memset:12 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::memset:14 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:3::memset:12 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  main:3::memset:14 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [17] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 [ memset::str#3 memset::c#4 memset::end#0 ] ( memset:7 [ memset::str#3 memset::c#4 memset::end#0 ] { }  memset:9 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [18] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( memset:7 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  memset:9 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( memset:7 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  memset:9 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [22] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( memset:7 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  memset:9 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::ch#2 main::ch#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ memset::str#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ memset::c#4 ] : zp[1]:5 , reg byte x , 
@@ -946,19 +912,19 @@ Potential registers zp[2]:6 [ memset::dst#2 memset::dst#4 memset::dst#1 ] : zp[2
 Potential registers zp[2]:8 [ memset::end#0 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memset] 3,572.33: zp[2]:6 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 183.67: zp[2]:8 [ memset::end#0 ] 143: zp[1]:5 [ memset::c#4 ] 0: zp[2]:3 [ memset::str#3 ] 
-Uplift Scope [main] 353.5: zp[1]:2 [ main::ch#2 main::ch#1 ] 
+Uplift Scope [memset] 362.33: zp[2]:6 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 18.67: zp[2]:8 [ memset::end#0 ] 14.43: zp[1]:5 [ memset::c#4 ] 0: zp[2]:3 [ memset::str#3 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::ch#2 main::ch#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [memset] best 6278 combination zp[2]:6 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:8 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:3 [ memset::str#3 ] 
-Uplifting [main] best 6158 combination reg byte x [ main::ch#2 main::ch#1 ] 
-Uplifting [MOS6526_CIA] best 6158 combination 
-Uplifting [MOS6569_VICII] best 6158 combination 
-Uplifting [MOS6581_SID] best 6158 combination 
-Uplifting [] best 6158 combination 
+Uplifting [memset] best 3676 combination zp[2]:6 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:8 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:3 [ memset::str#3 ] 
+Uplifting [main] best 3556 combination reg byte x [ main::ch#2 main::ch#1 ] 
+Uplifting [MOS6526_CIA] best 3556 combination 
+Uplifting [MOS6569_VICII] best 3556 combination 
+Uplifting [MOS6581_SID] best 3556 combination 
+Uplifting [] best 3556 combination 
 Coalescing zero page register [ zp[2]:3 [ memset::str#3 ] ] with [ zp[2]:6 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Allocated (was zp[2]:3) zp[2]:2 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
 Allocated (was zp[2]:8) zp[2]:4 [ memset::end#0 ]
@@ -990,41 +956,22 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
-  .label LOGO = $2000
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
-    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
-    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
-    // [9] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [4] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
     // main::toD0181
@@ -1032,62 +979,62 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [10] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [11] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta D016
-    // [12] call memset 
-    // [21] phi from main::@3 to memset [phi:main::@3->memset]
+    // [7] call memset 
+    // [16] phi from main::@3 to memset [phi:main::@3->memset]
   memset_from___b3:
-    // [21] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
+    // [16] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [16] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
     sta.z memset.str+1
     jsr memset
-    // [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [14] call memset 
-    // [21] phi from main::@4 to memset [phi:main::@4->memset]
+    // [9] call memset 
+    // [16] phi from main::@4 to memset [phi:main::@4->memset]
   memset_from___b4:
-    // [21] phi (byte) memset::c#4 = (const nomodify byte) WHITE|(byte) 8 [phi:main::@4->memset#0] -- vbuxx=vbuc1 
+    // [16] phi (byte) memset::c#4 = (const nomodify byte) WHITE|(byte) 8 [phi:main::@4->memset#0] -- vbuxx=vbuc1 
     ldx #WHITE|8
-    // [21] phi (void*) memset::str#3 = (void*)(const nomodify byte*) COLS [phi:main::@4->memset#1] -- pvoz1=pvoc1 
+    // [16] phi (void*) memset::str#3 = (void*)(const nomodify byte*) COLS [phi:main::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memset.str
     lda #>COLS
     sta.z memset.str+1
     jsr memset
-    // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [15] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
+    // [10] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [10] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [11] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
+    // [12] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [18] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [13] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f0
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // kickasm() {{ inc $d020  }}
     inc $d020 
@@ -1103,7 +1050,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [22] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 -- pbuz1=pbuz2_plus_vwuc1 
+    // [17] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z str
     clc
     adc #<$28*$19
@@ -1111,15 +1058,15 @@ memset: {
     lda.z str+1
     adc #>$28*$19
     sta.z end+1
-    // [23] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
-    // [24] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [18] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [19] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [24] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [19] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -1129,15 +1076,15 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [26] return 
+    // [21] return 
     rts
     // memset::@3
   __b3:
-    // [27] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
+    // [22] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
-    // [28] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
@@ -1145,8 +1092,9 @@ memset: {
     jmp __b2_from___b3
 }
   // File Data
-.pc = LOGO "LOGO"
-  .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+.pc = $2000 "LOGO"
+LOGO:
+.var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)
@@ -1154,9 +1102,6 @@ memset: {
 
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
 Removing instruction jmp toD0181
 Removing instruction jmp __b3
 Removing instruction jmp __b4
@@ -1170,10 +1115,6 @@ Removing instruction lda VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b1 with __b1
 Replacing label __b2_from___b3 with __b2
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __b2:
-Removing instruction __bend_from___b2:
 Removing instruction toD0181_from_main:
 Removing instruction toD0181:
 Removing instruction __b4_from___b3:
@@ -1182,8 +1123,6 @@ Removing instruction __b1_from___b1:
 Removing instruction __b2_from___b1:
 Removing instruction __b2_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b3:
 Removing instruction memset_from___b3:
 Removing instruction __b4:
@@ -1191,22 +1130,21 @@ Removing instruction __b1_from___b4:
 Removing instruction __b1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) COLS = (byte*) 55296
 (const nomodify byte*) D016 = (byte*) 53270
 (const nomodify byte*) D018 = (byte*) 53272
 (const nomodify byte) DARK_GREY = (byte) $b
-(const byte*) LOGO = (byte*) 8192
+(const byte*) LOGO[(number) 6*(number) $28*(number) 8]  = kickasm {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+    .for (var y=0; y<6	; y++)
+        .for (var x=0;x<40; x++)
+            .for(var cp=0; cp<8; cp++)
+                .byte logoPic.getMulticolorByte(x,cp+y*8)
+ }}
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -1306,8 +1244,8 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@4
 (byte) main::ch
-(byte) main::ch#1 reg byte x 151.5
-(byte) main::ch#2 reg byte x 202.0
+(byte) main::ch#1 reg byte x 16.5
+(byte) main::ch#2 reg byte x 22.0
 (label) main::toD0181
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
@@ -1319,13 +1257,13 @@ FINAL SYMBOL TABLE
 (label) memset::@3
 (label) memset::@return
 (byte) memset::c
-(byte) memset::c#4 reg byte x 143.0
+(byte) memset::c#4 reg byte x 14.428571428571429
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:2 2002.0
-(byte*) memset::dst#2 dst zp[2]:2 1368.3333333333335
-(byte*) memset::dst#4 dst zp[2]:2 202.0
+(byte*) memset::dst#1 dst zp[2]:2 202.0
+(byte*) memset::dst#2 dst zp[2]:2 138.33333333333331
+(byte*) memset::dst#4 dst zp[2]:2 22.0
 (byte*) memset::end
-(byte*) memset::end#0 end zp[2]:4 183.66666666666669
+(byte*) memset::end#0 end zp[2]:4 18.666666666666664
 (word) memset::num
 (void*) memset::return
 (void*) memset::str
@@ -1338,7 +1276,7 @@ zp[2]:4 [ memset::end#0 ]
 
 
 FINAL ASSEMBLER
-Score: 5884
+Score: 3324
 
   // File Comments
 // Commodore 64 Registers and Constants
@@ -1366,90 +1304,80 @@ Score: 5884
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
-  .label LOGO = $2000
-  // @begin
-  // @1
-  // kickasm
-  // kickasm(location (const byte*) LOGO) {{ .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))     .for (var y=0; y<6	; y++)         .for (var x=0;x<40; x++)             .for(var cp=0; cp<8; cp++)                 .byte logoPic.getMulticolorByte(x,cp+y*8)  }}
-  // [2] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [3] call main 
-  // [4] phi from @2 to @end [phi:@2->@end]
-  // @end
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // VICII->BORDER_COLOR = WHITE
-    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // VICII->BG_COLOR1 = DARK_GREY
-    // [6] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) ← (const nomodify byte) DARK_GREY -- _deref_pbuc1=vbuc2 
     lda #DARK_GREY
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
     // VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY
-    // [7] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1) -- _deref_pbuc1=_deref_pbuc2 
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // VICII->BG_COLOR2 = BLACK
-    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
-    // [9] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [4] phi from main to main::toD0181 [phi:main->main::toD0181]
     // main::toD0181
     // main::@3
     // *D018 = toD018(SCREEN, LOGO)
-    // [10] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // *D016 = VIC_MCM | VIC_CSEL
-    // [11] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) D016) ← (const nomodify byte) VIC_MCM|(const nomodify byte) VIC_CSEL -- _deref_pbuc1=vbuc2 
     lda #VIC_MCM|VIC_CSEL
     sta D016
     // memset(SCREEN, BLACK, 40*25)
-    // [12] call memset 
-    // [21] phi from main::@3 to memset [phi:main::@3->memset]
-    // [21] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
+    // [7] call memset 
+    // [16] phi from main::@3 to memset [phi:main::@3->memset]
+    // [16] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:main::@3->memset#0] -- vbuxx=vbuc1 
     ldx #BLACK
-    // [21] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
+    // [16] phi (void*) memset::str#3 = (void*)(const byte*) SCREEN [phi:main::@3->memset#1] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memset.str
     lda #>SCREEN
     sta.z memset.str+1
     jsr memset
-    // [13] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // main::@4
     // memset(COLS, WHITE|8, 40*25)
-    // [14] call memset 
-    // [21] phi from main::@4 to memset [phi:main::@4->memset]
-    // [21] phi (byte) memset::c#4 = (const nomodify byte) WHITE|(byte) 8 [phi:main::@4->memset#0] -- vbuxx=vbuc1 
+    // [9] call memset 
+    // [16] phi from main::@4 to memset [phi:main::@4->memset]
+    // [16] phi (byte) memset::c#4 = (const nomodify byte) WHITE|(byte) 8 [phi:main::@4->memset#0] -- vbuxx=vbuc1 
     ldx #WHITE|8
-    // [21] phi (void*) memset::str#3 = (void*)(const nomodify byte*) COLS [phi:main::@4->memset#1] -- pvoz1=pvoc1 
+    // [16] phi (void*) memset::str#3 = (void*)(const nomodify byte*) COLS [phi:main::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLS
     sta.z memset.str
     lda #>COLS
     sta.z memset.str+1
     jsr memset
-    // [15] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-    // [15] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
+    // [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [10] phi (byte) main::ch#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [15] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [15] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [10] phi (byte) main::ch#2 = (byte) main::ch#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // SCREEN[ch] = ch
-    // [16] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [11] *((const byte*) SCREEN + (byte) main::ch#2) ← (byte) main::ch#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // for(char ch: 0..239)
-    // [17] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
+    // [12] (byte) main::ch#1 ← ++ (byte) main::ch#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [18] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [13] if((byte) main::ch#1!=(byte) $f0) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$f0
     bne __b1
     // main::@2
   __b2:
     // (*(SCREEN+999))++;
-    // [19] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [14] *((const byte*) SCREEN+(word) $3e7) ← ++ *((const byte*) SCREEN+(word) $3e7) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN+$3e7
     // kickasm
     // kickasm() {{ inc $d020  }}
@@ -1465,7 +1393,7 @@ memset: {
     .label str = 2
     // memset::@1
     // end = (char*)str + num
-    // [22] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 -- pbuz1=pbuz2_plus_vwuc1 
+    // [17] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word)(number) $28*(number) $19 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z str
     clc
     adc #<$28*$19
@@ -1473,13 +1401,13 @@ memset: {
     lda.z str+1
     adc #>$28*$19
     sta.z end+1
-    // [23] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
-    // [24] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-    // [24] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [18] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [19] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [19] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
   __b2:
     // for(char* dst = str; dst!=end; dst++)
-    // [25] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [20] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -1488,17 +1416,17 @@ memset: {
     bne __b3
     // memset::@return
     // }
-    // [26] return 
+    // [21] return 
     rts
     // memset::@3
   __b3:
     // *dst = c
-    // [27] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
+    // [22] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [28] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
@@ -1506,8 +1434,9 @@ memset: {
     jmp __b2
 }
   // File Data
-.pc = LOGO "LOGO"
-  .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
+.pc = $2000 "LOGO"
+LOGO:
+.var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))
     .for (var y=0; y<6	; y++)
         .for (var x=0;x<40; x++)
             .for(var cp=0; cp<8; cp++)

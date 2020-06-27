@@ -1,8 +1,6 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
 mul16u: scope:[mul16u]  from main
@@ -54,7 +52,7 @@ mul16u::@return: scope:[mul16u]  from mul16u::@3
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (word) mul16u::a#1 ← (number) 4
   (word) mul16u::b#0 ← (number) $7b
   call mul16u 
@@ -74,18 +72,18 @@ main::@1: scope:[main]  from main
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (byte) MOS6526_CIA::INTERRUPT
@@ -172,6 +170,9 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (dword~) main::$0
 (word~) main::$1
@@ -288,6 +289,11 @@ Constant (const word) mul16u::b#0 = $7b
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const dword) mul16u::mb#0 = (dword)mul16u::b#0
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const dword) mul16u::res#0
 Inlining constant with var siblings (const word) mul16u::a#1
 Inlining constant with var siblings (const dword) mul16u::mb#0
@@ -296,88 +302,70 @@ Constant inlined mul16u::res#0 = (dword) 0
 Constant inlined mul16u::a#1 = (byte) 4
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting mul16u::@6(between mul16u::@2 and mul16u::@4)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of mul16u
 Adding NOP phi() at start of mul16u::@3
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to mul16u:6 
+Calls in [main] to mul16u:1 
 
 Created 4 initial phi equivalence classes
-Coalesced [23] mul16u::res#9 ← mul16u::res#1
-Coalesced [27] mul16u::a#7 ← mul16u::a#0
-Coalesced [28] mul16u::res#7 ← mul16u::res#6
-Coalesced [29] mul16u::mb#6 ← mul16u::mb#1
-Coalesced (already) [30] mul16u::res#8 ← mul16u::res#2
+Coalesced [18] mul16u::res#9 ← mul16u::res#1
+Coalesced [22] mul16u::a#7 ← mul16u::a#0
+Coalesced [23] mul16u::res#7 ← mul16u::res#6
+Coalesced [24] mul16u::mb#6 ← mul16u::mb#1
+Coalesced (already) [25] mul16u::res#8 ← mul16u::res#2
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) mul16u::@3
 Culled Empty Block (label) mul16u::@6
 Renumbering block mul16u::@4 to mul16u::@3
 Renumbering block mul16u::@5 to mul16u::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of mul16u
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call mul16u 
-  [6] (dword) mul16u::return#2 ← (dword) mul16u::res#2
+main: scope:[main]  from
+  [0] phi()
+  [1] call mul16u 
+  [2] (dword) mul16u::return#2 ← (dword) mul16u::res#2
   to:main::@1
 main::@1: scope:[main]  from main
-  [7] (dword) main::result#0 ← (dword) mul16u::return#2
-  [8] (word) main::kaputt#0 ← < (dword) main::result#0
-  [9] (byte~) main::$2 ← < (word) main::kaputt#0
-  [10] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2
-  [11] (byte~) main::$3 ← > (word) main::kaputt#0
-  [12] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3
+  [3] (dword) main::result#0 ← (dword) mul16u::return#2
+  [4] (word) main::kaputt#0 ← < (dword) main::result#0
+  [5] (byte~) main::$2 ← < (word) main::kaputt#0
+  [6] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2
+  [7] (byte~) main::$3 ← > (word) main::kaputt#0
+  [8] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [13] return 
+  [9] return 
   to:@return
 
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
 mul16u: scope:[mul16u]  from main
-  [14] phi()
+  [10] phi()
   to:mul16u::@1
 mul16u::@1: scope:[mul16u]  from mul16u mul16u::@3
-  [15] (dword) mul16u::mb#2 ← phi( mul16u/(dword)(const word) mul16u::b#0 mul16u::@3/(dword) mul16u::mb#1 )
-  [15] (dword) mul16u::res#2 ← phi( mul16u/(dword) 0 mul16u::@3/(dword) mul16u::res#6 )
-  [15] (word) mul16u::a#2 ← phi( mul16u/(byte) 4 mul16u::@3/(word) mul16u::a#0 )
-  [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
+  [11] (dword) mul16u::mb#2 ← phi( mul16u/(dword)(const word) mul16u::b#0 mul16u::@3/(dword) mul16u::mb#1 )
+  [11] (dword) mul16u::res#2 ← phi( mul16u/(dword) 0 mul16u::@3/(dword) mul16u::res#6 )
+  [11] (word) mul16u::a#2 ← phi( mul16u/(byte) 4 mul16u::@3/(word) mul16u::a#0 )
+  [12] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2
   to:mul16u::@return
 mul16u::@return: scope:[mul16u]  from mul16u::@1
-  [17] return 
+  [13] return 
   to:@return
 mul16u::@2: scope:[mul16u]  from mul16u::@1
-  [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1
-  [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3
+  [14] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1
+  [15] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3
   to:mul16u::@4
 mul16u::@4: scope:[mul16u]  from mul16u::@2
-  [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2
+  [16] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2
   to:mul16u::@3
 mul16u::@3: scope:[mul16u]  from mul16u::@2 mul16u::@4
-  [21] (dword) mul16u::res#6 ← phi( mul16u::@2/(dword) mul16u::res#2 mul16u::@4/(dword) mul16u::res#1 )
-  [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1
-  [23] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1
+  [17] (dword) mul16u::res#6 ← phi( mul16u::@2/(dword) mul16u::res#2 mul16u::@4/(dword) mul16u::res#1 )
+  [18] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1
+  [19] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1
   to:mul16u::@1
 
 
@@ -467,27 +455,27 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
-(byte~) main::$2 22.0
-(byte~) main::$3 22.0
+(byte~) main::$2 4.0
+(byte~) main::$3 4.0
 (word) main::kaputt
-(word) main::kaputt#0 11.0
+(word) main::kaputt#0 2.0
 (dword) main::result
-(dword) main::result#0 22.0
+(dword) main::result#0 4.0
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
-(byte~) mul16u::$1 2002.0
+(byte~) mul16u::$1 202.0
 (word) mul16u::a
-(word) mul16u::a#0 1001.0
-(word) mul16u::a#2 667.3333333333334
+(word) mul16u::a#0 101.0
+(word) mul16u::a#2 67.33333333333333
 (word) mul16u::b
 (dword) mul16u::mb
-(dword) mul16u::mb#1 2002.0
-(dword) mul16u::mb#2 429.0
+(dword) mul16u::mb#1 202.0
+(dword) mul16u::mb#2 43.285714285714285
 (dword) mul16u::res
-(dword) mul16u::res#1 2002.0
-(dword) mul16u::res#2 502.33333333333337
-(dword) mul16u::res#6 1001.0
+(dword) mul16u::res#1 202.0
+(dword) mul16u::res#2 50.83333333333333
+(dword) mul16u::res#6 101.0
 (dword) mul16u::return
-(dword) mul16u::return#2 22.0
+(dword) mul16u::return#2 4.0
 
 Initial phi equivalence classes
 [ mul16u::a#2 mul16u::a#0 ]
@@ -531,33 +519,17 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __2 = $16
     .label __3 = $17
     .label result = $10
     .label kaputt = $14
-    // [5] call mul16u 
-    // [14] phi from main to mul16u [phi:main->mul16u]
+    // [1] call mul16u 
+    // [10] phi from main to mul16u [phi:main->mul16u]
   mul16u_from_main:
     jsr mul16u
-    // [6] (dword) mul16u::return#2 ← (dword) mul16u::res#2 -- vduz1=vduz2 
+    // [2] (dword) mul16u::return#2 ← (dword) mul16u::res#2 -- vduz1=vduz2 
     lda.z mul16u.res
     sta.z mul16u.return
     lda.z mul16u.res+1
@@ -569,7 +541,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] (dword) main::result#0 ← (dword) mul16u::return#2 -- vduz1=vduz2 
+    // [3] (dword) main::result#0 ← (dword) mul16u::return#2 -- vduz1=vduz2 
     lda.z mul16u.return
     sta.z result
     lda.z mul16u.return+1
@@ -578,27 +550,27 @@ main: {
     sta.z result+2
     lda.z mul16u.return+3
     sta.z result+3
-    // [8] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
+    // [4] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
-    // [9] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuz1=_lo_vwuz2 
+    // [5] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuz1=_lo_vwuz2 
     lda.z kaputt
     sta.z __2
-    // [10] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    // [6] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
     sta BORDER_COLOR
-    // [11] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuz1=_hi_vwuz2 
+    // [7] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuz1=_hi_vwuz2 
     lda.z kaputt+1
     sta.z __3
-    // [12] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
     lda.z __3
     sta BG_COLOR
     jmp __breturn
     // main::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // mul16u
@@ -611,9 +583,9 @@ mul16u: {
     .label mb = 8
     .label res = 4
     .label return = $c
-    // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
+    // [11] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   __b1_from_mul16u:
-    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [11] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -622,7 +594,7 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    // [11] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
     lda #<0
     sta.z res
     lda #>0
@@ -631,7 +603,7 @@ mul16u: {
     sta.z res+2
     lda #>0>>$10
     sta.z res+3
-    // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
+    // [11] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
     sta.z a
     lda #>4
@@ -639,7 +611,7 @@ mul16u: {
     jmp __b1
     // mul16u::@1
   __b1:
-    // [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
+    // [12] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
     lda.z a
     bne __b2
     lda.z a+1
@@ -647,22 +619,22 @@ mul16u: {
     jmp __breturn
     // mul16u::@return
   __breturn:
-    // [17] return 
+    // [13] return 
     rts
     // mul16u::@2
   __b2:
-    // [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuz1=vwuz2_band_vbuc1 
+    // [14] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuz1=vwuz2_band_vbuc1 
     lda #1
     and.z a
     sta.z __1
-    // [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuz1_eq_0_then_la1 
+    // [15] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuz1_eq_0_then_la1 
     lda.z __1
     cmp #0
     beq __b3_from___b2
     jmp __b4
     // mul16u::@4
   __b4:
-    // [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
+    // [16] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
     lda.z res
     clc
     adc.z mb
@@ -676,37 +648,37 @@ mul16u: {
     lda.z res+3
     adc.z mb+3
     sta.z res+3
-    // [21] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
+    // [17] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
   __b3_from___b2:
   __b3_from___b4:
-    // [21] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
+    // [17] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
     jmp __b3
     // mul16u::@3
   __b3:
-    // [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    // [18] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z a+1
     ror.z a
-    // [23] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
+    // [19] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
     asl.z mb
     rol.z mb+1
     rol.z mb+2
     rol.z mb+3
-    // [15] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
+    // [11] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
   __b1_from___b3:
-    // [15] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
-    // [15] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
-    // [15] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
+    // [11] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
+    // [11] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
+    // [11] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (dword) mul16u::return#2 ← (dword) mul16u::res#2 [ mul16u::return#2 ] ( main:2 [ mul16u::return#2 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
-Statement [7] (dword) main::result#0 ← (dword) mul16u::return#2 [ main::result#0 ] ( main:2 [ main::result#0 ] { }  ) always clobbers reg byte a 
-Statement [8] (word) main::kaputt#0 ← < (dword) main::result#0 [ main::kaputt#0 ] ( main:2 [ main::kaputt#0 ] { }  ) always clobbers reg byte a 
-Statement [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] ( main:2::mul16u:5 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
-Statement [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] ( main:2::mul16u:5 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
-Statement [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] ( main:2::mul16u:5 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
+Statement [2] (dword) mul16u::return#2 ← (dword) mul16u::res#2 [ mul16u::return#2 ] (  [ mul16u::return#2 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
+Statement [3] (dword) main::result#0 ← (dword) mul16u::return#2 [ main::result#0 ] (  [ main::result#0 ] { }  ) always clobbers reg byte a 
+Statement [4] (word) main::kaputt#0 ← < (dword) main::result#0 [ main::kaputt#0 ] (  [ main::kaputt#0 ] { }  ) always clobbers reg byte a 
+Statement [12] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] ( mul16u:1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
+Statement [14] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] ( mul16u:1 [ mul16u::res#2 mul16u::a#2 mul16u::mb#2 mul16u::$1 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
+Statement [16] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] ( mul16u:1 [ mul16u::a#2 mul16u::mb#2 mul16u::res#1 ] { { mul16u::return#2 = mul16u::res#2 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] : zp[2]:2 , 
 Potential registers zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] : zp[4]:4 , 
 Potential registers zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] : zp[4]:8 , 
@@ -718,19 +690,19 @@ Potential registers zp[1]:23 [ main::$3 ] : zp[1]:23 , reg byte a , reg byte x ,
 Potential registers zp[1]:24 [ mul16u::$1 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mul16u] 3,505.33: zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] 2,431: zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] 2,002: zp[1]:24 [ mul16u::$1 ] 1,668.33: zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] 22: zp[4]:12 [ mul16u::return#2 ] 
-Uplift Scope [main] 22: zp[4]:16 [ main::result#0 ] 22: zp[1]:22 [ main::$2 ] 22: zp[1]:23 [ main::$3 ] 11: zp[2]:20 [ main::kaputt#0 ] 
+Uplift Scope [mul16u] 353.83: zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] 245.29: zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] 202: zp[1]:24 [ mul16u::$1 ] 168.33: zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] 4: zp[4]:12 [ mul16u::return#2 ] 
+Uplift Scope [main] 4: zp[4]:16 [ main::result#0 ] 4: zp[1]:22 [ main::$2 ] 4: zp[1]:23 [ main::$3 ] 2: zp[2]:20 [ main::kaputt#0 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [mul16u] best 1657 combination zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] zp[4]:12 [ mul16u::return#2 ] 
-Uplifting [main] best 1645 combination zp[4]:16 [ main::result#0 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[2]:20 [ main::kaputt#0 ] 
-Uplifting [MOS6526_CIA] best 1645 combination 
-Uplifting [MOS6569_VICII] best 1645 combination 
-Uplifting [MOS6581_SID] best 1645 combination 
-Uplifting [] best 1645 combination 
+Uplifting [mul16u] best 1645 combination zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] zp[4]:8 [ mul16u::mb#2 mul16u::mb#1 ] reg byte a [ mul16u::$1 ] zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] zp[4]:12 [ mul16u::return#2 ] 
+Uplifting [main] best 1633 combination zp[4]:16 [ main::result#0 ] reg byte a [ main::$2 ] reg byte a [ main::$3 ] zp[2]:20 [ main::kaputt#0 ] 
+Uplifting [MOS6526_CIA] best 1633 combination 
+Uplifting [MOS6569_VICII] best 1633 combination 
+Uplifting [MOS6581_SID] best 1633 combination 
+Uplifting [] best 1633 combination 
 Coalescing zero page register [ zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 ] ] with [ zp[4]:12 [ mul16u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp[4]:4 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 ] ] with [ zp[4]:16 [ main::result#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:20 [ main::kaputt#0 ] ] with [ zp[2]:2 [ mul16u::a#2 mul16u::a#0 ] ]
@@ -749,52 +721,36 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label result = 2
     .label kaputt = $a
-    // [5] call mul16u 
-    // [14] phi from main to mul16u [phi:main->mul16u]
+    // [1] call mul16u 
+    // [10] phi from main to mul16u [phi:main->mul16u]
   mul16u_from_main:
     jsr mul16u
-    // [6] (dword) mul16u::return#2 ← (dword) mul16u::res#2
+    // [2] (dword) mul16u::return#2 ← (dword) mul16u::res#2
     jmp __b1
     // main::@1
   __b1:
-    // [7] (dword) main::result#0 ← (dword) mul16u::return#2
-    // [8] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
+    // [3] (dword) main::result#0 ← (dword) mul16u::return#2
+    // [4] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
-    // [9] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuaa=_lo_vwuz1 
+    // [5] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuaa=_lo_vwuz1 
     lda.z kaputt
-    // [10] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [6] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta BORDER_COLOR
-    // [11] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuaa=_hi_vwuz1 
+    // [7] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuaa=_hi_vwuz1 
     lda.z kaputt+1
-    // [12] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta BG_COLOR
     jmp __breturn
     // main::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // mul16u
@@ -806,9 +762,9 @@ mul16u: {
     .label mb = 6
     .label res = 2
     .label return = 2
-    // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
+    // [11] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
   __b1_from_mul16u:
-    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [11] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -817,7 +773,7 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    // [11] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
     lda #<0
     sta.z res
     lda #>0
@@ -826,7 +782,7 @@ mul16u: {
     sta.z res+2
     lda #>0>>$10
     sta.z res+3
-    // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
+    // [11] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
     sta.z a
     lda #>4
@@ -834,7 +790,7 @@ mul16u: {
     jmp __b1
     // mul16u::@1
   __b1:
-    // [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
+    // [12] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
     lda.z a
     bne __b2
     lda.z a+1
@@ -842,20 +798,20 @@ mul16u: {
     jmp __breturn
     // mul16u::@return
   __breturn:
-    // [17] return 
+    // [13] return 
     rts
     // mul16u::@2
   __b2:
-    // [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
+    // [14] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
     lda #1
     and.z a
-    // [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
+    // [15] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3_from___b2
     jmp __b4
     // mul16u::@4
   __b4:
-    // [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
+    // [16] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
     lda.z res
     clc
     adc.z mb
@@ -869,33 +825,31 @@ mul16u: {
     lda.z res+3
     adc.z mb+3
     sta.z res+3
-    // [21] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
+    // [17] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
   __b3_from___b2:
   __b3_from___b4:
-    // [21] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
+    // [17] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
     jmp __b3
     // mul16u::@3
   __b3:
-    // [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    // [18] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z a+1
     ror.z a
-    // [23] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
+    // [19] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
     asl.z mb
     rol.z mb+1
     rol.z mb+2
     rol.z mb+3
-    // [15] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
+    // [11] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
   __b1_from___b3:
-    // [15] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
-    // [15] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
-    // [15] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
+    // [11] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
+    // [11] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
+    // [11] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
@@ -906,15 +860,9 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b3_from___b2 with __b3
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b3_from___b2:
 Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction mul16u_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
@@ -923,13 +871,8 @@ Removing instruction __breturn:
 Removing instruction __b4:
 Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (byte) MOS6526_CIA::INTERRUPT
@@ -1017,35 +960,35 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
-(byte~) main::$2 reg byte a 22.0
-(byte~) main::$3 reg byte a 22.0
+(byte~) main::$2 reg byte a 4.0
+(byte~) main::$3 reg byte a 4.0
 (label) main::@1
 (label) main::@return
 (word) main::kaputt
-(word) main::kaputt#0 kaputt zp[2]:10 11.0
+(word) main::kaputt#0 kaputt zp[2]:10 2.0
 (dword) main::result
-(dword) main::result#0 result zp[4]:2 22.0
+(dword) main::result#0 result zp[4]:2 4.0
 (dword()) mul16u((word) mul16u::a , (word) mul16u::b)
-(byte~) mul16u::$1 reg byte a 2002.0
+(byte~) mul16u::$1 reg byte a 202.0
 (label) mul16u::@1
 (label) mul16u::@2
 (label) mul16u::@3
 (label) mul16u::@4
 (label) mul16u::@return
 (word) mul16u::a
-(word) mul16u::a#0 a zp[2]:10 1001.0
-(word) mul16u::a#2 a zp[2]:10 667.3333333333334
+(word) mul16u::a#0 a zp[2]:10 101.0
+(word) mul16u::a#2 a zp[2]:10 67.33333333333333
 (word) mul16u::b
 (const word) mul16u::b#0 b = (byte) $7b
 (dword) mul16u::mb
-(dword) mul16u::mb#1 mb zp[4]:6 2002.0
-(dword) mul16u::mb#2 mb zp[4]:6 429.0
+(dword) mul16u::mb#1 mb zp[4]:6 202.0
+(dword) mul16u::mb#2 mb zp[4]:6 43.285714285714285
 (dword) mul16u::res
-(dword) mul16u::res#1 res zp[4]:2 2002.0
-(dword) mul16u::res#2 res zp[4]:2 502.33333333333337
-(dword) mul16u::res#6 res zp[4]:2 1001.0
+(dword) mul16u::res#1 res zp[4]:2 202.0
+(dword) mul16u::res#2 res zp[4]:2 50.83333333333333
+(dword) mul16u::res#6 res zp[4]:2 101.0
 (dword) mul16u::return
-(dword) mul16u::return#2 return zp[4]:2 22.0
+(dword) mul16u::return#2 return zp[4]:2 4.0
 
 zp[4]:2 [ mul16u::res#2 mul16u::res#6 mul16u::res#1 mul16u::return#2 main::result#0 ]
 zp[4]:6 [ mul16u::mb#2 mul16u::mb#1 ]
@@ -1068,47 +1011,40 @@ Score: 1439
   // Global Constants & labels
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label result = 2
     .label kaputt = $a
     // mul16u(4,123)
-    // [5] call mul16u 
-    // [14] phi from main to mul16u [phi:main->mul16u]
+    // [1] call mul16u 
+    // [10] phi from main to mul16u [phi:main->mul16u]
     jsr mul16u
     // mul16u(4,123)
-    // [6] (dword) mul16u::return#2 ← (dword) mul16u::res#2
+    // [2] (dword) mul16u::return#2 ← (dword) mul16u::res#2
     // main::@1
     // result = mul16u(4,123)
-    // [7] (dword) main::result#0 ← (dword) mul16u::return#2
+    // [3] (dword) main::result#0 ← (dword) mul16u::return#2
     // kaputt = <result
-    // [8] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
+    // [4] (word) main::kaputt#0 ← < (dword) main::result#0 -- vwuz1=_lo_vduz2 
     lda.z result
     sta.z kaputt
     lda.z result+1
     sta.z kaputt+1
     // <kaputt
-    // [9] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuaa=_lo_vwuz1 
+    // [5] (byte~) main::$2 ← < (word) main::kaputt#0 -- vbuaa=_lo_vwuz1 
     lda.z kaputt
     // *BORDER_COLOR = <kaputt
-    // [10] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [6] *((const nomodify byte*) BORDER_COLOR) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta BORDER_COLOR
     // >kaputt
-    // [11] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuaa=_hi_vwuz1 
+    // [7] (byte~) main::$3 ← > (word) main::kaputt#0 -- vbuaa=_hi_vwuz1 
     lda.z kaputt+1
     // *BG_COLOR = >kaputt
-    // [12] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [8] *((const nomodify byte*) BG_COLOR) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
     sta BG_COLOR
     // main::@return
     // }
-    // [13] return 
+    // [9] return 
     rts
 }
   // mul16u
@@ -1120,8 +1056,8 @@ mul16u: {
     .label mb = 6
     .label res = 2
     .label return = 2
-    // [15] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
-    // [15] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
+    // [11] phi from mul16u to mul16u::@1 [phi:mul16u->mul16u::@1]
+    // [11] phi (dword) mul16u::mb#2 = (dword)(const word) mul16u::b#0 [phi:mul16u->mul16u::@1#0] -- vduz1=vduc1 
     lda #<b
     sta.z mb
     lda #>b
@@ -1130,7 +1066,7 @@ mul16u: {
     sta.z mb+2
     lda #>b>>$10
     sta.z mb+3
-    // [15] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
+    // [11] phi (dword) mul16u::res#2 = (dword) 0 [phi:mul16u->mul16u::@1#1] -- vduz1=vduc1 
     lda #<0
     sta.z res
     sta.z res+1
@@ -1138,7 +1074,7 @@ mul16u: {
     sta.z res+2
     lda #>0>>$10
     sta.z res+3
-    // [15] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
+    // [11] phi (word) mul16u::a#2 = (byte) 4 [phi:mul16u->mul16u::@1#2] -- vwuz1=vbuc1 
     lda #<4
     sta.z a
     lda #>4
@@ -1146,28 +1082,28 @@ mul16u: {
     // mul16u::@1
   __b1:
     // while(a!=0)
-    // [16] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
+    // [12] if((word) mul16u::a#2!=(byte) 0) goto mul16u::@2 -- vwuz1_neq_0_then_la1 
     lda.z a
     bne __b2
     lda.z a+1
     bne __b2
     // mul16u::@return
     // }
-    // [17] return 
+    // [13] return 
     rts
     // mul16u::@2
   __b2:
     // a&1
-    // [18] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
+    // [14] (byte~) mul16u::$1 ← (word) mul16u::a#2 & (byte) 1 -- vbuaa=vwuz1_band_vbuc1 
     lda #1
     and.z a
     // if( (a&1) != 0)
-    // [19] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
+    // [15] if((byte~) mul16u::$1==(byte) 0) goto mul16u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3
     // mul16u::@4
     // res = res + mb
-    // [20] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
+    // [16] (dword) mul16u::res#1 ← (dword) mul16u::res#2 + (dword) mul16u::mb#2 -- vduz1=vduz1_plus_vduz2 
     lda.z res
     clc
     adc.z mb
@@ -1181,24 +1117,24 @@ mul16u: {
     lda.z res+3
     adc.z mb+3
     sta.z res+3
-    // [21] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
-    // [21] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
+    // [17] phi from mul16u::@2 mul16u::@4 to mul16u::@3 [phi:mul16u::@2/mul16u::@4->mul16u::@3]
+    // [17] phi (dword) mul16u::res#6 = (dword) mul16u::res#2 [phi:mul16u::@2/mul16u::@4->mul16u::@3#0] -- register_copy 
     // mul16u::@3
   __b3:
     // a = a>>1
-    // [22] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
+    // [18] (word) mul16u::a#0 ← (word) mul16u::a#2 >> (byte) 1 -- vwuz1=vwuz1_ror_1 
     lsr.z a+1
     ror.z a
     // mb = mb<<1
-    // [23] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
+    // [19] (dword) mul16u::mb#1 ← (dword) mul16u::mb#2 << (byte) 1 -- vduz1=vduz1_rol_1 
     asl.z mb
     rol.z mb+1
     rol.z mb+2
     rol.z mb+3
-    // [15] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
-    // [15] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
-    // [15] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
-    // [15] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
+    // [11] phi from mul16u::@3 to mul16u::@1 [phi:mul16u::@3->mul16u::@1]
+    // [11] phi (dword) mul16u::mb#2 = (dword) mul16u::mb#1 [phi:mul16u::@3->mul16u::@1#0] -- register_copy 
+    // [11] phi (dword) mul16u::res#2 = (dword) mul16u::res#6 [phi:mul16u::@3->mul16u::@1#1] -- register_copy 
+    // [11] phi (word) mul16u::a#2 = (word) mul16u::a#0 [phi:mul16u::@3->mul16u::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data

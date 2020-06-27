@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (signed byte) printneg::c#0 ← (number) -4
   call printneg 
   to:main::@1
@@ -24,19 +22,22 @@ printneg: scope:[printneg]  from main
 printneg::@return: scope:[printneg]  from printneg
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify signed byte*) SCREEN = (signed byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -68,6 +69,11 @@ Constant (const signed byte) printneg::c#0 = -4
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero SCREEN in [5] *((const nomodify signed byte*) SCREEN + (byte) 0) ← (signed byte) printneg::c#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [2] (signed byte) printneg::c#1 ← - (const signed byte) printneg::c#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const signed byte) printneg::c#1 = -printneg::c#0
@@ -77,51 +83,33 @@ Inlining constant with different constant siblings (const signed byte) printneg:
 Constant inlined printneg::c#1 = -(signed byte) -4
 Constant inlined printneg::c#0 = (signed byte) -4
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to printneg:6 
+Calls in [main] to printneg:1 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call printneg 
+main: scope:[main]  from
+  [0] phi()
+  [1] call printneg 
   to:main::@return
 main::@return: scope:[main]  from main
-  [6] return 
+  [2] return 
   to:@return
 
 (void()) printneg((signed byte) printneg::c)
 printneg: scope:[printneg]  from main
-  [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4
+  [3] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4
   to:printneg::@return
 printneg::@return: scope:[printneg]  from printneg
-  [8] return 
+  [4] return 
   to:@return
 
 
@@ -144,56 +132,40 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call printneg 
+    // [1] call printneg 
     jsr printneg
     jmp __breturn
     // main::@return
   __breturn:
-    // [6] return 
+    // [2] return 
     rts
 }
   // printneg
 printneg: {
-    // [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
+    // [3] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
     lda #-(-4)
     sta SCREEN
     jmp __breturn
     // printneg::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 [ ] ( main:2::printneg:5 [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 [ ] ( printneg:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [printneg] 
 Uplift Scope [] 
 
-Uplifting [main] best 42 combination 
-Uplifting [printneg] best 42 combination 
-Uplifting [] best 42 combination 
+Uplifting [main] best 30 combination 
+Uplifting [printneg] best 30 combination 
+Uplifting [] best 30 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -205,68 +177,38 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call printneg 
+    // [1] call printneg 
     jsr printneg
     jmp __breturn
     // main::@return
   __breturn:
-    // [6] return 
+    // [2] return 
     rts
 }
   // printneg
 printneg: {
-    // [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
+    // [3] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
     lda #-(-4)
     sta SCREEN
     jmp __breturn
     // printneg::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify signed byte*) SCREEN = (signed byte*) 1024
 (void()) main()
 (label) main::@return
@@ -288,32 +230,25 @@ Score: 24
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // printneg(-4)
-    // [5] call printneg 
+    // [1] call printneg 
     jsr printneg
     // main::@return
     // }
-    // [6] return 
+    // [2] return 
     rts
 }
   // printneg
 printneg: {
     // SCREEN[0] = c
-    // [7] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
+    // [3] *((const nomodify signed byte*) SCREEN) ← -(signed byte) -4 -- _deref_pbsc1=vbsc2 
     lda #-(-4)
     sta SCREEN
     // printneg::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data

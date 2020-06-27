@@ -2,11 +2,9 @@ Resolved forward reference fn1 to (byte()) fn1()
 Resolved forward reference fn2 to (byte()) fn2()
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte()*) main::f#0 ← (byte()*) 0
   (byte) main::i#0 ← (byte) 0
   to:main::@1
@@ -59,18 +57,21 @@ fn2::@return: scope:[fn2]  from fn2
   (byte) fn2::return#1 ← (byte) fn2::return#2
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (byte()) fn1()
 (label) fn1::@return
 (const nomodify byte*) fn1::BORDER_COLOR = (byte*)(number) $d020
@@ -150,6 +151,11 @@ Eliminating unused constant (const byte()*) main::f#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte()*) main::f#1
 Inlining constant with var siblings (const byte()*) main::f#2
@@ -157,40 +163,38 @@ Constant inlined main::i#0 = (byte) 0
 Constant inlined main::f#2 = &(byte()) fn2()
 Constant inlined main::f#1 = &(byte()) fn1()
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@3
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 2 initial phi equivalence classes
-Coalesced [13] main::i#7 ← main::i#1
+Coalesced [12] main::i#7 ← main::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@5
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
+
+(byte()) fn2()
+fn2: scope:[fn2]  from
+  [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
+  to:fn2::@return
+fn2::@return: scope:[fn2]  from fn2
+  [1] return 
+  to:@return
+
+(byte()) fn1()
+fn1: scope:[fn1]  from
+  [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  [3] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -209,22 +213,6 @@ main::@4: scope:[main]  from main::@2 main::@3
   [11] *((const nomodify byte*) main::SCREEN) ← (byte)(byte()*) main::f#3
   to:main::@1
 
-(byte()) fn2()
-fn2: scope:[fn2]  from
-  [12] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
-  to:fn2::@return
-fn2::@return: scope:[fn2]  from fn2
-  [13] return 
-  to:@return
-
-(byte()) fn1()
-fn1: scope:[fn1]  from
-  [14] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
-  to:fn1::@return
-fn1::@return: scope:[fn1]  from fn1
-  [15] return 
-  to:@return
-
 
 VARIABLE REGISTER WEIGHTS
 (byte()) fn1()
@@ -232,12 +220,12 @@ VARIABLE REGISTER WEIGHTS
 (byte()) fn2()
 (byte) fn2::return
 (void()) main()
-(byte~) main::$0 202.0
+(byte~) main::$0 22.0
 (byte()*) main::f
 (byte()*) main::f#3
 (byte) main::i
-(byte) main::i#1 50.5
-(byte) main::i#2 202.0
+(byte) main::i#1 5.5
+(byte) main::i#2 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -260,22 +248,28 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // fn2
+fn2: {
+    .label BG_COLOR = $d021
+    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    jmp __breturn
+    // fn2::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label BORDER_COLOR = $d020
+    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __breturn
+    // fn1::@return
+  __breturn:
+    // [3] return 
+    rts
+}
   // main
 main: {
     .label SCREEN = $400
@@ -334,49 +328,27 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // [12] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // fn2::@return
-  __breturn:
-    // [13] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [14] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [15] return 
-    rts
-}
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] *((const nomodify byte*) main::SCREEN) ← (byte)(byte()*) main::f#3 [ main::i#1 ] ( main:2 [ main::i#1 ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) main::SCREEN) ← (byte)(byte()*) main::f#3 [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] ( main:2 [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) main::SCREEN) ← (byte)(byte()*) main::f#3 [ main::i#1 ] ( main:2 [ main::i#1 ] { }  ) always clobbers reg byte a 
+Statement [7] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) main::SCREEN) ← (byte)(byte()*) main::f#3 [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::f#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::$0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 252.5: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
+Uplift Scope [main] 27.5: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:5 [ main::$0 ] 0: zp[2]:3 [ main::f#3 ] 
 Uplift Scope [fn1] 
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [main] best 617 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp[2]:3 [ main::f#3 ] 
-Uplifting [fn1] best 617 combination 
-Uplifting [fn2] best 617 combination 
-Uplifting [] best 617 combination 
+Uplifting [main] best 605 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$0 ] zp[2]:3 [ main::f#3 ] 
+Uplifting [fn1] best 605 combination 
+Uplifting [fn2] best 605 combination 
+Uplifting [] best 605 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ main::f#3 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -387,22 +359,28 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // fn2
+fn2: {
+    .label BG_COLOR = $d021
+    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    jmp __breturn
+    // fn2::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label BORDER_COLOR = $d020
+    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __breturn
+    // fn1::@return
+  __breturn:
+    // [3] return 
+    rts
+}
   // main
 main: {
     .label SCREEN = $400
@@ -456,65 +434,30 @@ main: {
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // [12] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // fn2::@return
-  __breturn:
-    // [13] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [14] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [15] return 
-    rts
-}
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __b4
-Removing instruction jmp __breturn
-Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b3_from___b2 with __b3
 Replacing label __b1 with __b2
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1:
 Removing instruction __b3_from___b2:
 Removing instruction __b4_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction __b1_from_main:
 Removing instruction __b4_from___b2:
 Removing instruction __b1_from___b4:
-Removing instruction __breturn:
-Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (byte()) fn1()
 (label) fn1::@return
 (const nomodify byte*) fn1::BORDER_COLOR = (byte*) 53280
@@ -524,7 +467,7 @@ FINAL SYMBOL TABLE
 (const nomodify byte*) fn2::BG_COLOR = (byte*) 53281
 (byte) fn2::return
 (void()) main()
-(byte~) main::$0 reg byte a 202.0
+(byte~) main::$0 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -533,8 +476,8 @@ FINAL SYMBOL TABLE
 (byte()*) main::f
 (byte()*) main::f#3 f zp[2]:2
 (byte) main::i
-(byte) main::i#1 reg byte x 50.5
-(byte) main::i#2 reg byte x 202.0
+(byte) main::i#1 reg byte x 5.5
+(byte) main::i#2 reg byte x 22.0
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::f#3 ]
@@ -551,13 +494,28 @@ Score: 479
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // fn2
+fn2: {
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    // fn2::@return
+    // }
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    // fn1::@return
+    // }
+    // [3] return 
+    rts
+}
   // main
 main: {
     .label SCREEN = $400
@@ -604,28 +562,6 @@ main: {
     // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
     // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@1#0] -- register_copy 
     jmp __b2
-}
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // (*BG_COLOR)++;
-    // [12] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // fn2::@return
-    // }
-    // [13] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // (*BORDER_COLOR)++;
-    // [14] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    // fn1::@return
-    // }
-    // [15] return 
-    rts
 }
   // File Data
 

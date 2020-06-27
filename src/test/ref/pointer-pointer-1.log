@@ -2,11 +2,9 @@ Setting inferred volatile on symbol affected by address-of (byte*) main::pb ← 
 Setting inferred volatile on symbol affected by address-of (byte**) main::ppb ← &(byte*) main::pb
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (volatile byte) main::b ← (byte) 'a'
   (volatile byte*) main::pb ← &(volatile byte) main::b
   *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
@@ -14,18 +12,21 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
@@ -35,46 +36,33 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] (volatile byte) main::b ← (byte) 'a'
-  [5] (volatile byte*) main::pb ← &(volatile byte) main::b
-  [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
+main: scope:[main]  from
+  [0] (volatile byte) main::b ← (byte) 'a'
+  [1] (volatile byte*) main::pb ← &(volatile byte) main::b
+  [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
   to:main::@return
 main::@return: scope:[main]  from main
-  [7] return 
+  [3] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(volatile byte) main::b loadstore 11.0
-(volatile byte*) main::pb loadstore 110.0
+(volatile byte) main::b loadstore 2.0
+(volatile byte*) main::pb loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::b to live range equivalence class [ main::b ]
@@ -94,35 +82,21 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
     .label ppb = pb
     .label b = 2
     .label pb = 3
-    // [4] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [0] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
-    // [5] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
+    // [1] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -133,26 +107,26 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (volatile byte) main::b ← (byte) 'a' [ main::b ] ( main:2 [ main::b ] { }  ) always clobbers reg byte a 
-Statement [5] (volatile byte*) main::pb ← &(volatile byte) main::b [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] (volatile byte) main::b ← (byte) 'a' [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile byte*) main::pb ← &(volatile byte) main::b [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::b ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ main::pb ] : zp[2]:3 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 110: zp[2]:3 [ main::pb ] 11: zp[1]:2 [ main::b ] 
+Uplift Scope [main] 20: zp[2]:3 [ main::pb ] 2: zp[1]:2 [ main::b ] 
 Uplift Scope [] 
 
-Uplifting [main] best 59 combination zp[2]:3 [ main::pb ] zp[1]:2 [ main::b ] 
-Uplifting [] best 59 combination 
+Uplifting [main] best 47 combination zp[2]:3 [ main::pb ] zp[1]:2 [ main::b ] 
+Uplifting [] best 47 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::b ]
-Uplifting [main] best 59 combination zp[1]:2 [ main::b ] 
+Uplifting [main] best 47 combination zp[1]:2 [ main::b ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -162,35 +136,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
     .label ppb = pb
     .label b = 2
     .label pb = 3
-    // [4] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [0] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
-    // [5] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
+    // [1] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -201,36 +161,23 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*) 1024
-(volatile byte) main::b loadstore zp[1]:2 11.0
-(volatile byte*) main::pb loadstore zp[2]:3 110.0
+(volatile byte) main::b loadstore zp[1]:2 2.0
+(volatile byte*) main::pb loadstore zp[2]:3 20.0
 (const byte**) main::ppb = &(volatile byte*) main::pb
 
 zp[1]:2 [ main::b ]
@@ -247,12 +194,6 @@ Score: 44
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400
@@ -260,17 +201,17 @@ main: {
     .label b = 2
     .label pb = 3
     // b = 'a'
-    // [4] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [0] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
     // pb = &b
-    // [5] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
+    // [1] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
     // *SCREEN = **ppb
-    // [6] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
+    // [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_pptc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -280,7 +221,7 @@ main: {
     sta SCREEN
     // main::@return
     // }
-    // [7] return 
+    // [3] return 
     rts
 }
   // File Data

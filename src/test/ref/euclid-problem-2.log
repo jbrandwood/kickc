@@ -1,68 +1,58 @@
-Does this handle main() / _start() correctly?
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) _init()
-_init: scope:[_init]  from _start
-  (byte) idx#0 ← (byte) 0
-  to:_init::@return
-_init::@return: scope:[_init]  from _init
-  (byte) idx#10 ← phi( _init/(byte) idx#0 )
-  (byte) idx#1 ← (byte) idx#10
-  return 
-  to:@return
-
 (void()) main()
 main: scope:[main]  from _start::@1
-  (byte) idx#19 ← phi( _start::@1/(byte) idx#7 )
+  (byte) idx#15 ← phi( _start::@1/(byte) idx#16 )
   (byte) euclid::a#0 ← (number) $80
   (byte) euclid::b#0 ← (number) 2
   call euclid 
   (byte) euclid::return#0 ← (byte) euclid::return#5
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) idx#11 ← phi( main/(byte) idx#19 )
+  (byte) idx#8 ← phi( main/(byte) idx#15 )
   (byte) euclid::return#6 ← phi( main/(byte) euclid::return#0 )
   (byte~) main::$0 ← (byte) euclid::return#6
-  *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte~) main::$0
-  (byte) idx#2 ← ++ (byte) idx#11
+  *((const nomodify byte*) SCREEN + (byte) idx#8) ← (byte~) main::$0
+  (byte) idx#0 ← ++ (byte) idx#8
   (byte) euclid::a#1 ← (number) $a9
   (byte) euclid::b#1 ← (number) $45
   call euclid 
   (byte) euclid::return#1 ← (byte) euclid::return#5
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) idx#12 ← phi( main::@1/(byte) idx#2 )
+  (byte) idx#9 ← phi( main::@1/(byte) idx#0 )
   (byte) euclid::return#7 ← phi( main::@1/(byte) euclid::return#1 )
   (byte~) main::$1 ← (byte) euclid::return#7
-  *((const nomodify byte*) SCREEN + (byte) idx#12) ← (byte~) main::$1
-  (byte) idx#3 ← ++ (byte) idx#12
+  *((const nomodify byte*) SCREEN + (byte) idx#9) ← (byte~) main::$1
+  (byte) idx#1 ← ++ (byte) idx#9
   (byte) euclid::a#2 ← (number) $ff
   (byte) euclid::b#2 ← (number) $9b
   call euclid 
   (byte) euclid::return#2 ← (byte) euclid::return#5
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  (byte) idx#13 ← phi( main::@2/(byte) idx#3 )
+  (byte) idx#10 ← phi( main::@2/(byte) idx#1 )
   (byte) euclid::return#8 ← phi( main::@2/(byte) euclid::return#2 )
   (byte~) main::$2 ← (byte) euclid::return#8
-  *((const nomodify byte*) SCREEN + (byte) idx#13) ← (byte~) main::$2
-  (byte) idx#4 ← ++ (byte) idx#13
+  *((const nomodify byte*) SCREEN + (byte) idx#10) ← (byte~) main::$2
+  (byte) idx#2 ← ++ (byte) idx#10
   (byte) euclid::a#3 ← (number) $63
   (byte) euclid::b#3 ← (number) 3
   call euclid 
   (byte) euclid::return#3 ← (byte) euclid::return#5
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  (byte) idx#14 ← phi( main::@3/(byte) idx#4 )
+  (byte) idx#11 ← phi( main::@3/(byte) idx#2 )
   (byte) euclid::return#9 ← phi( main::@3/(byte) euclid::return#3 )
   (byte~) main::$3 ← (byte) euclid::return#9
-  *((const nomodify byte*) SCREEN + (byte) idx#14) ← (byte~) main::$3
-  (byte) idx#5 ← ++ (byte) idx#14
+  *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte~) main::$3
+  (byte) idx#3 ← ++ (byte) idx#11
   to:main::@return
 main::@return: scope:[main]  from main::@4
-  (byte) idx#15 ← phi( main::@4/(byte) idx#5 )
-  (byte) idx#6 ← (byte) idx#15
+  (byte) idx#12 ← phi( main::@4/(byte) idx#3 )
+  (byte) idx#4 ← (byte) idx#12
   return 
   to:@return
 
@@ -107,32 +97,31 @@ euclid::@return: scope:[euclid]  from euclid::@3
 
 (void()) _start()
 _start: scope:[_start]  from
-  (byte) idx#20 ← phi( )
-  call _init 
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte) idx#5 ← (byte) 0
   to:_start::@1
-_start::@1: scope:[_start]  from _start
-  (byte) idx#16 ← phi( _start/(byte) idx#1 )
-  (byte) idx#7 ← (byte) idx#16
+_start::@1: scope:[_start]  from _start::_init1
+  (byte) idx#16 ← phi( _start::_init1/(byte) idx#5 )
   call main 
   to:_start::@2
 _start::@2: scope:[_start]  from _start::@1
-  (byte) idx#17 ← phi( _start::@1/(byte) idx#6 )
-  (byte) idx#8 ← (byte) idx#17
+  (byte) idx#13 ← phi( _start::@1/(byte) idx#4 )
+  (byte) idx#6 ← (byte) idx#13
   to:_start::@return
 _start::@return: scope:[_start]  from _start::@2
-  (byte) idx#18 ← phi( _start::@2/(byte) idx#8 )
-  (byte) idx#9 ← (byte) idx#18
+  (byte) idx#14 ← phi( _start::@2/(byte) idx#6 )
+  (byte) idx#7 ← (byte) idx#14
   return 
   to:@return
 
 SYMBOL TABLE SSA
 (const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) _init()
-(label) _init::@return
 (void()) _start()
 (label) _start::@1
 (label) _start::@2
 (label) _start::@return
+(label) _start::_init1
 (byte()) euclid((byte) euclid::a , (byte) euclid::b)
 (bool~) euclid::$0
 (bool~) euclid::$1
@@ -189,11 +178,7 @@ SYMBOL TABLE SSA
 (byte) idx#14
 (byte) idx#15
 (byte) idx#16
-(byte) idx#17
-(byte) idx#18
-(byte) idx#19
 (byte) idx#2
-(byte) idx#20
 (byte) idx#3
 (byte) idx#4
 (byte) idx#5
@@ -212,7 +197,6 @@ SYMBOL TABLE SSA
 (label) main::@4
 (label) main::@return
 
-Does this handle main() / _start() correctly?
 Adding number conversion cast (unumber) $80 in (byte) euclid::a#0 ← (number) $80
 Adding number conversion cast (unumber) 2 in (byte) euclid::b#0 ← (number) 2
 Adding number conversion cast (unumber) $a9 in (byte) euclid::a#1 ← (number) $a9
@@ -250,31 +234,28 @@ Finalized unsigned number type (byte) $9b
 Finalized unsigned number type (byte) $63
 Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias idx#0 = idx#10 idx#1 
 Alias euclid::return#0 = euclid::return#6 
-Alias idx#11 = idx#19 
+Alias idx#15 = idx#8 
 Alias euclid::return#1 = euclid::return#7 
-Alias idx#12 = idx#2 
+Alias idx#0 = idx#9 
 Alias euclid::return#2 = euclid::return#8 
-Alias idx#13 = idx#3 
+Alias idx#1 = idx#10 
 Alias euclid::return#3 = euclid::return#9 
-Alias idx#14 = idx#4 
-Alias idx#15 = idx#5 idx#6 
+Alias idx#11 = idx#2 
+Alias idx#12 = idx#3 idx#4 
 Alias euclid::a#5 = euclid::a#6 euclid::a#7 euclid::return#4 euclid::a#8 euclid::a#9 euclid::return#10 euclid::return#5 
 Alias euclid::b#5 = euclid::b#6 euclid::b#7 euclid::b#8 
 Alias euclid::a#4 = euclid::$3 
 Alias euclid::b#4 = euclid::$2 
-Alias idx#16 = idx#7 
-Alias idx#17 = idx#8 idx#18 idx#9 
+Alias idx#16 = idx#5 
+Alias idx#13 = idx#6 idx#14 idx#7 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) idx#11 (byte) idx#16
-Identical Phi Values (byte) idx#16 (byte) idx#0
-Identical Phi Values (byte) idx#17 (byte) idx#15
+Identical Phi Values (byte) idx#15 (byte) idx#16
+Identical Phi Values (byte) idx#13 (byte) idx#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) euclid::$0 [35] if((byte) euclid::a#5!=(byte) euclid::b#5) goto euclid::@2
-Simple Condition (bool~) euclid::$1 [37] if((byte) euclid::a#5>(byte) euclid::b#5) goto euclid::@4
+Simple Condition (bool~) euclid::$0 [33] if((byte) euclid::a#5!=(byte) euclid::b#5) goto euclid::@2
+Simple Condition (bool~) euclid::$1 [35] if((byte) euclid::a#5>(byte) euclid::b#5) goto euclid::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) idx#0 = 0
 Constant (const byte) euclid::a#0 = $80
 Constant (const byte) euclid::b#0 = 2
 Constant (const byte) euclid::a#1 = $a9
@@ -283,35 +264,30 @@ Constant (const byte) euclid::a#2 = $ff
 Constant (const byte) euclid::b#2 = $9b
 Constant (const byte) euclid::a#3 = $63
 Constant (const byte) euclid::b#3 = 3
+Constant (const byte) idx#16 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [8] *((const nomodify byte*) SCREEN + (const byte) idx#0) ← (byte~) main::$0
+Simplifying expression containing zero SCREEN in [6] *((const nomodify byte*) SCREEN + (const byte) idx#16) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) idx#15 and assignment [20] (byte) idx#15 ← ++ (byte) idx#14
-Eliminating unused variable - keeping the phi block (byte) idx#20
+Eliminating unused variable (byte) idx#12 and assignment [19] (byte) idx#12 ← ++ (byte) idx#11
 Successful SSA optimization PassNEliminateUnusedVars
-Removing call to empty procedure call _init 
-Removing unused procedure _init
-Removing unused procedure block _init
-Removing unused procedure block _init::@return
-Successful SSA optimization PassNEliminateEmptyProcedure
-Does this handle main() / _start() correctly?
-Constant right-side identified [4] (byte) idx#12 ← ++ (const byte) idx#0
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) idx#12 = ++idx#0
-Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure _start
 Removing unused procedure block _start
+Removing unused procedure block _start::_init1
 Removing unused procedure block _start::@1
 Removing unused procedure block _start::@2
 Removing unused procedure block _start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [8] (byte) idx#13 ← ++ (const byte) idx#12
+Constant right-side identified [4] (byte) idx#0 ← ++ (const byte) idx#16
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) idx#13 = ++idx#12
+Constant (const byte) idx#0 = ++idx#16
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [12] (byte) idx#14 ← ++ (const byte) idx#13
+Constant right-side identified [8] (byte) idx#1 ← ++ (const byte) idx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) idx#14 = ++idx#13
+Constant (const byte) idx#1 = ++idx#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant right-side identified [12] (byte) idx#11 ← ++ (const byte) idx#1
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) idx#11 = ++idx#1
 Successful SSA optimization Pass2ConstantIdentification
 Inlining constant with var siblings (const byte) euclid::a#0
 Inlining constant with var siblings (const byte) euclid::b#0
@@ -321,21 +297,21 @@ Inlining constant with var siblings (const byte) euclid::a#2
 Inlining constant with var siblings (const byte) euclid::b#2
 Inlining constant with var siblings (const byte) euclid::a#3
 Inlining constant with var siblings (const byte) euclid::b#3
+Inlining constant with different constant siblings (const byte) idx#16
 Inlining constant with different constant siblings (const byte) idx#0
-Inlining constant with different constant siblings (const byte) idx#12
-Inlining constant with different constant siblings (const byte) idx#13
-Inlining constant with different constant siblings (const byte) idx#14
-Constant inlined idx#12 = ++(byte) 0
-Constant inlined idx#14 = ++++++(byte) 0
-Constant inlined idx#13 = ++++(byte) 0
+Inlining constant with different constant siblings (const byte) idx#1
+Inlining constant with different constant siblings (const byte) idx#11
+Constant inlined idx#11 = ++++++(byte) 0
+Constant inlined idx#16 = (byte) 0
 Constant inlined euclid::b#0 = (byte) 2
 Constant inlined euclid::a#1 = (byte) $a9
 Constant inlined euclid::a#0 = (byte) $80
 Constant inlined euclid::b#2 = (byte) $9b
 Constant inlined euclid::a#3 = (byte) $63
-Constant inlined idx#0 = (byte) 0
+Constant inlined idx#0 = ++(byte) 0
 Constant inlined euclid::b#1 = (byte) $45
 Constant inlined euclid::a#2 = (byte) $ff
+Constant inlined idx#1 = ++++(byte) 0
 Constant inlined euclid::b#3 = (byte) 3
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+++0)
@@ -354,7 +330,6 @@ Adding NOP phi() at start of euclid::@3
 CALL GRAPH
 Calls in [main] to euclid:1 euclid:5 euclid:9 euclid:13 
 
-Does this handle main() / _start() correctly?
 Created 4 initial phi equivalence classes
 Coalesced [19] euclid::a#11 ← euclid::a#10
 Coalesced [20] euclid::b#10 ← euclid::b#9
@@ -367,7 +342,6 @@ Culled Empty Block (label) euclid::@3
 Renumbering block euclid::@4 to euclid::@3
 Renumbering block euclid::@5 to euclid::@4
 Adding NOP phi() at start of main
-Does this handle main() / _start() correctly?
 
 FINAL CONTROL FLOW GRAPH
 

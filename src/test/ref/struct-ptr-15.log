@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (number~) main::$1 ← (number) 0 * (const byte) SIZEOF_STRUCT_CIRCLE
   *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_X + (number~) main::$1) ← (number) 2
   (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_STRUCT_CIRCLE
@@ -47,18 +45,18 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (struct Point) Circle::center
 (byte) Circle::radius
 (const byte) OFFSET_STRUCT_CIRCLE_CENTER = (byte) 1
@@ -68,6 +66,9 @@ SYMBOL TABLE SSA
 (byte) Point::x
 (byte) Point::y
 (const byte) SIZEOF_STRUCT_CIRCLE = (byte) 3
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (const struct Circle*) circles[(number) 2]  = { fill( 2, 0) }
 (void()) main()
 (bool~) main::$0
@@ -211,7 +212,12 @@ Eliminating unused constant (const byte) main::$3
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Eliminating unused constant (const byte) OFFSET_STRUCT_CIRCLE_RADIUS
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) 2 in if((byte) main::i#1!=(number) 2) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 2 in [21] if((byte) main::i#1!=(number) 2) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
@@ -243,61 +249,43 @@ Consolidated array index constant in *((byte*)(struct Point*)circles+OFFSET_STRU
 Consolidated array index constant in *((byte*)circles+1*SIZEOF_STRUCT_CIRCLE)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 3 initial phi equivalence classes
-Coalesced [23] main::ptr#3 ← main::ptr#1
-Coalesced [24] main::idx#4 ← main::idx#2
-Coalesced [25] main::i#3 ← main::i#1
+Coalesced [18] main::ptr#3 ← main::ptr#1
+Coalesced [19] main::idx#4 ← main::idx#2
+Coalesced [20] main::i#3 ← main::i#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2
-  [5] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3
-  [6] *((byte*)(const struct Circle*) circles) ← (byte) 5
-  [7] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8
-  [8] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9
-  [9] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f
+main: scope:[main]  from
+  [0] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2
+  [1] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3
+  [2] *((byte*)(const struct Circle*) circles) ← (byte) 5
+  [3] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8
+  [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9
+  [5] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [10] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [10] (byte) main::idx#3 ← phi( main/(byte) 0 main::@1/(byte) main::idx#2 )
-  [10] (struct Circle*) main::ptr#2 ← phi( main/(const struct Circle*) circles main::@1/(struct Circle*) main::ptr#1 )
-  [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER)
-  [12] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER
-  [13] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y)
-  [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0
-  [15] (byte) main::idx#1 ← ++ (byte) main::idx#3
-  [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0
-  [17] (byte) main::idx#2 ← ++ (byte) main::idx#1
-  [18] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE
-  [19] (byte) main::i#1 ← ++ (byte) main::i#2
-  [20] if((byte) main::i#1!=(byte) 2) goto main::@1
+  [6] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [6] (byte) main::idx#3 ← phi( main/(byte) 0 main::@1/(byte) main::idx#2 )
+  [6] (struct Circle*) main::ptr#2 ← phi( main/(const struct Circle*) circles main::@1/(struct Circle*) main::ptr#1 )
+  [7] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER)
+  [8] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER
+  [9] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y)
+  [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0
+  [11] (byte) main::idx#1 ← ++ (byte) main::idx#3
+  [12] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0
+  [13] (byte) main::idx#2 ← ++ (byte) main::idx#1
+  [14] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE
+  [15] (byte) main::i#1 ← ++ (byte) main::i#2
+  [16] if((byte) main::i#1!=(byte) 2) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [21] return 
+  [17] return 
   to:@return
 
 
@@ -307,21 +295,21 @@ VARIABLE REGISTER WEIGHTS
 (byte) Point::x
 (byte) Point::y
 (void()) main()
-(struct Point*~) main::$14 101.0
+(struct Point*~) main::$14 11.0
 (byte) main::i
-(byte) main::i#1 151.5
-(byte) main::i#2 22.444444444444443
+(byte) main::i#1 16.5
+(byte) main::i#2 2.4444444444444446
 (byte) main::idx
-(byte) main::idx#1 151.5
-(byte) main::idx#2 50.5
-(byte) main::idx#3 60.599999999999994
+(byte) main::idx#1 16.5
+(byte) main::idx#2 5.5
+(byte) main::idx#3 6.6000000000000005
 (struct Circle*) main::ptr
-(struct Circle*) main::ptr#1 67.33333333333333
-(struct Circle*) main::ptr#2 25.25
+(struct Circle*) main::ptr#1 7.333333333333333
+(struct Circle*) main::ptr#2 2.75
 (byte) main::x
-(byte) main::x#0 67.33333333333333
+(byte) main::x#0 7.333333333333333
 (byte) main::y
-(byte) main::y#0 67.33333333333333
+(byte) main::y#0 7.333333333333333
 
 Initial phi equivalence classes
 [ main::ptr#2 main::ptr#1 ]
@@ -359,20 +347,6 @@ Target platform is c64basic / MOS6502X
   .const SIZEOF_STRUCT_CIRCLE = 3
   .const OFFSET_STRUCT_CIRCLE_CENTER = 1
   .const OFFSET_STRUCT_POINT_Y = 1
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -383,51 +357,51 @@ main: {
     .label idx_1 = 4
     .label ptr = 2
     .label i = 5
-    // [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER
-    // [5] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+OFFSET_STRUCT_POINT_Y
-    // [6] *((byte*)(const struct Circle*) circles) ← (byte) 5 -- _deref_pbuc1=vbuc2 
+    // [2] *((byte*)(const struct Circle*) circles) ← (byte) 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta circles
-    // [7] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 -- _deref_pbuc1=vbuc2 
     lda #8
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+1*SIZEOF_STRUCT_CIRCLE
-    // [8] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 -- _deref_pbuc1=vbuc2 
+    // [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 -- _deref_pbuc1=vbuc2 
     lda #9
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+OFFSET_STRUCT_POINT_Y+1*SIZEOF_STRUCT_CIRCLE
-    // [9] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta circles+1*SIZEOF_STRUCT_CIRCLE
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [10] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [10] phi (byte) main::idx#3 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::idx#3 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z idx_1
-    // [10] phi (struct Circle*) main::ptr#2 = (const struct Circle*) circles [phi:main->main::@1#2] -- pssz1=pssc1 
+    // [6] phi (struct Circle*) main::ptr#2 = (const struct Circle*) circles [phi:main->main::@1#2] -- pssz1=pssc1 
     lda #<circles
     sta.z ptr
     lda #>circles
     sta.z ptr+1
     jmp __b1
-    // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [10] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
-    // [10] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
+    // [6] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
+    // [7] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
     sta.z x
-    // [12] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER -- pssz1=pssz2_plus_vbuc1 
+    // [8] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER -- pssz1=pssz2_plus_vbuc1 
     lda #OFFSET_STRUCT_CIRCLE_CENTER
     clc
     adc.z ptr
@@ -435,27 +409,27 @@ main: {
     lda #0
     adc.z ptr+1
     sta.z __14+1
-    // [13] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=pbuz2_derefidx_vbuc1 
+    // [9] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_POINT_Y
     lda (__14),y
     sta.z y
-    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z x
     ldy.z idx_1
     sta SCREEN,y
-    // [15] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuz1=_inc_vbuz2 
+    // [11] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuz1=_inc_vbuz2 
     ldy.z idx_1
     iny
     sty.z idx
-    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [12] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z y
     ldy.z idx
     sta SCREEN,y
-    // [17] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
+    // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuz1=_inc_vbuz2 
     ldy.z idx
     iny
     sty.z idx_1
-    // [18] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE -- pssz1=pssz1_plus_vbuc1 
+    // [14] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_CIRCLE
     clc
     adc.z ptr
@@ -463,54 +437,54 @@ main: {
     bcc !+
     inc.z ptr+1
   !:
-    // [19] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [20] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [16] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z i
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
 }
   // File Data
   circles: .fill 3*2, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*)(const struct Circle*) circles) ← (byte) 5 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((byte*)(const struct Circle*) circles) ← (byte) 5 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::idx#3 main::idx#2 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::idx#3 main::idx#2 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ main::i#2 main::i#1 ]
-Statement [12] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] { }  ) always clobbers reg byte a 
+Statement [8] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::x#0 ]
-Statement [13] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ main::x#0 ]
-Statement [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::y#0 ]
-Statement [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 [ main::ptr#2 main::i#2 main::idx#1 ] ( main:2 [ main::ptr#2 main::i#2 main::idx#1 ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 [ main::ptr#2 main::i#2 main::idx#1 ] (  [ main::ptr#2 main::i#2 main::idx#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::idx#1 ]
-Statement [18] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE [ main::i#2 main::ptr#1 main::idx#2 ] ( main:2 [ main::i#2 main::ptr#1 main::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*)(const struct Circle*) circles) ← (byte) 5 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] ( main:2 [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 [ main::ptr#2 main::i#2 main::idx#1 ] ( main:2 [ main::ptr#2 main::i#2 main::idx#1 ] { }  ) always clobbers reg byte a 
-Statement [18] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE [ main::i#2 main::ptr#1 main::idx#2 ] ( main:2 [ main::i#2 main::ptr#1 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [14] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE [ main::i#2 main::ptr#1 main::idx#2 ] (  [ main::i#2 main::ptr#1 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [0] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((byte*)(const struct Circle*) circles) ← (byte) 5 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::x#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::$14 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::x#0 main::y#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] (  [ main::ptr#2 main::idx#3 main::i#2 main::y#0 ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 [ main::ptr#2 main::i#2 main::idx#1 ] (  [ main::ptr#2 main::i#2 main::idx#1 ] { }  ) always clobbers reg byte a 
+Statement [14] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE [ main::i#2 main::ptr#1 main::idx#2 ] (  [ main::i#2 main::ptr#1 main::idx#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::ptr#2 main::ptr#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::idx#3 main::idx#2 ] : zp[1]:4 , reg byte x , 
 Potential registers zp[1]:5 [ main::i#2 main::i#1 ] : zp[1]:5 , reg byte x , 
@@ -520,19 +494,19 @@ Potential registers zp[1]:9 [ main::y#0 ] : zp[1]:9 , reg byte x , reg byte y ,
 Potential registers zp[1]:10 [ main::idx#1 ] : zp[1]:10 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 173.94: zp[1]:5 [ main::i#2 main::i#1 ] 151.5: zp[1]:10 [ main::idx#1 ] 111.1: zp[1]:4 [ main::idx#3 main::idx#2 ] 101: zp[2]:7 [ main::$14 ] 92.58: zp[2]:2 [ main::ptr#2 main::ptr#1 ] 67.33: zp[1]:6 [ main::x#0 ] 67.33: zp[1]:9 [ main::y#0 ] 
+Uplift Scope [main] 18.94: zp[1]:5 [ main::i#2 main::i#1 ] 16.5: zp[1]:10 [ main::idx#1 ] 12.1: zp[1]:4 [ main::idx#3 main::idx#2 ] 11: zp[2]:7 [ main::$14 ] 10.08: zp[2]:2 [ main::ptr#2 main::ptr#1 ] 7.33: zp[1]:6 [ main::x#0 ] 7.33: zp[1]:9 [ main::y#0 ] 
 Uplift Scope [Point] 
 Uplift Scope [Circle] 
 Uplift Scope [] 
 
-Uplifting [main] best 1184 combination zp[1]:5 [ main::i#2 main::i#1 ] reg byte x [ main::idx#1 ] reg byte x [ main::idx#3 main::idx#2 ] zp[2]:7 [ main::$14 ] zp[2]:2 [ main::ptr#2 main::ptr#1 ] zp[1]:6 [ main::x#0 ] reg byte y [ main::y#0 ] 
-Uplifting [Point] best 1184 combination 
-Uplifting [Circle] best 1184 combination 
-Uplifting [] best 1184 combination 
+Uplifting [main] best 1172 combination zp[1]:5 [ main::i#2 main::i#1 ] reg byte x [ main::idx#1 ] reg byte x [ main::idx#3 main::idx#2 ] zp[2]:7 [ main::$14 ] zp[2]:2 [ main::ptr#2 main::ptr#1 ] zp[1]:6 [ main::x#0 ] reg byte y [ main::y#0 ] 
+Uplifting [Point] best 1172 combination 
+Uplifting [Circle] best 1172 combination 
+Uplifting [] best 1172 combination 
 Attempting to uplift remaining variables inzp[1]:5 [ main::i#2 main::i#1 ]
-Uplifting [main] best 1184 combination zp[1]:5 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 1172 combination zp[1]:5 [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ main::x#0 ]
-Uplifting [main] best 1184 combination zp[1]:6 [ main::x#0 ] 
+Uplifting [main] best 1172 combination zp[1]:6 [ main::x#0 ] 
 Allocated (was zp[1]:5) zp[1]:4 [ main::i#2 main::i#1 ]
 Allocated (was zp[1]:6) zp[1]:5 [ main::x#0 ]
 Allocated (was zp[2]:7) zp[2]:6 [ main::$14 ]
@@ -548,20 +522,6 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SIZEOF_STRUCT_CIRCLE = 3
   .const OFFSET_STRUCT_CIRCLE_CENTER = 1
   .const OFFSET_STRUCT_POINT_Y = 1
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -569,50 +529,50 @@ main: {
     .label x = 5
     .label ptr = 2
     .label i = 4
-    // [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER
-    // [5] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+OFFSET_STRUCT_POINT_Y
-    // [6] *((byte*)(const struct Circle*) circles) ← (byte) 5 -- _deref_pbuc1=vbuc2 
+    // [2] *((byte*)(const struct Circle*) circles) ← (byte) 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta circles
-    // [7] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 -- _deref_pbuc1=vbuc2 
     lda #8
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+1*SIZEOF_STRUCT_CIRCLE
-    // [8] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 -- _deref_pbuc1=vbuc2 
+    // [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 -- _deref_pbuc1=vbuc2 
     lda #9
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+OFFSET_STRUCT_POINT_Y+1*SIZEOF_STRUCT_CIRCLE
-    // [9] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta circles+1*SIZEOF_STRUCT_CIRCLE
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [10] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [10] phi (byte) main::idx#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [6] phi (byte) main::idx#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
-    // [10] phi (struct Circle*) main::ptr#2 = (const struct Circle*) circles [phi:main->main::@1#2] -- pssz1=pssc1 
+    // [6] phi (struct Circle*) main::ptr#2 = (const struct Circle*) circles [phi:main->main::@1#2] -- pssz1=pssc1 
     lda #<circles
     sta.z ptr
     lda #>circles
     sta.z ptr+1
     jmp __b1
-    // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [10] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
-    // [10] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
+    // [6] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
+    // [7] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
     sta.z x
-    // [12] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER -- pssz1=pssz2_plus_vbuc1 
+    // [8] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER -- pssz1=pssz2_plus_vbuc1 
     lda #OFFSET_STRUCT_CIRCLE_CENTER
     clc
     adc.z ptr
@@ -620,21 +580,21 @@ main: {
     lda #0
     adc.z ptr+1
     sta.z __14+1
-    // [13] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuyy=pbuz1_derefidx_vbuc1 
+    // [9] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuyy=pbuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_POINT_Y
     lda (__14),y
     tay
-    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z x
     sta SCREEN,x
-    // [15] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
-    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [12] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
-    // [17] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
     inx
-    // [18] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE -- pssz1=pssz1_plus_vbuc1 
+    // [14] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_CIRCLE
     clc
     adc.z ptr
@@ -642,16 +602,16 @@ main: {
     bcc !+
     inc.z ptr+1
   !:
-    // [19] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [20] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [16] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z i
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [21] return 
+    // [17] return 
     rts
 }
   // File Data
@@ -659,32 +619,20 @@ main: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing instruction ldx #0 with TAX
 Replacing instruction lda #OFFSET_STRUCT_CIRCLE_CENTER with TYA
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (struct Point) Circle::center
 (byte) Circle::radius
 (const byte) OFFSET_STRUCT_CIRCLE_CENTER = (byte) 1
@@ -694,24 +642,24 @@ FINAL SYMBOL TABLE
 (const byte) SIZEOF_STRUCT_CIRCLE = (byte) 3
 (const struct Circle*) circles[(number) 2]  = { fill( 2, 0) }
 (void()) main()
-(struct Point*~) main::$14 zp[2]:6 101.0
+(struct Point*~) main::$14 zp[2]:6 11.0
 (label) main::@1
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
-(byte) main::i#1 i zp[1]:4 151.5
-(byte) main::i#2 i zp[1]:4 22.444444444444443
+(byte) main::i#1 i zp[1]:4 16.5
+(byte) main::i#2 i zp[1]:4 2.4444444444444446
 (byte) main::idx
-(byte) main::idx#1 reg byte x 151.5
-(byte) main::idx#2 reg byte x 50.5
-(byte) main::idx#3 reg byte x 60.599999999999994
+(byte) main::idx#1 reg byte x 16.5
+(byte) main::idx#2 reg byte x 5.5
+(byte) main::idx#3 reg byte x 6.6000000000000005
 (struct Circle*) main::ptr
-(struct Circle*) main::ptr#1 ptr zp[2]:2 67.33333333333333
-(struct Circle*) main::ptr#2 ptr zp[2]:2 25.25
+(struct Circle*) main::ptr#1 ptr zp[2]:2 7.333333333333333
+(struct Circle*) main::ptr#2 ptr zp[2]:2 2.75
 (byte) main::x
-(byte) main::x#0 x zp[1]:5 67.33333333333333
+(byte) main::x#0 x zp[1]:5 7.333333333333333
 (byte) main::y
-(byte) main::y#0 reg byte y 67.33333333333333
+(byte) main::y#0 reg byte y 7.333333333333333
 
 zp[2]:2 [ main::ptr#2 main::ptr#1 ]
 reg byte x [ main::idx#3 main::idx#2 ]
@@ -735,12 +683,6 @@ Score: 1082
   .const SIZEOF_STRUCT_CIRCLE = 3
   .const OFFSET_STRUCT_CIRCLE_CENTER = 1
   .const OFFSET_STRUCT_POINT_Y = 1
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400
@@ -749,53 +691,53 @@ main: {
     .label ptr = 2
     .label i = 4
     // circles[0].center.x = 2
-    // [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER) ← (byte) 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER
     // circles[0].center.y = 3
-    // [5] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+OFFSET_STRUCT_POINT_Y
     // circles[0].radius = 5
-    // [6] *((byte*)(const struct Circle*) circles) ← (byte) 5 -- _deref_pbuc1=vbuc2 
+    // [2] *((byte*)(const struct Circle*) circles) ← (byte) 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta circles
     // circles[1].center.x = 8
-    // [7] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 8 -- _deref_pbuc1=vbuc2 
     lda #8
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+1*SIZEOF_STRUCT_CIRCLE
     // circles[1].center.y = 9
-    // [8] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 -- _deref_pbuc1=vbuc2 
+    // [4] *((byte*)(struct Point*)(const struct Circle*) circles+(const byte) OFFSET_STRUCT_CIRCLE_CENTER+(const byte) OFFSET_STRUCT_POINT_Y+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) 9 -- _deref_pbuc1=vbuc2 
     lda #9
     sta circles+OFFSET_STRUCT_CIRCLE_CENTER+OFFSET_STRUCT_POINT_Y+1*SIZEOF_STRUCT_CIRCLE
     // circles[1].radius = 15
-    // [9] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [5] *((byte*)(const struct Circle*) circles+(byte) 1*(const byte) SIZEOF_STRUCT_CIRCLE) ← (byte) $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta circles+1*SIZEOF_STRUCT_CIRCLE
-    // [10] phi from main to main::@1 [phi:main->main::@1]
-    // [10] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [10] phi (byte) main::idx#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [6] phi (byte) main::idx#3 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     tax
-    // [10] phi (struct Circle*) main::ptr#2 = (const struct Circle*) circles [phi:main->main::@1#2] -- pssz1=pssc1 
+    // [6] phi (struct Circle*) main::ptr#2 = (const struct Circle*) circles [phi:main->main::@1#2] -- pssz1=pssc1 
     lda #<circles
     sta.z ptr
     lda #>circles
     sta.z ptr+1
-    // [10] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [10] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
-    // [10] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
+    // [6] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::idx#3 = (byte) main::idx#2 [phi:main::@1->main::@1#1] -- register_copy 
+    // [6] phi (struct Circle*) main::ptr#2 = (struct Circle*) main::ptr#1 [phi:main::@1->main::@1#2] -- register_copy 
     // main::@1
   __b1:
     // x = ptr->center.x
-    // [11] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
+    // [7] (byte) main::x#0 ← *((byte*)(struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER) -- vbuz1=pbuz2_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_CIRCLE_CENTER
     lda (ptr),y
     sta.z x
     // y = ptr->center.y
-    // [12] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER -- pssz1=pssz2_plus_vbuc1 
+    // [8] (struct Point*~) main::$14 ← (struct Point*)(struct Circle*) main::ptr#2 + (const byte) OFFSET_STRUCT_CIRCLE_CENTER -- pssz1=pssz2_plus_vbuc1 
     tya
     clc
     adc.z ptr
@@ -803,26 +745,26 @@ main: {
     lda #0
     adc.z ptr+1
     sta.z __14+1
-    // [13] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuyy=pbuz1_derefidx_vbuc1 
+    // [9] (byte) main::y#0 ← *((byte*)(struct Point*~) main::$14 + (const byte) OFFSET_STRUCT_POINT_Y) -- vbuyy=pbuz1_derefidx_vbuc1 
     ldy #OFFSET_STRUCT_POINT_Y
     lda (__14),y
     tay
     // SCREEN[idx++] = x
-    // [14] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [10] *((const nomodify byte*) main::SCREEN + (byte) main::idx#3) ← (byte) main::x#0 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z x
     sta SCREEN,x
     // SCREEN[idx++] = x;
-    // [15] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) main::idx#1 ← ++ (byte) main::idx#3 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx++] = y
-    // [16] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [12] *((const nomodify byte*) main::SCREEN + (byte) main::idx#1) ← (byte) main::y#0 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta SCREEN,x
     // SCREEN[idx++] = y;
-    // [17] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) main::idx#2 ← ++ (byte) main::idx#1 -- vbuxx=_inc_vbuxx 
     inx
     // ptr++;
-    // [18] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE -- pssz1=pssz1_plus_vbuc1 
+    // [14] (struct Circle*) main::ptr#1 ← (struct Circle*) main::ptr#2 + (const byte) SIZEOF_STRUCT_CIRCLE -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_CIRCLE
     clc
     adc.z ptr
@@ -831,15 +773,15 @@ main: {
     inc.z ptr+1
   !:
     // for(byte i:0..1)
-    // [19] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [20] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [16] if((byte) main::i#1!=(byte) 2) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #2
     cmp.z i
     bne __b1
     // main::@return
     // }
-    // [21] return 
+    // [17] return 
     rts
 }
   // File Data

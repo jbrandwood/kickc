@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte) puta::ph#0 ← (number) 4
   (byte) puta::pl#0 ← (number) 0
   call puta 
@@ -30,18 +28,21 @@ puta: scope:[puta]  from main main::@1
 puta::@return: scope:[puta]  from puta
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -92,7 +93,12 @@ Constant (const byte) puta::pl#0 = 0
 Constant (const byte) puta::ph#1 = 5
 Constant (const byte) puta::pl#1 = $18
 Successful SSA optimization Pass2ConstantIdentification
-Inlining cast (byte*) puta::screen#0 ← (byte*)(word~) puta::$1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining cast [5] (byte*) puta::screen#0 ← (byte*)(word~) puta::$1
 Successful SSA optimization Pass2InlineCast
 Inlining Noop Cast [5] (byte*) puta::screen#0 ← (byte*)(word~) puta::$1 keeping puta::screen#0
 Successful SSA optimization Pass2NopCastInlining
@@ -105,60 +111,42 @@ Constant inlined puta::ph#1 = (byte) 5
 Constant inlined puta::ph#0 = (byte) 4
 Constant inlined puta::pl#1 = (byte) $18
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to puta:6 puta:8 
+Calls in [main] to puta:1 puta:3 
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call puta 
+main: scope:[main]  from
+  [0] phi()
+  [1] call puta 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call puta 
+  [2] phi()
+  [3] call puta 
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [8] return 
+  [4] return 
   to:@return
 
 (void()) puta((byte) puta::ph , (byte) puta::pl)
 puta: scope:[puta]  from main main::@1
-  [9] (byte) puta::pl#2 ← phi( main/(byte) 0 main::@1/(byte) $18 )
-  [9] (byte) puta::ph#2 ← phi( main/(byte) 4 main::@1/(byte) 5 )
-  [10] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2
-  [11] *((byte*)(word) puta::screen#0) ← (byte) 'a'
+  [5] (byte) puta::pl#2 ← phi( main/(byte) 0 main::@1/(byte) $18 )
+  [5] (byte) puta::ph#2 ← phi( main/(byte) 4 main::@1/(byte) 5 )
+  [6] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2
+  [7] *((byte*)(word) puta::screen#0) ← (byte) 'a'
   to:puta::@return
 puta::@return: scope:[puta]  from puta
-  [12] return 
+  [8] return 
   to:@return
 
 
@@ -166,11 +154,11 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (void()) puta((byte) puta::ph , (byte) puta::pl)
 (byte) puta::ph
-(byte) puta::ph#2 101.0
+(byte) puta::ph#2 11.0
 (byte) puta::pl
-(byte) puta::pl#2 101.0
+(byte) puta::pl#2 11.0
 (byte*) puta::screen
-(word) puta::screen#0 101.0
+(word) puta::screen#0 11.0
 
 Initial phi equivalence classes
 [ puta::ph#2 ]
@@ -193,53 +181,37 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call puta 
-    // [9] phi from main to puta [phi:main->puta]
+    // [1] call puta 
+    // [5] phi from main to puta [phi:main->puta]
   puta_from_main:
-    // [9] phi (byte) puta::pl#2 = (byte) 0 [phi:main->puta#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) puta::pl#2 = (byte) 0 [phi:main->puta#0] -- vbuz1=vbuc1 
     lda #0
     sta.z puta.pl
-    // [9] phi (byte) puta::ph#2 = (byte) 4 [phi:main->puta#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) puta::ph#2 = (byte) 4 [phi:main->puta#1] -- vbuz1=vbuc1 
     lda #4
     sta.z puta.ph
     jsr puta
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call puta 
-    // [9] phi from main::@1 to puta [phi:main::@1->puta]
+    // [3] call puta 
+    // [5] phi from main::@1 to puta [phi:main::@1->puta]
   puta_from___b1:
-    // [9] phi (byte) puta::pl#2 = (byte) $18 [phi:main::@1->puta#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) puta::pl#2 = (byte) $18 [phi:main::@1->puta#0] -- vbuz1=vbuc1 
     lda #$18
     sta.z puta.pl
-    // [9] phi (byte) puta::ph#2 = (byte) 5 [phi:main::@1->puta#1] -- vbuz1=vbuc1 
+    // [5] phi (byte) puta::ph#2 = (byte) 5 [phi:main::@1->puta#1] -- vbuz1=vbuc1 
     lda #5
     sta.z puta.ph
     jsr puta
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // puta
@@ -248,37 +220,37 @@ puta: {
     .label screen = 4
     .label ph = 2
     .label pl = 3
-    // [10] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuz2_word_vbuz3 
+    // [6] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuz2_word_vbuz3 
     lda.z ph
     sta.z screen+1
     lda.z pl
     sta.z screen
-    // [11] *((byte*)(word) puta::screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((byte*)(word) puta::screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp __breturn
     // puta::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] *((byte*)(word) puta::screen#0) ← (byte) 'a' [ ] ( main:2::puta:5 [ ] { }  main:2::puta:7 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] *((byte*)(word) puta::screen#0) ← (byte) 'a' [ ] ( puta:1 [ ] { }  puta:3 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ puta::ph#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ puta::pl#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:4 [ puta::screen#0 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [puta] 101: zp[1]:2 [ puta::ph#2 ] 101: zp[1]:3 [ puta::pl#2 ] 101: zp[2]:4 [ puta::screen#0 ] 
+Uplift Scope [puta] 11: zp[1]:2 [ puta::ph#2 ] 11: zp[1]:3 [ puta::pl#2 ] 11: zp[2]:4 [ puta::screen#0 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [puta] best 69 combination reg byte a [ puta::ph#2 ] reg byte x [ puta::pl#2 ] zp[2]:4 [ puta::screen#0 ] 
-Uplifting [main] best 69 combination 
-Uplifting [] best 69 combination 
+Uplifting [puta] best 57 combination reg byte a [ puta::ph#2 ] reg byte x [ puta::pl#2 ] zp[2]:4 [ puta::screen#0 ] 
+Uplifting [main] best 57 combination 
+Uplifting [] best 57 combination 
 Allocated (was zp[2]:4) zp[2]:2 [ puta::screen#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -289,109 +261,80 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call puta 
-    // [9] phi from main to puta [phi:main->puta]
+    // [1] call puta 
+    // [5] phi from main to puta [phi:main->puta]
   puta_from_main:
-    // [9] phi (byte) puta::pl#2 = (byte) 0 [phi:main->puta#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) puta::pl#2 = (byte) 0 [phi:main->puta#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (byte) puta::ph#2 = (byte) 4 [phi:main->puta#1] -- vbuaa=vbuc1 
+    // [5] phi (byte) puta::ph#2 = (byte) 4 [phi:main->puta#1] -- vbuaa=vbuc1 
     lda #4
     jsr puta
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call puta 
-    // [9] phi from main::@1 to puta [phi:main::@1->puta]
+    // [3] call puta 
+    // [5] phi from main::@1 to puta [phi:main::@1->puta]
   puta_from___b1:
-    // [9] phi (byte) puta::pl#2 = (byte) $18 [phi:main::@1->puta#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) puta::pl#2 = (byte) $18 [phi:main::@1->puta#0] -- vbuxx=vbuc1 
     ldx #$18
-    // [9] phi (byte) puta::ph#2 = (byte) 5 [phi:main::@1->puta#1] -- vbuaa=vbuc1 
+    // [5] phi (byte) puta::ph#2 = (byte) 5 [phi:main::@1->puta#1] -- vbuaa=vbuc1 
     lda #5
     jsr puta
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // puta
 // puta(byte register(A) ph, byte register(X) pl)
 puta: {
     .label screen = 2
-    // [10] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuaa_word_vbuxx 
+    // [6] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuaa_word_vbuxx 
     sta.z screen+1
     stx.z screen
-    // [11] *((byte*)(word) puta::screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((byte*)(word) puta::screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp __breturn
     // puta::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction puta_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction puta_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@return
 (void()) puta((byte) puta::ph , (byte) puta::pl)
 (label) puta::@return
 (byte) puta::ph
-(byte) puta::ph#2 reg byte a 101.0
+(byte) puta::ph#2 reg byte a 11.0
 (byte) puta::pl
-(byte) puta::pl#2 reg byte x 101.0
+(byte) puta::pl#2 reg byte x 11.0
 (byte*) puta::screen
-(word) puta::screen#0 screen zp[2]:2 101.0
+(word) puta::screen#0 screen zp[2]:2 11.0
 
 reg byte a [ puta::ph#2 ]
 reg byte x [ puta::pl#2 ]
@@ -408,36 +351,29 @@ Score: 48
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // puta(4, 0x00)
-    // [5] call puta 
-    // [9] phi from main to puta [phi:main->puta]
-    // [9] phi (byte) puta::pl#2 = (byte) 0 [phi:main->puta#0] -- vbuxx=vbuc1 
+    // [1] call puta 
+    // [5] phi from main to puta [phi:main->puta]
+    // [5] phi (byte) puta::pl#2 = (byte) 0 [phi:main->puta#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (byte) puta::ph#2 = (byte) 4 [phi:main->puta#1] -- vbuaa=vbuc1 
+    // [5] phi (byte) puta::ph#2 = (byte) 4 [phi:main->puta#1] -- vbuaa=vbuc1 
     lda #4
     jsr puta
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // puta(5, 0x18)
-    // [7] call puta 
-    // [9] phi from main::@1 to puta [phi:main::@1->puta]
-    // [9] phi (byte) puta::pl#2 = (byte) $18 [phi:main::@1->puta#0] -- vbuxx=vbuc1 
+    // [3] call puta 
+    // [5] phi from main::@1 to puta [phi:main::@1->puta]
+    // [5] phi (byte) puta::pl#2 = (byte) $18 [phi:main::@1->puta#0] -- vbuxx=vbuc1 
     ldx #$18
-    // [9] phi (byte) puta::ph#2 = (byte) 5 [phi:main::@1->puta#1] -- vbuaa=vbuc1 
+    // [5] phi (byte) puta::ph#2 = (byte) 5 [phi:main::@1->puta#1] -- vbuaa=vbuc1 
     lda #5
     jsr puta
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // puta
@@ -445,17 +381,17 @@ main: {
 puta: {
     .label screen = 2
     // screen = (byte*) { ph, pl }
-    // [10] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuaa_word_vbuxx 
+    // [6] (word) puta::screen#0 ← (byte) puta::ph#2 w= (byte) puta::pl#2 -- vwuz1=vbuaa_word_vbuxx 
     sta.z screen+1
     stx.z screen
     // *screen = 'a'
-    // [11] *((byte*)(word) puta::screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((byte*)(word) puta::screen#0) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     // puta::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data

@@ -1,12 +1,6 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-
-(void()) _init()
-_init: scope:[_init]  from _start
-  to:_init::@return
-_init::@return: scope:[_init]  from _init
-  return 
-  to:@return
 
 (void()) main()
 main: scope:[main]  from _start::@1
@@ -18,9 +12,10 @@ main::@return: scope:[main]  from main
 
 (void()) _start()
 _start: scope:[_start]  from
-  call _init 
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   to:_start::@1
-_start::@1: scope:[_start]  from _start
+_start::@1: scope:[_start]  from _start::_init1
   call main 
   to:_start::@2
 _start::@2: scope:[_start]  from _start::@1
@@ -33,12 +28,11 @@ SYMBOL TABLE SSA
 (const byte*) SCREEN = (byte*)(number) $400
 (const byte*) SINTAB[(number) $100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
  }}
-(void()) _init()
-(label) _init::@return
 (void()) _start()
 (label) _start::@1
 (label) _start::@2
 (label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@return
 
@@ -52,16 +46,12 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SINTAB in [1] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB + (byte) 0)
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB)
+Simplifying expression containing zero SINTAB in [0] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB + (byte) 0)
+Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Removing call to empty procedure call _init 
-Removing unused procedure _init
-Removing unused procedure block _init
-Removing unused procedure block _init::@return
-Successful SSA optimization PassNEliminateEmptyProcedure
 Removing unused procedure _start
 Removing unused procedure block _start
+Removing unused procedure block _start::_init1
 Removing unused procedure block _start::@1
 Removing unused procedure block _start::@2
 Removing unused procedure block _start::@return

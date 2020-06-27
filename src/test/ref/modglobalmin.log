@@ -1,59 +1,69 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (byte) cnt#0 ← (byte) 0
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
-  (byte) cnt#15 ← phi( @1/(byte) cnt#16 )
+main: scope:[main]  from _start::@1
+  (byte) cnt#17 ← phi( _start::@1/(byte) cnt#18 )
   call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) cnt#9 ← phi( main/(byte) cnt#7 )
-  (byte) cnt#1 ← (byte) cnt#9
-  *((const byte*) SCREEN + (number) 0) ← (byte) cnt#1
-  (byte) cnt#2 ← ++ (byte) cnt#1
+  (byte) cnt#10 ← phi( main/(byte) cnt#6 )
+  (byte) cnt#0 ← (byte) cnt#10
+  *((const byte*) SCREEN + (number) 0) ← (byte) cnt#0
+  (byte) cnt#1 ← ++ (byte) cnt#0
   call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#10 ← phi( main::@1/(byte) cnt#7 )
-  (byte) cnt#3 ← (byte) cnt#10
-  (byte) cnt#4 ← ++ (byte) cnt#3
-  *((const byte*) SCREEN + (number) 1) ← (byte) cnt#4
+  (byte) cnt#11 ← phi( main::@1/(byte) cnt#6 )
+  (byte) cnt#2 ← (byte) cnt#11
+  (byte) cnt#3 ← ++ (byte) cnt#2
+  *((const byte*) SCREEN + (number) 1) ← (byte) cnt#3
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  (byte) cnt#11 ← phi( main::@2/(byte) cnt#4 )
-  (byte) cnt#5 ← (byte) cnt#11
+  (byte) cnt#12 ← phi( main::@2/(byte) cnt#3 )
+  (byte) cnt#4 ← (byte) cnt#12
   return 
   to:@return
 
 (void()) inccnt()
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#12 ← phi( main/(byte) cnt#15 main::@1/(byte) cnt#2 )
-  (byte) cnt#6 ← ++ (byte) cnt#12
+  (byte) cnt#13 ← phi( main/(byte) cnt#17 main::@1/(byte) cnt#1 )
+  (byte) cnt#5 ← ++ (byte) cnt#13
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  (byte) cnt#13 ← phi( inccnt/(byte) cnt#6 )
-  (byte) cnt#7 ← (byte) cnt#13
+  (byte) cnt#14 ← phi( inccnt/(byte) cnt#5 )
+  (byte) cnt#6 ← (byte) cnt#14
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) cnt#16 ← phi( @begin/(byte) cnt#0 )
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte) cnt#7 ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  (byte) cnt#18 ← phi( _start::_init1/(byte) cnt#7 )
   call main 
-  to:@2
-@2: scope:[]  from @1
-  (byte) cnt#14 ← phi( @1/(byte) cnt#5 )
-  (byte) cnt#8 ← (byte) cnt#14
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  (byte) cnt#15 ← phi( _start::@1/(byte) cnt#4 )
+  (byte) cnt#8 ← (byte) cnt#15
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  (byte) cnt#16 ← phi( _start::@2/(byte) cnt#8 )
+  (byte) cnt#9 ← (byte) cnt#16
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) SCREEN[(number) $100]  = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (byte) cnt
 (byte) cnt#0
 (byte) cnt#1
@@ -64,6 +74,8 @@ SYMBOL TABLE SSA
 (byte) cnt#14
 (byte) cnt#15
 (byte) cnt#16
+(byte) cnt#17
+(byte) cnt#18
 (byte) cnt#2
 (byte) cnt#3
 (byte) cnt#4
@@ -79,8 +91,8 @@ SYMBOL TABLE SSA
 (label) main::@2
 (label) main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) cnt#1
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) cnt#4
+Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) cnt#0
+Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) cnt#3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -89,104 +101,93 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Alias cnt#1 = cnt#9 
-Alias cnt#10 = cnt#3 
-Alias cnt#11 = cnt#4 cnt#5 
-Alias cnt#13 = cnt#6 cnt#7 
-Alias cnt#0 = cnt#16 
-Alias cnt#14 = cnt#8 
+Alias cnt#0 = cnt#10 
+Alias cnt#11 = cnt#2 
+Alias cnt#12 = cnt#3 cnt#4 
+Alias cnt#14 = cnt#5 cnt#6 
+Alias cnt#18 = cnt#7 
+Alias cnt#15 = cnt#8 cnt#16 cnt#9 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) cnt#15 (byte) cnt#0
-Identical Phi Values (byte) cnt#1 (byte) cnt#13
-Identical Phi Values (byte) cnt#10 (byte) cnt#13
-Identical Phi Values (byte) cnt#14 (byte) cnt#11
+Identical Phi Values (byte) cnt#17 (byte) cnt#18
+Identical Phi Values (byte) cnt#0 (byte) cnt#14
+Identical Phi Values (byte) cnt#11 (byte) cnt#14
+Identical Phi Values (byte) cnt#15 (byte) cnt#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte) cnt#0 = 0
+Constant (const byte) cnt#18 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [4] *((const byte*) SCREEN + (byte) 0) ← (byte) cnt#13
+Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (byte) 0) ← (byte) cnt#14
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Inlining constant with var siblings (const byte) cnt#0
-Constant inlined cnt#0 = (byte) 0
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings (const byte) cnt#18
+Constant inlined cnt#18 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to inccnt:6 inccnt:10 
+Calls in [main] to inccnt:1 inccnt:5 
 
 Created 1 initial phi equivalence classes
-Coalesced [9] cnt#17 ← cnt#2
+Coalesced [4] cnt#19 ← cnt#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call inccnt 
+main: scope:[main]  from
+  [0] phi()
+  [1] call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((const byte*) SCREEN) ← (byte) cnt#13
-  [7] (byte) cnt#2 ← ++ (byte) cnt#13
-  [8] call inccnt 
+  [2] *((const byte*) SCREEN) ← (byte) cnt#14
+  [3] (byte) cnt#1 ← ++ (byte) cnt#14
+  [4] call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [9] (byte) cnt#11 ← ++ (byte) cnt#13
-  [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11
+  [5] (byte) cnt#12 ← ++ (byte) cnt#14
+  [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [11] return 
+  [7] return 
   to:@return
 
 (void()) inccnt()
 inccnt: scope:[inccnt]  from main main::@1
-  [12] (byte) cnt#12 ← phi( main/(byte) 0 main::@1/(byte) cnt#2 )
-  [13] (byte) cnt#13 ← ++ (byte) cnt#12
+  [8] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte) cnt#1 )
+  [9] (byte) cnt#14 ← ++ (byte) cnt#13
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  [14] return 
+  [10] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (byte) cnt
-(byte) cnt#11 22.0
-(byte) cnt#12 112.0
-(byte) cnt#13 26.8
-(byte) cnt#2 22.0
+(byte) cnt#1 4.0
+(byte) cnt#12 4.0
+(byte) cnt#13 13.0
+(byte) cnt#14 3.4000000000000004
 (void()) inccnt()
 (void()) main()
 
 Initial phi equivalence classes
-[ cnt#12 cnt#2 ]
-Added variable cnt#11 to live range equivalence class [ cnt#11 ]
-Added variable cnt#13 to live range equivalence class [ cnt#13 ]
+[ cnt#13 cnt#1 ]
+Added variable cnt#12 to live range equivalence class [ cnt#12 ]
+Added variable cnt#14 to live range equivalence class [ cnt#14 ]
 Complete equivalence classes
-[ cnt#12 cnt#2 ]
-[ cnt#11 ]
-[ cnt#13 ]
-Allocated zp[1]:2 [ cnt#12 cnt#2 ]
-Allocated zp[1]:3 [ cnt#11 ]
-Allocated zp[1]:4 [ cnt#13 ]
+[ cnt#13 cnt#1 ]
+[ cnt#12 ]
+[ cnt#14 ]
+Allocated zp[1]:2 [ cnt#13 cnt#1 ]
+Allocated zp[1]:3 [ cnt#12 ]
+Allocated zp[1]:4 [ cnt#14 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -200,89 +201,73 @@ Target platform is c64basic / MOS6502X
   .label cnt = 2
   .label cnt_1 = 3
   .label cnt_2 = 4
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call inccnt 
-    // [12] phi from main to inccnt [phi:main->inccnt]
+    // [1] call inccnt 
+    // [8] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-    // [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
+    // [8] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
     lda #0
     sta.z cnt
     jsr inccnt
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuz1 
+    // [2] *((const byte*) SCREEN) ← (byte) cnt#14 -- _deref_pbuc1=vbuz1 
     lda.z cnt_2
     sta SCREEN
-    // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
+    // [3] (byte) cnt#1 ← ++ (byte) cnt#14 -- vbuz1=_inc_vbuz2 
     ldy.z cnt_2
     iny
     sty.z cnt
-    // [8] call inccnt 
-    // [12] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+    // [4] call inccnt 
+    // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from___b1:
-    // [12] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
+    // [8] phi (byte) cnt#13 = (byte) cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
     jmp __b2
     // main::@2
   __b2:
-    // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
+    // [5] (byte) cnt#12 ← ++ (byte) cnt#14 -- vbuz1=_inc_vbuz2 
     ldy.z cnt_2
     iny
     sty.z cnt_1
-    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuz1 
+    // [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12 -- _deref_pbuc1=vbuz1 
     lda.z cnt_1
     sta SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [11] return 
+    // [7] return 
     rts
 }
   // inccnt
 inccnt: {
-    // [13] (byte) cnt#13 ← ++ (byte) cnt#12 -- vbuz1=_inc_vbuz2 
+    // [9] (byte) cnt#14 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
     ldy.z cnt
     iny
     sty.z cnt_2
     jmp __breturn
     // inccnt::@return
   __breturn:
-    // [14] return 
+    // [10] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp[1]:2 [ cnt#12 cnt#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:3 [ cnt#11 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:4 [ cnt#13 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:2 [ cnt#13 cnt#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ cnt#12 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ cnt#14 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 134: zp[1]:2 [ cnt#12 cnt#2 ] 26.8: zp[1]:4 [ cnt#13 ] 22: zp[1]:3 [ cnt#11 ] 
+Uplift Scope [] 17: zp[1]:2 [ cnt#13 cnt#1 ] 4: zp[1]:3 [ cnt#12 ] 3.4: zp[1]:4 [ cnt#14 ] 
 Uplift Scope [main] 
 Uplift Scope [inccnt] 
 
-Uplifting [] best 64 combination reg byte x [ cnt#12 cnt#2 ] reg byte x [ cnt#13 ] reg byte x [ cnt#11 ] 
-Uplifting [main] best 64 combination 
-Uplifting [inccnt] best 64 combination 
+Uplifting [] best 52 combination reg byte x [ cnt#13 cnt#1 ] reg byte x [ cnt#12 ] reg byte x [ cnt#14 ] 
+Uplifting [main] best 52 combination 
+Uplifting [inccnt] best 52 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -292,82 +277,57 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call inccnt 
-    // [12] phi from main to inccnt [phi:main->inccnt]
+    // [1] call inccnt 
+    // [8] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-    // [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+    // [8] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+    // [2] *((const byte*) SCREEN) ← (byte) cnt#14 -- _deref_pbuc1=vbuxx 
     stx SCREEN
-    // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
+    // [3] (byte) cnt#1 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
     inx
-    // [8] call inccnt 
-    // [12] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+    // [4] call inccnt 
+    // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from___b1:
-    // [12] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
+    // [8] phi (byte) cnt#13 = (byte) cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
     jmp __b2
     // main::@2
   __b2:
-    // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
+    // [5] (byte) cnt#12 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+    // [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [11] return 
+    // [7] return 
     rts
 }
   // inccnt
 inccnt: {
-    // [13] (byte) cnt#13 ← ++ (byte) cnt#12 -- vbuxx=_inc_vbuxx 
+    // [9] (byte) cnt#14 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     jmp __breturn
     // inccnt::@return
   __breturn:
-    // [14] return 
+    // [10] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction inccnt_from_main:
 Removing instruction __b1:
 Removing instruction inccnt_from___b1:
@@ -375,19 +335,14 @@ Removing instruction __b2:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) SCREEN[(number) $100]  = (byte*) 1024
 (byte) cnt
-(byte) cnt#11 reg byte x 22.0
-(byte) cnt#12 reg byte x 112.0
-(byte) cnt#13 reg byte x 26.8
-(byte) cnt#2 reg byte x 22.0
+(byte) cnt#1 reg byte x 4.0
+(byte) cnt#12 reg byte x 4.0
+(byte) cnt#13 reg byte x 13.0
+(byte) cnt#14 reg byte x 3.4000000000000004
 (void()) inccnt()
 (label) inccnt::@return
 (void()) main()
@@ -395,9 +350,9 @@ FINAL SYMBOL TABLE
 (label) main::@2
 (label) main::@return
 
-reg byte x [ cnt#12 cnt#2 ]
-reg byte x [ cnt#11 ]
-reg byte x [ cnt#13 ]
+reg byte x [ cnt#13 cnt#1 ]
+reg byte x [ cnt#12 ]
+reg byte x [ cnt#14 ]
 
 
 FINAL ASSEMBLER
@@ -410,53 +365,46 @@ Score: 40
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // inccnt()
-    // [5] call inccnt 
-    // [12] phi from main to inccnt [phi:main->inccnt]
-    // [12] phi (byte) cnt#12 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+    // [1] call inccnt 
+    // [8] phi from main to inccnt [phi:main->inccnt]
+    // [8] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
     // main::@1
     // SCREEN[0]=cnt++
-    // [6] *((const byte*) SCREEN) ← (byte) cnt#13 -- _deref_pbuc1=vbuxx 
+    // [2] *((const byte*) SCREEN) ← (byte) cnt#14 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // SCREEN[0]=cnt++;
-    // [7] (byte) cnt#2 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
+    // [3] (byte) cnt#1 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
     inx
     // inccnt()
-    // [8] call inccnt 
-    // [12] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-    // [12] phi (byte) cnt#12 = (byte) cnt#2 [phi:main::@1->inccnt#0] -- register_copy 
+    // [4] call inccnt 
+    // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
+    // [8] phi (byte) cnt#13 = (byte) cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
     // main::@2
     // SCREEN[1]=++cnt;
-    // [9] (byte) cnt#11 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
+    // [5] (byte) cnt#12 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[1]=++cnt
-    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#11 -- _deref_pbuc1=vbuxx 
+    // [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     // main::@return
     // }
-    // [11] return 
+    // [7] return 
     rts
 }
   // inccnt
 inccnt: {
     // ++cnt;
-    // [13] (byte) cnt#13 ← ++ (byte) cnt#12 -- vbuxx=_inc_vbuxx 
+    // [9] (byte) cnt#14 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     // inccnt::@return
     // }
-    // [14] return 
+    // [10] return 
     rts
 }
   // File Data

@@ -1,8 +1,7 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
@@ -43,7 +42,7 @@ keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_p
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -142,18 +141,22 @@ pressed::@3: scope:[pressed]  from pressed::@2
 pressed::@return: scope:[pressed]  from pressed::@1 pressed::@3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
@@ -250,6 +253,11 @@ SYMBOL TABLE SSA
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B = (byte) 1
 (const nomodify byte) RED = (byte) 2
 (const byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 (number~) keyboard_key_pressed::$0
 (byte~) keyboard_key_pressed::$1
@@ -399,6 +407,13 @@ Eliminating unused constant (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) keyboard_key_pressed::key#0
 Inlining constant with var siblings (const byte) keyboard_key_pressed::key#1
 Inlining constant with var siblings (const byte) keyboard_key_pressed::key#2
@@ -408,10 +423,6 @@ Constant inlined keyboard_key_pressed::key#1 = (const nomodify byte) KEY_I
 Constant inlined keyboard_key_pressed::key#2 = (const nomodify byte) KEY_E
 Constant inlined keyboard_key_pressed::key#3 = (const nomodify byte) KEY_SPACE
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
@@ -425,15 +436,13 @@ Adding NOP phi() at start of menu::@4
 Adding NOP phi() at start of pressed::@1
 Adding NOP phi() at start of pressed::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to menu:8 
-Calls in [menu] to keyboard_key_pressed:13 pressed:18 keyboard_key_pressed:22 keyboard_key_pressed:29 
-Calls in [keyboard_key_pressed] to keyboard_matrix_read:40 
-Calls in [pressed] to keyboard_key_pressed:51 
+Calls in [main] to menu:3 
+Calls in [menu] to keyboard_key_pressed:8 pressed:13 keyboard_key_pressed:17 keyboard_key_pressed:24 
+Calls in [keyboard_key_pressed] to keyboard_matrix_read:35 
+Calls in [pressed] to keyboard_key_pressed:46 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) menu::@1
@@ -452,9 +461,6 @@ Renumbering block menu::@10 to menu::@9
 Renumbering block menu::@12 to menu::@10
 Renumbering block pressed::@2 to pressed::@1
 Renumbering block pressed::@3 to pressed::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of menu
 Adding NOP phi() at start of menu::@1
@@ -464,116 +470,107 @@ Adding NOP phi() at start of menu::@3
 Adding NOP phi() at start of pressed::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
+main: scope:[main]  from
+  [0] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] phi()
-  [6] call menu 
+  [1] phi()
+  [2] call menu 
   to:main::@1
 
 (void()) menu()
 menu: scope:[menu]  from main::@1
-  [7] phi()
+  [3] phi()
   to:menu::@1
 menu::@1: scope:[menu]  from menu menu::@4
-  [8] phi()
-  [9] call keyboard_key_pressed 
-  [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+  [4] phi()
+  [5] call keyboard_key_pressed 
+  [6] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
   to:menu::@8
 menu::@8: scope:[menu]  from menu::@1
-  [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
-  [12] if((byte~) menu::$0==(byte) 0) goto menu::@2
+  [7] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
+  [8] if((byte~) menu::$0==(byte) 0) goto menu::@2
   to:menu::@5
 menu::@5: scope:[menu]  from menu::@8
-  [13] phi()
-  [14] call pressed 
+  [9] phi()
+  [10] call pressed 
   to:menu::@return
 menu::@return: scope:[menu]  from menu::@5 menu::@6 menu::@7
-  [15] return 
+  [11] return 
   to:@return
 menu::@2: scope:[menu]  from menu::@8
-  [16] phi()
-  [17] call keyboard_key_pressed 
-  [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
+  [12] phi()
+  [13] call keyboard_key_pressed 
+  [14] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
   to:menu::@9
 menu::@9: scope:[menu]  from menu::@2
-  [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
-  [20] if((byte~) menu::$4==(byte) 0) goto menu::@3
+  [15] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
+  [16] if((byte~) menu::$4==(byte) 0) goto menu::@3
   to:menu::@6
 menu::@6: scope:[menu]  from menu::@9
-  [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED
+  [17] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED
   asm { sei  }
   to:menu::@return
 menu::@3: scope:[menu]  from menu::@9
-  [23] phi()
-  [24] call keyboard_key_pressed 
-  [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
+  [19] phi()
+  [20] call keyboard_key_pressed 
+  [21] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
   to:menu::@10
 menu::@10: scope:[menu]  from menu::@3
-  [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
-  [27] if((byte~) menu::$7==(byte) 0) goto menu::@4
+  [22] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
+  [23] if((byte~) menu::$7==(byte) 0) goto menu::@4
   to:menu::@7
 menu::@7: scope:[menu]  from menu::@10
-  [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
+  [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN
   asm { cli  }
   to:menu::@return
 menu::@4: scope:[menu]  from menu::@10
-  [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
+  [26] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
   to:menu::@1
 
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
 keyboard_key_pressed: scope:[keyboard_key_pressed]  from menu::@1 menu::@2 menu::@3 pressed::@1
-  [31] (byte) keyboard_key_pressed::key#4 ← phi( menu::@1/(const nomodify byte) KEY_C menu::@2/(const nomodify byte) KEY_I menu::@3/(const nomodify byte) KEY_E pressed::@1/(const nomodify byte) KEY_SPACE )
-  [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7
-  [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3
-  [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0
-  [35] call keyboard_matrix_read 
-  [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  [27] (byte) keyboard_key_pressed::key#4 ← phi( menu::@1/(const nomodify byte) KEY_C menu::@2/(const nomodify byte) KEY_I menu::@3/(const nomodify byte) KEY_E pressed::@1/(const nomodify byte) KEY_SPACE )
+  [28] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7
+  [29] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3
+  [30] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0
+  [31] call keyboard_matrix_read 
+  [32] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
   to:keyboard_key_pressed::@1
 keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_pressed
-  [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0)
+  [33] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  [34] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0)
   to:keyboard_key_pressed::@return
 keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
-  [39] return 
+  [35] return 
   to:@return
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed
-  [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0)
-  [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
+  [36] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0)
+  [37] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
-  [42] return 
+  [38] return 
   to:@return
 
 (void()) pressed()
 pressed: scope:[pressed]  from menu::@5
-  [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  [39] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
   to:pressed::@1
 pressed::@1: scope:[pressed]  from pressed pressed::@2
-  [44] phi()
-  [45] call keyboard_key_pressed 
-  [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+  [40] phi()
+  [41] call keyboard_key_pressed 
+  [42] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
   to:pressed::@2
 pressed::@2: scope:[pressed]  from pressed::@1
-  [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
-  [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return
+  [43] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
+  [44] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return
   to:pressed::@1
 pressed::@return: scope:[pressed]  from pressed::@2
-  [49] return 
+  [45] return 
   to:@return
 
 null depth in calling loop Loop head: pressed::@1 tails: pressed::@2 blocks: pressed::@2 pressed::@1  in scope keyboard_key_pressed
@@ -664,33 +661,33 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
-(byte~) keyboard_key_pressed::$2 2.0000002E7
+(byte~) keyboard_key_pressed::$2 2000002.0
 (byte) keyboard_key_pressed::colidx
-(byte) keyboard_key_pressed::colidx#0 3333333.6666666665
+(byte) keyboard_key_pressed::colidx#0 333333.6666666667
 (byte) keyboard_key_pressed::key
-(byte) keyboard_key_pressed::key#4 1.0000001E7
+(byte) keyboard_key_pressed::key#4 1000001.0
 (byte) keyboard_key_pressed::return
-(byte) keyboard_key_pressed::return#0 1883334.1666666665
-(byte) keyboard_key_pressed::return#10 2000002.0
-(byte) keyboard_key_pressed::return#2 200002.0
-(byte) keyboard_key_pressed::return#3 200002.0
-(byte) keyboard_key_pressed::return#4 200002.0
+(byte) keyboard_key_pressed::return#0 188334.1666666667
+(byte) keyboard_key_pressed::return#10 200002.0
+(byte) keyboard_key_pressed::return#2 20002.0
+(byte) keyboard_key_pressed::return#3 20002.0
+(byte) keyboard_key_pressed::return#4 20002.0
 (byte) keyboard_key_pressed::rowidx
-(byte) keyboard_key_pressed::rowidx#0 2.0000002E7
+(byte) keyboard_key_pressed::rowidx#0 2000002.0
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (byte) keyboard_matrix_read::return
-(byte) keyboard_matrix_read::return#0 3.6666667333333336E7
-(byte) keyboard_matrix_read::return#2 2.0000002E7
+(byte) keyboard_matrix_read::return#0 3666667.333333333
+(byte) keyboard_matrix_read::return#2 2000002.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(byte) keyboard_matrix_read::rowid#0 1.10000002E8
+(byte) keyboard_matrix_read::rowid#0 1.1000002E7
 (void()) main()
 (void()) menu()
-(byte~) menu::$0 200002.0
-(byte~) menu::$4 200002.0
-(byte~) menu::$7 200002.0
+(byte~) menu::$0 20002.0
+(byte~) menu::$4 20002.0
+(byte~) menu::$7 20002.0
 (void()) pressed()
-(byte~) pressed::$1 2000002.0
+(byte~) pressed::$1 200002.0
 
 Initial phi equivalence classes
 [ keyboard_key_pressed::key#4 ]
@@ -787,33 +784,19 @@ Target platform is c64basic / MOS6502X
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDER_COLOR
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
   __b1_from___b1:
     jmp __b1
     // main::@1
   __b1:
-    // [6] call menu 
-    // [7] phi from main::@1 to menu [phi:main::@1->menu]
+    // [2] call menu 
+    // [3] phi from main::@1 to menu [phi:main::@1->menu]
   menu_from___b1:
     jsr menu
     jmp __b1_from___b1
@@ -823,107 +806,107 @@ menu: {
     .label __0 = 4
     .label __4 = 6
     .label __7 = 8
-    // [8] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
+    // [4] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
   __b1_from_menu:
   __b1_from___b4:
     jmp __b1
     // menu::@1
   __b1:
-    // [9] call keyboard_key_pressed 
-    // [31] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
+    // [5] call keyboard_key_pressed 
+    // [27] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
   keyboard_key_pressed_from___b1:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_C
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
-    // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [6] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_1
     jmp __b8
     // menu::@8
   __b8:
-    // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
+    // [7] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_1
     sta.z __0
-    // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuz1_eq_0_then_la1 
+    // [8] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuz1_eq_0_then_la1 
     lda.z __0
     cmp #0
     beq __b2_from___b8
-    // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
+    // [9] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
   __b5_from___b8:
     jmp __b5
     // menu::@5
   __b5:
-    // [14] call pressed 
+    // [10] call pressed 
     jsr pressed
     jmp __breturn
     // menu::@return
   __breturn:
-    // [15] return 
+    // [11] return 
     rts
-    // [16] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
+    // [12] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
   __b2_from___b8:
     jmp __b2
     // menu::@2
   __b2:
-    // [17] call keyboard_key_pressed 
-    // [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
+    // [13] call keyboard_key_pressed 
+    // [27] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
   keyboard_key_pressed_from___b2:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_I
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
-    // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [14] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_2
     jmp __b9
     // menu::@9
   __b9:
-    // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
+    // [15] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_2
     sta.z __4
-    // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuz1_eq_0_then_la1 
+    // [16] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuz1_eq_0_then_la1 
     lda.z __4
     cmp #0
     beq __b3_from___b9
     jmp __b6
     // menu::@6
   __b6:
-    // [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDER_COLOR
     // asm { sei  }
     sei
     jmp __breturn
-    // [23] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
+    // [19] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
   __b3_from___b9:
     jmp __b3
     // menu::@3
   __b3:
-    // [24] call keyboard_key_pressed 
-    // [31] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
+    // [20] call keyboard_key_pressed 
+    // [27] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
   keyboard_key_pressed_from___b3:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_E
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
-    // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [21] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_3
     jmp __b10
     // menu::@10
   __b10:
-    // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
+    // [22] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_3
     sta.z __7
-    // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
+    // [23] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuz1_eq_0_then_la1 
     lda.z __7
     cmp #0
     beq __b4
     jmp __b7
     // menu::@7
   __b7:
-    // [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDER_COLOR
     // asm { cli  }
@@ -931,7 +914,7 @@ menu: {
     jmp __breturn
     // menu::@4
   __b4:
-    // [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [26] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1_from___b4
 }
@@ -951,31 +934,31 @@ keyboard_key_pressed: {
     .label return_3 = 7
     .label key = 2
     .label return_4 = $10
-    // [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    // [28] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
     lda #7
     and.z key
     sta.z colidx
-    // [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
+    // [29] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
     lda.z key
     lsr
     lsr
     lsr
     sta.z rowidx
-    // [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
+    // [30] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
     lda.z rowidx
     sta.z keyboard_matrix_read.rowid
-    // [35] call keyboard_matrix_read 
+    // [31] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-    // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+    // [32] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return
     sta.z keyboard_matrix_read.return_1
     jmp __b1
     // keyboard_key_pressed::@1
   __b1:
-    // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
+    // [33] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return_1
     sta.z __2
-    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
+    // [34] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
     lda.z __2
     ldy.z colidx
     and keyboard_matrix_col_bitmask,y
@@ -983,7 +966,7 @@ keyboard_key_pressed: {
     jmp __breturn
     // keyboard_key_pressed::@return
   __breturn:
-    // [39] return 
+    // [35] return 
     rts
 }
   // keyboard_matrix_read
@@ -997,55 +980,55 @@ keyboard_matrix_read: {
     .label return = $f
     .label rowid = $b
     .label return_1 = $c
-    // [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    // [36] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1
-    // [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    // [37] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     sta.z return
     jmp __breturn
     // keyboard_matrix_read::@return
   __breturn:
-    // [42] return 
+    // [38] return 
     rts
 }
   // pressed
 pressed: {
     .label __1 = $11
-    // [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [39] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
-    // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
+    // [40] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
   __b1_from_pressed:
   __b1_from___b2:
     jmp __b1
     // pressed::@1
   __b1:
-    // [45] call keyboard_key_pressed 
-    // [31] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
+    // [41] call keyboard_key_pressed 
+    // [27] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
   keyboard_key_pressed_from___b1:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuz1=vbuc1 
     lda #KEY_SPACE
     sta.z keyboard_key_pressed.key
     jsr keyboard_key_pressed
-    // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
+    // [42] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return
     sta.z keyboard_key_pressed.return_4
     jmp __b2
     // pressed::@2
   __b2:
-    // [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
+    // [43] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10 -- vbuz1=vbuz2 
     lda.z keyboard_key_pressed.return_4
     sta.z __1
-    // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuz1_neq_0_then_la1 
+    // [44] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuz1_neq_0_then_la1 
     lda.z __1
     cmp #0
     bne __breturn
     jmp __b1_from___b2
     // pressed::@return
   __breturn:
-    // [49] return 
+    // [45] return 
     rts
 }
   // File Data
@@ -1055,19 +1038,19 @@ pressed: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
-Statement [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::menu:6::keyboard_key_pressed:9 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [17] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED [ ] ( menu:2 [ ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( menu:2 [ ] { }  ) always clobbers reg byte a 
+Statement [29] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( menu:2::keyboard_key_pressed:5 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:13 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:20 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::pressed:10::keyboard_key_pressed:41 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ keyboard_key_pressed::colidx#0 ]
-Statement [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( main:2::menu:6 [ ] { }  ) always clobbers reg byte a 
-Statement [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( main:2::menu:6::keyboard_key_pressed:9 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( main:2::menu:6::keyboard_key_pressed:9::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:17::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::keyboard_key_pressed:24::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  main:2::menu:6::pressed:14::keyboard_key_pressed:45::keyboard_matrix_read:35 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [36] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( menu:2::keyboard_key_pressed:5::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:13::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:20::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::pressed:10::keyboard_key_pressed:41::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [37] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( menu:2::keyboard_key_pressed:5::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:13::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:20::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::pressed:10::keyboard_key_pressed:41::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [17] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED [ ] ( menu:2 [ ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN [ ] ( menu:2 [ ] { }  ) always clobbers reg byte a 
+Statement [29] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( menu:2::keyboard_key_pressed:5 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:13 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:20 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::pressed:10::keyboard_key_pressed:41 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [36] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) [ ] ( menu:2::keyboard_key_pressed:5::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:13::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:20::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::pressed:10::keyboard_key_pressed:41::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [37] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( menu:2::keyboard_key_pressed:5::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:13::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#3 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::keyboard_key_pressed:20::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#4 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  menu:2::pressed:10::keyboard_key_pressed:41::keyboard_matrix_read:31 [ keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#10 } { keyboard_matrix_read::rowid#0 = keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ keyboard_key_pressed::key#4 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ keyboard_key_pressed::return#2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ menu::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -1086,38 +1069,38 @@ Potential registers zp[1]:16 [ keyboard_key_pressed::return#10 ] : zp[1]:16 , re
 Potential registers zp[1]:17 [ pressed::$1 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [keyboard_matrix_read] 110,000,002: zp[1]:11 [ keyboard_matrix_read::rowid#0 ] 36,666,667.33: zp[1]:15 [ keyboard_matrix_read::return#0 ] 20,000,002: zp[1]:12 [ keyboard_matrix_read::return#2 ] 
-Uplift Scope [keyboard_key_pressed] 20,000,002: zp[1]:10 [ keyboard_key_pressed::rowidx#0 ] 20,000,002: zp[1]:13 [ keyboard_key_pressed::$2 ] 10,000,001: zp[1]:2 [ keyboard_key_pressed::key#4 ] 3,333,333.67: zp[1]:9 [ keyboard_key_pressed::colidx#0 ] 2,000,002: zp[1]:16 [ keyboard_key_pressed::return#10 ] 1,883,334.17: zp[1]:14 [ keyboard_key_pressed::return#0 ] 200,002: zp[1]:3 [ keyboard_key_pressed::return#2 ] 200,002: zp[1]:5 [ keyboard_key_pressed::return#3 ] 200,002: zp[1]:7 [ keyboard_key_pressed::return#4 ] 
-Uplift Scope [pressed] 2,000,002: zp[1]:17 [ pressed::$1 ] 
-Uplift Scope [menu] 200,002: zp[1]:4 [ menu::$0 ] 200,002: zp[1]:6 [ menu::$4 ] 200,002: zp[1]:8 [ menu::$7 ] 
+Uplift Scope [keyboard_matrix_read] 11,000,002: zp[1]:11 [ keyboard_matrix_read::rowid#0 ] 3,666,667.33: zp[1]:15 [ keyboard_matrix_read::return#0 ] 2,000,002: zp[1]:12 [ keyboard_matrix_read::return#2 ] 
+Uplift Scope [keyboard_key_pressed] 2,000,002: zp[1]:10 [ keyboard_key_pressed::rowidx#0 ] 2,000,002: zp[1]:13 [ keyboard_key_pressed::$2 ] 1,000,001: zp[1]:2 [ keyboard_key_pressed::key#4 ] 333,333.67: zp[1]:9 [ keyboard_key_pressed::colidx#0 ] 200,002: zp[1]:16 [ keyboard_key_pressed::return#10 ] 188,334.17: zp[1]:14 [ keyboard_key_pressed::return#0 ] 20,002: zp[1]:3 [ keyboard_key_pressed::return#2 ] 20,002: zp[1]:5 [ keyboard_key_pressed::return#3 ] 20,002: zp[1]:7 [ keyboard_key_pressed::return#4 ] 
+Uplift Scope [pressed] 200,002: zp[1]:17 [ pressed::$1 ] 
+Uplift Scope [menu] 20,002: zp[1]:4 [ menu::$0 ] 20,002: zp[1]:6 [ menu::$4 ] 20,002: zp[1]:8 [ menu::$7 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [keyboard_matrix_read] best 12233 combination reg byte x [ keyboard_matrix_read::rowid#0 ] reg byte a [ keyboard_matrix_read::return#0 ] reg byte a [ keyboard_matrix_read::return#2 ] 
-Uplifting [keyboard_key_pressed] best 12207 combination reg byte a [ keyboard_key_pressed::rowidx#0 ] reg byte a [ keyboard_key_pressed::$2 ] reg byte x [ keyboard_key_pressed::key#4 ] zp[1]:9 [ keyboard_key_pressed::colidx#0 ] zp[1]:16 [ keyboard_key_pressed::return#10 ] zp[1]:14 [ keyboard_key_pressed::return#0 ] zp[1]:3 [ keyboard_key_pressed::return#2 ] zp[1]:5 [ keyboard_key_pressed::return#3 ] zp[1]:7 [ keyboard_key_pressed::return#4 ] 
+Uplifting [keyboard_matrix_read] best 12221 combination reg byte x [ keyboard_matrix_read::rowid#0 ] reg byte a [ keyboard_matrix_read::return#0 ] reg byte a [ keyboard_matrix_read::return#2 ] 
+Uplifting [keyboard_key_pressed] best 12195 combination reg byte a [ keyboard_key_pressed::rowidx#0 ] reg byte a [ keyboard_key_pressed::$2 ] reg byte x [ keyboard_key_pressed::key#4 ] zp[1]:9 [ keyboard_key_pressed::colidx#0 ] zp[1]:16 [ keyboard_key_pressed::return#10 ] zp[1]:14 [ keyboard_key_pressed::return#0 ] zp[1]:3 [ keyboard_key_pressed::return#2 ] zp[1]:5 [ keyboard_key_pressed::return#3 ] zp[1]:7 [ keyboard_key_pressed::return#4 ] 
 Limited combination testing to 100 combinations of 196608 possible.
-Uplifting [pressed] best 11607 combination reg byte a [ pressed::$1 ] 
-Uplifting [menu] best 9807 combination reg byte a [ menu::$0 ] reg byte a [ menu::$4 ] reg byte a [ menu::$7 ] 
-Uplifting [MOS6526_CIA] best 9807 combination 
-Uplifting [MOS6569_VICII] best 9807 combination 
-Uplifting [MOS6581_SID] best 9807 combination 
-Uplifting [main] best 9807 combination 
-Uplifting [] best 9807 combination 
+Uplifting [pressed] best 11595 combination reg byte a [ pressed::$1 ] 
+Uplifting [menu] best 9795 combination reg byte a [ menu::$0 ] reg byte a [ menu::$4 ] reg byte a [ menu::$7 ] 
+Uplifting [MOS6526_CIA] best 9795 combination 
+Uplifting [MOS6569_VICII] best 9795 combination 
+Uplifting [MOS6581_SID] best 9795 combination 
+Uplifting [main] best 9795 combination 
+Uplifting [] best 9795 combination 
 Attempting to uplift remaining variables inzp[1]:9 [ keyboard_key_pressed::colidx#0 ]
-Uplifting [keyboard_key_pressed] best 9805 combination reg byte y [ keyboard_key_pressed::colidx#0 ] 
+Uplifting [keyboard_key_pressed] best 9793 combination reg byte y [ keyboard_key_pressed::colidx#0 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ keyboard_key_pressed::return#10 ]
-Uplifting [keyboard_key_pressed] best 9205 combination reg byte a [ keyboard_key_pressed::return#10 ] 
+Uplifting [keyboard_key_pressed] best 9193 combination reg byte a [ keyboard_key_pressed::return#10 ] 
 Attempting to uplift remaining variables inzp[1]:14 [ keyboard_key_pressed::return#0 ]
-Uplifting [keyboard_key_pressed] best 8002 combination reg byte a [ keyboard_key_pressed::return#0 ] 
+Uplifting [keyboard_key_pressed] best 7990 combination reg byte a [ keyboard_key_pressed::return#0 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ keyboard_key_pressed::return#2 ]
-Uplifting [keyboard_key_pressed] best 7402 combination reg byte a [ keyboard_key_pressed::return#2 ] 
+Uplifting [keyboard_key_pressed] best 7390 combination reg byte a [ keyboard_key_pressed::return#2 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ keyboard_key_pressed::return#3 ]
-Uplifting [keyboard_key_pressed] best 6802 combination reg byte a [ keyboard_key_pressed::return#3 ] 
+Uplifting [keyboard_key_pressed] best 6790 combination reg byte a [ keyboard_key_pressed::return#3 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ keyboard_key_pressed::return#4 ]
-Uplifting [keyboard_key_pressed] best 6202 combination reg byte a [ keyboard_key_pressed::return#4 ] 
+Uplifting [keyboard_key_pressed] best 6190 combination reg byte a [ keyboard_key_pressed::return#4 ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1162,122 +1145,108 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDER_COLOR
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
   __b1_from___b1:
     jmp __b1
     // main::@1
   __b1:
-    // [6] call menu 
-    // [7] phi from main::@1 to menu [phi:main::@1->menu]
+    // [2] call menu 
+    // [3] phi from main::@1 to menu [phi:main::@1->menu]
   menu_from___b1:
     jsr menu
     jmp __b1_from___b1
 }
   // menu
 menu: {
-    // [8] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
+    // [4] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
   __b1_from_menu:
   __b1_from___b4:
     jmp __b1
     // menu::@1
   __b1:
-    // [9] call keyboard_key_pressed 
-    // [31] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
+    // [5] call keyboard_key_pressed 
+    // [27] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
   keyboard_key_pressed_from___b1:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_C
     jsr keyboard_key_pressed
-    // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // [6] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
     jmp __b8
     // menu::@8
   __b8:
-    // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
-    // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuaa_eq_0_then_la1 
+    // [7] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
+    // [8] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b2_from___b8
-    // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
+    // [9] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
   __b5_from___b8:
     jmp __b5
     // menu::@5
   __b5:
-    // [14] call pressed 
+    // [10] call pressed 
     jsr pressed
     jmp __breturn
     // menu::@return
   __breturn:
-    // [15] return 
+    // [11] return 
     rts
-    // [16] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
+    // [12] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
   __b2_from___b8:
     jmp __b2
     // menu::@2
   __b2:
-    // [17] call keyboard_key_pressed 
-    // [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
+    // [13] call keyboard_key_pressed 
+    // [27] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
   keyboard_key_pressed_from___b2:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_I
     jsr keyboard_key_pressed
-    // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
+    // [14] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
     jmp __b9
     // menu::@9
   __b9:
-    // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
-    // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuaa_eq_0_then_la1 
+    // [15] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
+    // [16] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3_from___b9
     jmp __b6
     // menu::@6
   __b6:
-    // [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDER_COLOR
     // asm { sei  }
     sei
     jmp __breturn
-    // [23] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
+    // [19] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
   __b3_from___b9:
     jmp __b3
     // menu::@3
   __b3:
-    // [24] call keyboard_key_pressed 
-    // [31] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
+    // [20] call keyboard_key_pressed 
+    // [27] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
   keyboard_key_pressed_from___b3:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_E
     jsr keyboard_key_pressed
-    // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
+    // [21] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
     jmp __b10
     // menu::@10
   __b10:
-    // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
-    // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
+    // [22] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
+    // [23] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b4
     jmp __b7
     // menu::@7
   __b7:
-    // [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDER_COLOR
     // asm { cli  }
@@ -1285,7 +1254,7 @@ menu: {
     jmp __breturn
     // menu::@4
   __b4:
-    // [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [26] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1_from___b4
 }
@@ -1296,30 +1265,30 @@ menu: {
 // Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
-    // [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
+    // [28] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
     and #7
     tay
-    // [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
+    // [29] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
-    // [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+    // [30] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
     tax
-    // [35] call keyboard_matrix_read 
+    // [31] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-    // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+    // [32] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
     jmp __b1
     // keyboard_key_pressed::@1
   __b1:
-    // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    // [33] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+    // [34] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     jmp __breturn
     // keyboard_key_pressed::@return
   __breturn:
-    // [39] return 
+    // [35] return 
     rts
 }
   // keyboard_matrix_read
@@ -1330,46 +1299,46 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [36] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [37] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     jmp __breturn
     // keyboard_matrix_read::@return
   __breturn:
-    // [42] return 
+    // [38] return 
     rts
 }
   // pressed
 pressed: {
-    // [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [39] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
-    // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
+    // [40] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
   __b1_from_pressed:
   __b1_from___b2:
     jmp __b1
     // pressed::@1
   __b1:
-    // [45] call keyboard_key_pressed 
-    // [31] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
+    // [41] call keyboard_key_pressed 
+    // [27] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
   keyboard_key_pressed_from___b1:
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
-    // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+    // [42] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
     jmp __b2
     // pressed::@2
   __b2:
-    // [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
-    // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuaa_neq_0_then_la1 
+    // [43] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
+    // [44] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuaa_neq_0_then_la1 
     cmp #0
     bne __breturn
     jmp __b1_from___b2
     // pressed::@return
   __breturn:
-    // [49] return 
+    // [45] return 
     rts
 }
   // File Data
@@ -1379,8 +1348,6 @@ pressed: {
   keyboard_matrix_col_bitmask: .byte 1, 2, 4, 8, $10, $20, $40, $80
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b1
 Removing instruction jmp __b8
@@ -1403,9 +1370,6 @@ Replacing label __b2_from___b8 with __b2
 Replacing label __b3_from___b9 with __b3
 Replacing label __b1_from___b4 with __b1
 Replacing label __b1_from___b2 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction __b1_from___b1:
 Removing instruction menu_from___b1:
@@ -1421,8 +1385,6 @@ Removing instruction __b1_from_pressed:
 Removing instruction __b1_from___b2:
 Removing instruction keyboard_key_pressed_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b8:
 Removing instruction __b5:
 Removing instruction __b9:
@@ -1434,8 +1396,6 @@ Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Replacing jump to rts with rts in jmp __breturn
 Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
@@ -1443,9 +1403,6 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
@@ -1542,37 +1499,37 @@ FINAL SYMBOL TABLE
 (const nomodify byte) RED = (byte) 2
 (const byte*) SCREEN = (byte*) 1024
 (byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
-(byte~) keyboard_key_pressed::$2 reg byte a 2.0000002E7
+(byte~) keyboard_key_pressed::$2 reg byte a 2000002.0
 (label) keyboard_key_pressed::@1
 (label) keyboard_key_pressed::@return
 (byte) keyboard_key_pressed::colidx
-(byte) keyboard_key_pressed::colidx#0 reg byte y 3333333.6666666665
+(byte) keyboard_key_pressed::colidx#0 reg byte y 333333.6666666667
 (byte) keyboard_key_pressed::key
-(byte) keyboard_key_pressed::key#4 reg byte x 1.0000001E7
+(byte) keyboard_key_pressed::key#4 reg byte x 1000001.0
 (byte) keyboard_key_pressed::return
-(byte) keyboard_key_pressed::return#0 reg byte a 1883334.1666666665
-(byte) keyboard_key_pressed::return#10 reg byte a 2000002.0
-(byte) keyboard_key_pressed::return#2 reg byte a 200002.0
-(byte) keyboard_key_pressed::return#3 reg byte a 200002.0
-(byte) keyboard_key_pressed::return#4 reg byte a 200002.0
+(byte) keyboard_key_pressed::return#0 reg byte a 188334.1666666667
+(byte) keyboard_key_pressed::return#10 reg byte a 200002.0
+(byte) keyboard_key_pressed::return#2 reg byte a 20002.0
+(byte) keyboard_key_pressed::return#3 reg byte a 20002.0
+(byte) keyboard_key_pressed::return#4 reg byte a 20002.0
 (byte) keyboard_key_pressed::rowidx
-(byte) keyboard_key_pressed::rowidx#0 reg byte a 2.0000002E7
+(byte) keyboard_key_pressed::rowidx#0 reg byte a 2000002.0
 (const byte*) keyboard_matrix_col_bitmask[(number) 8]  = { (byte) 1, (byte) 2, (byte) 4, (byte) 8, (byte) $10, (byte) $20, (byte) $40, (byte) $80 }
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 (label) keyboard_matrix_read::@return
 (byte) keyboard_matrix_read::return
-(byte) keyboard_matrix_read::return#0 reg byte a 3.6666667333333336E7
-(byte) keyboard_matrix_read::return#2 reg byte a 2.0000002E7
+(byte) keyboard_matrix_read::return#0 reg byte a 3666667.333333333
+(byte) keyboard_matrix_read::return#2 reg byte a 2000002.0
 (byte) keyboard_matrix_read::row_pressed_bits
 (byte) keyboard_matrix_read::rowid
-(byte) keyboard_matrix_read::rowid#0 reg byte x 1.10000002E8
+(byte) keyboard_matrix_read::rowid#0 reg byte x 1.1000002E7
 (const byte*) keyboard_matrix_row_bitmask[(number) 8]  = { (byte) $fe, (byte) $fd, (byte) $fb, (byte) $f7, (byte) $ef, (byte) $df, (byte) $bf, (byte) $7f }
 (void()) main()
 (label) main::@1
 (void()) menu()
-(byte~) menu::$0 reg byte a 200002.0
-(byte~) menu::$4 reg byte a 200002.0
-(byte~) menu::$7 reg byte a 200002.0
+(byte~) menu::$0 reg byte a 20002.0
+(byte~) menu::$4 reg byte a 20002.0
+(byte~) menu::$7 reg byte a 20002.0
 (label) menu::@1
 (label) menu::@10
 (label) menu::@2
@@ -1585,7 +1542,7 @@ FINAL SYMBOL TABLE
 (label) menu::@9
 (label) menu::@return
 (void()) pressed()
-(byte~) pressed::$1 reg byte a 2000002.0
+(byte~) pressed::$1 reg byte a 200002.0
 (label) pressed::@1
 (label) pressed::@2
 (label) pressed::@return
@@ -1653,101 +1610,95 @@ Score: 3151
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // *BORDER_COLOR = GREEN
-    // [4] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDER_COLOR
-    // [5] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
     // main::@1
   __b1:
     // menu()
-    // [6] call menu 
-    // [7] phi from main::@1 to menu [phi:main::@1->menu]
+    // [2] call menu 
+    // [3] phi from main::@1 to menu [phi:main::@1->menu]
     jsr menu
     jmp __b1
 }
   // menu
 menu: {
-    // [8] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
+    // [4] phi from menu menu::@4 to menu::@1 [phi:menu/menu::@4->menu::@1]
     // menu::@1
   __b1:
     // keyboard_key_pressed(KEY_C)
-    // [9] call keyboard_key_pressed 
-    // [31] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [5] call keyboard_key_pressed 
+    // [27] phi from menu::@1 to keyboard_key_pressed [phi:menu::@1->keyboard_key_pressed]
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_C [phi:menu::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_C
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_C)
-    // [10] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
+    // [6] (byte) keyboard_key_pressed::return#2 ← (byte) keyboard_key_pressed::return#0
     // menu::@8
-    // [11] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
+    // [7] (byte~) menu::$0 ← (byte) keyboard_key_pressed::return#2
     // if(keyboard_key_pressed(KEY_C)!=0)
-    // [12] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuaa_eq_0_then_la1 
+    // [8] if((byte~) menu::$0==(byte) 0) goto menu::@2 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b2
-    // [13] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
+    // [9] phi from menu::@8 to menu::@5 [phi:menu::@8->menu::@5]
     // menu::@5
     // pressed()
-    // [14] call pressed 
+    // [10] call pressed 
     jsr pressed
     // menu::@return
     // }
-    // [15] return 
+    // [11] return 
     rts
-    // [16] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
+    // [12] phi from menu::@8 to menu::@2 [phi:menu::@8->menu::@2]
     // menu::@2
   __b2:
     // keyboard_key_pressed(KEY_I)
-    // [17] call keyboard_key_pressed 
-    // [31] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [13] call keyboard_key_pressed 
+    // [27] phi from menu::@2 to keyboard_key_pressed [phi:menu::@2->keyboard_key_pressed]
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_I [phi:menu::@2->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_I
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_I)
-    // [18] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
+    // [14] (byte) keyboard_key_pressed::return#3 ← (byte) keyboard_key_pressed::return#0
     // menu::@9
-    // [19] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
+    // [15] (byte~) menu::$4 ← (byte) keyboard_key_pressed::return#3
     // if(keyboard_key_pressed(KEY_I)!=0)
-    // [20] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuaa_eq_0_then_la1 
+    // [16] if((byte~) menu::$4==(byte) 0) goto menu::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3
     // menu::@6
     // *BORDER_COLOR = RED
-    // [21] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [17] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BORDER_COLOR
     // asm
     // asm { sei  }
     sei
     rts
-    // [23] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
+    // [19] phi from menu::@9 to menu::@3 [phi:menu::@9->menu::@3]
     // menu::@3
   __b3:
     // keyboard_key_pressed(KEY_E)
-    // [24] call keyboard_key_pressed 
-    // [31] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [20] call keyboard_key_pressed 
+    // [27] phi from menu::@3 to keyboard_key_pressed [phi:menu::@3->keyboard_key_pressed]
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_E [phi:menu::@3->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_E
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_E)
-    // [25] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
+    // [21] (byte) keyboard_key_pressed::return#4 ← (byte) keyboard_key_pressed::return#0
     // menu::@10
-    // [26] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
+    // [22] (byte~) menu::$7 ← (byte) keyboard_key_pressed::return#4
     // if(keyboard_key_pressed(KEY_E)!=0)
-    // [27] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
+    // [23] if((byte~) menu::$7==(byte) 0) goto menu::@4 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b4
     // menu::@7
     // *BORDER_COLOR = GREEN
-    // [28] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    // [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
     lda #GREEN
     sta BORDER_COLOR
     // asm
@@ -1757,7 +1708,7 @@ menu: {
     // menu::@4
   __b4:
     // (*SCREEN)++;
-    // [30] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [26] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1
 }
@@ -1769,30 +1720,30 @@ menu: {
 // keyboard_key_pressed(byte register(X) key)
 keyboard_key_pressed: {
     // colidx = key&7
-    // [32] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
+    // [28] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#4 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
     txa
     and #7
     tay
     // rowidx = key>>3
-    // [33] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
+    // [29] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#4 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
     // keyboard_matrix_read(rowidx)
-    // [34] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+    // [30] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
     tax
-    // [35] call keyboard_matrix_read 
+    // [31] call keyboard_matrix_read 
     jsr keyboard_matrix_read
-    // [36] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+    // [32] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
     // keyboard_key_pressed::@1
-    // [37] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+    // [33] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
     // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    // [38] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    // [34] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
     and keyboard_matrix_col_bitmask,y
     // keyboard_key_pressed::@return
     // }
-    // [39] return 
+    // [35] return 
     rts
 }
   // keyboard_matrix_read
@@ -1804,45 +1755,45 @@ keyboard_key_pressed: {
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [40] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [36] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#0) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
     // ~CIA1->PORT_B
-    // [41] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [37] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // keyboard_matrix_read::@return
     // }
-    // [42] return 
+    // [38] return 
     rts
 }
   // pressed
 pressed: {
     // (*BG_COLOR)++;
-    // [43] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [39] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
-    // [44] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
+    // [40] phi from pressed pressed::@2 to pressed::@1 [phi:pressed/pressed::@2->pressed::@1]
     // pressed::@1
   __b1:
     // keyboard_key_pressed(KEY_SPACE)
-    // [45] call keyboard_key_pressed 
-    // [31] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
-    // [31] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
+    // [41] call keyboard_key_pressed 
+    // [27] phi from pressed::@1 to keyboard_key_pressed [phi:pressed::@1->keyboard_key_pressed]
+    // [27] phi (byte) keyboard_key_pressed::key#4 = (const nomodify byte) KEY_SPACE [phi:pressed::@1->keyboard_key_pressed#0] -- vbuxx=vbuc1 
     ldx #KEY_SPACE
     jsr keyboard_key_pressed
     // keyboard_key_pressed(KEY_SPACE)
-    // [46] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
+    // [42] (byte) keyboard_key_pressed::return#10 ← (byte) keyboard_key_pressed::return#0
     // pressed::@2
-    // [47] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
+    // [43] (byte~) pressed::$1 ← (byte) keyboard_key_pressed::return#10
     // if(keyboard_key_pressed(KEY_SPACE)!=0)
-    // [48] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuaa_neq_0_then_la1 
+    // [44] if((byte~) pressed::$1!=(byte) 0) goto pressed::@return -- vbuaa_neq_0_then_la1 
     cmp #0
     bne __breturn
     jmp __b1
     // pressed::@return
   __breturn:
     // }
-    // [49] return 
+    // [45] return 
     rts
 }
   // File Data

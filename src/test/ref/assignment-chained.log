@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte) main::a#0 ← (byte) 0
   (byte) main::a#1 ← (byte) 'c'
   *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
@@ -20,18 +18,21 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (number~) main::$0
 (label) main::@return
@@ -77,6 +78,11 @@ Simplifying expression containing zero main::screen in [2] *((const byte*) main:
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::a#0
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [5] (byte~) main::$0 ← (byte) 1 + (const byte) main::a#3
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$0 = 1+main::a#3
@@ -94,50 +100,32 @@ Consolidated array index constant in *(main::screen+$29)
 Consolidated array index constant in *(main::screen+2)
 Consolidated array index constant in *(main::screen+$2a)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const byte*) main::screen) ← (byte) 'c'
-  [5] *((const byte*) main::screen+(byte) $28) ← (byte) 'c'
-  [6] *((const byte*) main::screen+(byte) 1) ← (byte) 'm'
-  [7] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1)
-  [8] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2
-  [9] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l'
-  [10] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l'
+main: scope:[main]  from
+  [0] *((const byte*) main::screen) ← (byte) 'c'
+  [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c'
+  [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm'
+  [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1)
+  [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2
+  [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l'
+  [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l'
   to:main::@return
 main::@return: scope:[main]  from main
-  [11] return 
+  [7] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::a
-(byte) main::a#2 22.0
+(byte) main::a#2 4.0
 
 Initial phi equivalence classes
 Added variable main::a#2 to live range equivalence class [ main::a#2 ]
@@ -154,68 +142,54 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label screen = $400
     .label a = 2
-    // [4] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
-    // [5] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen+$28
-    // [6] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
-    // [7] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuz1=_deref_pbuc1 
+    // [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuz1=_deref_pbuc1 
     lda screen+1
     sta.z a
-    // [8] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
+    // [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
     lda.z a
     sta screen+$29
-    // [9] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
-    // [10] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
     jmp __breturn
     // main::@return
   __breturn:
-    // [11] return 
+    // [7] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::screen) ← (byte) 'c' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const byte*) main::screen) ← (byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::a#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp[1]:2 [ main::a#2 ] 
+Uplift Scope [main] 4: zp[1]:2 [ main::a#2 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 59 combination reg byte a [ main::a#2 ] 
-Uplifting [] best 59 combination 
+Uplifting [main] best 47 combination reg byte a [ main::a#2 ] 
+Uplifting [] best 47 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -225,78 +199,51 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label screen = $400
-    // [4] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
-    // [5] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen+$28
-    // [6] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
-    // [7] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuaa=_deref_pbuc1 
     lda screen+1
-    // [8] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
+    // [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
     sta screen+$29
-    // [9] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
-    // [10] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
     jmp __breturn
     // main::@return
   __breturn:
-    // [11] return 
+    // [7] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #'c'
 Removing instruction lda screen+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@return
 (byte) main::a
-(byte) main::a#2 reg byte a 22.0
+(byte) main::a#2 reg byte a 4.0
 (const byte*) main::screen = (byte*) 1024
 
 reg byte a [ main::a#2 ]
@@ -312,43 +259,37 @@ Score: 38
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label screen = $400
     // screen[0] = a = 'c'
-    // [4] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
     // screen[40] = a
-    // [5] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
     sta screen+$28
     // screen[1] = 'm'
-    // [6] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
     // a = screen[1] = 'm'
-    // [7] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuaa=_deref_pbuc1 
     // screen[41] = a
-    // [8] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
+    // [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
     sta screen+$29
     // screen[2] = 1 + (a = 'l')
-    // [9] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
     // screen[42] = a
-    // [10] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
     // main::@return
     // }
-    // [11] return 
+    // [7] return 
     rts
 }
   // File Data

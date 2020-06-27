@@ -2,11 +2,9 @@ Fixing constant pointer addition (const word*) seq+(number) 0
 Fixing constant pointer addition (const struct Setting*) settings+(number) 0
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -27,18 +25,18 @@ main::@2: scope:[main]  from main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte) OFFSET_STRUCT_SETTING_BUF = (byte) 1
 (const byte) OFFSET_STRUCT_SETTING_LEN = (byte) 0
 (const nomodify word*) SCREEN = (word*)(number) $400
@@ -46,6 +44,9 @@ SYMBOL TABLE SSA
 (const byte) SIZEOF_WORD = (byte) 2
 (word*) Setting::buf
 (byte) Setting::len
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (bool~) main::$0
 (byte~) main::$1
@@ -106,6 +107,11 @@ Eliminating unused variable (word**~) main::$3 and assignment [4] (word**~) main
 Eliminating unused constant (const byte) SIZEOF_STRUCT_SETTING
 Eliminating unused constant (const byte) OFFSET_STRUCT_SETTING_LEN
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Rewriting multiplication to use shift [2] (byte~) main::$1 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
@@ -118,49 +124,31 @@ Consolidated array index constant in *((word**)settings+OFFSET_STRUCT_SETTING_BU
 Successful SSA optimization Pass2ConstantAdditionElimination
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::i#4 ← main::i#1
+Coalesced [7] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2
+  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  [2] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [7] return 
+  [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1
-  [9] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1)
-  [10] (byte) main::i#1 ← ++ (byte) main::i#2
+  [4] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1
+  [5] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1)
+  [6] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 
@@ -168,10 +156,10 @@ VARIABLE REGISTER WEIGHTS
 (word*) Setting::buf
 (byte) Setting::len
 (void()) main()
-(byte~) main::$1 303.0
+(byte~) main::$1 33.0
 (byte) main::i
-(byte) main::i#1 202.0
-(byte) main::i#2 101.0
+(byte) main::i#1 22.0
+(byte) main::i#2 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -193,50 +181,34 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   .const OFFSET_STRUCT_SETTING_BUF = 1
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = 3
     .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuz1_lt__deref_pbuc1_then_la1 
+    // [2] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuz1_lt__deref_pbuc1_then_la1 
     lda.z i
     cmp settings
     bcc __b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
-    // [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [4] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
     sta.z __1
-    // [9] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuz1=(_deref_pptc2)_derefidx_vbuz1 
+    // [5] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuz1=(_deref_pptc2)_derefidx_vbuz1 
     ldy.z __1
     lda settings+OFFSET_STRUCT_SETTING_BUF
     sta.z $fe
@@ -247,11 +219,11 @@ main: {
     iny
     lda ($fe),y
     sta SCREEN,y
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -260,23 +232,23 @@ main: {
   .word seq
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$1 ] (  [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$1 ] ( main:2 [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$1 ] (  [ main::i#2 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 303: zp[1]:2 [ main::i#2 main::i#1 ] 303: zp[1]:3 [ main::$1 ] 
+Uplift Scope [main] 33: zp[1]:2 [ main::i#2 main::i#1 ] 33: zp[1]:3 [ main::$1 ] 
 Uplift Scope [Setting] 
 Uplift Scope [] 
 
-Uplifting [main] best 643 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
-Uplifting [Setting] best 643 combination 
-Uplifting [] best 643 combination 
+Uplifting [main] best 631 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$1 ] 
+Uplifting [Setting] best 631 combination 
+Uplifting [] best 631 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -288,45 +260,29 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .const OFFSET_STRUCT_SETTING_BUF = 1
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
+    // [2] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
     cpx settings
     bcc __b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
-    // [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [4] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [9] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
+    // [5] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
     tay
     lda settings+OFFSET_STRUCT_SETTING_BUF
     sta.z $fe
@@ -337,11 +293,11 @@ main: {
     iny
     lda ($fe),y
     sta SCREEN,y
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -351,40 +307,26 @@ main: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte) OFFSET_STRUCT_SETTING_BUF = (byte) 1
 (const nomodify word*) SCREEN = (word*) 1024
 (word*) Setting::buf
 (byte) Setting::len
 (void()) main()
-(byte~) main::$1 reg byte a 303.0
+(byte~) main::$1 reg byte a 33.0
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 202.0
-(byte) main::i#2 reg byte x 101.0
+(byte) main::i#1 reg byte x 22.0
+(byte) main::i#2 reg byte x 11.0
 (const word*) seq[]  = { (word) 1, (word) 2, (word) 3 }
 (const struct Setting*) settings[]  = { { len: (byte) 3, buf: (const word*) seq } }
 
@@ -404,35 +346,28 @@ Score: 571
   // Global Constants & labels
   .const OFFSET_STRUCT_SETTING_BUF = 1
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // for( char i=0;i<setting->len;i++)
-    // [6] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
+    // [2] if((byte) main::i#2<*((byte*)(const struct Setting*) settings)) goto main::@2 -- vbuxx_lt__deref_pbuc1_then_la1 
     cpx settings
     bcc __b2
     // main::@return
     // }
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
     // SCREEN[i] = setting->buf[i]
-    // [8] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [4] (byte~) main::$1 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [9] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
+    // [5] *((const nomodify word*) SCREEN + (byte~) main::$1) ← *(*((word**)(const struct Setting*) settings+(const byte) OFFSET_STRUCT_SETTING_BUF) + (byte~) main::$1) -- pwuc1_derefidx_vbuaa=(_deref_pptc2)_derefidx_vbuaa 
     tay
     lda settings+OFFSET_STRUCT_SETTING_BUF
     sta.z $fe
@@ -444,10 +379,10 @@ main: {
     lda ($fe),y
     sta SCREEN,y
     // for( char i=0;i<setting->len;i++)
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

@@ -2,10 +2,9 @@ Resolved forward reference FONT_HEX_PROTO to (const byte*) FONT_HEX_PROTO
 Resolved forward reference FONT_HEX_PROTO to (const byte*) FONT_HEX_PROTO
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 Inlined call (byte~) main::$0 ← call toD018 (const byte*) SCREEN (const byte*) CHARSET 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) init_font_hex((byte*) init_font_hex::charset)
 init_font_hex: scope:[init_font_hex]  from main::@2
@@ -79,7 +78,7 @@ init_font_hex::@return: scope:[init_font_hex]  from init_font_hex::@5
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte*) main::toD0181_screen#0 ← (const byte*) SCREEN
   (byte*) main::toD0181_gfx#0 ← (const byte*) CHARSET
   to:main::toD0181
@@ -120,18 +119,22 @@ main::@1: scope:[main]  from main::@1 main::@3
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) CHARSET = (byte*)(number) $2000
 (const nomodify byte*) D018 = (byte*)(number) $d018
 (const byte*) FONT_HEX_PROTO[]  = { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
@@ -220,6 +223,11 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) init_font_hex((byte*) init_font_hex::charset)
 (byte~) init_font_hex::$0
 (byte~) init_font_hex::$1
@@ -426,10 +434,17 @@ Simplifying expression containing zero init_font_hex::charset#2 in [8] *((byte*)
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) init_font_hex::idx#4 and assignment [15] (byte) init_font_hex::idx#4 ← ++ (byte) init_font_hex::idx#3
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) 5 in if((byte) init_font_hex::i#1!=(number) 5) goto init_font_hex::@3
-Adding number conversion cast (unumber) $10 in if((byte) init_font_hex::c1#1!=(number) $10) goto init_font_hex::@2
-Adding number conversion cast (unumber) $10 in if((byte) init_font_hex::c#1!=(number) $10) goto init_font_hex::@1
-Adding number conversion cast (unumber) 0 in if((byte) main::c#1!=(number) 0) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 5 in [11] if((byte) init_font_hex::i#1!=(number) 5) goto init_font_hex::@3
+Adding number conversion cast (unumber) $10 in [18] if((byte) init_font_hex::c1#1!=(number) $10) goto init_font_hex::@2
+Adding number conversion cast (unumber) $10 in [21] if((byte) init_font_hex::c#1!=(number) $10) goto init_font_hex::@1
+Adding number conversion cast (unumber) 0 in [35] if((byte) main::c#1!=(number) 0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 5
 Simplifying constant integer cast $10
@@ -499,119 +514,101 @@ Added new block during phi lifting init_font_hex::@6(between init_font_hex::@5 a
 Added new block during phi lifting init_font_hex::@7(between init_font_hex::@4 and init_font_hex::@2)
 Added new block during phi lifting init_font_hex::@8(between init_font_hex::@3 and init_font_hex::@3)
 Added new block during phi lifting main::@4(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of init_font_hex
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to init_font_hex:9 
+Calls in [main] to init_font_hex:4 
 
 Created 9 initial phi equivalence classes
-Coalesced [16] main::c#3 ← main::c#1
-Coalesced [19] init_font_hex::charset#9 ← init_font_hex::charset#5
-Coalesced [41] init_font_hex::charset#8 ← init_font_hex::charset#0
-Coalesced [42] init_font_hex::proto_hi#7 ← init_font_hex::proto_hi#1
-Coalesced [43] init_font_hex::c#7 ← init_font_hex::c#1
-Coalesced (already) [44] init_font_hex::charset#10 ← init_font_hex::charset#0
-Coalesced [45] init_font_hex::proto_lo#5 ← init_font_hex::proto_lo#1
-Coalesced [46] init_font_hex::c1#5 ← init_font_hex::c1#1
-Coalesced [47] init_font_hex::i#3 ← init_font_hex::i#1
-Coalesced [48] init_font_hex::idx#7 ← init_font_hex::idx#2
+Coalesced [11] main::c#3 ← main::c#1
+Coalesced [14] init_font_hex::charset#9 ← init_font_hex::charset#5
+Coalesced [36] init_font_hex::charset#8 ← init_font_hex::charset#0
+Coalesced [37] init_font_hex::proto_hi#7 ← init_font_hex::proto_hi#1
+Coalesced [38] init_font_hex::c#7 ← init_font_hex::c#1
+Coalesced (already) [39] init_font_hex::charset#10 ← init_font_hex::charset#0
+Coalesced [40] init_font_hex::proto_lo#5 ← init_font_hex::proto_lo#1
+Coalesced [41] init_font_hex::c1#5 ← init_font_hex::c1#1
+Coalesced [42] init_font_hex::i#3 ← init_font_hex::i#1
+Coalesced [43] init_font_hex::idx#7 ← init_font_hex::idx#2
 Coalesced down to 8 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) init_font_hex::@6
 Culled Empty Block (label) init_font_hex::@7
 Culled Empty Block (label) init_font_hex::@8
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of init_font_hex
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::toD0181
 main::toD0181: scope:[main]  from main
-  [5] phi()
+  [1] phi()
   to:main::@2
 main::@2: scope:[main]  from main::toD0181
-  [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
-  [7] call init_font_hex 
+  [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
+  [3] call init_font_hex 
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@2
-  [8] (byte) main::c#2 ← phi( main::@1/(byte) main::c#1 main::@2/(byte) 0 )
-  [9] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2
-  [10] (byte) main::c#1 ← ++ (byte) main::c#2
-  [11] if((byte) main::c#1!=(byte) 0) goto main::@1
+  [4] (byte) main::c#2 ← phi( main::@1/(byte) main::c#1 main::@2/(byte) 0 )
+  [5] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2
+  [6] (byte) main::c#1 ← ++ (byte) main::c#2
+  [7] if((byte) main::c#1!=(byte) 0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [12] return 
+  [8] return 
   to:@return
 
 (void()) init_font_hex((byte*) init_font_hex::charset)
 init_font_hex: scope:[init_font_hex]  from main::@2
-  [13] phi()
+  [9] phi()
   to:init_font_hex::@1
 init_font_hex::@1: scope:[init_font_hex]  from init_font_hex init_font_hex::@5
-  [14] (byte) init_font_hex::c#6 ← phi( init_font_hex/(byte) 0 init_font_hex::@5/(byte) init_font_hex::c#1 )
-  [14] (byte*) init_font_hex::proto_hi#6 ← phi( init_font_hex/(const byte*) FONT_HEX_PROTO init_font_hex::@5/(byte*) init_font_hex::proto_hi#1 )
-  [14] (byte*) init_font_hex::charset#5 ← phi( init_font_hex/(const byte*) CHARSET init_font_hex::@5/(byte*) init_font_hex::charset#0 )
+  [10] (byte) init_font_hex::c#6 ← phi( init_font_hex/(byte) 0 init_font_hex::@5/(byte) init_font_hex::c#1 )
+  [10] (byte*) init_font_hex::proto_hi#6 ← phi( init_font_hex/(const byte*) FONT_HEX_PROTO init_font_hex::@5/(byte*) init_font_hex::proto_hi#1 )
+  [10] (byte*) init_font_hex::charset#5 ← phi( init_font_hex/(const byte*) CHARSET init_font_hex::@5/(byte*) init_font_hex::charset#0 )
   to:init_font_hex::@2
 init_font_hex::@2: scope:[init_font_hex]  from init_font_hex::@1 init_font_hex::@4
-  [15] (byte) init_font_hex::c1#4 ← phi( init_font_hex::@1/(byte) 0 init_font_hex::@4/(byte) init_font_hex::c1#1 )
-  [15] (byte*) init_font_hex::proto_lo#4 ← phi( init_font_hex::@1/(const byte*) FONT_HEX_PROTO init_font_hex::@4/(byte*) init_font_hex::proto_lo#1 )
-  [15] (byte*) init_font_hex::charset#2 ← phi( init_font_hex::@1/(byte*) init_font_hex::charset#5 init_font_hex::@4/(byte*) init_font_hex::charset#0 )
-  [16] *((byte*) init_font_hex::charset#2) ← (byte) 0
+  [11] (byte) init_font_hex::c1#4 ← phi( init_font_hex::@1/(byte) 0 init_font_hex::@4/(byte) init_font_hex::c1#1 )
+  [11] (byte*) init_font_hex::proto_lo#4 ← phi( init_font_hex::@1/(const byte*) FONT_HEX_PROTO init_font_hex::@4/(byte*) init_font_hex::proto_lo#1 )
+  [11] (byte*) init_font_hex::charset#2 ← phi( init_font_hex::@1/(byte*) init_font_hex::charset#5 init_font_hex::@4/(byte*) init_font_hex::charset#0 )
+  [12] *((byte*) init_font_hex::charset#2) ← (byte) 0
   to:init_font_hex::@3
 init_font_hex::@3: scope:[init_font_hex]  from init_font_hex::@2 init_font_hex::@3
-  [17] (byte) init_font_hex::idx#5 ← phi( init_font_hex::@2/(byte) 1 init_font_hex::@3/(byte) init_font_hex::idx#2 )
-  [17] (byte) init_font_hex::i#2 ← phi( init_font_hex::@2/(byte) 0 init_font_hex::@3/(byte) init_font_hex::i#1 )
-  [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4
-  [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1
-  [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1
-  [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2
-  [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5
-  [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2
-  [24] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3
+  [13] (byte) init_font_hex::idx#5 ← phi( init_font_hex::@2/(byte) 1 init_font_hex::@3/(byte) init_font_hex::idx#2 )
+  [13] (byte) init_font_hex::i#2 ← phi( init_font_hex::@2/(byte) 0 init_font_hex::@3/(byte) init_font_hex::i#1 )
+  [14] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4
+  [15] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1
+  [16] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1
+  [17] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2
+  [18] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5
+  [19] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2
+  [20] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3
   to:init_font_hex::@4
 init_font_hex::@4: scope:[init_font_hex]  from init_font_hex::@3
-  [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0
-  [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2
-  [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0
-  [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5
-  [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8
-  [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4
-  [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2
+  [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0
+  [22] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2
+  [23] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0
+  [24] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5
+  [25] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8
+  [26] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4
+  [27] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2
   to:init_font_hex::@5
 init_font_hex::@5: scope:[init_font_hex]  from init_font_hex::@4
-  [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5
-  [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6
-  [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1
+  [28] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5
+  [29] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6
+  [30] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1
   to:init_font_hex::@return
 init_font_hex::@return: scope:[init_font_hex]  from init_font_hex::@5
-  [35] return 
+  [31] return 
   to:@return
 
 
@@ -701,36 +698,36 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) init_font_hex((byte*) init_font_hex::charset)
-(byte~) init_font_hex::$0 100001.0
-(byte~) init_font_hex::$1 200002.0
-(byte~) init_font_hex::$2 200002.0
+(byte~) init_font_hex::$0 10001.0
+(byte~) init_font_hex::$1 20002.0
+(byte~) init_font_hex::$2 20002.0
 (byte) init_font_hex::c
-(byte) init_font_hex::c#1 1501.5
-(byte) init_font_hex::c#6 105.36842105263158
+(byte) init_font_hex::c#1 151.5
+(byte) init_font_hex::c#6 10.631578947368421
 (byte) init_font_hex::c1
-(byte) init_font_hex::c1#1 15001.5
-(byte) init_font_hex::c1#4 1333.4666666666667
+(byte) init_font_hex::c1#1 1501.5
+(byte) init_font_hex::c1#4 133.46666666666667
 (byte*) init_font_hex::charset
-(byte*) init_font_hex::charset#0 3500.5
-(byte*) init_font_hex::charset#2 10786.214285714286
-(byte*) init_font_hex::charset#5 2002.0
+(byte*) init_font_hex::charset#0 350.5
+(byte*) init_font_hex::charset#2 1079.0714285714287
+(byte*) init_font_hex::charset#5 202.0
 (byte) init_font_hex::i
-(byte) init_font_hex::i#1 150001.5
-(byte) init_font_hex::i#2 66667.33333333333
+(byte) init_font_hex::i#1 15001.5
+(byte) init_font_hex::i#2 6667.333333333333
 (byte) init_font_hex::idx
-(byte) init_font_hex::idx#2 55001.0
-(byte) init_font_hex::idx#3 20002.0
-(byte) init_font_hex::idx#5 60000.600000000006
+(byte) init_font_hex::idx#2 5501.0
+(byte) init_font_hex::idx#3 2002.0
+(byte) init_font_hex::idx#5 6000.6
 (byte*) init_font_hex::proto_hi
-(byte*) init_font_hex::proto_hi#1 667.3333333333334
-(byte*) init_font_hex::proto_hi#6 5666.833333333334
+(byte*) init_font_hex::proto_hi#1 67.33333333333333
+(byte*) init_font_hex::proto_hi#6 566.8333333333333
 (byte*) init_font_hex::proto_lo
-(byte*) init_font_hex::proto_lo#1 5000.5
-(byte*) init_font_hex::proto_lo#4 9230.999999999998
+(byte*) init_font_hex::proto_lo#1 500.5
+(byte*) init_font_hex::proto_lo#4 923.3076923076923
 (void()) main()
 (byte) main::c
-(byte) main::c#1 151.5
-(byte) main::c#2 202.0
+(byte) main::c#1 16.5
+(byte) main::c#2 22.0
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
 (byte*) main::toD0181_screen
@@ -789,27 +786,11 @@ Target platform is c64basic / MOS6502X
   .label D018 = $d018
   .label SCREEN = $400
   .label CHARSET = $2000
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label c = 2
-    // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [1] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
     // main::toD0181
@@ -817,40 +798,40 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [7] call init_font_hex 
-    // [13] phi from main::@2 to init_font_hex [phi:main::@2->init_font_hex]
+    // [3] call init_font_hex 
+    // [9] phi from main::@2 to init_font_hex [phi:main::@2->init_font_hex]
   init_font_hex_from___b2:
     jsr init_font_hex
-    // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [4] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [8] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
+    // [4] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
     jmp __b1
   // Show all chars on screen
-    // [8] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [4] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [8] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [4] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [9] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [5] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z c
     tya
     sta SCREEN,y
-    // [10] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [11] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    // [7] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
     lda.z c
     cmp #0
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // init_font_hex
@@ -868,71 +849,71 @@ init_font_hex: {
     .label c1 = $a
     .label proto_hi = 3
     .label c = 5
-    // [14] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
+    // [10] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
   __b1_from_init_font_hex:
-    // [14] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
+    // [10] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    // [14] phi (byte*) init_font_hex::proto_hi#6 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
+    // [10] phi (byte*) init_font_hex::proto_hi#6 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta.z proto_hi
     lda #>FONT_HEX_PROTO
     sta.z proto_hi+1
-    // [14] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [10] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta.z charset
     lda #>CHARSET
     sta.z charset+1
     jmp __b1
-    // [14] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
+    // [10] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   __b1_from___b5:
-    // [14] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
-    // [14] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
-    // [14] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
+    // [10] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
+    // [10] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
+    // [10] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
     jmp __b1
     // init_font_hex::@1
   __b1:
-    // [15] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
+    // [11] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
   __b2_from___b1:
-    // [15] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
+    // [11] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c1
-    // [15] phi (byte*) init_font_hex::proto_lo#4 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
+    // [11] phi (byte*) init_font_hex::proto_lo#4 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta.z proto_lo
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
-    // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
+    // [11] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp __b2
-    // [15] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
+    // [11] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
   __b2_from___b4:
-    // [15] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
-    // [15] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
-    // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
+    // [11] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
+    // [11] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
+    // [11] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
     jmp __b2
     // init_font_hex::@2
   __b2:
-    // [16] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (charset),y
-    // [17] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
+    // [13] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
   __b3_from___b2:
-    // [17] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
+    // [13] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
     sta.z idx
-    // [17] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuz1=vbuc1 
+    // [13] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b3
-    // [17] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
+    // [13] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
   __b3_from___b3:
-    // [17] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
-    // [17] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
+    // [13] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
+    // [13] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
     jmp __b3
     // init_font_hex::@3
   __b3:
-    // [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuz3_rol_4 
+    // [14] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuz3_rol_4 
     ldy.z i
     lda (proto_hi),y
     asl
@@ -940,43 +921,43 @@ init_font_hex: {
     asl
     asl
     sta.z __0
-    // [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuz1=pbuz2_derefidx_vbuz3_rol_1 
+    // [15] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuz1=pbuz2_derefidx_vbuz3_rol_1 
     ldy.z i
     lda (proto_lo),y
     asl
     sta.z __1
-    // [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuz1=vbuz2_bor_vbuz3 
+    // [16] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __0
     ora.z __1
     sta.z __2
-    // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [17] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z __2
     ldy.z idx
     sta (charset),y
-    // [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuz1=_inc_vbuz1 
+    // [19] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [24] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuz1_neq_vbuc1_then_la1 
+    // [20] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuz1_neq_vbuc1_then_la1 
     lda #5
     cmp.z i
     bne __b3_from___b3
     jmp __b4
     // init_font_hex::@4
   __b4:
-    // [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy.z idx
     sta (charset),y
-    // [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuz1=_inc_vbuz2 
+    // [22] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuz1=_inc_vbuz2 
     ldy.z idx
     iny
     sty.z idx_1
-    // [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [23] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy.z idx_1
     sta (charset),y
-    // [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [24] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc.z proto_lo
@@ -984,7 +965,7 @@ init_font_hex: {
     bcc !+
     inc.z proto_lo+1
   !:
-    // [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
+    // [25] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
     adc.z charset
@@ -992,16 +973,16 @@ init_font_hex: {
     bcc !+
     inc.z charset+1
   !:
-    // [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
+    // [26] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
     inc.z c1
-    // [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [27] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c1
     bne __b2_from___b4
     jmp __b5
     // init_font_hex::@5
   __b5:
-    // [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [28] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc.z proto_hi
@@ -1009,16 +990,16 @@ init_font_hex: {
     bcc !+
     inc.z proto_hi+1
   !:
-    // [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
+    // [29] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [30] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c
     bne __b1_from___b5
     jmp __breturn
     // init_font_hex::@return
   __breturn:
-    // [35] return 
+    // [31] return 
     rts
 }
   // File Data
@@ -1026,31 +1007,31 @@ init_font_hex: {
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*) init_font_hex::charset#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*) init_font_hex::charset#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ]
-Statement [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] { }  ) always clobbers reg byte a 
+Statement [14] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:11 [ init_font_hex::i#2 init_font_hex::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
-Statement [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:13 [ init_font_hex::$0 ]
-Statement [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a 
-Statement [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
-Statement [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
-Statement [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] ( main:2::init_font_hex:7 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*) init_font_hex::charset#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] { }  ) always clobbers reg byte a 
-Statement [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a 
-Statement [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
-Statement [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( main:2::init_font_hex:7 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
-Statement [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] ( main:2::init_font_hex:7 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] { }  ) always clobbers reg byte a 
+Statement [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [23] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a 
+Statement [24] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
+Statement [25] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
+Statement [28] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] ( init_font_hex:3 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*) init_font_hex::charset#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::i#2 init_font_hex::idx#5 init_font_hex::$0 init_font_hex::$1 ] { }  ) always clobbers reg byte a 
+Statement [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 init_font_hex::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [23] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::proto_lo#4 init_font_hex::c1#4 ] { }  ) always clobbers reg byte a 
+Statement [24] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#2 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
+Statement [25] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] ( init_font_hex:3 [ init_font_hex::proto_hi#6 init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::c1#4 init_font_hex::proto_lo#1 ] { }  ) always clobbers reg byte a 
+Statement [28] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] ( init_font_hex:3 [ init_font_hex::c#6 init_font_hex::charset#0 init_font_hex::proto_hi#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] : zp[1]:5 , reg byte x , 
@@ -1065,30 +1046,30 @@ Potential registers zp[1]:15 [ init_font_hex::$2 ] : zp[1]:15 , reg byte a , reg
 Potential registers zp[1]:16 [ init_font_hex::idx#3 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [init_font_hex] 216,668.83: zp[1]:11 [ init_font_hex::i#2 init_font_hex::i#1 ] 200,002: zp[1]:14 [ init_font_hex::$1 ] 200,002: zp[1]:15 [ init_font_hex::$2 ] 115,001.6: zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 100,001: zp[1]:13 [ init_font_hex::$0 ] 20,002: zp[1]:16 [ init_font_hex::idx#3 ] 16,334.97: zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 16,288.71: zp[2]:6 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] 14,231.5: zp[2]:8 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] 6,334.17: zp[2]:3 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] 1,606.87: zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] 
-Uplift Scope [main] 353.5: zp[1]:2 [ main::c#2 main::c#1 ] 
+Uplift Scope [init_font_hex] 21,668.83: zp[1]:11 [ init_font_hex::i#2 init_font_hex::i#1 ] 20,002: zp[1]:14 [ init_font_hex::$1 ] 20,002: zp[1]:15 [ init_font_hex::$2 ] 11,501.6: zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 10,001: zp[1]:13 [ init_font_hex::$0 ] 2,002: zp[1]:16 [ init_font_hex::idx#3 ] 1,634.97: zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 1,631.57: zp[2]:6 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] 1,423.81: zp[2]:8 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] 634.17: zp[2]:3 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] 162.13: zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::c#2 main::c#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [init_font_hex] best 83724 combination reg byte x [ init_font_hex::i#2 init_font_hex::i#1 ] reg byte a [ init_font_hex::$1 ] reg byte a [ init_font_hex::$2 ] zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ] zp[1]:13 [ init_font_hex::$0 ] zp[1]:16 [ init_font_hex::idx#3 ] zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ] zp[2]:6 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] zp[2]:8 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] zp[2]:3 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] 
+Uplifting [init_font_hex] best 83712 combination reg byte x [ init_font_hex::i#2 init_font_hex::i#1 ] reg byte a [ init_font_hex::$1 ] reg byte a [ init_font_hex::$2 ] zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ] zp[1]:13 [ init_font_hex::$0 ] zp[1]:16 [ init_font_hex::idx#3 ] zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ] zp[2]:6 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ] zp[2]:8 [ init_font_hex::proto_lo#4 init_font_hex::proto_lo#1 ] zp[2]:3 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ] zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] 
 Limited combination testing to 100 combinations of 6912 possible.
-Uplifting [main] best 83604 combination reg byte x [ main::c#2 main::c#1 ] 
-Uplifting [MOS6526_CIA] best 83604 combination 
-Uplifting [MOS6569_VICII] best 83604 combination 
-Uplifting [MOS6581_SID] best 83604 combination 
-Uplifting [] best 83604 combination 
+Uplifting [main] best 83592 combination reg byte x [ main::c#2 main::c#1 ] 
+Uplifting [MOS6526_CIA] best 83592 combination 
+Uplifting [MOS6569_VICII] best 83592 combination 
+Uplifting [MOS6581_SID] best 83592 combination 
+Uplifting [] best 83592 combination 
 Attempting to uplift remaining variables inzp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ]
-Uplifting [init_font_hex] best 83604 combination zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 
+Uplifting [init_font_hex] best 83592 combination zp[1]:12 [ init_font_hex::idx#5 init_font_hex::idx#2 ] 
 Attempting to uplift remaining variables inzp[1]:13 [ init_font_hex::$0 ]
-Uplifting [init_font_hex] best 83604 combination zp[1]:13 [ init_font_hex::$0 ] 
+Uplifting [init_font_hex] best 83592 combination zp[1]:13 [ init_font_hex::$0 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ init_font_hex::idx#3 ]
-Uplifting [init_font_hex] best 83004 combination reg byte y [ init_font_hex::idx#3 ] 
+Uplifting [init_font_hex] best 82992 combination reg byte y [ init_font_hex::idx#3 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ]
-Uplifting [init_font_hex] best 83004 combination zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 
+Uplifting [init_font_hex] best 82992 combination zp[1]:10 [ init_font_hex::c1#4 init_font_hex::c1#1 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ]
-Uplifting [init_font_hex] best 83004 combination zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] 
+Uplifting [init_font_hex] best 82992 combination zp[1]:5 [ init_font_hex::c#6 init_font_hex::c#1 ] 
 Allocated (was zp[2]:3) zp[2]:2 [ init_font_hex::proto_hi#6 init_font_hex::proto_hi#1 ]
 Allocated (was zp[1]:5) zp[1]:4 [ init_font_hex::c#6 init_font_hex::c#1 ]
 Allocated (was zp[2]:6) zp[2]:5 [ init_font_hex::charset#2 init_font_hex::charset#5 init_font_hex::charset#0 ]
@@ -1111,26 +1092,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label D018 = $d018
   .label SCREEN = $400
   .label CHARSET = $2000
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [1] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
     // main::toD0181
@@ -1138,37 +1103,37 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [7] call init_font_hex 
-    // [13] phi from main::@2 to init_font_hex [phi:main::@2->init_font_hex]
+    // [3] call init_font_hex 
+    // [9] phi from main::@2 to init_font_hex [phi:main::@2->init_font_hex]
   init_font_hex_from___b2:
     jsr init_font_hex
-    // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [4] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [8] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuxx=vbuc1 
+    // [4] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
   // Show all chars on screen
-    // [8] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [4] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [8] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [4] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [9] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [5] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [10] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [11] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [7] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // init_font_hex
@@ -1182,70 +1147,70 @@ init_font_hex: {
     .label c1 = 9
     .label proto_hi = 2
     .label c = 4
-    // [14] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
+    // [10] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
   __b1_from_init_font_hex:
-    // [14] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
+    // [10] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    // [14] phi (byte*) init_font_hex::proto_hi#6 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
+    // [10] phi (byte*) init_font_hex::proto_hi#6 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta.z proto_hi
     lda #>FONT_HEX_PROTO
     sta.z proto_hi+1
-    // [14] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [10] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta.z charset
     lda #>CHARSET
     sta.z charset+1
     jmp __b1
-    // [14] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
+    // [10] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
   __b1_from___b5:
-    // [14] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
-    // [14] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
-    // [14] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
+    // [10] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
+    // [10] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
+    // [10] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
     jmp __b1
     // init_font_hex::@1
   __b1:
-    // [15] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
+    // [11] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
   __b2_from___b1:
-    // [15] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
+    // [11] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c1
-    // [15] phi (byte*) init_font_hex::proto_lo#4 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
+    // [11] phi (byte*) init_font_hex::proto_lo#4 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta.z proto_lo
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
-    // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
+    // [11] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
     jmp __b2
-    // [15] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
+    // [11] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
   __b2_from___b4:
-    // [15] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
-    // [15] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
-    // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
+    // [11] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
+    // [11] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
+    // [11] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
     jmp __b2
     // init_font_hex::@2
   __b2:
-    // [16] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (charset),y
-    // [17] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
+    // [13] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
   __b3_from___b2:
-    // [17] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
+    // [13] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
     sta.z idx
-    // [17] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
+    // [13] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp __b3
-    // [17] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
+    // [13] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
   __b3_from___b3:
-    // [17] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
-    // [17] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
+    // [13] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
+    // [13] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
     jmp __b3
     // init_font_hex::@3
   __b3:
-    // [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
+    // [14] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
     txa
     tay
     lda (proto_hi),y
@@ -1254,37 +1219,37 @@ init_font_hex: {
     asl
     asl
     sta.z __0
-    // [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
+    // [15] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
     tay
     lda (proto_lo),y
     asl
-    // [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
+    // [16] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __0
-    // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [17] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy.z idx
     sta (charset),y
-    // [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
+    // [19] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [24] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [20] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #5
     bne __b3_from___b3
     jmp __b4
     // init_font_hex::@4
   __b4:
-    // [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy.z idx
     sta (charset),y
-    // [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
+    // [22] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
     ldy.z idx
     iny
-    // [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [23] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #0
     sta (charset),y
-    // [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [24] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc.z proto_lo
@@ -1292,7 +1257,7 @@ init_font_hex: {
     bcc !+
     inc.z proto_lo+1
   !:
-    // [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
+    // [25] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
     adc.z charset
@@ -1300,16 +1265,16 @@ init_font_hex: {
     bcc !+
     inc.z charset+1
   !:
-    // [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
+    // [26] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
     inc.z c1
-    // [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [27] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c1
     bne __b2_from___b4
     jmp __b5
     // init_font_hex::@5
   __b5:
-    // [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [28] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc.z proto_hi
@@ -1317,16 +1282,16 @@ init_font_hex: {
     bcc !+
     inc.z proto_hi+1
   !:
-    // [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
+    // [29] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [30] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c
     bne __b1_from___b5
     jmp __breturn
     // init_font_hex::@return
   __breturn:
-    // [35] return 
+    // [31] return 
     rts
 }
   // File Data
@@ -1334,8 +1299,6 @@ init_font_hex: {
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp toD0181
 Removing instruction jmp __b2
 Removing instruction jmp __b1
@@ -1355,10 +1318,6 @@ Replacing label __b1_from___b1 with __b1
 Replacing label __b3_from___b3 with __b3
 Replacing label __b2_from___b4 with __b2
 Replacing label __b1_from___b5 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction toD0181_from_main:
 Removing instruction toD0181:
 Removing instruction __b1_from___b1:
@@ -1367,8 +1326,6 @@ Removing instruction __b2_from___b1:
 Removing instruction __b2_from___b4:
 Removing instruction __b3_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b2:
 Removing instruction init_font_hex_from___b2:
 Removing instruction __b1_from___b2:
@@ -1379,8 +1336,6 @@ Removing instruction __b4:
 Removing instruction __b5:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Removing instruction jmp __b1
 Removing instruction jmp __b2
@@ -1388,9 +1343,6 @@ Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) CHARSET = (byte*) 8192
 (const nomodify byte*) D018 = (byte*) 53272
 (const byte*) FONT_HEX_PROTO[]  = { (byte) 2, (byte) 5, (byte) 5, (byte) 5, (byte) 2, (byte) 6, (byte) 2, (byte) 2, (byte) 2, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 4, (byte) 7, (byte) 6, (byte) 1, (byte) 2, (byte) 1, (byte) 6, (byte) 5, (byte) 5, (byte) 7, (byte) 1, (byte) 1, (byte) 7, (byte) 4, (byte) 6, (byte) 1, (byte) 6, (byte) 3, (byte) 4, (byte) 6, (byte) 5, (byte) 2, (byte) 7, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 2, (byte) 5, (byte) 2, (byte) 2, (byte) 5, (byte) 3, (byte) 1, (byte) 1, (byte) 2, (byte) 5, (byte) 7, (byte) 5, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 5, (byte) 6, (byte) 2, (byte) 5, (byte) 4, (byte) 5, (byte) 2, (byte) 6, (byte) 5, (byte) 5, (byte) 5, (byte) 6, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 7, (byte) 7, (byte) 4, (byte) 6, (byte) 4, (byte) 4 }
@@ -1480,9 +1432,9 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte*) SCREEN = (byte*) 1024
 (void()) init_font_hex((byte*) init_font_hex::charset)
-(byte~) init_font_hex::$0 zp[1]:11 100001.0
-(byte~) init_font_hex::$1 reg byte a 200002.0
-(byte~) init_font_hex::$2 reg byte a 200002.0
+(byte~) init_font_hex::$0 zp[1]:11 10001.0
+(byte~) init_font_hex::$1 reg byte a 20002.0
+(byte~) init_font_hex::$2 reg byte a 20002.0
 (label) init_font_hex::@1
 (label) init_font_hex::@2
 (label) init_font_hex::@3
@@ -1490,35 +1442,35 @@ FINAL SYMBOL TABLE
 (label) init_font_hex::@5
 (label) init_font_hex::@return
 (byte) init_font_hex::c
-(byte) init_font_hex::c#1 c zp[1]:4 1501.5
-(byte) init_font_hex::c#6 c zp[1]:4 105.36842105263158
+(byte) init_font_hex::c#1 c zp[1]:4 151.5
+(byte) init_font_hex::c#6 c zp[1]:4 10.631578947368421
 (byte) init_font_hex::c1
-(byte) init_font_hex::c1#1 c1 zp[1]:9 15001.5
-(byte) init_font_hex::c1#4 c1 zp[1]:9 1333.4666666666667
+(byte) init_font_hex::c1#1 c1 zp[1]:9 1501.5
+(byte) init_font_hex::c1#4 c1 zp[1]:9 133.46666666666667
 (byte*) init_font_hex::charset
-(byte*) init_font_hex::charset#0 charset zp[2]:5 3500.5
-(byte*) init_font_hex::charset#2 charset zp[2]:5 10786.214285714286
-(byte*) init_font_hex::charset#5 charset zp[2]:5 2002.0
+(byte*) init_font_hex::charset#0 charset zp[2]:5 350.5
+(byte*) init_font_hex::charset#2 charset zp[2]:5 1079.0714285714287
+(byte*) init_font_hex::charset#5 charset zp[2]:5 202.0
 (byte) init_font_hex::i
-(byte) init_font_hex::i#1 reg byte x 150001.5
-(byte) init_font_hex::i#2 reg byte x 66667.33333333333
+(byte) init_font_hex::i#1 reg byte x 15001.5
+(byte) init_font_hex::i#2 reg byte x 6667.333333333333
 (byte) init_font_hex::idx
-(byte) init_font_hex::idx#2 idx zp[1]:10 55001.0
-(byte) init_font_hex::idx#3 reg byte y 20002.0
-(byte) init_font_hex::idx#5 idx zp[1]:10 60000.600000000006
+(byte) init_font_hex::idx#2 idx zp[1]:10 5501.0
+(byte) init_font_hex::idx#3 reg byte y 2002.0
+(byte) init_font_hex::idx#5 idx zp[1]:10 6000.6
 (byte*) init_font_hex::proto_hi
-(byte*) init_font_hex::proto_hi#1 proto_hi zp[2]:2 667.3333333333334
-(byte*) init_font_hex::proto_hi#6 proto_hi zp[2]:2 5666.833333333334
+(byte*) init_font_hex::proto_hi#1 proto_hi zp[2]:2 67.33333333333333
+(byte*) init_font_hex::proto_hi#6 proto_hi zp[2]:2 566.8333333333333
 (byte*) init_font_hex::proto_lo
-(byte*) init_font_hex::proto_lo#1 proto_lo zp[2]:7 5000.5
-(byte*) init_font_hex::proto_lo#4 proto_lo zp[2]:7 9230.999999999998
+(byte*) init_font_hex::proto_lo#1 proto_lo zp[2]:7 500.5
+(byte*) init_font_hex::proto_lo#4 proto_lo zp[2]:7 923.3076923076923
 (void()) main()
 (label) main::@1
 (label) main::@2
 (label) main::@return
 (byte) main::c
-(byte) main::c#1 reg byte x 151.5
-(byte) main::c#2 reg byte x 202.0
+(byte) main::c#1 reg byte x 16.5
+(byte) main::c#2 reg byte x 22.0
 (label) main::toD0181
 (byte*) main::toD0181_gfx
 (byte) main::toD0181_return
@@ -1555,48 +1507,41 @@ Score: 72379
   .label D018 = $d018
   .label SCREEN = $400
   .label CHARSET = $2000
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
-    // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [1] phi from main to main::toD0181 [phi:main->main::toD0181]
     // main::toD0181
     // main::@2
     // *D018 = toD018(SCREEN, CHARSET)
-    // [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // init_font_hex(CHARSET)
-    // [7] call init_font_hex 
-    // [13] phi from main::@2 to init_font_hex [phi:main::@2->init_font_hex]
+    // [3] call init_font_hex 
+    // [9] phi from main::@2 to init_font_hex [phi:main::@2->init_font_hex]
     jsr init_font_hex
-    // [8] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [8] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuxx=vbuc1 
+    // [4] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [4] phi (byte) main::c#2 = (byte) 0 [phi:main::@2->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   // Show all chars on screen
-    // [8] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [8] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [4] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [4] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // SCREEN[c] = c
-    // [9] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [5] *((const byte*) SCREEN + (byte) main::c#2) ← (byte) main::c#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // for (byte c: 0..255)
-    // [10] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [11] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [7] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1
     // main::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
 }
   // init_font_hex
@@ -1610,60 +1555,60 @@ init_font_hex: {
     .label c1 = 9
     .label proto_hi = 2
     .label c = 4
-    // [14] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
-    // [14] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
+    // [10] phi from init_font_hex to init_font_hex::@1 [phi:init_font_hex->init_font_hex::@1]
+    // [10] phi (byte) init_font_hex::c#6 = (byte) 0 [phi:init_font_hex->init_font_hex::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c
-    // [14] phi (byte*) init_font_hex::proto_hi#6 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
+    // [10] phi (byte*) init_font_hex::proto_hi#6 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex->init_font_hex::@1#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta.z proto_hi
     lda #>FONT_HEX_PROTO
     sta.z proto_hi+1
-    // [14] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
+    // [10] phi (byte*) init_font_hex::charset#5 = (const byte*) CHARSET [phi:init_font_hex->init_font_hex::@1#2] -- pbuz1=pbuc1 
     lda #<CHARSET
     sta.z charset
     lda #>CHARSET
     sta.z charset+1
-    // [14] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
-    // [14] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
-    // [14] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
-    // [14] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
+    // [10] phi from init_font_hex::@5 to init_font_hex::@1 [phi:init_font_hex::@5->init_font_hex::@1]
+    // [10] phi (byte) init_font_hex::c#6 = (byte) init_font_hex::c#1 [phi:init_font_hex::@5->init_font_hex::@1#0] -- register_copy 
+    // [10] phi (byte*) init_font_hex::proto_hi#6 = (byte*) init_font_hex::proto_hi#1 [phi:init_font_hex::@5->init_font_hex::@1#1] -- register_copy 
+    // [10] phi (byte*) init_font_hex::charset#5 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@5->init_font_hex::@1#2] -- register_copy 
     // init_font_hex::@1
   __b1:
-    // [15] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
-    // [15] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
+    // [11] phi from init_font_hex::@1 to init_font_hex::@2 [phi:init_font_hex::@1->init_font_hex::@2]
+    // [11] phi (byte) init_font_hex::c1#4 = (byte) 0 [phi:init_font_hex::@1->init_font_hex::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z c1
-    // [15] phi (byte*) init_font_hex::proto_lo#4 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
+    // [11] phi (byte*) init_font_hex::proto_lo#4 = (const byte*) FONT_HEX_PROTO [phi:init_font_hex::@1->init_font_hex::@2#1] -- pbuz1=pbuc1 
     lda #<FONT_HEX_PROTO
     sta.z proto_lo
     lda #>FONT_HEX_PROTO
     sta.z proto_lo+1
-    // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
-    // [15] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
-    // [15] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
-    // [15] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
-    // [15] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
+    // [11] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#5 [phi:init_font_hex::@1->init_font_hex::@2#2] -- register_copy 
+    // [11] phi from init_font_hex::@4 to init_font_hex::@2 [phi:init_font_hex::@4->init_font_hex::@2]
+    // [11] phi (byte) init_font_hex::c1#4 = (byte) init_font_hex::c1#1 [phi:init_font_hex::@4->init_font_hex::@2#0] -- register_copy 
+    // [11] phi (byte*) init_font_hex::proto_lo#4 = (byte*) init_font_hex::proto_lo#1 [phi:init_font_hex::@4->init_font_hex::@2#1] -- register_copy 
+    // [11] phi (byte*) init_font_hex::charset#2 = (byte*) init_font_hex::charset#0 [phi:init_font_hex::@4->init_font_hex::@2#2] -- register_copy 
     // init_font_hex::@2
   __b2:
     // charset[idx++] = 0
-    // [16] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [12] *((byte*) init_font_hex::charset#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (charset),y
-    // [17] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
-    // [17] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
+    // [13] phi from init_font_hex::@2 to init_font_hex::@3 [phi:init_font_hex::@2->init_font_hex::@3]
+    // [13] phi (byte) init_font_hex::idx#5 = (byte) 1 [phi:init_font_hex::@2->init_font_hex::@3#0] -- vbuz1=vbuc1 
     lda #1
     sta.z idx
-    // [17] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
+    // [13] phi (byte) init_font_hex::i#2 = (byte) 0 [phi:init_font_hex::@2->init_font_hex::@3#1] -- vbuxx=vbuc1 
     ldx #0
-    // [17] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
-    // [17] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
-    // [17] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
+    // [13] phi from init_font_hex::@3 to init_font_hex::@3 [phi:init_font_hex::@3->init_font_hex::@3]
+    // [13] phi (byte) init_font_hex::idx#5 = (byte) init_font_hex::idx#2 [phi:init_font_hex::@3->init_font_hex::@3#0] -- register_copy 
+    // [13] phi (byte) init_font_hex::i#2 = (byte) init_font_hex::i#1 [phi:init_font_hex::@3->init_font_hex::@3#1] -- register_copy 
     // init_font_hex::@3
   __b3:
     // proto_hi[i]<<4
-    // [18] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
+    // [14] (byte~) init_font_hex::$0 ← *((byte*) init_font_hex::proto_hi#6 + (byte) init_font_hex::i#2) << (byte) 4 -- vbuz1=pbuz2_derefidx_vbuxx_rol_4 
     txa
     tay
     lda (proto_hi),y
@@ -1673,41 +1618,41 @@ init_font_hex: {
     asl
     sta.z __0
     // proto_lo[i]<<1
-    // [19] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
+    // [15] (byte~) init_font_hex::$1 ← *((byte*) init_font_hex::proto_lo#4 + (byte) init_font_hex::i#2) << (byte) 1 -- vbuaa=pbuz1_derefidx_vbuxx_rol_1 
     txa
     tay
     lda (proto_lo),y
     asl
     // proto_hi[i]<<4 | proto_lo[i]<<1
-    // [20] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
+    // [16] (byte~) init_font_hex::$2 ← (byte~) init_font_hex::$0 | (byte~) init_font_hex::$1 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __0
     // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
-    // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [17] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#5) ← (byte~) init_font_hex::$2 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldy.z idx
     sta (charset),y
     // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
-    // [22] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) init_font_hex::idx#2 ← ++ (byte) init_font_hex::idx#5 -- vbuz1=_inc_vbuz1 
     inc.z idx
     // for( byte i: 0..4)
-    // [23] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
+    // [19] (byte) init_font_hex::i#1 ← ++ (byte) init_font_hex::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [24] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
+    // [20] if((byte) init_font_hex::i#1!=(byte) 5) goto init_font_hex::@3 -- vbuxx_neq_vbuc1_then_la1 
     cpx #5
     bne __b3
     // init_font_hex::@4
     // charset[idx++] = 0
-    // [25] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [21] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#2) ← (byte) 0 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #0
     ldy.z idx
     sta (charset),y
     // charset[idx++] = 0;
-    // [26] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
+    // [22] (byte) init_font_hex::idx#3 ← ++ (byte) init_font_hex::idx#2 -- vbuyy=_inc_vbuz1 
     iny
     // charset[idx++] = 0
-    // [27] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [23] *((byte*) init_font_hex::charset#2 + (byte) init_font_hex::idx#3) ← (byte) 0 -- pbuz1_derefidx_vbuyy=vbuc1 
     sta (charset),y
     // proto_lo += 5
-    // [28] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [24] (byte*) init_font_hex::proto_lo#1 ← (byte*) init_font_hex::proto_lo#4 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc.z proto_lo
@@ -1716,7 +1661,7 @@ init_font_hex: {
     inc.z proto_lo+1
   !:
     // charset += 8
-    // [29] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
+    // [25] (byte*) init_font_hex::charset#0 ← (byte*) init_font_hex::charset#2 + (byte) 8 -- pbuz1=pbuz1_plus_vbuc1 
     lda #8
     clc
     adc.z charset
@@ -1725,15 +1670,15 @@ init_font_hex: {
     inc.z charset+1
   !:
     // for( byte c: 0..15 )
-    // [30] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
+    // [26] (byte) init_font_hex::c1#1 ← ++ (byte) init_font_hex::c1#4 -- vbuz1=_inc_vbuz1 
     inc.z c1
-    // [31] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [27] if((byte) init_font_hex::c1#1!=(byte) $10) goto init_font_hex::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c1
     bne __b2
     // init_font_hex::@5
     // proto_hi += 5
-    // [32] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
+    // [28] (byte*) init_font_hex::proto_hi#1 ← (byte*) init_font_hex::proto_hi#6 + (byte) 5 -- pbuz1=pbuz1_plus_vbuc1 
     lda #5
     clc
     adc.z proto_hi
@@ -1742,15 +1687,15 @@ init_font_hex: {
     inc.z proto_hi+1
   !:
     // for( byte c: 0..15 )
-    // [33] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
+    // [29] (byte) init_font_hex::c#1 ← ++ (byte) init_font_hex::c#6 -- vbuz1=_inc_vbuz1 
     inc.z c
-    // [34] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [30] if((byte) init_font_hex::c#1!=(byte) $10) goto init_font_hex::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$10
     cmp.z c
     bne __b1
     // init_font_hex::@return
     // }
-    // [35] return 
+    // [31] return 
     rts
 }
   // File Data

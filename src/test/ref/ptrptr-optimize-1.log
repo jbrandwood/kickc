@@ -1,11 +1,9 @@
 Setting inferred volatile on symbol affected by address-of (byte**) main::pscreen ← &(byte*) main::screen
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (volatile byte*) main::screen ← (byte*)(number) $400
   (byte) sub::ch#0 ← (byte) 'a'
   (byte**) sub::dst#0 ← (const byte**) main::pscreen
@@ -32,18 +30,21 @@ sub: scope:[sub]  from main main::@1
 sub::@return: scope:[sub]  from sub
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -68,6 +69,11 @@ Constant (const byte**) sub::dst#0 = main::pscreen
 Constant (const byte) sub::ch#1 = 'b'
 Constant (const byte**) sub::dst#1 = main::pscreen
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) sub::ch#0
 Inlining constant with var siblings (const byte**) sub::dst#0
 Inlining constant with var siblings (const byte) sub::ch#1
@@ -79,66 +85,48 @@ Constant inlined sub::dst#0 = (const byte**) main::pscreen
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (byte**) sub::dst#2 (const byte**) main::pscreen
 Successful SSA optimization Pass2IdenticalPhiElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to sub:6 sub:8 
+Calls in [main] to sub:1 sub:3 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] (volatile byte*) main::screen ← (byte*) 1024
-  [5] call sub 
+main: scope:[main]  from
+  [0] (volatile byte*) main::screen ← (byte*) 1024
+  [1] call sub 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call sub 
+  [2] phi()
+  [3] call sub 
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [8] return 
+  [4] return 
   to:@return
 
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 sub: scope:[sub]  from main main::@1
-  [9] (byte) sub::ch#2 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
-  [10] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2
-  [11] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
+  [5] (byte) sub::ch#2 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
+  [6] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2
+  [7] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
   to:sub::@return
 sub::@return: scope:[sub]  from sub
-  [12] return 
+  [8] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(volatile byte*) main::screen loadstore 110.0
+(volatile byte*) main::screen loadstore 20.0
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 (byte) sub::ch
-(byte) sub::ch#2 101.0
+(byte) sub::ch#2 11.0
 (byte**) sub::dst
 
 Initial phi equivalence classes
@@ -159,59 +147,45 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label pscreen = screen
     .label screen = 3
-    // [4] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] call sub 
-    // [9] phi from main to sub [phi:main->sub]
+    // [1] call sub 
+    // [5] phi from main to sub [phi:main->sub]
   sub_from_main:
-    // [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuz1=vbuc1 
     lda #'a'
     sta.z sub.ch
     jsr sub
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call sub 
-    // [9] phi from main::@1 to sub [phi:main::@1->sub]
+    // [3] call sub 
+    // [5] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from___b1:
-    // [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuz1=vbuc1 
     lda #'b'
     sta.z sub.ch
     jsr sub
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // sub
 // sub(byte zp(2) ch)
 sub: {
     .label ch = 2
-    // [10] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuz1 
+    // [6] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuz1 
     lda.z ch
     ldy.z main.pscreen
     sty.z $fe
@@ -219,7 +193,7 @@ sub: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [11] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
+    // [7] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z main.pscreen
     bne !+
     inc.z main.pscreen+1
@@ -227,25 +201,25 @@ sub: {
     jmp __breturn
     // sub::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (volatile byte*) main::screen ← (byte*) 1024 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 [ ] ( main:2::sub:5 [ ] { }  main:2::sub:7 [ ] { }  ) always clobbers reg byte y 
+Statement [0] (volatile byte*) main::screen ← (byte*) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 [ ] ( sub:1 [ ] { }  sub:3 [ ] { }  ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ sub::ch#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::screen ] : zp[2]:3 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 110: zp[2]:3 [ main::screen ] 
-Uplift Scope [sub] 101: zp[1]:2 [ sub::ch#2 ] 
+Uplift Scope [main] 20: zp[2]:3 [ main::screen ] 
+Uplift Scope [sub] 11: zp[1]:2 [ sub::ch#2 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 100 combination zp[2]:3 [ main::screen ] 
-Uplifting [sub] best 91 combination reg byte a [ sub::ch#2 ] 
-Uplifting [] best 91 combination 
+Uplifting [main] best 88 combination zp[2]:3 [ main::screen ] 
+Uplifting [sub] best 79 combination reg byte a [ sub::ch#2 ] 
+Uplifting [] best 79 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ main::screen ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -256,63 +230,49 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label pscreen = screen
     .label screen = 2
-    // [4] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] call sub 
-    // [9] phi from main to sub [phi:main->sub]
+    // [1] call sub 
+    // [5] phi from main to sub [phi:main->sub]
   sub_from_main:
-    // [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
+    // [5] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
     jsr sub
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call sub 
-    // [9] phi from main::@1 to sub [phi:main::@1->sub]
+    // [3] call sub 
+    // [5] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from___b1:
-    // [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
+    // [5] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
     jsr sub
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // sub
 // sub(byte register(A) ch)
 sub: {
-    // [10] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
+    // [6] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
     ldy.z main.pscreen
     sty.z $fe
     ldy.z main.pscreen+1
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [11] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
+    // [7] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z main.pscreen
     bne !+
     inc.z main.pscreen+1
@@ -320,47 +280,35 @@ sub: {
     jmp __breturn
     // sub::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction sub_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction sub_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@return
 (const byte**) main::pscreen = &(volatile byte*) main::screen
-(volatile byte*) main::screen loadstore zp[2]:2 110.0
+(volatile byte*) main::screen loadstore zp[2]:2 20.0
 (void()) sub((byte) sub::ch , (byte**) sub::dst)
 (label) sub::@return
 (byte) sub::ch
-(byte) sub::ch#2 reg byte a 101.0
+(byte) sub::ch#2 reg byte a 11.0
 (byte**) sub::dst
 
 reg byte a [ sub::ch#2 ]
@@ -377,46 +325,40 @@ Score: 70
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label pscreen = screen
     .label screen = 2
     // screen = 0x400
-    // [4] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
     // sub('a',pscreen)
-    // [5] call sub 
-    // [9] phi from main to sub [phi:main->sub]
-    // [9] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
+    // [1] call sub 
+    // [5] phi from main to sub [phi:main->sub]
+    // [5] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
     jsr sub
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // sub('b',pscreen)
-    // [7] call sub 
-    // [9] phi from main::@1 to sub [phi:main::@1->sub]
-    // [9] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
+    // [3] call sub 
+    // [5] phi from main::@1 to sub [phi:main::@1->sub]
+    // [5] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
     jsr sub
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // sub
 // sub(byte register(A) ch)
 sub: {
     // *(*dst)++ = ch
-    // [10] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
+    // [6] *(*((const byte**) main::pscreen)) ← (byte) sub::ch#2 -- _deref_(_deref_pptc1)=vbuaa 
     ldy.z main.pscreen
     sty.z $fe
     ldy.z main.pscreen+1
@@ -424,14 +366,14 @@ sub: {
     ldy #0
     sta ($fe),y
     // *(*dst)++ = ch;
-    // [11] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
+    // [7] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z main.pscreen
     bne !+
     inc.z main.pscreen+1
   !:
     // sub::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data

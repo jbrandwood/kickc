@@ -1,7 +1,5 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 mul8u: scope:[mul8u]  from main::@1 main::@2
@@ -53,7 +51,7 @@ mul8u::@return: scope:[mul8u]  from mul8u::@3
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (word*) main::screen#0 ← (word*)(number) $400
   (byte) main::y#0 ← (byte) 0
   to:main::@1
@@ -93,19 +91,22 @@ main::@3: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte) SIZEOF_WORD = (byte) 2
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (word~) main::$0
 (word~) main::$1
@@ -245,7 +246,12 @@ Resolved ranged next value [31] main::y#1 ← ++ main::y#2 to ++
 Resolved ranged comparison value [33] if(main::y#1!=rangelast(0,5)) goto main::@1 to (number) 6
 Converting *(pointer+n) to pointer[n] [29] *((word*) main::screen#1) ← (word) main::z2#0  -- *(main::screen#3 + SIZEOF_WORD)
 Successful SSA optimization Pass2InlineDerefIdx
-Adding number conversion cast (unumber) 6 in if((byte) main::y#1!=(number) 6) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 6 in [25] if((byte) main::y#1!=(number) 6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
@@ -279,137 +285,119 @@ Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting mul8u::@6(between mul8u::@2 and mul8u::@4)
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of mul8u::@3
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to mul8u:9 mul8u:15 
+Calls in [main] to mul8u:4 mul8u:10 
 
 Created 7 initial phi equivalence classes
-Coalesced [8] mul8u::a#8 ← mul8u::a#1
-Coalesced [14] mul8u::a#9 ← mul8u::a#2
-Coalesced [23] main::y#5 ← main::y#1
-Coalesced [24] main::screen#6 ← main::screen#2
-Coalesced [26] mul8u::a#10 ← mul8u::a#6
-Coalesced [34] mul8u::res#9 ← mul8u::res#1
-Coalesced [38] mul8u::a#11 ← mul8u::a#0
-Coalesced [39] mul8u::res#7 ← mul8u::res#6
-Coalesced [40] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [41] mul8u::res#8 ← mul8u::res#2
+Coalesced [3] mul8u::a#8 ← mul8u::a#1
+Coalesced [9] mul8u::a#9 ← mul8u::a#2
+Coalesced [18] main::y#5 ← main::y#1
+Coalesced [19] main::screen#6 ← main::screen#2
+Coalesced [21] mul8u::a#10 ← mul8u::a#6
+Coalesced [29] mul8u::res#9 ← mul8u::res#1
+Coalesced [33] mul8u::a#11 ← mul8u::a#0
+Coalesced [34] mul8u::res#7 ← mul8u::res#6
+Coalesced [35] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [36] mul8u::res#8 ← mul8u::res#2
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@4
 Culled Empty Block (label) mul8u::@3
 Culled Empty Block (label) mul8u::@6
 Renumbering block mul8u::@4 to mul8u::@3
 Renumbering block mul8u::@5 to mul8u::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (word*) main::screen#1 ← phi( main/(word*) 1024 main::@3/(word*) main::screen#2 )
-  [5] (byte) main::y#2 ← phi( main/(byte) 0 main::@3/(byte) main::y#1 )
-  [6] (byte) mul8u::a#1 ← (byte) main::y#2
-  [7] call mul8u 
-  [8] (word) mul8u::return#2 ← (word) mul8u::res#2
+  [1] (word*) main::screen#1 ← phi( main/(word*) 1024 main::@3/(word*) main::screen#2 )
+  [1] (byte) main::y#2 ← phi( main/(byte) 0 main::@3/(byte) main::y#1 )
+  [2] (byte) mul8u::a#1 ← (byte) main::y#2
+  [3] call mul8u 
+  [4] (word) mul8u::return#2 ← (word) mul8u::res#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [9] (word) main::z1#0 ← (word) mul8u::return#2
-  [10] *((word*) main::screen#1) ← (word) main::z1#0
-  [11] (byte) mul8u::a#2 ← (byte) main::y#2
-  [12] call mul8u 
-  [13] (word) mul8u::return#3 ← (word) mul8u::res#2
+  [5] (word) main::z1#0 ← (word) mul8u::return#2
+  [6] *((word*) main::screen#1) ← (word) main::z1#0
+  [7] (byte) mul8u::a#2 ← (byte) main::y#2
+  [8] call mul8u 
+  [9] (word) mul8u::return#3 ← (word) mul8u::res#2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [14] (word) main::z2#0 ← (word) mul8u::return#3
-  [15] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0
-  [16] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD
-  [17] (byte) main::y#1 ← ++ (byte) main::y#2
-  [18] if((byte) main::y#1!=(byte) 6) goto main::@1
+  [10] (word) main::z2#0 ← (word) mul8u::return#3
+  [11] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0
+  [12] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD
+  [13] (byte) main::y#1 ← ++ (byte) main::y#2
+  [14] if((byte) main::y#1!=(byte) 6) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [19] return 
+  [15] return 
   to:@return
 
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
 mul8u: scope:[mul8u]  from main::@1 main::@2
-  [20] (byte) mul8u::a#6 ← phi( main::@1/(byte) mul8u::a#1 main::@2/(byte) mul8u::a#2 )
+  [16] (byte) mul8u::a#6 ← phi( main::@1/(byte) mul8u::a#1 main::@2/(byte) mul8u::a#2 )
   to:mul8u::@1
 mul8u::@1: scope:[mul8u]  from mul8u mul8u::@3
-  [21] (word) mul8u::mb#2 ← phi( mul8u/(word) $28 mul8u::@3/(word) mul8u::mb#1 )
-  [21] (word) mul8u::res#2 ← phi( mul8u/(word) 0 mul8u::@3/(word) mul8u::res#6 )
-  [21] (byte) mul8u::a#3 ← phi( mul8u/(byte) mul8u::a#6 mul8u::@3/(byte) mul8u::a#0 )
-  [22] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2
+  [17] (word) mul8u::mb#2 ← phi( mul8u/(word) $28 mul8u::@3/(word) mul8u::mb#1 )
+  [17] (word) mul8u::res#2 ← phi( mul8u/(word) 0 mul8u::@3/(word) mul8u::res#6 )
+  [17] (byte) mul8u::a#3 ← phi( mul8u/(byte) mul8u::a#6 mul8u::@3/(byte) mul8u::a#0 )
+  [18] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2
   to:mul8u::@return
 mul8u::@return: scope:[mul8u]  from mul8u::@1
-  [23] return 
+  [19] return 
   to:@return
 mul8u::@2: scope:[mul8u]  from mul8u::@1
-  [24] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1
-  [25] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3
+  [20] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1
+  [21] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3
   to:mul8u::@4
 mul8u::@4: scope:[mul8u]  from mul8u::@2
-  [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
+  [22] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
   to:mul8u::@3
 mul8u::@3: scope:[mul8u]  from mul8u::@2 mul8u::@4
-  [27] (word) mul8u::res#6 ← phi( mul8u::@2/(word) mul8u::res#2 mul8u::@4/(word) mul8u::res#1 )
-  [28] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1
-  [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1
+  [23] (word) mul8u::res#6 ← phi( mul8u::@2/(word) mul8u::res#2 mul8u::@4/(word) mul8u::res#1 )
+  [24] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1
+  [25] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1
   to:mul8u::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (word*) main::screen
-(word*) main::screen#1 36.72727272727273
-(word*) main::screen#2 67.33333333333333
+(word*) main::screen#1 4.0
+(word*) main::screen#2 7.333333333333333
 (byte) main::y
-(byte) main::y#1 151.5
-(byte) main::y#2 33.666666666666664
+(byte) main::y#1 16.5
+(byte) main::y#2 3.6666666666666665
 (word) main::z1
-(word) main::z1#0 202.0
+(word) main::z1#0 22.0
 (word) main::z2
-(word) main::z2#0 202.0
+(word) main::z2#0 22.0
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
-(byte~) mul8u::$1 200002.0
+(byte~) mul8u::$1 20002.0
 (byte) mul8u::a
-(byte) mul8u::a#0 100001.0
-(byte) mul8u::a#1 202.0
-(byte) mul8u::a#2 202.0
-(byte) mul8u::a#3 66834.16666666666
-(byte) mul8u::a#6 1203.0
+(byte) mul8u::a#0 10001.0
+(byte) mul8u::a#1 22.0
+(byte) mul8u::a#2 22.0
+(byte) mul8u::a#3 6684.166666666666
+(byte) mul8u::a#6 123.0
 (byte) mul8u::b
 (word) mul8u::mb
-(word) mul8u::mb#1 200002.0
-(word) mul8u::mb#2 42857.57142857143
+(word) mul8u::mb#1 20002.0
+(word) mul8u::mb#2 4286.142857142857
 (word) mul8u::res
-(word) mul8u::res#1 200002.0
-(word) mul8u::res#2 42886.42857142857
-(word) mul8u::res#6 100001.0
+(word) mul8u::res#1 20002.0
+(word) mul8u::res#2 4289.285714285714
+(word) mul8u::res#6 10001.0
 (word) mul8u::return
-(word) mul8u::return#2 202.0
-(word) mul8u::return#3 202.0
+(word) mul8u::return#2 22.0
+(word) mul8u::return#3 22.0
 
 Initial phi equivalence classes
 [ main::y#2 main::y#1 ]
@@ -454,55 +442,39 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label z1 = $c
     .label screen = 3
     .label z2 = $10
     .label y = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (word*) main::screen#1 = (word*) 1024 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    // [1] phi (word*) main::screen#1 = (word*) 1024 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     jmp __b1
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (word*) main::screen#1 = (word*) main::screen#2 [phi:main::@3->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi (word*) main::screen#1 = (word*) main::screen#2 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) mul8u::a#1 ← (byte) main::y#2 -- vbuz1=vbuz2 
+    // [2] (byte) mul8u::a#1 ← (byte) main::y#2 -- vbuz1=vbuz2 
     lda.z y
     sta.z mul8u.a
-    // [7] call mul8u 
-    // [20] phi from main::@1 to mul8u [phi:main::@1->mul8u]
+    // [3] call mul8u 
+    // [16] phi from main::@1 to mul8u [phi:main::@1->mul8u]
   mul8u_from___b1:
-    // [20] phi (byte) mul8u::a#6 = (byte) mul8u::a#1 [phi:main::@1->mul8u#0] -- register_copy 
+    // [16] phi (byte) mul8u::a#6 = (byte) mul8u::a#1 [phi:main::@1->mul8u#0] -- register_copy 
     jsr mul8u
-    // [8] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
+    // [4] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
     lda.z mul8u.res
     sta.z mul8u.return
     lda.z mul8u.res+1
@@ -510,27 +482,27 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [9] (word) main::z1#0 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
+    // [5] (word) main::z1#0 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
     lda.z mul8u.return
     sta.z z1
     lda.z mul8u.return+1
     sta.z z1+1
-    // [10] *((word*) main::screen#1) ← (word) main::z1#0 -- _deref_pwuz1=vwuz2 
+    // [6] *((word*) main::screen#1) ← (word) main::z1#0 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda.z z1
     sta (screen),y
     iny
     lda.z z1+1
     sta (screen),y
-    // [11] (byte) mul8u::a#2 ← (byte) main::y#2 -- vbuz1=vbuz2 
+    // [7] (byte) mul8u::a#2 ← (byte) main::y#2 -- vbuz1=vbuz2 
     lda.z y
     sta.z mul8u.a
-    // [12] call mul8u 
-    // [20] phi from main::@2 to mul8u [phi:main::@2->mul8u]
+    // [8] call mul8u 
+    // [16] phi from main::@2 to mul8u [phi:main::@2->mul8u]
   mul8u_from___b2:
-    // [20] phi (byte) mul8u::a#6 = (byte) mul8u::a#2 [phi:main::@2->mul8u#0] -- register_copy 
+    // [16] phi (byte) mul8u::a#6 = (byte) mul8u::a#2 [phi:main::@2->mul8u#0] -- register_copy 
     jsr mul8u
-    // [13] (word) mul8u::return#3 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
+    // [9] (word) mul8u::return#3 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
     lda.z mul8u.res
     sta.z mul8u.return_1
     lda.z mul8u.res+1
@@ -538,19 +510,19 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [14] (word) main::z2#0 ← (word) mul8u::return#3 -- vwuz1=vwuz2 
+    // [10] (word) main::z2#0 ← (word) mul8u::return#3 -- vwuz1=vwuz2 
     lda.z mul8u.return_1
     sta.z z2
     lda.z mul8u.return_1+1
     sta.z z2+1
-    // [15] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 -- pwuz1_derefidx_vbuc1=vwuz2 
+    // [11] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 -- pwuz1_derefidx_vbuc1=vwuz2 
     ldy #SIZEOF_WORD
     lda.z z2
     sta (screen),y
     iny
     lda.z z2+1
     sta (screen),y
-    // [16] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [12] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD+SIZEOF_WORD
     clc
     adc.z screen
@@ -558,16 +530,16 @@ main: {
     bcc !+
     inc.z screen+1
   !:
-    // [17] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
-    // [18] if((byte) main::y#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::y#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z y
     bne __b1_from___b3
     jmp __breturn
     // main::@return
   __breturn:
-    // [19] return 
+    // [15] return 
     rts
 }
   // mul8u
@@ -580,45 +552,45 @@ mul8u: {
     .label res = 6
     .label return = $a
     .label return_1 = $e
-    // [21] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [17] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   __b1_from_mul8u:
-    // [21] phi (word) mul8u::mb#2 = (word) $28 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    // [17] phi (word) mul8u::mb#2 = (word) $28 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
     lda #<$28
     sta.z mb
     lda #>$28
     sta.z mb+1
-    // [21] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
+    // [17] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
     lda #<0
     sta.z res
     lda #>0
     sta.z res+1
-    // [21] phi (byte) mul8u::a#3 = (byte) mul8u::a#6 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // [17] phi (byte) mul8u::a#3 = (byte) mul8u::a#6 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp __b1
     // mul8u::@1
   __b1:
-    // [22] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
+    // [18] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
     lda.z a
     cmp #0
     bne __b2
     jmp __breturn
     // mul8u::@return
   __breturn:
-    // [23] return 
+    // [19] return 
     rts
     // mul8u::@2
   __b2:
-    // [24] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [20] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z a
     sta.z __1
-    // [25] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
+    // [21] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
     lda.z __1
     cmp #0
     beq __b3_from___b2
     jmp __b4
     // mul8u::@4
   __b4:
-    // [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    // [22] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z res
     clc
     adc.z mb
@@ -626,48 +598,48 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-    // [27] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [23] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   __b3_from___b2:
   __b3_from___b4:
-    // [27] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // [23] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     jmp __b3
     // mul8u::@3
   __b3:
-    // [28] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
+    // [24] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
     lsr.z a
-    // [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [25] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z mb
     rol.z mb+1
-    // [21] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [17] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   __b1_from___b3:
-    // [21] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-    // [21] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-    // [21] phi (byte) mul8u::a#3 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    // [17] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [17] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [17] phi (byte) mul8u::a#3 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] (word) mul8u::return#2 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#2 ] ( main:2 [ main::y#2 main::screen#1 mul8u::return#2 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [4] (word) mul8u::return#2 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#2 ] (  [ main::y#2 main::screen#1 mul8u::return#2 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::y#2 main::y#1 ]
-Statement [9] (word) main::z1#0 ← (word) mul8u::return#2 [ main::y#2 main::screen#1 main::z1#0 ] ( main:2 [ main::y#2 main::screen#1 main::z1#0 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [10] *((word*) main::screen#1) ← (word) main::z1#0 [ main::y#2 main::screen#1 ] ( main:2 [ main::y#2 main::screen#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [5] (word) main::z1#0 ← (word) mul8u::return#2 [ main::y#2 main::screen#1 main::z1#0 ] (  [ main::y#2 main::screen#1 main::z1#0 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [6] *((word*) main::screen#1) ← (word) main::z1#0 [ main::y#2 main::screen#1 ] (  [ main::y#2 main::screen#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::y#2 main::y#1 ]
-Statement [13] (word) mul8u::return#3 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#3 ] ( main:2 [ main::y#2 main::screen#1 mul8u::return#3 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [14] (word) main::z2#0 ← (word) mul8u::return#3 [ main::y#2 main::screen#1 main::z2#0 ] ( main:2 [ main::y#2 main::screen#1 main::z2#0 ] { }  ) always clobbers reg byte a 
-Statement [15] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 [ main::y#2 main::screen#1 ] ( main:2 [ main::y#2 main::screen#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [16] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD [ main::y#2 main::screen#2 ] ( main:2 [ main::y#2 main::screen#2 ] { }  ) always clobbers reg byte a 
-Statement [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:7 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  main:2::mul8u:12 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [9] (word) mul8u::return#3 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#3 ] (  [ main::y#2 main::screen#1 mul8u::return#3 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [10] (word) main::z2#0 ← (word) mul8u::return#3 [ main::y#2 main::screen#1 main::z2#0 ] (  [ main::y#2 main::screen#1 main::z2#0 ] { }  ) always clobbers reg byte a 
+Statement [11] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 [ main::y#2 main::screen#1 ] (  [ main::y#2 main::screen#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD [ main::y#2 main::screen#2 ] (  [ main::y#2 main::screen#2 ] { }  ) always clobbers reg byte a 
+Statement [22] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( mul8u:3 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  mul8u:8 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ mul8u::a#3 mul8u::a#6 mul8u::a#1 mul8u::a#2 mul8u::a#0 ]
-Statement [8] (word) mul8u::return#2 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#2 ] ( main:2 [ main::y#2 main::screen#1 mul8u::return#2 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [9] (word) main::z1#0 ← (word) mul8u::return#2 [ main::y#2 main::screen#1 main::z1#0 ] ( main:2 [ main::y#2 main::screen#1 main::z1#0 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [10] *((word*) main::screen#1) ← (word) main::z1#0 [ main::y#2 main::screen#1 ] ( main:2 [ main::y#2 main::screen#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [13] (word) mul8u::return#3 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#3 ] ( main:2 [ main::y#2 main::screen#1 mul8u::return#3 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [14] (word) main::z2#0 ← (word) mul8u::return#3 [ main::y#2 main::screen#1 main::z2#0 ] ( main:2 [ main::y#2 main::screen#1 main::z2#0 ] { }  ) always clobbers reg byte a 
-Statement [15] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 [ main::y#2 main::screen#1 ] ( main:2 [ main::y#2 main::screen#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [16] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD [ main::y#2 main::screen#2 ] ( main:2 [ main::y#2 main::screen#2 ] { }  ) always clobbers reg byte a 
-Statement [24] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 [ mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] ( main:2::mul8u:7 [ main::y#2 main::screen#1 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  main:2::mul8u:12 [ main::y#2 main::screen#1 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( main:2::mul8u:7 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  main:2::mul8u:12 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [4] (word) mul8u::return#2 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#2 ] (  [ main::y#2 main::screen#1 mul8u::return#2 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [5] (word) main::z1#0 ← (word) mul8u::return#2 [ main::y#2 main::screen#1 main::z1#0 ] (  [ main::y#2 main::screen#1 main::z1#0 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [6] *((word*) main::screen#1) ← (word) main::z1#0 [ main::y#2 main::screen#1 ] (  [ main::y#2 main::screen#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [9] (word) mul8u::return#3 ← (word) mul8u::res#2 [ main::y#2 main::screen#1 mul8u::return#3 ] (  [ main::y#2 main::screen#1 mul8u::return#3 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [10] (word) main::z2#0 ← (word) mul8u::return#3 [ main::y#2 main::screen#1 main::z2#0 ] (  [ main::y#2 main::screen#1 main::z2#0 ] { }  ) always clobbers reg byte a 
+Statement [11] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 [ main::y#2 main::screen#1 ] (  [ main::y#2 main::screen#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD [ main::y#2 main::screen#2 ] (  [ main::y#2 main::screen#2 ] { }  ) always clobbers reg byte a 
+Statement [20] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 [ mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] ( mul8u:3 [ main::y#2 main::screen#1 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  mul8u:8 [ main::y#2 main::screen#1 mul8u::res#2 mul8u::a#3 mul8u::mb#2 mul8u::$1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [22] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] ( mul8u:3 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#1 = mul8u::a#6 main::y#2 } { mul8u::return#2 = mul8u::res#2 } }  mul8u:8 [ main::y#2 main::screen#1 mul8u::a#3 mul8u::mb#2 mul8u::res#1 ] { { mul8u::a#2 = mul8u::a#6 main::y#2 } { mul8u::return#3 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::y#2 main::y#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ main::screen#1 main::screen#2 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ mul8u::a#3 mul8u::a#6 mul8u::a#1 mul8u::a#2 mul8u::a#0 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -680,15 +652,15 @@ Potential registers zp[2]:16 [ main::z2#0 ] : zp[2]:16 ,
 Potential registers zp[1]:18 [ mul8u::$1 ] : zp[1]:18 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mul8u] 342,889.43: zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 242,859.57: zp[2]:8 [ mul8u::mb#2 mul8u::mb#1 ] 200,002: zp[1]:18 [ mul8u::$1 ] 168,442.17: zp[1]:5 [ mul8u::a#3 mul8u::a#6 mul8u::a#1 mul8u::a#2 mul8u::a#0 ] 202: zp[2]:10 [ mul8u::return#2 ] 202: zp[2]:14 [ mul8u::return#3 ] 
-Uplift Scope [main] 202: zp[2]:12 [ main::z1#0 ] 202: zp[2]:16 [ main::z2#0 ] 185.17: zp[1]:2 [ main::y#2 main::y#1 ] 104.06: zp[2]:3 [ main::screen#1 main::screen#2 ] 
+Uplift Scope [mul8u] 34,292.29: zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 24,288.14: zp[2]:8 [ mul8u::mb#2 mul8u::mb#1 ] 20,002: zp[1]:18 [ mul8u::$1 ] 16,852.17: zp[1]:5 [ mul8u::a#3 mul8u::a#6 mul8u::a#1 mul8u::a#2 mul8u::a#0 ] 22: zp[2]:10 [ mul8u::return#2 ] 22: zp[2]:14 [ mul8u::return#3 ] 
+Uplift Scope [main] 22: zp[2]:12 [ main::z1#0 ] 22: zp[2]:16 [ main::z2#0 ] 20.17: zp[1]:2 [ main::y#2 main::y#1 ] 11.33: zp[2]:3 [ main::screen#1 main::screen#2 ] 
 Uplift Scope [] 
 
-Uplifting [mul8u] best 10016 combination zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp[2]:8 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#1 mul8u::a#2 mul8u::a#0 ] zp[2]:10 [ mul8u::return#2 ] zp[2]:14 [ mul8u::return#3 ] 
-Uplifting [main] best 10016 combination zp[2]:12 [ main::z1#0 ] zp[2]:16 [ main::z2#0 ] zp[1]:2 [ main::y#2 main::y#1 ] zp[2]:3 [ main::screen#1 main::screen#2 ] 
-Uplifting [] best 10016 combination 
+Uplifting [mul8u] best 10004 combination zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp[2]:8 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#3 mul8u::a#6 mul8u::a#1 mul8u::a#2 mul8u::a#0 ] zp[2]:10 [ mul8u::return#2 ] zp[2]:14 [ mul8u::return#3 ] 
+Uplifting [main] best 10004 combination zp[2]:12 [ main::z1#0 ] zp[2]:16 [ main::z2#0 ] zp[1]:2 [ main::y#2 main::y#1 ] zp[2]:3 [ main::screen#1 main::screen#2 ] 
+Uplifting [] best 10004 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::y#2 main::y#1 ]
-Uplifting [main] best 10016 combination zp[1]:2 [ main::y#2 main::y#1 ] 
+Uplifting [main] best 10004 combination zp[1]:2 [ main::y#2 main::y#1 ] 
 Coalescing zero page register [ zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp[2]:10 [ mul8u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp[2]:14 [ mul8u::return#3 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 mul8u::return#3 ] ] with [ zp[2]:12 [ main::z1#0 ] ] - score: 1
@@ -705,85 +677,69 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label z1 = 5
     .label screen = 3
     .label z2 = 5
     .label y = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (word*) main::screen#1 = (word*) 1024 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    // [1] phi (word*) main::screen#1 = (word*) 1024 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     jmp __b1
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (word*) main::screen#1 = (word*) main::screen#2 [phi:main::@3->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi (word*) main::screen#1 = (word*) main::screen#2 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) mul8u::a#1 ← (byte) main::y#2 -- vbuxx=vbuz1 
+    // [2] (byte) mul8u::a#1 ← (byte) main::y#2 -- vbuxx=vbuz1 
     ldx.z y
-    // [7] call mul8u 
-    // [20] phi from main::@1 to mul8u [phi:main::@1->mul8u]
+    // [3] call mul8u 
+    // [16] phi from main::@1 to mul8u [phi:main::@1->mul8u]
   mul8u_from___b1:
-    // [20] phi (byte) mul8u::a#6 = (byte) mul8u::a#1 [phi:main::@1->mul8u#0] -- register_copy 
+    // [16] phi (byte) mul8u::a#6 = (byte) mul8u::a#1 [phi:main::@1->mul8u#0] -- register_copy 
     jsr mul8u
-    // [8] (word) mul8u::return#2 ← (word) mul8u::res#2
+    // [4] (word) mul8u::return#2 ← (word) mul8u::res#2
     jmp __b2
     // main::@2
   __b2:
-    // [9] (word) main::z1#0 ← (word) mul8u::return#2
-    // [10] *((word*) main::screen#1) ← (word) main::z1#0 -- _deref_pwuz1=vwuz2 
+    // [5] (word) main::z1#0 ← (word) mul8u::return#2
+    // [6] *((word*) main::screen#1) ← (word) main::z1#0 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda.z z1
     sta (screen),y
     iny
     lda.z z1+1
     sta (screen),y
-    // [11] (byte) mul8u::a#2 ← (byte) main::y#2 -- vbuxx=vbuz1 
+    // [7] (byte) mul8u::a#2 ← (byte) main::y#2 -- vbuxx=vbuz1 
     ldx.z y
-    // [12] call mul8u 
-    // [20] phi from main::@2 to mul8u [phi:main::@2->mul8u]
+    // [8] call mul8u 
+    // [16] phi from main::@2 to mul8u [phi:main::@2->mul8u]
   mul8u_from___b2:
-    // [20] phi (byte) mul8u::a#6 = (byte) mul8u::a#2 [phi:main::@2->mul8u#0] -- register_copy 
+    // [16] phi (byte) mul8u::a#6 = (byte) mul8u::a#2 [phi:main::@2->mul8u#0] -- register_copy 
     jsr mul8u
-    // [13] (word) mul8u::return#3 ← (word) mul8u::res#2
+    // [9] (word) mul8u::return#3 ← (word) mul8u::res#2
     jmp __b3
     // main::@3
   __b3:
-    // [14] (word) main::z2#0 ← (word) mul8u::return#3
-    // [15] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 -- pwuz1_derefidx_vbuc1=vwuz2 
+    // [10] (word) main::z2#0 ← (word) mul8u::return#3
+    // [11] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 -- pwuz1_derefidx_vbuc1=vwuz2 
     ldy #SIZEOF_WORD
     lda.z z2
     sta (screen),y
     iny
     lda.z z2+1
     sta (screen),y
-    // [16] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [12] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD+SIZEOF_WORD
     clc
     adc.z screen
@@ -791,16 +747,16 @@ main: {
     bcc !+
     inc.z screen+1
   !:
-    // [17] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
-    // [18] if((byte) main::y#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::y#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z y
     bne __b1_from___b3
     jmp __breturn
     // main::@return
   __breturn:
-    // [19] return 
+    // [15] return 
     rts
 }
   // mul8u
@@ -810,42 +766,42 @@ mul8u: {
     .label mb = 7
     .label res = 5
     .label return = 5
-    // [21] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [17] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
   __b1_from_mul8u:
-    // [21] phi (word) mul8u::mb#2 = (word) $28 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    // [17] phi (word) mul8u::mb#2 = (word) $28 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
     lda #<$28
     sta.z mb
     lda #>$28
     sta.z mb+1
-    // [21] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
+    // [17] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
     lda #<0
     sta.z res
     lda #>0
     sta.z res+1
-    // [21] phi (byte) mul8u::a#3 = (byte) mul8u::a#6 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // [17] phi (byte) mul8u::a#3 = (byte) mul8u::a#6 [phi:mul8u->mul8u::@1#2] -- register_copy 
     jmp __b1
     // mul8u::@1
   __b1:
-    // [22] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+    // [18] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b2
     jmp __breturn
     // mul8u::@return
   __breturn:
-    // [23] return 
+    // [19] return 
     rts
     // mul8u::@2
   __b2:
-    // [24] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [20] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [25] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+    // [21] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3_from___b2
     jmp __b4
     // mul8u::@4
   __b4:
-    // [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    // [22] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z res
     clc
     adc.z mb
@@ -853,32 +809,30 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-    // [27] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [23] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
   __b3_from___b2:
   __b3_from___b4:
-    // [27] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // [23] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     jmp __b3
     // mul8u::@3
   __b3:
-    // [28] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
+    // [24] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
-    // [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [25] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z mb
     rol.z mb+1
-    // [21] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [17] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
   __b1_from___b3:
-    // [21] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-    // [21] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-    // [21] phi (byte) mul8u::a#3 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    // [17] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [17] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [17] phi (byte) mul8u::a#3 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
@@ -892,16 +846,10 @@ Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b3 with __b1
 Replacing label __b3_from___b2 with __b3
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b3:
 Removing instruction __b3_from___b2:
 Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction mul8u_from___b1:
 Removing instruction __b2:
@@ -913,15 +861,10 @@ Removing instruction __breturn:
 Removing instruction __b4:
 Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
 (label) main::@1
@@ -929,39 +872,39 @@ FINAL SYMBOL TABLE
 (label) main::@3
 (label) main::@return
 (word*) main::screen
-(word*) main::screen#1 screen zp[2]:3 36.72727272727273
-(word*) main::screen#2 screen zp[2]:3 67.33333333333333
+(word*) main::screen#1 screen zp[2]:3 4.0
+(word*) main::screen#2 screen zp[2]:3 7.333333333333333
 (byte) main::y
-(byte) main::y#1 y zp[1]:2 151.5
-(byte) main::y#2 y zp[1]:2 33.666666666666664
+(byte) main::y#1 y zp[1]:2 16.5
+(byte) main::y#2 y zp[1]:2 3.6666666666666665
 (word) main::z1
-(word) main::z1#0 z1 zp[2]:5 202.0
+(word) main::z1#0 z1 zp[2]:5 22.0
 (word) main::z2
-(word) main::z2#0 z2 zp[2]:5 202.0
+(word) main::z2#0 z2 zp[2]:5 22.0
 (word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
-(byte~) mul8u::$1 reg byte a 200002.0
+(byte~) mul8u::$1 reg byte a 20002.0
 (label) mul8u::@1
 (label) mul8u::@2
 (label) mul8u::@3
 (label) mul8u::@4
 (label) mul8u::@return
 (byte) mul8u::a
-(byte) mul8u::a#0 reg byte x 100001.0
-(byte) mul8u::a#1 reg byte x 202.0
-(byte) mul8u::a#2 reg byte x 202.0
-(byte) mul8u::a#3 reg byte x 66834.16666666666
-(byte) mul8u::a#6 reg byte x 1203.0
+(byte) mul8u::a#0 reg byte x 10001.0
+(byte) mul8u::a#1 reg byte x 22.0
+(byte) mul8u::a#2 reg byte x 22.0
+(byte) mul8u::a#3 reg byte x 6684.166666666666
+(byte) mul8u::a#6 reg byte x 123.0
 (byte) mul8u::b
 (word) mul8u::mb
-(word) mul8u::mb#1 mb zp[2]:7 200002.0
-(word) mul8u::mb#2 mb zp[2]:7 42857.57142857143
+(word) mul8u::mb#1 mb zp[2]:7 20002.0
+(word) mul8u::mb#2 mb zp[2]:7 4286.142857142857
 (word) mul8u::res
-(word) mul8u::res#1 res zp[2]:5 200002.0
-(word) mul8u::res#2 res zp[2]:5 42886.42857142857
-(word) mul8u::res#6 res zp[2]:5 100001.0
+(word) mul8u::res#1 res zp[2]:5 20002.0
+(word) mul8u::res#2 res zp[2]:5 4289.285714285714
+(word) mul8u::res#6 res zp[2]:5 10001.0
 (word) mul8u::return
-(word) mul8u::return#2 return zp[2]:5 202.0
-(word) mul8u::return#3 return zp[2]:5 202.0
+(word) mul8u::return#2 return zp[2]:5 22.0
+(word) mul8u::return#3 return zp[2]:5 22.0
 
 zp[1]:2 [ main::y#2 main::y#1 ]
 zp[2]:3 [ main::screen#1 main::screen#2 ]
@@ -982,47 +925,40 @@ Score: 7974
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label z1 = 5
     .label screen = 3
     .label z2 = 5
     .label y = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (word*) main::screen#1 = (word*) 1024 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (word*) main::screen#1 = (word*) 1024 [phi:main->main::@1#0] -- pwuz1=pwuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::y#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (word*) main::screen#1 = (word*) main::screen#2 [phi:main::@3->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi (word*) main::screen#1 = (word*) main::screen#2 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@3->main::@1#1] -- register_copy 
     // main::@1
   __b1:
     // mul8u(y,40)
-    // [6] (byte) mul8u::a#1 ← (byte) main::y#2 -- vbuxx=vbuz1 
+    // [2] (byte) mul8u::a#1 ← (byte) main::y#2 -- vbuxx=vbuz1 
     ldx.z y
-    // [7] call mul8u 
-    // [20] phi from main::@1 to mul8u [phi:main::@1->mul8u]
-    // [20] phi (byte) mul8u::a#6 = (byte) mul8u::a#1 [phi:main::@1->mul8u#0] -- register_copy 
+    // [3] call mul8u 
+    // [16] phi from main::@1 to mul8u [phi:main::@1->mul8u]
+    // [16] phi (byte) mul8u::a#6 = (byte) mul8u::a#1 [phi:main::@1->mul8u#0] -- register_copy 
     jsr mul8u
     // mul8u(y,40)
-    // [8] (word) mul8u::return#2 ← (word) mul8u::res#2
+    // [4] (word) mul8u::return#2 ← (word) mul8u::res#2
     // main::@2
     // z1 = mul8u(y,40)
-    // [9] (word) main::z1#0 ← (word) mul8u::return#2
+    // [5] (word) main::z1#0 ← (word) mul8u::return#2
     // *screen++ = z1
-    // [10] *((word*) main::screen#1) ← (word) main::z1#0 -- _deref_pwuz1=vwuz2 
+    // [6] *((word*) main::screen#1) ← (word) main::z1#0 -- _deref_pwuz1=vwuz2 
     ldy #0
     lda.z z1
     sta (screen),y
@@ -1030,19 +966,19 @@ main: {
     lda.z z1+1
     sta (screen),y
     // mul8u(y,40)
-    // [11] (byte) mul8u::a#2 ← (byte) main::y#2 -- vbuxx=vbuz1 
+    // [7] (byte) mul8u::a#2 ← (byte) main::y#2 -- vbuxx=vbuz1 
     ldx.z y
-    // [12] call mul8u 
-    // [20] phi from main::@2 to mul8u [phi:main::@2->mul8u]
-    // [20] phi (byte) mul8u::a#6 = (byte) mul8u::a#2 [phi:main::@2->mul8u#0] -- register_copy 
+    // [8] call mul8u 
+    // [16] phi from main::@2 to mul8u [phi:main::@2->mul8u]
+    // [16] phi (byte) mul8u::a#6 = (byte) mul8u::a#2 [phi:main::@2->mul8u#0] -- register_copy 
     jsr mul8u
     // mul8u(y,40)
-    // [13] (word) mul8u::return#3 ← (word) mul8u::res#2
+    // [9] (word) mul8u::return#3 ← (word) mul8u::res#2
     // main::@3
     // z2 = mul8u(y,40)
-    // [14] (word) main::z2#0 ← (word) mul8u::return#3
+    // [10] (word) main::z2#0 ← (word) mul8u::return#3
     // *screen++ = z2
-    // [15] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 -- pwuz1_derefidx_vbuc1=vwuz2 
+    // [11] *((word*) main::screen#1 + (const byte) SIZEOF_WORD) ← (word) main::z2#0 -- pwuz1_derefidx_vbuc1=vwuz2 
     ldy #SIZEOF_WORD
     lda.z z2
     sta (screen),y
@@ -1050,7 +986,7 @@ main: {
     lda.z z2+1
     sta (screen),y
     // *screen++ = z2;
-    // [16] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    // [12] (word*) main::screen#2 ← (word*) main::screen#1 + (const byte) SIZEOF_WORD+(const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
     lda #SIZEOF_WORD+SIZEOF_WORD
     clc
     adc.z screen
@@ -1059,15 +995,15 @@ main: {
     inc.z screen+1
   !:
     // for( byte y: 0..5)
-    // [17] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
-    // [18] if((byte) main::y#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [14] if((byte) main::y#1!=(byte) 6) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #6
     cmp.z y
     bne __b1
     // main::@return
     // }
-    // [19] return 
+    // [15] return 
     rts
 }
   // mul8u
@@ -1077,40 +1013,40 @@ mul8u: {
     .label mb = 7
     .label res = 5
     .label return = 5
-    // [21] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-    // [21] phi (word) mul8u::mb#2 = (word) $28 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    // [17] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [17] phi (word) mul8u::mb#2 = (word) $28 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
     lda #<$28
     sta.z mb
     lda #>$28
     sta.z mb+1
-    // [21] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
+    // [17] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
     lda #<0
     sta.z res
     sta.z res+1
-    // [21] phi (byte) mul8u::a#3 = (byte) mul8u::a#6 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // [17] phi (byte) mul8u::a#3 = (byte) mul8u::a#6 [phi:mul8u->mul8u::@1#2] -- register_copy 
     // mul8u::@1
   __b1:
     // while(a!=0)
-    // [22] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+    // [18] if((byte) mul8u::a#3!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b2
     // mul8u::@return
     // }
-    // [23] return 
+    // [19] return 
     rts
     // mul8u::@2
   __b2:
     // a&1
-    // [24] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [20] (byte~) mul8u::$1 ← (byte) mul8u::a#3 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
     // if( (a&1) != 0)
-    // [25] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+    // [21] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3
     // mul8u::@4
     // res = res + mb
-    // [26] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    // [22] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
     lda.z res
     clc
     adc.z mb
@@ -1118,23 +1054,23 @@ mul8u: {
     lda.z res+1
     adc.z mb+1
     sta.z res+1
-    // [27] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
-    // [27] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // [23] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [23] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
     // mul8u::@3
   __b3:
     // a = a>>1
-    // [28] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
+    // [24] (byte) mul8u::a#0 ← (byte) mul8u::a#3 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
     txa
     lsr
     tax
     // mb = mb<<1
-    // [29] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    // [25] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
     asl.z mb
     rol.z mb+1
-    // [21] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
-    // [21] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-    // [21] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-    // [21] phi (byte) mul8u::a#3 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    // [17] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [17] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [17] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [17] phi (byte) mul8u::a#3 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data

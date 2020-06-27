@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte) main::x#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -42,18 +41,27 @@ incscreen: scope:[incscreen]  from main::@2
 incscreen::@return: scope:[incscreen]  from incscreen
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) incscreen((word) incscreen::ptr)
 (byte*~) incscreen::$0
 (byte*~) incscreen::$10
@@ -110,6 +118,13 @@ Successful SSA optimization Pass2InlineDerefIdx
 Eliminating unused variable (byte*~) incscreen::$10 and assignment [8] (byte*~) incscreen::$10 ← (byte*~) incscreen::$9 + (byte) 1
 Eliminating unused variable (byte*~) incscreen::$21 and assignment [13] (byte*~) incscreen::$21 ← (byte*~) incscreen::$20 + (byte) 1
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [5] (byte*~) incscreen::$0 ← (const to_nomodify byte*) screen + (const word) incscreen::ptr#0
 Constant right-side identified [7] (byte*~) incscreen::$9 ← (const to_nomodify byte*) screen + (const word) incscreen::ptr#0
 Constant right-side identified [9] (byte*~) incscreen::$11 ← (const to_nomodify byte*) screen + (const word) incscreen::ptr#0
@@ -133,65 +148,47 @@ Consolidated array index constant in *(screen+main::offset+1)
 Consolidated array index constant in *(screen+main::offset+1)
 Consolidated array index constant in *(screen+main::offset+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to incscreen:10 
+Calls in [main] to incscreen:5 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::x#5 ← main::x#1
+Coalesced [7] main::x#5 ← main::x#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::x#2 ← phi( main/(byte) 0 main::@3/(byte) main::x#1 )
-  [6] if((byte) main::x#2<(byte) $fe) goto main::@2
+  [1] (byte) main::x#2 ← phi( main/(byte) 0 main::@3/(byte) main::x#1 )
+  [2] if((byte) main::x#2<(byte) $fe) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [7] return 
+  [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] phi()
-  [9] call incscreen 
+  [4] phi()
+  [5] call incscreen 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (byte) main::x#1 ← ++ (byte) main::x#2
+  [6] (byte) main::x#1 ← ++ (byte) main::x#2
   to:main::@1
 
 (void()) incscreen((word) incscreen::ptr)
 incscreen: scope:[incscreen]  from main::@2
-  [11] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset)
-  [12] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1)
-  [13] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset)
-  [14] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1)
+  [7] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset)
+  [8] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1)
+  [9] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset)
+  [10] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1)
   to:incscreen::@return
 incscreen::@return: scope:[incscreen]  from incscreen
-  [15] return 
+  [11] return 
   to:@return
 
 
@@ -200,8 +197,8 @@ VARIABLE REGISTER WEIGHTS
 (word) incscreen::ptr
 (void()) main()
 (byte) main::x
-(byte) main::x#1 202.0
-(byte) main::x#2 75.75
+(byte) main::x#1 22.0
+(byte) main::x#2 8.25
 
 Initial phi equivalence classes
 [ main::x#2 main::x#1 ]
@@ -218,74 +215,58 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label offset = $28*$a
     .label x = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) main::x#2<(byte) $fe) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [2] if((byte) main::x#2<(byte) $fe) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z x
     cmp #$fe
     bcc __b2_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [9] call incscreen 
+    // [5] call incscreen 
     jsr incscreen
     jmp __b3
     // main::@3
   __b3:
-    // [10] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
+    // [6] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // incscreen
 incscreen: {
-    // [11] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [7] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset
-    // [12] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [8] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset+1
-    // [13] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc screen+main.offset
-    // [14] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [10] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc screen+main.offset+1
     jmp __breturn
     // incscreen::@return
   __breturn:
-    // [15] return 
+    // [11] return 
     rts
 }
   // File Data
@@ -294,13 +275,13 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp[1]:2 [ main::x#2 main::x#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 277.75: zp[1]:2 [ main::x#2 main::x#1 ] 
+Uplift Scope [main] 30.25: zp[1]:2 [ main::x#2 main::x#1 ] 
 Uplift Scope [incscreen] 
 Uplift Scope [] 
 
-Uplifting [main] best 346 combination reg byte x [ main::x#2 main::x#1 ] 
-Uplifting [incscreen] best 346 combination 
-Uplifting [] best 346 combination 
+Uplifting [main] best 334 combination reg byte x [ main::x#2 main::x#1 ] 
+Uplifting [incscreen] best 334 combination 
+Uplifting [] best 334 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -310,78 +291,60 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label offset = $28*$a
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) main::x#2<(byte) $fe) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [2] if((byte) main::x#2<(byte) $fe) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$fe
     bcc __b2_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [9] call incscreen 
+    // [5] call incscreen 
     jsr incscreen
     jmp __b3
     // main::@3
   __b3:
-    // [10] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // incscreen
 incscreen: {
-    // [11] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [7] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset
-    // [12] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [8] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset+1
-    // [13] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc screen+main.offset
-    // [14] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [10] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc screen+main.offset+1
     jmp __breturn
     // incscreen::@return
   __breturn:
-    // [15] return 
+    // [11] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b2
@@ -389,27 +352,16 @@ Removing instruction jmp __b3
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b2_from___b1 with __b2
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b2_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __b3:
 Removing instruction __b1_from___b3:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) incscreen((word) incscreen::ptr)
 (label) incscreen::@return
 (word) incscreen::ptr
@@ -420,8 +372,8 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (const word) main::offset = (word)(number) $28*(number) $a
 (byte) main::x
-(byte) main::x#1 reg byte x 202.0
-(byte) main::x#2 reg byte x 75.75
+(byte) main::x#1 reg byte x 22.0
+(byte) main::x#2 reg byte x 8.25
 (const to_nomodify byte*) screen = (byte*) 1024
 
 reg byte x [ main::x#2 main::x#1 ]
@@ -437,60 +389,53 @@ Score: 211
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label offset = $28*$a
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // for (char x=0;x<254;x++)
-    // [6] if((byte) main::x#2<(byte) $fe) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [2] if((byte) main::x#2<(byte) $fe) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$fe
     bcc __b2
     // main::@return
     // }
-    // [7] return 
+    // [3] return 
     rts
-    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
   __b2:
     // incscreen(offset)
-    // [9] call incscreen 
+    // [5] call incscreen 
     jsr incscreen
     // main::@3
     // for (char x=0;x<254;x++)
-    // [10] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuxx=_inc_vbuxx 
+    // [6] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
 }
   // incscreen
 incscreen: {
     // --(*(screen+ptr));
-    // [11] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [7] *((const to_nomodify byte*) screen+(const word) main::offset) ← -- *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset
     // (*(screen+ptr+1))--;
-    // [12] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [8] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← -- *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec screen+main.offset+1
     // ++(*(screen+ptr));
-    // [13] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *((const to_nomodify byte*) screen+(const word) main::offset) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc screen+main.offset
     // (*(screen+ptr+1))++;
-    // [14] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [10] *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) ← ++ *((const to_nomodify byte*) screen+(const word) main::offset+(byte) 1) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc screen+main.offset+1
     // incscreen::@return
     // }
-    // [15] return 
+    // [11] return 
     rts
 }
   // File Data

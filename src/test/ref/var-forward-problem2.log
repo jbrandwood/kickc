@@ -2,42 +2,56 @@ Resolved forward reference screen to (byte*) screen
 Resolved forward reference b to (byte) b
 Resolved forward reference b to (byte) b
 Resolved forward reference screen to (byte*) screen
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte*) screen#0 ← ((byte*)) (number) $400
   (byte) b#0 ← (byte) 'a'
   *((byte*) screen#0) ← (byte) b#0
   to:main::@return
 main::@return: scope:[main]  from main
-  (byte) b#4 ← phi( main/(byte) b#0 )
-  (byte*) screen#4 ← phi( main/(byte*) screen#0 )
-  (byte*) screen#1 ← (byte*) screen#4
-  (byte) b#1 ← (byte) b#4
+  (byte) b#5 ← phi( main/(byte) b#0 )
+  (byte*) screen#5 ← phi( main/(byte*) screen#0 )
+  (byte*) screen#1 ← (byte*) screen#5
+  (byte) b#1 ← (byte) b#5
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   (byte*) screen#2 ← (byte*) 0
   (byte) b#2 ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  (byte) b#8 ← phi( _start::_init1/(byte) b#2 )
+  (byte*) screen#8 ← phi( _start::_init1/(byte*) screen#2 )
   call main 
-  to:@2
-@2: scope:[]  from @1
-  (byte) b#5 ← phi( @1/(byte) b#1 )
-  (byte*) screen#5 ← phi( @1/(byte*) screen#1 )
-  (byte*) screen#3 ← (byte*) screen#5
-  (byte) b#3 ← (byte) b#5
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  (byte) b#6 ← phi( _start::@1/(byte) b#1 )
+  (byte*) screen#6 ← phi( _start::@1/(byte*) screen#1 )
+  (byte*) screen#3 ← (byte*) screen#6
+  (byte) b#3 ← (byte) b#6
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  (byte) b#7 ← phi( _start::@2/(byte) b#3 )
+  (byte*) screen#7 ← phi( _start::@2/(byte*) screen#3 )
+  (byte*) screen#4 ← (byte*) screen#7
+  (byte) b#4 ← (byte) b#7
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (byte) b
 (byte) b#0
 (byte) b#1
@@ -45,6 +59,9 @@ SYMBOL TABLE SSA
 (byte) b#3
 (byte) b#4
 (byte) b#5
+(byte) b#6
+(byte) b#7
+(byte) b#8
 (void()) main()
 (label) main::@return
 (byte*) screen
@@ -54,15 +71,20 @@ SYMBOL TABLE SSA
 (byte*) screen#3
 (byte*) screen#4
 (byte*) screen#5
+(byte*) screen#6
+(byte*) screen#7
+(byte*) screen#8
 
 Inlining cast (byte*) screen#0 ← (byte*)(number) $400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Alias screen#0 = screen#4 screen#1 
-Alias b#0 = b#4 b#1 
-Alias screen#3 = screen#5 
-Alias b#3 = b#5 
+Alias screen#0 = screen#5 screen#1 
+Alias b#0 = b#5 b#1 
+Alias screen#2 = screen#8 
+Alias b#2 = b#8 
+Alias screen#3 = screen#6 screen#7 screen#4 
+Alias b#3 = b#6 b#7 b#4 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte*) screen#3 (byte*) screen#0
 Identical Phi Values (byte) b#3 (byte) b#0
@@ -75,37 +97,26 @@ Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant (const byte*) screen#2
 Eliminating unused constant (const byte) b#2
 Successful SSA optimization PassNEliminateUnusedVars
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const byte*) screen#0) ← (const byte) b#0
+main: scope:[main]  from
+  [0] *((const byte*) screen#0) ← (const byte) b#0
   to:main::@return
 main::@return: scope:[main]  from main
-  [5] return 
+  [1] return 
   to:@return
 
 
@@ -128,42 +139,28 @@ Target platform is c64basic / MOS6502X
   // Global Constants & labels
   .const b = 'a'
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const byte*) screen#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) screen#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     jmp __breturn
     // main::@return
   __breturn:
-    // [5] return 
+    // [1] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) screen#0) ← (const byte) b#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const byte*) screen#0) ← (const byte) b#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 27 combination 
-Uplifting [] best 27 combination 
+Uplifting [main] best 15 combination 
+Uplifting [] best 15 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -175,53 +172,26 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   .const b = 'a'
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const byte*) screen#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) screen#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     jmp __breturn
     // main::@return
   __breturn:
-    // [5] return 
+    // [1] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (byte) b
 (const byte) b#0 b = (byte) 'a'
 (void()) main()
@@ -243,21 +213,15 @@ Score: 12
   // Global Constants & labels
   .const b = 'a'
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // *screen = b
-    // [4] *((const byte*) screen#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) screen#0) ← (const byte) b#0 -- _deref_pbuc1=vbuc2 
     lda #b
     sta screen
     // main::@return
     // }
-    // [5] return 
+    // [1] return 
     rts
 }
   // File Data

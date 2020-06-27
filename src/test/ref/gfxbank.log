@@ -2,11 +2,9 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Inlined call call vicSelectGfxBank (const nomodify byte*) main::PLAYFIELD_CHARSET 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte*) main::vicSelectGfxBank1_gfx#0 ← (const nomodify byte*) main::PLAYFIELD_CHARSET
   to:main::vicSelectGfxBank1
 main::vicSelectGfxBank1: scope:[main]  from main
@@ -33,18 +31,18 @@ main::vicSelectGfxBank1_@1: scope:[main]  from main::vicSelectGfxBank1_toDd001_@
 main::@return: scope:[main]  from main::vicSelectGfxBank1_@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -132,6 +130,9 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A = (byte) 0
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = (byte) 2
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 (const nomodify byte*) main::PLAYFIELD_CHARSET = (byte*)(number) $2800
@@ -186,6 +187,11 @@ Simplifying expression containing zero (byte*)CIA2 in [5] *((byte*)(const nomodi
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [1] (byte~) main::vicSelectGfxBank1_toDd001_$0 ← > (word)(const byte*) main::vicSelectGfxBank1_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::vicSelectGfxBank1_toDd001_$0 = >(word)main::vicSelectGfxBank1_gfx#0
@@ -207,52 +213,34 @@ Eliminating unused constant (const nomodify byte*) main::PLAYFIELD_CHARSET
 Successful SSA optimization PassNEliminateUnusedVars
 Constant (const byte) main::vicSelectGfxBank1_toDd001_return#0 = 3
 Successful SSA optimization Pass2ConstantIdentification
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001_@return
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::vicSelectGfxBank1_toDd001_@return
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::vicSelectGfxBank1_toDd001
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::vicSelectGfxBank1
 main::vicSelectGfxBank1: scope:[main]  from main
-  [5] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3
+  [1] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3
   to:main::vicSelectGfxBank1_toDd001
 main::vicSelectGfxBank1_toDd001: scope:[main]  from main::vicSelectGfxBank1
-  [6] phi()
+  [2] phi()
   to:main::vicSelectGfxBank1_@1
 main::vicSelectGfxBank1_@1: scope:[main]  from main::vicSelectGfxBank1_toDd001
-  [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0
+  [3] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0
   to:main::@return
 main::@return: scope:[main]  from main::vicSelectGfxBank1_@1
-  [8] return 
+  [4] return 
   to:@return
 
 
@@ -361,32 +349,16 @@ Target platform is c64basic / MOS6502X
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     jmp vicSelectGfxBank1
     // main::vicSelectGfxBank1
   vicSelectGfxBank1:
-    // [5] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // [6] phi from main::vicSelectGfxBank1 to main::vicSelectGfxBank1_toDd001 [phi:main::vicSelectGfxBank1->main::vicSelectGfxBank1_toDd001]
+    // [2] phi from main::vicSelectGfxBank1 to main::vicSelectGfxBank1_toDd001 [phi:main::vicSelectGfxBank1->main::vicSelectGfxBank1_toDd001]
   vicSelectGfxBank1_toDd001_from_vicSelectGfxBank1:
     jmp vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_toDd001
@@ -394,20 +366,20 @@ main: {
     jmp vicSelectGfxBank1___b1
     // main::vicSelectGfxBank1_@1
   vicSelectGfxBank1___b1:
-    // [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [MOS6526_CIA] 
@@ -416,11 +388,11 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 96 combination 
-Uplifting [MOS6569_VICII] best 96 combination 
-Uplifting [MOS6581_SID] best 96 combination 
-Uplifting [main] best 96 combination 
-Uplifting [] best 96 combination 
+Uplifting [MOS6526_CIA] best 84 combination 
+Uplifting [MOS6569_VICII] best 84 combination 
+Uplifting [MOS6581_SID] best 84 combination 
+Uplifting [main] best 84 combination 
+Uplifting [] best 84 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -433,32 +405,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     jmp vicSelectGfxBank1
     // main::vicSelectGfxBank1
   vicSelectGfxBank1:
-    // [5] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // [6] phi from main::vicSelectGfxBank1 to main::vicSelectGfxBank1_toDd001 [phi:main::vicSelectGfxBank1->main::vicSelectGfxBank1_toDd001]
+    // [2] phi from main::vicSelectGfxBank1 to main::vicSelectGfxBank1_toDd001 [phi:main::vicSelectGfxBank1->main::vicSelectGfxBank1_toDd001]
   vicSelectGfxBank1_toDd001_from_vicSelectGfxBank1:
     jmp vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_toDd001
@@ -466,45 +422,32 @@ main: {
     jmp vicSelectGfxBank1___b1
     // main::vicSelectGfxBank1_@1
   vicSelectGfxBank1___b1:
-    // [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp vicSelectGfxBank1
 Removing instruction jmp vicSelectGfxBank1_toDd001
 Removing instruction jmp vicSelectGfxBank1___b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction vicSelectGfxBank1_toDd001_from_vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1_toDd001:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction vicSelectGfxBank1:
 Removing instruction vicSelectGfxBank1___b1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -616,31 +559,24 @@ Score: 18
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     // main::vicSelectGfxBank1
     // CIA2->PORT_A_DDR = %00000011
-    // [5] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
     lda #3
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // [6] phi from main::vicSelectGfxBank1 to main::vicSelectGfxBank1_toDd001 [phi:main::vicSelectGfxBank1->main::vicSelectGfxBank1_toDd001]
+    // [2] phi from main::vicSelectGfxBank1 to main::vicSelectGfxBank1_toDd001 [phi:main::vicSelectGfxBank1->main::vicSelectGfxBank1_toDd001]
     // main::vicSelectGfxBank1_toDd001
     // main::vicSelectGfxBank1_@1
     // CIA2->PORT_A = toDd00(gfx)
-    // [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
+    // [3] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2) ← (const byte) main::vicSelectGfxBank1_toDd001_return#0 -- _deref_pbuc1=vbuc2 
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data

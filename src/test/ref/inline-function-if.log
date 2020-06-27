@@ -1,12 +1,11 @@
 Inlined call (byte~) main::$0 ← call toUpper (byte) 'c' true 
 Inlined call (byte~) main::$1 ← call toUpper (byte) 'm' false 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte) main::toUpper1_ch#0 ← (byte) 'c'
   (bool) main::toUpper1_bo#0 ← true
   to:main::toUpper1
@@ -63,18 +62,27 @@ main::@2: scope:[main]  from main::toUpper2_@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -169,6 +177,13 @@ Eliminating variable (byte) main::toUpper2_res#1 from unused block main::toUpper
 Removing PHI-reference to removed block (main::toUpper2_@2) in block main::toUpper2_@1
 Removing unused block main::toUpper2_@2
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Alias main::toUpper1_return#0 = main::toUpper1_res#1 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values (byte) main::toUpper2_return#0 (const byte) main::toUpper2_ch#0
@@ -179,10 +194,6 @@ Constant (const byte) main::toUpper1_return#0 = main::toUpper1_ch#0+$40
 Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(screen+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toUpper1
 Adding NOP phi() at start of main::toUpper1_@2
@@ -192,52 +203,38 @@ Adding NOP phi() at start of main::toUpper2
 Adding NOP phi() at start of main::toUpper2_@1
 Adding NOP phi() at start of main::toUpper2_@return
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::toUpper1_@2
 Culled Empty Block (label) main::toUpper1_@1
 Culled Empty Block (label) main::toUpper1_@return
 Culled Empty Block (label) main::toUpper2_@1
 Culled Empty Block (label) main::toUpper2_@return
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toUpper1
 Adding NOP phi() at start of main::toUpper2
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::toUpper1
 main::toUpper1: scope:[main]  from main
-  [5] phi()
+  [1] phi()
   to:main::@1
 main::@1: scope:[main]  from main::toUpper1
-  [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0
+  [2] *((const byte*) screen) ← (const byte) main::toUpper1_return#0
   to:main::toUpper2
 main::toUpper2: scope:[main]  from main::@1
-  [7] phi()
+  [3] phi()
   to:main::@2
 main::@2: scope:[main]  from main::toUpper2
-  [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0
+  [4] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [9] return 
+  [5] return 
   to:@return
 
 
@@ -265,28 +262,12 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toUpper1_ch = 'c'
     .const toUpper2_ch = 'm'
     .const toUpper1_return = toUpper1_ch+$40
-    // [5] phi from main to main::toUpper1 [phi:main->main::toUpper1]
+    // [1] phi from main to main::toUpper1 [phi:main->main::toUpper1]
   toUpper1_from_main:
     jmp toUpper1
     // main::toUpper1
@@ -294,10 +275,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
-    // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
+    // [3] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
   toUpper2_from___b1:
     jmp toUpper2
     // main::toUpper2
@@ -305,27 +286,27 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 99 combination 
-Uplifting [] best 99 combination 
+Uplifting [main] best 87 combination 
+Uplifting [] best 87 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -336,28 +317,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toUpper1_ch = 'c'
     .const toUpper2_ch = 'm'
     .const toUpper1_return = toUpper1_ch+$40
-    // [5] phi from main to main::toUpper1 [phi:main->main::toUpper1]
+    // [1] phi from main to main::toUpper1 [phi:main->main::toUpper1]
   toUpper1_from_main:
     jmp toUpper1
     // main::toUpper1
@@ -365,10 +330,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
-    // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
+    // [3] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
   toUpper2_from___b1:
     jmp toUpper2
     // main::toUpper2
@@ -376,48 +341,35 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp toUpper1
 Removing instruction jmp __b1
 Removing instruction jmp toUpper2
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction toUpper1_from_main:
 Removing instruction toUpper1:
 Removing instruction toUpper2_from___b1:
 Removing instruction toUpper2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -450,35 +402,28 @@ Score: 18
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .const toUpper1_ch = 'c'
     .const toUpper2_ch = 'm'
     .const toUpper1_return = toUpper1_ch+$40
-    // [5] phi from main to main::toUpper1 [phi:main->main::toUpper1]
+    // [1] phi from main to main::toUpper1 [phi:main->main::toUpper1]
     // main::toUpper1
     // main::@1
     // screen[0] = toUpper('c',true)
-    // [6] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) screen) ← (const byte) main::toUpper1_return#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper1_return
     sta screen
-    // [7] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
+    // [3] phi from main::@1 to main::toUpper2 [phi:main::@1->main::toUpper2]
     // main::toUpper2
     // main::@2
     // screen[1] = toUpper('m',false)
-    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) 1) ← (const byte) main::toUpper2_ch#0 -- _deref_pbuc1=vbuc2 
     lda #toUpper2_ch
     sta screen+1
     // main::@return
     // }
-    // [9] return 
+    // [5] return 
     rts
 }
   // File Data

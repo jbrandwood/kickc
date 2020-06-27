@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   *((const nomodify byte*) main::SCREEN+(number) $3e8) ← (number) 0
   kickasm() {{ lda #0
         .for (var i = 0; i < 1000; i++) {
@@ -15,18 +13,21 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400
@@ -43,34 +44,21 @@ Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0
+main: scope:[main]  from
+  [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0
   kickasm() {{ lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
@@ -78,7 +66,7 @@ main: scope:[main]  from @1
      }}
   to:main::@return
 main::@return: scope:[main]  from main
-  [6] return 
+  [2] return 
   to:@return
 
 
@@ -97,24 +85,10 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
@@ -126,20 +100,20 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [6] return 
+    // [2] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 283 combination 
-Uplifting [] best 283 combination 
+Uplifting [main] best 271 combination 
+Uplifting [] best 271 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -149,24 +123,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
-    // [4] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
@@ -178,31 +138,18 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [6] return 
+    // [2] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*) 1024
@@ -219,17 +166,11 @@ Score: 268
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400
     // *(SCREEN+1000) = 0
-    // [4] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm
@@ -241,7 +182,7 @@ main: {
     
     // main::@return
     // }
-    // [6] return 
+    // [2] return 
     rts
 }
   // File Data

@@ -1,7 +1,6 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (dword()) ifunc((dword) ifunc::a)
 ifunc: scope:[ifunc]  from main
@@ -39,7 +38,7 @@ ifunc::@return: scope:[ifunc]  from ifunc::@3
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (dword) ifunc::a#0 ← (number) 8
   call ifunc 
   (dword) ifunc::return#2 ← (dword) ifunc::return#1
@@ -53,20 +52,29 @@ main::@1: scope:[main]  from main
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const dword*) SCREEN = (dword*)(number) $400
 (const byte) SIZEOF_DWORD = (byte) 4
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (dword()) ifunc((dword) ifunc::a)
 (bool~) ifunc::$0
 (label) ifunc::@1
@@ -152,8 +160,15 @@ Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) main::$1
 Eliminating unused constant (const byte) SIZEOF_DWORD
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) ifunc::a#0+1 in if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(number) 1) goto ifunc::@2
-Adding number conversion cast (unumber) 1 in if((dword) ifunc::xsqr#2<(unumber)(const dword) ifunc::a#0+(number) 1) goto ifunc::@2
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) ifunc::a#0+1 in [1] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(number) 1) goto ifunc::@2
+Adding number conversion cast (unumber) 1 in [1] if((dword) ifunc::xsqr#2<(unumber)(const dword) ifunc::a#0+(number) 1) goto ifunc::@2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast (const dword) ifunc::a#0+(unumber)(number) 1
 Simplifying constant integer cast 1
@@ -167,73 +182,55 @@ Constant inlined ifunc::xsqr#0 = (dword) 1
 Constant inlined ifunc::delta#0 = (dword) 3
 Constant inlined ifunc::x#0 = (dword) 1
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of ifunc
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to ifunc:6 
+Calls in [main] to ifunc:1 
 
 Created 3 initial phi equivalence classes
-Coalesced [19] ifunc::xsqr#4 ← ifunc::xsqr#1
-Coalesced [20] ifunc::x#6 ← ifunc::x#1
-Coalesced [21] ifunc::delta#4 ← ifunc::delta#1
+Coalesced [14] ifunc::xsqr#4 ← ifunc::xsqr#1
+Coalesced [15] ifunc::x#6 ← ifunc::x#1
+Coalesced [16] ifunc::delta#4 ← ifunc::delta#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of ifunc
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call ifunc 
-  [6] (dword) ifunc::return#2 ← (dword) ifunc::return#0
+main: scope:[main]  from
+  [0] phi()
+  [1] call ifunc 
+  [2] (dword) ifunc::return#2 ← (dword) ifunc::return#0
   to:main::@1
 main::@1: scope:[main]  from main
-  [7] (dword~) main::$0 ← (dword) ifunc::return#2
-  [8] *((const dword*) SCREEN) ← (dword~) main::$0
+  [3] (dword~) main::$0 ← (dword) ifunc::return#2
+  [4] *((const dword*) SCREEN) ← (dword~) main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [9] return 
+  [5] return 
   to:@return
 
 (dword()) ifunc((dword) ifunc::a)
 ifunc: scope:[ifunc]  from main
-  [10] phi()
+  [6] phi()
   to:ifunc::@1
 ifunc::@1: scope:[ifunc]  from ifunc ifunc::@2
-  [11] (dword) ifunc::delta#2 ← phi( ifunc/(dword) 3 ifunc::@2/(dword) ifunc::delta#1 )
-  [11] (dword) ifunc::x#3 ← phi( ifunc/(dword) 1 ifunc::@2/(dword) ifunc::x#1 )
-  [11] (dword) ifunc::xsqr#2 ← phi( ifunc/(dword) 1 ifunc::@2/(dword) ifunc::xsqr#1 )
-  [12] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2
+  [7] (dword) ifunc::delta#2 ← phi( ifunc/(dword) 3 ifunc::@2/(dword) ifunc::delta#1 )
+  [7] (dword) ifunc::x#3 ← phi( ifunc/(dword) 1 ifunc::@2/(dword) ifunc::x#1 )
+  [7] (dword) ifunc::xsqr#2 ← phi( ifunc/(dword) 1 ifunc::@2/(dword) ifunc::xsqr#1 )
+  [8] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2
   to:ifunc::@3
 ifunc::@3: scope:[ifunc]  from ifunc::@1
-  [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
+  [9] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3
   to:ifunc::@return
 ifunc::@return: scope:[ifunc]  from ifunc::@3
-  [14] return 
+  [10] return 
   to:@return
 ifunc::@2: scope:[ifunc]  from ifunc::@1
-  [15] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3
-  [16] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2
-  [17] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2
+  [11] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3
+  [12] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2
+  [13] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2
   to:ifunc::@1
 
 
@@ -241,19 +238,19 @@ VARIABLE REGISTER WEIGHTS
 (dword()) ifunc((dword) ifunc::a)
 (dword) ifunc::a
 (dword) ifunc::delta
-(dword) ifunc::delta#1 2002.0
-(dword) ifunc::delta#2 750.75
+(dword) ifunc::delta#1 202.0
+(dword) ifunc::delta#2 75.75
 (dword) ifunc::return
-(dword) ifunc::return#0 37.33333333333333
-(dword) ifunc::return#2 22.0
+(dword) ifunc::return#0 4.333333333333333
+(dword) ifunc::return#2 4.0
 (dword) ifunc::x
-(dword) ifunc::x#1 667.3333333333334
-(dword) ifunc::x#3 1051.5
+(dword) ifunc::x#1 67.33333333333333
+(dword) ifunc::x#3 106.5
 (dword) ifunc::xsqr
-(dword) ifunc::xsqr#1 1001.0
-(dword) ifunc::xsqr#2 1001.0
+(dword) ifunc::xsqr#1 101.0
+(dword) ifunc::xsqr#2 101.0
 (void()) main()
-(dword~) main::$0 22.0
+(dword~) main::$0 4.0
 
 Initial phi equivalence classes
 [ ifunc::xsqr#2 ifunc::xsqr#1 ]
@@ -285,30 +282,14 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __0 = $12
-    // [5] call ifunc 
-    // [10] phi from main to ifunc [phi:main->ifunc]
+    // [1] call ifunc 
+    // [6] phi from main to ifunc [phi:main->ifunc]
   ifunc_from_main:
     jsr ifunc
-    // [6] (dword) ifunc::return#2 ← (dword) ifunc::return#0 -- vduz1=vduz2 
+    // [2] (dword) ifunc::return#2 ← (dword) ifunc::return#0 -- vduz1=vduz2 
     lda.z ifunc.return
     sta.z ifunc.return_1
     lda.z ifunc.return+1
@@ -320,7 +301,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] (dword~) main::$0 ← (dword) ifunc::return#2 -- vduz1=vduz2 
+    // [3] (dword~) main::$0 ← (dword) ifunc::return#2 -- vduz1=vduz2 
     lda.z ifunc.return_1
     sta.z __0
     lda.z ifunc.return_1+1
@@ -329,7 +310,7 @@ main: {
     sta.z __0+2
     lda.z ifunc.return_1+3
     sta.z __0+3
-    // [8] *((const dword*) SCREEN) ← (dword~) main::$0 -- _deref_pduc1=vduz1 
+    // [4] *((const dword*) SCREEN) ← (dword~) main::$0 -- _deref_pduc1=vduz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -341,7 +322,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // ifunc
@@ -352,9 +333,9 @@ ifunc: {
     .label delta = $a
     .label return = $16
     .label return_1 = $e
-    // [11] phi from ifunc to ifunc::@1 [phi:ifunc->ifunc::@1]
+    // [7] phi from ifunc to ifunc::@1 [phi:ifunc->ifunc::@1]
   __b1_from_ifunc:
-    // [11] phi (dword) ifunc::delta#2 = (dword) 3 [phi:ifunc->ifunc::@1#0] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::delta#2 = (dword) 3 [phi:ifunc->ifunc::@1#0] -- vduz1=vduc1 
     lda #<3
     sta.z delta
     lda #>3
@@ -363,7 +344,7 @@ ifunc: {
     sta.z delta+2
     lda #>3>>$10
     sta.z delta+3
-    // [11] phi (dword) ifunc::x#3 = (dword) 1 [phi:ifunc->ifunc::@1#1] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::x#3 = (dword) 1 [phi:ifunc->ifunc::@1#1] -- vduz1=vduc1 
     lda #<1
     sta.z x
     lda #>1
@@ -372,7 +353,7 @@ ifunc: {
     sta.z x+2
     lda #>1>>$10
     sta.z x+3
-    // [11] phi (dword) ifunc::xsqr#2 = (dword) 1 [phi:ifunc->ifunc::@1#2] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::xsqr#2 = (dword) 1 [phi:ifunc->ifunc::@1#2] -- vduz1=vduc1 
     lda #<1
     sta.z xsqr
     lda #>1
@@ -384,7 +365,7 @@ ifunc: {
     jmp __b1
     // ifunc::@1
   __b1:
-    // [12] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 -- vduz1_lt_vduc1_then_la1 
+    // [8] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 -- vduz1_lt_vduc1_then_la1 
     lda.z xsqr+3
     cmp #>a+1>>$10
     bcc __b2
@@ -404,7 +385,7 @@ ifunc: {
     jmp __b3
     // ifunc::@3
   __b3:
-    // [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz2 
+    // [9] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz2 
     lda.z x
     sec
     sbc #1
@@ -421,11 +402,11 @@ ifunc: {
     jmp __breturn
     // ifunc::@return
   __breturn:
-    // [14] return 
+    // [10] return 
     rts
     // ifunc::@2
   __b2:
-    // [15] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3 -- vduz1=_inc_vduz1 
+    // [11] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3 -- vduz1=_inc_vduz1 
     inc.z x
     bne !+
     inc.z x+1
@@ -434,7 +415,7 @@ ifunc: {
     bne !+
     inc.z x+3
   !:
-    // [16] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 -- vduz1=vduz1_plus_vduz2 
+    // [12] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 -- vduz1=vduz1_plus_vduz2 
     lda.z xsqr
     clc
     adc.z delta
@@ -448,7 +429,7 @@ ifunc: {
     lda.z xsqr+3
     adc.z delta+3
     sta.z xsqr+3
-    // [17] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 -- vduz1=vduz1_plus_vbuc1 
+    // [13] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 -- vduz1=vduz1_plus_vbuc1 
     lda.z delta
     clc
     adc #2
@@ -460,23 +441,23 @@ ifunc: {
     bne !+
     inc.z delta+3
   !:
-    // [11] phi from ifunc::@2 to ifunc::@1 [phi:ifunc::@2->ifunc::@1]
+    // [7] phi from ifunc::@2 to ifunc::@1 [phi:ifunc::@2->ifunc::@1]
   __b1_from___b2:
-    // [11] phi (dword) ifunc::delta#2 = (dword) ifunc::delta#1 [phi:ifunc::@2->ifunc::@1#0] -- register_copy 
-    // [11] phi (dword) ifunc::x#3 = (dword) ifunc::x#1 [phi:ifunc::@2->ifunc::@1#1] -- register_copy 
-    // [11] phi (dword) ifunc::xsqr#2 = (dword) ifunc::xsqr#1 [phi:ifunc::@2->ifunc::@1#2] -- register_copy 
+    // [7] phi (dword) ifunc::delta#2 = (dword) ifunc::delta#1 [phi:ifunc::@2->ifunc::@1#0] -- register_copy 
+    // [7] phi (dword) ifunc::x#3 = (dword) ifunc::x#1 [phi:ifunc::@2->ifunc::@1#1] -- register_copy 
+    // [7] phi (dword) ifunc::xsqr#2 = (dword) ifunc::xsqr#1 [phi:ifunc::@2->ifunc::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (dword) ifunc::return#2 ← (dword) ifunc::return#0 [ ifunc::return#2 ] ( main:2 [ ifunc::return#2 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
-Statement [7] (dword~) main::$0 ← (dword) ifunc::return#2 [ main::$0 ] ( main:2 [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const dword*) SCREEN) ← (dword~) main::$0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 [ ifunc::xsqr#2 ifunc::x#3 ifunc::delta#2 ] ( main:2::ifunc:5 [ ifunc::xsqr#2 ifunc::x#3 ifunc::delta#2 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
-Statement [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 [ ifunc::return#0 ] ( main:2::ifunc:5 [ ifunc::return#0 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
-Statement [16] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 [ ifunc::delta#2 ifunc::xsqr#1 ifunc::x#1 ] ( main:2::ifunc:5 [ ifunc::delta#2 ifunc::xsqr#1 ifunc::x#1 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
-Statement [17] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 [ ifunc::xsqr#1 ifunc::x#1 ifunc::delta#1 ] ( main:2::ifunc:5 [ ifunc::xsqr#1 ifunc::x#1 ifunc::delta#1 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
+Statement [2] (dword) ifunc::return#2 ← (dword) ifunc::return#0 [ ifunc::return#2 ] (  [ ifunc::return#2 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
+Statement [3] (dword~) main::$0 ← (dword) ifunc::return#2 [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [4] *((const dword*) SCREEN) ← (dword~) main::$0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 [ ifunc::xsqr#2 ifunc::x#3 ifunc::delta#2 ] ( ifunc:1 [ ifunc::xsqr#2 ifunc::x#3 ifunc::delta#2 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
+Statement [9] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 [ ifunc::return#0 ] ( ifunc:1 [ ifunc::return#0 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
+Statement [12] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 [ ifunc::delta#2 ifunc::xsqr#1 ifunc::x#1 ] ( ifunc:1 [ ifunc::delta#2 ifunc::xsqr#1 ifunc::x#1 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
+Statement [13] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 [ ifunc::xsqr#1 ifunc::x#1 ifunc::delta#1 ] ( ifunc:1 [ ifunc::xsqr#1 ifunc::x#1 ifunc::delta#1 ] { { ifunc::return#0 = ifunc::return#2 } }  ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] : zp[4]:2 , 
 Potential registers zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] : zp[4]:6 , 
 Potential registers zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] : zp[4]:10 , 
@@ -485,13 +466,13 @@ Potential registers zp[4]:18 [ main::$0 ] : zp[4]:18 ,
 Potential registers zp[4]:22 [ ifunc::return#0 ] : zp[4]:22 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [ifunc] 2,752.75: zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] 2,002: zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] 1,718.83: zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] 37.33: zp[4]:22 [ ifunc::return#0 ] 22: zp[4]:14 [ ifunc::return#2 ] 
-Uplift Scope [main] 22: zp[4]:18 [ main::$0 ] 
+Uplift Scope [ifunc] 277.75: zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] 202: zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] 173.83: zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] 4.33: zp[4]:22 [ ifunc::return#0 ] 4: zp[4]:14 [ ifunc::return#2 ] 
+Uplift Scope [main] 4: zp[4]:18 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [ifunc] best 2194 combination zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] zp[4]:22 [ ifunc::return#0 ] zp[4]:14 [ ifunc::return#2 ] 
-Uplifting [main] best 2194 combination zp[4]:18 [ main::$0 ] 
-Uplifting [] best 2194 combination 
+Uplifting [ifunc] best 2182 combination zp[4]:10 [ ifunc::delta#2 ifunc::delta#1 ] zp[4]:2 [ ifunc::xsqr#2 ifunc::xsqr#1 ] zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] zp[4]:22 [ ifunc::return#0 ] zp[4]:14 [ ifunc::return#2 ] 
+Uplifting [main] best 2182 combination zp[4]:18 [ main::$0 ] 
+Uplifting [] best 2182 combination 
 Coalescing zero page register [ zp[4]:6 [ ifunc::x#3 ifunc::x#1 ] ] with [ zp[4]:22 [ ifunc::return#0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:14 [ ifunc::return#2 ] ] with [ zp[4]:18 [ main::$0 ] ] - score: 1
 Coalescing zero page register [ zp[4]:6 [ ifunc::x#3 ifunc::x#1 ifunc::return#0 ] ] with [ zp[4]:14 [ ifunc::return#2 main::$0 ] ] - score: 1
@@ -504,35 +485,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __0 = 6
-    // [5] call ifunc 
-    // [10] phi from main to ifunc [phi:main->ifunc]
+    // [1] call ifunc 
+    // [6] phi from main to ifunc [phi:main->ifunc]
   ifunc_from_main:
     jsr ifunc
-    // [6] (dword) ifunc::return#2 ← (dword) ifunc::return#0
+    // [2] (dword) ifunc::return#2 ← (dword) ifunc::return#0
     jmp __b1
     // main::@1
   __b1:
-    // [7] (dword~) main::$0 ← (dword) ifunc::return#2
-    // [8] *((const dword*) SCREEN) ← (dword~) main::$0 -- _deref_pduc1=vduz1 
+    // [3] (dword~) main::$0 ← (dword) ifunc::return#2
+    // [4] *((const dword*) SCREEN) ← (dword~) main::$0 -- _deref_pduc1=vduz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -544,7 +509,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [5] return 
     rts
 }
   // ifunc
@@ -554,9 +519,9 @@ ifunc: {
     .label xsqr = 2
     .label delta = $a
     .label return = 6
-    // [11] phi from ifunc to ifunc::@1 [phi:ifunc->ifunc::@1]
+    // [7] phi from ifunc to ifunc::@1 [phi:ifunc->ifunc::@1]
   __b1_from_ifunc:
-    // [11] phi (dword) ifunc::delta#2 = (dword) 3 [phi:ifunc->ifunc::@1#0] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::delta#2 = (dword) 3 [phi:ifunc->ifunc::@1#0] -- vduz1=vduc1 
     lda #<3
     sta.z delta
     lda #>3
@@ -565,7 +530,7 @@ ifunc: {
     sta.z delta+2
     lda #>3>>$10
     sta.z delta+3
-    // [11] phi (dword) ifunc::x#3 = (dword) 1 [phi:ifunc->ifunc::@1#1] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::x#3 = (dword) 1 [phi:ifunc->ifunc::@1#1] -- vduz1=vduc1 
     lda #<1
     sta.z x
     lda #>1
@@ -574,7 +539,7 @@ ifunc: {
     sta.z x+2
     lda #>1>>$10
     sta.z x+3
-    // [11] phi (dword) ifunc::xsqr#2 = (dword) 1 [phi:ifunc->ifunc::@1#2] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::xsqr#2 = (dword) 1 [phi:ifunc->ifunc::@1#2] -- vduz1=vduc1 
     lda #<1
     sta.z xsqr
     lda #>1
@@ -586,7 +551,7 @@ ifunc: {
     jmp __b1
     // ifunc::@1
   __b1:
-    // [12] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 -- vduz1_lt_vduc1_then_la1 
+    // [8] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 -- vduz1_lt_vduc1_then_la1 
     lda.z xsqr+3
     cmp #>a+1>>$10
     bcc __b2
@@ -606,7 +571,7 @@ ifunc: {
     jmp __b3
     // ifunc::@3
   __b3:
-    // [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz1 
+    // [9] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz1 
     lda.z return
     sec
     sbc #1
@@ -623,11 +588,11 @@ ifunc: {
     jmp __breturn
     // ifunc::@return
   __breturn:
-    // [14] return 
+    // [10] return 
     rts
     // ifunc::@2
   __b2:
-    // [15] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3 -- vduz1=_inc_vduz1 
+    // [11] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3 -- vduz1=_inc_vduz1 
     inc.z x
     bne !+
     inc.z x+1
@@ -636,7 +601,7 @@ ifunc: {
     bne !+
     inc.z x+3
   !:
-    // [16] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 -- vduz1=vduz1_plus_vduz2 
+    // [12] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 -- vduz1=vduz1_plus_vduz2 
     lda.z xsqr
     clc
     adc.z delta
@@ -650,7 +615,7 @@ ifunc: {
     lda.z xsqr+3
     adc.z delta+3
     sta.z xsqr+3
-    // [17] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 -- vduz1=vduz1_plus_vbuc1 
+    // [13] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 -- vduz1=vduz1_plus_vbuc1 
     lda.z delta
     clc
     adc #2
@@ -662,31 +627,22 @@ ifunc: {
     bne !+
     inc.z delta+3
   !:
-    // [11] phi from ifunc::@2 to ifunc::@1 [phi:ifunc::@2->ifunc::@1]
+    // [7] phi from ifunc::@2 to ifunc::@1 [phi:ifunc::@2->ifunc::@1]
   __b1_from___b2:
-    // [11] phi (dword) ifunc::delta#2 = (dword) ifunc::delta#1 [phi:ifunc::@2->ifunc::@1#0] -- register_copy 
-    // [11] phi (dword) ifunc::x#3 = (dword) ifunc::x#1 [phi:ifunc::@2->ifunc::@1#1] -- register_copy 
-    // [11] phi (dword) ifunc::xsqr#2 = (dword) ifunc::xsqr#1 [phi:ifunc::@2->ifunc::@1#2] -- register_copy 
+    // [7] phi (dword) ifunc::delta#2 = (dword) ifunc::delta#1 [phi:ifunc::@2->ifunc::@1#0] -- register_copy 
+    // [7] phi (dword) ifunc::x#3 = (dword) ifunc::x#1 [phi:ifunc::@2->ifunc::@1#1] -- register_copy 
+    // [7] phi (dword) ifunc::xsqr#2 = (dword) ifunc::xsqr#1 [phi:ifunc::@2->ifunc::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction ifunc_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
@@ -695,13 +651,8 @@ Removing instruction __b3:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const dword*) SCREEN = (dword*) 1024
 (dword()) ifunc((dword) ifunc::a)
 (label) ifunc::@1
@@ -711,19 +662,19 @@ FINAL SYMBOL TABLE
 (dword) ifunc::a
 (const dword) ifunc::a#0 a = (byte) 8
 (dword) ifunc::delta
-(dword) ifunc::delta#1 delta zp[4]:10 2002.0
-(dword) ifunc::delta#2 delta zp[4]:10 750.75
+(dword) ifunc::delta#1 delta zp[4]:10 202.0
+(dword) ifunc::delta#2 delta zp[4]:10 75.75
 (dword) ifunc::return
-(dword) ifunc::return#0 return zp[4]:6 37.33333333333333
-(dword) ifunc::return#2 return zp[4]:6 22.0
+(dword) ifunc::return#0 return zp[4]:6 4.333333333333333
+(dword) ifunc::return#2 return zp[4]:6 4.0
 (dword) ifunc::x
-(dword) ifunc::x#1 x zp[4]:6 667.3333333333334
-(dword) ifunc::x#3 x zp[4]:6 1051.5
+(dword) ifunc::x#1 x zp[4]:6 67.33333333333333
+(dword) ifunc::x#3 x zp[4]:6 106.5
 (dword) ifunc::xsqr
-(dword) ifunc::xsqr#1 xsqr zp[4]:2 1001.0
-(dword) ifunc::xsqr#2 xsqr zp[4]:2 1001.0
+(dword) ifunc::xsqr#1 xsqr zp[4]:2 101.0
+(dword) ifunc::xsqr#2 xsqr zp[4]:2 101.0
 (void()) main()
-(dword~) main::$0 zp[4]:6 22.0
+(dword~) main::$0 zp[4]:6 4.0
 (label) main::@1
 (label) main::@return
 
@@ -742,26 +693,19 @@ Score: 2065
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label __0 = 6
     // ifunc(8)
-    // [5] call ifunc 
-    // [10] phi from main to ifunc [phi:main->ifunc]
+    // [1] call ifunc 
+    // [6] phi from main to ifunc [phi:main->ifunc]
     jsr ifunc
     // ifunc(8)
-    // [6] (dword) ifunc::return#2 ← (dword) ifunc::return#0
+    // [2] (dword) ifunc::return#2 ← (dword) ifunc::return#0
     // main::@1
-    // [7] (dword~) main::$0 ← (dword) ifunc::return#2
+    // [3] (dword~) main::$0 ← (dword) ifunc::return#2
     // SCREEN[0] = ifunc(8)
-    // [8] *((const dword*) SCREEN) ← (dword~) main::$0 -- _deref_pduc1=vduz1 
+    // [4] *((const dword*) SCREEN) ← (dword~) main::$0 -- _deref_pduc1=vduz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -772,7 +716,7 @@ main: {
     sta SCREEN+3
     // main::@return
     // }
-    // [9] return 
+    // [5] return 
     rts
 }
   // ifunc
@@ -782,8 +726,8 @@ ifunc: {
     .label xsqr = 2
     .label delta = $a
     .label return = 6
-    // [11] phi from ifunc to ifunc::@1 [phi:ifunc->ifunc::@1]
-    // [11] phi (dword) ifunc::delta#2 = (dword) 3 [phi:ifunc->ifunc::@1#0] -- vduz1=vduc1 
+    // [7] phi from ifunc to ifunc::@1 [phi:ifunc->ifunc::@1]
+    // [7] phi (dword) ifunc::delta#2 = (dword) 3 [phi:ifunc->ifunc::@1#0] -- vduz1=vduc1 
     lda #<3
     sta.z delta
     lda #>3
@@ -792,7 +736,7 @@ ifunc: {
     sta.z delta+2
     lda #>3>>$10
     sta.z delta+3
-    // [11] phi (dword) ifunc::x#3 = (dword) 1 [phi:ifunc->ifunc::@1#1] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::x#3 = (dword) 1 [phi:ifunc->ifunc::@1#1] -- vduz1=vduc1 
     lda #<1
     sta.z x
     lda #>1
@@ -801,7 +745,7 @@ ifunc: {
     sta.z x+2
     lda #>1>>$10
     sta.z x+3
-    // [11] phi (dword) ifunc::xsqr#2 = (dword) 1 [phi:ifunc->ifunc::@1#2] -- vduz1=vduc1 
+    // [7] phi (dword) ifunc::xsqr#2 = (dword) 1 [phi:ifunc->ifunc::@1#2] -- vduz1=vduc1 
     lda #<1
     sta.z xsqr
     lda #>1
@@ -813,7 +757,7 @@ ifunc: {
     // ifunc::@1
   __b1:
     // while(xsqr <=a)
-    // [12] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 -- vduz1_lt_vduc1_then_la1 
+    // [8] if((dword) ifunc::xsqr#2<(const dword) ifunc::a#0+(byte) 1) goto ifunc::@2 -- vduz1_lt_vduc1_then_la1 
     lda.z xsqr+3
     cmp #>a+1>>$10
     bcc __b2
@@ -832,7 +776,7 @@ ifunc: {
   !:
     // ifunc::@3
     // return --x;
-    // [13] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz1 
+    // [9] (dword) ifunc::return#0 ← -- (dword) ifunc::x#3 -- vduz1=_dec_vduz1 
     lda.z return
     sec
     sbc #1
@@ -848,12 +792,12 @@ ifunc: {
     sta.z return+3
     // ifunc::@return
     // }
-    // [14] return 
+    // [10] return 
     rts
     // ifunc::@2
   __b2:
     // ++x;
-    // [15] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3 -- vduz1=_inc_vduz1 
+    // [11] (dword) ifunc::x#1 ← ++ (dword) ifunc::x#3 -- vduz1=_inc_vduz1 
     inc.z x
     bne !+
     inc.z x+1
@@ -863,7 +807,7 @@ ifunc: {
     inc.z x+3
   !:
     // xsqr += delta
-    // [16] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 -- vduz1=vduz1_plus_vduz2 
+    // [12] (dword) ifunc::xsqr#1 ← (dword) ifunc::xsqr#2 + (dword) ifunc::delta#2 -- vduz1=vduz1_plus_vduz2 
     lda.z xsqr
     clc
     adc.z delta
@@ -878,7 +822,7 @@ ifunc: {
     adc.z delta+3
     sta.z xsqr+3
     // delta += 2
-    // [17] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 -- vduz1=vduz1_plus_vbuc1 
+    // [13] (dword) ifunc::delta#1 ← (dword) ifunc::delta#2 + (byte) 2 -- vduz1=vduz1_plus_vbuc1 
     lda.z delta
     clc
     adc #2
@@ -890,10 +834,10 @@ ifunc: {
     bne !+
     inc.z delta+3
   !:
-    // [11] phi from ifunc::@2 to ifunc::@1 [phi:ifunc::@2->ifunc::@1]
-    // [11] phi (dword) ifunc::delta#2 = (dword) ifunc::delta#1 [phi:ifunc::@2->ifunc::@1#0] -- register_copy 
-    // [11] phi (dword) ifunc::x#3 = (dword) ifunc::x#1 [phi:ifunc::@2->ifunc::@1#1] -- register_copy 
-    // [11] phi (dword) ifunc::xsqr#2 = (dword) ifunc::xsqr#1 [phi:ifunc::@2->ifunc::@1#2] -- register_copy 
+    // [7] phi from ifunc::@2 to ifunc::@1 [phi:ifunc::@2->ifunc::@1]
+    // [7] phi (dword) ifunc::delta#2 = (dword) ifunc::delta#1 [phi:ifunc::@2->ifunc::@1#0] -- register_copy 
+    // [7] phi (dword) ifunc::x#3 = (dword) ifunc::x#1 [phi:ifunc::@2->ifunc::@1#1] -- register_copy 
+    // [7] phi (dword) ifunc::xsqr#2 = (dword) ifunc::xsqr#1 [phi:ifunc::@2->ifunc::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data

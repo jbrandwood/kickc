@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (signed word) main::i#0 ← (signed word) -$a
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -19,19 +18,28 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*)(number) $400+(number) $28*(number) $a
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (byte*~) main::$0
 (bool~) main::$1
@@ -52,7 +60,14 @@ Constant (const signed word) main::i#0 = -$a
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
 Resolved ranged comparison value [6] if(main::i#1!=rangelast(-$a,$a)) goto main::@1 to (number) $b
-Adding number conversion cast (snumber) $b in if((signed word) main::i#1!=(number) $b) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (snumber) $b in [4] if((signed word) main::i#1!=(number) $b) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
@@ -62,58 +77,40 @@ Inlining constant with var siblings (const signed word) main::i#0
 Constant inlined main::i#0 = (signed word) -$a
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] main::i#3 ← main::i#1
+Coalesced [7] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (signed word) main::i#2 ← phi( main/(signed word) -$a main::@1/(signed word) main::i#1 )
-  [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2
-  [7] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2
-  [8] (signed word) main::i#1 ← ++ (signed word) main::i#2
-  [9] if((signed word) main::i#1!=(signed byte) $b) goto main::@1
+  [1] (signed word) main::i#2 ← phi( main/(signed word) -$a main::@1/(signed word) main::i#1 )
+  [2] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2
+  [3] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2
+  [4] (signed word) main::i#1 ← ++ (signed word) main::i#2
+  [5] if((signed word) main::i#1!=(signed byte) $b) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [10] return 
+  [6] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (signed word) main::i
-(signed word) main::i#1 151.5
-(signed word) main::i#2 101.0
+(signed word) main::i#1 16.5
+(signed word) main::i#2 11.0
 (byte*) main::sc
-(byte*) main::sc#0 202.0
+(byte*) main::sc#0 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -135,41 +132,25 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400+$28*$a
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label sc = 4
     .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
+    // [1] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-$a
     sta.z i
     lda #>-$a
     sta.z i+1
     jmp __b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [5] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [2] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
     adc.z i
@@ -177,16 +158,16 @@ main: {
     lda #>SCREEN
     adc.z i+1
     sta.z sc+1
-    // [7] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 -- _deref_pbuz1=_byte_vwsz2 
+    // [3] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 -- _deref_pbuz1=_byte_vwsz2 
     lda.z i
     ldy #0
     sta (sc),y
-    // [8] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
+    // [4] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1
   !:
-    // [9] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
+    // [5] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
     lda.z i+1
     cmp #>$b
     bne __b1_from___b1
@@ -196,24 +177,24 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 [ main::i#2 main::sc#0 ] ( main:2 [ main::i#2 main::sc#0 ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 [ main::i#1 ] ( main:2 [ main::i#1 ] { }  ) always clobbers reg byte a 
+Statement [2] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 [ main::i#2 main::sc#0 ] (  [ main::i#2 main::sc#0 ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::sc#0 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 252.5: zp[2]:2 [ main::i#2 main::i#1 ] 202: zp[2]:4 [ main::sc#0 ] 
+Uplift Scope [main] 27.5: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::sc#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 773 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::sc#0 ] 
-Uplifting [] best 773 combination 
+Uplifting [main] best 761 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::sc#0 ] 
+Uplifting [] best 761 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -225,41 +206,25 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400+$28*$a
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label sc = 4
     .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
+    // [1] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-$a
     sta.z i
     lda #>-$a
     sta.z i+1
     jmp __b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [5] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [2] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
     adc.z i
@@ -267,16 +232,16 @@ main: {
     lda #>SCREEN
     adc.z i+1
     sta.z sc+1
-    // [7] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 -- _deref_pbuz1=_byte_vwsz2 
+    // [3] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 -- _deref_pbuz1=_byte_vwsz2 
     lda.z i
     ldy #0
     sta (sc),y
-    // [8] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
+    // [4] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1
   !:
-    // [9] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
+    // [5] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
     lda.z i+1
     cmp #>$b
     bne __b1_from___b1
@@ -286,48 +251,35 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*)(number) $400+(number) $28*(number) $a
 (void()) main()
 (label) main::@1
 (label) main::@return
 (signed word) main::i
-(signed word) main::i#1 i zp[2]:2 151.5
-(signed word) main::i#2 i zp[2]:2 101.0
+(signed word) main::i#1 i zp[2]:2 16.5
+(signed word) main::i#2 i zp[2]:2 11.0
 (byte*) main::sc
-(byte*) main::sc#0 sc zp[2]:4 202.0
+(byte*) main::sc#0 sc zp[2]:4 22.0
 
 zp[2]:2 [ main::i#2 main::i#1 ]
 zp[2]:4 [ main::sc#0 ]
@@ -345,29 +297,22 @@ Score: 671
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400+$28*$a
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label sc = 4
     .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (signed word) main::i#2 = (signed word) -$a [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-$a
     sta.z i
     lda #>-$a
     sta.z i+1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [5] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // sc = SCREEN + i
-    // [6] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [2] (byte*) main::sc#0 ← (const byte*) SCREEN + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<SCREEN
     clc
     adc.z i
@@ -376,17 +321,17 @@ main: {
     adc.z i+1
     sta.z sc+1
     // *sc = (char)i
-    // [7] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 -- _deref_pbuz1=_byte_vwsz2 
+    // [3] *((byte*) main::sc#0) ← (byte)(signed word) main::i#2 -- _deref_pbuz1=_byte_vwsz2 
     lda.z i
     ldy #0
     sta (sc),y
     // for (signed word i : -10..10 )
-    // [8] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
+    // [4] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1
   !:
-    // [9] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
+    // [5] if((signed word) main::i#1!=(signed byte) $b) goto main::@1 -- vwsz1_neq_vwuc1_then_la1 
     lda.z i+1
     cmp #>$b
     bne __b1
@@ -395,7 +340,7 @@ main: {
     bne __b1
     // main::@return
     // }
-    // [10] return 
+    // [6] return 
     rts
 }
   // File Data

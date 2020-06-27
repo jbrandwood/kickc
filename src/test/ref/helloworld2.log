@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte*) print2::at#0 ← (const byte*) screen
   (byte*) print2::msg#0 ← (const byte*) main::hello
   call print2 
@@ -48,18 +47,27 @@ print2::@2: scope:[print2]  from print2::@1
 print2::@return: scope:[print2]  from print2::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (byte*~) main::$1
 (label) main::@1
@@ -128,6 +136,13 @@ Constant (const byte*) print2::msg#1 = main::hello
 Constant (const byte) print2::j#0 = 0
 Constant (const byte) print2::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte*) print2::at#0
 Inlining constant with var siblings (const byte*) print2::msg#0
 Inlining constant with var siblings (const byte*) print2::at#1
@@ -143,69 +158,51 @@ Constant inlined print2::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (byte*) print2::msg#4 (const byte*) main::hello
 Successful SSA optimization Pass2IdenticalPhiElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to print2:6 print2:8 
+Calls in [main] to print2:1 print2:3 
 
 Created 3 initial phi equivalence classes
-Coalesced [18] print2::i#4 ← print2::i#1
-Coalesced [19] print2::j#4 ← print2::j#1
+Coalesced [13] print2::i#4 ← print2::i#1
+Coalesced [14] print2::j#4 ← print2::j#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call print2 
+main: scope:[main]  from
+  [0] phi()
+  [1] call print2 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call print2 
+  [2] phi()
+  [3] call print2 
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [8] return 
+  [4] return 
   to:@return
 
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
 print2: scope:[print2]  from main main::@1
-  [9] (byte*) print2::at#4 ← phi( main/(const byte*) screen main::@1/(const byte*) screen+(byte) $50 )
+  [5] (byte*) print2::at#4 ← phi( main/(const byte*) screen main::@1/(const byte*) screen+(byte) $50 )
   to:print2::@1
 print2::@1: scope:[print2]  from print2 print2::@2
-  [10] (byte) print2::j#2 ← phi( print2/(byte) 0 print2::@2/(byte) print2::j#1 )
-  [10] (byte) print2::i#2 ← phi( print2/(byte) 0 print2::@2/(byte) print2::i#1 )
-  [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2
+  [6] (byte) print2::j#2 ← phi( print2/(byte) 0 print2::@2/(byte) print2::j#1 )
+  [6] (byte) print2::i#2 ← phi( print2/(byte) 0 print2::@2/(byte) print2::i#1 )
+  [7] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2
   to:print2::@return
 print2::@return: scope:[print2]  from print2::@1
-  [12] return 
+  [8] return 
   to:@return
 print2::@2: scope:[print2]  from print2::@1
-  [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2)
-  [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2
-  [15] (byte) print2::i#1 ← ++ (byte) print2::i#2
+  [9] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2)
+  [10] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2
+  [11] (byte) print2::i#1 ← ++ (byte) print2::i#2
   to:print2::@1
 
 
@@ -213,13 +210,13 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (void()) print2((byte*) print2::at , (byte*) print2::msg)
 (byte*) print2::at
-(byte*) print2::at#4 166.83333333333334
+(byte*) print2::at#4 16.833333333333332
 (byte) print2::i
-(byte) print2::i#1 2002.0
-(byte) print2::i#2 1001.0
+(byte) print2::i#1 202.0
+(byte) print2::i#2 101.0
 (byte) print2::j
-(byte) print2::j#1 1001.0
-(byte) print2::j#2 1001.0
+(byte) print2::j#1 101.0
+(byte) print2::j#2 101.0
 (byte*) print2::msg
 
 Initial phi equivalence classes
@@ -243,42 +240,26 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call print2 
-    // [9] phi from main to print2 [phi:main->print2]
+    // [1] call print2 
+    // [5] phi from main to print2 [phi:main->print2]
   print2_from_main:
-    // [9] phi (byte*) print2::at#4 = (const byte*) screen [phi:main->print2#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) print2::at#4 = (const byte*) screen [phi:main->print2#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z print2.at
     lda #>screen
     sta.z print2.at+1
     jsr print2
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call print2 
-    // [9] phi from main::@1 to print2 [phi:main::@1->print2]
+    // [3] call print2 
+    // [5] phi from main::@1 to print2 [phi:main::@1->print2]
   print2_from___b1:
-    // [9] phi (byte*) print2::at#4 = (const byte*) screen+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) print2::at#4 = (const byte*) screen+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
     sta.z print2.at
     lda #>screen+$50
@@ -287,7 +268,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
     hello: .text "hello world!"
     .byte 0
@@ -298,18 +279,18 @@ print2: {
     .label j = 5
     .label i = 4
     .label at = 2
-    // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
+    // [6] phi from print2 to print2::@1 [phi:print2->print2::@1]
   __b1_from_print2:
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z j
-    // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuz1=vbuc1 
+    // [6] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // print2::@1
   __b1:
-    // [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [7] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp main.hello,y
@@ -317,49 +298,49 @@ print2: {
     jmp __breturn
     // print2::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
     // print2::@2
   __b2:
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
+    // [9] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
     ldy.z i
     lda main.hello,y
     ldy.z j
     sta (at),y
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
+    // [10] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuz1=vbuz1_plus_2 
     lda.z j
     clc
     adc #2
     sta.z j
-    // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuz1=_inc_vbuz1 
+    // [11] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
+    // [6] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
   __b1_from___b2:
-    // [10] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
-    // [10] phi (byte) print2::i#2 = (byte) print2::i#1 [phi:print2::@2->print2::@1#1] -- register_copy 
+    // [6] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
+    // [6] phi (byte) print2::i#2 = (byte) print2::i#1 [phi:print2::@2->print2::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] { }  main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
+Statement [7] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( print2:1 [ print2::at#4 print2::i#2 print2::j#2 ] { }  print2:3 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ print2::i#2 print2::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ print2::j#2 print2::j#1 ]
-Statement [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] { }  main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
-Statement [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] { }  main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( main:2::print2:5 [ print2::at#4 print2::i#2 print2::j#2 ] { }  main:2::print2:7 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( print2:1 [ print2::at#4 print2::i#2 print2::j#2 ] { }  print2:3 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
+Statement [7] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 [ print2::at#4 print2::i#2 print2::j#2 ] ( print2:1 [ print2::at#4 print2::i#2 print2::j#2 ] { }  print2:3 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) [ print2::at#4 print2::i#2 print2::j#2 ] ( print2:1 [ print2::at#4 print2::i#2 print2::j#2 ] { }  print2:3 [ print2::at#4 print2::i#2 print2::j#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ print2::at#4 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ print2::i#2 print2::i#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ print2::j#2 print2::j#1 ] : zp[1]:5 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [print2] 3,003: zp[1]:4 [ print2::i#2 print2::i#1 ] 2,002: zp[1]:5 [ print2::j#2 print2::j#1 ] 166.83: zp[2]:2 [ print2::at#4 ] 
+Uplift Scope [print2] 303: zp[1]:4 [ print2::i#2 print2::i#1 ] 202: zp[1]:5 [ print2::j#2 print2::j#1 ] 16.83: zp[2]:2 [ print2::at#4 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [print2] best 447 combination reg byte x [ print2::i#2 print2::i#1 ] reg byte y [ print2::j#2 print2::j#1 ] zp[2]:2 [ print2::at#4 ] 
-Uplifting [main] best 447 combination 
-Uplifting [] best 447 combination 
+Uplifting [print2] best 435 combination reg byte x [ print2::i#2 print2::i#1 ] reg byte y [ print2::j#2 print2::j#1 ] zp[2]:2 [ print2::at#4 ] 
+Uplifting [main] best 435 combination 
+Uplifting [] best 435 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -369,42 +350,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call print2 
-    // [9] phi from main to print2 [phi:main->print2]
+    // [1] call print2 
+    // [5] phi from main to print2 [phi:main->print2]
   print2_from_main:
-    // [9] phi (byte*) print2::at#4 = (const byte*) screen [phi:main->print2#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) print2::at#4 = (const byte*) screen [phi:main->print2#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z print2.at
     lda #>screen
     sta.z print2.at+1
     jsr print2
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call print2 
-    // [9] phi from main::@1 to print2 [phi:main::@1->print2]
+    // [3] call print2 
+    // [5] phi from main::@1 to print2 [phi:main::@1->print2]
   print2_from___b1:
-    // [9] phi (byte*) print2::at#4 = (const byte*) screen+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
+    // [5] phi (byte*) print2::at#4 = (const byte*) screen+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
     sta.z print2.at
     lda #>screen+$50
@@ -413,7 +378,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
     hello: .text "hello world!"
     .byte 0
@@ -422,59 +387,51 @@ main: {
 // print2(byte* zp(2) at)
 print2: {
     .label at = 2
-    // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
+    // [6] phi from print2 to print2::@1 [phi:print2->print2::@1]
   __b1_from_print2:
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
+    // [6] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
+    // [6] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // print2::@1
   __b1:
-    // [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda main.hello,x
     cmp #0
     bne __b2
     jmp __breturn
     // print2::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
     // print2::@2
   __b2:
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+    // [9] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda main.hello,x
     sta (at),y
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
+    // [10] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
     iny
     iny
-    // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
+    // [6] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
   __b1_from___b2:
-    // [10] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
-    // [10] phi (byte) print2::i#2 = (byte) print2::i#1 [phi:print2::@2->print2::@1#1] -- register_copy 
+    // [6] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
+    // [6] phi (byte) print2::i#2 = (byte) print2::i#1 [phi:print2::@2->print2::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction print2_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction print2_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
@@ -482,13 +439,8 @@ Removing instruction __b1_from_print2:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -498,13 +450,13 @@ FINAL SYMBOL TABLE
 (label) print2::@2
 (label) print2::@return
 (byte*) print2::at
-(byte*) print2::at#4 at zp[2]:2 166.83333333333334
+(byte*) print2::at#4 at zp[2]:2 16.833333333333332
 (byte) print2::i
-(byte) print2::i#1 reg byte x 2002.0
-(byte) print2::i#2 reg byte x 1001.0
+(byte) print2::i#1 reg byte x 202.0
+(byte) print2::i#2 reg byte x 101.0
 (byte) print2::j
-(byte) print2::j#1 reg byte y 1001.0
-(byte) print2::j#2 reg byte y 1001.0
+(byte) print2::j#1 reg byte y 101.0
+(byte) print2::j#2 reg byte y 101.0
 (byte*) print2::msg
 (const byte*) screen = (byte*) 1024
 
@@ -523,30 +475,23 @@ Score: 369
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // print2(screen, hello)
-    // [5] call print2 
-    // [9] phi from main to print2 [phi:main->print2]
-    // [9] phi (byte*) print2::at#4 = (const byte*) screen [phi:main->print2#0] -- pbuz1=pbuc1 
+    // [1] call print2 
+    // [5] phi from main to print2 [phi:main->print2]
+    // [5] phi (byte*) print2::at#4 = (const byte*) screen [phi:main->print2#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z print2.at
     lda #>screen
     sta.z print2.at+1
     jsr print2
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // print2(screen+80, hello)
-    // [7] call print2 
-    // [9] phi from main::@1 to print2 [phi:main::@1->print2]
-    // [9] phi (byte*) print2::at#4 = (const byte*) screen+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
+    // [3] call print2 
+    // [5] phi from main::@1 to print2 [phi:main::@1->print2]
+    // [5] phi (byte*) print2::at#4 = (const byte*) screen+(byte) $50 [phi:main::@1->print2#0] -- pbuz1=pbuc1 
     lda #<screen+$50
     sta.z print2.at
     lda #>screen+$50
@@ -554,7 +499,7 @@ main: {
     jsr print2
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
     hello: .text "hello world!"
     .byte 0
@@ -563,38 +508,38 @@ main: {
 // print2(byte* zp(2) at)
 print2: {
     .label at = 2
-    // [10] phi from print2 to print2::@1 [phi:print2->print2::@1]
-    // [10] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
+    // [6] phi from print2 to print2::@1 [phi:print2->print2::@1]
+    // [6] phi (byte) print2::j#2 = (byte) 0 [phi:print2->print2::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    // [10] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
+    // [6] phi (byte) print2::i#2 = (byte) 0 [phi:print2->print2::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // print2::@1
   __b1:
     // for(byte i=0; msg[i]; i++)
-    // [11] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if((byte) 0!=*((const byte*) main::hello + (byte) print2::i#2)) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda main.hello,x
     cmp #0
     bne __b2
     // print2::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
     // print2::@2
   __b2:
     // at[j] = msg[i]
-    // [13] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+    // [9] *((byte*) print2::at#4 + (byte) print2::j#2) ← *((const byte*) main::hello + (byte) print2::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda main.hello,x
     sta (at),y
     // j += 2
-    // [14] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
+    // [10] (byte) print2::j#1 ← (byte) print2::j#2 + (byte) 2 -- vbuyy=vbuyy_plus_2 
     iny
     iny
     // for(byte i=0; msg[i]; i++)
-    // [15] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
+    // [11] (byte) print2::i#1 ← ++ (byte) print2::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
-    // [10] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
-    // [10] phi (byte) print2::i#2 = (byte) print2::i#1 [phi:print2::@2->print2::@1#1] -- register_copy 
+    // [6] phi from print2::@2 to print2::@1 [phi:print2::@2->print2::@1]
+    // [6] phi (byte) print2::j#2 = (byte) print2::j#1 [phi:print2::@2->print2::@1#0] -- register_copy 
+    // [6] phi (byte) print2::i#2 = (byte) print2::i#1 [phi:print2::@2->print2::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

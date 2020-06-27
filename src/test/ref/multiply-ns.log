@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte) main::i#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
@@ -46,18 +44,21 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (number~) main::$0
 (number~) main::$1
@@ -187,7 +188,12 @@ Simplifying constant evaluating to zero (byte)(number) 0*(number) $28 in [3] *((
 Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero main::SCREEN in [3] *((const nomodify byte*) main::SCREEN+(byte) 0 + (byte) main::i#2) ← (byte~) main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Adding number conversion cast (unumber) $12 in if((byte) main::i#1!=(number) $12) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) $12 in [32] if((byte) main::i#1!=(number) $12) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $12
 Successful SSA optimization PassNCastSimplification
@@ -242,129 +248,111 @@ Alias main::$18 = main::$3 main::$29 main::$32
 Alias main::$27 = main::$7 
 Successful SSA optimization Pass2AliasElimination
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [55] main::i#3 ← main::i#1
+Coalesced [50] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2
-  [7] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1
-  [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16
-  [9] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2
-  [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2
-  [11] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2
-  [12] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18
-  [13] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2
-  [14] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4
-  [15] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2
-  [16] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1
-  [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5
-  [18] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2
-  [19] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1
-  [20] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2
-  [21] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6
-  [22] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3
-  [23] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27
-  [24] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2
-  [25] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8
-  [26] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2
-  [27] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1
-  [28] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9
-  [29] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2
-  [30] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1
-  [31] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2
-  [32] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10
-  [33] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2
-  [34] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2
-  [35] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11
-  [36] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2
-  [37] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2
-  [38] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2
-  [39] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12
-  [40] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2
-  [41] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1
-  [42] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2
-  [43] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1
-  [44] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13
-  [45] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2
-  [46] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1
-  [47] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2
-  [48] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1
-  [49] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2
-  [50] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14
-  [51] (byte) main::i#1 ← ++ (byte) main::i#2
-  [52] if((byte) main::i#1!=(byte) $12) goto main::@1
+  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [2] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2
+  [3] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1
+  [4] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16
+  [5] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2
+  [6] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2
+  [7] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2
+  [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18
+  [9] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2
+  [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4
+  [11] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2
+  [12] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1
+  [13] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5
+  [14] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2
+  [15] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1
+  [16] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2
+  [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6
+  [18] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3
+  [19] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27
+  [20] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2
+  [21] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8
+  [22] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2
+  [23] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1
+  [24] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9
+  [25] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2
+  [26] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1
+  [27] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2
+  [28] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10
+  [29] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2
+  [30] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2
+  [31] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11
+  [32] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2
+  [33] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2
+  [34] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2
+  [35] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12
+  [36] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2
+  [37] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1
+  [38] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2
+  [39] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1
+  [40] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13
+  [41] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2
+  [42] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1
+  [43] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2
+  [44] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1
+  [45] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2
+  [46] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14
+  [47] (byte) main::i#1 ← ++ (byte) main::i#2
+  [48] if((byte) main::i#1!=(byte) $12) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [53] return 
+  [49] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$10 202.0
-(byte~) main::$11 202.0
-(byte~) main::$12 202.0
-(byte~) main::$13 202.0
-(byte~) main::$14 202.0
-(byte~) main::$16 23.921052631578952
-(byte~) main::$18 28.055555555555554
-(byte~) main::$2 202.0
-(byte~) main::$21 202.0
-(byte~) main::$24 202.0
-(byte~) main::$25 202.0
-(byte~) main::$27 151.5
-(byte~) main::$30 202.0
-(byte~) main::$33 202.0
-(byte~) main::$34 202.0
-(byte~) main::$37 202.0
-(byte~) main::$4 202.0
-(byte~) main::$40 202.0
-(byte~) main::$41 202.0
-(byte~) main::$44 202.0
-(byte~) main::$45 202.0
-(byte~) main::$46 202.0
-(byte~) main::$49 202.0
-(byte~) main::$5 202.0
-(byte~) main::$50 202.0
-(byte~) main::$51 202.0
-(byte~) main::$52 202.0
-(byte~) main::$6 202.0
-(byte~) main::$8 202.0
-(byte~) main::$9 202.0
+(byte~) main::$10 22.0
+(byte~) main::$11 22.0
+(byte~) main::$12 22.0
+(byte~) main::$13 22.0
+(byte~) main::$14 22.0
+(byte~) main::$16 2.605263157894737
+(byte~) main::$18 3.055555555555556
+(byte~) main::$2 22.0
+(byte~) main::$21 22.0
+(byte~) main::$24 22.0
+(byte~) main::$25 22.0
+(byte~) main::$27 16.5
+(byte~) main::$30 22.0
+(byte~) main::$33 22.0
+(byte~) main::$34 22.0
+(byte~) main::$37 22.0
+(byte~) main::$4 22.0
+(byte~) main::$40 22.0
+(byte~) main::$41 22.0
+(byte~) main::$44 22.0
+(byte~) main::$45 22.0
+(byte~) main::$46 22.0
+(byte~) main::$49 22.0
+(byte~) main::$5 22.0
+(byte~) main::$50 22.0
+(byte~) main::$51 22.0
+(byte~) main::$52 22.0
+(byte~) main::$6 22.0
+(byte~) main::$8 22.0
+(byte~) main::$9 22.0
 (byte) main::i
-(byte) main::i#1 151.5
-(byte) main::i#2 83.43478260869571
+(byte) main::i#1 16.5
+(byte) main::i#2 9.086956521739129
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -471,22 +459,6 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
@@ -521,301 +493,301 @@ main: {
     .label __50 = $1d
     .label __51 = $1e
     .label __52 = $1f
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [2] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
-    // [7] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [3] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
     sta.z __16
-    // [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __16
     ldy.z i
     sta SCREEN+1*$28,y
-    // [9] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [5] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __2
-    // [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [6] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __2
     ldy.z i
     sta SCREEN+2*$28,y
-    // [11] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [7] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z i
     asl
     asl
     sta.z __18
-    // [12] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __18
     ldy.z i
     sta SCREEN+3*$28,y
-    // [13] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [9] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __18
     clc
     adc.z i
     sta.z __4
-    // [14] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __4
     ldy.z i
     sta SCREEN+4*$28,y
-    // [15] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [11] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __21
-    // [16] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [12] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __21
     asl
     sta.z __5
-    // [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [13] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __5
     ldy.z i
     sta SCREEN+5*$28,y
-    // [18] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [14] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __24
-    // [19] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [15] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __24
     asl
     sta.z __25
-    // [20] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [16] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __25
     clc
     adc.z i
     sta.z __6
-    // [21] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __6
     ldy.z i
     sta SCREEN+6*$28,y
-    // [22] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 -- vbuz1=vbuz2_rol_3 
+    // [18] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 -- vbuz1=vbuz2_rol_3 
     lda.z i
     asl
     asl
     asl
     sta.z __27
-    // [23] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [19] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __27
     ldy.z i
     sta SCREEN+7*$28,y
-    // [24] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [20] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __27
     clc
     adc.z i
     sta.z __8
-    // [25] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [21] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __8
     ldy.z i
     sta SCREEN+8*$28,y
-    // [26] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [22] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __18
     clc
     adc.z i
     sta.z __30
-    // [27] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [23] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __30
     asl
     sta.z __9
-    // [28] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [24] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __9
     ldy.z i
     sta SCREEN+9*$28,y
-    // [29] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [25] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __18
     clc
     adc.z i
     sta.z __33
-    // [30] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [26] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __33
     asl
     sta.z __34
-    // [31] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [27] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __34
     clc
     adc.z i
     sta.z __10
-    // [32] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [28] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __10
     ldy.z i
     sta SCREEN+$a*$28,y
-    // [33] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [29] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __37
-    // [34] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [30] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z __37
     asl
     asl
     sta.z __11
-    // [35] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [31] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __11
     ldy.z i
     sta SCREEN+$b*$28,y
-    // [36] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [32] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __40
-    // [37] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [33] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z __40
     asl
     asl
     sta.z __41
-    // [38] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [34] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __41
     clc
     adc.z i
     sta.z __12
-    // [39] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [35] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __12
     ldy.z i
     sta SCREEN+$c*$28,y
-    // [40] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [36] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __44
-    // [41] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [37] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __44
     asl
     sta.z __45
-    // [42] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [38] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __45
     clc
     adc.z i
     sta.z __46
-    // [43] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [39] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __46
     asl
     sta.z __13
-    // [44] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [40] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __13
     ldy.z i
     sta SCREEN+$d*$28,y
-    // [45] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [41] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __16
     clc
     adc.z i
     sta.z __49
-    // [46] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [42] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __49
     asl
     sta.z __50
-    // [47] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [43] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __50
     clc
     adc.z i
     sta.z __51
-    // [48] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [44] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z __51
     asl
     sta.z __52
-    // [49] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    // [45] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __52
     clc
     adc.z i
     sta.z __14
-    // [50] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [46] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z __14
     ldy.z i
     sta SCREEN+$e*$28,y
-    // [51] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [47] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [52] if((byte) main::i#1!=(byte) $12) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [48] if((byte) main::i#1!=(byte) $12) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$12
     cmp.z i
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [53] return 
+    // [49] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$16 ] ( main:2 [ main::i#2 main::$16 ] { }  ) always clobbers reg byte a 
+Statement [3] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$16 ] (  [ main::i#2 main::$16 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$2 ] ( main:2 [ main::i#2 main::$16 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$2 ] (  [ main::i#2 main::$16 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::$16 ]
-Statement [11] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::$16 main::$18 ] ( main:2 [ main::i#2 main::$16 main::$18 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$4 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$4 ] { }  ) always clobbers reg byte a 
+Statement [7] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::$16 main::$18 ] (  [ main::i#2 main::$16 main::$18 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$4 ] (  [ main::i#2 main::$16 main::$18 main::$4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::$18 ]
-Statement [15] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$21 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$21 ] { }  ) always clobbers reg byte a 
-Statement [16] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$5 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [18] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$24 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$24 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$25 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$25 ] { }  ) always clobbers reg byte a 
-Statement [20] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$6 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$6 ] { }  ) always clobbers reg byte a 
-Statement [22] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::$16 main::$18 main::$27 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$27 ] { }  ) always clobbers reg byte a 
-Statement [24] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$8 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$8 ] { }  ) always clobbers reg byte a 
-Statement [26] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$30 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$30 ] { }  ) always clobbers reg byte a 
-Statement [27] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$9 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$9 ] { }  ) always clobbers reg byte a 
-Statement [29] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$33 ] ( main:2 [ main::i#2 main::$16 main::$33 ] { }  ) always clobbers reg byte a 
-Statement [30] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 [ main::i#2 main::$16 main::$34 ] ( main:2 [ main::i#2 main::$16 main::$34 ] { }  ) always clobbers reg byte a 
-Statement [31] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 [ main::i#2 main::$16 main::$10 ] ( main:2 [ main::i#2 main::$16 main::$10 ] { }  ) always clobbers reg byte a 
-Statement [33] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$37 ] ( main:2 [ main::i#2 main::$16 main::$37 ] { }  ) always clobbers reg byte a 
-Statement [34] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 [ main::i#2 main::$16 main::$11 ] ( main:2 [ main::i#2 main::$16 main::$11 ] { }  ) always clobbers reg byte a 
-Statement [36] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$40 ] ( main:2 [ main::i#2 main::$16 main::$40 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 [ main::i#2 main::$16 main::$41 ] ( main:2 [ main::i#2 main::$16 main::$41 ] { }  ) always clobbers reg byte a 
-Statement [38] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 [ main::i#2 main::$16 main::$12 ] ( main:2 [ main::i#2 main::$16 main::$12 ] { }  ) always clobbers reg byte a 
-Statement [40] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$44 ] ( main:2 [ main::i#2 main::$16 main::$44 ] { }  ) always clobbers reg byte a 
-Statement [41] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 [ main::i#2 main::$16 main::$45 ] ( main:2 [ main::i#2 main::$16 main::$45 ] { }  ) always clobbers reg byte a 
-Statement [42] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 [ main::i#2 main::$16 main::$46 ] ( main:2 [ main::i#2 main::$16 main::$46 ] { }  ) always clobbers reg byte a 
-Statement [43] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 [ main::i#2 main::$16 main::$13 ] ( main:2 [ main::i#2 main::$16 main::$13 ] { }  ) always clobbers reg byte a 
-Statement [45] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$49 ] ( main:2 [ main::i#2 main::$49 ] { }  ) always clobbers reg byte a 
-Statement [46] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 [ main::i#2 main::$50 ] ( main:2 [ main::i#2 main::$50 ] { }  ) always clobbers reg byte a 
-Statement [47] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 [ main::i#2 main::$51 ] ( main:2 [ main::i#2 main::$51 ] { }  ) always clobbers reg byte a 
-Statement [48] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 [ main::i#2 main::$52 ] ( main:2 [ main::i#2 main::$52 ] { }  ) always clobbers reg byte a 
-Statement [49] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 [ main::i#2 main::$14 ] ( main:2 [ main::i#2 main::$14 ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [7] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$16 ] ( main:2 [ main::i#2 main::$16 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 [ main::i#2 main::$16 ] ( main:2 [ main::i#2 main::$16 ] { }  ) always clobbers reg byte a 
-Statement [9] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$2 ] ( main:2 [ main::i#2 main::$16 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [11] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::$16 main::$18 ] ( main:2 [ main::i#2 main::$16 main::$18 ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 [ main::i#2 main::$16 main::$18 ] ( main:2 [ main::i#2 main::$16 main::$18 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$4 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$4 ] { }  ) always clobbers reg byte a 
-Statement [15] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$21 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$21 ] { }  ) always clobbers reg byte a 
-Statement [16] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$5 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [18] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$24 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$24 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$25 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$25 ] { }  ) always clobbers reg byte a 
-Statement [20] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$6 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$6 ] { }  ) always clobbers reg byte a 
-Statement [22] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::$16 main::$18 main::$27 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$27 ] { }  ) always clobbers reg byte a 
-Statement [24] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$8 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$8 ] { }  ) always clobbers reg byte a 
-Statement [26] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$30 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$30 ] { }  ) always clobbers reg byte a 
-Statement [27] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$9 ] ( main:2 [ main::i#2 main::$16 main::$18 main::$9 ] { }  ) always clobbers reg byte a 
-Statement [29] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$33 ] ( main:2 [ main::i#2 main::$16 main::$33 ] { }  ) always clobbers reg byte a 
-Statement [30] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 [ main::i#2 main::$16 main::$34 ] ( main:2 [ main::i#2 main::$16 main::$34 ] { }  ) always clobbers reg byte a 
-Statement [31] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 [ main::i#2 main::$16 main::$10 ] ( main:2 [ main::i#2 main::$16 main::$10 ] { }  ) always clobbers reg byte a 
-Statement [33] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$37 ] ( main:2 [ main::i#2 main::$16 main::$37 ] { }  ) always clobbers reg byte a 
-Statement [34] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 [ main::i#2 main::$16 main::$11 ] ( main:2 [ main::i#2 main::$16 main::$11 ] { }  ) always clobbers reg byte a 
-Statement [36] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$40 ] ( main:2 [ main::i#2 main::$16 main::$40 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 [ main::i#2 main::$16 main::$41 ] ( main:2 [ main::i#2 main::$16 main::$41 ] { }  ) always clobbers reg byte a 
-Statement [38] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 [ main::i#2 main::$16 main::$12 ] ( main:2 [ main::i#2 main::$16 main::$12 ] { }  ) always clobbers reg byte a 
-Statement [40] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$44 ] ( main:2 [ main::i#2 main::$16 main::$44 ] { }  ) always clobbers reg byte a 
-Statement [41] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 [ main::i#2 main::$16 main::$45 ] ( main:2 [ main::i#2 main::$16 main::$45 ] { }  ) always clobbers reg byte a 
-Statement [42] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 [ main::i#2 main::$16 main::$46 ] ( main:2 [ main::i#2 main::$16 main::$46 ] { }  ) always clobbers reg byte a 
-Statement [43] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 [ main::i#2 main::$16 main::$13 ] ( main:2 [ main::i#2 main::$16 main::$13 ] { }  ) always clobbers reg byte a 
-Statement [45] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$49 ] ( main:2 [ main::i#2 main::$49 ] { }  ) always clobbers reg byte a 
-Statement [46] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 [ main::i#2 main::$50 ] ( main:2 [ main::i#2 main::$50 ] { }  ) always clobbers reg byte a 
-Statement [47] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 [ main::i#2 main::$51 ] ( main:2 [ main::i#2 main::$51 ] { }  ) always clobbers reg byte a 
-Statement [48] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 [ main::i#2 main::$52 ] ( main:2 [ main::i#2 main::$52 ] { }  ) always clobbers reg byte a 
-Statement [49] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 [ main::i#2 main::$14 ] ( main:2 [ main::i#2 main::$14 ] { }  ) always clobbers reg byte a 
+Statement [11] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$21 ] (  [ main::i#2 main::$16 main::$18 main::$21 ] { }  ) always clobbers reg byte a 
+Statement [12] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$5 ] (  [ main::i#2 main::$16 main::$18 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [14] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$24 ] (  [ main::i#2 main::$16 main::$18 main::$24 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$25 ] (  [ main::i#2 main::$16 main::$18 main::$25 ] { }  ) always clobbers reg byte a 
+Statement [16] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$6 ] (  [ main::i#2 main::$16 main::$18 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [18] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::$16 main::$18 main::$27 ] (  [ main::i#2 main::$16 main::$18 main::$27 ] { }  ) always clobbers reg byte a 
+Statement [20] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$8 ] (  [ main::i#2 main::$16 main::$18 main::$8 ] { }  ) always clobbers reg byte a 
+Statement [22] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$30 ] (  [ main::i#2 main::$16 main::$18 main::$30 ] { }  ) always clobbers reg byte a 
+Statement [23] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$9 ] (  [ main::i#2 main::$16 main::$18 main::$9 ] { }  ) always clobbers reg byte a 
+Statement [25] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$33 ] (  [ main::i#2 main::$16 main::$33 ] { }  ) always clobbers reg byte a 
+Statement [26] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 [ main::i#2 main::$16 main::$34 ] (  [ main::i#2 main::$16 main::$34 ] { }  ) always clobbers reg byte a 
+Statement [27] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 [ main::i#2 main::$16 main::$10 ] (  [ main::i#2 main::$16 main::$10 ] { }  ) always clobbers reg byte a 
+Statement [29] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$37 ] (  [ main::i#2 main::$16 main::$37 ] { }  ) always clobbers reg byte a 
+Statement [30] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 [ main::i#2 main::$16 main::$11 ] (  [ main::i#2 main::$16 main::$11 ] { }  ) always clobbers reg byte a 
+Statement [32] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$40 ] (  [ main::i#2 main::$16 main::$40 ] { }  ) always clobbers reg byte a 
+Statement [33] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 [ main::i#2 main::$16 main::$41 ] (  [ main::i#2 main::$16 main::$41 ] { }  ) always clobbers reg byte a 
+Statement [34] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 [ main::i#2 main::$16 main::$12 ] (  [ main::i#2 main::$16 main::$12 ] { }  ) always clobbers reg byte a 
+Statement [36] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$44 ] (  [ main::i#2 main::$16 main::$44 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 [ main::i#2 main::$16 main::$45 ] (  [ main::i#2 main::$16 main::$45 ] { }  ) always clobbers reg byte a 
+Statement [38] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 [ main::i#2 main::$16 main::$46 ] (  [ main::i#2 main::$16 main::$46 ] { }  ) always clobbers reg byte a 
+Statement [39] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 [ main::i#2 main::$16 main::$13 ] (  [ main::i#2 main::$16 main::$13 ] { }  ) always clobbers reg byte a 
+Statement [41] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$49 ] (  [ main::i#2 main::$49 ] { }  ) always clobbers reg byte a 
+Statement [42] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 [ main::i#2 main::$50 ] (  [ main::i#2 main::$50 ] { }  ) always clobbers reg byte a 
+Statement [43] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 [ main::i#2 main::$51 ] (  [ main::i#2 main::$51 ] { }  ) always clobbers reg byte a 
+Statement [44] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 [ main::i#2 main::$52 ] (  [ main::i#2 main::$52 ] { }  ) always clobbers reg byte a 
+Statement [45] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 [ main::i#2 main::$14 ] (  [ main::i#2 main::$14 ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [3] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$16 ] (  [ main::i#2 main::$16 ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 [ main::i#2 main::$16 ] (  [ main::i#2 main::$16 ] { }  ) always clobbers reg byte a 
+Statement [5] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$2 ] (  [ main::i#2 main::$16 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [7] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 [ main::i#2 main::$16 main::$18 ] (  [ main::i#2 main::$16 main::$18 ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 [ main::i#2 main::$16 main::$18 ] (  [ main::i#2 main::$16 main::$18 ] { }  ) always clobbers reg byte a 
+Statement [9] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$4 ] (  [ main::i#2 main::$16 main::$18 main::$4 ] { }  ) always clobbers reg byte a 
+Statement [11] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$21 ] (  [ main::i#2 main::$16 main::$18 main::$21 ] { }  ) always clobbers reg byte a 
+Statement [12] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$5 ] (  [ main::i#2 main::$16 main::$18 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [14] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$24 ] (  [ main::i#2 main::$16 main::$18 main::$24 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$25 ] (  [ main::i#2 main::$16 main::$18 main::$25 ] { }  ) always clobbers reg byte a 
+Statement [16] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$6 ] (  [ main::i#2 main::$16 main::$18 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [18] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 [ main::i#2 main::$16 main::$18 main::$27 ] (  [ main::i#2 main::$16 main::$18 main::$27 ] { }  ) always clobbers reg byte a 
+Statement [20] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$8 ] (  [ main::i#2 main::$16 main::$18 main::$8 ] { }  ) always clobbers reg byte a 
+Statement [22] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$18 main::$30 ] (  [ main::i#2 main::$16 main::$18 main::$30 ] { }  ) always clobbers reg byte a 
+Statement [23] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 [ main::i#2 main::$16 main::$18 main::$9 ] (  [ main::i#2 main::$16 main::$18 main::$9 ] { }  ) always clobbers reg byte a 
+Statement [25] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 [ main::i#2 main::$16 main::$33 ] (  [ main::i#2 main::$16 main::$33 ] { }  ) always clobbers reg byte a 
+Statement [26] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 [ main::i#2 main::$16 main::$34 ] (  [ main::i#2 main::$16 main::$34 ] { }  ) always clobbers reg byte a 
+Statement [27] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 [ main::i#2 main::$16 main::$10 ] (  [ main::i#2 main::$16 main::$10 ] { }  ) always clobbers reg byte a 
+Statement [29] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$37 ] (  [ main::i#2 main::$16 main::$37 ] { }  ) always clobbers reg byte a 
+Statement [30] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 [ main::i#2 main::$16 main::$11 ] (  [ main::i#2 main::$16 main::$11 ] { }  ) always clobbers reg byte a 
+Statement [32] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$40 ] (  [ main::i#2 main::$16 main::$40 ] { }  ) always clobbers reg byte a 
+Statement [33] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 [ main::i#2 main::$16 main::$41 ] (  [ main::i#2 main::$16 main::$41 ] { }  ) always clobbers reg byte a 
+Statement [34] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 [ main::i#2 main::$16 main::$12 ] (  [ main::i#2 main::$16 main::$12 ] { }  ) always clobbers reg byte a 
+Statement [36] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$16 main::$44 ] (  [ main::i#2 main::$16 main::$44 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 [ main::i#2 main::$16 main::$45 ] (  [ main::i#2 main::$16 main::$45 ] { }  ) always clobbers reg byte a 
+Statement [38] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 [ main::i#2 main::$16 main::$46 ] (  [ main::i#2 main::$16 main::$46 ] { }  ) always clobbers reg byte a 
+Statement [39] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 [ main::i#2 main::$16 main::$13 ] (  [ main::i#2 main::$16 main::$13 ] { }  ) always clobbers reg byte a 
+Statement [41] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 [ main::i#2 main::$49 ] (  [ main::i#2 main::$49 ] { }  ) always clobbers reg byte a 
+Statement [42] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 [ main::i#2 main::$50 ] (  [ main::i#2 main::$50 ] { }  ) always clobbers reg byte a 
+Statement [43] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 [ main::i#2 main::$51 ] (  [ main::i#2 main::$51 ] { }  ) always clobbers reg byte a 
+Statement [44] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 [ main::i#2 main::$52 ] (  [ main::i#2 main::$52 ] { }  ) always clobbers reg byte a 
+Statement [45] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 [ main::i#2 main::$14 ] (  [ main::i#2 main::$14 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$16 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -849,72 +821,72 @@ Potential registers zp[1]:31 [ main::$52 ] : zp[1]:31 , reg byte a , reg byte x 
 Potential registers zp[1]:32 [ main::$14 ] : zp[1]:32 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 234.93: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:4 [ main::$2 ] 202: zp[1]:6 [ main::$4 ] 202: zp[1]:7 [ main::$21 ] 202: zp[1]:8 [ main::$5 ] 202: zp[1]:9 [ main::$24 ] 202: zp[1]:10 [ main::$25 ] 202: zp[1]:11 [ main::$6 ] 202: zp[1]:13 [ main::$8 ] 202: zp[1]:14 [ main::$30 ] 202: zp[1]:15 [ main::$9 ] 202: zp[1]:16 [ main::$33 ] 202: zp[1]:17 [ main::$34 ] 202: zp[1]:18 [ main::$10 ] 202: zp[1]:19 [ main::$37 ] 202: zp[1]:20 [ main::$11 ] 202: zp[1]:21 [ main::$40 ] 202: zp[1]:22 [ main::$41 ] 202: zp[1]:23 [ main::$12 ] 202: zp[1]:24 [ main::$44 ] 202: zp[1]:25 [ main::$45 ] 202: zp[1]:26 [ main::$46 ] 202: zp[1]:27 [ main::$13 ] 202: zp[1]:28 [ main::$49 ] 202: zp[1]:29 [ main::$50 ] 202: zp[1]:30 [ main::$51 ] 202: zp[1]:31 [ main::$52 ] 202: zp[1]:32 [ main::$14 ] 151.5: zp[1]:12 [ main::$27 ] 28.06: zp[1]:5 [ main::$18 ] 23.92: zp[1]:3 [ main::$16 ] 
+Uplift Scope [main] 25.59: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:4 [ main::$2 ] 22: zp[1]:6 [ main::$4 ] 22: zp[1]:7 [ main::$21 ] 22: zp[1]:8 [ main::$5 ] 22: zp[1]:9 [ main::$24 ] 22: zp[1]:10 [ main::$25 ] 22: zp[1]:11 [ main::$6 ] 22: zp[1]:13 [ main::$8 ] 22: zp[1]:14 [ main::$30 ] 22: zp[1]:15 [ main::$9 ] 22: zp[1]:16 [ main::$33 ] 22: zp[1]:17 [ main::$34 ] 22: zp[1]:18 [ main::$10 ] 22: zp[1]:19 [ main::$37 ] 22: zp[1]:20 [ main::$11 ] 22: zp[1]:21 [ main::$40 ] 22: zp[1]:22 [ main::$41 ] 22: zp[1]:23 [ main::$12 ] 22: zp[1]:24 [ main::$44 ] 22: zp[1]:25 [ main::$45 ] 22: zp[1]:26 [ main::$46 ] 22: zp[1]:27 [ main::$13 ] 22: zp[1]:28 [ main::$49 ] 22: zp[1]:29 [ main::$50 ] 22: zp[1]:30 [ main::$51 ] 22: zp[1]:31 [ main::$52 ] 22: zp[1]:32 [ main::$14 ] 16.5: zp[1]:12 [ main::$27 ] 3.06: zp[1]:5 [ main::$18 ] 2.61: zp[1]:3 [ main::$16 ] 
 Uplift Scope [] 
 
-Uplifting [] best 4933 combination 
+Uplifting [] best 4921 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 4193 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [main] best 4181 combination reg byte x [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:4 [ main::$2 ]
-Uplifting [main] best 4133 combination reg byte a [ main::$2 ] 
+Uplifting [main] best 4121 combination reg byte a [ main::$2 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ main::$4 ]
-Uplifting [main] best 4073 combination reg byte a [ main::$4 ] 
+Uplifting [main] best 4061 combination reg byte a [ main::$4 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ main::$21 ]
-Uplifting [main] best 4013 combination reg byte a [ main::$21 ] 
+Uplifting [main] best 4001 combination reg byte a [ main::$21 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ main::$5 ]
-Uplifting [main] best 3953 combination reg byte a [ main::$5 ] 
+Uplifting [main] best 3941 combination reg byte a [ main::$5 ] 
 Attempting to uplift remaining variables inzp[1]:9 [ main::$24 ]
-Uplifting [main] best 3893 combination reg byte a [ main::$24 ] 
+Uplifting [main] best 3881 combination reg byte a [ main::$24 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ main::$25 ]
-Uplifting [main] best 3873 combination reg byte a [ main::$25 ] 
+Uplifting [main] best 3861 combination reg byte a [ main::$25 ] 
 Attempting to uplift remaining variables inzp[1]:11 [ main::$6 ]
-Uplifting [main] best 3813 combination reg byte a [ main::$6 ] 
+Uplifting [main] best 3801 combination reg byte a [ main::$6 ] 
 Attempting to uplift remaining variables inzp[1]:13 [ main::$8 ]
-Uplifting [main] best 3753 combination reg byte a [ main::$8 ] 
+Uplifting [main] best 3741 combination reg byte a [ main::$8 ] 
 Attempting to uplift remaining variables inzp[1]:14 [ main::$30 ]
-Uplifting [main] best 3693 combination reg byte a [ main::$30 ] 
+Uplifting [main] best 3681 combination reg byte a [ main::$30 ] 
 Attempting to uplift remaining variables inzp[1]:15 [ main::$9 ]
-Uplifting [main] best 3633 combination reg byte a [ main::$9 ] 
+Uplifting [main] best 3621 combination reg byte a [ main::$9 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ main::$33 ]
-Uplifting [main] best 3573 combination reg byte a [ main::$33 ] 
+Uplifting [main] best 3561 combination reg byte a [ main::$33 ] 
 Attempting to uplift remaining variables inzp[1]:17 [ main::$34 ]
-Uplifting [main] best 3553 combination reg byte a [ main::$34 ] 
+Uplifting [main] best 3541 combination reg byte a [ main::$34 ] 
 Attempting to uplift remaining variables inzp[1]:18 [ main::$10 ]
-Uplifting [main] best 3493 combination reg byte a [ main::$10 ] 
+Uplifting [main] best 3481 combination reg byte a [ main::$10 ] 
 Attempting to uplift remaining variables inzp[1]:19 [ main::$37 ]
-Uplifting [main] best 3433 combination reg byte a [ main::$37 ] 
+Uplifting [main] best 3421 combination reg byte a [ main::$37 ] 
 Attempting to uplift remaining variables inzp[1]:20 [ main::$11 ]
-Uplifting [main] best 3373 combination reg byte a [ main::$11 ] 
+Uplifting [main] best 3361 combination reg byte a [ main::$11 ] 
 Attempting to uplift remaining variables inzp[1]:21 [ main::$40 ]
-Uplifting [main] best 3313 combination reg byte a [ main::$40 ] 
+Uplifting [main] best 3301 combination reg byte a [ main::$40 ] 
 Attempting to uplift remaining variables inzp[1]:22 [ main::$41 ]
-Uplifting [main] best 3293 combination reg byte a [ main::$41 ] 
+Uplifting [main] best 3281 combination reg byte a [ main::$41 ] 
 Attempting to uplift remaining variables inzp[1]:23 [ main::$12 ]
-Uplifting [main] best 3233 combination reg byte a [ main::$12 ] 
+Uplifting [main] best 3221 combination reg byte a [ main::$12 ] 
 Attempting to uplift remaining variables inzp[1]:24 [ main::$44 ]
-Uplifting [main] best 3173 combination reg byte a [ main::$44 ] 
+Uplifting [main] best 3161 combination reg byte a [ main::$44 ] 
 Attempting to uplift remaining variables inzp[1]:25 [ main::$45 ]
-Uplifting [main] best 3153 combination reg byte a [ main::$45 ] 
+Uplifting [main] best 3141 combination reg byte a [ main::$45 ] 
 Attempting to uplift remaining variables inzp[1]:26 [ main::$46 ]
-Uplifting [main] best 3093 combination reg byte a [ main::$46 ] 
+Uplifting [main] best 3081 combination reg byte a [ main::$46 ] 
 Attempting to uplift remaining variables inzp[1]:27 [ main::$13 ]
-Uplifting [main] best 3033 combination reg byte a [ main::$13 ] 
+Uplifting [main] best 3021 combination reg byte a [ main::$13 ] 
 Attempting to uplift remaining variables inzp[1]:28 [ main::$49 ]
-Uplifting [main] best 2973 combination reg byte a [ main::$49 ] 
+Uplifting [main] best 2961 combination reg byte a [ main::$49 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ main::$50 ]
-Uplifting [main] best 2953 combination reg byte a [ main::$50 ] 
+Uplifting [main] best 2941 combination reg byte a [ main::$50 ] 
 Attempting to uplift remaining variables inzp[1]:30 [ main::$51 ]
-Uplifting [main] best 2893 combination reg byte a [ main::$51 ] 
+Uplifting [main] best 2881 combination reg byte a [ main::$51 ] 
 Attempting to uplift remaining variables inzp[1]:31 [ main::$52 ]
-Uplifting [main] best 2873 combination reg byte a [ main::$52 ] 
+Uplifting [main] best 2861 combination reg byte a [ main::$52 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ main::$14 ]
-Uplifting [main] best 2813 combination reg byte a [ main::$14 ] 
+Uplifting [main] best 2801 combination reg byte a [ main::$14 ] 
 Attempting to uplift remaining variables inzp[1]:12 [ main::$27 ]
-Uplifting [main] best 2763 combination reg byte a [ main::$27 ] 
+Uplifting [main] best 2751 combination reg byte a [ main::$27 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ main::$18 ]
-Uplifting [main] best 2763 combination zp[1]:5 [ main::$18 ] 
+Uplifting [main] best 2751 combination zp[1]:5 [ main::$18 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ main::$16 ]
-Uplifting [main] best 2763 combination zp[1]:3 [ main::$16 ] 
+Uplifting [main] best 2751 combination zp[1]:3 [ main::$16 ] 
 Allocated (was zp[1]:3) zp[1]:2 [ main::$16 ]
 Allocated (was zp[1]:5) zp[1]:3 [ main::$18 ]
 
@@ -926,191 +898,173 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
     .label __16 = 2
     .label __18 = 3
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [2] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
-    // [7] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
+    // [3] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
     sta.z __16
-    // [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z __16
     sta SCREEN+1*$28,x
-    // [9] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [5] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [6] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+2*$28,x
-    // [11] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuxx_rol_2 
+    // [7] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuxx_rol_2 
     txa
     asl
     asl
     sta.z __18
-    // [12] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 -- pbuc1_derefidx_vbuxx=vbuz1 
     lda.z __18
     sta SCREEN+3*$28,x
-    // [13] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [9] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __18
-    // [14] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+4*$28,x
-    // [15] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [11] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [16] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [12] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [13] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
-    // [18] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [14] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [19] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [15] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [20] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [16] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [21] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+6*$28,x
-    // [22] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
+    // [18] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
     txa
     asl
     asl
     asl
-    // [23] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [19] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+7*$28,x
-    // [24] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [20] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [25] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [21] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+8*$28,x
-    // [26] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [22] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __18
-    // [27] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [23] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [28] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [24] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+9*$28,x
-    // [29] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [25] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __18
-    // [30] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [26] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [31] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [27] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [32] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [28] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$a*$28,x
-    // [33] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [29] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [34] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 -- vbuaa=vbuaa_rol_2 
+    // [30] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 -- vbuaa=vbuaa_rol_2 
     asl
     asl
-    // [35] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [31] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$b*$28,x
-    // [36] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [32] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [37] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 -- vbuaa=vbuaa_rol_2 
+    // [33] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 -- vbuaa=vbuaa_rol_2 
     asl
     asl
-    // [38] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [34] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [39] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [35] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$c*$28,x
-    // [40] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [36] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [41] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [37] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [42] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [38] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [43] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [39] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [44] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [40] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$d*$28,x
-    // [45] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [41] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [46] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [42] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [47] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [43] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [48] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [44] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [49] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [45] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [50] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [46] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$e*$28,x
-    // [51] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [47] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [52] if((byte) main::i#1!=(byte) $12) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [48] if((byte) main::i#1!=(byte) $12) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$12
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [53] return 
+    // [49] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
@@ -1118,64 +1072,53 @@ Removing instruction lda.z __16
 Removing instruction lda.z __18
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Fixing long branch [102] bne __b1 to beq
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
-(byte~) main::$10 reg byte a 202.0
-(byte~) main::$11 reg byte a 202.0
-(byte~) main::$12 reg byte a 202.0
-(byte~) main::$13 reg byte a 202.0
-(byte~) main::$14 reg byte a 202.0
-(byte~) main::$16 zp[1]:2 23.921052631578952
-(byte~) main::$18 zp[1]:3 28.055555555555554
-(byte~) main::$2 reg byte a 202.0
-(byte~) main::$21 reg byte a 202.0
-(byte~) main::$24 reg byte a 202.0
-(byte~) main::$25 reg byte a 202.0
-(byte~) main::$27 reg byte a 151.5
-(byte~) main::$30 reg byte a 202.0
-(byte~) main::$33 reg byte a 202.0
-(byte~) main::$34 reg byte a 202.0
-(byte~) main::$37 reg byte a 202.0
-(byte~) main::$4 reg byte a 202.0
-(byte~) main::$40 reg byte a 202.0
-(byte~) main::$41 reg byte a 202.0
-(byte~) main::$44 reg byte a 202.0
-(byte~) main::$45 reg byte a 202.0
-(byte~) main::$46 reg byte a 202.0
-(byte~) main::$49 reg byte a 202.0
-(byte~) main::$5 reg byte a 202.0
-(byte~) main::$50 reg byte a 202.0
-(byte~) main::$51 reg byte a 202.0
-(byte~) main::$52 reg byte a 202.0
-(byte~) main::$6 reg byte a 202.0
-(byte~) main::$8 reg byte a 202.0
-(byte~) main::$9 reg byte a 202.0
+(byte~) main::$10 reg byte a 22.0
+(byte~) main::$11 reg byte a 22.0
+(byte~) main::$12 reg byte a 22.0
+(byte~) main::$13 reg byte a 22.0
+(byte~) main::$14 reg byte a 22.0
+(byte~) main::$16 zp[1]:2 2.605263157894737
+(byte~) main::$18 zp[1]:3 3.055555555555556
+(byte~) main::$2 reg byte a 22.0
+(byte~) main::$21 reg byte a 22.0
+(byte~) main::$24 reg byte a 22.0
+(byte~) main::$25 reg byte a 22.0
+(byte~) main::$27 reg byte a 16.5
+(byte~) main::$30 reg byte a 22.0
+(byte~) main::$33 reg byte a 22.0
+(byte~) main::$34 reg byte a 22.0
+(byte~) main::$37 reg byte a 22.0
+(byte~) main::$4 reg byte a 22.0
+(byte~) main::$40 reg byte a 22.0
+(byte~) main::$41 reg byte a 22.0
+(byte~) main::$44 reg byte a 22.0
+(byte~) main::$45 reg byte a 22.0
+(byte~) main::$46 reg byte a 22.0
+(byte~) main::$49 reg byte a 22.0
+(byte~) main::$5 reg byte a 22.0
+(byte~) main::$50 reg byte a 22.0
+(byte~) main::$51 reg byte a 22.0
+(byte~) main::$52 reg byte a 22.0
+(byte~) main::$6 reg byte a 22.0
+(byte~) main::$8 reg byte a 22.0
+(byte~) main::$9 reg byte a 22.0
 (label) main::@1
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*) 1024
 (byte) main::i
-(byte) main::i#1 reg byte x 151.5
-(byte) main::i#2 reg byte x 83.43478260869571
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 9.086956521739129
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[1]:2 [ main::$16 ]
@@ -1220,200 +1163,193 @@ Score: 2631
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400
     .label __16 = 2
     .label __18 = 3
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // (SCREEN+0*40)[i] = i*1
-    // [6] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [2] *((const nomodify byte*) main::SCREEN + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // i*2
-    // [7] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
+    // [3] (byte~) main::$16 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuxx_rol_1 
     txa
     asl
     sta.z __16
     // (SCREEN+1*40)[i] = i*2
-    // [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte)(number) 1*(number) $28 + (byte) main::i#2) ← (byte~) main::$16 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta SCREEN+1*$28,x
     // i*3
-    // [9] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [5] (byte~) main::$2 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
     // (SCREEN+2*40)[i] = i*3
-    // [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [6] *((const nomodify byte*) main::SCREEN+(byte)(number) 2*(number) $28 + (byte) main::i#2) ← (byte~) main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+2*$28,x
     // i*4
-    // [11] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuxx_rol_2 
+    // [7] (byte~) main::$18 ← (byte) main::i#2 << (byte) 2 -- vbuz1=vbuxx_rol_2 
     txa
     asl
     asl
     sta.z __18
     // (SCREEN+3*40)[i] = i*4
-    // [12] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 -- pbuc1_derefidx_vbuxx=vbuz1 
+    // [8] *((const nomodify byte*) main::SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i#2) ← (byte~) main::$18 -- pbuc1_derefidx_vbuxx=vbuz1 
     sta SCREEN+3*$28,x
     // i*5
-    // [13] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [9] (byte~) main::$4 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __18
     // (SCREEN+4*40)[i] = i*5
-    // [14] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [10] *((const nomodify byte*) main::SCREEN+(byte)(number) 4*(number) $28 + (byte) main::i#2) ← (byte~) main::$4 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+4*$28,x
     // i*6
-    // [15] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [11] (byte~) main::$21 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [16] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [12] (byte~) main::$5 ← (byte~) main::$21 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // (SCREEN+5*40)[i] = i*6
-    // [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [13] *((const nomodify byte*) main::SCREEN+(byte)(number) 5*(number) $28 + (byte) main::i#2) ← (byte~) main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
     // i*7
-    // [18] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [14] (byte~) main::$24 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [19] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [15] (byte~) main::$25 ← (byte~) main::$24 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [20] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [16] (byte~) main::$6 ← (byte~) main::$25 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     // (SCREEN+6*40)[i] = i*7
-    // [21] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [17] *((const nomodify byte*) main::SCREEN+(byte)(number) 6*(number) $28 + (byte) main::i#2) ← (byte~) main::$6 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+6*$28,x
     // i*8
-    // [22] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
+    // [18] (byte~) main::$27 ← (byte) main::i#2 << (byte) 3 -- vbuaa=vbuxx_rol_3 
     txa
     asl
     asl
     asl
     // (SCREEN+7*40)[i] = i*8
-    // [23] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [19] *((const nomodify byte*) main::SCREEN+(word)(number) 7*(number) $28 + (byte) main::i#2) ← (byte~) main::$27 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+7*$28,x
     // i*9
-    // [24] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [20] (byte~) main::$8 ← (byte~) main::$27 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     // (SCREEN+8*40)[i] = i*9
-    // [25] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [21] *((const nomodify byte*) main::SCREEN+(word)(number) 8*(number) $28 + (byte) main::i#2) ← (byte~) main::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+8*$28,x
     // i*10
-    // [26] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [22] (byte~) main::$30 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __18
-    // [27] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [23] (byte~) main::$9 ← (byte~) main::$30 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // (SCREEN+9*40)[i] = i*10
-    // [28] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [24] *((const nomodify byte*) main::SCREEN+(word)(number) 9*(number) $28 + (byte) main::i#2) ← (byte~) main::$9 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+9*$28,x
     // i*11
-    // [29] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [25] (byte~) main::$33 ← (byte~) main::$18 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __18
-    // [30] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [26] (byte~) main::$34 ← (byte~) main::$33 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [31] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [27] (byte~) main::$10 ← (byte~) main::$34 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     // (SCREEN+10*40)[i] = i*11
-    // [32] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [28] *((const nomodify byte*) main::SCREEN+(word)(number) $a*(number) $28 + (byte) main::i#2) ← (byte~) main::$10 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$a*$28,x
     // i*12
-    // [33] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [29] (byte~) main::$37 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [34] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 -- vbuaa=vbuaa_rol_2 
+    // [30] (byte~) main::$11 ← (byte~) main::$37 << (byte) 2 -- vbuaa=vbuaa_rol_2 
     asl
     asl
     // (SCREEN+11*40)[i] = i*12
-    // [35] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [31] *((const nomodify byte*) main::SCREEN+(word)(number) $b*(number) $28 + (byte) main::i#2) ← (byte~) main::$11 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$b*$28,x
     // i*13
-    // [36] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [32] (byte~) main::$40 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [37] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 -- vbuaa=vbuaa_rol_2 
+    // [33] (byte~) main::$41 ← (byte~) main::$40 << (byte) 2 -- vbuaa=vbuaa_rol_2 
     asl
     asl
-    // [38] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [34] (byte~) main::$12 ← (byte~) main::$41 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     // (SCREEN+12*40)[i] = i*13
-    // [39] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [35] *((const nomodify byte*) main::SCREEN+(word)(number) $c*(number) $28 + (byte) main::i#2) ← (byte~) main::$12 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$c*$28,x
     // i*14
-    // [40] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [36] (byte~) main::$44 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [41] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [37] (byte~) main::$45 ← (byte~) main::$44 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [42] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [38] (byte~) main::$46 ← (byte~) main::$45 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [43] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [39] (byte~) main::$13 ← (byte~) main::$46 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
     // (SCREEN+13*40)[i] = i*14
-    // [44] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [40] *((const nomodify byte*) main::SCREEN+(word)(number) $d*(number) $28 + (byte) main::i#2) ← (byte~) main::$13 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$d*$28,x
     // i*15
-    // [45] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
+    // [41] (byte~) main::$49 ← (byte~) main::$16 + (byte) main::i#2 -- vbuaa=vbuz1_plus_vbuxx 
     txa
     clc
     adc.z __16
-    // [46] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [42] (byte~) main::$50 ← (byte~) main::$49 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [47] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [43] (byte~) main::$51 ← (byte~) main::$50 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
-    // [48] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [44] (byte~) main::$52 ← (byte~) main::$51 << (byte) 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [49] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
+    // [45] (byte~) main::$14 ← (byte~) main::$52 + (byte) main::i#2 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     // (SCREEN+14*40)[i] = i*15
-    // [50] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [46] *((const nomodify byte*) main::SCREEN+(word)(number) $e*(number) $28 + (byte) main::i#2) ← (byte~) main::$14 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$e*$28,x
     // for(byte i: 0..17)
-    // [51] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [47] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [52] if((byte) main::i#1!=(byte) $12) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [48] if((byte) main::i#1!=(byte) $12) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$12
     beq !__b1+
     jmp __b1
   !__b1:
     // main::@return
     // }
-    // [53] return 
+    // [49] return 
     rts
 }
   // File Data

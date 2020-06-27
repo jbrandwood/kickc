@@ -1,11 +1,9 @@
 Resolved forward reference irq to interrupt(HARDWARE_STACK)(void()) irq()
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   asm { sei  }
   *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
   *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
@@ -35,18 +33,18 @@ irq: scope:[irq]  from
 irq::@return: scope:[irq]  from irq
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
@@ -63,6 +61,9 @@ SYMBOL TABLE SSA
 (const nomodify byte*) RASTER = (byte*)(number) $d012
 (const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
 (const nomodify byte) WHITE = (byte) 1
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 interrupt(HARDWARE_STACK)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -95,36 +96,33 @@ if() condition always true - replacing block destination [9] if(true) goto main:
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Renumbering block main::@2 to main::@1
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
+
+interrupt(HARDWARE_STACK)(void()) irq()
+irq: scope:[irq]  from
+  [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
+  [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  [2] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  [3] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from
   asm { sei  }
   [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
   [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
@@ -138,16 +136,6 @@ main: scope:[main]  from @1
 main::@1: scope:[main]  from main main::@1
   [13] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL)
   to:main::@1
-
-interrupt(HARDWARE_STACK)(void()) irq()
-irq: scope:[irq]  from
-  [14] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
-  [15] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
-  [16] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  to:irq::@return
-irq::@return: scope:[irq]  from irq
-  [17] return 
-  to:@return
 
 
 VARIABLE REGISTER WEIGHTS
@@ -186,20 +174,36 @@ Target platform is c64basic / MOS6502X
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // irq
+// Interrupt Routine
+irq: {
+    // entry interrupt(HARDWARE_STACK)
+    pha
+    txa
+    pha
+    tya
+    pha
+    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BG_COLOR
+    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // [2] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [3] return  - exit interrupt(HARDWARE_STACK)
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
+}
   // main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
@@ -243,59 +247,29 @@ main: {
     inc FGCOL
     jmp __b1
 }
-  // irq
-// Interrupt Routine
-irq: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
-    // [14] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta BG_COLOR
-    // [15] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // [16] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [17] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
-}
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) RASTER) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [17] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) RASTER) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq() [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 334 combination 
-Uplifting [irq] best 334 combination 
-Uplifting [] best 334 combination 
+Uplifting [main] best 322 combination 
+Uplifting [irq] best 322 combination 
+Uplifting [] best 322 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -325,20 +299,36 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // irq
+// Interrupt Routine
+irq: {
+    // entry interrupt(HARDWARE_STACK)
+    pha
+    txa
+    pha
+    tya
+    pha
+    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BG_COLOR
+    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // [2] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [3] return  - exit interrupt(HARDWARE_STACK)
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
+}
   // main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
@@ -382,59 +372,16 @@ main: {
     inc FGCOL
     jmp __b1
 }
-  // irq
-// Interrupt Routine
-irq: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
-    // [14] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta BG_COLOR
-    // [15] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // [16] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [17] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
-}
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53280
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) CIA1_INTERRUPT = (byte*) 56333
@@ -488,12 +435,38 @@ Score: 316
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // irq
+// Interrupt Routine
+irq: {
+    // entry interrupt(HARDWARE_STACK)
+    pha
+    txa
+    pha
+    tya
+    pha
+    // *BG_COLOR = WHITE
+    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
+    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // [2] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // irq::@return
+    // }
+    // [3] return  - exit interrupt(HARDWARE_STACK)
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
+}
   // main
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
@@ -545,38 +518,6 @@ main: {
     // [13] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp __b1
-}
-  // irq
-// Interrupt Routine
-irq: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
-    // *BG_COLOR = WHITE
-    // [14] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta BG_COLOR
-    // *BG_COLOR = BLACK
-    // [15] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // [16] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // irq::@return
-    // }
-    // [17] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
 }
   // File Data
 

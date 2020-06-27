@@ -1,13 +1,11 @@
 Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call setscreen &(byte*) screen (byte*) screen1 
 Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call setscreen &(volatile byte*) screen (byte*) screen2 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (volatile byte*) screen ← (byte*)(number) $400
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte**) setscreen::screen#0 ← &(volatile byte*) screen
   (byte*) setscreen::val#0 ← (const byte*) screen1
   call setscreen 
@@ -34,18 +32,28 @@ setscreen: scope:[setscreen]  from main main::@1
 setscreen::@return: scope:[setscreen]  from setscreen
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte*) screen ← (byte*)(number) $400
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -68,9 +76,9 @@ Adding number conversion cast (unumber) 0 in *((volatile byte*) screen + (number
 Adding number conversion cast (unumber) 0 in *((volatile byte*) screen + (number) 0) ← (byte) 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast 0
-Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -80,8 +88,8 @@ Constant (const byte*) setscreen::val#0 = screen1
 Constant (const byte**) setscreen::screen#1 = &screen
 Constant (const byte*) setscreen::val#1 = screen2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero screen in [4] *((volatile byte*) screen + (byte) 0) ← (byte) 'a'
-Simplifying expression containing zero screen in [8] *((volatile byte*) screen + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen in [3] *((volatile byte*) screen + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen in [7] *((volatile byte*) screen + (byte) 0) ← (byte) 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Inlining constant with var siblings (const byte**) setscreen::screen#0
 Inlining constant with var siblings (const byte*) setscreen::val#0
@@ -94,59 +102,66 @@ Constant inlined setscreen::val#0 = (const byte*) screen1
 Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values (byte**) setscreen::screen#2 &(volatile byte*) screen
 Successful SSA optimization Pass2IdenticalPhiElimination
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to setscreen:6 setscreen:8 
+Calls in [_start] to main:3 
+Calls in [main] to setscreen:7 setscreen:9 
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
+Culled Empty Block (label) _start::@2
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] (volatile byte*) screen ← (byte*) 1024
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
+
+(void()) _start()
+_start: scope:[_start]  from
+  [0] phi()
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  [1] (volatile byte*) screen ← (byte*) 1024
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  [2] phi()
+  [3] call main 
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call setscreen 
+main: scope:[main]  from _start::@1
+  [5] phi()
+  [6] call setscreen 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] *((volatile byte*) screen) ← (byte) 'a'
-  [7] call setscreen 
+  [7] *((volatile byte*) screen) ← (byte) 'a'
+  [8] call setscreen 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((volatile byte*) screen) ← (byte) 'a'
+  [9] *((volatile byte*) screen) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  [9] return 
+  [10] return 
   to:@return
 
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
 setscreen: scope:[setscreen]  from main main::@1
-  [10] (byte*) setscreen::val#2 ← phi( main/(const byte*) screen1 main::@1/(const byte*) screen2 )
-  [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2
+  [11] (byte*) setscreen::val#2 ← phi( main/(const byte*) screen1 main::@1/(const byte*) screen2 )
+  [12] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2
   to:setscreen::@return
 setscreen::@return: scope:[setscreen]  from setscreen
-  [12] return 
+  [13] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
+(void()) _start()
 (void()) main()
 (volatile byte*) screen loadstore 2.666666666666667
 (void()) setscreen((byte**) setscreen::screen , (byte*) setscreen::val)
@@ -169,39 +184,43 @@ Target platform is c64basic / MOS6502X
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-  // @begin
-__bbegin:
-  // [0] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
-  lda #<$400
-  sta.z screen
-  lda #>$400
-  sta.z screen+1
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    // [5] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    // [5] call setscreen 
-    // [10] phi from main to setscreen [phi:main->setscreen]
+    // [6] call setscreen 
+    // [11] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta.z setscreen.val
     lda #>screen1
@@ -210,14 +229,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-    // [7] call setscreen 
-    // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+    // [8] call setscreen 
+    // [11] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from___b1:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
@@ -226,21 +245,21 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [9] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [10] return 
     rts
 }
   // setscreen
 // setscreen(byte* zp(2) val)
 setscreen: {
     .label val = 2
-    // [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+    // [12] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda.z val
     sta.z @screen
     lda.z val+1
@@ -248,16 +267,16 @@ setscreen: {
     jmp __breturn
     // setscreen::@return
   __breturn:
-    // [12] return 
+    // [13] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile byte*) screen ← (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
-Statement [6] *((volatile byte*) screen) ← (byte) 'a' [ screen ] ( main:2 [ screen ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] *((volatile byte*) screen) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 [ screen ] ( main:2::setscreen:5 [ screen ] { }  main:2::setscreen:7 [ screen ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile byte*) screen ← (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
+Statement [7] *((volatile byte*) screen) ← (byte) 'a' [ screen ] ( main:3 [ screen ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] *((volatile byte*) screen) ← (byte) 'a' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 [ screen ] ( main:3::setscreen:6 [ screen ] { }  main:3::setscreen:8 [ screen ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ setscreen::val#2 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ screen ] : zp[2]:4 , 
 
@@ -265,49 +284,55 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [setscreen] 101: zp[2]:2 [ setscreen::val#2 ] 
 Uplift Scope [] 2.67: zp[2]:4 [ screen ] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [setscreen] best 110 combination zp[2]:2 [ setscreen::val#2 ] 
-Uplifting [] best 110 combination zp[2]:4 [ screen ] 
-Uplifting [main] best 110 combination 
+Uplifting [setscreen] best 146 combination zp[2]:2 [ setscreen::val#2 ] 
+Uplifting [] best 146 combination zp[2]:4 [ screen ] 
+Uplifting [main] best 146 combination 
+Uplifting [_start] best 146 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-  // @begin
-__bbegin:
-  // [0] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
-  lda #<$400
-  sta.z screen
-  lda #>$400
-  sta.z screen+1
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    // [5] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    // [5] call setscreen 
-    // [10] phi from main to setscreen [phi:main->setscreen]
+    // [6] call setscreen 
+    // [11] phi from main to setscreen [phi:main->setscreen]
   setscreen_from_main:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta.z setscreen.val
     lda #>screen1
@@ -316,14 +341,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
-    // [7] call setscreen 
-    // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+    // [8] call setscreen 
+    // [11] phi from main::@1 to setscreen [phi:main::@1->setscreen]
   setscreen_from___b1:
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
@@ -332,21 +357,21 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [9] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [10] return 
     rts
 }
   // setscreen
 // setscreen(byte* zp(2) val)
 setscreen: {
     .label val = 2
-    // [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+    // [12] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda.z val
     sta.z @screen
     lda.z val+1
@@ -354,25 +379,26 @@ setscreen: {
     jmp __breturn
     // setscreen::@return
   __breturn:
-    // [12] return 
+    // [13] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
+Removing instruction __b1_from__init1:
 Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction _init1:
 Removing instruction __b1:
-Removing instruction __bend:
+Removing instruction __breturn:
 Removing instruction setscreen_from_main:
 Removing instruction __b1:
 Removing instruction setscreen_from___b1:
@@ -380,13 +406,12 @@ Removing instruction __b2:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -411,34 +436,36 @@ Score: 98
 // Tests pointer to pointer in a more complex setup
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-  // @begin
-__bbegin:
-  // screen = $400
-  // [0] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
-  lda #<$400
-  sta.z screen
-  lda #>$400
-  sta.z screen+1
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  jsr main
-  rts
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // screen = $400
+    // [1] (volatile byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    // [5] phi from _start::@1 to main [phi:_start::@1->main]
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
     // setscreen(&screen, screen1)
-    // [5] call setscreen 
-    // [10] phi from main to setscreen [phi:main->setscreen]
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
+    // [6] call setscreen 
+    // [11] phi from main to setscreen [phi:main->setscreen]
+    // [11] phi (byte*) setscreen::val#2 = (const byte*) screen1 [phi:main->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen1
     sta.z setscreen.val
     lda #>screen1
@@ -446,14 +473,14 @@ main: {
     jsr setscreen
     // main::@1
     // screen[0] = 'a'
-    // [6] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     // setscreen(&screen, screen2)
-    // [7] call setscreen 
-    // [10] phi from main::@1 to setscreen [phi:main::@1->setscreen]
-    // [10] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
+    // [8] call setscreen 
+    // [11] phi from main::@1 to setscreen [phi:main::@1->setscreen]
+    // [11] phi (byte*) setscreen::val#2 = (const byte*) screen2 [phi:main::@1->setscreen#0] -- pbuz1=pbuc1 
     lda #<screen2
     sta.z setscreen.val
     lda #>screen2
@@ -461,13 +488,13 @@ main: {
     jsr setscreen
     // main::@2
     // screen[0] = 'a'
-    // [8] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [9] *((volatile byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
     lda #'a'
     ldy #0
     sta (screen),y
     // main::@return
     // }
-    // [9] return 
+    // [10] return 
     rts
 }
   // setscreen
@@ -475,14 +502,14 @@ main: {
 setscreen: {
     .label val = 2
     // *screen = val
-    // [11] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
+    // [12] *(&(volatile byte*) screen) ← (byte*) setscreen::val#2 -- _deref_pptc1=pbuz1 
     lda.z val
     sta.z @screen
     lda.z val+1
     sta.z @screen+1
     // setscreen::@return
     // }
-    // [12] return 
+    // [13] return 
     rts
 }
   // File Data

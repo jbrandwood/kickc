@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte) main::x#0 ← (byte) 0
   to:main::@1
 main::@1: scope:[main]  from main main::@4
@@ -34,18 +32,21 @@ main::@4: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@4
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (bool~) main::$0
 (number~) main::$1
@@ -95,7 +96,12 @@ Constant (const byte) main::line#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Resolved ranged next value [10] main::x#1 ← ++ main::x#5 to ++
 Resolved ranged comparison value [12] if(main::x#1!=rangelast(0,$27)) goto main::@1 to (number) $28
-Adding number conversion cast (unumber) $28 in if((byte) main::x#1!=(number) $28) goto main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) $28 in [8] if((byte) main::x#1!=(number) $28) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
@@ -125,15 +131,15 @@ Unrolling loop Loop head: main::@2_1 tails: main::@3_1 blocks: main::@3_1 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#4 (const byte) main::line#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [8] (byte~) main::$4 ← (const byte) main::line#1 * (byte) $28
-Constant right-side identified [11] (byte) main::line#5 ← ++ (const byte) main::line#1
+Constant right-side identified [7] (byte~) main::$4 ← (const byte) main::line#1 * (byte) $28
+Constant right-side identified [10] (byte) main::line#5 ← ++ (const byte) main::line#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$4 = main::line#1*$28
 Constant (const byte) main::line#5 = ++main::line#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [4] if((const byte) main::line#1!=(byte) $19) goto main::@3_1
+if() condition always true - replacing block destination [3] if((const byte) main::line#1!=(byte) $19) goto main::@3_1
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [6] (byte*~) main::$5 ← (const byte*) main::SCREEN + (const byte) main::$4
+Constant right-side identified [5] (byte*~) main::$5 ← (const byte*) main::SCREEN + (const byte) main::$4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$5 = main::SCREEN+main::$4
 Successful SSA optimization Pass2ConstantIdentification
@@ -141,15 +147,15 @@ Unrolling loop Loop head: main::@2_2 tails: main::@3_2 blocks: main::@3_2 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#6 (const byte) main::line#5
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [9] (byte~) main::$6 ← (const byte) main::line#5 * (byte) $28
-Constant right-side identified [12] (byte) main::line#7 ← ++ (const byte) main::line#5
+Constant right-side identified [8] (byte~) main::$6 ← (const byte) main::line#5 * (byte) $28
+Constant right-side identified [11] (byte) main::line#7 ← ++ (const byte) main::line#5
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$6 = main::line#5*$28
 Constant (const byte) main::line#7 = ++main::line#5
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [5] if((const byte) main::line#5!=(byte) $19) goto main::@3_2
+if() condition always true - replacing block destination [4] if((const byte) main::line#5!=(byte) $19) goto main::@3_2
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [7] (byte*~) main::$7 ← (const byte*) main::SCREEN + (const byte) main::$6
+Constant right-side identified [6] (byte*~) main::$7 ← (const byte*) main::SCREEN + (const byte) main::$6
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$7 = main::SCREEN+main::$6
 Successful SSA optimization Pass2ConstantIdentification
@@ -157,15 +163,15 @@ Unrolling loop Loop head: main::@2_3 tails: main::@3_3 blocks: main::@3_3 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#8 (const byte) main::line#7
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [10] (byte~) main::$8 ← (const byte) main::line#7 * (byte) $28
-Constant right-side identified [13] (byte) main::line#9 ← ++ (const byte) main::line#7
+Constant right-side identified [9] (byte~) main::$8 ← (const byte) main::line#7 * (byte) $28
+Constant right-side identified [12] (byte) main::line#9 ← ++ (const byte) main::line#7
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$8 = main::line#7*$28
 Constant (const byte) main::line#9 = ++main::line#7
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [6] if((const byte) main::line#7!=(byte) $19) goto main::@3_3
+if() condition always true - replacing block destination [5] if((const byte) main::line#7!=(byte) $19) goto main::@3_3
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [8] (byte*~) main::$9 ← (const byte*) main::SCREEN + (const byte) main::$8
+Constant right-side identified [7] (byte*~) main::$9 ← (const byte*) main::SCREEN + (const byte) main::$8
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$9 = main::SCREEN+main::$8
 Successful SSA optimization Pass2ConstantIdentification
@@ -173,15 +179,15 @@ Unrolling loop Loop head: main::@2_4 tails: main::@3_4 blocks: main::@3_4 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#10 (const byte) main::line#9
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [11] (byte~) main::$10 ← (const byte) main::line#9 * (byte) $28
-Constant right-side identified [14] (byte) main::line#11 ← ++ (const byte) main::line#9
+Constant right-side identified [10] (byte~) main::$10 ← (const byte) main::line#9 * (byte) $28
+Constant right-side identified [13] (byte) main::line#11 ← ++ (const byte) main::line#9
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$10 = main::line#9*$28
 Constant (const byte) main::line#11 = ++main::line#9
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [7] if((const byte) main::line#9!=(byte) $19) goto main::@3_4
+if() condition always true - replacing block destination [6] if((const byte) main::line#9!=(byte) $19) goto main::@3_4
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [9] (byte*~) main::$11 ← (const byte*) main::SCREEN + (const byte) main::$10
+Constant right-side identified [8] (byte*~) main::$11 ← (const byte*) main::SCREEN + (const byte) main::$10
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$11 = main::SCREEN+main::$10
 Successful SSA optimization Pass2ConstantIdentification
@@ -189,15 +195,15 @@ Unrolling loop Loop head: main::@2_5 tails: main::@3_5 blocks: main::@3_5 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#12 (const byte) main::line#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [12] (byte~) main::$12 ← (const byte) main::line#11 * (byte) $28
-Constant right-side identified [15] (byte) main::line#13 ← ++ (const byte) main::line#11
+Constant right-side identified [11] (byte~) main::$12 ← (const byte) main::line#11 * (byte) $28
+Constant right-side identified [14] (byte) main::line#13 ← ++ (const byte) main::line#11
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$12 = main::line#11*$28
 Constant (const byte) main::line#13 = ++main::line#11
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [8] if((const byte) main::line#11!=(byte) $19) goto main::@3_5
+if() condition always true - replacing block destination [7] if((const byte) main::line#11!=(byte) $19) goto main::@3_5
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [10] (byte*~) main::$13 ← (const byte*) main::SCREEN + (const byte) main::$12
+Constant right-side identified [9] (byte*~) main::$13 ← (const byte*) main::SCREEN + (const byte) main::$12
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$13 = main::SCREEN+main::$12
 Successful SSA optimization Pass2ConstantIdentification
@@ -205,15 +211,15 @@ Unrolling loop Loop head: main::@2_6 tails: main::@3_6 blocks: main::@3_6 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#14 (const byte) main::line#13
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [13] (byte~) main::$14 ← (const byte) main::line#13 * (byte) $28
-Constant right-side identified [16] (byte) main::line#15 ← ++ (const byte) main::line#13
+Constant right-side identified [12] (byte~) main::$14 ← (const byte) main::line#13 * (byte) $28
+Constant right-side identified [15] (byte) main::line#15 ← ++ (const byte) main::line#13
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$14 = main::line#13*$28
 Constant (const byte) main::line#15 = ++main::line#13
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [9] if((const byte) main::line#13!=(byte) $19) goto main::@3_6
+if() condition always true - replacing block destination [8] if((const byte) main::line#13!=(byte) $19) goto main::@3_6
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [11] (byte*~) main::$15 ← (const byte*) main::SCREEN + (const byte) main::$14
+Constant right-side identified [10] (byte*~) main::$15 ← (const byte*) main::SCREEN + (const byte) main::$14
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$15 = main::SCREEN+main::$14
 Successful SSA optimization Pass2ConstantIdentification
@@ -221,15 +227,15 @@ Unrolling loop Loop head: main::@2_7 tails: main::@3_7 blocks: main::@3_7 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#16 (const byte) main::line#15
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [14] (byte~) main::$16 ← (const byte) main::line#15 * (byte) $28
-Constant right-side identified [17] (byte) main::line#17 ← ++ (const byte) main::line#15
+Constant right-side identified [13] (byte~) main::$16 ← (const byte) main::line#15 * (byte) $28
+Constant right-side identified [16] (byte) main::line#17 ← ++ (const byte) main::line#15
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$16 = main::line#15*$28
 Constant (const byte) main::line#17 = ++main::line#15
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [10] if((const byte) main::line#15!=(byte) $19) goto main::@3_7
+if() condition always true - replacing block destination [9] if((const byte) main::line#15!=(byte) $19) goto main::@3_7
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [12] (byte*~) main::$17 ← (const byte*) main::SCREEN + (const byte) main::$16
+Constant right-side identified [11] (byte*~) main::$17 ← (const byte*) main::SCREEN + (const byte) main::$16
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$17 = main::SCREEN+main::$16
 Successful SSA optimization Pass2ConstantIdentification
@@ -237,15 +243,15 @@ Unrolling loop Loop head: main::@2_8 tails: main::@3_8 blocks: main::@3_8 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#18 (const byte) main::line#17
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [15] (byte~) main::$18 ← (const byte) main::line#17 * (byte) $28
-Constant right-side identified [18] (byte) main::line#19 ← ++ (const byte) main::line#17
+Constant right-side identified [14] (byte~) main::$18 ← (const byte) main::line#17 * (byte) $28
+Constant right-side identified [17] (byte) main::line#19 ← ++ (const byte) main::line#17
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$18 = main::line#17*$28
 Constant (const byte) main::line#19 = ++main::line#17
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [11] if((const byte) main::line#17!=(byte) $19) goto main::@3_8
+if() condition always true - replacing block destination [10] if((const byte) main::line#17!=(byte) $19) goto main::@3_8
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [13] (byte*~) main::$19 ← (const byte*) main::SCREEN + (const byte) main::$18
+Constant right-side identified [12] (byte*~) main::$19 ← (const byte*) main::SCREEN + (const byte) main::$18
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$19 = main::SCREEN+main::$18
 Successful SSA optimization Pass2ConstantIdentification
@@ -253,15 +259,15 @@ Unrolling loop Loop head: main::@2_9 tails: main::@3_9 blocks: main::@3_9 main::
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#20 (const byte) main::line#19
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [16] (byte~) main::$20 ← (const byte) main::line#19 * (byte) $28
-Constant right-side identified [19] (byte) main::line#21 ← ++ (const byte) main::line#19
+Constant right-side identified [15] (byte~) main::$20 ← (const byte) main::line#19 * (byte) $28
+Constant right-side identified [18] (byte) main::line#21 ← ++ (const byte) main::line#19
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$20 = main::line#19*$28
 Constant (const byte) main::line#21 = ++main::line#19
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [12] if((const byte) main::line#19!=(byte) $19) goto main::@3_9
+if() condition always true - replacing block destination [11] if((const byte) main::line#19!=(byte) $19) goto main::@3_9
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [14] (byte*~) main::$21 ← (const byte*) main::SCREEN + (const byte) main::$20
+Constant right-side identified [13] (byte*~) main::$21 ← (const byte*) main::SCREEN + (const byte) main::$20
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$21 = main::SCREEN+main::$20
 Successful SSA optimization Pass2ConstantIdentification
@@ -269,15 +275,15 @@ Unrolling loop Loop head: main::@2_10 tails: main::@3_10 blocks: main::@3_10 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#22 (const byte) main::line#21
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [17] (byte~) main::$22 ← (const byte) main::line#21 * (byte) $28
-Constant right-side identified [20] (byte) main::line#23 ← ++ (const byte) main::line#21
+Constant right-side identified [16] (byte~) main::$22 ← (const byte) main::line#21 * (byte) $28
+Constant right-side identified [19] (byte) main::line#23 ← ++ (const byte) main::line#21
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$22 = main::line#21*$28
 Constant (const byte) main::line#23 = ++main::line#21
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [13] if((const byte) main::line#21!=(byte) $19) goto main::@3_10
+if() condition always true - replacing block destination [12] if((const byte) main::line#21!=(byte) $19) goto main::@3_10
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [15] (byte*~) main::$23 ← (const byte*) main::SCREEN + (const byte) main::$22
+Constant right-side identified [14] (byte*~) main::$23 ← (const byte*) main::SCREEN + (const byte) main::$22
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$23 = main::SCREEN+main::$22
 Successful SSA optimization Pass2ConstantIdentification
@@ -285,15 +291,15 @@ Unrolling loop Loop head: main::@2_11 tails: main::@3_11 blocks: main::@3_11 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#24 (const byte) main::line#23
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [18] (byte~) main::$24 ← (const byte) main::line#23 * (byte) $28
-Constant right-side identified [21] (byte) main::line#25 ← ++ (const byte) main::line#23
+Constant right-side identified [17] (byte~) main::$24 ← (const byte) main::line#23 * (byte) $28
+Constant right-side identified [20] (byte) main::line#25 ← ++ (const byte) main::line#23
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$24 = main::line#23*$28
 Constant (const byte) main::line#25 = ++main::line#23
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [14] if((const byte) main::line#23!=(byte) $19) goto main::@3_11
+if() condition always true - replacing block destination [13] if((const byte) main::line#23!=(byte) $19) goto main::@3_11
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [16] (byte*~) main::$25 ← (const byte*) main::SCREEN + (const byte) main::$24
+Constant right-side identified [15] (byte*~) main::$25 ← (const byte*) main::SCREEN + (const byte) main::$24
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$25 = main::SCREEN+main::$24
 Successful SSA optimization Pass2ConstantIdentification
@@ -301,15 +307,15 @@ Unrolling loop Loop head: main::@2_12 tails: main::@3_12 blocks: main::@3_12 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#26 (const byte) main::line#25
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [19] (byte~) main::$26 ← (const byte) main::line#25 * (byte) $28
-Constant right-side identified [22] (byte) main::line#27 ← ++ (const byte) main::line#25
+Constant right-side identified [18] (byte~) main::$26 ← (const byte) main::line#25 * (byte) $28
+Constant right-side identified [21] (byte) main::line#27 ← ++ (const byte) main::line#25
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$26 = main::line#25*$28
 Constant (const byte) main::line#27 = ++main::line#25
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [15] if((const byte) main::line#25!=(byte) $19) goto main::@3_12
+if() condition always true - replacing block destination [14] if((const byte) main::line#25!=(byte) $19) goto main::@3_12
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [17] (byte*~) main::$27 ← (const byte*) main::SCREEN + (const byte) main::$26
+Constant right-side identified [16] (byte*~) main::$27 ← (const byte*) main::SCREEN + (const byte) main::$26
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$27 = main::SCREEN+main::$26
 Successful SSA optimization Pass2ConstantIdentification
@@ -317,15 +323,15 @@ Unrolling loop Loop head: main::@2_13 tails: main::@3_13 blocks: main::@3_13 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#28 (const byte) main::line#27
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [20] (byte~) main::$28 ← (const byte) main::line#27 * (byte) $28
-Constant right-side identified [23] (byte) main::line#29 ← ++ (const byte) main::line#27
+Constant right-side identified [19] (byte~) main::$28 ← (const byte) main::line#27 * (byte) $28
+Constant right-side identified [22] (byte) main::line#29 ← ++ (const byte) main::line#27
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$28 = main::line#27*$28
 Constant (const byte) main::line#29 = ++main::line#27
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [16] if((const byte) main::line#27!=(byte) $19) goto main::@3_13
+if() condition always true - replacing block destination [15] if((const byte) main::line#27!=(byte) $19) goto main::@3_13
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [18] (byte*~) main::$29 ← (const byte*) main::SCREEN + (const byte) main::$28
+Constant right-side identified [17] (byte*~) main::$29 ← (const byte*) main::SCREEN + (const byte) main::$28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$29 = main::SCREEN+main::$28
 Successful SSA optimization Pass2ConstantIdentification
@@ -333,15 +339,15 @@ Unrolling loop Loop head: main::@2_14 tails: main::@3_14 blocks: main::@3_14 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#30 (const byte) main::line#29
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [21] (byte~) main::$30 ← (const byte) main::line#29 * (byte) $28
-Constant right-side identified [24] (byte) main::line#31 ← ++ (const byte) main::line#29
+Constant right-side identified [20] (byte~) main::$30 ← (const byte) main::line#29 * (byte) $28
+Constant right-side identified [23] (byte) main::line#31 ← ++ (const byte) main::line#29
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$30 = main::line#29*$28
 Constant (const byte) main::line#31 = ++main::line#29
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [17] if((const byte) main::line#29!=(byte) $19) goto main::@3_14
+if() condition always true - replacing block destination [16] if((const byte) main::line#29!=(byte) $19) goto main::@3_14
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [19] (byte*~) main::$31 ← (const byte*) main::SCREEN + (const byte) main::$30
+Constant right-side identified [18] (byte*~) main::$31 ← (const byte*) main::SCREEN + (const byte) main::$30
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$31 = main::SCREEN+main::$30
 Successful SSA optimization Pass2ConstantIdentification
@@ -349,15 +355,15 @@ Unrolling loop Loop head: main::@2_15 tails: main::@3_15 blocks: main::@3_15 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#32 (const byte) main::line#31
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [22] (byte~) main::$32 ← (const byte) main::line#31 * (byte) $28
-Constant right-side identified [25] (byte) main::line#33 ← ++ (const byte) main::line#31
+Constant right-side identified [21] (byte~) main::$32 ← (const byte) main::line#31 * (byte) $28
+Constant right-side identified [24] (byte) main::line#33 ← ++ (const byte) main::line#31
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$32 = main::line#31*$28
 Constant (const byte) main::line#33 = ++main::line#31
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [18] if((const byte) main::line#31!=(byte) $19) goto main::@3_15
+if() condition always true - replacing block destination [17] if((const byte) main::line#31!=(byte) $19) goto main::@3_15
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [20] (byte*~) main::$33 ← (const byte*) main::SCREEN + (const byte) main::$32
+Constant right-side identified [19] (byte*~) main::$33 ← (const byte*) main::SCREEN + (const byte) main::$32
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$33 = main::SCREEN+main::$32
 Successful SSA optimization Pass2ConstantIdentification
@@ -365,15 +371,15 @@ Unrolling loop Loop head: main::@2_16 tails: main::@3_16 blocks: main::@3_16 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#34 (const byte) main::line#33
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [23] (byte~) main::$34 ← (const byte) main::line#33 * (byte) $28
-Constant right-side identified [26] (byte) main::line#35 ← ++ (const byte) main::line#33
+Constant right-side identified [22] (byte~) main::$34 ← (const byte) main::line#33 * (byte) $28
+Constant right-side identified [25] (byte) main::line#35 ← ++ (const byte) main::line#33
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$34 = main::line#33*$28
 Constant (const byte) main::line#35 = ++main::line#33
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [19] if((const byte) main::line#33!=(byte) $19) goto main::@3_16
+if() condition always true - replacing block destination [18] if((const byte) main::line#33!=(byte) $19) goto main::@3_16
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [21] (byte*~) main::$35 ← (const byte*) main::SCREEN + (const byte) main::$34
+Constant right-side identified [20] (byte*~) main::$35 ← (const byte*) main::SCREEN + (const byte) main::$34
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$35 = main::SCREEN+main::$34
 Successful SSA optimization Pass2ConstantIdentification
@@ -381,15 +387,15 @@ Unrolling loop Loop head: main::@2_17 tails: main::@3_17 blocks: main::@3_17 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#36 (const byte) main::line#35
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [24] (byte~) main::$36 ← (const byte) main::line#35 * (byte) $28
-Constant right-side identified [27] (byte) main::line#37 ← ++ (const byte) main::line#35
+Constant right-side identified [23] (byte~) main::$36 ← (const byte) main::line#35 * (byte) $28
+Constant right-side identified [26] (byte) main::line#37 ← ++ (const byte) main::line#35
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$36 = main::line#35*$28
 Constant (const byte) main::line#37 = ++main::line#35
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [20] if((const byte) main::line#35!=(byte) $19) goto main::@3_17
+if() condition always true - replacing block destination [19] if((const byte) main::line#35!=(byte) $19) goto main::@3_17
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [22] (byte*~) main::$37 ← (const byte*) main::SCREEN + (const byte) main::$36
+Constant right-side identified [21] (byte*~) main::$37 ← (const byte*) main::SCREEN + (const byte) main::$36
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$37 = main::SCREEN+main::$36
 Successful SSA optimization Pass2ConstantIdentification
@@ -397,15 +403,15 @@ Unrolling loop Loop head: main::@2_18 tails: main::@3_18 blocks: main::@3_18 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#38 (const byte) main::line#37
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [25] (byte~) main::$38 ← (const byte) main::line#37 * (byte) $28
-Constant right-side identified [28] (byte) main::line#39 ← ++ (const byte) main::line#37
+Constant right-side identified [24] (byte~) main::$38 ← (const byte) main::line#37 * (byte) $28
+Constant right-side identified [27] (byte) main::line#39 ← ++ (const byte) main::line#37
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$38 = main::line#37*$28
 Constant (const byte) main::line#39 = ++main::line#37
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [21] if((const byte) main::line#37!=(byte) $19) goto main::@3_18
+if() condition always true - replacing block destination [20] if((const byte) main::line#37!=(byte) $19) goto main::@3_18
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [23] (byte*~) main::$39 ← (const byte*) main::SCREEN + (const byte) main::$38
+Constant right-side identified [22] (byte*~) main::$39 ← (const byte*) main::SCREEN + (const byte) main::$38
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$39 = main::SCREEN+main::$38
 Successful SSA optimization Pass2ConstantIdentification
@@ -413,15 +419,15 @@ Unrolling loop Loop head: main::@2_19 tails: main::@3_19 blocks: main::@3_19 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#40 (const byte) main::line#39
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [26] (byte~) main::$40 ← (const byte) main::line#39 * (byte) $28
-Constant right-side identified [29] (byte) main::line#41 ← ++ (const byte) main::line#39
+Constant right-side identified [25] (byte~) main::$40 ← (const byte) main::line#39 * (byte) $28
+Constant right-side identified [28] (byte) main::line#41 ← ++ (const byte) main::line#39
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$40 = main::line#39*$28
 Constant (const byte) main::line#41 = ++main::line#39
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [22] if((const byte) main::line#39!=(byte) $19) goto main::@3_19
+if() condition always true - replacing block destination [21] if((const byte) main::line#39!=(byte) $19) goto main::@3_19
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [24] (byte*~) main::$41 ← (const byte*) main::SCREEN + (const byte) main::$40
+Constant right-side identified [23] (byte*~) main::$41 ← (const byte*) main::SCREEN + (const byte) main::$40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$41 = main::SCREEN+main::$40
 Successful SSA optimization Pass2ConstantIdentification
@@ -429,15 +435,15 @@ Unrolling loop Loop head: main::@2_20 tails: main::@3_20 blocks: main::@3_20 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#42 (const byte) main::line#41
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [27] (byte~) main::$42 ← (const byte) main::line#41 * (byte) $28
-Constant right-side identified [30] (byte) main::line#43 ← ++ (const byte) main::line#41
+Constant right-side identified [26] (byte~) main::$42 ← (const byte) main::line#41 * (byte) $28
+Constant right-side identified [29] (byte) main::line#43 ← ++ (const byte) main::line#41
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$42 = main::line#41*$28
 Constant (const byte) main::line#43 = ++main::line#41
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [23] if((const byte) main::line#41!=(byte) $19) goto main::@3_20
+if() condition always true - replacing block destination [22] if((const byte) main::line#41!=(byte) $19) goto main::@3_20
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [25] (byte*~) main::$43 ← (const byte*) main::SCREEN + (const byte) main::$42
+Constant right-side identified [24] (byte*~) main::$43 ← (const byte*) main::SCREEN + (const byte) main::$42
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$43 = main::SCREEN+main::$42
 Successful SSA optimization Pass2ConstantIdentification
@@ -445,15 +451,15 @@ Unrolling loop Loop head: main::@2_21 tails: main::@3_21 blocks: main::@3_21 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#44 (const byte) main::line#43
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [28] (byte~) main::$44 ← (const byte) main::line#43 * (byte) $28
-Constant right-side identified [31] (byte) main::line#45 ← ++ (const byte) main::line#43
+Constant right-side identified [27] (byte~) main::$44 ← (const byte) main::line#43 * (byte) $28
+Constant right-side identified [30] (byte) main::line#45 ← ++ (const byte) main::line#43
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$44 = main::line#43*$28
 Constant (const byte) main::line#45 = ++main::line#43
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [24] if((const byte) main::line#43!=(byte) $19) goto main::@3_21
+if() condition always true - replacing block destination [23] if((const byte) main::line#43!=(byte) $19) goto main::@3_21
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [26] (byte*~) main::$45 ← (const byte*) main::SCREEN + (const byte) main::$44
+Constant right-side identified [25] (byte*~) main::$45 ← (const byte*) main::SCREEN + (const byte) main::$44
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$45 = main::SCREEN+main::$44
 Successful SSA optimization Pass2ConstantIdentification
@@ -461,15 +467,15 @@ Unrolling loop Loop head: main::@2_22 tails: main::@3_22 blocks: main::@3_22 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#46 (const byte) main::line#45
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [29] (byte~) main::$46 ← (const byte) main::line#45 * (byte) $28
-Constant right-side identified [32] (byte) main::line#47 ← ++ (const byte) main::line#45
+Constant right-side identified [28] (byte~) main::$46 ← (const byte) main::line#45 * (byte) $28
+Constant right-side identified [31] (byte) main::line#47 ← ++ (const byte) main::line#45
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$46 = main::line#45*$28
 Constant (const byte) main::line#47 = ++main::line#45
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [25] if((const byte) main::line#45!=(byte) $19) goto main::@3_22
+if() condition always true - replacing block destination [24] if((const byte) main::line#45!=(byte) $19) goto main::@3_22
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [27] (byte*~) main::$47 ← (const byte*) main::SCREEN + (const byte) main::$46
+Constant right-side identified [26] (byte*~) main::$47 ← (const byte*) main::SCREEN + (const byte) main::$46
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$47 = main::SCREEN+main::$46
 Successful SSA optimization Pass2ConstantIdentification
@@ -477,15 +483,15 @@ Unrolling loop Loop head: main::@2_23 tails: main::@3_23 blocks: main::@3_23 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#48 (const byte) main::line#47
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [30] (byte~) main::$48 ← (const byte) main::line#47 * (byte) $28
-Constant right-side identified [33] (byte) main::line#49 ← ++ (const byte) main::line#47
+Constant right-side identified [29] (byte~) main::$48 ← (const byte) main::line#47 * (byte) $28
+Constant right-side identified [32] (byte) main::line#49 ← ++ (const byte) main::line#47
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$48 = main::line#47*$28
 Constant (const byte) main::line#49 = ++main::line#47
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [26] if((const byte) main::line#47!=(byte) $19) goto main::@3_23
+if() condition always true - replacing block destination [25] if((const byte) main::line#47!=(byte) $19) goto main::@3_23
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [28] (byte*~) main::$49 ← (const byte*) main::SCREEN + (const byte) main::$48
+Constant right-side identified [27] (byte*~) main::$49 ← (const byte*) main::SCREEN + (const byte) main::$48
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$49 = main::SCREEN+main::$48
 Successful SSA optimization Pass2ConstantIdentification
@@ -493,15 +499,15 @@ Unrolling loop Loop head: main::@2_24 tails: main::@3_24 blocks: main::@3_24 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#50 (const byte) main::line#49
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [31] (byte~) main::$50 ← (const byte) main::line#49 * (byte) $28
-Constant right-side identified [34] (byte) main::line#51 ← ++ (const byte) main::line#49
+Constant right-side identified [30] (byte~) main::$50 ← (const byte) main::line#49 * (byte) $28
+Constant right-side identified [33] (byte) main::line#51 ← ++ (const byte) main::line#49
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$50 = main::line#49*$28
 Constant (const byte) main::line#51 = ++main::line#49
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [27] if((const byte) main::line#49!=(byte) $19) goto main::@3_24
+if() condition always true - replacing block destination [26] if((const byte) main::line#49!=(byte) $19) goto main::@3_24
 Successful SSA optimization Pass2ConstantIfs
-Constant right-side identified [29] (byte*~) main::$51 ← (const byte*) main::SCREEN + (const byte) main::$50
+Constant right-side identified [28] (byte*~) main::$51 ← (const byte*) main::SCREEN + (const byte) main::$50
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) main::$51 = main::SCREEN+main::$50
 Successful SSA optimization Pass2ConstantIdentification
@@ -509,13 +515,13 @@ Unrolling loop Loop head: main::@2_25 tails: main::@3_25 blocks: main::@3_25 mai
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) main::line#52 (const byte) main::line#51
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [32] (byte~) main::$52 ← (const byte) main::line#51 * (byte) $28
-Constant right-side identified [35] (byte) main::line#53 ← ++ (const byte) main::line#51
+Constant right-side identified [31] (byte~) main::$52 ← (const byte) main::line#51 * (byte) $28
+Constant right-side identified [34] (byte) main::line#53 ← ++ (const byte) main::line#51
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) main::$52 = main::line#51*$28
 Constant (const byte) main::line#53 = ++main::line#51
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [28] if((const byte) main::line#51!=(byte) $19) goto main::@3_25
+if() condition always false - eliminating [27] if((const byte) main::line#51!=(byte) $19) goto main::@3_25
 Successful SSA optimization Pass2ConstantIfs
 Eliminating variable (byte*~) main::$53 from unused block main::@3_25
 Eliminating variable (byte) main::line#54 from unused block main::@2_26
@@ -684,10 +690,6 @@ Simplifying constant integer increment ++$16
 Simplifying constant integer increment ++$17
 Successful SSA optimization Pass2ConstantSimplification
 Added new block during phi lifting main::@5(between main::@4 and main::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@2_1
@@ -716,12 +718,10 @@ Adding NOP phi() at start of main::@2_23
 Adding NOP phi() at start of main::@2_24
 Adding NOP phi() at start of main::@2_25
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 1 initial phi equivalence classes
-Coalesced [61] main::x#6 ← main::x#1
+Coalesced [56] main::x#6 ← main::x#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@2_1
 Culled Empty Block (label) main::@2_2
@@ -751,110 +751,98 @@ Culled Empty Block (label) main::@2_25
 Culled Empty Block (label) main::@5
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::x#5 ← phi( main/(byte) 0 main::@3/(byte) main::x#1 )
+  [1] (byte) main::x#5 ← phi( main/(byte) 0 main::@3/(byte) main::x#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5
+  [2] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_1
 main::@3_1: scope:[main]  from main::@2
-  [7] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [3] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_2
 main::@3_2: scope:[main]  from main::@3_1
-  [8] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [4] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_3
 main::@3_3: scope:[main]  from main::@3_2
-  [9] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [5] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_4
 main::@3_4: scope:[main]  from main::@3_3
-  [10] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [6] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_5
 main::@3_5: scope:[main]  from main::@3_4
-  [11] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [7] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_6
 main::@3_6: scope:[main]  from main::@3_5
-  [12] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [8] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_7
 main::@3_7: scope:[main]  from main::@3_6
-  [13] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [9] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_8
 main::@3_8: scope:[main]  from main::@3_7
-  [14] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [10] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_9
 main::@3_9: scope:[main]  from main::@3_8
-  [15] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [11] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_10
 main::@3_10: scope:[main]  from main::@3_9
-  [16] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [12] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_11
 main::@3_11: scope:[main]  from main::@3_10
-  [17] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [13] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_12
 main::@3_12: scope:[main]  from main::@3_11
-  [18] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [14] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_13
 main::@3_13: scope:[main]  from main::@3_12
-  [19] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [15] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_14
 main::@3_14: scope:[main]  from main::@3_13
-  [20] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [16] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_15
 main::@3_15: scope:[main]  from main::@3_14
-  [21] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [17] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_16
 main::@3_16: scope:[main]  from main::@3_15
-  [22] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [18] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_17
 main::@3_17: scope:[main]  from main::@3_16
-  [23] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [19] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_18
 main::@3_18: scope:[main]  from main::@3_17
-  [24] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [20] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_19
 main::@3_19: scope:[main]  from main::@3_18
-  [25] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [21] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_20
 main::@3_20: scope:[main]  from main::@3_19
-  [26] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [22] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_21
 main::@3_21: scope:[main]  from main::@3_20
-  [27] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [23] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_22
 main::@3_22: scope:[main]  from main::@3_21
-  [28] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [24] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_23
 main::@3_23: scope:[main]  from main::@3_22
-  [29] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [25] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3_24
 main::@3_24: scope:[main]  from main::@3_23
-  [30] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
+  [26] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5
   to:main::@3
 main::@3: scope:[main]  from main::@3_24
-  [31] (byte) main::x#1 ← ++ (byte) main::x#5
-  [32] if((byte) main::x#1!=(byte) $28) goto main::@1
+  [27] (byte) main::x#1 ← ++ (byte) main::x#5
+  [28] if((byte) main::x#1!=(byte) $28) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [33] return 
+  [29] return 
   to:@return
 
 
@@ -862,8 +850,8 @@ VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::line
 (byte) main::x
-(byte) main::x#1 151.5
-(byte) main::x#5 202.00000000000009
+(byte) main::x#1 16.5
+(byte) main::x#5 22.00000000000001
 
 Initial phi equivalence classes
 [ main::x#5 main::x#1 ]
@@ -880,226 +868,210 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
     .label x = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::x#5 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::x#5 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z x
     jmp __b1
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
     jmp __b2
     // main::@2
   __b2:
-    // [6] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [2] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN,y
     jmp __b3_1
     // main::@3_1
   __b3_1:
-    // [7] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [3] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+1*$28,y
     jmp __b3_2
     // main::@3_2
   __b3_2:
-    // [8] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [4] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+2*$28,y
     jmp __b3_3
     // main::@3_3
   __b3_3:
-    // [9] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [5] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+3*$28,y
     jmp __b3_4
     // main::@3_4
   __b3_4:
-    // [10] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [6] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+4*$28,y
     jmp __b3_5
     // main::@3_5
   __b3_5:
-    // [11] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [7] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+5*$28,y
     jmp __b3_6
     // main::@3_6
   __b3_6:
-    // [12] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [8] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+6*$28,y
     jmp __b3_7
     // main::@3_7
   __b3_7:
-    // [13] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [9] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+7*$28,y
     jmp __b3_8
     // main::@3_8
   __b3_8:
-    // [14] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [10] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+8*$28,y
     jmp __b3_9
     // main::@3_9
   __b3_9:
-    // [15] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [11] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+9*$28,y
     jmp __b3_10
     // main::@3_10
   __b3_10:
-    // [16] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [12] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$a*$28,y
     jmp __b3_11
     // main::@3_11
   __b3_11:
-    // [17] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [13] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$b*$28,y
     jmp __b3_12
     // main::@3_12
   __b3_12:
-    // [18] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [14] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$c*$28,y
     jmp __b3_13
     // main::@3_13
   __b3_13:
-    // [19] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [15] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$d*$28,y
     jmp __b3_14
     // main::@3_14
   __b3_14:
-    // [20] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [16] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$e*$28,y
     jmp __b3_15
     // main::@3_15
   __b3_15:
-    // [21] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [17] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$f*$28,y
     jmp __b3_16
     // main::@3_16
   __b3_16:
-    // [22] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [18] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$10*$28,y
     jmp __b3_17
     // main::@3_17
   __b3_17:
-    // [23] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [19] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$11*$28,y
     jmp __b3_18
     // main::@3_18
   __b3_18:
-    // [24] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [20] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$12*$28,y
     jmp __b3_19
     // main::@3_19
   __b3_19:
-    // [25] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [21] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$13*$28,y
     jmp __b3_20
     // main::@3_20
   __b3_20:
-    // [26] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [22] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$14*$28,y
     jmp __b3_21
     // main::@3_21
   __b3_21:
-    // [27] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [23] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$15*$28,y
     jmp __b3_22
     // main::@3_22
   __b3_22:
-    // [28] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [24] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$16*$28,y
     jmp __b3_23
     // main::@3_23
   __b3_23:
-    // [29] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [25] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$17*$28,y
     jmp __b3_24
     // main::@3_24
   __b3_24:
-    // [30] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [26] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z x
     tya
     sta SCREEN+$18*$28,y
     jmp __b3
     // main::@3
   __b3:
-    // [31] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuz1=_inc_vbuz1 
+    // [27] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuz1=_inc_vbuz1 
     inc.z x
-    // [32] if((byte) main::x#1!=(byte) $28) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [28] if((byte) main::x#1!=(byte) $28) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z x
     bne __b1_from___b3
     jmp __breturn
     // main::@return
   __breturn:
-    // [33] return 
+    // [29] return 
     rts
 }
   // File Data
@@ -1108,11 +1080,11 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp[1]:2 [ main::x#5 main::x#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 353.5: zp[1]:2 [ main::x#5 main::x#1 ] 
+Uplift Scope [main] 38.5: zp[1]:2 [ main::x#5 main::x#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 2723 combination reg byte x [ main::x#5 main::x#1 ] 
-Uplifting [] best 2723 combination 
+Uplifting [main] best 2711 combination reg byte x [ main::x#5 main::x#1 ] 
+Uplifting [] best 2711 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1122,205 +1094,187 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::x#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::x#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
     jmp __b2
     // main::@2
   __b2:
-    // [6] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [2] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     jmp __b3_1
     // main::@3_1
   __b3_1:
-    // [7] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [3] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+1*$28,x
     jmp __b3_2
     // main::@3_2
   __b3_2:
-    // [8] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [4] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+2*$28,x
     jmp __b3_3
     // main::@3_3
   __b3_3:
-    // [9] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [5] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+3*$28,x
     jmp __b3_4
     // main::@3_4
   __b3_4:
-    // [10] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+4*$28,x
     jmp __b3_5
     // main::@3_5
   __b3_5:
-    // [11] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [7] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+5*$28,x
     jmp __b3_6
     // main::@3_6
   __b3_6:
-    // [12] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [8] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+6*$28,x
     jmp __b3_7
     // main::@3_7
   __b3_7:
-    // [13] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [9] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+7*$28,x
     jmp __b3_8
     // main::@3_8
   __b3_8:
-    // [14] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [10] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+8*$28,x
     jmp __b3_9
     // main::@3_9
   __b3_9:
-    // [15] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [11] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+9*$28,x
     jmp __b3_10
     // main::@3_10
   __b3_10:
-    // [16] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [12] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$a*$28,x
     jmp __b3_11
     // main::@3_11
   __b3_11:
-    // [17] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [13] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$b*$28,x
     jmp __b3_12
     // main::@3_12
   __b3_12:
-    // [18] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [14] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$c*$28,x
     jmp __b3_13
     // main::@3_13
   __b3_13:
-    // [19] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [15] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$d*$28,x
     jmp __b3_14
     // main::@3_14
   __b3_14:
-    // [20] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [16] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$e*$28,x
     jmp __b3_15
     // main::@3_15
   __b3_15:
-    // [21] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [17] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$f*$28,x
     jmp __b3_16
     // main::@3_16
   __b3_16:
-    // [22] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [18] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$10*$28,x
     jmp __b3_17
     // main::@3_17
   __b3_17:
-    // [23] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [19] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$11*$28,x
     jmp __b3_18
     // main::@3_18
   __b3_18:
-    // [24] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [20] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$12*$28,x
     jmp __b3_19
     // main::@3_19
   __b3_19:
-    // [25] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [21] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$13*$28,x
     jmp __b3_20
     // main::@3_20
   __b3_20:
-    // [26] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [22] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$14*$28,x
     jmp __b3_21
     // main::@3_21
   __b3_21:
-    // [27] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [23] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$15*$28,x
     jmp __b3_22
     // main::@3_22
   __b3_22:
-    // [28] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [24] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$16*$28,x
     jmp __b3_23
     // main::@3_23
   __b3_23:
-    // [29] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [25] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$17*$28,x
     jmp __b3_24
     // main::@3_24
   __b3_24:
-    // [30] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [26] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$18*$28,x
     jmp __b3
     // main::@3
   __b3:
-    // [31] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuxx=_inc_vbuxx 
+    // [27] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuxx=_inc_vbuxx 
     inx
-    // [32] if((byte) main::x#1!=(byte) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [28] if((byte) main::x#1!=(byte) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne __b1_from___b3
     jmp __breturn
     // main::@return
   __breturn:
-    // [33] return 
+    // [29] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3_1
@@ -1352,15 +1306,9 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1 with __b2
 Replacing label __b1_from___b3 with __b2
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b3:
 Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b3_1:
 Removing instruction __b3_2:
@@ -1389,15 +1337,10 @@ Removing instruction __b3_24:
 Removing instruction __b3:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -1430,8 +1373,8 @@ FINAL SYMBOL TABLE
 (const byte*) main::SCREEN = (byte*) 1024
 (byte) main::line
 (byte) main::x
-(byte) main::x#1 reg byte x 151.5
-(byte) main::x#5 reg byte x 202.00000000000009
+(byte) main::x#1 reg byte x 16.5
+(byte) main::x#5 reg byte x 22.00000000000001
 
 reg byte x [ main::x#5 main::x#1 ]
 
@@ -1446,134 +1389,127 @@ Score: 1841
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::x#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::x#5 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
+    // [1] phi (byte) main::x#5 = (byte) main::x#1 [phi:main::@3->main::@1#0] -- register_copy 
     // main::@1
     // main::@2
   __b2:
     // (SCREEN+line*40)[x] = x
-    // [6] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [2] *((const byte*) main::SCREEN + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN,x
     // main::@3_1
-    // [7] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [3] *((const byte*) main::SCREEN+(byte) 1*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+1*$28,x
     // main::@3_2
-    // [8] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [4] *((const byte*) main::SCREEN+(byte) 2*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+2*$28,x
     // main::@3_3
-    // [9] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [5] *((const byte*) main::SCREEN+(byte) 3*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+3*$28,x
     // main::@3_4
-    // [10] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [6] *((const byte*) main::SCREEN+(byte) 4*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+4*$28,x
     // main::@3_5
-    // [11] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [7] *((const byte*) main::SCREEN+(byte) 5*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+5*$28,x
     // main::@3_6
-    // [12] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [8] *((const byte*) main::SCREEN+(byte) 6*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+6*$28,x
     // main::@3_7
-    // [13] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [9] *((const byte*) main::SCREEN+(byte) 7*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+7*$28,x
     // main::@3_8
-    // [14] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [10] *((const byte*) main::SCREEN+(byte) 8*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+8*$28,x
     // main::@3_9
-    // [15] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [11] *((const byte*) main::SCREEN+(byte) 9*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+9*$28,x
     // main::@3_10
-    // [16] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [12] *((const byte*) main::SCREEN+(byte) $a*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$a*$28,x
     // main::@3_11
-    // [17] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [13] *((const byte*) main::SCREEN+(byte) $b*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$b*$28,x
     // main::@3_12
-    // [18] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [14] *((const byte*) main::SCREEN+(byte) $c*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$c*$28,x
     // main::@3_13
-    // [19] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [15] *((const byte*) main::SCREEN+(byte) $d*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$d*$28,x
     // main::@3_14
-    // [20] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [16] *((const byte*) main::SCREEN+(byte) $e*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$e*$28,x
     // main::@3_15
-    // [21] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [17] *((const byte*) main::SCREEN+(byte) $f*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$f*$28,x
     // main::@3_16
-    // [22] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [18] *((const byte*) main::SCREEN+(byte) $10*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$10*$28,x
     // main::@3_17
-    // [23] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [19] *((const byte*) main::SCREEN+(byte) $11*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$11*$28,x
     // main::@3_18
-    // [24] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [20] *((const byte*) main::SCREEN+(byte) $12*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$12*$28,x
     // main::@3_19
-    // [25] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [21] *((const byte*) main::SCREEN+(byte) $13*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$13*$28,x
     // main::@3_20
-    // [26] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [22] *((const byte*) main::SCREEN+(byte) $14*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$14*$28,x
     // main::@3_21
-    // [27] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [23] *((const byte*) main::SCREEN+(byte) $15*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$15*$28,x
     // main::@3_22
-    // [28] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [24] *((const byte*) main::SCREEN+(byte) $16*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$16*$28,x
     // main::@3_23
-    // [29] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [25] *((const byte*) main::SCREEN+(byte) $17*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$17*$28,x
     // main::@3_24
-    // [30] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [26] *((const byte*) main::SCREEN+(byte) $18*(byte) $28 + (byte) main::x#5) ← (byte) main::x#5 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta SCREEN+$18*$28,x
     // main::@3
     // for(byte x: 0..39)
-    // [31] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuxx=_inc_vbuxx 
+    // [27] (byte) main::x#1 ← ++ (byte) main::x#5 -- vbuxx=_inc_vbuxx 
     inx
-    // [32] if((byte) main::x#1!=(byte) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [28] if((byte) main::x#1!=(byte) $28) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28
     bne __b2
     // main::@return
     // }
-    // [33] return 
+    // [29] return 
     rts
 }
   // File Data

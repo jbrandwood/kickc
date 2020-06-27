@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte*) fill::screen#0 ← (byte*)(number) $400
   (byte) fill::ch#0 ← (byte) 'a'
   call fill 
@@ -55,18 +53,21 @@ fill::@3: scope:[fill]  from fill::@2
 fill::@return: scope:[fill]  from fill::@3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) fill((byte*) fill::screen , (byte) fill::ch)
 (number~) fill::$0
 (byte*~) fill::$1
@@ -140,8 +141,13 @@ Resolved ranged next value [15] fill::j#1 ← ++ fill::j#2 to ++
 Resolved ranged comparison value [17] unroll if(fill::j#1!=rangelast(0,2)) goto fill::@2 to (number) 3
 Resolved ranged next value [18] fill::i#1 ← ++ fill::i#4 to ++
 Resolved ranged comparison value [20] if(fill::i#1!=rangelast(0,$27)) goto fill::@1 to (number) $28
-Adding number conversion cast (unumber) 3 in unroll if((byte) fill::j#1!=(number) 3) goto fill::@2
-Adding number conversion cast (unumber) $28 in if((byte) fill::i#1!=(number) $28) goto fill::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 3 in [10] unroll if((byte) fill::j#1!=(number) 3) goto fill::@2
+Adding number conversion cast (unumber) $28 in [12] if((byte) fill::i#1!=(number) $28) goto fill::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Simplifying constant integer cast $28
@@ -175,30 +181,30 @@ Unrolling loop Loop head: fill::@2_1 tails: fill::@2_1 blocks: fill::@2_1
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) fill::j#3 (const byte) fill::j#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Negating conditional jump and destination [12] if((byte) fill::j#4==(byte) 3) goto fill::@3
+Negating conditional jump and destination [11] if((byte) fill::j#4==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [8] (byte~) fill::$4 ← (const byte) fill::j#1 * (byte) $28
-Constant right-side identified [11] (byte) fill::j#4 ← ++ (const byte) fill::j#1
+Constant right-side identified [7] (byte~) fill::$4 ← (const byte) fill::j#1 * (byte) $28
+Constant right-side identified [10] (byte) fill::j#4 ← ++ (const byte) fill::j#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) fill::$4 = fill::j#1*$28
 Constant (const byte) fill::j#4 = ++fill::j#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [12] if((const byte) fill::j#4==(byte) 3) goto fill::@3
+if() condition always false - eliminating [11] if((const byte) fill::j#4==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConstantIfs
 Unrolling loop Loop head: fill::@2_2 tails: fill::@2_2 blocks: fill::@2_2 
 Successful SSA optimization Pass2LoopUnroll
 Identical Phi Values (byte) fill::j#5 (const byte) fill::j#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Negating conditional jump and destination [14] if((byte) fill::j#6==(byte) 3) goto fill::@3
+Negating conditional jump and destination [13] if((byte) fill::j#6==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant right-side identified [10] (byte~) fill::$6 ← (const byte) fill::j#4 * (byte) $28
-Constant right-side identified [13] (byte) fill::j#6 ← ++ (const byte) fill::j#4
+Constant right-side identified [9] (byte~) fill::$6 ← (const byte) fill::j#4 * (byte) $28
+Constant right-side identified [12] (byte) fill::j#6 ← ++ (const byte) fill::j#4
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) fill::$6 = fill::j#4*$28
 Constant (const byte) fill::j#6 = ++fill::j#4
 Successful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (fill::@2_2) in block fill::@2_3
-if() condition always true - replacing block destination [14] if((const byte) fill::j#6==(byte) 3) goto fill::@3
+if() condition always true - replacing block destination [13] if((const byte) fill::j#6==(byte) 3) goto fill::@3
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) fill::j#6
 Successful SSA optimization PassNEliminateUnusedVars
@@ -233,93 +239,75 @@ Successful SSA optimization Pass2ConstantSimplification
 Simplifying constant integer increment ++1
 Successful SSA optimization Pass2ConstantSimplification
 Added new block during phi lifting fill::@4(between fill::@3 and fill::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to fill:6 fill:8 
+Calls in [main] to fill:1 fill:3 
 
 Created 3 initial phi equivalence classes
-Coalesced [21] fill::i#5 ← fill::i#1
+Coalesced [16] fill::i#5 ← fill::i#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) fill::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call fill 
+main: scope:[main]  from
+  [0] phi()
+  [1] call fill 
   to:main::@1
 main::@1: scope:[main]  from main
-  [6] phi()
-  [7] call fill 
+  [2] phi()
+  [3] call fill 
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [8] return 
+  [4] return 
   to:@return
 
 (void()) fill((byte*) fill::screen , (byte) fill::ch)
 fill: scope:[fill]  from main main::@1
-  [9] (byte) fill::ch#4 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
-  [9] (byte*) fill::screen#4 ← phi( main/(byte*) 1024 main::@1/(byte*) 8192 )
+  [5] (byte) fill::ch#4 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
+  [5] (byte*) fill::screen#4 ← phi( main/(byte*) 1024 main::@1/(byte*) 8192 )
   to:fill::@1
 fill::@1: scope:[fill]  from fill fill::@3
-  [10] (byte) fill::i#4 ← phi( fill/(byte) 0 fill::@3/(byte) fill::i#1 )
+  [6] (byte) fill::i#4 ← phi( fill/(byte) 0 fill::@3/(byte) fill::i#1 )
   to:fill::@2
 fill::@2: scope:[fill]  from fill::@1
-  [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4
+  [7] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4
   to:fill::@2_1
 fill::@2_1: scope:[fill]  from fill::@2
-  [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28
-  [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4
+  [8] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28
+  [9] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4
   to:fill::@2_2
 fill::@2_2: scope:[fill]  from fill::@2_1
-  [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28
-  [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4
+  [10] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28
+  [11] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4
   to:fill::@3
 fill::@3: scope:[fill]  from fill::@2_2
-  [16] (byte) fill::i#1 ← ++ (byte) fill::i#4
-  [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1
+  [12] (byte) fill::i#1 ← ++ (byte) fill::i#4
+  [13] if((byte) fill::i#1!=(byte) $28) goto fill::@1
   to:fill::@return
 fill::@return: scope:[fill]  from fill::@3
-  [18] return 
+  [14] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) fill((byte*) fill::screen , (byte) fill::ch)
-(byte*~) fill::$5 2002.0
-(byte*~) fill::$7 2002.0
+(byte*~) fill::$5 202.0
+(byte*~) fill::$7 202.0
 (byte) fill::ch
-(byte) fill::ch#4 333.6666666666667
+(byte) fill::ch#4 33.666666666666664
 (byte) fill::i
-(byte) fill::i#1 1501.5
-(byte) fill::i#4 834.1666666666667
+(byte) fill::i#1 151.5
+(byte) fill::i#4 84.16666666666666
 (byte) fill::j
 (byte*) fill::screen
-(byte*) fill::screen#4 333.6666666666667
+(byte*) fill::screen#4 33.666666666666664
 (void()) main()
 
 Initial phi equivalence classes
@@ -349,48 +337,32 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call fill 
-    // [9] phi from main to fill [phi:main->fill]
+    // [1] call fill 
+    // [5] phi from main to fill [phi:main->fill]
   fill_from_main:
-    // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuz1=vbuc1 
     lda #'a'
     sta.z fill.ch
-    // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z fill.screen
     lda #>$400
     sta.z fill.screen+1
     jsr fill
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call fill 
-    // [9] phi from main::@1 to fill [phi:main::@1->fill]
+    // [3] call fill 
+    // [5] phi from main::@1 to fill [phi:main::@1->fill]
   fill_from___b1:
-    // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
+    // [5] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuz1=vbuc1 
     lda #'b'
     sta.z fill.ch
-    // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta.z fill.screen
     lda #>$2000
@@ -399,7 +371,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // fill
@@ -410,29 +382,29 @@ fill: {
     .label ch = 4
     .label __5 = 6
     .label __7 = 8
-    // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
+    // [6] phi from fill to fill::@1 [phi:fill->fill::@1]
   __b1_from_fill:
-    // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
+    // [6] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
   __b1_from___b3:
-    // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
+    // [6] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
     jmp __b1
     // fill::@1
   __b1:
     jmp __b2
     // fill::@2
   __b2:
-    // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [7] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ch
     ldy.z i
     sta (screen),y
     jmp __b2_1
     // fill::@2_1
   __b2_1:
-    // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [8] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc.z screen
@@ -440,14 +412,14 @@ fill: {
     lda #0
     adc.z screen+1
     sta.z __5+1
-    // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [9] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ch
     ldy.z i
     sta (__5),y
     jmp __b2_2
     // fill::@2_2
   __b2_2:
-    // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [10] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc.z screen
@@ -455,39 +427,39 @@ fill: {
     lda #0
     adc.z screen+1
     sta.z __7+1
-    // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
+    // [11] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuz2=vbuz3 
     lda.z ch
     ldy.z i
     sta (__7),y
     jmp __b3
     // fill::@3
   __b3:
-    // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
+    // [12] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [13] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$28
     cmp.z i
     bne __b1_from___b3
     jmp __breturn
     // fill::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  ) always clobbers reg byte a 
+Statement [8] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ fill::ch#4 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ fill::i#4 fill::i#1 ]
-Statement [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
-Statement [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
-Statement [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( main:2::fill:5 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  main:2::fill:7 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
+Statement [10] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
+Statement [7] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
+Statement [8] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$5 ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
+Statement [10] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 fill::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 [ fill::screen#4 fill::ch#4 fill::i#4 ] ( fill:1 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  fill:3 [ fill::screen#4 fill::ch#4 fill::i#4 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ fill::screen#4 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ fill::ch#4 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ fill::i#4 fill::i#1 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -495,13 +467,13 @@ Potential registers zp[2]:6 [ fill::$5 ] : zp[2]:6 ,
 Potential registers zp[2]:8 [ fill::$7 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [fill] 2,335.67: zp[1]:5 [ fill::i#4 fill::i#1 ] 2,002: zp[2]:6 [ fill::$5 ] 2,002: zp[2]:8 [ fill::$7 ] 333.67: zp[2]:2 [ fill::screen#4 ] 333.67: zp[1]:4 [ fill::ch#4 ] 
+Uplift Scope [fill] 235.67: zp[1]:5 [ fill::i#4 fill::i#1 ] 202: zp[2]:6 [ fill::$5 ] 202: zp[2]:8 [ fill::$7 ] 33.67: zp[2]:2 [ fill::screen#4 ] 33.67: zp[1]:4 [ fill::ch#4 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [fill] best 961 combination reg byte y [ fill::i#4 fill::i#1 ] zp[2]:6 [ fill::$5 ] zp[2]:8 [ fill::$7 ] zp[2]:2 [ fill::screen#4 ] reg byte x [ fill::ch#4 ] 
-Uplifting [main] best 961 combination 
-Uplifting [] best 961 combination 
+Uplifting [fill] best 949 combination reg byte y [ fill::i#4 fill::i#1 ] zp[2]:6 [ fill::$5 ] zp[2]:8 [ fill::$7 ] zp[2]:2 [ fill::screen#4 ] reg byte x [ fill::ch#4 ] 
+Uplifting [main] best 949 combination 
+Uplifting [] best 949 combination 
 Allocated (was zp[2]:6) zp[2]:4 [ fill::$5 ]
 Allocated (was zp[2]:8) zp[2]:6 [ fill::$7 ]
 
@@ -513,46 +485,30 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call fill 
-    // [9] phi from main to fill [phi:main->fill]
+    // [1] call fill 
+    // [5] phi from main to fill [phi:main->fill]
   fill_from_main:
-    // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-    // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z fill.screen
     lda #>$400
     sta.z fill.screen+1
     jsr fill
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [7] call fill 
-    // [9] phi from main::@1 to fill [phi:main::@1->fill]
+    // [3] call fill 
+    // [5] phi from main::@1 to fill [phi:main::@1->fill]
   fill_from___b1:
-    // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
+    // [5] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-    // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta.z fill.screen
     lda #>$2000
@@ -561,7 +517,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // fill
@@ -570,27 +526,27 @@ fill: {
     .label screen = 2
     .label __5 = 4
     .label __7 = 6
-    // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
+    // [6] phi from fill to fill::@1 [phi:fill->fill::@1]
   __b1_from_fill:
-    // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
+    // [6] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp __b1
-    // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
+    // [6] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
   __b1_from___b3:
-    // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
+    // [6] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
     jmp __b1
     // fill::@1
   __b1:
     jmp __b2
     // fill::@2
   __b2:
-    // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+    // [7] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (screen),y
     jmp __b2_1
     // fill::@2_1
   __b2_1:
-    // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [8] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc.z screen
@@ -598,13 +554,13 @@ fill: {
     lda #0
     adc.z screen+1
     sta.z __5+1
-    // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+    // [9] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (__5),y
     jmp __b2_2
     // fill::@2_2
   __b2_2:
-    // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [10] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc.z screen
@@ -612,28 +568,26 @@ fill: {
     lda #0
     adc.z screen+1
     sta.z __7+1
-    // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+    // [11] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (__7),y
     jmp __b3
     // fill::@3
   __b3:
-    // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
+    // [12] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
-    // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [13] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne __b1_from___b3
     jmp __breturn
     // fill::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
@@ -645,17 +599,11 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1 with __b2
 Replacing label __b1_from___b3 with __b2
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction fill_from___b1:
 Removing instruction __b1_from___b3:
 Removing instruction __b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction fill_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
@@ -665,18 +613,13 @@ Removing instruction __b2_2:
 Removing instruction __b3:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) fill((byte*) fill::screen , (byte) fill::ch)
-(byte*~) fill::$5 zp[2]:4 2002.0
-(byte*~) fill::$7 zp[2]:6 2002.0
+(byte*~) fill::$5 zp[2]:4 202.0
+(byte*~) fill::$7 zp[2]:6 202.0
 (label) fill::@1
 (label) fill::@2
 (label) fill::@2_1
@@ -684,13 +627,13 @@ FINAL SYMBOL TABLE
 (label) fill::@3
 (label) fill::@return
 (byte) fill::ch
-(byte) fill::ch#4 reg byte x 333.6666666666667
+(byte) fill::ch#4 reg byte x 33.666666666666664
 (byte) fill::i
-(byte) fill::i#1 reg byte y 1501.5
-(byte) fill::i#4 reg byte y 834.1666666666667
+(byte) fill::i#1 reg byte y 151.5
+(byte) fill::i#4 reg byte y 84.16666666666666
 (byte) fill::j
 (byte*) fill::screen
-(byte*) fill::screen#4 screen zp[2]:2 333.6666666666667
+(byte*) fill::screen#4 screen zp[2]:2 33.666666666666664
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -712,34 +655,27 @@ Score: 733
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // fill((byte*)$400,'a')
-    // [5] call fill 
-    // [9] phi from main to fill [phi:main->fill]
-    // [9] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
+    // [1] call fill 
+    // [5] phi from main to fill [phi:main->fill]
+    // [5] phi (byte) fill::ch#4 = (byte) 'a' [phi:main->fill#0] -- vbuxx=vbuc1 
     ldx #'a'
-    // [9] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) fill::screen#4 = (byte*) 1024 [phi:main->fill#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z fill.screen
     lda #>$400
     sta.z fill.screen+1
     jsr fill
-    // [6] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // fill((byte*)$2000,'b')
-    // [7] call fill 
-    // [9] phi from main::@1 to fill [phi:main::@1->fill]
-    // [9] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
+    // [3] call fill 
+    // [5] phi from main::@1 to fill [phi:main::@1->fill]
+    // [5] phi (byte) fill::ch#4 = (byte) 'b' [phi:main::@1->fill#0] -- vbuxx=vbuc1 
     ldx #'b'
-    // [9] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
+    // [5] phi (byte*) fill::screen#4 = (byte*) 8192 [phi:main::@1->fill#1] -- pbuz1=pbuc1 
     lda #<$2000
     sta.z fill.screen
     lda #>$2000
@@ -747,7 +683,7 @@ main: {
     jsr fill
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // fill
@@ -756,21 +692,21 @@ fill: {
     .label screen = 2
     .label __5 = 4
     .label __7 = 6
-    // [10] phi from fill to fill::@1 [phi:fill->fill::@1]
-    // [10] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
+    // [6] phi from fill to fill::@1 [phi:fill->fill::@1]
+    // [6] phi (byte) fill::i#4 = (byte) 0 [phi:fill->fill::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    // [10] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
-    // [10] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
+    // [6] phi from fill::@3 to fill::@1 [phi:fill::@3->fill::@1]
+    // [6] phi (byte) fill::i#4 = (byte) fill::i#1 [phi:fill::@3->fill::@1#0] -- register_copy 
     // fill::@1
     // fill::@2
   __b2:
     // (screen+j*40)[i] = ch
-    // [11] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+    // [7] *((byte*) fill::screen#4 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (screen),y
     // fill::@2_1
     // screen+j*40
-    // [12] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [8] (byte*~) fill::$5 ← (byte*) fill::screen#4 + (byte) 1*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #1*$28
     clc
     adc.z screen
@@ -779,12 +715,12 @@ fill: {
     adc.z screen+1
     sta.z __5+1
     // (screen+j*40)[i] = ch
-    // [13] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+    // [9] *((byte*~) fill::$5 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (__5),y
     // fill::@2_2
     // screen+j*40
-    // [14] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [10] (byte*~) fill::$7 ← (byte*) fill::screen#4 + (byte) 2*(byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #2*$28
     clc
     adc.z screen
@@ -793,19 +729,19 @@ fill: {
     adc.z screen+1
     sta.z __7+1
     // (screen+j*40)[i] = ch
-    // [15] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
+    // [11] *((byte*~) fill::$7 + (byte) fill::i#4) ← (byte) fill::ch#4 -- pbuz1_derefidx_vbuyy=vbuxx 
     txa
     sta (__7),y
     // fill::@3
     // for(byte i: 0..39)
-    // [16] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
+    // [12] (byte) fill::i#1 ← ++ (byte) fill::i#4 -- vbuyy=_inc_vbuyy 
     iny
-    // [17] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [13] if((byte) fill::i#1!=(byte) $28) goto fill::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$28
     bne __b2
     // fill::@return
     // }
-    // [18] return 
+    // [14] return 
     rts
 }
   // File Data

@@ -1,12 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
- }}
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte*) main::screen#0 ← (byte*)(number) $400
   (byte*) main::cols#0 ← (byte*)(number) $d800
   (byte) main::i#0 ← (byte) 0
@@ -15,7 +11,7 @@ main::@1: scope:[main]  from main main::@1
   (byte*) main::cols#2 ← phi( main/(byte*) main::cols#0 main::@1/(byte*) main::cols#1 )
   (byte*) main::screen#2 ← phi( main/(byte*) main::screen#0 main::@1/(byte*) main::screen#1 )
   (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2)
+  (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2)
   *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*'
   (byte*) main::screen#1 ← (byte*) main::screen#2 + (number) $28
   *((byte*) main::cols#2 + (byte) main::sin#0) ← (number) 1
@@ -27,18 +23,21 @@ main::@1: scope:[main]  from main main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -57,7 +56,8 @@ SYMBOL TABLE SSA
 (byte*) main::screen#2
 (byte) main::sin
 (byte) main::sin#0
-(const nomodify byte*) sintab = (byte*)(number) $1000
+(const byte*) sintab[]  = kickasm {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
+ }}
 
 Adding number conversion cast (unumber) $28 in (byte*) main::screen#1 ← (byte*) main::screen#2 + (number) $28
 Adding number conversion cast (unumber) 1 in *((byte*) main::cols#2 + (byte) main::sin#0) ← (number) 1
@@ -65,7 +65,6 @@ Adding number conversion cast (unumber) $28 in (byte*) main::cols#1 ← (byte*) 
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *((byte*) main::cols#2 + (byte) main::sin#0) ← (unumber)(number) 1
 Successful SSA optimization Pass2InlineCast
-Simplifying constant pointer cast (byte*) 4096
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast $28
@@ -76,15 +75,20 @@ Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [12] if((byte) main::i#1!=rangelast(0,$18)) goto main::@1
+Simple Condition (bool~) main::$0 [11] if((byte) main::i#1!=rangelast(0,$18)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::screen#0 = (byte*) 1024
 Constant (const byte*) main::cols#0 = (byte*) 55296
 Constant (const byte) main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [10] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [12] if(main::i#1!=rangelast(0,$18)) goto main::@1 to (number) $19
-Adding number conversion cast (unumber) $19 in if((byte) main::i#1!=(number) $19) goto main::@1
+Resolved ranged next value [9] main::i#1 ← ++ main::i#2 to ++
+Resolved ranged comparison value [11] if(main::i#1!=rangelast(0,$18)) goto main::@1 to (number) $19
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) $19 in [7] if((byte) main::i#1!=(number) $19) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19
 Successful SSA optimization PassNCastSimplification
@@ -98,70 +102,53 @@ Constant inlined main::i#0 = (byte) 0
 Constant inlined main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 3 initial phi equivalence classes
-Coalesced [15] main::i#3 ← main::i#1
-Coalesced [16] main::screen#3 ← main::screen#1
-Coalesced [17] main::cols#3 ← main::cols#1
+Coalesced [10] main::i#3 ← main::i#1
+Coalesced [11] main::screen#3 ← main::screen#1
+Coalesced [12] main::cols#3 ← main::cols#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@2
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
- }}
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [5] (byte*) main::cols#2 ← phi( main/(byte*) 55296 main::@1/(byte*) main::cols#1 )
-  [5] (byte*) main::screen#2 ← phi( main/(byte*) 1024 main::@1/(byte*) main::screen#1 )
-  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2)
-  [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*'
-  [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28
-  [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1
-  [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28
-  [11] (byte) main::i#1 ← ++ (byte) main::i#2
-  [12] if((byte) main::i#1!=(byte) $19) goto main::@1
+  [1] (byte*) main::cols#2 ← phi( main/(byte*) 55296 main::@1/(byte*) main::cols#1 )
+  [1] (byte*) main::screen#2 ← phi( main/(byte*) 1024 main::@1/(byte*) main::screen#1 )
+  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [2] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2)
+  [3] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*'
+  [4] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28
+  [5] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1
+  [6] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28
+  [7] (byte) main::i#1 ← ++ (byte) main::i#2
+  [8] if((byte) main::i#1!=(byte) $19) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [13] return 
+  [9] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::cols
-(byte*) main::cols#1 67.33333333333333
-(byte*) main::cols#2 60.599999999999994
+(byte*) main::cols#1 7.333333333333333
+(byte*) main::cols#2 6.6000000000000005
 (byte) main::i
-(byte) main::i#1 151.5
-(byte) main::i#2 50.5
+(byte) main::i#1 16.5
+(byte) main::i#2 5.5
 (byte*) main::screen
-(byte*) main::screen#1 40.4
-(byte*) main::screen#2 101.0
+(byte*) main::screen#1 4.4
+(byte*) main::screen#2 11.0
 (byte) main::sin
-(byte) main::sin#0 101.0
+(byte) main::sin#0 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -187,63 +174,45 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label sintab = $1000
-  // @begin
-__bbegin:
-  // kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label sin = 7
     .label screen = 3
     .label cols = 5
     .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta.z cols
     lda #>$d800
     sta.z cols+1
-    // [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
+    // [1] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [2] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z i
     lda sintab,y
     sta.z sin
-    // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [3] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #'*'
     ldy.z sin
     sta (screen),y
-    // [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [4] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z screen
@@ -251,11 +220,11 @@ main: {
     bcc !+
     inc.z screen+1
   !:
-    // [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [5] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #1
     ldy.z sin
     sta (cols),y
-    // [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [6] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z cols
@@ -263,45 +232,46 @@ main: {
     bcc !+
     inc.z cols+1
   !:
-    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z i
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // File Data
-.pc = sintab "sintab"
-  .fill 25, 20 + 20*sin(toRadians(i*360/25))
+.pc = $1000 "sintab"
+sintab:
+.fill 25, 20 + 20*sin(toRadians(i*360/25))
 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] ( main:2 [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] (  [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::sin#0 ]
-Statement [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] ( main:2 [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 [ main::i#2 main::cols#2 main::screen#1 ] ( main:2 [ main::i#2 main::cols#2 main::screen#1 ] { }  ) always clobbers reg byte a 
-Statement [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 [ main::i#2 main::screen#1 main::cols#1 ] ( main:2 [ main::i#2 main::screen#1 main::cols#1 ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] ( main:2 [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] ( main:2 [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] { }  ) always clobbers reg byte a 
-Statement [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 [ main::i#2 main::cols#2 main::screen#1 ] ( main:2 [ main::i#2 main::cols#2 main::screen#1 ] { }  ) always clobbers reg byte a 
-Statement [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 [ main::i#2 main::screen#1 main::cols#1 ] ( main:2 [ main::i#2 main::screen#1 main::cols#1 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] (  [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 [ main::i#2 main::cols#2 main::screen#1 ] (  [ main::i#2 main::cols#2 main::screen#1 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 [ main::i#2 main::screen#1 main::cols#1 ] (  [ main::i#2 main::screen#1 main::cols#1 ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] (  [ main::i#2 main::screen#2 main::cols#2 main::sin#0 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] (  [ main::i#2 main::cols#2 main::screen#1 main::sin#0 ] { }  ) always clobbers reg byte a 
+Statement [5] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 [ main::i#2 main::cols#2 main::screen#1 ] (  [ main::i#2 main::cols#2 main::screen#1 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 [ main::i#2 main::screen#1 main::cols#1 ] (  [ main::i#2 main::screen#1 main::cols#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::screen#2 main::screen#1 ] : zp[2]:3 , 
 Potential registers zp[2]:5 [ main::cols#2 main::cols#1 ] : zp[2]:5 , 
 Potential registers zp[1]:7 [ main::sin#0 ] : zp[1]:7 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 202: zp[1]:2 [ main::i#2 main::i#1 ] 141.4: zp[2]:3 [ main::screen#2 main::screen#1 ] 127.93: zp[2]:5 [ main::cols#2 main::cols#1 ] 101: zp[1]:7 [ main::sin#0 ] 
+Uplift Scope [main] 22: zp[1]:2 [ main::i#2 main::i#1 ] 15.4: zp[2]:3 [ main::screen#2 main::screen#1 ] 13.93: zp[2]:5 [ main::cols#2 main::cols#1 ] 11: zp[1]:7 [ main::sin#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 3508 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:3 [ main::screen#2 main::screen#1 ] zp[2]:5 [ main::cols#2 main::cols#1 ] reg byte y [ main::sin#0 ] 
-Uplifting [] best 3508 combination 
+Uplifting [main] best 936 combination reg byte x [ main::i#2 main::i#1 ] zp[2]:3 [ main::screen#2 main::screen#1 ] zp[2]:5 [ main::cols#2 main::cols#1 ] reg byte y [ main::sin#0 ] 
+Uplifting [] best 936 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ main::screen#2 main::screen#1 ]
 Allocated (was zp[2]:5) zp[2]:4 [ main::cols#2 main::cols#1 ]
 
@@ -313,57 +283,39 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label sintab = $1000
-  // @begin
-__bbegin:
-  // kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label screen = 2
     .label cols = 4
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta.z cols
     lda #>$d800
     sta.z cols+1
-    // [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
+    // [1] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
+    // [2] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy sintab,x
-    // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [3] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
     sta (screen),y
-    // [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [4] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z screen
@@ -371,10 +323,10 @@ main: {
     bcc !+
     inc.z screen+1
   !:
-    // [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [5] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #1
     sta (cols),y
-    // [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [6] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z cols
@@ -382,64 +334,53 @@ main: {
     bcc !+
     inc.z cols+1
   !:
-    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$19
     bne __b1_from___b1
     jmp __breturn
     // main::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // File Data
-.pc = sintab "sintab"
-  .fill 25, 20 + 20*sin(toRadians(i*360/25))
+.pc = $1000 "sintab"
+sintab:
+.fill 25, 20 + 20*sin(toRadians(i*360/25))
 
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@return
 (byte*) main::cols
-(byte*) main::cols#1 cols zp[2]:4 67.33333333333333
-(byte*) main::cols#2 cols zp[2]:4 60.599999999999994
+(byte*) main::cols#1 cols zp[2]:4 7.333333333333333
+(byte*) main::cols#2 cols zp[2]:4 6.6000000000000005
 (byte) main::i
-(byte) main::i#1 reg byte x 151.5
-(byte) main::i#2 reg byte x 50.5
+(byte) main::i#1 reg byte x 16.5
+(byte) main::i#2 reg byte x 5.5
 (byte*) main::screen
-(byte*) main::screen#1 screen zp[2]:2 40.4
-(byte*) main::screen#2 screen zp[2]:2 101.0
+(byte*) main::screen#1 screen zp[2]:2 4.4
+(byte*) main::screen#2 screen zp[2]:2 11.0
 (byte) main::sin
-(byte) main::sin#0 reg byte y 101.0
-(const nomodify byte*) sintab = (byte*) 4096
+(byte) main::sin#0 reg byte y 11.0
+(const byte*) sintab[]  = kickasm {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))
+ }}
 
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ main::screen#2 main::screen#1 ]
@@ -448,7 +389,7 @@ reg byte y [ main::sin#0 ]
 
 
 FINAL ASSEMBLER
-Score: 3406
+Score: 846
 
   // File Comments
 // Example of inline kickasm data
@@ -457,48 +398,38 @@ Score: 3406
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  .label sintab = $1000
-  // @begin
-  // kickasm
-  // kickasm(location (const nomodify byte*) sintab) {{ .fill 25, 20 + 20*sin(toRadians(i*360/25))  }}
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label screen = 2
     .label cols = 4
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte*) main::cols#2 = (byte*) 55296 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$d800
     sta.z cols
     lda #>$d800
     sta.z cols+1
-    // [5] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::screen#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#2] -- vbuxx=vbuc1 
     ldx #0
-    // [5] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [5] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [5] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
+    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [1] phi (byte*) main::cols#2 = (byte*) main::cols#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi (byte*) main::screen#2 = (byte*) main::screen#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#2] -- register_copy 
     // main::@1
   __b1:
     // sin = sintab[i]
-    // [6] (byte) main::sin#0 ← *((const nomodify byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
+    // [2] (byte) main::sin#0 ← *((const byte*) sintab + (byte) main::i#2) -- vbuyy=pbuc1_derefidx_vbuxx 
     ldy sintab,x
     // screen[sin] = '*'
-    // [7] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [3] *((byte*) main::screen#2 + (byte) main::sin#0) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
     sta (screen),y
     // screen += 40
-    // [8] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [4] (byte*) main::screen#1 ← (byte*) main::screen#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z screen
@@ -507,11 +438,11 @@ main: {
     inc.z screen+1
   !:
     // cols[sin] = 1
-    // [9] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [5] *((byte*) main::cols#2 + (byte) main::sin#0) ← (byte) 1 -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #1
     sta (cols),y
     // cols += 40
-    // [10] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [6] (byte*) main::cols#1 ← (byte*) main::cols#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z cols
@@ -520,18 +451,19 @@ main: {
     inc.z cols+1
   !:
     // for(byte i:0..24)
-    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [12] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if((byte) main::i#1!=(byte) $19) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$19
     bne __b1
     // main::@return
     // }
-    // [13] return 
+    // [9] return 
     rts
 }
   // File Data
-.pc = sintab "sintab"
-  .fill 25, 20 + 20*sin(toRadians(i*360/25))
+.pc = $1000 "sintab"
+sintab:
+.fill 25, 20 + 20*sin(toRadians(i*360/25))
 
 

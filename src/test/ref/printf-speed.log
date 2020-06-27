@@ -5,6 +5,7 @@ Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Added struct type cast to parameter value list call printf_string (byte*~) main::$3 (struct printf_format_string){ (byte) 0, (byte) 0 } 
 Added struct type cast to parameter value list call printf_uint (word) main::i (struct printf_format_number){ (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (const byte) DECIMAL } 
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 Eliminating unused variable with no statement (struct TIME_OF_DAY~) main::$2
 Eliminating unused variable with no statement (void~) main::$4
 Eliminating unused variable with no statement (void~) main::$10
@@ -13,8 +14,6 @@ Unwinding list assignment { (byte~) main::$2_TENTHS, (byte~) main::$2_SEC, (byte
 Unwinding list assignment { (byte) tod_read::return_TENTHS#2, (byte) tod_read::return_SEC#2, (byte) tod_read::return_MIN#2, (byte) tod_read::return_HOURS#2 } ← { (byte) tod_read::return_TENTHS#1, (byte) tod_read::return_SEC#1, (byte) tod_read::return_MIN#1, (byte) tod_read::return_HOURS#1 }
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (byte()) toupper((byte) toupper::ch)
 toupper: scope:[toupper]  from strupr::@2
@@ -362,14 +361,6 @@ utoa_append::@return: scope:[utoa_append]  from utoa_append::@3
   (word) utoa_append::return#2 ← (word) utoa_append::return#4
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) conio_cursor_x ← (byte) 0
-  (byte) conio_cursor_y ← (byte) 0
-  (byte*) conio_line_text ← (const nomodify byte*) CONIO_SCREEN_TEXT
-  (byte*) conio_line_color ← (const nomodify byte*) CONIO_SCREEN_COLORS
-  (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
-  (byte) conio_scroll_enable ← (byte) 1
-  to:@2
 
 (void()) gotoxy((byte) gotoxy::x , (byte) gotoxy::y)
 gotoxy: scope:[gotoxy]  from cscroll::@2 main::@14 main::@3 main::@5
@@ -1022,7 +1013,7 @@ tod_str::@return: scope:[tod_str]  from tod_str
   to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
   (byte) tod_init::tod_SEC#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_SEC)
   (byte) tod_init::tod_MIN#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_MIN)
@@ -1124,19 +1115,28 @@ main::@15: scope:[main]  from main::@14
 main::@return: scope:[main]  from main::@11
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte) conio_cursor_x ← (byte) 0
+  (byte) conio_cursor_y ← (byte) 0
+  (byte*) conio_line_text ← (const nomodify byte*) CONIO_SCREEN_TEXT
+  (byte*) conio_line_color ← (const nomodify byte*) CONIO_SCREEN_COLORS
+  (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
+  (byte) conio_scroll_enable ← (byte) 1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const byte) BINARY = (number) 2
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
 (const nomodify byte*) COLORRAM = (byte*)(number) $d800
@@ -1259,6 +1259,11 @@ SYMBOL TABLE SSA
 (byte) TIME_OF_DAY::SEC
 (byte) TIME_OF_DAY::TENTHS
 (struct TIME_OF_DAY) TOD_ZERO loadstore = { TENTHS: (byte) 0, SEC: (byte) 0, MIN: (byte) 0, HOURS: (byte) 0 }
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (byte) conio_cursor_x loadstore
 (byte) conio_cursor_y loadstore
 (byte*) conio_line_color loadstore
@@ -2461,22 +2466,22 @@ Inferred type updated to byte in (unumber~) tod_str::$14 ← (byte) tod_str::tod
 Inferred type updated to byte in (unumber~) tod_str::$15 ← (byte) '0' + (byte~) tod_str::$14
 Inferred type updated to byte in (unumber~) main::$6 ← (word) main::i#3 & (byte) $7f
 Inversing boolean not [33] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [32] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [171] (bool~) gotoxy::$1 ← (byte) gotoxy::y#5 <= (byte) $19 from [170] (bool~) gotoxy::$0 ← (byte) gotoxy::y#5 > (byte) $19
-Inversing boolean not [175] (bool~) gotoxy::$3 ← (byte) gotoxy::x#5 < (byte) $28 from [174] (bool~) gotoxy::$2 ← (byte) gotoxy::x#5 >= (byte) $28
-Inversing boolean not [201] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [200] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
-Inversing boolean not [212] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [211] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
-Inversing boolean not [293] (bool~) printf_number_buffer::$0 ← (byte) 0 == (byte) printf_number_buffer::format_min_length#1 from [292] (bool~) printf_number_buffer::$26 ← (byte) 0 != (byte) printf_number_buffer::format_min_length#1
-Inversing boolean not [297] (bool~) printf_number_buffer::$1 ← (byte) 0 == (byte) printf_number_buffer::format_justify_left#1 from [296] (bool~) printf_number_buffer::$27 ← (byte) 0 != (byte) printf_number_buffer::format_justify_left#1
-Inversing boolean not [299] (bool~) printf_number_buffer::$2 ← (byte) 0 == (byte) printf_number_buffer::format_zero_padding#1 from [298] (bool~) printf_number_buffer::$28 ← (byte) 0 != (byte) printf_number_buffer::format_zero_padding#1
-Inversing boolean not [312] (bool~) printf_number_buffer::$20 ← (byte) 0 == (byte) printf_number_buffer::buffer_sign#1 from [311] (bool~) printf_number_buffer::$29 ← (byte) 0 != (byte) printf_number_buffer::buffer_sign#1
-Inversing boolean not [319] (bool~) printf_number_buffer::$23 ← (signed byte) printf_number_buffer::padding#1 >= (signed byte) 0 from [318] (bool~) printf_number_buffer::$22 ← (signed byte) printf_number_buffer::padding#1 < (signed byte) 0
-Inversing boolean not [327] (bool~) printf_number_buffer::$7 ← (byte) 0 == (byte) printf_number_buffer::buffer_sign#2 from [326] (bool~) printf_number_buffer::$30 ← (byte) 0 != (byte) printf_number_buffer::buffer_sign#2
-Inversing boolean not [344] (bool~) printf_number_buffer::$12 ← (byte) 0 == (byte) printf_number_buffer::format_upper_case#1 from [343] (bool~) printf_number_buffer::$31 ← (byte) 0 != (byte) printf_number_buffer::format_upper_case#1
-Inversing boolean not [356] (bool~) printf_number_buffer::$14 ← (byte) 0 == (byte) printf_number_buffer::format_zero_padding#3 from [355] (bool~) printf_number_buffer::$32 ← (byte) 0 != (byte) printf_number_buffer::format_zero_padding#3
-Inversing boolean not [374] (bool~) printf_string::$0 ← (byte) 0 == (byte) printf_string::format_min_length#1 from [373] (bool~) printf_string::$14 ← (byte) 0 != (byte) printf_string::format_min_length#1
-Inversing boolean not [378] (bool~) printf_string::$1 ← (byte) 0 == (byte) printf_string::format_justify_left#1 from [377] (bool~) printf_string::$15 ← (byte) 0 != (byte) printf_string::format_justify_left#1
-Inversing boolean not [393] (bool~) printf_string::$12 ← (signed byte) printf_string::padding#1 >= (signed byte) 0 from [392] (bool~) printf_string::$11 ← (signed byte) printf_string::padding#1 < (signed byte) 0
-Inversing boolean not [483] (bool~) main::$8 ← (byte~) main::$6 != (byte) 0 from [482] (bool~) main::$7 ← (byte~) main::$6 == (byte) 0
+Inversing boolean not [165] (bool~) gotoxy::$1 ← (byte) gotoxy::y#5 <= (byte) $19 from [164] (bool~) gotoxy::$0 ← (byte) gotoxy::y#5 > (byte) $19
+Inversing boolean not [169] (bool~) gotoxy::$3 ← (byte) gotoxy::x#5 < (byte) $28 from [168] (bool~) gotoxy::$2 ← (byte) gotoxy::x#5 >= (byte) $28
+Inversing boolean not [195] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [194] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
+Inversing boolean not [206] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [205] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
+Inversing boolean not [287] (bool~) printf_number_buffer::$0 ← (byte) 0 == (byte) printf_number_buffer::format_min_length#1 from [286] (bool~) printf_number_buffer::$26 ← (byte) 0 != (byte) printf_number_buffer::format_min_length#1
+Inversing boolean not [291] (bool~) printf_number_buffer::$1 ← (byte) 0 == (byte) printf_number_buffer::format_justify_left#1 from [290] (bool~) printf_number_buffer::$27 ← (byte) 0 != (byte) printf_number_buffer::format_justify_left#1
+Inversing boolean not [293] (bool~) printf_number_buffer::$2 ← (byte) 0 == (byte) printf_number_buffer::format_zero_padding#1 from [292] (bool~) printf_number_buffer::$28 ← (byte) 0 != (byte) printf_number_buffer::format_zero_padding#1
+Inversing boolean not [306] (bool~) printf_number_buffer::$20 ← (byte) 0 == (byte) printf_number_buffer::buffer_sign#1 from [305] (bool~) printf_number_buffer::$29 ← (byte) 0 != (byte) printf_number_buffer::buffer_sign#1
+Inversing boolean not [313] (bool~) printf_number_buffer::$23 ← (signed byte) printf_number_buffer::padding#1 >= (signed byte) 0 from [312] (bool~) printf_number_buffer::$22 ← (signed byte) printf_number_buffer::padding#1 < (signed byte) 0
+Inversing boolean not [321] (bool~) printf_number_buffer::$7 ← (byte) 0 == (byte) printf_number_buffer::buffer_sign#2 from [320] (bool~) printf_number_buffer::$30 ← (byte) 0 != (byte) printf_number_buffer::buffer_sign#2
+Inversing boolean not [338] (bool~) printf_number_buffer::$12 ← (byte) 0 == (byte) printf_number_buffer::format_upper_case#1 from [337] (bool~) printf_number_buffer::$31 ← (byte) 0 != (byte) printf_number_buffer::format_upper_case#1
+Inversing boolean not [350] (bool~) printf_number_buffer::$14 ← (byte) 0 == (byte) printf_number_buffer::format_zero_padding#3 from [349] (bool~) printf_number_buffer::$32 ← (byte) 0 != (byte) printf_number_buffer::format_zero_padding#3
+Inversing boolean not [368] (bool~) printf_string::$0 ← (byte) 0 == (byte) printf_string::format_min_length#1 from [367] (bool~) printf_string::$14 ← (byte) 0 != (byte) printf_string::format_min_length#1
+Inversing boolean not [372] (bool~) printf_string::$1 ← (byte) 0 == (byte) printf_string::format_justify_left#1 from [371] (bool~) printf_string::$15 ← (byte) 0 != (byte) printf_string::format_justify_left#1
+Inversing boolean not [387] (bool~) printf_string::$12 ← (signed byte) printf_string::padding#1 >= (signed byte) 0 from [386] (bool~) printf_string::$11 ← (signed byte) printf_string::padding#1 < (signed byte) 0
+Inversing boolean not [477] (bool~) main::$8 ← (byte~) main::$6 != (byte) 0 from [476] (bool~) main::$7 ← (byte~) main::$6 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -2708,41 +2713,41 @@ Simple Condition (bool~) utoa::$2 [64] if((byte) utoa::radix#0==(const byte) OCT
 Simple Condition (bool~) utoa::$3 [68] if((byte) utoa::radix#0==(const byte) BINARY) goto utoa::@4
 Simple Condition (bool~) utoa::$5 [85] if((byte) utoa::digit#2<(byte~) utoa::$4) goto utoa::@11
 Simple Condition (bool~) utoa_append::$0 [110] if((word) utoa_append::value#2>=(word) utoa_append::sub#0) goto utoa_append::@2
-Simple Condition (bool~) gotoxy::$1 [123] if((byte) gotoxy::y#5<=(byte) $19) goto gotoxy::@1
-Simple Condition (bool~) gotoxy::$3 [126] if((byte) gotoxy::x#5<(byte) $28) goto gotoxy::@2
-Simple Condition (bool~) cputc::$0 [141] if((byte) cputc::c#3==(byte) '
+Simple Condition (bool~) gotoxy::$1 [117] if((byte) gotoxy::y#5<=(byte) $19) goto gotoxy::@1
+Simple Condition (bool~) gotoxy::$3 [120] if((byte) gotoxy::x#5<(byte) $28) goto gotoxy::@2
+Simple Condition (bool~) cputc::$0 [135] if((byte) cputc::c#3==(byte) '
 ') goto cputc::@1
-Simple Condition (bool~) cputc::$2 [147] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
-Simple Condition (bool~) cscroll::$1 [157] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
-Simple Condition (bool~) cscroll::$7 [159] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [193] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
-Simple Condition (bool~) printf_padding::$0 [201] if((byte) printf_padding::i#2<(byte) printf_padding::length#6) goto printf_padding::@2
-Simple Condition (bool~) printf_uint::$5 [208] if((byte) 0!=(byte) printf_uint::format_sign_always#0) goto printf_uint::@1
-Simple Condition (bool~) printf_number_buffer::$0 [230] if((byte) 0==(byte) printf_number_buffer::format_min_length#0) goto printf_number_buffer::@1
-Simple Condition (bool~) printf_number_buffer::$20 [244] if((byte) 0==(byte) printf_number_buffer::buffer_sign#0) goto printf_number_buffer::@13
-Simple Condition (bool~) printf_number_buffer::$23 [249] if((signed byte) printf_number_buffer::padding#1>=(signed byte) 0) goto printf_number_buffer::@1
-Simple Condition (bool~) printf_number_buffer::$7 [253] if((byte) 0==(byte) printf_number_buffer::buffer_sign#0) goto printf_number_buffer::@3
-Simple Condition (bool~) printf_number_buffer::$12 [263] if((byte) 0==(byte) printf_number_buffer::format_upper_case#0) goto printf_number_buffer::@5
-Simple Condition (bool~) printf_string::$0 [284] if((byte) 0==(byte) printf_string::format_min_length#0) goto printf_string::@1
-Simple Condition (bool~) printf_string::$12 [298] if((signed byte) printf_string::padding#1>=(signed byte) 0) goto printf_string::@1
-Simple Condition (bool~) main::$5 [362] if((word) main::i#2<(word) $2710) goto main::@2
-Simple Condition (bool~) main::$8 [365] if((byte~) main::$6!=(byte) 0) goto main::@4
+Simple Condition (bool~) cputc::$2 [141] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
+Simple Condition (bool~) cscroll::$1 [151] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
+Simple Condition (bool~) cscroll::$7 [153] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
+Simple Condition (bool~) cputs::$1 [187] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) printf_padding::$0 [195] if((byte) printf_padding::i#2<(byte) printf_padding::length#6) goto printf_padding::@2
+Simple Condition (bool~) printf_uint::$5 [202] if((byte) 0!=(byte) printf_uint::format_sign_always#0) goto printf_uint::@1
+Simple Condition (bool~) printf_number_buffer::$0 [224] if((byte) 0==(byte) printf_number_buffer::format_min_length#0) goto printf_number_buffer::@1
+Simple Condition (bool~) printf_number_buffer::$20 [238] if((byte) 0==(byte) printf_number_buffer::buffer_sign#0) goto printf_number_buffer::@13
+Simple Condition (bool~) printf_number_buffer::$23 [243] if((signed byte) printf_number_buffer::padding#1>=(signed byte) 0) goto printf_number_buffer::@1
+Simple Condition (bool~) printf_number_buffer::$7 [247] if((byte) 0==(byte) printf_number_buffer::buffer_sign#0) goto printf_number_buffer::@3
+Simple Condition (bool~) printf_number_buffer::$12 [257] if((byte) 0==(byte) printf_number_buffer::format_upper_case#0) goto printf_number_buffer::@5
+Simple Condition (bool~) printf_string::$0 [278] if((byte) 0==(byte) printf_string::format_min_length#0) goto printf_string::@1
+Simple Condition (bool~) printf_string::$12 [292] if((signed byte) printf_string::padding#1>=(signed byte) 0) goto printf_string::@1
+Simple Condition (bool~) main::$5 [356] if((word) main::i#2<(word) $2710) goto main::@2
+Simple Condition (bool~) main::$8 [359] if((byte~) main::$6!=(byte) 0) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Rewriting && if()-condition to two if()s [3] (bool~) toupper::$2 ← (bool~) toupper::$0 && (bool~) toupper::$1
 Rewriting ! if()-condition to reversed if() [90] (bool~) utoa::$8 ← ! (bool~) utoa::$7
 Rewriting || if()-condition to two if()s [89] (bool~) utoa::$7 ← (byte) utoa::started#2 || (bool~) utoa::$6
-Rewriting ! if()-condition to reversed if() [236] (bool~) printf_number_buffer::$5 ← ! (bool~) printf_number_buffer::$4
-Rewriting && if()-condition to two if()s [235] (bool~) printf_number_buffer::$4 ← (bool~) printf_number_buffer::$3 && (signed byte) printf_number_buffer::padding#10
-Rewriting && if()-condition to two if()s [234] (bool~) printf_number_buffer::$3 ← (bool~) printf_number_buffer::$1 && (bool~) printf_number_buffer::$2
-Rewriting ! if()-condition to reversed if() [258] (bool~) printf_number_buffer::$10 ← ! (bool~) printf_number_buffer::$9
-Rewriting && if()-condition to two if()s [257] (bool~) printf_number_buffer::$9 ← (byte) printf_number_buffer::format_zero_padding#0 && (signed byte) printf_number_buffer::padding#10
-Rewriting ! if()-condition to reversed if() [272] (bool~) printf_number_buffer::$17 ← ! (bool~) printf_number_buffer::$16
-Rewriting && if()-condition to two if()s [271] (bool~) printf_number_buffer::$16 ← (bool~) printf_number_buffer::$15 && (signed byte) printf_number_buffer::padding#10
-Rewriting && if()-condition to two if()s [270] (bool~) printf_number_buffer::$15 ← (byte) printf_number_buffer::format_justify_left#0 && (bool~) printf_number_buffer::$14
-Rewriting ! if()-condition to reversed if() [288] (bool~) printf_string::$3 ← ! (bool~) printf_string::$2
-Rewriting && if()-condition to two if()s [287] (bool~) printf_string::$2 ← (bool~) printf_string::$1 && (signed byte) printf_string::padding#3
-Rewriting ! if()-condition to reversed if() [303] (bool~) printf_string::$7 ← ! (bool~) printf_string::$6
-Rewriting && if()-condition to two if()s [302] (bool~) printf_string::$6 ← (byte) printf_string::format_justify_left#0 && (signed byte) printf_string::padding#3
+Rewriting ! if()-condition to reversed if() [230] (bool~) printf_number_buffer::$5 ← ! (bool~) printf_number_buffer::$4
+Rewriting && if()-condition to two if()s [229] (bool~) printf_number_buffer::$4 ← (bool~) printf_number_buffer::$3 && (signed byte) printf_number_buffer::padding#10
+Rewriting && if()-condition to two if()s [228] (bool~) printf_number_buffer::$3 ← (bool~) printf_number_buffer::$1 && (bool~) printf_number_buffer::$2
+Rewriting ! if()-condition to reversed if() [252] (bool~) printf_number_buffer::$10 ← ! (bool~) printf_number_buffer::$9
+Rewriting && if()-condition to two if()s [251] (bool~) printf_number_buffer::$9 ← (byte) printf_number_buffer::format_zero_padding#0 && (signed byte) printf_number_buffer::padding#10
+Rewriting ! if()-condition to reversed if() [266] (bool~) printf_number_buffer::$17 ← ! (bool~) printf_number_buffer::$16
+Rewriting && if()-condition to two if()s [265] (bool~) printf_number_buffer::$16 ← (bool~) printf_number_buffer::$15 && (signed byte) printf_number_buffer::padding#10
+Rewriting && if()-condition to two if()s [264] (bool~) printf_number_buffer::$15 ← (byte) printf_number_buffer::format_justify_left#0 && (bool~) printf_number_buffer::$14
+Rewriting ! if()-condition to reversed if() [282] (bool~) printf_string::$3 ← ! (bool~) printf_string::$2
+Rewriting && if()-condition to two if()s [281] (bool~) printf_string::$2 ← (bool~) printf_string::$1 && (signed byte) printf_string::padding#3
+Rewriting ! if()-condition to reversed if() [297] (bool~) printf_string::$7 ← ! (bool~) printf_string::$6
+Rewriting && if()-condition to two if()s [296] (bool~) printf_string::$6 ← (byte) printf_string::format_justify_left#0 && (signed byte) printf_string::padding#3
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 Warning! Adding boolean cast to non-boolean condition (byte) utoa::started#2
 Warning! Adding boolean cast to non-boolean condition (byte) printf_number_buffer::format_zero_padding#0
@@ -2753,8 +2758,8 @@ Warning! Adding boolean cast to non-boolean condition (signed byte) printf_numbe
 Warning! Adding boolean cast to non-boolean condition (signed byte) printf_number_buffer::padding#10
 Warning! Adding boolean cast to non-boolean condition (signed byte) printf_string::padding#3
 Warning! Adding boolean cast to non-boolean condition (signed byte) printf_string::padding#3
-Constant right-side identified [162] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
-Constant right-side identified [167] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [156] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [161] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const word) strlen::len#0 = 0
 Constant (const byte) utoa::max_digits#0 = 0
@@ -2847,29 +2852,29 @@ if() condition always true - replacing block destination [56] if((const byte) ut
 if() condition always false - eliminating [60] if((const byte) utoa::radix#0==(const byte) HEXADECIMAL) goto utoa::@2
 if() condition always false - eliminating [64] if((const byte) utoa::radix#0==(const byte) OCTAL) goto utoa::@3
 if() condition always false - eliminating [68] if((const byte) utoa::radix#0==(const byte) BINARY) goto utoa::@4
-if() condition always true - replacing block destination [159] if((byte) 0!=(const byte) conio_scroll_enable) goto cscroll::@3
-if() condition always false - eliminating [208] if((byte) 0!=(const byte) printf_uint::format_sign_always#0) goto printf_uint::@1
-if() condition always true - replacing block destination [230] if((byte) 0==(const byte) printf_number_buffer::format_min_length#0) goto printf_number_buffer::@1
-if() condition always true - replacing block destination [263] if((byte) 0==(const byte) printf_number_buffer::format_upper_case#0) goto printf_number_buffer::@5
-if() condition always true - replacing block destination [284] if((byte) 0==(const byte) printf_string::format_min_length#0) goto printf_string::@1
+if() condition always true - replacing block destination [153] if((byte) 0!=(const byte) conio_scroll_enable) goto cscroll::@3
+if() condition always false - eliminating [202] if((byte) 0!=(const byte) printf_uint::format_sign_always#0) goto printf_uint::@1
+if() condition always true - replacing block destination [224] if((byte) 0==(const byte) printf_number_buffer::format_min_length#0) goto printf_number_buffer::@1
+if() condition always true - replacing block destination [257] if((byte) 0==(const byte) printf_number_buffer::format_upper_case#0) goto printf_number_buffer::@5
+if() condition always true - replacing block destination [278] if((byte) 0==(const byte) printf_string::format_min_length#0) goto printf_string::@1
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [123] if((byte) gotoxy::y#5<=(byte) $19) goto gotoxy::@1
+Rewriting conditional comparison [117] if((byte) gotoxy::y#5<=(byte) $19) goto gotoxy::@1
 Simplifying constant evaluating to zero (signed byte)(const byte) printf_number_buffer::format_min_length#0 in 
 Simplifying constant evaluating to zero (signed byte)(const byte) printf_string::format_min_length#0 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero (byte*)&printf_buffer in [212] *((byte*)&(struct printf_buffer_number) printf_buffer+(const byte) OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN) ← (byte~) printf_uint::$2
-Simplifying expression containing zero (byte*)&printf_buffer in [217] (byte) printf_number_buffer::buffer_sign#0 ← *((byte*)&(struct printf_buffer_number) printf_buffer+(const byte) OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN)
-Simplifying expression containing zero printf_number_buffer::len#2 in [247] (signed byte) printf_number_buffer::padding#1 ← (const signed byte) printf_number_buffer::$25 - (signed byte) printf_number_buffer::len#2
-Simplifying expression containing zero printf_string::len#0 in [296] (signed byte) printf_string::padding#1 ← (const signed byte) printf_string::$13 - (signed byte) printf_string::len#0
-Simplifying expression containing zero tod_buffer in [330] *((const byte*) tod_buffer + (byte) 0) ← (byte~) tod_str::$1
-Simplifying expression containing zero (byte*)&TOD_ZERO in [354] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
+Simplifying expression containing zero (byte*)&printf_buffer in [206] *((byte*)&(struct printf_buffer_number) printf_buffer+(const byte) OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN) ← (byte~) printf_uint::$2
+Simplifying expression containing zero (byte*)&printf_buffer in [211] (byte) printf_number_buffer::buffer_sign#0 ← *((byte*)&(struct printf_buffer_number) printf_buffer+(const byte) OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_SIGN)
+Simplifying expression containing zero printf_number_buffer::len#2 in [241] (signed byte) printf_number_buffer::padding#1 ← (const signed byte) printf_number_buffer::$25 - (signed byte) printf_number_buffer::len#2
+Simplifying expression containing zero printf_string::len#0 in [290] (signed byte) printf_string::padding#1 ← (const signed byte) printf_string::$13 - (signed byte) printf_string::len#0
+Simplifying expression containing zero tod_buffer in [324] *((const byte*) tod_buffer + (byte) 0) ← (byte~) tod_str::$1
+Simplifying expression containing zero (byte*)&TOD_ZERO in [348] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_TENTHS)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (void*) memcpy::return#2 and assignment [113] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memcpy::return#3 and assignment [115] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memset::return#2 and assignment [117] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [119] (void*) memset::return#3 ← (void*) memset::str#3
-Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#0 and assignment [205] (struct TIME_OF_DAY) tod_read::return#0 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
-Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#1 and assignment [206] (struct TIME_OF_DAY) tod_read::return#1 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
+Eliminating unused variable (void*) memcpy::return#2 and assignment [109] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memcpy::return#3 and assignment [111] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memset::return#2 and assignment [113] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [115] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#0 and assignment [201] (struct TIME_OF_DAY) tod_read::return#0 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
+Eliminating unused variable (struct TIME_OF_DAY) tod_read::return#1 and assignment [202] (struct TIME_OF_DAY) tod_read::return#1 ← struct-unwound {(byte) tod_read::return_TENTHS#0, (byte) tod_read::return_SEC#0, (byte) tod_read::return_MIN#0, (byte) tod_read::return_HOURS#0}
 Eliminating unused constant (const byte*) strupr::return#2
 Eliminating unused constant (const byte) BINARY
 Eliminating unused constant (const byte) OCTAL
@@ -3026,34 +3031,34 @@ Identical Phi Values (signed byte) printf_number_buffer::padding#10 (const signe
 Identical Phi Values (signed byte) printf_string::padding#3 (const signed byte) printf_string::padding#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) utoa::$12 [30] if((byte) 0!=(byte) utoa::started#2) goto utoa::@14
-Simple Condition (bool~) printf_number_buffer::$1 [117] if((byte) 0==(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@23
-Simple Condition (bool~) printf_number_buffer::$33 [122] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@24
-Simple Condition (bool~) printf_number_buffer::$34 [130] if((byte) 0!=(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@26
-Simple Condition (bool~) printf_string::$1 [136] if((byte) 0==(const byte) printf_string::format_justify_left#0) goto printf_string::@11
-Simple Condition (bool~) printf_string::$16 [139] if((byte) 0!=(const byte) printf_string::format_justify_left#0) goto printf_string::@12
-Simple Condition (bool~) utoa::$6 [212] if((word) utoa::value#2>=(word) utoa::digit_value#0) goto utoa::@14
-Simple Condition (bool~) printf_number_buffer::$35 [214] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@8
-Simple Condition (bool~) printf_number_buffer::$2 [215] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@22
-Simple Condition (bool~) printf_number_buffer::$36 [217] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@10
-Simple Condition (bool~) printf_number_buffer::$37 [219] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@12
-Simple Condition (bool~) printf_number_buffer::$14 [220] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@25
-Simple Condition (bool~) printf_string::$17 [222] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@5
-Simple Condition (bool~) printf_string::$18 [224] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@6
+Simple Condition (bool~) printf_number_buffer::$1 [113] if((byte) 0==(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@23
+Simple Condition (bool~) printf_number_buffer::$33 [118] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@24
+Simple Condition (bool~) printf_number_buffer::$34 [126] if((byte) 0!=(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@26
+Simple Condition (bool~) printf_string::$1 [132] if((byte) 0==(const byte) printf_string::format_justify_left#0) goto printf_string::@11
+Simple Condition (bool~) printf_string::$16 [135] if((byte) 0!=(const byte) printf_string::format_justify_left#0) goto printf_string::@12
+Simple Condition (bool~) utoa::$6 [213] if((word) utoa::value#2>=(word) utoa::digit_value#0) goto utoa::@14
+Simple Condition (bool~) printf_number_buffer::$35 [215] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@8
+Simple Condition (bool~) printf_number_buffer::$2 [216] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@22
+Simple Condition (bool~) printf_number_buffer::$36 [218] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@10
+Simple Condition (bool~) printf_number_buffer::$37 [220] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@12
+Simple Condition (bool~) printf_number_buffer::$14 [221] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@25
+Simple Condition (bool~) printf_string::$17 [223] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@5
+Simple Condition (bool~) printf_string::$18 [225] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@6
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Negating conditional jump and destination [117] if((byte) 0!=(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@2
-Negating conditional jump and destination [122] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@4
-Negating conditional jump and destination [130] if((byte) 0==(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@return
-Negating conditional jump and destination [136] if((byte) 0!=(const byte) printf_string::format_justify_left#0) goto printf_string::@2
-Negating conditional jump and destination [139] if((byte) 0==(const byte) printf_string::format_justify_left#0) goto printf_string::@return
-Negating conditional jump and destination [215] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@2
-Negating conditional jump and destination [220] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@return
+Negating conditional jump and destination [113] if((byte) 0!=(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@2
+Negating conditional jump and destination [118] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@4
+Negating conditional jump and destination [126] if((byte) 0==(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@return
+Negating conditional jump and destination [132] if((byte) 0!=(const byte) printf_string::format_justify_left#0) goto printf_string::@2
+Negating conditional jump and destination [135] if((byte) 0==(const byte) printf_string::format_justify_left#0) goto printf_string::@return
+Negating conditional jump and destination [216] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@2
+Negating conditional jump and destination [221] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@return
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
 Constant right-side identified [24] (byte~) utoa::$4 ← (const byte) utoa::max_digits#1 - (byte) 1
-Constant right-side identified [119] (byte) printf_padding::length#0 ← (byte)(const signed byte) printf_number_buffer::padding#0
-Constant right-side identified [125] (byte) printf_padding::length#1 ← (byte)(const signed byte) printf_number_buffer::padding#0
-Constant right-side identified [131] (byte) printf_padding::length#2 ← (byte)(const signed byte) printf_number_buffer::padding#0
-Constant right-side identified [140] (byte) printf_padding::length#3 ← (byte)(const signed byte) printf_string::padding#0
-Constant right-side identified [142] (byte) printf_padding::length#4 ← (byte)(const signed byte) printf_string::padding#0
+Constant right-side identified [115] (byte) printf_padding::length#0 ← (byte)(const signed byte) printf_number_buffer::padding#0
+Constant right-side identified [121] (byte) printf_padding::length#1 ← (byte)(const signed byte) printf_number_buffer::padding#0
+Constant right-side identified [127] (byte) printf_padding::length#2 ← (byte)(const signed byte) printf_number_buffer::padding#0
+Constant right-side identified [136] (byte) printf_padding::length#3 ← (byte)(const signed byte) printf_string::padding#0
+Constant right-side identified [138] (byte) printf_padding::length#4 ← (byte)(const signed byte) printf_string::padding#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) utoa::$4 = utoa::max_digits#1-1
 Constant (const byte) printf_padding::length#0 = (byte)printf_number_buffer::padding#0
@@ -3062,18 +3067,18 @@ Constant (const byte) printf_padding::length#2 = (byte)printf_number_buffer::pad
 Constant (const byte) printf_padding::length#3 = (byte)printf_string::padding#0
 Constant (const byte) printf_padding::length#4 = (byte)printf_string::padding#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [117] if((byte) 0!=(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@2
-if() condition always true - replacing block destination [122] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@4
-if() condition always true - replacing block destination [130] if((byte) 0==(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@return
-if() condition always false - eliminating [136] if((byte) 0!=(const byte) printf_string::format_justify_left#0) goto printf_string::@2
-if() condition always true - replacing block destination [139] if((byte) 0==(const byte) printf_string::format_justify_left#0) goto printf_string::@return
-if() condition always false - eliminating [214] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@8
-if() condition always false - eliminating [215] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@2
-if() condition always false - eliminating [217] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@10
-if() condition always false - eliminating [219] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@12
-if() condition always false - eliminating [220] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@return
-if() condition always false - eliminating [222] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@5
-if() condition always false - eliminating [224] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@6
+if() condition always false - eliminating [113] if((byte) 0!=(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@2
+if() condition always true - replacing block destination [118] if((byte) 0==(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@4
+if() condition always true - replacing block destination [126] if((byte) 0==(const byte) printf_number_buffer::format_justify_left#0) goto printf_number_buffer::@return
+if() condition always false - eliminating [132] if((byte) 0!=(const byte) printf_string::format_justify_left#0) goto printf_string::@2
+if() condition always true - replacing block destination [135] if((byte) 0==(const byte) printf_string::format_justify_left#0) goto printf_string::@return
+if() condition always false - eliminating [215] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@8
+if() condition always false - eliminating [216] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@2
+if() condition always false - eliminating [218] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@10
+if() condition always false - eliminating [220] if((signed byte) 0!=(const signed byte) printf_number_buffer::padding#0) goto printf_number_buffer::@12
+if() condition always false - eliminating [221] if((byte) 0!=(const byte) printf_number_buffer::format_zero_padding#0) goto printf_number_buffer::@return
+if() condition always false - eliminating [223] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@5
+if() condition always false - eliminating [225] if((signed byte) 0!=(const signed byte) printf_string::padding#0) goto printf_string::@6
 Successful SSA optimization Pass2ConstantIfs
 Simplifying constant evaluating to zero (byte)(const signed byte) printf_number_buffer::padding#0 in 
 Simplifying constant evaluating to zero (byte)(const signed byte) printf_number_buffer::padding#0 in 
@@ -3141,7 +3146,7 @@ Inlining Noop Cast [13] (byte*~) memset::$4 ← (byte*)(void*) memset::str#3 kee
 Inlining Noop Cast [15] (byte*) memset::dst#0 ← (byte*)(void*) memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
 Rewriting multiplication to use shift [24] (byte~) utoa::$10 ← (byte) utoa::digit#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift and addition[58] (word) gotoxy::line_offset#0 ← (word~) gotoxy::$7 * (byte) $28
+Rewriting multiplication to use shift and addition[54] (word) gotoxy::line_offset#0 ← (word~) gotoxy::$7 * (byte) $28
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const void*) memcpy::destination#0
 Inlining constant with var siblings (const void*) memcpy::source#0
@@ -3235,7 +3240,7 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Identical Phi Values (byte) gotoxy::x#6 (byte) 0
 Successful SSA optimization Pass2IdenticalPhiElimination
 if() condition always false - eliminating [9] if((byte) $28<=(byte) 0) goto memset::@1
-if() condition always true - replacing block destination [48] if((byte) 0<(byte) $28) goto gotoxy::@2
+if() condition always true - replacing block destination [44] if((byte) 0<(byte) $28) goto gotoxy::@2
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
@@ -3245,10 +3250,9 @@ Alias candidate removed (volatile)conio_line_text = gotoxy::$5
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Added new block during phi lifting utoa::@17(between utoa::@16 and utoa::@13)
 Added new block during phi lifting gotoxy::@5(between gotoxy and gotoxy::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@7
@@ -3292,7 +3296,7 @@ Adding NOP phi() at start of printf_string::@11
 Adding NOP phi() at start of printf_string::@2
 Adding NOP phi() at start of printf_string::@8
 CALL GRAPH
-Calls in [] to main:6 
+Calls in [_start] to main:6 
 Calls in [main] to tod_init:13 gotoxy:18 tod_read:20 tod_str:29 cputs:31 printf_string:33 gotoxy:39 printf_uint:41 gotoxy:43 cputs:46 
 Calls in [cputs] to cputc:58 
 Calls in [cputc] to cputln:67 cputln:71 
@@ -3327,7 +3331,7 @@ Coalesced [189] utoa_append::value#6 ← utoa_append::value#0
 Coalesced [196] utoa_append::value#7 ← utoa_append::value#1
 Coalesced [197] utoa_append::digit#5 ← utoa_append::digit#1
 Coalesced down to 17 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@11
 Culled Empty Block (label) main::@15
@@ -3383,9 +3387,8 @@ Renumbering block main::@10 to main::@9
 Renumbering block main::@12 to main::@10
 Renumbering block main::@13 to main::@11
 Renumbering block main::@14 to main::@12
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@8
@@ -3409,24 +3412,27 @@ Adding NOP phi() at start of printf_string
 Adding NOP phi() at start of printf_string::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (byte) conio_cursor_x ← (byte) 0
   [2] (byte) conio_cursor_y ← (byte) 0
   [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN
   [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [5] phi()
   [6] call main 
-  to:@end
-@end: scope:[]  from @2
-  [7] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [7] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   [8] (byte) tod_init::tod_TENTHS#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO)
   [9] (byte) tod_init::tod_SEC#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_SEC)
   [10] (byte) tod_init::tod_MIN#0 ← *((byte*)&(struct TIME_OF_DAY) TOD_ZERO+(const byte) OFFSET_STRUCT_TIME_OF_DAY_MIN)
@@ -3904,6 +3910,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) TIME_OF_DAY::SEC
 (byte) TIME_OF_DAY::TENTHS
 (struct TIME_OF_DAY) TOD_ZERO loadstore = { TENTHS: (byte) 0, SEC: (byte) 0, MIN: (byte) 0, HOURS: (byte) 0 }
+(void()) _start()
 (byte) conio_cursor_x loadstore 1.8987354544303797E7
 (byte) conio_cursor_y loadstore 3.4042554263829786E8
 (byte*) conio_line_color loadstore 2.6309525009523806E8
@@ -4340,7 +4347,7 @@ Target platform is c64basic / MOS6502X
 // Functions for performing input and output.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -4360,48 +4367,49 @@ Target platform is c64basic / MOS6502X
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = $1e
-  .label conio_cursor_y = $1f
-  .label conio_line_text = $20
-  .label conio_line_color = $22
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = $1e
   // The current cursor y-position
-  lda #0
-  sta.z conio_cursor_y
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = $1f
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $20
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [6] call main 
-  jsr main
-  // [7] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label conio_line_color = $22
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_y
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [6] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [7] return 
+    rts
+}
   // main
 main: {
     .label __6 = $30
@@ -5837,92 +5845,94 @@ Uplift Scope [printf_buffer_number]
 Uplift Scope [printf_format_string] 
 Uplift Scope [printf_string] 
 Uplift Scope [TIME_OF_DAY] 
+Uplift Scope [_start] 
 
-Uplifting [memcpy] best 199487 combination zp[2]:16 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:18 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:54 [ memcpy::src_end#0 ] zp[2]:12 [ memcpy::source#2 ] zp[2]:14 [ memcpy::destination#2 ] 
-Uplifting [memset] best 198481 combination zp[2]:10 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:52 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:7 [ memset::str#3 ] 
-Uplifting [utoa_append] best 192478 combination zp[2]:27 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] reg byte x [ utoa_append::digit#2 utoa_append::digit#1 ] zp[2]:77 [ utoa_append::sub#0 ] zp[2]:79 [ utoa_append::return#0 ] zp[2]:75 [ utoa_append::buffer#0 ] 
-Uplifting [] best 192478 combination zp[1]:31 [ conio_cursor_y ] zp[2]:34 [ conio_line_color ] zp[2]:32 [ conio_line_text ] zp[1]:30 [ conio_cursor_x ] mem[12] [ printf_buffer ] mem[4] [ TOD_ZERO ] 
-Uplifting [cputc] best 192169 combination reg byte a [ cputc::c#3 cputc::c#0 cputc::c#2 ] 
-Uplifting [cputs] best 191269 combination zp[2]:4 [ cputs::s#5 cputs::s#6 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
-Uplifting [utoa] best 189965 combination zp[2]:25 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] zp[2]:22 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] zp[1]:21 [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$10 ] reg byte x [ utoa::started#2 utoa::started#4 ] zp[2]:73 [ utoa::digit_value#0 ] reg byte a [ utoa::$11 ] zp[2]:70 [ utoa::buffer#3 ] 
-Uplifting [gotoxy] best 189946 combination zp[2]:58 [ gotoxy::$8 ] zp[2]:60 [ gotoxy::$9 ] zp[2]:64 [ gotoxy::$5 ] zp[2]:66 [ gotoxy::$6 ] zp[2]:56 [ gotoxy::$7 ] reg byte x [ gotoxy::y#6 gotoxy::y#5 ] zp[2]:62 [ gotoxy::line_offset#0 ] 
-Uplifting [printf_number_buffer] best 189937 combination reg byte a [ printf_number_buffer::buffer_sign#0 ] 
-Uplifting [main] best 189877 combination zp[2]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$6 ] 
-Uplifting [printf_uint] best 189877 combination zp[2]:49 [ printf_uint::uvalue#0 ] 
-Uplifting [tod_read] best 189859 combination reg byte y [ tod_read::return_TENTHS#0 ] reg byte x [ tod_read::return_SEC#0 ] reg byte a [ tod_read::return_MIN#0 ] zp[1]:97 [ tod_read::return_HOURS#0 ] zp[1]:40 [ tod_read::return_TENTHS#2 ] zp[1]:41 [ tod_read::return_SEC#2 ] zp[1]:42 [ tod_read::return_MIN#2 ] zp[1]:43 [ tod_read::return_HOURS#2 ] 
+Uplifting [memcpy] best 199493 combination zp[2]:16 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:18 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:54 [ memcpy::src_end#0 ] zp[2]:12 [ memcpy::source#2 ] zp[2]:14 [ memcpy::destination#2 ] 
+Uplifting [memset] best 198487 combination zp[2]:10 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:52 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:7 [ memset::str#3 ] 
+Uplifting [utoa_append] best 192484 combination zp[2]:27 [ utoa_append::value#2 utoa_append::value#0 utoa_append::value#1 ] reg byte x [ utoa_append::digit#2 utoa_append::digit#1 ] zp[2]:77 [ utoa_append::sub#0 ] zp[2]:79 [ utoa_append::return#0 ] zp[2]:75 [ utoa_append::buffer#0 ] 
+Uplifting [] best 192484 combination zp[1]:31 [ conio_cursor_y ] zp[2]:34 [ conio_line_color ] zp[2]:32 [ conio_line_text ] zp[1]:30 [ conio_cursor_x ] mem[12] [ printf_buffer ] mem[4] [ TOD_ZERO ] 
+Uplifting [cputc] best 192175 combination reg byte a [ cputc::c#3 cputc::c#0 cputc::c#2 ] 
+Uplifting [cputs] best 191275 combination zp[2]:4 [ cputs::s#5 cputs::s#6 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
+Uplifting [utoa] best 189971 combination zp[2]:25 [ utoa::buffer#11 utoa::buffer#14 utoa::buffer#4 ] zp[2]:22 [ utoa::value#2 utoa::value#6 utoa::value#1 utoa::value#0 ] zp[1]:21 [ utoa::digit#2 utoa::digit#1 ] reg byte a [ utoa::$10 ] reg byte x [ utoa::started#2 utoa::started#4 ] zp[2]:73 [ utoa::digit_value#0 ] reg byte a [ utoa::$11 ] zp[2]:70 [ utoa::buffer#3 ] 
+Uplifting [gotoxy] best 189952 combination zp[2]:58 [ gotoxy::$8 ] zp[2]:60 [ gotoxy::$9 ] zp[2]:64 [ gotoxy::$5 ] zp[2]:66 [ gotoxy::$6 ] zp[2]:56 [ gotoxy::$7 ] reg byte x [ gotoxy::y#6 gotoxy::y#5 ] zp[2]:62 [ gotoxy::line_offset#0 ] 
+Uplifting [printf_number_buffer] best 189943 combination reg byte a [ printf_number_buffer::buffer_sign#0 ] 
+Uplifting [main] best 189883 combination zp[2]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$6 ] 
+Uplifting [printf_uint] best 189883 combination zp[2]:49 [ printf_uint::uvalue#0 ] 
+Uplifting [tod_read] best 189865 combination reg byte y [ tod_read::return_TENTHS#0 ] reg byte x [ tod_read::return_SEC#0 ] reg byte a [ tod_read::return_MIN#0 ] zp[1]:97 [ tod_read::return_HOURS#0 ] zp[1]:40 [ tod_read::return_TENTHS#2 ] zp[1]:41 [ tod_read::return_SEC#2 ] zp[1]:42 [ tod_read::return_MIN#2 ] zp[1]:43 [ tod_read::return_HOURS#2 ] 
 Limited combination testing to 100 combinations of 65536 possible.
-Uplifting [tod_init] best 189847 combination reg byte y [ tod_init::tod_HOURS#0 ] reg byte x [ tod_init::tod_MIN#0 ] zp[1]:37 [ tod_init::tod_SEC#0 ] zp[1]:36 [ tod_init::tod_TENTHS#0 ] 
-Uplifting [RADIX] best 189847 combination 
-Uplifting [MOS6526_CIA] best 189847 combination 
-Uplifting [MOS6569_VICII] best 189847 combination 
-Uplifting [MOS6581_SID] best 189847 combination 
-Uplifting [cputln] best 189847 combination 
-Uplifting [cscroll] best 189847 combination 
-Uplifting [printf_format_number] best 189847 combination 
-Uplifting [printf_buffer_number] best 189847 combination 
-Uplifting [printf_format_string] best 189847 combination 
-Uplifting [printf_string] best 189847 combination 
-Uplifting [TIME_OF_DAY] best 189847 combination 
+Uplifting [tod_init] best 189853 combination reg byte y [ tod_init::tod_HOURS#0 ] reg byte x [ tod_init::tod_MIN#0 ] zp[1]:37 [ tod_init::tod_SEC#0 ] zp[1]:36 [ tod_init::tod_TENTHS#0 ] 
+Uplifting [RADIX] best 189853 combination 
+Uplifting [MOS6526_CIA] best 189853 combination 
+Uplifting [MOS6569_VICII] best 189853 combination 
+Uplifting [MOS6581_SID] best 189853 combination 
+Uplifting [cputln] best 189853 combination 
+Uplifting [cscroll] best 189853 combination 
+Uplifting [printf_format_number] best 189853 combination 
+Uplifting [printf_buffer_number] best 189853 combination 
+Uplifting [printf_format_string] best 189853 combination 
+Uplifting [printf_string] best 189853 combination 
+Uplifting [TIME_OF_DAY] best 189853 combination 
+Uplifting [_start] best 189853 combination 
 Attempting to uplift remaining variables inzp[1]:31 [ conio_cursor_y ]
-Uplifting [] best 189847 combination zp[1]:31 [ conio_cursor_y ] 
+Uplifting [] best 189853 combination zp[1]:31 [ conio_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:30 [ conio_cursor_x ]
-Uplifting [] best 189847 combination zp[1]:30 [ conio_cursor_x ] 
+Uplifting [] best 189853 combination zp[1]:30 [ conio_cursor_x ] 
 Attempting to uplift remaining variables inzp[1]:21 [ utoa::digit#2 utoa::digit#1 ]
-Uplifting [utoa] best 189847 combination zp[1]:21 [ utoa::digit#2 utoa::digit#1 ] 
+Uplifting [utoa] best 189853 combination zp[1]:21 [ utoa::digit#2 utoa::digit#1 ] 
 Attempting to uplift remaining variables inzp[1]:81 [ tod_str::$0 ]
-Uplifting [tod_str] best 189843 combination reg byte a [ tod_str::$0 ] 
+Uplifting [tod_str] best 189849 combination reg byte a [ tod_str::$0 ] 
 Attempting to uplift remaining variables inzp[1]:82 [ tod_str::$1 ]
-Uplifting [tod_str] best 189837 combination reg byte a [ tod_str::$1 ] 
+Uplifting [tod_str] best 189843 combination reg byte a [ tod_str::$1 ] 
 Attempting to uplift remaining variables inzp[1]:83 [ tod_str::$2 ]
-Uplifting [tod_str] best 189833 combination reg byte a [ tod_str::$2 ] 
+Uplifting [tod_str] best 189839 combination reg byte a [ tod_str::$2 ] 
 Attempting to uplift remaining variables inzp[1]:84 [ tod_str::$3 ]
-Uplifting [tod_str] best 189827 combination reg byte a [ tod_str::$3 ] 
+Uplifting [tod_str] best 189833 combination reg byte a [ tod_str::$3 ] 
 Attempting to uplift remaining variables inzp[1]:85 [ tod_str::$4 ]
-Uplifting [tod_str] best 189823 combination reg byte a [ tod_str::$4 ] 
+Uplifting [tod_str] best 189829 combination reg byte a [ tod_str::$4 ] 
 Attempting to uplift remaining variables inzp[1]:86 [ tod_str::$5 ]
-Uplifting [tod_str] best 189817 combination reg byte a [ tod_str::$5 ] 
+Uplifting [tod_str] best 189823 combination reg byte a [ tod_str::$5 ] 
 Attempting to uplift remaining variables inzp[1]:87 [ tod_str::$6 ]
-Uplifting [tod_str] best 189813 combination reg byte a [ tod_str::$6 ] 
+Uplifting [tod_str] best 189819 combination reg byte a [ tod_str::$6 ] 
 Attempting to uplift remaining variables inzp[1]:88 [ tod_str::$7 ]
-Uplifting [tod_str] best 189807 combination reg byte a [ tod_str::$7 ] 
+Uplifting [tod_str] best 189813 combination reg byte a [ tod_str::$7 ] 
 Attempting to uplift remaining variables inzp[1]:89 [ tod_str::$8 ]
-Uplifting [tod_str] best 189803 combination reg byte a [ tod_str::$8 ] 
+Uplifting [tod_str] best 189809 combination reg byte a [ tod_str::$8 ] 
 Attempting to uplift remaining variables inzp[1]:90 [ tod_str::$9 ]
-Uplifting [tod_str] best 189797 combination reg byte a [ tod_str::$9 ] 
+Uplifting [tod_str] best 189803 combination reg byte a [ tod_str::$9 ] 
 Attempting to uplift remaining variables inzp[1]:91 [ tod_str::$10 ]
-Uplifting [tod_str] best 189793 combination reg byte a [ tod_str::$10 ] 
+Uplifting [tod_str] best 189799 combination reg byte a [ tod_str::$10 ] 
 Attempting to uplift remaining variables inzp[1]:92 [ tod_str::$11 ]
-Uplifting [tod_str] best 189787 combination reg byte a [ tod_str::$11 ] 
+Uplifting [tod_str] best 189793 combination reg byte a [ tod_str::$11 ] 
 Attempting to uplift remaining variables inzp[1]:93 [ tod_str::$12 ]
-Uplifting [tod_str] best 189783 combination reg byte a [ tod_str::$12 ] 
+Uplifting [tod_str] best 189789 combination reg byte a [ tod_str::$12 ] 
 Attempting to uplift remaining variables inzp[1]:94 [ tod_str::$13 ]
-Uplifting [tod_str] best 189777 combination reg byte a [ tod_str::$13 ] 
+Uplifting [tod_str] best 189783 combination reg byte a [ tod_str::$13 ] 
 Attempting to uplift remaining variables inzp[1]:95 [ tod_str::$14 ]
-Uplifting [tod_str] best 189773 combination reg byte a [ tod_str::$14 ] 
+Uplifting [tod_str] best 189779 combination reg byte a [ tod_str::$14 ] 
 Attempting to uplift remaining variables inzp[1]:96 [ tod_str::$15 ]
-Uplifting [tod_str] best 189767 combination reg byte a [ tod_str::$15 ] 
+Uplifting [tod_str] best 189773 combination reg byte a [ tod_str::$15 ] 
 Attempting to uplift remaining variables inzp[1]:47 [ tod_str::tod_HOURS#0 ]
-Uplifting [tod_str] best 189762 combination reg byte x [ tod_str::tod_HOURS#0 ] 
+Uplifting [tod_str] best 189768 combination reg byte x [ tod_str::tod_HOURS#0 ] 
 Attempting to uplift remaining variables inzp[1]:46 [ tod_str::tod_MIN#0 ]
-Uplifting [tod_str] best 189757 combination reg byte y [ tod_str::tod_MIN#0 ] 
+Uplifting [tod_str] best 189763 combination reg byte y [ tod_str::tod_MIN#0 ] 
 Attempting to uplift remaining variables inzp[1]:37 [ tod_init::tod_SEC#0 ]
-Uplifting [tod_init] best 189757 combination zp[1]:37 [ tod_init::tod_SEC#0 ] 
+Uplifting [tod_init] best 189763 combination zp[1]:37 [ tod_init::tod_SEC#0 ] 
 Attempting to uplift remaining variables inzp[1]:36 [ tod_init::tod_TENTHS#0 ]
-Uplifting [tod_init] best 189757 combination zp[1]:36 [ tod_init::tod_TENTHS#0 ] 
+Uplifting [tod_init] best 189763 combination zp[1]:36 [ tod_init::tod_TENTHS#0 ] 
 Attempting to uplift remaining variables inzp[1]:97 [ tod_read::return_HOURS#0 ]
-Uplifting [tod_read] best 189757 combination zp[1]:97 [ tod_read::return_HOURS#0 ] 
+Uplifting [tod_read] best 189763 combination zp[1]:97 [ tod_read::return_HOURS#0 ] 
 Attempting to uplift remaining variables inzp[1]:45 [ tod_str::tod_SEC#0 ]
-Uplifting [tod_str] best 189757 combination zp[1]:45 [ tod_str::tod_SEC#0 ] 
+Uplifting [tod_str] best 189763 combination zp[1]:45 [ tod_str::tod_SEC#0 ] 
 Attempting to uplift remaining variables inzp[1]:44 [ tod_str::tod_TENTHS#0 ]
-Uplifting [tod_str] best 189757 combination zp[1]:44 [ tod_str::tod_TENTHS#0 ] 
+Uplifting [tod_str] best 189763 combination zp[1]:44 [ tod_str::tod_TENTHS#0 ] 
 Attempting to uplift remaining variables inzp[1]:40 [ tod_read::return_TENTHS#2 ]
-Uplifting [tod_read] best 189751 combination reg byte y [ tod_read::return_TENTHS#2 ] 
+Uplifting [tod_read] best 189757 combination reg byte y [ tod_read::return_TENTHS#2 ] 
 Attempting to uplift remaining variables inzp[1]:41 [ tod_read::return_SEC#2 ]
-Uplifting [tod_read] best 189745 combination reg byte x [ tod_read::return_SEC#2 ] 
+Uplifting [tod_read] best 189751 combination reg byte x [ tod_read::return_SEC#2 ] 
 Attempting to uplift remaining variables inzp[1]:42 [ tod_read::return_MIN#2 ]
-Uplifting [tod_read] best 189745 combination zp[1]:42 [ tod_read::return_MIN#2 ] 
+Uplifting [tod_read] best 189751 combination zp[1]:42 [ tod_read::return_MIN#2 ] 
 Attempting to uplift remaining variables inzp[1]:43 [ tod_read::return_HOURS#2 ]
-Uplifting [tod_read] best 189741 combination reg byte a [ tod_read::return_HOURS#2 ] 
+Uplifting [tod_read] best 189747 combination reg byte a [ tod_read::return_HOURS#2 ] 
 Coalescing zero page register [ zp[2]:2 [ main::i#2 main::i#1 ] ] with [ zp[2]:49 [ printf_uint::uvalue#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:7 [ memset::str#3 ] ] with [ zp[2]:10 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:12 [ memcpy::source#2 ] ] with [ zp[2]:16 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
@@ -5965,7 +5975,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Functions for performing input and output.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -5986,48 +5996,49 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = 8
-  .label conio_cursor_y = 9
-  .label conio_line_text = $a
-  .label conio_line_color = $c
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = 8
   // The current cursor y-position
-  lda #0
-  sta.z conio_cursor_y
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = 9
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $a
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [6] call main 
-  jsr main
-  // [7] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label conio_line_color = $c
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_y
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [6] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [7] return 
+    rts
+}
   // main
 main: {
     .label i = 2
@@ -7067,9 +7078,9 @@ tod_init: {
   TOD_ZERO: .byte 0, 0, 0, 0
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp __b6
@@ -7141,9 +7152,7 @@ Replacing label __b1_from___b2 with __b1
 Replacing label __b3_from_gotoxy with __b2
 Replacing label __b1 with __b2
 Replacing label __b2_from___b1 with __b2
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Removing instruction __b3_from___b1:
 Removing instruction gotoxy_from___b3:
 Removing instruction __b6_from___b3:
@@ -7189,8 +7198,9 @@ Removing instruction utoa_append_from___b5:
 Removing instruction __b1_from_printf_string:
 Removing instruction cputs_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __b1_from_main:
 Removing instruction __b3:
 Removing instruction __b6:
@@ -7244,18 +7254,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda.z digit_value+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte*) COLORRAM = (byte*) 55296
 (const nomodify byte*) DEFAULT_SCREEN = (byte*) 1024
@@ -7366,6 +7370,10 @@ FINAL SYMBOL TABLE
 (byte) TIME_OF_DAY::SEC
 (byte) TIME_OF_DAY::TENTHS
 (struct TIME_OF_DAY) TOD_ZERO loadstore mem[4] = { TENTHS: (byte) 0, SEC: (byte) 0, MIN: (byte) 0, HOURS: (byte) 0 }
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (byte) conio_cursor_x loadstore zp[1]:8 1.8987354544303797E7
 (byte) conio_cursor_y loadstore zp[1]:9 3.4042554263829786E8
 (byte*) conio_line_color loadstore zp[2]:12 2.6309525009523806E8
@@ -7698,7 +7706,7 @@ Score: 160752
 // Functions for performing input and output.
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -7719,44 +7727,45 @@ Score: 160752
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = 8
-  .label conio_cursor_y = 9
-  .label conio_line_text = $a
-  .label conio_line_color = $c
-  // @begin
-__bbegin:
-  // @1
-  // conio_cursor_x = 0
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = 8
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = 9
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $a
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [6] call main 
-  jsr main
-  rts
-  // [7] phi from @2 to @end [phi:@2->@end]
-  // @end
+  .label conio_line_color = $c
+  // _start
+_start: {
+    // _start::_init1
+    // conio_cursor_x = 0
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [6] call main 
+    jsr main
+    // _start::@return
+    // [7] return 
+    rts
+}
   // main
 main: {
     .label i = 2

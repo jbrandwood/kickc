@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte*) strncat::destination#0 ← (const byte*) build
   (to_nomodify byte*) strncat::source#0 ← (const byte*) hello
   (word) strncat::num#0 ← (number) 5
@@ -93,19 +91,22 @@ strncat::@return: scope:[strncat]  from strncat::@5
   (byte*) strncat::return#4 ← (byte*) strncat::return#5
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (const byte*) build[(number) $28]  = { fill( $28, 0) }
 (const byte*) hello[]  = (byte*) "hello"
 (void()) main()
@@ -244,8 +245,13 @@ Eliminating unused variable (byte*) strncat::return#0 and assignment [1] (byte*)
 Eliminating unused variable (byte*) strncat::return#1 and assignment [3] (byte*) strncat::return#1 ← (byte*) strncat::dst#0
 Eliminating unused variable (byte*) strncat::return#2 and assignment [5] (byte*) strncat::return#2 ← (byte*) strncat::dst#0
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) 0 in (bool~) strncat::$2 ← (number) 0 != (word) strncat::num#4
-Adding number conversion cast (unumber) 0 in (bool~) strncat::$3 ← (number) 0 != *((byte*) strncat::dst#5)
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 0 in [15] (bool~) strncat::$2 ← (number) 0 != (word) strncat::num#4
+Adding number conversion cast (unumber) 0 in [23] (bool~) strncat::$3 ← (number) 0 != *((byte*) strncat::dst#5)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -254,7 +260,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition (bool~) strncat::$2 [16] if((byte) 0!=(word) strncat::num#4) goto strncat::@6
-Simple Condition (bool~) strncat::$3 [23] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4
+Simple Condition (bool~) strncat::$3 [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Negating conditional jump and destination [16] if((byte) 0==(word) strncat::num#4) goto strncat::@5
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
@@ -281,127 +287,109 @@ Identical Phi Values (word) strncat::num#7 (byte) 5
 Successful SSA optimization Pass2IdenticalPhiElimination
 Added new block during phi lifting strncat::@7(between strncat::@1 and strncat::@3)
 Fixing phi predecessor for strncat::num#4 to new block ( strncat::@1 -> strncat::@7 ) during phi lifting.
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@5
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to strncat:6 strncat:8 strncat:10 
+Calls in [main] to strncat:1 strncat:3 strncat:5 
 
 Created 6 initial phi equivalence classes
-Coalesced [17] main::i#4 ← main::i#1
-Coalesced [21] strncat::source#9 ← strncat::source#7
-Coalesced [22] strncat::dst#9 ← strncat::dst#3
-Coalesced [32] strncat::source#10 ← strncat::source#3
-Coalesced [33] strncat::dst#10 ← strncat::dst#2
-Coalesced [34] strncat::num#9 ← strncat::num#3
-Coalesced [36] strncat::dst#8 ← strncat::dst#1
+Coalesced [12] main::i#4 ← main::i#1
+Coalesced [16] strncat::source#9 ← strncat::source#7
+Coalesced [17] strncat::dst#9 ← strncat::dst#3
+Coalesced [27] strncat::source#10 ← strncat::source#3
+Coalesced [28] strncat::dst#10 ← strncat::dst#2
+Coalesced [29] strncat::num#9 ← strncat::num#3
+Coalesced [31] strncat::dst#8 ← strncat::dst#1
 Coalesced down to 4 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@5
 Culled Empty Block (label) strncat::@7
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call strncat 
+main: scope:[main]  from
+  [0] phi()
+  [1] call strncat 
   to:main::@3
 main::@3: scope:[main]  from main
-  [6] phi()
-  [7] call strncat 
+  [2] phi()
+  [3] call strncat 
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  [8] phi()
-  [9] call strncat 
+  [4] phi()
+  [5] call strncat 
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@4
-  [10] (byte) main::i#2 ← phi( main::@2/(byte) main::i#1 main::@4/(byte) 0 )
-  [11] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2
+  [6] (byte) main::i#2 ← phi( main::@2/(byte) main::i#1 main::@4/(byte) 0 )
+  [7] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [12] return 
+  [8] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [13] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2)
-  [14] (byte) main::i#1 ← ++ (byte) main::i#2
+  [9] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2)
+  [10] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@1
 
 (byte*()) strncat((byte*) strncat::destination , (to_nomodify byte*) strncat::source , (word) strncat::num)
 strncat: scope:[strncat]  from main main::@3 main::@4
-  [15] (to_nomodify byte*) strncat::source#7 ← phi( main/(const byte*) hello main::@3/(const byte*) space main::@4/(const byte*) world )
+  [11] (to_nomodify byte*) strncat::source#7 ← phi( main/(const byte*) hello main::@3/(const byte*) space main::@4/(const byte*) world )
   to:strncat::@1
 strncat::@1: scope:[strncat]  from strncat strncat::@2
-  [16] (byte*) strncat::dst#3 ← phi( strncat/(const byte*) build strncat::@2/(byte*) strncat::dst#1 )
-  [17] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2
+  [12] (byte*) strncat::dst#3 ← phi( strncat/(const byte*) build strncat::@2/(byte*) strncat::dst#1 )
+  [13] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2
   to:strncat::@3
 strncat::@3: scope:[strncat]  from strncat::@1 strncat::@4
-  [18] (word) strncat::num#4 ← phi( strncat::@1/(byte) 5 strncat::@4/(word) strncat::num#3 )
-  [18] (byte*) strncat::dst#5 ← phi( strncat::@1/(byte*) strncat::dst#3 strncat::@4/(byte*) strncat::dst#2 )
-  [18] (to_nomodify byte*) strncat::source#4 ← phi( strncat::@1/(to_nomodify byte*) strncat::source#7 strncat::@4/(to_nomodify byte*) strncat::source#3 )
-  [19] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4)
-  [20] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4
-  [21] if((byte) 0==(word) strncat::num#4) goto strncat::@5
+  [14] (word) strncat::num#4 ← phi( strncat::@1/(byte) 5 strncat::@4/(word) strncat::num#3 )
+  [14] (byte*) strncat::dst#5 ← phi( strncat::@1/(byte*) strncat::dst#3 strncat::@4/(byte*) strncat::dst#2 )
+  [14] (to_nomodify byte*) strncat::source#4 ← phi( strncat::@1/(to_nomodify byte*) strncat::source#7 strncat::@4/(to_nomodify byte*) strncat::source#3 )
+  [15] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4)
+  [16] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4
+  [17] if((byte) 0==(word) strncat::num#4) goto strncat::@5
   to:strncat::@6
 strncat::@6: scope:[strncat]  from strncat::@3
-  [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4
+  [18] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4
   to:strncat::@5
 strncat::@5: scope:[strncat]  from strncat::@3 strncat::@6
-  [23] *((byte*) strncat::dst#5) ← (byte) 0
+  [19] *((byte*) strncat::dst#5) ← (byte) 0
   to:strncat::@return
 strncat::@return: scope:[strncat]  from strncat::@5
-  [24] return 
+  [20] return 
   to:@return
 strncat::@4: scope:[strncat]  from strncat::@6
-  [25] (word) strncat::num#3 ← -- (word) strncat::num#4
-  [26] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5
+  [21] (word) strncat::num#3 ← -- (word) strncat::num#4
+  [22] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5
   to:strncat::@3
 strncat::@2: scope:[strncat]  from strncat::@1
-  [27] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3
+  [23] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3
   to:strncat::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::i
-(byte) main::i#1 202.0
-(byte) main::i#2 168.33333333333331
+(byte) main::i#1 22.0
+(byte) main::i#2 18.333333333333332
 (byte*()) strncat((byte*) strncat::destination , (to_nomodify byte*) strncat::source , (word) strncat::num)
 (byte*) strncat::destination
 (byte*) strncat::dst
-(byte*) strncat::dst#1 2002.0
-(byte*) strncat::dst#2 2002.0
-(byte*) strncat::dst#3 2002.0
-(byte*) strncat::dst#5 851.0000000000001
+(byte*) strncat::dst#1 202.0
+(byte*) strncat::dst#2 202.0
+(byte*) strncat::dst#3 202.0
+(byte*) strncat::dst#5 85.99999999999999
 (word) strncat::num
-(word) strncat::num#3 1001.0
-(word) strncat::num#4 600.5999999999999
+(word) strncat::num#3 101.0
+(word) strncat::num#4 60.599999999999994
 (byte*) strncat::return
 (to_nomodify byte*) strncat::source
-(to_nomodify byte*) strncat::source#3 400.4
-(to_nomodify byte*) strncat::source#4 2002.0
-(to_nomodify byte*) strncat::source#7 250.25
+(to_nomodify byte*) strncat::source#3 40.4
+(to_nomodify byte*) strncat::source#4 202.0
+(to_nomodify byte*) strncat::source#7 25.25
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -428,71 +416,55 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label i = 2
-    // [5] call strncat 
-    // [15] phi from main to strncat [phi:main->strncat]
+    // [1] call strncat 
+    // [11] phi from main to strncat [phi:main->strncat]
   strncat_from_main:
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) hello [phi:main->strncat#0] -- pbuz1=pbuc1 
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) hello [phi:main->strncat#0] -- pbuz1=pbuc1 
     lda #<hello
     sta.z strncat.source
     lda #>hello
     sta.z strncat.source+1
     jsr strncat
-    // [6] phi from main to main::@3 [phi:main->main::@3]
+    // [2] phi from main to main::@3 [phi:main->main::@3]
   __b3_from_main:
     jmp __b3
     // main::@3
   __b3:
-    // [7] call strncat 
-    // [15] phi from main::@3 to strncat [phi:main::@3->strncat]
+    // [3] call strncat 
+    // [11] phi from main::@3 to strncat [phi:main::@3->strncat]
   strncat_from___b3:
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) space [phi:main::@3->strncat#0] -- pbuz1=pbuc1 
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) space [phi:main::@3->strncat#0] -- pbuz1=pbuc1 
     lda #<space
     sta.z strncat.source
     lda #>space
     sta.z strncat.source+1
     jsr strncat
-    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [4] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [9] call strncat 
-    // [15] phi from main::@4 to strncat [phi:main::@4->strncat]
+    // [5] call strncat 
+    // [11] phi from main::@4 to strncat [phi:main::@4->strncat]
   strncat_from___b4:
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) world [phi:main::@4->strncat#0] -- pbuz1=pbuc1 
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) world [phi:main::@4->strncat#0] -- pbuz1=pbuc1 
     lda #<world
     sta.z strncat.source
     lda #>world
     sta.z strncat.source+1
     jsr strncat
-    // [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [10] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
     // main::@1
   __b1:
-    // [11] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [7] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp build,y
@@ -500,19 +472,19 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
     // main::@2
   __b2:
-    // [13] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda build,y
     sta SCREEN,y
-    // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [10] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [6] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // strncat
@@ -523,9 +495,9 @@ strncat: {
     .label dst = 5
     .label source = 3
     .label num = 7
-    // [16] phi from strncat to strncat::@1 [phi:strncat->strncat::@1]
+    // [12] phi from strncat to strncat::@1 [phi:strncat->strncat::@1]
   __b1_from_strncat:
-    // [16] phi (byte*) strncat::dst#3 = (const byte*) build [phi:strncat->strncat::@1#0] -- pbuz1=pbuc1 
+    // [12] phi (byte*) strncat::dst#3 = (const byte*) build [phi:strncat->strncat::@1#0] -- pbuz1=pbuc1 
     lda #<build
     sta.z dst
     lda #>build
@@ -534,35 +506,35 @@ strncat: {
   // Skip the existing string at dest
     // strncat::@1
   __b1:
-    // [17] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [13] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
     bne __b2
-    // [18] phi from strncat::@1 to strncat::@3 [phi:strncat::@1->strncat::@3]
+    // [14] phi from strncat::@1 to strncat::@3 [phi:strncat::@1->strncat::@3]
   __b3_from___b1:
-    // [18] phi (word) strncat::num#4 = (byte) 5 [phi:strncat::@1->strncat::@3#0] -- vwuz1=vbuc1 
+    // [14] phi (word) strncat::num#4 = (byte) 5 [phi:strncat::@1->strncat::@3#0] -- vwuz1=vbuc1 
     lda #<5
     sta.z num
     lda #>5
     sta.z num+1
-    // [18] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#3 [phi:strncat::@1->strncat::@3#1] -- register_copy 
-    // [18] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#7 [phi:strncat::@1->strncat::@3#2] -- register_copy 
+    // [14] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#3 [phi:strncat::@1->strncat::@3#1] -- register_copy 
+    // [14] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#7 [phi:strncat::@1->strncat::@3#2] -- register_copy 
     jmp __b3
   // Copy up to num chars from src
     // strncat::@3
   __b3:
-    // [19] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) -- _deref_pbuz1=_deref_pbuz2 
+    // [15] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (source),y
     ldy #0
     sta (dst),y
-    // [20] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4 -- pbuz1=_inc_pbuz1 
+    // [16] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4 -- pbuz1=_inc_pbuz1 
     inc.z source
     bne !+
     inc.z source+1
   !:
-    // [21] if((byte) 0==(word) strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
+    // [17] if((byte) 0==(word) strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
     lda #0
     cmp.z num
     bne !+
@@ -573,7 +545,7 @@ strncat: {
     jmp __b6
     // strncat::@6
   __b6:
-    // [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [18] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -581,7 +553,7 @@ strncat: {
     jmp __b5
     // strncat::@5
   __b5:
-    // [23] *((byte*) strncat::dst#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [19] *((byte*) strncat::dst#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     // Add null-character
     lda #0
     ldy #0
@@ -589,37 +561,37 @@ strncat: {
     jmp __breturn
     // strncat::@return
   __breturn:
-    // [24] return 
+    // [20] return 
     rts
     // strncat::@4
   __b4:
-    // [25] (word) strncat::num#3 ← -- (word) strncat::num#4 -- vwuz1=_dec_vwuz1 
+    // [21] (word) strncat::num#3 ← -- (word) strncat::num#4 -- vwuz1=_dec_vwuz1 
     lda.z num
     bne !+
     dec.z num+1
   !:
     dec.z num
-    // [26] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5 -- pbuz1=_inc_pbuz1 
+    // [22] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [18] phi from strncat::@4 to strncat::@3 [phi:strncat::@4->strncat::@3]
+    // [14] phi from strncat::@4 to strncat::@3 [phi:strncat::@4->strncat::@3]
   __b3_from___b4:
-    // [18] phi (word) strncat::num#4 = (word) strncat::num#3 [phi:strncat::@4->strncat::@3#0] -- register_copy 
-    // [18] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#2 [phi:strncat::@4->strncat::@3#1] -- register_copy 
-    // [18] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#3 [phi:strncat::@4->strncat::@3#2] -- register_copy 
+    // [14] phi (word) strncat::num#4 = (word) strncat::num#3 [phi:strncat::@4->strncat::@3#0] -- register_copy 
+    // [14] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#2 [phi:strncat::@4->strncat::@3#1] -- register_copy 
+    // [14] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#3 [phi:strncat::@4->strncat::@3#2] -- register_copy 
     jmp __b3
     // strncat::@2
   __b2:
-    // [27] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3 -- pbuz1=_inc_pbuz1 
+    // [23] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [16] phi from strncat::@2 to strncat::@1 [phi:strncat::@2->strncat::@1]
+    // [12] phi from strncat::@2 to strncat::@1 [phi:strncat::@2->strncat::@1]
   __b1_from___b2:
-    // [16] phi (byte*) strncat::dst#3 = (byte*) strncat::dst#1 [phi:strncat::@2->strncat::@1#0] -- register_copy 
+    // [12] phi (byte*) strncat::dst#3 = (byte*) strncat::dst#1 [phi:strncat::@2->strncat::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -632,36 +604,36 @@ strncat: {
   build: .fill $28, 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [11] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [7] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [13] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [17] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 [ strncat::source#7 strncat::dst#3 ] ( main:2::strncat:5 [ strncat::source#7 strncat::dst#3 ] { }  main:2::strncat:7 [ strncat::source#7 strncat::dst#3 ] { }  main:2::strncat:9 [ strncat::source#7 strncat::dst#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) [ strncat::source#4 strncat::dst#5 strncat::num#4 ] ( main:2::strncat:5 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  main:2::strncat:7 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  main:2::strncat:9 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [21] if((byte) 0==(word) strncat::num#4) goto strncat::@5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( main:2::strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:7 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:9 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a 
-Statement [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( main:2::strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:7 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:9 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((byte*) strncat::dst#5) ← (byte) 0 [ ] ( main:2::strncat:5 [ ] { }  main:2::strncat:7 [ ] { }  main:2::strncat:9 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [25] (word) strncat::num#3 ← -- (word) strncat::num#4 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] ( main:2::strncat:5 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  main:2::strncat:7 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  main:2::strncat:9 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  ) always clobbers reg byte a 
-Statement [11] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [17] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 [ strncat::source#7 strncat::dst#3 ] ( main:2::strncat:5 [ strncat::source#7 strncat::dst#3 ] { }  main:2::strncat:7 [ strncat::source#7 strncat::dst#3 ] { }  main:2::strncat:9 [ strncat::source#7 strncat::dst#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) [ strncat::source#4 strncat::dst#5 strncat::num#4 ] ( main:2::strncat:5 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  main:2::strncat:7 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  main:2::strncat:9 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [21] if((byte) 0==(word) strncat::num#4) goto strncat::@5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( main:2::strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:7 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:9 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a 
-Statement [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( main:2::strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:7 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  main:2::strncat:9 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((byte*) strncat::dst#5) ← (byte) 0 [ ] ( main:2::strncat:5 [ ] { }  main:2::strncat:7 [ ] { }  main:2::strncat:9 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [25] (word) strncat::num#3 ← -- (word) strncat::num#4 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] ( main:2::strncat:5 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  main:2::strncat:7 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  main:2::strncat:9 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [13] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 [ strncat::source#7 strncat::dst#3 ] ( strncat:1 [ strncat::source#7 strncat::dst#3 ] { }  strncat:3 [ strncat::source#7 strncat::dst#3 ] { }  strncat:5 [ strncat::source#7 strncat::dst#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [15] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) [ strncat::source#4 strncat::dst#5 strncat::num#4 ] ( strncat:1 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  strncat:3 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  strncat:5 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [17] if((byte) 0==(word) strncat::num#4) goto strncat::@5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( strncat:1 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:3 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a 
+Statement [18] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( strncat:1 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:3 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] *((byte*) strncat::dst#5) ← (byte) 0 [ ] ( strncat:1 [ ] { }  strncat:3 [ ] { }  strncat:5 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [21] (word) strncat::num#3 ← -- (word) strncat::num#4 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] ( strncat:1 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  strncat:3 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  strncat:5 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  ) always clobbers reg byte a 
+Statement [7] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [13] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 [ strncat::source#7 strncat::dst#3 ] ( strncat:1 [ strncat::source#7 strncat::dst#3 ] { }  strncat:3 [ strncat::source#7 strncat::dst#3 ] { }  strncat:5 [ strncat::source#7 strncat::dst#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [15] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) [ strncat::source#4 strncat::dst#5 strncat::num#4 ] ( strncat:1 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  strncat:3 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  strncat:5 [ strncat::source#4 strncat::dst#5 strncat::num#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [17] if((byte) 0==(word) strncat::num#4) goto strncat::@5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( strncat:1 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:3 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a 
+Statement [18] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] ( strncat:1 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:3 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  strncat:5 [ strncat::dst#5 strncat::num#4 strncat::source#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] *((byte*) strncat::dst#5) ← (byte) 0 [ ] ( strncat:1 [ ] { }  strncat:3 [ ] { }  strncat:5 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [21] (word) strncat::num#3 ← -- (word) strncat::num#4 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] ( strncat:1 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  strncat:3 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  strncat:5 [ strncat::dst#5 strncat::source#3 strncat::num#3 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] : zp[2]:3 , 
 Potential registers zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] : zp[2]:5 , 
 Potential registers zp[2]:7 [ strncat::num#4 strncat::num#3 ] : zp[2]:7 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [strncat] 6,857: zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] 2,652.65: zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] 1,601.6: zp[2]:7 [ strncat::num#4 strncat::num#3 ] 
-Uplift Scope [main] 370.33: zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplift Scope [strncat] 692: zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] 267.65: zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] 161.6: zp[2]:7 [ strncat::num#4 strncat::num#3 ] 
+Uplift Scope [main] 40.33: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [strncat] best 1991 combination zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] zp[2]:7 [ strncat::num#4 strncat::num#3 ] 
-Uplifting [main] best 1871 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 1871 combination 
+Uplifting [strncat] best 1979 combination zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] zp[2]:7 [ strncat::num#4 strncat::num#3 ] 
+Uplifting [main] best 1859 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 1859 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ strncat::source#4 strncat::source#7 strncat::source#3 ]
 Allocated (was zp[2]:5) zp[2]:4 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ]
 Allocated (was zp[2]:7) zp[2]:6 [ strncat::num#4 strncat::num#3 ]
@@ -675,87 +647,71 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call strncat 
-    // [15] phi from main to strncat [phi:main->strncat]
+    // [1] call strncat 
+    // [11] phi from main to strncat [phi:main->strncat]
   strncat_from_main:
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) hello [phi:main->strncat#0] -- pbuz1=pbuc1 
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) hello [phi:main->strncat#0] -- pbuz1=pbuc1 
     lda #<hello
     sta.z strncat.source
     lda #>hello
     sta.z strncat.source+1
     jsr strncat
-    // [6] phi from main to main::@3 [phi:main->main::@3]
+    // [2] phi from main to main::@3 [phi:main->main::@3]
   __b3_from_main:
     jmp __b3
     // main::@3
   __b3:
-    // [7] call strncat 
-    // [15] phi from main::@3 to strncat [phi:main::@3->strncat]
+    // [3] call strncat 
+    // [11] phi from main::@3 to strncat [phi:main::@3->strncat]
   strncat_from___b3:
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) space [phi:main::@3->strncat#0] -- pbuz1=pbuc1 
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) space [phi:main::@3->strncat#0] -- pbuz1=pbuc1 
     lda #<space
     sta.z strncat.source
     lda #>space
     sta.z strncat.source+1
     jsr strncat
-    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [4] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [9] call strncat 
-    // [15] phi from main::@4 to strncat [phi:main::@4->strncat]
+    // [5] call strncat 
+    // [11] phi from main::@4 to strncat [phi:main::@4->strncat]
   strncat_from___b4:
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) world [phi:main::@4->strncat#0] -- pbuz1=pbuc1 
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) world [phi:main::@4->strncat#0] -- pbuz1=pbuc1 
     lda #<world
     sta.z strncat.source
     lda #>world
     sta.z strncat.source+1
     jsr strncat
-    // [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [10] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [11] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda build,x
     cmp #0
     bne __b2
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
     // main::@2
   __b2:
-    // [13] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda build,x
     sta SCREEN,x
-    // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [6] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // strncat
@@ -766,9 +722,9 @@ strncat: {
     .label dst = 4
     .label source = 2
     .label num = 6
-    // [16] phi from strncat to strncat::@1 [phi:strncat->strncat::@1]
+    // [12] phi from strncat to strncat::@1 [phi:strncat->strncat::@1]
   __b1_from_strncat:
-    // [16] phi (byte*) strncat::dst#3 = (const byte*) build [phi:strncat->strncat::@1#0] -- pbuz1=pbuc1 
+    // [12] phi (byte*) strncat::dst#3 = (const byte*) build [phi:strncat->strncat::@1#0] -- pbuz1=pbuc1 
     lda #<build
     sta.z dst
     lda #>build
@@ -777,35 +733,35 @@ strncat: {
   // Skip the existing string at dest
     // strncat::@1
   __b1:
-    // [17] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [13] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
     bne __b2
-    // [18] phi from strncat::@1 to strncat::@3 [phi:strncat::@1->strncat::@3]
+    // [14] phi from strncat::@1 to strncat::@3 [phi:strncat::@1->strncat::@3]
   __b3_from___b1:
-    // [18] phi (word) strncat::num#4 = (byte) 5 [phi:strncat::@1->strncat::@3#0] -- vwuz1=vbuc1 
+    // [14] phi (word) strncat::num#4 = (byte) 5 [phi:strncat::@1->strncat::@3#0] -- vwuz1=vbuc1 
     lda #<5
     sta.z num
     lda #>5
     sta.z num+1
-    // [18] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#3 [phi:strncat::@1->strncat::@3#1] -- register_copy 
-    // [18] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#7 [phi:strncat::@1->strncat::@3#2] -- register_copy 
+    // [14] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#3 [phi:strncat::@1->strncat::@3#1] -- register_copy 
+    // [14] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#7 [phi:strncat::@1->strncat::@3#2] -- register_copy 
     jmp __b3
   // Copy up to num chars from src
     // strncat::@3
   __b3:
-    // [19] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) -- _deref_pbuz1=_deref_pbuz2 
+    // [15] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (source),y
     ldy #0
     sta (dst),y
-    // [20] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4 -- pbuz1=_inc_pbuz1 
+    // [16] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4 -- pbuz1=_inc_pbuz1 
     inc.z source
     bne !+
     inc.z source+1
   !:
-    // [21] if((byte) 0==(word) strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
+    // [17] if((byte) 0==(word) strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
     lda #0
     cmp.z num
     bne !+
@@ -816,7 +772,7 @@ strncat: {
     jmp __b6
     // strncat::@6
   __b6:
-    // [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [18] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -824,7 +780,7 @@ strncat: {
     jmp __b5
     // strncat::@5
   __b5:
-    // [23] *((byte*) strncat::dst#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [19] *((byte*) strncat::dst#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     // Add null-character
     lda #0
     ldy #0
@@ -832,37 +788,37 @@ strncat: {
     jmp __breturn
     // strncat::@return
   __breturn:
-    // [24] return 
+    // [20] return 
     rts
     // strncat::@4
   __b4:
-    // [25] (word) strncat::num#3 ← -- (word) strncat::num#4 -- vwuz1=_dec_vwuz1 
+    // [21] (word) strncat::num#3 ← -- (word) strncat::num#4 -- vwuz1=_dec_vwuz1 
     lda.z num
     bne !+
     dec.z num+1
   !:
     dec.z num
-    // [26] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5 -- pbuz1=_inc_pbuz1 
+    // [22] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [18] phi from strncat::@4 to strncat::@3 [phi:strncat::@4->strncat::@3]
+    // [14] phi from strncat::@4 to strncat::@3 [phi:strncat::@4->strncat::@3]
   __b3_from___b4:
-    // [18] phi (word) strncat::num#4 = (word) strncat::num#3 [phi:strncat::@4->strncat::@3#0] -- register_copy 
-    // [18] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#2 [phi:strncat::@4->strncat::@3#1] -- register_copy 
-    // [18] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#3 [phi:strncat::@4->strncat::@3#2] -- register_copy 
+    // [14] phi (word) strncat::num#4 = (word) strncat::num#3 [phi:strncat::@4->strncat::@3#0] -- register_copy 
+    // [14] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#2 [phi:strncat::@4->strncat::@3#1] -- register_copy 
+    // [14] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#3 [phi:strncat::@4->strncat::@3#2] -- register_copy 
     jmp __b3
     // strncat::@2
   __b2:
-    // [27] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3 -- pbuz1=_inc_pbuz1 
+    // [23] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [16] phi from strncat::@2 to strncat::@1 [phi:strncat::@2->strncat::@1]
+    // [12] phi from strncat::@2 to strncat::@1 [phi:strncat::@2->strncat::@1]
   __b1_from___b2:
-    // [16] phi (byte*) strncat::dst#3 = (byte*) strncat::dst#1 [phi:strncat::@2->strncat::@1#0] -- register_copy 
+    // [12] phi (byte*) strncat::dst#3 = (byte*) strncat::dst#1 [phi:strncat::@2->strncat::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -875,8 +831,6 @@ strncat: {
   build: .fill $28, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b3
 Removing instruction jmp __b4
 Removing instruction jmp __b1
@@ -890,17 +844,11 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Replacing instruction ldy #0 with TAY
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b3_from_main:
 Removing instruction strncat_from___b3:
 Removing instruction __b4_from___b3:
 Removing instruction strncat_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction strncat_from_main:
 Removing instruction __b3:
 Removing instruction __b4:
@@ -914,14 +862,9 @@ Removing instruction __breturn:
 Removing instruction __b3_from___b4:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Replacing instruction lda #>5 with TYA
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*) 1024
 (const byte*) build[(number) $28]  = { fill( $28, 0) }
 (const byte*) hello[]  = (byte*) "hello"
@@ -932,8 +875,8 @@ FINAL SYMBOL TABLE
 (label) main::@4
 (label) main::@return
 (byte) main::i
-(byte) main::i#1 reg byte x 202.0
-(byte) main::i#2 reg byte x 168.33333333333331
+(byte) main::i#1 reg byte x 22.0
+(byte) main::i#2 reg byte x 18.333333333333332
 (const byte*) space[]  = (byte*) " "
 (byte*()) strncat((byte*) strncat::destination , (to_nomodify byte*) strncat::source , (word) strncat::num)
 (label) strncat::@1
@@ -945,18 +888,18 @@ FINAL SYMBOL TABLE
 (label) strncat::@return
 (byte*) strncat::destination
 (byte*) strncat::dst
-(byte*) strncat::dst#1 dst zp[2]:4 2002.0
-(byte*) strncat::dst#2 dst zp[2]:4 2002.0
-(byte*) strncat::dst#3 dst zp[2]:4 2002.0
-(byte*) strncat::dst#5 dst zp[2]:4 851.0000000000001
+(byte*) strncat::dst#1 dst zp[2]:4 202.0
+(byte*) strncat::dst#2 dst zp[2]:4 202.0
+(byte*) strncat::dst#3 dst zp[2]:4 202.0
+(byte*) strncat::dst#5 dst zp[2]:4 85.99999999999999
 (word) strncat::num
-(word) strncat::num#3 num zp[2]:6 1001.0
-(word) strncat::num#4 num zp[2]:6 600.5999999999999
+(word) strncat::num#3 num zp[2]:6 101.0
+(word) strncat::num#4 num zp[2]:6 60.599999999999994
 (byte*) strncat::return
 (to_nomodify byte*) strncat::source
-(to_nomodify byte*) strncat::source#3 source zp[2]:2 400.4
-(to_nomodify byte*) strncat::source#4 source zp[2]:2 2002.0
-(to_nomodify byte*) strncat::source#7 source zp[2]:2 250.25
+(to_nomodify byte*) strncat::source#3 source zp[2]:2 40.4
+(to_nomodify byte*) strncat::source#4 source zp[2]:2 202.0
+(to_nomodify byte*) strncat::source#7 source zp[2]:2 25.25
 (const byte*) world[]  = (byte*) "world war 3"
 
 reg byte x [ main::i#2 main::i#1 ]
@@ -976,71 +919,64 @@ Score: 1650
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // strncat(build, hello, 5)
-    // [5] call strncat 
-    // [15] phi from main to strncat [phi:main->strncat]
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) hello [phi:main->strncat#0] -- pbuz1=pbuc1 
+    // [1] call strncat 
+    // [11] phi from main to strncat [phi:main->strncat]
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) hello [phi:main->strncat#0] -- pbuz1=pbuc1 
     lda #<hello
     sta.z strncat.source
     lda #>hello
     sta.z strncat.source+1
     jsr strncat
-    // [6] phi from main to main::@3 [phi:main->main::@3]
+    // [2] phi from main to main::@3 [phi:main->main::@3]
     // main::@3
     // strncat(build, space, 5)
-    // [7] call strncat 
-    // [15] phi from main::@3 to strncat [phi:main::@3->strncat]
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) space [phi:main::@3->strncat#0] -- pbuz1=pbuc1 
+    // [3] call strncat 
+    // [11] phi from main::@3 to strncat [phi:main::@3->strncat]
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) space [phi:main::@3->strncat#0] -- pbuz1=pbuc1 
     lda #<space
     sta.z strncat.source
     lda #>space
     sta.z strncat.source+1
     jsr strncat
-    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [4] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // main::@4
     // strncat(build, world, 5)
-    // [9] call strncat 
-    // [15] phi from main::@4 to strncat [phi:main::@4->strncat]
-    // [15] phi (to_nomodify byte*) strncat::source#7 = (const byte*) world [phi:main::@4->strncat#0] -- pbuz1=pbuc1 
+    // [5] call strncat 
+    // [11] phi from main::@4 to strncat [phi:main::@4->strncat]
+    // [11] phi (to_nomodify byte*) strncat::source#7 = (const byte*) world [phi:main::@4->strncat#0] -- pbuz1=pbuc1 
     lda #<world
     sta.z strncat.source
     lda #>world
     sta.z strncat.source+1
     jsr strncat
-    // [10] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-    // [10] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
+    // [6] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) 0 [phi:main::@4->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // while(build[i])
-    // [11] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if((byte) 0!=*((const byte*) build + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda build,x
     cmp #0
     bne __b2
     // main::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
     // main::@2
   __b2:
     // SCREEN[i] = build[i]
-    // [13] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [9] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← *((const byte*) build + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda build,x
     sta SCREEN,x
     // i++;
-    // [14] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [10] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [6] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [6] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // strncat
@@ -1051,8 +987,8 @@ strncat: {
     .label dst = 4
     .label source = 2
     .label num = 6
-    // [16] phi from strncat to strncat::@1 [phi:strncat->strncat::@1]
-    // [16] phi (byte*) strncat::dst#3 = (const byte*) build [phi:strncat->strncat::@1#0] -- pbuz1=pbuc1 
+    // [12] phi from strncat to strncat::@1 [phi:strncat->strncat::@1]
+    // [12] phi (byte*) strncat::dst#3 = (const byte*) build [phi:strncat->strncat::@1#0] -- pbuz1=pbuc1 
     lda #<build
     sta.z dst
     lda #>build
@@ -1061,34 +997,34 @@ strncat: {
     // strncat::@1
   __b1:
     // while (*dst)
-    // [17] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [13] if((byte) 0!=*((byte*) strncat::dst#3)) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
     bne __b2
-    // [18] phi from strncat::@1 to strncat::@3 [phi:strncat::@1->strncat::@3]
-    // [18] phi (word) strncat::num#4 = (byte) 5 [phi:strncat::@1->strncat::@3#0] -- vwuz1=vbuc1 
+    // [14] phi from strncat::@1 to strncat::@3 [phi:strncat::@1->strncat::@3]
+    // [14] phi (word) strncat::num#4 = (byte) 5 [phi:strncat::@1->strncat::@3#0] -- vwuz1=vbuc1 
     lda #<5
     sta.z num
     tya
     sta.z num+1
-    // [18] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#3 [phi:strncat::@1->strncat::@3#1] -- register_copy 
-    // [18] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#7 [phi:strncat::@1->strncat::@3#2] -- register_copy 
+    // [14] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#3 [phi:strncat::@1->strncat::@3#1] -- register_copy 
+    // [14] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#7 [phi:strncat::@1->strncat::@3#2] -- register_copy 
   // Copy up to num chars from src
     // strncat::@3
   __b3:
     // *dst = *source++
-    // [19] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) -- _deref_pbuz1=_deref_pbuz2 
+    // [15] *((byte*) strncat::dst#5) ← *((to_nomodify byte*) strncat::source#4) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (source),y
     sta (dst),y
     // while (num && (*dst = *source++))
-    // [20] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4 -- pbuz1=_inc_pbuz1 
+    // [16] (to_nomodify byte*) strncat::source#3 ← ++ (to_nomodify byte*) strncat::source#4 -- pbuz1=_inc_pbuz1 
     inc.z source
     bne !+
     inc.z source+1
   !:
-    // [21] if((byte) 0==(word) strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
+    // [17] if((byte) 0==(word) strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
     lda #0
     cmp.z num
     bne !+
@@ -1097,7 +1033,7 @@ strncat: {
     jmp __b5
   !:
     // strncat::@6
-    // [22] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [18] if((byte) 0!=*((byte*) strncat::dst#5)) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -1105,45 +1041,45 @@ strncat: {
     // strncat::@5
   __b5:
     // *dst = 0
-    // [23] *((byte*) strncat::dst#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [19] *((byte*) strncat::dst#5) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     // Add null-character
     lda #0
     tay
     sta (dst),y
     // strncat::@return
     // }
-    // [24] return 
+    // [20] return 
     rts
     // strncat::@4
   __b4:
     // --num;
-    // [25] (word) strncat::num#3 ← -- (word) strncat::num#4 -- vwuz1=_dec_vwuz1 
+    // [21] (word) strncat::num#3 ← -- (word) strncat::num#4 -- vwuz1=_dec_vwuz1 
     lda.z num
     bne !+
     dec.z num+1
   !:
     dec.z num
     // ++dst;
-    // [26] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5 -- pbuz1=_inc_pbuz1 
+    // [22] (byte*) strncat::dst#2 ← ++ (byte*) strncat::dst#5 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [18] phi from strncat::@4 to strncat::@3 [phi:strncat::@4->strncat::@3]
-    // [18] phi (word) strncat::num#4 = (word) strncat::num#3 [phi:strncat::@4->strncat::@3#0] -- register_copy 
-    // [18] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#2 [phi:strncat::@4->strncat::@3#1] -- register_copy 
-    // [18] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#3 [phi:strncat::@4->strncat::@3#2] -- register_copy 
+    // [14] phi from strncat::@4 to strncat::@3 [phi:strncat::@4->strncat::@3]
+    // [14] phi (word) strncat::num#4 = (word) strncat::num#3 [phi:strncat::@4->strncat::@3#0] -- register_copy 
+    // [14] phi (byte*) strncat::dst#5 = (byte*) strncat::dst#2 [phi:strncat::@4->strncat::@3#1] -- register_copy 
+    // [14] phi (to_nomodify byte*) strncat::source#4 = (to_nomodify byte*) strncat::source#3 [phi:strncat::@4->strncat::@3#2] -- register_copy 
     jmp __b3
     // strncat::@2
   __b2:
     // dst++;
-    // [27] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3 -- pbuz1=_inc_pbuz1 
+    // [23] (byte*) strncat::dst#1 ← ++ (byte*) strncat::dst#3 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [16] phi from strncat::@2 to strncat::@1 [phi:strncat::@2->strncat::@1]
-    // [16] phi (byte*) strncat::dst#3 = (byte*) strncat::dst#1 [phi:strncat::@2->strncat::@1#0] -- register_copy 
+    // [12] phi from strncat::@2 to strncat::@1 [phi:strncat::@2->strncat::@1]
+    // [12] phi (byte*) strncat::dst#3 = (byte*) strncat::dst#1 [phi:strncat::@2->strncat::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

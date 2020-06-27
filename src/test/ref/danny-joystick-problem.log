@@ -1,11 +1,9 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (number) $7f
   asm { lda#0  }
   (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
@@ -14,18 +12,18 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -113,6 +111,9 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B = (byte) 1
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 (byte) main::port4Value
@@ -126,40 +127,27 @@ Simplifying constant integer cast $7f
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $7f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f
+main: scope:[main]  from
+  [0] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f
   asm { lda#0  }
-  [6] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
-  [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0
+  [2] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
+  [3] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0
   to:main::@return
 main::@return: scope:[main]  from main
-  [8] return 
+  [4] return 
   to:@return
 
 
@@ -250,7 +238,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
 (byte) main::port4Value
-(byte) main::port4Value#0 22.0
+(byte) main::port4Value#0 4.0
 
 Initial phi equivalence classes
 Added variable main::port4Value#0 to live range equivalence class [ main::port4Value#0 ]
@@ -272,60 +260,46 @@ Target platform is c64basic / MOS6502X
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label port4Value = 2
-    // [4] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [0] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // asm { lda#0  }
     lda #0
-    // [6] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuz1=_deref_pbuc1 
+    // [2] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuz1=_deref_pbuc1 
     lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     sta.z port4Value
-    // [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuz1 
+    // [3] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuz1 
     lda.z port4Value
     sta SCREEN
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::port4Value#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp[1]:2 [ main::port4Value#0 ] 
+Uplift Scope [main] 4: zp[1]:2 [ main::port4Value#0 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [main] best 41 combination reg byte a [ main::port4Value#0 ] 
-Uplifting [MOS6526_CIA] best 41 combination 
-Uplifting [MOS6569_VICII] best 41 combination 
-Uplifting [MOS6581_SID] best 41 combination 
-Uplifting [] best 41 combination 
+Uplifting [main] best 29 combination reg byte a [ main::port4Value#0 ] 
+Uplifting [MOS6526_CIA] best 29 combination 
+Uplifting [MOS6569_VICII] best 29 combination 
+Uplifting [MOS6581_SID] best 29 combination 
+Uplifting [] best 29 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -340,60 +314,33 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [0] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // asm { lda#0  }
     lda #0
-    // [6] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
+    // [2] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
     lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
-    // [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
+    // [3] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
@@ -484,7 +431,7 @@ FINAL SYMBOL TABLE
 (void()) main()
 (label) main::@return
 (byte) main::port4Value
-(byte) main::port4Value#0 reg byte a 22.0
+(byte) main::port4Value#0 reg byte a 4.0
 
 reg byte a [ main::port4Value#0 ]
 
@@ -504,16 +451,10 @@ Score: 26
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // (CIA2->PORT_B) &= 0x7f
-    // [4] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [0] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
@@ -521,14 +462,14 @@ main: {
     // asm { lda#0  }
     lda #0
     // port4Value = CIA2->PORT_B
-    // [6] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
+    // [2] (byte) main::port4Value#0 ← *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_deref_pbuc1 
     lda CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     // *SCREEN = port4Value
-    // [7] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
+    // [3] *((const nomodify byte*) SCREEN) ← (byte) main::port4Value#0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data

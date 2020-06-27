@@ -1,13 +1,12 @@
 Inlined call (byte~) main::$0 ← call sum (number) 2 (number) 1 
 Inlined call (byte~) main::$1 ← call sum (number) $a (number) 3 
 Inlined call (byte~) main::$2 ← call sum (number) 4 (number) 8 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte) main::sum1_a#0 ← (number) 2
   (byte) main::sum1_b#0 ← (number) 1
   to:main::sum1
@@ -63,18 +62,27 @@ main::@3: scope:[main]  from main::sum3_@return
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -184,6 +192,13 @@ Constant (const byte) main::sum3_b#0 = 8
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero screen in [3] *((const byte*) screen + (byte) 0) ← (byte) main::sum1_return#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [0] (byte) main::sum1_return#0 ← (const byte) main::sum1_a#0 + (const byte) main::sum1_b#0
 Constant right-side identified [2] (byte) main::sum2_return#0 ← (const byte) main::sum2_a#0 + (const byte) main::sum2_b#0
 Constant right-side identified [4] (byte) main::sum3_return#0 ← (const byte) main::sum3_a#0 + (const byte) main::sum3_b#0
@@ -195,10 +210,6 @@ Successful SSA optimization Pass2ConstantIdentification
 Consolidated array index constant in *(screen+1)
 Consolidated array index constant in *(screen+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::sum1
 Adding NOP phi() at start of main::sum1_@return
@@ -207,57 +218,43 @@ Adding NOP phi() at start of main::sum2_@return
 Adding NOP phi() at start of main::sum3
 Adding NOP phi() at start of main::sum3_@return
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::sum1_@return
 Culled Empty Block (label) main::sum2_@return
 Culled Empty Block (label) main::sum3_@return
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::sum1
 Adding NOP phi() at start of main::sum2
 Adding NOP phi() at start of main::sum3
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::sum1
 main::sum1: scope:[main]  from main
-  [5] phi()
+  [1] phi()
   to:main::@1
 main::@1: scope:[main]  from main::sum1
-  [6] *((const byte*) screen) ← (const byte) main::sum1_return#0
+  [2] *((const byte*) screen) ← (const byte) main::sum1_return#0
   to:main::sum2
 main::sum2: scope:[main]  from main::@1
-  [7] phi()
+  [3] phi()
   to:main::@2
 main::@2: scope:[main]  from main::sum2
-  [8] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0
+  [4] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0
   to:main::sum3
 main::sum3: scope:[main]  from main::@2
-  [9] phi()
+  [5] phi()
   to:main::@3
 main::@3: scope:[main]  from main::sum3
-  [10] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0
+  [6] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [11] return 
+  [7] return 
   to:@return
 
 
@@ -286,22 +283,6 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const sum1_a = 2
@@ -313,7 +294,7 @@ main: {
     .const sum1_return = sum1_a+sum1_b
     .const sum2_return = sum2_a+sum2_b
     .const sum3_return = sum3_a+sum3_b
-    // [5] phi from main to main::sum1 [phi:main->main::sum1]
+    // [1] phi from main to main::sum1 [phi:main->main::sum1]
   sum1_from_main:
     jmp sum1
     // main::sum1
@@ -321,10 +302,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) screen) ← (const byte) main::sum1_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) screen) ← (const byte) main::sum1_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum1_return
     sta screen
-    // [7] phi from main::@1 to main::sum2 [phi:main::@1->main::sum2]
+    // [3] phi from main::@1 to main::sum2 [phi:main::@1->main::sum2]
   sum2_from___b1:
     jmp sum2
     // main::sum2
@@ -332,10 +313,10 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum2_return
     sta screen+1
-    // [9] phi from main::@2 to main::sum3 [phi:main::@2->main::sum3]
+    // [5] phi from main::@2 to main::sum3 [phi:main::@2->main::sum3]
   sum3_from___b2:
     jmp sum3
     // main::sum3
@@ -343,28 +324,28 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [10] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum3_return
     sta screen+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [11] return 
+    // [7] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const byte*) screen) ← (const byte) main::sum1_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const byte*) screen) ← (const byte) main::sum1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 138 combination 
-Uplifting [] best 138 combination 
+Uplifting [main] best 126 combination 
+Uplifting [] best 126 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -375,22 +356,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const sum1_a = 2
@@ -402,7 +367,7 @@ main: {
     .const sum1_return = sum1_a+sum1_b
     .const sum2_return = sum2_a+sum2_b
     .const sum3_return = sum3_a+sum3_b
-    // [5] phi from main to main::sum1 [phi:main->main::sum1]
+    // [1] phi from main to main::sum1 [phi:main->main::sum1]
   sum1_from_main:
     jmp sum1
     // main::sum1
@@ -410,10 +375,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const byte*) screen) ← (const byte) main::sum1_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) screen) ← (const byte) main::sum1_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum1_return
     sta screen
-    // [7] phi from main::@1 to main::sum2 [phi:main::@1->main::sum2]
+    // [3] phi from main::@1 to main::sum2 [phi:main::@1->main::sum2]
   sum2_from___b1:
     jmp sum2
     // main::sum2
@@ -421,10 +386,10 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum2_return
     sta screen+1
-    // [9] phi from main::@2 to main::sum3 [phi:main::@2->main::sum3]
+    // [5] phi from main::@2 to main::sum3 [phi:main::@2->main::sum3]
   sum3_from___b2:
     jmp sum3
     // main::sum3
@@ -432,20 +397,18 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [10] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum3_return
     sta screen+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [11] return 
+    // [7] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp sum1
 Removing instruction jmp __b1
 Removing instruction jmp sum2
@@ -454,10 +417,6 @@ Removing instruction jmp sum3
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction sum1_from_main:
 Removing instruction sum1:
 Removing instruction sum2_from___b1:
@@ -465,20 +424,13 @@ Removing instruction sum2:
 Removing instruction sum3_from___b2:
 Removing instruction sum3:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -520,13 +472,6 @@ Score: 24
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .const sum1_a = 2
@@ -538,30 +483,30 @@ main: {
     .const sum1_return = sum1_a+sum1_b
     .const sum2_return = sum2_a+sum2_b
     .const sum3_return = sum3_a+sum3_b
-    // [5] phi from main to main::sum1 [phi:main->main::sum1]
+    // [1] phi from main to main::sum1 [phi:main->main::sum1]
     // main::sum1
     // main::@1
     // screen[0] = sum(2, 1)
-    // [6] *((const byte*) screen) ← (const byte) main::sum1_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const byte*) screen) ← (const byte) main::sum1_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum1_return
     sta screen
-    // [7] phi from main::@1 to main::sum2 [phi:main::@1->main::sum2]
+    // [3] phi from main::@1 to main::sum2 [phi:main::@1->main::sum2]
     // main::sum2
     // main::@2
     // screen[1] = sum(10, 3)
-    // [8] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 -- _deref_pbuc1=vbuc2 
+    // [4] *((const byte*) screen+(byte) 1) ← (const byte) main::sum2_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum2_return
     sta screen+1
-    // [9] phi from main::@2 to main::sum3 [phi:main::@2->main::sum3]
+    // [5] phi from main::@2 to main::sum3 [phi:main::@2->main::sum3]
     // main::sum3
     // main::@3
     // screen[2] = sum(4, 8)
-    // [10] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 -- _deref_pbuc1=vbuc2 
+    // [6] *((const byte*) screen+(byte) 2) ← (const byte) main::sum3_return#0 -- _deref_pbuc1=vbuc2 
     lda #sum3_return
     sta screen+2
     // main::@return
     // }
-    // [11] return 
+    // [7] return 
     rts
 }
   // File Data

@@ -3,11 +3,9 @@ Fixing struct type SIZE_OF struct Point to 4
 Fixing struct type SIZE_OF struct Point to 4
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3)
   *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
   *((const nomodify byte*) SCREEN + (number) 1) ← *((const byte*) main::point1_initials + (number) 0)
@@ -16,22 +14,25 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
 (const byte*) $0[(number) 3]  = (byte*) "jg"
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) Point::initials[(number) 3]  = { fill( 3, 0) }
 (byte) Point::x
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 (const byte*) main::point1_initials[(number) 3]  = { fill( 3, 0) }
@@ -59,44 +60,31 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) main::point1_x
 Simplifying expression containing zero main::point1_initials in [2] *((const nomodify byte*) SCREEN + (byte) 1) ← *((const byte*) main::point1_initials + (byte) 0)
 Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(main::point1_initials+1)
 Consolidated array index constant in *(SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3)
-  [5] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x
-  [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials)
-  [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1)
+main: scope:[main]  from
+  [0] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3)
+  [1] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x
+  [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials)
+  [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1)
   to:main::@return
 main::@return: scope:[main]  from main
-  [8] return 
+  [4] return 
   to:@return
 
 
@@ -117,43 +105,29 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const point1_x = 2
-    // [4] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
+    // [0] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #3
   !:
     lda __0-1,y
     sta point1_initials-1,y
     dey
     bne !-
-    // [5] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) -- _deref_pbuc1=_deref_pbuc2 
     lda point1_initials
     sta SCREEN+1
-    // [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1_initials+1
     sta SCREEN+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
     point1_initials: .fill 3, 0
 }
@@ -162,19 +136,19 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [5] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [Point] best 59 combination 
-Uplifting [main] best 59 combination 
-Uplifting [] best 59 combination 
+Uplifting [Point] best 47 combination 
+Uplifting [main] best 47 combination 
+Uplifting [] best 47 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -185,43 +159,29 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const point1_x = 2
-    // [4] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
+    // [0] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #3
   !:
     lda __0-1,y
     sta point1_initials-1,y
     dey
     bne !-
-    // [5] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) -- _deref_pbuc1=_deref_pbuc2 
     lda point1_initials
     sta SCREEN+1
-    // [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1_initials+1
     sta SCREEN+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
     point1_initials: .fill 3, 0
 }
@@ -230,26 +190,13 @@ main: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
 (const byte*) $0[(number) 3]  = (byte*) "jg"
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) Point::initials[(number) 3]  = { fill( 3, 0) }
 (byte) Point::x
 (const nomodify byte*) SCREEN = (byte*) 1024
@@ -271,17 +218,11 @@ Score: 44
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .const point1_x = 2
     // point1 = { 2, "jg" }
-    // [4] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
+    // [0] *((const byte*) main::point1_initials) ← memcpy(*(&(const byte*) $0), byte, (number) 3) -- _deref_pbuc1=_deref_pptc2_memcpy_vbuc3 
     ldy #3
   !:
     lda __0-1,y
@@ -289,20 +230,20 @@ main: {
     dey
     bne !-
     // SCREEN[0] = point1.x
-    // [5] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
     // SCREEN[1] = point1.initials[0]
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((const byte*) main::point1_initials) -- _deref_pbuc1=_deref_pbuc2 
     lda point1_initials
     sta SCREEN+1
     // SCREEN[2] = point1.initials[1]
-    // [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((const byte*) main::point1_initials+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1_initials+1
     sta SCREEN+2
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
     point1_initials: .fill 3, 0
 }

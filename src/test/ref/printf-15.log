@@ -3,13 +3,12 @@ Fixing struct type size struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 Eliminating unused variable with no statement (struct printf_buffer_number) printf_buffer
 Eliminating unused variable with no statement (void~) main::$1
 Eliminating unused variable with no statement (void~) main::$2
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from cscroll::@3 cscroll::@4
@@ -92,14 +91,6 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#1 ← (void*) memset::return#4
   return 
   to:@return
-@1: scope:[]  from @begin
-  (byte) conio_cursor_x ← (byte) 0
-  (byte) conio_cursor_y ← (byte) 0
-  (byte*) conio_line_text ← (const nomodify byte*) CONIO_SCREEN_TEXT
-  (byte*) conio_line_color ← (const nomodify byte*) CONIO_SCREEN_COLORS
-  (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
-  (byte) conio_scroll_enable ← (byte) 1
-  to:@2
 
 (void()) clrscr()
 clrscr: scope:[clrscr]  from main
@@ -319,7 +310,7 @@ cputs::@return: scope:[cputs]  from cputs::@1
   to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   call clrscr 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -335,19 +326,28 @@ main::@3: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (byte) conio_cursor_x ← (byte) 0
+  (byte) conio_cursor_y ← (byte) 0
+  (byte*) conio_line_text ← (const nomodify byte*) CONIO_SCREEN_TEXT
+  (byte*) conio_line_color ← (const nomodify byte*) CONIO_SCREEN_COLORS
+  (byte) conio_textcolor ← (const nomodify byte) CONIO_TEXTCOLOR_DEFAULT
+  (byte) conio_scroll_enable ← (byte) 1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify byte*) COLORRAM = (byte*)(number) $d800
 (const nomodify byte*) CONIO_SCREEN_COLORS = (const nomodify byte*) COLORRAM
 (const nomodify byte*) CONIO_SCREEN_TEXT = (const nomodify byte*) DEFAULT_SCREEN
@@ -442,6 +442,11 @@ SYMBOL TABLE SSA
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) clrscr()
 (bool~) clrscr::$0
 (bool~) clrscr::$1
@@ -788,10 +793,10 @@ Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in (unumber~) gotoxy::$4 ← (word~) gotoxy::$7 * (byte) $28
 Inversing boolean not [20] (bool~) memset::$1 ← (word) memset::num#2 <= (byte) 0 from [19] (bool~) memset::$0 ← (word) memset::num#2 > (byte) 0
-Inversing boolean not [70] (bool~) gotoxy::$1 ← (byte) gotoxy::y#2 <= (byte) $19 from [69] (bool~) gotoxy::$0 ← (byte) gotoxy::y#2 > (byte) $19
-Inversing boolean not [74] (bool~) gotoxy::$3 ← (byte) gotoxy::x#2 < (byte) $28 from [73] (bool~) gotoxy::$2 ← (byte) gotoxy::x#2 >= (byte) $28
-Inversing boolean not [100] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [99] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
-Inversing boolean not [111] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [110] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
+Inversing boolean not [64] (bool~) gotoxy::$1 ← (byte) gotoxy::y#2 <= (byte) $19 from [63] (bool~) gotoxy::$0 ← (byte) gotoxy::y#2 > (byte) $19
+Inversing boolean not [68] (bool~) gotoxy::$3 ← (byte) gotoxy::x#2 < (byte) $28 from [67] (bool~) gotoxy::$2 ← (byte) gotoxy::x#2 >= (byte) $28
+Inversing boolean not [94] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [93] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
+Inversing boolean not [105] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [104] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -847,19 +852,19 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memcpy::$1 [7] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
 Simple Condition (bool~) memset::$1 [14] if((word) memset::num#2<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [21] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) clrscr::$0 [36] if((byte) clrscr::l#2<(byte) $19) goto clrscr::@2
-Simple Condition (bool~) clrscr::$1 [44] if((byte) clrscr::c#2<(byte) $28) goto clrscr::@5
-Simple Condition (bool~) gotoxy::$1 [54] if((byte) gotoxy::y#1<=(byte) $19) goto gotoxy::@1
-Simple Condition (bool~) gotoxy::$3 [57] if((byte) gotoxy::x#1<(byte) $28) goto gotoxy::@2
-Simple Condition (bool~) cputc::$0 [72] if((byte) cputc::c#0==(byte) '
+Simple Condition (bool~) clrscr::$0 [30] if((byte) clrscr::l#2<(byte) $19) goto clrscr::@2
+Simple Condition (bool~) clrscr::$1 [38] if((byte) clrscr::c#2<(byte) $28) goto clrscr::@5
+Simple Condition (bool~) gotoxy::$1 [48] if((byte) gotoxy::y#1<=(byte) $19) goto gotoxy::@1
+Simple Condition (bool~) gotoxy::$3 [51] if((byte) gotoxy::x#1<(byte) $28) goto gotoxy::@2
+Simple Condition (bool~) cputc::$0 [66] if((byte) cputc::c#0==(byte) '
 ') goto cputc::@1
-Simple Condition (bool~) cputc::$2 [78] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
-Simple Condition (bool~) cscroll::$1 [88] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
-Simple Condition (bool~) cscroll::$7 [90] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [124] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) cputc::$2 [72] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
+Simple Condition (bool~) cscroll::$1 [82] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
+Simple Condition (bool~) cscroll::$7 [84] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
+Simple Condition (bool~) cputs::$1 [118] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [93] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
-Constant right-side identified [98] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [87] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
+Constant right-side identified [92] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) clrscr::line_text#0 = CONIO_SCREEN_TEXT
 Constant (const byte*) clrscr::line_cols#0 = CONIO_SCREEN_COLORS
@@ -888,14 +893,14 @@ Constant (const byte) conio_scroll_enable = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte) memset::c#1 = conio_textcolor
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [54] if((const byte) gotoxy::y#1<=(byte) $19) goto gotoxy::@1
-if() condition always true - replacing block destination [57] if((const byte) gotoxy::x#1<(byte) $28) goto gotoxy::@2
-if() condition always true - replacing block destination [90] if((byte) 0!=(const byte) conio_scroll_enable) goto cscroll::@3
+if() condition always true - replacing block destination [48] if((const byte) gotoxy::y#1<=(byte) $19) goto gotoxy::@1
+if() condition always true - replacing block destination [51] if((const byte) gotoxy::x#1<(byte) $28) goto gotoxy::@2
+if() condition always true - replacing block destination [84] if((byte) 0!=(const byte) conio_scroll_enable) goto cscroll::@3
 Successful SSA optimization Pass2ConstantIfs
-Eliminating unused variable (void*) memcpy::return#2 and assignment [67] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memcpy::return#3 and assignment [69] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
-Eliminating unused variable (void*) memset::return#2 and assignment [71] (void*) memset::return#2 ← (void*) memset::str#3
-Eliminating unused variable (void*) memset::return#3 and assignment [73] (void*) memset::return#3 ← (void*) memset::str#3
+Eliminating unused variable (void*) memcpy::return#2 and assignment [63] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memcpy::return#3 and assignment [65] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
+Eliminating unused variable (void*) memset::return#2 and assignment [67] (void*) memset::return#2 ← (void*) memset::str#3
+Eliminating unused variable (void*) memset::return#3 and assignment [69] (void*) memset::return#3 ← (void*) memset::str#3
 Eliminating unused constant (const byte) cputs::c#0
 Eliminating unused constant (const byte) conio_scroll_enable
 Successful SSA optimization PassNEliminateUnusedVars
@@ -969,10 +974,9 @@ Identical Phi Values (word) memset::num#2 (byte) $28
 Successful SSA optimization Pass2IdenticalPhiElimination
 if() condition always false - eliminating [9] if((byte) $28<=(byte) 0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -992,7 +996,7 @@ Adding NOP phi() at start of memcpy::@3
 Adding NOP phi() at start of clrscr
 Adding NOP phi() at start of clrscr::@2
 CALL GRAPH
-Calls in [] to main:6 
+Calls in [_start] to main:6 
 Calls in [main] to clrscr:10 cputs:12 cputs:14 
 Calls in [cputs] to cputc:25 
 Calls in [cputc] to cputln:33 cputln:37 
@@ -1010,7 +1014,7 @@ Coalesced [98] clrscr::line_text#7 ← clrscr::line_text#1
 Coalesced [99] clrscr::line_cols#7 ← clrscr::line_cols#1
 Coalesced [103] clrscr::c#4 ← clrscr::c#1
 Coalesced down to 12 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) cputs::@3
 Culled Empty Block (label) cputc::@5
@@ -1032,9 +1036,8 @@ Renumbering block cscroll::@4 to cscroll::@2
 Renumbering block cscroll::@5 to cscroll::@3
 Renumbering block cscroll::@6 to cscroll::@4
 Renumbering block cscroll::@7 to cscroll::@5
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -1047,24 +1050,27 @@ Adding NOP phi() at start of cscroll::@4
 Adding NOP phi() at start of clrscr
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (byte) conio_cursor_x ← (byte) 0
   [2] (byte) conio_cursor_y ← (byte) 0
   [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN
   [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [5] phi()
   [6] call main 
-  to:@end
-@end: scope:[]  from @2
-  [7] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [7] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   [8] phi()
   [9] call clrscr 
   to:main::@1
@@ -1325,6 +1331,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) _start()
 (void()) clrscr()
 (byte) clrscr::c
 (byte) clrscr::c#1 20002.0
@@ -1465,7 +1472,7 @@ Target platform is c64basic / MOS6502X
 // A few strings with newlines
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -1473,50 +1480,51 @@ Target platform is c64basic / MOS6502X
   .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  .label conio_cursor_x = $17
-  .label conio_cursor_y = $18
-  .label conio_line_text = $19
-  .label conio_line_color = $1b
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = $17
   // The current cursor y-position
-  lda #0
-  sta.z conio_cursor_y
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = $18
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $19
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [6] call main 
-  // [8] phi from @2 to main [phi:@2->main]
-main_from___b2:
-  jsr main
-  // [7] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label conio_line_color = $1b
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_y
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [6] call main 
+    // [8] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [7] return 
+    rts
+}
   // main
 main: {
     // [9] call clrscr 
@@ -2126,27 +2134,29 @@ Uplift Scope [printf_format_number]
 Uplift Scope [printf_buffer_number] 
 Uplift Scope [printf_format_string] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [memcpy] best 18364 combination zp[2]:13 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:15 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:33 [ memcpy::src_end#0 ] zp[2]:9 [ memcpy::source#2 ] zp[2]:11 [ memcpy::destination#2 ] 
-Uplifting [memset] best 18258 combination zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:31 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::str#3 ] 
-Uplifting [] best 18258 combination zp[1]:24 [ conio_cursor_y ] zp[2]:27 [ conio_line_color ] zp[2]:25 [ conio_line_text ] zp[1]:23 [ conio_cursor_x ] 
-Uplifting [clrscr] best 16668 combination reg byte y [ clrscr::c#2 clrscr::c#1 ] zp[2]:20 [ clrscr::line_cols#5 clrscr::line_cols#1 ] zp[2]:18 [ clrscr::line_text#5 clrscr::line_text#1 ] reg byte x [ clrscr::l#2 clrscr::l#1 ] 
-Uplifting [cputc] best 16632 combination reg byte a [ cputc::c#0 ] 
-Uplifting [cputs] best 16542 combination zp[2]:2 [ cputs::s#3 cputs::s#4 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
-Uplifting [RADIX] best 16542 combination 
-Uplifting [MOS6526_CIA] best 16542 combination 
-Uplifting [MOS6569_VICII] best 16542 combination 
-Uplifting [MOS6581_SID] best 16542 combination 
-Uplifting [cputln] best 16542 combination 
-Uplifting [cscroll] best 16542 combination 
-Uplifting [printf_format_number] best 16542 combination 
-Uplifting [printf_buffer_number] best 16542 combination 
-Uplifting [printf_format_string] best 16542 combination 
-Uplifting [main] best 16542 combination 
+Uplifting [memcpy] best 18370 combination zp[2]:13 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:15 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:33 [ memcpy::src_end#0 ] zp[2]:9 [ memcpy::source#2 ] zp[2]:11 [ memcpy::destination#2 ] 
+Uplifting [memset] best 18264 combination zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:31 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::str#3 ] 
+Uplifting [] best 18264 combination zp[1]:24 [ conio_cursor_y ] zp[2]:27 [ conio_line_color ] zp[2]:25 [ conio_line_text ] zp[1]:23 [ conio_cursor_x ] 
+Uplifting [clrscr] best 16674 combination reg byte y [ clrscr::c#2 clrscr::c#1 ] zp[2]:20 [ clrscr::line_cols#5 clrscr::line_cols#1 ] zp[2]:18 [ clrscr::line_text#5 clrscr::line_text#1 ] reg byte x [ clrscr::l#2 clrscr::l#1 ] 
+Uplifting [cputc] best 16638 combination reg byte a [ cputc::c#0 ] 
+Uplifting [cputs] best 16548 combination zp[2]:2 [ cputs::s#3 cputs::s#4 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
+Uplifting [RADIX] best 16548 combination 
+Uplifting [MOS6526_CIA] best 16548 combination 
+Uplifting [MOS6569_VICII] best 16548 combination 
+Uplifting [MOS6581_SID] best 16548 combination 
+Uplifting [cputln] best 16548 combination 
+Uplifting [cscroll] best 16548 combination 
+Uplifting [printf_format_number] best 16548 combination 
+Uplifting [printf_buffer_number] best 16548 combination 
+Uplifting [printf_format_string] best 16548 combination 
+Uplifting [main] best 16548 combination 
+Uplifting [_start] best 16548 combination 
 Attempting to uplift remaining variables inzp[1]:24 [ conio_cursor_y ]
-Uplifting [] best 16542 combination zp[1]:24 [ conio_cursor_y ] 
+Uplifting [] best 16548 combination zp[1]:24 [ conio_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:23 [ conio_cursor_x ]
-Uplifting [] best 16542 combination zp[1]:23 [ conio_cursor_x ] 
+Uplifting [] best 16548 combination zp[1]:23 [ conio_cursor_x ] 
 Coalescing zero page register [ zp[2]:4 [ memset::str#3 ] ] with [ zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:9 [ memcpy::source#2 ] ] with [ zp[2]:13 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:11 [ memcpy::destination#2 ] ] with [ zp[2]:15 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
@@ -2169,7 +2179,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // A few strings with newlines
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -2177,50 +2187,51 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  .label conio_cursor_x = 8
-  .label conio_cursor_y = 9
-  .label conio_line_text = $a
-  .label conio_line_color = $c
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = 8
   // The current cursor y-position
-  lda #0
-  sta.z conio_cursor_y
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = 9
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $a
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [6] call main 
-  // [8] phi from @2 to main [phi:@2->main]
-main_from___b2:
-  jsr main
-  // [7] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label conio_line_color = $c
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_y
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [6] call main 
+    // [8] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [7] return 
+    rts
+}
   // main
 main: {
     // [9] call clrscr 
@@ -2695,9 +2706,9 @@ clrscr: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
@@ -2734,10 +2745,8 @@ Replacing label __b1_from___b2 with __b1
 Replacing label __b1_from_cputc with __b1
 Replacing label __b2_from___b3 with __b2
 Replacing label __b1_from___b2 with __b1
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction main_from___b2:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
+Removing instruction main_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction cputs_from___b1:
 Removing instruction __b2_from___b1:
@@ -2759,8 +2768,9 @@ Removing instruction __b2_from___b3:
 Removing instruction __b1_from_memcpy:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction clrscr_from_main:
 Removing instruction __b1:
 Removing instruction __b2:
@@ -2788,14 +2798,8 @@ Replacing jump to rts with rts in jmp __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Relabelling long label __b3_from___b1 to __b2
 Succesful ASM optimization Pass5RelabelLongLabels
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) COLORRAM = (byte*) 55296
 (const nomodify byte*) DEFAULT_SCREEN = (byte*) 1024
 (const nomodify byte) LIGHT_BLUE = (byte) $e
@@ -2887,6 +2891,10 @@ FINAL SYMBOL TABLE
 (const byte) RADIX::DECIMAL = (number) $a
 (const byte) RADIX::HEXADECIMAL = (number) $10
 (const byte) RADIX::OCTAL = (number) 8
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (void()) clrscr()
 (label) clrscr::@1
 (label) clrscr::@2
@@ -3015,7 +3023,7 @@ Score: 14277
 // A few strings with newlines
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
@@ -3023,45 +3031,46 @@ Score: 14277
   .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  .label conio_cursor_x = 8
-  .label conio_cursor_y = 9
-  .label conio_line_text = $a
-  .label conio_line_color = $c
-  // @begin
-__bbegin:
-  // @1
-  // conio_cursor_x = 0
-  // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
-  // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+  .label conio_cursor_x = 8
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
-  // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+  .label conio_cursor_y = 9
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
-  // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+  .label conio_line_text = $a
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // [5] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [6] call main 
-  // [8] phi from @2 to main [phi:@2->main]
-  jsr main
-  rts
-  // [7] phi from @2 to @end [phi:@2->@end]
-  // @end
+  .label conio_line_color = $c
+  // _start
+_start: {
+    // _start::_init1
+    // conio_cursor_x = 0
+    // [1] (byte) conio_cursor_x ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    // [2] (byte) conio_cursor_y ← (byte) 0 -- vbuz1=vbuc1 
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    // [3] (byte*) conio_line_text ← (const nomodify byte*) DEFAULT_SCREEN -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    // [4] (byte*) conio_line_color ← (const nomodify byte*) COLORRAM -- pbuz1=pbuc1 
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // [5] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [6] call main 
+    // [8] phi from _start::@1 to main [phi:_start::@1->main]
+    jsr main
+    // _start::@return
+    // [7] return 
+    rts
+}
   // main
 main: {
     // clrscr()

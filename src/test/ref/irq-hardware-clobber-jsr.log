@@ -2,11 +2,9 @@ Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   asm { sei  }
   *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
   *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
@@ -46,18 +44,18 @@ do_irq: scope:[do_irq]  from irq
 do_irq::@return: scope:[do_irq]  from do_irq
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d021
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
@@ -159,6 +157,9 @@ SYMBOL TABLE SSA
 (const nomodify byte*) RASTER = (byte*)(number) $d012
 (const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
 (const nomodify byte) WHITE = (byte) 1
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) do_irq()
 (label) do_irq::@return
 interrupt(HARDWARE_CLOBBER)(void()) irq()
@@ -194,73 +195,60 @@ if() condition always true - replacing block destination [9] if(true) goto main:
 Successful SSA optimization Pass2ConstantIfs
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
-Adding NOP phi() at start of main::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Adding NOP phi() at start of irq
 Adding NOP phi() at start of irq::@1
+Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [irq] to do_irq:17 
+Calls in [irq] to do_irq:1 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Culled Empty Block (label) main::@1
 Culled Empty Block (label) irq::@1
+Culled Empty Block (label) main::@1
 Renumbering block main::@2 to main::@1
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of irq
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
-
-(void()) main()
-main: scope:[main]  from @1
-  asm { sei  }
-  [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
-  [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
-  [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80
-  [9] *((const nomodify byte*) RASTER) ← (byte) 0
-  [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
-  [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq()
-  asm { cli  }
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
-  to:main::@1
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
-  [14] phi()
-  [15] call do_irq 
+  [0] phi()
+  [1] call do_irq 
   to:irq::@return
 irq::@return: scope:[irq]  from irq
-  [16] return 
+  [2] return 
   to:@return
 
 (void()) do_irq()
 do_irq: scope:[do_irq]  from irq
-  [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
-  [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
-  [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  [3] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
+  [4] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  [5] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
   to:do_irq::@return
 do_irq::@return: scope:[do_irq]  from do_irq
-  [20] return 
+  [6] return 
   to:@return
+
+(void()) main()
+main: scope:[main]  from
+  asm { sei  }
+  [8] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
+  [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
+  [10] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  [11] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80
+  [12] *((const nomodify byte*) RASTER) ← (byte) 0
+  [13] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  [14] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq()
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -395,62 +383,6 @@ Target platform is c64basic / MOS6502X
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
-  // main
-main: {
-    // asm { sei  }
-    sei
-    // [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
-    // Disable kernal & basic
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
-    // [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
-    // Set raster line to $100
-    lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // [9] *((const nomodify byte*) RASTER) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta RASTER
-    // [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
-    // Set the IRQ routine
-    lda #<irq
-    sta HARDWARE_IRQ
-    lda #>irq
-    sta HARDWARE_IRQ+1
-    // asm { cli  }
-    cli
-    jmp __b1
-    // main::@1
-  __b1:
-    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __b1
-}
   // irq
 // Interrupt Routine
 irq: {
@@ -458,12 +390,12 @@ irq: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [15] call do_irq 
+    // [1] call do_irq 
     jsr do_irq
     jmp __breturn
     // irq::@return
   __breturn:
-    // [16] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
   rega:
     lda #00
   regx:
@@ -474,36 +406,78 @@ irq: {
 }
   // do_irq
 do_irq: {
-    // [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BG_COLOR
-    // [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BG_COLOR
-    // [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
     jmp __breturn
     // do_irq::@return
   __breturn:
-    // [20] return 
+    // [6] return 
     rts
+}
+  // main
+main: {
+    // asm { sei  }
+    sei
+    // [8] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // Disable kernal & basic
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // [10] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // [11] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // Set raster line to $100
+    lda #$80
+    ora VIC_CONTROL
+    sta VIC_CONTROL
+    // [12] *((const nomodify byte*) RASTER) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta RASTER
+    // [13] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // [14] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+    // Set the IRQ routine
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+    // asm { cli  }
+    cli
+    jmp __b1
+    // main::@1
+  __b1:
+    // [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BORDER_COLOR
+    jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) RASTER) ← (byte) 0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [16] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
-Statement [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] ( do_irq:15 [ ] { }  ) always clobbers reg byte a 
+Statement [2] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [3] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] ( do_irq:1 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( do_irq:1 [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] ( do_irq:1 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify byte*) RASTER) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [MOS6526_CIA] 
@@ -514,20 +488,20 @@ Uplift Scope [irq]
 Uplift Scope [do_irq] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 329 combination 
-Uplifting [MOS6569_VICII] best 329 combination 
-Uplifting [MOS6581_SID] best 329 combination 
-Uplifting [main] best 329 combination 
-Uplifting [irq] best 329 combination 
-Uplifting [do_irq] best 329 combination 
-Uplifting [] best 329 combination 
+Uplifting [MOS6526_CIA] best 317 combination 
+Uplifting [MOS6569_VICII] best 317 combination 
+Uplifting [MOS6581_SID] best 317 combination 
+Uplifting [main] best 317 combination 
+Uplifting [irq] best 317 combination 
+Uplifting [do_irq] best 317 combination 
+Uplifting [] best 317 combination 
 Interrupt procedure irq clobbers ANZ
-Removing interrupt register storage stx regx+1 in 22 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage sty regy+1 in 22 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regx: in 25 [16] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldx #00 in 25 [16] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in 25 [16] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in 25 [16] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage stx regx+1 in 4 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage sty regy+1 in 4 entry interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regx: in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldx #00 in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage regy: in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
+Removing interrupt register storage ldy #00 in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -568,48 +542,67 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // irq
+// Interrupt Routine
+irq: {
+    // entry interrupt(HARDWARE_CLOBBER)
+    sta rega+1
+    // [1] call do_irq 
+    jsr do_irq
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
+  rega:
+    lda #00
+    rti
+}
+  // do_irq
+do_irq: {
+    // [3] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BG_COLOR
+    // [4] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // [5] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    jmp __breturn
+    // do_irq::@return
+  __breturn:
+    // [6] return 
+    rts
+}
   // main
 main: {
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-    // [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [10] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [11] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
-    // [9] *((const nomodify byte*) RASTER) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) RASTER) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
-    // [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+    // [14] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
@@ -620,68 +613,23 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __b1
-}
-  // irq
-// Interrupt Routine
-irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
-    sta rega+1
-    // [15] call do_irq 
-    jsr do_irq
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [16] return  - exit interrupt(HARDWARE_CLOBBER)
-  rega:
-    lda #00
-    rti
-}
-  // do_irq
-do_irq: {
-    // [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta BG_COLOR
-    // [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    jmp __breturn
-    // do_irq::@return
-  __breturn:
-    // [20] return 
-    rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53281
 (const nomodify byte) BLACK = (byte) 0
 (const nomodify byte*) BORDER_COLOR = (byte*) 53280
@@ -833,48 +781,77 @@ Score: 224
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // irq
+// Interrupt Routine
+irq: {
+    // entry interrupt(HARDWARE_CLOBBER)
+    sta rega+1
+    // do_irq()
+    // [1] call do_irq 
+    jsr do_irq
+    // irq::@return
+    // }
+    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
+  rega:
+    lda #00
+    rti
+}
+  // do_irq
+do_irq: {
+    // *BG_COLOR = WHITE
+    // [3] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
+    // [4] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // [5] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // do_irq::@return
+    // }
+    // [6] return 
+    rts
+}
   // main
 main: {
     // asm
     // asm { sei  }
     sei
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // [5] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [8] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // Disable kernal & basic
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
-    // [6] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [10] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL |=$80
-    // [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [11] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) | (byte) $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
     ora VIC_CONTROL
     sta VIC_CONTROL
     // *RASTER = $00
-    // [9] *((const nomodify byte*) RASTER) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [12] *((const nomodify byte*) RASTER) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
     // *IRQ_ENABLE = IRQ_RASTER
-    // [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [13] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     // *HARDWARE_IRQ = &irq
-    // [11] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
+    // [14] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta HARDWARE_IRQ
@@ -886,44 +863,9 @@ main: {
     // main::@1
   __b1:
     // (*BORDER_COLOR)++;
-    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __b1
-}
-  // irq
-// Interrupt Routine
-irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
-    sta rega+1
-    // do_irq()
-    // [15] call do_irq 
-    jsr do_irq
-    // irq::@return
-    // }
-    // [16] return  - exit interrupt(HARDWARE_CLOBBER)
-  rega:
-    lda #00
-    rti
-}
-  // do_irq
-do_irq: {
-    // *BG_COLOR = WHITE
-    // [17] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta BG_COLOR
-    // *BG_COLOR = BLACK
-    // [18] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // [19] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // do_irq::@return
-    // }
-    // [20] return 
-    rts
 }
   // File Data
 

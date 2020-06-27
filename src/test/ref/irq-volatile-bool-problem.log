@@ -1,12 +1,11 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
 Resolved forward reference framedone to (volatile bool) framedone
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   asm { sei  }
   *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
   *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
@@ -45,18 +44,22 @@ irq::@2: scope:[irq]  from irq
 irq::@return: scope:[irq]  from irq::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify byte*) CIA1_INTERRUPT = (byte*)(number) $dc0d
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
@@ -66,6 +69,11 @@ SYMBOL TABLE SSA
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (const nomodify byte*) RASTER = (byte*)(number) $d012
 (const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 interrupt(KERNEL_MIN)(void()) irq()
 (bool~) irq::$1
 (bool~) irq::$2
@@ -115,79 +123,68 @@ Successful SSA optimization Pass2ConstantIfs
 Rewriting conditional comparison [14] if(*((const nomodify byte*) RASTER)<=(byte) $32) goto irq::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) $32+1 in if(*((const nomodify byte*) RASTER)<(byte) $32+(number) 1) goto irq::@1
-Adding number conversion cast (unumber) 1 in if(*((const nomodify byte*) RASTER)<(unumber)(byte) $32+(number) 1) goto irq::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) $32+1 in [10] if(*((const nomodify byte*) RASTER)<(byte) $32+(number) 1) goto irq::@1
+Adding number conversion cast (unumber) 1 in [10] if(*((const nomodify byte*) RASTER)<(unumber)(byte) $32+(number) 1) goto irq::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast (byte) $32+(unumber)(number) 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of irq::@2
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@3
-Adding NOP phi() at start of irq::@2
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
-Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of irq::@2
+Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
-
-(void()) main()
-main: scope:[main]  from @1
-  asm { sei  }
-  [5] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  [6] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
-  [7] *((const nomodify byte*) RASTER) ← (byte) $fd
-  [8] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
-  [9] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
-  asm { cli  }
-  to:main::@1
-main::@1: scope:[main]  from main main::@1 main::@2
-  [11] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1
-  to:main::@2
-main::@2: scope:[main]  from main::@1
-  [12] phi()
-  to:main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
-  [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
-  [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  [15] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1
+  [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  [1] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
+  [2] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1
   to:irq::@2
 irq::@2: scope:[irq]  from irq
-  [16] phi()
+  [3] phi()
   to:irq::@1
 irq::@1: scope:[irq]  from irq irq::@2
-  [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR)
+  [4] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR)
   to:irq::@return
 irq::@return: scope:[irq]  from irq::@1
-  [18] return 
+  [5] return 
   to:@return
+
+(void()) main()
+main: scope:[main]  from
+  asm { sei  }
+  [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
+  [9] *((const nomodify byte*) RASTER) ← (byte) $fd
+  [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  [11] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main main::@1 main::@2
+  [13] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [14] phi()
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -216,41 +213,55 @@ Target platform is c64basic / MOS6502X
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // irq
+irq: {
+    // entry interrupt(KERNEL_MIN)
+    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    // [1] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // [2] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    lda RASTER
+    cmp #$32+1
+    bcc __b1
+    // [3] phi from irq to irq::@2 [phi:irq->irq::@2]
+  __b2_from_irq:
+    jmp __b2
+    // irq::@2
+  __b2:
+    jmp __b1
+    // irq::@1
+  __b1:
+    // [4] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [5] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
   // main
 main: {
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [6] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [7] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-    // [8] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [9] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [11] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
@@ -261,65 +272,37 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [11] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    // [13] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
     bcs __b1
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
     jmp __b1
 }
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [15] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
-    lda RASTER
-    cmp #$32+1
-    bcc __b1
-    // [16] phi from irq to irq::@2 [phi:irq->irq::@2]
-  __b2_from_irq:
-    jmp __b2
-    // irq::@2
-  __b2:
-    jmp __b1
-    // irq::@1
-  __b1:
-    // [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BG_COLOR
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [18] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-}
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) RASTER) ← (byte) $fd [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [15] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) RASTER) ← (byte) $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 1034 combination 
-Uplifting [irq] best 1034 combination 
-Uplifting [] best 1034 combination 
+Uplifting [main] best 1022 combination 
+Uplifting [irq] best 1022 combination 
+Uplifting [] best 1022 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -339,41 +322,55 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // irq
+irq: {
+    // entry interrupt(KERNEL_MIN)
+    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    // [1] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // [2] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    lda RASTER
+    cmp #$32+1
+    bcc __b1
+    // [3] phi from irq to irq::@2 [phi:irq->irq::@2]
+  __b2_from_irq:
+    jmp __b2
+    // irq::@2
+  __b2:
+    jmp __b1
+    // irq::@1
+  __b1:
+    // [4] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [5] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
   // main
 main: {
     // asm { sei  }
     sei
-    // [5] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [6] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [7] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
-    // [8] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [9] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [11] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
@@ -384,79 +381,39 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [11] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    // [13] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
     bcs __b1
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
     jmp __b1
 }
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [15] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
-    lda RASTER
-    cmp #$32+1
-    bcc __b1
-    // [16] phi from irq to irq::@2 [phi:irq->irq::@2]
-  __b2_from_irq:
-    jmp __b2
-    // irq::@2
-  __b2:
-    jmp __b1
-    // irq::@1
-  __b1:
-    // [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BG_COLOR
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [18] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-}
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
-Removing instruction jmp __b2
 Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Removing instruction __b2_from___b1:
 Removing instruction __b2_from_irq:
 Removing instruction __b2:
+Removing instruction __b2_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
-Removing instruction __b2:
 Removing instruction __breturn:
+Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction bcc __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53280
 (const nomodify byte*) CIA1_INTERRUPT = (byte*) 56333
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
@@ -496,39 +453,58 @@ Score: 951
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // irq
+irq: {
+    // entry interrupt(KERNEL_MIN)
+    // (*BG_COLOR)++;
+    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // [1] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // if (*RASTER>50)
+    // [2] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    lda RASTER
+    cmp #$32+1
+    // [3] phi from irq to irq::@2 [phi:irq->irq::@2]
+    // irq::@2
+    // irq::@1
+    // (*BG_COLOR)--;
+    // [4] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec BG_COLOR
+    // irq::@return
+    // }
+    // [5] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
   // main
 main: {
     // asm
     // asm { sei  }
     sei
     // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [5] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) CIA1_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
     // *VIC_CONTROL &=$7f
-    // [6] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [8] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
     // *RASTER = $fd
-    // [7] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
+    // [9] *((const nomodify byte*) RASTER) ← (byte) $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
     // *IRQ_ENABLE = IRQ_RASTER
-    // [8] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [10] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     // *KERNEL_IRQ = &irq
-    // [9] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [11] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     // Set the IRQ routine
     lda #<irq
     sta KERNEL_IRQ
@@ -540,38 +516,13 @@ main: {
     // main::@1
   __b1:
     // if(*RASTER<20)
-    // [11] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
+    // [13] if(*((const nomodify byte*) RASTER)>=(byte) $14) goto main::@1 -- _deref_pbuc1_ge_vbuc2_then_la1 
     lda RASTER
     cmp #$14
     bcs __b1
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [14] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     jmp __b1
-}
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // (*BG_COLOR)++;
-    // [13] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // [14] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // if (*RASTER>50)
-    // [15] if(*((const nomodify byte*) RASTER)<(byte) $32+(byte) 1) goto irq::@1 -- _deref_pbuc1_lt_vbuc2_then_la1 
-    lda RASTER
-    cmp #$32+1
-    // [16] phi from irq to irq::@2 [phi:irq->irq::@2]
-    // irq::@2
-    // irq::@1
-    // (*BG_COLOR)--;
-    // [17] *((const nomodify byte*) BG_COLOR) ← -- *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BG_COLOR
-    // irq::@return
-    // }
-    // [18] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
 }
   // File Data
 

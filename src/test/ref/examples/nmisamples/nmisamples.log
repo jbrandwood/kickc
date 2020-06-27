@@ -1,16 +1,12 @@
 Resolved forward reference nmi to interrupt(HARDWARE_ALL)(void()) nmi()
 Resolved forward reference nmi2 to interrupt(HARDWARE_ALL)(void()) nmi2()
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
-@1: scope:[]  from @begin
-  (volatile byte*) sample ← (const byte*) SAMPLE
-  to:@2
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
   *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
@@ -59,19 +55,23 @@ nmi2::@2: scope:[nmi2]  from nmi2
 nmi2::@return: scope:[nmi2]  from nmi2::@1
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte*) sample ← (const byte*) SAMPLE
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
 (const nomodify byte*) CIA2_INTERRUPT = (byte*)(number) $dd0d
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
@@ -169,6 +169,11 @@ SYMBOL TABLE SSA
 (const nomodify word) SAMPLE_SIZE = (word) $6100
 (const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*)(number) $d400
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
@@ -216,40 +221,41 @@ Finalized unsigned number type (byte) 4
 Finalized unsigned number type (word) $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f
-Inversing boolean not [24] (bool~) nmi2::$4 ← (byte~) nmi2::$2 != >(const byte*) SAMPLE+(word) $6100 from [23] (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(word) $6100
+Inversing boolean not [23] (bool~) nmi2::$4 ← (byte~) nmi2::$2 != >(const byte*) SAMPLE+(word) $6100 from [22] (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(word) $6100
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) nmi2::$4 [24] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
+Simple Condition (bool~) nmi2::$4 [23] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [_start] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Culled Empty Block (label) _start::@2
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (volatile byte*) sample ← (const byte*) SAMPLE
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [2] phi()
   [3] call main 
-  to:@end
-@end: scope:[]  from @2
-  [4] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
   [7] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
@@ -383,6 +389,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) _start()
 (void()) main()
 interrupt(HARDWARE_ALL)(void()) nmi()
 (byte~) nmi::$1 4.0
@@ -414,7 +421,7 @@ Target platform is c64basic / MOS6502X
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -436,28 +443,29 @@ Target platform is c64basic / MOS6502X
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
-  lda #<SAMPLE
-  sta.z sample
-  lda #>SAMPLE
-  sta.z sample+1
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    lda #<SAMPLE
+    sta.z sample
+    lda #>SAMPLE
+    sta.z sample+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     // asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
@@ -638,14 +646,16 @@ Uplift Scope [MOS6526_CIA]
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [nmi2] best 534 combination reg byte a [ nmi2::$1 ] reg byte a [ nmi2::$2 ] 
-Uplifting [nmi] best 528 combination reg byte a [ nmi::$1 ] 
-Uplifting [] best 528 combination zp[2]:2 [ sample ] 
-Uplifting [MOS6526_CIA] best 528 combination 
-Uplifting [MOS6569_VICII] best 528 combination 
-Uplifting [MOS6581_SID] best 528 combination 
-Uplifting [main] best 528 combination 
+Uplifting [nmi2] best 540 combination reg byte a [ nmi2::$1 ] reg byte a [ nmi2::$2 ] 
+Uplifting [nmi] best 534 combination reg byte a [ nmi::$1 ] 
+Uplifting [] best 534 combination zp[2]:2 [ sample ] 
+Uplifting [MOS6526_CIA] best 534 combination 
+Uplifting [MOS6569_VICII] best 534 combination 
+Uplifting [MOS6581_SID] best 534 combination 
+Uplifting [main] best 534 combination 
+Uplifting [_start] best 534 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -654,7 +664,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -676,28 +686,29 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
-  lda #<SAMPLE
-  sta.z sample
-  lda #>SAMPLE
-  sta.z sample+1
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    lda #<SAMPLE
+    sta.z sample
+    lda #>SAMPLE
+    sta.z sample+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     // asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
@@ -840,34 +851,27 @@ SAMPLE:
 .import binary "moments_sample.bin" 
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
 (const nomodify byte*) CIA2_INTERRUPT = (byte*) 56589
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
@@ -965,6 +969,10 @@ FINAL SYMBOL TABLE
 (const nomodify word) SAMPLE_SIZE = (word) $6100
 (const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*) 54272
 (const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@return
 interrupt(HARDWARE_ALL)(void()) nmi()
@@ -993,7 +1001,7 @@ Score: 483
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -1015,22 +1023,23 @@ Score: 483
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
-  // @begin
-__bbegin:
-  // @1
-  // sample = SAMPLE
-  // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
-  lda #<SAMPLE
-  sta.z sample
-  lda #>SAMPLE
-  sta.z sample+1
-  // [2] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [3] call main 
-  jsr main
-  rts
-  // [4] phi from @2 to @end [phi:@2->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // sample = SAMPLE
+    // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    lda #<SAMPLE
+    sta.z sample
+    lda #>SAMPLE
+    sta.z sample+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
     // asm

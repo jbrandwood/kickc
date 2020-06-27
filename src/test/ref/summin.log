@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte) sum::a#0 ← (number) 1
   (byte) sum::b#0 ← (number) 2
   call sum 
@@ -56,18 +55,27 @@ sum::@return: scope:[sum]  from sum
   (byte) sum::return#4 ← (byte) sum::return#8
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (byte~) main::$0
 (byte~) main::$1
@@ -159,6 +167,13 @@ Constant (const byte) sum::b#1 = 4
 Constant (const byte) sum::a#2 = 9
 Constant (const byte) sum::b#2 = $d
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) sum::a#0
 Inlining constant with var siblings (const byte) sum::b#0
 Inlining constant with var siblings (const byte) sum::a#1
@@ -172,92 +187,74 @@ Constant inlined sum::a#1 = (byte) 3
 Constant inlined sum::b#2 = (byte) $d
 Constant inlined sum::a#0 = (byte) 1
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to sum:6 sum:9 sum:12 
+Calls in [main] to sum:1 sum:4 sum:7 
 
 Created 2 initial phi equivalence classes
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call sum 
-  [6] (byte) sum::return#0 ← (byte) sum::return#3
+main: scope:[main]  from
+  [0] phi()
+  [1] call sum 
+  [2] (byte) sum::return#0 ← (byte) sum::return#3
   to:main::@1
 main::@1: scope:[main]  from main
-  [7] (byte) main::s1#0 ← (byte) sum::return#0
-  [8] call sum 
-  [9] (byte) sum::return#1 ← (byte) sum::return#3
+  [3] (byte) main::s1#0 ← (byte) sum::return#0
+  [4] call sum 
+  [5] (byte) sum::return#1 ← (byte) sum::return#3
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [10] (byte) main::s2#0 ← (byte) sum::return#1
-  [11] call sum 
-  [12] (byte) sum::return#2 ← (byte) sum::return#3
+  [6] (byte) main::s2#0 ← (byte) sum::return#1
+  [7] call sum 
+  [8] (byte) sum::return#2 ← (byte) sum::return#3
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [13] (byte) main::s3#0 ← (byte) sum::return#2
-  [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0
-  [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0
-  [16] *((const byte*) screen) ← (byte) main::s4#0
+  [9] (byte) main::s3#0 ← (byte) sum::return#2
+  [10] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0
+  [11] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0
+  [12] *((const byte*) screen) ← (byte) main::s4#0
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [17] return 
+  [13] return 
   to:@return
 
 (byte()) sum((byte) sum::a , (byte) sum::b)
 sum: scope:[sum]  from main main::@1 main::@2
-  [18] (byte) sum::b#3 ← phi( main/(byte) 2 main::@1/(byte) 4 main::@2/(byte) $d )
-  [18] (byte) sum::a#3 ← phi( main/(byte) 1 main::@1/(byte) 3 main::@2/(byte) 9 )
-  [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3
+  [14] (byte) sum::b#3 ← phi( main/(byte) 2 main::@1/(byte) 4 main::@2/(byte) $d )
+  [14] (byte) sum::a#3 ← phi( main/(byte) 1 main::@1/(byte) 3 main::@2/(byte) 9 )
+  [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3
   to:sum::@return
 sum::@return: scope:[sum]  from sum
-  [20] return 
+  [16] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$3 22.0
+(byte~) main::$3 4.0
 (byte) main::s1
-(byte) main::s1#0 3.142857142857143
+(byte) main::s1#0 0.5714285714285714
 (byte) main::s2
-(byte) main::s2#0 5.5
+(byte) main::s2#0 1.0
 (byte) main::s3
-(byte) main::s3#0 11.0
+(byte) main::s3#0 2.0
 (byte) main::s4
-(byte) main::s4#0 22.0
+(byte) main::s4#0 4.0
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (byte) sum::a
-(byte) sum::a#3 101.0
+(byte) sum::a#3 11.0
 (byte) sum::b
-(byte) sum::b#3 101.0
+(byte) sum::b#3 11.0
 (byte) sum::return
-(byte) sum::return#0 22.0
-(byte) sum::return#1 22.0
-(byte) sum::return#2 22.0
-(byte) sum::return#3 26.8
+(byte) sum::return#0 4.0
+(byte) sum::return#1 4.0
+(byte) sum::return#2 4.0
+(byte) sum::return#3 3.4000000000000004
 
 Initial phi equivalence classes
 [ sum::a#3 ]
@@ -304,22 +301,6 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __3 = $a
@@ -327,80 +308,80 @@ main: {
     .label s2 = 7
     .label s3 = 9
     .label s4 = $b
-    // [5] call sum 
-    // [18] phi from main to sum [phi:main->sum]
+    // [1] call sum 
+    // [14] phi from main to sum [phi:main->sum]
   sum_from_main:
-    // [18] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuz1=vbuc1 
+    // [14] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuz1=vbuc1 
     lda #2
     sta.z sum.b
-    // [18] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuz1=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuz1=vbuc1 
     lda #1
     sta.z sum.a
     jsr sum
-    // [6] (byte) sum::return#0 ← (byte) sum::return#3 -- vbuz1=vbuz2 
+    // [2] (byte) sum::return#0 ← (byte) sum::return#3 -- vbuz1=vbuz2 
     lda.z sum.return_3
     sta.z sum.return
     jmp __b1
     // main::@1
   __b1:
-    // [7] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
+    // [3] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuz2 
     lda.z sum.return
     sta.z s1
-    // [8] call sum 
-    // [18] phi from main::@1 to sum [phi:main::@1->sum]
+    // [4] call sum 
+    // [14] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from___b1:
-    // [18] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuz1=vbuc1 
+    // [14] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuz1=vbuc1 
     lda #4
     sta.z sum.b
-    // [18] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuz1=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuz1=vbuc1 
     lda #3
     sta.z sum.a
     jsr sum
-    // [9] (byte) sum::return#1 ← (byte) sum::return#3 -- vbuz1=vbuz2 
+    // [5] (byte) sum::return#1 ← (byte) sum::return#3 -- vbuz1=vbuz2 
     lda.z sum.return_3
     sta.z sum.return_1
     jmp __b2
     // main::@2
   __b2:
-    // [10] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
+    // [6] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuz1=vbuz2 
     lda.z sum.return_1
     sta.z s2
-    // [11] call sum 
-    // [18] phi from main::@2 to sum [phi:main::@2->sum]
+    // [7] call sum 
+    // [14] phi from main::@2 to sum [phi:main::@2->sum]
   sum_from___b2:
-    // [18] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuz1=vbuc1 
+    // [14] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuz1=vbuc1 
     lda #$d
     sta.z sum.b
-    // [18] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuz1=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuz1=vbuc1 
     lda #9
     sta.z sum.a
     jsr sum
-    // [12] (byte) sum::return#2 ← (byte) sum::return#3 -- vbuz1=vbuz2 
+    // [8] (byte) sum::return#2 ← (byte) sum::return#3 -- vbuz1=vbuz2 
     lda.z sum.return_3
     sta.z sum.return_2
     jmp __b3
     // main::@3
   __b3:
-    // [13] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuz2 
+    // [9] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuz2 
     lda.z sum.return_2
     sta.z s3
-    // [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuz1=vbuz2_plus_vbuz3 
+    // [10] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z s1
     clc
     adc.z s2
     sta.z __3
-    // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuz1=vbuz2_plus_vbuz3 
+    // [11] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __3
     clc
     adc.z s3
     sta.z s4
-    // [16] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuz1 
+    // [12] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuz1 
     lda.z s4
     sta screen
     jmp __breturn
     // main::@return
   __breturn:
-    // [17] return 
+    // [13] return 
     rts
 }
   // sum
@@ -412,7 +393,7 @@ sum: {
     .label return_3 = $c
     .label a = 2
     .label b = 3
-    // [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuz1=vbuz2_plus_vbuz3 
+    // [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z a
     clc
     adc.z b
@@ -420,21 +401,21 @@ sum: {
     jmp __breturn
     // sum::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [10] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] (  [ main::s3#0 main::$3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::s3#0 ]
-Statement [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ main::s4#0 ] ( main:2 [ main::s4#0 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] { { sum::return#0 = sum::return#3 } }  main:2::sum:8 [ main::s1#0 sum::return#3 ] { { sum::return#1 = sum::return#3 } }  main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] { { sum::return#2 = sum::return#3 } }  ) always clobbers reg byte a 
+Statement [11] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ main::s4#0 ] (  [ main::s4#0 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( sum:1 [ sum::return#3 ] { { sum::return#0 = sum::return#3 } }  sum:4 [ main::s1#0 sum::return#3 ] { { sum::return#1 = sum::return#3 } }  sum:7 [ main::s1#0 main::s2#0 sum::return#3 ] { { sum::return#2 = sum::return#3 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::s1#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::s2#0 ]
-Statement [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] ( main:2 [ main::s3#0 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ main::s4#0 ] ( main:2 [ main::s4#0 ] { }  ) always clobbers reg byte a 
-Statement [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( main:2::sum:5 [ sum::return#3 ] { { sum::return#0 = sum::return#3 } }  main:2::sum:8 [ main::s1#0 sum::return#3 ] { { sum::return#1 = sum::return#3 } }  main:2::sum:11 [ main::s1#0 main::s2#0 sum::return#3 ] { { sum::return#2 = sum::return#3 } }  ) always clobbers reg byte a 
+Statement [10] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 [ main::s3#0 main::$3 ] (  [ main::s3#0 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [11] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 [ main::s4#0 ] (  [ main::s4#0 ] { }  ) always clobbers reg byte a 
+Statement [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 [ sum::return#3 ] ( sum:1 [ sum::return#3 ] { { sum::return#0 = sum::return#3 } }  sum:4 [ main::s1#0 sum::return#3 ] { { sum::return#1 = sum::return#3 } }  sum:7 [ main::s1#0 main::s2#0 sum::return#3 ] { { sum::return#2 = sum::return#3 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ sum::a#3 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ sum::b#3 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ sum::return#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -448,25 +429,25 @@ Potential registers zp[1]:11 [ main::s4#0 ] : zp[1]:11 , reg byte a , reg byte x
 Potential registers zp[1]:12 [ sum::return#3 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [sum] 101: zp[1]:2 [ sum::a#3 ] 101: zp[1]:3 [ sum::b#3 ] 26.8: zp[1]:12 [ sum::return#3 ] 22: zp[1]:4 [ sum::return#0 ] 22: zp[1]:6 [ sum::return#1 ] 22: zp[1]:8 [ sum::return#2 ] 
-Uplift Scope [main] 22: zp[1]:10 [ main::$3 ] 22: zp[1]:11 [ main::s4#0 ] 11: zp[1]:9 [ main::s3#0 ] 5.5: zp[1]:7 [ main::s2#0 ] 3.14: zp[1]:5 [ main::s1#0 ] 
+Uplift Scope [sum] 11: zp[1]:2 [ sum::a#3 ] 11: zp[1]:3 [ sum::b#3 ] 4: zp[1]:4 [ sum::return#0 ] 4: zp[1]:6 [ sum::return#1 ] 4: zp[1]:8 [ sum::return#2 ] 3.4: zp[1]:12 [ sum::return#3 ] 
+Uplift Scope [main] 4: zp[1]:10 [ main::$3 ] 4: zp[1]:11 [ main::s4#0 ] 2: zp[1]:9 [ main::s3#0 ] 1: zp[1]:7 [ main::s2#0 ] 0.57: zp[1]:5 [ main::s1#0 ] 
 Uplift Scope [] 
 
-Uplifting [sum] best 127 combination reg byte x [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#3 ] reg byte a [ sum::return#0 ] zp[1]:6 [ sum::return#1 ] zp[1]:8 [ sum::return#2 ] 
+Uplifting [sum] best 121 combination reg byte x [ sum::a#3 ] reg byte a [ sum::b#3 ] reg byte a [ sum::return#0 ] reg byte a [ sum::return#1 ] zp[1]:8 [ sum::return#2 ] zp[1]:12 [ sum::return#3 ] 
 Limited combination testing to 100 combinations of 4096 possible.
-Uplifting [main] best 115 combination reg byte a [ main::$3 ] reg byte a [ main::s4#0 ] zp[1]:9 [ main::s3#0 ] zp[1]:7 [ main::s2#0 ] zp[1]:5 [ main::s1#0 ] 
+Uplifting [main] best 109 combination reg byte a [ main::$3 ] reg byte a [ main::s4#0 ] zp[1]:9 [ main::s3#0 ] zp[1]:7 [ main::s2#0 ] zp[1]:5 [ main::s1#0 ] 
 Limited combination testing to 100 combinations of 432 possible.
-Uplifting [] best 115 combination 
-Attempting to uplift remaining variables inzp[1]:6 [ sum::return#1 ]
-Uplifting [sum] best 109 combination reg byte a [ sum::return#1 ] 
+Uplifting [] best 109 combination 
 Attempting to uplift remaining variables inzp[1]:8 [ sum::return#2 ]
 Uplifting [sum] best 103 combination reg byte a [ sum::return#2 ] 
+Attempting to uplift remaining variables inzp[1]:12 [ sum::return#3 ]
+Uplifting [sum] best 91 combination reg byte a [ sum::return#3 ] 
 Attempting to uplift remaining variables inzp[1]:9 [ main::s3#0 ]
-Uplifting [main] best 103 combination zp[1]:9 [ main::s3#0 ] 
+Uplifting [main] best 91 combination zp[1]:9 [ main::s3#0 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ main::s2#0 ]
-Uplifting [main] best 101 combination reg byte y [ main::s2#0 ] 
+Uplifting [main] best 89 combination reg byte y [ main::s2#0 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ main::s1#0 ]
-Uplifting [main] best 101 combination zp[1]:5 [ main::s1#0 ] 
+Uplifting [main] best 89 combination zp[1]:5 [ main::s1#0 ] 
 Allocated (was zp[1]:5) zp[1]:2 [ main::s1#0 ]
 Allocated (was zp[1]:9) zp[1]:3 [ main::s3#0 ]
 
@@ -478,114 +459,89 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label s1 = 2
     .label s3 = 3
-    // [5] call sum 
-    // [18] phi from main to sum [phi:main->sum]
+    // [1] call sum 
+    // [14] phi from main to sum [phi:main->sum]
   sum_from_main:
-    // [18] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuaa=vbuc1 
+    // [14] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuaa=vbuc1 
     lda #2
-    // [18] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuxx=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuxx=vbuc1 
     ldx #1
     jsr sum
-    // [6] (byte) sum::return#0 ← (byte) sum::return#3
+    // [2] (byte) sum::return#0 ← (byte) sum::return#3
     jmp __b1
     // main::@1
   __b1:
-    // [7] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuaa 
+    // [3] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuaa 
     sta.z s1
-    // [8] call sum 
-    // [18] phi from main::@1 to sum [phi:main::@1->sum]
+    // [4] call sum 
+    // [14] phi from main::@1 to sum [phi:main::@1->sum]
   sum_from___b1:
-    // [18] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
+    // [14] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
     lda #4
-    // [18] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuxx=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuxx=vbuc1 
     ldx #3
     jsr sum
-    // [9] (byte) sum::return#1 ← (byte) sum::return#3
+    // [5] (byte) sum::return#1 ← (byte) sum::return#3
     jmp __b2
     // main::@2
   __b2:
-    // [10] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuyy=vbuaa 
+    // [6] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuyy=vbuaa 
     tay
-    // [11] call sum 
-    // [18] phi from main::@2 to sum [phi:main::@2->sum]
+    // [7] call sum 
+    // [14] phi from main::@2 to sum [phi:main::@2->sum]
   sum_from___b2:
-    // [18] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuaa=vbuc1 
+    // [14] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuaa=vbuc1 
     lda #$d
-    // [18] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuxx=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuxx=vbuc1 
     ldx #9
     jsr sum
-    // [12] (byte) sum::return#2 ← (byte) sum::return#3
+    // [8] (byte) sum::return#2 ← (byte) sum::return#3
     jmp __b3
     // main::@3
   __b3:
-    // [13] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuaa 
+    // [9] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuaa 
     sta.z s3
-    // [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuaa=vbuz1_plus_vbuyy 
+    // [10] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuaa=vbuz1_plus_vbuyy 
     tya
     clc
     adc.z s1
-    // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
+    // [11] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z s3
-    // [16] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
     sta screen
     jmp __breturn
     // main::@return
   __breturn:
-    // [17] return 
+    // [13] return 
     rts
 }
   // sum
 // sum(byte register(X) a, byte register(A) b)
 sum: {
-    // [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuaa=vbuxx_plus_vbuaa 
+    // [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuaa=vbuxx_plus_vbuaa 
     stx.z $ff
     clc
     adc.z $ff
     jmp __breturn
     // sum::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction sum_from_main:
 Removing instruction __b1:
 Removing instruction sum_from___b1:
@@ -595,39 +551,34 @@ Removing instruction __b3:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (void()) main()
-(byte~) main::$3 reg byte a 22.0
+(byte~) main::$3 reg byte a 4.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@return
 (byte) main::s1
-(byte) main::s1#0 s1 zp[1]:2 3.142857142857143
+(byte) main::s1#0 s1 zp[1]:2 0.5714285714285714
 (byte) main::s2
-(byte) main::s2#0 reg byte y 5.5
+(byte) main::s2#0 reg byte y 1.0
 (byte) main::s3
-(byte) main::s3#0 s3 zp[1]:3 11.0
+(byte) main::s3#0 s3 zp[1]:3 2.0
 (byte) main::s4
-(byte) main::s4#0 reg byte a 22.0
+(byte) main::s4#0 reg byte a 4.0
 (const byte*) screen = (byte*) 1024
 (byte()) sum((byte) sum::a , (byte) sum::b)
 (label) sum::@return
 (byte) sum::a
-(byte) sum::a#3 reg byte x 101.0
+(byte) sum::a#3 reg byte x 11.0
 (byte) sum::b
-(byte) sum::b#3 reg byte a 101.0
+(byte) sum::b#3 reg byte a 11.0
 (byte) sum::return
-(byte) sum::return#0 reg byte a 22.0
-(byte) sum::return#1 reg byte a 22.0
-(byte) sum::return#2 reg byte a 22.0
-(byte) sum::return#3 reg byte a 26.8
+(byte) sum::return#0 reg byte a 4.0
+(byte) sum::return#1 reg byte a 4.0
+(byte) sum::return#2 reg byte a 4.0
+(byte) sum::return#3 reg byte a 3.4000000000000004
 
 reg byte x [ sum::a#3 ]
 reg byte a [ sum::b#3 ]
@@ -652,87 +603,80 @@ Score: 74
 .pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label s1 = 2
     .label s3 = 3
     // sum(1,2)
-    // [5] call sum 
-    // [18] phi from main to sum [phi:main->sum]
-    // [18] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuaa=vbuc1 
+    // [1] call sum 
+    // [14] phi from main to sum [phi:main->sum]
+    // [14] phi (byte) sum::b#3 = (byte) 2 [phi:main->sum#0] -- vbuaa=vbuc1 
     lda #2
-    // [18] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuxx=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 1 [phi:main->sum#1] -- vbuxx=vbuc1 
     ldx #1
     jsr sum
     // sum(1,2)
-    // [6] (byte) sum::return#0 ← (byte) sum::return#3
+    // [2] (byte) sum::return#0 ← (byte) sum::return#3
     // main::@1
     // s1=sum(1,2)
-    // [7] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuaa 
+    // [3] (byte) main::s1#0 ← (byte) sum::return#0 -- vbuz1=vbuaa 
     sta.z s1
     // sum(3,4)
-    // [8] call sum 
-    // [18] phi from main::@1 to sum [phi:main::@1->sum]
-    // [18] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
+    // [4] call sum 
+    // [14] phi from main::@1 to sum [phi:main::@1->sum]
+    // [14] phi (byte) sum::b#3 = (byte) 4 [phi:main::@1->sum#0] -- vbuaa=vbuc1 
     lda #4
-    // [18] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuxx=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 3 [phi:main::@1->sum#1] -- vbuxx=vbuc1 
     ldx #3
     jsr sum
     // sum(3,4)
-    // [9] (byte) sum::return#1 ← (byte) sum::return#3
+    // [5] (byte) sum::return#1 ← (byte) sum::return#3
     // main::@2
     // s2=sum(3,4)
-    // [10] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuyy=vbuaa 
+    // [6] (byte) main::s2#0 ← (byte) sum::return#1 -- vbuyy=vbuaa 
     tay
     // sum(9,13)
-    // [11] call sum 
-    // [18] phi from main::@2 to sum [phi:main::@2->sum]
-    // [18] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuaa=vbuc1 
+    // [7] call sum 
+    // [14] phi from main::@2 to sum [phi:main::@2->sum]
+    // [14] phi (byte) sum::b#3 = (byte) $d [phi:main::@2->sum#0] -- vbuaa=vbuc1 
     lda #$d
-    // [18] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuxx=vbuc1 
+    // [14] phi (byte) sum::a#3 = (byte) 9 [phi:main::@2->sum#1] -- vbuxx=vbuc1 
     ldx #9
     jsr sum
     // sum(9,13)
-    // [12] (byte) sum::return#2 ← (byte) sum::return#3
+    // [8] (byte) sum::return#2 ← (byte) sum::return#3
     // main::@3
     // s3=sum(9,13)
-    // [13] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuaa 
+    // [9] (byte) main::s3#0 ← (byte) sum::return#2 -- vbuz1=vbuaa 
     sta.z s3
     // s1+s2
-    // [14] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuaa=vbuz1_plus_vbuyy 
+    // [10] (byte~) main::$3 ← (byte) main::s1#0 + (byte) main::s2#0 -- vbuaa=vbuz1_plus_vbuyy 
     tya
     clc
     adc.z s1
     // s4=s1+s2+s3
-    // [15] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
+    // [11] (byte) main::s4#0 ← (byte~) main::$3 + (byte) main::s3#0 -- vbuaa=vbuaa_plus_vbuz1 
     clc
     adc.z s3
     // *screen = s4
-    // [16] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
+    // [12] *((const byte*) screen) ← (byte) main::s4#0 -- _deref_pbuc1=vbuaa 
     sta screen
     // main::@return
     // }
-    // [17] return 
+    // [13] return 
     rts
 }
   // sum
 // sum(byte register(X) a, byte register(A) b)
 sum: {
     // a+b
-    // [19] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuaa=vbuxx_plus_vbuaa 
+    // [15] (byte) sum::return#3 ← (byte) sum::a#3 + (byte) sum::b#3 -- vbuaa=vbuxx_plus_vbuaa 
     stx.z $ff
     clc
     adc.z $ff
     // sum::@return
     // }
-    // [20] return 
+    // [16] return 
     rts
 }
   // File Data

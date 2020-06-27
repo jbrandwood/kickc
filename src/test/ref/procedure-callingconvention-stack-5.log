@@ -1,3 +1,4 @@
+Inlined call call _init 
 Converting PHI-variable modified inside __stackcall procedure next() to load/store (signed word) current
 Calling convention STACK_CALL adding prepare/execute/finalize for (signed word~) main::$0 ← call next 
 Calling convention STACK_CALL adding prepare/execute/finalize for (signed word~) main::$1 ← call next 
@@ -6,11 +7,9 @@ Calling convention STACK_CALL adding stack pull main::$0 ← stackpull(signed wo
 Calling convention STACK_CALL adding stack pull main::$1 ← stackpull(signed word)
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   sideeffect stackpushbytes((number) 2)
   callexecute next 
   (signed word~) main::$0 ← stackpull(signed word)
@@ -25,9 +24,6 @@ main: scope:[main]  from @2
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
-  (signed word) current ← (signed word) $30
-  to:@2
 
 __stackcall (signed word()) next()
 next: scope:[next]  from
@@ -39,22 +35,31 @@ next::@return: scope:[next]  from next
   stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#1
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (signed word) current ← (signed word) $30
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const nomodify signed word*) SCREEN = (signed word*)(number) $400
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const word) STACK_BASE = (word) $103
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (signed word) current loadstore
 (void()) main()
 (signed word~) main::$0
@@ -101,37 +106,38 @@ Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1*SIZEOF_SIGNED_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [_start] to main:3 
 Calls in [main] to next:7 next:11 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Culled Empty Block (label) _start::@2
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (signed word) current ← (signed word) $30
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [2] phi()
   [3] call main 
-  to:@end
-@end: scope:[]  from @2
-  [4] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   sideeffect stackpushbytes((number) 2)
   [6] callexecute next 
   [7] (signed word~) main::$0 ← stackpull(signed word)
@@ -157,6 +163,7 @@ next::@return: scope:[next]  from next
 
 
 VARIABLE REGISTER WEIGHTS
+(void()) _start()
 (signed word) current loadstore 27.727272727272727
 (void()) main()
 (signed word~) main::$0 22.0
@@ -187,35 +194,36 @@ Target platform is c64basic / MOS6502X
 // Return value larger than parameter
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (signed word) current ← (signed word) $30 -- vwsz1=vwsc1 
-  lda #<$30
-  sta.z current
-  lda #>$30
-  sta.z current+1
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (signed word) current ← (signed word) $30 -- vwsz1=vwsc1 
+    lda #<$30
+    sta.z current
+    lda #>$30
+    sta.z current+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     .label __0 = 4
@@ -301,10 +309,16 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [next] 101: zp[2]:8 [ next::return#0 ] 
 Uplift Scope [main] 22: zp[2]:4 [ main::$0 ] 22: zp[2]:6 [ main::$1 ] 
 Uplift Scope [] 27.73: zp[2]:2 [ current ] 
+Uplift Scope [_start] 
 
-Uplifting [next] best 192 combination zp[2]:8 [ next::return#0 ] 
-Uplifting [main] best 192 combination zp[2]:4 [ main::$0 ] zp[2]:6 [ main::$1 ] 
-Uplifting [] best 192 combination zp[2]:2 [ current ] 
+Uplifting [next] best 198 combination zp[2]:8 [ next::return#0 ] 
+Uplifting [main] best 198 combination zp[2]:4 [ main::$0 ] zp[2]:6 [ main::$1 ] 
+Uplifting [] best 198 combination zp[2]:2 [ current ] 
+Uplifting [_start] best 198 combination 
+Coalescing zero page register [ zp[2]:6 [ main::$1 ] ] with [ zp[2]:2 [ current ] ]
+Allocated (was zp[2]:4) zp[2]:2 [ main::$0 ]
+Allocated (was zp[2]:6) zp[2]:4 [ main::$1 current ]
+Allocated (was zp[2]:8) zp[2]:6 [ next::return#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -312,39 +326,40 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Return value larger than parameter
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
-  .label current = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (signed word) current ← (signed word) $30 -- vwsz1=vwsc1 
-  lda #<$30
-  sta.z current
-  lda #>$30
-  sta.z current+1
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  .label current = 4
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (signed word) current ← (signed word) $30 -- vwsz1=vwsc1 
+    lda #<$30
+    sta.z current
+    lda #>$30
+    sta.z current+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    .label __0 = 4
-    .label __1 = 6
+    .label __0 = 2
+    .label __1 = 4
     // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
     pha
     pha
@@ -384,7 +399,7 @@ main: {
   // next
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 8
+    .label return = 6
     // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
     lda.z current
     sta.z return
@@ -410,47 +425,43 @@ next: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify signed word*) SCREEN = (signed word*) 1024
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const word) STACK_BASE = (word) $103
-(signed word) current loadstore zp[2]:2 27.727272727272727
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
+(signed word) current loadstore zp[2]:4 27.727272727272727
 (void()) main()
-(signed word~) main::$0 zp[2]:4 22.0
-(signed word~) main::$1 zp[2]:6 22.0
+(signed word~) main::$0 zp[2]:2 22.0
+(signed word~) main::$1 zp[2]:4 22.0
 (label) main::@return
 __stackcall (signed word()) next()
 (label) next::@return
 (const byte) next::OFFSET_STACK_RETURN = (byte) 0
 (signed word) next::return
-(signed word) next::return#0 return zp[2]:8 101.0
+(signed word) next::return#0 return zp[2]:6 101.0
 
-zp[2]:2 [ current ]
-zp[2]:4 [ main::$0 ]
-zp[2]:6 [ main::$1 ]
-zp[2]:8 [ next::return#0 ]
+zp[2]:2 [ main::$0 ]
+zp[2]:4 [ main::$1 current ]
+zp[2]:6 [ next::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -461,33 +472,34 @@ Score: 156
 // Return value larger than parameter
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
-  .label current = 2
-  // @begin
-__bbegin:
-  // @1
-  // current = 48
-  // [1] (signed word) current ← (signed word) $30 -- vwsz1=vwsc1 
-  lda #<$30
-  sta.z current
-  lda #>$30
-  sta.z current+1
-  // [2] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [3] call main 
-  jsr main
-  rts
-  // [4] phi from @2 to @end [phi:@2->@end]
-  // @end
+  .label current = 4
+  // _start
+_start: {
+    // _start::_init1
+    // current = 48
+    // [1] (signed word) current ← (signed word) $30 -- vwsz1=vwsc1 
+    lda #<$30
+    sta.z current
+    lda #>$30
+    sta.z current+1
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
-    .label __0 = 4
-    .label __1 = 6
+    .label __0 = 2
+    .label __1 = 4
     // next()
     // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
     pha
@@ -530,7 +542,7 @@ main: {
   // next
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 8
+    .label return = 6
     // return current++;
     // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
     lda.z current

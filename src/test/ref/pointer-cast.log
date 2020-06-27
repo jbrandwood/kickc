@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   *((byte*)(const byte*) ub_screen) ← (const byte) ub
   (signed byte*~) main::$20 ← (signed byte*)(const byte*) ub_screen
   (signed byte*~) main::$0 ← (signed byte*~) main::$20 + (number) 1
@@ -57,20 +56,29 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const byte) SIZEOF_WORD = (byte) 2
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (signed byte*~) main::$0
 (word*~) main::$1
@@ -246,6 +254,13 @@ Eliminating unused variable (signed byte*~) main::$9 and assignment [22] (signed
 Eliminating unused variable (word*~) main::$10 and assignment [24] (word*~) main::$10 ← (const word*) main::$30 + (const byte) main::$18
 Eliminating unused variable (signed word*~) main::$11 and assignment [26] (signed word*~) main::$11 ← (const signed word*) main::$31 + (const byte) main::$19
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant inlined main::$23 = (const signed byte*) sb_screen
 Constant inlined main::$12 = (byte) 1*(const byte) SIZEOF_WORD
 Constant inlined main::$13 = (byte) 2*(const byte) SIZEOF_SIGNED_WORD
@@ -280,52 +295,34 @@ Consolidated array index constant in *((signed byte*)sw_screen+1)
 Consolidated array index constant in *((word*)sw_screen+1*SIZEOF_WORD)
 Consolidated array index constant in *(sw_screen+2*SIZEOF_SIGNED_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const byte*) ub_screen) ← (const byte) ub
-  [5] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb
-  [6] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
-  [7] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
-  [8] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub
-  [9] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb
-  [10] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
-  [11] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
-  [12] *((byte*)(const word*) uw_screen) ← (const byte) ub
-  [13] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb
-  [14] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
-  [15] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
-  [16] *((byte*)(const signed word*) sw_screen) ← (const byte) ub
-  [17] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb
-  [18] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
-  [19] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
+main: scope:[main]  from
+  [0] *((const byte*) ub_screen) ← (const byte) ub
+  [1] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb
+  [2] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
+  [3] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
+  [4] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub
+  [5] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb
+  [6] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
+  [7] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
+  [8] *((byte*)(const word*) uw_screen) ← (const byte) ub
+  [9] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb
+  [10] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
+  [11] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
+  [12] *((byte*)(const signed word*) sw_screen) ← (const byte) ub
+  [13] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb
+  [14] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw
+  [15] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw
   to:main::@return
 main::@return: scope:[main]  from main
-  [20] return 
+  [16] return 
   to:@return
 
 
@@ -354,82 +351,68 @@ Target platform is c64basic / MOS6502X
   .label sb_screen = $428
   .label uw_screen = $450
   .label sw_screen = $478
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const byte*) ub_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) ub_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta ub_screen
-    // [5] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [1] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta ub_screen+1
-    // [6] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [2] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta ub_screen+1*SIZEOF_WORD
     lda #>uw
     sta ub_screen+1*SIZEOF_WORD+1
-    // [7] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [3] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta ub_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta ub_screen+2*SIZEOF_SIGNED_WORD+1
-    // [8] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [4] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta sb_screen
-    // [9] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [5] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen+1
-    // [10] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [6] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta sb_screen+1*SIZEOF_WORD
     lda #>uw
     sta sb_screen+1*SIZEOF_WORD+1
-    // [11] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [7] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta sb_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta sb_screen+2*SIZEOF_SIGNED_WORD+1
-    // [12] *((byte*)(const word*) uw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [8] *((byte*)(const word*) uw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta uw_screen
-    // [13] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [9] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta uw_screen+1
-    // [14] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [10] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta uw_screen+1*SIZEOF_WORD
     lda #>uw
     sta uw_screen+1*SIZEOF_WORD+1
-    // [15] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [11] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta uw_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta uw_screen+2*SIZEOF_SIGNED_WORD+1
-    // [16] *((byte*)(const signed word*) sw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [12] *((byte*)(const signed word*) sw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta sw_screen
-    // [17] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [13] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sw_screen+1
-    // [18] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [14] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta sw_screen+1*SIZEOF_WORD
     lda #>uw
     sta sw_screen+1*SIZEOF_WORD+1
-    // [19] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [15] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta sw_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
@@ -437,35 +420,35 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const byte*) ub_screen) ← (const byte) ub [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *((byte*)(const word*) uw_screen) ← (const byte) ub [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [14] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((byte*)(const signed word*) sw_screen) ← (const byte) ub [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [17] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [18] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [19] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const byte*) ub_screen) ← (const byte) ub [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const word*) uw_screen) ← (const byte) ub [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*)(const signed word*) sw_screen) ← (const byte) ub [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 165 combination 
-Uplifting [] best 165 combination 
+Uplifting [main] best 153 combination 
+Uplifting [] best 153 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -485,82 +468,68 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label sb_screen = $428
   .label uw_screen = $450
   .label sw_screen = $478
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const byte*) ub_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) ub_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta ub_screen
-    // [5] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [1] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta ub_screen+1
-    // [6] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [2] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta ub_screen+1*SIZEOF_WORD
     lda #>uw
     sta ub_screen+1*SIZEOF_WORD+1
-    // [7] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [3] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta ub_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta ub_screen+2*SIZEOF_SIGNED_WORD+1
-    // [8] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [4] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta sb_screen
-    // [9] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [5] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen+1
-    // [10] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [6] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta sb_screen+1*SIZEOF_WORD
     lda #>uw
     sta sb_screen+1*SIZEOF_WORD+1
-    // [11] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [7] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta sb_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta sb_screen+2*SIZEOF_SIGNED_WORD+1
-    // [12] *((byte*)(const word*) uw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [8] *((byte*)(const word*) uw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta uw_screen
-    // [13] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [9] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta uw_screen+1
-    // [14] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [10] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta uw_screen+1*SIZEOF_WORD
     lda #>uw
     sta uw_screen+1*SIZEOF_WORD+1
-    // [15] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [11] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta uw_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta uw_screen+2*SIZEOF_SIGNED_WORD+1
-    // [16] *((byte*)(const signed word*) sw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [12] *((byte*)(const signed word*) sw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta sw_screen
-    // [17] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [13] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sw_screen+1
-    // [18] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [14] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta sw_screen+1*SIZEOF_WORD
     lda #>uw
     sta sw_screen+1*SIZEOF_WORD+1
-    // [19] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [15] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta sw_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
@@ -568,31 +537,18 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte) SIZEOF_SIGNED_WORD = (byte) 2
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
@@ -628,97 +584,91 @@ Score: 150
   .label sb_screen = $428
   .label uw_screen = $450
   .label sw_screen = $478
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // *((byte*)ub_screen) = ub
-    // [4] *((const byte*) ub_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [0] *((const byte*) ub_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta ub_screen
     // *((signed byte*)ub_screen+1) = sb
-    // [5] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [1] *((signed byte*)(const byte*) ub_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta ub_screen+1
     // *((word*)ub_screen+1)= uw
-    // [6] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [2] *((word*)(const byte*) ub_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta ub_screen+1*SIZEOF_WORD
     lda #>uw
     sta ub_screen+1*SIZEOF_WORD+1
     // *((signed word*)ub_screen+2) = sw
-    // [7] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [3] *((signed word*)(const byte*) ub_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta ub_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta ub_screen+2*SIZEOF_SIGNED_WORD+1
     // *((byte*)sb_screen) = ub
-    // [8] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [4] *((byte*)(const signed byte*) sb_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta sb_screen
     // *((signed byte*)sb_screen+1) = sb
-    // [9] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [5] *((const signed byte*) sb_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen+1
     // *((word*)sb_screen+1)= uw
-    // [10] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [6] *((word*)(const signed byte*) sb_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta sb_screen+1*SIZEOF_WORD
     lda #>uw
     sta sb_screen+1*SIZEOF_WORD+1
     // *((signed word*)sb_screen+2) = sw
-    // [11] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [7] *((signed word*)(const signed byte*) sb_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta sb_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta sb_screen+2*SIZEOF_SIGNED_WORD+1
     // *((byte*)uw_screen) = ub
-    // [12] *((byte*)(const word*) uw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [8] *((byte*)(const word*) uw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta uw_screen
     // *((signed byte*)uw_screen+1) = sb
-    // [13] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [9] *((signed byte*)(const word*) uw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta uw_screen+1
     // *((word*)uw_screen+1)= uw
-    // [14] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [10] *((const word*) uw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta uw_screen+1*SIZEOF_WORD
     lda #>uw
     sta uw_screen+1*SIZEOF_WORD+1
     // *((signed word*)uw_screen+2) = sw
-    // [15] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [11] *((signed word*)(const word*) uw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta uw_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta uw_screen+2*SIZEOF_SIGNED_WORD+1
     // *((byte*)sw_screen) = ub
-    // [16] *((byte*)(const signed word*) sw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
+    // [12] *((byte*)(const signed word*) sw_screen) ← (const byte) ub -- _deref_pbuc1=vbuc2 
     lda #ub
     sta sw_screen
     // *((signed byte*)sw_screen+1) = sb
-    // [17] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
+    // [13] *((signed byte*)(const signed word*) sw_screen+(byte) 1) ← (const signed byte) sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sw_screen+1
     // *((word*)sw_screen+1)= uw
-    // [18] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
+    // [14] *((word*)(const signed word*) sw_screen+(byte) 1*(const byte) SIZEOF_WORD) ← (const word) uw -- _deref_pwuc1=vwuc2 
     lda #<uw
     sta sw_screen+1*SIZEOF_WORD
     lda #>uw
     sta sw_screen+1*SIZEOF_WORD+1
     // *((signed word*)sw_screen+2) = sw
-    // [19] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
+    // [15] *((const signed word*) sw_screen+(byte) 2*(const byte) SIZEOF_SIGNED_WORD) ← (const signed word) sw -- _deref_pwsc1=vwsc2 
     lda #<sw
     sta sw_screen+2*SIZEOF_SIGNED_WORD
     lda #>sw
     sta sw_screen+2*SIZEOF_SIGNED_WORD+1
     // main::@return
     // }
-    // [20] return 
+    // [16] return 
     rts
 }
   // File Data

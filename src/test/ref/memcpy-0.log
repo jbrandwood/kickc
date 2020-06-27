@@ -2,8 +2,6 @@ Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBa
 Inlined call (byte~) main::$0 ← call toD018 (const nomodify byte*) SCREEN_COPY (const nomodify byte*) CHARSET 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main::@1 main::@2
@@ -44,7 +42,7 @@ memcpy::@return: scope:[memcpy]  from memcpy::@3
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte*) main::toD0181_screen#0 ← (const nomodify byte*) SCREEN_COPY
   (byte*) main::toD0181_gfx#0 ← (const nomodify byte*) CHARSET
   to:main::toD0181
@@ -91,18 +89,18 @@ main::@3: scope:[main]  from main::@2
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) CHARGEN = (byte*)(number) $d000
 (const nomodify byte*) CHARSET = (byte*)(number) $2000
 (const nomodify byte*) D018 = (byte*)(number) $d018
@@ -195,6 +193,9 @@ SYMBOL TABLE SSA
 (const nomodify byte) PROCPORT_RAM_CHARROM = (byte) 1
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (const nomodify byte*) SCREEN_COPY = (byte*)(number) $2400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (byte~) main::$0
 (label) main::@1
@@ -340,6 +341,11 @@ Successful SSA optimization Pass2ConstantValues
 Eliminating unused variable (void*) memcpy::return#2 and assignment [20] (void*) memcpy::return#2 ← (void*) memcpy::destination#2
 Eliminating unused variable (void*) memcpy::return#3 and assignment [24] (void*) memcpy::return#3 ← (void*) memcpy::destination#2
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [11] (word~) main::toD0181_$0 ← (const word) main::toD0181_$7 & (word) $3fff
 Constant right-side identified [14] (byte~) main::toD0181_$3 ← > (word)(const byte*) main::toD0181_gfx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -388,87 +394,69 @@ Constant inlined memcpy::num#1 = (word) $800
 Constant inlined memcpy::num#0 = (word) $400
 Constant inlined memcpy::source#1 = (void*)(const nomodify byte*) CHARGEN
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
 Adding NOP phi() at start of memcpy::@3
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to memcpy:9 memcpy:12 
+Calls in [main] to memcpy:4 memcpy:7 
 
 Created 5 initial phi equivalence classes
-Coalesced [27] memcpy::src#5 ← memcpy::src#1
-Coalesced [28] memcpy::dst#5 ← memcpy::dst#1
+Coalesced [22] memcpy::src#5 ← memcpy::src#1
+Coalesced [23] memcpy::dst#5 ← memcpy::dst#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::toD0181_@return
 Culled Empty Block (label) memcpy::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toD0181
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::toD0181
 main::toD0181: scope:[main]  from main
-  [5] phi()
+  [1] phi()
   to:main::@1
 main::@1: scope:[main]  from main::toD0181
-  [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
-  [7] call memcpy 
+  [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0
+  [3] call memcpy 
   to:main::@2
 main::@2: scope:[main]  from main::@1
   asm { sei  }
-  [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM
-  [10] call memcpy 
+  [5] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM
+  [6] call memcpy 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO
+  [7] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [13] return 
+  [9] return 
   to:@return
 
 (void*()) memcpy((void*) memcpy::destination , (void*) memcpy::source , (word) memcpy::num)
 memcpy: scope:[memcpy]  from main::@1 main::@2
-  [14] (word) memcpy::num#2 ← phi( main::@1/(word) $400 main::@2/(word) $800 )
-  [14] (void*) memcpy::destination#2 ← phi( main::@1/(void*)(const nomodify byte*) SCREEN_COPY main::@2/(void*)(const nomodify byte*) CHARSET )
-  [14] (void*) memcpy::source#2 ← phi( main::@1/(void*)(const nomodify byte*) SCREEN main::@2/(void*)(const nomodify byte*) CHARGEN )
-  [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2
-  [16] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-  [17] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+  [10] (word) memcpy::num#2 ← phi( main::@1/(word) $400 main::@2/(word) $800 )
+  [10] (void*) memcpy::destination#2 ← phi( main::@1/(void*)(const nomodify byte*) SCREEN_COPY main::@2/(void*)(const nomodify byte*) CHARSET )
+  [10] (void*) memcpy::source#2 ← phi( main::@1/(void*)(const nomodify byte*) SCREEN main::@2/(void*)(const nomodify byte*) CHARGEN )
+  [11] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2
+  [12] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+  [13] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
-  [18] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*) memcpy::dst#4 memcpy::@2/(byte*) memcpy::dst#1 )
-  [18] (byte*) memcpy::src#2 ← phi( memcpy/(byte*) memcpy::src#4 memcpy::@2/(byte*) memcpy::src#1 )
-  [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
+  [14] (byte*) memcpy::dst#2 ← phi( memcpy/(byte*) memcpy::dst#4 memcpy::@2/(byte*) memcpy::dst#1 )
+  [14] (byte*) memcpy::src#2 ← phi( memcpy/(byte*) memcpy::src#4 memcpy::@2/(byte*) memcpy::src#1 )
+  [15] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2
   to:memcpy::@return
 memcpy::@return: scope:[memcpy]  from memcpy::@1
-  [20] return 
+  [16] return 
   to:@return
 memcpy::@2: scope:[memcpy]  from memcpy::@1
-  [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2)
-  [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2
-  [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2
+  [17] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2)
+  [18] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2
+  [19] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2
   to:memcpy::@1
 
 
@@ -565,20 +553,20 @@ VARIABLE REGISTER WEIGHTS
 (void*) memcpy::destination
 (void*) memcpy::destination#2
 (byte*) memcpy::dst
-(byte*) memcpy::dst#1 1001.0
-(byte*) memcpy::dst#2 1034.6666666666667
-(byte*) memcpy::dst#4 202.0
+(byte*) memcpy::dst#1 101.0
+(byte*) memcpy::dst#2 104.66666666666666
+(byte*) memcpy::dst#4 22.0
 (word) memcpy::num
-(word) memcpy::num#2 101.0
+(word) memcpy::num#2 11.0
 (void*) memcpy::return
 (void*) memcpy::source
 (void*) memcpy::source#2
 (byte*) memcpy::src
-(byte*) memcpy::src#1 2002.0
-(byte*) memcpy::src#2 1026.25
-(byte*) memcpy::src#4 101.0
+(byte*) memcpy::src#1 202.0
+(byte*) memcpy::src#2 103.75
+(byte*) memcpy::src#4 11.0
 (byte*) memcpy::src_end
-(byte*) memcpy::src_end#0 137.75
+(byte*) memcpy::src_end#0 14.0
 
 Initial phi equivalence classes
 [ memcpy::source#2 ]
@@ -622,26 +610,10 @@ Target platform is c64basic / MOS6502X
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
-    // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [1] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
     // main::toD0181
@@ -649,23 +621,23 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [7] call memcpy 
-    // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
+    // [3] call memcpy 
+    // [10] phi from main::@1 to memcpy [phi:main::@1->memcpy]
   memcpy_from___b1:
-    // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
+    // [10] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta.z memcpy.num
     lda #>$400
     sta.z memcpy.num+1
-    // [14] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) SCREEN_COPY [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) SCREEN_COPY [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<SCREEN_COPY
     sta.z memcpy.destination
     lda #>SCREEN_COPY
     sta.z memcpy.destination+1
-    // [14] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) SCREEN [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) SCREEN [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memcpy.source
     lda #>SCREEN
@@ -676,23 +648,23 @@ main: {
   __b2:
     // asm { sei  }
     sei
-    // [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
-    // [10] call memcpy 
-    // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
+    // [6] call memcpy 
+    // [10] phi from main::@2 to memcpy [phi:main::@2->memcpy]
   memcpy_from___b2:
-    // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
+    // [10] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta.z memcpy.num
     lda #>$800
     sta.z memcpy.num+1
-    // [14] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) CHARSET [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) CHARSET [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<CHARSET
     sta.z memcpy.destination
     lda #>CHARSET
     sta.z memcpy.destination+1
-    // [14] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) CHARGEN [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) CHARGEN [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
     lda #<CHARGEN
     sta.z memcpy.source
     lda #>CHARGEN
@@ -701,7 +673,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
     // asm { cli  }
@@ -709,7 +681,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // memcpy
@@ -723,7 +695,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-    // [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz3 
+    // [11] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz3 
     lda.z source
     clc
     adc.z num
@@ -731,25 +703,25 @@ memcpy: {
     lda.z source+1
     adc.z num+1
     sta.z src_end+1
-    // [16] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
+    // [12] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 -- pbuz1=pbuz2 
     lda.z source
     sta.z src
     lda.z source+1
     sta.z src+1
-    // [17] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
+    // [13] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 -- pbuz1=pbuz2 
     lda.z destination
     sta.z dst
     lda.z destination+1
     sta.z dst+1
-    // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+    // [14] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [18] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [18] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [14] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [14] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
-    // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [15] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
     bne __b2
@@ -759,21 +731,21 @@ memcpy: {
     jmp __breturn
     // memcpy::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
     // memcpy::@2
   __b2:
-    // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [17] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-    // [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [18] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
     inc.z src+1
@@ -783,14 +755,14 @@ memcpy: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:2::memcpy:7 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { }  main:2::memcpy:10 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { }  ) always clobbers reg byte a 
-Statement [16] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:2::memcpy:7 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { }  main:2::memcpy:10 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { }  ) always clobbers reg byte a 
-Statement [17] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { }  main:2::memcpy:10 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  main:2::memcpy:10 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:2::memcpy:7 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  main:2::memcpy:10 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [11] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( memcpy:3 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { }  memcpy:6 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { }  ) always clobbers reg byte a 
+Statement [12] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( memcpy:3 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { }  memcpy:6 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { }  ) always clobbers reg byte a 
+Statement [13] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( memcpy:3 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { }  memcpy:6 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [15] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( memcpy:3 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  memcpy:6 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [17] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( memcpy:3 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  memcpy:6 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ memcpy::source#2 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ memcpy::destination#2 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ memcpy::num#2 ] : zp[2]:6 , 
@@ -799,19 +771,19 @@ Potential registers zp[2]:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] : zp[
 Potential registers zp[2]:12 [ memcpy::src_end#0 ] : zp[2]:12 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memcpy] 3,129.25: zp[2]:8 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 2,237.67: zp[2]:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 137.75: zp[2]:12 [ memcpy::src_end#0 ] 101: zp[2]:6 [ memcpy::num#2 ] 0: zp[2]:2 [ memcpy::source#2 ] 0: zp[2]:4 [ memcpy::destination#2 ] 
+Uplift Scope [memcpy] 316.75: zp[2]:8 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] 227.67: zp[2]:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] 14: zp[2]:12 [ memcpy::src_end#0 ] 11: zp[2]:6 [ memcpy::num#2 ] 0: zp[2]:2 [ memcpy::source#2 ] 0: zp[2]:4 [ memcpy::destination#2 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [memcpy] best 869 combination zp[2]:8 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:12 [ memcpy::src_end#0 ] zp[2]:6 [ memcpy::num#2 ] zp[2]:2 [ memcpy::source#2 ] zp[2]:4 [ memcpy::destination#2 ] 
-Uplifting [MOS6526_CIA] best 869 combination 
-Uplifting [MOS6569_VICII] best 869 combination 
-Uplifting [MOS6581_SID] best 869 combination 
-Uplifting [main] best 869 combination 
-Uplifting [] best 869 combination 
+Uplifting [memcpy] best 857 combination zp[2]:8 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:12 [ memcpy::src_end#0 ] zp[2]:6 [ memcpy::num#2 ] zp[2]:2 [ memcpy::source#2 ] zp[2]:4 [ memcpy::destination#2 ] 
+Uplifting [MOS6526_CIA] best 857 combination 
+Uplifting [MOS6569_VICII] best 857 combination 
+Uplifting [MOS6581_SID] best 857 combination 
+Uplifting [main] best 857 combination 
+Uplifting [] best 857 combination 
 Coalescing zero page register [ zp[2]:2 [ memcpy::source#2 ] ] with [ zp[2]:8 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:4 [ memcpy::destination#2 ] ] with [ zp[2]:10 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:6 [ memcpy::num#2 ] ] with [ zp[2]:12 [ memcpy::src_end#0 ] ] - score: 1
@@ -836,26 +808,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
-    // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [1] phi from main to main::toD0181 [phi:main->main::toD0181]
   toD0181_from_main:
     jmp toD0181
     // main::toD0181
@@ -863,23 +819,23 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
-    // [7] call memcpy 
-    // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
+    // [3] call memcpy 
+    // [10] phi from main::@1 to memcpy [phi:main::@1->memcpy]
   memcpy_from___b1:
-    // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
+    // [10] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta.z memcpy.num
     lda #>$400
     sta.z memcpy.num+1
-    // [14] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) SCREEN_COPY [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) SCREEN_COPY [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<SCREEN_COPY
     sta.z memcpy.destination
     lda #>SCREEN_COPY
     sta.z memcpy.destination+1
-    // [14] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) SCREEN [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) SCREEN [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memcpy.source
     lda #>SCREEN
@@ -890,23 +846,23 @@ main: {
   __b2:
     // asm { sei  }
     sei
-    // [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
-    // [10] call memcpy 
-    // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
+    // [6] call memcpy 
+    // [10] phi from main::@2 to memcpy [phi:main::@2->memcpy]
   memcpy_from___b2:
-    // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
+    // [10] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta.z memcpy.num
     lda #>$800
     sta.z memcpy.num+1
-    // [14] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) CHARSET [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) CHARSET [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<CHARSET
     sta.z memcpy.destination
     lda #>CHARSET
     sta.z memcpy.destination+1
-    // [14] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) CHARGEN [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) CHARGEN [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
     lda #<CHARGEN
     sta.z memcpy.source
     lda #>CHARGEN
@@ -915,7 +871,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
     // asm { cli  }
@@ -923,7 +879,7 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [13] return 
+    // [9] return 
     rts
 }
   // memcpy
@@ -937,7 +893,7 @@ memcpy: {
     .label source = 2
     .label destination = 4
     .label num = 6
-    // [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+    // [11] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z src_end
     clc
     adc.z source
@@ -945,17 +901,17 @@ memcpy: {
     lda.z src_end+1
     adc.z source+1
     sta.z src_end+1
-    // [16] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-    // [17] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
-    // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+    // [12] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+    // [13] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+    // [14] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [18] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [18] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [14] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [14] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
-    // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [15] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
     bne __b2
@@ -965,21 +921,21 @@ memcpy: {
     jmp __breturn
     // memcpy::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
     // memcpy::@2
   __b2:
-    // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [17] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-    // [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [18] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
     inc.z src+1
@@ -989,8 +945,6 @@ memcpy: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp toD0181
 Removing instruction jmp __b1
 Removing instruction jmp __b2
@@ -1002,17 +956,11 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b2 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction toD0181_from_main:
 Removing instruction toD0181:
 Removing instruction __b1_from_memcpy:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1:
 Removing instruction memcpy_from___b1:
 Removing instruction __b2:
@@ -1021,13 +969,8 @@ Removing instruction __b3:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) CHARGEN = (byte*) 53248
 (const nomodify byte*) CHARSET = (byte*) 8192
 (const nomodify byte*) D018 = (byte*) 53272
@@ -1137,20 +1080,20 @@ FINAL SYMBOL TABLE
 (void*) memcpy::destination
 (void*) memcpy::destination#2 destination zp[2]:4
 (byte*) memcpy::dst
-(byte*) memcpy::dst#1 dst zp[2]:4 1001.0
-(byte*) memcpy::dst#2 dst zp[2]:4 1034.6666666666667
-(byte*) memcpy::dst#4 dst zp[2]:4 202.0
+(byte*) memcpy::dst#1 dst zp[2]:4 101.0
+(byte*) memcpy::dst#2 dst zp[2]:4 104.66666666666666
+(byte*) memcpy::dst#4 dst zp[2]:4 22.0
 (word) memcpy::num
-(word) memcpy::num#2 num zp[2]:6 101.0
+(word) memcpy::num#2 num zp[2]:6 11.0
 (void*) memcpy::return
 (void*) memcpy::source
 (void*) memcpy::source#2 source zp[2]:2
 (byte*) memcpy::src
-(byte*) memcpy::src#1 src zp[2]:2 2002.0
-(byte*) memcpy::src#2 src zp[2]:2 1026.25
-(byte*) memcpy::src#4 src zp[2]:2 101.0
+(byte*) memcpy::src#1 src zp[2]:2 202.0
+(byte*) memcpy::src#2 src zp[2]:2 103.75
+(byte*) memcpy::src#4 src zp[2]:2 11.0
 (byte*) memcpy::src_end
-(byte*) memcpy::src_end#0 src_end zp[2]:6 137.75
+(byte*) memcpy::src_end#0 src_end zp[2]:6 14.0
 
 zp[2]:2 [ memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
 zp[2]:4 [ memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
@@ -1179,37 +1122,30 @@ Score: 711
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
-    // [5] phi from main to main::toD0181 [phi:main->main::toD0181]
+    // [1] phi from main to main::toD0181 [phi:main->main::toD0181]
     // main::toD0181
     // main::@1
     // *D018 = toD018(SCREEN_COPY, CHARSET)
-    // [6] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) D018) ← (const byte) main::toD0181_return#0 -- _deref_pbuc1=vbuc2 
     lda #toD0181_return
     sta D018
     // memcpy(SCREEN_COPY, SCREEN, 0x0400)
-    // [7] call memcpy 
-    // [14] phi from main::@1 to memcpy [phi:main::@1->memcpy]
-    // [14] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
+    // [3] call memcpy 
+    // [10] phi from main::@1 to memcpy [phi:main::@1->memcpy]
+    // [10] phi (word) memcpy::num#2 = (word) $400 [phi:main::@1->memcpy#0] -- vwuz1=vwuc1 
     lda #<$400
     sta.z memcpy.num
     lda #>$400
     sta.z memcpy.num+1
-    // [14] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) SCREEN_COPY [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) SCREEN_COPY [phi:main::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<SCREEN_COPY
     sta.z memcpy.destination
     lda #>SCREEN_COPY
     sta.z memcpy.destination+1
-    // [14] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) SCREEN [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) SCREEN [phi:main::@1->memcpy#2] -- pvoz1=pvoc1 
     lda #<SCREEN
     sta.z memcpy.source
     lda #>SCREEN
@@ -1220,23 +1156,23 @@ main: {
     // asm { sei  }
     sei
     // *PROCPORT = PROCPORT_RAM_CHARROM
-    // [9] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
+    // [5] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_CHARROM -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_CHARROM
     sta PROCPORT
     // memcpy(CHARSET, CHARGEN, 0x0800)
-    // [10] call memcpy 
-    // [14] phi from main::@2 to memcpy [phi:main::@2->memcpy]
-    // [14] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
+    // [6] call memcpy 
+    // [10] phi from main::@2 to memcpy [phi:main::@2->memcpy]
+    // [10] phi (word) memcpy::num#2 = (word) $800 [phi:main::@2->memcpy#0] -- vwuz1=vwuc1 
     lda #<$800
     sta.z memcpy.num
     lda #>$800
     sta.z memcpy.num+1
-    // [14] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) CHARSET [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::destination#2 = (void*)(const nomodify byte*) CHARSET [phi:main::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<CHARSET
     sta.z memcpy.destination
     lda #>CHARSET
     sta.z memcpy.destination+1
-    // [14] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) CHARGEN [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
+    // [10] phi (void*) memcpy::source#2 = (void*)(const nomodify byte*) CHARGEN [phi:main::@2->memcpy#2] -- pvoz1=pvoc1 
     lda #<CHARGEN
     sta.z memcpy.source
     lda #>CHARGEN
@@ -1244,7 +1180,7 @@ main: {
     jsr memcpy
     // main::@3
     // *PROCPORT = PROCPORT_BASIC_KERNEL_IO
-    // [11] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
+    // [7] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_BASIC_KERNEL_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_BASIC_KERNEL_IO
     sta PROCPORT
     // asm
@@ -1252,7 +1188,7 @@ main: {
     cli
     // main::@return
     // }
-    // [13] return 
+    // [9] return 
     rts
 }
   // memcpy
@@ -1267,7 +1203,7 @@ memcpy: {
     .label destination = 4
     .label num = 6
     // src_end = (char*)source+num
-    // [15] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
+    // [11] (byte*) memcpy::src_end#0 ← (byte*)(void*) memcpy::source#2 + (word) memcpy::num#2 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z src_end
     clc
     adc.z source
@@ -1275,15 +1211,15 @@ memcpy: {
     lda.z src_end+1
     adc.z source+1
     sta.z src_end+1
-    // [16] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
-    // [17] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
-    // [18] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-    // [18] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [18] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [12] (byte*) memcpy::src#4 ← (byte*)(void*) memcpy::source#2
+    // [13] (byte*) memcpy::dst#4 ← (byte*)(void*) memcpy::destination#2
+    // [14] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+    // [14] phi (byte*) memcpy::dst#2 = (byte*) memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [14] phi (byte*) memcpy::src#2 = (byte*) memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
   __b1:
     // while(src!=src_end)
-    // [19] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [15] if((byte*) memcpy::src#2!=(byte*) memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
     bne __b2
@@ -1292,22 +1228,22 @@ memcpy: {
     bne __b2
     // memcpy::@return
     // }
-    // [20] return 
+    // [16] return 
     rts
     // memcpy::@2
   __b2:
     // *dst++ = *src++
-    // [21] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [17] *((byte*) memcpy::dst#2) ← *((byte*) memcpy::src#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     sta (dst),y
     // *dst++ = *src++;
-    // [22] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [18] (byte*) memcpy::dst#1 ← ++ (byte*) memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [23] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [19] (byte*) memcpy::src#1 ← ++ (byte*) memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inc.z src
     bne !+
     inc.z src+1

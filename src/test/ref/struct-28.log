@@ -3,11 +3,9 @@ Fixing struct type SIZE_OF struct Point to 3
 Fixing struct type SIZE_OF struct Point to 3
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
   (struct Point) main::point1 ← struct-unwound {*(&(struct Point) main::point1)}
   *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_X)
@@ -17,25 +15,28 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
 (const struct Point) $0 = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte) OFFSET_STRUCT_POINT_INITIALS = (byte) 1
 (const byte) OFFSET_STRUCT_POINT_X = (byte) 0
 (const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
 (byte) Point::x
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (const byte) SIZEOF_STRUCT_POINT = (byte) 3
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (label) main::@return
 (struct Point) main::point1 loadstore
@@ -66,44 +67,31 @@ Simplifying expression containing zero (byte*)&main::point1+OFFSET_STRUCT_POINT_
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *((byte*)&main::point1+OFFSET_STRUCT_POINT_INITIALS+1)
 Consolidated array index constant in *(SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
-  [5] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1)
-  [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS)
-  [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1)
+main: scope:[main]  from
+  [0] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT)
+  [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1)
+  [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS)
+  [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1)
   to:main::@return
 main::@return: scope:[main]  from main
-  [8] return 
+  [4] return 
   to:@return
 
 
@@ -130,53 +118,39 @@ Target platform is c64basic / MOS6502X
   .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label point1 = 2
-    // [4] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    // [0] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
     sta point1-1,y
     dey
     bne !-
-    // [5] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) -- _deref_pbuc1=_deref_pbuc2 
     lda.z point1
     sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
-    // [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
   __0: .byte 2, 'j', 'g'
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::point1 ] ( main:2 [ main::point1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [5] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) [ main::point1 ] ( main:2 [ main::point1 ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) [ main::point1 ] ( main:2 [ main::point1 ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) [ main::point1 ] (  [ main::point1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) [ main::point1 ] (  [ main::point1 ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) [ main::point1 ] (  [ main::point1 ] { }  ) always clobbers reg byte a 
+Statement [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[3]:2 [ main::point1 ] : zp[3]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -184,9 +158,9 @@ Uplift Scope [Point]
 Uplift Scope [main] 0: zp[3]:2 [ main::point1 ] 
 Uplift Scope [] 
 
-Uplifting [Point] best 60 combination 
-Uplifting [main] best 60 combination zp[3]:2 [ main::point1 ] 
-Uplifting [] best 60 combination 
+Uplifting [Point] best 48 combination 
+Uplifting [main] best 48 combination zp[3]:2 [ main::point1 ] 
+Uplifting [] best 48 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -199,69 +173,42 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label point1 = 2
-    // [4] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    // [0] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
     sta point1-1,y
     dey
     bne !-
-    // [5] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) -- _deref_pbuc1=_deref_pbuc2 
     lda.z point1
     sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
-    // [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     jmp __breturn
     // main::@return
   __breturn:
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data
   __0: .byte 2, 'j', 'g'
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
 (const struct Point) $0 = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
-(label) @1
-(label) @begin
-(label) @end
 (const byte) OFFSET_STRUCT_POINT_INITIALS = (byte) 1
 (const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
 (byte) Point::x
@@ -287,17 +234,11 @@ Score: 45
   .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label point1 = 2
     // point1 = { 2, { 'j', 'g' } }
-    // [4] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
+    // [0] *(&(struct Point) main::point1) ← memcpy(*(&(const struct Point) $0), struct Point, (const byte) SIZEOF_STRUCT_POINT) -- _deref_pssc1=_deref_pssc2_memcpy_vbuc3 
     ldy #SIZEOF_STRUCT_POINT
   !:
     lda __0-1,y
@@ -305,20 +246,20 @@ main: {
     dey
     bne !-
     // SCREEN[0] = point1.x
-    // [5] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) main::point1) -- _deref_pbuc1=_deref_pbuc2 
     lda.z point1
     sta SCREEN
     // SCREEN[1] = point1.initials[0]
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // SCREEN[2] = point1.initials[1]
-    // [7] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [3] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) main::point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     // main::@return
     // }
-    // [8] return 
+    // [4] return 
     rts
 }
   // File Data

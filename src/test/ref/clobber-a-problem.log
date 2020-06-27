@@ -1,19 +1,15 @@
 Resolved forward reference irq to interrupt(HARDWARE_CLOBBER)(void()) irq()
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq()
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
-  (volatile byte) irq_raster_next ← (byte) 0
-  to:@2
 
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 irq: scope:[irq]  from
@@ -37,24 +33,33 @@ irq::@2: scope:[irq]  from irq
 irq::@return: scope:[irq]  from irq::@1
   return 
   to:@return
-@2: scope:[]  from @1
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte) irq_raster_next ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@3
-@3: scope:[]  from @2
-  to:@end
-@end: scope:[]  from @3
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @3
-(label) @begin
-(label) @end
 (const byte) BLACK = (byte) 0
 (const byte*) BORDER_COLOR = (byte*)(number) $d020
 (const byte) DARK_GREY = (byte) $b
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (const byte*) RASTER = (byte*)(number) $d012
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (number~) irq::$0
 (bool~) irq::$1
@@ -91,46 +96,47 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) irq::$0 ← (byte) irq::raster_next#0 & (byte) 7
-Inversing boolean not [8] (bool~) irq::$2 ← (byte~) irq::$0 != (byte) 0 from [7] (bool~) irq::$1 ← (byte~) irq::$0 == (byte) 0
+Inversing boolean not [7] (bool~) irq::$2 ← (byte~) irq::$0 != (byte) 0 from [6] (bool~) irq::$1 ← (byte~) irq::$0 == (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias irq::raster_next#0 = irq::raster_next#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) irq::$2 [8] if((byte~) irq::$0!=(byte) 0) goto irq::@1
+Simple Condition (bool~) irq::$2 [7] if((byte~) irq::$0!=(byte) 0) goto irq::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Added new block during phi lifting irq::@3(between irq and irq::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @3
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 CALL GRAPH
-Calls in [] to main:3 
+Calls in [_start] to main:3 
 
 Created 1 initial phi equivalence classes
 Coalesced [14] irq::raster_next#5 ← irq::raster_next#1
 Coalesced [19] irq::raster_next#4 ← irq::raster_next#0
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @3
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) irq::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
+
+(void()) _start()
+_start: scope:[_start]  from
   [0] phi()
-  to:@1
-@1: scope:[]  from @begin
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
   [1] (volatile byte) irq_raster_next ← (byte) 0
-  to:@2
-@2: scope:[]  from @1
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   [2] phi()
   [3] call main 
-  to:@end
-@end: scope:[]  from @2
-  [4] phi()
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @2
+main: scope:[main]  from _start::@1
   [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq()
   to:main::@return
 main::@return: scope:[main]  from main
@@ -159,6 +165,7 @@ irq::@return: scope:[irq]  from irq::@1
 
 
 VARIABLE REGISTER WEIGHTS
+(void()) _start()
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte~) irq::$0 4.0
 (byte) irq::raster_next
@@ -185,7 +192,7 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const DARK_GREY = $b
@@ -194,26 +201,27 @@ Target platform is c64basic / MOS6502X
   .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 3
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte) irq_raster_next ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z irq_raster_next
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) irq_raster_next ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z irq_raster_next
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
@@ -301,12 +309,14 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [irq] 12.67: zp[1]:2 [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] 4: zp[1]:4 [ irq::$0 ] 
 Uplift Scope [] 4: zp[1]:3 [ irq_raster_next ] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [irq] best 246 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
-Uplifting [] best 246 combination zp[1]:3 [ irq_raster_next ] 
-Uplifting [main] best 246 combination 
+Uplifting [irq] best 252 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
+Uplifting [] best 252 combination zp[1]:3 [ irq_raster_next ] 
+Uplifting [main] best 252 combination 
+Uplifting [_start] best 252 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ irq_raster_next ]
-Uplifting [] best 246 combination zp[1]:3 [ irq_raster_next ] 
+Uplifting [] best 252 combination zp[1]:3 [ irq_raster_next ] 
 Allocated (was zp[1]:3) zp[1]:2 [ irq_raster_next ]
 Interrupt procedure irq clobbers AXCNZ
 Removing interrupt register storage sty regy+1 in 16 entry interrupt(HARDWARE_CLOBBER)
@@ -317,7 +327,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const DARK_GREY = $b
@@ -326,26 +336,27 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
-  // @begin
-__bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [1] (volatile byte) irq_raster_next ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z irq_raster_next
-  // [2] phi from @1 to @2 [phi:@1->@2]
-__b2_from___b1:
-  jmp __b2
-  // @2
-__b2:
-  // [3] call main 
-  jsr main
-  // [4] phi from @2 to @end [phi:@2->@end]
-__bend_from___b2:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) irq_raster_next ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z irq_raster_next
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
     // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(HARDWARE_CLOBBER)(void()) irq() -- _deref_pptc1=pprc2 
@@ -410,9 +421,9 @@ irq: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __b2
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b2
 Removing instruction jmp __b1
@@ -421,31 +432,28 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldx.z irq_raster_next
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from_irq with __b1
-Removing instruction __b1:
-Removing instruction __b2_from___b1:
-Removing instruction __bend_from___b2:
+Removing instruction __b1_from__init1:
 Removing instruction __b1_from_irq:
 Removing instruction __b1_from___b2:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __b2:
-Removing instruction __bend:
+Removing instruction _init1:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte) BLACK = (byte) 0
 (const byte*) BORDER_COLOR = (byte*) 53280
 (const byte) DARK_GREY = (byte) $b
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
 (const byte*) RASTER = (byte*) 53266
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 interrupt(HARDWARE_CLOBBER)(void()) irq()
 (byte~) irq::$0 reg byte a 4.0
 (label) irq::@1
@@ -470,7 +478,7 @@ Score: 159
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const DARK_GREY = $b
@@ -479,20 +487,21 @@ Score: 159
   .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
-  // @begin
-__bbegin:
-  // @1
-  // irq_raster_next = 0
-  // [1] (volatile byte) irq_raster_next ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z irq_raster_next
-  // [2] phi from @1 to @2 [phi:@1->@2]
-  // @2
-  // [3] call main 
-  jsr main
-  rts
-  // [4] phi from @2 to @end [phi:@2->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // irq_raster_next = 0
+    // [1] (volatile byte) irq_raster_next ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z irq_raster_next
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
     // *KERNEL_IRQ = &irq

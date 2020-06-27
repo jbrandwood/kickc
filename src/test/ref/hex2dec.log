@@ -4,11 +4,9 @@ Setting inferred volatile on symbol affected by address-of (byte~) utoa16w::$8 �
 Setting inferred volatile on symbol affected by address-of (byte~) utoa16w::$11 ← call utoa16n (number~) utoa16w::$10 &(volatile byte*) utoa16w::dst (number) 1 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   asm { sei  }
   call cls 
   to:main::@6
@@ -302,23 +300,26 @@ utoa16n::@return: scope:[utoa16n]  from utoa16n::@2
   (byte) utoa16n::return#5 ← (byte) utoa16n::return#9
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BORDER_COLOR = (byte*)(number) $d020
 (const byte*) DIGITS[]  = (byte*) "0123456789abcdef"
 (const byte) SIZEOF_WORD = (byte) 2
 (const word*) UTOA10_SUB[]  = { (word) $7530, (word) $2710, (word) $bb8, (word) $3e8, (word) $12c, (word) $64, (word) $1e, (word) $a }
 (const byte*) UTOA10_VAL[]  = { (byte) 3, (byte) 1, (byte) 3, (byte) 1, (byte) 3, (byte) 1, (byte) 3, (byte) 1 }
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) cls()
 (byte*~) cls::$0
 (bool~) cls::$1
@@ -783,8 +784,13 @@ Eliminating unused variable (byte) utoa16n::return#2 and assignment [80] (byte) 
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) 1 in if((byte*) cls::sc#1!=(byte*)(const byte*) cls::$0+(number) 1) goto cls::@1
-Adding number conversion cast (unumber) 8 in if((byte) utoa10w::i#1!=(number) 8) goto utoa10w::@1
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding number conversion cast (unumber) 1 in [41] if((byte*) cls::sc#1!=(byte*)(const byte*) cls::$0+(number) 1) goto cls::@1
+Adding number conversion cast (unumber) 8 in [53] if((byte) utoa10w::i#1!=(number) 8) goto utoa10w::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast (const byte*) cls::$0+(unumber)(number) 1
 Simplifying constant integer cast 1
@@ -887,10 +893,6 @@ Added new block during phi lifting utoa10w::@9(between utoa10w::@6 and utoa10w::
 Added new block during phi lifting utoa10w::@10(between utoa10w::@3 and utoa10w::@6)
 Added new block during phi lifting utoa10w::@11(between utoa10w::@4 and utoa10w::@7)
 Added new block during phi lifting utoa16n::@5(between utoa16n and utoa16n::@1)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@12
@@ -898,37 +900,35 @@ Adding NOP phi() at start of utoa16n::@3
 Adding NOP phi() at start of utoa16n::@2
 Adding NOP phi() at start of cls
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to cls:6 utoa16w:16 utoa16w:19 utoa16w:22 utoa16w:25 utoa16w:28 utoa10w:33 
-Calls in [utoa16w] to utoa16n:79 utoa16n:87 utoa16n:95 utoa16n:99 
+Calls in [main] to cls:1 utoa16w:11 utoa16w:14 utoa16w:17 utoa16w:20 utoa16w:23 utoa10w:28 
+Calls in [utoa16w] to utoa16n:74 utoa16n:82 utoa16n:90 utoa16n:94 
 
 Created 14 initial phi equivalence classes
-Coalesced [39] main::i#4 ← main::i#1
-Coalesced [40] utoa10w::value#11 ← utoa10w::value#0
-Coalesced [49] utoa10w::dst#17 ← utoa10w::dst#1
-Coalesced [51] utoa10w::dst#15 ← utoa10w::dst#8
-Coalesced [60] utoa10w::i#10 ← utoa10w::i#1
-Coalesced (already) [61] utoa10w::value#13 ← utoa10w::value#10
-Coalesced [62] utoa10w::digit#10 ← utoa10w::digit#7
-Coalesced (already) [63] utoa10w::bStarted#8 ← utoa10w::bStarted#2
-Coalesced [64] utoa10w::dst#13 ← utoa10w::dst#4
-Coalesced (already) [65] utoa10w::dst#16 ← utoa10w::dst#11
-Coalesced (already) [66] utoa10w::dst#14 ← utoa10w::dst#11
-Coalesced (already) [67] utoa10w::digit#11 ← utoa10w::digit#3
-Coalesced (already) [71] utoa10w::i#9 ← utoa10w::i#2
-Coalesced [72] utoa10w::value#12 ← utoa10w::value#1
-Coalesced [73] utoa10w::digit#9 ← utoa10w::digit#1
-Coalesced (already) [74] utoa10w::dst#12 ← utoa10w::dst#11
-Coalesced [78] utoa16n::nybble#8 ← utoa16n::nybble#0
-Coalesced [85] utoa16n::nybble#9 ← utoa16n::nybble#1
-Coalesced [86] utoa16n::started#9 ← utoa16n::started#1
-Coalesced [93] utoa16n::nybble#10 ← utoa16n::nybble#2
-Coalesced [94] utoa16n::started#10 ← utoa16n::started#2
-Coalesced [98] utoa16n::nybble#11 ← utoa16n::nybble#3
-Coalesced [111] utoa16n::return#10 ← utoa16n::started#7
-Coalesced [118] cls::sc#3 ← cls::sc#1
+Coalesced [34] main::i#4 ← main::i#1
+Coalesced [35] utoa10w::value#11 ← utoa10w::value#0
+Coalesced [44] utoa10w::dst#17 ← utoa10w::dst#1
+Coalesced [46] utoa10w::dst#15 ← utoa10w::dst#8
+Coalesced [55] utoa10w::i#10 ← utoa10w::i#1
+Coalesced (already) [56] utoa10w::value#13 ← utoa10w::value#10
+Coalesced [57] utoa10w::digit#10 ← utoa10w::digit#7
+Coalesced (already) [58] utoa10w::bStarted#8 ← utoa10w::bStarted#2
+Coalesced [59] utoa10w::dst#13 ← utoa10w::dst#4
+Coalesced (already) [60] utoa10w::dst#16 ← utoa10w::dst#11
+Coalesced (already) [61] utoa10w::dst#14 ← utoa10w::dst#11
+Coalesced (already) [62] utoa10w::digit#11 ← utoa10w::digit#3
+Coalesced (already) [66] utoa10w::i#9 ← utoa10w::i#2
+Coalesced [67] utoa10w::value#12 ← utoa10w::value#1
+Coalesced [68] utoa10w::digit#9 ← utoa10w::digit#1
+Coalesced (already) [69] utoa10w::dst#12 ← utoa10w::dst#11
+Coalesced [73] utoa16n::nybble#8 ← utoa16n::nybble#0
+Coalesced [80] utoa16n::nybble#9 ← utoa16n::nybble#1
+Coalesced [81] utoa16n::started#9 ← utoa16n::started#1
+Coalesced [88] utoa16n::nybble#10 ← utoa16n::nybble#2
+Coalesced [89] utoa16n::started#10 ← utoa16n::started#2
+Coalesced [93] utoa16n::nybble#11 ← utoa16n::nybble#3
+Coalesced [106] utoa16n::return#10 ← utoa16n::started#7
+Coalesced [113] cls::sc#3 ← cls::sc#1
 Coalesced down to 10 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@6
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) main::@12
@@ -949,267 +949,255 @@ Renumbering block main::@10 to main::@8
 Renumbering block main::@11 to main::@9
 Renumbering block utoa16n::@4 to utoa16n::@2
 Renumbering block utoa16n::@5 to utoa16n::@3
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of utoa10w
 Adding NOP phi() at start of utoa16n::@3
 Adding NOP phi() at start of cls
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from
   asm { sei  }
-  [5] call cls 
+  [1] call cls 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3
-  [6] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80
-  [7] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1
-  [8] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2
-  [9] if((byte) main::rst#0!=(byte) $30) goto main::@1
+  [2] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80
+  [3] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1
+  [4] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2
+  [5] if((byte) main::rst#0!=(byte) $30) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [10] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1
-  [11] (byte) main::time_start#0 ← *((const nomodify byte*) raster)
-  [12] (volatile byte*) utoa16w::dst ← (byte*) 1024
-  [13] call utoa16w 
+  [6] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1
+  [7] (byte) main::time_start#0 ← *((const nomodify byte*) raster)
+  [8] (volatile byte*) utoa16w::dst ← (byte*) 1024
+  [9] call utoa16w 
   to:main::@5
 main::@5: scope:[main]  from main::@2
-  [14] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
-  [15] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28
-  [16] call utoa16w 
+  [10] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
+  [11] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28
+  [12] call utoa16w 
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [17] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
-  [18] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28
-  [19] call utoa16w 
+  [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
+  [14] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28
+  [15] call utoa16w 
   to:main::@7
 main::@7: scope:[main]  from main::@6
-  [20] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
-  [21] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28
-  [22] call utoa16w 
+  [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
+  [17] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28
+  [18] call utoa16w 
   to:main::@8
 main::@8: scope:[main]  from main::@7
-  [23] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
-  [24] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28
-  [25] call utoa16w 
+  [19] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR)
+  [20] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28
+  [21] call utoa16w 
   to:main::@9
 main::@9: scope:[main]  from main::@8
-  [26] (byte) main::time_end#0 ← *((const nomodify byte*) raster)
-  [27] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0
-  [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0
-  [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0
-  [30] call utoa10w 
+  [22] (byte) main::time_end#0 ← *((const nomodify byte*) raster)
+  [23] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0
+  [24] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0
+  [25] (word) utoa10w::value#0 ← (word)(byte) main::time#0
+  [26] call utoa10w 
   to:main::@3
 main::@3: scope:[main]  from main::@4 main::@9
-  [31] (byte) main::i#2 ← phi( main::@9/(byte) 0 main::@4/(byte) main::i#1 )
-  [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4
+  [27] (byte) main::i#2 ← phi( main::@9/(byte) 0 main::@4/(byte) main::i#1 )
+  [28] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4
   to:main::@1
 main::@4: scope:[main]  from main::@3
-  [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2)
-  [34] (byte) main::i#1 ← ++ (byte) main::i#2
+  [29] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2)
+  [30] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@3
 
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
 utoa10w: scope:[utoa10w]  from main::@9
-  [35] phi()
+  [31] phi()
   to:utoa10w::@1
 utoa10w::@1: scope:[utoa10w]  from utoa10w utoa10w::@2 utoa10w::@6
-  [36] (byte*) utoa10w::dst#11 ← phi( utoa10w/(byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 utoa10w::@2/(byte*) utoa10w::dst#11 utoa10w::@6/(byte*) utoa10w::dst#4 )
-  [36] (byte) utoa10w::bStarted#2 ← phi( utoa10w/(byte) 0 utoa10w::@2/(byte) 1 utoa10w::@6/(byte) utoa10w::bStarted#2 )
-  [36] (byte) utoa10w::digit#3 ← phi( utoa10w/(byte) 0 utoa10w::@2/(byte) utoa10w::digit#1 utoa10w::@6/(byte) utoa10w::digit#7 )
-  [36] (word) utoa10w::value#10 ← phi( utoa10w/(word) utoa10w::value#0 utoa10w::@2/(word) utoa10w::value#1 utoa10w::@6/(word) utoa10w::value#10 )
-  [36] (byte) utoa10w::i#2 ← phi( utoa10w/(byte) 0 utoa10w::@2/(byte) utoa10w::i#2 utoa10w::@6/(byte) utoa10w::i#1 )
-  [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1
-  [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2
+  [32] (byte*) utoa10w::dst#11 ← phi( utoa10w/(byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 utoa10w::@2/(byte*) utoa10w::dst#11 utoa10w::@6/(byte*) utoa10w::dst#4 )
+  [32] (byte) utoa10w::bStarted#2 ← phi( utoa10w/(byte) 0 utoa10w::@2/(byte) 1 utoa10w::@6/(byte) utoa10w::bStarted#2 )
+  [32] (byte) utoa10w::digit#3 ← phi( utoa10w/(byte) 0 utoa10w::@2/(byte) utoa10w::digit#1 utoa10w::@6/(byte) utoa10w::digit#7 )
+  [32] (word) utoa10w::value#10 ← phi( utoa10w/(word) utoa10w::value#0 utoa10w::@2/(word) utoa10w::value#1 utoa10w::@6/(word) utoa10w::value#10 )
+  [32] (byte) utoa10w::i#2 ← phi( utoa10w/(byte) 0 utoa10w::@2/(byte) utoa10w::i#2 utoa10w::@6/(byte) utoa10w::i#1 )
+  [33] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1
+  [34] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2
   to:utoa10w::@3
 utoa10w::@3: scope:[utoa10w]  from utoa10w::@1
-  [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1
-  [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6
+  [35] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1
+  [36] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6
   to:utoa10w::@4
 utoa10w::@4: scope:[utoa10w]  from utoa10w::@3
-  [41] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7
+  [37] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7
   to:utoa10w::@5
 utoa10w::@5: scope:[utoa10w]  from utoa10w::@4
-  [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3)
-  [43] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11
+  [38] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3)
+  [39] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11
   to:utoa10w::@7
 utoa10w::@7: scope:[utoa10w]  from utoa10w::@4 utoa10w::@5
-  [44] (byte*) utoa10w::dst#8 ← phi( utoa10w::@4/(byte*) utoa10w::dst#11 utoa10w::@5/(byte*) utoa10w::dst#1 )
+  [40] (byte*) utoa10w::dst#8 ← phi( utoa10w::@4/(byte*) utoa10w::dst#11 utoa10w::@5/(byte*) utoa10w::dst#1 )
   to:utoa10w::@6
 utoa10w::@6: scope:[utoa10w]  from utoa10w::@3 utoa10w::@7
-  [45] (byte) utoa10w::digit#7 ← phi( utoa10w::@3/(byte) utoa10w::digit#3 utoa10w::@7/(byte) 0 )
-  [45] (byte*) utoa10w::dst#4 ← phi( utoa10w::@3/(byte*) utoa10w::dst#11 utoa10w::@7/(byte*) utoa10w::dst#8 )
-  [46] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2
-  [47] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1
+  [41] (byte) utoa10w::digit#7 ← phi( utoa10w::@3/(byte) utoa10w::digit#3 utoa10w::@7/(byte) 0 )
+  [41] (byte*) utoa10w::dst#4 ← phi( utoa10w::@3/(byte*) utoa10w::dst#11 utoa10w::@7/(byte*) utoa10w::dst#8 )
+  [42] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2
+  [43] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1
   to:utoa10w::@8
 utoa10w::@8: scope:[utoa10w]  from utoa10w::@6
-  [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10
-  [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9)
-  [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4
-  [51] *((byte*) utoa10w::dst#2) ← (byte) 0
+  [44] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10
+  [45] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9)
+  [46] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4
+  [47] *((byte*) utoa10w::dst#2) ← (byte) 0
   to:utoa10w::@return
 utoa10w::@return: scope:[utoa10w]  from utoa10w::@8
-  [52] return 
+  [48] return 
   to:@return
 utoa10w::@2: scope:[utoa10w]  from utoa10w::@1
-  [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2)
-  [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1
-  [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8)
+  [49] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2)
+  [50] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1
+  [51] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8)
   to:utoa10w::@1
 
 (void()) utoa16w((word) utoa16w::value , (volatile byte*) utoa16w::dst)
 utoa16w: scope:[utoa16w]  from main::@2 main::@5 main::@6 main::@7 main::@8
-  [56] (word) utoa16w::value#5 ← phi( main::@8/(word) $e608 main::@2/(byte) 0 main::@5/(word) $4d2 main::@6/(word) $162e main::@7/(word) $270f )
-  [57] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5
-  [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4
-  [59] call utoa16n 
-  [60] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4
+  [52] (word) utoa16w::value#5 ← phi( main::@8/(word) $e608 main::@2/(byte) 0 main::@5/(word) $4d2 main::@6/(word) $162e main::@7/(word) $270f )
+  [53] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5
+  [54] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4
+  [55] call utoa16n 
+  [56] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4
   to:utoa16w::@1
 utoa16w::@1: scope:[utoa16w]  from utoa16w
-  [61] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0
-  [62] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5
-  [63] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f
-  [64] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1
-  [65] call utoa16n 
-  [66] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4
+  [57] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0
+  [58] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5
+  [59] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f
+  [60] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1
+  [61] call utoa16n 
+  [62] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4
   to:utoa16w::@2
 utoa16w::@2: scope:[utoa16w]  from utoa16w::@1
-  [67] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1
-  [68] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5
-  [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4
-  [70] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2
-  [71] call utoa16n 
+  [63] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1
+  [64] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5
+  [65] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4
+  [66] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2
+  [67] call utoa16n 
   to:utoa16w::@3
 utoa16w::@3: scope:[utoa16w]  from utoa16w::@2
-  [72] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5
-  [73] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f
-  [74] call utoa16n 
+  [68] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5
+  [69] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f
+  [70] call utoa16n 
   to:utoa16w::@4
 utoa16w::@4: scope:[utoa16w]  from utoa16w::@3
-  [75] *((volatile byte*) utoa16w::dst) ← (byte) 0
+  [71] *((volatile byte*) utoa16w::dst) ← (byte) 0
   to:utoa16w::@return
 utoa16w::@return: scope:[utoa16w]  from utoa16w::@4
-  [76] return 
+  [72] return 
   to:@return
 
 (byte()) utoa16n((byte) utoa16n::nybble , (word**) utoa16n::dst , (byte) utoa16n::started)
 utoa16n: scope:[utoa16n]  from utoa16w utoa16w::@1 utoa16w::@2 utoa16w::@3
-  [77] (byte) utoa16n::started#7 ← phi( utoa16w/(byte) 0 utoa16w::@1/(byte) utoa16n::started#1 utoa16w::@2/(byte) utoa16n::started#2 utoa16w::@3/(byte) 1 )
-  [77] (byte) utoa16n::nybble#4 ← phi( utoa16w/(byte) utoa16n::nybble#0 utoa16w::@1/(byte) utoa16n::nybble#1 utoa16w::@2/(byte) utoa16n::nybble#2 utoa16w::@3/(byte) utoa16n::nybble#3 )
-  [78] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3
+  [73] (byte) utoa16n::started#7 ← phi( utoa16w/(byte) 0 utoa16w::@1/(byte) utoa16n::started#1 utoa16w::@2/(byte) utoa16n::started#2 utoa16w::@3/(byte) 1 )
+  [73] (byte) utoa16n::nybble#4 ← phi( utoa16w/(byte) utoa16n::nybble#0 utoa16w::@1/(byte) utoa16n::nybble#1 utoa16w::@2/(byte) utoa16n::nybble#2 utoa16w::@3/(byte) utoa16n::nybble#3 )
+  [74] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3
   to:utoa16n::@1
 utoa16n::@3: scope:[utoa16n]  from utoa16n
-  [79] phi()
+  [75] phi()
   to:utoa16n::@1
 utoa16n::@1: scope:[utoa16n]  from utoa16n utoa16n::@3
-  [80] (byte) utoa16n::return#4 ← phi( utoa16n::@3/(byte) utoa16n::started#7 utoa16n/(byte) 1 )
-  [81] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return
+  [76] (byte) utoa16n::return#4 ← phi( utoa16n::@3/(byte) utoa16n::started#7 utoa16n/(byte) 1 )
+  [77] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return
   to:utoa16n::@2
 utoa16n::@2: scope:[utoa16n]  from utoa16n::@1
-  [82] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4)
-  [83] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst)
+  [78] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4)
+  [79] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst)
   to:utoa16n::@return
 utoa16n::@return: scope:[utoa16n]  from utoa16n::@1 utoa16n::@2
-  [84] return 
+  [80] return 
   to:@return
 
 (void()) cls()
 cls: scope:[cls]  from main
-  [85] phi()
+  [81] phi()
   to:cls::@1
 cls::@1: scope:[cls]  from cls cls::@1
-  [86] (byte*) cls::sc#2 ← phi( cls/(const byte*) cls::screen cls::@1/(byte*) cls::sc#1 )
-  [87] *((byte*) cls::sc#2) ← (byte) ' '
-  [88] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2
-  [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1
+  [82] (byte*) cls::sc#2 ← phi( cls/(const byte*) cls::screen cls::@1/(byte*) cls::sc#1 )
+  [83] *((byte*) cls::sc#2) ← (byte) ' '
+  [84] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2
+  [85] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1
   to:cls::@return
 cls::@return: scope:[cls]  from cls::@1
-  [90] return 
+  [86] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) cls()
 (byte*) cls::sc
-(byte*) cls::sc#1 1501.5
-(byte*) cls::sc#2 1501.5
+(byte*) cls::sc#1 151.5
+(byte*) cls::sc#2 151.5
 (void()) main()
-(byte~) main::$1 1001.0
-(byte~) main::$2 2002.0
+(byte~) main::$1 101.0
+(byte~) main::$2 202.0
 (byte) main::i
-(byte) main::i#1 2002.0
-(byte) main::i#2 1668.3333333333335
+(byte) main::i#1 202.0
+(byte) main::i#2 168.33333333333331
 (byte) main::rst
-(byte) main::rst#0 2002.0
+(byte) main::rst#0 202.0
 (byte*) main::screen
 (byte) main::time
-(byte) main::time#0 101.0
+(byte) main::time#0 11.0
 (byte) main::time_end
-(byte) main::time_end#0 101.0
+(byte) main::time_end#0 11.0
 (byte) main::time_start
-(byte) main::time_start#0 11.882352941176471
+(byte) main::time_start#0 1.2941176470588236
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
-(byte~) utoa10w::$1 200002.0
-(byte~) utoa10w::$7 200002.0
-(byte~) utoa10w::$8 200002.0
-(byte~) utoa10w::$9 2002.0
+(byte~) utoa10w::$1 20002.0
+(byte~) utoa10w::$7 20002.0
+(byte~) utoa10w::$8 20002.0
+(byte~) utoa10w::$9 202.0
 (byte) utoa10w::bStarted
-(byte) utoa10w::bStarted#2 25000.25
+(byte) utoa10w::bStarted#2 2500.25
 (byte) utoa10w::digit
-(byte) utoa10w::digit#1 66667.33333333333
-(byte) utoa10w::digit#3 83334.16666666666
-(byte) utoa10w::digit#7 66667.33333333333
+(byte) utoa10w::digit#1 6667.333333333333
+(byte) utoa10w::digit#3 8334.166666666666
+(byte) utoa10w::digit#7 6667.333333333333
 (byte*) utoa10w::dst
-(byte*) utoa10w::dst#1 200002.0
-(byte*) utoa10w::dst#11 70000.7
-(byte*) utoa10w::dst#2 2002.0
-(byte*) utoa10w::dst#4 60401.0
-(byte*) utoa10w::dst#8 300003.0
+(byte*) utoa10w::dst#1 20002.0
+(byte*) utoa10w::dst#11 7000.700000000001
+(byte*) utoa10w::dst#2 202.0
+(byte*) utoa10w::dst#4 6041.0
+(byte*) utoa10w::dst#8 30003.0
 (byte) utoa10w::i
-(byte) utoa10w::i#1 150001.5
-(byte) utoa10w::i#2 61539.07692307693
+(byte) utoa10w::i#1 15001.5
+(byte) utoa10w::i#2 6154.461538461538
 (word) utoa10w::value
-(word) utoa10w::value#0 551.0
-(word) utoa10w::value#1 200002.0
-(word) utoa10w::value#10 35786.142857142855
+(word) utoa10w::value#0 56.0
+(word) utoa10w::value#1 20002.0
+(word) utoa10w::value#10 3579.000000000001
 (byte()) utoa16n((byte) utoa16n::nybble , (word**) utoa16n::dst , (byte) utoa16n::started)
 (word**) utoa16n::dst
 (byte) utoa16n::nybble
-(byte) utoa16n::nybble#0 2002.0
-(byte) utoa16n::nybble#1 1001.0
-(byte) utoa16n::nybble#2 1001.0
-(byte) utoa16n::nybble#3 2002.0
-(byte) utoa16n::nybble#4 4801.2
+(byte) utoa16n::nybble#0 202.0
+(byte) utoa16n::nybble#1 101.0
+(byte) utoa16n::nybble#2 101.0
+(byte) utoa16n::nybble#3 202.0
+(byte) utoa16n::nybble#4 481.2
 (byte) utoa16n::return
-(byte) utoa16n::return#0 2002.0
-(byte) utoa16n::return#1 2002.0
-(byte) utoa16n::return#4 3143.4285714285716
+(byte) utoa16n::return#0 202.0
+(byte) utoa16n::return#1 202.0
+(byte) utoa16n::return#4 314.8571428571429
 (byte) utoa16n::started
-(byte) utoa16n::started#1 2002.0
-(byte) utoa16n::started#2 2002.0
-(byte) utoa16n::started#7 4001.0
+(byte) utoa16n::started#1 202.0
+(byte) utoa16n::started#2 202.0
+(byte) utoa16n::started#7 401.0
 (void()) utoa16w((word) utoa16w::value , (volatile byte*) utoa16w::dst)
-(byte~) utoa16w::$0 2002.0
-(byte~) utoa16w::$3 2002.0
-(byte~) utoa16w::$6 2002.0
-(byte~) utoa16w::$9 2002.0
-(volatile byte*) utoa16w::dst loadstore 47.0625
+(byte~) utoa16w::$0 202.0
+(byte~) utoa16w::$3 202.0
+(byte~) utoa16w::$6 202.0
+(byte~) utoa16w::$9 202.0
+(volatile byte*) utoa16w::dst loadstore 4.875
 (byte) utoa16w::started
-(byte) utoa16w::started#1 667.3333333333334
-(byte) utoa16w::started#2 667.3333333333334
+(byte) utoa16w::started#1 67.33333333333333
+(byte) utoa16w::started#2 67.33333333333333
 (word) utoa16w::value
-(word) utoa16w::value#5 250.25
+(word) utoa16w::value#5 25.25
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -1316,20 +1304,6 @@ Target platform is c64basic / MOS6502X
   .label control = $d011
   .label raster = $d012
   .label BORDER_COLOR = $d020
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = $10
@@ -1341,47 +1315,47 @@ main: {
     .label i = 2
     // asm { sei  }
     sei
-    // [5] call cls 
-    // [85] phi from main to cls [phi:main->cls]
+    // [1] call cls 
+    // [81] phi from main to cls [phi:main->cls]
   cls_from_main:
     jsr cls
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 -- vbuz1=_deref_pbuc1_band_vbuc2 
+    // [2] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda #$80
     and control
     sta.z __1
-    // [7] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 -- vbuz1=_deref_pbuc1_ror_1 
+    // [3] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 -- vbuz1=_deref_pbuc1_ror_1 
     lda raster
     lsr
     sta.z __2
-    // [8] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2 -- vbuz1=vbuz2_bor_vbuz3 
+    // [4] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __1
     ora.z __2
     sta.z rst
-    // [9] if((byte) main::rst#0!=(byte) $30) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [5] if((byte) main::rst#0!=(byte) $30) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$30
     cmp.z rst
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [10] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta BORDER_COLOR
-    // [11] (byte) main::time_start#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
+    // [7] (byte) main::time_start#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
     lda raster
     sta.z time_start
-    // [12] (volatile byte*) utoa16w::dst ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [8] (volatile byte*) utoa16w::dst ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z utoa16w.dst
     lda #>$400
     sta.z utoa16w.dst+1
-    // [13] call utoa16w 
-    // [56] phi from main::@2 to utoa16w [phi:main::@2->utoa16w]
+    // [9] call utoa16w 
+    // [52] phi from main::@2 to utoa16w [phi:main::@2->utoa16w]
   utoa16w_from___b2:
-    // [56] phi (word) utoa16w::value#5 = (byte) 0 [phi:main::@2->utoa16w#0] -- vwuz1=vbuc1 
+    // [52] phi (word) utoa16w::value#5 = (byte) 0 [phi:main::@2->utoa16w#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z utoa16w.value
     lda #>0
@@ -1390,17 +1364,17 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [14] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [10] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [15] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 -- pbuz1=pbuc1 
+    // [11] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28
     sta.z utoa16w.dst
     lda #>$400+$28
     sta.z utoa16w.dst+1
-    // [16] call utoa16w 
-    // [56] phi from main::@5 to utoa16w [phi:main::@5->utoa16w]
+    // [12] call utoa16w 
+    // [52] phi from main::@5 to utoa16w [phi:main::@5->utoa16w]
   utoa16w_from___b5:
-    // [56] phi (word) utoa16w::value#5 = (word) $4d2 [phi:main::@5->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $4d2 [phi:main::@5->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z utoa16w.value
     lda #>$4d2
@@ -1409,17 +1383,17 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [17] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [18] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [14] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28
     sta.z utoa16w.dst+1
-    // [19] call utoa16w 
-    // [56] phi from main::@6 to utoa16w [phi:main::@6->utoa16w]
+    // [15] call utoa16w 
+    // [52] phi from main::@6 to utoa16w [phi:main::@6->utoa16w]
   utoa16w_from___b6:
-    // [56] phi (word) utoa16w::value#5 = (word) $162e [phi:main::@6->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $162e [phi:main::@6->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$162e
     sta.z utoa16w.value
     lda #>$162e
@@ -1428,17 +1402,17 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [20] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [21] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [17] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28+$28
     sta.z utoa16w.dst+1
-    // [22] call utoa16w 
-    // [56] phi from main::@7 to utoa16w [phi:main::@7->utoa16w]
+    // [18] call utoa16w 
+    // [52] phi from main::@7 to utoa16w [phi:main::@7->utoa16w]
   utoa16w_from___b7:
-    // [56] phi (word) utoa16w::value#5 = (word) $270f [phi:main::@7->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $270f [phi:main::@7->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$270f
     sta.z utoa16w.value
     lda #>$270f
@@ -1447,17 +1421,17 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [23] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [19] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [24] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [20] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28+$28+$28
     sta.z utoa16w.dst+1
-    // [25] call utoa16w 
-    // [56] phi from main::@8 to utoa16w [phi:main::@8->utoa16w]
+    // [21] call utoa16w 
+    // [52] phi from main::@8 to utoa16w [phi:main::@8->utoa16w]
   utoa16w_from___b8:
-    // [56] phi (word) utoa16w::value#5 = (word) $e608 [phi:main::@8->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $e608 [phi:main::@8->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$e608
     sta.z utoa16w.value
     lda #>$e608
@@ -1466,35 +1440,35 @@ main: {
     jmp __b9
     // main::@9
   __b9:
-    // [26] (byte) main::time_end#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
+    // [22] (byte) main::time_end#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
     lda raster
     sta.z time_end
-    // [27] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BORDER_COLOR
-    // [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 -- vbuz1=vbuz2_minus_vbuz3 
+    // [24] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 -- vbuz1=vbuz2_minus_vbuz3 
     lda.z time_end
     sec
     sbc.z time_start
     sta.z time
-    // [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 -- vwuz1=_word_vbuz2 
+    // [25] (word) utoa10w::value#0 ← (word)(byte) main::time#0 -- vwuz1=_word_vbuz2 
     lda.z time
     sta.z utoa10w.value
     lda #0
     sta.z utoa10w.value+1
-    // [30] call utoa10w 
-    // [35] phi from main::@9 to utoa10w [phi:main::@9->utoa10w]
+    // [26] call utoa10w 
+    // [31] phi from main::@9 to utoa10w [phi:main::@9->utoa10w]
   utoa10w_from___b9:
     jsr utoa10w
-    // [31] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
+    // [27] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
   __b3_from___b9:
-    // [31] phi (byte) main::i#2 = (byte) 0 [phi:main::@9->main::@3#0] -- vbuz1=vbuc1 
+    // [27] phi (byte) main::i#2 = (byte) 0 [phi:main::@9->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b3
     // main::@3
   __b3:
-    // [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
+    // [28] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 -- pbuc1_derefidx_vbuz1_neq_0_then_la1 
     ldy.z i
     lda msg,y
     cmp #0
@@ -1502,15 +1476,15 @@ main: {
     jmp __b1
     // main::@4
   __b4:
-    // [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [29] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda msg,y
     sta $400+$28+$28+$28+$28+$50+3,y
-    // [34] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [30] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [31] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [27] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   __b3_from___b4:
-    // [31] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    // [27] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
     jmp __b3
     msg: .text "raster lines"
     .byte 0
@@ -1529,39 +1503,39 @@ utoa10w: {
     .label dst = 8
     .label dst_1 = $1b
     .label bStarted = 7
-    // [36] phi from utoa10w to utoa10w::@1 [phi:utoa10w->utoa10w::@1]
+    // [32] phi from utoa10w to utoa10w::@1 [phi:utoa10w->utoa10w::@1]
   __b1_from_utoa10w:
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 [phi:utoa10w->utoa10w::@1#0] -- pbuz1=pbuc1 
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 [phi:utoa10w->utoa10w::@1#0] -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28+$28+$50
     sta.z dst
     lda #>$400+$28+$28+$28+$28+$50
     sta.z dst+1
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#1] -- vbuz1=vbuc1 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z bStarted
-    // [36] phi (byte) utoa10w::digit#3 = (byte) 0 [phi:utoa10w->utoa10w::@1#2] -- vbuz1=vbuc1 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) 0 [phi:utoa10w->utoa10w::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#0 [phi:utoa10w->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#4] -- vbuz1=vbuc1 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#0 [phi:utoa10w->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#4] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [36] phi from utoa10w::@6 to utoa10w::@1 [phi:utoa10w::@6->utoa10w::@1]
+    // [32] phi from utoa10w::@6 to utoa10w::@1 [phi:utoa10w::@6->utoa10w::@1]
   __b1_from___b6:
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#4 [phi:utoa10w::@6->utoa10w::@1#0] -- register_copy 
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) utoa10w::bStarted#2 [phi:utoa10w::@6->utoa10w::@1#1] -- register_copy 
-    // [36] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#7 [phi:utoa10w::@6->utoa10w::@1#2] -- register_copy 
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#10 [phi:utoa10w::@6->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#1 [phi:utoa10w::@6->utoa10w::@1#4] -- register_copy 
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#4 [phi:utoa10w::@6->utoa10w::@1#0] -- register_copy 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) utoa10w::bStarted#2 [phi:utoa10w::@6->utoa10w::@1#1] -- register_copy 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#7 [phi:utoa10w::@6->utoa10w::@1#2] -- register_copy 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#10 [phi:utoa10w::@6->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#1 [phi:utoa10w::@6->utoa10w::@1#4] -- register_copy 
     jmp __b1
     // utoa10w::@1
   __b1:
-    // [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [33] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
     sta.z __7
-    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuz2_then_la1 
+    // [34] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuz2_then_la1 
     ldy.z __7
     lda UTOA10_SUB+1,y
     cmp.z value+1
@@ -1574,73 +1548,73 @@ utoa10w: {
     jmp __b3
     // utoa10w::@3
   __b3:
-    // [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    // [35] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
     lda #1
     and.z i
     sta.z __1
-    // [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuz1_eq_0_then_la1 
+    // [36] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuz1_eq_0_then_la1 
     lda.z __1
     cmp #0
     beq __b6_from___b3
     jmp __b4
     // utoa10w::@4
   __b4:
-    // [41] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7 -- vbuz1_eq_0_then_la1 
+    // [37] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7 -- vbuz1_eq_0_then_la1 
     lda.z bStarted
     cmp #0
     beq __b7_from___b4
     jmp __b5
     // utoa10w::@5
   __b5:
-    // [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [38] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z digit
     lda DIGITS,y
     ldy #0
     sta (dst),y
-    // [43] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11 -- pbuz1=_inc_pbuz1 
+    // [39] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [44] phi from utoa10w::@4 utoa10w::@5 to utoa10w::@7 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7]
+    // [40] phi from utoa10w::@4 utoa10w::@5 to utoa10w::@7 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7]
   __b7_from___b4:
   __b7_from___b5:
-    // [44] phi (byte*) utoa10w::dst#8 = (byte*) utoa10w::dst#11 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7#0] -- register_copy 
+    // [40] phi (byte*) utoa10w::dst#8 = (byte*) utoa10w::dst#11 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7#0] -- register_copy 
     jmp __b7
     // utoa10w::@7
   __b7:
-    // [45] phi from utoa10w::@7 to utoa10w::@6 [phi:utoa10w::@7->utoa10w::@6]
+    // [41] phi from utoa10w::@7 to utoa10w::@6 [phi:utoa10w::@7->utoa10w::@6]
   __b6_from___b7:
-    // [45] phi (byte) utoa10w::digit#7 = (byte) 0 [phi:utoa10w::@7->utoa10w::@6#0] -- vbuz1=vbuc1 
+    // [41] phi (byte) utoa10w::digit#7 = (byte) 0 [phi:utoa10w::@7->utoa10w::@6#0] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    // [45] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#8 [phi:utoa10w::@7->utoa10w::@6#1] -- register_copy 
+    // [41] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#8 [phi:utoa10w::@7->utoa10w::@6#1] -- register_copy 
     jmp __b6
-    // [45] phi from utoa10w::@3 to utoa10w::@6 [phi:utoa10w::@3->utoa10w::@6]
+    // [41] phi from utoa10w::@3 to utoa10w::@6 [phi:utoa10w::@3->utoa10w::@6]
   __b6_from___b3:
-    // [45] phi (byte) utoa10w::digit#7 = (byte) utoa10w::digit#3 [phi:utoa10w::@3->utoa10w::@6#0] -- register_copy 
-    // [45] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#11 [phi:utoa10w::@3->utoa10w::@6#1] -- register_copy 
+    // [41] phi (byte) utoa10w::digit#7 = (byte) utoa10w::digit#3 [phi:utoa10w::@3->utoa10w::@6#0] -- register_copy 
+    // [41] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#11 [phi:utoa10w::@3->utoa10w::@6#1] -- register_copy 
     jmp __b6
     // utoa10w::@6
   __b6:
-    // [46] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2 -- vbuz1=_inc_vbuz1 
+    // [42] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [47] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [43] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #8
     cmp.z i
     bne __b1_from___b6
     jmp __b8
     // utoa10w::@8
   __b8:
-    // [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuz1=_byte_vwuz2 
+    // [44] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuz1=_byte_vwuz2 
     lda.z value
     sta.z __9
-    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [45] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __9
     lda DIGITS,y
     ldy #0
     sta (dst),y
-    // [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 -- pbuz1=_inc_pbuz2 
+    // [46] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 -- pbuz1=_inc_pbuz2 
     lda.z dst
     clc
     adc #1
@@ -1648,28 +1622,28 @@ utoa10w: {
     lda.z dst+1
     adc #0
     sta.z dst_1+1
-    // [51] *((byte*) utoa10w::dst#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [47] *((byte*) utoa10w::dst#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (dst_1),y
     jmp __breturn
     // utoa10w::@return
   __breturn:
-    // [52] return 
+    // [48] return 
     rts
     // utoa10w::@2
   __b2:
-    // [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
+    // [49] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuz2 
     lda.z digit
     ldy.z i
     clc
     adc UTOA10_VAL,y
     sta.z digit
-    // [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [50] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
     sta.z __8
-    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
+    // [51] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuz2 
     ldy.z __8
     sec
     lda.z value
@@ -1678,15 +1652,15 @@ utoa10w: {
     lda.z value+1
     sbc UTOA10_SUB+1,y
     sta.z value+1
-    // [36] phi from utoa10w::@2 to utoa10w::@1 [phi:utoa10w::@2->utoa10w::@1]
+    // [32] phi from utoa10w::@2 to utoa10w::@1 [phi:utoa10w::@2->utoa10w::@1]
   __b1_from___b2:
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#11 [phi:utoa10w::@2->utoa10w::@1#0] -- register_copy 
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) 1 [phi:utoa10w::@2->utoa10w::@1#1] -- vbuz1=vbuc1 
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#11 [phi:utoa10w::@2->utoa10w::@1#0] -- register_copy 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) 1 [phi:utoa10w::@2->utoa10w::@1#1] -- vbuz1=vbuc1 
     lda #1
     sta.z bStarted
-    // [36] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#1 [phi:utoa10w::@2->utoa10w::@1#2] -- register_copy 
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#1 [phi:utoa10w::@2->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#2 [phi:utoa10w::@2->utoa10w::@1#4] -- register_copy 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#1 [phi:utoa10w::@2->utoa10w::@1#2] -- register_copy 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#1 [phi:utoa10w::@2->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#2 [phi:utoa10w::@2->utoa10w::@1#4] -- register_copy 
     jmp __b1
 }
   // utoa16w
@@ -1701,106 +1675,106 @@ utoa16w: {
     .label started = $20
     .label started_1 = $23
     .label value = $a
-    // [57] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuz1=_hi_vwuz2 
+    // [53] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuz1=_hi_vwuz2 
     lda.z value+1
     sta.z __0
-    // [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
+    // [54] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z __0
     lsr
     lsr
     lsr
     lsr
     sta.z utoa16n.nybble
-    // [59] call utoa16n 
-    // [77] phi from utoa16w to utoa16n [phi:utoa16w->utoa16n]
+    // [55] call utoa16n 
+    // [73] phi from utoa16w to utoa16n [phi:utoa16w->utoa16n]
   utoa16n_from_utoa16w:
-    // [77] phi (byte) utoa16n::started#7 = (byte) 0 [phi:utoa16w->utoa16n#0] -- vbuz1=vbuc1 
+    // [73] phi (byte) utoa16n::started#7 = (byte) 0 [phi:utoa16w->utoa16n#0] -- vbuz1=vbuc1 
     lda #0
     sta.z utoa16n.started
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
     jsr utoa16n
-    // [60] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4 -- vbuz1=vbuz2 
+    // [56] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4 -- vbuz1=vbuz2 
     lda.z utoa16n.return_2
     sta.z utoa16n.return
     jmp __b1
     // utoa16w::@1
   __b1:
-    // [61] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0 -- vbuz1=vbuz2 
+    // [57] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0 -- vbuz1=vbuz2 
     lda.z utoa16n.return
     sta.z started
-    // [62] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5 -- vbuz1=_hi_vwuz2 
+    // [58] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5 -- vbuz1=_hi_vwuz2 
     lda.z value+1
     sta.z __3
-    // [63] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [59] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z __3
     sta.z utoa16n.nybble
-    // [64] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1 -- vbuz1=vbuz2 
+    // [60] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1 -- vbuz1=vbuz2 
     lda.z started
     sta.z utoa16n.started
-    // [65] call utoa16n 
-    // [77] phi from utoa16w::@1 to utoa16n [phi:utoa16w::@1->utoa16n]
+    // [61] call utoa16n 
+    // [73] phi from utoa16w::@1 to utoa16n [phi:utoa16w::@1->utoa16n]
   utoa16n_from___b1:
-    // [77] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
     jsr utoa16n
-    // [66] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4 -- vbuz1=vbuz2 
+    // [62] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4 -- vbuz1=vbuz2 
     lda.z utoa16n.return_2
     sta.z utoa16n.return_1
     jmp __b2
     // utoa16w::@2
   __b2:
-    // [67] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1 -- vbuz1=vbuz2 
+    // [63] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1 -- vbuz1=vbuz2 
     lda.z utoa16n.return_1
     sta.z started_1
-    // [68] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5 -- vbuz1=_lo_vwuz2 
+    // [64] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5 -- vbuz1=_lo_vwuz2 
     lda.z value
     sta.z __6
-    // [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
+    // [65] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 -- vbuz1=vbuz2_ror_4 
     lda.z __6
     lsr
     lsr
     lsr
     lsr
     sta.z utoa16n.nybble
-    // [70] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2 -- vbuz1=vbuz2 
+    // [66] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2 -- vbuz1=vbuz2 
     lda.z started_1
     sta.z utoa16n.started
-    // [71] call utoa16n 
-    // [77] phi from utoa16w::@2 to utoa16n [phi:utoa16w::@2->utoa16n]
+    // [67] call utoa16n 
+    // [73] phi from utoa16w::@2 to utoa16n [phi:utoa16w::@2->utoa16n]
   utoa16n_from___b2:
-    // [77] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#2 [phi:utoa16w::@2->utoa16n#0] -- register_copy 
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#2 [phi:utoa16w::@2->utoa16n#0] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
     jsr utoa16n
     jmp __b3
     // utoa16w::@3
   __b3:
-    // [72] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5 -- vbuz1=_lo_vwuz2 
+    // [68] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5 -- vbuz1=_lo_vwuz2 
     lda.z value
     sta.z __9
-    // [73] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [69] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z __9
     sta.z utoa16n.nybble
-    // [74] call utoa16n 
-    // [77] phi from utoa16w::@3 to utoa16n [phi:utoa16w::@3->utoa16n]
+    // [70] call utoa16n 
+    // [73] phi from utoa16w::@3 to utoa16n [phi:utoa16w::@3->utoa16n]
   utoa16n_from___b3:
-    // [77] phi (byte) utoa16n::started#7 = (byte) 1 [phi:utoa16w::@3->utoa16n#0] -- vbuz1=vbuc1 
+    // [73] phi (byte) utoa16n::started#7 = (byte) 1 [phi:utoa16w::@3->utoa16n#0] -- vbuz1=vbuc1 
     lda #1
     sta.z utoa16n.started
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#3 [phi:utoa16w::@3->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#3 [phi:utoa16w::@3->utoa16n#1] -- register_copy 
     jsr utoa16n
     jmp __b4
     // utoa16w::@4
   __b4:
-    // [75] *((volatile byte*) utoa16w::dst) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [71] *((volatile byte*) utoa16w::dst) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (dst),y
     jmp __breturn
     // utoa16w::@return
   __breturn:
-    // [76] return 
+    // [72] return 
     rts
 }
   // utoa16n
@@ -1812,35 +1786,35 @@ utoa16n: {
     .label started = $d
     .label return_1 = $22
     .label return_2 = $d
-    // [78] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3 -- vbuz1_eq_0_then_la1 
+    // [74] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3 -- vbuz1_eq_0_then_la1 
     lda.z nybble
     cmp #0
     beq __b3_from_utoa16n
-    // [80] phi from utoa16n to utoa16n::@1 [phi:utoa16n->utoa16n::@1]
+    // [76] phi from utoa16n to utoa16n::@1 [phi:utoa16n->utoa16n::@1]
   __b1_from_utoa16n:
-    // [80] phi (byte) utoa16n::return#4 = (byte) 1 [phi:utoa16n->utoa16n::@1#0] -- vbuz1=vbuc1 
+    // [76] phi (byte) utoa16n::return#4 = (byte) 1 [phi:utoa16n->utoa16n::@1#0] -- vbuz1=vbuc1 
     lda #1
     sta.z return_2
     jmp __b1
-    // [79] phi from utoa16n to utoa16n::@3 [phi:utoa16n->utoa16n::@3]
+    // [75] phi from utoa16n to utoa16n::@3 [phi:utoa16n->utoa16n::@3]
   __b3_from_utoa16n:
     jmp __b3
     // utoa16n::@3
   __b3:
-    // [80] phi from utoa16n::@3 to utoa16n::@1 [phi:utoa16n::@3->utoa16n::@1]
+    // [76] phi from utoa16n::@3 to utoa16n::@1 [phi:utoa16n::@3->utoa16n::@1]
   __b1_from___b3:
-    // [80] phi (byte) utoa16n::return#4 = (byte) utoa16n::started#7 [phi:utoa16n::@3->utoa16n::@1#0] -- register_copy 
+    // [76] phi (byte) utoa16n::return#4 = (byte) utoa16n::started#7 [phi:utoa16n::@3->utoa16n::@1#0] -- register_copy 
     jmp __b1
     // utoa16n::@1
   __b1:
-    // [81] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return -- vbuz1_eq_0_then_la1 
+    // [77] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return -- vbuz1_eq_0_then_la1 
     lda.z return_2
     cmp #0
     beq __breturn
     jmp __b2
     // utoa16n::@2
   __b2:
-    // [82] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) -- _deref_(_deref_pptc1)=pbuc2_derefidx_vbuz1 
+    // [78] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) -- _deref_(_deref_pptc1)=pbuc2_derefidx_vbuz1 
     ldy.z nybble
     lda DIGITS,y
     ldy.z utoa16w.dst
@@ -1849,7 +1823,7 @@ utoa16n: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [83] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst) -- _deref_pptc1=_inc__deref_pptc1 
+    // [79] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z utoa16w.dst
     bne !+
     inc.z utoa16w.dst+1
@@ -1857,37 +1831,37 @@ utoa16n: {
     jmp __breturn
     // utoa16n::@return
   __breturn:
-    // [84] return 
+    // [80] return 
     rts
 }
   // cls
 cls: {
     .label screen = $400
     .label sc = $e
-    // [86] phi from cls to cls::@1 [phi:cls->cls::@1]
+    // [82] phi from cls to cls::@1 [phi:cls->cls::@1]
   __b1_from_cls:
-    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
+    // [82] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
     sta.z sc+1
     jmp __b1
-    // [86] phi from cls::@1 to cls::@1 [phi:cls::@1->cls::@1]
+    // [82] phi from cls::@1 to cls::@1 [phi:cls::@1->cls::@1]
   __b1_from___b1:
-    // [86] phi (byte*) cls::sc#2 = (byte*) cls::sc#1 [phi:cls::@1->cls::@1#0] -- register_copy 
+    // [82] phi (byte*) cls::sc#2 = (byte*) cls::sc#1 [phi:cls::@1->cls::@1#0] -- register_copy 
     jmp __b1
     // cls::@1
   __b1:
-    // [87] *((byte*) cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [83] *((byte*) cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [88] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [84] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
     inc.z sc+1
   !:
-    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [85] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7+1
     bne __b1_from___b1
@@ -1897,7 +1871,7 @@ cls: {
     jmp __breturn
     // cls::@return
   __breturn:
-    // [90] return 
+    // [86] return 
     rts
 }
   // File Data
@@ -1910,79 +1884,79 @@ cls: {
   UTOA10_VAL: .byte 3, 1, 3, 1, 3, 1, 3, 1
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 [ main::$1 ] ( main:2 [ main::$1 ] { }  ) always clobbers reg byte a 
-Statement [7] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 [ main::$1 main::$2 ] ( main:2 [ main::$1 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [2] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [3] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 [ main::$1 main::$2 ] (  [ main::$1 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ main::$1 ]
-Statement [10] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] (volatile byte*) utoa16w::dst ← (byte*) 1024 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] (volatile byte*) utoa16w::dst ← (byte*) 1024 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ main::time_start#0 ]
-Statement [15] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [18] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [21] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [24] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [27] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 [ main::time_start#0 main::time_end#0 ] ( main:2 [ main::time_start#0 main::time_end#0 ] { }  ) always clobbers reg byte a 
+Statement [11] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [14] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [17] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [20] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [23] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 [ main::time_start#0 main::time_end#0 ] (  [ main::time_start#0 main::time_end#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:22 [ main::time_end#0 ]
-Statement [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 [ main::time#0 ] ( main:2 [ main::time#0 ] { }  ) always clobbers reg byte a 
-Statement [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 [ utoa10w::value#0 ] ( main:2 [ utoa10w::value#0 ] { }  ) always clobbers reg byte a 
-Statement [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [24] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 [ main::time#0 ] (  [ main::time#0 ] { }  ) always clobbers reg byte a 
+Statement [25] (word) utoa10w::value#0 ← (word)(byte) main::time#0 [ utoa10w::value#0 ] (  [ utoa10w::value#0 ] { }  ) always clobbers reg byte a 
+Statement [28] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] { }  ) always clobbers reg byte a 
+Statement [29] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [33] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ utoa10w::bStarted#2 ]
-Statement [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
-Statement [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] { }  ) always clobbers reg byte a 
-Statement [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [34] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
+Statement [35] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] { }  ) always clobbers reg byte a 
+Statement [38] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:7 [ utoa10w::bStarted#2 ]
-Statement [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$9 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 utoa10w::$9 ] { }  ) always clobbers reg byte a 
-Statement [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) [ utoa10w::dst#4 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 [ utoa10w::dst#2 ] ( main:2::utoa10w:30 [ utoa10w::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [51] *((byte*) utoa10w::dst#2) ← (byte) 0 [ ] ( main:2::utoa10w:30 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
-Statement [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] { }  ) always clobbers reg byte a 
-Statement [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
-Statement [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  ) always clobbers reg byte a 
-Statement [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  ) always clobbers reg byte a 
+Statement [44] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$9 ] ( utoa10w:26 [ utoa10w::dst#4 utoa10w::$9 ] { }  ) always clobbers reg byte a 
+Statement [45] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) [ utoa10w::dst#4 ] ( utoa10w:26 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [46] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 [ utoa10w::dst#2 ] ( utoa10w:26 [ utoa10w::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [47] *((byte*) utoa10w::dst#2) ← (byte) 0 [ ] ( utoa10w:26 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [49] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
+Statement [50] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] { }  ) always clobbers reg byte a 
+Statement [51] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
+Statement [54] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] ( utoa16w:9 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:12 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:15 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:18 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:21 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  ) always clobbers reg byte a 
+Statement [65] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] ( utoa16w:9 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:12 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:15 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:18 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:21 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:35 [ utoa16w::started#2 ]
-Statement [75] *((volatile byte*) utoa16w::dst) ← (byte) 0 [ ] ( main:2::utoa16w:13 [ main::time_start#0 ] { }  main:2::utoa16w:16 [ main::time_start#0 ] { }  main:2::utoa16w:19 [ main::time_start#0 ] { }  main:2::utoa16w:22 [ main::time_start#0 ] { }  main:2::utoa16w:25 [ main::time_start#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [71] *((volatile byte*) utoa16w::dst) ← (byte) 0 [ ] ( utoa16w:9 [ main::time_start#0 ] { }  utoa16w:12 [ main::time_start#0 ] { }  utoa16w:15 [ main::time_start#0 ] { }  utoa16w:18 [ main::time_start#0 ] { }  utoa16w:21 [ main::time_start#0 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:19 [ main::time_start#0 ]
-Statement [82] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) [ utoa16w::dst utoa16n::return#4 ] ( main:2::utoa16w:13::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:16::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:19::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:22::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:25::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:13::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:16::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:19::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:22::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:25::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:13::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:16::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:19::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:22::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:25::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:13::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:16::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:19::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:22::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:25::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  ) always clobbers reg byte a reg byte y 
+Statement [78] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) [ utoa16w::dst utoa16n::return#4 ] ( utoa16w:9::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:12::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:15::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:18::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:21::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:9::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:12::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:15::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:18::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:21::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:9::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:12::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:15::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:18::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:21::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:9::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:12::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:15::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:18::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:21::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:13 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ]
 Removing always clobbered register reg byte y as potential for zp[1]:13 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ]
-Statement [87] *((byte*) cls::sc#2) ← (byte) ' ' [ cls::sc#2 ] ( main:2::cls:5 [ cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( main:2::cls:5 [ cls::sc#1 ] { }  ) always clobbers reg byte a 
-Statement [6] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 [ main::$1 ] ( main:2 [ main::$1 ] { }  ) always clobbers reg byte a 
-Statement [7] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 [ main::$1 main::$2 ] ( main:2 [ main::$1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [12] (volatile byte*) utoa16w::dst ← (byte*) 1024 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [15] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [18] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [21] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [24] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] ( main:2 [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
-Statement [27] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 [ main::time_start#0 main::time_end#0 ] ( main:2 [ main::time_start#0 main::time_end#0 ] { }  ) always clobbers reg byte a 
-Statement [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 [ main::time#0 ] ( main:2 [ main::time#0 ] { }  ) always clobbers reg byte a 
-Statement [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 [ utoa10w::value#0 ] ( main:2 [ utoa10w::value#0 ] { }  ) always clobbers reg byte a 
-Statement [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) [ main::i#2 ] ( main:2 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] { }  ) always clobbers reg byte a 
-Statement [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
-Statement [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] { }  ) always clobbers reg byte a 
-Statement [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$9 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 utoa10w::$9 ] { }  ) always clobbers reg byte a 
-Statement [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) [ utoa10w::dst#4 ] ( main:2::utoa10w:30 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 [ utoa10w::dst#2 ] ( main:2::utoa10w:30 [ utoa10w::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [51] *((byte*) utoa10w::dst#2) ← (byte) 0 [ ] ( main:2::utoa10w:30 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
-Statement [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] { }  ) always clobbers reg byte a 
-Statement [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( main:2::utoa10w:30 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
-Statement [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  ) always clobbers reg byte a 
-Statement [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] ( main:2::utoa16w:13 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:16 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:19 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:22 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:25 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  ) always clobbers reg byte a 
-Statement [75] *((volatile byte*) utoa16w::dst) ← (byte) 0 [ ] ( main:2::utoa16w:13 [ main::time_start#0 ] { }  main:2::utoa16w:16 [ main::time_start#0 ] { }  main:2::utoa16w:19 [ main::time_start#0 ] { }  main:2::utoa16w:22 [ main::time_start#0 ] { }  main:2::utoa16w:25 [ main::time_start#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [82] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) [ utoa16w::dst utoa16n::return#4 ] ( main:2::utoa16w:13::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:16::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:19::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:22::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:25::utoa16n:59 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  main:2::utoa16w:13::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:16::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:19::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:22::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:25::utoa16n:65 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  main:2::utoa16w:13::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:16::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:19::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:22::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:25::utoa16n:71 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  main:2::utoa16w:13::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:16::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:19::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:22::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  main:2::utoa16w:25::utoa16n:74 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  ) always clobbers reg byte a reg byte y 
-Statement [87] *((byte*) cls::sc#2) ← (byte) ' ' [ cls::sc#2 ] ( main:2::cls:5 [ cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( main:2::cls:5 [ cls::sc#1 ] { }  ) always clobbers reg byte a 
+Statement [83] *((byte*) cls::sc#2) ← (byte) ' ' [ cls::sc#2 ] ( cls:1 [ cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [85] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( cls:1 [ cls::sc#1 ] { }  ) always clobbers reg byte a 
+Statement [2] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [3] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 [ main::$1 main::$2 ] (  [ main::$1 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] (volatile byte*) utoa16w::dst ← (byte*) 1024 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [11] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [14] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [17] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [20] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 [ main::time_start#0 utoa16w::dst ] (  [ main::time_start#0 utoa16w::dst ] { }  ) always clobbers reg byte a 
+Statement [23] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 [ main::time_start#0 main::time_end#0 ] (  [ main::time_start#0 main::time_end#0 ] { }  ) always clobbers reg byte a 
+Statement [24] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 [ main::time#0 ] (  [ main::time#0 ] { }  ) always clobbers reg byte a 
+Statement [25] (word) utoa10w::value#0 ← (word)(byte) main::time#0 [ utoa10w::value#0 ] (  [ utoa10w::value#0 ] { }  ) always clobbers reg byte a 
+Statement [28] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [29] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [33] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$7 ] { }  ) always clobbers reg byte a 
+Statement [34] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a 
+Statement [35] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::digit#3 utoa10w::bStarted#2 utoa10w::dst#11 utoa10w::$1 ] { }  ) always clobbers reg byte a 
+Statement [38] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::bStarted#2 utoa10w::dst#11 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [44] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 [ utoa10w::dst#4 utoa10w::$9 ] ( utoa10w:26 [ utoa10w::dst#4 utoa10w::$9 ] { }  ) always clobbers reg byte a 
+Statement [45] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) [ utoa10w::dst#4 ] ( utoa10w:26 [ utoa10w::dst#4 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [46] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 [ utoa10w::dst#2 ] ( utoa10w:26 [ utoa10w::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [47] *((byte*) utoa10w::dst#2) ← (byte) 0 [ ] ( utoa10w:26 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [49] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
+Statement [50] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::value#10 utoa10w::dst#11 utoa10w::digit#1 utoa10w::$8 ] { }  ) always clobbers reg byte a 
+Statement [51] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] ( utoa10w:26 [ utoa10w::i#2 utoa10w::dst#11 utoa10w::value#1 utoa10w::digit#1 ] { }  ) always clobbers reg byte a 
+Statement [54] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] ( utoa16w:9 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:12 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:15 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:18 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:21 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16n::nybble#0 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  ) always clobbers reg byte a 
+Statement [65] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 [ utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] ( utoa16w:9 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:12 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:15 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:18 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:21 [ main::time_start#0 utoa16w::dst utoa16w::value#5 utoa16w::started#2 utoa16n::nybble#2 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  ) always clobbers reg byte a 
+Statement [71] *((volatile byte*) utoa16w::dst) ← (byte) 0 [ ] ( utoa16w:9 [ main::time_start#0 ] { }  utoa16w:12 [ main::time_start#0 ] { }  utoa16w:15 [ main::time_start#0 ] { }  utoa16w:18 [ main::time_start#0 ] { }  utoa16w:21 [ main::time_start#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [78] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) [ utoa16w::dst utoa16n::return#4 ] ( utoa16w:9::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:12::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:15::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:18::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:21::utoa16n:55 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#0 = utoa16n::nybble#4 } { utoa16n::return#0 = utoa16n::return#4 } }  utoa16w:9::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:12::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:15::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:18::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:21::utoa16n:61 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#1 = utoa16n::nybble#4 } { utoa16n::started#1 = utoa16n::started#7 utoa16w::started#1 } { utoa16n::return#1 = utoa16n::return#4 } }  utoa16w:9::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:12::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:15::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:18::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:21::utoa16n:67 [ main::time_start#0 utoa16w::value#5 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#2 = utoa16n::nybble#4 } { utoa16n::started#2 = utoa16n::started#7 utoa16w::started#2 } }  utoa16w:9::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:12::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:15::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:18::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  utoa16w:21::utoa16n:70 [ main::time_start#0 utoa16w::dst utoa16n::return#4 ] { { utoa16n::nybble#3 = utoa16n::nybble#4 } }  ) always clobbers reg byte a reg byte y 
+Statement [83] *((byte*) cls::sc#2) ← (byte) ' ' [ cls::sc#2 ] ( cls:1 [ cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [85] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 [ cls::sc#1 ] ( cls:1 [ cls::sc#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ] : zp[1]:3 , reg byte x , 
 Potential registers zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] : zp[2]:4 , 
@@ -2015,43 +1989,43 @@ Potential registers zp[1]:36 [ utoa16w::$6 ] : zp[1]:36 , reg byte a , reg byte 
 Potential registers zp[1]:37 [ utoa16w::$9 ] : zp[1]:37 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [utoa10w] 630,406.7: zp[2]:8 [ utoa10w::dst#8 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] 236,339.14: zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] 216,668.83: zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ] 211,540.58: zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ] 200,002: zp[1]:24 [ utoa10w::$7 ] 200,002: zp[1]:25 [ utoa10w::$1 ] 200,002: zp[1]:29 [ utoa10w::$8 ] 25,000.25: zp[1]:7 [ utoa10w::bStarted#2 ] 2,002: zp[1]:26 [ utoa10w::$9 ] 2,002: zp[2]:27 [ utoa10w::dst#2 ] 
-Uplift Scope [utoa16n] 11,148.43: zp[1]:13 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ] 10,807.2: zp[1]:12 [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ] 2,002: zp[1]:31 [ utoa16n::return#0 ] 2,002: zp[1]:34 [ utoa16n::return#1 ] 
-Uplift Scope [utoa16w] 2,002: zp[1]:30 [ utoa16w::$0 ] 2,002: zp[1]:33 [ utoa16w::$3 ] 2,002: zp[1]:36 [ utoa16w::$6 ] 2,002: zp[1]:37 [ utoa16w::$9 ] 667.33: zp[1]:32 [ utoa16w::started#1 ] 667.33: zp[1]:35 [ utoa16w::started#2 ] 250.25: zp[2]:10 [ utoa16w::value#5 ] 47.06: zp[2]:20 [ utoa16w::dst ] 
-Uplift Scope [main] 3,670.33: zp[1]:2 [ main::i#2 main::i#1 ] 2,002: zp[1]:17 [ main::$2 ] 2,002: zp[1]:18 [ main::rst#0 ] 1,001: zp[1]:16 [ main::$1 ] 101: zp[1]:22 [ main::time_end#0 ] 101: zp[1]:23 [ main::time#0 ] 11.88: zp[1]:19 [ main::time_start#0 ] 
-Uplift Scope [cls] 3,003: zp[2]:14 [ cls::sc#2 cls::sc#1 ] 
+Uplift Scope [utoa10w] 63,046.7: zp[2]:8 [ utoa10w::dst#8 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] 23,637: zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] 21,668.83: zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ] 21,155.96: zp[1]:3 [ utoa10w::i#2 utoa10w::i#1 ] 20,002: zp[1]:24 [ utoa10w::$7 ] 20,002: zp[1]:25 [ utoa10w::$1 ] 20,002: zp[1]:29 [ utoa10w::$8 ] 2,500.25: zp[1]:7 [ utoa10w::bStarted#2 ] 202: zp[1]:26 [ utoa10w::$9 ] 202: zp[2]:27 [ utoa10w::dst#2 ] 
+Uplift Scope [utoa16n] 1,119.86: zp[1]:13 [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ] 1,087.2: zp[1]:12 [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ] 202: zp[1]:31 [ utoa16n::return#0 ] 202: zp[1]:34 [ utoa16n::return#1 ] 
+Uplift Scope [utoa16w] 202: zp[1]:30 [ utoa16w::$0 ] 202: zp[1]:33 [ utoa16w::$3 ] 202: zp[1]:36 [ utoa16w::$6 ] 202: zp[1]:37 [ utoa16w::$9 ] 67.33: zp[1]:32 [ utoa16w::started#1 ] 67.33: zp[1]:35 [ utoa16w::started#2 ] 25.25: zp[2]:10 [ utoa16w::value#5 ] 4.88: zp[2]:20 [ utoa16w::dst ] 
+Uplift Scope [main] 370.33: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:17 [ main::$2 ] 202: zp[1]:18 [ main::rst#0 ] 101: zp[1]:16 [ main::$1 ] 11: zp[1]:22 [ main::time_end#0 ] 11: zp[1]:23 [ main::time#0 ] 1.29: zp[1]:19 [ main::time_start#0 ] 
+Uplift Scope [cls] 303: zp[2]:14 [ cls::sc#2 cls::sc#1 ] 
 Uplift Scope [] 
 
-Uplifting [utoa10w] best 28971 combination zp[2]:8 [ utoa10w::dst#8 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ] reg byte x [ utoa10w::i#2 utoa10w::i#1 ] reg byte a [ utoa10w::$7 ] reg byte a [ utoa10w::$1 ] zp[1]:29 [ utoa10w::$8 ] zp[1]:7 [ utoa10w::bStarted#2 ] zp[1]:26 [ utoa10w::$9 ] zp[2]:27 [ utoa10w::dst#2 ] 
+Uplifting [utoa10w] best 28959 combination zp[2]:8 [ utoa10w::dst#8 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ] reg byte x [ utoa10w::i#2 utoa10w::i#1 ] reg byte a [ utoa10w::$7 ] reg byte a [ utoa10w::$1 ] zp[1]:29 [ utoa10w::$8 ] zp[1]:7 [ utoa10w::bStarted#2 ] zp[1]:26 [ utoa10w::$9 ] zp[2]:27 [ utoa10w::dst#2 ] 
 Limited combination testing to 100 combinations of 3072 possible.
-Uplifting [utoa16n] best 28919 combination reg byte x [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ] reg byte a [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ] reg byte x [ utoa16n::return#0 ] reg byte x [ utoa16n::return#1 ] 
+Uplifting [utoa16n] best 28907 combination reg byte x [ utoa16n::return#4 utoa16n::started#7 utoa16n::started#1 utoa16n::started#2 ] reg byte a [ utoa16n::nybble#4 utoa16n::nybble#0 utoa16n::nybble#1 utoa16n::nybble#2 utoa16n::nybble#3 ] reg byte x [ utoa16n::return#0 ] reg byte x [ utoa16n::return#1 ] 
 Limited combination testing to 100 combinations of 128 possible.
-Uplifting [utoa16w] best 28895 combination reg byte a [ utoa16w::$0 ] reg byte a [ utoa16w::$3 ] reg byte a [ utoa16w::$6 ] reg byte a [ utoa16w::$9 ] zp[1]:32 [ utoa16w::started#1 ] zp[1]:35 [ utoa16w::started#2 ] zp[2]:10 [ utoa16w::value#5 ] zp[2]:20 [ utoa16w::dst ] 
+Uplifting [utoa16w] best 28883 combination reg byte a [ utoa16w::$0 ] reg byte a [ utoa16w::$3 ] reg byte a [ utoa16w::$6 ] reg byte a [ utoa16w::$9 ] zp[1]:32 [ utoa16w::started#1 ] zp[1]:35 [ utoa16w::started#2 ] zp[2]:10 [ utoa16w::value#5 ] zp[2]:20 [ utoa16w::dst ] 
 Limited combination testing to 100 combinations of 3072 possible.
-Uplifting [main] best 26495 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$2 ] reg byte a [ main::rst#0 ] zp[1]:16 [ main::$1 ] zp[1]:22 [ main::time_end#0 ] zp[1]:23 [ main::time#0 ] zp[1]:19 [ main::time_start#0 ] 
+Uplifting [main] best 26483 combination reg byte x [ main::i#2 main::i#1 ] reg byte a [ main::$2 ] reg byte a [ main::rst#0 ] zp[1]:16 [ main::$1 ] zp[1]:22 [ main::time_end#0 ] zp[1]:23 [ main::time#0 ] zp[1]:19 [ main::time_start#0 ] 
 Limited combination testing to 100 combinations of 3456 possible.
-Uplifting [cls] best 26495 combination zp[2]:14 [ cls::sc#2 cls::sc#1 ] 
-Uplifting [] best 26495 combination 
+Uplifting [cls] best 26483 combination zp[2]:14 [ cls::sc#2 cls::sc#1 ] 
+Uplifting [] best 26483 combination 
 Attempting to uplift remaining variables inzp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ]
-Uplifting [utoa10w] best 26495 combination zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ] 
+Uplifting [utoa10w] best 26483 combination zp[1]:6 [ utoa10w::digit#3 utoa10w::digit#1 utoa10w::digit#7 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ utoa10w::$8 ]
-Uplifting [utoa10w] best 26095 combination reg byte a [ utoa10w::$8 ] 
+Uplifting [utoa10w] best 26083 combination reg byte a [ utoa10w::$8 ] 
 Attempting to uplift remaining variables inzp[1]:7 [ utoa10w::bStarted#2 ]
-Uplifting [utoa10w] best 26095 combination zp[1]:7 [ utoa10w::bStarted#2 ] 
+Uplifting [utoa10w] best 26083 combination zp[1]:7 [ utoa10w::bStarted#2 ] 
 Attempting to uplift remaining variables inzp[1]:26 [ utoa10w::$9 ]
-Uplifting [utoa10w] best 26091 combination reg byte a [ utoa10w::$9 ] 
+Uplifting [utoa10w] best 26079 combination reg byte a [ utoa10w::$9 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ main::$1 ]
-Uplifting [main] best 26091 combination zp[1]:16 [ main::$1 ] 
+Uplifting [main] best 26079 combination zp[1]:16 [ main::$1 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ utoa16w::started#1 ]
-Uplifting [utoa16w] best 26085 combination reg byte x [ utoa16w::started#1 ] 
+Uplifting [utoa16w] best 26073 combination reg byte x [ utoa16w::started#1 ] 
 Attempting to uplift remaining variables inzp[1]:35 [ utoa16w::started#2 ]
-Uplifting [utoa16w] best 26079 combination reg byte x [ utoa16w::started#2 ] 
+Uplifting [utoa16w] best 26067 combination reg byte x [ utoa16w::started#2 ] 
 Attempting to uplift remaining variables inzp[1]:22 [ main::time_end#0 ]
-Uplifting [main] best 26039 combination reg byte x [ main::time_end#0 ] 
+Uplifting [main] best 26027 combination reg byte x [ main::time_end#0 ] 
 Attempting to uplift remaining variables inzp[1]:23 [ main::time#0 ]
-Uplifting [main] best 25979 combination reg byte a [ main::time#0 ] 
+Uplifting [main] best 25967 combination reg byte a [ main::time#0 ] 
 Attempting to uplift remaining variables inzp[1]:19 [ main::time_start#0 ]
-Uplifting [main] best 25979 combination zp[1]:19 [ main::time_start#0 ] 
+Uplifting [main] best 25967 combination zp[1]:19 [ main::time_start#0 ] 
 Coalescing zero page register [ zp[2]:8 [ utoa10w::dst#8 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 ] ] with [ zp[2]:27 [ utoa10w::dst#2 ] ] - score: 1
 Coalescing zero page register [ zp[2]:10 [ utoa16w::value#5 ] ] with [ zp[2]:4 [ utoa10w::value#10 utoa10w::value#0 utoa10w::value#1 ] ]
 Coalescing zero page register [ zp[2]:14 [ cls::sc#2 cls::sc#1 ] ] with [ zp[2]:8 [ utoa10w::dst#8 utoa10w::dst#11 utoa10w::dst#4 utoa10w::dst#1 utoa10w::dst#2 ] ]
@@ -2074,63 +2048,49 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label control = $d011
   .label raster = $d012
   .label BORDER_COLOR = $d020
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label __1 = 6
     .label time_start = 7
     // asm { sei  }
     sei
-    // [5] call cls 
-    // [85] phi from main to cls [phi:main->cls]
+    // [1] call cls 
+    // [81] phi from main to cls [phi:main->cls]
   cls_from_main:
     jsr cls
     jmp __b1
     // main::@1
   __b1:
-    // [6] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 -- vbuz1=_deref_pbuc1_band_vbuc2 
+    // [2] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda #$80
     and control
     sta.z __1
-    // [7] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 -- vbuaa=_deref_pbuc1_ror_1 
+    // [3] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 -- vbuaa=_deref_pbuc1_ror_1 
     lda raster
     lsr
-    // [8] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2 -- vbuaa=vbuz1_bor_vbuaa 
+    // [4] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
-    // [9] if((byte) main::rst#0!=(byte) $30) goto main::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [5] if((byte) main::rst#0!=(byte) $30) goto main::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #$30
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [10] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta BORDER_COLOR
-    // [11] (byte) main::time_start#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
+    // [7] (byte) main::time_start#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
     lda raster
     sta.z time_start
-    // [12] (volatile byte*) utoa16w::dst ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [8] (volatile byte*) utoa16w::dst ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z utoa16w.dst
     lda #>$400
     sta.z utoa16w.dst+1
-    // [13] call utoa16w 
-    // [56] phi from main::@2 to utoa16w [phi:main::@2->utoa16w]
+    // [9] call utoa16w 
+    // [52] phi from main::@2 to utoa16w [phi:main::@2->utoa16w]
   utoa16w_from___b2:
-    // [56] phi (word) utoa16w::value#5 = (byte) 0 [phi:main::@2->utoa16w#0] -- vwuz1=vbuc1 
+    // [52] phi (word) utoa16w::value#5 = (byte) 0 [phi:main::@2->utoa16w#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z utoa16w.value
     lda #>0
@@ -2139,17 +2099,17 @@ main: {
     jmp __b5
     // main::@5
   __b5:
-    // [14] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [10] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [15] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 -- pbuz1=pbuc1 
+    // [11] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28
     sta.z utoa16w.dst
     lda #>$400+$28
     sta.z utoa16w.dst+1
-    // [16] call utoa16w 
-    // [56] phi from main::@5 to utoa16w [phi:main::@5->utoa16w]
+    // [12] call utoa16w 
+    // [52] phi from main::@5 to utoa16w [phi:main::@5->utoa16w]
   utoa16w_from___b5:
-    // [56] phi (word) utoa16w::value#5 = (word) $4d2 [phi:main::@5->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $4d2 [phi:main::@5->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z utoa16w.value
     lda #>$4d2
@@ -2158,17 +2118,17 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [17] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [18] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [14] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28
     sta.z utoa16w.dst+1
-    // [19] call utoa16w 
-    // [56] phi from main::@6 to utoa16w [phi:main::@6->utoa16w]
+    // [15] call utoa16w 
+    // [52] phi from main::@6 to utoa16w [phi:main::@6->utoa16w]
   utoa16w_from___b6:
-    // [56] phi (word) utoa16w::value#5 = (word) $162e [phi:main::@6->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $162e [phi:main::@6->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$162e
     sta.z utoa16w.value
     lda #>$162e
@@ -2177,17 +2137,17 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [20] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [21] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [17] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28+$28
     sta.z utoa16w.dst+1
-    // [22] call utoa16w 
-    // [56] phi from main::@7 to utoa16w [phi:main::@7->utoa16w]
+    // [18] call utoa16w 
+    // [52] phi from main::@7 to utoa16w [phi:main::@7->utoa16w]
   utoa16w_from___b7:
-    // [56] phi (word) utoa16w::value#5 = (word) $270f [phi:main::@7->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $270f [phi:main::@7->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$270f
     sta.z utoa16w.value
     lda #>$270f
@@ -2196,17 +2156,17 @@ main: {
     jmp __b8
     // main::@8
   __b8:
-    // [23] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [19] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
-    // [24] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [20] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28+$28+$28
     sta.z utoa16w.dst+1
-    // [25] call utoa16w 
-    // [56] phi from main::@8 to utoa16w [phi:main::@8->utoa16w]
+    // [21] call utoa16w 
+    // [52] phi from main::@8 to utoa16w [phi:main::@8->utoa16w]
   utoa16w_from___b8:
-    // [56] phi (word) utoa16w::value#5 = (word) $e608 [phi:main::@8->utoa16w#0] -- vwuz1=vwuc1 
+    // [52] phi (word) utoa16w::value#5 = (word) $e608 [phi:main::@8->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$e608
     sta.z utoa16w.value
     lda #>$e608
@@ -2215,45 +2175,45 @@ main: {
     jmp __b9
     // main::@9
   __b9:
-    // [26] (byte) main::time_end#0 ← *((const nomodify byte*) raster) -- vbuxx=_deref_pbuc1 
+    // [22] (byte) main::time_end#0 ← *((const nomodify byte*) raster) -- vbuxx=_deref_pbuc1 
     ldx raster
-    // [27] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BORDER_COLOR
-    // [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 -- vbuaa=vbuxx_minus_vbuz1 
+    // [24] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 -- vbuaa=vbuxx_minus_vbuz1 
     txa
     sec
     sbc.z time_start
-    // [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 -- vwuz1=_word_vbuaa 
+    // [25] (word) utoa10w::value#0 ← (word)(byte) main::time#0 -- vwuz1=_word_vbuaa 
     sta.z utoa10w.value
     lda #0
     sta.z utoa10w.value+1
-    // [30] call utoa10w 
-    // [35] phi from main::@9 to utoa10w [phi:main::@9->utoa10w]
+    // [26] call utoa10w 
+    // [31] phi from main::@9 to utoa10w [phi:main::@9->utoa10w]
   utoa10w_from___b9:
     jsr utoa10w
-    // [31] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
+    // [27] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
   __b3_from___b9:
-    // [31] phi (byte) main::i#2 = (byte) 0 [phi:main::@9->main::@3#0] -- vbuxx=vbuc1 
+    // [27] phi (byte) main::i#2 = (byte) 0 [phi:main::@9->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b3
     // main::@3
   __b3:
-    // [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
+    // [28] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
     lda msg,x
     cmp #0
     bne __b4
     jmp __b1
     // main::@4
   __b4:
-    // [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [29] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda msg,x
     sta $400+$28+$28+$28+$28+$50+3,x
-    // [34] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [30] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [31] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [27] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
   __b3_from___b4:
-    // [31] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    // [27] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
     jmp __b3
     msg: .text "raster lines"
     .byte 0
@@ -2266,37 +2226,37 @@ utoa10w: {
     .label digit = 6
     .label dst = 4
     .label bStarted = 7
-    // [36] phi from utoa10w to utoa10w::@1 [phi:utoa10w->utoa10w::@1]
+    // [32] phi from utoa10w to utoa10w::@1 [phi:utoa10w->utoa10w::@1]
   __b1_from_utoa10w:
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 [phi:utoa10w->utoa10w::@1#0] -- pbuz1=pbuc1 
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 [phi:utoa10w->utoa10w::@1#0] -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28+$28+$50
     sta.z dst
     lda #>$400+$28+$28+$28+$28+$50
     sta.z dst+1
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#1] -- vbuz1=vbuc1 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z bStarted
-    // [36] phi (byte) utoa10w::digit#3 = (byte) 0 [phi:utoa10w->utoa10w::@1#2] -- vbuz1=vbuc1 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) 0 [phi:utoa10w->utoa10w::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#0 [phi:utoa10w->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#4] -- vbuxx=vbuc1 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#0 [phi:utoa10w->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#4] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [36] phi from utoa10w::@6 to utoa10w::@1 [phi:utoa10w::@6->utoa10w::@1]
+    // [32] phi from utoa10w::@6 to utoa10w::@1 [phi:utoa10w::@6->utoa10w::@1]
   __b1_from___b6:
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#4 [phi:utoa10w::@6->utoa10w::@1#0] -- register_copy 
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) utoa10w::bStarted#2 [phi:utoa10w::@6->utoa10w::@1#1] -- register_copy 
-    // [36] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#7 [phi:utoa10w::@6->utoa10w::@1#2] -- register_copy 
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#10 [phi:utoa10w::@6->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#1 [phi:utoa10w::@6->utoa10w::@1#4] -- register_copy 
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#4 [phi:utoa10w::@6->utoa10w::@1#0] -- register_copy 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) utoa10w::bStarted#2 [phi:utoa10w::@6->utoa10w::@1#1] -- register_copy 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#7 [phi:utoa10w::@6->utoa10w::@1#2] -- register_copy 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#10 [phi:utoa10w::@6->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#1 [phi:utoa10w::@6->utoa10w::@1#4] -- register_copy 
     jmp __b1
     // utoa10w::@1
   __b1:
-    // [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [33] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
+    // [34] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
     tay
     lda UTOA10_SUB+1,y
     cmp.z value+1
@@ -2309,93 +2269,93 @@ utoa10w: {
     jmp __b3
     // utoa10w::@3
   __b3:
-    // [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [35] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
+    // [36] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b6_from___b3
     jmp __b4
     // utoa10w::@4
   __b4:
-    // [41] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7 -- vbuz1_eq_0_then_la1 
+    // [37] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7 -- vbuz1_eq_0_then_la1 
     lda.z bStarted
     cmp #0
     beq __b7_from___b4
     jmp __b5
     // utoa10w::@5
   __b5:
-    // [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [38] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z digit
     lda DIGITS,y
     ldy #0
     sta (dst),y
-    // [43] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11 -- pbuz1=_inc_pbuz1 
+    // [39] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [44] phi from utoa10w::@4 utoa10w::@5 to utoa10w::@7 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7]
+    // [40] phi from utoa10w::@4 utoa10w::@5 to utoa10w::@7 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7]
   __b7_from___b4:
   __b7_from___b5:
-    // [44] phi (byte*) utoa10w::dst#8 = (byte*) utoa10w::dst#11 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7#0] -- register_copy 
+    // [40] phi (byte*) utoa10w::dst#8 = (byte*) utoa10w::dst#11 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7#0] -- register_copy 
     jmp __b7
     // utoa10w::@7
   __b7:
-    // [45] phi from utoa10w::@7 to utoa10w::@6 [phi:utoa10w::@7->utoa10w::@6]
+    // [41] phi from utoa10w::@7 to utoa10w::@6 [phi:utoa10w::@7->utoa10w::@6]
   __b6_from___b7:
-    // [45] phi (byte) utoa10w::digit#7 = (byte) 0 [phi:utoa10w::@7->utoa10w::@6#0] -- vbuz1=vbuc1 
+    // [41] phi (byte) utoa10w::digit#7 = (byte) 0 [phi:utoa10w::@7->utoa10w::@6#0] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    // [45] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#8 [phi:utoa10w::@7->utoa10w::@6#1] -- register_copy 
+    // [41] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#8 [phi:utoa10w::@7->utoa10w::@6#1] -- register_copy 
     jmp __b6
-    // [45] phi from utoa10w::@3 to utoa10w::@6 [phi:utoa10w::@3->utoa10w::@6]
+    // [41] phi from utoa10w::@3 to utoa10w::@6 [phi:utoa10w::@3->utoa10w::@6]
   __b6_from___b3:
-    // [45] phi (byte) utoa10w::digit#7 = (byte) utoa10w::digit#3 [phi:utoa10w::@3->utoa10w::@6#0] -- register_copy 
-    // [45] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#11 [phi:utoa10w::@3->utoa10w::@6#1] -- register_copy 
+    // [41] phi (byte) utoa10w::digit#7 = (byte) utoa10w::digit#3 [phi:utoa10w::@3->utoa10w::@6#0] -- register_copy 
+    // [41] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#11 [phi:utoa10w::@3->utoa10w::@6#1] -- register_copy 
     jmp __b6
     // utoa10w::@6
   __b6:
-    // [46] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2 -- vbuxx=_inc_vbuxx 
+    // [42] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [47] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [43] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne __b1_from___b6
     jmp __b8
     // utoa10w::@8
   __b8:
-    // [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
+    // [44] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
     lda.z value
-    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
+    // [45] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy #0
     sta (dst),y
-    // [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 -- pbuz1=_inc_pbuz1 
+    // [46] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [51] *((byte*) utoa10w::dst#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [47] *((byte*) utoa10w::dst#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (dst),y
     jmp __breturn
     // utoa10w::@return
   __breturn:
-    // [52] return 
+    // [48] return 
     rts
     // utoa10w::@2
   __b2:
-    // [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuxx 
+    // [49] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuxx 
     lda UTOA10_VAL,x
     clc
     adc.z digit
     sta.z digit
-    // [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [50] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [51] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z value
@@ -2404,15 +2364,15 @@ utoa10w: {
     lda.z value+1
     sbc UTOA10_SUB+1,y
     sta.z value+1
-    // [36] phi from utoa10w::@2 to utoa10w::@1 [phi:utoa10w::@2->utoa10w::@1]
+    // [32] phi from utoa10w::@2 to utoa10w::@1 [phi:utoa10w::@2->utoa10w::@1]
   __b1_from___b2:
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#11 [phi:utoa10w::@2->utoa10w::@1#0] -- register_copy 
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) 1 [phi:utoa10w::@2->utoa10w::@1#1] -- vbuz1=vbuc1 
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#11 [phi:utoa10w::@2->utoa10w::@1#0] -- register_copy 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) 1 [phi:utoa10w::@2->utoa10w::@1#1] -- vbuz1=vbuc1 
     lda #1
     sta.z bStarted
-    // [36] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#1 [phi:utoa10w::@2->utoa10w::@1#2] -- register_copy 
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#1 [phi:utoa10w::@2->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#2 [phi:utoa10w::@2->utoa10w::@1#4] -- register_copy 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#1 [phi:utoa10w::@2->utoa10w::@1#2] -- register_copy 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#1 [phi:utoa10w::@2->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#2 [phi:utoa10w::@2->utoa10w::@1#4] -- register_copy 
     jmp __b1
 }
   // utoa16w
@@ -2421,112 +2381,112 @@ utoa10w: {
 utoa16w: {
     .label dst = 8
     .label value = 2
-    // [57] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // [53] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda.z value+1
-    // [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
+    // [54] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
     lsr
     lsr
-    // [59] call utoa16n 
-    // [77] phi from utoa16w to utoa16n [phi:utoa16w->utoa16n]
+    // [55] call utoa16n 
+    // [73] phi from utoa16w to utoa16n [phi:utoa16w->utoa16n]
   utoa16n_from_utoa16w:
-    // [77] phi (byte) utoa16n::started#7 = (byte) 0 [phi:utoa16w->utoa16n#0] -- vbuxx=vbuc1 
+    // [73] phi (byte) utoa16n::started#7 = (byte) 0 [phi:utoa16w->utoa16n#0] -- vbuxx=vbuc1 
     ldx #0
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
     jsr utoa16n
-    // [60] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4
+    // [56] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4
     jmp __b1
     // utoa16w::@1
   __b1:
-    // [61] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0
-    // [62] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // [57] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0
+    // [58] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda.z value+1
-    // [63] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // [59] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [64] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1
-    // [65] call utoa16n 
-    // [77] phi from utoa16w::@1 to utoa16n [phi:utoa16w::@1->utoa16n]
+    // [60] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1
+    // [61] call utoa16n 
+    // [73] phi from utoa16w::@1 to utoa16n [phi:utoa16w::@1->utoa16n]
   utoa16n_from___b1:
-    // [77] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
     jsr utoa16n
-    // [66] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4
+    // [62] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4
     jmp __b2
     // utoa16w::@2
   __b2:
-    // [67] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1
-    // [68] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // [63] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1
+    // [64] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
     lda.z value
-    // [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
+    // [65] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
     lsr
     lsr
-    // [70] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2
-    // [71] call utoa16n 
-    // [77] phi from utoa16w::@2 to utoa16n [phi:utoa16w::@2->utoa16n]
+    // [66] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2
+    // [67] call utoa16n 
+    // [73] phi from utoa16w::@2 to utoa16n [phi:utoa16w::@2->utoa16n]
   utoa16n_from___b2:
-    // [77] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#2 [phi:utoa16w::@2->utoa16n#0] -- register_copy 
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#2 [phi:utoa16w::@2->utoa16n#0] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
     jsr utoa16n
     jmp __b3
     // utoa16w::@3
   __b3:
-    // [72] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // [68] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
     lda.z value
-    // [73] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // [69] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [74] call utoa16n 
-    // [77] phi from utoa16w::@3 to utoa16n [phi:utoa16w::@3->utoa16n]
+    // [70] call utoa16n 
+    // [73] phi from utoa16w::@3 to utoa16n [phi:utoa16w::@3->utoa16n]
   utoa16n_from___b3:
-    // [77] phi (byte) utoa16n::started#7 = (byte) 1 [phi:utoa16w::@3->utoa16n#0] -- vbuxx=vbuc1 
+    // [73] phi (byte) utoa16n::started#7 = (byte) 1 [phi:utoa16w::@3->utoa16n#0] -- vbuxx=vbuc1 
     ldx #1
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#3 [phi:utoa16w::@3->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#3 [phi:utoa16w::@3->utoa16n#1] -- register_copy 
     jsr utoa16n
     jmp __b4
     // utoa16w::@4
   __b4:
-    // [75] *((volatile byte*) utoa16w::dst) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [71] *((volatile byte*) utoa16w::dst) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (dst),y
     jmp __breturn
     // utoa16w::@return
   __breturn:
-    // [76] return 
+    // [72] return 
     rts
 }
   // utoa16n
 // Hexadecimal utoa() for a single nybble
 // utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
-    // [78] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3 -- vbuaa_eq_0_then_la1 
+    // [74] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b3_from_utoa16n
-    // [80] phi from utoa16n to utoa16n::@1 [phi:utoa16n->utoa16n::@1]
+    // [76] phi from utoa16n to utoa16n::@1 [phi:utoa16n->utoa16n::@1]
   __b1_from_utoa16n:
-    // [80] phi (byte) utoa16n::return#4 = (byte) 1 [phi:utoa16n->utoa16n::@1#0] -- vbuxx=vbuc1 
+    // [76] phi (byte) utoa16n::return#4 = (byte) 1 [phi:utoa16n->utoa16n::@1#0] -- vbuxx=vbuc1 
     ldx #1
     jmp __b1
-    // [79] phi from utoa16n to utoa16n::@3 [phi:utoa16n->utoa16n::@3]
+    // [75] phi from utoa16n to utoa16n::@3 [phi:utoa16n->utoa16n::@3]
   __b3_from_utoa16n:
     jmp __b3
     // utoa16n::@3
   __b3:
-    // [80] phi from utoa16n::@3 to utoa16n::@1 [phi:utoa16n::@3->utoa16n::@1]
+    // [76] phi from utoa16n::@3 to utoa16n::@1 [phi:utoa16n::@3->utoa16n::@1]
   __b1_from___b3:
-    // [80] phi (byte) utoa16n::return#4 = (byte) utoa16n::started#7 [phi:utoa16n::@3->utoa16n::@1#0] -- register_copy 
+    // [76] phi (byte) utoa16n::return#4 = (byte) utoa16n::started#7 [phi:utoa16n::@3->utoa16n::@1#0] -- register_copy 
     jmp __b1
     // utoa16n::@1
   __b1:
-    // [81] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return -- vbuxx_eq_0_then_la1 
+    // [77] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return -- vbuxx_eq_0_then_la1 
     cpx #0
     beq __breturn
     jmp __b2
     // utoa16n::@2
   __b2:
-    // [82] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) -- _deref_(_deref_pptc1)=pbuc2_derefidx_vbuaa 
+    // [78] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) -- _deref_(_deref_pptc1)=pbuc2_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy.z utoa16w.dst
@@ -2535,7 +2495,7 @@ utoa16n: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [83] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst) -- _deref_pptc1=_inc__deref_pptc1 
+    // [79] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z utoa16w.dst
     bne !+
     inc.z utoa16w.dst+1
@@ -2543,37 +2503,37 @@ utoa16n: {
     jmp __breturn
     // utoa16n::@return
   __breturn:
-    // [84] return 
+    // [80] return 
     rts
 }
   // cls
 cls: {
     .label screen = $400
     .label sc = 4
-    // [86] phi from cls to cls::@1 [phi:cls->cls::@1]
+    // [82] phi from cls to cls::@1 [phi:cls->cls::@1]
   __b1_from_cls:
-    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
+    // [82] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
     sta.z sc+1
     jmp __b1
-    // [86] phi from cls::@1 to cls::@1 [phi:cls::@1->cls::@1]
+    // [82] phi from cls::@1 to cls::@1 [phi:cls::@1->cls::@1]
   __b1_from___b1:
-    // [86] phi (byte*) cls::sc#2 = (byte*) cls::sc#1 [phi:cls::@1->cls::@1#0] -- register_copy 
+    // [82] phi (byte*) cls::sc#2 = (byte*) cls::sc#1 [phi:cls::@1->cls::@1#0] -- register_copy 
     jmp __b1
     // cls::@1
   __b1:
-    // [87] *((byte*) cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [83] *((byte*) cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [88] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [84] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
     inc.z sc+1
   !:
-    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [85] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7+1
     bne __b1_from___b1
@@ -2583,7 +2543,7 @@ cls: {
     jmp __breturn
     // cls::@return
   __breturn:
-    // [90] return 
+    // [86] return 
     rts
 }
   // File Data
@@ -2596,8 +2556,6 @@ cls: {
   UTOA10_VAL: .byte 3, 1, 3, 1, 3, 1, 3, 1
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b5
@@ -2638,9 +2596,6 @@ Replacing label __b1_from___b6 with __b1
 Replacing label __b3_from_utoa16n with __b1
 Replacing label __b1_from___b1 with __b1
 Replacing label __b1_from___b1 with __b1
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from___b6:
 Removing instruction __b7_from___b4:
 Removing instruction __b7_from___b5:
@@ -2651,8 +2606,6 @@ Removing instruction __b3:
 Removing instruction __b1_from___b3:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction cls_from_main:
 Removing instruction __b2:
 Removing instruction utoa16w_from___b2:
@@ -2689,8 +2642,6 @@ Removing instruction __b2:
 Removing instruction __b1_from_cls:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction jmp __b1
 Removing instruction jmp __b6
 Removing instruction jmp __b1
@@ -2698,9 +2649,6 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BORDER_COLOR = (byte*) 53280
 (const byte*) DIGITS[]  = (byte*) "0123456789abcdef"
 (const word*) UTOA10_SUB[]  = { (word) $7530, (word) $2710, (word) $bb8, (word) $3e8, (word) $12c, (word) $64, (word) $1e, (word) $a }
@@ -2709,13 +2657,13 @@ FINAL SYMBOL TABLE
 (label) cls::@1
 (label) cls::@return
 (byte*) cls::sc
-(byte*) cls::sc#1 sc zp[2]:4 1501.5
-(byte*) cls::sc#2 sc zp[2]:4 1501.5
+(byte*) cls::sc#1 sc zp[2]:4 151.5
+(byte*) cls::sc#2 sc zp[2]:4 151.5
 (const byte*) cls::screen = (byte*) 1024
 (const nomodify byte*) control = (byte*) 53265
 (void()) main()
-(byte~) main::$1 zp[1]:6 1001.0
-(byte~) main::$2 reg byte a 2002.0
+(byte~) main::$1 zp[1]:6 101.0
+(byte~) main::$2 reg byte a 202.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
@@ -2726,24 +2674,24 @@ FINAL SYMBOL TABLE
 (label) main::@8
 (label) main::@9
 (byte) main::i
-(byte) main::i#1 reg byte x 2002.0
-(byte) main::i#2 reg byte x 1668.3333333333335
+(byte) main::i#1 reg byte x 202.0
+(byte) main::i#2 reg byte x 168.33333333333331
 (const byte*) main::msg[]  = (byte*) "raster lines"
 (byte) main::rst
-(byte) main::rst#0 reg byte a 2002.0
+(byte) main::rst#0 reg byte a 202.0
 (byte*) main::screen
 (byte) main::time
-(byte) main::time#0 reg byte a 101.0
+(byte) main::time#0 reg byte a 11.0
 (byte) main::time_end
-(byte) main::time_end#0 reg byte x 101.0
+(byte) main::time_end#0 reg byte x 11.0
 (byte) main::time_start
-(byte) main::time_start#0 time_start zp[1]:7 11.882352941176471
+(byte) main::time_start#0 time_start zp[1]:7 1.2941176470588236
 (const nomodify byte*) raster = (byte*) 53266
 (void()) utoa10w((word) utoa10w::value , (byte*) utoa10w::dst)
-(byte~) utoa10w::$1 reg byte a 200002.0
-(byte~) utoa10w::$7 reg byte a 200002.0
-(byte~) utoa10w::$8 reg byte a 200002.0
-(byte~) utoa10w::$9 reg byte a 2002.0
+(byte~) utoa10w::$1 reg byte a 20002.0
+(byte~) utoa10w::$7 reg byte a 20002.0
+(byte~) utoa10w::$8 reg byte a 20002.0
+(byte~) utoa10w::$9 reg byte a 202.0
 (label) utoa10w::@1
 (label) utoa10w::@2
 (label) utoa10w::@3
@@ -2754,24 +2702,24 @@ FINAL SYMBOL TABLE
 (label) utoa10w::@8
 (label) utoa10w::@return
 (byte) utoa10w::bStarted
-(byte) utoa10w::bStarted#2 bStarted zp[1]:7 25000.25
+(byte) utoa10w::bStarted#2 bStarted zp[1]:7 2500.25
 (byte) utoa10w::digit
-(byte) utoa10w::digit#1 digit zp[1]:6 66667.33333333333
-(byte) utoa10w::digit#3 digit zp[1]:6 83334.16666666666
-(byte) utoa10w::digit#7 digit zp[1]:6 66667.33333333333
+(byte) utoa10w::digit#1 digit zp[1]:6 6667.333333333333
+(byte) utoa10w::digit#3 digit zp[1]:6 8334.166666666666
+(byte) utoa10w::digit#7 digit zp[1]:6 6667.333333333333
 (byte*) utoa10w::dst
-(byte*) utoa10w::dst#1 dst zp[2]:4 200002.0
-(byte*) utoa10w::dst#11 dst zp[2]:4 70000.7
-(byte*) utoa10w::dst#2 dst zp[2]:4 2002.0
-(byte*) utoa10w::dst#4 dst zp[2]:4 60401.0
-(byte*) utoa10w::dst#8 dst zp[2]:4 300003.0
+(byte*) utoa10w::dst#1 dst zp[2]:4 20002.0
+(byte*) utoa10w::dst#11 dst zp[2]:4 7000.700000000001
+(byte*) utoa10w::dst#2 dst zp[2]:4 202.0
+(byte*) utoa10w::dst#4 dst zp[2]:4 6041.0
+(byte*) utoa10w::dst#8 dst zp[2]:4 30003.0
 (byte) utoa10w::i
-(byte) utoa10w::i#1 reg byte x 150001.5
-(byte) utoa10w::i#2 reg byte x 61539.07692307693
+(byte) utoa10w::i#1 reg byte x 15001.5
+(byte) utoa10w::i#2 reg byte x 6154.461538461538
 (word) utoa10w::value
-(word) utoa10w::value#0 value zp[2]:2 551.0
-(word) utoa10w::value#1 value zp[2]:2 200002.0
-(word) utoa10w::value#10 value zp[2]:2 35786.142857142855
+(word) utoa10w::value#0 value zp[2]:2 56.0
+(word) utoa10w::value#1 value zp[2]:2 20002.0
+(word) utoa10w::value#10 value zp[2]:2 3579.000000000001
 (byte()) utoa16n((byte) utoa16n::nybble , (word**) utoa16n::dst , (byte) utoa16n::started)
 (label) utoa16n::@1
 (label) utoa16n::@2
@@ -2779,35 +2727,35 @@ FINAL SYMBOL TABLE
 (label) utoa16n::@return
 (word**) utoa16n::dst
 (byte) utoa16n::nybble
-(byte) utoa16n::nybble#0 reg byte a 2002.0
-(byte) utoa16n::nybble#1 reg byte a 1001.0
-(byte) utoa16n::nybble#2 reg byte a 1001.0
-(byte) utoa16n::nybble#3 reg byte a 2002.0
-(byte) utoa16n::nybble#4 reg byte a 4801.2
+(byte) utoa16n::nybble#0 reg byte a 202.0
+(byte) utoa16n::nybble#1 reg byte a 101.0
+(byte) utoa16n::nybble#2 reg byte a 101.0
+(byte) utoa16n::nybble#3 reg byte a 202.0
+(byte) utoa16n::nybble#4 reg byte a 481.2
 (byte) utoa16n::return
-(byte) utoa16n::return#0 reg byte x 2002.0
-(byte) utoa16n::return#1 reg byte x 2002.0
-(byte) utoa16n::return#4 reg byte x 3143.4285714285716
+(byte) utoa16n::return#0 reg byte x 202.0
+(byte) utoa16n::return#1 reg byte x 202.0
+(byte) utoa16n::return#4 reg byte x 314.8571428571429
 (byte) utoa16n::started
-(byte) utoa16n::started#1 reg byte x 2002.0
-(byte) utoa16n::started#2 reg byte x 2002.0
-(byte) utoa16n::started#7 reg byte x 4001.0
+(byte) utoa16n::started#1 reg byte x 202.0
+(byte) utoa16n::started#2 reg byte x 202.0
+(byte) utoa16n::started#7 reg byte x 401.0
 (void()) utoa16w((word) utoa16w::value , (volatile byte*) utoa16w::dst)
-(byte~) utoa16w::$0 reg byte a 2002.0
-(byte~) utoa16w::$3 reg byte a 2002.0
-(byte~) utoa16w::$6 reg byte a 2002.0
-(byte~) utoa16w::$9 reg byte a 2002.0
+(byte~) utoa16w::$0 reg byte a 202.0
+(byte~) utoa16w::$3 reg byte a 202.0
+(byte~) utoa16w::$6 reg byte a 202.0
+(byte~) utoa16w::$9 reg byte a 202.0
 (label) utoa16w::@1
 (label) utoa16w::@2
 (label) utoa16w::@3
 (label) utoa16w::@4
 (label) utoa16w::@return
-(volatile byte*) utoa16w::dst loadstore zp[2]:8 47.0625
+(volatile byte*) utoa16w::dst loadstore zp[2]:8 4.875
 (byte) utoa16w::started
-(byte) utoa16w::started#1 reg byte x 667.3333333333334
-(byte) utoa16w::started#2 reg byte x 667.3333333333334
+(byte) utoa16w::started#1 reg byte x 67.33333333333333
+(byte) utoa16w::started#2 reg byte x 67.33333333333333
 (word) utoa16w::value
-(word) utoa16w::value#5 value zp[2]:2 250.25
+(word) utoa16w::value#5 value zp[2]:2 25.25
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte x [ utoa10w::i#2 utoa10w::i#1 ]
@@ -2849,12 +2797,6 @@ Score: 22318
   .label control = $d011
   .label raster = $d012
   .label BORDER_COLOR = $d020
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label __1 = 6
@@ -2863,62 +2805,62 @@ main: {
     // asm { sei  }
     sei
     // cls()
-    // [5] call cls 
-    // [85] phi from main to cls [phi:main->cls]
+    // [1] call cls 
+    // [81] phi from main to cls [phi:main->cls]
     jsr cls
     // main::@1
   __b1:
     // *control&0x80
-    // [6] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 -- vbuz1=_deref_pbuc1_band_vbuc2 
+    // [2] (byte~) main::$1 ← *((const nomodify byte*) control) & (byte) $80 -- vbuz1=_deref_pbuc1_band_vbuc2 
     lda #$80
     and control
     sta.z __1
     // *raster>>1
-    // [7] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 -- vbuaa=_deref_pbuc1_ror_1 
+    // [3] (byte~) main::$2 ← *((const nomodify byte*) raster) >> (byte) 1 -- vbuaa=_deref_pbuc1_ror_1 
     lda raster
     lsr
     // rst = (*control&0x80)|(*raster>>1)
-    // [8] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2 -- vbuaa=vbuz1_bor_vbuaa 
+    // [4] (byte) main::rst#0 ← (byte~) main::$1 | (byte~) main::$2 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
     // while (rst!=0x30)
-    // [9] if((byte) main::rst#0!=(byte) $30) goto main::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [5] if((byte) main::rst#0!=(byte) $30) goto main::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #$30
     bne __b1
     // main::@2
     // *BORDER_COLOR = 1
-    // [10] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [6] *((const nomodify byte*) BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta BORDER_COLOR
     // time_start = *raster
-    // [11] (byte) main::time_start#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
+    // [7] (byte) main::time_start#0 ← *((const nomodify byte*) raster) -- vbuz1=_deref_pbuc1 
     lda raster
     sta.z time_start
     // utoa16w(00000, screen)
-    // [12] (volatile byte*) utoa16w::dst ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [8] (volatile byte*) utoa16w::dst ← (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z utoa16w.dst
     lda #>$400
     sta.z utoa16w.dst+1
-    // [13] call utoa16w 
-    // [56] phi from main::@2 to utoa16w [phi:main::@2->utoa16w]
-    // [56] phi (word) utoa16w::value#5 = (byte) 0 [phi:main::@2->utoa16w#0] -- vwuz1=vbuc1 
+    // [9] call utoa16w 
+    // [52] phi from main::@2 to utoa16w [phi:main::@2->utoa16w]
+    // [52] phi (word) utoa16w::value#5 = (byte) 0 [phi:main::@2->utoa16w#0] -- vwuz1=vbuc1 
     lda #<0
     sta.z utoa16w.value
     sta.z utoa16w.value+1
     jsr utoa16w
     // main::@5
     // (*BORDER_COLOR)++;
-    // [14] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [10] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // utoa16w(01234, screen)
-    // [15] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 -- pbuz1=pbuc1 
+    // [11] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28
     sta.z utoa16w.dst
     lda #>$400+$28
     sta.z utoa16w.dst+1
-    // [16] call utoa16w 
-    // [56] phi from main::@5 to utoa16w [phi:main::@5->utoa16w]
-    // [56] phi (word) utoa16w::value#5 = (word) $4d2 [phi:main::@5->utoa16w#0] -- vwuz1=vwuc1 
+    // [12] call utoa16w 
+    // [52] phi from main::@5 to utoa16w [phi:main::@5->utoa16w]
+    // [52] phi (word) utoa16w::value#5 = (word) $4d2 [phi:main::@5->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z utoa16w.value
     lda #>$4d2
@@ -2926,17 +2868,17 @@ main: {
     jsr utoa16w
     // main::@6
     // (*BORDER_COLOR)++;
-    // [17] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [13] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // utoa16w(05678, screen)
-    // [18] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [14] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28
     sta.z utoa16w.dst+1
-    // [19] call utoa16w 
-    // [56] phi from main::@6 to utoa16w [phi:main::@6->utoa16w]
-    // [56] phi (word) utoa16w::value#5 = (word) $162e [phi:main::@6->utoa16w#0] -- vwuz1=vwuc1 
+    // [15] call utoa16w 
+    // [52] phi from main::@6 to utoa16w [phi:main::@6->utoa16w]
+    // [52] phi (word) utoa16w::value#5 = (word) $162e [phi:main::@6->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$162e
     sta.z utoa16w.value
     lda #>$162e
@@ -2944,17 +2886,17 @@ main: {
     jsr utoa16w
     // main::@7
     // (*BORDER_COLOR)++;
-    // [20] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // utoa16w(09999, screen)
-    // [21] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [17] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28+$28
     sta.z utoa16w.dst+1
-    // [22] call utoa16w 
-    // [56] phi from main::@7 to utoa16w [phi:main::@7->utoa16w]
-    // [56] phi (word) utoa16w::value#5 = (word) $270f [phi:main::@7->utoa16w#0] -- vwuz1=vwuc1 
+    // [18] call utoa16w 
+    // [52] phi from main::@7 to utoa16w [phi:main::@7->utoa16w]
+    // [52] phi (word) utoa16w::value#5 = (word) $270f [phi:main::@7->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$270f
     sta.z utoa16w.value
     lda #>$270f
@@ -2962,17 +2904,17 @@ main: {
     jsr utoa16w
     // main::@8
     // (*BORDER_COLOR)++;
-    // [23] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [19] *((const nomodify byte*) BORDER_COLOR) ← ++ *((const nomodify byte*) BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // utoa16w(58888, screen)
-    // [24] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
+    // [20] (volatile byte*) utoa16w::dst ← (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28 -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28+$28
     sta.z utoa16w.dst
     lda #>$400+$28+$28+$28+$28
     sta.z utoa16w.dst+1
-    // [25] call utoa16w 
-    // [56] phi from main::@8 to utoa16w [phi:main::@8->utoa16w]
-    // [56] phi (word) utoa16w::value#5 = (word) $e608 [phi:main::@8->utoa16w#0] -- vwuz1=vwuc1 
+    // [21] call utoa16w 
+    // [52] phi from main::@8 to utoa16w [phi:main::@8->utoa16w]
+    // [52] phi (word) utoa16w::value#5 = (word) $e608 [phi:main::@8->utoa16w#0] -- vwuz1=vwuc1 
     lda #<$e608
     sta.z utoa16w.value
     lda #>$e608
@@ -2980,32 +2922,32 @@ main: {
     jsr utoa16w
     // main::@9
     // time_end = *raster
-    // [26] (byte) main::time_end#0 ← *((const nomodify byte*) raster) -- vbuxx=_deref_pbuc1 
+    // [22] (byte) main::time_end#0 ← *((const nomodify byte*) raster) -- vbuxx=_deref_pbuc1 
     ldx raster
     // *BORDER_COLOR = 0
-    // [27] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [23] *((const nomodify byte*) BORDER_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BORDER_COLOR
     // time = time_end - time_start
-    // [28] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 -- vbuaa=vbuxx_minus_vbuz1 
+    // [24] (byte) main::time#0 ← (byte) main::time_end#0 - (byte) main::time_start#0 -- vbuaa=vbuxx_minus_vbuz1 
     txa
     sec
     sbc.z time_start
     // utoa10w((unsigned int)time, screen+80)
-    // [29] (word) utoa10w::value#0 ← (word)(byte) main::time#0 -- vwuz1=_word_vbuaa 
+    // [25] (word) utoa10w::value#0 ← (word)(byte) main::time#0 -- vwuz1=_word_vbuaa 
     sta.z utoa10w.value
     lda #0
     sta.z utoa10w.value+1
-    // [30] call utoa10w 
-    // [35] phi from main::@9 to utoa10w [phi:main::@9->utoa10w]
+    // [26] call utoa10w 
+    // [31] phi from main::@9 to utoa10w [phi:main::@9->utoa10w]
     jsr utoa10w
-    // [31] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
-    // [31] phi (byte) main::i#2 = (byte) 0 [phi:main::@9->main::@3#0] -- vbuxx=vbuc1 
+    // [27] phi from main::@9 to main::@3 [phi:main::@9->main::@3]
+    // [27] phi (byte) main::i#2 = (byte) 0 [phi:main::@9->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@3
   __b3:
     // for( byte i=0; msg[i]!=0; i++ )
-    // [32] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
+    // [28] if(*((const byte*) main::msg + (byte) main::i#2)!=(byte) 0) goto main::@4 -- pbuc1_derefidx_vbuxx_neq_0_then_la1 
     lda msg,x
     cmp #0
     bne __b4
@@ -3013,14 +2955,14 @@ main: {
     // main::@4
   __b4:
     // (screen+80+3)[i] = msg[i]
-    // [33] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [29] *((byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50+(byte) 3 + (byte) main::i#2) ← *((const byte*) main::msg + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda msg,x
     sta $400+$28+$28+$28+$28+$50+3,x
     // for( byte i=0; msg[i]!=0; i++ )
-    // [34] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [30] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [31] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
-    // [31] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
+    // [27] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [27] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@4->main::@3#0] -- register_copy 
     jmp __b3
     msg: .text "raster lines"
     .byte 0
@@ -3033,34 +2975,34 @@ utoa10w: {
     .label digit = 6
     .label dst = 4
     .label bStarted = 7
-    // [36] phi from utoa10w to utoa10w::@1 [phi:utoa10w->utoa10w::@1]
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 [phi:utoa10w->utoa10w::@1#0] -- pbuz1=pbuc1 
+    // [32] phi from utoa10w to utoa10w::@1 [phi:utoa10w->utoa10w::@1]
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) 1024+(byte) $28+(byte) $28+(byte) $28+(byte) $28+(byte) $50 [phi:utoa10w->utoa10w::@1#0] -- pbuz1=pbuc1 
     lda #<$400+$28+$28+$28+$28+$50
     sta.z dst
     lda #>$400+$28+$28+$28+$28+$50
     sta.z dst+1
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#1] -- vbuz1=vbuc1 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z bStarted
-    // [36] phi (byte) utoa10w::digit#3 = (byte) 0 [phi:utoa10w->utoa10w::@1#2] -- vbuz1=vbuc1 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) 0 [phi:utoa10w->utoa10w::@1#2] -- vbuz1=vbuc1 
     sta.z digit
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#0 [phi:utoa10w->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#4] -- vbuxx=vbuc1 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#0 [phi:utoa10w->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) 0 [phi:utoa10w->utoa10w::@1#4] -- vbuxx=vbuc1 
     tax
-    // [36] phi from utoa10w::@6 to utoa10w::@1 [phi:utoa10w::@6->utoa10w::@1]
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#4 [phi:utoa10w::@6->utoa10w::@1#0] -- register_copy 
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) utoa10w::bStarted#2 [phi:utoa10w::@6->utoa10w::@1#1] -- register_copy 
-    // [36] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#7 [phi:utoa10w::@6->utoa10w::@1#2] -- register_copy 
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#10 [phi:utoa10w::@6->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#1 [phi:utoa10w::@6->utoa10w::@1#4] -- register_copy 
+    // [32] phi from utoa10w::@6 to utoa10w::@1 [phi:utoa10w::@6->utoa10w::@1]
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#4 [phi:utoa10w::@6->utoa10w::@1#0] -- register_copy 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) utoa10w::bStarted#2 [phi:utoa10w::@6->utoa10w::@1#1] -- register_copy 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#7 [phi:utoa10w::@6->utoa10w::@1#2] -- register_copy 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#10 [phi:utoa10w::@6->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#1 [phi:utoa10w::@6->utoa10w::@1#4] -- register_copy 
     // utoa10w::@1
   __b1:
     // value>=UTOA10_SUB[i]
-    // [37] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [33] (byte~) utoa10w::$7 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
     // while(value>=UTOA10_SUB[i])
-    // [38] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
+    // [34] if((word) utoa10w::value#10>=*((const word*) UTOA10_SUB + (byte~) utoa10w::$7)) goto utoa10w::@2 -- vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1 
     tay
     lda UTOA10_SUB+1,y
     cmp.z value+1
@@ -3072,89 +3014,89 @@ utoa10w: {
     bcc __b2
     // utoa10w::@3
     // i&1
-    // [39] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [35] (byte~) utoa10w::$1 ← (byte) utoa10w::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
     // if((i&1)!=0)
-    // [40] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
+    // [36] if((byte~) utoa10w::$1==(byte) 0) goto utoa10w::@6 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b6
     // utoa10w::@4
     // if(bStarted!=0)
-    // [41] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7 -- vbuz1_eq_0_then_la1 
+    // [37] if((byte) utoa10w::bStarted#2==(byte) 0) goto utoa10w::@7 -- vbuz1_eq_0_then_la1 
     lda.z bStarted
     cmp #0
     beq __b7
     // utoa10w::@5
     // *dst++ = DIGITS[digit]
-    // [42] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
+    // [38] *((byte*) utoa10w::dst#11) ← *((const byte*) DIGITS + (byte) utoa10w::digit#3) -- _deref_pbuz1=pbuc1_derefidx_vbuz2 
     ldy.z digit
     lda DIGITS,y
     ldy #0
     sta (dst),y
     // *dst++ = DIGITS[digit];
-    // [43] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11 -- pbuz1=_inc_pbuz1 
+    // [39] (byte*) utoa10w::dst#1 ← ++ (byte*) utoa10w::dst#11 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [44] phi from utoa10w::@4 utoa10w::@5 to utoa10w::@7 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7]
-    // [44] phi (byte*) utoa10w::dst#8 = (byte*) utoa10w::dst#11 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7#0] -- register_copy 
+    // [40] phi from utoa10w::@4 utoa10w::@5 to utoa10w::@7 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7]
+    // [40] phi (byte*) utoa10w::dst#8 = (byte*) utoa10w::dst#11 [phi:utoa10w::@4/utoa10w::@5->utoa10w::@7#0] -- register_copy 
     // utoa10w::@7
   __b7:
-    // [45] phi from utoa10w::@7 to utoa10w::@6 [phi:utoa10w::@7->utoa10w::@6]
-    // [45] phi (byte) utoa10w::digit#7 = (byte) 0 [phi:utoa10w::@7->utoa10w::@6#0] -- vbuz1=vbuc1 
+    // [41] phi from utoa10w::@7 to utoa10w::@6 [phi:utoa10w::@7->utoa10w::@6]
+    // [41] phi (byte) utoa10w::digit#7 = (byte) 0 [phi:utoa10w::@7->utoa10w::@6#0] -- vbuz1=vbuc1 
     lda #0
     sta.z digit
-    // [45] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#8 [phi:utoa10w::@7->utoa10w::@6#1] -- register_copy 
-    // [45] phi from utoa10w::@3 to utoa10w::@6 [phi:utoa10w::@3->utoa10w::@6]
-    // [45] phi (byte) utoa10w::digit#7 = (byte) utoa10w::digit#3 [phi:utoa10w::@3->utoa10w::@6#0] -- register_copy 
-    // [45] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#11 [phi:utoa10w::@3->utoa10w::@6#1] -- register_copy 
+    // [41] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#8 [phi:utoa10w::@7->utoa10w::@6#1] -- register_copy 
+    // [41] phi from utoa10w::@3 to utoa10w::@6 [phi:utoa10w::@3->utoa10w::@6]
+    // [41] phi (byte) utoa10w::digit#7 = (byte) utoa10w::digit#3 [phi:utoa10w::@3->utoa10w::@6#0] -- register_copy 
+    // [41] phi (byte*) utoa10w::dst#4 = (byte*) utoa10w::dst#11 [phi:utoa10w::@3->utoa10w::@6#1] -- register_copy 
     // utoa10w::@6
   __b6:
     // for( unsigned char i: 0..7)
-    // [46] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2 -- vbuxx=_inc_vbuxx 
+    // [42] (byte) utoa10w::i#1 ← ++ (byte) utoa10w::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [47] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [43] if((byte) utoa10w::i#1!=(byte) 8) goto utoa10w::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne __b1
     // utoa10w::@8
     // *dst++ = DIGITS[(unsigned char) value]
-    // [48] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
+    // [44] (byte~) utoa10w::$9 ← (byte)(word) utoa10w::value#10 -- vbuaa=_byte_vwuz1 
     lda.z value
-    // [49] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
+    // [45] *((byte*) utoa10w::dst#4) ← *((const byte*) DIGITS + (byte~) utoa10w::$9) -- _deref_pbuz1=pbuc1_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy #0
     sta (dst),y
     // *dst++ = DIGITS[(unsigned char) value];
-    // [50] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 -- pbuz1=_inc_pbuz1 
+    // [46] (byte*) utoa10w::dst#2 ← ++ (byte*) utoa10w::dst#4 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     // *dst = 0
-    // [51] *((byte*) utoa10w::dst#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [47] *((byte*) utoa10w::dst#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (dst),y
     // utoa10w::@return
     // }
-    // [52] return 
+    // [48] return 
     rts
     // utoa10w::@2
   __b2:
     // digit += UTOA10_VAL[i]
-    // [53] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuxx 
+    // [49] (byte) utoa10w::digit#1 ← (byte) utoa10w::digit#3 + *((const byte*) UTOA10_VAL + (byte) utoa10w::i#2) -- vbuz1=vbuz1_plus_pbuc1_derefidx_vbuxx 
     lda UTOA10_VAL,x
     clc
     adc.z digit
     sta.z digit
     // value -= UTOA10_SUB[i]
-    // [54] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    // [50] (byte~) utoa10w::$8 ← (byte) utoa10w::i#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [55] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
+    // [51] (word) utoa10w::value#1 ← (word) utoa10w::value#10 - *((const word*) UTOA10_SUB + (byte~) utoa10w::$8) -- vwuz1=vwuz1_minus_pwuc1_derefidx_vbuaa 
     tay
     sec
     lda.z value
@@ -3163,14 +3105,14 @@ utoa10w: {
     lda.z value+1
     sbc UTOA10_SUB+1,y
     sta.z value+1
-    // [36] phi from utoa10w::@2 to utoa10w::@1 [phi:utoa10w::@2->utoa10w::@1]
-    // [36] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#11 [phi:utoa10w::@2->utoa10w::@1#0] -- register_copy 
-    // [36] phi (byte) utoa10w::bStarted#2 = (byte) 1 [phi:utoa10w::@2->utoa10w::@1#1] -- vbuz1=vbuc1 
+    // [32] phi from utoa10w::@2 to utoa10w::@1 [phi:utoa10w::@2->utoa10w::@1]
+    // [32] phi (byte*) utoa10w::dst#11 = (byte*) utoa10w::dst#11 [phi:utoa10w::@2->utoa10w::@1#0] -- register_copy 
+    // [32] phi (byte) utoa10w::bStarted#2 = (byte) 1 [phi:utoa10w::@2->utoa10w::@1#1] -- vbuz1=vbuc1 
     lda #1
     sta.z bStarted
-    // [36] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#1 [phi:utoa10w::@2->utoa10w::@1#2] -- register_copy 
-    // [36] phi (word) utoa10w::value#10 = (word) utoa10w::value#1 [phi:utoa10w::@2->utoa10w::@1#3] -- register_copy 
-    // [36] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#2 [phi:utoa10w::@2->utoa10w::@1#4] -- register_copy 
+    // [32] phi (byte) utoa10w::digit#3 = (byte) utoa10w::digit#1 [phi:utoa10w::@2->utoa10w::@1#2] -- register_copy 
+    // [32] phi (word) utoa10w::value#10 = (word) utoa10w::value#1 [phi:utoa10w::@2->utoa10w::@1#3] -- register_copy 
+    // [32] phi (byte) utoa10w::i#2 = (byte) utoa10w::i#2 [phi:utoa10w::@2->utoa10w::@1#4] -- register_copy 
     jmp __b1
 }
   // utoa16w
@@ -3180,79 +3122,79 @@ utoa16w: {
     .label dst = 8
     .label value = 2
     // >value
-    // [57] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // [53] (byte~) utoa16w::$0 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda.z value+1
     // utoa16n((>value)>>4, &dst, started)
-    // [58] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
+    // [54] (byte) utoa16n::nybble#0 ← (byte~) utoa16w::$0 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
     lsr
     lsr
-    // [59] call utoa16n 
-    // [77] phi from utoa16w to utoa16n [phi:utoa16w->utoa16n]
-    // [77] phi (byte) utoa16n::started#7 = (byte) 0 [phi:utoa16w->utoa16n#0] -- vbuxx=vbuc1 
+    // [55] call utoa16n 
+    // [73] phi from utoa16w to utoa16n [phi:utoa16w->utoa16n]
+    // [73] phi (byte) utoa16n::started#7 = (byte) 0 [phi:utoa16w->utoa16n#0] -- vbuxx=vbuc1 
     ldx #0
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#0 [phi:utoa16w->utoa16n#1] -- register_copy 
     jsr utoa16n
     // utoa16n((>value)>>4, &dst, started)
-    // [60] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4
+    // [56] (byte) utoa16n::return#0 ← (byte) utoa16n::return#4
     // utoa16w::@1
     // started = utoa16n((>value)>>4, &dst, started)
-    // [61] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0
+    // [57] (byte) utoa16w::started#1 ← (byte) utoa16n::return#0
     // >value
-    // [62] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
+    // [58] (byte~) utoa16w::$3 ← > (word) utoa16w::value#5 -- vbuaa=_hi_vwuz1 
     lda.z value+1
     // utoa16n((>value)&0x0f, &dst, started)
-    // [63] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // [59] (byte) utoa16n::nybble#1 ← (byte~) utoa16w::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [64] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1
-    // [65] call utoa16n 
-    // [77] phi from utoa16w::@1 to utoa16n [phi:utoa16w::@1->utoa16n]
-    // [77] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
+    // [60] (byte) utoa16n::started#1 ← (byte) utoa16w::started#1
+    // [61] call utoa16n 
+    // [73] phi from utoa16w::@1 to utoa16n [phi:utoa16w::@1->utoa16n]
+    // [73] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#1 [phi:utoa16w::@1->utoa16n#0] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#1 [phi:utoa16w::@1->utoa16n#1] -- register_copy 
     jsr utoa16n
     // utoa16n((>value)&0x0f, &dst, started)
-    // [66] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4
+    // [62] (byte) utoa16n::return#1 ← (byte) utoa16n::return#4
     // utoa16w::@2
     // started = utoa16n((>value)&0x0f, &dst, started)
-    // [67] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1
+    // [63] (byte) utoa16w::started#2 ← (byte) utoa16n::return#1
     // <value
-    // [68] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // [64] (byte~) utoa16w::$6 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
     lda.z value
     // utoa16n((<value)>>4, &dst, started)
-    // [69] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
+    // [65] (byte) utoa16n::nybble#2 ← (byte~) utoa16w::$6 >> (byte) 4 -- vbuaa=vbuaa_ror_4 
     lsr
     lsr
     lsr
     lsr
-    // [70] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2
-    // [71] call utoa16n 
-    // [77] phi from utoa16w::@2 to utoa16n [phi:utoa16w::@2->utoa16n]
-    // [77] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#2 [phi:utoa16w::@2->utoa16n#0] -- register_copy 
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
+    // [66] (byte) utoa16n::started#2 ← (byte) utoa16w::started#2
+    // [67] call utoa16n 
+    // [73] phi from utoa16w::@2 to utoa16n [phi:utoa16w::@2->utoa16n]
+    // [73] phi (byte) utoa16n::started#7 = (byte) utoa16n::started#2 [phi:utoa16w::@2->utoa16n#0] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#2 [phi:utoa16w::@2->utoa16n#1] -- register_copy 
     jsr utoa16n
     // utoa16w::@3
     // <value
-    // [72] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
+    // [68] (byte~) utoa16w::$9 ← < (word) utoa16w::value#5 -- vbuaa=_lo_vwuz1 
     lda.z value
     // utoa16n((<value)&0x0f, &dst, 1)
-    // [73] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // [69] (byte) utoa16n::nybble#3 ← (byte~) utoa16w::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [74] call utoa16n 
-    // [77] phi from utoa16w::@3 to utoa16n [phi:utoa16w::@3->utoa16n]
-    // [77] phi (byte) utoa16n::started#7 = (byte) 1 [phi:utoa16w::@3->utoa16n#0] -- vbuxx=vbuc1 
+    // [70] call utoa16n 
+    // [73] phi from utoa16w::@3 to utoa16n [phi:utoa16w::@3->utoa16n]
+    // [73] phi (byte) utoa16n::started#7 = (byte) 1 [phi:utoa16w::@3->utoa16n#0] -- vbuxx=vbuc1 
     ldx #1
-    // [77] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#3 [phi:utoa16w::@3->utoa16n#1] -- register_copy 
+    // [73] phi (byte) utoa16n::nybble#4 = (byte) utoa16n::nybble#3 [phi:utoa16w::@3->utoa16n#1] -- register_copy 
     jsr utoa16n
     // utoa16w::@4
     // *dst = 0
-    // [75] *((volatile byte*) utoa16w::dst) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [71] *((volatile byte*) utoa16w::dst) ← (byte) 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (dst),y
     // utoa16w::@return
     // }
-    // [76] return 
+    // [72] return 
     rts
 }
   // utoa16n
@@ -3260,25 +3202,25 @@ utoa16w: {
 // utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
     // if(nybble!=0)
-    // [78] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3 -- vbuaa_eq_0_then_la1 
+    // [74] if((byte) utoa16n::nybble#4==(byte) 0) goto utoa16n::@3 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b1
-    // [80] phi from utoa16n to utoa16n::@1 [phi:utoa16n->utoa16n::@1]
-    // [80] phi (byte) utoa16n::return#4 = (byte) 1 [phi:utoa16n->utoa16n::@1#0] -- vbuxx=vbuc1 
+    // [76] phi from utoa16n to utoa16n::@1 [phi:utoa16n->utoa16n::@1]
+    // [76] phi (byte) utoa16n::return#4 = (byte) 1 [phi:utoa16n->utoa16n::@1#0] -- vbuxx=vbuc1 
     ldx #1
-    // [79] phi from utoa16n to utoa16n::@3 [phi:utoa16n->utoa16n::@3]
+    // [75] phi from utoa16n to utoa16n::@3 [phi:utoa16n->utoa16n::@3]
     // utoa16n::@3
-    // [80] phi from utoa16n::@3 to utoa16n::@1 [phi:utoa16n::@3->utoa16n::@1]
-    // [80] phi (byte) utoa16n::return#4 = (byte) utoa16n::started#7 [phi:utoa16n::@3->utoa16n::@1#0] -- register_copy 
+    // [76] phi from utoa16n::@3 to utoa16n::@1 [phi:utoa16n::@3->utoa16n::@1]
+    // [76] phi (byte) utoa16n::return#4 = (byte) utoa16n::started#7 [phi:utoa16n::@3->utoa16n::@1#0] -- register_copy 
     // utoa16n::@1
   __b1:
     // if(started!=0)
-    // [81] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return -- vbuxx_eq_0_then_la1 
+    // [77] if((byte) utoa16n::return#4==(byte) 0) goto utoa16n::@return -- vbuxx_eq_0_then_la1 
     cpx #0
     beq __breturn
     // utoa16n::@2
     // *(*dst)++ = DIGITS[nybble]
-    // [82] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) -- _deref_(_deref_pptc1)=pbuc2_derefidx_vbuaa 
+    // [78] *(*(&(volatile byte*) utoa16w::dst)) ← *((const byte*) DIGITS + (byte) utoa16n::nybble#4) -- _deref_(_deref_pptc1)=pbuc2_derefidx_vbuaa 
     tay
     lda DIGITS,y
     ldy.z utoa16w.dst
@@ -3288,7 +3230,7 @@ utoa16n: {
     ldy #0
     sta ($fe),y
     // *(*dst)++ = DIGITS[nybble];
-    // [83] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst) -- _deref_pptc1=_inc__deref_pptc1 
+    // [79] *(&(volatile byte*) utoa16w::dst) ← ++ *(&(volatile byte*) utoa16w::dst) -- _deref_pptc1=_inc__deref_pptc1 
     inc.z utoa16w.dst
     bne !+
     inc.z utoa16w.dst+1
@@ -3296,35 +3238,35 @@ utoa16n: {
     // utoa16n::@return
   __breturn:
     // }
-    // [84] return 
+    // [80] return 
     rts
 }
   // cls
 cls: {
     .label screen = $400
     .label sc = 4
-    // [86] phi from cls to cls::@1 [phi:cls->cls::@1]
-    // [86] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
+    // [82] phi from cls to cls::@1 [phi:cls->cls::@1]
+    // [82] phi (byte*) cls::sc#2 = (const byte*) cls::screen [phi:cls->cls::@1#0] -- pbuz1=pbuc1 
     lda #<screen
     sta.z sc
     lda #>screen
     sta.z sc+1
-    // [86] phi from cls::@1 to cls::@1 [phi:cls::@1->cls::@1]
-    // [86] phi (byte*) cls::sc#2 = (byte*) cls::sc#1 [phi:cls::@1->cls::@1#0] -- register_copy 
+    // [82] phi from cls::@1 to cls::@1 [phi:cls::@1->cls::@1]
+    // [82] phi (byte*) cls::sc#2 = (byte*) cls::sc#1 [phi:cls::@1->cls::@1#0] -- register_copy 
     // cls::@1
   __b1:
     // *sc=' '
-    // [87] *((byte*) cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [83] *((byte*) cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
     // for( unsigned char *sc: screen..screen+999)
-    // [88] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [84] (byte*) cls::sc#1 ← ++ (byte*) cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
     inc.z sc+1
   !:
-    // [89] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
+    // [85] if((byte*) cls::sc#1!=(const byte*) cls::screen+(word) $3e7+(byte) 1) goto cls::@1 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>screen+$3e7+1
     bne __b1
@@ -3333,7 +3275,7 @@ cls: {
     bne __b1
     // cls::@return
     // }
-    // [90] return 
+    // [86] return 
     rts
 }
   // File Data

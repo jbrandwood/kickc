@@ -1,12 +1,10 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (volatile byte) col ← (byte) 0
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@3
@@ -38,20 +36,30 @@ irq::@1: scope:[irq]  from irq
 irq::@return: scope:[irq]  from irq irq::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte) col ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*)(number) $d020
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (volatile byte) col loadstore
 interrupt(KERNEL_MIN)(void()) irq()
 (bool~) irq::$0
@@ -82,15 +90,15 @@ Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [4] (bool~) main::$1 ← (volatile byte) col <= (byte) $a from [3] (bool~) main::$0 ← (volatile byte) col > (byte) $a
-Inversing boolean not [11] (bool~) irq::$1 ← (volatile byte) col == (byte) 0 from [10] (bool~) irq::$0 ← (volatile byte) col != (byte) 0
+Inversing boolean not [3] (bool~) main::$1 ← (volatile byte) col <= (byte) $a from [2] (bool~) main::$0 ← (volatile byte) col > (byte) $a
+Inversing boolean not [10] (bool~) irq::$1 ← (volatile byte) col == (byte) 0 from [9] (bool~) irq::$0 ← (volatile byte) col != (byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$1 [4] if((volatile byte) col<=(byte) $a) goto main::@1
-Simple Condition (bool~) irq::$1 [10] if((volatile byte) col==(byte) 0) goto irq::@return
+Simple Condition (bool~) main::$1 [3] if((volatile byte) col<=(byte) $a) goto main::@1
+Simple Condition (bool~) irq::$1 [9] if((volatile byte) col==(byte) 0) goto irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-if() condition always true - replacing block destination [2] if(true) goto main::@2
+if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [4] if((volatile byte) col<=(byte) $a) goto main::@1
+Rewriting conditional comparison [3] if((volatile byte) col<=(byte) $a) goto main::@1
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Adding number conversion cast (unumber) $a+1 in if((volatile byte) col<(byte) $a+(number) 1) goto main::@1
@@ -101,59 +109,66 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main::@1
 CALL GRAPH
-Calls in [] to main:2 
+Calls in [_start] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
+Culled Empty Block (label) _start::@2
 Culled Empty Block (label) main::@1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] (volatile byte) col ← (byte) 0
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
+
+(void()) _start()
+_start: scope:[_start]  from
+  [0] phi()
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  [1] (volatile byte) col ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  [2] phi()
+  [3] call main 
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+main: scope:[main]  from _start::@1
+  [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@2
-  [5] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1
+  [6] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] (volatile byte) col ← (byte) 0
+  [7] (volatile byte) col ← (byte) 0
   to:main::@1
 
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
-  [9] if((volatile byte) col==(byte) 0) goto irq::@return
+  [9] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
+  [10] if((volatile byte) col==(byte) 0) goto irq::@return
   to:irq::@1
 irq::@1: scope:[irq]  from irq
-  [10] (volatile byte) col ← ++ (volatile byte) col
+  [11] (volatile byte) col ← ++ (volatile byte) col
   to:irq::@return
 irq::@return: scope:[irq]  from irq irq::@1
-  [11] return 
+  [12] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
+(void()) _start()
 (volatile byte) col loadstore 139.0
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
@@ -170,32 +185,36 @@ Target platform is c64basic / MOS6502X
 // Tests that long branch fixing works with interrupt exits (to $ea81)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
-  // @begin
-__bbegin:
-  // [0] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z col
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z col
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -203,14 +222,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z col
     cmp #$a+1
     bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [6] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col
     jmp __b1
@@ -220,78 +239,84 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BG_COLOR
-    // [9] if((volatile byte) col==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+    // [10] if((volatile byte) col==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda.z col
     cmp #0
     beq __breturn
     jmp __b1
     // irq::@1
   __b1:
-    // [10] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
+    // [11] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
     jmp __breturn
     // irq::@return
   __breturn:
-    // [11] return  - exit interrupt(KERNEL_MIN)
+    // [12] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile byte) col ← (byte) 0 [ col ] (  [ col ] { }  ) always clobbers reg byte a 
-Statement [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col ] ( main:2 [ col ] { }  ) always clobbers reg byte a 
-Statement [5] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 [ col ] ( main:2 [ col ] { }  ) always clobbers reg byte a 
-Statement [6] (volatile byte) col ← (byte) 0 [ col ] ( main:2 [ col ] { }  ) always clobbers reg byte a 
+Statement [1] (volatile byte) col ← (byte) 0 [ col ] (  [ col ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col ] ( main:3 [ col ] { }  ) always clobbers reg byte a 
+Statement [6] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 [ col ] ( main:3 [ col ] { }  ) always clobbers reg byte a 
+Statement [7] (volatile byte) col ← (byte) 0 [ col ] ( main:3 [ col ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col [ col ] (  [ col ] { }  ) always clobbers reg byte a 
-Statement [9] if((volatile byte) col==(byte) 0) goto irq::@return [ col ] (  [ col ] { }  ) always clobbers reg byte a 
+Statement [9] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col [ col ] (  [ col ] { }  ) always clobbers reg byte a 
+Statement [10] if((volatile byte) col==(byte) 0) goto irq::@return [ col ] (  [ col ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ col ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 139: zp[1]:2 [ col ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
+Uplift Scope [_start] 
 
-Uplifting [] best 1194 combination zp[1]:2 [ col ] 
-Uplifting [main] best 1194 combination 
-Uplifting [irq] best 1194 combination 
+Uplifting [] best 1230 combination zp[1]:2 [ col ] 
+Uplifting [main] best 1230 combination 
+Uplifting [irq] best 1230 combination 
+Uplifting [_start] best 1230 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ col ]
-Uplifting [] best 1194 combination zp[1]:2 [ col ] 
+Uplifting [] best 1230 combination zp[1]:2 [ col ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests that long branch fixing works with interrupt exits (to $ea81)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
-  // @begin
-__bbegin:
-  // [0] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z col
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z col
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -299,14 +324,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [5] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z col
     cmp #$a+1
     bcc __b1
     jmp __b2
     // main::@2
   __b2:
-    // [6] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col
     jmp __b1
@@ -316,56 +341,56 @@ irq: {
     // entry interrupt(KERNEL_MIN)
     // asm { lda$dc0d  }
     lda $dc0d
-    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BG_COLOR
-    // [9] if((volatile byte) col==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+    // [10] if((volatile byte) col==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda.z col
     cmp #0
     beq __breturn
     jmp __b1
     // irq::@1
   __b1:
-    // [10] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
+    // [11] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
     jmp __breturn
     // irq::@return
   __breturn:
-    // [11] return  - exit interrupt(KERNEL_MIN)
+    // [12] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __bend_from___b1:
+Removing instruction __b1_from__init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction _init1:
 Removing instruction __b1:
-Removing instruction __bend:
+Removing instruction __breturn:
 Removing instruction __b2:
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Skipping double jump to $ea81 in beq __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [31] beq $ea81 to bne
+Fixing long branch [32] beq $ea81 to bne
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) BG_COLOR = (byte*) 53280
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 (volatile byte) col loadstore zp[1]:2 139.0
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@1
@@ -384,29 +409,31 @@ Score: 888
 // Tests that long branch fixing works with interrupt exits (to $ea81)
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
-  // @begin
-__bbegin:
-  // col = 0
-  // [0] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z col
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  jsr main
-  rts
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // col = 0
+    // [1] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z col
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
     // *KERNEL_IRQ = &irq
-    // [4] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -414,13 +441,13 @@ main: {
     // main::@1
   __b1:
     // if(col>10)
-    // [5] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if((volatile byte) col<(byte) $a+(byte) 1) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
     lda.z col
     cmp #$a+1
     bcc __b1
     // main::@2
     // col = 0
-    // [6] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
+    // [7] (volatile byte) col ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col
     jmp __b1
@@ -432,11 +459,11 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // *BG_COLOR = col
-    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BG_COLOR
     // if(col!=0)
-    // [9] if((volatile byte) col==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
+    // [10] if((volatile byte) col==(byte) 0) goto irq::@return -- vbuz1_eq_0_then_la1 
     lda.z col
     cmp #0
     bne !__ea81+
@@ -444,11 +471,11 @@ irq: {
   !__ea81:
     // irq::@1
     // col++;
-    // [10] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
+    // [11] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
     // irq::@return
     // }
-    // [11] return  - exit interrupt(KERNEL_MIN)
+    // [12] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
 }
   // File Data

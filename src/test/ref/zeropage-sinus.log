@@ -1,11 +1,9 @@
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   asm { sei  }
   *((const nomodify byte*) SPRITES_ENABLE) ← (number) 1
   *((const nomodify byte*) SPRITES_YPOS + (number) 0) ← (number) $64
@@ -79,18 +77,18 @@ animSprite: scope:[animSprite]  from main::@2
 animSprite::@return: scope:[animSprite]  from animSprite
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -185,6 +183,9 @@ SYMBOL TABLE SSA
 (const nomodify byte*) SPRITES_YPOS = (byte*)(number) $d001
 (const nomodify word) SPRITE_PTRS = (word) $3f8
 (const to_nomodify byte*) ZP_STORAGE[(number) $100]  = { fill( $100, 0) }
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) animSprite()
 (label) animSprite::@return
 (void()) main()
@@ -232,63 +233,50 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SPRITES_YPOS in [2] *((const nomodify byte*) SPRITES_YPOS + (byte) 0) ← (byte) $64
 Simplifying expression containing zero SPRITES_XPOS in [3] *((const nomodify byte*) SPRITES_XPOS + (byte) 0) ← (byte) $64
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to saveZeropage:10 sinZeropage:12 animSprite:14 restoreZeropage:16 
+Calls in [main] to saveZeropage:5 sinZeropage:7 animSprite:9 restoreZeropage:11 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@4
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from
   asm { sei  }
-  [5] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1
-  [6] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64
-  [7] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64
-  [8] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40
-  [9] call saveZeropage 
+  [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1
+  [2] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64
+  [3] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64
+  [4] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40
+  [5] call saveZeropage 
   to:main::@1
 main::@1: scope:[main]  from main
-  [10] phi()
-  [11] call sinZeropage 
+  [6] phi()
+  [7] call sinZeropage 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [12] phi()
-  [13] call animSprite 
+  [8] phi()
+  [9] call animSprite 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [14] phi()
-  [15] call restoreZeropage 
+  [10] phi()
+  [11] call restoreZeropage 
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  [16] return 
+  [12] return 
   to:@return
 
 (void()) restoreZeropage()
@@ -296,7 +284,7 @@ restoreZeropage: scope:[restoreZeropage]  from main::@3
   asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
   to:restoreZeropage::@return
 restoreZeropage::@return: scope:[restoreZeropage]  from restoreZeropage
-  [18] return 
+  [14] return 
   to:@return
 
 (void()) animSprite()
@@ -324,7 +312,7 @@ animSprite: scope:[animSprite]  from main::@2
      }}
   to:animSprite::@return
 animSprite::@return: scope:[animSprite]  from animSprite
-  [20] return 
+  [16] return 
   to:@return
 
 (void()) sinZeropage()
@@ -332,7 +320,7 @@ sinZeropage: scope:[sinZeropage]  from main::@1
   asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
   to:sinZeropage::@return
 sinZeropage::@return: scope:[sinZeropage]  from sinZeropage
-  [22] return 
+  [18] return 
   to:@return
 
 (void()) saveZeropage()
@@ -340,7 +328,7 @@ saveZeropage: scope:[saveZeropage]  from main
   asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
   to:saveZeropage::@return
 saveZeropage::@return: scope:[saveZeropage]  from saveZeropage
-  [24] return 
+  [20] return 
   to:@return
 
 
@@ -454,65 +442,51 @@ Target platform is c64basic / MOS6502X
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     // asm { sei  }
     // Stop interrupts
     sei
-    // [5] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Show sprite
     lda #1
     sta SPRITES_ENABLE
-    // [6] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_YPOS
-    // [7] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [8] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
-    // [9] call saveZeropage 
+    // [5] call saveZeropage 
     jsr saveZeropage
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [11] call sinZeropage 
+    // [7] call sinZeropage 
     jsr sinZeropage
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [13] call animSprite 
+    // [9] call animSprite 
     jsr animSprite
-    // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [15] call restoreZeropage 
+    // [11] call restoreZeropage 
     jsr restoreZeropage
     jmp __breturn
     // main::@return
   __breturn:
-    // [16] return 
+    // [12] return 
     rts
 }
   // restoreZeropage
@@ -528,7 +502,7 @@ restoreZeropage: {
     jmp __breturn
     // restoreZeropage::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
 }
   // animSprite
@@ -559,7 +533,7 @@ animSprite: {
     jmp __breturn
     // animSprite::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
 }
   // sinZeropage
@@ -575,7 +549,7 @@ sinZeropage: {
     jmp __breturn
     // sinZeropage::@return
   __breturn:
-    // [22] return 
+    // [18] return 
     rts
 }
   // saveZeropage
@@ -591,7 +565,7 @@ saveZeropage: {
     jmp __breturn
     // saveZeropage::@return
   __breturn:
-    // [24] return 
+    // [20] return 
     rts
 }
   // File Data
@@ -610,10 +584,10 @@ SPRITE:
 .fill $40,$ff 
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  } always clobbers reg byte a reg byte x 
@@ -629,15 +603,15 @@ Uplift Scope [sinZeropage]
 Uplift Scope [animSprite] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 417 combination 
-Uplifting [MOS6569_VICII] best 417 combination 
-Uplifting [MOS6581_SID] best 417 combination 
-Uplifting [main] best 417 combination 
-Uplifting [saveZeropage] best 417 combination 
-Uplifting [restoreZeropage] best 417 combination 
-Uplifting [sinZeropage] best 417 combination 
-Uplifting [animSprite] best 417 combination 
-Uplifting [] best 417 combination 
+Uplifting [MOS6526_CIA] best 405 combination 
+Uplifting [MOS6569_VICII] best 405 combination 
+Uplifting [MOS6581_SID] best 405 combination 
+Uplifting [main] best 405 combination 
+Uplifting [saveZeropage] best 405 combination 
+Uplifting [restoreZeropage] best 405 combination 
+Uplifting [sinZeropage] best 405 combination 
+Uplifting [animSprite] best 405 combination 
+Uplifting [] best 405 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -654,65 +628,51 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     // asm { sei  }
     // Stop interrupts
     sei
-    // [5] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Show sprite
     lda #1
     sta SPRITES_ENABLE
-    // [6] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_YPOS
-    // [7] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [8] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
-    // [9] call saveZeropage 
+    // [5] call saveZeropage 
     jsr saveZeropage
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [11] call sinZeropage 
+    // [7] call sinZeropage 
     jsr sinZeropage
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [13] call animSprite 
+    // [9] call animSprite 
     jsr animSprite
-    // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [15] call restoreZeropage 
+    // [11] call restoreZeropage 
     jsr restoreZeropage
     jmp __breturn
     // main::@return
   __breturn:
-    // [16] return 
+    // [12] return 
     rts
 }
   // restoreZeropage
@@ -728,7 +688,7 @@ restoreZeropage: {
     jmp __breturn
     // restoreZeropage::@return
   __breturn:
-    // [18] return 
+    // [14] return 
     rts
 }
   // animSprite
@@ -759,7 +719,7 @@ animSprite: {
     jmp __breturn
     // animSprite::@return
   __breturn:
-    // [20] return 
+    // [16] return 
     rts
 }
   // sinZeropage
@@ -775,7 +735,7 @@ sinZeropage: {
     jmp __breturn
     // sinZeropage::@return
   __breturn:
-    // [22] return 
+    // [18] return 
     rts
 }
   // saveZeropage
@@ -791,7 +751,7 @@ saveZeropage: {
     jmp __breturn
     // saveZeropage::@return
   __breturn:
-    // [24] return 
+    // [20] return 
     rts
 }
   // File Data
@@ -811,8 +771,6 @@ SPRITE:
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
@@ -823,15 +781,10 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #$64
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1_from_main:
 Removing instruction __b2_from___b1:
 Removing instruction __b3_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __b3:
@@ -841,13 +794,8 @@ Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (byte) MOS6526_CIA::INTERRUPT
 (byte) MOS6526_CIA::PORT_A
 (byte) MOS6526_CIA::PORT_A_DDR
@@ -975,12 +923,6 @@ Score: 379
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // asm
@@ -988,42 +930,42 @@ main: {
     // Stop interrupts
     sei
     // *SPRITES_ENABLE = 1
-    // [5] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // Show sprite
     lda #1
     sta SPRITES_ENABLE
     // SPRITES_YPOS[0] = 100
-    // [6] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_YPOS
     // SPRITES_XPOS[0] = 100
-    // [7] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
     sta SPRITES_XPOS
     // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
-    // [8] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [4] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+SPRITE_PTRS
     // saveZeropage()
-    // [9] call saveZeropage 
+    // [5] call saveZeropage 
     jsr saveZeropage
-    // [10] phi from main to main::@1 [phi:main->main::@1]
+    // [6] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // sinZeropage()
-    // [11] call sinZeropage 
+    // [7] call sinZeropage 
     jsr sinZeropage
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // animSprite()
-    // [13] call animSprite 
+    // [9] call animSprite 
     jsr animSprite
-    // [14] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [10] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // restoreZeropage()
-    // [15] call restoreZeropage 
+    // [11] call restoreZeropage 
     jsr restoreZeropage
     // main::@return
     // }
-    // [16] return 
+    // [12] return 
     rts
 }
   // restoreZeropage
@@ -1039,7 +981,7 @@ restoreZeropage: {
     bne !-
     // restoreZeropage::@return
     // }
-    // [18] return 
+    // [14] return 
     rts
 }
   // animSprite
@@ -1070,7 +1012,7 @@ animSprite: {
     
     // animSprite::@return
     // }
-    // [20] return 
+    // [16] return 
     rts
 }
   // sinZeropage
@@ -1086,7 +1028,7 @@ sinZeropage: {
     bne !-
     // sinZeropage::@return
     // }
-    // [22] return 
+    // [18] return 
     rts
 }
   // saveZeropage
@@ -1102,7 +1044,7 @@ saveZeropage: {
     bne !-
     // saveZeropage::@return
     // }
-    // [24] return 
+    // [20] return 
     rts
 }
   // File Data

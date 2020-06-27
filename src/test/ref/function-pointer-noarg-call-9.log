@@ -1,8 +1,6 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  (volatile byte) idx ← (byte) 0
-  to:@1
 
 (void()) fn1()
 fn1: scope:[fn1]  from
@@ -13,7 +11,7 @@ fn1::@return: scope:[fn1]  from fn1
   to:@return
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   call *((const void()*) main::f) 
   *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   call *((const void()*) main::f) 
@@ -22,19 +20,29 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  (volatile byte) idx ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) fn1()
 (label) fn1::@return
 (volatile byte) idx loadstore
@@ -44,59 +52,66 @@ SYMBOL TABLE SSA
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Replacing constant pointer function [3] call fn1 
-Replacing constant pointer function [5] call fn1 
+Replacing constant pointer function [2] call fn1 
+Replacing constant pointer function [4] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
 Eliminating unused constant (const void()*) main::f
 Successful SSA optimization PassNEliminateUnusedVars
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of _start::@2
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to fn1:6 fn1:8 
+Calls in [_start] to main:3 
+Calls in [main] to fn1:7 fn1:9 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
+Culled Empty Block (label) _start::@2
+Adding NOP phi() at start of _start
+Adding NOP phi() at start of _start::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] (volatile byte) idx ← (byte) 0
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
+
+(void()) _start()
+_start: scope:[_start]  from
+  [0] phi()
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  [1] (volatile byte) idx ← (byte) 0
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
+  [2] phi()
+  [3] call main 
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  [4] return 
+  to:@return
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call fn1 
-  [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
-  [7] call fn1 
-  [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
+main: scope:[main]  from _start::@1
+  [5] phi()
+  [6] call fn1 
+  [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
+  [8] call fn1 
+  [9] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a'
   to:main::@return
 main::@return: scope:[main]  from main
-  [9] return 
+  [10] return 
   to:@return
 
 __stackcall (void()) fn1()
 fn1: scope:[fn1]  from main
-  [10] (volatile byte) idx ← ++ (volatile byte) idx
+  [11] (volatile byte) idx ← ++ (volatile byte) idx
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
-  [11] return 
+  [12] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
+(void()) _start()
 __stackcall (void()) fn1()
 (volatile byte) idx loadstore 28.25
 (void()) main()
@@ -113,163 +128,173 @@ Target platform is c64basic / MOS6502X
 // Tests calling into a function pointer which modifies global volatile
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-  // @begin
-__bbegin:
-  // [0] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z idx
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    // [5] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    // [5] call fn1 
+    // [6] call fn1 
     jsr fn1
-    // [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
-    // [7] call fn1 
+    // [8] call fn1 
     jsr fn1
-    // [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [9] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [10] return 
     rts
 }
   // fn1
 fn1: {
-    // [10] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    // [11] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // fn1::@return
   __breturn:
-    // [11] return 
+    // [12] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' [ idx ] ( main:2 [ idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' [ ] ( main:2 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' [ idx ] ( main:3 [ idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ idx ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 28.25: zp[1]:2 [ idx ] 
 Uplift Scope [fn1] 
 Uplift Scope [main] 
+Uplift Scope [_start] 
 
-Uplifting [] best 72 combination zp[1]:2 [ idx ] 
-Uplifting [fn1] best 72 combination 
-Uplifting [main] best 72 combination 
+Uplifting [] best 108 combination zp[1]:2 [ idx ] 
+Uplifting [fn1] best 108 combination 
+Uplifting [main] best 108 combination 
+Uplifting [_start] best 108 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ idx ]
-Uplifting [] best 72 combination zp[1]:2 [ idx ] 
+Uplifting [] best 108 combination zp[1]:2 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests calling into a function pointer which modifies global volatile
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-  // @begin
-__bbegin:
-  // [0] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z idx
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
+  // _start
+_start: {
+    jmp _init1
+    // _start::_init1
+  _init1:
+    // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+  __b1_from__init1:
+    jmp __b1
+    // _start::@1
+  __b1:
+    // [3] call main 
+    // [5] phi from _start::@1 to main [phi:_start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // _start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
   // main
 main: {
-    // [5] call fn1 
+    // [6] call fn1 
     jsr fn1
-    // [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
-    // [7] call fn1 
+    // [8] call fn1 
     jsr fn1
-    // [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [9] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     jmp __breturn
     // main::@return
   __breturn:
-    // [9] return 
+    // [10] return 
     rts
 }
   // fn1
 fn1: {
-    // [10] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    // [11] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     jmp __breturn
     // fn1::@return
   __breturn:
-    // [11] return 
+    // [12] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp _init1
 Removing instruction jmp __b1
-Removing instruction jmp __bend
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
+Removing instruction __b1_from__init1:
 Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction _init1:
 Removing instruction __b1:
-Removing instruction __bend:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Adding RTS to root block 
-Succesful ASM optimization Pass5AddMainRts
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte*) SCREEN = (byte*) 1024
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(label) _start::_init1
 __stackcall (void()) fn1()
 (label) fn1::@return
 (volatile byte) idx loadstore zp[1]:2 28.25
@@ -286,56 +311,58 @@ Score: 66
 // Tests calling into a function pointer which modifies global volatile
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
-  // @begin
-__bbegin:
-  // idx = 0
-  // [0] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-  lda #0
-  sta.z idx
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  jsr main
-  rts
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
+  // _start
+_start: {
+    // _start::_init1
+    // idx = 0
+    // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z idx
+    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
+    // _start::@1
+    // [3] call main 
+    // [5] phi from _start::@1 to main [phi:_start::@1->main]
+    jsr main
+    // _start::@return
+    // [4] return 
+    rts
+}
   // main
 main: {
     // (*f)()
-    // [5] call fn1 
+    // [6] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [6] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // (*f)()
-    // [7] call fn1 
+    // [8] call fn1 
     jsr fn1
     // SCREEN[idx] = 'a'
-    // [8] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
+    // [9] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← (byte) 'a' -- pbuc1_derefidx_vbuz1=vbuc2 
     lda #'a'
     ldy.z idx
     sta SCREEN,y
     // main::@return
     // }
-    // [9] return 
+    // [10] return 
     rts
 }
   // fn1
 fn1: {
     // idx++;
-    // [10] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    // [11] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
     // fn1::@return
     // }
-    // [11] return 
+    // [12] return 
     rts
 }
   // File Data

@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte) main::min#0 ← (byte) $ff
   (byte) main::max#0 ← (byte) 0
   (byte) main::pos#0 ← (byte) 0
@@ -53,19 +52,28 @@ main::@6: scope:[main]  from main::@3
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (bool~) main::$0
 (bool~) main::$1
@@ -148,6 +156,13 @@ Simplifying expression containing zero SCREEN in [12] *((const byte*) SCREEN + (
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte) main::min#0
 Inlining constant with var siblings (const byte) main::max#0
 Inlining constant with var siblings (const byte) main::pos#0
@@ -160,86 +175,68 @@ Consolidated array index constant in *(SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Added new block during phi lifting main::@7(between main::@2 and main::@3)
 Added new block during phi lifting main::@8(between main::@3 and main::@4)
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 5 initial phi equivalence classes
-Not coalescing [9] main::min#9 ← main::pos#1
-Not coalescing [12] main::max#9 ← main::pos#1
-Coalesced [17] main::pos#8 ← main::pos#1
-Coalesced [18] main::min#7 ← main::min#3
-Coalesced [19] main::max#7 ← main::max#3
-Coalesced (already) [20] main::max#8 ← main::max#2
-Coalesced (already) [21] main::min#8 ← main::min#2
+Not coalescing [4] main::min#9 ← main::pos#1
+Not coalescing [7] main::max#9 ← main::pos#1
+Coalesced [12] main::pos#8 ← main::pos#1
+Coalesced [13] main::min#7 ← main::min#3
+Coalesced [14] main::max#7 ← main::max#3
+Coalesced (already) [15] main::max#8 ← main::max#2
+Coalesced (already) [16] main::min#8 ← main::min#2
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) main::@7
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  [5] (byte) main::max#2 ← phi( main/(byte) 0 main::@4/(byte) main::max#3 )
-  [5] (byte) main::min#2 ← phi( main/(byte) $ff main::@4/(byte) main::min#3 )
-  [5] (byte) main::pos#2 ← phi( main/(byte) 0 main::@4/(byte) main::pos#1 )
+  [1] (byte) main::max#2 ← phi( main/(byte) 0 main::@4/(byte) main::max#3 )
+  [1] (byte) main::min#2 ← phi( main/(byte) $ff main::@4/(byte) main::min#3 )
+  [1] (byte) main::pos#2 ← phi( main/(byte) 0 main::@4/(byte) main::pos#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] (byte) main::pos#1 ← ++ (byte) main::pos#2
-  [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3
+  [2] (byte) main::pos#1 ← ++ (byte) main::pos#2
+  [3] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3
   to:main::@5
 main::@5: scope:[main]  from main::@2
-  [8] (byte) main::min#9 ← (byte) main::pos#1
+  [4] (byte) main::min#9 ← (byte) main::pos#1
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@5
-  [9] (byte) main::min#3 ← phi( main::@2/(byte) main::min#2 main::@5/(byte) main::min#9 )
-  [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4
+  [5] (byte) main::min#3 ← phi( main::@2/(byte) main::min#2 main::@5/(byte) main::min#9 )
+  [6] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4
   to:main::@6
 main::@6: scope:[main]  from main::@3
-  [11] (byte) main::max#9 ← (byte) main::pos#1
+  [7] (byte) main::max#9 ← (byte) main::pos#1
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@6
-  [12] (byte) main::max#3 ← phi( main::@3/(byte) main::max#2 main::@6/(byte) main::max#9 )
-  [13] *((const byte*) SCREEN) ← (byte) main::min#3
-  [14] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3
-  [15] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1
+  [8] (byte) main::max#3 ← phi( main::@3/(byte) main::max#2 main::@6/(byte) main::max#9 )
+  [9] *((const byte*) SCREEN) ← (byte) main::min#3
+  [10] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3
+  [11] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte) main::max
-(byte) main::max#2 50.5
-(byte) main::max#3 101.0
-(byte) main::max#9 202.0
+(byte) main::max#2 5.5
+(byte) main::max#3 11.0
+(byte) main::max#9 22.0
 (byte) main::min
-(byte) main::min#2 101.0
-(byte) main::min#3 57.714285714285715
-(byte) main::min#9 202.0
+(byte) main::min#2 11.0
+(byte) main::min#3 6.285714285714286
+(byte) main::min#9 22.0
 (byte) main::pos
-(byte) main::pos#1 70.7
-(byte) main::pos#2 202.0
+(byte) main::pos#1 7.699999999999999
+(byte) main::pos#2 22.0
 
 Initial phi equivalence classes
 [ main::pos#2 main::pos#1 ]
@@ -263,36 +260,20 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label pos = 2
     .label min = 3
     .label max = 4
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z max
-    // [5] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuz1=vbuc1 
     lda #$ff
     sta.z min
-    // [5] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
+    // [1] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuz1=vbuc1 
     lda #0
     sta.z pos
     jmp __b1
@@ -301,56 +282,56 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuz1=_inc_vbuz1 
+    // [2] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuz1=_inc_vbuz1 
     inc.z pos
-    // [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuz1_ge_vbuz2_then_la1 
+    // [3] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuz1_ge_vbuz2_then_la1 
     lda.z pos
     cmp.z min
     bcs __b3_from___b2
     jmp __b5
     // main::@5
   __b5:
-    // [8] (byte) main::min#9 ← (byte) main::pos#1 -- vbuz1=vbuz2 
+    // [4] (byte) main::min#9 ← (byte) main::pos#1 -- vbuz1=vbuz2 
     lda.z pos
     sta.z min
-    // [9] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
+    // [5] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
   __b3_from___b2:
   __b3_from___b5:
-    // [9] phi (byte) main::min#3 = (byte) main::min#2 [phi:main::@2/main::@5->main::@3#0] -- register_copy 
+    // [5] phi (byte) main::min#3 = (byte) main::min#2 [phi:main::@2/main::@5->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuz1_le_vbuz2_then_la1 
+    // [6] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuz1_le_vbuz2_then_la1 
     lda.z max
     cmp.z pos
     bcs __b4_from___b3
     jmp __b6
     // main::@6
   __b6:
-    // [11] (byte) main::max#9 ← (byte) main::pos#1 -- vbuz1=vbuz2 
+    // [7] (byte) main::max#9 ← (byte) main::pos#1 -- vbuz1=vbuz2 
     lda.z pos
     sta.z max
-    // [12] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
+    // [8] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
   __b4_from___b3:
   __b4_from___b6:
-    // [12] phi (byte) main::max#3 = (byte) main::max#2 [phi:main::@3/main::@6->main::@4#0] -- register_copy 
+    // [8] phi (byte) main::max#3 = (byte) main::max#2 [phi:main::@3/main::@6->main::@4#0] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [13] *((const byte*) SCREEN) ← (byte) main::min#3 -- _deref_pbuc1=vbuz1 
+    // [9] *((const byte*) SCREEN) ← (byte) main::min#3 -- _deref_pbuc1=vbuz1 
     lda.z min
     sta SCREEN
-    // [14] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuz1 
+    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuz1 
     lda.z max
     sta SCREEN+1
-    // [15] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuz1 
+    // [11] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuz1 
     lda.z pos
     sta SCREEN+2
-    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [5] phi (byte) main::max#2 = (byte) main::max#3 [phi:main::@4->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::min#2 = (byte) main::min#3 [phi:main::@4->main::@1#1] -- register_copy 
-    // [5] phi (byte) main::pos#2 = (byte) main::pos#1 [phi:main::@4->main::@1#2] -- register_copy 
+    // [1] phi (byte) main::max#2 = (byte) main::max#3 [phi:main::@4->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::min#2 = (byte) main::min#3 [phi:main::@4->main::@1#1] -- register_copy 
+    // [1] phi (byte) main::pos#2 = (byte) main::pos#1 [phi:main::@4->main::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -361,11 +342,11 @@ Potential registers zp[1]:3 [ main::min#2 main::min#3 main::min#9 ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ main::max#2 main::max#3 main::max#9 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 360.71: zp[1]:3 [ main::min#2 main::min#3 main::min#9 ] 353.5: zp[1]:4 [ main::max#2 main::max#3 main::max#9 ] 272.7: zp[1]:2 [ main::pos#2 main::pos#1 ] 
+Uplift Scope [main] 39.29: zp[1]:3 [ main::min#2 main::min#3 main::min#9 ] 38.5: zp[1]:4 [ main::max#2 main::max#3 main::max#9 ] 29.7: zp[1]:2 [ main::pos#2 main::pos#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 652 combination reg byte x [ main::min#2 main::min#3 main::min#9 ] reg byte y [ main::max#2 main::max#3 main::max#9 ] reg byte a [ main::pos#2 main::pos#1 ] 
-Uplifting [] best 652 combination 
+Uplifting [main] best 640 combination reg byte x [ main::min#2 main::min#3 main::min#9 ] reg byte y [ main::max#2 main::max#3 main::max#9 ] reg byte a [ main::pos#2 main::pos#1 ] 
+Uplifting [] best 640 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -376,31 +357,15 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [1] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    // [5] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #$ff
-    // [5] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuaa=vbuc1 
+    // [1] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuaa=vbuc1 
     lda #0
     jmp __b1
     // main::@1
@@ -408,59 +373,57 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuaa=_inc_vbuaa 
+    // [2] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuaa=_inc_vbuaa 
     clc
     adc #1
-    // [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuaa_ge_vbuxx_then_la1 
+    // [3] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuaa_ge_vbuxx_then_la1 
     stx.z $ff
     cmp.z $ff
     bcs __b3_from___b2
     jmp __b5
     // main::@5
   __b5:
-    // [8] (byte) main::min#9 ← (byte) main::pos#1 -- vbuxx=vbuaa 
+    // [4] (byte) main::min#9 ← (byte) main::pos#1 -- vbuxx=vbuaa 
     tax
-    // [9] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
+    // [5] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
   __b3_from___b2:
   __b3_from___b5:
-    // [9] phi (byte) main::min#3 = (byte) main::min#2 [phi:main::@2/main::@5->main::@3#0] -- register_copy 
+    // [5] phi (byte) main::min#3 = (byte) main::min#2 [phi:main::@2/main::@5->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuaa_le_vbuyy_then_la1 
+    // [6] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuaa_le_vbuyy_then_la1 
     sta.z $ff
     cpy.z $ff
     bcs __b4_from___b3
     jmp __b6
     // main::@6
   __b6:
-    // [11] (byte) main::max#9 ← (byte) main::pos#1 -- vbuyy=vbuaa 
+    // [7] (byte) main::max#9 ← (byte) main::pos#1 -- vbuyy=vbuaa 
     tay
-    // [12] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
+    // [8] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
   __b4_from___b3:
   __b4_from___b6:
-    // [12] phi (byte) main::max#3 = (byte) main::max#2 [phi:main::@3/main::@6->main::@4#0] -- register_copy 
+    // [8] phi (byte) main::max#3 = (byte) main::max#2 [phi:main::@3/main::@6->main::@4#0] -- register_copy 
     jmp __b4
     // main::@4
   __b4:
-    // [13] *((const byte*) SCREEN) ← (byte) main::min#3 -- _deref_pbuc1=vbuxx 
+    // [9] *((const byte*) SCREEN) ← (byte) main::min#3 -- _deref_pbuc1=vbuxx 
     stx SCREEN
-    // [14] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuyy 
+    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuyy 
     sty SCREEN+1
-    // [15] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+2
-    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
   __b1_from___b4:
-    // [5] phi (byte) main::max#2 = (byte) main::max#3 [phi:main::@4->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::min#2 = (byte) main::min#3 [phi:main::@4->main::@1#1] -- register_copy 
-    // [5] phi (byte) main::pos#2 = (byte) main::pos#1 [phi:main::@4->main::@1#2] -- register_copy 
+    // [1] phi (byte) main::max#2 = (byte) main::max#3 [phi:main::@4->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::min#2 = (byte) main::min#3 [phi:main::@4->main::@1#1] -- register_copy 
+    // [1] phi (byte) main::pos#2 = (byte) main::pos#1 [phi:main::@4->main::@1#2] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b5
@@ -472,30 +435,19 @@ Replacing instruction lda #0 with TYA
 Replacing label __b3_from___b2 with __b3
 Replacing label __b4_from___b3 with __b4
 Replacing label __b1 with __b2
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b1:
 Removing instruction __b3_from___b2:
 Removing instruction __b3_from___b5:
 Removing instruction __b4_from___b3:
 Removing instruction __b4_from___b6:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __b5:
 Removing instruction __b6:
 Removing instruction __b1_from___b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@1
@@ -505,16 +457,16 @@ FINAL SYMBOL TABLE
 (label) main::@5
 (label) main::@6
 (byte) main::max
-(byte) main::max#2 reg byte y 50.5
-(byte) main::max#3 reg byte y 101.0
-(byte) main::max#9 reg byte y 202.0
+(byte) main::max#2 reg byte y 5.5
+(byte) main::max#3 reg byte y 11.0
+(byte) main::max#9 reg byte y 22.0
 (byte) main::min
-(byte) main::min#2 reg byte x 101.0
-(byte) main::min#3 reg byte x 57.714285714285715
-(byte) main::min#9 reg byte x 202.0
+(byte) main::min#2 reg byte x 11.0
+(byte) main::min#3 reg byte x 6.285714285714286
+(byte) main::min#9 reg byte x 22.0
 (byte) main::pos
-(byte) main::pos#1 reg byte a 70.7
-(byte) main::pos#2 reg byte a 202.0
+(byte) main::pos#1 reg byte a 7.699999999999999
+(byte) main::pos#2 reg byte a 22.0
 
 reg byte a [ main::pos#2 main::pos#1 ]
 reg byte x [ main::min#2 main::min#3 main::min#9 ]
@@ -532,66 +484,59 @@ Score: 460
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::max#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
-    // [5] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [1] phi (byte) main::min#2 = (byte) $ff [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #$ff
-    // [5] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuaa=vbuc1 
+    // [1] phi (byte) main::pos#2 = (byte) 0 [phi:main->main::@1#2] -- vbuaa=vbuc1 
     tya
     // main::@1
     // main::@2
   __b2:
     // pos++;
-    // [6] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuaa=_inc_vbuaa 
+    // [2] (byte) main::pos#1 ← ++ (byte) main::pos#2 -- vbuaa=_inc_vbuaa 
     clc
     adc #1
     // if(pos<min)
-    // [7] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuaa_ge_vbuxx_then_la1 
+    // [3] if((byte) main::pos#1>=(byte) main::min#2) goto main::@3 -- vbuaa_ge_vbuxx_then_la1 
     stx.z $ff
     cmp.z $ff
     bcs __b3
     // main::@5
-    // [8] (byte) main::min#9 ← (byte) main::pos#1 -- vbuxx=vbuaa 
+    // [4] (byte) main::min#9 ← (byte) main::pos#1 -- vbuxx=vbuaa 
     tax
-    // [9] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
-    // [9] phi (byte) main::min#3 = (byte) main::min#2 [phi:main::@2/main::@5->main::@3#0] -- register_copy 
+    // [5] phi from main::@2 main::@5 to main::@3 [phi:main::@2/main::@5->main::@3]
+    // [5] phi (byte) main::min#3 = (byte) main::min#2 [phi:main::@2/main::@5->main::@3#0] -- register_copy 
     // main::@3
   __b3:
     // if(pos>max)
-    // [10] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuaa_le_vbuyy_then_la1 
+    // [6] if((byte) main::pos#1<=(byte) main::max#2) goto main::@4 -- vbuaa_le_vbuyy_then_la1 
     sta.z $ff
     cpy.z $ff
     bcs __b4
     // main::@6
-    // [11] (byte) main::max#9 ← (byte) main::pos#1 -- vbuyy=vbuaa 
+    // [7] (byte) main::max#9 ← (byte) main::pos#1 -- vbuyy=vbuaa 
     tay
-    // [12] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
-    // [12] phi (byte) main::max#3 = (byte) main::max#2 [phi:main::@3/main::@6->main::@4#0] -- register_copy 
+    // [8] phi from main::@3 main::@6 to main::@4 [phi:main::@3/main::@6->main::@4]
+    // [8] phi (byte) main::max#3 = (byte) main::max#2 [phi:main::@3/main::@6->main::@4#0] -- register_copy 
     // main::@4
   __b4:
     // SCREEN[0] = min
-    // [13] *((const byte*) SCREEN) ← (byte) main::min#3 -- _deref_pbuc1=vbuxx 
+    // [9] *((const byte*) SCREEN) ← (byte) main::min#3 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // SCREEN[1] = max
-    // [14] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuyy 
+    // [10] *((const byte*) SCREEN+(byte) 1) ← (byte) main::max#3 -- _deref_pbuc1=vbuyy 
     sty SCREEN+1
     // SCREEN[2] = pos
-    // [15] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuaa 
+    // [11] *((const byte*) SCREEN+(byte) 2) ← (byte) main::pos#1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+2
-    // [5] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
-    // [5] phi (byte) main::max#2 = (byte) main::max#3 [phi:main::@4->main::@1#0] -- register_copy 
-    // [5] phi (byte) main::min#2 = (byte) main::min#3 [phi:main::@4->main::@1#1] -- register_copy 
-    // [5] phi (byte) main::pos#2 = (byte) main::pos#1 [phi:main::@4->main::@1#2] -- register_copy 
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [1] phi (byte) main::max#2 = (byte) main::max#3 [phi:main::@4->main::@1#0] -- register_copy 
+    // [1] phi (byte) main::min#2 = (byte) main::min#3 [phi:main::@4->main::@1#1] -- register_copy 
+    // [1] phi (byte) main::pos#2 = (byte) main::pos#1 [phi:main::@4->main::@1#2] -- register_copy 
     jmp __b2
 }
   // File Data

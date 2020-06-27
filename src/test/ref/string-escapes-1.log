@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (byte*) main::line#0 ← (byte*)(number) $400
   (byte*) main::cursor#0 ← (byte*) main::line#0
   (byte*) main::msg#0 ← (const byte*) MESSAGE
@@ -45,20 +44,29 @@ main::@5: scope:[main]  from main::@3 main::@4
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) MESSAGE[]  = (byte*) "hello
 world"
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (bool~) main::$0
 (label) main::@1
@@ -115,91 +123,80 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::cursor#0 = (byte*) 1024
 Constant (const byte*) main::msg#0 = MESSAGE
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings (const byte*) main::cursor#0
 Inlining constant with var siblings (const byte*) main::msg#0
 Constant inlined main::cursor#0 = (byte*) 1024
 Constant inlined main::msg#0 = (const byte*) MESSAGE
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 5 initial phi equivalence classes
-Coalesced [12] main::line#9 ← main::line#2
-Coalesced [13] main::cursor#9 ← main::cursor#2
-Coalesced [16] main::msg#7 ← main::msg#1
-Coalesced (already) [17] main::line#7 ← main::line#5
-Coalesced [18] main::cursor#7 ← main::cursor#6
-Not coalescing [20] main::line#8 ← main::cursor#1
-Coalesced [21] main::cursor#8 ← main::cursor#1
+Coalesced [7] main::line#9 ← main::line#2
+Coalesced [8] main::cursor#9 ← main::cursor#2
+Coalesced [11] main::msg#7 ← main::msg#1
+Coalesced (already) [12] main::line#7 ← main::line#5
+Coalesced [13] main::cursor#7 ← main::cursor#6
+Not coalescing [15] main::line#8 ← main::cursor#1
+Coalesced [16] main::cursor#8 ← main::cursor#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
+main: scope:[main]  from
+  [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@5
-  [5] (byte*) main::cursor#3 ← phi( main/(byte*) 1024 main::@5/(byte*) main::cursor#6 )
-  [5] (byte*) main::line#2 ← phi( main/(byte*) 1024 main::@5/(byte*) main::line#5 )
-  [5] (byte*) main::msg#2 ← phi( main/(const byte*) MESSAGE main::@5/(byte*) main::msg#1 )
-  [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
+  [1] (byte*) main::cursor#3 ← phi( main/(byte*) 1024 main::@5/(byte*) main::cursor#6 )
+  [1] (byte*) main::line#2 ← phi( main/(byte*) 1024 main::@5/(byte*) main::line#5 )
+  [1] (byte*) main::msg#2 ← phi( main/(const byte*) MESSAGE main::@5/(byte*) main::msg#1 )
+  [2] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  [7] return 
+  [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] if(*((byte*) main::msg#2)==(byte) '
+  [4] if(*((byte*) main::msg#2)==(byte) '
 ') goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2)
-  [10] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3
+  [5] *((byte*) main::cursor#3) ← *((byte*) main::msg#2)
+  [6] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3
   to:main::@5
 main::@5: scope:[main]  from main::@3 main::@4
-  [11] (byte*) main::cursor#6 ← phi( main::@3/(byte*) main::cursor#1 main::@4/(byte*) main::cursor#2 )
-  [11] (byte*) main::line#5 ← phi( main::@3/(byte*) main::line#8 main::@4/(byte*) main::line#2 )
-  [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2
+  [7] (byte*) main::cursor#6 ← phi( main::@3/(byte*) main::cursor#1 main::@4/(byte*) main::cursor#2 )
+  [7] (byte*) main::line#5 ← phi( main::@3/(byte*) main::line#8 main::@4/(byte*) main::line#2 )
+  [8] (byte*) main::msg#1 ← ++ (byte*) main::msg#2
   to:main::@1
 main::@3: scope:[main]  from main::@2
-  [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28
-  [14] (byte*) main::line#8 ← (byte*) main::cursor#1
+  [9] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28
+  [10] (byte*) main::line#8 ← (byte*) main::cursor#1
   to:main::@5
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*) main::cursor
-(byte*) main::cursor#1 151.5
-(byte*) main::cursor#2 202.0
-(byte*) main::cursor#3 75.75
-(byte*) main::cursor#6 151.5
+(byte*) main::cursor#1 16.5
+(byte*) main::cursor#2 22.0
+(byte*) main::cursor#3 8.25
+(byte*) main::cursor#6 16.5
 (byte*) main::line
-(byte*) main::line#2 60.599999999999994
-(byte*) main::line#5 151.5
-(byte*) main::line#8 202.0
+(byte*) main::line#2 6.6000000000000005
+(byte*) main::line#5 16.5
+(byte*) main::line#8 22.0
 (byte*) main::msg
-(byte*) main::msg#1 202.0
-(byte*) main::msg#2 63.125
+(byte*) main::msg#1 22.0
+(byte*) main::msg#2 6.875
 
 Initial phi equivalence classes
 [ main::msg#2 main::msg#1 ]
@@ -222,40 +219,24 @@ Target platform is c64basic / MOS6502X
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label cursor = 6
     .label msg = 2
     .label line = 4
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
     lda #>$400
     sta.z cursor+1
-    // [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -263,7 +244,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [2] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -271,11 +252,11 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
-    // [8] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    // [4] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #'\n'
     ldy #0
     cmp (msg),y
@@ -283,38 +264,38 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [5] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
     ldy #0
     sta (cursor),y
-    // [10] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3 -- pbuz1=_inc_pbuz1 
+    // [6] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [11] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
+    // [7] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
   __b5_from___b3:
   __b5_from___b4:
-    // [11] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
-    // [11] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
+    // [7] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
+    // [7] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     jmp __b5
     // main::@5
   __b5:
-    // [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   __b1_from___b5:
-    // [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
-    // [5] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
-    // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
+    // [1] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
+    // [1] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
+    // [1] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
     jmp __b1
     // main::@3
   __b3:
-    // [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [9] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -322,7 +303,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [14] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
+    // [10] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1
@@ -334,22 +315,22 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 [ main::msg#2 main::line#2 main::cursor#3 ] ( main:2 [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] if(*((byte*) main::msg#2)==(byte) '
-') goto main::@3 [ main::msg#2 main::line#2 main::cursor#3 ] ( main:2 [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) [ main::msg#2 main::line#2 main::cursor#3 ] ( main:2 [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 [ main::msg#2 main::cursor#1 ] ( main:2 [ main::msg#2 main::cursor#1 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte*) main::line#8 ← (byte*) main::cursor#1 [ main::msg#2 main::line#8 main::cursor#1 ] ( main:2 [ main::msg#2 main::line#8 main::cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [2] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] if(*((byte*) main::msg#2)==(byte) '
+') goto main::@3 [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) [ main::msg#2 main::line#2 main::cursor#3 ] (  [ main::msg#2 main::line#2 main::cursor#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 [ main::msg#2 main::cursor#1 ] (  [ main::msg#2 main::cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [10] (byte*) main::line#8 ← (byte*) main::cursor#1 [ main::msg#2 main::line#8 main::cursor#1 ] (  [ main::msg#2 main::line#8 main::cursor#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::msg#2 main::msg#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] : zp[2]:6 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 580.75: zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 414.1: zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] 265.12: zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplift Scope [main] 63.25: zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] 45.1: zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] 28.88: zp[2]:2 [ main::msg#2 main::msg#1 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1443 combination zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] zp[2]:2 [ main::msg#2 main::msg#1 ] 
-Uplifting [] best 1443 combination 
+Uplifting [main] best 1431 combination zp[2]:6 [ main::cursor#3 main::cursor#6 main::cursor#1 main::cursor#2 ] zp[2]:4 [ main::line#2 main::line#5 main::line#8 ] zp[2]:2 [ main::msg#2 main::msg#1 ] 
+Uplifting [] best 1431 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -359,40 +340,24 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label cursor = 6
     .label msg = 2
     .label line = 4
-    // [5] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
     lda #>$400
     sta.z cursor+1
-    // [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -400,7 +365,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [2] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -408,11 +373,11 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
-    // [8] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    // [4] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #'\n'
     ldy #0
     cmp (msg),y
@@ -420,38 +385,38 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [5] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (msg),y
     ldy #0
     sta (cursor),y
-    // [10] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3 -- pbuz1=_inc_pbuz1 
+    // [6] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [11] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
+    // [7] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
   __b5_from___b3:
   __b5_from___b4:
-    // [11] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
-    // [11] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
+    // [7] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
+    // [7] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     jmp __b5
     // main::@5
   __b5:
-    // [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   __b1_from___b5:
-    // [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
-    // [5] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
-    // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
+    // [1] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
+    // [1] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
+    // [1] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
     jmp __b1
     // main::@3
   __b3:
-    // [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [9] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -459,7 +424,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [14] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
+    // [10] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1
@@ -472,8 +437,6 @@ main: {
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
-Removing instruction jmp __bend
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b4
 Removing instruction jmp __b5
@@ -481,29 +444,18 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b5_from___b3 with __b5
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
 Removing instruction __b5_from___b3:
 Removing instruction __b5_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Removing instruction __b4:
 Removing instruction __b1_from___b5:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) MESSAGE[]  = (byte*) "hello
 world"
 (void()) main()
@@ -514,17 +466,17 @@ world"
 (label) main::@5
 (label) main::@return
 (byte*) main::cursor
-(byte*) main::cursor#1 cursor zp[2]:6 151.5
-(byte*) main::cursor#2 cursor zp[2]:6 202.0
-(byte*) main::cursor#3 cursor zp[2]:6 75.75
-(byte*) main::cursor#6 cursor zp[2]:6 151.5
+(byte*) main::cursor#1 cursor zp[2]:6 16.5
+(byte*) main::cursor#2 cursor zp[2]:6 22.0
+(byte*) main::cursor#3 cursor zp[2]:6 8.25
+(byte*) main::cursor#6 cursor zp[2]:6 16.5
 (byte*) main::line
-(byte*) main::line#2 line zp[2]:4 60.599999999999994
-(byte*) main::line#5 line zp[2]:4 151.5
-(byte*) main::line#8 line zp[2]:4 202.0
+(byte*) main::line#2 line zp[2]:4 6.6000000000000005
+(byte*) main::line#5 line zp[2]:4 16.5
+(byte*) main::line#8 line zp[2]:4 22.0
 (byte*) main::msg
-(byte*) main::msg#1 msg zp[2]:2 202.0
-(byte*) main::msg#2 msg zp[2]:2 63.125
+(byte*) main::msg#1 msg zp[2]:2 22.0
+(byte*) main::msg#2 msg zp[2]:2 6.875
 
 zp[2]:2 [ main::msg#2 main::msg#1 ]
 zp[2]:4 [ main::line#2 main::line#5 main::line#8 ]
@@ -541,30 +493,23 @@ Score: 1271
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label cursor = 6
     .label msg = 2
     .label line = 4
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte*) main::cursor#3 = (byte*) 1024 [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z cursor
     lda #>$400
     sta.z cursor+1
-    // [5] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::line#2 = (byte*) 1024 [phi:main->main::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z line
     lda #>$400
     sta.z line+1
-    // [5] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
+    // [1] phi (byte*) main::msg#2 = (const byte*) MESSAGE [phi:main->main::@1#2] -- pbuz1=pbuc1 
     lda #<MESSAGE
     sta.z msg
     lda #>MESSAGE
@@ -572,14 +517,14 @@ main: {
     // main::@1
   __b1:
     // while(*msg)
-    // [6] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [2] if((byte) 0!=*((byte*) main::msg#2)) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
     bne __b2
     // main::@return
     // }
-    // [7] return 
+    // [3] return 
     rts
     // main::@2
   __b2:
@@ -587,42 +532,42 @@ main: {
     //                 line += 0x28;
     //                 cursor = line;
     //                 break;
-    // [8] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
+    // [4] if(*((byte*) main::msg#2)==(byte) ' ') goto main::@3 -- _deref_pbuz1_eq_vbuc1_then_la1 
     lda #'\n'
     ldy #0
     cmp (msg),y
     beq __b3
     // main::@4
     // *cursor++ = *msg
-    // [9] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
+    // [5] *((byte*) main::cursor#3) ← *((byte*) main::msg#2) -- _deref_pbuz1=_deref_pbuz2 
     lda (msg),y
     sta (cursor),y
     // *cursor++ = *msg;
-    // [10] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3 -- pbuz1=_inc_pbuz1 
+    // [6] (byte*) main::cursor#2 ← ++ (byte*) main::cursor#3 -- pbuz1=_inc_pbuz1 
     inc.z cursor
     bne !+
     inc.z cursor+1
   !:
-    // [11] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
-    // [11] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
-    // [11] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
+    // [7] phi from main::@3 main::@4 to main::@5 [phi:main::@3/main::@4->main::@5]
+    // [7] phi (byte*) main::cursor#6 = (byte*) main::cursor#1 [phi:main::@3/main::@4->main::@5#0] -- register_copy 
+    // [7] phi (byte*) main::line#5 = (byte*) main::line#8 [phi:main::@3/main::@4->main::@5#1] -- register_copy 
     // main::@5
   __b5:
     // msg++;
-    // [12] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) main::msg#1 ← ++ (byte*) main::msg#2 -- pbuz1=_inc_pbuz1 
     inc.z msg
     bne !+
     inc.z msg+1
   !:
-    // [5] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-    // [5] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
-    // [5] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
-    // [5] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi (byte*) main::cursor#3 = (byte*) main::cursor#6 [phi:main::@5->main::@1#0] -- register_copy 
+    // [1] phi (byte*) main::line#2 = (byte*) main::line#5 [phi:main::@5->main::@1#1] -- register_copy 
+    // [1] phi (byte*) main::msg#2 = (byte*) main::msg#1 [phi:main::@5->main::@1#2] -- register_copy 
     jmp __b1
     // main::@3
   __b3:
     // line += 0x28
-    // [13] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
+    // [9] (byte*) main::cursor#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -630,7 +575,7 @@ main: {
     lda #0
     adc.z line+1
     sta.z cursor+1
-    // [14] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
+    // [10] (byte*) main::line#8 ← (byte*) main::cursor#1 -- pbuz1=pbuz2 
     lda.z cursor
     sta.z line
     lda.z cursor+1

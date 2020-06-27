@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (byte) main::idx#0 ← (byte) 0
   *((const nomodify byte*) screen + (byte) main::idx#0) ← (const nomodify byte) cpm
   (byte) main::idx#1 ← ++ (byte) main::idx#0
@@ -27,18 +25,21 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (const nomodify byte) ccpu = (byte) 'A'pu
 (const nomodify byte) cpm = (byte) 'A'pm
 (const nomodify byte) csm = (byte) 'A'
@@ -95,6 +96,11 @@ Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (byte) main::idx#4 and assignment [7] (byte) main::idx#4 ← ++ (byte) main::idx#3
 Eliminating unused variable (byte) main::idx#9 and assignment [15] (byte) main::idx#9 ← ++ (byte) main::idx#8
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [1] (byte) main::idx#1 ← ++ (const byte) main::idx#0
 Constant right-side identified [8] (byte) main::idx#6 ← ++ (const byte) main::idx#5
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -150,44 +156,26 @@ Simplifying constant integer increment ++2
 Simplifying constant integer increment ++$29
 Simplifying constant integer increment ++$2a
 Successful SSA optimization Pass2ConstantSimplification
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] *((const nomodify byte*) screen) ← (const nomodify byte) cpm
-  [5] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu
-  [6] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm
-  [7] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu
-  [8] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm)
-  [9] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu)
-  [10] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm)
-  [11] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu)
+main: scope:[main]  from
+  [0] *((const nomodify byte*) screen) ← (const nomodify byte) cpm
+  [1] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu
+  [2] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm
+  [3] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu
+  [4] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm)
+  [5] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu)
+  [6] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm)
+  [7] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu)
   to:main::@return
 main::@return: scope:[main]  from main
-  [12] return 
+  [8] return 
   to:@return
 
 
@@ -216,50 +204,36 @@ Target platform is c64basic / MOS6502X
 .encoding "screencode_upper"
   .const csu = 'A'
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const nomodify byte*) screen) ← (const nomodify byte) cpm -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) screen) ← (const nomodify byte) cpm -- _deref_pbuc1=vbuc2 
     lda #cpm
     sta screen
-    // [5] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu -- _deref_pbuc1=vbuc2 
     lda #ccpu
     sta screen+1
-    // [6] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm -- _deref_pbuc1=vbuc2 
     lda #csm
     sta screen+2
-    // [7] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu -- _deref_pbuc1=vbuc2 
     lda #csu
     sta screen+3
-    // [8] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) -- _deref_pbuc1=_deref_pbuc2 
     lda spm
     sta screen+$28
-    // [9] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) -- _deref_pbuc1=_deref_pbuc2 
     lda spu
     sta screen+$29
-    // [10] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) -- _deref_pbuc1=_deref_pbuc2 
     lda ssm
     sta screen+$2a
-    // [11] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) -- _deref_pbuc1=_deref_pbuc2 
     lda ssu
     sta screen+$2b
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data
@@ -277,21 +251,21 @@ main: {
   .byte 0
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] *((const nomodify byte*) screen) ← (const nomodify byte) cpm [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) [ ] ( main:2 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((const nomodify byte*) screen) ← (const nomodify byte) cpm [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 77 combination 
-Uplifting [] best 77 combination 
+Uplifting [main] best 65 combination 
+Uplifting [] best 65 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -310,50 +284,36 @@ ASSEMBLER BEFORE OPTIMIZATION
 .encoding "screencode_upper"
   .const csu = 'A'
   .label screen = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [4] *((const nomodify byte*) screen) ← (const nomodify byte) cpm -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) screen) ← (const nomodify byte) cpm -- _deref_pbuc1=vbuc2 
     lda #cpm
     sta screen
-    // [5] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu -- _deref_pbuc1=vbuc2 
     lda #ccpu
     sta screen+1
-    // [6] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm -- _deref_pbuc1=vbuc2 
     lda #csm
     sta screen+2
-    // [7] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu -- _deref_pbuc1=vbuc2 
     lda #csu
     sta screen+3
-    // [8] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) -- _deref_pbuc1=_deref_pbuc2 
     lda spm
     sta screen+$28
-    // [9] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) -- _deref_pbuc1=_deref_pbuc2 
     lda spu
     sta screen+$29
-    // [10] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) -- _deref_pbuc1=_deref_pbuc2 
     lda ssm
     sta screen+$2a
-    // [11] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) -- _deref_pbuc1=_deref_pbuc2 
     lda ssu
     sta screen+$2b
     jmp __breturn
     // main::@return
   __breturn:
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data
@@ -371,25 +331,12 @@ main: {
   .byte 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const nomodify byte) ccpu = (byte) 'A'pu
 (const nomodify byte) cpm = (byte) 'A'pm
 (const nomodify byte) csm = (byte) 'A'
@@ -424,49 +371,43 @@ Score: 62
 .encoding "screencode_upper"
   .const csu = 'A'
   .label screen = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // screen[idx++] = cpm
-    // [4] *((const nomodify byte*) screen) ← (const nomodify byte) cpm -- _deref_pbuc1=vbuc2 
+    // [0] *((const nomodify byte*) screen) ← (const nomodify byte) cpm -- _deref_pbuc1=vbuc2 
     lda #cpm
     sta screen
     // screen[idx++] = ccpu
-    // [5] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu -- _deref_pbuc1=vbuc2 
+    // [1] *((const nomodify byte*) screen+(byte) 1) ← (const nomodify byte) ccpu -- _deref_pbuc1=vbuc2 
     lda #ccpu
     sta screen+1
     // screen[idx++] = csm
-    // [6] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm -- _deref_pbuc1=vbuc2 
+    // [2] *((const nomodify byte*) screen+(byte) 2) ← (const nomodify byte) csm -- _deref_pbuc1=vbuc2 
     lda #csm
     sta screen+2
     // screen[idx++] = csu
-    // [7] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu -- _deref_pbuc1=vbuc2 
+    // [3] *((const nomodify byte*) screen+(byte) 3) ← (const nomodify byte) csu -- _deref_pbuc1=vbuc2 
     lda #csu
     sta screen+3
     // screen[idx++] = spm[0]
-    // [8] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) -- _deref_pbuc1=_deref_pbuc2 
+    // [4] *((const nomodify byte*) screen+(byte) $28) ← *((const to_nomodify byte*) spm) -- _deref_pbuc1=_deref_pbuc2 
     lda spm
     sta screen+$28
     // screen[idx++] = spu[0]
-    // [9] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *((const nomodify byte*) screen+(byte) $29) ← *((const to_nomodify byte*) spu) -- _deref_pbuc1=_deref_pbuc2 
     lda spu
     sta screen+$29
     // screen[idx++] = ssm[0]
-    // [10] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) -- _deref_pbuc1=_deref_pbuc2 
+    // [6] *((const nomodify byte*) screen+(byte) $2a) ← *((const to_nomodify byte*) ssm) -- _deref_pbuc1=_deref_pbuc2 
     lda ssm
     sta screen+$2a
     // screen[idx++] = ssu[0]
-    // [11] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) -- _deref_pbuc1=_deref_pbuc2 
+    // [7] *((const nomodify byte*) screen+(byte) $2b) ← *((const to_nomodify byte*) ssu) -- _deref_pbuc1=_deref_pbuc2 
     lda ssu
     sta screen+$2b
     // main::@return
     // }
-    // [12] return 
+    // [8] return 
     rts
 }
   // File Data

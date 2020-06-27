@@ -1,10 +1,9 @@
+Inlined call call _init 
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start::@1
   (void*) memset::str#0 ← (void*)(const byte*) SCREEN
   (byte) memset::c#0 ← (byte) 'c'
   (word) memset::num#0 ← (number) $3e8
@@ -60,19 +59,28 @@ memset::@return: scope:[memset]  from memset::@1
   (void*) memset::return#2 ← (void*) memset::return#3
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
+  to:_start::_init1
+_start::_init1: scope:[_start]  from _start
+  to:_start::@1
+_start::@1: scope:[_start]  from _start::_init1
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@2
+_start::@2: scope:[_start]  from _start::@1
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@2
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@2
+(label) _start::@return
+(label) _start::_init1
 (void()) main()
 (label) main::@1
 (label) main::@return
@@ -170,6 +178,13 @@ if() condition always false - eliminating [8] if((const word) memset::num#0<=(by
 Successful SSA optimization Pass2ConstantIfs
 Eliminating unused constant (const void*) memset::return#0
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::_init1
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@2
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant right-side identified [2] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
@@ -178,68 +193,50 @@ Inlining constant with var siblings (const byte*) memset::dst#0
 Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
-Calls in [] to main:2 
-Calls in [main] to memset:6 
+Calls in [main] to memset:1 
 
 Created 1 initial phi equivalence classes
-Coalesced [17] memset::dst#4 ← memset::dst#1
+Coalesced [12] memset::dst#4 ← memset::dst#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) @2
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
 Renumbering block memset::@3 to memset::@1
 Renumbering block memset::@4 to memset::@2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 Adding NOP phi() at start of main
 Adding NOP phi() at start of memset
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] phi()
-  [5] call memset 
+main: scope:[main]  from
+  [0] phi()
+  [1] call memset 
   to:main::@return
 main::@return: scope:[main]  from main
-  [6] return 
+  [2] return 
   to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main
-  [7] phi()
+  [3] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [8] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+  [4] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [5] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [10] return 
+  [6] return 
   to:@return
 memset::@2: scope:[memset]  from memset::@1
-  [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [12] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [7] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [8] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@1
 
 
@@ -248,8 +245,8 @@ VARIABLE REGISTER WEIGHTS
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (byte) memset::c
 (byte*) memset::dst
-(byte*) memset::dst#1 2002.0
-(byte*) memset::dst#2 1334.6666666666667
+(byte*) memset::dst#1 202.0
+(byte*) memset::dst#2 134.66666666666666
 (byte*) memset::end
 (word) memset::num
 (void*) memset::return
@@ -271,32 +268,16 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call memset 
-    // [7] phi from main to memset [phi:main->memset]
+    // [1] call memset 
+    // [3] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
     jmp __breturn
     // main::@return
   __breturn:
-    // [6] return 
+    // [2] return 
     rts
 }
   // memset
@@ -307,9 +288,9 @@ memset: {
     .label str = SCREEN
     .label end = str+num
     .label dst = 2
-    // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [4] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [8] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [4] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -317,7 +298,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [5] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -327,39 +308,39 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
     // memset::@2
   __b2:
-    // [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [7] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [12] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [8] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [4] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [8] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [4] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:2::memset:5 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:2::memset:5 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [7] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ memset::dst#2 memset::dst#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memset] 3,336.67: zp[2]:2 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [memset] 336.67: zp[2]:2 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [memset] best 598 combination zp[2]:2 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [main] best 598 combination 
-Uplifting [] best 598 combination 
+Uplifting [memset] best 586 combination zp[2]:2 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [main] best 586 combination 
+Uplifting [] best 586 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -370,32 +351,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-main_from___b1:
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
-    // [5] call memset 
-    // [7] phi from main to memset [phi:main->memset]
+    // [1] call memset 
+    // [3] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
     jmp __breturn
     // main::@return
   __breturn:
-    // [6] return 
+    // [2] return 
     rts
 }
   // memset
@@ -406,9 +371,9 @@ memset: {
     .label str = SCREEN
     .label end = str+num
     .label dst = 2
-    // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [4] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [8] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [4] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -416,7 +381,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [5] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -426,53 +391,39 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [10] return 
+    // [6] return 
     rts
     // memset::@2
   __b2:
-    // [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [7] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [12] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [8] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [4] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [8] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [4] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction main_from___b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction memset_from_main:
 Removing instruction __breturn:
 Removing instruction __b1_from_memset:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte*) SCREEN = (byte*) 1024
 (void()) main()
 (label) main::@return
@@ -483,8 +434,8 @@ FINAL SYMBOL TABLE
 (byte) memset::c
 (const byte) memset::c#0 c = (byte) 'c'
 (byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:2 2002.0
-(byte*) memset::dst#2 dst zp[2]:2 1334.6666666666667
+(byte*) memset::dst#1 dst zp[2]:2 202.0
+(byte*) memset::dst#2 dst zp[2]:2 134.66666666666666
 (byte*) memset::end
 (const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
 (word) memset::num
@@ -507,22 +458,15 @@ Score: 523
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [4] phi from @1 to main [phi:@1->main]
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     // memset(SCREEN, 'c', 1000)
-    // [5] call memset 
-    // [7] phi from main to memset [phi:main->memset]
+    // [1] call memset 
+    // [3] phi from main to memset [phi:main->memset]
     jsr memset
     // main::@return
     // }
-    // [6] return 
+    // [2] return 
     rts
 }
   // memset
@@ -533,8 +477,8 @@ memset: {
     .label str = SCREEN
     .label end = str+num
     .label dst = 2
-    // [8] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [8] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [4] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [4] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -542,7 +486,7 @@ memset: {
     // memset::@1
   __b1:
     // while(dst!=end)
-    // [9] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [5] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -551,23 +495,23 @@ memset: {
     bne __b2
     // memset::@return
     // }
-    // [10] return 
+    // [6] return 
     rts
     // memset::@2
   __b2:
     // *dst = c
-    // [11] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [7] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // dst++;
-    // [12] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [8] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [8] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [8] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [4] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [4] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

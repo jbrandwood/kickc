@@ -1,10 +1,8 @@
 
 CONTROL FLOW GRAPH SSA
-@begin: scope:[]  from
-  to:@1
 
 (void()) main()
-main: scope:[main]  from @1
+main: scope:[main]  from _start
   (number~) main::$6 ← (number) 1 * (const byte) SIZEOF_WORD
   (word*~) main::$0 ← (const word*) main::words + (number~) main::$6
   (word) main::w1#0 ← *((word*~) main::$0)
@@ -23,19 +21,22 @@ main: scope:[main]  from @1
 main::@return: scope:[main]  from main
   return 
   to:@return
-@1: scope:[]  from @begin
+
+(void()) _start()
+_start: scope:[_start]  from
   call main 
-  to:@2
-@2: scope:[]  from @1
-  to:@end
-@end: scope:[]  from @2
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
 
 SYMBOL TABLE SSA
-(label) @1
-(label) @2
-(label) @begin
-(label) @end
 (const byte) SIZEOF_WORD = (byte) 2
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
 (void()) main()
 (word*~) main::$0
 (byte~) main::$1
@@ -93,6 +94,11 @@ Successful SSA optimization PassNSimplifyExpressionWithZero
 Eliminating unused variable (word*~) main::$0 and assignment [0] (word*~) main::$0 ← (const word*) main::words + (const byte) main::$6
 Eliminating unused variable (word*~) main::$3 and assignment [6] (word*~) main::$3 ← (const word*) main::words + (const byte) main::$7
 Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
 Constant inlined main::$6 = (byte) 1*(const byte) SIZEOF_WORD
 Constant inlined main::$7 = (byte) 2*(const byte) SIZEOF_WORD
 Successful SSA optimization Pass2ConstantInlining
@@ -102,59 +108,41 @@ Consolidated array index constant in *(main::words+2*SIZEOF_WORD)
 Consolidated array index constant in *(main::SCREEN+2)
 Consolidated array index constant in *(main::SCREEN+3)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @2
-Adding NOP phi() at start of @end
 CALL GRAPH
-Calls in [] to main:2 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) @2
-Adding NOP phi() at start of @begin
-Adding NOP phi() at start of @1
-Adding NOP phi() at start of @end
 
 FINAL CONTROL FLOW GRAPH
-@begin: scope:[]  from
-  [0] phi()
-  to:@1
-@1: scope:[]  from @begin
-  [1] phi()
-  [2] call main 
-  to:@end
-@end: scope:[]  from @1
-  [3] phi()
 
 (void()) main()
-main: scope:[main]  from @1
-  [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD)
-  [5] (byte~) main::$1 ← < (word) main::w1#0
-  [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1
-  [7] (byte~) main::$2 ← > (word) main::w1#0
-  [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2
-  [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD)
-  [10] (byte~) main::$4 ← < (word) main::w2#0
-  [11] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4
-  [12] (byte~) main::$5 ← > (word) main::w2#0
-  [13] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5
+main: scope:[main]  from
+  [0] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD)
+  [1] (byte~) main::$1 ← < (word) main::w1#0
+  [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1
+  [3] (byte~) main::$2 ← > (word) main::w1#0
+  [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2
+  [5] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD)
+  [6] (byte~) main::$4 ← < (word) main::w2#0
+  [7] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4
+  [8] (byte~) main::$5 ← > (word) main::w2#0
+  [9] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5
   to:main::@return
 main::@return: scope:[main]  from main
-  [14] return 
+  [10] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
-(byte~) main::$1 22.0
-(byte~) main::$2 22.0
-(byte~) main::$4 22.0
-(byte~) main::$5 22.0
+(byte~) main::$1 4.0
+(byte~) main::$2 4.0
+(byte~) main::$4 4.0
+(byte~) main::$5 4.0
 (word) main::w1
-(word) main::w1#0 11.0
+(word) main::w1#0 2.0
 (word) main::w2
-(word) main::w2#0 11.0
+(word) main::w2#0 2.0
 
 Initial phi equivalence classes
 Added variable main::w1#0 to live range equivalence class [ main::w1#0 ]
@@ -187,20 +175,6 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400+6*$28
@@ -211,51 +185,51 @@ main: {
     .label __5 = 9
     .label w1 = 2
     .label w2 = 6
-    // [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [0] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+1*SIZEOF_WORD
     sta.z w1
     lda words+1*SIZEOF_WORD+1
     sta.z w1+1
-    // [5] (byte~) main::$1 ← < (word) main::w1#0 -- vbuz1=_lo_vwuz2 
+    // [1] (byte~) main::$1 ← < (word) main::w1#0 -- vbuz1=_lo_vwuz2 
     lda.z w1
     sta.z __1
-    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
+    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
     lda.z __1
     sta SCREEN
-    // [7] (byte~) main::$2 ← > (word) main::w1#0 -- vbuz1=_hi_vwuz2 
+    // [3] (byte~) main::$2 ← > (word) main::w1#0 -- vbuz1=_hi_vwuz2 
     lda.z w1+1
     sta.z __2
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuz1 
     lda.z __2
     sta SCREEN+1
-    // [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [5] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1
     sta.z w2+1
-    // [10] (byte~) main::$4 ← < (word) main::w2#0 -- vbuz1=_lo_vwuz2 
+    // [6] (byte~) main::$4 ← < (word) main::w2#0 -- vbuz1=_lo_vwuz2 
     lda.z w2
     sta.z __4
-    // [11] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4 -- _deref_pbuc1=vbuz1 
     lda.z __4
     sta SCREEN+2
-    // [12] (byte~) main::$5 ← > (word) main::w2#0 -- vbuz1=_hi_vwuz2 
+    // [8] (byte~) main::$5 ← > (word) main::w2#0 -- vbuz1=_hi_vwuz2 
     lda.z w2+1
     sta.z __5
-    // [13] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5 -- _deref_pbuc1=vbuz1 
+    // [9] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5 -- _deref_pbuc1=vbuz1 
     lda.z __5
     sta SCREEN+3
     jmp __breturn
     // main::@return
   __breturn:
-    // [14] return 
+    // [10] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) [ main::w1#0 ] ( main:2 [ main::w1#0 ] { }  ) always clobbers reg byte a 
-Statement [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) [ main::w2#0 ] ( main:2 [ main::w2#0 ] { }  ) always clobbers reg byte a 
+Statement [0] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) [ main::w1#0 ] (  [ main::w1#0 ] { }  ) always clobbers reg byte a 
+Statement [5] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) [ main::w2#0 ] (  [ main::w2#0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::w1#0 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -264,12 +238,12 @@ Potential registers zp[1]:8 [ main::$4 ] : zp[1]:8 , reg byte a , reg byte x , r
 Potential registers zp[1]:9 [ main::$5 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 22: zp[1]:4 [ main::$1 ] 22: zp[1]:5 [ main::$2 ] 22: zp[1]:8 [ main::$4 ] 22: zp[1]:9 [ main::$5 ] 11: zp[2]:2 [ main::w1#0 ] 11: zp[2]:6 [ main::w2#0 ] 
+Uplift Scope [main] 4: zp[1]:4 [ main::$1 ] 4: zp[1]:5 [ main::$2 ] 4: zp[1]:8 [ main::$4 ] 4: zp[1]:9 [ main::$5 ] 2: zp[2]:2 [ main::w1#0 ] 2: zp[2]:6 [ main::w2#0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 77 combination reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$4 ] reg byte a [ main::$5 ] zp[2]:2 [ main::w1#0 ] zp[2]:6 [ main::w2#0 ] 
+Uplifting [main] best 65 combination reg byte a [ main::$1 ] reg byte a [ main::$2 ] reg byte a [ main::$4 ] reg byte a [ main::$5 ] zp[2]:2 [ main::w1#0 ] zp[2]:6 [ main::w2#0 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [] best 77 combination 
+Uplifting [] best 65 combination 
 Allocated (was zp[2]:6) zp[2]:4 [ main::w2#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -281,92 +255,65 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // @begin
-__bbegin:
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-__b1_from___bbegin:
-  jmp __b1
-  // @1
-__b1:
-  // [2] call main 
-  jsr main
-  // [3] phi from @1 to @end [phi:@1->@end]
-__bend_from___b1:
-  jmp __bend
-  // @end
-__bend:
   // main
 main: {
     .label SCREEN = $400+6*$28
     .label words = $400
     .label w1 = 2
     .label w2 = 4
-    // [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [0] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+1*SIZEOF_WORD
     sta.z w1
     lda words+1*SIZEOF_WORD+1
     sta.z w1+1
-    // [5] (byte~) main::$1 ← < (word) main::w1#0 -- vbuaa=_lo_vwuz1 
+    // [1] (byte~) main::$1 ← < (word) main::w1#0 -- vbuaa=_lo_vwuz1 
     lda.z w1
-    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [7] (byte~) main::$2 ← > (word) main::w1#0 -- vbuaa=_hi_vwuz1 
+    // [3] (byte~) main::$2 ← > (word) main::w1#0 -- vbuaa=_hi_vwuz1 
     lda.z w1+1
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
-    // [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [5] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1
     sta.z w2+1
-    // [10] (byte~) main::$4 ← < (word) main::w2#0 -- vbuaa=_lo_vwuz1 
+    // [6] (byte~) main::$4 ← < (word) main::w2#0 -- vbuaa=_lo_vwuz1 
     lda.z w2
-    // [11] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+2
-    // [12] (byte~) main::$5 ← > (word) main::w2#0 -- vbuaa=_hi_vwuz1 
+    // [8] (byte~) main::$5 ← > (word) main::w2#0 -- vbuaa=_hi_vwuz1 
     lda.z w2+1
-    // [13] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5 -- _deref_pbuc1=vbuaa 
+    // [9] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
     jmp __breturn
     // main::@return
   __breturn:
-    // [14] return 
+    // [10] return 
     rts
 }
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp __b1
-Removing instruction jmp __bend
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from___bbegin:
-Removing instruction __b1:
-Removing instruction __bend_from___b1:
-Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __bbegin:
-Removing instruction __bend:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction jsr main
-Succesful ASM optimization Pass5SkipBegin
 
 FINAL SYMBOL TABLE
-(label) @1
-(label) @begin
-(label) @end
 (const byte) SIZEOF_WORD = (byte) 2
 (void()) main()
-(byte~) main::$1 reg byte a 22.0
-(byte~) main::$2 reg byte a 22.0
-(byte~) main::$4 reg byte a 22.0
-(byte~) main::$5 reg byte a 22.0
+(byte~) main::$1 reg byte a 4.0
+(byte~) main::$2 reg byte a 4.0
+(byte~) main::$4 reg byte a 4.0
+(byte~) main::$5 reg byte a 4.0
 (label) main::@return
 (const nomodify byte*) main::SCREEN = (byte*)(number) $400+(number) 6*(number) $28
 (word) main::w1
-(word) main::w1#0 w1 zp[2]:2 11.0
+(word) main::w1#0 w1 zp[2]:2 2.0
 (word) main::w2
-(word) main::w2#0 w2 zp[2]:4 11.0
+(word) main::w2#0 w2 zp[2]:4 2.0
 (const word*) main::words = (word*) 1024
 
 zp[2]:2 [ main::w1#0 ]
@@ -388,12 +335,6 @@ Score: 62
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  // @begin
-  // [1] phi from @begin to @1 [phi:@begin->@1]
-  // @1
-  // [2] call main 
-  // [3] phi from @1 to @end [phi:@1->@end]
-  // @end
   // main
 main: {
     .label SCREEN = $400+6*$28
@@ -401,44 +342,44 @@ main: {
     .label w1 = 2
     .label w2 = 4
     // w1 = *(words+1)
-    // [4] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [0] (word) main::w1#0 ← *((const word*) main::words+(byte) 1*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+1*SIZEOF_WORD
     sta.z w1
     lda words+1*SIZEOF_WORD+1
     sta.z w1+1
     // <w1
-    // [5] (byte~) main::$1 ← < (word) main::w1#0 -- vbuaa=_lo_vwuz1 
+    // [1] (byte~) main::$1 ← < (word) main::w1#0 -- vbuaa=_lo_vwuz1 
     lda.z w1
     // SCREEN[0] = <w1
-    // [6] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // >w1
-    // [7] (byte~) main::$2 ← > (word) main::w1#0 -- vbuaa=_hi_vwuz1 
+    // [3] (byte~) main::$2 ← > (word) main::w1#0 -- vbuaa=_hi_vwuz1 
     lda.z w1+1
     // SCREEN[1] = >w1
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
+    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$2 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // w2 = *(words+2)
-    // [9] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
+    // [5] (word) main::w2#0 ← *((const word*) main::words+(byte) 2*(const byte) SIZEOF_WORD) -- vwuz1=_deref_pwuc1 
     lda words+2*SIZEOF_WORD
     sta.z w2
     lda words+2*SIZEOF_WORD+1
     sta.z w2+1
     // <w2
-    // [10] (byte~) main::$4 ← < (word) main::w2#0 -- vbuaa=_lo_vwuz1 
+    // [6] (byte~) main::$4 ← < (word) main::w2#0 -- vbuaa=_lo_vwuz1 
     lda.z w2
     // SCREEN[2] = <w2
-    // [11] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
+    // [7] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (byte~) main::$4 -- _deref_pbuc1=vbuaa 
     sta SCREEN+2
     // >w2
-    // [12] (byte~) main::$5 ← > (word) main::w2#0 -- vbuaa=_hi_vwuz1 
+    // [8] (byte~) main::$5 ← > (word) main::w2#0 -- vbuaa=_hi_vwuz1 
     lda.z w2+1
     // SCREEN[3] = >w2
-    // [13] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5 -- _deref_pbuc1=vbuaa 
+    // [9] *((const nomodify byte*) main::SCREEN+(byte) 3) ← (byte~) main::$5 -- _deref_pbuc1=vbuaa 
     sta SCREEN+3
     // main::@return
     // }
-    // [14] return 
+    // [10] return 
     rts
 }
   // File Data

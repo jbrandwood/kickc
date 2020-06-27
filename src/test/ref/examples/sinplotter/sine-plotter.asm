@@ -282,12 +282,8 @@ sin16s_gen2: {
     .label ampl = max-min
     .label __6 = 8
     .label __8 = $1c
-    // ampl is always positive so shifting left does not alter the sign
-    // u[4.28] step = PI*2/wavelength
     .label step = $18
     .label sintab = 6
-    // u[4.28]
-    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = 2
@@ -493,23 +489,14 @@ sin16s: {
     .label __4 = $1e
     .label x = $e
     .label return = $1c
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $22
-    // u[1.15]
     .label x2 = $12
-    // u[2.14] x^2
     .label x3 = $12
-    // u[2.14] x^3
     .label x3_6 = $24
-    // u[1.15] x^3/6;
     .label usinx = $1c
-    // u[1.15] x - x^3/6
     .label x4 = $12
-    // u[3.13] x^4
     .label x5 = $24
-    // u[4.12] x^5
     .label x5_128 = $24
-    // u[1.15] (first bit is always zero)
     .label sinx = $1c
     // if(x >= PI_u4f28 )
     lda.z x+3

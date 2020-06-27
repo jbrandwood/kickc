@@ -13,7 +13,6 @@
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     // Clear the screen by modifying the charset
-    // Clear the screen by modifying the charset
     .label clear_char = 2
     // init_font_hex(CHARSET)
     jsr init_font_hex
@@ -178,7 +177,6 @@ atan2_16: {
     .label yi = $11
     .label xi = 4
     .label angle = 6
-    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = $a
     .label yd = 8
     .label return = 6

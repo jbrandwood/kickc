@@ -847,7 +847,6 @@ printf_slong: {
     .const format_upper_case = 0
     .const value = -main.sl
     // Format number into buffer
-    // Format number into buffer
     .const uvalue = value
     // printf_buffer.sign = 0
     // Handle any sign
@@ -1097,7 +1096,6 @@ printf_sint: {
     .const format_upper_case = 0
     .const value = -main.si
     // Format number into buffer
-    // Format number into buffer
     .const uvalue = value
     // printf_buffer.sign = 0
     // Handle any sign
@@ -1264,7 +1262,6 @@ printf_schar: {
     .const format_zero_padding = 0
     .const format_upper_case = 0
     .const value = -main.sc
-    // Format number into buffer
     // Format number into buffer
     .const uvalue = value
     // printf_buffer.sign = 0

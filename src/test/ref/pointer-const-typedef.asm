@@ -11,7 +11,6 @@
   .label cpc1 = $400
   .label cpc2 = $400
   // Pointer to const
-  // Pointer to const
   .label pc0 = $400
   .label pc1 = $400
   .label pc2 = $400

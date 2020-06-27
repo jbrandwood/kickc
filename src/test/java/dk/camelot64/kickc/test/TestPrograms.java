@@ -1255,7 +1255,7 @@ public class TestPrograms {
 
    @Test
    public void testInnerIncrementProblem() throws IOException, URISyntaxException {
-      compileAndCompare("inner-increment-problem.c", log());
+      compileAndCompare("inner-increment-problem.c");
    }
 
    @Test

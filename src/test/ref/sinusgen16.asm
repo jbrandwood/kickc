@@ -235,11 +235,8 @@ memset: {
 // sin16s_gen(signed word* zp($c) sintab)
 sin16s_gen: {
     .label __2 = $12
-    // u[4.28] step = PI*2/wavelength
     .label step = $1c
     .label sintab = $c
-    // u[4.28]
-    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = 8
@@ -330,23 +327,14 @@ sin16s: {
     .label __4 = $20
     .label x = $e
     .label return = $12
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $26
-    // u[1.15]
     .label x2 = $18
-    // u[2.14] x^2
     .label x3 = $18
-    // u[2.14] x^3
     .label x3_6 = $24
-    // u[1.15] x^3/6;
     .label usinx = $12
-    // u[1.15] x - x^3/6
     .label x4 = $18
-    // u[3.13] x^4
     .label x5 = $24
-    // u[4.12] x^5
     .label x5_128 = $24
-    // u[1.15] (first bit is always zero)
     .label sinx = $12
     // if(x >= PI_u4f28 )
     lda.z x+3

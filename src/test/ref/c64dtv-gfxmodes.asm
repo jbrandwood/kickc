@@ -475,7 +475,6 @@ mode_8bppchunkybmm: {
 }
 // Allow the user to control the DTV graphics using different keys
 mode_ctrl: {
-    // Read the current control byte
     // DTV Graphics Mode - Reset
     .label ctrl = 3
   __b1:
@@ -497,7 +496,6 @@ mode_ctrl: {
   __b4:
     // ctrl = dtv_control
     // Read the current control byte
-    // DTV Graphics Mode - Reset
     stx.z ctrl
     // keyboard_key_pressed(KEY_L)
     ldy #KEY_L
@@ -641,7 +639,6 @@ keyboard_matrix_read: {
 // dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
-    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     // *cpuBank = cpuBankIdx
     sta cpuBank
@@ -668,7 +665,6 @@ mode_8bpppixelcell: {
     .label PLANEB = $4000
     .label CHARGEN = $d000
     .label __3 = 8
-    // Screen Chars for Plane A (screen) - 16x16 repeating
     // Screen Chars for Plane A (screen) - 16x16 repeating
     .label gfxa = 6
     .label ay = 2
@@ -861,14 +857,11 @@ mode_sixsfred: {
     .label PLANEB = $6000
     .label COLORS = $8000
     // Colors for high 4 bits of 8bpp
-    // Colors for high 4 bits of 8bpp
     .label col = 4
     .label cy = $a
     // Graphics for Plane A () - horizontal stripes every 2 pixels
-    // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = 6
     .label ay = $f
-    // Graphics for Plane B - vertical stripes every 2 pixels
     // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = $d
     .label by = $11
@@ -1054,15 +1047,11 @@ mode_twoplanebitmap: {
     .label __3 = 8
     // Color for bits 11
     // Colors for bits 01 / 10
-    // Color for bits 11
-    // Colors for bits 01 / 10
     .label col = 6
     .label cy = 2
     // Graphics for Plane A - horizontal stripes
-    // Graphics for Plane A - horizontal stripes
     .label gfxa = $d
     .label ay = 3
-    // Graphics for Plane B - vertical stripes
     // Graphics for Plane B - vertical stripes
     .label gfxb = 4
     .label by = $a
@@ -1270,14 +1259,11 @@ mode_sixsfred2: {
     .label COLORS = $8000
     .label __3 = 9
     // Colors for high 4 bits of 8bpp
-    // Colors for high 4 bits of 8bpp
     .label col = 4
     .label cy = 2
     // Graphics for Plane A () - horizontal stripes every 2 pixels
-    // Graphics for Plane A () - horizontal stripes every 2 pixels
     .label gfxa = 6
     .label ay = 3
-    // Graphics for Plane B - vertical stripes every 2 pixels
     // Graphics for Plane B - vertical stripes every 2 pixels
     .label gfxb = $d
     .label by = $a
@@ -1474,7 +1460,6 @@ mode_hicolmcchar: {
     .label COLORS = $8400
     .label __3 = 9
     // Char Colors and screen chars
-    // Char Colors and screen chars
     .label col = 6
     .label ch = $d
     .label cy = $f
@@ -1612,7 +1597,6 @@ mode_hicolecmchar: {
     .label COLORS = $8400
     .label __3 = $a
     // Char Colors and screen chars
-    // Char Colors and screen chars
     .label col = 6
     .label ch = $d
     .label cy = $f
@@ -1749,7 +1733,6 @@ mode_hicolstdchar: {
     .label COLORS = $8400
     .label __3 = $a
     // Char Colors and screen chars
-    // Char Colors and screen chars
     .label col = 6
     .label ch = $d
     .label cy = $11
@@ -1874,7 +1857,6 @@ mode_stdbitmap: {
     .label SCREEN = $4000
     .label BITMAP = $6000
     .label col2 = $f
-    // Bitmap Colors
     // Bitmap Colors
     .label ch = 4
     .label cy = $11
@@ -2176,7 +2158,6 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(Y) x, byte register(X) y)
 bitmap_plot: {
-    // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
     .label plotter_x = $b
     .label plotter_y = $d
     .label plotter = $b
@@ -2464,7 +2445,6 @@ mode_mcchar: {
     .label COLORS = $d800
     .label __5 = $f
     // Char Colors and screen chars
-    // Char Colors and screen chars
     .label col = 4
     .label ch = $d
     .label cy = $a
@@ -2607,7 +2587,6 @@ mode_ecmchar: {
     .label COLORS = $d800
     .label __5 = $10
     // Char Colors and screen chars
-    // Char Colors and screen chars
     .label col = $d
     .label ch = 6
     .label cy = $f
@@ -2747,7 +2726,6 @@ mode_stdchar: {
     // Charset ROM
     .label COLORS = $d800
     .label __5 = $11
-    // Char Colors and screen chars
     // Char Colors and screen chars
     .label col = 6
     .label ch = $d

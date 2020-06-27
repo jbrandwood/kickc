@@ -412,7 +412,6 @@ printf_ulong: {
 printf_number_buffer: {
     .label __19 = $a
     .label buffer_sign = $1a
-    // There is a minimum length - work out the padding
     .label len = $11
     .label padding = $10
     .label format_min_length = $10

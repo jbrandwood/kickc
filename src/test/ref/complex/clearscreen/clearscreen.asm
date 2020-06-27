@@ -80,7 +80,6 @@
   // Sprite data for the animating sprites
   .label SPRITE_DATA = $2000
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 8
@@ -230,7 +229,6 @@ startProcessing: {
     .label center_x = $21
     .label center_y = $10
     .label i = 5
-    // Copy char into sprite
     .label offset = $22
     .label colPtr = $13
     .label spriteCol = $15
@@ -240,7 +238,6 @@ startProcessing: {
     .label spriteX = $16
     .label spriteY = $18
     .label spritePtr = $1a
-    // Busy-wait while finding an empty slot in the PROCESSING array
     // Busy-wait while finding an empty slot in the PROCESSING array
     .label freeIdx = 5
     .label __33 = $11
@@ -881,7 +878,6 @@ atan2_16: {
     .label yi = $11
     .label xi = $13
     .label angle = $16
-    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = $1b
     .label yd = $18
     .label return = $16

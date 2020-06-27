@@ -34,7 +34,6 @@ syscall1: {
 }
 main: {
     // Print message
-    // Print message
     .label sc = 4
     .label msg = 2
     // *VIC_MEMORY = 0x14

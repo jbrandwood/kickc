@@ -396,7 +396,6 @@ font_2x2_to_sprites: {
     .label __3 = $1b
     .label char_right = $b
     .label sprite_idx = $18
-    // Upper char
     .label char_left = 9
     .label char_current = $19
     .label sprite = 7

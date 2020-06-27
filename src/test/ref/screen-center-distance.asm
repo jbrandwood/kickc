@@ -22,7 +22,6 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()

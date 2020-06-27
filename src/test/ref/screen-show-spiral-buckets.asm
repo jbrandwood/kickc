@@ -21,7 +21,6 @@
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 4
@@ -106,15 +105,12 @@ main: {
     .label bucket = $16
     .label bucket_size = $18
     // Animate a spiral walking through the buckets one at a time
-    // Animate a spiral walking through the buckets one at a time
     .label bucket_idx = 2
     .label offset = $14
     .label fill = $19
     .label angle = $1b
     // Find the minimum unfilled angle in the current bucket
-    // Find the minimum unfilled angle in the current bucket
     .label min_angle = 3
-    // Found something to fill!
     .label fill1 = 4
     .label min_offset = 4
     .label min_offset_1 = $14
@@ -281,13 +277,11 @@ init_buckets: {
     .label __12 = $1d
     .label __14 = $1d
     .label screen = $1b
-    // first find bucket sizes - by counting number of chars with each distance value
     .label dist = $c
     .label i1 = $16
     .label i2 = $19
     .label distance = $1f
     .label bucket = $1d
-    // first find bucket sizes - by counting number of chars with each distance value
     .label dist_1 = $22
     .label i4 = $24
     .label __15 = 6
@@ -630,7 +624,6 @@ atan2_16: {
     .label yi = $19
     .label xi = $22
     .label angle = $24
-    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = 8
     .label yd = 6
     .label return = $24

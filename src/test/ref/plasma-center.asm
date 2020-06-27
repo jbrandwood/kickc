@@ -26,7 +26,6 @@
   // Plasma screen 2
   .label SCREEN2 = $2c00
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label print_screen = $400
   // Head of the heap. Moved backward each malloc()
@@ -543,7 +542,6 @@ atan2_16: {
     .label yi = 7
     .label xi = $1a
     .label angle = $10
-    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = 9
     .label yd = $18
     .label return = $10

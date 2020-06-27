@@ -12,7 +12,6 @@
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = $15
@@ -53,7 +52,6 @@ _start: {
     rts
 }
 main: {
-    // Find the minimum dist/angle that is not already filled
     .label dist = 2
     .label angle = 4
     .label fill = $15
@@ -316,7 +314,6 @@ atan2_16: {
     .label yi = $11
     .label xi = $24
     .label angle = $13
-    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = $1e
     .label yd = $17
     .label return = $13

@@ -76,7 +76,6 @@ main: {
 // The raster loop
 loop: {
     // The current index into the y-sinus
-    // The current index into the y-sinus
     .label sin_idx = 2
     lda #0
     sta.z sin_idx
@@ -196,7 +195,6 @@ plexSort: {
 }
 // Initialize the program
 init: {
-    // Set the x-positions & pointers
     // Set the x-positions & pointers
     .label xp = 4
     // *D011 = VIC_DEN | VIC_RSEL | 3

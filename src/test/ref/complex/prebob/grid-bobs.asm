@@ -44,7 +44,6 @@
 main: {
     .const origY = $a00
     // Row and column offset vectors
-    // Row and column offset vectors
     .const rowOffsetX = $c00
     .const colOffsetX = $100
     .const colOffsetY = $1800
@@ -59,7 +58,6 @@ main: {
     .label rowX = 4
     .label rowY = 6
     .label col = $e
-    // Origin point
     // Origin point
     .label origX = $c
     .label rowOffsetY = 2
@@ -527,7 +525,6 @@ prepareBobs: {
     .label bob_table = $1b
     .label shift_y = $11
     // Populate charset and tables
-    // Populate charset and tables
     .label bob_glyph = $f
     .label cell = $14
     .label bob_table_idx = $12
@@ -823,20 +820,15 @@ protoBobShiftDown: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    // x/2
     .label c = $11
     // Counter used for determining x%2==0
-    // Counter used for determining x%2==0
     .label sqr1_hi = $1b
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $19
     .label sqr1_lo = $f
     // Decrease or increase x_255 - initially we decrease
-    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $16
     .label sqr2_lo = $1d
-    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $12
     ldx #0

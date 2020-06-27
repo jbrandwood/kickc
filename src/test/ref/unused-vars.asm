@@ -5,7 +5,6 @@
   .label SCREEN = $400
 main: {
     // used vars
-    // used vars
     .const col = 2
     .label COLS = $d800
     ldx #0

@@ -463,10 +463,8 @@ render_bcd: {
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
-    // Find the screen area
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $32
-    // Render the next piece
     .label next_piece_gfx = $2c
     .label screen_next_area = $2e
     .label l = $c
@@ -619,7 +617,6 @@ render_moving: {
 render_playfield: {
     .label screen_line = $2c
     // Do not render the top 2 lines.
-    // Do not render the top 2 lines.
     .label i = $1d
     .label c = $1e
     .label l = $1c
@@ -707,7 +704,6 @@ play_movement: {
 // Return non-zero if a render is needed
 // play_move_rotate(byte register(A) key_event)
 play_move_rotate: {
-    // Handle keyboard events
     // Handle keyboard events
     .label orientation = $c
     // if(key_event==KEY_Z)
@@ -1029,8 +1025,6 @@ play_move_down: {
 // Moves the next piece into the current and spawns a new next piece
 play_spawn_current: {
     .label __7 = $33
-    // Spawn a new next piece
-    // Pick a random piece (0-6)
     // Spawn a new next piece
     // Pick a random piece (0-6)
     .label piece_idx = $1a
@@ -1553,7 +1547,6 @@ render_show: {
 play_init: {
     .label pli = $2c
     // Initialize the playfield line pointers;
-    // Initialize the playfield line pointers;
     .label idx = $32
     lda #0
     sta.z idx
@@ -1705,7 +1698,6 @@ sprites_init: {
 // Initialize rendering
 render_init: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)/$40
-    // Initialize the screen line pointers;
     // Initialize the screen line pointers;
     .label li_1 = $2c
     .label li_2 = $2e
@@ -1908,7 +1900,6 @@ render_screen_original: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
-    // Wait for the y-position before changing sprite pointers
     .label raster_sprite_gfx_modify = $3c
     sta rega+1
     stx regx+1

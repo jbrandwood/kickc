@@ -311,9 +311,7 @@ bitmap_line: {
     .label dy = $1a
     .label sx = $20
     .label sy = $1e
-    // X is the driver
     .label e1 = 9
-    // Y is the driver
     .label e = 7
     .label x1 = $f
     .label y1 = $11
@@ -960,11 +958,8 @@ rotate: {
     .label return_x = 3
     .label return_y = 5
     .label cos_a = $18
-    // signed fixed[0.7]
     .label xr = $1a
-    // signed fixed[8.8]
     .label yr = $1c
-    // signed fixed[8.8]
     .label sin_a = $18
     // cos_a = (signed int) COS[angle]
     lda COS,y
@@ -1410,20 +1405,15 @@ bitmap_init: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    // x/2
     .label c = $26
     // Counter used for determining x%2==0
-    // Counter used for determining x%2==0
     .label sqr1_hi = $16
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $18
     .label sqr1_lo = $14
     // Decrease or increase x_255 - initially we decrease
-    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $20
     .label sqr2_lo = $1c
-    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $13
     ldx #0

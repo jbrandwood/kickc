@@ -74,9 +74,7 @@
   // Pointer to the start of RAM memory
   .label MEMORY = 0
   // NES Picture Processing Unit (PPU)
-  // NES Picture Processing Unit (PPU)
   .label PPU = $2000
-  // NES CPU and audion processing unit (APU)
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
   // Index into the Y sine
@@ -266,7 +264,6 @@ ppuDataTransfer: {
     .label ppuData = PPU_PALETTE
     .label cpuData = PALETTE
     // Transfer to PPU
-    // Transfer to PPU
     .label cpuSrc = 6
     .label i = 4
     // PPU->PPUADDR = >ppuData
@@ -319,7 +316,6 @@ vblank: {
     .label __23 = $b
     .label __25 = $b
     .label __28 = $f
-    // Update sprite positions
     .label y_idx = 9
     .label x_idx = $a
     .label x_idx_2 = $b

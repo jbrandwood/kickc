@@ -184,11 +184,8 @@ memset: {
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 // sin8s_gen(signed byte* zp(7) sintab)
 sin8s_gen: {
-    // u[4.28] step = PI*2/wavelength
     .label step = $f
     .label sintab = 7
-    // u[4.12]
-    // Iterate over the table
     // u[4.12]
     // Iterate over the table
     .label x = 5
@@ -258,13 +255,9 @@ sin8s: {
     .const DIV_6 = $2b
     .label __4 = $b
     .label x = $b
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $11
-    // u[2.6] x^2
     .label x3 = $12
-    // u[1.7] x^3/6;
     .label usinx = $13
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = 9
     // if(x >= PI_u4f12 )

@@ -3,7 +3,6 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 2

@@ -28,7 +28,6 @@
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
   /* Sqrt of COUNT */
-  /* Sqrt of COUNT */
   .label sieve = $1000
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
@@ -45,7 +44,6 @@ main: {
     .label sec100s = 4
     .label i = $a
     .label sieve_i = 2
-    /* Prime number - mark all multiples */
     .label j = 6
     .label s = 8
     .label i_1 = 4

@@ -985,11 +985,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                // Add comments to constant
                variable.setComments(ensureUnusedComments(declComments));
             } else if(!variable.isKindConstant() && !isStructMember) {
-               final List<Comment> comments = ensureUnusedComments(declComments);
-               Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, comments);
+               Statement initStmt = new StatementAssignment(variable.getVariableRef(), initValue, true, statementSource, Comment.NO_COMMENTS);
                addStatement(initStmt);
-               // Add comments to variable
-               variable.setComments(comments);
+               if(variable.getScope().getRef().equals(ScopeRef.ROOT)) {
+                  // Add comments to variable for global vars
+                  variable.setComments(ensureUnusedComments(declComments));
+               }  else {
+                  // Add comments to statement for local vars
+                  initStmt.setComments(ensureUnusedComments(declComments));
+               }
+
             }
             if(initializer != null)
                PrePostModifierHandler.addPostModifiers(this, initializer, statementSource);

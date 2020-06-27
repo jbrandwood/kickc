@@ -34,7 +34,6 @@ main: {
     bne __b1
     // }
     rts
-    // A local pointer 
     screen: .word 0
     i: .byte 0
 }

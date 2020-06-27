@@ -4,7 +4,6 @@
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
-  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
 _start: {

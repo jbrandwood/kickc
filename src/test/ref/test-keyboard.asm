@@ -64,7 +64,6 @@ main: {
     .label row = 4
     .label ch = 7
     // Checks all specific chars $00-$3f
-    // Checks all specific chars $00-$3f
     .label i = 8
     lda #<$400
     sta.z sc

@@ -251,7 +251,6 @@ clear_screen: {
 // gen_sintab(byte* zp($f) sintab, byte zp(8) length, byte zp(6) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
-    // amplitude/2
     .label f_2pi = $e2e5
     .label __20 = $13
     .label i = 9
@@ -624,14 +623,11 @@ gen_chargen_sprite: {
     .label __14 = $13
     .label sprite = $f
     .label chargen = $13
-    // current chargen line
     .label bits = 5
-    // current sprite char
     // current sprite char
     .label s_gen = 9
     .label x = 6
     .label y = 4
-    // Find the current chargen pixel (c)
     // Find the current chargen pixel (c)
     .label c = 8
     // ((unsigned int)ch)*8

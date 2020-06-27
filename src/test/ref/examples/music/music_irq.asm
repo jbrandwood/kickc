@@ -22,9 +22,7 @@
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // Pointer to the music init routine
-  // Pointer to the music init routine
   .label musicInit = MUSIC
-  // Pointer to the music play routine
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
 // Raster IRQ Routine playing music

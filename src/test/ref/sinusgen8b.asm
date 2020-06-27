@@ -231,11 +231,8 @@ memset: {
 // sin16s_gen(signed word* zp($15) sintab)
 sin16s_gen: {
     .label __2 = $17
-    // u[4.28] step = PI*2/wavelength
     .label step = $1d
     .label sintab = $15
-    // u[4.28]
-    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = 5
@@ -326,23 +323,14 @@ sin16s: {
     .label __4 = $21
     .label x = 9
     .label return = $17
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $25
-    // u[1.15]
     .label x2 = $11
-    // u[2.14] x^2
     .label x3 = $11
-    // u[2.14] x^3
     .label x3_6 = $27
-    // u[1.15] x^3/6;
     .label usinx = $17
-    // u[1.15] x - x^3/6
     .label x4 = $11
-    // u[3.13] x^4
     .label x5 = $27
-    // u[4.12] x^5
     .label x5_128 = $27
-    // u[1.15] (first bit is always zero)
     .label sinx = $17
     // if(x >= PI_u4f28 )
     lda.z x+3
@@ -749,11 +737,8 @@ divr16u: {
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
 // sin8s_gen(signed byte* zp($1b) sintab)
 sin8s_gen: {
-    // u[4.28] step = PI*2/wavelength
     .label step = $13
     .label sintab = $1b
-    // u[4.12]
-    // Iterate over the table
     // u[4.12]
     // Iterate over the table
     .label x = $17
@@ -823,13 +808,9 @@ sin8s: {
     .const DIV_6 = $2b
     .label __4 = $25
     .label x = $25
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $2b
-    // u[2.6] x^2
     .label x3 = $2c
-    // u[1.7] x^3/6;
     .label usinx = $2d
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = $1a
     // if(x >= PI_u4f12 )

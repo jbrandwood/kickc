@@ -76,10 +76,8 @@ main: {
     .const toD0182_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
     .label cols = 3
     // Setup 16x16 canvas for rendering
-    // Setup 16x16 canvas for rendering
     .label screen = 5
     .label y = 2
-    // Plot in line buffer
     .label x0 = $13
     .label y0 = $14
     .label x1 = $c
@@ -89,7 +87,6 @@ main: {
     .label p0_idx = 7
     .label p1_idx = 8
     .label p2_idx = 9
-    // The current canvas being rendered to
     // The current canvas being rendered to
     .label canvas = $a
     // memset(CONSOLE, ' ', 40*25)
@@ -380,19 +377,13 @@ line: {
     .label dy = $18
     .label sx = $19
     .label sy = $1a
-    // Find the canvas column
     .label plot1_column = $21
     .label plot2_y = $1b
-    // Find the canvas column
     .label plot2_column = $1c
-    // Find the canvas column
     .label plot3_column = $1f
     .label e1 = $e
-    // Find the canvas column
     .label plot4_column = $23
-    // Find the canvas column
     .label plot5_column = $25
-    // Find the canvas column
     .label plot6_column = $28
     // abs_u8(x2-x1)
     lda.z x2

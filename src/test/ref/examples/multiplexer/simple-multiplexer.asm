@@ -24,7 +24,6 @@
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Location of screen & sprites
-  // Location of screen & sprites
   .label SCREEN = $400
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
@@ -63,7 +62,6 @@ main: {
 }
 // The raster loop
 loop: {
-    // The current index into the y-sinus
     // The current index into the y-sinus
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = $a
@@ -301,7 +299,6 @@ plexSort: {
 }
 // Initialize the program
 init: {
-    // Set the x-positions & pointers
     // Set the x-positions & pointers
     .label xp = 4
     // *D011 = VIC_DEN | VIC_RSEL | 3

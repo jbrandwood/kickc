@@ -16,10 +16,6 @@ main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
     .label __4 = $a
-    //byte angle_b = atan2_8(x, y);
-    //diff_sum += diff(angle_b, *screen_ref);
-    //*screen = angle_b - *screen_ref++;
-    //*screen = angle_b;
     .label xw = $17
     .label yw = $19
     .label angle_w = $a
@@ -202,7 +198,6 @@ atan2_16: {
     .label yi = $e
     .label xi = $11
     .label angle = $a
-    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = $c
     .label yd = $13
     .label return = $a

@@ -43,9 +43,7 @@ _start: {
 main: {
     .label __9 = $10
     .label __10 = $d
-    // yd = y-12 
     .label yd = $f
-    // dist_sq = xd*xd + yd*yd
     .label dist_sq = $10
     .label y = 9
     .label sc = $b

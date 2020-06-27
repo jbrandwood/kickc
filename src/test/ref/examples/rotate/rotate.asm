@@ -48,19 +48,14 @@ anim: {
     .label __12 = 3
     .label __26 = $13
     .label x = $b
-    // signed fixed[7.0]
     .label y = $c
     .label xr = $d
-    // signed fixed[8.8]
     .label yr = $f
-    // signed fixed[8.8]
     .label xpos = $11
-    // signed fixed[0.7]
     // signed fixed[0.7]
     .label sprite_msb = 2
     .label i = $a
     .label angle = 7
-    // Calculate the cycle count - 0x12 is the base usage of start/read
     .label cyclecount = $13
     lda #0
     sta.z angle
@@ -476,20 +471,15 @@ init: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    // x/2
     .label c = 7
     // Counter used for determining x%2==0
-    // Counter used for determining x%2==0
     .label sqr1_hi = 8
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $11
     .label sqr1_lo = 5
     // Decrease or increase x_255 - initially we decrease
-    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $f
     .label sqr2_lo = $d
-    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $a
     ldx #0

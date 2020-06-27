@@ -14,7 +14,6 @@ main: {
     .label SCREEN1 = $400
     .label SCREEN2 = SCREEN1+$28
     // Use address-of - hereafter all versions of val must be in the same memory
-    // Use address-of - hereafter all versions of val must be in the same memory
     .label ptr = val
     // SCREEN1[idx] = val
     lda.z val

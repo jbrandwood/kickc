@@ -893,7 +893,6 @@ mulf_tables_cmp: {
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 mulf_init_asm: {
     // Ensure the ASM tables are not detected as unused by the optimizer
-    // Ensure the ASM tables are not detected as unused by the optimizer
     .label mem = $ff
     // asm
     ldx #0
@@ -952,20 +951,15 @@ mulf_init_asm: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    // x/2
     .label c = $10
     // Counter used for determining x%2==0
-    // Counter used for determining x%2==0
     .label sqr1_hi = 7
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $e
     .label sqr1_lo = 5
     // Decrease or increase x_255 - initially we decrease
-    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $b
     .label sqr2_lo = 9
-    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $d
     ldx #0

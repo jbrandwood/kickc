@@ -37,14 +37,11 @@ sin8u_table: {
     .const sum = min+max
     .const mid = sum/2+1
     .label amplitude = max-min
-    //if( sum & 1 > 0) mid++;
-    // u[4.28] step = PI*2/wavelength
     .label step = $e
     .label sinx = $12
     .label sinx_sc = 6
     .label sinx_tr = $13
     .label sintab = 4
-    // Iterate over the table
     // Iterate over the table
     .label x = 2
     .label i = $10
@@ -471,13 +468,9 @@ sin8s: {
     .const DIV_6 = $2b
     .label __4 = $c
     .label x = $c
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $14
-    // u[2.6] x^2
     .label x3 = $15
-    // u[1.7] x^3/6;
     .label usinx = $16
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = $12
     // if(x >= PI_u4f12 )

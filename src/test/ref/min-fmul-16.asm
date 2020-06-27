@@ -233,20 +233,15 @@ mulf16u: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    // x/2
     .label c = 4
     // Counter used for determining x%2==0
-    // Counter used for determining x%2==0
     .label sqr1_hi = 5
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $c
     .label sqr1_lo = 2
     // Decrease or increase x_255 - initially we decrease
-    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = 9
     .label sqr2_lo = 7
-    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $b
     ldx #0

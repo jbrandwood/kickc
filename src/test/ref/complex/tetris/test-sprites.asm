@@ -273,7 +273,6 @@ sprites_init: {
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
     .const toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
-    // Wait for the y-position before changing sprite pointers
     .label raster_sprite_gfx_modify = $b
     sta rega+1
     stx regx+1

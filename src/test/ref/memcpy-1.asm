@@ -5,7 +5,6 @@
   .label SCREEN = $400
 main: {
     // Working memory copy of string
-    // Working memory copy of string
     .label sc = 4
     .label camelot = 2
     .label sc2 = 8

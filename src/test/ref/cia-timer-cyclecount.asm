@@ -18,7 +18,6 @@
   .label SCREEN = $400
 main: {
     .label __1 = 9
-    // Calculate the cycle count - 0x12 is the base usage of start/read
     .label cyclecount = 9
   __b1:
     // clock_start()

@@ -10,9 +10,7 @@
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Pointer to the music init routine
-  // Pointer to the music init routine
   .label musicInit = MUSIC
-  // Pointer to the music play routine
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
 // Play the music 

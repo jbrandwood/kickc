@@ -712,7 +712,6 @@ ultoa_append: {
 // When all columns on a row is exhausted move back down to the lower level and move forward one position until we are done with the last position on the first row
 queens: {
     // The current row where the queen is moving
-    // The current row where the queen is moving
     .label row = $d
     lda #<0
     sta.z count

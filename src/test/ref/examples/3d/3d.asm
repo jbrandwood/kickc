@@ -21,16 +21,13 @@
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The rotated point - updated by calling rotate_matrix()
-  // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
   // The rotated point with perspective
-  // The rotated point with perspective
   .label pp = $f3
   .label xp = $f4
   .label yp = $f5
-  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
   .label psp1 = $f6
   .label psp2 = $f8
@@ -623,13 +620,9 @@ calculate_matrix: {
     .label t3 = 7
     .label t4 = 8
     .label t5 = 9
-    // = sx+sy+sz
     .label t6 = $a
-    // = sx-sy+sz
     .label t7 = $b
-    // = sx+sy-sz
     .label t8 = $c
-    // = sy+sz-sx
     .label t9 = $d
     // t1 = sy-sz
     lda.z sy

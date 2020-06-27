@@ -98,9 +98,7 @@ main: {
 }
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
-    // Average characters from below the current character (24 lines)
     .label screen = 2
-    // Average characters from below the current character (24 lines)
     .label screen_1 = $b
     .label buffer = 4
     .label buffer_1 = 9

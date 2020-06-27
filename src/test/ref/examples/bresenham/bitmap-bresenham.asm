@@ -236,7 +236,6 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(X) x, byte register(Y) y)
 bitmap_plot: {
-    // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
     .label plotter_x = 9
     .label plotter_y = $b
     .label plotter = 9

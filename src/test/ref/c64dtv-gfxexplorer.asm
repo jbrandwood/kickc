@@ -75,7 +75,6 @@
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // Number of form fields
-  // Number of form fields
   .const form_fields_cnt = $24
   .label VIC_CONTROL = $d011
   .label VIC_CONTROL2 = $d016
@@ -228,7 +227,6 @@ gfx_mode: {
     .label __83 = $10
     .label plane_a = 2
     .label plane_b = 2
-    // VIC Colors
     .label vic_colors = 6
     .label col = $d
     .label cy = $f
@@ -1726,7 +1724,6 @@ form_control: {
 // Set the screen to use for the form.
 // screen is the start address of the screen to use
 form_set_screen: {
-    // Calculate the field line table
     .label line = 6
     ldx #0
     lda #<FORM_SCREEN
@@ -2037,7 +2034,6 @@ gfx_init_plane_fill: {
 // dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
-    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     // *cpuBank = cpuBankIdx
     sta cpuBank
@@ -2235,7 +2231,6 @@ gfx_init_plane_horisontal: {
 }
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
-    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = PLANE_CHARSET8/$4000
     .label bits = $22
@@ -2609,7 +2604,6 @@ bitmap_line_xdyi: {
 }
 // bitmap_plot(byte register(Y) x, byte register(X) y)
 bitmap_plot: {
-    // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
     .label plotter_x = $1c
     .label plotter_y = $1e
     .label plotter = $1c

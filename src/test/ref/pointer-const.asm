@@ -39,6 +39,5 @@ main: {
     jmp __b1
 }
   // Pointer to const
-  // Pointer to const
   MSG: .text "hello world!"
   .byte 0

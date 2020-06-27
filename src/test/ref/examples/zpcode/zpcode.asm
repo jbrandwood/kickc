@@ -30,7 +30,6 @@ zpLoop: {
 .segment Code
 main: {
     // Transfer ZP-code to zeropage
-    // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
     // asm
     sei

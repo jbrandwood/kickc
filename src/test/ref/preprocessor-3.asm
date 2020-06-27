@@ -5,8 +5,6 @@
 .pc = $80d "Program"
   // Test the preprocessor
   // #define inside an #included file
-  // Test the preprocessor
-  // #define inside an #included file
   .label SCREEN = $400
 main: {
     // SCREEN[0] = STAR

@@ -81,9 +81,7 @@
   // Pointer to the start of RAM memory
   .label MEMORY = 0
   // NES Picture Processing Unit (PPU)
-  // NES Picture Processing Unit (PPU)
   .label PPU = $2000
-  // NES CPU and audion processing unit (APU)
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
   // The current cursor x-position
@@ -367,7 +365,6 @@ cputln: {
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // Scroll lines up
-    // Scroll lines up
     .label line1 = $17
     .label line2 = $f
     // if(conio_cursor_y==CONIO_HEIGHT)
@@ -460,7 +457,6 @@ cscroll: {
 // ppuDataTransfer(void* zp(5) ppuData, void* zp(7) cpuData, word zp(9) size)
 ppuDataTransfer: {
     .label ppuDataPrepare1_ppuData = 5
-    // Transfer to PPU
     .label cpuSrc = 7
     .label i = $b
     .label ppuData = 5
@@ -515,7 +511,6 @@ ppuDataTransfer: {
 ppuDataFetch: {
     .const size = $20
     .label cpuData = conio_cscroll_buffer
-    // Fetch from PPU to CPU
     // Fetch from PPU to CPU
     .label cpuDst = 7
     .label i = 5

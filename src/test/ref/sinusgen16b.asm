@@ -255,11 +255,8 @@ memset: {
 // sin16s_genb(signed word* zp($f) sintab)
 sin16s_genb: {
     .label __3 = $15
-    // u[4.28] step = PI*2/wavelength
     .label step = $1d
     .label sintab = $f
-    // u[4.28]
-    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = $11
@@ -345,23 +342,14 @@ sin16s_genb: {
 sin16sb: {
     .label x = 9
     .label return = $15
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = 9
-    // u[1.15]
     .label x2 = $b
-    // u[2.14] x^2
     .label x3 = $b
-    // u[2.14] x^3
     .label x3_6 = $21
-    // u[1.15] x^3/6;
     .label usinx = $15
-    // u[1.15] x - x^3/6
     .label x4 = $b
-    // u[3.13] x^4
     .label x5 = $21
-    // u[4.12] x^5
     .label x5_128 = $21
-    // u[1.15] (first bit is always zero)
     .label sinx = $15
     // if(x >= PI_u4f12 )
     lda.z x+1
@@ -722,11 +710,8 @@ divr16u: {
 // sin16s_gen(signed word* zp($15) sintab)
 sin16s_gen: {
     .label __2 = $1b
-    // u[4.28] step = PI*2/wavelength
     .label step = $1d
     .label sintab = $15
-    // u[4.28]
-    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = $11
@@ -817,23 +802,14 @@ sin16s: {
     .label __4 = $23
     .label x = $17
     .label return = $1b
-    // sinx = x - x^3/6 + x5/128;
     .label x1 = $27
-    // u[1.15]
     .label x2 = $b
-    // u[2.14] x^2
     .label x3 = $b
-    // u[2.14] x^3
     .label x3_6 = $21
-    // u[1.15] x^3/6;
     .label usinx = $1b
-    // u[1.15] x - x^3/6
     .label x4 = $b
-    // u[3.13] x^4
     .label x5 = $21
-    // u[4.12] x^5
     .label x5_128 = $21
-    // u[1.15] (first bit is always zero)
     .label sinx = $1b
     // if(x >= PI_u4f28 )
     lda.z x+3

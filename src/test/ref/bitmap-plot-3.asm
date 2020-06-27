@@ -97,9 +97,7 @@ bitmap_line: {
     .label dy = 8
     .label sx = $16
     .label sy = 6
-    // X is the driver
     .label e1 = $e
-    // Y is the driver
     .label e = $a
     .label y = $c
     .label x = 4

@@ -56,7 +56,6 @@ main: {
     .label r = 7
     .label i = 3
     // Render Rotated BOBs
-    // Render Rotated BOBs
     .label angle = 6
     // mulf_init()
     jsr mulf_init
@@ -585,7 +584,6 @@ prepareBobs: {
     .label bob_table = $14
     .label shift_y = $a
     // Populate charset and tables
-    // Populate charset and tables
     .label bob_glyph = 8
     .label cell = $f
     .label bob_table_idx = $b
@@ -882,20 +880,15 @@ shiftProtoBobDown: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    // x/2
     .label c = $a
     // Counter used for determining x%2==0
-    // Counter used for determining x%2==0
     .label sqr1_hi = $14
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $10
     .label sqr1_lo = 8
     // Decrease or increase x_255 - initially we decrease
-    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $c
     .label sqr2_lo = $16
-    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $b
     ldx #0

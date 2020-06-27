@@ -30,17 +30,18 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_B = 1
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label print_line_cursor = $c
-  .label print_char_cursor = 2
-  .label print_line_cursor_1 = 4
+  .label print_screen = $400
+  .label print_char_cursor = 4
+  .label print_line_cursor = 8
+  .label print_line_cursor_1 = $a
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
-    .label fileEntry1___0 = 6
-    .label fileEntry2___0 = $a
-    .label entry1 = 6
-    .label entry2 = $a
+    .label fileEntry1___0 = 2
+    .label fileEntry2___0 = 6
+    .label entry1 = 2
+    .label entry2 = 6
     // keyboard_init()
     jsr keyboard_init
     // mul8u(idx, SIZEOF_ENTRY)
@@ -88,9 +89,9 @@ main: {
     // print_cls()
     jsr print_cls
     // print_str("** entry 1 **")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -98,9 +99,9 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor_1
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
@@ -145,9 +146,9 @@ main: {
     // print_cls()
     jsr print_cls
     // print_str("** entry 2 **")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str2
     sta.z print_str.str
@@ -155,9 +156,9 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor_1
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor_1+1
     jsr print_ln
     lda.z print_line_cursor
@@ -225,9 +226,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = 4
+    .label dst = $a
     lda #<str
     sta.z dst
     lda #>str
@@ -284,9 +285,9 @@ keyboard_matrix_read: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(4) str)
+// print_str(byte* zp($a) str)
 print_str: {
-    .label str = 4
+    .label str = $a
   __b1:
     // while(*str)
     ldy #0
@@ -350,9 +351,9 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zp(6) entry)
+// printEntry(byte* zp(2) entry)
 printEntry: {
-    .label entry = 6
+    .label entry = 2
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -694,9 +695,9 @@ print_uchar: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(8) w)
+// print_uint(word zp($a) w)
 print_uint: {
-    .label w = 8
+    .label w = $a
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -708,14 +709,14 @@ print_uint: {
 }
 // Set all values in the passed struct
 // Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zp(8) entry, byte register(X) n)
+// initEntry(byte* zp(4) entry, byte register(X) n)
 initEntry: {
-    .label __1 = $e
-    .label __3 = $10
-    .label __5 = $12
-    .label __7 = $14
-    .label __17 = $16
-    .label entry = 8
+    .label __1 = 8
+    .label __3 = $a
+    .label __5 = $c
+    .label __7 = $e
+    .label __17 = $10
+    .label entry = 4
     // 0x1111+n
     txa
     clc
@@ -853,9 +854,9 @@ initEntry: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a)
 mul8u: {
-    .label mb = $c
-    .label res = $a
-    .label return = $a
+    .label mb = 8
+    .label res = 6
+    .label return = 6
     lda #<SIZEOF_ENTRY
     sta.z mb
     lda #>SIZEOF_ENTRY

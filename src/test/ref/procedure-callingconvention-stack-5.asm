@@ -1,23 +1,24 @@
 // Test a procedure with calling convention stack
 // Return value larger than parameter
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
-  .label current = 2
-__bbegin:
-  // current = 48
-  lda #<$30
-  sta.z current
-  lda #>$30
-  sta.z current+1
-  jsr main
-  rts
+  .label current = 4
+_start: {
+    // current = 48
+    lda #<$30
+    sta.z current
+    lda #>$30
+    sta.z current+1
+    jsr main
+    rts
+}
 main: {
-    .label __0 = 4
-    .label __1 = 6
+    .label __0 = 2
+    .label __1 = 4
     // next()
     pha
     pha
@@ -49,7 +50,7 @@ main: {
 }
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 8
+    .label return = 6
     // return current++;
     lda.z current
     sta.z return

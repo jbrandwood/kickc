@@ -8,11 +8,14 @@
   .const SQRT_COUNT = $80
   .label SCREEN = $400
   /* Sqrt of COUNT */
+  /* Sqrt of COUNT */
   .label sieve = $1000
+  .label print_screen = $400
   .label print_char_cursor = $a
 main: {
     .label i = $a
     .label sieve_i = 2
+    /* Prime number - mark all multiples */
     .label j = 6
     .label s = 8
     .label i_1 = 4
@@ -38,9 +41,9 @@ main: {
     cmp #<SQRT_COUNT
     bcc __b2
   !:
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<2
     sta.z i_1

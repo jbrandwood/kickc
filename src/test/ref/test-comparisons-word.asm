@@ -8,7 +8,8 @@
   .const FF = $57
   // filled circle
   .const TT = $51
-  .label print_line_cursor = 6
+  .label print_screen = $400
+  .label print_line_cursor = $d
   .label print_char_cursor = $b
 main: {
     .label w1 = $f
@@ -19,15 +20,15 @@ main: {
     .label i = 2
     // print_cls()
     jsr print_cls
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     lda #0
     sta.z s
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #0
     sta.z i
@@ -121,7 +122,7 @@ print_ln: {
 compare: {
     .label w1 = 9
     .label w2 = $11
-    .label ops = $d
+    .label ops = 6
     .label r = 8
     // if(op==0)
     cmp #0
@@ -364,9 +365,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($d) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = $d
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -398,7 +399,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = $d
     lda #<str

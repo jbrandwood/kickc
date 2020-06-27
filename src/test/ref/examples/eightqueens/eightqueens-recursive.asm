@@ -4,7 +4,7 @@
 //
 // This is a recursive solution
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
@@ -25,43 +25,44 @@
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = $14
-  .label conio_cursor_y = $15
-  .label conio_line_text = $16
-  .label conio_line_color = $18
-  .label count = 2
-__bbegin:
-  // conio_cursor_x = 0
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
+  .label conio_cursor_x = $14
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
+  .label conio_cursor_y = $15
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
+  .label conio_line_text = $16
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // count = 0
+  .label conio_line_color = $18
   // The number of found solutions
-  lda #<0
-  sta.z count
-  sta.z count+1
-  lda #<0>>$10
-  sta.z count+2
-  lda #>0>>$10
-  sta.z count+3
-  jsr main
-  rts
+  .label count = 2
+_start: {
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // count = 0
+    lda #<0
+    sta.z count
+    sta.z count+1
+    lda #<0>>$10
+    sta.z count+2
+    lda #>0>>$10
+    sta.z count+3
+    jsr main
+    rts
+}
 main: {
     // clrscr()
     jsr clrscr
@@ -411,6 +412,7 @@ printf_ulong: {
 printf_number_buffer: {
     .label __19 = $a
     .label buffer_sign = $1a
+    // There is a minimum length - work out the padding
     .label len = $11
     .label padding = $10
     .label format_min_length = $10

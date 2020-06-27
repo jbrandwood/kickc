@@ -2,7 +2,7 @@
 // From CC65 sample "Eine kleine Nachtmusik" by Ullrich von Bassewitz
 // https://github.com/cc65/cc65/blob/master/samples/nachtm.c
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // The horizontal line character
@@ -28,51 +28,52 @@
   .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
+  // The number of bytes on the screen
+  // The current cursor x-position
   .label conio_cursor_x = $b
+  // The current cursor y-position
   .label conio_cursor_y = $c
+  // The current text cursor line start
   .label conio_line_text = $d
+  // The current color cursor line start
   .label conio_line_color = $f
+  // The current text color
   .label conio_textcolor = $11
+  // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
+  // If disabled the cursor just moves back to (0,0) instead
   .label conio_scroll_enable = $12
   .label XSize = $13
   .label YSize = $14
-__bbegin:
-  // conio_cursor_x = 0
-  // The number of bytes on the screen
-  // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
-  // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
-  // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
-  // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
-  // The current text color
-  lda #LIGHT_BLUE
-  sta.z conio_textcolor
-  // conio_scroll_enable = 1
-  // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
-  // If disabled the cursor just moves back to (0,0) instead
-  lda #1
-  sta.z conio_scroll_enable
-  // XSize
-  lda #0
-  sta.z XSize
-  // YSize
-  sta.z YSize
-  jsr main
-  rts
+_start: {
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+    lda #LIGHT_BLUE
+    sta.z conio_textcolor
+    // conio_scroll_enable = 1
+    lda #1
+    sta.z conio_scroll_enable
+    // XSize
+    lda #0
+    sta.z XSize
+    // YSize
+    sta.z YSize
+    jsr main
+    rts
+}
 main: {
     // *VIC_MEMORY = 0x17
     lda #$17
@@ -193,8 +194,6 @@ MakeNiceScreen: {
     jsr bgcolor
     // clrscr ()
     jsr clrscr
-    // cursor (0)
-    jsr cursor
     // cputcxy (0, 0, CH_ULCORNER)
   /* Top line */
     ldy #CH_ULCORNER
@@ -781,13 +780,6 @@ cvline: {
     // for(char i=0;i<length;i++)
     inc.z i
     jmp __b1
-}
-// If onoff is 1, a cursor is displayed when waiting for keyboard input.
-// If onoff is 0, the cursor is hidden when waiting for keyboard input.
-// The function returns the old cursor setting.
-cursor: {
-    // }
-    rts
 }
 // Set the color for the background. The old color setting is returned.
 bgcolor: {

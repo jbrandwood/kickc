@@ -9,6 +9,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Pointers to a, b and c=a*b
+  // Pointers to a, b and c=a*b
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff

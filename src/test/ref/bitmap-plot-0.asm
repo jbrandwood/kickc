@@ -4,7 +4,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -40,14 +40,15 @@
   .label HARDWARE_IRQ = $fffe
   .label BITMAP = $2000
   .label SCREEN = $400
-  .label frame_cnt = 8
-__bbegin:
-  // frame_cnt = 1
   // Counts frames - updated by the IRQ
-  lda #1
-  sta.z frame_cnt
-  jsr main
-  rts
+  .label frame_cnt = 8
+_start: {
+    // frame_cnt = 1
+    lda #1
+    sta.z frame_cnt
+    jsr main
+    rts
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label x = 2

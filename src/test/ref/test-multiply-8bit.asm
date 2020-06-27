@@ -3,8 +3,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BG_COLOR = $d021
-  .label print_line_cursor = 2
-  .label print_char_cursor = 4
+  .label print_screen = $400
+  .label print_char_cursor = 7
+  .label print_line_cursor = 3
 main: {
     // *BG_COLOR = 5
     lda #5
@@ -26,11 +27,11 @@ main: {
 }
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
-    .label ms = 7
-    .label mf = 9
-    .label mn = $e
+    .label ms = 5
+    .label mf = $b
+    .label mn = 9
     .label a = $d
-    .label b = 6
+    .label b = 2
     lda #-$80
     sta.z a
   __b1:
@@ -118,12 +119,12 @@ mul8s_compare: {
     str: .text "signed multiply results match!"
     .byte 0
 }
-// mul8s_error(signed byte register(X) a, signed byte zp(6) b, signed word zp(7) ms, signed word zp($e) mn, signed word zp(9) mf)
+// mul8s_error(signed byte register(X) a, signed byte zp(2) b, signed word zp(5) ms, signed word zp(9) mn, signed word zp($b) mf)
 mul8s_error: {
-    .label b = 6
-    .label ms = 7
-    .label mn = $e
-    .label mf = 9
+    .label b = 2
+    .label ms = 5
+    .label mn = 9
+    .label mf = $b
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -208,9 +209,9 @@ print_ln: {
     rts
 }
 // Print a signed int as HEX
-// print_sint(signed word zp(7) w)
+// print_sint(signed word zp(5) w)
 print_sint: {
-    .label w = 7
+    .label w = 5
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -251,9 +252,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(7) w)
+// print_uint(word zp(5) w)
 print_uint: {
-    .label w = 7
+    .label w = 5
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -287,9 +288,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($b) str)
+// print_str(byte* zp($e) str)
 print_str: {
-    .label str = $b
+    .label str = $e
   __b1:
     // while(*str)
     ldy #0
@@ -340,7 +341,7 @@ print_schar: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul8s(signed byte zp($d) a, signed byte register(Y) b)
 mul8s: {
-    .label m = $e
+    .label m = 9
     .label a = $d
     // mul8u((char)a, (char) b)
     ldx.z a
@@ -376,9 +377,9 @@ mul8s: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $b
-    .label res = $e
-    .label return = $e
+    .label mb = $e
+    .label res = 9
+    .label return = 9
     // mb = b
     sta.z mb
     lda #0
@@ -419,7 +420,7 @@ mul8u: {
 // Fast multiply two signed chars to a unsigned int result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
-    .label return = 9
+    .label return = $b
     // mulf8u_prepare((char)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
@@ -430,11 +431,11 @@ mulf8s: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8s_prepare(char a)
-// mulf8s_prepared(signed byte zp($12) b)
+// mulf8s_prepared(signed byte zp($10) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = 9
-    .label b = $12
+    .label m = $b
+    .label b = $10
     // mulf8u_prepared((char) b)
     lda.z b
     jsr mulf8u_prepared
@@ -471,7 +472,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = 9
+    .label return = $b
     // *memB = b
     sta memB
     // asm
@@ -514,8 +515,8 @@ mulf8u_prepare: {
 // Perform a signed multiplication by repeated addition/subtraction
 // muls8s(signed byte zp($d) a, signed byte register(X) b)
 muls8s: {
-    .label m = 7
-    .label return = 7
+    .label m = 5
+    .label return = 5
     .label a = $d
     // if(a<0)
     lda.z a
@@ -589,10 +590,10 @@ muls8s: {
 }
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
-    .label ms = 7
-    .label mf = 9
-    .label mn = $e
-    .label b = 6
+    .label ms = 5
+    .label mf = $b
+    .label mn = 9
+    .label b = 2
     .label a = $d
     lda #0
     sta.z a
@@ -672,12 +673,12 @@ mul8u_compare: {
     str: .text "multiply results match!"
     .byte 0
 }
-// mul8u_error(byte register(X) a, byte zp(6) b, word zp(7) ms, word zp($e) mn, word zp(9) mf)
+// mul8u_error(byte register(X) a, byte zp(2) b, word zp(5) ms, word zp(9) mn, word zp($b) mf)
 mul8u_error: {
-    .label b = 6
-    .label ms = 7
-    .label mn = $e
-    .label mf = 9
+    .label b = 2
+    .label ms = 5
+    .label mn = 9
+    .label mf = $b
     // print_str("multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -737,7 +738,7 @@ mul8u_error: {
 // Fast multiply two unsigned chars to a unsigned int result
 // mulf8u(byte register(A) a, byte register(X) b)
 mulf8u: {
-    .label return = 9
+    .label return = $b
     // mulf8u_prepare(a)
     jsr mulf8u_prepare
     // mulf8u_prepared(b)
@@ -751,8 +752,8 @@ mulf8u: {
 // Calculate an unsigned multiplication by repeated addition
 // muls8u(byte zp($d) a, byte register(X) b)
 muls8u: {
-    .label return = 7
-    .label m = 7
+    .label return = 5
+    .label m = 5
     .label a = $d
     // if(a!=0)
     lda.z a
@@ -789,8 +790,8 @@ muls8u: {
 // Compare the ASM-based mul tables with the KC-based mul tables
 // Red screen on failure - green on success
 mulf_tables_cmp: {
-    .label asm_sqr = 7
-    .label kc_sqr = $e
+    .label asm_sqr = 5
+    .label kc_sqr = 3
     lda #<mula_sqr1_lo
     sta.z asm_sqr
     lda #>mula_sqr1_lo
@@ -810,9 +811,9 @@ mulf_tables_cmp: {
     bcc __b2
   !:
     // print_str("multiply tables match!")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -820,9 +821,9 @@ mulf_tables_cmp: {
     sta.z print_str.str+1
     jsr print_str
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     lda.z print_line_cursor
@@ -841,9 +842,9 @@ mulf_tables_cmp: {
     lda #2
     sta BG_COLOR
     // print_str("multiply table mismatch at ")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str1
     sta.z print_str.str
@@ -864,9 +865,9 @@ mulf_tables_cmp: {
     lda.z kc_sqr+1
     sta.z print_uint.w+1
     jsr print_uint
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     rts
   __b4:
@@ -891,6 +892,7 @@ mulf_tables_cmp: {
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 mulf_init_asm: {
+    // Ensure the ASM tables are not detected as unused by the optimizer
     // Ensure the ASM tables are not detected as unused by the optimizer
     .label mem = $ff
     // asm
@@ -950,15 +952,20 @@ mulf_init_asm: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $12
+    // x/2
+    .label c = $10
     // Counter used for determining x%2==0
-    .label sqr1_hi = 9
+    // Counter used for determining x%2==0
+    .label sqr1_hi = 7
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $e
-    .label sqr1_lo = 7
+    .label sqr1_lo = 5
+    // Decrease or increase x_255 - initially we decrease
     // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $b
-    .label sqr2_lo = $10
+    .label sqr2_lo = 9
+    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $d
     ldx #0
@@ -1097,9 +1104,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = $10
+    .label dst = $e
     lda #<str
     sta.z dst
     lda #>str

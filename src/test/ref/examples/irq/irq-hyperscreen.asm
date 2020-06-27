@@ -25,39 +25,6 @@
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label GHOST_BYTE = $3fff
-main: {
-    // *GHOST_BYTE = 0
-    lda #0
-    sta GHOST_BYTE
-    // asm
-    sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // VICII->CONTROL1 &=$7f
-    // Set raster line to $fa
-    lda #$7f
-    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // VICII->RASTER = $fa
-    lda #$fa
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // VICII->IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // *KERNEL_IRQ = &irq_bottom_1
-    // Set the IRQ routine
-    lda #<irq_bottom_1
-    sta KERNEL_IRQ
-    lda #>irq_bottom_1
-    sta KERNEL_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
 // Interrupt Routine 2
 irq_bottom_2: {
     // VICII->BORDER_COLOR = WHITE
@@ -115,4 +82,37 @@ irq_bottom_1: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
     jmp $ea81
+}
+main: {
+    // *GHOST_BYTE = 0
+    lda #0
+    sta GHOST_BYTE
+    // asm
+    sei
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // VICII->CONTROL1 &=$7f
+    // Set raster line to $fa
+    lda #$7f
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->RASTER = $fa
+    lda #$fa
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // VICII->IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
+    // *KERNEL_IRQ = &irq_bottom_1
+    // Set the IRQ routine
+    lda #<irq_bottom_1
+    sta KERNEL_IRQ
+    lda #>irq_bottom_1
+    sta KERNEL_IRQ+1
+    // asm
+    cli
+    // }
+    rts
 }

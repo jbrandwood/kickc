@@ -34,29 +34,30 @@
   .label BOB_CHARSET = $2000
   .label COS = SIN+$40
   // BOB charset ID of the next glyph to be added
-  .label bob_charset_next_id = 9
+  .label bob_charset_next_id = 7
   // Current index within the progress cursor (0-7)
-  .label progress_idx = 8
+  .label progress_idx = 6
   // Current position of the progress cursor
-  .label progress_cursor = 6
+  .label progress_cursor = 4
   // Pointer to the next clean-up to add
   // Prepare for next clean-up
-  .label renderBobCleanupNext = 3
+  .label renderBobCleanupNext = 8
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const vicSelectGfxBank2_toDd001_return = 3
     .const toD0181_return = (>(BOB_SCREEN&$3fff)*4)|(>BOB_CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN_BASIC&$3fff)*4)|(>CHARSET_BASIC)/4&$f
-    .label __10 = 6
-    .label __12 = 6
-    .label __13 = 6
+    .label __10 = 4
+    .label __12 = 4
+    .label __13 = 4
     .label x = $c
-    .label y = 6
+    .label y = 4
     .label a = 2
-    .label r = 9
-    .label i = 5
+    .label r = 7
+    .label i = 3
     // Render Rotated BOBs
-    .label angle = 8
+    // Render Rotated BOBs
+    .label angle = 6
     // mulf_init()
     jsr mulf_init
     // prepareBobs()
@@ -344,7 +345,7 @@ renderBob: {
 // Fast multiply two signed chars to a unsigned int result
 // mulf8s(signed byte register(A) a, signed byte register(X) b)
 mulf8s: {
-    .label return = 6
+    .label return = 4
     // mulf8u_prepare((char)a)
     jsr mulf8u_prepare
     // mulf8s_prepared(b)
@@ -358,7 +359,7 @@ mulf8s: {
 // mulf8s_prepared(signed byte zp($13) b)
 mulf8s_prepared: {
     .label memA = $fd
-    .label m = 6
+    .label m = 4
     .label b = $13
     // mulf8u_prepared((char) b)
     lda.z b
@@ -395,7 +396,7 @@ mulf8s_prepared: {
 mulf8u_prepared: {
     .label resL = $fe
     .label memB = $ff
-    .label return = 6
+    .label return = 4
     // *memB = b
     sta memB
     // asm
@@ -488,7 +489,7 @@ memset: {
     .const num = $3e8
     .label str = BOB_SCREEN
     .label end = str+num
-    .label dst = $c
+    .label dst = 8
     lda #<str
     sta.z dst
     lda #>str
@@ -517,10 +518,10 @@ memset: {
 }
 // Initialize the tables used by renderBob()
 renderBobInit: {
-    .label __0 = $16
-    .label __5 = $16
-    .label __6 = $18
-    .label __7 = $16
+    .label __0 = $14
+    .label __5 = $14
+    .label __6 = $16
+    .label __7 = $14
     ldx #0
   __b1:
     // ((unsigned int)y)*40
@@ -581,15 +582,14 @@ renderBobInit: {
 // Creates the pre-shifted bobs into BOB_CHARSET and populates the BOB_TABLES
 // Modifies PROTO_BOB by shifting it around
 prepareBobs: {
-    .label bob_table = $16
+    .label bob_table = $14
     .label shift_y = $a
     // Populate charset and tables
-    .label bob_glyph = $c
+    // Populate charset and tables
+    .label bob_glyph = 8
     .label cell = $f
     .label bob_table_idx = $b
     .label shift_x = $e
-    // progress_init(SCREEN_BASIC)
-    jsr progress_init
     // bobCharsetFindOrAddGlyph(PROTO_BOB+48)
   // Ensure that glyph #0 is empty
     lda #<PROTO_BOB+$30
@@ -725,10 +725,10 @@ progress_inc: {
 // Looks through BOB_CHARSET to find the passed bob glyph if present.
 // If not present it is added
 // Returns the glyph ID
-// bobCharsetFindOrAddGlyph(byte* zp($c) bob_glyph)
+// bobCharsetFindOrAddGlyph(byte* zp(8) bob_glyph)
 bobCharsetFindOrAddGlyph: {
-    .label bob_glyph = $c
-    .label glyph_cursor = $18
+    .label bob_glyph = 8
+    .label glyph_cursor = $16
     lda #<BOB_CHARSET
     sta.z glyph_cursor
     lda #>BOB_CHARSET
@@ -879,23 +879,23 @@ shiftProtoBobDown: {
     dex
     jmp __b1
 }
-// Initialize the PETSCII progress bar
-progress_init: {
-    // }
-    rts
-}
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
+    // x/2
     .label c = $a
     // Counter used for determining x%2==0
-    .label sqr1_hi = $18
+    // Counter used for determining x%2==0
+    .label sqr1_hi = $14
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $14
-    .label sqr1_lo = $16
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
+    .label sqr = $10
+    .label sqr1_lo = 8
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $10
-    .label sqr2_lo = $c
+    // Decrease or increase x_255 - initially we decrease
+    .label sqr2_hi = $c
+    .label sqr2_lo = $16
+    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $b
     ldx #0

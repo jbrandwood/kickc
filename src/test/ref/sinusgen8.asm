@@ -13,7 +13,7 @@
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .const wavelength = $c0
-  .label print_line_cursor = $400
+  .label print_screen = $400
   .label print_char_cursor = 3
 main: {
     .label i = 2
@@ -21,9 +21,9 @@ main: {
     jsr sin8s_gen
     // print_cls()
     jsr print_cls
-    lda #<print_line_cursor
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>print_line_cursor
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #0
     sta.z i
@@ -150,7 +150,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = print_line_cursor
+    .label str = print_screen
     .label end = str+num
     .label dst = 5
     lda #<str
@@ -182,14 +182,17 @@ memset: {
 // Generate signed char sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zp(9) sintab)
+// sin8s_gen(signed byte* zp(7) sintab)
 sin8s_gen: {
-    .label step = $11
-    .label sintab = 9
+    // u[4.28] step = PI*2/wavelength
+    .label step = $f
+    .label sintab = 7
     // u[4.12]
     // Iterate over the table
-    .label x = 7
-    .label i = 5
+    // u[4.12]
+    // Iterate over the table
+    .label x = 5
+    .label i = 3
     // div16u(PI2_u4f12, wavelength)
     jsr div16u
     // div16u(PI2_u4f12, wavelength)
@@ -249,17 +252,21 @@ sin8s_gen: {
 // Calculate signed char sinus sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp($d) x)
+// sin8s(word zp($b) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = $d
-    .label x = $d
-    .label x1 = $13
-    .label x3 = $14
-    .label usinx = $15
+    .label __4 = $b
+    .label x = $b
+    // sinx = x - x^3/6 + x5/128;
+    .label x1 = $11
+    // u[2.6] x^2
+    .label x3 = $12
+    // u[1.7] x^3/6;
+    .label usinx = $13
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-    .label isUpper = $b
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    .label isUpper = 9
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -390,11 +397,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($c) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($a) select)
 mulu8_sel: {
-    .label __0 = $f
-    .label __1 = $f
-    .label select = $c
+    .label __0 = $d
+    .label __1 = $d
+    .label select = $a
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -415,9 +422,9 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $d
-    .label res = $f
-    .label return = $f
+    .label mb = $b
+    .label res = $d
+    .label return = $d
     // mb = b
     sta.z mb
     lda #0
@@ -460,7 +467,7 @@ mul8u: {
 // The remainder will be set into the global variable rem16u
 // Implemented using simple binary division
 div16u: {
-    .label return = $11
+    .label return = $f
     // divr16u(dividend, divisor, 0)
     jsr divr16u
     // divr16u(dividend, divisor, 0)
@@ -471,12 +478,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($f) dividend, word zp($d) rem)
+// divr16u(word zp($d) dividend, word zp($b) rem)
 divr16u: {
-    .label rem = $d
-    .label dividend = $f
-    .label quotient = $11
-    .label return = $11
+    .label rem = $b
+    .label dividend = $d
+    .label quotient = $f
+    .label return = $f
     ldx #0
     txa
     sta.z quotient

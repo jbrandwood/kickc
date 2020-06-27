@@ -3,7 +3,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -34,34 +34,35 @@
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = $400+$3f8
-  .label plex_show_idx = 6
-  .label plex_sprite_idx = 7
-  .label plex_sprite_msb = 8
-  .label plex_free_next = 9
-  .label framedone = $a
-__bbegin:
-  // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
-  lda #0
-  sta.z plex_show_idx
-  // plex_sprite_idx=0
+  .label plex_show_idx = 8
   // The index the next sprite to use for showing (sprites are used round-robin)
-  sta.z plex_sprite_idx
-  // plex_sprite_msb=1
+  .label plex_sprite_idx = 9
   // The MSB bit of the next sprite to use for showing
-  lda #1
-  sta.z plex_sprite_msb
-  // plex_free_next = 0
+  .label plex_sprite_msb = $a
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  lda #0
-  sta.z plex_free_next
-  // framedone = true
-  lda #1
-  sta.z framedone
-  jsr main
-  rts
+  .label plex_free_next = $b
+  .label framedone = $c
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
+  .label PLEX_SCREEN_PTR = 6
+_start: {
+    // plex_show_idx=0
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx=0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb=1
+    lda #1
+    sta.z plex_sprite_msb
+    // plex_free_next = 0
+    lda #0
+    sta.z plex_free_next
+    // framedone = true
+    lda #1
+    sta.z framedone
+    jsr main
+    rts
+}
 main: {
     // asm
     sei
@@ -74,6 +75,7 @@ main: {
 }
 // The raster loop
 loop: {
+    // The current index into the y-sinus
     // The current index into the y-sinus
     .label sin_idx = 2
     lda #0
@@ -125,8 +127,8 @@ loop: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $b
-    .label nxt_y = $c
+    .label nxt_idx = $d
+    .label nxt_y = $e
     .label m = 3
     lda #0
     sta.z m
@@ -194,6 +196,7 @@ plexSort: {
 }
 // Initialize the program
 init: {
+    // Set the x-positions & pointers
     // Set the x-positions & pointers
     .label xp = 4
     // *D011 = VIC_DEN | VIC_RSEL | 3
@@ -287,7 +290,7 @@ plexInit: {
     rts
 }
 plex_irq: {
-    .label __4 = $d
+    .label __4 = $f
     // asm
     sei
     // *BORDER_COLOR = WHITE
@@ -340,7 +343,7 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $e
+    .label plex_sprite_idx2 = $10
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -370,8 +373,8 @@ plexShowSprite: {
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
-    ldx.z plex_sprite_idx
-    sta PLEX_SCREEN_PTR,x
+    ldy.z plex_sprite_idx
+    sta (PLEX_SCREEN_PTR),y
     // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y

@@ -1,7 +1,7 @@
 // Tests printf function call rewriting
 // Print a bunch of different stuff using printf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const BINARY = 2
   .const OCTAL = 8
@@ -14,33 +14,34 @@
   .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  .label conio_cursor_x = $11
-  .label conio_cursor_y = $12
-  .label conio_line_text = $13
-  .label conio_line_color = $15
-__bbegin:
-  // conio_cursor_x = 0
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
+  .label conio_cursor_x = $11
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
+  .label conio_cursor_y = $12
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
+  .label conio_line_text = $13
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  jsr main
-  rts
+  .label conio_line_color = $15
+_start: {
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    jsr main
+    rts
+}
 main: {
     .const ui = $162e
     .label sc = -$c
@@ -846,6 +847,7 @@ printf_slong: {
     .const format_upper_case = 0
     .const value = -main.sl
     // Format number into buffer
+    // Format number into buffer
     .const uvalue = value
     // printf_buffer.sign = 0
     // Handle any sign
@@ -1095,6 +1097,7 @@ printf_sint: {
     .const format_upper_case = 0
     .const value = -main.si
     // Format number into buffer
+    // Format number into buffer
     .const uvalue = value
     // printf_buffer.sign = 0
     // Handle any sign
@@ -1261,6 +1264,7 @@ printf_schar: {
     .const format_zero_padding = 0
     .const format_upper_case = 0
     .const value = -main.sc
+    // Format number into buffer
     // Format number into buffer
     .const uvalue = value
     // printf_buffer.sign = 0

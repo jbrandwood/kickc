@@ -8,9 +8,9 @@
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
 .segment Vectors
-.word __bbegin // NMI
-.word __bbegin // RESET
-.word __bbegin // IRQ
+.word _start // NMI
+.word _start // RESET
+.word _start // IRQ
 .segment Code
 
   // The number of CPU cycles per scanline
@@ -34,20 +34,21 @@
   .label TIA = 0
   // Atari RIOT registers
   .label RIOT = $280
+  // Player 0 X position
   .label p0_xpos = $82
   // Counts frames
   .label idx = $80
   // Player 0 Y position
   .label p0_ypos = $83
   .label idx2 = $81
-__bbegin:
-  // p0_xpos
-  // Player 0 X position
-  lda #0
-  sta.z p0_xpos
-  jsr main
-  rts
 .segment Code
+_start: {
+    // p0_xpos
+    lda #0
+    sta.z p0_xpos
+    jsr main
+    rts
+}
 main: {
     // asm
     cld

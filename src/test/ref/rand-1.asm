@@ -2,7 +2,7 @@
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 // Information https://en.wikipedia.org/wiki/Xorshift
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const WHITE = 1
   .const LIGHT_BLUE = $e
@@ -12,42 +12,43 @@
   .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
-  .label conio_cursor_x = $16
-  .label conio_cursor_y = $17
-  .label conio_line_text = $18
-  .label conio_line_color = $1a
-  .label conio_textcolor = $1c
-  // The random state variable
-  .label rand_state = $11
-__bbegin:
-  // conio_cursor_x = 0
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
+  .label conio_cursor_x = $18
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
+  .label conio_cursor_y = $19
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
+  .label conio_line_text = $21
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  // conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+  .label conio_line_color = $23
   // The current text color
-  lda #LIGHT_BLUE
-  sta.z conio_textcolor
-  jsr main
-  rts
+  .label conio_textcolor = $1a
+  // The random state variable
+  .label rand_state = $14
+_start: {
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // conio_textcolor = CONIO_TEXTCOLOR_DEFAULT
+    lda #LIGHT_BLUE
+    sta.z conio_textcolor
+    jsr main
+    rts
+}
 main: {
-    .label first = $1d
+    .label first = $1b
     .label cnt = 2
     .label rnd = 8
     .label row = 7
@@ -202,7 +203,7 @@ printf_ulong: {
 // This handles minimum length, zero-filling, and left/right justification from the format
 // printf_number_buffer(byte zp($a) buffer_sign, byte register(X) format_min_length, byte zp($10) format_justify_left, byte zp($13) format_zero_padding, byte zp($b) format_upper_case)
 printf_number_buffer: {
-    .label __19 = $27
+    .label __19 = $11
     .label buffer_sign = $a
     .label padding = $c
     .label format_zero_padding = $13
@@ -453,11 +454,11 @@ cscroll: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($27) str, byte register(X) c)
+// memset(void* zp($11) str, byte register(X) c)
 memset: {
-    .label end = $25
-    .label dst = $27
-    .label str = $27
+    .label end = $27
+    .label dst = $11
+    .label str = $11
     // end = (char*)str + num
     lda #$28
     clc
@@ -490,13 +491,13 @@ memset: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($14) destination, void* zp($27) source)
+// memcpy(void* zp($16) destination, void* zp($11) source)
 memcpy: {
-    .label src_end = $25
-    .label dst = $14
-    .label src = $27
-    .label source = $27
-    .label destination = $14
+    .label src_end = $27
+    .label dst = $16
+    .label src = $11
+    .label source = $11
+    .label destination = $16
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -532,9 +533,9 @@ memcpy: {
     jmp __b1
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($23) s)
+// cputs(byte* zp($25) s)
 cputs: {
-    .label s = $23
+    .label s = $25
   __b1:
     // c=*s++
     ldy #0
@@ -556,7 +557,7 @@ cputs: {
 // Converts a string to uppercase.
 strupr: {
     .label str = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label src = $14
+    .label src = $16
     lda #<str
     sta.z src
     lda #>str
@@ -604,11 +605,11 @@ toupper: {
     rts
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($23) str)
+// strlen(byte* zp($25) str)
 strlen: {
-    .label len = $27
-    .label str = $23
-    .label return = $27
+    .label len = $11
+    .label str = $25
+    .label return = $11
     lda #<0
     sta.z len
     sta.z len+1
@@ -642,11 +643,11 @@ strlen: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(2) value, byte* zp($27) buffer)
+// ultoa(dword zp(2) value, byte* zp($11) buffer)
 ultoa: {
     .const max_digits = $a
-    .label digit_value = $1f
-    .label buffer = $27
+    .label digit_value = $1d
+    .label buffer = $11
     .label digit = $10
     .label value = 2
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -736,11 +737,11 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($27) buffer, dword zp(2) value, dword zp($1f) sub)
+// ultoa_append(byte* zp($11) buffer, dword zp(2) value, dword zp($1d) sub)
 ultoa_append: {
-    .label buffer = $27
+    .label buffer = $11
     .label value = 2
-    .label sub = $1f
+    .label sub = $1d
     .label return = 2
     ldx #0
   __b1:
@@ -797,12 +798,12 @@ textcolor: {
 // Set the cursor to the specified position
 // gotoxy(byte register(X) x, byte register(A) y)
 gotoxy: {
-    .label __5 = $18
-    .label __6 = $1a
-    .label __7 = $1a
-    .label line_offset = $1a
-    .label __8 = $23
-    .label __9 = $1a
+    .label __5 = $21
+    .label __6 = $23
+    .label __7 = $23
+    .label line_offset = $23
+    .label __8 = $25
+    .label __9 = $23
     // if(y>CONIO_HEIGHT)
     cmp #$19+1
     bcc __b1
@@ -869,11 +870,11 @@ gotoxy: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $23
-    .label __1 = $27
+    .label __0 = $21
+    .label __1 = $23
     .label __2 = $25
     .label return = 8
-    .label return_1 = $1d
+    .label return_1 = $1b
     // rand_state << 7
     lda.z rand_state+1
     lsr
@@ -957,11 +958,11 @@ printf_uint: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(8) value, byte* zp($14) buffer)
+// utoa(word zp(8) value, byte* zp($16) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $27
-    .label buffer = $14
+    .label buffer = $16
     .label digit = $13
     .label value = 8
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1037,9 +1038,9 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($14) buffer, word zp(8) value, word zp($27) sub)
+// utoa_append(byte* zp($16) buffer, word zp(8) value, word zp($27) sub)
 utoa_append: {
-    .label buffer = $14
+    .label buffer = $16
     .label value = 8
     .label sub = $27
     .label return = 8
@@ -1076,7 +1077,7 @@ utoa_append: {
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
     .label line_text = $14
-    .label line_cols = $18
+    .label line_cols = $16
     lda #<COLORRAM
     sta.z line_cols
     lda #>COLORRAM

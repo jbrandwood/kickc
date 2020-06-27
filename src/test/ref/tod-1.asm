@@ -5,7 +5,7 @@
 //
 // Currently C64/PLUS4/VIC20 platforms are supported
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
@@ -23,33 +23,34 @@
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  .label conio_cursor_x = 6
-  .label conio_cursor_y = 7
-  .label conio_line_text = 8
-  .label conio_line_color = $a
-__bbegin:
-  // conio_cursor_x = 0
   // The number of bytes on the screen
   // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
+  .label conio_cursor_x = $a
   // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
+  .label conio_cursor_y = $b
   // The current text cursor line start
-  lda #<DEFAULT_SCREEN
-  sta.z conio_line_text
-  lda #>DEFAULT_SCREEN
-  sta.z conio_line_text+1
-  // conio_line_color = CONIO_SCREEN_COLORS
+  .label conio_line_text = 6
   // The current color cursor line start
-  lda #<COLORRAM
-  sta.z conio_line_color
-  lda #>COLORRAM
-  sta.z conio_line_color+1
-  jsr main
-  rts
+  .label conio_line_color = 8
+_start: {
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    jsr main
+    rts
+}
 main: {
     // tod_init(TOD_ZERO)
     lda TOD_ZERO
@@ -300,10 +301,10 @@ memcpy: {
     jmp __b1
 }
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($d) tod_TENTHS, byte zp($12) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+// tod_str(byte zp($12) tod_TENTHS, byte zp($d) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $d
-    .label tod_SEC = $12
+    .label tod_TENTHS = $12
+    .label tod_SEC = $d
     // tod.HOURS>>4
     txa
     lsr
@@ -425,10 +426,10 @@ gotoxy: {
 }
 // Initialize time-of-day clock
 // This uses the MOS6526 CIA#1
-// tod_init(byte zp($c) tod_TENTHS, byte zp($d) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
+// tod_init(byte zp($a) tod_TENTHS, byte zp($b) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
 tod_init: {
-    .label tod_TENTHS = $c
-    .label tod_SEC = $d
+    .label tod_TENTHS = $a
+    .label tod_SEC = $b
     // CIA1->TIMER_A_CONTROL |= 0x80
     // Set 50hz (this assumes PAL!) (bit7=1)
     lda #$80

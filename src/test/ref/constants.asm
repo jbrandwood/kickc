@@ -6,6 +6,7 @@
   .const GREEN = 5
   .const RED = 2
   .label BG_COLOR = $d021
+  .label print_screen = $400
   .label print_char_cursor = 2
   .label print_line_cursor = 4
 main: {
@@ -192,16 +193,16 @@ test_bytes: {
     .const bc = 2
     .const bd = bc-4
     // assert_byte("0=0", bb, 0)
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     lda #0
     sta.z assert_byte.c
     ldx #bb
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<msg
     sta.z assert_byte.msg
@@ -288,7 +289,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = 7
     lda #<str

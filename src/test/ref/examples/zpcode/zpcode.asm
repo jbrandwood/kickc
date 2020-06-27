@@ -14,8 +14,22 @@
 
   .label RASTER = $d012
   .label BG_COLOR = $d020
+.segment ZpCode
+zpLoop: {
+    ldx #0
+  __b1:
+    // (*BG_COLOR)++;
+    inc BG_COLOR
+    // for(char i:0..100)
+    inx
+    cpx #$65
+    bne __b1
+    // }
+    rts
+}
 .segment Code
 main: {
+    // Transfer ZP-code to zeropage
     // Transfer ZP-code to zeropage
     .label zpCode = zpLoop
     // asm
@@ -48,20 +62,6 @@ main: {
     inx
     jmp __b1
 }
-.segment ZpCode
-zpLoop: {
-    ldx #0
-  __b1:
-    // (*BG_COLOR)++;
-    inc BG_COLOR
-    // for(char i:0..100)
-    inx
-    cpx #$65
-    bne __b1
-    // }
-    rts
-}
-.segment Code
 // Code in "normal" memory
 loop: {
     ldx #0

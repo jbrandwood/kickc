@@ -6,11 +6,11 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label SCREEN = $400
-  .label print_char_cursor = 2
+  .label print_char_cursor = 5
 main: {
     .label a = $4d2
     .label b = $929
-    .label r = $10
+    .label r = $e
     // mulf_init()
     jsr mulf_init
     // asm
@@ -33,23 +33,16 @@ main: {
     dec BORDER_COLOR
     // print_ulong(r)
     jsr print_ulong
-    // print_set_screen(SCREEN)
-    jsr print_set_screen
     lda #<SCREEN
     sta.z print_char_cursor
     lda #>SCREEN
     sta.z print_char_cursor+1
     jmp __b2
 }
-// Set the screen to print on. Also resets current line/char cursor.
-print_set_screen: {
-    // }
-    rts
-}
 // Print a unsigned long as HEX
-// print_ulong(dword zp($10) dw)
+// print_ulong(dword zp($e) dw)
 print_ulong: {
-    .label dw = $10
+    .label dw = $e
     // print_uint(>dw)
     lda.z dw+2
     sta.z print_uint.w
@@ -66,9 +59,9 @@ print_ulong: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(4) w)
+// print_uint(word zp(2) w)
 print_uint: {
-    .label w = 4
+    .label w = 2
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -121,7 +114,7 @@ mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $10
+    .label return = $e
     // *memA = a
     lda #<main.a
     sta memA
@@ -240,17 +233,22 @@ mulf16u: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 6
+    // x/2
+    .label c = 4
     // Counter used for determining x%2==0
-    .label sqr1_hi = 7
+    // Counter used for determining x%2==0
+    .label sqr1_hi = 5
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $e
-    .label sqr1_lo = 4
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
+    .label sqr = $c
+    .label sqr1_lo = 2
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $b
-    .label sqr2_lo = 9
+    // Decrease or increase x_255 - initially we decrease
+    .label sqr2_hi = 9
+    .label sqr2_lo = 7
     //Start with g(0)=f(255)
-    .label dir = $d
+    //Start with g(0)=f(255)
+    .label dir = $b
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi

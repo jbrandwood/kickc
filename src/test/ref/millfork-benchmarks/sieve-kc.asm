@@ -1,22 +1,24 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const COUNT = $4000
   .const SQRT_COUNT = $80
+  .label print_screen = $400
   .label last_time = 6
   .label print_line_cursor = 2
-  .label print_char_cursor = 4
   .label Ticks = 8
   .label Ticks_1 = $a
-__bbegin:
-  // last_time
-  lda #<0
-  sta.z last_time
-  sta.z last_time+1
-  jsr main
-  rts
+  .label print_char_cursor = 4
+_start: {
+    // last_time
+    lda #<0
+    sta.z last_time
+    sta.z last_time+1
+    jsr main
+    rts
+}
 main: {
     // start()
     jsr start
@@ -75,9 +77,9 @@ end: {
 }
 // Print a newline
 print_ln: {
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
   __b1:
     // print_line_cursor + $28
@@ -106,9 +108,9 @@ print_uint: {
     .label w = $a
     // print_uchar(>w)
     ldx.z w+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     jsr print_uchar
     // print_uchar(<w)
@@ -164,8 +166,8 @@ start: {
     rts
 }
 round: {
-    .label p = 8
-    .label S = $a
+    .label p = 2
+    .label S = 4
     lda #<Sieve
     sta.z p
     lda #>Sieve

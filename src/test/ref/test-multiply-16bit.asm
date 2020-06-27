@@ -3,8 +3,9 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BG_COLOR = $d021
-  .label print_line_cursor = 2
-  .label print_char_cursor = 8
+  .label print_screen = $400
+  .label print_char_cursor = $19
+  .label print_line_cursor = $17
 main: {
     // *BG_COLOR = 5
     lda #5
@@ -22,12 +23,12 @@ main: {
 }
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
-    .label a = $16
-    .label b = $18
-    .label ms = 4
-    .label mn = $e
-    .label mf = $a
-    .label i = $1a
+    .label a = $12
+    .label b = $14
+    .label ms = 2
+    .label mn = $a
+    .label mf = 6
+    .label i = $16
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -175,9 +176,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($22) str)
+// print_str(byte* zp($20) str)
 print_str: {
-    .label str = $22
+    .label str = $20
   __b1:
     // while(*str)
     ldy #0
@@ -212,13 +213,13 @@ print_char: {
     // }
     rts
 }
-// mul16s_error(signed word zp($16) a, signed word zp($18) b, signed dword zp(4) ms, signed dword zp($e) mn, signed dword zp($a) mf)
+// mul16s_error(signed word zp($12) a, signed word zp($14) b, signed dword zp(2) ms, signed dword zp($a) mn, signed dword zp(6) mf)
 mul16s_error: {
-    .label a = $16
-    .label b = $18
-    .label ms = 4
-    .label mn = $e
-    .label mf = $a
+    .label a = $12
+    .label b = $14
+    .label ms = 2
+    .label mn = $a
+    .label mf = 6
     // print_str("signed word multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -287,9 +288,9 @@ mul16s_error: {
     .byte 0
 }
 // Print a signed long as HEX
-// print_slong(signed dword zp(4) dw)
+// print_slong(signed dword zp(2) dw)
 print_slong: {
-    .label dw = 4
+    .label dw = 2
     // if(dw<0)
     lda.z dw+3
     bmi __b1
@@ -326,9 +327,9 @@ print_slong: {
     jmp __b2
 }
 // Print a unsigned long as HEX
-// print_ulong(dword zp(4) dw)
+// print_ulong(dword zp(2) dw)
 print_ulong: {
-    .label dw = 4
+    .label dw = 2
     // print_uint(>dw)
     lda.z dw+2
     sta.z print_uint.w
@@ -345,9 +346,9 @@ print_ulong: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($16) w)
+// print_uint(word zp($12) w)
 print_uint: {
-    .label w = $16
+    .label w = $12
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -381,9 +382,9 @@ print_uchar: {
     rts
 }
 // Print a signed int as HEX
-// print_sint(signed word zp($16) w)
+// print_sint(signed word zp($12) w)
 print_sint: {
-    .label w = $16
+    .label w = $12
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -411,16 +412,16 @@ print_sint: {
 }
 // Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
-// mulf16s(signed word zp($16) a, signed word zp($18) b)
+// mulf16s(signed word zp($12) a, signed word zp($14) b)
 mulf16s: {
     .label __6 = $1c
     .label __9 = $1e
     .label __11 = $1c
     .label __12 = $1e
-    .label m = $a
-    .label return = $a
-    .label a = $16
-    .label b = $18
+    .label m = 6
+    .label return = 6
+    .label a = $12
+    .label b = $14
     // mulf16u((unsigned int)a, (unsigned int)b)
     lda.z a
     sta.z mulf16u.a
@@ -486,7 +487,7 @@ mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $a
+    .label return = 6
     .label a = $1c
     .label b = $1e
     // *memA = a
@@ -606,16 +607,16 @@ mulf16u: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($16) a, signed word zp($18) b)
+// mul16s(signed word zp($12) a, signed word zp($14) b)
 mul16s: {
-    .label __6 = $20
-    .label __9 = $22
-    .label __11 = $20
-    .label __12 = $22
-    .label m = $e
-    .label return = $e
-    .label a = $16
-    .label b = $18
+    .label __6 = $1e
+    .label __9 = $20
+    .label __11 = $1e
+    .label __12 = $20
+    .label m = $a
+    .label return = $a
+    .label a = $12
+    .label b = $14
     // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -675,13 +676,13 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($22) a, word zp($1e) b)
+// mul16u(word zp($20) a, word zp($1e) b)
 mul16u: {
-    .label mb = $12
-    .label a = $22
-    .label res = $e
+    .label mb = $e
+    .label a = $20
+    .label res = $a
     .label b = $1e
-    .label return = $e
+    .label return = $a
     // mb = b
     lda.z b
     sta.z mb
@@ -738,14 +739,14 @@ mul16u: {
 }
 // Slow multiplication of signed words
 // Perform a signed multiplication by repeated addition/subtraction
-// muls16s(signed word zp($16) a, signed word zp($18) b)
+// muls16s(signed word zp($12) a, signed word zp($14) b)
 muls16s: {
-    .label m = 4
+    .label m = 2
     .label j = $1c
-    .label return = 4
+    .label return = 2
     .label i = $1e
-    .label a = $16
-    .label b = $18
+    .label a = $12
+    .label b = $14
     // if(a<0)
     lda.z a+1
     bmi __b8
@@ -864,19 +865,19 @@ muls16s: {
 mul16u_compare: {
     .label a = $1c
     .label b = $1e
-    .label ms = 4
-    .label mn = $e
-    .label mf = $a
-    .label i = $1a
+    .label ms = 2
+    .label mn = $a
+    .label mf = 6
+    .label i = $16
     lda #0
     sta.z i
     sta.z b
     sta.z b+1
     sta.z a
     sta.z a+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
   __b1:
     // print_str(".")
@@ -980,9 +981,9 @@ mul16u_compare: {
     jmp __b1
   !__b1:
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     lda.z print_line_cursor
@@ -1001,13 +1002,13 @@ mul16u_compare: {
     str1: .text "word multiply results match!"
     .byte 0
 }
-// mul16u_error(word zp($16) a, word zp($1e) b, dword zp(4) ms, dword zp($e) mn, dword zp($a) mf)
+// mul16u_error(word zp($12) a, word zp($1e) b, dword zp(2) ms, dword zp($a) mn, dword zp(6) mf)
 mul16u_error: {
-    .label a = $16
+    .label a = $12
     .label b = $1e
-    .label ms = 4
-    .label mn = $e
-    .label mf = $a
+    .label ms = 2
+    .label mn = $a
+    .label mf = 6
     // print_str("multiply mismatch ")
     lda #<str
     sta.z print_str.str
@@ -1069,9 +1070,9 @@ mul16u_error: {
     sta.z print_ulong.dw+3
     jsr print_ulong
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     // }
@@ -1083,9 +1084,9 @@ mul16u_error: {
 // Calculate an unsigned multiplication by repeated addition
 // muls16u(word zp($1c) a, word zp($1e) b)
 muls16u: {
-    .label return = 4
-    .label m = 4
-    .label i = $16
+    .label return = 2
+    .label m = 2
+    .label i = $12
     .label a = $1c
     .label b = $1e
     // if(a!=0)
@@ -1148,15 +1149,20 @@ muls16u: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $1a
+    // x/2
+    .label c = $16
     // Counter used for determining x%2==0
-    .label sqr1_hi = $22
+    // Counter used for determining x%2==0
+    .label sqr1_hi = $17
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $20
-    .label sqr1_lo = $18
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
+    .label sqr = $1c
+    .label sqr1_lo = $14
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $1e
-    .label sqr2_lo = $1c
+    // Decrease or increase x_255 - initially we decrease
+    .label sqr2_hi = $20
+    .label sqr2_lo = $19
+    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $1b
     ldx #0
@@ -1295,9 +1301,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = $22
+    .label dst = $20
     lda #<str
     sta.z dst
     lda #>str

@@ -264,6 +264,7 @@ gfx_init: {
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = $ff&CHARSET8/$4000
     .label bits = 2
     .label chargen = 7
@@ -354,6 +355,7 @@ gfx_init_plane_charset8: {
 // The actual memory addressed will be $4000*cpuSegmentIdx
 // dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
 dtvSetCpuBankSegment1: {
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     // Move CPU BANK 1 SEGMENT ($4000-$7fff)
     .label cpuBank = $ff
     // *cpuBank = cpuBankIdx

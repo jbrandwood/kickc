@@ -3,30 +3,31 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 6
-  .label print_char_cursor = $a
-  .label print_char_cursor_1 = 6
-  .label print_line_cursor_1 = 8
+  .label print_screen = $400
+  .label print_line_cursor = $10
+  .label print_char_cursor = 8
+  .label print_char_cursor_1 = $10
+  .label print_line_cursor_1 = 6
 main: {
-    .label __3 = $c
-    .label __6 = $12
-    .label __16 = $14
-    .label __20 = $16
-    .label __24 = $18
-    .label __28 = $1a
-    .label __32 = $c
-    .label __33 = $12
-    .label dw2 = $e
+    .label __3 = 8
+    .label __6 = $e
+    .label __16 = $10
+    .label __20 = $12
+    .label __24 = $14
+    .label __28 = $16
+    .label __32 = 8
+    .label __33 = $e
+    .label dw2 = $a
     .label dw = 2
     // print_cls()
     jsr print_cls
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor_1
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor_1+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor_1
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor_1+1
     lda #<$12345678
     sta.z dw
@@ -245,9 +246,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($c) w)
+// print_uint(word zp($e) w)
 print_uint: {
-    .label w = $c
+    .label w = $e
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -258,9 +259,9 @@ print_uint: {
     rts
 }
 // Print a unsigned long as HEX
-// print_ulong(dword zp($e) dw)
+// print_ulong(dword zp($a) dw)
 print_ulong: {
-    .label dw = $e
+    .label dw = $a
     // print_uint(>dw)
     lda.z dw+2
     sta.z print_uint.w
@@ -292,9 +293,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = $c
+    .label dst = $10
     lda #<str
     sta.z dst
     lda #>str

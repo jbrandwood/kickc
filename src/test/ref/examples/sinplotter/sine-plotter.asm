@@ -35,7 +35,7 @@
   .label SCREEN = $400
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
-  .label rem16u = $12
+  .label rem16u = $16
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -282,8 +282,12 @@ sin16s_gen2: {
     .label ampl = max-min
     .label __6 = 8
     .label __8 = $1c
+    // ampl is always positive so shifting left does not alter the sign
+    // u[4.28] step = PI*2/wavelength
     .label step = $18
     .label sintab = 6
+    // u[4.28]
+    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = 2
@@ -375,13 +379,13 @@ sin16s_gen2: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($16) a)
+// mul16s(signed word zp($1c) a)
 mul16s: {
     .label __6 = $22
     .label __11 = $22
     .label m = 8
     .label return = 8
-    .label a = $16
+    .label a = $1c
     // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -420,10 +424,10 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($12) a, word zp($c) b)
+// mul16u(word zp($16) a, word zp($c) b)
 mul16u: {
     .label mb = $e
-    .label a = $12
+    .label a = $16
     .label res = 8
     .label return = 8
     .label b = $c
@@ -488,16 +492,25 @@ mul16u: {
 sin16s: {
     .label __4 = $1e
     .label x = $e
-    .label return = $16
+    .label return = $1c
+    // sinx = x - x^3/6 + x5/128;
     .label x1 = $22
-    .label x2 = $1c
-    .label x3 = $1c
+    // u[1.15]
+    .label x2 = $12
+    // u[2.14] x^2
+    .label x3 = $12
+    // u[2.14] x^3
     .label x3_6 = $24
-    .label usinx = $16
-    .label x4 = $1c
+    // u[1.15] x^3/6;
+    .label usinx = $1c
+    // u[1.15] x - x^3/6
+    .label x4 = $12
+    // u[3.13] x^4
     .label x5 = $24
+    // u[4.12] x^5
     .label x5_128 = $24
-    .label sinx = $16
+    // u[1.15] (first bit is always zero)
+    .label sinx = $1c
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -695,14 +708,14 @@ sin16s: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($1c) v1, word zp($c) v2, byte register(X) select)
+// mulu16_sel(word zp($12) v1, word zp($c) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = 8
     .label __1 = 8
-    .label v1 = $1c
+    .label v1 = $12
     .label v2 = $c
     .label return = $24
-    .label return_1 = $1c
+    .label return_1 = $12
     // mul16u(v1, v2)
     lda.z v1
     sta.z mul16u.a
@@ -733,7 +746,7 @@ mulu16_sel: {
 // The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
     .label quotient_hi = $24
-    .label quotient_lo = $1c
+    .label quotient_lo = $12
     .label return = $18
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
@@ -774,12 +787,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($16) dividend, word zp($12) rem)
+// divr16u(word zp($1c) dividend, word zp($16) rem)
 divr16u: {
-    .label rem = $12
-    .label dividend = $16
-    .label quotient = $1c
-    .label return = $1c
+    .label rem = $16
+    .label dividend = $1c
+    .label quotient = $12
+    .label return = $12
     ldx #0
     txa
     sta.z quotient

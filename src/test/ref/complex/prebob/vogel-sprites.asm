@@ -3,7 +3,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
@@ -32,28 +32,29 @@
   .label COS = SIN+$40
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  .label plex_show_idx = $11
-  .label plex_sprite_idx = $12
-  .label plex_sprite_msb = $13
-  .label plex_free_next = $14
-__bbegin:
-  // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
-  lda #0
-  sta.z plex_show_idx
-  // plex_sprite_idx=0
+  .label plex_show_idx = $11
   // The index the next sprite to use for showing (sprites are used round-robin)
-  sta.z plex_sprite_idx
-  // plex_sprite_msb=1
+  .label plex_sprite_idx = $12
   // The MSB bit of the next sprite to use for showing
-  lda #1
-  sta.z plex_sprite_msb
-  // plex_free_next = 0
+  .label plex_sprite_msb = $13
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  lda #0
-  sta.z plex_free_next
-  jsr main
-  rts
+  .label plex_free_next = $14
+_start: {
+    // plex_show_idx=0
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx=0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb=1
+    lda #1
+    sta.z plex_sprite_msb
+    // plex_free_next = 0
+    lda #0
+    sta.z plex_free_next
+    jsr main
+    rts
+}
 main: {
     // asm
     sei
@@ -121,6 +122,7 @@ loop: {
     .label a = $e
     .label r = 7
     .label i = 2
+    // Render Rotated BOBs
     // Render Rotated BOBs
     .label angle = 4
     .label plexFreeNextYpos1_return = $15
@@ -624,15 +626,20 @@ memset: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
+    // x/2
     .label c = 7
     // Counter used for determining x%2==0
+    // Counter used for determining x%2==0
     .label sqr1_hi = 8
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $f
     .label sqr1_lo = 5
     // Decrease or increase x_255 - initially we decrease
+    // Decrease or increase x_255 - initially we decrease
     .label sqr2_hi = $c
     .label sqr2_lo = $a
+    //Start with g(0)=f(255)
     //Start with g(0)=f(255)
     .label dir = $e
     ldx #0

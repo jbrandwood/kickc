@@ -3,7 +3,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
@@ -24,33 +24,33 @@
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Location of screen & sprites
+  // Location of screen & sprites
   .label SCREEN = $400
-  .label SPRITE = $2000
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR = SCREEN+$3f8
-  .label plex_show_idx = 6
-  .label plex_sprite_idx = 7
-  .label plex_sprite_msb = 8
-  .label plex_free_next = 9
-__bbegin:
-  // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
-  lda #0
-  sta.z plex_show_idx
-  // plex_sprite_idx=0
+  .label plex_show_idx = 6
   // The index the next sprite to use for showing (sprites are used round-robin)
-  sta.z plex_sprite_idx
-  // plex_sprite_msb=1
+  .label plex_sprite_idx = 7
   // The MSB bit of the next sprite to use for showing
-  lda #1
-  sta.z plex_sprite_msb
-  // plex_free_next = 0
+  .label plex_sprite_msb = 8
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  lda #0
-  sta.z plex_free_next
-  // kickasm
-  jsr main
-  rts
+  .label plex_free_next = 9
+_start: {
+    // plex_show_idx=0
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx=0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb=1
+    lda #1
+    sta.z plex_sprite_msb
+    // plex_free_next = 0
+    lda #0
+    sta.z plex_free_next
+    jsr main
+    rts
+}
 main: {
     // asm
     sei
@@ -63,6 +63,7 @@ main: {
 }
 // The raster loop
 loop: {
+    // The current index into the y-sinus
     // The current index into the y-sinus
     .label sin_idx = 2
     .label plexFreeNextYpos1_return = $a
@@ -301,6 +302,7 @@ plexSort: {
 // Initialize the program
 init: {
     // Set the x-positions & pointers
+    // Set the x-positions & pointers
     .label xp = 4
     // *D011 = VIC_DEN | VIC_RSEL | 3
     lda #VIC_DEN|VIC_RSEL|3
@@ -315,7 +317,7 @@ init: {
     ldx #0
   __b1:
     // PLEX_PTR[sx] = (char)(SPRITE/$40)
-    lda #SPRITE/$40
+    lda #$ff&SPRITE/$40
     sta PLEX_PTR,x
     // PLEX_XPOS[sx] = xp
     txa
@@ -385,8 +387,9 @@ YSIN:
     .for(var i=0;i<256;i++)
         .byte round(min+(ampl/2)+(ampl/2)*sin(toRadians(360*i/256)))
 
-.pc = SPRITE "SPRITE"
-  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+.pc = $2000 "SPRITE"
+SPRITE:
+.var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)

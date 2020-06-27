@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const DARK_GREY = $b
   .const BLACK = 0
@@ -7,12 +7,13 @@
   .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
-__bbegin:
-  // irq_raster_next = 0
-  lda #0
-  sta.z irq_raster_next
-  jsr main
-  rts
+_start: {
+    // irq_raster_next = 0
+    lda #0
+    sta.z irq_raster_next
+    jsr main
+    rts
+}
 main: {
     // *KERNEL_IRQ = &irq
     lda #<irq

@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    // A local pointer 
     .label screen = 2
     // screen = 0x0400
     // A local pointer 

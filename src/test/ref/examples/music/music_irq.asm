@@ -21,17 +21,34 @@
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
-  .label MUSIC = $1000
-  // kickasm
-  // Load the SID
-  .const music = LoadSid("toiletrensdyr.sid")
-
-// Place the SID into memory
+  // Pointer to the music init routine
+  // Pointer to the music init routine
+  .label musicInit = MUSIC
+  // Pointer to the music play routine
+  // Pointer to the music play routine
+  .label musicPlay = MUSIC+3
+// Raster IRQ Routine playing music
+irq_play: {
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // (*musicPlay)()
+    // Play SID
+    jsr musicPlay
+    // VICII->IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // (VICII->BORDER_COLOR)--;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // }
+    jmp $ea31
+}
 // Setup Raster IRQ and initialize SID player
 main: {
     // asm
     sei
-    jsr music.init
+    // (*musicInit)()
+    jsr musicInit
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
@@ -59,22 +76,9 @@ main: {
     // }
     rts
 }
-// Raster IRQ Routine playing music
-irq_play: {
-    // (VICII->BORDER_COLOR)++;
-    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // asm
-    // Play SID
-    jsr music.play
-    // VICII->IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // (VICII->BORDER_COLOR)--;
-    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // }
-    jmp $ea31
-}
-.pc = MUSIC "MUSIC"
-  .fill music.size, music.getData(i)
+.pc = $1000 "MUSIC"
+// SID tune at an absolute address
+MUSIC:
+.const music = LoadSid("toiletrensdyr.sid")
+    .fill music.size, music.getData(i)
 

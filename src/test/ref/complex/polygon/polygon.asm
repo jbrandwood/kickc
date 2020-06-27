@@ -5,7 +5,7 @@
 // - Up-to-down EOR filling 
 // - Double buffering
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -31,7 +31,6 @@
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
-  .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Color Ram
@@ -56,27 +55,31 @@
   // The default charset address
   .label PETSCII = $1000
   .label COSTAB = SINTAB+$40
-  .label canvas_show_memory = $11
-  .label canvas_show_flag = $12
-__bbegin:
-  // canvas_show_memory = toD018(SCREEN, CANVAS2)
   // The current canvas being rendered to the screen - in D018 format.
-  lda #toD0181_return
-  sta.z canvas_show_memory
-  // canvas_show_flag = 0
+  .label canvas_show_memory = $11
   // Flag signalling that the canvas on screen needs to be updated.
   // Set to 1 by the renderer when a new canvas is ready for showing, and to 0 by the raster when the canvas is shown on screen.
-  lda #0
-  sta.z canvas_show_flag
-  jsr main
-  rts
+  .label canvas_show_flag = $12
+_start: {
+    .const _init1_toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
+    // canvas_show_memory = toD018(SCREEN, CANVAS2)
+    lda #_init1_toD0181_return
+    sta.z canvas_show_memory
+    // canvas_show_flag = 0
+    lda #0
+    sta.z canvas_show_flag
+    jsr main
+    rts
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS1)/4&$f
     .const toD0182_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
     .label cols = 3
     // Setup 16x16 canvas for rendering
+    // Setup 16x16 canvas for rendering
     .label screen = 5
     .label y = 2
+    // Plot in line buffer
     .label x0 = $13
     .label y0 = $14
     .label x1 = $c
@@ -86,6 +89,7 @@ main: {
     .label p0_idx = 7
     .label p1_idx = 8
     .label p2_idx = 9
+    // The current canvas being rendered to
     // The current canvas being rendered to
     .label canvas = $a
     // memset(CONSOLE, ' ', 40*25)
@@ -148,9 +152,6 @@ main: {
     // setup_irq()
     // Set-up the raster IRQ
     jsr setup_irq
-    // textcolor(WHITE)
-  // Set text color
-    jsr textcolor
     lda #<CANVAS1
     sta.z canvas
     lda #>CANVAS1
@@ -266,8 +267,6 @@ main: {
     // Set flag used to signal when the canvas has been shown
     lda #1
     sta.z canvas_show_flag
-    // clock()
-    jsr clock
     jmp __b8
   __b2:
     ldx.z y
@@ -308,12 +307,6 @@ main: {
     // for(char x=0;x<16;x++)
     iny
     jmp __b4
-}
-// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
-// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
-clock: {
-    // }
-    rts
 }
 // EOR fill from the line buffer onto the canvas
 // eorfill(byte* zp($1f) canvas)
@@ -387,13 +380,19 @@ line: {
     .label dy = $18
     .label sx = $19
     .label sy = $1a
+    // Find the canvas column
     .label plot1_column = $21
     .label plot2_y = $1b
+    // Find the canvas column
     .label plot2_column = $1c
+    // Find the canvas column
     .label plot3_column = $1f
     .label e1 = $e
+    // Find the canvas column
     .label plot4_column = $23
+    // Find the canvas column
     .label plot5_column = $25
+    // Find the canvas column
     .label plot6_column = $28
     // abs_u8(x2-x1)
     lda.z x2
@@ -801,10 +800,6 @@ clock_start: {
     lda #CIA_TIMER_CONTROL_START
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
-    rts
-}
-// Set the color for text output. The old color setting is returned.
-textcolor: {
     rts
 }
 // Setup raster IRQ to change charset at different lines

@@ -87,7 +87,6 @@ public class Pass4CodeGeneration {
       linkScriptBody = linkScriptBody.replace("%_O", outputFileName.toLowerCase());
       linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
       String entryName = program.getStartProcedure().getFullName();
-      ;
       linkScriptBody = linkScriptBody.replace("%E", entryName);
       Number programPc = program.getProgramPc();
       if(programPc == null) programPc = 0x080d;

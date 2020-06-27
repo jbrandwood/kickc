@@ -14,7 +14,7 @@
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = 2
+  .label next = $a
 main: {
     // *BORDER_COLOR = 0
     lda #0
@@ -55,7 +55,7 @@ main: {
     jmp __b1
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp(2) x2)
+// bitmap_line(word zp($a) x2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
@@ -64,11 +64,13 @@ bitmap_line: {
     .label dy = 8
     .label sx = $12
     .label sy = 6
+    // X is the driver
     .label e1 = 4
-    .label e = $a
-    .label y = $e
-    .label x = $c
-    .label x2 = 2
+    // Y is the driver
+    .label e = $c
+    .label y = 2
+    .label x = $e
+    .label x2 = $a
     // abs_u16(x2-x1)
     lda.z x2
     sta.z abs_u16.w
@@ -287,11 +289,11 @@ bitmap_line: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($c) x, byte register(X) y)
+// bitmap_plot(word zp($e) x, byte register(X) y)
 bitmap_plot: {
     .label __0 = $16
     .label plotter = $14
-    .label x = $c
+    .label x = $e
     // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     lda bitmap_plot_yhi,x
     sta.z plotter+1

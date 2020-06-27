@@ -1,16 +1,17 @@
 // Test a procedure with calling convention stack
 // Illustrates live ranges for printline::i and global variable val
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label val = 2
-__bbegin:
-  // val = 0
-  lda #0
-  sta.z val
-  jsr main
-  rts
+_start: {
+    // val = 0
+    lda #0
+    sta.z val
+    jsr main
+    rts
+}
 printline: {
     ldx #0
   __b1:

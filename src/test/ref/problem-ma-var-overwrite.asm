@@ -1,15 +1,16 @@
 // Demonstrates that a local __ma variable overwrites a parameter§
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label h1 = 2
-__bbegin:
-  // h1
-  lda #<0
-  sta.z h1
-  sta.z h1+1
-  jsr main
-  rts
+_start: {
+    // h1
+    lda #<0
+    sta.z h1
+    sta.z h1+1
+    jsr main
+    rts
+}
 main: {
     // test(h1, 0xD800, 0xC000)
     lda.z h1

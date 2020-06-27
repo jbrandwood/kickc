@@ -3,17 +3,17 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label BG_COLOR = $d020
-main: {
-    // asm
-    jsr init
-    // }
-    rts
-}
 // Function only used inside the inline asm
 init: {
     // *BG_COLOR = 0
     lda #0
     sta BG_COLOR
+    // }
+    rts
+}
+main: {
+    // asm
+    jsr init
     // }
     rts
 }

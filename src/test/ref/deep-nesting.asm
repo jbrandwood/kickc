@@ -700,11 +700,5 @@ f98: {
 }
 f99: {
     .label return = 1
-    // f100(x)
-    jsr f100
-    // }
-    rts
-}
-f100: {
     rts
 }

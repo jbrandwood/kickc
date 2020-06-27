@@ -1,15 +1,17 @@
 // Experiments with malloc() - a byte array
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
+  // Top of the heap used by malloc()
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label BYTES = malloc.return
-__bbegin:
-  // malloc(0x100)
-  jsr malloc
-  jsr main
-  rts
+_start: {
+    // malloc(0x100)
+    jsr malloc
+    jsr main
+    rts
+}
 main: {
     ldx #0
   __b1:

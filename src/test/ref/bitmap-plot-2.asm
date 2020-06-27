@@ -4,7 +4,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -48,30 +48,31 @@
   .label HARDWARE_IRQ = $fffe
   .label BITMAP = $2000
   .label SCREEN = $400
-  .label frame_cnt = $1b
-  // Remainder after unsigned 16-bit division
-  .label rem16u = $19
-__bbegin:
-  // frame_cnt = 1
   // Counts frames - updated by the IRQ
-  lda #1
-  sta.z frame_cnt
-  jsr main
-  rts
+  .label frame_cnt = $19
+  // Remainder after unsigned 16-bit division
+  .label rem16u = $2f
+_start: {
+    // frame_cnt = 1
+    lda #1
+    sta.z frame_cnt
+    jsr main
+    rts
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __7 = $1c
-    .label __11 = $1e
+    .label __7 = $1a
+    .label __11 = $1c
     .label __26 = 9
     .label __27 = 9
-    .label __28 = $1c
-    .label __29 = $1e
+    .label __28 = $1a
+    .label __29 = $1c
     .label cos_x = 9
     .label xpos = $b
-    .label x = $1c
+    .label x = $1a
     .label sin_y = 9
     .label ypos = $b
-    .label y = $1e
+    .label y = $1c
     .label idx_x = 2
     .label idx_y = 6
     .label r = 4
@@ -283,11 +284,11 @@ main: {
     jmp __b7
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp($1c) x, byte register(A) y)
+// bitmap_plot(word zp($1a) x, byte register(A) y)
 bitmap_plot: {
-    .label __0 = $2b
+    .label __0 = $1e
     .label plotter = $25
-    .label x = $1c
+    .label x = $1a
     // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     tay
     lda bitmap_plot_yhi,y
@@ -323,9 +324,9 @@ bitmap_plot: {
 // Fixes offsets introduced by using unsigned multiplication
 // mul16s(signed word zp(4) a, signed word zp(9) b)
 mul16s: {
-    .label __6 = $2b
+    .label __6 = $1e
     .label __9 = $25
-    .label __11 = $2b
+    .label __11 = $1e
     .label __12 = $25
     .label m = $b
     .label return = $b
@@ -390,12 +391,12 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($25) a, word zp($1e) b)
+// mul16u(word zp($25) a, word zp($1c) b)
 mul16u: {
     .label mb = $15
     .label a = $25
     .label res = $b
-    .label b = $1e
+    .label b = $1c
     .label return = $b
     // mb = b
     lda.z b
@@ -520,11 +521,11 @@ bitmap_clear: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($25) str, byte register(X) c, word zp($1e) num)
+// memset(void* zp($25) str, byte register(X) c, word zp($1c) num)
 memset: {
-    .label end = $1e
+    .label end = $1c
     .label dst = $25
-    .label num = $1e
+    .label num = $1c
     .label str = $25
     // if(num>0)
     lda.z num
@@ -625,7 +626,7 @@ bitmap_init: {
 // Generate signed int sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen2(signed word* zp($1c) sintab)
+// sin16s_gen2(signed word* zp($1a) sintab)
 sin16s_gen2: {
     .const min = -$1001
     .const max = $1001
@@ -633,8 +634,12 @@ sin16s_gen2: {
     .label wavelength = $200
     .label __6 = $b
     .label __8 = $25
+    // ampl is always positive so shifting left does not alter the sign
+    // u[4.28] step = PI*2/wavelength
     .label step = $21
-    .label sintab = $1c
+    .label sintab = $1a
+    // u[4.28]
+    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = $11
@@ -737,14 +742,23 @@ sin16s: {
     .label __4 = $27
     .label x = $15
     .label return = 4
+    // sinx = x - x^3/6 + x5/128;
     .label x1 = $2d
-    .label x2 = $19
-    .label x3 = $19
+    // u[1.15]
+    .label x2 = $1e
+    // u[2.14] x^2
+    .label x3 = $1e
+    // u[2.14] x^3
     .label x3_6 = $2b
+    // u[1.15] x^3/6;
     .label usinx = 4
-    .label x4 = $19
+    // u[1.15] x - x^3/6
+    .label x4 = $1e
+    // u[3.13] x^4
     .label x5 = $2b
+    // u[4.12] x^5
     .label x5_128 = $2b
+    // u[1.15] (first bit is always zero)
     .label sinx = 4
     // if(x >= PI_u4f28 )
     lda.z x+3
@@ -943,14 +957,14 @@ sin16s: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($19) v1, word zp($1e) v2, byte register(X) select)
+// mulu16_sel(word zp($1e) v1, word zp($1c) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = $b
     .label __1 = $b
-    .label v1 = $19
-    .label v2 = $1e
+    .label v1 = $1e
+    .label v2 = $1c
     .label return = $2b
-    .label return_1 = $19
+    .label return_1 = $1e
     // mul16u(v1, v2)
     lda.z v1
     sta.z mul16u.a
@@ -999,6 +1013,10 @@ div32u16u: {
     lda.z divr16u.return+1
     sta.z quotient_hi+1
     // divr16u(<dividend, divisor, rem16u)
+    lda.z rem16u
+    sta.z divr16u.rem
+    lda.z rem16u+1
+    sta.z divr16u.rem+1
     lda #<PI2_u4f28&$ffff
     sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
@@ -1022,10 +1040,10 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($1e) dividend, word zp($19) rem)
+// divr16u(word zp($1c) dividend, word zp($1e) rem)
 divr16u: {
-    .label rem = $19
-    .label dividend = $1e
+    .label rem = $1e
+    .label dividend = $1c
     .label quotient = $25
     .label return = $25
     ldx #0
@@ -1082,6 +1100,10 @@ divr16u: {
     cpx #$10
     bne __b1
     // rem16u = rem
+    lda.z rem
+    sta.z rem16u
+    lda.z rem+1
+    sta.z rem16u+1
     // }
     rts
 }

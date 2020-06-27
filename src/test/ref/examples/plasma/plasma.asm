@@ -26,13 +26,13 @@
   .label SCREEN1 = $2800
   .label SCREEN2 = $2c00
   .label CHARSET = $2000
-  .label print_line_cursor = $400
+  .label print_screen = $400
   .label print_char_cursor = $b
   // Plasma state variables
-  .label c1A = 2
-  .label c1B = 3
-  .label c2A = 4
-  .label c2B = 5
+  .label c1A = $d
+  .label c1B = $e
+  .label c2A = $11
+  .label c2B = 2
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
@@ -96,9 +96,9 @@ main: {
 // Render plasma to the passed screen
 // doplasma(byte* zp(9) screen)
 doplasma: {
-    .label c1a = $e
-    .label c1b = $11
-    .label i = $d
+    .label c1a = 4
+    .label c1b = 5
+    .label i = 3
     .label c2a = 7
     .label c2b = 8
     .label i1 = 6
@@ -244,9 +244,9 @@ makecharset: {
     sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
     // print_cls()
     jsr print_cls
-    lda #<print_line_cursor
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>print_line_cursor
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<0
     sta.z c
@@ -377,7 +377,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = print_line_cursor
+    .label str = print_screen
     .label end = str+num
     .label dst = $f
     lda #<str

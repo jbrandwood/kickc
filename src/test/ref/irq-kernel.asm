@@ -13,6 +13,21 @@
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+// Interrupt Routine
+irq: {
+    // *BG_COLOR = WHITE
+    lda #WHITE
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // }
+    jmp $ea31
+}
 main: {
     // asm
     sei
@@ -42,19 +57,4 @@ main: {
     cli
     // }
     rts
-}
-// Interrupt Routine
-irq: {
-    // *BG_COLOR = WHITE
-    lda #WHITE
-    sta BG_COLOR
-    // *BG_COLOR = BLACK
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // }
-    jmp $ea31
 }

@@ -82,10 +82,143 @@
   // Pointer to the start of RAM memory
   .label MEMORY = 0
   // NES Picture Processing Unit (PPU)
+  // NES Picture Processing Unit (PPU)
   .label PPU = $2000
+  // NES CPU and audion processing unit (APU)
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
 .segment Code
+// NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
+vblank: {
+    pha
+    txa
+    pha
+    tya
+    pha
+    // readJoy1()
+    jsr readJoy1
+    // joy = readJoy1()
+    tax
+    // joy&JOY_DOWN
+    txa
+    and #JOY_DOWN
+    // if(joy&JOY_DOWN)
+    cmp #0
+    beq __b1
+    // SPRITE_BUFFER[0].y++;
+    inc SPRITE_BUFFER
+    // SPRITE_BUFFER[1].y++;
+    inc SPRITE_BUFFER+1*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[2].y++;
+    inc SPRITE_BUFFER+2*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[3].y++;
+    inc SPRITE_BUFFER+3*SIZEOF_STRUCT_SPRITEDATA
+  __b1:
+    // joy&JOY_UP
+    txa
+    and #JOY_UP
+    // if(joy&JOY_UP)
+    cmp #0
+    beq __b2
+    // SPRITE_BUFFER[0].y--;
+    dec SPRITE_BUFFER
+    // SPRITE_BUFFER[1].y--;
+    dec SPRITE_BUFFER+1*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[2].y--;
+    dec SPRITE_BUFFER+2*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[3].y--;
+    dec SPRITE_BUFFER+3*SIZEOF_STRUCT_SPRITEDATA
+  __b2:
+    // joy&JOY_LEFT
+    txa
+    and #JOY_LEFT
+    // if(joy&JOY_LEFT)
+    cmp #0
+    beq __b3
+    // SPRITE_BUFFER[0].x--;
+    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X
+    // SPRITE_BUFFER[1].x--;
+    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+1*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[2].x--;
+    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+2*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[3].x--;
+    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+3*SIZEOF_STRUCT_SPRITEDATA
+  __b3:
+    // joy&JOY_RIGHT
+    txa
+    and #JOY_RIGHT
+    // if(joy&JOY_RIGHT)
+    cmp #0
+    beq ppuSpriteBufferDmaTransfer1
+    // SPRITE_BUFFER[0].x++;
+    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X
+    // SPRITE_BUFFER[1].x++;
+    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+1*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[2].x++;
+    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+2*SIZEOF_STRUCT_SPRITEDATA
+    // SPRITE_BUFFER[3].x++;
+    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+3*SIZEOF_STRUCT_SPRITEDATA
+  ppuSpriteBufferDmaTransfer1:
+    // PPU->OAMADDR = 0
+    lda #0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
+    // APU->OAMDMA = >spriteBuffer
+    lda #>SPRITE_BUFFER
+    sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
+    // PPU->PPUSCROLL = 0
+    // Set scroll
+    lda #0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
+    // PPU->PPUSCROLL = -8
+    lda #-8
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
+    // }
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
+}
+// Read Standard Controller #1
+// Returns a byte representing the pushed buttons
+// - bit 0: right
+// - bit 1: left
+// - bit 2: down
+// - bit 3: up
+// - bit 4: start
+// - bit 5: select
+// - bit 6: B
+// - bit 7: A
+readJoy1: {
+    .label __1 = 8
+    // APU->JOY1 = 1
+    // Latch the controller buttons
+    lda #1
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // APU->JOY1 = 0
+    lda #0
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    tax
+  __b1:
+    // for(char i=0;i<8;i++)
+    cpx #8
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // joy<<1
+    asl
+    sta.z __1
+    // APU->JOY1&1
+    lda #1
+    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // joy = joy<<1 | APU->JOY1&1
+    ora.z __1
+    // for(char i=0;i<8;i++)
+    inx
+    jmp __b1
+}
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     // asm
@@ -368,6 +501,7 @@ ppuDataTransfer: {
     .label ppuData = PPU_PALETTE
     .label cpuData = PALETTE
     // Transfer to PPU
+    // Transfer to PPU
     .label cpuSrc = 6
     .label i = 4
     // PPU->PPUADDR = >ppuData
@@ -411,137 +545,6 @@ ppuDataTransfer: {
     bne !+
     inc.z i+1
   !:
-    jmp __b1
-}
-// NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-vblank: {
-    pha
-    txa
-    pha
-    tya
-    pha
-    // readJoy1()
-    jsr readJoy1
-    // joy = readJoy1()
-    tax
-    // joy&JOY_DOWN
-    txa
-    and #JOY_DOWN
-    // if(joy&JOY_DOWN)
-    cmp #0
-    beq __b1
-    // SPRITE_BUFFER[0].y++;
-    inc SPRITE_BUFFER
-    // SPRITE_BUFFER[1].y++;
-    inc SPRITE_BUFFER+1*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[2].y++;
-    inc SPRITE_BUFFER+2*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[3].y++;
-    inc SPRITE_BUFFER+3*SIZEOF_STRUCT_SPRITEDATA
-  __b1:
-    // joy&JOY_UP
-    txa
-    and #JOY_UP
-    // if(joy&JOY_UP)
-    cmp #0
-    beq __b2
-    // SPRITE_BUFFER[0].y--;
-    dec SPRITE_BUFFER
-    // SPRITE_BUFFER[1].y--;
-    dec SPRITE_BUFFER+1*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[2].y--;
-    dec SPRITE_BUFFER+2*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[3].y--;
-    dec SPRITE_BUFFER+3*SIZEOF_STRUCT_SPRITEDATA
-  __b2:
-    // joy&JOY_LEFT
-    txa
-    and #JOY_LEFT
-    // if(joy&JOY_LEFT)
-    cmp #0
-    beq __b3
-    // SPRITE_BUFFER[0].x--;
-    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X
-    // SPRITE_BUFFER[1].x--;
-    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+1*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[2].x--;
-    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+2*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[3].x--;
-    dec SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+3*SIZEOF_STRUCT_SPRITEDATA
-  __b3:
-    // joy&JOY_RIGHT
-    txa
-    and #JOY_RIGHT
-    // if(joy&JOY_RIGHT)
-    cmp #0
-    beq ppuSpriteBufferDmaTransfer1
-    // SPRITE_BUFFER[0].x++;
-    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X
-    // SPRITE_BUFFER[1].x++;
-    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+1*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[2].x++;
-    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+2*SIZEOF_STRUCT_SPRITEDATA
-    // SPRITE_BUFFER[3].x++;
-    inc SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X+3*SIZEOF_STRUCT_SPRITEDATA
-  ppuSpriteBufferDmaTransfer1:
-    // PPU->OAMADDR = 0
-    lda #0
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_OAMADDR
-    // APU->OAMDMA = >spriteBuffer
-    lda #>SPRITE_BUFFER
-    sta APU+OFFSET_STRUCT_RICOH_2A03_OAMDMA
-    // PPU->PPUSCROLL = 0
-    // Set scroll
-    lda #0
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
-    // PPU->PPUSCROLL = -8
-    lda #-8
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
-    // }
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
-}
-// Read Standard Controller #1
-// Returns a byte representing the pushed buttons
-// - bit 0: right
-// - bit 1: left
-// - bit 2: down
-// - bit 3: up
-// - bit 4: start
-// - bit 5: select
-// - bit 6: B
-// - bit 7: A
-readJoy1: {
-    .label __1 = 8
-    // APU->JOY1 = 1
-    // Latch the controller buttons
-    lda #1
-    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // APU->JOY1 = 0
-    lda #0
-    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    tax
-  __b1:
-    // for(char i=0;i<8;i++)
-    cpx #8
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // joy<<1
-    asl
-    sta.z __1
-    // APU->JOY1&1
-    lda #1
-    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // joy = joy<<1 | APU->JOY1&1
-    ora.z __1
-    // for(char i=0;i<8;i++)
-    inx
     jmp __b1
 }
 .segment Data

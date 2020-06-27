@@ -6,21 +6,22 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
+  .label print_screen = $400
+  .label print_line_cursor = 6
+  .label print_char_cursor = 4
 main: {
     // print_cls()
     jsr print_cls
     // print_euclid(128,2)
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     lda #2
     sta.z print_euclid.b
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #$80
     sta.z print_euclid.a
@@ -206,9 +207,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = 8
+    .label dst = 6
     lda #<str
     sta.z dst
     lda #>str

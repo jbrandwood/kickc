@@ -90,6 +90,7 @@ atan2_16: {
     .label yi = $a
     .label xi = $d
     .label angle = 6
+    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = 8
     .label yd = $f
     .label return = 6

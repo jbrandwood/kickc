@@ -7,10 +7,11 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
+  .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $13
-  .label print_char_cursor = 5
-  .label print_line_cursor = 3
+  .label rem16u = $17
+  .label print_char_cursor = 3
+  .label print_line_cursor = 7
 main: {
     .label i = 2
     // lin16u_gen(557, 29793, lintab1, 20)
@@ -57,9 +58,9 @@ main: {
     // print_cls()
     jsr print_cls
     // print_str("   ")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -96,9 +97,9 @@ main: {
     sta.z print_uint.w+1
     jsr print_uint
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     lda #0
@@ -243,9 +244,9 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(7) w)
+// print_uint(word zp(5) w)
 print_uint: {
-    .label w = 7
+    .label w = 5
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -293,9 +294,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(7) str)
+// print_str(byte* zp(5) str)
 print_str: {
-    .label str = 7
+    .label str = 5
   __b1:
     // while(*str)
     ldy #0
@@ -327,7 +328,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = 7
     lda #<str
@@ -359,18 +360,18 @@ memset: {
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sinus wavelength (the size of the table)
-// lin16u_gen(word zp(9) min, word zp(7) max, word* zp($11) lintab)
+// lin16u_gen(word zp(5) min, word zp(3) max, word* zp($d) lintab)
 lin16u_gen: {
-    .label __6 = $1d
-    .label ampl = 7
-    .label stepi = $17
-    .label stepf = $15
-    .label step = $19
-    .label val = $d
-    .label lintab = $11
-    .label i = $b
-    .label max = 7
-    .label min = 9
+    .label __6 = $17
+    .label ampl = 3
+    .label stepi = $11
+    .label stepf = $f
+    .label step = $13
+    .label val = 9
+    .label lintab = $d
+    .label i = 7
+    .label max = 3
+    .label min = 5
     // ampl = max-min
     lda.z ampl
     sec
@@ -475,12 +476,12 @@ lin16u_gen: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp(7) dividend, word zp($13) rem)
+// divr16u(word zp(3) dividend, word zp($17) rem)
 divr16u: {
-    .label rem = $13
-    .label dividend = 7
-    .label quotient = $15
-    .label return = $15
+    .label rem = $17
+    .label dividend = 3
+    .label quotient = $f
+    .label return = $f
     ldx #0
     txa
     sta.z quotient

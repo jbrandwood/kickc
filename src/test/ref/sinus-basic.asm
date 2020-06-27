@@ -6,6 +6,7 @@
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
+  .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 5
 main: {
@@ -25,13 +26,13 @@ main: {
     lda #>f_127
     sta.z setMEMtoFAC.mem+1
     jsr setMEMtoFAC
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #1
     sta.z i

@@ -1,18 +1,19 @@
 // Tests pointer to pointer in a more complex setup
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-__bbegin:
-  // screen = $400
-  lda #<$400
-  sta.z screen
-  lda #>$400
-  sta.z screen+1
-  jsr main
-  rts
+_start: {
+    // screen = $400
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    jsr main
+    rts
+}
 main: {
     // setscreen(&screen, screen1)
     lda #<screen1

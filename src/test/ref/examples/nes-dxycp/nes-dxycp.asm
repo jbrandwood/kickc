@@ -74,28 +74,31 @@
   // Pointer to the start of RAM memory
   .label MEMORY = 0
   // NES Picture Processing Unit (PPU)
+  // NES Picture Processing Unit (PPU)
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
+  // NES CPU and audion processing unit (APU)
   .label APU = $4000
-  .label y_sin_idx = $c
-  .label x_sin_idx = $d
-  .label x_sin_idx_2 = $e
-__bbegin:
-  // y_sin_idx = 0
   // Index into the Y sine
-  lda #0
-  sta.z y_sin_idx
-  // x_sin_idx = 73
+  .label y_sin_idx = $c
   // Index into the X sine
-  lda #$49
-  sta.z x_sin_idx
-  // x_sin_idx_2 = 82
+  .label x_sin_idx = $d
   // Index into the small X sine
-  lda #$52
-  sta.z x_sin_idx_2
-  jsr main
-  rts
+  .label x_sin_idx_2 = $e
 .segment Code
+_start: {
+    // y_sin_idx = 0
+    lda #0
+    sta.z y_sin_idx
+    // x_sin_idx = 73
+    lda #$49
+    sta.z x_sin_idx
+    // x_sin_idx_2 = 82
+    lda #$52
+    sta.z x_sin_idx_2
+    jsr main
+    rts
+}
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     // asm
@@ -263,6 +266,7 @@ ppuDataTransfer: {
     .label ppuData = PPU_PALETTE
     .label cpuData = PALETTE
     // Transfer to PPU
+    // Transfer to PPU
     .label cpuSrc = 6
     .label i = 4
     // PPU->PPUADDR = >ppuData
@@ -315,6 +319,7 @@ vblank: {
     .label __23 = $b
     .label __25 = $b
     .label __28 = $f
+    // Update sprite positions
     .label y_idx = 9
     .label x_idx = $a
     .label x_idx_2 = $b

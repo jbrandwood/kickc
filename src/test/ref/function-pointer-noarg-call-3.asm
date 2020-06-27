@@ -2,6 +2,20 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+fn2: {
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    inc BG_COLOR
+    // }
+    rts
+}
+fn1: {
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
+    // }
+    rts
+}
 main: {
     .label __1 = 3
     .label i = 2
@@ -37,20 +51,6 @@ getfn: {
     sta.z return
     lda #>fn1
     sta.z return+1
-    // }
-    rts
-}
-fn2: {
-    .label BG_COLOR = $d021
-    // (*BG_COLOR)++;
-    inc BG_COLOR
-    // }
-    rts
-}
-fn1: {
-    .label BORDER_COLOR = $d020
-    // (*BORDER_COLOR)++;
-    inc BORDER_COLOR
     // }
     rts
 }

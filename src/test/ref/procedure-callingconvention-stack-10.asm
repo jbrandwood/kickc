@@ -1,18 +1,19 @@
 // Test a procedure with calling convention stack
 // Returning and passing struct values
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 3
-__bbegin:
-  // idx = 0
-  lda #0
-  sta.z idx
-  jsr main
-  rts
+_start: {
+    // idx = 0
+    lda #0
+    sta.z idx
+    jsr main
+    rts
+}
 // print(byte register(Y) p_x, byte register(X) p_y)
 print: {
     .const OFFSET_STACK_P_X = 1

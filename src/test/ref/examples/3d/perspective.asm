@@ -9,12 +9,15 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   // The rotated point - updated by calling rotate()
+  // The rotated point - updated by calling rotate()
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
+  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
   .label psp1 = $f3
   .label psp2 = $f5
+  .label print_screen = $400
   .label print_char_cursor = 4
   .label print_line_cursor = 2
 main: {
@@ -44,9 +47,9 @@ do_perspective: {
     .label y = -$47
     .label z = $36
     // print_str("(")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -115,9 +118,9 @@ do_perspective: {
 }
 // Print a newline
 print_ln: {
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
   __b1:
     // print_line_cursor + $28
@@ -141,9 +144,9 @@ print_ln: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// print_str(byte* zp(2) str)
 print_str: {
-    .label str = 6
+    .label str = 2
   __b1:
     // while(*str)
     ldy #0
@@ -272,9 +275,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str
@@ -303,9 +306,9 @@ memset: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = $a
-    .label sqr = 6
-    .label add = 8
+    .label val = 6
+    .label sqr = 2
+    .label add = 4
     lda #<1
     sta.z add
     lda #>1

@@ -4,6 +4,7 @@ import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -20,17 +21,15 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
    @Override
    public boolean step() {
       Set<ProcedureRef> calledProcedures = getGraph().getAllCalledProcedures();
-      calledProcedures.add(getProgram().getStartProcedure());
+      //calledProcedures.add(getProgram().getStartProcedure());
 
       Set<ProcedureRef> unusedProcedures = new LinkedHashSet<>();
       Collection<Procedure> allProcedures = getProgram().getScope().getAllProcedures(true);
-      for(Procedure procedure : allProcedures) {
-         // TODO Also look at kickasm/asm uses! (Maybe also look at some directive like "export" )
-         if(!calledProcedures.contains(procedure.getRef())  && !Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), getProgram())) {
-            // The procedure is not used - mark for removal!
-            unusedProcedures.add(procedure.getRef());
-         }
-      }
+      for(Procedure procedure : allProcedures)
+         if(!ProcedureUtils.isEntrypoint(procedure.getRef(), getProgram()))
+            if(!calledProcedures.contains(procedure.getRef()))
+               // The procedure is not used - mark for removal!
+               unusedProcedures.add(procedure.getRef());
 
       for(ProcedureRef unusedProcedure : unusedProcedures) {
          removeProcedure(getProgram(), unusedProcedure);
@@ -41,6 +40,7 @@ public class Pass1EliminateUncalledProcedures extends Pass1Base {
 
    /**
     * Removed a procedure from the program (the symbol in the symbol table and all blocks in the control flow graph)
+    *
     * @param program The program
     * @param procedureRef The procedure to be removed
     */

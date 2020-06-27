@@ -3,8 +3,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_char_cursor = 4
-  .label print_line_cursor = 2
+  .label print_screen = $400
+  .label print_char_cursor = 6
+  .label print_line_cursor = 4
 main: {
     .label __13 = 6
     // file->bufEdit = 0x4000
@@ -33,9 +34,9 @@ main: {
   // writes address 0x4004 (right!)
     jsr print_cls
     // print_str("$0000=")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -46,9 +47,9 @@ main: {
     ldx 0
     jsr print_uchar
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     lda.z print_line_cursor
@@ -134,9 +135,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(6) str)
+// print_str(byte* zp(2) str)
 print_str: {
-    .label str = 6
+    .label str = 2
   __b1:
     // while(*str)
     ldy #0
@@ -168,9 +169,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = 6
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str

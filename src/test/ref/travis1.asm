@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const READY_FRAMES = 5
+  .label print_screen = $400
   .label print_char_cursor = 7
   .label print_line_cursor = 5
 main: {
@@ -10,13 +11,13 @@ main: {
     lda #0
     sta.z i
     tax
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
   __b1:
     // game_ready()

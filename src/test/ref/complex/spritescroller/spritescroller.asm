@@ -3,7 +3,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -17,7 +17,8 @@
   // The number of sprites in the multiplexer
   .const PLEX_COUNT = $20
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-  .const toSpritePtr1_return = SPRITES/$40
+  // Sprite pointer for sprite 0
+  .const SPRITE_0 = SPRITES/$40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
@@ -43,44 +44,45 @@
   .label SCREEN = $400
   // The high-value table
   .label XMOVEMENT_HI = XMOVEMENT+$100
-  // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = $400+$3f8
-  .label plex_show_idx = $d
-  .label plex_sprite_idx = $e
-  .label plex_sprite_msb = $f
-  .label plex_free_next = $10
-  .label frame_done = $11
-  // The next char to use from the scroll text
-  .label scroll_text_next = 4
-  // Y-sine index
-  .label y_sin_idx = 2
-  // X-movement index
-  .label x_movement_idx = 3
-__bbegin:
-  // plex_show_idx=0
   // The index in the PLEX tables of the next sprite to show
-  lda #0
-  sta.z plex_show_idx
-  // plex_sprite_idx=0
+  .label plex_show_idx = $10
   // The index the next sprite to use for showing (sprites are used round-robin)
-  sta.z plex_sprite_idx
-  // plex_sprite_msb=1
+  .label plex_sprite_idx = $11
   // The MSB bit of the next sprite to use for showing
-  lda #1
-  sta.z plex_sprite_msb
-  // plex_free_next = 0
+  .label plex_sprite_msb = $12
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  lda #0
-  sta.z plex_free_next
-  // frame_done = false
+  .label plex_free_next = $13
   // Signal used between IRQ and main loop. Set to true when the IRQ is done showing the sprites.
-  sta.z frame_done
-  jsr main
-  rts
+  .label frame_done = $14
+  // The next char to use from the scroll text
+  .label scroll_text_next = 5
+  // Y-sine index
+  .label y_sin_idx = 3
+  // X-movement index
+  .label x_movement_idx = 4
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
+  .label PLEX_SCREEN_PTR = $e
+_start: {
+    // plex_show_idx=0
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx=0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb=1
+    lda #1
+    sta.z plex_sprite_msb
+    // plex_free_next = 0
+    lda #0
+    sta.z plex_free_next
+    // frame_done = false
+    sta.z frame_done
+    jsr main
+    rts
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET_DEFAULT)/4&$f
     .label s = 2
-    .label __13 = $12
+    .label __13 = $15
     // asm
     // Create 2x2 font from CHARGEN
     sei
@@ -189,7 +191,7 @@ main: {
     jmp __b6
   __b2:
     // PLEX_PTR[s] = SPRITE_0+' '
-    lda #toSpritePtr1_return+' '
+    lda #SPRITE_0+' '
     ldy.z s
     sta PLEX_PTR,y
     // PLEX_XPOS[s] = { XMOVEMENT_HI[x], XMOVEMENT[x] }
@@ -220,9 +222,9 @@ main: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $14
-    .label nxt_y = $15
-    .label m = $c
+    .label nxt_idx = $17
+    .label nxt_y = $18
+    .label m = $d
     lda #0
     sta.z m
   __b1:
@@ -289,10 +291,10 @@ plexSort: {
 }
 // Move the plex sprites in an Y-sine and scroll them to the left.
 plex_move: {
-    .label y_idx = $c
-    .label x_idx = $15
-    .label s = $14
-    .label __7 = $16
+    .label y_idx = $d
+    .label x_idx = $18
+    .label s = $17
+    .label __7 = $19
     // y_idx = y_sin_idx
     lda.z y_sin_idx
     sta.z y_idx
@@ -339,7 +341,7 @@ plex_move: {
     sta.z scroll_text_next+1
   __b3:
     // SPRITE_0+*scroll_text_next++
-    lda #toSpritePtr1_return
+    lda #SPRITE_0
     clc
     ldy #0
     adc (scroll_text_next),y
@@ -391,13 +393,14 @@ plexInit: {
 // - num_chars The number of chars to convert
 font_2x2_to_sprites: {
     .const num_chars = $40
-    .label __3 = $18
-    .label char_right = $a
-    .label sprite_idx = $15
-    .label char_left = 8
-    .label char_current = $16
-    .label sprite = 6
-    .label c = $14
+    .label __3 = $1b
+    .label char_right = $b
+    .label sprite_idx = $18
+    // Upper char
+    .label char_left = 9
+    .label char_current = $19
+    .label sprite = 7
+    .label c = $17
     lda #<SPRITES
     sta.z sprite
     lda #>SPRITES
@@ -519,18 +522,18 @@ font_2x2_to_sprites: {
 // - 0x80 - 0xbf Lower left glyphs
 // - 0xc0 - 0xff Lower right glyphs
 font_2x2: {
-    .label __5 = $12
-    .label __7 = $12
-    .label next_2x2_left = $16
-    .label next_2x2_right = $a
-    .label glyph_bits = $c
-    .label glyph_bits_2x2 = $12
-    .label l2 = $18
-    .label l = $15
-    .label next_2x2_left_1 = 8
-    .label next_2x2 = $16
-    .label next_original = 6
-    .label c = $14
+    .label __5 = $15
+    .label __7 = $15
+    .label next_2x2_left = $19
+    .label next_2x2_right = $b
+    .label glyph_bits = $d
+    .label glyph_bits_2x2 = $15
+    .label l2 = $1b
+    .label l = $18
+    .label next_2x2_left_1 = 9
+    .label next_2x2 = $19
+    .label next_original = 7
+    .label c = $17
     lda #0
     sta.z c
     lda #<CHARGEN
@@ -679,7 +682,7 @@ font_2x2: {
 }
 // Show sprites from the multiplexer, rescheduling the IRQ as many times as needed
 plex_irq: {
-    .label __4 = $19
+    .label __4 = $1c
     // asm
     sei
   __b3:
@@ -731,7 +734,7 @@ plex_irq: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $1a
+    .label plex_sprite_idx2 = $1d
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -760,8 +763,8 @@ plexShowSprite: {
     // PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
-    ldx.z plex_sprite_idx
-    sta PLEX_SCREEN_PTR,x
+    ldy.z plex_sprite_idx
+    sta (PLEX_SCREEN_PTR),y
     // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y

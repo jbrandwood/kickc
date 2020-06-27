@@ -11,6 +11,7 @@ import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.passes.Pass2AliasElimination;
 import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
+import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.util.*;
 
@@ -69,8 +70,7 @@ public class PassNCalcLiveRangesEffectiveCallPaths extends PassNCalcBase<LiveRan
       LiveRangeVariablesEffectiveCallPaths.CallPaths callPaths = procedureCallPaths.get(procedureRef);
       if(callPaths == null) {
          callPaths = new LiveRangeVariablesEffectiveCallPaths.CallPaths(procedureRef);
-
-         if(procedure.getInterruptType()!=null || Pass2ConstantIdentification.isAddressOfUsed(procedureRef, getProgram()) || procedureRef.equals(getProgram().getStartProcedure())) {
+         if(ProcedureUtils.isEntrypoint(procedureRef, getProgram())) {
             // Interrupt is called outside procedure scope - create initial call-path.
             ArrayList<CallGraph.CallBlock.Call> rootPath = new ArrayList<>();
             ArrayList<VariableRef> rootAlive = new ArrayList<>();

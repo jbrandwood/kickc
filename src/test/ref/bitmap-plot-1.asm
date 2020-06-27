@@ -4,7 +4,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -47,16 +47,17 @@
   .label HARDWARE_IRQ = $fffe
   .label BITMAP = $2000
   .label SCREEN = $400
+  // Counts frames - updated by the IRQ
   .label frame_cnt = $16
   // Remainder after unsigned 16-bit division
-  .label rem16u = $14
-__bbegin:
-  // frame_cnt = 1
-  // Counts frames - updated by the IRQ
-  lda #1
-  sta.z frame_cnt
-  jsr main
-  rts
+  .label rem16u = $2e
+_start: {
+    // frame_cnt = 1
+    lda #1
+    sta.z frame_cnt
+    jsr main
+    rts
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label __6 = 8
@@ -596,8 +597,12 @@ sin16s_gen2: {
     .label wavelength = $200
     .label __6 = 8
     .label __8 = $24
+    // ampl is always positive so shifting left does not alter the sign
+    // u[4.28] step = PI*2/wavelength
     .label step = $20
     .label sintab = $19
+    // u[4.28]
+    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = $c
@@ -700,14 +705,23 @@ sin16s: {
     .label __4 = $26
     .label x = $10
     .label return = $1b
+    // sinx = x - x^3/6 + x5/128;
     .label x1 = $2a
+    // u[1.15]
     .label x2 = $14
+    // u[2.14] x^2
     .label x3 = $14
+    // u[2.14] x^3
     .label x3_6 = $2c
+    // u[1.15] x^3/6;
     .label usinx = $1b
+    // u[1.15] x - x^3/6
     .label x4 = $14
+    // u[3.13] x^4
     .label x5 = $2c
+    // u[4.12] x^5
     .label x5_128 = $2c
+    // u[1.15] (first bit is always zero)
     .label sinx = $1b
     // if(x >= PI_u4f28 )
     lda.z x+3
@@ -962,6 +976,10 @@ div32u16u: {
     lda.z divr16u.return+1
     sta.z quotient_hi+1
     // divr16u(<dividend, divisor, rem16u)
+    lda.z rem16u
+    sta.z divr16u.rem
+    lda.z rem16u+1
+    sta.z divr16u.rem+1
     lda #<PI2_u4f28&$ffff
     sta.z divr16u.dividend
     lda #>PI2_u4f28&$ffff
@@ -1045,6 +1063,10 @@ divr16u: {
     cpx #$10
     bne __b1
     // rem16u = rem
+    lda.z rem
+    sta.z rem16u
+    lda.z rem+1
+    sta.z rem16u+1
     // }
     rts
 }

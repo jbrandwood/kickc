@@ -1,16 +1,17 @@
 // Tests that long branch fixing works with interrupt exits (to $ea81)
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
-__bbegin:
-  // col = 0
-  lda #0
-  sta.z col
-  jsr main
-  rts
+_start: {
+    // col = 0
+    lda #0
+    sta.z col
+    jsr main
+    rts
+}
 main: {
     // *KERNEL_IRQ = &irq
     lda #<irq

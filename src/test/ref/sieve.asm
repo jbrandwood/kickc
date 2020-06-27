@@ -28,7 +28,9 @@
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
   /* Sqrt of COUNT */
+  /* Sqrt of COUNT */
   .label sieve = $1000
+  .label print_screen = $400
   // Remainder after unsigned 16-bit division
   .label rem16u = $13
   .label print_char_cursor = $a
@@ -43,6 +45,7 @@ main: {
     .label sec100s = 4
     .label i = $a
     .label sieve_i = 2
+    /* Prime number - mark all multiples */
     .label j = 6
     .label s = 8
     .label i_1 = 4
@@ -54,9 +57,9 @@ main: {
     // print_cls()
     jsr print_cls
     // print_str("Sieve benchmark - calculating primes")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -64,9 +67,9 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     lda.z print_line_cursor
@@ -835,12 +838,12 @@ clock_start: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($1b) str, byte register(X) c, word zp($15) num)
+// memset(void* zp($15) str, byte register(X) c, word zp($13) num)
 memset: {
-    .label end = $15
-    .label dst = $1b
-    .label num = $15
-    .label str = $1b
+    .label end = $13
+    .label dst = $15
+    .label num = $13
+    .label str = $15
     // if(num>0)
     lda.z num
     bne !+
@@ -882,9 +885,9 @@ memset: {
 print_cls: {
     // memset(print_screen, ' ', 1000)
     ldx #' '
-    lda #<$400
+    lda #<print_screen
     sta.z memset.str
-    lda #>$400
+    lda #>print_screen
     sta.z memset.str+1
     lda #<$3e8
     sta.z memset.num

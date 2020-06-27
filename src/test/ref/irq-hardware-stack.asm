@@ -22,6 +22,31 @@
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+// Interrupt Routine
+irq: {
+    pha
+    txa
+    pha
+    tya
+    pha
+    // *BG_COLOR = WHITE
+    lda #WHITE
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // }
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
+}
 // RAM in $A000, $E000 CHAR ROM in $D000
 main: {
     // asm
@@ -61,29 +86,4 @@ main: {
     // (*FGCOL)++;
     inc FGCOL
     jmp __b1
-}
-// Interrupt Routine
-irq: {
-    pha
-    txa
-    pha
-    tya
-    pha
-    // *BG_COLOR = WHITE
-    lda #WHITE
-    sta BG_COLOR
-    // *BG_COLOR = BLACK
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // }
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
 }

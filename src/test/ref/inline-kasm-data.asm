@@ -2,8 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label sintab = $1000
-  // kickasm
 main: {
     .label screen = 2
     .label cols = 4
@@ -48,6 +46,7 @@ main: {
     // }
     rts
 }
-.pc = sintab "sintab"
-  .fill 25, 20 + 20*sin(toRadians(i*360/25))
+.pc = $1000 "sintab"
+sintab:
+.fill 25, 20 + 20*sin(toRadians(i*360/25))
 

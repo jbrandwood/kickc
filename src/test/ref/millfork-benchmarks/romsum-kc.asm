@@ -1,32 +1,34 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label rom = $e000
+  .label print_screen = $400
   .label last_time = $b
   .label print_char_cursor = 4
   .label print_line_cursor = 2
   .label Ticks = $d
   .label Ticks_1 = $f
-__bbegin:
-  // last_time
-  lda #<0
-  sta.z last_time
-  sta.z last_time+1
-  jsr main
-  rts
+_start: {
+    // last_time
+    lda #<0
+    sta.z last_time
+    sta.z last_time+1
+    jsr main
+    rts
+}
 main: {
     .label i = $d
     // start()
     jsr start
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<0
     sta.z i

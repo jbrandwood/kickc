@@ -1,6 +1,6 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -12,43 +12,48 @@
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // Top of the heap used by malloc()
+  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = $15
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
   .label SQUARES = $17
+  // Screen containing distance to center
   .label SCREEN_DIST = $19
+  // Screen containing angle to center
   .label SCREEN_ANGLE = $1b
-__bbegin:
-  // malloc(1000)
-  lda #<$3e8
-  sta.z malloc.size
-  lda #>$3e8
-  sta.z malloc.size+1
-  lda #<HEAP_TOP
-  sta.z heap_head
-  lda #>HEAP_TOP
-  sta.z heap_head+1
-  jsr malloc
-  // malloc(1000)
-  lda.z malloc.mem
-  sta.z SCREEN_DIST
-  lda.z malloc.mem+1
-  sta.z SCREEN_DIST+1
-  lda #<$3e8
-  sta.z malloc.size
-  lda #>$3e8
-  sta.z malloc.size+1
-  jsr malloc
-  // malloc(1000)
-  lda.z malloc.mem
-  sta.z SCREEN_ANGLE
-  lda.z malloc.mem+1
-  sta.z SCREEN_ANGLE+1
-  jsr main
-  rts
+_start: {
+    // malloc(1000)
+    lda #<$3e8
+    sta.z malloc.size
+    lda #>$3e8
+    sta.z malloc.size+1
+    lda #<HEAP_TOP
+    sta.z heap_head
+    lda #>HEAP_TOP
+    sta.z heap_head+1
+    jsr malloc
+    // malloc(1000)
+    lda.z malloc.mem
+    sta.z SCREEN_DIST
+    lda.z malloc.mem+1
+    sta.z SCREEN_DIST+1
+    lda #<$3e8
+    sta.z malloc.size
+    lda #>$3e8
+    sta.z malloc.size+1
+    jsr malloc
+    // malloc(1000)
+    lda.z malloc.mem
+    sta.z SCREEN_ANGLE
+    lda.z malloc.mem+1
+    sta.z SCREEN_ANGLE+1
+    jsr main
+    rts
+}
 main: {
+    // Find the minimum dist/angle that is not already filled
     .label dist = 2
     .label angle = 4
     .label fill = $15
@@ -311,6 +316,7 @@ atan2_16: {
     .label yi = $11
     .label xi = $24
     .label angle = $13
+    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
     .label xd = $1e
     .label yd = $17
     .label return = $13

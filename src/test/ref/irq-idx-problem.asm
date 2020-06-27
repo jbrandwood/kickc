@@ -3,7 +3,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -25,12 +25,13 @@
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
-__bbegin:
-  // irq_idx = 0
-  lda #0
-  sta.z irq_idx
-  jsr main
-  rts
+_start: {
+    // irq_idx = 0
+    lda #0
+    sta.z irq_idx
+    jsr main
+    rts
+}
 main: {
     // asm
     sei

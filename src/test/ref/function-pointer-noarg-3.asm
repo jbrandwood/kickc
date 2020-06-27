@@ -2,10 +2,20 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  // kickasm
-  ff:
-    jmp (main.f)
-
+fn2: {
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    inc BG_COLOR
+    // }
+    rts
+}
+fn1: {
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
+    // }
+    rts
+}
 main: {
     .label f = 2
     ldx #0
@@ -34,17 +44,7 @@ main: {
         
     jmp __b2
 }
-fn2: {
-    .label BG_COLOR = $d021
-    // (*BG_COLOR)++;
-    inc BG_COLOR
-    // }
-    rts
-}
-fn1: {
-    .label BORDER_COLOR = $d020
-    // (*BORDER_COLOR)++;
-    inc BORDER_COLOR
-    // }
-    rts
-}
+// Inline KickAsm function
+ff:
+jmp (main.f)
+

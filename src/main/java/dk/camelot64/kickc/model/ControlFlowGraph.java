@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.values.LabelRef;
 import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
-import dk.camelot64.kickc.passes.Pass2ConstantIdentification;
+import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -45,7 +45,7 @@ public class ControlFlowGraph implements Serializable {
    }
 
    public List<ControlFlowBlock> getAllBlocks() {
-         return blocks;
+      return blocks;
    }
 
    public void setAllBlocks(List<ControlFlowBlock> blocks) {
@@ -109,8 +109,8 @@ public class ControlFlowGraph implements Serializable {
    }
 
    public void setSequence(List<LabelRef> sequence) {
-      if(sequence.size()!=blocks.size()) {
-         throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: "+sequence.size()+" Blocks: "+blocks.size());
+      if(sequence.size() != blocks.size()) {
+         throw new CompileError("ERROR! Sequence does not contain all blocks from the program. Sequence: " + sequence.size() + " Blocks: " + blocks.size());
       }
       this.sequence = sequence;
       ArrayList<ControlFlowBlock> seqBlocks = new ArrayList<>();
@@ -144,29 +144,26 @@ public class ControlFlowGraph implements Serializable {
    /**
     * Get all blocks that are program entry points.
     * This is the start-block and any blocks referenced by the address-off operator (&)
+    *
     * @param program The program
     * @return All entry-point blocks
     */
    public List<ControlFlowBlock> getEntryPointBlocks(Program program) {
       List<ControlFlowBlock> entryPointBlocks = new ArrayList<>();
       for(Procedure procedure : program.getScope().getAllProcedures(true)) {
-         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+         if(ProcedureUtils.isEntrypoint(procedure.getRef(), program) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
             // Address-of is used on the procedure
             Label procedureLabel = procedure.getLabel();
             ControlFlowBlock procedureBlock = getBlock(procedureLabel.getRef());
             entryPointBlocks.add(procedureBlock);
          }
       }
-      final ProcedureRef startProcedure = program.getStartProcedure();
-      final ControlFlowBlock startBlock = getBlock(startProcedure.getLabelRef());
-      if(startBlock != null && !entryPointBlocks.contains(startBlock)) {
-         entryPointBlocks.add(startBlock);
-      }
       return entryPointBlocks;
    }
 
    /**
     * Get all called procedures in the graph
+    *
     * @return All called procedures
     */
    public Set<ProcedureRef> getAllCalledProcedures() {
@@ -219,7 +216,7 @@ public class ControlFlowGraph implements Serializable {
    public Statement getStatementByIndex(int statementIdx) {
       for(ControlFlowBlock block : getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
-            if(statement.getIndex()!=null && statementIdx == statement.getIndex()) {
+            if(statement.getIndex() != null && statementIdx == statement.getIndex()) {
                return statement;
             }
          }
@@ -245,20 +242,22 @@ public class ControlFlowGraph implements Serializable {
 
    /**
     * Get information about the size of the program
+    *
     * @return Size information
     */
    public String getSizeInfo() {
       StringBuilder sizeInfo = new StringBuilder();
-      sizeInfo.append("SIZE blocks "+ getAllBlocks().size()).append("\n");
+      sizeInfo.append("SIZE blocks " + getAllBlocks().size()).append("\n");
       int numStmt = getAllBlocks().stream().mapToInt(block -> block.getStatements().size()).sum();
-      sizeInfo.append("SIZE statements "+ numStmt).append("\n");
-      int numPhiVars =  getAllBlocks().stream().mapToInt(value -> value.getStatements().stream().mapToInt(value1 -> (value1 instanceof StatementPhiBlock)?((StatementPhiBlock) value1).getPhiVariables().size():0).sum()).sum();
-      sizeInfo.append("SIZE phi variables "+ numPhiVars).append("\n");
+      sizeInfo.append("SIZE statements " + numStmt).append("\n");
+      int numPhiVars = getAllBlocks().stream().mapToInt(value -> value.getStatements().stream().mapToInt(value1 -> (value1 instanceof StatementPhiBlock) ? ((StatementPhiBlock) value1).getPhiVariables().size() : 0).sum()).sum();
+      sizeInfo.append("SIZE phi variables " + numPhiVars).append("\n");
       return sizeInfo.toString();
    }
 
    /**
     * Get all statements executed between two statements (none of these are included in the result)
+    *
     * @param from The statement to start at
     * @param to The statement to end at
     * @return All statements executed between the two passed statements
@@ -272,6 +271,7 @@ public class ControlFlowGraph implements Serializable {
 
    /**
     * Fill the between collection with all statements executed between two statements (none of these are included in the result)
+    *
     * @param from The statement to start at
     * @param to The statement to end at
     * @param between The between collection

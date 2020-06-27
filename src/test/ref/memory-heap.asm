@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Top of the heap used by malloc()
+  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 2
@@ -39,10 +40,6 @@ main: {
     iny
     cpy #$64
     bne __b1
-    // free(buf1)
-    jsr free
-    // free(buf2)
-    jsr free
     // screen[0] = *buf1
     ldy #0
     lda (buf1),y
@@ -51,11 +48,6 @@ main: {
     lda (buf2),y
     sta screen+1
     // }
-    rts
-}
-// A block of memory previously allocated by a call to malloc is deallocated, making it available again for further allocations.
-// If ptr is a null pointer, the function does nothing.
-free: {
     rts
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.

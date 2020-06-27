@@ -12,6 +12,20 @@
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+irq: {
+    // (*BG_COLOR)++;
+    inc BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // if (*RASTER>50)
+    lda RASTER
+    cmp #$32+1
+    // (*BG_COLOR)--;
+    dec BG_COLOR
+    // }
+    jmp $ea81
+}
 main: {
     // asm
     sei
@@ -45,18 +59,4 @@ main: {
     cmp #$14
     bcs __b1
     jmp __b1
-}
-irq: {
-    // (*BG_COLOR)++;
-    inc BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // if (*RASTER>50)
-    lda RASTER
-    cmp #$32+1
-    // (*BG_COLOR)--;
-    dec BG_COLOR
-    // }
-    jmp $ea81
 }

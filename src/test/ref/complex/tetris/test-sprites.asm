@@ -4,7 +4,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -24,7 +24,6 @@
   .const IRQ_RASTER_FIRST = SPRITES_FIRST_YPOS+$13
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-  .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_COLOR = $d027
@@ -59,48 +58,43 @@
   .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
   // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
-  // Address of the sprites covering the playfield
-  .label PLAYFIELD_SPRITES = $3000
-  // Address of the charset
-  .label PLAYFIELD_CHARSET = $2800
-  .label SIN_SPRITE = $2800
-  .label render_screen_showing = 5
-  .label irq_raster_next = 6
-  .label irq_sprite_ypos = 7
-  .label irq_sprite_ptr = 8
-  .label irq_cnt = 9
-  .label sin_idx = 3
-__bbegin:
-  // render_screen_showing = 0
   // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
-  lda #0
-  sta.z render_screen_showing
-  // kickasm
-  // irq_raster_next = IRQ_RASTER_FIRST
+  .label render_screen_showing = 6
   // The raster line of the next IRQ
-  lda #IRQ_RASTER_FIRST
-  sta.z irq_raster_next
-  // irq_sprite_ypos = SPRITES_FIRST_YPOS + 21
+  .label irq_raster_next = 7
   // Y-pos of the sprites on the next IRQ
-  lda #SPRITES_FIRST_YPOS+$15
-  sta.z irq_sprite_ypos
-  // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3
+  .label irq_sprite_ypos = 8
   // Index of the sprites to show on the next IRQ
-  lda #toSpritePtr1_return+3
-  sta.z irq_sprite_ptr
-  // irq_cnt = 0
+  .label irq_sprite_ptr = 9
   // Counting the 10 IRQs
-  lda #0
-  sta.z irq_cnt
-  // kickasm
-  jsr main
-  rts
+  .label irq_cnt = $a
+  .label sin_idx = 4
+_start: {
+    .const _init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
+    // render_screen_showing = 0
+    lda #0
+    sta.z render_screen_showing
+    // irq_raster_next = IRQ_RASTER_FIRST
+    lda #IRQ_RASTER_FIRST
+    sta.z irq_raster_next
+    // irq_sprite_ypos = SPRITES_FIRST_YPOS + 21
+    lda #SPRITES_FIRST_YPOS+$15
+    sta.z irq_sprite_ypos
+    // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3
+    lda #_init1_toSpritePtr1_return+3
+    sta.z irq_sprite_ptr
+    // irq_cnt = 0
+    lda #0
+    sta.z irq_cnt
+    jsr main
+    rts
+}
 main: {
-    .const toSpritePtr1_return = SIN_SPRITE/$40
+    .const toSpritePtr1_return = $ff&SIN_SPRITE/$40
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    .label xpos = 3
-    .label ypos = 2
+    .label xpos = 2
+    .label ypos = 3
     // CIA2->PORT_A_DDR = %00000011
     lda #3
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
@@ -160,7 +154,7 @@ main: {
     rts
 }
 loop: {
-    .label s = 4
+    .label s = 5
     lda #0
     sta.z sin_idx
   __b2:
@@ -238,7 +232,7 @@ sprites_irq_init: {
 }
 // Setup the sprites
 sprites_init: {
-    .label xpos = 4
+    .label xpos = 5
     // *SPRITES_ENABLE = %00001111
     lda #$f
     sta SPRITES_ENABLE
@@ -278,8 +272,9 @@ sprites_init: {
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
 sprites_irq: {
-    .const toSpritePtr1_return = PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = $a
+    .const toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
+    // Wait for the y-position before changing sprite pointers
+    .label raster_sprite_gfx_modify = $b
     sta rega+1
     stx regx+1
     // asm
@@ -416,9 +411,11 @@ SIN:
   	  .byte 51+AMPL/2+sin(toRadians([i*360]/256))*AMPL/2
     }
 
-.pc = PLAYFIELD_SPRITES "PLAYFIELD_SPRITES"
-  .var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
-	// Put the sprites into memory 
+.pc = $3000 "PLAYFIELD_SPRITES"
+// Sprites covering the playfield
+PLAYFIELD_SPRITES:
+.var sprites = LoadPicture("playfield-sprites.png", List().add($010101, $000000))
+	// Put the sprites into memory
 	.for(var sy=0;sy<10;sy++) {
 	    .var sprite_gfx_y = sy*20
 		.for(var sx=0;sx<3;sx++) {
@@ -432,6 +429,13 @@ SIN:
 	  	}
 	}
 
-.pc = SIN_SPRITE "SIN_SPRITE"
-  .fill $40, $ff
+.pc = $2800 "PLAYFIELD_CHARSET"
+// Address of the charset
+PLAYFIELD_CHARSET:
+.fill 8,$00 // Place a filled char at the start of the charset
+    .import binary "playfield-screen.imap"
+
+.pc = $3800 "SIN_SPRITE"
+SIN_SPRITE:
+.fill $40, $ff
 

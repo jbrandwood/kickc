@@ -4,6 +4,14 @@
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label FGCOL = $d021
+irq: {
+    // (*BG_COLOR)++;
+    inc BG_COLOR
+    // asm
+    lda $dc0d
+    // }
+    jmp $ea81
+}
 main: {
     // *KERNEL_IRQ = &irq
     lda #<irq
@@ -14,12 +22,4 @@ main: {
     // (*FGCOL)++;
     inc FGCOL
     jmp __b1
-}
-irq: {
-    // (*BG_COLOR)++;
-    inc BG_COLOR
-    // asm
-    lda $dc0d
-    // }
-    jmp $ea81
 }

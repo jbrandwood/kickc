@@ -2,6 +2,20 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+fn2: {
+    .label BG_COLOR = $d021
+    // (*BG_COLOR)++;
+    inc BG_COLOR
+    // }
+    rts
+}
+fn1: {
+    .label BORDER_COLOR = $d020
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
+    // }
+    rts
+}
 main: {
     .label SCREEN = $400
     .label f = 2
@@ -30,18 +44,4 @@ main: {
     lda.z f
     sta SCREEN
     jmp __b2
-}
-fn2: {
-    .label BG_COLOR = $d021
-    // (*BG_COLOR)++;
-    inc BG_COLOR
-    // }
-    rts
-}
-fn1: {
-    .label BORDER_COLOR = $d020
-    // (*BORDER_COLOR)++;
-    inc BORDER_COLOR
-    // }
-    rts
 }

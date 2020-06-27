@@ -2,8 +2,6 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label TABLE = $2000
-  // kickasm
 main: {
     .label BORDER_COLOR = $d020
     ldx #0
@@ -15,6 +13,7 @@ main: {
     inx
     jmp __b2
 }
-.pc = TABLE "TABLE"
-  .byte 1, 2, 3
+.pc = $2000 "TABLE"
+TABLE:
+.byte 1, 2, 3
 

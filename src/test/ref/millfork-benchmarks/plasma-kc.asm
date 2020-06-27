@@ -1,7 +1,7 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
   .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
@@ -11,23 +11,25 @@
   .label SCREEN1 = $e000
   .label SCREEN2 = $e400
   .label CHARSET = $e800
-  .label last_time = $c
+  .label print_screen = $400
+  .label last_time = $a
   // The random state variable
-  .label rand_state = 9
+  .label rand_state = 7
   .label print_line_cursor = 5
-  .label print_char_cursor = 7
-  .label Ticks = $10
-  .label Ticks_1 = $12
-__bbegin:
-  // last_time
-  lda #<0
-  sta.z last_time
-  sta.z last_time+1
-  jsr main
-  rts
+  .label Ticks = $e
+  .label Ticks_1 = $11
+  .label print_char_cursor = $13
+_start: {
+    // last_time
+    lda #<0
+    sta.z last_time
+    sta.z last_time+1
+    jsr main
+    rts
+}
 main: {
-    .label block = $e
-    .label v = $f
+    .label block = $c
+    .label v = $d
     .label count = 5
     // makechar()
     jsr makechar
@@ -97,17 +99,17 @@ main: {
     dec.z count
     jmp __b1
 }
-// doplasma(byte* zp(7) scrn)
+// doplasma(byte* zp($13) scrn)
 doplasma: {
     .const c2A = 0
     .const c2B = 0
-    .label c1a = $14
-    .label c1b = $19
-    .label ii = $b
+    .label c1a = $10
+    .label c1b = $15
+    .label ii = 9
     .label c2a = 3
     .label c2b = 4
     .label i = 2
-    .label scrn = 7
+    .label scrn = $13
     lda #0
     sta.z c1b
     sta.z c1a
@@ -235,9 +237,9 @@ end: {
 }
 // Print a newline
 print_ln: {
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
   __b1:
     // print_line_cursor + $28
@@ -261,14 +263,14 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($12) w)
+// print_uint(word zp($11) w)
 print_uint: {
-    .label w = $12
+    .label w = $11
     // print_uchar(>w)
     ldx.z w+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     jsr print_uchar
     // print_uchar(<w)
@@ -324,14 +326,14 @@ start: {
     rts
 }
 makechar: {
-    .label __3 = $17
-    .label __4 = $19
-    .label __7 = $15
-    .label __8 = $15
-    .label s = $14
-    .label c = $10
-    .label i = $b
-    .label __10 = $15
+    .label __3 = $13
+    .label __4 = $15
+    .label __7 = $11
+    .label __8 = $11
+    .label s = $10
+    .label c = $e
+    .label i = 9
+    .label __10 = $11
     lda #<1
     sta.z rand_state
     lda #>1
@@ -434,10 +436,10 @@ makechar: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $1a
-    .label __1 = $1c
-    .label __2 = $1e
-    .label return = $17
+    .label __0 = $16
+    .label __1 = $18
+    .label __2 = $1a
+    .label return = $13
     // rand_state << 7
     lda.z rand_state+1
     lsr

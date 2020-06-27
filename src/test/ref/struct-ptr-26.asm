@@ -3,6 +3,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label print_screen = $400
   .label print_char_cursor = 2
 main: {
     .label file = $4000
@@ -34,9 +35,9 @@ print_uint: {
     .label w = 4
     // print_uchar(>w)
     ldx.z w+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     jsr print_uchar
     // print_uchar(<w)

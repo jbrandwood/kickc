@@ -1,16 +1,17 @@
 // Test that address vars are turned into load/store and located at hardcoded addresses
 // Hard-coded mainmem-page address - global variable
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label i = $2000
-__bbegin:
-  // i = 3
-  lda #3
-  sta i
-  jsr main
-  rts
+_start: {
+    // i = 3
+    lda #3
+    sta i
+    jsr main
+    rts
+}
 main: {
   __b1:
     // while(i<7)

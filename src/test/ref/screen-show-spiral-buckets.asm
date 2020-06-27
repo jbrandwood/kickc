@@ -1,7 +1,7 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 // Utilizes a bucket sort for identifying the minimum angle/distance
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -21,91 +21,103 @@
   // Screen containing angle to center
   .label SCREEN_FILL = $400
   // Top of the heap used by malloc()
+  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 4
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
   .label SQUARES = 6
-  .label SCREEN_DIST = $10
-  .label SCREEN_ANGLE = $12
-  .label BUCKET_SIZES = $14
-  .label BUCKETS = $16
-  .label BUCKET_IDX = $18
-__bbegin:
-  // malloc(1000)
-  lda #<$3e8
-  sta.z malloc.size
-  lda #>$3e8
-  sta.z malloc.size+1
-  lda #<HEAP_TOP
-  sta.z heap_head
-  lda #>HEAP_TOP
-  sta.z heap_head+1
-  jsr malloc
-  // malloc(1000)
-  lda.z malloc.mem
-  sta.z SCREEN_DIST
-  lda.z malloc.mem+1
-  sta.z SCREEN_DIST+1
-  lda #<$3e8
-  sta.z malloc.size
-  lda #>$3e8
-  sta.z malloc.size+1
-  jsr malloc
-  // malloc(1000)
-  lda.z malloc.mem
-  sta.z SCREEN_ANGLE
-  lda.z malloc.mem+1
-  sta.z SCREEN_ANGLE+1
-  // malloc(NUM_BUCKETS*sizeof(byte))
-  lda #<NUM_BUCKETS*SIZEOF_BYTE
-  sta.z malloc.size
-  lda #>NUM_BUCKETS*SIZEOF_BYTE
-  sta.z malloc.size+1
-  jsr malloc
-  // malloc(NUM_BUCKETS*sizeof(byte))
-  lda.z malloc.mem
-  sta.z BUCKET_SIZES
-  lda.z malloc.mem+1
-  sta.z BUCKET_SIZES+1
-  // malloc(NUM_BUCKETS*sizeof(word*))
-  lda #<NUM_BUCKETS*SIZEOF_POINTER
-  sta.z malloc.size
-  lda #>NUM_BUCKETS*SIZEOF_POINTER
-  sta.z malloc.size+1
-  jsr malloc
-  // malloc(NUM_BUCKETS*sizeof(word*))
-  lda.z malloc.mem
-  sta.z BUCKETS
-  lda.z malloc.mem+1
-  sta.z BUCKETS+1
-  // malloc(NUM_BUCKETS*sizeof(byte))
-  lda #<NUM_BUCKETS*SIZEOF_BYTE
-  sta.z malloc.size
-  lda #>NUM_BUCKETS*SIZEOF_BYTE
-  sta.z malloc.size+1
-  jsr malloc
-  // malloc(NUM_BUCKETS*sizeof(byte))
-  lda.z malloc.mem
-  sta.z BUCKET_IDX
-  lda.z malloc.mem+1
-  sta.z BUCKET_IDX+1
-  jsr main
-  rts
+  // Screen containing distance to center
+  .label SCREEN_DIST = $1b
+  // Screen containing angle to center
+  .label SCREEN_ANGLE = $e
+  // Array containing the bucket size for each of the distance buckets
+  .label BUCKET_SIZES = $10
+  // Buckets containing screen indices for each distance from the center.
+  // BUCKETS[dist] is an array of words containing screen indices.
+  // The size of the array BUCKETS[dist] is BUCKET_SIZES[dist]
+  .label BUCKETS = $12
+  // Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
+  .label BUCKET_IDX = $14
+_start: {
+    // malloc(1000)
+    lda #<$3e8
+    sta.z malloc.size
+    lda #>$3e8
+    sta.z malloc.size+1
+    lda #<HEAP_TOP
+    sta.z heap_head
+    lda #>HEAP_TOP
+    sta.z heap_head+1
+    jsr malloc
+    // malloc(1000)
+    lda.z malloc.mem
+    sta.z SCREEN_DIST
+    lda.z malloc.mem+1
+    sta.z SCREEN_DIST+1
+    lda #<$3e8
+    sta.z malloc.size
+    lda #>$3e8
+    sta.z malloc.size+1
+    jsr malloc
+    // malloc(1000)
+    lda.z malloc.mem
+    sta.z SCREEN_ANGLE
+    lda.z malloc.mem+1
+    sta.z SCREEN_ANGLE+1
+    // malloc(NUM_BUCKETS*sizeof(byte))
+    lda #<NUM_BUCKETS*SIZEOF_BYTE
+    sta.z malloc.size
+    lda #>NUM_BUCKETS*SIZEOF_BYTE
+    sta.z malloc.size+1
+    jsr malloc
+    // malloc(NUM_BUCKETS*sizeof(byte))
+    lda.z malloc.mem
+    sta.z BUCKET_SIZES
+    lda.z malloc.mem+1
+    sta.z BUCKET_SIZES+1
+    // malloc(NUM_BUCKETS*sizeof(word*))
+    lda #<NUM_BUCKETS*SIZEOF_POINTER
+    sta.z malloc.size
+    lda #>NUM_BUCKETS*SIZEOF_POINTER
+    sta.z malloc.size+1
+    jsr malloc
+    // malloc(NUM_BUCKETS*sizeof(word*))
+    lda.z malloc.mem
+    sta.z BUCKETS
+    lda.z malloc.mem+1
+    sta.z BUCKETS+1
+    // malloc(NUM_BUCKETS*sizeof(byte))
+    lda #<NUM_BUCKETS*SIZEOF_BYTE
+    sta.z malloc.size
+    lda #>NUM_BUCKETS*SIZEOF_BYTE
+    sta.z malloc.size+1
+    jsr malloc
+    // malloc(NUM_BUCKETS*sizeof(byte))
+    lda.z malloc.mem
+    sta.z BUCKET_IDX
+    lda.z malloc.mem+1
+    sta.z BUCKET_IDX+1
+    jsr main
+    rts
+}
 main: {
-    .label bucket = $1a
-    .label bucket_size = $1c
+    .label bucket = $16
+    .label bucket_size = $18
+    // Animate a spiral walking through the buckets one at a time
     // Animate a spiral walking through the buckets one at a time
     .label bucket_idx = 2
-    .label offset = $18
-    .label fill = $1d
-    .label angle = $1f
+    .label offset = $14
+    .label fill = $19
+    .label angle = $1b
+    // Find the minimum unfilled angle in the current bucket
     // Find the minimum unfilled angle in the current bucket
     .label min_angle = 3
+    // Found something to fill!
     .label fill1 = 4
     .label min_offset = 4
-    .label min_offset_1 = $18
+    .label min_offset_1 = $14
     // asm
     sei
     // init_dist_screen(SCREEN_DIST)
@@ -261,24 +273,26 @@ main: {
     jmp __b8
 }
 // Initialize buckets containing indices of chars on the screen with specific distances to the center.
-// init_buckets(byte* zp($10) screen)
+// init_buckets(byte* zp($1b) screen)
 init_buckets: {
     .label __4 = 6
-    .label __7 = $22
+    .label __7 = $20
     .label __11 = $26
-    .label __12 = $28
-    .label __14 = $28
-    .label screen = $10
-    .label dist = $e
-    .label i1 = $1a
-    .label i2 = $1d
-    .label distance = $21
-    .label bucket = $28
-    .label dist_1 = $1f
+    .label __12 = $1d
+    .label __14 = $1d
+    .label screen = $1b
+    // first find bucket sizes - by counting number of chars with each distance value
+    .label dist = $c
+    .label i1 = $16
+    .label i2 = $19
+    .label distance = $1f
+    .label bucket = $1d
+    // first find bucket sizes - by counting number of chars with each distance value
+    .label dist_1 = $22
     .label i4 = $24
     .label __15 = 6
     .label __16 = $26
-    .label __17 = $28
+    .label __17 = $1d
     ldy #0
   // Init bucket sizes to 0
   __b1:
@@ -483,19 +497,19 @@ malloc: {
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the center
-// init_angle_screen(byte* zp($1a) screen)
+// init_angle_screen(byte* zp($16) screen)
 init_angle_screen: {
     .label __7 = $24
-    .label screen = $1a
-    .label screen_topline = $e
-    .label screen_bottomline = $1a
+    .label screen = $16
+    .label screen_topline = $c
+    .label screen_bottomline = $16
     .label xw = $26
-    .label yw = $28
+    .label yw = $1d
     .label angle_w = $24
-    .label ang_w = $21
-    .label x = $c
-    .label xb = $d
-    .label y = $1c
+    .label ang_w = $1f
+    .label x = $a
+    .label xb = $b
+    .label y = $18
     // screen_topline = screen+40*12
     lda.z screen
     clc
@@ -609,18 +623,19 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($26) x, signed word zp($28) y)
+// atan2_16(signed word zp($26) x, signed word zp($1d) y)
 atan2_16: {
-    .label __2 = $1d
-    .label __7 = $1f
-    .label yi = $1d
-    .label xi = $1f
+    .label __2 = $19
+    .label __7 = $22
+    .label yi = $19
+    .label xi = $22
     .label angle = $24
-    .label xd = $a
-    .label yd = 8
+    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
+    .label xd = 8
+    .label yd = 6
     .label return = $24
     .label x = $26
-    .label y = $28
+    .label y = $1d
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -827,14 +842,14 @@ atan2_16: {
 // init_dist_screen(byte* zp(8) screen)
 init_dist_screen: {
     .label screen = 8
-    .label screen_bottomline = $a
-    .label yds = $22
+    .label screen_bottomline = $16
+    .label yds = $20
     .label screen_topline = 8
-    .label y = $1c
-    .label xds = $24
-    .label ds = $24
-    .label x = $c
-    .label xb = $d
+    .label y = $18
+    .label xds = $22
+    .label ds = $22
+    .label x = $a
+    .label xb = $b
     // init_squares()
     jsr init_squares
     // screen_bottomline = screen+40*24
@@ -952,12 +967,12 @@ init_dist_screen: {
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($24) val)
+// sqrt(word zp($22) val)
 sqrt: {
-    .label __1 = $e
-    .label __2 = $e
-    .label found = $e
-    .label val = $24
+    .label __1 = $c
+    .label __2 = $c
+    .label found = $c
+    .label val = $22
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     lda.z SQUARES
     sta.z bsearch16u.items
@@ -986,14 +1001,14 @@ sqrt: {
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($24) key, word* zp($e) items, byte register(X) num)
+// bsearch16u(word zp($22) key, word* zp($c) items, byte register(X) num)
 bsearch16u: {
-    .label __2 = $e
-    .label pivot = $26
-    .label result = $28
-    .label return = $e
-    .label items = $e
-    .label key = $24
+    .label __2 = $c
+    .label pivot = $24
+    .label result = $26
+    .label return = $c
+    .label items = $c
+    .label key = $22
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)
@@ -1080,8 +1095,8 @@ bsearch16u: {
 // Uses a table of squares that must be initialized by calling init_squares()
 // sqr(byte register(A) val)
 sqr: {
-    .label return = $24
-    .label return_1 = $22
+    .label return = $22
+    .label return_1 = $20
     // return SQUARES[val];
     asl
     tay
@@ -1096,8 +1111,8 @@ sqr: {
 // Initialize squares table
 // Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
 init_squares: {
-    .label squares = $1a
-    .label sqr = $e
+    .label squares = $19
+    .label sqr = $c
     // malloc(NUM_SQUARES*sizeof(unsigned int))
     lda #<NUM_SQUARES*SIZEOF_WORD
     sta.z malloc.size

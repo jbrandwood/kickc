@@ -9,17 +9,17 @@
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
-  .label MUSIC = $1000
-  // kickasm
-  // Load the SID
-  .const music = LoadSid("toiletrensdyr.sid")
-
-// Place the SID into memory
+  // Pointer to the music init routine
+  // Pointer to the music init routine
+  .label musicInit = MUSIC
+  // Pointer to the music play routine
+  // Pointer to the music play routine
+  .label musicPlay = MUSIC+3
 // Play the music 
 main: {
-    // asm
+    // (*musicInit)()
     // Initialize the music
-    jsr music.init
+    jsr musicInit
   // Wait for the RASTER
   __b1:
     // while (VICII->RASTER != $fd)
@@ -28,13 +28,16 @@ main: {
     bne __b1
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // asm
+    // (*musicPlay)()
     // Play the music
-    jsr music.play
+    jsr musicPlay
     // (VICII->BORDER_COLOR)--;
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
-.pc = MUSIC "MUSIC"
-  .fill music.size, music.getData(i)
+.pc = $1000 "MUSIC"
+// SID tune at an absolute address
+MUSIC:
+.const music = LoadSid("toiletrensdyr.sid")
+    .fill music.size, music.getData(i)
 

@@ -3,28 +3,29 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label print_screen = $400
+  .label print_char_cursor = $d
   .label print_line_cursor = 6
-  .label print_char_cursor = 6
-  .label print_char_cursor_1 = $a
-  .label print_line_cursor_1 = 8
+  .label print_char_cursor_1 = 6
+  .label print_line_cursor_1 = $f
 main: {
     .label i = 2
-    .label __5 = $d
-    .label __6 = $d
-    .label __7 = $d
-    .label __8 = $d
-    .label __9 = $d
-    .label __10 = $d
-    .label __11 = $d
+    .label __5 = 9
+    .label __6 = 9
+    .label __7 = 9
+    .label __8 = 9
+    .label __9 = 9
+    .label __10 = 9
+    .label __11 = 9
     // print_cls()
     jsr print_cls
-    lda #<$400
-    sta.z print_char_cursor
-    lda #>$400
-    sta.z print_char_cursor+1
-    lda #<$400
+    lda #<print_screen
+    sta.z print_char_cursor_1
+    lda #>print_screen
+    sta.z print_char_cursor_1+1
+    lda #<print_screen
     sta.z print_line_cursor_1
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor_1+1
     lda #<0
     sta.z i
@@ -186,11 +187,11 @@ print_ln: {
     adc.z print_line_cursor_1+1
     sta.z print_line_cursor+1
     // while (print_line_cursor<print_char_cursor)
-    cmp.z print_char_cursor_1+1
+    cmp.z print_char_cursor+1
     bcc __b2
     bne !+
     lda.z print_line_cursor
-    cmp.z print_char_cursor_1
+    cmp.z print_char_cursor
     bcc __b2
   !:
     // }
@@ -203,9 +204,9 @@ print_ln: {
     jmp __b1
 }
 // Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp($d) w)
+// print_ulong_decimal(dword zp(9) w)
 print_ulong_decimal: {
-    .label w = $d
+    .label w = 9
     // ultoa(w, decimal_digits_long, DECIMAL)
     jsr ultoa
     // print_str(decimal_digits_long)
@@ -214,13 +215,13 @@ print_ulong_decimal: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($11) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = $11
-    lda.z print_char_cursor
-    sta.z print_char_cursor_1
-    lda.z print_char_cursor+1
-    sta.z print_char_cursor_1+1
+    .label str = 6
+    lda.z print_char_cursor_1
+    sta.z print_char_cursor
+    lda.z print_char_cursor_1+1
+    sta.z print_char_cursor+1
     lda #<decimal_digits_long
     sta.z str
     lda #>decimal_digits_long
@@ -250,11 +251,11 @@ print_str: {
 print_char: {
     // *(print_char_cursor++) = ch
     ldy #0
-    sta (print_char_cursor_1),y
+    sta (print_char_cursor),y
     // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor_1
+    inc.z print_char_cursor
     bne !+
-    inc.z print_char_cursor_1+1
+    inc.z print_char_cursor+1
   !:
     // }
     rts
@@ -264,13 +265,13 @@ print_char: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($d) value, byte* zp($11) buffer)
+// ultoa(dword zp(9) value, byte* zp($d) buffer)
 ultoa: {
     .const max_digits = $a
-    .label digit_value = $13
-    .label buffer = $11
-    .label digit = $c
-    .label value = $d
+    .label digit_value = $11
+    .label buffer = $d
+    .label digit = 8
+    .label value = 9
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long
@@ -358,12 +359,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($11) buffer, dword zp($d) value, dword zp($13) sub)
+// ultoa_append(byte* zp($d) buffer, dword zp(9) value, dword zp($11) sub)
 ultoa_append: {
-    .label buffer = $11
-    .label value = $d
-    .label sub = $13
-    .label return = $d
+    .label buffer = $d
+    .label value = 9
+    .label sub = $11
+    .label return = 9
     ldx #0
   __b1:
     // while (value >= sub)
@@ -419,9 +420,9 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
-    .label dst = $11
+    .label dst = $f
     lda #<str
     sta.z dst
     lda #>str

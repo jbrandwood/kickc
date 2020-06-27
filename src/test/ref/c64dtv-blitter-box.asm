@@ -70,6 +70,7 @@
   .label DTV_BLITTER_CONTROL2 = $d33f
   .label SCREEN = $400
   // Controls the ALU operation
+  // Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e
 main: {
     // *DTV_FEATURE = DTV_FEATURE_ENABLE

@@ -2,7 +2,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 5
+  .label print_screen = $400
+  .label print_line_cursor = 9
   .label print_char_cursor = 7
 main: {
     .label w2 = $b
@@ -12,13 +13,13 @@ main: {
     jsr print_cls
     lda #0
     sta.z i
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<$4d2
     sta.z w1
@@ -96,9 +97,9 @@ print_ln: {
     rts
 }
 // Print a signed int as HEX
-// print_sint(signed word zp(9) w)
+// print_sint(signed word zp(5) w)
 print_sint: {
-    .label w = 9
+    .label w = 5
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -139,9 +140,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(9) w)
+// print_uint(word zp(5) w)
 print_uint: {
-    .label w = 9
+    .label w = 5
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -185,7 +186,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = 9
     lda #<str

@@ -1,36 +1,36 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
+  .label print_screen = $400
   .label last_time = $a
-  .label print_line_cursor = 6
-  .label print_char_cursor = 8
-  .label Ticks = $c
-  .label free_ = 2
-  .label root = 4
-  .label Ticks_1 = $e
-__bbegin:
-  // last_time
-  lda #<0
-  sta.z last_time
-  sta.z last_time+1
-  jsr main
-  rts
+  .label print_line_cursor = 4
+  .label Ticks = $e
+  .label Ticks_1 = $c
+  .label print_char_cursor = 6
+  .label free_ = 8
+  .label root = 2
+_start: {
+    // last_time
+    lda #<0
+    sta.z last_time
+    sta.z last_time+1
+    jsr main
+    rts
+}
 main: {
-    .label __5 = $c
-    .label i = 6
+    .label __5 = 8
+    .label i = 4
     // start()
     jsr start
     ldx #0
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
   __b1:
-    // init()
-    jsr init
     lda #<0
     sta.z root
     sta.z root+1
@@ -96,9 +96,9 @@ end: {
 }
 // Print a newline
 print_ln: {
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
   __b1:
     // print_line_cursor + $28
@@ -122,9 +122,9 @@ print_ln: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($e) w)
+// print_uint(word zp($c) w)
 print_uint: {
-    .label w = $e
+    .label w = $c
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -181,9 +181,9 @@ start: {
     rts
 }
 sum: {
-    .label current = 4
-    .label s = $c
-    .label return = $c
+    .label current = 2
+    .label s = 8
+    .label return = 8
     // current = root
     lda #<0
     sta.z s
@@ -220,10 +220,10 @@ sum: {
     sta.z current
     jmp __b1
 }
-// prepend(word zp(6) x)
+// prepend(word zp(4) x)
 prepend: {
-    .label new = $10
-    .label x = 6
+    .label new = $e
+    .label x = 4
     // alloc()
     jsr alloc
     // new = alloc()
@@ -250,8 +250,8 @@ prepend: {
     rts
 }
 alloc: {
-    .label __1 = $10
-    .label return = $10
+    .label __1 = $e
+    .label return = $e
     // heap + free_
     lda.z free_
     asl
@@ -274,9 +274,6 @@ alloc: {
     inc.z free_+1
   !:
     // }
-    rts
-}
-init: {
     rts
 }
   print_hextab: .text "0123456789abcdef"

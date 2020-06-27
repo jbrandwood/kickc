@@ -4,13 +4,6 @@
 .pc = $80d "Program"
   .label SCREEN = $400
   .label HARDWARE_IRQ = $fffe
-main: {
-    // *SCREEN = 'x'
-    lda #'x'
-    sta SCREEN
-    // }
-    rts
-}
 // Unused Interrupt Routine
 irq2: {
     // *HARDWARE_IRQ = &irq1
@@ -30,4 +23,11 @@ irq1: {
     sta HARDWARE_IRQ+1
     // }
     jmp $ea81
+}
+main: {
+    // *SCREEN = 'x'
+    lda #'x'
+    sta SCREEN
+    // }
+    rts
 }

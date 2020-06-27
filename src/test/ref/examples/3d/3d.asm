@@ -21,25 +21,25 @@
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The rotated point - updated by calling rotate_matrix()
+  // The rotated point - updated by calling rotate_matrix()
   .label xr = $f0
   .label yr = $f1
   .label zr = $f2
+  // The rotated point with perspective
   // The rotated point with perspective
   .label pp = $f3
   .label xp = $f4
   .label yp = $f5
   // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
+  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
   .label psp1 = $f6
   .label psp2 = $f8
   .label SCREEN = $400
-  // A single sprite
-  .label SPRITE = $3000
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
   .label print_screen = $400
-  .label sx = 2
-  .label sy = 3
-  // kickasm
+  .label sx = 3
+  .label sy = 4
 main: {
     // asm
     sei
@@ -65,7 +65,7 @@ main: {
     rts
 }
 anim: {
-    .label i = 4
+    .label i = 2
     lda #0
     sta.z sy
     sta.z sx
@@ -188,8 +188,8 @@ debug_print: {
     .const print_schar_pos12_row = 6
     .const print_schar_pos12_col = $25
     .label at_line = SCREEN+$13*$28
-    .label c = 5
-    .label i = 6
+    .label c = 6
+    .label i = 7
     // print_schar_pos(sx, 0, 37)
     lda.z sx
     // print_schar_at(sb, print_screen+row*40+col)
@@ -389,9 +389,9 @@ debug_print: {
     rts
 }
 // Print a signed char as hex at a specific screen position
-// print_schar_at(signed byte zp(7) b, byte* zp($e) at)
+// print_schar_at(signed byte zp(5) b, byte* zp($e) at)
 print_schar_at: {
-    .label b = 7
+    .label b = 5
     .label at = $e
     // if(b<0)
     lda.z b
@@ -432,9 +432,9 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp(7) b, byte* zp($e) at)
+// print_uchar_at(byte zp(5) b, byte* zp($e) at)
 print_uchar_at: {
-    .label b = 7
+    .label b = 5
     .label at = $e
     // b>>4
     lda.z b
@@ -615,17 +615,21 @@ store_matrix: {
 // Prepare the 3x3 rotation matrix into rotation_matrix[]
 // Angles sx, sy, sz are based on 2*PI=$100 
 // Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// calculate_matrix(signed byte register(X) sx, signed byte zp(3) sy)
+// calculate_matrix(signed byte register(X) sx, signed byte zp(4) sy)
 calculate_matrix: {
-    .label sy = 3
+    .label sy = 4
     .label t1 = 5
     .label t2 = 6
     .label t3 = 7
     .label t4 = 8
     .label t5 = 9
+    // = sx+sy+sz
     .label t6 = $a
+    // = sx-sy+sz
     .label t7 = $b
+    // = sx+sy-sz
     .label t8 = $c
+    // = sy+sz-sx
     .label t9 = $d
     // t1 = sy-sz
     lda.z sy
@@ -818,8 +822,8 @@ debug_print_init: {
     .label __59 = $1a
     .label __62 = $1c
     .label __65 = $1e
-    .label c = 4
-    .label i = 5
+    .label c = 3
+    .label i = 4
     // print_cls()
     jsr print_cls
     // print_str_at("sx", SCREEN+40*0+34)
@@ -1210,7 +1214,7 @@ sprites_init: {
     ldx #0
   __b1:
     // sprites_ptr[i] = (char)(SPRITE/$40)
-    lda #SPRITE/$40
+    lda #$ff&SPRITE/$40
     sta sprites_ptr,x
     // SPRITES_COLOR[i] = GREEN
     lda #GREEN
@@ -1301,8 +1305,10 @@ SINQ:
     }
     }
 
-.pc = SPRITE "SPRITE"
-  .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+.pc = $3000 "SPRITE"
+// A single sprite
+SPRITE:
+.var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)

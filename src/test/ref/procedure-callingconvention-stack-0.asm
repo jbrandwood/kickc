@@ -4,6 +4,26 @@
 .pc = $80d "Program"
   .const STACK_BASE = $103
   .label SCREEN = $400
+// plus(byte zp(2) a, byte register(A) b)
+plus: {
+    .const OFFSET_STACK_A = 1
+    .const OFFSET_STACK_B = 0
+    .const OFFSET_STACK_RETURN = 1
+    .label a = 2
+    // }
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    // return a+b;
+    clc
+    adc.z a
+    // }
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    rts
+}
 main: {
     // plus('0', 7)
     lda #'0'
@@ -16,24 +36,5 @@ main: {
     // SCREEN[0] = plus('0', 7)
     sta SCREEN
     // }
-    rts
-}
-// plus(byte zp(2) a, byte register(A) b)
-plus: {
-    .const OFFSET_STACK_A = 1
-    .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 1
-    .label a = 2
-    tsx
-    lda STACK_BASE+OFFSET_STACK_A,x
-    sta.z a
-    tsx
-    lda STACK_BASE+OFFSET_STACK_B,x
-    // return a+b;
-    clc
-    adc.z a
-    // }
-    tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
     rts
 }

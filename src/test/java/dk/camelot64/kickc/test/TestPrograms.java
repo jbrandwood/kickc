@@ -43,6 +43,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEmptyFunction2() throws IOException, URISyntaxException {
+      compileAndCompare("empty-function-2.c");
+   }
+
+   @Test
+   public void testEmptyFunction1() throws IOException, URISyntaxException {
+      compileAndCompare("empty-function-1.c");
+   }
+
+   @Test
+   public void testEmptyFunction0() throws IOException, URISyntaxException {
+      compileAndCompare("empty-function-0.c");
+   }
+
+   @Test
    public void testStaticInitCode2() throws IOException, URISyntaxException {
       compileAndCompare("static-init-code-2.c");
    }
@@ -1240,7 +1255,7 @@ public class TestPrograms {
 
    @Test
    public void testInnerIncrementProblem() throws IOException, URISyntaxException {
-      compileAndCompare("inner-increment-problem.c");
+      compileAndCompare("inner-increment-problem.c", log());
    }
 
    @Test
@@ -3043,6 +3058,11 @@ public class TestPrograms {
    @Test
    public void testStringConstConsolidation() throws IOException, URISyntaxException {
       compileAndCompare("string-const-consolidation.c");
+   }
+
+   @Test
+   public void testCommentsGlobalInit() throws IOException, URISyntaxException {
+      compileAndCompare("test-comments-global.c");
    }
 
    @Test

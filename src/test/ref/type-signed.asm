@@ -2,6 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
+  .label print_screen = $400
   .label print_line_cursor = 7
   .label print_char_cursor = $b
 main: {
@@ -10,13 +11,13 @@ main: {
     .label i = 6
     lda #0
     sta.z i
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<$1024
     sta.z b

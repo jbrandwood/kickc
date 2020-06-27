@@ -23,8 +23,9 @@
   .label KERNAL_ROM = $e000
   .label IO_RAM = $d000
   .label SCREEN = $400
-  .label print_line_cursor = 4
-  .label print_char_cursor = 6
+  .label print_screen = $400
+  .label print_char_cursor = 4
+  .label print_line_cursor = 8
 main: {
     // asm
     // Avoid interrupts
@@ -57,9 +58,9 @@ main: {
     // print_cls()
     jsr print_cls
     // print_str("ddr port ddr2 $00 $01 $a000 $d000 $e000")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -67,9 +68,9 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     // testProcport(PROCPORT_DDR_MEMORY_MASK, PROCPORT_RAM_ALL, PROCPORT_DDR_MEMORY_MASK)
@@ -409,9 +410,9 @@ print_char: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(8) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 8
+    .label str = 6
   __b1:
     // while(*str)
     ldy #0
@@ -443,7 +444,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = 8
     lda #<str

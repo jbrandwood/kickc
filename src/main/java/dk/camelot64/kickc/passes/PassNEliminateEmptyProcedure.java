@@ -10,6 +10,7 @@ import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.ProcedureRef;
+import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.SymbolVariableRef;
 
 import java.util.Collection;
@@ -30,7 +31,8 @@ public class PassNEliminateEmptyProcedure extends Pass2SsaOptimization {
       boolean optimized = false;
       for(Procedure procedure : allProcedures) {
          if(hasEmptyBody(procedure.getRef())) {
-            if(!hasExternalUsages(procedure.getRef(), getProgram())) {
+            if(!hasExternalUsages(procedure.getRef(), getProgram()) && !SymbolRef.MAIN_PROC_NAME.equals(procedure.getLabel().getLocalName())) {
+               // TODO: Entry point procedures include isAddressOfUsed!
                // Remove all calls
                removeAllCalls(procedure.getRef());
                // Remove the procedure

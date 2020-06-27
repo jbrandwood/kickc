@@ -5,25 +5,26 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
+  .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $f
+  .label rem16u = $15
   // Remainder after signed 16 bit division
-  .label rem16s = $f
-  .label testnum = 8
+  .label rem16s = $15
+  .label testnum = 6
   .label lasttest = 2
-  .label primeptr = 6
-  .label print_char_cursor = $a
+  .label primeptr = $19
   .label lastprime = 4
+  .label print_char_cursor = 8
 main: {
-    .label __0 = $11
-    .label __12 = $19
-    .label __13 = $d
-    .label __14 = $1d
-    .label __15 = $1b
-    .label p = $19
-    .label __16 = $19
-    .label __17 = $d
-    .label __18 = $1d
+    .label __0 = $d
+    .label __12 = $15
+    .label __13 = $b
+    .label __14 = $19
+    .label __15 = $17
+    .label p = $15
+    .label __16 = $15
+    .label __17 = $b
+    .label __18 = $19
     // primenum[1] = 2
     lda #<2
     sta primenum+1*SIZEOF_SIGNED_WORD
@@ -34,9 +35,9 @@ main: {
     sta primenum+2*SIZEOF_SIGNED_WORD
     lda #>3
     sta primenum+2*SIZEOF_SIGNED_WORD+1
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<2
     sta.z lastprime
@@ -257,9 +258,9 @@ print_sint_decimal: {
     jmp __b2
 }
 // Print a zero-terminated string
-// print_str(byte* zp($d) str)
+// print_str(byte* zp($b) str)
 print_str: {
-    .label str = $d
+    .label str = $b
     lda #<decimal_digits
     sta.z str
     lda #>decimal_digits
@@ -289,12 +290,12 @@ print_str: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($19) value, byte* zp($d) buffer)
+// utoa(word zp($19) value, byte* zp($b) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $1f
-    .label buffer = $d
-    .label digit = $c
+    .label digit_value = $1d
+    .label buffer = $b
+    .label digit = $a
     .label value = $19
     lda #<decimal_digits
     sta.z buffer
@@ -369,11 +370,11 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($d) buffer, word zp($19) value, word zp($1f) sub)
+// utoa_append(byte* zp($b) buffer, word zp($19) value, word zp($1d) sub)
 utoa_append: {
-    .label buffer = $d
+    .label buffer = $b
     .label value = $19
-    .label sub = $1f
+    .label sub = $1d
     .label return = $19
     ldx #0
   __b1:
@@ -411,10 +412,10 @@ utoa_append: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div16s(signed word zp(8) dividend, signed word zp($d) divisor)
+// div16s(signed word zp(6) dividend, signed word zp($b) divisor)
 div16s: {
-    .label dividend = 8
-    .label divisor = $d
+    .label dividend = 6
+    .label divisor = $b
     // divr16s(dividend, divisor, 0)
     lda.z dividend
     sta.z divr16s.dividend
@@ -429,12 +430,12 @@ div16s: {
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp($19) dividend, signed word zp($d) divisor)
+// divr16s(signed word zp($1b) dividend, signed word zp($b) divisor)
 divr16s: {
-    .label dividendu = $19
-    .label divisoru = $d
-    .label dividend = $19
-    .label divisor = $d
+    .label dividendu = $1b
+    .label divisoru = $b
+    .label dividend = $1b
+    .label divisor = $b
     // if(dividend<0 || rem<0)
     lda.z dividend+1
     bmi __b1
@@ -490,13 +491,13 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($19) dividend, word zp($d) divisor, word zp($f) rem)
+// divr16u(word zp($1b) dividend, word zp($b) divisor, word zp($15) rem)
 divr16u: {
-    .label rem = $f
-    .label dividend = $19
-    .label quotient = $1b
-    .label return = $1b
-    .label divisor = $d
+    .label rem = $15
+    .label dividend = $1b
+    .label quotient = $17
+    .label return = $17
+    .label divisor = $b
     ldx #0
     txa
     sta.z quotient
@@ -558,16 +559,16 @@ divr16u: {
 }
 // Multiply of two signed ints to a signed long
 // Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($19) a, signed word zp($19) b)
+// mul16s(signed word zp($15) a, signed word zp($15) b)
 mul16s: {
-    .label __6 = $1f
-    .label __9 = $21
-    .label __11 = $1f
-    .label __12 = $21
-    .label m = $11
-    .label return = $11
-    .label a = $19
-    .label b = $19
+    .label __6 = $1b
+    .label __9 = $1d
+    .label __11 = $1b
+    .label __12 = $1d
+    .label m = $d
+    .label return = $d
+    .label a = $15
+    .label b = $15
     // mul16u((unsigned int)a, (unsigned int) b)
     lda.z a
     sta.z mul16u.a
@@ -626,13 +627,13 @@ mul16s: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($1b) a, word zp($1f) b)
+// mul16u(word zp($1b) a, word zp($1d) b)
 mul16u: {
-    .label mb = $15
+    .label mb = $11
     .label a = $1b
-    .label res = $11
-    .label b = $1f
-    .label return = $11
+    .label res = $d
+    .label b = $1d
+    .label return = $d
     // mb = b
     lda.z b
     sta.z mb

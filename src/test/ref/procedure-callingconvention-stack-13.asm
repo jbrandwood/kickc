@@ -5,21 +5,11 @@
 .pc = $80d "Program"
   .const STACK_BASE = $103
   .label SCREEN = $400
-main: {
-    // pow2(6)
-    lda #6
-    pha
-    jsr pow2
-    pla
-    // *SCREEN = pow2(6)
-    sta SCREEN
-    // }
-    rts
-}
 // pow2(byte register(A) n)
 pow2: {
     .const OFFSET_STACK_N = 0
     .const OFFSET_STACK_RETURN = 0
+    // }
     tsx
     lda STACK_BASE+OFFSET_STACK_N,x
     // if (n == 0)
@@ -42,5 +32,16 @@ pow2: {
     // }
     tsx
     sta STACK_BASE+OFFSET_STACK_RETURN,x
+    rts
+}
+main: {
+    // pow2(6)
+    lda #6
+    pha
+    jsr pow2
+    pla
+    // *SCREEN = pow2(6)
+    sta SCREEN
+    // }
     rts
 }

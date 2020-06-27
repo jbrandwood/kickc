@@ -1,17 +1,18 @@
 // Test a procedure with calling convention stack
 // Test that comments are handled correctly
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label idx = 4
-__bbegin:
-  // idx = 0
-  lda #0
-  sta.z idx
-  jsr main
-  rts
+_start: {
+    // idx = 0
+    lda #0
+    sta.z idx
+    jsr main
+    rts
+}
 // print(byte* zp(2) str, byte zp(5) spacing)
 print: {
     .const OFFSET_STACK_STR = 1

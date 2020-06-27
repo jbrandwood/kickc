@@ -3,7 +3,8 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 5
+  .label print_screen = $400
+  .label print_line_cursor = $a
   .label print_char_cursor = 8
 main: {
     .label b = $c
@@ -12,15 +13,15 @@ main: {
     .label r = 4
     // print_cls()
     jsr print_cls
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     lda #0
     sta.z i
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #7
     sta.z a
@@ -507,11 +508,11 @@ print_ln: {
     // }
     rts
 }
-// printu(byte register(X) a, byte* zp($a) op, byte zp(7) b, byte zp(4) res)
+// printu(byte register(X) a, byte* zp(5) op, byte zp(7) b, byte zp(4) res)
 printu: {
     .label b = 7
     .label res = 4
-    .label op = $a
+    .label op = 5
     // print_char(' ')
     lda #' '
     jsr print_char
@@ -570,9 +571,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($a) str)
+// print_str(byte* zp(5) str)
 print_str: {
-    .label str = $a
+    .label str = 5
   __b1:
     // while(*str)
     ldy #0
@@ -604,7 +605,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = $a
     lda #<str

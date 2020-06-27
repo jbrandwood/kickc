@@ -81,36 +81,39 @@
   // Pointer to the start of RAM memory
   .label MEMORY = 0
   // NES Picture Processing Unit (PPU)
+  // NES Picture Processing Unit (PPU)
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
+  // NES CPU and audion processing unit (APU)
   .label APU = $4000
+  // The current cursor x-position
   .label conio_cursor_x = $11
+  // The current cursor y-position
   .label conio_cursor_y = $12
+  // The current text cursor line start
   .label conio_line_text = $13
   .label x_scroll = $15
   .label y_scroll = $16
-__bbegin:
-  // conio_cursor_x = 0
-  // The current cursor x-position
-  lda #0
-  sta.z conio_cursor_x
-  // conio_cursor_y = 0
-  // The current cursor y-position
-  sta.z conio_cursor_y
-  // conio_line_text = CONIO_SCREEN_TEXT
-  // The current text cursor line start
-  lda #<PPU_NAME_TABLE_0
-  sta.z conio_line_text
-  lda #>PPU_NAME_TABLE_0
-  sta.z conio_line_text+1
-  // x_scroll
-  lda #0
-  sta.z x_scroll
-  // y_scroll
-  sta.z y_scroll
-  jsr main
-  rts
 .segment Code
+_start: {
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<PPU_NAME_TABLE_0
+    sta.z conio_line_text
+    lda #>PPU_NAME_TABLE_0
+    sta.z conio_line_text+1
+    // x_scroll
+    lda #0
+    sta.z x_scroll
+    // y_scroll
+    sta.z y_scroll
+    jsr main
+    rts
+}
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     .const screensizex1_return = $20
@@ -364,6 +367,7 @@ cputln: {
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // Scroll lines up
+    // Scroll lines up
     .label line1 = $17
     .label line2 = $f
     // if(conio_cursor_y==CONIO_HEIGHT)
@@ -456,6 +460,7 @@ cscroll: {
 // ppuDataTransfer(void* zp(5) ppuData, void* zp(7) cpuData, word zp(9) size)
 ppuDataTransfer: {
     .label ppuDataPrepare1_ppuData = 5
+    // Transfer to PPU
     .label cpuSrc = 7
     .label i = $b
     .label ppuData = 5
@@ -510,6 +515,7 @@ ppuDataTransfer: {
 ppuDataFetch: {
     .const size = $20
     .label cpuData = conio_cscroll_buffer
+    // Fetch from PPU to CPU
     // Fetch from PPU to CPU
     .label cpuDst = 7
     .label i = 5
@@ -626,9 +632,9 @@ ppuDataSet: {
 // Set the cursor to the specified position
 // gotoxy(byte register(X) x, byte register(A) y)
 gotoxy: {
-    .label __5 = $13
-    .label __6 = $13
-    .label line_offset = $13
+    .label __5 = $1b
+    .label __6 = $1b
+    .label line_offset = $1b
     // if(y>CONIO_HEIGHT)
     cmp #$1e+1
     bcc __b1
@@ -667,6 +673,10 @@ gotoxy: {
     adc #>PPU_NAME_TABLE_0
     sta.z __5+1
     // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
     // }
     rts
 }
@@ -682,9 +692,9 @@ cputsxy: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($d) s)
+// cputs(byte* zp($1b) s)
 cputs: {
-    .label s = $d
+    .label s = $1b
     lda #<num_buffer
     sta.z s
     lda #>num_buffer
@@ -716,10 +726,10 @@ cputs: {
 // uctoa(byte register(X) value, byte* zp($f) buffer)
 uctoa: {
     .const max_digits = 2
-    .label digit_value = $1b
+    .label digit_value = $1d
     .label buffer = $f
-    .label digit = $11
-    .label started = $12
+    .label digit = $d
+    .label started = $e
     lda #<num_buffer
     sta.z buffer
     lda #>num_buffer
@@ -784,10 +794,10 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($f) buffer, byte register(X) value, byte zp($1b) sub)
+// uctoa_append(byte* zp($f) buffer, byte register(X) value, byte zp($1d) sub)
 uctoa_append: {
     .label buffer = $f
-    .label sub = $1b
+    .label sub = $1d
     ldy #0
   __b1:
     // while (value >= sub)
@@ -919,7 +929,7 @@ vblank: {
 // - bit 6: B
 // - bit 7: A
 readJoy1: {
-    .label __1 = $1c
+    .label __1 = $1e
     // APU->JOY1 = 1
     // Latch the controller buttons
     lda #1

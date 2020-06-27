@@ -5,10 +5,9 @@
   .label SCREEN = $400
 main: {
     // used vars
+    // used vars
     .const col = 2
     .label COLS = $d800
-    // s()
-    jsr s
     ldx #0
   __b1:
     // COLS[i] = col
@@ -22,8 +21,5 @@ main: {
     cpx #$65
     bne __b1
     // }
-    rts
-}
-s: {
     rts
 }

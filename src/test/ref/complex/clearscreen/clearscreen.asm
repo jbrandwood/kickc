@@ -4,7 +4,7 @@
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
@@ -80,30 +80,38 @@
   // Sprite data for the animating sprites
   .label SPRITE_DATA = $2000
   // Top of the heap used by malloc()
+  // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 8
+  // Copy of the screen used for finding chars to process
   .label SCREEN_COPY = $c
+  // Screen containing bytes representing the distance to the center
   .label SCREEN_DIST = $e
-__bbegin:
-  // malloc(1000)
-  lda #<HEAP_TOP
-  sta.z heap_head
-  lda #>HEAP_TOP
-  sta.z heap_head+1
-  jsr malloc
-  // malloc(1000)
-  lda.z malloc.mem
-  sta.z SCREEN_COPY
-  lda.z malloc.mem+1
-  sta.z SCREEN_COPY+1
-  jsr malloc
-  // malloc(1000)
-  jsr main
-  rts
+_start: {
+    // malloc(1000)
+    lda #<HEAP_TOP
+    sta.z heap_head
+    lda #>HEAP_TOP
+    sta.z heap_head+1
+    jsr malloc
+    // malloc(1000)
+    lda.z malloc.mem
+    sta.z SCREEN_COPY
+    lda.z malloc.mem+1
+    sta.z SCREEN_COPY+1
+    jsr malloc
+    // malloc(1000)
+    lda.z malloc.mem
+    sta.z SCREEN_DIST
+    lda.z malloc.mem+1
+    sta.z SCREEN_DIST+1
+    jsr main
+    rts
+}
 main: {
     .label dst = 2
-    .label src = 8
+    .label src = $22
     .label i = 4
     .label center_y = $10
     // init_angle_screen(SCREEN_DIST)
@@ -147,7 +155,7 @@ main: {
     tax
     ldy #0
   !:
-    lda __2,y
+    lda __0,y
     sta PROCESSING,x
     inx
     iny
@@ -205,36 +213,38 @@ main: {
     jmp __b1
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zp($23) center_x, byte zp($10) center_y)
+// startProcessing(byte zp($21) center_x, byte zp($10) center_y)
 startProcessing: {
-    .label __0 = $11
-    .label __4 = 8
+    .label __0 = $22
+    .label __4 = $1f
     .label __6 = 6
-    .label __8 = $18
-    .label __9 = $18
-    .label __11 = $1a
-    .label __12 = $1a
-    .label __23 = $11
-    .label __24 = 8
+    .label __8 = $16
+    .label __9 = $16
+    .label __11 = $18
+    .label __12 = $18
+    .label __23 = $22
+    .label __24 = $1f
     .label __25 = 6
-    .label __26 = $18
-    .label __27 = $1a
-    .label center_x = $23
+    .label __26 = $16
+    .label __27 = $18
+    .label center_x = $21
     .label center_y = $10
     .label i = 5
-    .label offset = $11
-    .label colPtr = $15
-    .label spriteCol = $17
-    .label screenPtr = $11
-    .label spriteData = 8
+    // Copy char into sprite
+    .label offset = $22
+    .label colPtr = $13
+    .label spriteCol = $15
+    .label screenPtr = $22
+    .label spriteData = $1f
     .label chargenData = 6
-    .label spriteX = $18
-    .label spriteY = $1a
-    .label spritePtr = $1c
+    .label spriteX = $16
+    .label spriteY = $18
+    .label spritePtr = $1a
+    // Busy-wait while finding an empty slot in the PROCESSING array
     // Busy-wait while finding an empty slot in the PROCESSING array
     .label freeIdx = 5
-    .label __33 = $13
-    .label __34 = $11
+    .label __33 = $11
+    .label __34 = $22
     ldx #$ff
   __b1:
     lda #0
@@ -518,19 +528,19 @@ startProcessing: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label __8 = $1d
-    .label __9 = $1d
-    .label __11 = $1d
+    .label __8 = $1b
+    .label __9 = $1b
+    .label __11 = $1b
     .label screen_line = 6
-    .label dist_line = 8
+    .label dist_line = $1f
     .label y = 5
-    .label return_x = $17
-    .label return_y = $1c
+    .label return_x = $15
+    .label return_y = $1a
     .label closest_dist = $10
-    .label closest_x = $17
-    .label closest_y = $1c
-    .label __12 = $1f
-    .label __13 = $1d
+    .label closest_x = $15
+    .label closest_y = $1a
+    .label __12 = $1d
+    .label __13 = $1b
     // screen_line = SCREEN_COPY
     lda.z SCREEN_COPY
     sta.z screen_line
@@ -738,18 +748,18 @@ initSprites: {
 }
 // Populates 1000 chars (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zp($11) screen)
+// init_angle_screen(byte* zp($22) screen)
 init_angle_screen: {
-    .label __7 = $18
-    .label screen = $11
+    .label __7 = $16
+    .label screen = $22
     .label screen_topline = 6
-    .label screen_bottomline = $11
-    .label xw = $1f
-    .label yw = $21
-    .label angle_w = $18
-    .label ang_w = $23
-    .label x = $17
-    .label xb = $1c
+    .label screen_bottomline = $22
+    .label xw = $1d
+    .label yw = $1f
+    .label angle_w = $16
+    .label ang_w = $21
+    .label x = $15
+    .label xb = $1a
     .label y = $10
     // screen_topline = screen+40*12
     lda.z screen
@@ -864,18 +874,19 @@ init_angle_screen: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($1f) x, signed word zp($21) y)
+// atan2_16(signed word zp($1d) x, signed word zp($1f) y)
 atan2_16: {
-    .label __2 = $13
-    .label __7 = $15
-    .label yi = $13
-    .label xi = $15
-    .label angle = $18
-    .label xd = $1d
-    .label yd = $1a
-    .label return = $18
-    .label x = $1f
-    .label y = $21
+    .label __2 = $11
+    .label __7 = $13
+    .label yi = $11
+    .label xi = $13
+    .label angle = $16
+    // Optimized shift of 2 values: xd=xi>>i; yd=yi>>i
+    .label xd = $1b
+    .label yd = $18
+    .label return = $16
+    .label x = $1d
+    .label y = $1f
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -1079,7 +1090,7 @@ atan2_16: {
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
 malloc: {
-    .label mem = $e
+    .label mem = $22
     // mem = heap_head-size
     lda.z heap_head
     sec
@@ -1486,6 +1497,6 @@ VYSIN:
 
   // Sprites currently being processed in the interrupt
   PROCESSING: .fill $e*NUM_PROCESSING, 0
-  __2: .word 0, 0, 0, 0
+  __0: .word 0, 0, 0, 0
   .byte 0, 0, 0, STATUS_FREE
   .word 0

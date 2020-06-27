@@ -1,16 +1,17 @@
 // Test declaring a variable as at a hard-coded address
 // mainmem-page hard-coded address parameter
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = $3000
-__bbegin:
-  // idx
-  lda #0
-  sta idx
-  jsr main
-  rts
+_start: {
+    // idx
+    lda #0
+    sta idx
+    jsr main
+    rts
+}
 main: {
     // print('c')
     lda #'c'

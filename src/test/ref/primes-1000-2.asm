@@ -5,13 +5,14 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
+  .label print_screen = $400
+  .label print_char_cursor = 7
   // The number currently being tested for whether it is a prime
-  .label potential = 6
+  .label potential = 5
   // The last index to test. It is the smallest index where PRIMES[test_last] > sqr(potential)
   .label test_last = 2
   // The index into PRIMES[] used for prime testing. It runs from 2 to test_last for each number tested.
-  .label test_idx = 5
-  .label print_char_cursor = 8
+  .label test_idx = 9
   // The index of the last prime we put into the PRIME[] table
   .label prime_idx = 3
 main: {
@@ -28,9 +29,9 @@ main: {
     sta PRIMES+2*SIZEOF_WORD+1
     lda #<3
     sta PRIMES+2*SIZEOF_WORD
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<2
     sta.z prime_idx
@@ -162,9 +163,9 @@ print_char: {
     rts
 }
 // Print a unsigned int as DECIMAL
-// print_uint_decimal(word zp(6) w)
+// print_uint_decimal(word zp(5) w)
 print_uint_decimal: {
-    .label w = 6
+    .label w = 5
     // utoa(w, decimal_digits, DECIMAL)
     lda.z w
     sta.z utoa.value
@@ -214,7 +215,7 @@ utoa: {
     .const max_digits = 5
     .label digit_value = $11
     .label buffer = $d
-    .label digit = $a
+    .label digit = 9
     .label value = $f
     lda #<decimal_digits
     sta.z buffer
@@ -327,9 +328,9 @@ utoa_append: {
 }
 // Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
 // The 8-bit unsigned char remainder can be found in rem8u after the division
-// div16u8u(word zp(6) dividend, byte zp($a) divisor)
+// div16u8u(word zp(5) dividend, byte zp($a) divisor)
 div16u8u: {
-    .label dividend = 6
+    .label dividend = 5
     .label divisor = $a
     // divr8u(>dividend, divisor, 0)
     lda.z dividend+1

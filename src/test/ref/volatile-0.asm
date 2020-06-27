@@ -1,15 +1,16 @@
 // Test that volatile vars are turned into load/store
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label i = 2
-__bbegin:
-  // i = 3
-  lda #3
-  sta.z i
-  jsr main
-  rts
+_start: {
+    // i = 3
+    lda #3
+    sta.z i
+    jsr main
+    rts
+}
 main: {
   __b1:
     // while(i<7)

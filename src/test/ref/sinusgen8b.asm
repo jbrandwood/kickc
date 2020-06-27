@@ -19,17 +19,17 @@
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
   .const SIZEOF_SIGNED_WORD = 2
-  .label print_line_cursor = $400
+  .label print_screen = $400
   // Remainder after unsigned 16-bit division
   .label rem16u = $11
   .label print_char_cursor = 3
 main: {
     .label wavelength = $c0
-    .label __3 = $1d
-    .label __9 = $1d
-    .label __10 = $1d
-    .label sb = $1c
-    .label sw = $1d
+    .label __3 = $1b
+    .label __9 = $1b
+    .label __10 = $1b
+    .label sb = $1a
+    .label sw = $1b
     .label i = 2
     // sin8s_gen(sintabb, wavelength)
     jsr sin8s_gen
@@ -37,9 +37,9 @@ main: {
     jsr sin16s_gen
     // print_cls()
     jsr print_cls
-    lda #<print_line_cursor
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>print_line_cursor
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #0
     sta.z i
@@ -196,7 +196,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = print_line_cursor
+    .label str = print_screen
     .label end = str+num
     .label dst = $11
     lda #<str
@@ -228,15 +228,18 @@ memset: {
 // Generate signed (large) unsigned int sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen(signed word* zp($17) sintab)
+// sin16s_gen(signed word* zp($15) sintab)
 sin16s_gen: {
-    .label __2 = $19
-    .label step = $1f
-    .label sintab = $17
+    .label __2 = $17
+    // u[4.28] step = PI*2/wavelength
+    .label step = $1d
+    .label sintab = $15
+    // u[4.28]
+    // Iterate over the table
     // u[4.28]
     // Iterate over the table
     .label x = 5
-    .label i = $15
+    .label i = 3
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
@@ -320,18 +323,27 @@ sin16s_gen: {
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp(9) x)
 sin16s: {
-    .label __4 = $23
+    .label __4 = $21
     .label x = 9
-    .label return = $19
-    .label x1 = $29
+    .label return = $17
+    // sinx = x - x^3/6 + x5/128;
+    .label x1 = $25
+    // u[1.15]
     .label x2 = $11
+    // u[2.14] x^2
     .label x3 = $11
+    // u[2.14] x^3
     .label x3_6 = $27
-    .label usinx = $19
+    // u[1.15] x^3/6;
+    .label usinx = $17
+    // u[1.15] x - x^3/6
     .label x4 = $11
+    // u[3.13] x^4
     .label x5 = $27
+    // u[4.12] x^5
     .label x5_128 = $27
-    .label sinx = $19
+    // u[1.15] (first bit is always zero)
+    .label sinx = $17
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -529,12 +541,12 @@ sin16s: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($11) v1, word zp($1d) v2, byte register(X) select)
+// mulu16_sel(word zp($11) v1, word zp($1b) v2, byte register(X) select)
 mulu16_sel: {
-    .label __0 = $23
-    .label __1 = $23
+    .label __0 = $21
+    .label __1 = $21
     .label v1 = $11
-    .label v2 = $1d
+    .label v2 = $1b
     .label return = $27
     .label return_1 = $11
     // mul16u(v1, v2)
@@ -563,13 +575,13 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($13) a, word zp($1d) b)
+// mul16u(word zp($13) a, word zp($1b) b)
 mul16u: {
     .label mb = $d
     .label a = $13
-    .label res = $23
-    .label b = $1d
-    .label return = $23
+    .label res = $21
+    .label b = $1b
+    .label return = $21
     // mb = b
     lda.z b
     sta.z mb
@@ -629,7 +641,7 @@ mul16u: {
 div32u16u: {
     .label quotient_hi = $29
     .label quotient_lo = $13
-    .label return = $1f
+    .label return = $1d
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -669,10 +681,10 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($1d) dividend, word zp($11) rem)
+// divr16u(word zp($1b) dividend, word zp($11) rem)
 divr16u: {
     .label rem = $11
-    .label dividend = $1d
+    .label dividend = $1b
     .label quotient = $13
     .label return = $13
     ldx #0
@@ -735,10 +747,13 @@ divr16u: {
 // Generate signed char sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zp($19) sintab)
+// sin8s_gen(signed byte* zp($1b) sintab)
 sin8s_gen: {
+    // u[4.28] step = PI*2/wavelength
     .label step = $13
-    .label sintab = $19
+    .label sintab = $1b
+    // u[4.12]
+    // Iterate over the table
     // u[4.12]
     // Iterate over the table
     .label x = $17
@@ -802,17 +817,21 @@ sin8s_gen: {
 // Calculate signed char sinus sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp($1d) x)
+// sin8s(word zp($25) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = $1d
-    .label x = $1d
+    .label __4 = $25
+    .label x = $25
+    // sinx = x - x^3/6 + x5/128;
     .label x1 = $2b
+    // u[2.6] x^2
     .label x3 = $2c
+    // u[1.7] x^3/6;
     .label usinx = $2d
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-    .label isUpper = $1c
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    .label isUpper = $1a
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -943,11 +962,11 @@ sin8s: {
 }
 // Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($1b) select)
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($19) select)
 mulu8_sel: {
-    .label __0 = $29
-    .label __1 = $29
-    .label select = $1b
+    .label __0 = $27
+    .label __1 = $27
+    .label select = $19
     // mul8u(v1, v2)
     tya
     jsr mul8u
@@ -968,9 +987,9 @@ mulu8_sel: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $27
-    .label res = $29
-    .label return = $29
+    .label mb = $29
+    .label res = $27
+    .label return = $27
     // mb = b
     sta.z mb
     lda #0

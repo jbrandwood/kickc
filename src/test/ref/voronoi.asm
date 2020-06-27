@@ -4,6 +4,7 @@
 .pc = $80d "Program"
   .const FILL = $e6
   // The total number of voronoi points
+  // The total number of voronoi points
   .const numpoints = 6
   .label SCREEN = $400
   .label COLORS = $d800

@@ -12,6 +12,7 @@ main: {
 }
 model_ssa_zp: {
     // A local pointer
+    // A local pointer
     .label screen = 2
     ldx #0
     lda #<$428
@@ -68,6 +69,7 @@ model_ma_mem: {
     bne __b1
     // }
     rts
+    // A local pointer
     screen: .word 0
     i: .byte 0
 }

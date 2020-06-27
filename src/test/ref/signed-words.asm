@@ -18,13 +18,13 @@
   .label SPRITES_PTR = SCREEN+$3f8
   .label SPRITE = $2000
   // Reset y velocity
-  .label yvel_init = 4
-  .label yvel = 4
-  .label yvel_1 = 6
+  .label yvel_init = 2
+  .label yvel = 2
+  .label yvel_1 = 4
   // Reset position
-  .label xpos = 8
-  .label ypos = $a
-  .label xvel = 2
+  .label xpos = 6
+  .label ypos = 8
+  .label xvel = $a
 main: {
     // init()
     jsr init
@@ -191,7 +191,7 @@ anim: {
 }
 // Fill and show a sprite, clear the screen
 init: {
-    .label sc = $c
+    .label sc = $a
     // *SPRITES_ENABLE = %00000001
     lda #1
     sta SPRITES_ENABLE

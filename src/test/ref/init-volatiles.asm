@@ -1,14 +1,15 @@
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label x = 2
-__bbegin:
-  // x = 12
-  lda #$c
-  sta.z x
-  jsr main
-  rts
+_start: {
+    // x = 12
+    lda #$c
+    sta.z x
+    jsr main
+    rts
+}
 main: {
   __b1:
     // while(++x<50)

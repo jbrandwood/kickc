@@ -12,8 +12,9 @@
   .const PI_u4f12 = $3244
   // PI/2 in u[4.12] format
   .const PI_HALF_u4f12 = $1922
+  .label print_screen = $400
   .label print_char_cursor = 8
-  .label print_line_cursor = 6
+  .label print_line_cursor = $a
 main: {
     .label tabsize = $14
     // print_cls()
@@ -36,11 +37,14 @@ sin8u_table: {
     .const sum = min+max
     .const mid = sum/2+1
     .label amplitude = max-min
+    //if( sum & 1 > 0) mid++;
+    // u[4.28] step = PI*2/wavelength
     .label step = $e
     .label sinx = $12
-    .label sinx_sc = $a
+    .label sinx_sc = 6
     .label sinx_tr = $13
     .label sintab = 4
+    // Iterate over the table
     // Iterate over the table
     .label x = 2
     .label i = $10
@@ -50,9 +54,9 @@ sin8u_table: {
     // step = div16u(PI2_u4f12, tabsize)
     // print_str("step:")
   // u[4.12]
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -102,9 +106,9 @@ sin8u_table: {
     ldx #mid
     jsr print_uchar
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     lda #<main.sintab
@@ -394,7 +398,7 @@ print_schar: {
 // mul8su(signed byte register(Y) a)
 mul8su: {
     .const b = sin8u_table.amplitude+1
-    .label m = $a
+    .label m = 6
     // mul8u((char)a, (char) b)
     tya
     tax
@@ -418,9 +422,9 @@ mul8su: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = $c
-    .label res = $a
-    .label return = $a
+    .label mb = 8
+    .label res = 6
+    .label return = 6
     // mb = b
     sta.z mb
     lda #0
@@ -467,9 +471,13 @@ sin8s: {
     .const DIV_6 = $2b
     .label __4 = $c
     .label x = $c
+    // sinx = x - x^3/6 + x5/128;
     .label x1 = $14
+    // u[2.6] x^2
     .label x3 = $15
+    // u[1.7] x^3/6;
     .label usinx = $16
+    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
     .label isUpper = $12
     // if(x >= PI_u4f12 )
@@ -604,8 +612,8 @@ sin8s: {
 // The select parameter indicates how many of the highest bits of the 16-bit result to skip
 // mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($13) select)
 mulu8_sel: {
-    .label __0 = $a
-    .label __1 = $a
+    .label __0 = 6
+    .label __1 = 6
     .label select = $13
     // mul8u(v1, v2)
     tya
@@ -641,9 +649,9 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($c) dividend, word zp($10) rem)
+// divr16u(word zp($c) dividend, word zp($a) rem)
 divr16u: {
-    .label rem = $10
+    .label rem = $a
     .label dividend = $c
     .label quotient = $e
     .label return = $e
@@ -721,7 +729,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = $10
     lda #<str

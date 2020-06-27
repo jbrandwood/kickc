@@ -2,8 +2,9 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label print_line_cursor = 2
-  .label print_char_cursor = 8
+  .label print_screen = $400
+  .label print_char_cursor = 6
+  .label print_line_cursor = $a
 main: {
     // print_cls()
     jsr print_cls
@@ -99,9 +100,9 @@ print_ln: {
     rts
 }
 // Print a signed long as HEX
-// print_slong(signed dword zp(4) dw)
+// print_slong(signed dword zp(2) dw)
 print_slong: {
-    .label dw = 4
+    .label dw = 2
     // if(dw<0)
     lda.z dw+3
     bmi __b1
@@ -152,9 +153,9 @@ print_char: {
     rts
 }
 // Print a unsigned long as HEX
-// print_ulong(dword zp(4) dw)
+// print_ulong(dword zp(2) dw)
 print_ulong: {
-    .label dw = 4
+    .label dw = 2
     // print_uint(>dw)
     lda.z dw+2
     sta.z print_uint.w
@@ -171,9 +172,9 @@ print_ulong: {
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp($a) w)
+// print_uint(word zp(8) w)
 print_uint: {
-    .label w = $a
+    .label w = 8
     // print_uchar(>w)
     ldx.z w+1
     jsr print_uchar
@@ -207,9 +208,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($a) str)
+// print_str(byte* zp(8) str)
 print_str: {
-    .label str = $a
+    .label str = 8
   __b1:
     // while(*str)
     ldy #0
@@ -276,9 +277,9 @@ testInt: {
     .byte 0
 }
 // Print a signed int as HEX
-// print_sint(signed word zp($a) w)
+// print_sint(signed word zp(8) w)
 print_sint: {
-    .label w = $a
+    .label w = 8
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -354,9 +355,9 @@ testChar: {
     .const n = $e
     .label s = -$e
     // print_str("char: ")
-    lda #<$400
+    lda #<print_screen
     sta.z print_char_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_char_cursor+1
     lda #<str
     sta.z print_str.str
@@ -378,9 +379,9 @@ testChar: {
     // print_schar(s)
     jsr print_schar
     // print_ln()
-    lda #<$400
+    lda #<print_screen
     sta.z print_line_cursor
-    lda #>$400
+    lda #>print_screen
     sta.z print_line_cursor+1
     jsr print_ln
     // }
@@ -411,7 +412,7 @@ print_cls: {
 memset: {
     .const c = ' '
     .const num = $3e8
-    .label str = $400
+    .label str = print_screen
     .label end = str+num
     .label dst = $a
     lda #<str

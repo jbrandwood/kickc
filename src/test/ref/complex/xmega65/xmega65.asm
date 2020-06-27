@@ -18,7 +18,22 @@
   .label BG_COLOR = $d021
   .label COLS = $d800
 .segment Code
+syscall2: {
+    // *(SCREEN+78) = '<'
+    lda #'<'
+    sta SCREEN+$4e
+    // }
+    rts
+}
+syscall1: {
+    // *(SCREEN+79) = '>'
+    lda #'>'
+    sta SCREEN+$4f
+    // }
+    rts
+}
 main: {
+    // Print message
     // Print message
     .label sc = 4
     .label msg = 2
@@ -123,20 +138,6 @@ memset: {
     inc.z dst+1
   !:
     jmp __b2
-}
-syscall2: {
-    // *(SCREEN+78) = '<'
-    lda #'<'
-    sta SCREEN+$4e
-    // }
-    rts
-}
-syscall1: {
-    // *(SCREEN+79) = '>'
-    lda #'>'
-    sta SCREEN+$4f
-    // }
-    rts
 }
 .segment Data
   MESSAGE: .text "hello world!"

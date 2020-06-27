@@ -1,17 +1,19 @@
 // Test address-of by assigning the affected variable in multiple ways
 .pc = $801 "Basic"
-:BasicUpstart(__bbegin)
+:BasicUpstart(_start)
 .pc = $80d "Program"
   .label val = 2
-__bbegin:
-  // val = 0
-  lda #0
-  sta.z val
-  jsr main
-  rts
+_start: {
+    // val = 0
+    lda #0
+    sta.z val
+    jsr main
+    rts
+}
 main: {
     .label SCREEN1 = $400
     .label SCREEN2 = SCREEN1+$28
+    // Use address-of - hereafter all versions of val must be in the same memory
     // Use address-of - hereafter all versions of val must be in the same memory
     .label ptr = val
     // SCREEN1[idx] = val

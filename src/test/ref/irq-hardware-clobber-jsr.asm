@@ -33,6 +33,30 @@
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+// Interrupt Routine
+irq: {
+    sta rega+1
+    // do_irq()
+    jsr do_irq
+    // }
+  rega:
+    lda #00
+    rti
+}
+do_irq: {
+    // *BG_COLOR = WHITE
+    lda #WHITE
+    sta BG_COLOR
+    // *BG_COLOR = BLACK
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // }
+    rts
+}
 main: {
     // asm
     sei
@@ -71,28 +95,4 @@ main: {
     // (*BORDER_COLOR)++;
     inc BORDER_COLOR
     jmp __b1
-}
-// Interrupt Routine
-irq: {
-    sta rega+1
-    // do_irq()
-    jsr do_irq
-    // }
-  rega:
-    lda #00
-    rti
-}
-do_irq: {
-    // *BG_COLOR = WHITE
-    lda #WHITE
-    sta BG_COLOR
-    // *BG_COLOR = BLACK
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // }
-    rts
 }

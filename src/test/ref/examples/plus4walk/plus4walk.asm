@@ -262,11 +262,11 @@ rand: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(5) str, byte register(X) c)
+// memset(void* zp(3) str, byte register(X) c)
 memset: {
     .label end = $13
-    .label dst = 5
-    .label str = 5
+    .label dst = 3
+    .label str = 3
     // end = (char*)str + num
     lda.z str
     clc

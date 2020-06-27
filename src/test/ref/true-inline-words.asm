@@ -3,12 +3,17 @@
 .pc = $80d "Program"
 main: {
     // constant byte array
+    // constant byte array
     .const b = 4
+    // constant byte
     .const w = b*$100
+    // constant inline word
     .const w2 = 1*$100+1+w
+    // Test the result
     // Test the result
     .label pos = $501
     .label BG_COLOR = $d021
+    // constant inline words inside expression
     // constant inline words inside expression
     .label sc = w2
     // *sc = bs[1]

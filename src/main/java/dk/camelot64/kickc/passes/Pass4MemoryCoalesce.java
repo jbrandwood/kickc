@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.values.ProcedureRef;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
 import dk.camelot64.kickc.model.values.VariableRef;
+import dk.camelot64.kickc.passes.utils.ProcedureUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,22 +33,9 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
    public static Collection<ScopeRef> getThreadHeads(Program program) {
       ArrayList<ScopeRef> threadHeads = new ArrayList<>();
       Collection<Procedure> procedures = program.getScope().getAllProcedures(true);
-      for(Procedure procedure : procedures) {
-         if(procedure.getRef().equals(program.getStartProcedure())) {
-            // TODO: Handles main() correctly?
+      for(Procedure procedure : procedures)
+         if(ProcedureUtils.isEntrypoint(procedure.getRef(), program))
             threadHeads.add(procedure.getRef());
-            continue;
-         }
-         if(Pass2ConstantIdentification.isAddressOfUsed(procedure.getRef(), program)) {
-            threadHeads.add(procedure.getRef());
-            continue;
-         }
-         if(procedure.getInterruptType()!=null) {
-            // TODO: Handles Interrupts correctly?
-            threadHeads.add(procedure.getRef());
-            continue;
-         }
-      }
       return threadHeads;
    }
 

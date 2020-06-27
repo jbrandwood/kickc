@@ -442,8 +442,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Object visitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx) {
-      final KickAsm kickAsm = (KickAsm) this.visit(ctx.declKasm());
-      StatementKickAsm statementKickAsm = new StatementKickAsm(kickAsm.kickAsmCode, kickAsm.bytes, kickAsm.cycles, kickAsm.uses, kickAsm.declaredClobber, StatementSource.kickAsm(ctx.declKasm()), ensureUnusedComments(getCommentsSymbol(ctx)));
+      final KickAsm kickAsm = (KickAsm) this.visit(ctx.kasmContent());
+      StatementKickAsm statementKickAsm = new StatementKickAsm(kickAsm.kickAsmCode, kickAsm.bytes, kickAsm.cycles, kickAsm.uses, kickAsm.declaredClobber, StatementSource.kickAsm(ctx.kasmContent()), ensureUnusedComments(getCommentsSymbol(ctx)));
       addStatement(statementKickAsm);
       return statementKickAsm;
    }
@@ -467,7 +467,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public KickAsm visitDeclKasm(KickCParser.DeclKasmContext ctx) {
+   public Object visitKasmContent(KickCParser.KasmContentContext ctx) {
       String kasmBody = ctx.KICKASM_BODY().getText();
       Pattern p = Pattern.compile("\\{\\{[\\s]*(.*)[\\s]*\\}\\}", Pattern.DOTALL);
       Matcher m = p.matcher(kasmBody);
@@ -1036,7 +1036,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("KickAsm initializers only supported for arrays " + varDecl.getEffectiveType().getTypeName(), statementSource);
       }
       // Add KickAsm statement
-      KickAsm kasm = (KickAsm) this.visit(ctx.declKasm());
+      KickAsm kasm = (KickAsm) this.visit(ctx.kasmContent());
       if(kasm.cycles != null) {
          throw new CompileError("KickAsm initializers does not support 'cycles' directive.", statementSource);
       }

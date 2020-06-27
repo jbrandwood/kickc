@@ -565,6 +565,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code stmtEmpty}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStmtEmpty(KickCParser.StmtEmptyContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link KickCParser#switchCases}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -786,11 +793,11 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitParameterList(KickCParser.ParameterListContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link KickCParser#declKasm}.
+	 * Visit a parse tree produced by {@link KickCParser#kasmContent}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDeclKasm(KickCParser.DeclKasmContext ctx);
+	T visitKasmContent(KickCParser.KasmContentContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link KickCParser#asmDirectives}.
 	 * @param ctx the parse tree

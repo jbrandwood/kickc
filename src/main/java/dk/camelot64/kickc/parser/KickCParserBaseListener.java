@@ -1002,6 +1002,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStmtEmpty(KickCParser.StmtEmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStmtEmpty(KickCParser.StmtEmptyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterSwitchCases(KickCParser.SwitchCasesContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1386,13 +1398,13 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDeclKasm(KickCParser.DeclKasmContext ctx) { }
+	@Override public void enterKasmContent(KickCParser.KasmContentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDeclKasm(KickCParser.DeclKasmContext ctx) { }
+	@Override public void exitKasmContent(KickCParser.KasmContentContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

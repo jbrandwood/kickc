@@ -53,7 +53,7 @@ typeDef
 
 declVariableInit
     : NAME declArray* ('=' expr)? #declVariableInitExpr
-    | NAME declArray* '=' declKasm #declVariableInitKasm
+    | NAME declArray* '=' kasmContent #declVariableInitKasm
     ;
 
 declType
@@ -189,7 +189,8 @@ stmt
     | BREAK ';' #stmtBreak
     | CONTINUE ';' #stmtContinue
     | ASM asmDirectives? CURLY_BEGIN asmLines ASM_CURLY_END #stmtAsm
-    | declKasm #stmtDeclKasm
+    | kasmContent #stmtDeclKasm
+    | ';' #stmtEmpty
     ;
 
 switchCases:
@@ -254,7 +255,7 @@ parameterList
     : expr (COMMA expr)*
     ;
 
-declKasm
+kasmContent
     : KICKASM asmDirectives? KICKASM_BODY
     ;
 

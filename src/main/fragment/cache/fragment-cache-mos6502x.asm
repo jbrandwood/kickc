@@ -17728,3 +17728,7 @@ tax
 //FRAGMENT vbuyy=_byte_pwuc1_derefidx_vbuyy
 lda {c1},y
 tay
+//FRAGMENT vbuc1_ge_vbuaa_then_la1
+cmp #{c1}
+bcc {la1}
+beq {la1}

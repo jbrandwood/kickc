@@ -950,6 +950,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitStmtDeclKasm(KickCParser.StmtDeclKasmContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code stmtEmpty}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterStmtEmpty(KickCParser.StmtEmptyContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code stmtEmpty}
+	 * labeled alternative in {@link KickCParser#stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitStmtEmpty(KickCParser.StmtEmptyContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link KickCParser#switchCases}.
 	 * @param ctx the parse tree
 	 */
@@ -1328,15 +1340,15 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitParameterList(KickCParser.ParameterListContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link KickCParser#declKasm}.
+	 * Enter a parse tree produced by {@link KickCParser#kasmContent}.
 	 * @param ctx the parse tree
 	 */
-	void enterDeclKasm(KickCParser.DeclKasmContext ctx);
+	void enterKasmContent(KickCParser.KasmContentContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link KickCParser#declKasm}.
+	 * Exit a parse tree produced by {@link KickCParser#kasmContent}.
 	 * @param ctx the parse tree
 	 */
-	void exitDeclKasm(KickCParser.DeclKasmContext ctx);
+	void exitKasmContent(KickCParser.KasmContentContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link KickCParser#asmDirectives}.
 	 * @param ctx the parse tree

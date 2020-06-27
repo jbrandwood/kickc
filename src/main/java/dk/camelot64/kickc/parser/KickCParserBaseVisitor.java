@@ -593,6 +593,13 @@ public class KickCParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitStmtEmpty(KickCParser.StmtEmptyContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitSwitchCases(KickCParser.SwitchCasesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -817,7 +824,7 @@ public class KickCParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitDeclKasm(KickCParser.DeclKasmContext ctx) { return visitChildren(ctx); }
+	@Override public T visitKasmContent(KickCParser.KasmContentContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

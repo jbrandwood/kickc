@@ -163,7 +163,7 @@ public class StatementSource implements Serializable {
       return new StatementSource(nodeStart, nodeStop);
    }
 
-   public static StatementSource kickAsm(KickCParser.DeclKasmContext ctx) {
+   public static StatementSource kickAsm(KickCParser.KasmContentContext ctx) {
       ParseTree nodeStart = ctx.getChild(0);
       ParseTree nodeStop = ctx.getChild(0);
       return new StatementSource(nodeStart, nodeStop);

@@ -1587,6 +1587,16 @@ public class TestPrograms {
       compileAndCompare("initializer-3.c");
    }
 
+   @Test
+   public void testInitializer4() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-4.c");
+   }
+
+   @Test
+   public void testInitializer5() throws IOException, URISyntaxException {
+      compileAndCompare("initializer-5.c", log());
+   }
+
    /*
    @Test
    public void testProblemInlineStructReturn() throws IOException, URISyntaxException {

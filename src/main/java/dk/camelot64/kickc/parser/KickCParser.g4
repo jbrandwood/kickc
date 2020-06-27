@@ -243,7 +243,7 @@ expr
     | expr '?'   expr COLON expr #exprTernary
     | <assoc=right> expr '=' expr  #exprAssignment
     | <assoc=right> expr ASSIGN_COMPOUND expr  #exprAssignmentCompound
-    | CURLY_BEGIN expr (COMMA expr )* CURLY_END #initList
+    | CURLY_BEGIN expr (COMMA expr )* COMMA? CURLY_END #initList
     | NAME  #exprId
     | NUMBER #exprNumber
     | STRING+ #exprString

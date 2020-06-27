@@ -448,7 +448,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       return statementKickAsm;
    }
 
-   /** Inline KickAssembler code. */
+   /** Inline KickAssembler (can be either inline code or inline data initialization). */
    static class KickAsm {
       /** KickAssembler code. */
       private final String kickAsmCode;

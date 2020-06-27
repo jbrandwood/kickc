@@ -576,6 +576,21 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testAddress10() throws IOException, URISyntaxException {
+      assertError("address-10.c", "Error! Local array variables with __address() not allowed.", false);
+   }
+
+   @Test
+   public void testAddress9() throws IOException, URISyntaxException {
+      compileAndCompare("address-9.c");
+   }
+
+   @Test
+   public void testAddress8() throws IOException, URISyntaxException {
+      compileAndCompare("address-8.c");
+   }
+
+   @Test
    public void testAddress6() throws IOException, URISyntaxException {
       compileAndCompare("address-6.c");
    }

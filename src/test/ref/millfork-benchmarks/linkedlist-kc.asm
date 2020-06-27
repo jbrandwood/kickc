@@ -1,7 +1,7 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label print_screen = $400
@@ -12,7 +12,7 @@
   .label print_char_cursor = 6
   .label free_ = 8
   .label root = 2
-_start: {
+__start: {
     // last_time
     lda #<0
     sta.z last_time

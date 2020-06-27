@@ -1,11 +1,11 @@
 // Typedef const/volatile type
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const c = 'c'
   .label SCREEN = $400
   .label v = 2
-_start: {
+__start: {
     // v = 'v'
     lda #'v'
     sta.z v

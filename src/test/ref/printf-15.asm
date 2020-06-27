@@ -1,7 +1,7 @@
 // Tests printf function call rewriting
 // A few strings with newlines
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // Color Ram
@@ -17,7 +17,7 @@
   .label conio_line_text = $a
   // The current color cursor line start
   .label conio_line_color = $c
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

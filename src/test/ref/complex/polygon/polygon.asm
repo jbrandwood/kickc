@@ -5,7 +5,7 @@
 // - Up-to-down EOR filling 
 // - Double buffering
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -60,10 +60,10 @@
   // Flag signalling that the canvas on screen needs to be updated.
   // Set to 1 by the renderer when a new canvas is ready for showing, and to 0 by the raster when the canvas is shown on screen.
   .label canvas_show_flag = $12
-_start: {
-    .const _init1_toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
+__start: {
+    .const __init1_toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
     // canvas_show_memory = toD018(SCREEN, CANVAS2)
-    lda #_init1_toD0181_return
+    lda #__init1_toD0181_return
     sta.z canvas_show_memory
     // canvas_show_flag = 0
     lda #0

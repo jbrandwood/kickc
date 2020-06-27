@@ -1,11 +1,11 @@
 // Test a procedure with calling convention stack
 // Illustrates live range problem with function variable printother::i and global variable val
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label val = 2
-_start: {
+__start: {
     // val = 0
     lda #0
     sta.z val

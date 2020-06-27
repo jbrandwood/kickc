@@ -2,7 +2,7 @@
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 // Information https://en.wikipedia.org/wiki/Xorshift
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const WHITE = 1
   .const LIGHT_BLUE = $e
@@ -25,7 +25,7 @@
   .label conio_textcolor = $1a
   // The random state variable
   .label rand_state = $14
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

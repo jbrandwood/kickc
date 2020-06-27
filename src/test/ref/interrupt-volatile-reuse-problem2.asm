@@ -1,12 +1,12 @@
 // Illustrates problem where volatiles reuse ZP addresses of other variables
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label IRQ_STATUS = $d019
   .label SCREEN = $400
   .label col1 = 3
-_start: {
+__start: {
     // col1 = 0
     lda #0
     sta.z col1

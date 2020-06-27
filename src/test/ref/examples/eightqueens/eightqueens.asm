@@ -4,7 +4,7 @@
 //
 // This is an iterative solution.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
@@ -24,7 +24,7 @@
   .label conio_line_color = $1d
   // The number of found solutions
   .label count = 2
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

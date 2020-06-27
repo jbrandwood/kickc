@@ -4,7 +4,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -52,7 +52,7 @@
   .label frame_cnt = $19
   // Remainder after unsigned 16-bit division
   .label rem16u = $2f
-_start: {
+__start: {
     // frame_cnt = 1
     lda #1
     sta.z frame_cnt

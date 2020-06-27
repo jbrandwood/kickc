@@ -1,11 +1,11 @@
 // Tests pointer to pointer in a more complex setup
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
-_start: {
+__start: {
     // screen = $400
     lda #<$400
     sta.z screen

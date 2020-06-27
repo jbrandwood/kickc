@@ -1,5 +1,5 @@
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const DARK_GREY = $b
   .const BLACK = 0
@@ -7,7 +7,7 @@
   .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
-_start: {
+__start: {
     // irq_raster_next = 0
     lda #0
     sta.z irq_raster_next

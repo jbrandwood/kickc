@@ -1,7 +1,7 @@
 // Tests printf function call rewriting
 // Print a bunch of different stuff using printf
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const BINARY = 2
   .const OCTAL = 8
@@ -23,7 +23,7 @@
   .label conio_line_text = $13
   // The current color cursor line start
   .label conio_line_color = $15
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

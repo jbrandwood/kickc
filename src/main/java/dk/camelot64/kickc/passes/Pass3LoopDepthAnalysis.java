@@ -31,16 +31,8 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
       Set<ScopeRef> done = new LinkedHashSet<>();
 
       List<ControlFlowBlock> entryPointBlocks = getGraph().getEntryPointBlocks(getProgram());
-      for(ControlFlowBlock entryPointBlock : entryPointBlocks) {
-         LabelRef label = entryPointBlock.getLabel();
-         ScopeRef scope;
-         if(label.getFullName().equals(LabelRef.BEGIN_BLOCK_NAME)) {
-            scope = ScopeRef.ROOT;
-         } else {
-            scope = entryPointBlock.getScope();
-         }
-         todo.push(scope);
-      }
+      for(ControlFlowBlock entryPointBlock : entryPointBlocks)
+         todo.push(entryPointBlock.getScope());
 
       while(!todo.isEmpty()) {
          ScopeRef currentScope = todo.pop();
@@ -78,19 +70,19 @@ public class Pass3LoopDepthAnalysis extends Pass2Base {
             Collection<NaturalLoop> callingLoops = loopSet.getLoopsContainingBlock(callingControlBlock.getLabel());
             for(NaturalLoop callingLoop : callingLoops) {
                Integer depth = callingLoop.getDepth();
-               if(depth!=null) {
+               if(depth != null) {
                   int potentialDepth = depth + 1;
                   if(potentialDepth > callingDepth) {
                      callingDepth = potentialDepth;
                   }
                } else {
-                  getLog().append("null depth in calling loop "+callingLoop.toString()+" in scope "+currentScope);
+                  getLog().append("null depth in calling loop " + callingLoop.toString() + " in scope " + currentScope);
                }
             }
             // Also look through all callers
             int superCallingDepth = getCallingDepth(callingScope, path);
-            if(superCallingDepth>callingDepth)  {
-               callingDepth= superCallingDepth;
+            if(superCallingDepth > callingDepth) {
+               callingDepth = superCallingDepth;
             }
          }
       }

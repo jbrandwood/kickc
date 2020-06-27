@@ -2,7 +2,7 @@
 // Code by Scan of Desire (Richard-William Loerakker)
 // Sample from ART OF NOISE: MOMENTS IN LOVE
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -23,7 +23,7 @@
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
-_start: {
+__start: {
     // sample = SAMPLE
     lda #<SAMPLE
     sta.z sample

@@ -4,7 +4,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -69,8 +69,8 @@
   // Counting the 10 IRQs
   .label irq_cnt = $a
   .label sin_idx = 4
-_start: {
-    .const _init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
+__start: {
+    .const __init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
     // render_screen_showing = 0
     lda #0
     sta.z render_screen_showing
@@ -81,7 +81,7 @@ _start: {
     lda #SPRITES_FIRST_YPOS+$15
     sta.z irq_sprite_ypos
     // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3
-    lda #_init1_toSpritePtr1_return+3
+    lda #__init1_toSpritePtr1_return+3
     sta.z irq_sprite_ptr
     // irq_cnt = 0
     lda #0

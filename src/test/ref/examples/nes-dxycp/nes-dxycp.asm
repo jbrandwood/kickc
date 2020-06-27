@@ -84,7 +84,7 @@
   // Index into the small X sine
   .label x_sin_idx_2 = $e
 .segment Code
-_start: {
+__start: {
     // y_sin_idx = 0
     lda #0
     sta.z y_sin_idx

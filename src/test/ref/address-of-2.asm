@@ -1,9 +1,9 @@
 // Test address-of by assigning the affected variable in multiple ways
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label val = 2
-_start: {
+__start: {
     // val = 0
     lda #0
     sta.z val

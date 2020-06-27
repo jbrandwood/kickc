@@ -3,7 +3,7 @@
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
@@ -35,7 +35,7 @@
   .label plex_sprite_msb = 8
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = 9
-_start: {
+__start: {
     // plex_show_idx=0
     lda #0
     sta.z plex_show_idx

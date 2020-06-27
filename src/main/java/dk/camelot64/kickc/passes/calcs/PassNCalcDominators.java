@@ -1,11 +1,12 @@
 package dk.camelot64.kickc.passes.calcs;
 
-import dk.camelot64.kickc.model.InternalError;
-import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.DominatorsBlock;
+import dk.camelot64.kickc.model.DominatorsGraph;
+import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,27 +36,17 @@ public class PassNCalcDominators extends PassNCalcBase<DominatorsGraph> {
       for(Procedure procedure : procedures) {
          calculateDominators(procedure, dominatorsGraph);
       }
-      calculateDominators(getScope(), dominatorsGraph);
 
       return dominatorsGraph;
    }
 
    private void calculateDominators(Scope scope, DominatorsGraph dominatorsGraph) {
       // Initialize dominators: Dom[first]={first}, Dom[block]={all}
-
       List<LabelRef> firstBlocks = new ArrayList<>();
-      LabelRef firstBlock;
-      if(scope instanceof Procedure) {
-         firstBlock = ((Procedure)scope).getRef().getLabelRef();
-      } else if(scope.getRef().equals(ScopeRef.ROOT)) {
-         firstBlock = new LabelRef(LabelRef.BEGIN_BLOCK_NAME);
-      } else {
-         throw new InternalError("Scope type not handled! "+scope);
-      }
+      LabelRef firstBlock = ((Procedure) scope).getRef().getLabelRef();
       DominatorsBlock firstDominators = dominatorsGraph.addDominators(firstBlock);
       firstDominators.add(firstBlock);
       firstBlocks.add(firstBlock);
-
       List<LabelRef> procedureBlocks = getGraph().getScopeBlocks(scope.getRef()).stream().map(ControlFlowBlock::getLabel).collect(Collectors.toList());
       for(LabelRef procedureBlock : procedureBlocks) {
          if(!firstBlocks.contains(procedureBlock)) {

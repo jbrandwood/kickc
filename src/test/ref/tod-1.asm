@@ -5,7 +5,7 @@
 //
 // Currently C64/PLUS4/VIC20 platforms are supported
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
@@ -32,7 +32,7 @@
   .label conio_line_text = 6
   // The current color cursor line start
   .label conio_line_color = 8
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

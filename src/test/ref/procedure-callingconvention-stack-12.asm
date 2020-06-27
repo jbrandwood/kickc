@@ -1,12 +1,12 @@
 // Test a procedure with calling convention stack
 // Test that comments are handled correctly
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label idx = 4
-_start: {
+__start: {
     // idx = 0
     lda #0
     sta.z idx

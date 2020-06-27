@@ -1,13 +1,13 @@
 // Test a procedure with calling convention stack
 // Return value larger than parameter
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
-_start: {
+__start: {
     // current = 48
     lda #<$30
     sta.z current

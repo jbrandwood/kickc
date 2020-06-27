@@ -1,11 +1,11 @@
 // Test declaring a variable as "memory", meaning it will be stored in main memory
 // Test a fixed main memory address __notssa variable
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = $1000
-_start: {
+__start: {
     // idx
     lda #0
     sta idx

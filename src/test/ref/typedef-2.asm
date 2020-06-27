@@ -1,9 +1,9 @@
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label ptr = 2
-_start: {
+__start: {
     // ptr = 0x1000
     lda #<$1000
     sta.z ptr

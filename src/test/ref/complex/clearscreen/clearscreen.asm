@@ -4,7 +4,7 @@
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
@@ -87,7 +87,7 @@
   .label SCREEN_COPY = $c
   // Screen containing bytes representing the distance to the center
   .label SCREEN_DIST = $e
-_start: {
+__start: {
     // malloc(1000)
     lda #<HEAP_TOP
     sta.z heap_head

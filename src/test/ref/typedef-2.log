@@ -1,10 +1,10 @@
 Setting inferred volatile on symbol affected by address-of (word) main::w ← (word)&(byte*) ptr
-Inlined call call _init 
+Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   (word) main::w#0 ← (word)&(volatile byte*) ptr
   (word) main::w#1 ← (word) main::w#0 + (number) $32
   (byte~) main::$0 ← < (word) main::w#1
@@ -14,28 +14,28 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) _start()
-_start: scope:[_start]  from
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   (volatile byte*) ptr ← (byte*)(number) $1000
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   call main 
-  to:_start::@2
-_start::@2: scope:[_start]  from _start::@1
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@2
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
 SYMBOL TABLE SSA
 (const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) _start()
-(label) _start::@1
-(label) _start::@2
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
 (void()) main()
 (byte~) main::$0
 (label) main::@return
@@ -73,37 +73,37 @@ Constant inlined main::w#0 = (word)&(volatile byte*) ptr
 Constant inlined main::w#1 = (word)&(volatile byte*) ptr+(byte) $32
 Constant inlined main::$0 = <(word)&(volatile byte*) ptr+(byte) $32
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
-Adding NOP phi() at start of _start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
 CALL GRAPH
-Calls in [_start] to main:3 
+Calls in [__start] to main:3 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) _start::@2
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
+Culled Empty Block (label) __start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) _start()
-_start: scope:[_start]  from
+(void()) __start()
+__start: scope:[__start]  from
   [0] phi()
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   [1] (volatile byte*) ptr ← (byte*) 4096
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   [2] phi()
   [3] call main 
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   [5] *((const nomodify byte*) SCREEN) ← <(word)&(volatile byte*) ptr+(byte) $32
   to:main::@return
 main::@return: scope:[main]  from main
@@ -112,7 +112,7 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) _start()
+(void()) __start()
 (void()) main()
 (word) main::w
 (volatile byte*) ptr loadstore 1.0
@@ -128,30 +128,30 @@ Target platform is c64basic / MOS6502X
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label ptr = 2
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte*) ptr ← (byte*) 4096 -- pbuz1=pbuc1 
     lda #<$1000
     sta.z ptr
     lda #>$1000
     sta.z ptr+1
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [3] call main 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [4] return 
     rts
@@ -177,40 +177,40 @@ Potential registers zp[2]:2 [ ptr ] : zp[2]:2 ,
 REGISTER UPLIFT SCOPES
 Uplift Scope [] 1: zp[2]:2 [ ptr ] 
 Uplift Scope [main] 
-Uplift Scope [_start] 
+Uplift Scope [__start] 
 
 Uplifting [] best 73 combination zp[2]:2 [ ptr ] 
 Uplifting [main] best 73 combination 
-Uplifting [_start] best 73 combination 
+Uplifting [__start] best 73 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label ptr = 2
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte*) ptr ← (byte*) 4096 -- pbuz1=pbuc1 
     lda #<$1000
     sta.z ptr
     lda #>$1000
     sta.z ptr+1
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [3] call main 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [4] return 
     rts
@@ -229,14 +229,14 @@ main: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp _init1
+Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from__init1:
+Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction _init1:
+Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -244,10 +244,10 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (const nomodify byte*) SCREEN = (byte*) 1024
-(void()) _start()
-(label) _start::@1
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
 (void()) main()
 (label) main::@return
 (word) main::w
@@ -262,25 +262,25 @@ Score: 34
   // File Comments
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label ptr = 2
-  // _start
-_start: {
-    // _start::_init1
+  // __start
+__start: {
+    // __start::__init1
     // ptr = 0x1000
     // [1] (volatile byte*) ptr ← (byte*) 4096 -- pbuz1=pbuc1 
     lda #<$1000
     sta.z ptr
     lda #>$1000
     sta.z ptr+1
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-    // _start::@1
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
     // [3] call main 
     jsr main
-    // _start::@return
+    // __start::@return
     // [4] return 
     rts
 }

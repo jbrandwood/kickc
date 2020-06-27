@@ -1,10 +1,10 @@
 // Tests calling into a function pointer which modifies global volatile
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = 2
-_start: {
+__start: {
     // idx = 0
     lda #0
     sta.z idx

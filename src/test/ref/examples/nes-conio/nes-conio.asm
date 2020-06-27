@@ -93,7 +93,7 @@
   .label x_scroll = $15
   .label y_scroll = $16
 .segment Code
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

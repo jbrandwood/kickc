@@ -1,10 +1,10 @@
 Setting inferred volatile on symbol affected by address-of (byte*) main::ptr ← &(byte) val
-Inlined call call _init 
+Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   (byte) main::idx#0 ← (byte) 0
   *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#0) ← (volatile byte) val
   *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#0) ← (byte) '.'
@@ -62,27 +62,27 @@ setp::@return: scope:[setp]  from setp
   return 
   to:@return
 
-(void()) _start()
-_start: scope:[_start]  from
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   (volatile byte) val ← (byte) 0
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   call main 
-  to:_start::@2
-_start::@2: scope:[_start]  from _start::@1
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@2
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
 SYMBOL TABLE SSA
-(void()) _start()
-(label) _start::@1
-(label) _start::@2
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -221,38 +221,38 @@ Simplifying constant integer increment ++2
 Simplifying constant integer increment ++3
 Simplifying constant integer increment ++4
 Successful SSA optimization Pass2ConstantSimplification
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
-Adding NOP phi() at start of _start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
 CALL GRAPH
-Calls in [_start] to main:3 
+Calls in [__start] to main:3 
 Calls in [main] to setv:17 setp:20 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) _start::@2
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
+Culled Empty Block (label) __start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) _start()
-_start: scope:[_start]  from
+(void()) __start()
+__start: scope:[__start]  from
   [0] phi()
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   [1] (volatile byte) val ← (byte) 0
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   [2] phi()
   [3] call main 
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   [5] *((const nomodify byte*) main::SCREEN1) ← (volatile byte) val
   [6] *((const nomodify byte*) main::SCREEN2) ← (byte) '.'
   [7] (volatile byte) val ← (byte) 1
@@ -297,7 +297,7 @@ setv::@return: scope:[setv]  from setv
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) _start()
+(void()) __start()
 (void()) main()
 (byte) main::idx
 (void()) setp((byte*) setp::p , (byte) setp::v)
@@ -319,27 +319,27 @@ Target platform is c64basic / MOS6502X
 // Test address-of by assigning the affected variable in multiple ways
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label val = 2
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte) val ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z val
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [3] call main 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [4] return 
     rts
@@ -468,13 +468,13 @@ Uplift Scope [] 14.69: zp[1]:2 [ val ]
 Uplift Scope [main] 
 Uplift Scope [setv] 
 Uplift Scope [setp] 
-Uplift Scope [_start] 
+Uplift Scope [__start] 
 
 Uplifting [] best 205 combination zp[1]:2 [ val ] 
 Uplifting [main] best 205 combination 
 Uplifting [setv] best 205 combination 
 Uplifting [setp] best 205 combination 
-Uplifting [_start] best 205 combination 
+Uplifting [__start] best 205 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ val ]
 Uplifting [] best 205 combination zp[1]:2 [ val ] 
 
@@ -483,27 +483,27 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test address-of by assigning the affected variable in multiple ways
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label val = 2
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte) val ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z val
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [3] call main 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [4] return 
     rts
@@ -607,7 +607,7 @@ setv: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp _init1
+Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
@@ -619,9 +619,9 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda.z val
 Removing instruction lda.z val
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Removing instruction __b1_from__init1:
+Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction _init1:
+Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b1:
@@ -632,10 +632,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) _start()
-(label) _start::@1
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
 (void()) main()
 (label) main::@1
 (label) main::@2
@@ -665,22 +665,22 @@ Score: 148
 // Test address-of by assigning the affected variable in multiple ways
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label val = 2
-  // _start
-_start: {
-    // _start::_init1
+  // __start
+__start: {
+    // __start::__init1
     // val = 0
     // [1] (volatile byte) val ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z val
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-    // _start::@1
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
     // [3] call main 
     jsr main
-    // _start::@return
+    // __start::@return
     // [4] return 
     rts
 }

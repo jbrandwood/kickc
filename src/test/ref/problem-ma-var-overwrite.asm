@@ -1,9 +1,9 @@
 // Demonstrates that a local __ma variable overwrites a parameter§
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label h1 = 2
-_start: {
+__start: {
     // h1
     lda #<0
     sta.z h1

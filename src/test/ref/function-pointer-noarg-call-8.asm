@@ -1,11 +1,11 @@
 // Tests calling into a function pointer with local variables
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label msg = 3
   .label idx = 5
-_start: {
+__start: {
     // msg
     lda #<0
     sta.z msg

@@ -2,7 +2,7 @@
 // From CC65 sample "Eine kleine Nachtmusik" by Ullrich von Bassewitz
 // https://github.com/cc65/cc65/blob/master/samples/nachtm.c
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // The horizontal line character
@@ -44,7 +44,7 @@
   .label conio_scroll_enable = $12
   .label XSize = $13
   .label YSize = $14
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

@@ -1,10 +1,10 @@
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
-_start: {
+__start: {
     // col = 0
     lda #0
     sta.z col

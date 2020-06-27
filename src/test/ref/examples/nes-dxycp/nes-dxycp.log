@@ -33,7 +33,7 @@ Inlined call (byte~) ppuDataGet::$1 ← call ppuDataRead
 Inlined call call initNES 
 Inlined call call enableVideoOutput 
 Inlined call call ppuSpriteBufferDmaTransfer (const struct SpriteData*) SPRITE_BUFFER 
-Inlined call call _init 
+Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
@@ -192,7 +192,7 @@ ppuDataTransfer::@return: scope:[ppuDataTransfer]  from ppuDataTransfer::@1
   to:@return
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   to:main::initNES1
 main::initNES1: scope:[main]  from main
   asm { cld ldx#$ff txs  }
@@ -455,20 +455,20 @@ vblank::@15: scope:[vblank]  from vblank::@13 vblank::@14
   (byte) vblank::s#1 ← ++ (byte) vblank::s#4
   to:vblank::@8
 
-(void()) _start()
-_start: scope:[_start]  from
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   (volatile byte) y_sin_idx ← (byte) 0
   (volatile byte) x_sin_idx ← (byte) $49
   (volatile byte) x_sin_idx_2 ← (byte) $52
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   call main 
-  to:_start::@2
-_start::@2: scope:[_start]  from _start::@1
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@2
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -550,11 +550,11 @@ SYMBOL TABLE SSA
     }
  }}
 (const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_STACK)(void()) vblank(), &(void()) main(), (void()*)(number) 0 }
-(void()) _start()
-(label) _start::@1
-(label) _start::@2
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
 (void()) main()
 (byte~) main::$1
 (bool~) main::$6
@@ -1438,9 +1438,9 @@ Successful SSA optimization PassNEliminateUnusedVars
 Alias candidate removed (volatile)x_sin_idx = vblank::$7 
 Alias candidate removed (volatile)x_sin_idx_2 = vblank::$12 
 Added new block during phi lifting main::@8(between main::initNES1_@1 and main::initNES1_@1)
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
-Adding NOP phi() at start of _start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::initNES1_waitForVBlank1
 Adding NOP phi() at start of main::initNES1_@6
@@ -1459,7 +1459,7 @@ Adding NOP phi() at start of vblank::@5
 Adding NOP phi() at start of vblank::@2
 Adding NOP phi() at start of readJoy1::@3
 CALL GRAPH
-Calls in [_start] to main:5 
+Calls in [__start] to main:5 
 Calls in [main] to ppuDataTransfer:35 ppuDataFill:37 ppuDataFill:39 
 Calls in [vblank] to readJoy1:85 
 
@@ -1485,7 +1485,7 @@ Coalesced [130] vblank::x_idx#14 ← vblank::$19
 Coalesced [143] readJoy1::i#4 ← readJoy1::i#1
 Coalesced [144] readJoy1::joy#5 ← readJoy1::joy#1
 Coalesced down to 16 phi equivalence classes
-Culled Empty Block (label) _start::@2
+Culled Empty Block (label) __start::@2
 Culled Empty Block (label) main::initNES1_@6
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@8
@@ -1511,8 +1511,8 @@ Renumbering block vblank::@14 to vblank::@12
 Renumbering block vblank::@15 to vblank::@13
 Renumbering block vblank::@16 to vblank::@14
 Renumbering block vblank::@17 to vblank::@15
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::initNES1_waitForVBlank1
 Adding NOP phi() at start of main::initNES1_waitForVBlank2
@@ -1525,25 +1525,25 @@ Adding NOP phi() at start of vblank::@14
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) _start()
-_start: scope:[_start]  from
+(void()) __start()
+__start: scope:[__start]  from
   [0] phi()
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   [1] (volatile byte) y_sin_idx ← (byte) 0
   [2] (volatile byte) x_sin_idx ← (byte) $49
   [3] (volatile byte) x_sin_idx_2 ← (byte) $52
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   [4] phi()
   [5] call main 
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
   [6] return 
   to:@return
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   [7] phi()
   to:main::initNES1
 main::initNES1: scope:[main]  from main
@@ -1812,7 +1812,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) SpriteData::tile
 (byte) SpriteData::x
 (byte) SpriteData::y
-(void()) _start()
+(void()) __start()
 (void()) main()
 (byte~) main::$7 126.25
 (byte) main::initNES1_i
@@ -2081,11 +2081,11 @@ Target platform is nes / MOS6502X
   // Index into the small X sine
   .label x_sin_idx_2 = $19
 .segment Code
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte) y_sin_idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z y_sin_idx
@@ -2095,17 +2095,17 @@ _start: {
     // [3] (volatile byte) x_sin_idx_2 ← (byte) $52 -- vbuz1=vbuc1 
     lda #$52
     sta.z x_sin_idx_2
-    // [4] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [4] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [5] call main 
-    // [7] phi from _start::@1 to main [phi:_start::@1->main]
+    // [7] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [6] return 
     rts
@@ -2998,7 +2998,7 @@ Uplift Scope [] 0.8: zp[1]:23 [ y_sin_idx ] 0.77: zp[1]:24 [ x_sin_idx ] 0.56: z
 Uplift Scope [RICOH_2C02] 
 Uplift Scope [RICOH_2A03] 
 Uplift Scope [SpriteData] 
-Uplift Scope [_start] 
+Uplift Scope [__start] 
 
 Uplifting [ppuDataTransfer] best 6639 combination zp[2]:11 [ ppuDataTransfer::i#2 ppuDataTransfer::i#1 ] reg byte a [ ppuDataTransfer::ppuDataPut1_val#0 ] zp[2]:13 [ ppuDataTransfer::cpuSrc#2 ppuDataTransfer::cpuSrc#1 ] 
 Uplifting [ppuDataFill] best 6591 combination zp[2]:9 [ ppuDataFill::i#2 ppuDataFill::i#1 ] reg byte a [ ppuDataFill::ppuDataPrepare1_$0 ] reg byte a [ ppuDataFill::ppuDataPrepare1_$1 ] zp[2]:6 [ ppuDataFill::size#3 ] reg byte x [ ppuDataFill::val#4 ] zp[2]:4 [ ppuDataFill::ppuDataPrepare1_ppuData#0 ] 
@@ -3012,7 +3012,7 @@ Uplifting [] best 5708 combination zp[1]:23 [ y_sin_idx ] zp[1]:24 [ x_sin_idx ]
 Uplifting [RICOH_2C02] best 5708 combination 
 Uplifting [RICOH_2A03] best 5708 combination 
 Uplifting [SpriteData] best 5708 combination 
-Uplifting [_start] best 5708 combination 
+Uplifting [__start] best 5708 combination 
 Attempting to uplift remaining variables inzp[1]:28 [ main::$7 ]
 Uplifting [main] best 5578 combination reg byte y [ main::$7 ] 
 Attempting to uplift remaining variables inzp[1]:36 [ readJoy1::$1 ]
@@ -3146,11 +3146,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Index into the small X sine
   .label x_sin_idx_2 = $e
 .segment Code
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte) y_sin_idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z y_sin_idx
@@ -3160,17 +3160,17 @@ _start: {
     // [3] (volatile byte) x_sin_idx_2 ← (byte) $52 -- vbuz1=vbuc1 
     lda #$52
     sta.z x_sin_idx_2
-    // [4] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [4] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [5] call main 
-    // [7] phi from _start::@1 to main [phi:_start::@1->main]
+    // [7] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [6] return 
     rts
@@ -3839,7 +3839,7 @@ TILES:
   VECTORS: .word vblank, main, 0
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp _init1
+Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp initNES1
@@ -3904,7 +3904,7 @@ Replacing label initNES1___b1_from_initNES1___b1 with initNES1___b1
 Replacing label initNES1_waitForVBlank2___b1 with initNES1_waitForVBlank2
 Replacing label __b13_from___b11 with __b13
 Replacing label __b10_from___b8 with __b10
-Removing instruction __b1_from__init1:
+Removing instruction __b1_from___init1:
 Removing instruction main_from___b1:
 Removing instruction initNES1_waitForVBlank1_from_initNES1_clearVBlankFlag1:
 Removing instruction initNES1_waitForVBlank1___b1:
@@ -3922,7 +3922,7 @@ Removing instruction __b10_from___b9:
 Removing instruction __b13_from___b11:
 Removing instruction __b13_from___b12:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction _init1:
+Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction initNES1:
@@ -4052,10 +4052,10 @@ FINAL SYMBOL TABLE
     }
  }}
 (const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_STACK)(void()) vblank(), &(void()) main(), (void()*) 0 }
-(void()) _start()
-(label) _start::@1
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
 (void()) main()
 (byte~) main::$7 reg byte y 126.25
 (label) main::@1
@@ -4311,9 +4311,9 @@ Score: 4504
   // Index into the small X sine
   .label x_sin_idx_2 = $e
 .segment Code
-  // _start
-_start: {
-    // _start::_init1
+  // __start
+__start: {
+    // __start::__init1
     // y_sin_idx = 0
     // [1] (volatile byte) y_sin_idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
@@ -4326,12 +4326,12 @@ _start: {
     // [3] (volatile byte) x_sin_idx_2 ← (byte) $52 -- vbuz1=vbuc1 
     lda #$52
     sta.z x_sin_idx_2
-    // [4] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-    // _start::@1
+    // [4] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
     // [5] call main 
-    // [7] phi from _start::@1 to main [phi:_start::@1->main]
+    // [7] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
-    // _start::@return
+    // __start::@return
     // [6] return 
     rts
 }

@@ -1,9 +1,9 @@
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label x = 2
-_start: {
+__start: {
     // x = 12
     lda #$c
     sta.z x

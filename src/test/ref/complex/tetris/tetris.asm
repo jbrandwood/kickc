@@ -2,7 +2,7 @@
 // The tetris game tries to match NES tetris gameplay pretty closely
 // Source: https://meatfighter.com/nintendotetrisai/
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -165,8 +165,8 @@
   .label current_piece_gfx_1 = 7
   // The char of the current piece
   .label current_piece_char_1 = 9
-_start: {
-    .const _init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
+__start: {
+    .const __init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
     // render_screen_showing = 0
     lda #0
     sta.z render_screen_showing
@@ -184,7 +184,7 @@ _start: {
     lda #SPRITES_FIRST_YPOS+$15
     sta.z irq_sprite_ypos
     // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES) + 3
-    lda #_init1_toSpritePtr1_return+3
+    lda #__init1_toSpritePtr1_return+3
     sta.z irq_sprite_ptr
     // irq_cnt = 0
     lda #0

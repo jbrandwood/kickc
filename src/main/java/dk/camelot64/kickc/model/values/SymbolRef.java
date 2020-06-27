@@ -8,12 +8,10 @@ import java.util.Objects;
 /** A reference to a symbol (variable, procedure or label) */
 public class SymbolRef implements Value {
 
-   public static final String BEGIN_BLOCK_NAME = "@begin";
-   public static final String END_BLOCK_NAME = "@end";
    public static final String PROCEXIT_BLOCK_NAME = "@return";
    public static final String MAIN_PROC_NAME = "main";
-   public static final String START_PROC_NAME = "_start";
-   public static final String INIT_PROC_NAME = "_init";
+   public static final String START_PROC_NAME = "__start";
+   public static final String INIT_PROC_NAME = "__init";
 
    /** The full name of the variable. Allowing lookup in the symbol table. */
    private String fullName;
@@ -74,8 +72,6 @@ public class SymbolRef implements Value {
    }
 
    public boolean isIntermediate() {
-      if( fullName.contains(BEGIN_BLOCK_NAME) || fullName.contains(END_BLOCK_NAME))
-         return false;
       return fullName.contains("$") || fullName.contains("@");
    }
 

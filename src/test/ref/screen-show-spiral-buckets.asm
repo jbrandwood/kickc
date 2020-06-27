@@ -1,7 +1,7 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
 // Utilizes a bucket sort for identifying the minimum angle/distance
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
@@ -39,7 +39,7 @@
   .label BUCKETS = $12
   // Current index into each bucket. Used while populating the buckets. (After population the end the values will be equal to the bucket sizes)
   .label BUCKET_IDX = $14
-_start: {
+__start: {
     // malloc(1000)
     lda #<$3e8
     sta.z malloc.size

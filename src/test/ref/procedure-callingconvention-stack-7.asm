@@ -1,10 +1,10 @@
 // Test a procedure with calling convention stack
 // Illustrates live ranges for main::val and printline::i
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
-_start: {
+__start: {
     jsr main
     rts
 }

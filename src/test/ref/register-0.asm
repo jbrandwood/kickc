@@ -1,11 +1,11 @@
 // Test declaring a variable as at a hard-coded register
 // hard-coded register parameter
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = 3
-_start: {
+__start: {
     // idx
     lda #0
     sta.z idx

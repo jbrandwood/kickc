@@ -1,6 +1,6 @@
 // Plasma based on the distance/angle to the screen center
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
@@ -41,7 +41,7 @@
   // Offsets for the sines
   .label sin_offset_x = 2
   .label sin_offset_y = $f
-_start: {
+__start: {
     // malloc(1000)
     lda #<$3e8
     sta.z malloc.size

@@ -1,11 +1,11 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a zeropage notregister variable
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label idx = 2
-_start: {
+__start: {
     // idx
     lda #0
     sta.z idx

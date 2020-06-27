@@ -1,10 +1,10 @@
 Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
-Inlined call call _init 
+Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@return
 main::@return: scope:[main]  from main
@@ -22,30 +22,30 @@ irq::@return: scope:[irq]  from irq
   return 
   to:@return
 
-(void()) _start()
-_start: scope:[_start]  from
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   (volatile byte) col1 ← (byte) 0
   (volatile byte) col2 ← (byte) 8
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   call main 
-  to:_start::@2
-_start::@2: scope:[_start]  from _start::@1
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@2
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
 SYMBOL TABLE SSA
 (const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
 (const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) _start()
-(label) _start::@1
-(label) _start::@2
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
 (volatile byte) col1 loadstore
 (volatile byte) col2 loadstore
 interrupt(KERNEL_MIN)(void()) irq()
@@ -67,38 +67,38 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Consolidated array index constant in *(SCREEN+$28)
 Consolidated array index constant in *(SCREEN+$29)
 Successful SSA optimization Pass2ConstantAdditionElimination
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
-Adding NOP phi() at start of _start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
 CALL GRAPH
-Calls in [_start] to main:4 
+Calls in [__start] to main:4 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) _start::@2
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
+Culled Empty Block (label) __start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) _start()
-_start: scope:[_start]  from
+(void()) __start()
+__start: scope:[__start]  from
   [0] phi()
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   [1] (volatile byte) col1 ← (byte) 0
   [2] (volatile byte) col2 ← (byte) 8
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   [3] phi()
   [4] call main 
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
   [5] return 
   to:@return
 
 (void()) main()
-main: scope:[main]  from _start::@1
+main: scope:[main]  from __start::@1
   [6] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
   to:main::@return
 main::@return: scope:[main]  from main
@@ -118,7 +118,7 @@ irq::@return: scope:[irq]  from irq
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) _start()
+(void()) __start()
 (volatile byte) col1 loadstore 8.0
 (volatile byte) col2 loadstore 2.6666666666666665
 interrupt(KERNEL_MIN)(void()) irq()
@@ -139,33 +139,33 @@ Target platform is c64basic / MOS6502X
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2
   .label col2 = 3
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col1
     // [2] (volatile byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
     lda #8
     sta.z col2
-    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [4] call main 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [5] return 
     rts
@@ -217,12 +217,12 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [] 8: zp[1]:2 [ col1 ] 2.67: zp[1]:3 [ col2 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
-Uplift Scope [_start] 
+Uplift Scope [__start] 
 
 Uplifting [] best 109 combination zp[1]:2 [ col1 ] zp[1]:3 [ col2 ] 
 Uplifting [main] best 109 combination 
 Uplifting [irq] best 109 combination 
-Uplifting [_start] best 109 combination 
+Uplifting [__start] best 109 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ col1 ]
 Uplifting [] best 109 combination zp[1]:2 [ col1 ] 
 Attempting to uplift remaining variables inzp[1]:3 [ col2 ]
@@ -233,33 +233,33 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2
   .label col2 = 3
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col1
     // [2] (volatile byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
     lda #8
     sta.z col2
-    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [4] call main 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [5] return 
     rts
@@ -299,15 +299,15 @@ irq: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp _init1
+Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from__init1:
+Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction _init1:
+Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -317,10 +317,10 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 (const nomodify void()**) KERNEL_IRQ = (void()**) 788
 (const nomodify byte*) SCREEN = (byte*) 1024
-(void()) _start()
-(label) _start::@1
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
 (volatile byte) col1 loadstore zp[1]:2 8.0
 (volatile byte) col2 loadstore zp[1]:3 2.6666666666666665
 interrupt(KERNEL_MIN)(void()) irq()
@@ -339,16 +339,16 @@ Score: 67
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2
   .label col2 = 3
-  // _start
-_start: {
-    // _start::_init1
+  // __start
+__start: {
+    // __start::__init1
     // col1 = 0
     // [1] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
@@ -357,11 +357,11 @@ _start: {
     // [2] (volatile byte) col2 ← (byte) 8 -- vbuz1=vbuc1 
     lda #8
     sta.z col2
-    // [3] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-    // _start::@1
+    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
     // [4] call main 
     jsr main
-    // _start::@return
+    // __start::@return
     // [5] return 
     rts
 }

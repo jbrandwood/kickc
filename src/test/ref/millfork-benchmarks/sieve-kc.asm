@@ -1,7 +1,7 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const COUNT = $4000
   .const SQRT_COUNT = $80
@@ -11,7 +11,7 @@
   .label Ticks = 8
   .label Ticks_1 = $a
   .label print_char_cursor = 4
-_start: {
+__start: {
     // last_time
     lda #<0
     sta.z last_time

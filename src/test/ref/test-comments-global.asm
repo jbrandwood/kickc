@@ -1,10 +1,10 @@
 // Tests that global variables with initializer gets their comments
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // The screen (should become a var-comment in ASM)
   .label screen = 2
-_start: {
+__start: {
     // screen = 0x0400
     lda #<$400
     sta.z screen

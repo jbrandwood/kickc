@@ -1,7 +1,7 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
   .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
@@ -19,7 +19,7 @@
   .label Ticks = $e
   .label Ticks_1 = $11
   .label print_char_cursor = $13
-_start: {
+__start: {
     // last_time
     lda #<0
     sta.z last_time

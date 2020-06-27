@@ -2,14 +2,14 @@
 // Currently placed outside any function scope and pushed into @begin block.
 // To be put into an initializer function.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   // Initialize a volatile ZP-variable (will be done in the initializer)
   .label c1 = 2
   // Initialize another volatile ZP-variable (will be done in the initializer)
   .label c2 = 3
-_start: {
+__start: {
     // c1 = 'o'
     lda #'o'
     sta.z c1

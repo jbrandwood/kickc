@@ -3,12 +3,12 @@
 // Problem is that outside main() scope statements have zero call-paths and then isStatementAllocationOverlapping() never checks liveranges
 // CallPath code must be rewritten to use @begin as the outermost call instead of main()
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label MEM = 2
   .label SCREEN_1 = 4
   .label SCREEN_2 = 6
-_start: {
+__start: {
     // malloc()
     lda #<$400
     sta.z MEM

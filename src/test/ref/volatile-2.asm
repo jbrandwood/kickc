@@ -1,10 +1,10 @@
 // Test that volatile const vars are turned into load/store
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN = $400
   .label ch = 2
-_start: {
+__start: {
     // ch = 3
     lda #3
     sta.z ch

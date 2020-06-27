@@ -1,13 +1,13 @@
 // Tests declaring variables as __ssa / __notssa
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .label SCREEN1 = $400
   .label SCREEN2 = $400+$28
   .label SCREEN3 = $400+$50
   .label SCREEN4 = $400+$78
   .label idx_nssa_g = 2
-_start: {
+__start: {
     // idx_nssa_g
     lda #0
     sta.z idx_nssa_g

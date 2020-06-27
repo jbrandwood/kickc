@@ -8,9 +8,9 @@
 .segmentdef Data [startAfter="Code",max=$fff9]
 .segmentdef Vectors [start=$fffa,max=$ffff]
 .segment Vectors
-.word _start // NMI
-.word _start // RESET
-.word _start // IRQ
+.word __start // NMI
+.word __start // RESET
+.word __start // IRQ
 .segment Code
 
   // The number of CPU cycles per scanline
@@ -42,7 +42,7 @@
   .label p0_ypos = $83
   .label idx2 = $81
 .segment Code
-_start: {
+__start: {
     // p0_xpos
     lda #0
     sta.z p0_xpos

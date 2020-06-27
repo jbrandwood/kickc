@@ -1,4 +1,4 @@
-Inlined call call _init 
+Inlined call call __init 
 Eliminating unused variable with no statement (struct Point~) main::$1
 Converting PHI-variable modified inside __stackcall procedure main() to load/store (byte) idx
 Calling convention STACK_CALL adding prepare/execute/finalize for { (byte~) main::$1_x, (byte~) main::$1_y } ← call get (byte) main::i 
@@ -76,16 +76,16 @@ print::@return: scope:[print]  from print
   return 
   to:@return
 
-(void()) _start()
-_start: scope:[_start]  from
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   (byte) idx ← (byte) 0
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   callexecute main 
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
   return 
   to:@return
 
@@ -96,10 +96,10 @@ SYMBOL TABLE SSA
 (byte) Point::y
 (const nomodify byte*) SCREEN = (byte*)(number) $400
 (const word) STACK_BASE = (word) $103
-(void()) _start()
-(label) _start::@1
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
 __stackcall (struct Point()) get((byte) get::i)
 (number~) get::$0
 (label) get::@return
@@ -180,34 +180,34 @@ Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 CALL GRAPH
-Calls in [_start] to main:3 
+Calls in [__start] to main:3 
 Calls in [main] to get:23 print:28 
 
 Created 1 initial phi equivalence classes
 Coalesced [31] main::i#4 ← main::i#1
 Coalesced down to 1 phi equivalence classes
-Adding NOP phi() at start of _start
-Adding NOP phi() at start of _start::@1
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) _start()
-_start: scope:[_start]  from
+(void()) __start()
+__start: scope:[__start]  from
   [0] phi()
-  to:_start::_init1
-_start::_init1: scope:[_start]  from _start
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   [1] (byte) idx ← (byte) 0
-  to:_start::@1
-_start::@1: scope:[_start]  from _start::_init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
   [2] phi()
   [3] callexecute main 
-  to:_start::@return
-_start::@return: scope:[_start]  from _start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
@@ -265,7 +265,7 @@ null depth in calling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 
 VARIABLE REGISTER WEIGHTS
 (byte) Point::x
 (byte) Point::y
-(void()) _start()
+(void()) __start()
 __stackcall (struct Point()) get((byte) get::i)
 (byte) get::i
 (byte) get::p_x
@@ -324,30 +324,30 @@ Target platform is c64basic / MOS6502X
 // Returning and passing struct values
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 3
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z idx
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [3] callexecute main  -- jsr 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [4] return 
     rts
@@ -529,14 +529,14 @@ Uplift Scope [print] 1,001: zp[1]:4 [ print::p_x#0 ] 667.33: zp[1]:5 [ print::p_
 Uplift Scope [main] 238.73: zp[1]:2 [ main::i#2 main::i#1 ] 101: zp[1]:8 [ main::p_x#0 ] 101: zp[1]:9 [ main::p_y#0 ] 
 Uplift Scope [] 273.09: zp[1]:3 [ idx ] 
 Uplift Scope [Point] 
-Uplift Scope [_start] 
+Uplift Scope [__start] 
 
 Uplifting [get] best 974 combination reg byte x [ get::return_x#0 ] reg byte y [ get::return_y#0 ] 
 Uplifting [print] best 970 combination reg byte y [ print::p_x#0 ] reg byte x [ print::p_y#0 ] 
 Uplifting [main] best 930 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte y [ main::p_x#0 ] reg byte x [ main::p_y#0 ] 
 Uplifting [] best 930 combination zp[1]:3 [ idx ] 
 Uplifting [Point] best 930 combination 
-Uplifting [_start] best 930 combination 
+Uplifting [__start] best 930 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ idx ]
 Uplifting [] best 930 combination zp[1]:3 [ idx ] 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
@@ -548,30 +548,30 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Returning and passing struct values
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 3
-  // _start
-_start: {
-    jmp _init1
-    // _start::_init1
-  _init1:
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
     // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z idx
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-  __b1_from__init1:
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
     jmp __b1
-    // _start::@1
+    // __start::@1
   __b1:
     // [3] callexecute main  -- jsr 
     jsr main
     jmp __breturn
-    // _start::@return
+    // __start::@return
   __breturn:
     // [4] return 
     rts
@@ -688,7 +688,7 @@ main: {
   // File Data
 
 ASSEMBLER OPTIMIZATIONS
-Removing instruction jmp _init1
+Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
@@ -696,9 +696,9 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from__init1:
+Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction _init1:
+Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __breturn:
@@ -714,10 +714,10 @@ FINAL SYMBOL TABLE
 (byte) Point::y
 (const nomodify byte*) SCREEN = (byte*) 1024
 (const word) STACK_BASE = (word) $103
-(void()) _start()
-(label) _start::@1
-(label) _start::@return
-(label) _start::_init1
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
 __stackcall (struct Point()) get((byte) get::i)
 (label) get::@return
 (const byte) get::OFFSET_STACK_I = (byte) 0
@@ -768,25 +768,25 @@ Score: 828
 // Returning and passing struct values
   // Upstart
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 3
-  // _start
-_start: {
-    // _start::_init1
+  // __start
+__start: {
+    // __start::__init1
     // idx = 0
     // [1] (byte) idx ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z idx
-    // [2] phi from _start::_init1 to _start::@1 [phi:_start::_init1->_start::@1]
-    // _start::@1
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
     // [3] callexecute main  -- jsr 
     jsr main
-    // _start::@return
+    // __start::@return
     // [4] return 
     rts
 }

@@ -1,7 +1,7 @@
 // Tests the speed of printf()
 // Functions for performing input and output.
 .pc = $801 "Basic"
-:BasicUpstart(_start)
+:BasicUpstart(__start)
 .pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
@@ -30,7 +30,7 @@
   .label conio_line_text = $a
   // The current color cursor line start
   .label conio_line_color = $c
-_start: {
+__start: {
     // conio_cursor_x = 0
     lda #0
     sta.z conio_cursor_x

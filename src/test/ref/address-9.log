@@ -1,0 +1,192 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from _start
+  (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_SIGNED_WORD
+  *((const nomodify signed word*) SCREEN + (number~) main::$0) ← *((const signed word*) DATA + (number~) main::$0)
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) _start()
+_start: scope:[_start]  from
+  call main 
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const signed word*) DATA[(number) $3e8]  = { fill( $3e8, 0) }
+(const nomodify signed word*) SCREEN = (signed word*)(number) $400
+(const byte) SIZEOF_SIGNED_WORD = (byte) 2
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(void()) main()
+(number~) main::$0
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_SIGNED_WORD
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 0 * (const byte) SIZEOF_SIGNED_WORD
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (signed word*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) main::$0 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
+Constant right-side identified [0] (byte~) main::$0 ← (byte) 0 * (const byte) SIZEOF_SIGNED_WORD
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::$0 = 0*SIZEOF_SIGNED_WORD
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_SIGNED_WORD in 
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero DATA in [1] *((const nomodify signed word*) SCREEN + (const byte) main::$0) ← *((const signed word*) DATA + (const byte) main::$0)
+Simplifying expression containing zero SCREEN in [1] *((const nomodify signed word*) SCREEN + (const byte) main::$0) ← *((const signed word*) DATA)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) main::$0
+Eliminating unused constant (const byte) SIZEOF_SIGNED_WORD
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] *((const nomodify signed word*) SCREEN) ← *((const signed word*) DATA)
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test declaring an integer array variable as at a hard-coded address
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The screen
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] *((const nomodify signed word*) SCREEN) ← *((const signed word*) DATA) -- _deref_pwsc1=_deref_pwsc2 
+    lda DATA
+    sta SCREEN
+    lda DATA+1
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+.pc = $1000 "DATA"
+  // Data to be put on the screen
+  DATA: .fill 2*$3e8, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((const nomodify signed word*) SCREEN) ← *((const signed word*) DATA) [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 25 combination 
+Uplifting [] best 25 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test declaring an integer array variable as at a hard-coded address
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The screen
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] *((const nomodify signed word*) SCREEN) ← *((const signed word*) DATA) -- _deref_pwsc1=_deref_pwsc2 
+    lda DATA
+    sta SCREEN
+    lda DATA+1
+    sta SCREEN+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+.pc = $1000 "DATA"
+  // Data to be put on the screen
+  DATA: .fill 2*$3e8, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const signed word*) DATA[(number) $3e8]  = { fill( $3e8, 0) }
+(const nomodify signed word*) SCREEN = (signed word*) 1024
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 22
+
+  // File Comments
+// Test declaring an integer array variable as at a hard-coded address
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The screen
+  .label SCREEN = $400
+  // main
+main: {
+    // SCREEN[0] = DATA[0]
+    // [0] *((const nomodify signed word*) SCREEN) ← *((const signed word*) DATA) -- _deref_pwsc1=_deref_pwsc2 
+    lda DATA
+    sta SCREEN
+    lda DATA+1
+    sta SCREEN+1
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+.pc = $1000 "DATA"
+  // Data to be put on the screen
+  DATA: .fill 2*$3e8, 0
+

@@ -1,0 +1,190 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from _start
+  call empty 
+  to:main::@1
+main::@1: scope:[main]  from main
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'x'
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+(void()) empty()
+empty: scope:[empty]  from main
+  to:empty::@return
+empty::@return: scope:[empty]  from empty
+  return 
+  to:@return
+
+(void()) _start()
+_start: scope:[_start]  from
+  call main 
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(void()) empty()
+(label) empty::@return
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'x'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) 'x'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing call to empty procedure [0] call empty 
+Removing unused procedure empty
+Removing unused procedure block empty
+Removing unused procedure block empty::@return
+Successful SSA optimization PassNEliminateEmptyProcedure
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main
+  [1] *((const nomodify byte*) SCREEN) ← (byte) 'x'
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test removal of empty function
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    jmp __b1
+    // main::@1
+  __b1:
+    // [1] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    lda #'x'
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] *((const nomodify byte*) SCREEN) ← (byte) 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 45 combination 
+Uplifting [] best 45 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test removal of empty function
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    jmp __b1
+    // main::@1
+  __b1:
+    // [1] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    lda #'x'
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const nomodify byte*) SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+  // File Comments
+// Test removal of empty function
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // main::@1
+    // SCREEN[0] = 'x'
+    // [1] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    lda #'x'
+    sta SCREEN
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

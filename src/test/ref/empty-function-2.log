@@ -1,0 +1,156 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from _start
+  call empty 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+(void()) empty()
+empty: scope:[empty]  from main
+  to:empty::@return
+empty::@return: scope:[empty]  from empty
+  return 
+  to:@return
+
+(void()) _start()
+_start: scope:[_start]  from
+  call main 
+  to:_start::@1
+_start::@1: scope:[_start]  from _start
+  to:_start::@return
+_start::@return: scope:[_start]  from _start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(void()) _start()
+(label) _start::@1
+(label) _start::@return
+(void()) empty()
+(label) empty::@return
+(void()) main()
+(label) main::@1
+(label) main::@return
+
+Removing call to empty procedure [0] call empty 
+Removing unused procedure empty
+Removing unused procedure block empty
+Removing unused procedure block empty::@return
+Successful SSA optimization PassNEliminateEmptyProcedure
+Removing unused procedure _start
+Removing unused procedure block _start
+Removing unused procedure block _start::@1
+Removing unused procedure block _start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) main::@1
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test removal of empty function
+// main() should not be removed!
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 36 combination 
+Uplifting [] best 36 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test removal of empty function
+// main() should not be removed!
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 6
+
+  // File Comments
+// Test removal of empty function
+// main() should not be removed!
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

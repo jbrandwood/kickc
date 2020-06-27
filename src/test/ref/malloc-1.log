@@ -199,14 +199,14 @@ Adding NOP phi() at start of __start::__init1
 Adding NOP phi() at start of __start::@2
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@3
-Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
+Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [__start] to malloc:2 main:5 
 
 Created 2 initial phi equivalence classes
-Coalesced [15] main::i#3 ← main::i#1
-Coalesced [16] main::w#3 ← main::w#1
+Coalesced [17] main::i#3 ← main::i#1
+Coalesced [18] main::w#3 ← main::w#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) __start::@2
 Culled Empty Block (label) __start::@3
@@ -214,8 +214,8 @@ Culled Empty Block (label) main::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::__init1
 Adding NOP phi() at start of __start::@1
-Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
+Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
@@ -235,27 +235,27 @@ __start::@return: scope:[__start]  from __start::@1
   [5] return 
   to:@return
 
-(void()) main()
-main: scope:[main]  from __start::@1
-  [6] phi()
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [7] (word*) main::w#2 ← phi( main/(const word*) WORDS#0 main::@1/(word*) main::w#1 )
-  [7] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [8] *((word*) main::w#2) ← (byte) main::i#2
-  [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD
-  [10] (byte) main::i#1 ← ++ (byte) main::i#2
-  [11] if((byte) main::i#1!=(byte) 0) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [12] return 
-  to:@return
-
 (void*()) malloc((word) malloc::size)
 malloc: scope:[malloc]  from __start::__init1
-  [13] phi()
+  [6] phi()
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
+  [7] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  [8] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [9] (word*) main::w#2 ← phi( main/(const word*) WORDS#0 main::@1/(word*) main::w#1 )
+  [9] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [10] *((word*) main::w#2) ← (byte) main::i#2
+  [11] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD
+  [12] (byte) main::i#1 ← ++ (byte) main::i#2
+  [13] if((byte) main::i#1!=(byte) 0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
   [14] return 
   to:@return
 
@@ -306,7 +306,7 @@ __start: {
     // __start::__init1
   __init1:
     // [2] call malloc 
-    // [13] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
   malloc_from___init1:
     jsr malloc
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -315,62 +315,13 @@ __start: {
     // __start::@1
   __b1:
     // [4] call main 
-    // [6] phi from __start::@1 to main [phi:__start::@1->main]
+    // [8] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
     // __start::@return
   __breturn:
     // [5] return 
-    rts
-}
-  // main
-main: {
-    .label w = 3
-    .label i = 2
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
-    lda #<WORDS
-    sta.z w
-    lda #>WORDS
-    sta.z w+1
-    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuz2 
-    lda.z i
-    ldy #0
-    sta (w),y
-    tya
-    iny
-    sta (w),y
-    // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
-    lda #SIZEOF_WORD
-    clc
-    adc.z w
-    sta.z w
-    bcc !+
-    inc.z w+1
-  !:
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
-    lda.z i
-    cmp #0
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [12] return 
     rts
 }
   // malloc
@@ -383,18 +334,67 @@ malloc: {
     jmp __breturn
     // malloc::@return
   __breturn:
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    .label w = 3
+    .label i = 2
+    // [9] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [9] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    lda #<WORDS
+    sta.z w
+    lda #>WORDS
+    sta.z w+1
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  __b1_from___b1:
+    // [9] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [10] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuz2 
+    lda.z i
+    ldy #0
+    sta (w),y
+    tya
+    iny
+    sta (w),y
+    // [11] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    lda #SIZEOF_WORD
+    clc
+    adc.z w
+    sta.z w
+    bcc !+
+    inc.z w+1
+  !:
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [13] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    lda.z i
+    cmp #0
+    bne __b1_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
     // [14] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] *((word*) main::w#2) ← (byte) main::i#2 [ main::i#2 main::w#2 ] ( main:4 [ main::i#2 main::w#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] *((word*) main::w#2) ← (byte) main::i#2 [ main::i#2 main::w#2 ] ( main:4 [ main::i#2 main::w#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD [ main::i#2 main::w#1 ] ( main:4 [ main::i#2 main::w#1 ] { }  ) always clobbers reg byte a 
-Statement [8] *((word*) main::w#2) ← (byte) main::i#2 [ main::i#2 main::w#2 ] ( main:4 [ main::i#2 main::w#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD [ main::i#2 main::w#1 ] ( main:4 [ main::i#2 main::w#1 ] { }  ) always clobbers reg byte a 
+Statement [11] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD [ main::i#2 main::w#1 ] ( main:4 [ main::i#2 main::w#1 ] { }  ) always clobbers reg byte a 
+Statement [10] *((word*) main::w#2) ← (byte) main::i#2 [ main::i#2 main::w#2 ] ( main:4 [ main::i#2 main::w#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [11] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD [ main::i#2 main::w#1 ] ( main:4 [ main::i#2 main::w#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ main::w#2 main::w#1 ] : zp[2]:3 , 
 
@@ -432,7 +432,7 @@ __start: {
     // __start::__init1
   __init1:
     // [2] call malloc 
-    // [13] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
   malloc_from___init1:
     jsr malloc
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -441,59 +441,13 @@ __start: {
     // __start::@1
   __b1:
     // [4] call main 
-    // [6] phi from __start::@1 to main [phi:__start::@1->main]
+    // [8] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
     // __start::@return
   __breturn:
     // [5] return 
-    rts
-}
-  // main
-main: {
-    .label w = 2
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
-    lda #<WORDS
-    sta.z w
-    lda #>WORDS
-    sta.z w+1
-    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    jmp __b1
-    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
-    txa
-    ldy #0
-    sta (w),y
-    tya
-    iny
-    sta (w),y
-    // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
-    lda #SIZEOF_WORD
-    clc
-    adc.z w
-    sta.z w
-    bcc !+
-    inc.z w+1
-  !:
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [12] return 
     rts
 }
   // malloc
@@ -506,6 +460,52 @@ malloc: {
     jmp __breturn
     // malloc::@return
   __breturn:
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    .label w = 2
+    // [9] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [9] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    lda #<WORDS
+    sta.z w
+    lda #>WORDS
+    sta.z w+1
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  __b1_from___b1:
+    // [9] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [10] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
+    txa
+    ldy #0
+    sta (w),y
+    tya
+    iny
+    sta (w),y
+    // [11] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    lda #SIZEOF_WORD
+    clc
+    adc.z w
+    sta.z w
+    bcc !+
+    inc.z w+1
+  !:
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [13] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b1_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
     // [14] return 
     rts
 }
@@ -515,8 +515,8 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
@@ -529,8 +529,8 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
-Removing instruction __b1_from_main:
 Removing instruction __breturn:
+Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -592,59 +592,15 @@ __start: {
     // __start::__init1
     // malloc(0x200)
     // [2] call malloc 
-    // [13] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
     jsr malloc
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [4] call main 
-    // [6] phi from __start::@1 to main [phi:__start::@1->main]
+    // [8] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [5] return 
-    rts
-}
-  // main
-main: {
-    .label w = 2
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-    // [7] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
-    lda #<WORDS
-    sta.z w
-    lda #>WORDS
-    sta.z w+1
-    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
-    ldx #0
-    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [7] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
-    // main::@1
-  __b1:
-    // *w++ = i
-    // [8] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
-    txa
-    ldy #0
-    sta (w),y
-    tya
-    iny
-    sta (w),y
-    // *w++ = i;
-    // [9] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
-    lda #SIZEOF_WORD
-    clc
-    adc.z w
-    sta.z w
-    bcc !+
-    inc.z w+1
-  !:
-    // for( byte i: 0..255)
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [11] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b1
-    // main::@return
-    // }
-    // [12] return 
     rts
 }
   // malloc
@@ -655,6 +611,51 @@ malloc: {
     .label mem = HEAP_TOP-size
     .label return = mem
     // malloc::@return
+    // }
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    .label w = 2
+    // [9] phi from main to main::@1 [phi:main->main::@1]
+    // [9] phi (word*) main::w#2 = (const word*) WORDS#0 [phi:main->main::@1#0] -- pwuz1=pwuc1 
+    lda #<WORDS
+    sta.z w
+    lda #>WORDS
+    sta.z w+1
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    ldx #0
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [9] phi (word*) main::w#2 = (word*) main::w#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#1] -- register_copy 
+    // main::@1
+  __b1:
+    // *w++ = i
+    // [10] *((word*) main::w#2) ← (byte) main::i#2 -- _deref_pwuz1=vbuxx 
+    txa
+    ldy #0
+    sta (w),y
+    tya
+    iny
+    sta (w),y
+    // *w++ = i;
+    // [11] (word*) main::w#1 ← (word*) main::w#2 + (const byte) SIZEOF_WORD -- pwuz1=pwuz1_plus_vbuc1 
+    lda #SIZEOF_WORD
+    clc
+    adc.z w
+    sta.z w
+    bcc !+
+    inc.z w+1
+  !:
+    // for( byte i: 0..255)
+    // [12] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [13] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b1
+    // main::@return
+    // }
     // [14] return 
     rts
 }

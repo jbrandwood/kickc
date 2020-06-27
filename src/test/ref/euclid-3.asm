@@ -79,6 +79,13 @@ main: {
     // }
     rts
 }
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
 // print_euclid(byte zp(2) a, byte zp(3) b)
 print_euclid: {
     .label b = 3
@@ -108,28 +115,38 @@ print_euclid: {
     // }
     rts
 }
-// Print a newline
-print_ln: {
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = 4
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
   __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
+    bne __b2
     // }
     rts
+  __b2:
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b1
 }
 // Print a char as HEX
 // print_uchar(byte register(X) b)
@@ -196,44 +213,27 @@ euclid: {
     sta.z a
     jmp __b1
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = 6
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
+// Print a newline
+print_ln: {
   __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
     // }
     rts
-  __b2:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

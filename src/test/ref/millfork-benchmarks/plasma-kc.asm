@@ -14,11 +14,11 @@
   .label print_screen = $400
   .label last_time = $a
   // The random state variable
-  .label rand_state = 7
-  .label print_line_cursor = 5
-  .label Ticks = $e
-  .label Ticks_1 = $11
-  .label print_char_cursor = $13
+  .label rand_state = 2
+  .label print_line_cursor = $f
+  .label Ticks = $14
+  .label Ticks_1 = $16
+  .label print_char_cursor = $11
 __start: {
     // last_time
     lda #<0
@@ -30,7 +30,7 @@ __start: {
 main: {
     .label block = $c
     .label v = $d
-    .label count = 5
+    .label count = 2
     // makechar()
     jsr makechar
     // start()
@@ -99,241 +99,15 @@ main: {
     dec.z count
     jmp __b1
 }
-// doplasma(byte* zp($13) scrn)
-doplasma: {
-    .const c2A = 0
-    .const c2B = 0
-    .label c1a = $10
-    .label c1b = $15
-    .label ii = 9
-    .label c2a = 3
-    .label c2b = 4
-    .label i = 2
-    .label scrn = $13
-    lda #0
-    sta.z c1b
-    sta.z c1a
-    sta.z ii
-  __b1:
-    // for (ii = 0; ii < 25; ++ii)
-    lda.z ii
-    cmp #$19
-    bcc __b2
-    lda #c2B
-    sta.z c2b
-    lda #c2A
-    sta.z c2a
-    lda #0
-    sta.z i
-  __b3:
-    // for (i = 0; i < 40; ++i)
-    lda.z i
-    cmp #$28
-    bcc __b4
-    ldx #0
-  __b5:
-    // for (jj = 0; jj < 25; ++jj)
-    cpx #$19
-    bcc __b8
-    // }
-    rts
-  __b8:
-    ldy #0
-  __b6:
-    // for (j = 0; j < 40; ++j)
-    cpy #$28
-    bcc __b7
-    // scrn += 40
-    lda #$28
-    clc
-    adc.z scrn
-    sta.z scrn
-    bcc !+
-    inc.z scrn+1
-  !:
-    // for (jj = 0; jj < 25; ++jj)
-    inx
-    jmp __b5
-  __b7:
-    // xbuf[j] + ybuf[jj]
-    lda xbuf,y
-    clc
-    adc ybuf,x
-    // scrn[j] = (xbuf[j] + ybuf[jj])
-    sta (scrn),y
-    // for (j = 0; j < 40; ++j)
-    iny
-    jmp __b6
-  __b4:
-    // sinustable[c2a] + sinustable[c2b]
-    ldy.z c2a
-    lda sinustable,y
-    ldy.z c2b
-    clc
-    adc sinustable,y
-    // xbuf[i] = (sinustable[c2a] + sinustable[c2b])
-    ldy.z i
-    sta xbuf,y
-    // c2a += 3
-    lax.z c2a
-    axs #-[3]
-    stx.z c2a
-    // c2b += 7
-    lax.z c2b
-    axs #-[7]
-    stx.z c2b
-    // for (i = 0; i < 40; ++i)
-    inc.z i
-    jmp __b3
-  __b2:
-    // sinustable[c1a] + sinustable[c1b]
-    ldy.z c1a
-    lda sinustable,y
-    ldy.z c1b
-    clc
-    adc sinustable,y
-    // ybuf[ii] = (sinustable[c1a] + sinustable[c1b])
-    ldy.z ii
-    sta ybuf,y
-    // c1a += 4
-    lax.z c1a
-    axs #-[4]
-    stx.z c1a
-    // c1b += 9
-    lax.z c1b
-    axs #-[9]
-    stx.z c1b
-    // for (ii = 0; ii < 25; ++ii)
-    inc.z ii
-    jmp __b1
-}
-end: {
-    // Ticks = last_time
-    lda.z last_time
-    sta.z Ticks
-    lda.z last_time+1
-    sta.z Ticks+1
-    // start()
-    jsr start
-    // last_time -= Ticks
-    lda.z last_time
-    sec
-    sbc.z Ticks
-    sta.z last_time
-    lda.z last_time+1
-    sbc.z Ticks+1
-    sta.z last_time+1
-    // Ticks = last_time
-    lda.z last_time
-    sta.z Ticks_1
-    lda.z last_time+1
-    sta.z Ticks_1+1
-    // print_uint(Ticks)
-    jsr print_uint
-    // print_ln()
-    jsr print_ln
-    // }
-    rts
-}
-// Print a newline
-print_ln: {
-    lda #<print_screen
-    sta.z print_line_cursor
-    lda #>print_screen
-    sta.z print_line_cursor+1
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp($11) w)
-print_uint: {
-    .label w = $11
-    // print_uchar(>w)
-    ldx.z w+1
-    lda #<print_screen
-    sta.z print_char_cursor
-    lda #>print_screen
-    sta.z print_char_cursor+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-start: {
-    .label LAST_TIME = last_time
-    // asm
-    jsr $ffde
-    sta LAST_TIME
-    stx LAST_TIME+1
-    // }
-    rts
-}
 makechar: {
-    .label __3 = $13
-    .label __4 = $15
-    .label __7 = $11
-    .label __8 = $11
-    .label s = $10
-    .label c = $e
-    .label i = 9
-    .label __10 = $11
+    .label __3 = $11
+    .label __4 = $13
+    .label __7 = $f
+    .label __8 = $f
+    .label s = $e
+    .label c = 8
+    .label i = 4
+    .label __10 = $f
     lda #<1
     sta.z rand_state
     lda #>1
@@ -431,15 +205,160 @@ makechar: {
     inx
     jmp __b5
 }
+start: {
+    .label LAST_TIME = last_time
+    // asm
+    jsr $ffde
+    sta LAST_TIME
+    stx LAST_TIME+1
+    // }
+    rts
+}
+end: {
+    // Ticks = last_time
+    lda.z last_time
+    sta.z Ticks
+    lda.z last_time+1
+    sta.z Ticks+1
+    // start()
+    jsr start
+    // last_time -= Ticks
+    lda.z last_time
+    sec
+    sbc.z Ticks
+    sta.z last_time
+    lda.z last_time+1
+    sbc.z Ticks+1
+    sta.z last_time+1
+    // Ticks = last_time
+    lda.z last_time
+    sta.z Ticks_1
+    lda.z last_time+1
+    sta.z Ticks_1+1
+    // print_uint(Ticks)
+    jsr print_uint
+    // print_ln()
+    jsr print_ln
+    // }
+    rts
+}
+// doplasma(byte* zp(8) scrn)
+doplasma: {
+    .const c2A = 0
+    .const c2B = 0
+    .label c1a = $e
+    .label c1b = $13
+    .label ii = 4
+    .label c2a = 6
+    .label c2b = 7
+    .label i = 5
+    .label scrn = 8
+    lda #0
+    sta.z c1b
+    sta.z c1a
+    sta.z ii
+  __b1:
+    // for (ii = 0; ii < 25; ++ii)
+    lda.z ii
+    cmp #$19
+    bcc __b2
+    lda #c2B
+    sta.z c2b
+    lda #c2A
+    sta.z c2a
+    lda #0
+    sta.z i
+  __b3:
+    // for (i = 0; i < 40; ++i)
+    lda.z i
+    cmp #$28
+    bcc __b4
+    ldx #0
+  __b5:
+    // for (jj = 0; jj < 25; ++jj)
+    cpx #$19
+    bcc __b8
+    // }
+    rts
+  __b8:
+    ldy #0
+  __b6:
+    // for (j = 0; j < 40; ++j)
+    cpy #$28
+    bcc __b7
+    // scrn += 40
+    lda #$28
+    clc
+    adc.z scrn
+    sta.z scrn
+    bcc !+
+    inc.z scrn+1
+  !:
+    // for (jj = 0; jj < 25; ++jj)
+    inx
+    jmp __b5
+  __b7:
+    // xbuf[j] + ybuf[jj]
+    lda xbuf,y
+    clc
+    adc ybuf,x
+    // scrn[j] = (xbuf[j] + ybuf[jj])
+    sta (scrn),y
+    // for (j = 0; j < 40; ++j)
+    iny
+    jmp __b6
+  __b4:
+    // sinustable[c2a] + sinustable[c2b]
+    ldy.z c2a
+    lda sinustable,y
+    ldy.z c2b
+    clc
+    adc sinustable,y
+    // xbuf[i] = (sinustable[c2a] + sinustable[c2b])
+    ldy.z i
+    sta xbuf,y
+    // c2a += 3
+    lax.z c2a
+    axs #-[3]
+    stx.z c2a
+    // c2b += 7
+    lax.z c2b
+    axs #-[7]
+    stx.z c2b
+    // for (i = 0; i < 40; ++i)
+    inc.z i
+    jmp __b3
+  __b2:
+    // sinustable[c1a] + sinustable[c1b]
+    ldy.z c1a
+    lda sinustable,y
+    ldy.z c1b
+    clc
+    adc sinustable,y
+    // ybuf[ii] = (sinustable[c1a] + sinustable[c1b])
+    ldy.z ii
+    sta ybuf,y
+    // c1a += 4
+    lax.z c1a
+    axs #-[4]
+    stx.z c1a
+    // c1b += 9
+    lax.z c1b
+    axs #-[9]
+    stx.z c1b
+    // for (ii = 0; ii < 25; ++ii)
+    inc.z ii
+    jmp __b1
+}
 // Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
 // Uses an xorshift pseudorandom number generator that hits all different values
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $16
-    .label __1 = $18
-    .label __2 = $1a
-    .label return = $13
+    .label __0 = $14
+    .label __1 = $16
+    .label __2 = $18
+    .label return = $11
     // rand_state << 7
     lda.z rand_state+1
     lsr
@@ -485,6 +404,87 @@ rand: {
     sta.z return
     lda.z rand_state+1
     sta.z return+1
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp($16) w)
+print_uint: {
+    .label w = $16
+    // print_uchar(>w)
+    ldx.z w+1
+    lda #<print_screen
+    sta.z print_char_cursor
+    lda #>print_screen
+    sta.z print_char_cursor+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a newline
+print_ln: {
+    lda #<print_screen
+    sta.z print_line_cursor
+    lda #>print_screen
+    sta.z print_line_cursor+1
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
     // }
     rts
 }

@@ -85,13 +85,13 @@
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
   // The current cursor x-position
-  .label conio_cursor_x = $11
+  .label conio_cursor_x = $f
   // The current cursor y-position
-  .label conio_cursor_y = $12
+  .label conio_cursor_y = $10
   // The current text cursor line start
-  .label conio_line_text = $13
-  .label x_scroll = $15
-  .label y_scroll = $16
+  .label conio_line_text = $11
+  .label x_scroll = $13
+  .label y_scroll = $14
 .segment Code
 __start: {
     // conio_cursor_x = 0
@@ -111,6 +111,79 @@ __start: {
     sta.z y_scroll
     jsr main
     rts
+}
+// NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
+vblank: {
+    pha
+    txa
+    pha
+    tya
+    pha
+    // readJoy1()
+    jsr readJoy1
+    // joy = readJoy1()
+    tax
+    // joy&JOY_DOWN
+    txa
+    and #JOY_DOWN
+    // if(joy&JOY_DOWN)
+    cmp #0
+    beq __b1
+    // if(++y_scroll==240)
+    inc.z y_scroll
+    lda #$f0
+    cmp.z y_scroll
+    bne __b1
+    // y_scroll=0
+    lda #0
+    sta.z y_scroll
+  __b1:
+    // joy&JOY_UP
+    txa
+    and #JOY_UP
+    // if(joy&JOY_UP)
+    cmp #0
+    beq __b2
+    // if(--y_scroll==255)
+    dec.z y_scroll
+    lda #$ff
+    cmp.z y_scroll
+    bne __b2
+    // y_scroll=239
+    lda #$ef
+    sta.z y_scroll
+  __b2:
+    // joy&JOY_LEFT
+    txa
+    and #JOY_LEFT
+    // if(joy&JOY_LEFT)
+    cmp #0
+    beq __b3
+    // x_scroll++;
+    inc.z x_scroll
+  __b3:
+    // joy&JOY_RIGHT
+    txa
+    and #JOY_RIGHT
+    // if(joy&JOY_RIGHT)
+    cmp #0
+    beq __b4
+    // x_scroll--;
+    dec.z x_scroll
+  __b4:
+    // PPU->PPUSCROLL = x_scroll
+    lda.z x_scroll
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
+    // PPU->PPUSCROLL = y_scroll
+    lda.z y_scroll
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
+    // }
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
 }
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
@@ -296,6 +369,245 @@ main: {
     inc.z x
     jmp __b7
 }
+// Read Standard Controller #1
+// Returns a byte representing the pushed buttons
+// - bit 0: right
+// - bit 1: left
+// - bit 2: down
+// - bit 3: up
+// - bit 4: start
+// - bit 5: select
+// - bit 6: B
+// - bit 7: A
+readJoy1: {
+    .label __1 = $15
+    // APU->JOY1 = 1
+    // Latch the controller buttons
+    lda #1
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // APU->JOY1 = 0
+    lda #0
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    tax
+  __b1:
+    // for(char i=0;i<8;i++)
+    cpx #8
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // joy<<1
+    asl
+    sta.z __1
+    // APU->JOY1&1
+    lda #1
+    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // joy = joy<<1 | APU->JOY1&1
+    ora.z __1
+    // for(char i=0;i<8;i++)
+    inx
+    jmp __b1
+}
+// Transfer a number of bytes from the CPU memory to the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+// ppuDataTransfer(void* zp($b) ppuData, void* zp($d) cpuData, word zp($1b) size)
+ppuDataTransfer: {
+    .label ppuDataPrepare1_ppuData = $b
+    .label cpuSrc = $d
+    .label i = 7
+    .label ppuData = $b
+    .label cpuData = $d
+    .label size = $1b
+    // >ppuData
+    lda.z ppuDataPrepare1_ppuData+1
+    // PPU->PPUADDR = >ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    lda.z ppuDataPrepare1_ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<0
+    sta.z i
+    sta.z i+1
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp.z size+1
+    bcc __b2
+    bne !+
+    lda.z i
+    cmp.z size
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    // ppuDataPut(*cpuSrc++)
+    ldy #0
+    lda (cpuSrc),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // ppuDataPut(*cpuSrc++);
+    inc.z cpuSrc
+    bne !+
+    inc.z cpuSrc+1
+  !:
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b1
+}
+// Fill a number of bytes in the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+// ppuDataFill(byte register(X) val, word zp($d) size)
+ppuDataFill: {
+    .label ppuDataPrepare1_ppuData = $b
+    .label i = $1b
+    .label size = $d
+    // >ppuData
+    lda.z ppuDataPrepare1_ppuData+1
+    // PPU->PPUADDR = >ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    lda.z ppuDataPrepare1_ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<0
+    sta.z i
+    sta.z i+1
+  // Transfer to PPU
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp.z size+1
+    bcc ppuDataPut1
+    bne !+
+    lda.z i
+    cmp.z size
+    bcc ppuDataPut1
+  !:
+    // }
+    rts
+  ppuDataPut1:
+    // PPU->PPUDATA = val
+    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b1
+}
+// clears the screen and moves the cursor to the upper left-hand corner of the screen.
+clrscr: {
+    // ppuDataFill(CONIO_SCREEN_TEXT, ' ', 0x3c0)
+    ldx #' '
+    lda #<$3c0
+    sta.z ppuDataFill.size
+    lda #>$3c0
+    sta.z ppuDataFill.size+1
+    lda #<PPU_NAME_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData
+    lda #>PPU_NAME_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
+    jsr ppuDataFill
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<PPU_NAME_TABLE_0
+    sta.z conio_line_text
+    lda #>PPU_NAME_TABLE_0
+    sta.z conio_line_text+1
+    // }
+    rts
+}
+// Converts unsigned number value to a string representing it in RADIX format.
+// If the leading digits are zero they are not included in the string.
+// - value : The number to be converted to RADIX
+// - buffer : receives the string representing the number and zero-termination.
+// - radix : The radix to convert the number to (from the enum RADIX)
+// uctoa(byte register(X) value, byte* zp(7) buffer)
+uctoa: {
+    .const max_digits = 2
+    .label digit_value = $16
+    .label buffer = 7
+    .label digit = 5
+    .label started = 6
+    lda #<num_buffer
+    sta.z buffer
+    lda #>num_buffer
+    sta.z buffer+1
+    lda #0
+    sta.z started
+    sta.z digit
+  __b1:
+    // for( char digit=0; digit<max_digits-1; digit++ )
+    lda.z digit
+    cmp #max_digits-1
+    bcc __b2
+    // *buffer++ = DIGITS[(char)value]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // *buffer++ = DIGITS[(char)value];
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    // *buffer = 0
+    lda #0
+    tay
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit_value = digit_values[digit]
+    ldy.z digit
+    lda RADIX_HEXADECIMAL_VALUES_CHAR,y
+    sta.z digit_value
+    // if (started || value >= digit_value)
+    lda #0
+    cmp.z started
+    bne __b5
+    cpx.z digit_value
+    bcs __b5
+  __b4:
+    // for( char digit=0; digit<max_digits-1; digit++ )
+    inc.z digit
+    jmp __b1
+  __b5:
+    // uctoa_append(buffer++, value, digit_value)
+    jsr uctoa_append
+    // uctoa_append(buffer++, value, digit_value)
+    // value = uctoa_append(buffer++, value, digit_value)
+    // value = uctoa_append(buffer++, value, digit_value);
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    lda #1
+    sta.z started
+    jmp __b4
+}
+// Move cursor and output a NUL-terminated string
+// Same as "gotoxy (x, y); puts (s);"
+// cputsxy(byte register(X) x, byte register(A) y)
+cputsxy: {
+    // gotoxy(x, y)
+    jsr gotoxy
+    // cputs(s)
+    jsr cputs
+    // }
+    rts
+}
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"
 // cputcxy(byte register(X) x, byte register(A) y, byte register(Y) c)
@@ -308,6 +620,117 @@ cputcxy: {
     jsr cputc
     // }
     rts
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// uctoa_append(byte* zp(7) buffer, byte register(X) value, byte zp($16) sub)
+uctoa_append: {
+    .label buffer = 7
+    .label sub = $16
+    ldy #0
+  __b1:
+    // while (value >= sub)
+    cpx.z sub
+    bcs __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,y
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    iny
+    // value -= sub
+    txa
+    sec
+    sbc.z sub
+    tax
+    jmp __b1
+}
+// Set the cursor to the specified position
+// gotoxy(byte register(X) x, byte register(A) y)
+gotoxy: {
+    .label __5 = $17
+    .label __6 = $17
+    .label line_offset = $17
+    // if(y>CONIO_HEIGHT)
+    cmp #$1e+1
+    bcc __b1
+    lda #0
+  __b1:
+    // if(x>=CONIO_WIDTH)
+    cpx #$20
+    bcc __b2
+    ldx #0
+  __b2:
+    // conio_cursor_x = x
+    stx.z conio_cursor_x
+    // conio_cursor_y = y
+    sta.z conio_cursor_y
+    // (unsigned int)y*CONIO_WIDTH
+    sta.z __6
+    lda #0
+    sta.z __6+1
+    // line_offset = (unsigned int)y*CONIO_WIDTH
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    // CONIO_SCREEN_TEXT + line_offset
+    clc
+    lda.z __5
+    adc #<PPU_NAME_TABLE_0
+    sta.z __5
+    lda.z __5+1
+    adc #>PPU_NAME_TABLE_0
+    sta.z __5+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
+    // }
+    rts
+}
+// Output a NUL-terminated string at the current cursor position
+// cputs(byte* zp($17) s)
+cputs: {
+    .label s = $17
+    lda #<num_buffer
+    sta.z s
+    lda #>num_buffer
+    sta.z s+1
+  __b1:
+    // c=*s++
+    ldy #0
+    lda (s),y
+    // while(c=*s++)
+    inc.z s
+    bne !+
+    inc.z s+1
+  !:
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // cputc(c)
+    tax
+    jsr cputc
+    jmp __b1
 }
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
@@ -342,6 +765,25 @@ cputc: {
     jsr cputln
     rts
 }
+// Set one byte in PPU memory
+// - ppuData : Pointer in the PPU memory
+// - val : The value to set
+// ppuDataSet(byte* zp($19) ppuData, byte register(A) val)
+ppuDataSet: {
+    .label ppuData = $19
+    // >ppuData
+    ldx.z ppuData+1
+    // PPU->PPUADDR = >ppuData
+    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    ldx.z ppuData
+    // PPU->PPUADDR = <ppuData
+    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // }
+    rts
+}
 // Print a newline
 cputln: {
     // conio_line_text +=  CONIO_WIDTH
@@ -365,8 +807,8 @@ cputln: {
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // Scroll lines up
-    .label line1 = $17
-    .label line2 = $f
+    .label line1 = 9
+    .label line2 = $19
     // if(conio_cursor_y==CONIO_HEIGHT)
     lda #$1e
     cmp.z conio_cursor_y
@@ -450,71 +892,18 @@ cscroll: {
     inx
     jmp __b1
 }
-// Transfer a number of bytes from the CPU memory to the PPU memory
-// - cpuData : Pointer to the CPU memory (RAM of ROM)
-// - ppuData : Pointer in the PPU memory
-// - size : The number of bytes to transfer
-// ppuDataTransfer(void* zp(5) ppuData, void* zp(7) cpuData, word zp(9) size)
-ppuDataTransfer: {
-    .label ppuDataPrepare1_ppuData = 5
-    .label cpuSrc = 7
-    .label i = $b
-    .label ppuData = 5
-    .label cpuData = 7
-    .label size = 9
-    // >ppuData
-    lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
-    lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    lda #<0
-    sta.z i
-    sta.z i+1
-  __b1:
-    // for(unsigned int i=0;i<size;i++)
-    lda.z i+1
-    cmp.z size+1
-    bcc __b2
-    bne !+
-    lda.z i
-    cmp.z size
-    bcc __b2
-  !:
-    // }
-    rts
-  __b2:
-    // ppuDataPut(*cpuSrc++)
-    ldy #0
-    lda (cpuSrc),y
-    // PPU->PPUDATA = val
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // ppuDataPut(*cpuSrc++);
-    inc.z cpuSrc
-    bne !+
-    inc.z cpuSrc+1
-  !:
-    // for(unsigned int i=0;i<size;i++)
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    jmp __b1
-}
 // Transfer a number of bytes from the PPU memory to the CPU memory
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
-// ppuDataFetch(void* zp($19) ppuData)
+// ppuDataFetch(void* zp($1b) ppuData)
 ppuDataFetch: {
     .const size = $20
     .label cpuData = conio_cscroll_buffer
     // Fetch from PPU to CPU
-    .label cpuDst = 7
-    .label i = 5
-    .label ppuData = $19
+    .label cpuDst = $d
+    .label i = $b
+    .label ppuData = $1b
     // >ppuData
     lda.z ppuData+1
     // PPU->PPUADDR = >ppuData
@@ -561,395 +950,6 @@ ppuDataFetch: {
     bne !+
     inc.z i+1
   !:
-    jmp __b1
-}
-// Fill a number of bytes in the PPU memory
-// - ppuData : Pointer in the PPU memory
-// - size : The number of bytes to transfer
-// ppuDataFill(byte register(X) val, word zp($b) size)
-ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = 9
-    .label i = $19
-    .label size = $b
-    // >ppuData
-    lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
-    lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    lda #<0
-    sta.z i
-    sta.z i+1
-  // Transfer to PPU
-  __b1:
-    // for(unsigned int i=0;i<size;i++)
-    lda.z i+1
-    cmp.z size+1
-    bcc ppuDataPut1
-    bne !+
-    lda.z i
-    cmp.z size
-    bcc ppuDataPut1
-  !:
-    // }
-    rts
-  ppuDataPut1:
-    // PPU->PPUDATA = val
-    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // for(unsigned int i=0;i<size;i++)
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    jmp __b1
-}
-// Set one byte in PPU memory
-// - ppuData : Pointer in the PPU memory
-// - val : The value to set
-// ppuDataSet(byte* zp($17) ppuData, byte register(A) val)
-ppuDataSet: {
-    .label ppuData = $17
-    // >ppuData
-    ldx.z ppuData+1
-    // PPU->PPUADDR = >ppuData
-    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
-    ldx.z ppuData
-    // PPU->PPUADDR = <ppuData
-    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // PPU->PPUDATA = val
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // }
-    rts
-}
-// Set the cursor to the specified position
-// gotoxy(byte register(X) x, byte register(A) y)
-gotoxy: {
-    .label __5 = $1b
-    .label __6 = $1b
-    .label line_offset = $1b
-    // if(y>CONIO_HEIGHT)
-    cmp #$1e+1
-    bcc __b1
-    lda #0
-  __b1:
-    // if(x>=CONIO_WIDTH)
-    cpx #$20
-    bcc __b2
-    ldx #0
-  __b2:
-    // conio_cursor_x = x
-    stx.z conio_cursor_x
-    // conio_cursor_y = y
-    sta.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
-    sta.z __6
-    lda #0
-    sta.z __6+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
-    asl.z line_offset
-    rol.z line_offset+1
-    asl.z line_offset
-    rol.z line_offset+1
-    asl.z line_offset
-    rol.z line_offset+1
-    asl.z line_offset
-    rol.z line_offset+1
-    asl.z line_offset
-    rol.z line_offset+1
-    // CONIO_SCREEN_TEXT + line_offset
-    clc
-    lda.z __5
-    adc #<PPU_NAME_TABLE_0
-    sta.z __5
-    lda.z __5+1
-    adc #>PPU_NAME_TABLE_0
-    sta.z __5+1
-    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
-    lda.z __5
-    sta.z conio_line_text
-    lda.z __5+1
-    sta.z conio_line_text+1
-    // }
-    rts
-}
-// Move cursor and output a NUL-terminated string
-// Same as "gotoxy (x, y); puts (s);"
-// cputsxy(byte register(X) x, byte register(A) y)
-cputsxy: {
-    // gotoxy(x, y)
-    jsr gotoxy
-    // cputs(s)
-    jsr cputs
-    // }
-    rts
-}
-// Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($1b) s)
-cputs: {
-    .label s = $1b
-    lda #<num_buffer
-    sta.z s
-    lda #>num_buffer
-    sta.z s+1
-  __b1:
-    // c=*s++
-    ldy #0
-    lda (s),y
-    // while(c=*s++)
-    inc.z s
-    bne !+
-    inc.z s+1
-  !:
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // cputc(c)
-    tax
-    jsr cputc
-    jmp __b1
-}
-// Converts unsigned number value to a string representing it in RADIX format.
-// If the leading digits are zero they are not included in the string.
-// - value : The number to be converted to RADIX
-// - buffer : receives the string representing the number and zero-termination.
-// - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($f) buffer)
-uctoa: {
-    .const max_digits = 2
-    .label digit_value = $1d
-    .label buffer = $f
-    .label digit = $d
-    .label started = $e
-    lda #<num_buffer
-    sta.z buffer
-    lda #>num_buffer
-    sta.z buffer+1
-    lda #0
-    sta.z started
-    sta.z digit
-  __b1:
-    // for( char digit=0; digit<max_digits-1; digit++ )
-    lda.z digit
-    cmp #max_digits-1
-    bcc __b2
-    // *buffer++ = DIGITS[(char)value]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // *buffer++ = DIGITS[(char)value];
-    inc.z buffer
-    bne !+
-    inc.z buffer+1
-  !:
-    // *buffer = 0
-    lda #0
-    tay
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit_value = digit_values[digit]
-    ldy.z digit
-    lda RADIX_HEXADECIMAL_VALUES_CHAR,y
-    sta.z digit_value
-    // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
-    bne __b5
-    cpx.z digit_value
-    bcs __b5
-  __b4:
-    // for( char digit=0; digit<max_digits-1; digit++ )
-    inc.z digit
-    jmp __b1
-  __b5:
-    // uctoa_append(buffer++, value, digit_value)
-    jsr uctoa_append
-    // uctoa_append(buffer++, value, digit_value)
-    // value = uctoa_append(buffer++, value, digit_value)
-    // value = uctoa_append(buffer++, value, digit_value);
-    inc.z buffer
-    bne !+
-    inc.z buffer+1
-  !:
-    lda #1
-    sta.z started
-    jmp __b4
-}
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($f) buffer, byte register(X) value, byte zp($1d) sub)
-uctoa_append: {
-    .label buffer = $f
-    .label sub = $1d
-    ldy #0
-  __b1:
-    // while (value >= sub)
-    cpx.z sub
-    bcs __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,y
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    iny
-    // value -= sub
-    txa
-    sec
-    sbc.z sub
-    tax
-    jmp __b1
-}
-// clears the screen and moves the cursor to the upper left-hand corner of the screen.
-clrscr: {
-    // ppuDataFill(CONIO_SCREEN_TEXT, ' ', 0x3c0)
-    ldx #' '
-    lda #<$3c0
-    sta.z ppuDataFill.size
-    lda #>$3c0
-    sta.z ppuDataFill.size+1
-    lda #<PPU_NAME_TABLE_0
-    sta.z ppuDataFill.ppuDataPrepare1_ppuData
-    lda #>PPU_NAME_TABLE_0
-    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
-    jsr ppuDataFill
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // conio_cursor_y = 0
-    sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
-    lda #<PPU_NAME_TABLE_0
-    sta.z conio_line_text
-    lda #>PPU_NAME_TABLE_0
-    sta.z conio_line_text+1
-    // }
-    rts
-}
-// NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-vblank: {
-    pha
-    txa
-    pha
-    tya
-    pha
-    // readJoy1()
-    jsr readJoy1
-    // joy = readJoy1()
-    tax
-    // joy&JOY_DOWN
-    txa
-    and #JOY_DOWN
-    // if(joy&JOY_DOWN)
-    cmp #0
-    beq __b1
-    // if(++y_scroll==240)
-    inc.z y_scroll
-    lda #$f0
-    cmp.z y_scroll
-    bne __b1
-    // y_scroll=0
-    lda #0
-    sta.z y_scroll
-  __b1:
-    // joy&JOY_UP
-    txa
-    and #JOY_UP
-    // if(joy&JOY_UP)
-    cmp #0
-    beq __b2
-    // if(--y_scroll==255)
-    dec.z y_scroll
-    lda #$ff
-    cmp.z y_scroll
-    bne __b2
-    // y_scroll=239
-    lda #$ef
-    sta.z y_scroll
-  __b2:
-    // joy&JOY_LEFT
-    txa
-    and #JOY_LEFT
-    // if(joy&JOY_LEFT)
-    cmp #0
-    beq __b3
-    // x_scroll++;
-    inc.z x_scroll
-  __b3:
-    // joy&JOY_RIGHT
-    txa
-    and #JOY_RIGHT
-    // if(joy&JOY_RIGHT)
-    cmp #0
-    beq __b4
-    // x_scroll--;
-    dec.z x_scroll
-  __b4:
-    // PPU->PPUSCROLL = x_scroll
-    lda.z x_scroll
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
-    // PPU->PPUSCROLL = y_scroll
-    lda.z y_scroll
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUSCROLL
-    // }
-    pla
-    tay
-    pla
-    tax
-    pla
-    rti
-}
-// Read Standard Controller #1
-// Returns a byte representing the pushed buttons
-// - bit 0: right
-// - bit 1: left
-// - bit 2: down
-// - bit 3: up
-// - bit 4: start
-// - bit 5: select
-// - bit 6: B
-// - bit 7: A
-readJoy1: {
-    .label __1 = $1e
-    // APU->JOY1 = 1
-    // Latch the controller buttons
-    lda #1
-    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // APU->JOY1 = 0
-    lda #0
-    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    tax
-  __b1:
-    // for(char i=0;i<8;i++)
-    cpx #8
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // joy<<1
-    asl
-    sta.z __1
-    // APU->JOY1&1
-    lda #1
-    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // joy = joy<<1 | APU->JOY1&1
-    ora.z __1
-    // for(char i=0;i<8;i++)
-    inx
     jmp __b1
 }
 .segment GameRam

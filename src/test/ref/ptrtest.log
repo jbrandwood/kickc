@@ -296,29 +296,29 @@ Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
-Adding NOP phi() at start of lvaluevar
 Adding NOP phi() at start of rvaluevar
+Adding NOP phi() at start of lvaluevar
 CALL GRAPH
 Calls in [main] to lvalue:1 rvalue:3 rvaluevar:5 lvaluevar:7 
 
 Created 8 initial phi equivalence classes
-Coalesced [17] lvaluevar::i#4 ← lvaluevar::i#1
-Coalesced [18] lvaluevar::screen#4 ← lvaluevar::screen#1
-Coalesced [27] rvaluevar::i#4 ← rvaluevar::i#1
-Coalesced [28] rvaluevar::screen#4 ← rvaluevar::screen#1
-Coalesced [29] rvaluevar::b#4 ← rvaluevar::b#1
-Coalesced [31] rvalue::b#5 ← rvalue::b#1
-Coalesced [38] rvalue::i#4 ← rvalue::i#1
-Coalesced [39] rvalue::b#6 ← rvalue::b#2
-Coalesced [47] lvalue::i#4 ← lvalue::i#1
+Coalesced [17] lvalue::i#4 ← lvalue::i#1
+Coalesced [19] rvalue::b#5 ← rvalue::b#1
+Coalesced [26] rvalue::i#4 ← rvalue::i#1
+Coalesced [27] rvalue::b#6 ← rvalue::b#2
+Coalesced [36] rvaluevar::i#4 ← rvaluevar::i#1
+Coalesced [37] rvaluevar::screen#4 ← rvaluevar::screen#1
+Coalesced [38] rvaluevar::b#4 ← rvaluevar::b#1
+Coalesced [46] lvaluevar::i#4 ← lvaluevar::i#1
+Coalesced [47] lvaluevar::screen#4 ← lvaluevar::screen#1
 Coalesced down to 8 phi equivalence classes
 Culled Empty Block (label) main::@4
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
-Adding NOP phi() at start of lvaluevar
 Adding NOP phi() at start of rvaluevar
+Adding NOP phi() at start of lvaluevar
 
 FINAL CONTROL FLOW GRAPH
 
@@ -343,82 +343,82 @@ main::@return: scope:[main]  from main::@3
   [8] return 
   to:@return
 
-(void()) lvaluevar()
-lvaluevar: scope:[lvaluevar]  from main::@3
-  [9] phi()
-  to:lvaluevar::@1
-lvaluevar::@1: scope:[lvaluevar]  from lvaluevar lvaluevar::@2
-  [10] (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(byte*) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
-  [10] (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
-  [11] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2
-  to:lvaluevar::@return
-lvaluevar::@return: scope:[lvaluevar]  from lvaluevar::@1
-  [12] return 
+(void()) lvalue()
+lvalue: scope:[lvalue]  from main
+  [9] *((const byte*) lvalue::SCREEN) ← (byte) 1
+  [10] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2
+  to:lvalue::@1
+lvalue::@1: scope:[lvalue]  from lvalue lvalue::@2
+  [11] (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
+  [12] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2
+  to:lvalue::@return
+lvalue::@return: scope:[lvalue]  from lvalue::@1
+  [13] return 
   to:@return
-lvaluevar::@2: scope:[lvaluevar]  from lvaluevar::@1
-  [13] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b
-  [14] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
-  [15] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
-  to:lvaluevar::@1
-
-(void()) rvaluevar()
-rvaluevar: scope:[rvaluevar]  from main::@2
-  [16] phi()
-  to:rvaluevar::@1
-rvaluevar::@1: scope:[rvaluevar]  from rvaluevar rvaluevar::@2
-  [17] (byte) rvaluevar::b#2 ← phi( rvaluevar/(byte) 0 rvaluevar::@2/(byte) rvaluevar::b#1 )
-  [17] (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(byte*) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
-  [17] (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
-  [18] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2
-  to:rvaluevar::@3
-rvaluevar::@3: scope:[rvaluevar]  from rvaluevar::@1
-  [19] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2
-  to:rvaluevar::@return
-rvaluevar::@return: scope:[rvaluevar]  from rvaluevar::@3
-  [20] return 
-  to:@return
-rvaluevar::@2: scope:[rvaluevar]  from rvaluevar::@1
-  [21] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2)
-  [22] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
-  [23] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
-  to:rvaluevar::@1
+lvalue::@2: scope:[lvalue]  from lvalue::@1
+  [14] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3
+  [15] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
+  to:lvalue::@1
 
 (void()) rvalue()
 rvalue: scope:[rvalue]  from main::@1
-  [24] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1)
+  [16] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1)
   to:rvalue::@1
 rvalue::@1: scope:[rvalue]  from rvalue rvalue::@2
-  [25] (byte) rvalue::b#3 ← phi( rvalue/(byte) rvalue::b#1 rvalue::@2/(byte) rvalue::b#2 )
-  [25] (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
-  [26] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2
+  [17] (byte) rvalue::b#3 ← phi( rvalue/(byte) rvalue::b#1 rvalue::@2/(byte) rvalue::b#2 )
+  [17] (byte) rvalue::i#2 ← phi( rvalue/(byte) 2 rvalue::@2/(byte) rvalue::i#1 )
+  [18] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2
   to:rvalue::@3
 rvalue::@3: scope:[rvalue]  from rvalue::@1
-  [27] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3
+  [19] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3
   to:rvalue::@return
 rvalue::@return: scope:[rvalue]  from rvalue::@3
-  [28] return 
+  [20] return 
   to:@return
 rvalue::@2: scope:[rvalue]  from rvalue::@1
-  [29] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2)
-  [30] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
+  [21] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2)
+  [22] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2
   to:rvalue::@1
 
-(void()) lvalue()
-lvalue: scope:[lvalue]  from main
-  [31] *((const byte*) lvalue::SCREEN) ← (byte) 1
-  [32] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2
-  to:lvalue::@1
-lvalue::@1: scope:[lvalue]  from lvalue lvalue::@2
-  [33] (byte) lvalue::i#2 ← phi( lvalue/(byte) 2 lvalue::@2/(byte) lvalue::i#1 )
-  [34] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2
-  to:lvalue::@return
-lvalue::@return: scope:[lvalue]  from lvalue::@1
-  [35] return 
+(void()) rvaluevar()
+rvaluevar: scope:[rvaluevar]  from main::@2
+  [23] phi()
+  to:rvaluevar::@1
+rvaluevar::@1: scope:[rvaluevar]  from rvaluevar rvaluevar::@2
+  [24] (byte) rvaluevar::b#2 ← phi( rvaluevar/(byte) 0 rvaluevar::@2/(byte) rvaluevar::b#1 )
+  [24] (byte*) rvaluevar::screen#2 ← phi( rvaluevar/(byte*) 1024 rvaluevar::@2/(byte*) rvaluevar::screen#1 )
+  [24] (byte) rvaluevar::i#2 ← phi( rvaluevar/(byte) 2 rvaluevar::@2/(byte) rvaluevar::i#1 )
+  [25] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2
+  to:rvaluevar::@3
+rvaluevar::@3: scope:[rvaluevar]  from rvaluevar::@1
+  [26] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2
+  to:rvaluevar::@return
+rvaluevar::@return: scope:[rvaluevar]  from rvaluevar::@3
+  [27] return 
   to:@return
-lvalue::@2: scope:[lvalue]  from lvalue::@1
-  [36] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3
-  [37] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2
-  to:lvalue::@1
+rvaluevar::@2: scope:[rvaluevar]  from rvaluevar::@1
+  [28] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2)
+  [29] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2
+  [30] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2
+  to:rvaluevar::@1
+
+(void()) lvaluevar()
+lvaluevar: scope:[lvaluevar]  from main::@3
+  [31] phi()
+  to:lvaluevar::@1
+lvaluevar::@1: scope:[lvaluevar]  from lvaluevar lvaluevar::@2
+  [32] (byte*) lvaluevar::screen#2 ← phi( lvaluevar/(byte*) 1024 lvaluevar::@2/(byte*) lvaluevar::screen#1 )
+  [32] (byte) lvaluevar::i#2 ← phi( lvaluevar/(byte) 2 lvaluevar::@2/(byte) lvaluevar::i#1 )
+  [33] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2
+  to:lvaluevar::@return
+lvaluevar::@return: scope:[lvaluevar]  from lvaluevar::@1
+  [34] return 
+  to:@return
+lvaluevar::@2: scope:[lvaluevar]  from lvaluevar::@1
+  [35] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b
+  [36] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2
+  [37] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2
+  to:lvaluevar::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -454,31 +454,31 @@ VARIABLE REGISTER WEIGHTS
 (byte*) rvaluevar::screen#2 101.0
 
 Initial phi equivalence classes
-[ lvaluevar::i#2 lvaluevar::i#1 ]
-[ lvaluevar::screen#2 lvaluevar::screen#1 ]
+[ lvalue::i#2 lvalue::i#1 ]
+[ rvalue::i#2 rvalue::i#1 ]
+[ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
 [ rvaluevar::i#2 rvaluevar::i#1 ]
 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
 [ rvaluevar::b#2 rvaluevar::b#1 ]
-[ rvalue::i#2 rvalue::i#1 ]
-[ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
-[ lvalue::i#2 lvalue::i#1 ]
+[ lvaluevar::i#2 lvaluevar::i#1 ]
+[ lvaluevar::screen#2 lvaluevar::screen#1 ]
 Complete equivalence classes
-[ lvaluevar::i#2 lvaluevar::i#1 ]
-[ lvaluevar::screen#2 lvaluevar::screen#1 ]
+[ lvalue::i#2 lvalue::i#1 ]
+[ rvalue::i#2 rvalue::i#1 ]
+[ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
 [ rvaluevar::i#2 rvaluevar::i#1 ]
 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
 [ rvaluevar::b#2 rvaluevar::b#1 ]
-[ rvalue::i#2 rvalue::i#1 ]
-[ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
-[ lvalue::i#2 lvalue::i#1 ]
-Allocated zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
-Allocated zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
+[ lvaluevar::i#2 lvaluevar::i#1 ]
+[ lvaluevar::screen#2 lvaluevar::screen#1 ]
+Allocated zp[1]:2 [ lvalue::i#2 lvalue::i#1 ]
+Allocated zp[1]:3 [ rvalue::i#2 rvalue::i#1 ]
+Allocated zp[1]:4 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
 Allocated zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
 Allocated zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ]
 Allocated zp[1]:8 [ rvaluevar::b#2 rvaluevar::b#1 ]
-Allocated zp[1]:9 [ rvalue::i#2 rvalue::i#1 ]
-Allocated zp[1]:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
-Allocated zp[1]:11 [ lvalue::i#2 lvalue::i#1 ]
+Allocated zp[1]:9 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Allocated zp[2]:10 [ lvaluevar::screen#2 lvaluevar::screen#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -506,7 +506,7 @@ main: {
     // main::@2
   __b2:
     // [5] call rvaluevar 
-    // [16] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
+    // [23] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
   rvaluevar_from___b2:
     jsr rvaluevar
     // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
@@ -515,7 +515,7 @@ main: {
     // main::@3
   __b3:
     // [7] call lvaluevar 
-    // [9] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
+    // [31] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
   lvaluevar_from___b3:
     jsr lvaluevar
     jmp __breturn
@@ -524,51 +524,98 @@ main: {
     // [8] return 
     rts
 }
-  // lvaluevar
-lvaluevar: {
-    // LValue Variable pointer dereference
-    .const b = 4
-    .label screen = 3
+  // lvalue
+lvalue: {
+    // A constant pointer
+    .label SCREEN = $400
+    // LValue constant array variable indexing
     .label i = 2
-    // [10] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
-  __b1_from_lvaluevar:
-    // [10] phi (byte*) lvaluevar::screen#2 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [10] phi (byte) lvaluevar::i#2 = (byte) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuz1=vbuc1 
+    // [9] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // LValue constant pointer dereference
+    lda #1
+    sta SCREEN
+    // [10] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // LValue constant array constant indexing
+    lda #2
+    sta SCREEN+1
+    // [11] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
+  __b1_from_lvalue:
+    // [11] phi (byte) lvalue::i#2 = (byte) 2 [phi:lvalue->lvalue::@1#0] -- vbuz1=vbuc1 
     lda #2
     sta.z i
     jmp __b1
-    // lvaluevar::@1
+    // lvalue::@1
   __b1:
-    // [11] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [12] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$a
     bcc __b2
     jmp __breturn
-    // lvaluevar::@return
+    // lvalue::@return
   __breturn:
-    // [12] return 
+    // [13] return 
     rts
-    // lvaluevar::@2
+    // lvalue::@2
   __b2:
-    // [13] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b -- _deref_pbuz1=vbuc1 
-    lda #b
-    ldy #0
-    sta (screen),y
-    // [14] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // [15] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 -- vbuz1=_inc_vbuz1 
+    // [14] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #3
+    ldy.z i
+    sta SCREEN,y
+    // [15] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [10] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
+    // [11] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
   __b1_from___b2:
-    // [10] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
-    // [10] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
+    // [11] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
+    jmp __b1
+}
+  // rvalue
+rvalue: {
+    // A constant pointer
+    .label SCREEN = $400
+    .label screen2 = $400
+    .label b = 4
+    // RValue constant array variable index
+    .label i = 3
+    // [16] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuz1=_deref_pbuc1 
+    // RValue constant array pointer constant index
+    lda SCREEN+1
+    sta.z b
+    // [17] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
+  __b1_from_rvalue:
+    // [17] phi (byte) rvalue::b#3 = (byte) rvalue::b#1 [phi:rvalue->rvalue::@1#0] -- register_copy 
+    // [17] phi (byte) rvalue::i#2 = (byte) 2 [phi:rvalue->rvalue::@1#1] -- vbuz1=vbuc1 
+    lda #2
+    sta.z i
+    jmp __b1
+    // rvalue::@1
+  __b1:
+    // [18] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #$a
+    bcc __b2
+    jmp __b3
+    // rvalue::@3
+  __b3:
+    // [19] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3 -- _deref_pbuc1=vbuz1 
+    lda.z b
+    sta screen2
+    jmp __breturn
+    // rvalue::@return
+  __breturn:
+    // [20] return 
+    rts
+    // rvalue::@2
+  __b2:
+    // [21] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
+    ldy.z i
+    lda SCREEN,y
+    sta.z b
+    // [22] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [17] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
+  __b1_from___b2:
+    // [17] phi (byte) rvalue::b#3 = (byte) rvalue::b#2 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
+    // [17] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#1] -- register_copy 
     jmp __b1
 }
   // rvaluevar
@@ -578,194 +625,147 @@ rvaluevar: {
     .label b = 8
     .label screen = 6
     .label i = 5
-    // [17] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
+    // [24] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
   __b1_from_rvaluevar:
-    // [17] phi (byte) rvaluevar::b#2 = (byte) 0 [phi:rvaluevar->rvaluevar::@1#0] -- vbuz1=vbuc1 
+    // [24] phi (byte) rvaluevar::b#2 = (byte) 0 [phi:rvaluevar->rvaluevar::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z b
-    // [17] phi (byte*) rvaluevar::screen#2 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@1#1] -- pbuz1=pbuc1 
+    // [24] phi (byte*) rvaluevar::screen#2 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@1#1] -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [17] phi (byte) rvaluevar::i#2 = (byte) 2 [phi:rvaluevar->rvaluevar::@1#2] -- vbuz1=vbuc1 
+    // [24] phi (byte) rvaluevar::i#2 = (byte) 2 [phi:rvaluevar->rvaluevar::@1#2] -- vbuz1=vbuc1 
     lda #2
     sta.z i
     jmp __b1
     // rvaluevar::@1
   __b1:
-    // [18] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [25] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$a
     bcc __b2
     jmp __b3
     // rvaluevar::@3
   __b3:
-    // [19] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2 -- _deref_pbuc1=vbuz1 
+    // [26] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2 -- _deref_pbuc1=vbuz1 
     lda.z b
     sta screen2
     jmp __breturn
     // rvaluevar::@return
   __breturn:
-    // [20] return 
+    // [27] return 
     rts
     // rvaluevar::@2
   __b2:
-    // [21] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuz1=_deref_pbuz2 
+    // [28] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuz1=_deref_pbuz2 
     ldy #0
     lda (screen),y
     sta.z b
-    // [22] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
+    // [29] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // [23] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 -- vbuz1=_inc_vbuz1 
+    // [30] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [17] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
+    // [24] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
   __b1_from___b2:
-    // [17] phi (byte) rvaluevar::b#2 = (byte) rvaluevar::b#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
-    // [17] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
-    // [17] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#2] -- register_copy 
+    // [24] phi (byte) rvaluevar::b#2 = (byte) rvaluevar::b#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
+    // [24] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
+    // [24] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#2] -- register_copy 
     jmp __b1
 }
-  // rvalue
-rvalue: {
-    // A constant pointer
-    .label SCREEN = $400
-    .label screen2 = $400
-    .label b = $a
-    // RValue constant array variable index
+  // lvaluevar
+lvaluevar: {
+    // LValue Variable pointer dereference
+    .const b = 4
+    .label screen = $a
     .label i = 9
-    // [24] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuz1=_deref_pbuc1 
-    // RValue constant array pointer constant index
-    lda SCREEN+1
-    sta.z b
-    // [25] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
-  __b1_from_rvalue:
-    // [25] phi (byte) rvalue::b#3 = (byte) rvalue::b#1 [phi:rvalue->rvalue::@1#0] -- register_copy 
-    // [25] phi (byte) rvalue::i#2 = (byte) 2 [phi:rvalue->rvalue::@1#1] -- vbuz1=vbuc1 
+    // [32] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
+  __b1_from_lvaluevar:
+    // [32] phi (byte*) lvaluevar::screen#2 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [32] phi (byte) lvaluevar::i#2 = (byte) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuz1=vbuc1 
     lda #2
     sta.z i
     jmp __b1
-    // rvalue::@1
+    // lvaluevar::@1
   __b1:
-    // [26] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #$a
-    bcc __b2
-    jmp __b3
-    // rvalue::@3
-  __b3:
-    // [27] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3 -- _deref_pbuc1=vbuz1 
-    lda.z b
-    sta screen2
-    jmp __breturn
-    // rvalue::@return
-  __breturn:
-    // [28] return 
-    rts
-    // rvalue::@2
-  __b2:
-    // [29] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z i
-    lda SCREEN,y
-    sta.z b
-    // [30] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [25] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
-  __b1_from___b2:
-    // [25] phi (byte) rvalue::b#3 = (byte) rvalue::b#2 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
-    // [25] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#1] -- register_copy 
-    jmp __b1
-}
-  // lvalue
-lvalue: {
-    // A constant pointer
-    .label SCREEN = $400
-    // LValue constant array variable indexing
-    .label i = $b
-    // [31] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    // LValue constant pointer dereference
-    lda #1
-    sta SCREEN
-    // [32] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
-    // LValue constant array constant indexing
-    lda #2
-    sta SCREEN+1
-    // [33] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
-  __b1_from_lvalue:
-    // [33] phi (byte) lvalue::i#2 = (byte) 2 [phi:lvalue->lvalue::@1#0] -- vbuz1=vbuc1 
-    lda #2
-    sta.z i
-    jmp __b1
-    // lvalue::@1
-  __b1:
-    // [34] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [33] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$a
     bcc __b2
     jmp __breturn
-    // lvalue::@return
+    // lvaluevar::@return
   __breturn:
-    // [35] return 
+    // [34] return 
     rts
-    // lvalue::@2
+    // lvaluevar::@2
   __b2:
-    // [36] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #3
-    ldy.z i
-    sta SCREEN,y
-    // [37] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuz1=_inc_vbuz1 
+    // [35] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b -- _deref_pbuz1=vbuc1 
+    lda #b
+    ldy #0
+    sta (screen),y
+    // [36] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // [37] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [33] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
+    // [32] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
   __b1_from___b2:
-    // [33] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
+    // [32] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
+    // [32] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [13] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b [ lvaluevar::i#2 lvaluevar::screen#2 ] ( lvaluevar:7 [ lvaluevar::i#2 lvaluevar::screen#2 ] { }  ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ]
-Statement [21] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ( rvaluevar:5 [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] *((const byte*) lvalue::SCREEN) ← (byte) 1 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( lvalue:1 [ lvalue::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ lvalue::i#2 lvalue::i#1 ]
+Statement [28] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ( rvaluevar:5 [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ]
-Statement [31] *((const byte*) lvalue::SCREEN) ← (byte) 1 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
-Statement [32] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
-Statement [36] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( lvalue:1 [ lvalue::i#2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:11 [ lvalue::i#2 lvalue::i#1 ]
-Statement [13] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b [ lvaluevar::i#2 lvaluevar::screen#2 ] ( lvaluevar:7 [ lvaluevar::i#2 lvaluevar::screen#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [21] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ( rvaluevar:5 [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [31] *((const byte*) lvalue::SCREEN) ← (byte) 1 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
-Statement [32] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
-Statement [36] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( lvalue:1 [ lvalue::i#2 ] { }  ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ] : zp[1]:2 , reg byte x , 
-Potential registers zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] : zp[2]:3 , 
+Statement [35] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b [ lvaluevar::i#2 lvaluevar::screen#2 ] ( lvaluevar:7 [ lvaluevar::i#2 lvaluevar::screen#2 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:9 [ lvaluevar::i#2 lvaluevar::i#1 ]
+Statement [9] *((const byte*) lvalue::SCREEN) ← (byte) 1 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
+Statement [10] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 [ ] ( lvalue:1 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 [ lvalue::i#2 ] ( lvalue:1 [ lvalue::i#2 ] { }  ) always clobbers reg byte a 
+Statement [28] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] ( rvaluevar:5 [ rvaluevar::i#2 rvaluevar::screen#2 rvaluevar::b#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [35] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b [ lvaluevar::i#2 lvaluevar::screen#2 ] ( lvaluevar:7 [ lvaluevar::i#2 lvaluevar::screen#2 ] { }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[1]:2 [ lvalue::i#2 lvalue::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ rvalue::i#2 rvalue::i#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ] : zp[1]:5 , reg byte x , 
 Potential registers zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] : zp[2]:6 , 
 Potential registers zp[1]:8 [ rvaluevar::b#2 rvaluevar::b#1 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:9 [ rvalue::i#2 rvalue::i#1 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:11 [ lvalue::i#2 lvalue::i#1 ] : zp[1]:11 , reg byte x , reg byte y , 
+Potential registers zp[1]:9 [ lvaluevar::i#2 lvaluevar::i#1 ] : zp[1]:9 , reg byte x , 
+Potential registers zp[2]:10 [ lvaluevar::screen#2 lvaluevar::screen#1 ] : zp[2]:10 , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [rvaluevar] 277.75: zp[1]:5 [ rvaluevar::i#2 rvaluevar::i#1 ] 202: zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] 123.33: zp[1]:8 [ rvaluevar::b#2 rvaluevar::b#1 ] 
-Uplift Scope [rvalue] 336.67: zp[1]:9 [ rvalue::i#2 rvalue::i#1 ] 184.5: zp[1]:10 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] 
-Uplift Scope [lvaluevar] 277.75: zp[1]:2 [ lvaluevar::i#2 lvaluevar::i#1 ] 202: zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
-Uplift Scope [lvalue] 336.67: zp[1]:11 [ lvalue::i#2 lvalue::i#1 ] 
+Uplift Scope [rvalue] 336.67: zp[1]:3 [ rvalue::i#2 rvalue::i#1 ] 184.5: zp[1]:4 [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] 
+Uplift Scope [lvaluevar] 277.75: zp[1]:9 [ lvaluevar::i#2 lvaluevar::i#1 ] 202: zp[2]:10 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
+Uplift Scope [lvalue] 336.67: zp[1]:2 [ lvalue::i#2 lvalue::i#1 ] 
 Uplift Scope [main] 
 Uplift Scope [] 
 
 Uplifting [rvaluevar] best 1942 combination reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ] zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] reg byte y [ rvaluevar::b#2 rvaluevar::b#1 ] 
 Uplifting [rvalue] best 1786 combination reg byte x [ rvalue::i#2 rvalue::i#1 ] reg byte a [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ] 
-Uplifting [lvaluevar] best 1696 combination reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ] zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
+Uplifting [lvaluevar] best 1696 combination reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ] zp[2]:10 [ lvaluevar::screen#2 lvaluevar::screen#1 ] 
 Uplifting [lvalue] best 1576 combination reg byte x [ lvalue::i#2 lvalue::i#1 ] 
 Uplifting [main] best 1576 combination 
 Uplifting [] best 1576 combination 
-Coalescing zero page register [ zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ] with [ zp[2]:3 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ]
-Allocated (was zp[2]:6) zp[2]:2 [ rvaluevar::screen#2 rvaluevar::screen#1 lvaluevar::screen#2 lvaluevar::screen#1 ]
+Coalescing zero page register [ zp[2]:10 [ lvaluevar::screen#2 lvaluevar::screen#1 ] ] with [ zp[2]:6 [ rvaluevar::screen#2 rvaluevar::screen#1 ] ]
+Allocated (was zp[2]:10) zp[2]:2 [ lvaluevar::screen#2 lvaluevar::screen#1 rvaluevar::screen#2 rvaluevar::screen#1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -792,7 +792,7 @@ main: {
     // main::@2
   __b2:
     // [5] call rvaluevar 
-    // [16] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
+    // [23] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
   rvaluevar_from___b2:
     jsr rvaluevar
     // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
@@ -801,7 +801,7 @@ main: {
     // main::@3
   __b3:
     // [7] call lvaluevar 
-    // [9] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
+    // [31] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
   lvaluevar_from___b3:
     jsr lvaluevar
     jmp __breturn
@@ -810,99 +810,43 @@ main: {
     // [8] return 
     rts
 }
-  // lvaluevar
-lvaluevar: {
-    // LValue Variable pointer dereference
-    .const b = 4
-    .label screen = 2
-    // [10] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
-  __b1_from_lvaluevar:
-    // [10] phi (byte*) lvaluevar::screen#2 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [10] phi (byte) lvaluevar::i#2 = (byte) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
+  // lvalue
+lvalue: {
+    // A constant pointer
+    .label SCREEN = $400
+    // [9] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // LValue constant pointer dereference
+    lda #1
+    sta SCREEN
+    // [10] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // LValue constant array constant indexing
+    lda #2
+    sta SCREEN+1
+    // [11] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
+  __b1_from_lvalue:
+    // [11] phi (byte) lvalue::i#2 = (byte) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
     ldx #2
     jmp __b1
-    // lvaluevar::@1
+    // lvalue::@1
   __b1:
-    // [11] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [12] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc __b2
     jmp __breturn
-    // lvaluevar::@return
+    // lvalue::@return
   __breturn:
-    // [12] return 
+    // [13] return 
     rts
-    // lvaluevar::@2
+    // lvalue::@2
   __b2:
-    // [13] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b -- _deref_pbuz1=vbuc1 
-    lda #b
-    ldy #0
-    sta (screen),y
-    // [14] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // [15] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 -- vbuxx=_inc_vbuxx 
+    // [14] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #3
+    sta SCREEN,x
+    // [15] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
+    // [11] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
   __b1_from___b2:
-    // [10] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
-    // [10] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
-    jmp __b1
-}
-  // rvaluevar
-rvaluevar: {
-    .label screen2 = $400
-    .label screen = 2
-    // [17] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
-  __b1_from_rvaluevar:
-    // [17] phi (byte) rvaluevar::b#2 = (byte) 0 [phi:rvaluevar->rvaluevar::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-    // [17] phi (byte*) rvaluevar::screen#2 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@1#1] -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [17] phi (byte) rvaluevar::i#2 = (byte) 2 [phi:rvaluevar->rvaluevar::@1#2] -- vbuxx=vbuc1 
-    ldx #2
-    jmp __b1
-    // rvaluevar::@1
-  __b1:
-    // [18] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc __b2
-    jmp __b3
-    // rvaluevar::@3
-  __b3:
-    // [19] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2 -- _deref_pbuc1=vbuyy 
-    sty screen2
-    jmp __breturn
-    // rvaluevar::@return
-  __breturn:
-    // [20] return 
-    rts
-    // rvaluevar::@2
-  __b2:
-    // [21] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuyy=_deref_pbuz1 
-    ldy #0
-    lda (screen),y
-    tay
-    // [22] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // [23] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [17] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
-  __b1_from___b2:
-    // [17] phi (byte) rvaluevar::b#2 = (byte) rvaluevar::b#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
-    // [17] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
-    // [17] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#2] -- register_copy 
+    // [11] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
     jmp __b1
 }
   // rvalue
@@ -910,79 +854,135 @@ rvalue: {
     // A constant pointer
     .label SCREEN = $400
     .label screen2 = $400
-    // [24] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [16] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
     // RValue constant array pointer constant index
     lda SCREEN+1
-    // [25] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
+    // [17] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
   __b1_from_rvalue:
-    // [25] phi (byte) rvalue::b#3 = (byte) rvalue::b#1 [phi:rvalue->rvalue::@1#0] -- register_copy 
-    // [25] phi (byte) rvalue::i#2 = (byte) 2 [phi:rvalue->rvalue::@1#1] -- vbuxx=vbuc1 
+    // [17] phi (byte) rvalue::b#3 = (byte) rvalue::b#1 [phi:rvalue->rvalue::@1#0] -- register_copy 
+    // [17] phi (byte) rvalue::i#2 = (byte) 2 [phi:rvalue->rvalue::@1#1] -- vbuxx=vbuc1 
     ldx #2
     jmp __b1
     // rvalue::@1
   __b1:
-    // [26] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [18] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc __b2
     jmp __b3
     // rvalue::@3
   __b3:
-    // [27] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3 -- _deref_pbuc1=vbuaa 
+    // [19] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3 -- _deref_pbuc1=vbuaa 
     sta screen2
     jmp __breturn
     // rvalue::@return
   __breturn:
-    // [28] return 
+    // [20] return 
     rts
     // rvalue::@2
   __b2:
-    // [29] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [21] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
-    // [30] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuxx=_inc_vbuxx 
+    // [22] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [25] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
+    // [17] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
   __b1_from___b2:
-    // [25] phi (byte) rvalue::b#3 = (byte) rvalue::b#2 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
-    // [25] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#1] -- register_copy 
+    // [17] phi (byte) rvalue::b#3 = (byte) rvalue::b#2 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
+    // [17] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#1] -- register_copy 
     jmp __b1
 }
-  // lvalue
-lvalue: {
-    // A constant pointer
-    .label SCREEN = $400
-    // [31] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    // LValue constant pointer dereference
-    lda #1
-    sta SCREEN
-    // [32] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
-    // LValue constant array constant indexing
-    lda #2
-    sta SCREEN+1
-    // [33] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
-  __b1_from_lvalue:
-    // [33] phi (byte) lvalue::i#2 = (byte) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
+  // rvaluevar
+rvaluevar: {
+    .label screen2 = $400
+    .label screen = 2
+    // [24] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
+  __b1_from_rvaluevar:
+    // [24] phi (byte) rvaluevar::b#2 = (byte) 0 [phi:rvaluevar->rvaluevar::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [24] phi (byte*) rvaluevar::screen#2 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@1#1] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [24] phi (byte) rvaluevar::i#2 = (byte) 2 [phi:rvaluevar->rvaluevar::@1#2] -- vbuxx=vbuc1 
     ldx #2
     jmp __b1
-    // lvalue::@1
+    // rvaluevar::@1
   __b1:
-    // [34] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [25] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc __b2
+    jmp __b3
+    // rvaluevar::@3
+  __b3:
+    // [26] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2 -- _deref_pbuc1=vbuyy 
+    sty screen2
+    jmp __breturn
+    // rvaluevar::@return
+  __breturn:
+    // [27] return 
+    rts
+    // rvaluevar::@2
+  __b2:
+    // [28] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuyy=_deref_pbuz1 
+    ldy #0
+    lda (screen),y
+    tay
+    // [29] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // [30] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [24] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
+  __b1_from___b2:
+    // [24] phi (byte) rvaluevar::b#2 = (byte) rvaluevar::b#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
+    // [24] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
+    // [24] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#2] -- register_copy 
+    jmp __b1
+}
+  // lvaluevar
+lvaluevar: {
+    // LValue Variable pointer dereference
+    .const b = 4
+    .label screen = 2
+    // [32] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
+  __b1_from_lvaluevar:
+    // [32] phi (byte*) lvaluevar::screen#2 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [32] phi (byte) lvaluevar::i#2 = (byte) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
+    ldx #2
+    jmp __b1
+    // lvaluevar::@1
+  __b1:
+    // [33] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc __b2
     jmp __breturn
-    // lvalue::@return
+    // lvaluevar::@return
   __breturn:
-    // [35] return 
+    // [34] return 
     rts
-    // lvalue::@2
+    // lvaluevar::@2
   __b2:
-    // [36] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #3
-    sta SCREEN,x
-    // [37] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuxx=_inc_vbuxx 
+    // [35] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b -- _deref_pbuz1=vbuc1 
+    lda #b
+    ldy #0
+    sta (screen),y
+    // [36] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // [37] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [33] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
+    // [32] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
   __b1_from___b2:
-    // [33] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
+    // [32] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
+    // [32] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -1013,18 +1013,18 @@ Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __breturn:
-Removing instruction __b1_from_lvaluevar:
-Removing instruction __breturn:
-Removing instruction __b1_from___b2:
-Removing instruction __b1_from_rvaluevar:
-Removing instruction __b3:
+Removing instruction __b1_from_lvalue:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Removing instruction __b1_from_rvalue:
 Removing instruction __b3:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
-Removing instruction __b1_from_lvalue:
+Removing instruction __b1_from_rvaluevar:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Removing instruction __b1_from_lvaluevar:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1085,13 +1085,13 @@ FINAL SYMBOL TABLE
 (byte*) rvaluevar::screen#2 screen zp[2]:2 101.0
 (const byte*) rvaluevar::screen2 = (byte*) 1024
 
-reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ]
-reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ]
-zp[2]:2 [ rvaluevar::screen#2 rvaluevar::screen#1 lvaluevar::screen#2 lvaluevar::screen#1 ]
-reg byte y [ rvaluevar::b#2 rvaluevar::b#1 ]
+reg byte x [ lvalue::i#2 lvalue::i#1 ]
 reg byte x [ rvalue::i#2 rvalue::i#1 ]
 reg byte a [ rvalue::b#3 rvalue::b#1 rvalue::b#2 ]
-reg byte x [ lvalue::i#2 lvalue::i#1 ]
+reg byte x [ rvaluevar::i#2 rvaluevar::i#1 ]
+reg byte y [ rvaluevar::b#2 rvaluevar::b#1 ]
+reg byte x [ lvaluevar::i#2 lvaluevar::i#1 ]
+zp[2]:2 [ lvaluevar::screen#2 lvaluevar::screen#1 rvaluevar::screen#2 rvaluevar::screen#1 ]
 
 
 FINAL ASSEMBLER
@@ -1118,111 +1118,57 @@ main: {
     // main::@2
     // rvaluevar()
     // [5] call rvaluevar 
-    // [16] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
+    // [23] phi from main::@2 to rvaluevar [phi:main::@2->rvaluevar]
     jsr rvaluevar
     // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // lvaluevar()
     // [7] call lvaluevar 
-    // [9] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
+    // [31] phi from main::@3 to lvaluevar [phi:main::@3->lvaluevar]
     jsr lvaluevar
     // main::@return
     // }
     // [8] return 
     rts
 }
-  // lvaluevar
-lvaluevar: {
-    // LValue Variable pointer dereference
-    .const b = 4
-    .label screen = 2
-    // [10] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
-    // [10] phi (byte*) lvaluevar::screen#2 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [10] phi (byte) lvaluevar::i#2 = (byte) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
-    ldx #2
-    // lvaluevar::@1
+  // lvalue
+lvalue: {
+    // A constant pointer
+    .label SCREEN = $400
+    // *SCREEN = 1
+    // [9] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // LValue constant pointer dereference
+    lda #1
+    sta SCREEN
+    // SCREEN[1] = 2
+    // [10] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    // LValue constant array constant indexing
+    lda #2
+    sta SCREEN+1
+    // [11] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
+    // [11] phi (byte) lvalue::i#2 = (byte) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
+    tax
+    // lvalue::@1
   __b1:
     // while(i<10)
-    // [11] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [12] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc __b2
-    // lvaluevar::@return
+    // lvalue::@return
     // }
-    // [12] return 
+    // [13] return 
     rts
-    // lvaluevar::@2
+    // lvalue::@2
   __b2:
-    // *screen = b
-    // [13] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b -- _deref_pbuz1=vbuc1 
-    lda #b
-    ldy #0
-    sta (screen),y
-    // screen++;
-    // [14] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // i++;
-    // [15] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 -- vbuxx=_inc_vbuxx 
+    // SCREEN[i++] = 3
+    // [14] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #3
+    sta SCREEN,x
+    // SCREEN[i++] = 3;
+    // [15] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
-    // [10] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
-    // [10] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
-    jmp __b1
-}
-  // rvaluevar
-rvaluevar: {
-    .label screen2 = $400
-    .label screen = 2
-    // [17] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
-    // [17] phi (byte) rvaluevar::b#2 = (byte) 0 [phi:rvaluevar->rvaluevar::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-    // [17] phi (byte*) rvaluevar::screen#2 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@1#1] -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [17] phi (byte) rvaluevar::i#2 = (byte) 2 [phi:rvaluevar->rvaluevar::@1#2] -- vbuxx=vbuc1 
-    ldx #2
-    // rvaluevar::@1
-  __b1:
-    // while(i<10)
-    // [18] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
-    cpx #$a
-    bcc __b2
-    // rvaluevar::@3
-    // *screen2 = b
-    // [19] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2 -- _deref_pbuc1=vbuyy 
-    sty screen2
-    // rvaluevar::@return
-    // }
-    // [20] return 
-    rts
-    // rvaluevar::@2
-  __b2:
-    // b = *screen
-    // [21] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuyy=_deref_pbuz1 
-    ldy #0
-    lda (screen),y
-    tay
-    // screen++;
-    // [22] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // i++;
-    // [23] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [17] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
-    // [17] phi (byte) rvaluevar::b#2 = (byte) rvaluevar::b#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
-    // [17] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
-    // [17] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#2] -- register_copy 
+    // [11] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
+    // [11] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
     jmp __b1
 }
   // rvalue
@@ -1231,78 +1177,132 @@ rvalue: {
     .label SCREEN = $400
     .label screen2 = $400
     // b = SCREEN[1]
-    // [24] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [16] (byte) rvalue::b#1 ← *((const byte*) rvalue::SCREEN+(byte) 1) -- vbuaa=_deref_pbuc1 
     // RValue constant array pointer constant index
     lda SCREEN+1
-    // [25] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
-    // [25] phi (byte) rvalue::b#3 = (byte) rvalue::b#1 [phi:rvalue->rvalue::@1#0] -- register_copy 
-    // [25] phi (byte) rvalue::i#2 = (byte) 2 [phi:rvalue->rvalue::@1#1] -- vbuxx=vbuc1 
+    // [17] phi from rvalue to rvalue::@1 [phi:rvalue->rvalue::@1]
+    // [17] phi (byte) rvalue::b#3 = (byte) rvalue::b#1 [phi:rvalue->rvalue::@1#0] -- register_copy 
+    // [17] phi (byte) rvalue::i#2 = (byte) 2 [phi:rvalue->rvalue::@1#1] -- vbuxx=vbuc1 
     ldx #2
     // rvalue::@1
   __b1:
     // while(i<10)
-    // [26] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [18] if((byte) rvalue::i#2<(byte) $a) goto rvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc __b2
     // rvalue::@3
     // *screen2 = b
-    // [27] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3 -- _deref_pbuc1=vbuaa 
+    // [19] *((const byte*) rvalue::screen2) ← (byte) rvalue::b#3 -- _deref_pbuc1=vbuaa 
     sta screen2
     // rvalue::@return
     // }
-    // [28] return 
+    // [20] return 
     rts
     // rvalue::@2
   __b2:
     // b = SCREEN[i++]
-    // [29] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [21] (byte) rvalue::b#2 ← *((const byte*) rvalue::SCREEN + (byte) rvalue::i#2) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda SCREEN,x
     // b = SCREEN[i++];
-    // [30] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuxx=_inc_vbuxx 
+    // [22] (byte) rvalue::i#1 ← ++ (byte) rvalue::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [25] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
-    // [25] phi (byte) rvalue::b#3 = (byte) rvalue::b#2 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
-    // [25] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#1] -- register_copy 
+    // [17] phi from rvalue::@2 to rvalue::@1 [phi:rvalue::@2->rvalue::@1]
+    // [17] phi (byte) rvalue::b#3 = (byte) rvalue::b#2 [phi:rvalue::@2->rvalue::@1#0] -- register_copy 
+    // [17] phi (byte) rvalue::i#2 = (byte) rvalue::i#1 [phi:rvalue::@2->rvalue::@1#1] -- register_copy 
     jmp __b1
 }
-  // lvalue
-lvalue: {
-    // A constant pointer
-    .label SCREEN = $400
-    // *SCREEN = 1
-    // [31] *((const byte*) lvalue::SCREEN) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    // LValue constant pointer dereference
-    lda #1
-    sta SCREEN
-    // SCREEN[1] = 2
-    // [32] *((const byte*) lvalue::SCREEN+(byte) 1) ← (byte) 2 -- _deref_pbuc1=vbuc2 
-    // LValue constant array constant indexing
-    lda #2
-    sta SCREEN+1
-    // [33] phi from lvalue to lvalue::@1 [phi:lvalue->lvalue::@1]
-    // [33] phi (byte) lvalue::i#2 = (byte) 2 [phi:lvalue->lvalue::@1#0] -- vbuxx=vbuc1 
-    tax
-    // lvalue::@1
+  // rvaluevar
+rvaluevar: {
+    .label screen2 = $400
+    .label screen = 2
+    // [24] phi from rvaluevar to rvaluevar::@1 [phi:rvaluevar->rvaluevar::@1]
+    // [24] phi (byte) rvaluevar::b#2 = (byte) 0 [phi:rvaluevar->rvaluevar::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [24] phi (byte*) rvaluevar::screen#2 = (byte*) 1024 [phi:rvaluevar->rvaluevar::@1#1] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [24] phi (byte) rvaluevar::i#2 = (byte) 2 [phi:rvaluevar->rvaluevar::@1#2] -- vbuxx=vbuc1 
+    ldx #2
+    // rvaluevar::@1
   __b1:
     // while(i<10)
-    // [34] if((byte) lvalue::i#2<(byte) $a) goto lvalue::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [25] if((byte) rvaluevar::i#2<(byte) $a) goto rvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$a
     bcc __b2
-    // lvalue::@return
+    // rvaluevar::@3
+    // *screen2 = b
+    // [26] *((const byte*) rvaluevar::screen2) ← (byte) rvaluevar::b#2 -- _deref_pbuc1=vbuyy 
+    sty screen2
+    // rvaluevar::@return
     // }
-    // [35] return 
+    // [27] return 
     rts
-    // lvalue::@2
+    // rvaluevar::@2
   __b2:
-    // SCREEN[i++] = 3
-    // [36] *((const byte*) lvalue::SCREEN + (byte) lvalue::i#2) ← (byte) 3 -- pbuc1_derefidx_vbuxx=vbuc2 
-    lda #3
-    sta SCREEN,x
-    // SCREEN[i++] = 3;
-    // [37] (byte) lvalue::i#1 ← ++ (byte) lvalue::i#2 -- vbuxx=_inc_vbuxx 
+    // b = *screen
+    // [28] (byte) rvaluevar::b#1 ← *((byte*) rvaluevar::screen#2) -- vbuyy=_deref_pbuz1 
+    ldy #0
+    lda (screen),y
+    tay
+    // screen++;
+    // [29] (byte*) rvaluevar::screen#1 ← ++ (byte*) rvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // i++;
+    // [30] (byte) rvaluevar::i#1 ← ++ (byte) rvaluevar::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [33] phi from lvalue::@2 to lvalue::@1 [phi:lvalue::@2->lvalue::@1]
-    // [33] phi (byte) lvalue::i#2 = (byte) lvalue::i#1 [phi:lvalue::@2->lvalue::@1#0] -- register_copy 
+    // [24] phi from rvaluevar::@2 to rvaluevar::@1 [phi:rvaluevar::@2->rvaluevar::@1]
+    // [24] phi (byte) rvaluevar::b#2 = (byte) rvaluevar::b#1 [phi:rvaluevar::@2->rvaluevar::@1#0] -- register_copy 
+    // [24] phi (byte*) rvaluevar::screen#2 = (byte*) rvaluevar::screen#1 [phi:rvaluevar::@2->rvaluevar::@1#1] -- register_copy 
+    // [24] phi (byte) rvaluevar::i#2 = (byte) rvaluevar::i#1 [phi:rvaluevar::@2->rvaluevar::@1#2] -- register_copy 
+    jmp __b1
+}
+  // lvaluevar
+lvaluevar: {
+    // LValue Variable pointer dereference
+    .const b = 4
+    .label screen = 2
+    // [32] phi from lvaluevar to lvaluevar::@1 [phi:lvaluevar->lvaluevar::@1]
+    // [32] phi (byte*) lvaluevar::screen#2 = (byte*) 1024 [phi:lvaluevar->lvaluevar::@1#0] -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z screen
+    lda #>$400
+    sta.z screen+1
+    // [32] phi (byte) lvaluevar::i#2 = (byte) 2 [phi:lvaluevar->lvaluevar::@1#1] -- vbuxx=vbuc1 
+    ldx #2
+    // lvaluevar::@1
+  __b1:
+    // while(i<10)
+    // [33] if((byte) lvaluevar::i#2<(byte) $a) goto lvaluevar::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$a
+    bcc __b2
+    // lvaluevar::@return
+    // }
+    // [34] return 
+    rts
+    // lvaluevar::@2
+  __b2:
+    // *screen = b
+    // [35] *((byte*) lvaluevar::screen#2) ← (const byte) lvaluevar::b -- _deref_pbuz1=vbuc1 
+    lda #b
+    ldy #0
+    sta (screen),y
+    // screen++;
+    // [36] (byte*) lvaluevar::screen#1 ← ++ (byte*) lvaluevar::screen#2 -- pbuz1=_inc_pbuz1 
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // i++;
+    // [37] (byte) lvaluevar::i#1 ← ++ (byte) lvaluevar::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [32] phi from lvaluevar::@2 to lvaluevar::@1 [phi:lvaluevar::@2->lvaluevar::@1]
+    // [32] phi (byte*) lvaluevar::screen#2 = (byte*) lvaluevar::screen#1 [phi:lvaluevar::@2->lvaluevar::@1#0] -- register_copy 
+    // [32] phi (byte) lvaluevar::i#2 = (byte) lvaluevar::i#1 [phi:lvaluevar::@2->lvaluevar::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

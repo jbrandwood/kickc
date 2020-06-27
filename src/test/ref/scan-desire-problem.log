@@ -905,7 +905,6 @@ Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of mul8u::@3
 Adding NOP phi() at start of init
 Adding NOP phi() at start of init::@2
 Adding NOP phi() at start of init::@3
@@ -913,29 +912,30 @@ Adding NOP phi() at start of init::@4
 Adding NOP phi() at start of init::toD0181
 Adding NOP phi() at start of init::toD0181_@return
 Adding NOP phi() at start of memset::@1
+Adding NOP phi() at start of mul8u::@3
 CALL GRAPH
 Calls in [main] to init:1 draw_block:16 
-Calls in [draw_block] to mul8u:23 
-Calls in [init] to init_sprites:62 memset:64 memset:66 
+Calls in [init] to init_sprites:20 memset:22 memset:24 
+Calls in [draw_block] to mul8u:40 
 
 Created 9 initial phi equivalence classes
 Coalesced [10] main::x#8 ← main::x#1
 Coalesced [18] main::y#5 ← main::y#1
-Coalesced [45] mul8u::a#7 ← mul8u::a#1
-Coalesced [53] mul8u::res#9 ← mul8u::res#1
-Coalesced [57] mul8u::a#8 ← mul8u::a#0
-Coalesced [58] mul8u::res#7 ← mul8u::res#6
-Coalesced [59] mul8u::mb#6 ← mul8u::mb#1
-Coalesced (already) [60] mul8u::res#8 ← mul8u::res#2
-Coalesced [87] memset::dst#5 ← memset::dst#1
+Coalesced [78] memset::dst#5 ← memset::dst#1
+Coalesced [79] mul8u::a#7 ← mul8u::a#1
+Coalesced [87] mul8u::res#9 ← mul8u::res#1
+Coalesced [91] mul8u::a#8 ← mul8u::a#0
+Coalesced [92] mul8u::res#7 ← mul8u::res#6
+Coalesced [93] mul8u::mb#6 ← mul8u::mb#1
+Coalesced (already) [94] mul8u::res#8 ← mul8u::res#2
 Coalesced down to 8 phi equivalence classes
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@2
-Culled Empty Block (label) mul8u::@3
-Culled Empty Block (label) mul8u::@6
 Culled Empty Block (label) init::@4
 Culled Empty Block (label) init::toD0181_@return
 Culled Empty Block (label) memset::@1
+Culled Empty Block (label) mul8u::@3
+Culled Empty Block (label) mul8u::@6
 Renumbering block memset::@2 to memset::@1
 Renumbering block memset::@3 to memset::@2
 Renumbering block memset::@4 to memset::@3
@@ -948,11 +948,11 @@ Renumbering block main::@6 to main::@5
 Renumbering block main::@8 to main::@6
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
-Adding NOP phi() at start of mul8u
 Adding NOP phi() at start of init
 Adding NOP phi() at start of init::@2
 Adding NOP phi() at start of init::@3
 Adding NOP phi() at start of init::toD0181
+Adding NOP phi() at start of mul8u
 
 FINAL CONTROL FLOW GRAPH
 
@@ -987,128 +987,128 @@ main::@6: scope:[main]  from main::@3
   [14] (byte) main::y#1 ← ++ (byte) main::y#2
   to:main::@2
 
-(void()) draw_block((byte) draw_block::tileno , (byte) draw_block::x , (byte) draw_block::y , (byte) draw_block::color)
-draw_block: scope:[draw_block]  from main::@3
-  [15] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2
-  [16] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1
-  [17] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1
-  [18] (byte) mul8u::a#1 ← (byte) draw_block::y#1
-  [19] call mul8u 
-  [20] (word) mul8u::return#2 ← (word) mul8u::res#2
-  to:draw_block::@1
-draw_block::@1: scope:[draw_block]  from draw_block
-  [21] (word) draw_block::z#0 ← (word) mul8u::return#2
-  [22] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0
-  [23] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1)
-  [24] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1
-  [25] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0
-  [26] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1
-  [27] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW
-  [28] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1
-  [29] *((byte*~) draw_block::$13) ← (byte) 1
-  [30] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1
-  [31] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW
-  [32] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1
-  [33] *((byte*~) draw_block::$15) ← (byte) 2
-  [34] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1
-  [35] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW
-  [36] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1
-  [37] *((byte*~) draw_block::$17) ← (byte) 3
-  [38] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1
-  [39] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW
-  to:draw_block::@return
-draw_block::@return: scope:[draw_block]  from draw_block::@1
-  [40] return 
-  to:@return
-
-(word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
-mul8u: scope:[mul8u]  from draw_block
-  [41] phi()
-  to:mul8u::@1
-mul8u::@1: scope:[mul8u]  from mul8u mul8u::@3
-  [42] (word) mul8u::mb#2 ← phi( mul8u/(word)(const byte) mul8u::b#0 mul8u::@3/(word) mul8u::mb#1 )
-  [42] (word) mul8u::res#2 ← phi( mul8u/(word) 0 mul8u::@3/(word) mul8u::res#6 )
-  [42] (byte) mul8u::a#2 ← phi( mul8u/(byte) mul8u::a#1 mul8u::@3/(byte) mul8u::a#0 )
-  [43] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
-  to:mul8u::@return
-mul8u::@return: scope:[mul8u]  from mul8u::@1
-  [44] return 
-  to:@return
-mul8u::@2: scope:[mul8u]  from mul8u::@1
-  [45] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1
-  [46] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3
-  to:mul8u::@4
-mul8u::@4: scope:[mul8u]  from mul8u::@2
-  [47] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
-  to:mul8u::@3
-mul8u::@3: scope:[mul8u]  from mul8u::@2 mul8u::@4
-  [48] (word) mul8u::res#6 ← phi( mul8u::@2/(word) mul8u::res#2 mul8u::@4/(word) mul8u::res#1 )
-  [49] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1
-  [50] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1
-  to:mul8u::@1
-
 (void()) init()
 init: scope:[init]  from main
-  [51] phi()
-  [52] call init_sprites 
+  [15] phi()
+  [16] call init_sprites 
   to:init::@2
 init::@2: scope:[init]  from init
-  [53] phi()
-  [54] call memset 
+  [17] phi()
+  [18] call memset 
   to:init::@3
 init::@3: scope:[init]  from init::@2
-  [55] phi()
-  [56] call memset 
+  [19] phi()
+  [20] call memset 
   to:init::toD0181
 init::toD0181: scope:[init]  from init::@3
-  [57] phi()
+  [21] phi()
   to:init::@1
 init::@1: scope:[init]  from init::toD0181
-  [58] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0
+  [22] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0
   asm { lda#$5b sta$d011  }
-  [60] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK
-  [61] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
-  [62] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED
-  [63] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE
-  [64] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN
+  [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK
+  [25] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  [26] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED
+  [27] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE
+  [28] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN
   to:init::@return
 init::@return: scope:[init]  from init::@1
-  [65] return 
+  [29] return 
+  to:@return
+
+(void()) draw_block((byte) draw_block::tileno , (byte) draw_block::x , (byte) draw_block::y , (byte) draw_block::color)
+draw_block: scope:[draw_block]  from main::@3
+  [30] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2
+  [31] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1
+  [32] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1
+  [33] (byte) mul8u::a#1 ← (byte) draw_block::y#1
+  [34] call mul8u 
+  [35] (word) mul8u::return#2 ← (word) mul8u::res#2
+  to:draw_block::@1
+draw_block::@1: scope:[draw_block]  from draw_block
+  [36] (word) draw_block::z#0 ← (word) mul8u::return#2
+  [37] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0
+  [38] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1)
+  [39] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1
+  [40] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0
+  [41] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1
+  [42] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW
+  [43] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1
+  [44] *((byte*~) draw_block::$13) ← (byte) 1
+  [45] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1
+  [46] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW
+  [47] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1
+  [48] *((byte*~) draw_block::$15) ← (byte) 2
+  [49] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1
+  [50] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW
+  [51] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1
+  [52] *((byte*~) draw_block::$17) ← (byte) 3
+  [53] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1
+  [54] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW
+  to:draw_block::@return
+draw_block::@return: scope:[draw_block]  from draw_block::@1
+  [55] return 
+  to:@return
+
+(void()) init_sprites()
+init_sprites: scope:[init_sprites]  from init
+  [56] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1
+  [57] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0
+  [58] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0
+  [59] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0
+  [60] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE
+  [61] *((const nomodify byte*) SPRITES_MC) ← (byte) 0
+  to:init_sprites::@return
+init_sprites::@return: scope:[init_sprites]  from init_sprites
+  [62] return 
   to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from init::@2 init::@3
-  [66] (byte) memset::c#4 ← phi( init::@2/(byte) 0 init::@3/(const nomodify byte) BLACK )
-  [66] (void*) memset::str#3 ← phi( init::@2/(void*)(const nomodify byte*) screen init::@3/(void*)(const nomodify byte*) colors )
+  [63] (byte) memset::c#4 ← phi( init::@2/(byte) 0 init::@3/(const nomodify byte) BLACK )
+  [63] (void*) memset::str#3 ← phi( init::@2/(void*)(const nomodify byte*) screen init::@3/(void*)(const nomodify byte*) colors )
   to:memset::@1
 memset::@1: scope:[memset]  from memset
-  [67] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8
-  [68] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+  [64] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8
+  [65] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
   to:memset::@2
 memset::@2: scope:[memset]  from memset::@1 memset::@3
-  [69] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
-  [70] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
+  [66] (byte*) memset::dst#2 ← phi( memset::@1/(byte*) memset::dst#4 memset::@3/(byte*) memset::dst#1 )
+  [67] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@2
-  [71] return 
+  [68] return 
   to:@return
 memset::@3: scope:[memset]  from memset::@2
-  [72] *((byte*) memset::dst#2) ← (byte) memset::c#4
-  [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [69] *((byte*) memset::dst#2) ← (byte) memset::c#4
+  [70] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@2
 
-(void()) init_sprites()
-init_sprites: scope:[init_sprites]  from init
-  [74] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1
-  [75] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0
-  [76] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0
-  [77] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0
-  [78] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE
-  [79] *((const nomodify byte*) SPRITES_MC) ← (byte) 0
-  to:init_sprites::@return
-init_sprites::@return: scope:[init_sprites]  from init_sprites
-  [80] return 
+(word()) mul8u((byte) mul8u::a , (byte) mul8u::b)
+mul8u: scope:[mul8u]  from draw_block
+  [71] phi()
+  to:mul8u::@1
+mul8u::@1: scope:[mul8u]  from mul8u mul8u::@3
+  [72] (word) mul8u::mb#2 ← phi( mul8u/(word)(const byte) mul8u::b#0 mul8u::@3/(word) mul8u::mb#1 )
+  [72] (word) mul8u::res#2 ← phi( mul8u/(word) 0 mul8u::@3/(word) mul8u::res#6 )
+  [72] (byte) mul8u::a#2 ← phi( mul8u/(byte) mul8u::a#1 mul8u::@3/(byte) mul8u::a#0 )
+  [73] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2
+  to:mul8u::@return
+mul8u::@return: scope:[mul8u]  from mul8u::@1
+  [74] return 
   to:@return
+mul8u::@2: scope:[mul8u]  from mul8u::@1
+  [75] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1
+  [76] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3
+  to:mul8u::@4
+mul8u::@4: scope:[mul8u]  from mul8u::@2
+  [77] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2
+  to:mul8u::@3
+mul8u::@3: scope:[mul8u]  from mul8u::@2 mul8u::@4
+  [78] (word) mul8u::res#6 ← phi( mul8u::@2/(word) mul8u::res#2 mul8u::@4/(word) mul8u::res#1 )
+  [79] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1
+  [80] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1
+  to:mul8u::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -1270,12 +1270,12 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::x#2 main::x#1 ]
 [ main::y#2 main::y#1 ]
-[ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-[ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
-[ mul8u::mb#2 mul8u::mb#1 ]
 [ memset::str#3 ]
 [ memset::c#4 ]
 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
+[ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
+[ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
+[ mul8u::mb#2 mul8u::mb#1 ]
 Added variable main::z#0 to live range equivalence class [ main::z#0 ]
 Added variable main::tile#0 to live range equivalence class [ main::tile#0 ]
 Added variable draw_block::tileno#0 to live range equivalence class [ draw_block::tileno#0 ]
@@ -1296,17 +1296,17 @@ Added variable draw_block::$15 to live range equivalence class [ draw_block::$15
 Added variable draw_block::$16 to live range equivalence class [ draw_block::$16 ]
 Added variable draw_block::$17 to live range equivalence class [ draw_block::$17 ]
 Added variable draw_block::$18 to live range equivalence class [ draw_block::$18 ]
-Added variable mul8u::$1 to live range equivalence class [ mul8u::$1 ]
 Added variable memset::end#0 to live range equivalence class [ memset::end#0 ]
+Added variable mul8u::$1 to live range equivalence class [ mul8u::$1 ]
 Complete equivalence classes
 [ main::x#2 main::x#1 ]
 [ main::y#2 main::y#1 ]
-[ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-[ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
-[ mul8u::mb#2 mul8u::mb#1 ]
 [ memset::str#3 ]
 [ memset::c#4 ]
 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
+[ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
+[ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
+[ mul8u::mb#2 mul8u::mb#1 ]
 [ main::z#0 ]
 [ main::tile#0 ]
 [ draw_block::tileno#0 ]
@@ -1327,16 +1327,16 @@ Complete equivalence classes
 [ draw_block::$16 ]
 [ draw_block::$17 ]
 [ draw_block::$18 ]
-[ mul8u::$1 ]
 [ memset::end#0 ]
+[ mul8u::$1 ]
 Allocated zp[1]:2 [ main::x#2 main::x#1 ]
 Allocated zp[1]:3 [ main::y#2 main::y#1 ]
-Allocated zp[1]:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-Allocated zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
-Allocated zp[2]:7 [ mul8u::mb#2 mul8u::mb#1 ]
-Allocated zp[2]:9 [ memset::str#3 ]
-Allocated zp[1]:11 [ memset::c#4 ]
-Allocated zp[2]:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
+Allocated zp[2]:4 [ memset::str#3 ]
+Allocated zp[1]:6 [ memset::c#4 ]
+Allocated zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
+Allocated zp[1]:9 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
+Allocated zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ]
+Allocated zp[2]:12 [ mul8u::mb#2 mul8u::mb#1 ]
 Allocated zp[1]:14 [ main::z#0 ]
 Allocated zp[1]:15 [ main::tile#0 ]
 Allocated zp[1]:16 [ draw_block::tileno#0 ]
@@ -1357,8 +1357,8 @@ Allocated zp[2]:38 [ draw_block::$15 ]
 Allocated zp[2]:40 [ draw_block::$16 ]
 Allocated zp[2]:42 [ draw_block::$17 ]
 Allocated zp[2]:44 [ draw_block::$18 ]
-Allocated zp[1]:46 [ mul8u::$1 ]
-Allocated zp[2]:47 [ memset::end#0 ]
+Allocated zp[2]:46 [ memset::end#0 ]
+Allocated zp[1]:48 [ mul8u::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1403,7 +1403,7 @@ main: {
     .label y = 3
     .label x = 2
     // [1] call init 
-    // [51] phi from main to init [phi:main->init]
+    // [15] phi from main to init [phi:main->init]
   init_from_main:
     jsr init
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -1478,6 +1478,80 @@ main: {
     // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@6->main::@2#0] -- register_copy 
     jmp __b2
 }
+  // init
+init: {
+    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
+    // [16] call init_sprites 
+    jsr init_sprites
+    // [17] phi from init to init::@2 [phi:init->init::@2]
+  __b2_from_init:
+    jmp __b2
+    // init::@2
+  __b2:
+    // [18] call memset 
+    // [63] phi from init::@2 to memset [phi:init::@2->memset]
+  memset_from___b2:
+    // [63] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z memset.c
+    // [63] phi (void*) memset::str#3 = (void*)(const nomodify byte*) screen [phi:init::@2->memset#1] -- pvoz1=pvoc1 
+    lda #<screen
+    sta.z memset.str
+    lda #>screen
+    sta.z memset.str+1
+    jsr memset
+    // [19] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+  __b3_from___b2:
+    jmp __b3
+    // init::@3
+  __b3:
+    // [20] call memset 
+    // [63] phi from init::@3 to memset [phi:init::@3->memset]
+  memset_from___b3:
+    // [63] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:init::@3->memset#0] -- vbuz1=vbuc1 
+    lda #BLACK
+    sta.z memset.c
+    // [63] phi (void*) memset::str#3 = (void*)(const nomodify byte*) colors [phi:init::@3->memset#1] -- pvoz1=pvoc1 
+    lda #<colors
+    sta.z memset.str
+    lda #>colors
+    sta.z memset.str+1
+    jsr memset
+    // [21] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
+  toD0181_from___b3:
+    jmp toD0181
+    // init::toD0181
+  toD0181:
+    jmp __b1
+    // init::@1
+  __b1:
+    // [22] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    lda #toD0181_return
+    sta D018
+    // asm { lda#$5b sta$d011  }
+    lda #$5b
+    sta $d011
+    // [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BORDER_COLOR
+    // [25] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // [26] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    lda #RED
+    sta BG_COLOR1
+    // [27] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    lda #BLUE
+    sta BG_COLOR2
+    // [28] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    lda #GREEN
+    sta BG_COLOR3
+    jmp __breturn
+    // init::@return
+  __breturn:
+    // [29] return 
+    rts
+}
   // draw_block
 // draw_block(byte zp($10) tileno, byte zp($11) x, byte zp($12) y)
 draw_block: {
@@ -1498,30 +1572,30 @@ draw_block: {
     .label __16 = $28
     .label __17 = $2a
     .label __18 = $2c
-    // [15] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuz1=vbuz2_rol_2 
+    // [30] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuz1=vbuz2_rol_2 
     lda.z tileno
     asl
     asl
     sta.z tileno_1
-    // [16] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuz2_rol_1 
+    // [31] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuz2_rol_1 
     lda.z x
     asl
     sta.z x1
     lda #0
     rol
     sta.z x1+1
-    // [17] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [32] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z y
     asl
     sta.z y_1
-    // [18] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuz1=vbuz2 
+    // [33] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuz1=vbuz2 
     lda.z y_1
     sta.z mul8u.a
-    // [19] call mul8u 
-    // [41] phi from draw_block to mul8u [phi:draw_block->mul8u]
+    // [34] call mul8u 
+    // [71] phi from draw_block to mul8u [phi:draw_block->mul8u]
   mul8u_from_draw_block:
     jsr mul8u
-    // [20] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
+    // [35] (word) mul8u::return#2 ← (word) mul8u::res#2 -- vwuz1=vwuz2 
     lda.z mul8u.res
     sta.z mul8u.return
     lda.z mul8u.res+1
@@ -1529,12 +1603,12 @@ draw_block: {
     jmp __b1
     // draw_block::@1
   __b1:
-    // [21] (word) draw_block::z#0 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
+    // [36] (word) draw_block::z#0 ← (word) mul8u::return#2 -- vwuz1=vwuz2 
     lda.z mul8u.return
     sta.z z
     lda.z mul8u.return+1
     sta.z z+1
-    // [22] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz3 
+    // [37] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz3 
     lda.z z
     clc
     adc.z x1
@@ -1542,11 +1616,11 @@ draw_block: {
     lda.z z+1
     adc.z x1+1
     sta.z z_1+1
-    // [23] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [38] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z tileno_1
     lda tileset,y
     sta.z drawtile
-    // [24] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [39] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen
@@ -1554,11 +1628,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen
     sta.z __11+1
-    // [25] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuz2 
+    // [40] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuz2 
     lda.z drawtile
     ldy #0
     sta (__11),y
-    // [26] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [41] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors
@@ -1566,11 +1640,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors
     sta.z __12+1
-    // [27] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [42] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__12),y
-    // [28] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [43] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+1
@@ -1578,11 +1652,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+1
     sta.z __13+1
-    // [29] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    // [44] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
     sta (__13),y
-    // [30] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [45] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+1
@@ -1590,11 +1664,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+1
     sta.z __14+1
-    // [31] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [46] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__14),y
-    // [32] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [47] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+$28
@@ -1602,11 +1676,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+$28
     sta.z __15+1
-    // [33] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
+    // [48] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (__15),y
-    // [34] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [49] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+$28
@@ -1614,11 +1688,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+$28
     sta.z __16+1
-    // [35] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [50] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__16),y
-    // [36] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [51] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+$29
@@ -1626,11 +1700,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+$29
     sta.z __17+1
-    // [37] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
+    // [52] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
     lda #3
     ldy #0
     sta (__17),y
-    // [38] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [53] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+$29
@@ -1638,177 +1712,55 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+$29
     sta.z __18+1
-    // [39] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [54] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__18),y
     jmp __breturn
     // draw_block::@return
   __breturn:
-    // [40] return 
+    // [55] return 
     rts
 }
-  // mul8u
-// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte zp(4) a)
-mul8u: {
-    .const b = $28
-    .label __1 = $2e
-    .label a = 4
-    .label mb = 7
-    .label res = 5
-    .label return = $17
-    // [42] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-  __b1_from_mul8u:
-    // [42] phi (word) mul8u::mb#2 = (word)(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
-    lda #<b
-    sta.z mb
-    lda #>b
-    sta.z mb+1
-    // [42] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
-    lda #<0
-    sta.z res
-    lda #>0
-    sta.z res+1
-    // [42] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
-    jmp __b1
-    // mul8u::@1
-  __b1:
-    // [43] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
-    lda.z a
-    cmp #0
-    bne __b2
-    jmp __breturn
-    // mul8u::@return
-  __breturn:
-    // [44] return 
-    rts
-    // mul8u::@2
-  __b2:
-    // [45] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+  // init_sprites
+init_sprites: {
+    // [56] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     lda #1
-    and.z a
-    sta.z __1
-    // [46] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
-    lda.z __1
-    cmp #0
-    beq __b3_from___b2
-    jmp __b4
-    // mul8u::@4
-  __b4:
-    // [47] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    // [48] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
-  __b3_from___b2:
-  __b3_from___b4:
-    // [48] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
-    jmp __b3
-    // mul8u::@3
-  __b3:
-    // [49] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
-    lsr.z a
-    // [50] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl.z mb
-    rol.z mb+1
-    // [42] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
-  __b1_from___b3:
-    // [42] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-    // [42] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-    // [42] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
-    jmp __b1
-}
-  // init
-init: {
-    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-    // [52] call init_sprites 
-    jsr init_sprites
-    // [53] phi from init to init::@2 [phi:init->init::@2]
-  __b2_from_init:
-    jmp __b2
-    // init::@2
-  __b2:
-    // [54] call memset 
-    // [66] phi from init::@2 to memset [phi:init::@2->memset]
-  memset_from___b2:
-    // [66] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuz1=vbuc1 
+    sta SPRITES_ENABLE
+    // [57] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // one sprite enabled
     lda #0
-    sta.z memset.c
-    // [66] phi (void*) memset::str#3 = (void*)(const nomodify byte*) screen [phi:init::@2->memset#1] -- pvoz1=pvoc1 
-    lda #<screen
-    sta.z memset.str
-    lda #>screen
-    sta.z memset.str+1
-    jsr memset
-    // [55] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
-  __b3_from___b2:
-    jmp __b3
-    // init::@3
-  __b3:
-    // [56] call memset 
-    // [66] phi from init::@3 to memset [phi:init::@3->memset]
-  memset_from___b3:
-    // [66] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:init::@3->memset#0] -- vbuz1=vbuc1 
-    lda #BLACK
-    sta.z memset.c
-    // [66] phi (void*) memset::str#3 = (void*)(const nomodify byte*) colors [phi:init::@3->memset#1] -- pvoz1=pvoc1 
-    lda #<colors
-    sta.z memset.str
-    lda #>colors
-    sta.z memset.str+1
-    jsr memset
-    // [57] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
-  toD0181_from___b3:
-    jmp toD0181
-    // init::toD0181
-  toD0181:
-    jmp __b1
-    // init::@1
-  __b1:
-    // [58] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
-    lda #toD0181_return
-    sta D018
-    // asm { lda#$5b sta$d011  }
-    lda #$5b
-    sta $d011
-    // [60] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BORDER_COLOR
-    // [61] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // [62] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BG_COLOR1
-    // [63] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
-    lda #BLUE
-    sta BG_COLOR2
-    // [64] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
-    lda #GREEN
-    sta BG_COLOR3
+    sta SPRITES_EXPAND_X
+    // [58] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_EXPAND_Y
+    // [59] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_XMSB
+    // [60] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta SPRITES_COLOR
+    // [61] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_MC
     jmp __breturn
-    // init::@return
+    // init_sprites::@return
   __breturn:
-    // [65] return 
+    // [62] return 
     rts
 }
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(9) str, byte zp($b) c)
+// memset(void* zp(4) str, byte zp(6) c)
 memset: {
-    .label end = $2f
-    .label dst = $c
-    .label str = 9
-    .label c = $b
+    .label end = $2e
+    .label dst = 7
+    .label str = 4
+    .label c = 6
     jmp __b1
     // memset::@1
   __b1:
-    // [67] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [64] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z str
     clc
     adc #<$3e8
@@ -1816,19 +1768,19 @@ memset: {
     lda.z str+1
     adc #>$3e8
     sta.z end+1
-    // [68] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
+    // [65] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 -- pbuz1=pbuz2 
     lda.z str
     sta.z dst
     lda.z str+1
     sta.z dst+1
-    // [69] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [66] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [69] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [66] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [70] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [67] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -1838,47 +1790,95 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [71] return 
+    // [68] return 
     rts
     // memset::@3
   __b3:
-    // [72] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
+    // [69] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuz2 
     lda.z c
     ldy #0
     sta (dst),y
-    // [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [70] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     jmp __b2_from___b3
 }
-  // init_sprites
-init_sprites: {
-    // [74] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SPRITES_ENABLE
-    // [75] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // one sprite enabled
-    lda #0
-    sta SPRITES_EXPAND_X
-    // [76] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_EXPAND_Y
-    // [77] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_XMSB
-    // [78] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta SPRITES_COLOR
-    // [79] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_MC
+  // mul8u
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+// mul8u(byte zp(9) a)
+mul8u: {
+    .const b = $28
+    .label __1 = $30
+    .label a = 9
+    .label mb = $c
+    .label res = $a
+    .label return = $17
+    // [72] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+  __b1_from_mul8u:
+    // [72] phi (word) mul8u::mb#2 = (word)(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    lda #<b
+    sta.z mb
+    lda #>b
+    sta.z mb+1
+    // [72] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
+    lda #<0
+    sta.z res
+    lda #>0
+    sta.z res+1
+    // [72] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    jmp __b1
+    // mul8u::@1
+  __b1:
+    // [73] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuz1_neq_0_then_la1 
+    lda.z a
+    cmp #0
+    bne __b2
     jmp __breturn
-    // init_sprites::@return
+    // mul8u::@return
   __breturn:
-    // [80] return 
+    // [74] return 
     rts
+    // mul8u::@2
+  __b2:
+    // [75] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
+    lda #1
+    and.z a
+    sta.z __1
+    // [76] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuz1_eq_0_then_la1 
+    lda.z __1
+    cmp #0
+    beq __b3_from___b2
+    jmp __b4
+    // mul8u::@4
+  __b4:
+    // [77] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    // [78] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+  __b3_from___b2:
+  __b3_from___b4:
+    // [78] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    jmp __b3
+    // mul8u::@3
+  __b3:
+    // [79] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
+    lsr.z a
+    // [80] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    asl.z mb
+    rol.z mb+1
+    // [72] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+  __b1_from___b3:
+    // [72] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [72] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [72] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    jmp __b1
 }
   // File Data
 
@@ -1886,105 +1886,105 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 [ main::x#2 main::y#2 main::z#0 ] (  [ main::x#2 main::y#2 main::z#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::x#2 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::y#2 main::y#1 ]
-Statement [15] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [22] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [26] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [30] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:17 [ draw_block::x#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:18 [ draw_block::y#0 ]
-Statement [16] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [31] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:19 [ draw_block::tileno#1 ]
-Statement [17] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [20] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [21] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [22] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [24] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [32] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [35] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [36] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [37] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [39] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:29 [ draw_block::drawtile#0 ]
-Statement [25] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [40] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::x#2 main::x#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ main::y#2 main::y#1 ]
-Statement [26] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$12 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [27] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [28] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$13 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [29] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [30] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$14 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [31] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [32] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$15 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [33] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [34] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$16 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [35] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [36] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$17 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [37] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [38] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::$18 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [39] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW [ ] ( draw_block:13 [ main::x#2 main::y#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [47] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( draw_block:13::mul8u:19 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-Statement [58] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
-Statement [60] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [61] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [63] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [64] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [67] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 [ memset::str#3 memset::c#4 memset::end#0 ] ( init:1::memset:54 [ memset::str#3 memset::c#4 memset::end#0 ] { }  init:1::memset:56 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:11 [ memset::c#4 ]
-Statement [68] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( init:1::memset:54 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  init:1::memset:56 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [70] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:54 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:56 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [72] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:54 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:56 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte y as potential for zp[1]:11 [ memset::c#4 ]
-Statement [74] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [75] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [76] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [77] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [78] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [79] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
+Statement [41] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$12 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [42] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$13 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [44] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [45] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$14 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [46] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [47] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$15 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [48] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [49] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$16 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [50] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [51] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$17 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [52] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [53] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::$18 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [54] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW [ ] ( draw_block:13 [ main::x#2 main::y#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [56] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [57] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [58] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [59] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [60] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [61] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [64] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 [ memset::str#3 memset::c#4 memset::end#0 ] ( init:1::memset:18 [ memset::str#3 memset::c#4 memset::end#0 ] { }  init:1::memset:20 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ memset::c#4 ]
+Statement [65] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( init:1::memset:18 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  init:1::memset:20 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [67] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:18 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:20 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [69] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:18 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:20 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:6 [ memset::c#4 ]
+Statement [77] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( draw_block:13::mul8u:34 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
 Statement [8] (byte) main::z#0 ← (byte) main::x#2 + (byte) main::y#2 [ main::x#2 main::y#2 main::z#0 ] (  [ main::x#2 main::y#2 main::z#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [15] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [16] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [17] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [20] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [21] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [22] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [24] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [25] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [26] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$12 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [27] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [28] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$13 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [29] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [30] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$14 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [31] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [32] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$15 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [33] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [34] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$16 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [35] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [36] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$17 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [37] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [38] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::$18 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
-Statement [39] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW [ ] ( draw_block:13 [ main::x#2 main::y#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [45] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( draw_block:13::mul8u:19 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [47] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( draw_block:13::mul8u:19 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
-Statement [58] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [22] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#$5b sta$d011  } always clobbers reg byte a 
-Statement [60] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [61] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [63] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [64] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
-Statement [67] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 [ memset::str#3 memset::c#4 memset::end#0 ] ( init:1::memset:54 [ memset::str#3 memset::c#4 memset::end#0 ] { }  init:1::memset:56 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
-Statement [68] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( init:1::memset:54 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  init:1::memset:56 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
-Statement [70] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:54 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:56 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [72] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:54 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:56 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [74] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [75] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [76] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [77] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [78] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
-Statement [79] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 [ ] ( init:1::init_sprites:52 [ ] { }  ) always clobbers reg byte a 
+Statement [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [26] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN [ ] ( init:1 [ ] { }  ) always clobbers reg byte a 
+Statement [30] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 [ draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::x#0 draw_block::y#0 draw_block::tileno#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [31] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 [ draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::y#0 draw_block::tileno#1 draw_block::x1#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [32] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 [ draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::y#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [35] (word) mul8u::return#2 ← (word) mul8u::res#2 [ draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::return#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [36] (word) draw_block::z#0 ← (word) mul8u::return#2 [ draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 draw_block::z#0 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [37] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 [ draw_block::tileno#1 draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [39] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 [ draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::drawtile#0 draw_block::$11 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [40] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [41] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$12 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$12 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [42] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [43] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$13 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$13 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [44] *((byte*~) draw_block::$13) ← (byte) 1 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [45] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$14 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$14 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [46] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [47] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$15 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$15 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [48] *((byte*~) draw_block::$15) ← (byte) 2 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [49] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$16 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$16 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [50] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [51] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 [ draw_block::z#1 draw_block::$17 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 draw_block::$17 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [52] *((byte*~) draw_block::$17) ← (byte) 3 [ draw_block::z#1 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::z#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [53] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 [ draw_block::$18 ] ( draw_block:13 [ main::x#2 main::y#2 draw_block::$18 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a 
+Statement [54] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW [ ] ( draw_block:13 [ main::x#2 main::y#2 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [56] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [57] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [58] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [59] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [60] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [61] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 [ ] ( init:1::init_sprites:16 [ ] { }  ) always clobbers reg byte a 
+Statement [64] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 [ memset::str#3 memset::c#4 memset::end#0 ] ( init:1::memset:18 [ memset::str#3 memset::c#4 memset::end#0 ] { }  init:1::memset:20 [ memset::str#3 memset::c#4 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [65] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( init:1::memset:18 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  init:1::memset:20 [ memset::c#4 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [67] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:18 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:20 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [69] *((byte*) memset::dst#2) ← (byte) memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( init:1::memset:18 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  init:1::memset:20 [ memset::c#4 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [75] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 [ mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] ( draw_block:13::mul8u:34 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::res#2 mul8u::a#2 mul8u::mb#2 mul8u::$1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
+Statement [77] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 [ mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] ( draw_block:13::mul8u:34 [ main::x#2 main::y#2 draw_block::tileno#1 draw_block::x1#0 mul8u::a#2 mul8u::mb#2 mul8u::res#1 ] { { draw_block::tileno#0 = main::tile#0 } { draw_block::x#0 = main::x#2 } { draw_block::y#0 = main::y#2 } { mul8u::a#1 = draw_block::y#1 } { mul8u::return#2 = mul8u::res#2 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::x#2 main::x#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[1]:3 [ main::y#2 main::y#1 ] : zp[1]:3 , reg byte x , 
-Potential registers zp[1]:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] : zp[1]:4 , reg byte x , reg byte y , 
-Potential registers zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] : zp[2]:5 , 
-Potential registers zp[2]:7 [ mul8u::mb#2 mul8u::mb#1 ] : zp[2]:7 , 
-Potential registers zp[2]:9 [ memset::str#3 ] : zp[2]:9 , 
-Potential registers zp[1]:11 [ memset::c#4 ] : zp[1]:11 , reg byte x , 
-Potential registers zp[2]:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] : zp[2]:12 , 
+Potential registers zp[2]:4 [ memset::str#3 ] : zp[2]:4 , 
+Potential registers zp[1]:6 [ memset::c#4 ] : zp[1]:6 , reg byte x , 
+Potential registers zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] : zp[2]:7 , 
+Potential registers zp[1]:9 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] : zp[1]:9 , reg byte x , reg byte y , 
+Potential registers zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ mul8u::mb#2 mul8u::mb#1 ] : zp[2]:12 , 
 Potential registers zp[1]:14 [ main::z#0 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:15 [ main::tile#0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:16 [ draw_block::tileno#0 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
@@ -2005,13 +2005,13 @@ Potential registers zp[2]:38 [ draw_block::$15 ] : zp[2]:38 ,
 Potential registers zp[2]:40 [ draw_block::$16 ] : zp[2]:40 , 
 Potential registers zp[2]:42 [ draw_block::$17 ] : zp[2]:42 , 
 Potential registers zp[2]:44 [ draw_block::$18 ] : zp[2]:44 , 
-Potential registers zp[1]:46 [ mul8u::$1 ] : zp[1]:46 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:47 [ memset::end#0 ] : zp[2]:47 , 
+Potential registers zp[2]:46 [ memset::end#0 ] : zp[2]:46 , 
+Potential registers zp[1]:48 [ mul8u::$1 ] : zp[1]:48 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [mul8u] 35,000,170.33: zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 24,285,716.71: zp[2]:7 [ mul8u::mb#2 mul8u::mb#1 ] 20,000,002: zp[1]:46 [ mul8u::$1 ] 16,673,836.17: zp[1]:4 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 2,002: zp[2]:23 [ mul8u::return#2 ] 
+Uplift Scope [mul8u] 35,000,170.33: zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] 24,285,716.71: zp[2]:12 [ mul8u::mb#2 mul8u::mb#1 ] 20,000,002: zp[1]:48 [ mul8u::$1 ] 16,673,836.17: zp[1]:9 [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] 2,002: zp[2]:23 [ mul8u::return#2 ] 
 Uplift Scope [draw_block] 2,002: zp[1]:22 [ draw_block::y#1 ] 2,002: zp[2]:25 [ draw_block::z#0 ] 2,002: zp[2]:30 [ draw_block::$11 ] 2,002: zp[2]:32 [ draw_block::$12 ] 2,002: zp[2]:34 [ draw_block::$13 ] 2,002: zp[2]:36 [ draw_block::$14 ] 2,002: zp[2]:38 [ draw_block::$15 ] 2,002: zp[2]:40 [ draw_block::$16 ] 2,002: zp[2]:42 [ draw_block::$17 ] 2,002: zp[2]:44 [ draw_block::$18 ] 1,001: zp[1]:29 [ draw_block::drawtile#0 ] 563.06: zp[2]:27 [ draw_block::z#1 ] 367.33: zp[1]:16 [ draw_block::tileno#0 ] 367.33: zp[1]:17 [ draw_block::x#0 ] 367.33: zp[1]:18 [ draw_block::y#0 ] 333.67: zp[2]:20 [ draw_block::x1#0 ] 250.25: zp[1]:19 [ draw_block::tileno#1 ] 
-Uplift Scope [memset] 3,572.33: zp[2]:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 183.67: zp[2]:47 [ memset::end#0 ] 143: zp[1]:11 [ memset::c#4 ] 0: zp[2]:9 [ memset::str#3 ] 
+Uplift Scope [memset] 3,572.33: zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 183.67: zp[2]:46 [ memset::end#0 ] 143: zp[1]:6 [ memset::c#4 ] 0: zp[2]:4 [ memset::str#3 ] 
 Uplift Scope [main] 265.12: zp[1]:3 [ main::y#2 main::y#1 ] 202: zp[1]:14 [ main::z#0 ] 202: zp[1]:15 [ main::tile#0 ] 43.36: zp[1]:2 [ main::x#2 main::x#1 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
@@ -2020,10 +2020,10 @@ Uplift Scope [init]
 Uplift Scope [init_sprites] 
 Uplift Scope [] 
 
-Uplifting [mul8u] best 92884 combination zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp[2]:7 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp[2]:23 [ mul8u::return#2 ] 
+Uplifting [mul8u] best 92884 combination zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] zp[2]:12 [ mul8u::mb#2 mul8u::mb#1 ] reg byte a [ mul8u::$1 ] reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ] zp[2]:23 [ mul8u::return#2 ] 
 Uplifting [draw_block] best 92274 combination reg byte a [ draw_block::y#1 ] zp[2]:25 [ draw_block::z#0 ] zp[2]:30 [ draw_block::$11 ] zp[2]:32 [ draw_block::$12 ] zp[2]:34 [ draw_block::$13 ] zp[2]:36 [ draw_block::$14 ] zp[2]:38 [ draw_block::$15 ] zp[2]:40 [ draw_block::$16 ] zp[2]:42 [ draw_block::$17 ] zp[2]:44 [ draw_block::$18 ] reg byte x [ draw_block::drawtile#0 ] zp[2]:27 [ draw_block::z#1 ] reg byte y [ draw_block::tileno#0 ] reg byte x [ draw_block::x#0 ] zp[1]:18 [ draw_block::y#0 ] zp[2]:20 [ draw_block::x1#0 ] zp[1]:19 [ draw_block::tileno#1 ] 
 Limited combination testing to 100 combinations of 1296 possible.
-Uplifting [memset] best 92258 combination zp[2]:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:47 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:9 [ memset::str#3 ] 
+Uplifting [memset] best 92258 combination zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:46 [ memset::end#0 ] reg byte x [ memset::c#4 ] zp[2]:4 [ memset::str#3 ] 
 Uplifting [main] best 91258 combination zp[1]:3 [ main::y#2 main::y#1 ] reg byte a [ main::z#0 ] reg byte y [ main::tile#0 ] zp[1]:2 [ main::x#2 main::x#1 ] 
 Uplifting [MOS6526_CIA] best 91258 combination 
 Uplifting [MOS6569_VICII] best 91258 combination 
@@ -2040,15 +2040,15 @@ Uplifting [draw_block] best 91254 combination reg byte y [ draw_block::tileno#1 
 Attempting to uplift remaining variables inzp[1]:2 [ main::x#2 main::x#1 ]
 Uplifting [main] best 91254 combination zp[1]:2 [ main::x#2 main::x#1 ] 
 Coalescing zero page register [ zp[1]:3 [ main::y#2 main::y#1 ] ] with [ zp[1]:18 [ draw_block::y#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp[2]:23 [ mul8u::return#2 ] ] - score: 1
-Coalescing zero page register [ zp[2]:9 [ memset::str#3 ] ] with [ zp[2]:12 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ memset::str#3 ] ] with [ zp[2]:7 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 ] ] with [ zp[2]:23 [ mul8u::return#2 ] ] - score: 1
 Coalescing zero page register [ zp[2]:20 [ draw_block::x1#0 ] ] with [ zp[2]:27 [ draw_block::z#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp[2]:25 [ draw_block::z#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 ] ] with [ zp[2]:25 [ draw_block::z#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:20 [ draw_block::x1#0 draw_block::z#1 ] ] with [ zp[2]:44 [ draw_block::$18 ] ] - score: 1
-Coalescing zero page register [ zp[2]:9 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ] with [ zp[2]:5 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ] ]
-Coalescing zero page register [ zp[2]:30 [ draw_block::$11 ] ] with [ zp[2]:7 [ mul8u::mb#2 mul8u::mb#1 ] ]
-Coalescing zero page register [ zp[2]:47 [ memset::end#0 ] ] with [ zp[2]:20 [ draw_block::x1#0 draw_block::z#1 draw_block::$18 ] ]
-Allocated (was zp[2]:9) zp[2]:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ]
+Coalescing zero page register [ zp[2]:10 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ] ] with [ zp[2]:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ] ]
+Coalescing zero page register [ zp[2]:30 [ draw_block::$11 ] ] with [ zp[2]:12 [ mul8u::mb#2 mul8u::mb#1 ] ]
+Coalescing zero page register [ zp[2]:46 [ memset::end#0 ] ] with [ zp[2]:20 [ draw_block::x1#0 draw_block::z#1 draw_block::$18 ] ]
+Allocated (was zp[2]:10) zp[2]:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
 Allocated (was zp[2]:30) zp[2]:6 [ draw_block::$11 mul8u::mb#2 mul8u::mb#1 ]
 Allocated (was zp[2]:32) zp[2]:8 [ draw_block::$12 ]
 Allocated (was zp[2]:34) zp[2]:10 [ draw_block::$13 ]
@@ -2056,7 +2056,7 @@ Allocated (was zp[2]:36) zp[2]:12 [ draw_block::$14 ]
 Allocated (was zp[2]:38) zp[2]:14 [ draw_block::$15 ]
 Allocated (was zp[2]:40) zp[2]:16 [ draw_block::$16 ]
 Allocated (was zp[2]:42) zp[2]:18 [ draw_block::$17 ]
-Allocated (was zp[2]:47) zp[2]:20 [ memset::end#0 draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
+Allocated (was zp[2]:46) zp[2]:20 [ memset::end#0 draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2098,7 +2098,7 @@ main: {
     .label y = 3
     .label x = 2
     // [1] call init 
-    // [51] phi from main to init [phi:main->init]
+    // [15] phi from main to init [phi:main->init]
   init_from_main:
     jsr init
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -2166,6 +2166,78 @@ main: {
     // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@6->main::@2#0] -- register_copy 
     jmp __b2
 }
+  // init
+init: {
+    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
+    // [16] call init_sprites 
+    jsr init_sprites
+    // [17] phi from init to init::@2 [phi:init->init::@2]
+  __b2_from_init:
+    jmp __b2
+    // init::@2
+  __b2:
+    // [18] call memset 
+    // [63] phi from init::@2 to memset [phi:init::@2->memset]
+  memset_from___b2:
+    // [63] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [63] phi (void*) memset::str#3 = (void*)(const nomodify byte*) screen [phi:init::@2->memset#1] -- pvoz1=pvoc1 
+    lda #<screen
+    sta.z memset.str
+    lda #>screen
+    sta.z memset.str+1
+    jsr memset
+    // [19] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+  __b3_from___b2:
+    jmp __b3
+    // init::@3
+  __b3:
+    // [20] call memset 
+    // [63] phi from init::@3 to memset [phi:init::@3->memset]
+  memset_from___b3:
+    // [63] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:init::@3->memset#0] -- vbuxx=vbuc1 
+    ldx #BLACK
+    // [63] phi (void*) memset::str#3 = (void*)(const nomodify byte*) colors [phi:init::@3->memset#1] -- pvoz1=pvoc1 
+    lda #<colors
+    sta.z memset.str
+    lda #>colors
+    sta.z memset.str+1
+    jsr memset
+    // [21] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
+  toD0181_from___b3:
+    jmp toD0181
+    // init::toD0181
+  toD0181:
+    jmp __b1
+    // init::@1
+  __b1:
+    // [22] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    lda #toD0181_return
+    sta D018
+    // asm { lda#$5b sta$d011  }
+    lda #$5b
+    sta $d011
+    // [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BORDER_COLOR
+    // [25] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BG_COLOR
+    // [26] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    lda #RED
+    sta BG_COLOR1
+    // [27] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    lda #BLUE
+    sta BG_COLOR2
+    // [28] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    lda #GREEN
+    sta BG_COLOR3
+    jmp __breturn
+    // init::@return
+  __breturn:
+    // [29] return 
+    rts
+}
   // draw_block
 // draw_block(byte register(Y) tileno, byte register(X) x, byte zp(3) y)
 draw_block: {
@@ -2181,33 +2253,33 @@ draw_block: {
     .label __16 = $10
     .label __17 = $12
     .label __18 = $14
-    // [15] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuyy=vbuyy_rol_2 
+    // [30] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuyy=vbuyy_rol_2 
     tya
     asl
     asl
     tay
-    // [16] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuxx_rol_1 
+    // [31] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuxx_rol_1 
     txa
     asl
     sta.z x1
     lda #0
     rol
     sta.z x1+1
-    // [17] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [32] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
     asl
-    // [18] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuxx=vbuaa 
+    // [33] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuxx=vbuaa 
     tax
-    // [19] call mul8u 
-    // [41] phi from draw_block to mul8u [phi:draw_block->mul8u]
+    // [34] call mul8u 
+    // [71] phi from draw_block to mul8u [phi:draw_block->mul8u]
   mul8u_from_draw_block:
     jsr mul8u
-    // [20] (word) mul8u::return#2 ← (word) mul8u::res#2
+    // [35] (word) mul8u::return#2 ← (word) mul8u::res#2
     jmp __b1
     // draw_block::@1
   __b1:
-    // [21] (word) draw_block::z#0 ← (word) mul8u::return#2
-    // [22] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [36] (word) draw_block::z#0 ← (word) mul8u::return#2
+    // [37] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z z_1
     clc
     adc.z z
@@ -2215,9 +2287,9 @@ draw_block: {
     lda.z z_1+1
     adc.z z+1
     sta.z z_1+1
-    // [23] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [38] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx tileset,y
-    // [24] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [39] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen
@@ -2225,11 +2297,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen
     sta.z __11+1
-    // [25] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
+    // [40] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (__11),y
-    // [26] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [41] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors
@@ -2237,11 +2309,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors
     sta.z __12+1
-    // [27] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [42] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__12),y
-    // [28] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [43] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+1
@@ -2249,11 +2321,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+1
     sta.z __13+1
-    // [29] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    // [44] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
     sta (__13),y
-    // [30] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [45] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+1
@@ -2261,11 +2333,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+1
     sta.z __14+1
-    // [31] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [46] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__14),y
-    // [32] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [47] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+$28
@@ -2273,11 +2345,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+$28
     sta.z __15+1
-    // [33] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
+    // [48] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     ldy #0
     sta (__15),y
-    // [34] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [49] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+$28
@@ -2285,11 +2357,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+$28
     sta.z __16+1
-    // [35] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [50] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__16),y
-    // [36] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [51] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+$29
@@ -2297,11 +2369,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+$29
     sta.z __17+1
-    // [37] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
+    // [52] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
     lda #3
     ldy #0
     sta (__17),y
-    // [38] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [53] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __18
     adc #<colors+$29
@@ -2309,158 +2381,41 @@ draw_block: {
     lda.z __18+1
     adc #>colors+$29
     sta.z __18+1
-    // [39] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [54] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     ldy #0
     sta (__18),y
     jmp __breturn
     // draw_block::@return
   __breturn:
-    // [40] return 
+    // [55] return 
     rts
 }
-  // mul8u
-// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a)
-mul8u: {
-    .const b = $28
-    .label mb = 6
-    .label res = 4
-    .label return = 4
-    // [42] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-  __b1_from_mul8u:
-    // [42] phi (word) mul8u::mb#2 = (word)(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
-    lda #<b
-    sta.z mb
-    lda #>b
-    sta.z mb+1
-    // [42] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
-    lda #<0
-    sta.z res
-    lda #>0
-    sta.z res+1
-    // [42] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
-    jmp __b1
-    // mul8u::@1
-  __b1:
-    // [43] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b2
+  // init_sprites
+init_sprites: {
+    // [56] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta SPRITES_ENABLE
+    // [57] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // one sprite enabled
+    lda #0
+    sta SPRITES_EXPAND_X
+    // [58] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_EXPAND_Y
+    // [59] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_XMSB
+    // [60] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta SPRITES_COLOR
+    // [61] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_MC
     jmp __breturn
-    // mul8u::@return
+    // init_sprites::@return
   __breturn:
-    // [44] return 
-    rts
-    // mul8u::@2
-  __b2:
-    // [45] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #1
-    // [46] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
-    cmp #0
-    beq __b3_from___b2
-    jmp __b4
-    // mul8u::@4
-  __b4:
-    // [47] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    // [48] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
-  __b3_from___b2:
-  __b3_from___b4:
-    // [48] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
-    jmp __b3
-    // mul8u::@3
-  __b3:
-    // [49] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
-    txa
-    lsr
-    tax
-    // [50] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl.z mb
-    rol.z mb+1
-    // [42] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
-  __b1_from___b3:
-    // [42] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-    // [42] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-    // [42] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
-    jmp __b1
-}
-  // init
-init: {
-    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-    // [52] call init_sprites 
-    jsr init_sprites
-    // [53] phi from init to init::@2 [phi:init->init::@2]
-  __b2_from_init:
-    jmp __b2
-    // init::@2
-  __b2:
-    // [54] call memset 
-    // [66] phi from init::@2 to memset [phi:init::@2->memset]
-  memset_from___b2:
-    // [66] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [66] phi (void*) memset::str#3 = (void*)(const nomodify byte*) screen [phi:init::@2->memset#1] -- pvoz1=pvoc1 
-    lda #<screen
-    sta.z memset.str
-    lda #>screen
-    sta.z memset.str+1
-    jsr memset
-    // [55] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
-  __b3_from___b2:
-    jmp __b3
-    // init::@3
-  __b3:
-    // [56] call memset 
-    // [66] phi from init::@3 to memset [phi:init::@3->memset]
-  memset_from___b3:
-    // [66] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:init::@3->memset#0] -- vbuxx=vbuc1 
-    ldx #BLACK
-    // [66] phi (void*) memset::str#3 = (void*)(const nomodify byte*) colors [phi:init::@3->memset#1] -- pvoz1=pvoc1 
-    lda #<colors
-    sta.z memset.str
-    lda #>colors
-    sta.z memset.str+1
-    jsr memset
-    // [57] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
-  toD0181_from___b3:
-    jmp toD0181
-    // init::toD0181
-  toD0181:
-    jmp __b1
-    // init::@1
-  __b1:
-    // [58] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
-    lda #toD0181_return
-    sta D018
-    // asm { lda#$5b sta$d011  }
-    lda #$5b
-    sta $d011
-    // [60] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BORDER_COLOR
-    // [61] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    // [62] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BG_COLOR1
-    // [63] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
-    lda #BLUE
-    sta BG_COLOR2
-    // [64] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
-    lda #GREEN
-    sta BG_COLOR3
-    jmp __breturn
-    // init::@return
-  __breturn:
-    // [65] return 
+    // [62] return 
     rts
 }
   // memset
@@ -2473,7 +2428,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [67] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [64] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z str
     clc
     adc #<$3e8
@@ -2481,15 +2436,15 @@ memset: {
     lda.z str+1
     adc #>$3e8
     sta.z end+1
-    // [68] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
-    // [69] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [65] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [66] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [69] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [66] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [70] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [67] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -2499,47 +2454,92 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [71] return 
+    // [68] return 
     rts
     // memset::@3
   __b3:
-    // [72] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
+    // [69] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
-    // [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [70] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     jmp __b2_from___b3
 }
-  // init_sprites
-init_sprites: {
-    // [74] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SPRITES_ENABLE
-    // [75] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // one sprite enabled
-    lda #0
-    sta SPRITES_EXPAND_X
-    // [76] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_EXPAND_Y
-    // [77] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_XMSB
-    // [78] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta SPRITES_COLOR
-    // [79] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_MC
+  // mul8u
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+// mul8u(byte register(X) a)
+mul8u: {
+    .const b = $28
+    .label mb = 6
+    .label res = 4
+    .label return = 4
+    // [72] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+  __b1_from_mul8u:
+    // [72] phi (word) mul8u::mb#2 = (word)(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    lda #<b
+    sta.z mb
+    lda #>b
+    sta.z mb+1
+    // [72] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
+    lda #<0
+    sta.z res
+    lda #>0
+    sta.z res+1
+    // [72] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    jmp __b1
+    // mul8u::@1
+  __b1:
+    // [73] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b2
     jmp __breturn
-    // init_sprites::@return
+    // mul8u::@return
   __breturn:
-    // [80] return 
+    // [74] return 
     rts
+    // mul8u::@2
+  __b2:
+    // [75] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    txa
+    and #1
+    // [76] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+    cmp #0
+    beq __b3_from___b2
+    jmp __b4
+    // mul8u::@4
+  __b4:
+    // [77] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    // [78] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+  __b3_from___b2:
+  __b3_from___b4:
+    // [78] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    jmp __b3
+    // mul8u::@3
+  __b3:
+    // [79] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
+    txa
+    lsr
+    tax
+    // [80] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    asl.z mb
+    rol.z mb+1
+    // [72] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+  __b1_from___b3:
+    // [72] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [72] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [72] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    jmp __b1
 }
   // File Data
 
@@ -2549,41 +2549,39 @@ Removing instruction jmp __b5
 Removing instruction jmp __b2
 Removing instruction jmp __b4
 Removing instruction jmp __b6
-Removing instruction jmp __b1
-Removing instruction jmp __breturn
-Removing instruction jmp __b1
-Removing instruction jmp __breturn
-Removing instruction jmp __b4
-Removing instruction jmp __b3
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp toD0181
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b4
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction ldy #0
-Removing instruction ldy #0
-Removing instruction ldy #0
-Removing instruction ldy #0
-Removing instruction ldy #0
-Removing instruction ldy #0
-Removing instruction ldy #0
-Removing instruction lda #>0
 Removing instruction lda #BLACK
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
 Removing instruction lda #0
 Removing instruction lda #0
+Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b5_from___b5 with __b5
-Replacing label __b3_from___b2 with __b3
 Replacing label __b2_from___b3 with __b2
+Replacing label __b3_from___b2 with __b3
 Removing instruction __b5_from___b1:
 Removing instruction __b5_from___b5:
-Removing instruction __b3_from___b2:
-Removing instruction __b3_from___b4:
 Removing instruction __b2_from_init:
 Removing instruction memset_from___b2:
 Removing instruction __b3_from___b2:
@@ -2592,6 +2590,8 @@ Removing instruction toD0181_from___b3:
 Removing instruction toD0181:
 Removing instruction __b2_from___b1:
 Removing instruction __b2_from___b3:
+Removing instruction __b3_from___b2:
+Removing instruction __b3_from___b4:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction init_from_main:
 Removing instruction __b1_from_main:
@@ -2599,20 +2599,20 @@ Removing instruction __b4:
 Removing instruction __b1_from___b4:
 Removing instruction __b6:
 Removing instruction __b2_from___b6:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __b1:
+Removing instruction __breturn:
 Removing instruction mul8u_from_draw_block:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b1_from_mul8u:
 Removing instruction __breturn:
 Removing instruction __b4:
 Removing instruction __b1_from___b3:
-Removing instruction __b2:
-Removing instruction __b3:
-Removing instruction __b1:
-Removing instruction __breturn:
-Removing instruction __b1:
-Removing instruction __breturn:
-Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Relabelling long label __b2_from___b1 to __b4
 Succesful ASM optimization Pass5RelabelLongLabels
@@ -2823,9 +2823,9 @@ FINAL SYMBOL TABLE
 
 zp[1]:2 [ main::x#2 main::x#1 ]
 zp[1]:3 [ main::y#2 main::y#1 draw_block::y#0 ]
-reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
-zp[2]:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 ]
 reg byte x [ memset::c#4 ]
+reg byte x [ mul8u::a#2 mul8u::a#1 mul8u::a#0 ]
+zp[2]:4 [ mul8u::res#2 mul8u::res#6 mul8u::res#1 mul8u::return#2 draw_block::z#0 memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
 reg byte a [ main::z#0 ]
 reg byte y [ main::tile#0 ]
 reg byte y [ draw_block::tileno#0 ]
@@ -2840,8 +2840,8 @@ zp[2]:12 [ draw_block::$14 ]
 zp[2]:14 [ draw_block::$15 ]
 zp[2]:16 [ draw_block::$16 ]
 zp[2]:18 [ draw_block::$17 ]
-reg byte a [ mul8u::$1 ]
 zp[2]:20 [ memset::end#0 draw_block::x1#0 draw_block::z#1 draw_block::$18 ]
+reg byte a [ mul8u::$1 ]
 
 
 FINAL ASSEMBLER
@@ -2887,7 +2887,7 @@ main: {
     .label x = 2
     // init()
     // [1] call init 
-    // [51] phi from main to init [phi:main->init]
+    // [15] phi from main to init [phi:main->init]
     jsr init
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // [2] phi (byte) main::x#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
@@ -2949,6 +2949,73 @@ main: {
     // [5] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@6->main::@2#0] -- register_copy 
     jmp __b2
 }
+  // init
+init: {
+    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
+    // init_sprites()
+    // [16] call init_sprites 
+    jsr init_sprites
+    // [17] phi from init to init::@2 [phi:init->init::@2]
+    // init::@2
+    // memset(screen, 0, 1000)
+    // [18] call memset 
+    // [63] phi from init::@2 to memset [phi:init::@2->memset]
+    // [63] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [63] phi (void*) memset::str#3 = (void*)(const nomodify byte*) screen [phi:init::@2->memset#1] -- pvoz1=pvoc1 
+    lda #<screen
+    sta.z memset.str
+    lda #>screen
+    sta.z memset.str+1
+    jsr memset
+    // [19] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
+    // init::@3
+    // memset(colors, BLACK, 1000)
+    // [20] call memset 
+    // [63] phi from init::@3 to memset [phi:init::@3->memset]
+    // [63] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:init::@3->memset#0] -- vbuxx=vbuc1 
+    ldx #BLACK
+    // [63] phi (void*) memset::str#3 = (void*)(const nomodify byte*) colors [phi:init::@3->memset#1] -- pvoz1=pvoc1 
+    lda #<colors
+    sta.z memset.str
+    lda #>colors
+    sta.z memset.str+1
+    jsr memset
+    // [21] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
+    // init::toD0181
+    // init::@1
+    // *D018 = toD018(screen, charset)
+    // [22] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
+    lda #toD0181_return
+    sta D018
+    // asm
+    // asm { lda#$5b sta$d011  }
+    lda #$5b
+    sta $d011
+    // *BORDER_COLOR = BLACK
+    // [24] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    lda #BLACK
+    sta BORDER_COLOR
+    // *BG_COLOR = BLACK
+    // [25] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    sta BG_COLOR
+    // *BG_COLOR1 = RED
+    // [26] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    lda #RED
+    sta BG_COLOR1
+    // *BG_COLOR2 = BLUE
+    // [27] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
+    lda #BLUE
+    sta BG_COLOR2
+    // *BG_COLOR3 = GREEN
+    // [28] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
+    lda #GREEN
+    sta BG_COLOR3
+    // init::@return
+    // }
+    // [29] return 
+    rts
+}
   // draw_block
 // draw_block(byte register(Y) tileno, byte register(X) x, byte zp(3) y)
 draw_block: {
@@ -2965,13 +3032,13 @@ draw_block: {
     .label __17 = $12
     .label __18 = $14
     // tileno = tileno << 2
-    // [15] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuyy=vbuyy_rol_2 
+    // [30] (byte) draw_block::tileno#1 ← (byte) draw_block::tileno#0 << (byte) 2 -- vbuyy=vbuyy_rol_2 
     tya
     asl
     asl
     tay
     // x1 = x << 1
-    // [16] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuxx_rol_1 
+    // [31] (word) draw_block::x1#0 ← (byte) draw_block::x#0 << (byte) 1 -- vwuz1=vbuxx_rol_1 
     txa
     asl
     sta.z x1
@@ -2979,22 +3046,22 @@ draw_block: {
     rol
     sta.z x1+1
     // y = y << 1
-    // [17] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuaa=vbuz1_rol_1 
+    // [32] (byte) draw_block::y#1 ← (byte) draw_block::y#0 << (byte) 1 -- vbuaa=vbuz1_rol_1 
     lda.z y
     asl
     // mul8u(y,40)
-    // [18] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuxx=vbuaa 
+    // [33] (byte) mul8u::a#1 ← (byte) draw_block::y#1 -- vbuxx=vbuaa 
     tax
-    // [19] call mul8u 
-    // [41] phi from draw_block to mul8u [phi:draw_block->mul8u]
+    // [34] call mul8u 
+    // [71] phi from draw_block to mul8u [phi:draw_block->mul8u]
     jsr mul8u
     // mul8u(y,40)
-    // [20] (word) mul8u::return#2 ← (word) mul8u::res#2
+    // [35] (word) mul8u::return#2 ← (word) mul8u::res#2
     // draw_block::@1
     // z = mul8u(y,40)
-    // [21] (word) draw_block::z#0 ← (word) mul8u::return#2
+    // [36] (word) draw_block::z#0 ← (word) mul8u::return#2
     // z = z + x1
-    // [22] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz1 
+    // [37] (word) draw_block::z#1 ← (word) draw_block::z#0 + (word) draw_block::x1#0 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z z_1
     clc
     adc.z z
@@ -3003,10 +3070,10 @@ draw_block: {
     adc.z z+1
     sta.z z_1+1
     // drawtile = tileset[tileno]
-    // [23] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuyy 
+    // [38] (byte) draw_block::drawtile#0 ← *((const nomodify byte*) tileset + (byte) draw_block::tileno#1) -- vbuxx=pbuc1_derefidx_vbuyy 
     ldx tileset,y
     // screen[z] = drawtile
-    // [24] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [39] (byte*~) draw_block::$11 ← (const nomodify byte*) screen + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen
@@ -3014,12 +3081,12 @@ draw_block: {
     lda.z z_1+1
     adc #>screen
     sta.z __11+1
-    // [25] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
+    // [40] *((byte*~) draw_block::$11) ← (byte) draw_block::drawtile#0 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (__11),y
     // colors[z] = YELLOW
-    // [26] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [41] (byte*~) draw_block::$12 ← (const nomodify byte*) colors + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors
@@ -3027,11 +3094,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors
     sta.z __12+1
-    // [27] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [42] *((byte*~) draw_block::$12) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (__12),y
     // screen[z+1] = 1
-    // [28] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [43] (byte*~) draw_block::$13 ← (const nomodify byte*) screen+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+1
@@ -3039,11 +3106,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+1
     sta.z __13+1
-    // [29] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    // [44] *((byte*~) draw_block::$13) ← (byte) 1 -- _deref_pbuz1=vbuc1 
     lda #1
     sta (__13),y
     // colors[z+1] = YELLOW
-    // [30] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [45] (byte*~) draw_block::$14 ← (const nomodify byte*) colors+(byte) 1 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+1
@@ -3051,11 +3118,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+1
     sta.z __14+1
-    // [31] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [46] *((byte*~) draw_block::$14) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (__14),y
     // screen[z+40] = 2
-    // [32] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [47] (byte*~) draw_block::$15 ← (const nomodify byte*) screen+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+$28
@@ -3063,11 +3130,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+$28
     sta.z __15+1
-    // [33] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
+    // [48] *((byte*~) draw_block::$15) ← (byte) 2 -- _deref_pbuz1=vbuc1 
     lda #2
     sta (__15),y
     // colors[z+40] = YELLOW
-    // [34] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [49] (byte*~) draw_block::$16 ← (const nomodify byte*) colors+(byte) $28 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<colors+$28
@@ -3075,11 +3142,11 @@ draw_block: {
     lda.z z_1+1
     adc #>colors+$28
     sta.z __16+1
-    // [35] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [50] *((byte*~) draw_block::$16) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (__16),y
     // screen[z+41] = 3
-    // [36] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [51] (byte*~) draw_block::$17 ← (const nomodify byte*) screen+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z z_1
     clc
     adc #<screen+$29
@@ -3087,11 +3154,11 @@ draw_block: {
     lda.z z_1+1
     adc #>screen+$29
     sta.z __17+1
-    // [37] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
+    // [52] *((byte*~) draw_block::$17) ← (byte) 3 -- _deref_pbuz1=vbuc1 
     lda #3
     sta (__17),y
     // colors[z+41] = YELLOW
-    // [38] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
+    // [53] (byte*~) draw_block::$18 ← (const nomodify byte*) colors+(byte) $29 + (word) draw_block::z#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __18
     adc #<colors+$29
@@ -3099,147 +3166,42 @@ draw_block: {
     lda.z __18+1
     adc #>colors+$29
     sta.z __18+1
-    // [39] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
+    // [54] *((byte*~) draw_block::$18) ← (const nomodify byte) YELLOW -- _deref_pbuz1=vbuc1 
     lda #YELLOW
     sta (__18),y
     // draw_block::@return
     // }
-    // [40] return 
+    // [55] return 
     rts
 }
-  // mul8u
-// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a)
-mul8u: {
-    .const b = $28
-    .label mb = 6
-    .label res = 4
-    .label return = 4
-    // [42] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
-    // [42] phi (word) mul8u::mb#2 = (word)(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
-    lda #<b
-    sta.z mb
-    lda #>b
-    sta.z mb+1
-    // [42] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
-    lda #<0
-    sta.z res
-    sta.z res+1
-    // [42] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
-    // mul8u::@1
-  __b1:
-    // while(a!=0)
-    // [43] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b2
-    // mul8u::@return
+  // init_sprites
+init_sprites: {
+    // *SPRITES_ENABLE = %00000001
+    // [56] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta SPRITES_ENABLE
+    // *SPRITES_EXPAND_X = 0
+    // [57] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // one sprite enabled
+    lda #0
+    sta SPRITES_EXPAND_X
+    // *SPRITES_EXPAND_Y = 0
+    // [58] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    sta SPRITES_EXPAND_Y
+    // *SPRITES_XMSB = 0
+    // [59] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    sta SPRITES_XMSB
+    // *SPRITES_COLOR = WHITE
+    // [60] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    lda #WHITE
+    sta SPRITES_COLOR
+    // *SPRITES_MC = 0
+    // [61] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta SPRITES_MC
+    // init_sprites::@return
     // }
-    // [44] return 
-    rts
-    // mul8u::@2
-  __b2:
-    // a&1
-    // [45] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
-    txa
-    and #1
-    // if( (a&1) != 0)
-    // [46] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
-    cmp #0
-    beq __b3
-    // mul8u::@4
-    // res = res + mb
-    // [47] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    // [48] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
-    // [48] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
-    // mul8u::@3
-  __b3:
-    // a = a>>1
-    // [49] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
-    txa
-    lsr
-    tax
-    // mb = mb<<1
-    // [50] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
-    asl.z mb
-    rol.z mb+1
-    // [42] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
-    // [42] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
-    // [42] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
-    // [42] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
-    jmp __b1
-}
-  // init
-init: {
-    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-    // init_sprites()
-    // [52] call init_sprites 
-    jsr init_sprites
-    // [53] phi from init to init::@2 [phi:init->init::@2]
-    // init::@2
-    // memset(screen, 0, 1000)
-    // [54] call memset 
-    // [66] phi from init::@2 to memset [phi:init::@2->memset]
-    // [66] phi (byte) memset::c#4 = (byte) 0 [phi:init::@2->memset#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [66] phi (void*) memset::str#3 = (void*)(const nomodify byte*) screen [phi:init::@2->memset#1] -- pvoz1=pvoc1 
-    lda #<screen
-    sta.z memset.str
-    lda #>screen
-    sta.z memset.str+1
-    jsr memset
-    // [55] phi from init::@2 to init::@3 [phi:init::@2->init::@3]
-    // init::@3
-    // memset(colors, BLACK, 1000)
-    // [56] call memset 
-    // [66] phi from init::@3 to memset [phi:init::@3->memset]
-    // [66] phi (byte) memset::c#4 = (const nomodify byte) BLACK [phi:init::@3->memset#0] -- vbuxx=vbuc1 
-    ldx #BLACK
-    // [66] phi (void*) memset::str#3 = (void*)(const nomodify byte*) colors [phi:init::@3->memset#1] -- pvoz1=pvoc1 
-    lda #<colors
-    sta.z memset.str
-    lda #>colors
-    sta.z memset.str+1
-    jsr memset
-    // [57] phi from init::@3 to init::toD0181 [phi:init::@3->init::toD0181]
-    // init::toD0181
-    // init::@1
-    // *D018 = toD018(screen, charset)
-    // [58] *((const nomodify byte*) D018) ← (const byte) init::toD0181_return#0 -- _deref_pbuc1=vbuc2 
-    lda #toD0181_return
-    sta D018
-    // asm
-    // asm { lda#$5b sta$d011  }
-    lda #$5b
-    sta $d011
-    // *BORDER_COLOR = BLACK
-    // [60] *((const nomodify byte*) BORDER_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BORDER_COLOR
-    // *BG_COLOR = BLACK
-    // [61] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    sta BG_COLOR
-    // *BG_COLOR1 = RED
-    // [62] *((const nomodify byte*) BG_COLOR1) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BG_COLOR1
-    // *BG_COLOR2 = BLUE
-    // [63] *((const nomodify byte*) BG_COLOR2) ← (const nomodify byte) BLUE -- _deref_pbuc1=vbuc2 
-    lda #BLUE
-    sta BG_COLOR2
-    // *BG_COLOR3 = GREEN
-    // [64] *((const nomodify byte*) BG_COLOR3) ← (const nomodify byte) GREEN -- _deref_pbuc1=vbuc2 
-    lda #GREEN
-    sta BG_COLOR3
-    // init::@return
-    // }
-    // [65] return 
+    // [62] return 
     rts
 }
   // memset
@@ -3251,7 +3213,7 @@ memset: {
     .label str = 4
     // memset::@1
     // end = (char*)str + num
-    // [67] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+    // [64] (byte*) memset::end#0 ← (byte*)(void*) memset::str#3 + (word) $3e8 -- pbuz1=pbuz2_plus_vwuc1 
     lda.z str
     clc
     adc #<$3e8
@@ -3259,13 +3221,13 @@ memset: {
     lda.z str+1
     adc #>$3e8
     sta.z end+1
-    // [68] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
-    // [69] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-    // [69] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [65] (byte*) memset::dst#4 ← (byte*)(void*) memset::str#3
+    // [66] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [66] phi (byte*) memset::dst#2 = (byte*) memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
   __b2:
     // for(char* dst = str; dst!=end; dst++)
-    // [70] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [67] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -3274,52 +3236,90 @@ memset: {
     bne __b3
     // memset::@return
     // }
-    // [71] return 
+    // [68] return 
     rts
     // memset::@3
   __b3:
     // *dst = c
-    // [72] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
+    // [69] *((byte*) memset::dst#2) ← (byte) memset::c#4 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [73] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [70] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     jmp __b2
 }
-  // init_sprites
-init_sprites: {
-    // *SPRITES_ENABLE = %00000001
-    // [74] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SPRITES_ENABLE
-    // *SPRITES_EXPAND_X = 0
-    // [75] *((const nomodify byte*) SPRITES_EXPAND_X) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // one sprite enabled
-    lda #0
-    sta SPRITES_EXPAND_X
-    // *SPRITES_EXPAND_Y = 0
-    // [76] *((const nomodify byte*) SPRITES_EXPAND_Y) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    sta SPRITES_EXPAND_Y
-    // *SPRITES_XMSB = 0
-    // [77] *((const nomodify byte*) SPRITES_XMSB) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    sta SPRITES_XMSB
-    // *SPRITES_COLOR = WHITE
-    // [78] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta SPRITES_COLOR
-    // *SPRITES_MC = 0
-    // [79] *((const nomodify byte*) SPRITES_MC) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SPRITES_MC
-    // init_sprites::@return
+  // mul8u
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+// mul8u(byte register(X) a)
+mul8u: {
+    .const b = $28
+    .label mb = 6
+    .label res = 4
+    .label return = 4
+    // [72] phi from mul8u to mul8u::@1 [phi:mul8u->mul8u::@1]
+    // [72] phi (word) mul8u::mb#2 = (word)(const byte) mul8u::b#0 [phi:mul8u->mul8u::@1#0] -- vwuz1=vwuc1 
+    lda #<b
+    sta.z mb
+    lda #>b
+    sta.z mb+1
+    // [72] phi (word) mul8u::res#2 = (word) 0 [phi:mul8u->mul8u::@1#1] -- vwuz1=vwuc1 
+    lda #<0
+    sta.z res
+    sta.z res+1
+    // [72] phi (byte) mul8u::a#2 = (byte) mul8u::a#1 [phi:mul8u->mul8u::@1#2] -- register_copy 
+    // mul8u::@1
+  __b1:
+    // while(a!=0)
+    // [73] if((byte) mul8u::a#2!=(byte) 0) goto mul8u::@2 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b2
+    // mul8u::@return
     // }
-    // [80] return 
+    // [74] return 
     rts
+    // mul8u::@2
+  __b2:
+    // a&1
+    // [75] (byte~) mul8u::$1 ← (byte) mul8u::a#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    txa
+    and #1
+    // if( (a&1) != 0)
+    // [76] if((byte~) mul8u::$1==(byte) 0) goto mul8u::@3 -- vbuaa_eq_0_then_la1 
+    cmp #0
+    beq __b3
+    // mul8u::@4
+    // res = res + mb
+    // [77] (word) mul8u::res#1 ← (word) mul8u::res#2 + (word) mul8u::mb#2 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    // [78] phi from mul8u::@2 mul8u::@4 to mul8u::@3 [phi:mul8u::@2/mul8u::@4->mul8u::@3]
+    // [78] phi (word) mul8u::res#6 = (word) mul8u::res#2 [phi:mul8u::@2/mul8u::@4->mul8u::@3#0] -- register_copy 
+    // mul8u::@3
+  __b3:
+    // a = a>>1
+    // [79] (byte) mul8u::a#0 ← (byte) mul8u::a#2 >> (byte) 1 -- vbuxx=vbuxx_ror_1 
+    txa
+    lsr
+    tax
+    // mb = mb<<1
+    // [80] (word) mul8u::mb#1 ← (word) mul8u::mb#2 << (byte) 1 -- vwuz1=vwuz1_rol_1 
+    asl.z mb
+    rol.z mb+1
+    // [72] phi from mul8u::@3 to mul8u::@1 [phi:mul8u::@3->mul8u::@1]
+    // [72] phi (word) mul8u::mb#2 = (word) mul8u::mb#1 [phi:mul8u::@3->mul8u::@1#0] -- register_copy 
+    // [72] phi (word) mul8u::res#2 = (word) mul8u::res#6 [phi:mul8u::@3->mul8u::@1#1] -- register_copy 
+    // [72] phi (byte) mul8u::a#2 = (byte) mul8u::a#0 [phi:mul8u::@3->mul8u::@1#2] -- register_copy 
+    jmp __b1
 }
   // File Data
 

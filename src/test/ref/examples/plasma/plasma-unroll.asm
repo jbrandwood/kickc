@@ -28,15 +28,15 @@
   .label SCREEN1 = $2800
   .label CHARSET = $2000
   .label print_screen = $400
-  .label print_char_cursor = $b
+  .label print_char_cursor = 5
   // Plasma state variables
-  .label c1A = $d
-  .label c1B = $f
-  .label c2A = $12
+  .label c1A = 7
+  .label c1B = $e
+  .label c2A = $11
   .label c2B = 2
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
-    .label col = $b
+    .label col = 5
     // asm
     sei
     // VICII->BORDER_COLOR = BLUE
@@ -80,15 +80,141 @@ main: {
     jsr doplasma
     jmp __b4
 }
+// Make a plasma-friendly charset where the chars are randomly filled
+makecharset: {
+    .label __7 = $11
+    .label __10 = $f
+    .label __11 = $f
+    .label s = $e
+    .label i = 7
+    .label c = 3
+    .label __16 = $f
+    // SID->CH3_FREQ = 0xffff
+    lda #<$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
+    lda #>$ffff
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
+    // SID->CH3_CONTROL = SID_CONTROL_NOISE
+    lda #SID_CONTROL_NOISE
+    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
+    // print_cls()
+    jsr print_cls
+    lda #<print_screen
+    sta.z print_char_cursor
+    lda #>print_screen
+    sta.z print_char_cursor+1
+    lda #<0
+    sta.z c
+    sta.z c+1
+  __b1:
+    // for (unsigned int c = 0; c < 0x100; ++c)
+    lda.z c+1
+    cmp #>$100
+    bcc __b2
+    bne !+
+    lda.z c
+    cmp #<$100
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    // <c
+    ldx.z c
+    // s = SINTABLE[<c]
+    lda SINTABLE,x
+    sta.z s
+    lda #0
+    sta.z i
+  __b3:
+    // for ( unsigned char i = 0; i < 8; ++i)
+    lda.z i
+    cmp #8
+    bcc __b4
+    // c & 0x07
+    lda #7
+    and.z c
+    // if ((c & 0x07) == 0)
+    cmp #0
+    bne __b10
+    // print_char('.')
+    jsr print_char
+  __b10:
+    // for (unsigned int c = 0; c < 0x100; ++c)
+    inc.z c
+    bne !+
+    inc.z c+1
+  !:
+    jmp __b1
+  __b4:
+    ldy #0
+    ldx #0
+  __b5:
+    // for (unsigned char ii = 0; ii < 8; ++ii)
+    cpx #8
+    bcc sid_rnd1
+    // c*8
+    lda.z c
+    asl
+    sta.z __10
+    lda.z c+1
+    rol
+    sta.z __10+1
+    asl.z __10
+    rol.z __10+1
+    asl.z __10
+    rol.z __10+1
+    // (c*8) + i
+    lda.z i
+    clc
+    adc.z __11
+    sta.z __11
+    bcc !+
+    inc.z __11+1
+  !:
+    // charset[(c*8) + i] = b
+    clc
+    lda.z __16
+    adc #<CHARSET
+    sta.z __16
+    lda.z __16+1
+    adc #>CHARSET
+    sta.z __16+1
+    tya
+    ldy #0
+    sta (__16),y
+    // for ( unsigned char i = 0; i < 8; ++i)
+    inc.z i
+    jmp __b3
+  sid_rnd1:
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
+    // sid_rnd() & 0xFF
+    and #$ff
+    sta.z __7
+    // if ((sid_rnd() & 0xFF) > s)
+    lda.z s
+    cmp.z __7
+    bcs __b7
+    // b |= bittab[ii]
+    tya
+    ora bittab,x
+    tay
+  __b7:
+    // for (unsigned char ii = 0; ii < 8; ++ii)
+    inx
+    jmp __b5
+    bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
+}
 // Render plasma to the passed screen
 doplasma: {
-    .label c1a = 4
-    .label c1b = 5
-    .label yval = $e
-    .label i = 3
-    .label c2a = 7
-    .label c2b = 8
-    .label i1 = 6
+    .label c1a = 9
+    .label c1b = $a
+    .label yval = $12
+    .label i = 8
+    .label c2a = $c
+    .label c2b = $d
+    .label i1 = $b
     // c1a = c1A
     lda.z c1A
     sta.z c1a
@@ -329,131 +455,12 @@ doplasma: {
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
-// Make a plasma-friendly charset where the chars are randomly filled
-makecharset: {
-    .label __7 = $12
-    .label __10 = $10
-    .label __11 = $10
-    .label s = $f
-    .label i = $d
-    .label c = 9
-    .label __16 = $10
-    // SID->CH3_FREQ = 0xffff
-    lda #<$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ
-    lda #>$ffff
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_FREQ+1
-    // SID->CH3_CONTROL = SID_CONTROL_NOISE
-    lda #SID_CONTROL_NOISE
-    sta SID+OFFSET_STRUCT_MOS6581_SID_CH3_CONTROL
-    // print_cls()
-    jsr print_cls
-    lda #<print_screen
-    sta.z print_char_cursor
-    lda #>print_screen
-    sta.z print_char_cursor+1
-    lda #<0
-    sta.z c
-    sta.z c+1
-  __b1:
-    // for (unsigned int c = 0; c < 0x100; ++c)
-    lda.z c+1
-    cmp #>$100
-    bcc __b2
-    bne !+
-    lda.z c
-    cmp #<$100
-    bcc __b2
-  !:
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
-  __b2:
-    // <c
-    ldx.z c
-    // s = SINTABLE[<c]
-    lda SINTABLE,x
-    sta.z s
-    lda #0
-    sta.z i
-  __b3:
-    // for ( unsigned char i = 0; i < 8; ++i)
-    lda.z i
-    cmp #8
-    bcc __b4
-    // c & 0x07
-    lda #7
-    and.z c
-    // if ((c & 0x07) == 0)
-    cmp #0
-    bne __b10
-    // print_char('.')
-    jsr print_char
-  __b10:
-    // for (unsigned int c = 0; c < 0x100; ++c)
-    inc.z c
-    bne !+
-    inc.z c+1
-  !:
-    jmp __b1
-  __b4:
-    ldy #0
-    ldx #0
-  __b5:
-    // for (unsigned char ii = 0; ii < 8; ++ii)
-    cpx #8
-    bcc sid_rnd1
-    // c*8
-    lda.z c
-    asl
-    sta.z __10
-    lda.z c+1
-    rol
-    sta.z __10+1
-    asl.z __10
-    rol.z __10+1
-    asl.z __10
-    rol.z __10+1
-    // (c*8) + i
-    lda.z i
-    clc
-    adc.z __11
-    sta.z __11
-    bcc !+
-    inc.z __11+1
-  !:
-    // charset[(c*8) + i] = b
-    clc
-    lda.z __16
-    adc #<CHARSET
-    sta.z __16
-    lda.z __16+1
-    adc #>CHARSET
-    sta.z __16+1
-    tya
-    ldy #0
-    sta (__16),y
-    // for ( unsigned char i = 0; i < 8; ++i)
-    inc.z i
-    jmp __b3
-  sid_rnd1:
-    // return SID->CH3_OSC;
-    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
-    // sid_rnd() & 0xFF
-    and #$ff
-    sta.z __7
-    // if ((sid_rnd() & 0xFF) > s)
-    lda.z s
-    cmp.z __7
-    bcs __b7
-    // b |= bittab[ii]
-    tya
-    ora bittab,x
-    tay
-  __b7:
-    // for (unsigned char ii = 0; ii < 8; ++ii)
-    inx
-    jmp __b5
-    bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
 // Print a single char
 print_char: {
@@ -470,20 +477,13 @@ print_char: {
     // }
     rts
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $10
+    .label dst = $f
     lda #<str
     sta.z dst
     lda #>str

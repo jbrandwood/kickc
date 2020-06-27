@@ -11,17 +11,17 @@
   .label CHARSET = $2000
   .label SCREEN = $2800
   .label print_screen = $400
-  .label print_char_cursor = 8
+  .label print_char_cursor = $15
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .label col00 = COLS+$c*$28+$13
-    .label __4 = $a
+    .label __4 = $f
     .label xw = $17
     .label yw = $19
-    .label angle_w = $a
+    .label angle_w = $f
     .label diff_sum = 4
     .label screen = 6
-    .label screen_ref = 8
+    .label screen_ref = $15
     .label x = 3
     .label y = 2
     // init_font_hex(CHARSET)
@@ -115,77 +115,110 @@ main: {
     inc col00
     jmp __b5
 }
-// Print a unsigned int as HEX
-// print_uint(word zp(4) w)
-print_uint: {
-    .label w = 4
-    // print_uchar(>w)
-    ldx.z w+1
-    lda #<print_screen
-    sta.z print_char_cursor
-    lda #>print_screen
-    sta.z print_char_cursor+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// diff(byte register(X) bb1, byte register(A) bb2)
-diff: {
-    // (bb1<bb2)?(bb2-bb1):bb1-bb2
-    sta.z $ff
-    cpx.z $ff
-    bcc __b1
-    sta.z $ff
-    txa
-    sec
-    sbc.z $ff
-    // }
-    rts
+// Make charset from proto chars
+// init_font_hex(byte* zp($d) charset)
+init_font_hex: {
+    .label __0 = $1b
+    .label idx = $a
+    .label proto_lo = $f
+    .label charset = $d
+    .label c1 = 9
+    .label proto_hi = $b
+    .label c = 8
+    lda #0
+    sta.z c
+    lda #<FONT_HEX_PROTO
+    sta.z proto_hi
+    lda #>FONT_HEX_PROTO
+    sta.z proto_hi+1
+    lda #<CHARSET
+    sta.z charset
+    lda #>CHARSET
+    sta.z charset+1
   __b1:
-    // (bb1<bb2)?(bb2-bb1):bb1-bb2
-    stx.z $ff
-    sec
-    sbc.z $ff
+    lda #0
+    sta.z c1
+    lda #<FONT_HEX_PROTO
+    sta.z proto_lo
+    lda #>FONT_HEX_PROTO
+    sta.z proto_lo+1
+  __b2:
+    // charset[idx++] = 0
+    lda #0
+    tay
+    sta (charset),y
+    lda #1
+    sta.z idx
+    ldx #0
+  __b3:
+    // proto_hi[i]<<4
+    txa
+    tay
+    lda (proto_hi),y
+    asl
+    asl
+    asl
+    asl
+    sta.z __0
+    // proto_lo[i]<<1
+    txa
+    tay
+    lda (proto_lo),y
+    asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
+    ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
+    inc.z idx
+    // for( byte i: 0..4)
+    inx
+    cpx #5
+    bne __b3
+    // charset[idx++] = 0
+    lda #0
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = 0;
+    iny
+    // charset[idx++] = 0
+    sta (charset),y
+    // proto_lo += 5
+    lda #5
+    clc
+    adc.z proto_lo
+    sta.z proto_lo
+    bcc !+
+    inc.z proto_lo+1
+  !:
+    // charset += 8
+    lda #8
+    clc
+    adc.z charset
+    sta.z charset
+    bcc !+
+    inc.z charset+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c1
+    lda #$10
+    cmp.z c1
+    bne __b2
+    // proto_hi += 5
+    lda #5
+    clc
+    adc.z proto_hi
+    sta.z proto_hi
+    bcc !+
+    inc.z proto_hi+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c
+    lda #$10
+    cmp.z c
+    bne __b1
+    // }
     rts
 }
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
@@ -193,14 +226,14 @@ diff: {
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zp($17) x, signed word zp($19) y)
 atan2_16: {
-    .label __2 = $e
-    .label __7 = $11
-    .label yi = $e
-    .label xi = $11
-    .label angle = $a
-    .label xd = $c
-    .label yd = $13
-    .label return = $a
+    .label __2 = $b
+    .label __7 = $d
+    .label yi = $b
+    .label xi = $d
+    .label angle = $f
+    .label xd = $13
+    .label yd = $11
+    .label return = $f
     .label x = $17
     .label y = $19
     // (y>=0)?y:-y
@@ -403,109 +436,76 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
-// Make charset from proto chars
-// init_font_hex(byte* zp($11) charset)
-init_font_hex: {
-    .label __0 = $1b
-    .label idx = $16
-    .label proto_lo = $13
-    .label charset = $11
-    .label c1 = $15
-    .label proto_hi = $e
-    .label c = $10
-    lda #0
-    sta.z c
-    lda #<FONT_HEX_PROTO
-    sta.z proto_hi
-    lda #>FONT_HEX_PROTO
-    sta.z proto_hi+1
-    lda #<CHARSET
-    sta.z charset
-    lda #>CHARSET
-    sta.z charset+1
+// diff(byte register(X) bb1, byte register(A) bb2)
+diff: {
+    // (bb1<bb2)?(bb2-bb1):bb1-bb2
+    sta.z $ff
+    cpx.z $ff
+    bcc __b1
+    sta.z $ff
+    txa
+    sec
+    sbc.z $ff
+    // }
+    rts
   __b1:
-    lda #0
-    sta.z c1
-    lda #<FONT_HEX_PROTO
-    sta.z proto_lo
-    lda #>FONT_HEX_PROTO
-    sta.z proto_lo+1
-  __b2:
-    // charset[idx++] = 0
-    lda #0
-    tay
-    sta (charset),y
-    lda #1
-    sta.z idx
-    ldx #0
-  __b3:
-    // proto_hi[i]<<4
+    // (bb1<bb2)?(bb2-bb1):bb1-bb2
+    stx.z $ff
+    sec
+    sbc.z $ff
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp(4) w)
+print_uint: {
+    .label w = 4
+    // print_uchar(>w)
+    ldx.z w+1
+    lda #<print_screen
+    sta.z print_char_cursor
+    lda #>print_screen
+    sta.z print_char_cursor+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
     txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
     tay
-    lda (proto_hi),y
-    asl
-    asl
-    asl
-    asl
-    sta.z __0
-    // proto_lo[i]<<1
-    txa
-    tay
-    lda (proto_lo),y
-    asl
-    // proto_hi[i]<<4 | proto_lo[i]<<1
-    ora.z __0
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
-    inc.z idx
-    // for( byte i: 0..4)
-    inx
-    cpx #5
-    bne __b3
-    // charset[idx++] = 0
-    lda #0
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = 0;
-    iny
-    // charset[idx++] = 0
-    sta (charset),y
-    // proto_lo += 5
-    lda #5
-    clc
-    adc.z proto_lo
-    sta.z proto_lo
-    bcc !+
-    inc.z proto_lo+1
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
   !:
-    // charset += 8
-    lda #8
-    clc
-    adc.z charset
-    sta.z charset
-    bcc !+
-    inc.z charset+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c1
-    lda #$10
-    cmp.z c1
-    bne __b2
-    // proto_hi += 5
-    lda #5
-    clc
-    adc.z proto_hi
-    sta.z proto_hi
-    bcc !+
-    inc.z proto_hi+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c
-    lda #$10
-    cmp.z c
-    bne __b1
     // }
     rts
 }

@@ -58,13 +58,119 @@ main: {
     inc col00
     jmp __b4
 }
+// Make charset from proto chars
+// init_font_hex(byte* zp(8) charset)
+init_font_hex: {
+    .label __0 = $f
+    .label idx = $e
+    .label proto_lo = $a
+    .label charset = 8
+    .label c1 = $d
+    .label proto_hi = 6
+    .label c = $c
+    lda #0
+    sta.z c
+    lda #<FONT_HEX_PROTO
+    sta.z proto_hi
+    lda #>FONT_HEX_PROTO
+    sta.z proto_hi+1
+    lda #<CHARSET
+    sta.z charset
+    lda #>CHARSET
+    sta.z charset+1
+  __b1:
+    lda #0
+    sta.z c1
+    lda #<FONT_HEX_PROTO
+    sta.z proto_lo
+    lda #>FONT_HEX_PROTO
+    sta.z proto_lo+1
+  __b2:
+    // charset[idx++] = 0
+    lda #0
+    tay
+    sta (charset),y
+    lda #1
+    sta.z idx
+    ldx #0
+  __b3:
+    // proto_hi[i]<<4
+    txa
+    tay
+    lda (proto_hi),y
+    asl
+    asl
+    asl
+    asl
+    sta.z __0
+    // proto_lo[i]<<1
+    txa
+    tay
+    lda (proto_lo),y
+    asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
+    ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
+    inc.z idx
+    // for( byte i: 0..4)
+    inx
+    cpx #5
+    bne __b3
+    // charset[idx++] = 0
+    lda #0
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = 0;
+    iny
+    // charset[idx++] = 0
+    sta (charset),y
+    // proto_lo += 5
+    lda #5
+    clc
+    adc.z proto_lo
+    sta.z proto_lo
+    bcc !+
+    inc.z proto_lo+1
+  !:
+    // charset += 8
+    lda #8
+    clc
+    adc.z charset
+    sta.z charset
+    bcc !+
+    inc.z charset+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c1
+    lda #$10
+    cmp.z c1
+    bne __b2
+    // proto_hi += 5
+    lda #5
+    clc
+    adc.z proto_hi
+    sta.z proto_hi
+    bcc !+
+    inc.z proto_hi+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c
+    lda #$10
+    cmp.z c
+    bne __b1
+    // }
+    rts
+}
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_8
 // Returns the angle in hex-degrees (0=0, 0x80=PI, 0x100=2*PI)
 // atan2_8(signed byte zp(3) x, signed byte zp(2) y)
 atan2_8: {
-    .label __7 = 8
-    .label xi = 8
+    .label __7 = $c
+    .label xi = $c
     .label xd = $f
     .label angle = $e
     .label i = $d
@@ -215,112 +321,6 @@ atan2_8: {
     // (y>0)?y:-y
     ldx.z y
     jmp __b3
-}
-// Make charset from proto chars
-// init_font_hex(byte* zp(9) charset)
-init_font_hex: {
-    .label __0 = $f
-    .label idx = $e
-    .label proto_lo = $b
-    .label charset = 9
-    .label c1 = $d
-    .label proto_hi = 6
-    .label c = 8
-    lda #0
-    sta.z c
-    lda #<FONT_HEX_PROTO
-    sta.z proto_hi
-    lda #>FONT_HEX_PROTO
-    sta.z proto_hi+1
-    lda #<CHARSET
-    sta.z charset
-    lda #>CHARSET
-    sta.z charset+1
-  __b1:
-    lda #0
-    sta.z c1
-    lda #<FONT_HEX_PROTO
-    sta.z proto_lo
-    lda #>FONT_HEX_PROTO
-    sta.z proto_lo+1
-  __b2:
-    // charset[idx++] = 0
-    lda #0
-    tay
-    sta (charset),y
-    lda #1
-    sta.z idx
-    ldx #0
-  __b3:
-    // proto_hi[i]<<4
-    txa
-    tay
-    lda (proto_hi),y
-    asl
-    asl
-    asl
-    asl
-    sta.z __0
-    // proto_lo[i]<<1
-    txa
-    tay
-    lda (proto_lo),y
-    asl
-    // proto_hi[i]<<4 | proto_lo[i]<<1
-    ora.z __0
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
-    inc.z idx
-    // for( byte i: 0..4)
-    inx
-    cpx #5
-    bne __b3
-    // charset[idx++] = 0
-    lda #0
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = 0;
-    iny
-    // charset[idx++] = 0
-    sta (charset),y
-    // proto_lo += 5
-    lda #5
-    clc
-    adc.z proto_lo
-    sta.z proto_lo
-    bcc !+
-    inc.z proto_lo+1
-  !:
-    // charset += 8
-    lda #8
-    clc
-    adc.z charset
-    sta.z charset
-    bcc !+
-    inc.z charset+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c1
-    lda #$10
-    cmp.z c1
-    bne __b2
-    // proto_hi += 5
-    lda #5
-    clc
-    adc.z proto_hi
-    sta.z proto_hi
-    bcc !+
-    inc.z proto_hi+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c
-    lda #$10
-    cmp.z c
-    bne __b1
-    // }
-    rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4

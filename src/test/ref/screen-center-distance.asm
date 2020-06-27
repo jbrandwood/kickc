@@ -66,136 +66,151 @@ main: {
     // }
     rts
 }
-// Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp($c) dw)
-print_ulong_at: {
-    .label dw = $c
-    // print_uint_at(>dw, at)
-    lda.z dw+2
-    sta.z print_uint_at.w
-    lda.z dw+3
-    sta.z print_uint_at.w+1
-    lda #<main.BASE_SCREEN
-    sta.z print_uint_at.at
-    lda #>main.BASE_SCREEN
-    sta.z print_uint_at.at+1
-    jsr print_uint_at
-    // print_uint_at(<dw, at+4)
-    lda.z dw
-    sta.z print_uint_at.w
-    lda.z dw+1
-    sta.z print_uint_at.w+1
-    lda #<main.BASE_SCREEN+4
-    sta.z print_uint_at.at
-    lda #>main.BASE_SCREEN+4
-    sta.z print_uint_at.at+1
-    jsr print_uint_at
-    // }
-    rts
-}
-// Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp(2) w, byte* zp(4) at)
-print_uint_at: {
-    .label w = 2
-    .label at = 4
-    // print_uchar_at(>w, at)
-    lda.z w+1
-    sta.z print_uchar_at.b
-    jsr print_uchar_at
-    // print_uchar_at(<w, at+2)
-    lda.z w
-    sta.z print_uchar_at.b
-    lda #2
-    clc
-    adc.z print_uchar_at.at
-    sta.z print_uchar_at.at
-    bcc !+
-    inc.z print_uchar_at.at+1
-  !:
-    jsr print_uchar_at
-    // }
-    rts
-}
-// Print a char as HEX at a specific position
-// print_uchar_at(byte zp($b) b, byte* zp(4) at)
-print_uchar_at: {
-    .label b = $b
-    .label at = 4
-    // b>>4
-    lda.z b
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char_at(print_hextab[b>>4], at)
+// Make charset from proto chars
+// init_font_hex(byte* zp(5) charset)
+init_font_hex: {
+    .label __0 = $10
+    .label idx = 9
+    .label proto_lo = $a
+    .label charset = 5
+    .label c1 = 7
+    .label proto_hi = 3
+    .label c = 2
+    lda #0
+    sta.z c
+    lda #<FONT_HEX_PROTO
+    sta.z proto_hi
+    lda #>FONT_HEX_PROTO
+    sta.z proto_hi+1
+    lda #<CHARSET
+    sta.z charset
+    lda #>CHARSET
+    sta.z charset+1
+  __b1:
+    lda #0
+    sta.z c1
+    lda #<FONT_HEX_PROTO
+    sta.z proto_lo
+    lda #>FONT_HEX_PROTO
+    sta.z proto_lo+1
+  __b2:
+    // charset[idx++] = 0
+    lda #0
     tay
-    ldx print_hextab,y
-    lda.z at
-    sta.z print_char_at.at
-    lda.z at+1
-    sta.z print_char_at.at+1
-  // Table of hexadecimal digits
-    jsr print_char_at
-    // b&$f
-    lda #$f
-    and.z b
-    tay
-    // print_char_at(print_hextab[b&$f], at+1)
-    lda.z at
-    clc
-    adc #1
-    sta.z print_char_at.at
-    lda.z at+1
-    adc #0
-    sta.z print_char_at.at+1
-    ldx print_hextab,y
-    jsr print_char_at
-    // }
-    rts
-}
-// Print a single char
-// print_char_at(byte register(X) ch, byte* zp(6) at)
-print_char_at: {
-    .label at = 6
-    // *(at) = ch
+    sta (charset),y
+    lda #1
+    sta.z idx
+    ldx #0
+  __b3:
+    // proto_hi[i]<<4
     txa
-    ldy #0
-    sta (at),y
+    tay
+    lda (proto_hi),y
+    asl
+    asl
+    asl
+    asl
+    sta.z __0
+    // proto_lo[i]<<1
+    txa
+    tay
+    lda (proto_lo),y
+    asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
+    ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
+    inc.z idx
+    // for( byte i: 0..4)
+    inx
+    cpx #5
+    bne __b3
+    // charset[idx++] = 0
+    lda #0
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = 0;
+    iny
+    // charset[idx++] = 0
+    sta (charset),y
+    // proto_lo += 5
+    lda #5
+    clc
+    adc.z proto_lo
+    sta.z proto_lo
+    bcc !+
+    inc.z proto_lo+1
+  !:
+    // charset += 8
+    lda #8
+    clc
+    adc.z charset
+    sta.z charset
+    bcc !+
+    inc.z charset+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c1
+    lda #$10
+    cmp.z c1
+    bne __b2
+    // proto_hi += 5
+    lda #5
+    clc
+    adc.z proto_hi
+    sta.z proto_hi
+    bcc !+
+    inc.z proto_hi+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c
+    lda #$10
+    cmp.z c
+    bne __b1
     // }
     rts
 }
-// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
-// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
-clock: {
-    .label return = $c
-    // 0xffffffff - *CIA2_TIMER_AB
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
     lda #<$ffffffff
-    sec
-    sbc CIA2_TIMER_AB
-    sta.z return
+    sta CIA2_TIMER_AB
     lda #>$ffffffff
-    sbc CIA2_TIMER_AB+1
-    sta.z return+1
+    sta CIA2_TIMER_AB+1
     lda #<$ffffffff>>$10
-    sbc CIA2_TIMER_AB+2
-    sta.z return+2
+    sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
-    sbc CIA2_TIMER_AB+3
-    sta.z return+3
+    sta CIA2_TIMER_AB+3
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the distance to the center.
 // The actual value stored is distance*2 to increase precision
 init_dist_screen: {
-    .label yds = $10
-    .label screen_topline = 2
-    .label screen_bottomline = 4
-    .label y = $b
-    .label xds = $12
-    .label ds = $12
-    .label x = 9
-    .label xb = $a
+    .label yds = $11
+    .label screen_topline = 3
+    .label screen_bottomline = 5
+    .label y = 2
+    .label xds = $13
+    .label ds = $13
+    .label x = 7
+    .label xb = 9
     // init_squares()
     jsr init_squares
     lda #<SCREEN+$28*$18
@@ -310,15 +325,133 @@ init_dist_screen: {
     sbc #$18
     jmp __b4
 }
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = $c
+    // 0xffffffff - *CIA2_TIMER_AB
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta.z return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta.z return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta.z return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta.z return+3
+    // }
+    rts
+}
+// Print a unsigned long as HEX at a specific position
+// print_ulong_at(dword zp($c) dw)
+print_ulong_at: {
+    .label dw = $c
+    // print_uint_at(>dw, at)
+    lda.z dw+2
+    sta.z print_uint_at.w
+    lda.z dw+3
+    sta.z print_uint_at.w+1
+    lda #<main.BASE_SCREEN
+    sta.z print_uint_at.at
+    lda #>main.BASE_SCREEN
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // print_uint_at(<dw, at+4)
+    lda.z dw
+    sta.z print_uint_at.w
+    lda.z dw+1
+    sta.z print_uint_at.w+1
+    lda #<main.BASE_SCREEN+4
+    sta.z print_uint_at.at
+    lda #>main.BASE_SCREEN+4
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // }
+    rts
+}
+// Initialize squares table
+// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
+init_squares: {
+    .label squares = $13
+    .label sqr = $a
+    // malloc(NUM_SQUARES*sizeof(unsigned int))
+    jsr malloc
+    lda #<SQUARES
+    sta.z squares
+    lda #>SQUARES
+    sta.z squares+1
+    lda #<0
+    sta.z sqr
+    sta.z sqr+1
+    tax
+  __b1:
+    // for(char i=0;i<NUM_SQUARES;i++)
+    cpx #NUM_SQUARES
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // *squares++ = sqr
+    ldy #0
+    lda.z sqr
+    sta (squares),y
+    iny
+    lda.z sqr+1
+    sta (squares),y
+    // *squares++ = sqr;
+    lda #SIZEOF_WORD
+    clc
+    adc.z squares
+    sta.z squares
+    bcc !+
+    inc.z squares+1
+  !:
+    // i*2
+    txa
+    asl
+    // i*2+1
+    clc
+    adc #1
+    // sqr += i*2+1
+    clc
+    adc.z sqr
+    sta.z sqr
+    bcc !+
+    inc.z sqr+1
+  !:
+    // for(char i=0;i<NUM_SQUARES;i++)
+    inx
+    jmp __b1
+}
+// Find the square of a char value
+// Uses a table of squares that must be initialized by calling init_squares()
+// sqr(byte register(A) val)
+sqr: {
+    .label return = $13
+    .label return_1 = $11
+    // return SQUARES[val];
+    asl
+    tay
+    lda SQUARES,y
+    sta.z return
+    lda SQUARES+1,y
+    sta.z return+1
+    // }
+    rts
+}
 // Find the (integer) square root of a unsigned int value
 // If the square is not an integer then it returns the largest integer N where N*N <= val
 // Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($12) val)
+// sqrt(word zp($13) val)
 sqrt: {
-    .label __1 = 6
-    .label __2 = 6
-    .label found = 6
-    .label val = $12
+    .label __1 = $a
+    .label __2 = $a
+    .label found = $a
+    .label val = $13
     // bsearch16u(val, SQUARES, NUM_SQUARES)
     jsr bsearch16u
     // bsearch16u(val, SQUARES, NUM_SQUARES)
@@ -338,19 +471,50 @@ sqrt: {
     // }
     rts
 }
+// Print a unsigned int as HEX at a specific position
+// print_uint_at(word zp($13) w, byte* zp($a) at)
+print_uint_at: {
+    .label w = $13
+    .label at = $a
+    // print_uchar_at(>w, at)
+    lda.z w+1
+    sta.z print_uchar_at.b
+    jsr print_uchar_at
+    // print_uchar_at(<w, at+2)
+    lda.z w
+    sta.z print_uchar_at.b
+    lda #2
+    clc
+    adc.z print_uchar_at.at
+    sta.z print_uchar_at.at
+    bcc !+
+    inc.z print_uchar_at.at+1
+  !:
+    jsr print_uchar_at
+    // }
+    rts
+}
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
+// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+malloc: {
+    .const size = NUM_SQUARES*SIZEOF_WORD
+    .label mem = HEAP_TOP-size
+    .label return = mem
+    rts
+}
 // Searches an array of nitems unsigned ints, the initial member of which is pointed to by base, for a member that matches the value key.
 // - key - The value to look for
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($12) key, word* zp(6) items, byte register(X) num)
+// bsearch16u(word zp($13) key, word* zp($a) items, byte register(X) num)
 bsearch16u: {
-    .label __2 = 6
-    .label pivot = $14
-    .label result = $16
-    .label return = 6
-    .label items = 6
-    .label key = $12
+    .label __2 = $a
+    .label pivot = $15
+    .label result = $17
+    .label return = $a
+    .label items = $a
+    .label key = $13
     lda #<SQUARES
     sta.z items
     lda #>SQUARES
@@ -437,216 +601,51 @@ bsearch16u: {
     tax
     jmp __b3
 }
-// Find the square of a char value
-// Uses a table of squares that must be initialized by calling init_squares()
-// sqr(byte register(A) val)
-sqr: {
-    .label return = $12
-    .label return_1 = $10
-    // return SQUARES[val];
-    asl
+// Print a char as HEX at a specific position
+// print_uchar_at(byte zp($10) b, byte* zp($a) at)
+print_uchar_at: {
+    .label b = $10
+    .label at = $a
+    // b>>4
+    lda.z b
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char_at(print_hextab[b>>4], at)
     tay
-    lda SQUARES,y
-    sta.z return
-    lda SQUARES+1,y
-    sta.z return+1
-    // }
-    rts
-}
-// Initialize squares table
-// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
-init_squares: {
-    .label squares = $12
-    .label sqr = 6
-    // malloc(NUM_SQUARES*sizeof(unsigned int))
-    jsr malloc
-    lda #<SQUARES
-    sta.z squares
-    lda #>SQUARES
-    sta.z squares+1
-    lda #<0
-    sta.z sqr
-    sta.z sqr+1
-    tax
-  __b1:
-    // for(char i=0;i<NUM_SQUARES;i++)
-    cpx #NUM_SQUARES
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // *squares++ = sqr
-    ldy #0
-    lda.z sqr
-    sta (squares),y
-    iny
-    lda.z sqr+1
-    sta (squares),y
-    // *squares++ = sqr;
-    lda #SIZEOF_WORD
-    clc
-    adc.z squares
-    sta.z squares
-    bcc !+
-    inc.z squares+1
-  !:
-    // i*2
-    txa
-    asl
-    // i*2+1
+    ldx print_hextab,y
+    lda.z at
+    sta.z print_char_at.at
+    lda.z at+1
+    sta.z print_char_at.at+1
+  // Table of hexadecimal digits
+    jsr print_char_at
+    // b&$f
+    lda #$f
+    and.z b
+    tay
+    // print_char_at(print_hextab[b&$f], at+1)
+    lda.z at
     clc
     adc #1
-    // sqr += i*2+1
-    clc
-    adc.z sqr
-    sta.z sqr
-    bcc !+
-    inc.z sqr+1
-  !:
-    // for(char i=0;i<NUM_SQUARES;i++)
-    inx
-    jmp __b1
-}
-// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
-// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-malloc: {
-    .const size = NUM_SQUARES*SIZEOF_WORD
-    .label mem = HEAP_TOP-size
-    .label return = mem
+    sta.z print_char_at.at
+    lda.z at+1
+    adc #0
+    sta.z print_char_at.at+1
+    ldx print_hextab,y
+    jsr print_char_at
     // }
     rts
 }
-// Reset & start the processor clock time. The value can be read using clock().
-// This uses CIA #2 Timer A+B on the C64
-clock_start: {
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // *CIA2_TIMER_AB = 0xffffffff
-    lda #<$ffffffff
-    sta CIA2_TIMER_AB
-    lda #>$ffffffff
-    sta CIA2_TIMER_AB+1
-    lda #<$ffffffff>>$10
-    sta CIA2_TIMER_AB+2
-    lda #>$ffffffff>>$10
-    sta CIA2_TIMER_AB+3
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    lda #CIA_TIMER_CONTROL_START
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // }
-    rts
-}
-// Make charset from proto chars
-// init_font_hex(byte* zp($12) charset)
-init_font_hex: {
-    .label __0 = $18
-    .label idx = $b
-    .label proto_lo = $10
-    .label charset = $12
-    .label c1 = $a
-    .label proto_hi = 6
-    .label c = 9
-    lda #0
-    sta.z c
-    lda #<FONT_HEX_PROTO
-    sta.z proto_hi
-    lda #>FONT_HEX_PROTO
-    sta.z proto_hi+1
-    lda #<CHARSET
-    sta.z charset
-    lda #>CHARSET
-    sta.z charset+1
-  __b1:
-    lda #0
-    sta.z c1
-    lda #<FONT_HEX_PROTO
-    sta.z proto_lo
-    lda #>FONT_HEX_PROTO
-    sta.z proto_lo+1
-  __b2:
-    // charset[idx++] = 0
-    lda #0
-    tay
-    sta (charset),y
-    lda #1
-    sta.z idx
-    ldx #0
-  __b3:
-    // proto_hi[i]<<4
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zp($11) at)
+print_char_at: {
+    .label at = $11
+    // *(at) = ch
     txa
-    tay
-    lda (proto_hi),y
-    asl
-    asl
-    asl
-    asl
-    sta.z __0
-    // proto_lo[i]<<1
-    txa
-    tay
-    lda (proto_lo),y
-    asl
-    // proto_hi[i]<<4 | proto_lo[i]<<1
-    ora.z __0
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
-    inc.z idx
-    // for( byte i: 0..4)
-    inx
-    cpx #5
-    bne __b3
-    // charset[idx++] = 0
-    lda #0
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = 0;
-    iny
-    // charset[idx++] = 0
-    sta (charset),y
-    // proto_lo += 5
-    lda #5
-    clc
-    adc.z proto_lo
-    sta.z proto_lo
-    bcc !+
-    inc.z proto_lo+1
-  !:
-    // charset += 8
-    lda #8
-    clc
-    adc.z charset
-    sta.z charset
-    bcc !+
-    inc.z charset+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c1
-    lda #$10
-    cmp.z c1
-    bne __b2
-    // proto_hi += 5
-    lda #5
-    clc
-    adc.z proto_hi
-    sta.z proto_hi
-    bcc !+
-    inc.z proto_hi+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c
-    lda #$10
-    cmp.z c
-    bne __b1
+    ldy #0
+    sta (at),y
     // }
     rts
 }

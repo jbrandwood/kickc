@@ -25,16 +25,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // *SCREEN_1 = 0
-    lda #0
-    tay
-    sta (SCREEN_1),y
-    // *SCREEN_2 = 0
-    sta (SCREEN_2),y
-    // }
-    rts
-}
 malloc: {
     .label return = 6
     .label return_1 = 4
@@ -47,6 +37,16 @@ malloc: {
     sta.z return
     lda.z MEM+1
     sta.z return+1
+    // }
+    rts
+}
+main: {
+    // *SCREEN_1 = 0
+    lda #0
+    tay
+    sta (SCREEN_1),y
+    // *SCREEN_2 = 0
+    sta (SCREEN_2),y
     // }
     rts
 }

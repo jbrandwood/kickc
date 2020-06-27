@@ -80,6 +80,76 @@ main: {
     // }
     rts
 }
+// clears the screen and moves the cursor to the upper left-hand corner of the screen.
+clrscr: {
+    .label line_text = $c
+    .label line_cols = 4
+    lda #<COLORRAM
+    sta.z line_cols
+    lda #>COLORRAM
+    sta.z line_cols+1
+    lda #<DEFAULT_SCREEN
+    sta.z line_text
+    lda #>DEFAULT_SCREEN
+    sta.z line_text+1
+    ldx #0
+  __b1:
+    // for( char l=0;l<CONIO_HEIGHT; l++ )
+    cpx #$19
+    bcc __b2
+    // conio_cursor_x = 0
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = 0
+    sta.z conio_cursor_y
+    // conio_line_text = CONIO_SCREEN_TEXT
+    lda #<DEFAULT_SCREEN
+    sta.z conio_line_text
+    lda #>DEFAULT_SCREEN
+    sta.z conio_line_text+1
+    // conio_line_color = CONIO_SCREEN_COLORS
+    lda #<COLORRAM
+    sta.z conio_line_color
+    lda #>COLORRAM
+    sta.z conio_line_color+1
+    // }
+    rts
+  __b2:
+    ldy #0
+  __b3:
+    // for( char c=0;c<CONIO_WIDTH; c++ )
+    cpy #$28
+    bcc __b4
+    // line_text += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z line_text
+    sta.z line_text
+    bcc !+
+    inc.z line_text+1
+  !:
+    // line_cols += CONIO_WIDTH
+    lda #$28
+    clc
+    adc.z line_cols
+    sta.z line_cols
+    bcc !+
+    inc.z line_cols+1
+  !:
+    // for( char l=0;l<CONIO_HEIGHT; l++ )
+    inx
+    jmp __b1
+  __b4:
+    // line_text[c] = ' '
+    lda #' '
+    sta (line_text),y
+    // line_cols[c] = conio_textcolor
+    lda #LIGHT_BLUE
+    sta (line_cols),y
+    // for( char c=0;c<CONIO_WIDTH; c++ )
+    iny
+    jmp __b3
+}
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
 // cputc(byte register(A) c)
@@ -106,6 +176,93 @@ cputc: {
   __b1:
     // cputln()
     jsr cputln
+    rts
+}
+// Set the cursor to the specified position
+// gotoxy(byte register(X) y)
+gotoxy: {
+    .const x = 0
+    .label __5 = 8
+    .label __6 = $a
+    .label __7 = $a
+    .label line_offset = $a
+    .label __8 = $c
+    .label __9 = $a
+    // if(y>CONIO_HEIGHT)
+    cpx #$19+1
+    bcc __b2
+    ldx #0
+  __b2:
+    // conio_cursor_x = x
+    lda #x
+    sta.z conio_cursor_x
+    // conio_cursor_y = y
+    stx.z conio_cursor_y
+    // (unsigned int)y*CONIO_WIDTH
+    txa
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    // line_offset = (unsigned int)y*CONIO_WIDTH
+    lda.z __7
+    asl
+    sta.z __8
+    lda.z __7+1
+    rol
+    sta.z __8+1
+    asl.z __8
+    rol.z __8+1
+    lda.z __9
+    clc
+    adc.z __8
+    sta.z __9
+    lda.z __9+1
+    adc.z __8+1
+    sta.z __9+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    // CONIO_SCREEN_TEXT + line_offset
+    lda.z line_offset
+    clc
+    adc #<DEFAULT_SCREEN
+    sta.z __5
+    lda.z line_offset+1
+    adc #>DEFAULT_SCREEN
+    sta.z __5+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    // CONIO_SCREEN_COLORS + line_offset
+    clc
+    lda.z __6
+    adc #<COLORRAM
+    sta.z __6
+    lda.z __6+1
+    adc #>COLORRAM
+    sta.z __6+1
+    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    // }
+    rts
+}
+// Convert lowercase alphabet to uppercase
+// Returns uppercase equivalent to c, if such value exists, else c remains unchanged
+// toupper(byte register(A) ch)
+toupper: {
+    // if(ch>='a' && ch<='z')
+    cmp #'a'
+    bcc __breturn
+    cmp #'z'
+    bcc __b1
+    beq __b1
+    rts
+  __b1:
+    // return ch + ('A'-'a');
+    clc
+    adc #'A'-'a'
+  __breturn:
+    // }
     rts
 }
 // Print a newline
@@ -198,50 +355,14 @@ cscroll: {
     // }
     rts
 }
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($e) str, byte register(X) c)
-memset: {
-    .label end = $c
-    .label dst = $e
-    .label str = $e
-    // end = (char*)str + num
-    lda #$28
-    clc
-    adc.z str
-    sta.z end
-    lda #0
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp(4) destination, void* zp($e) source)
+// memcpy(void* zp(4) destination, void* zp($c) source)
 memcpy: {
-    .label src_end = $c
+    .label src_end = $e
     .label dst = 4
-    .label src = $e
-    .label source = $e
+    .label src = $c
+    .label source = $c
     .label destination = 4
     // src_end = (char*)source+num
     lda.z source
@@ -277,160 +398,39 @@ memcpy: {
   !:
     jmp __b1
 }
-// Convert lowercase alphabet to uppercase
-// Returns uppercase equivalent to c, if such value exists, else c remains unchanged
-// toupper(byte register(A) ch)
-toupper: {
-    // if(ch>='a' && ch<='z')
-    cmp #'a'
-    bcc __breturn
-    cmp #'z'
-    bcc __b1
-    beq __b1
-    rts
-  __b1:
-    // return ch + ('A'-'a');
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($c) str, byte register(X) c)
+memset: {
+    .label end = $e
+    .label dst = $c
+    .label str = $c
+    // end = (char*)str + num
+    lda #$28
     clc
-    adc #'A'-'a'
-  __breturn:
-    // }
-    rts
-}
-// Set the cursor to the specified position
-// gotoxy(byte register(X) y)
-gotoxy: {
-    .const x = 0
-    .label __5 = 8
-    .label __6 = $a
-    .label __7 = $a
-    .label line_offset = $a
-    .label __8 = $e
-    .label __9 = $a
-    // if(y>CONIO_HEIGHT)
-    cpx #$19+1
-    bcc __b2
-    ldx #0
-  __b2:
-    // conio_cursor_x = x
-    lda #x
-    sta.z conio_cursor_x
-    // conio_cursor_y = y
-    stx.z conio_cursor_y
-    // (unsigned int)y*CONIO_WIDTH
-    txa
-    sta.z __7
+    adc.z str
+    sta.z end
     lda #0
-    sta.z __7+1
-    // line_offset = (unsigned int)y*CONIO_WIDTH
-    lda.z __7
-    asl
-    sta.z __8
-    lda.z __7+1
-    rol
-    sta.z __8+1
-    asl.z __8
-    rol.z __8+1
-    lda.z __9
-    clc
-    adc.z __8
-    sta.z __9
-    lda.z __9+1
-    adc.z __8+1
-    sta.z __9+1
-    asl.z line_offset
-    rol.z line_offset+1
-    asl.z line_offset
-    rol.z line_offset+1
-    asl.z line_offset
-    rol.z line_offset+1
-    // CONIO_SCREEN_TEXT + line_offset
-    lda.z line_offset
-    clc
-    adc #<DEFAULT_SCREEN
-    sta.z __5
-    lda.z line_offset+1
-    adc #>DEFAULT_SCREEN
-    sta.z __5+1
-    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
-    // CONIO_SCREEN_COLORS + line_offset
-    clc
-    lda.z __6
-    adc #<COLORRAM
-    sta.z __6
-    lda.z __6+1
-    adc #>COLORRAM
-    sta.z __6+1
-    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
-    // }
-    rts
-}
-// clears the screen and moves the cursor to the upper left-hand corner of the screen.
-clrscr: {
-    .label line_text = 4
-    .label line_cols = 8
-    lda #<COLORRAM
-    sta.z line_cols
-    lda #>COLORRAM
-    sta.z line_cols+1
-    lda #<DEFAULT_SCREEN
-    sta.z line_text
-    lda #>DEFAULT_SCREEN
-    sta.z line_text+1
-    ldx #0
-  __b1:
-    // for( char l=0;l<CONIO_HEIGHT; l++ )
-    cpx #$19
-    bcc __b2
-    // conio_cursor_x = 0
-    lda #0
-    sta.z conio_cursor_x
-    // conio_cursor_y = 0
-    sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT
-    lda #<DEFAULT_SCREEN
-    sta.z conio_line_text
-    lda #>DEFAULT_SCREEN
-    sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS
-    lda #<COLORRAM
-    sta.z conio_line_color
-    lda #>COLORRAM
-    sta.z conio_line_color+1
-    // }
-    rts
+    adc.z str+1
+    sta.z end+1
   __b2:
-    ldy #0
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // }
+    rts
   __b3:
-    // for( char c=0;c<CONIO_WIDTH; c++ )
-    cpy #$28
-    bcc __b4
-    // line_text += CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z line_text
-    sta.z line_text
-    bcc !+
-    inc.z line_text+1
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
   !:
-    // line_cols += CONIO_WIDTH
-    lda #$28
-    clc
-    adc.z line_cols
-    sta.z line_cols
-    bcc !+
-    inc.z line_cols+1
-  !:
-    // for( char l=0;l<CONIO_HEIGHT; l++ )
-    inx
-    jmp __b1
-  __b4:
-    // line_text[c] = ' '
-    lda #' '
-    sta (line_text),y
-    // line_cols[c] = conio_textcolor
-    lda #LIGHT_BLUE
-    sta (line_cols),y
-    // for( char c=0;c<CONIO_WIDTH; c++ )
-    iny
-    jmp __b3
+    jmp __b2
 }

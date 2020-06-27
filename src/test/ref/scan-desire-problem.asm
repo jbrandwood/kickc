@@ -69,6 +69,47 @@ main: {
     inc.z y
     jmp __b2
 }
+init: {
+    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
+    // init_sprites()
+    jsr init_sprites
+    // memset(screen, 0, 1000)
+    ldx #0
+    lda #<screen
+    sta.z memset.str
+    lda #>screen
+    sta.z memset.str+1
+    jsr memset
+    // memset(colors, BLACK, 1000)
+    ldx #BLACK
+    lda #<colors
+    sta.z memset.str
+    lda #>colors
+    sta.z memset.str+1
+    jsr memset
+    // *D018 = toD018(screen, charset)
+    lda #toD0181_return
+    sta D018
+    // asm
+    lda #$5b
+    sta $d011
+    // *BORDER_COLOR = BLACK
+    lda #BLACK
+    sta BORDER_COLOR
+    // *BG_COLOR = BLACK
+    sta BG_COLOR
+    // *BG_COLOR1 = RED
+    lda #RED
+    sta BG_COLOR1
+    // *BG_COLOR2 = BLUE
+    lda #BLUE
+    sta BG_COLOR2
+    // *BG_COLOR3 = GREEN
+    lda #GREEN
+    sta BG_COLOR3
+    // }
+    rts
+}
 // draw_block(byte register(Y) tileno, byte register(X) x, byte zp(3) y)
 draw_block: {
     .label y = 3
@@ -197,6 +238,63 @@ draw_block: {
     // }
     rts
 }
+init_sprites: {
+    // *SPRITES_ENABLE = %00000001
+    lda #1
+    sta SPRITES_ENABLE
+    // *SPRITES_EXPAND_X = 0
+    // one sprite enabled
+    lda #0
+    sta SPRITES_EXPAND_X
+    // *SPRITES_EXPAND_Y = 0
+    sta SPRITES_EXPAND_Y
+    // *SPRITES_XMSB = 0
+    sta SPRITES_XMSB
+    // *SPRITES_COLOR = WHITE
+    lda #WHITE
+    sta SPRITES_COLOR
+    // *SPRITES_MC = 0
+    lda #0
+    sta SPRITES_MC
+    // }
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(4) str, byte register(X) c)
+memset: {
+    .label end = $14
+    .label dst = 4
+    .label str = 4
+    // end = (char*)str + num
+    lda.z str
+    clc
+    adc #<$3e8
+    sta.z end
+    lda.z str+1
+    adc #>$3e8
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a)
 mul8u: {
@@ -241,102 +339,4 @@ mul8u: {
     asl.z mb
     rol.z mb+1
     jmp __b1
-}
-init: {
-    .const toD0181_return = (>(screen&$3fff)*4)|(>charset)/4&$f
-    // init_sprites()
-    jsr init_sprites
-    // memset(screen, 0, 1000)
-    ldx #0
-    lda #<screen
-    sta.z memset.str
-    lda #>screen
-    sta.z memset.str+1
-    jsr memset
-    // memset(colors, BLACK, 1000)
-    ldx #BLACK
-    lda #<colors
-    sta.z memset.str
-    lda #>colors
-    sta.z memset.str+1
-    jsr memset
-    // *D018 = toD018(screen, charset)
-    lda #toD0181_return
-    sta D018
-    // asm
-    lda #$5b
-    sta $d011
-    // *BORDER_COLOR = BLACK
-    lda #BLACK
-    sta BORDER_COLOR
-    // *BG_COLOR = BLACK
-    sta BG_COLOR
-    // *BG_COLOR1 = RED
-    lda #RED
-    sta BG_COLOR1
-    // *BG_COLOR2 = BLUE
-    lda #BLUE
-    sta BG_COLOR2
-    // *BG_COLOR3 = GREEN
-    lda #GREEN
-    sta BG_COLOR3
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c)
-memset: {
-    .label end = $14
-    .label dst = 4
-    .label str = 4
-    // end = (char*)str + num
-    lda.z str
-    clc
-    adc #<$3e8
-    sta.z end
-    lda.z str+1
-    adc #>$3e8
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-init_sprites: {
-    // *SPRITES_ENABLE = %00000001
-    lda #1
-    sta SPRITES_ENABLE
-    // *SPRITES_EXPAND_X = 0
-    // one sprite enabled
-    lda #0
-    sta SPRITES_EXPAND_X
-    // *SPRITES_EXPAND_Y = 0
-    sta SPRITES_EXPAND_Y
-    // *SPRITES_XMSB = 0
-    sta SPRITES_XMSB
-    // *SPRITES_COLOR = WHITE
-    lda #WHITE
-    sta SPRITES_COLOR
-    // *SPRITES_MC = 0
-    lda #0
-    sta SPRITES_MC
-    // }
-    rts
 }

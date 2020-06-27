@@ -14,65 +14,32 @@ main: {
     // }
     rts
 }
-bool_complex: {
-    .label screen = $478
+bool_and: {
+    .label screen = $400
     ldx #0
   __b1:
     // i&1
     txa
     and #1
-    // if( ((i<10) && (i&1)==0) || !((i<10) || (i&1)==0) )
+    // if( (i<10) && ((i&1)==0) )
     cpx #$a
-    bcs __b5
+    bcs __b4
     cmp #0
     beq __b2
-  __b5:
-    cpx #$a
-    bcc __b4
-    cmp #0
-    beq __b4
+  __b4:
+    // screen[i] = ' '
+    lda #' '
+    sta screen,x
+  __b3:
+    // for( byte i : 0..20)
+    inx
+    cpx #$15
+    bne __b1
+    // }
+    rts
   __b2:
     // screen[i] = '*'
     lda #'*'
-    sta screen,x
-  __b3:
-    // for( byte i : 0..20)
-    inx
-    cpx #$15
-    bne __b1
-    // }
-    rts
-  __b4:
-    // screen[i] = ' '
-    lda #' '
-    sta screen,x
-    jmp __b3
-}
-bool_not: {
-    .label screen = $450
-    ldx #0
-  __b1:
-    // i&1
-    txa
-    and #1
-    // if( !((i<10) || (i&1)==0))
-    cpx #$a
-    bcc __b4
-    cmp #0
-    beq __b4
-    // screen[i] = '*'
-    lda #'*'
-    sta screen,x
-  __b3:
-    // for( byte i : 0..20)
-    inx
-    cpx #$15
-    bne __b1
-    // }
-    rts
-  __b4:
-    // screen[i] = ' '
-    lda #' '
     sta screen,x
     jmp __b3
 }
@@ -104,21 +71,20 @@ bool_or: {
     sta screen,x
     jmp __b3
 }
-bool_and: {
-    .label screen = $400
+bool_not: {
+    .label screen = $450
     ldx #0
   __b1:
     // i&1
     txa
     and #1
-    // if( (i<10) && ((i&1)==0) )
+    // if( !((i<10) || (i&1)==0))
     cpx #$a
-    bcs __b4
+    bcc __b4
     cmp #0
-    beq __b2
-  __b4:
-    // screen[i] = ' '
-    lda #' '
+    beq __b4
+    // screen[i] = '*'
+    lda #'*'
     sta screen,x
   __b3:
     // for( byte i : 0..20)
@@ -127,9 +93,43 @@ bool_and: {
     bne __b1
     // }
     rts
+  __b4:
+    // screen[i] = ' '
+    lda #' '
+    sta screen,x
+    jmp __b3
+}
+bool_complex: {
+    .label screen = $478
+    ldx #0
+  __b1:
+    // i&1
+    txa
+    and #1
+    // if( ((i<10) && (i&1)==0) || !((i<10) || (i&1)==0) )
+    cpx #$a
+    bcs __b5
+    cmp #0
+    beq __b2
+  __b5:
+    cpx #$a
+    bcc __b4
+    cmp #0
+    beq __b4
   __b2:
     // screen[i] = '*'
     lda #'*'
+    sta screen,x
+  __b3:
+    // for( byte i : 0..20)
+    inx
+    cpx #$15
+    bne __b1
+    // }
+    rts
+  __b4:
+    // screen[i] = ' '
+    lda #' '
     sta screen,x
     jmp __b3
 }

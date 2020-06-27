@@ -136,28 +136,28 @@ Added new block during phi lifting hello::@2(between hello::@1 and hello::@1)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
+Adding NOP phi() at start of hello
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of do10
-Adding NOP phi() at start of hello
 CALL GRAPH
 Calls in [__start] to main:3 
-Calls in [main] to do10:7 
-Calls in [do10] to hello:12 
+Calls in [main] to do10:15 
+Calls in [do10] to hello:20 
 
 Created 2 initial phi equivalence classes
-Coalesced [16] do10::i#3 ← do10::i#1
-Coalesced [24] hello::i#3 ← hello::i#1
+Coalesced [13] hello::i#3 ← hello::i#1
+Coalesced [24] do10::i#3 ← do10::i#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) __start::@2
+Culled Empty Block (label) hello::@2
 Culled Empty Block (label) main::@1
 Culled Empty Block (label) do10::@2
-Culled Empty Block (label) hello::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of hello
 Adding NOP phi() at start of main
 Adding NOP phi() at start of do10
-Adding NOP phi() at start of hello
 
 FINAL CONTROL FLOW GRAPH
 
@@ -176,41 +176,41 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
+__stackcall (void()) hello()
+hello: scope:[hello]  from do10::@1
+  [5] phi()
+  to:hello::@1
+hello::@1: scope:[hello]  from hello hello::@1
+  [6] (byte) hello::i#2 ← phi( hello/(byte) 0 hello::@1/(byte) hello::i#1 )
+  [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2)
+  [8] (volatile byte) idx ← ++ (volatile byte) idx
+  [9] (byte) hello::i#1 ← ++ (byte) hello::i#2
+  [10] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1
+  to:hello::@return
+hello::@return: scope:[hello]  from hello::@1
+  [11] return 
+  to:@return
+
 (void()) main()
 main: scope:[main]  from __start::@1
-  [5] phi()
-  [6] call do10 
+  [12] phi()
+  [13] call do10 
   to:main::@return
 main::@return: scope:[main]  from main
-  [7] return 
+  [14] return 
   to:@return
 
 (void()) do10((void()*) do10::fn)
 do10: scope:[do10]  from main
-  [8] phi()
+  [15] phi()
   to:do10::@1
 do10::@1: scope:[do10]  from do10 do10::@1
-  [9] (byte) do10::i#2 ← phi( do10/(byte) 0 do10::@1/(byte) do10::i#1 )
-  [10] call hello 
-  [11] (byte) do10::i#1 ← ++ (byte) do10::i#2
-  [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1
+  [16] (byte) do10::i#2 ← phi( do10/(byte) 0 do10::@1/(byte) do10::i#1 )
+  [17] call hello 
+  [18] (byte) do10::i#1 ← ++ (byte) do10::i#2
+  [19] if((byte) do10::i#1!=(byte) $a) goto do10::@1
   to:do10::@return
 do10::@return: scope:[do10]  from do10::@1
-  [13] return 
-  to:@return
-
-__stackcall (void()) hello()
-hello: scope:[hello]  from do10::@1
-  [14] phi()
-  to:hello::@1
-hello::@1: scope:[hello]  from hello hello::@1
-  [15] (byte) hello::i#2 ← phi( hello/(byte) 0 hello::@1/(byte) hello::i#1 )
-  [16] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2)
-  [17] (volatile byte) idx ← ++ (volatile byte) idx
-  [18] (byte) hello::i#1 ← ++ (byte) hello::i#2
-  [19] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1
-  to:hello::@return
-hello::@return: scope:[hello]  from hello::@1
   [20] return 
   to:@return
 
@@ -231,15 +231,15 @@ __stackcall (void()) hello()
 (void()) main()
 
 Initial phi equivalence classes
-[ do10::i#2 do10::i#1 ]
 [ hello::i#2 hello::i#1 ]
+[ do10::i#2 do10::i#1 ]
 Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
-[ do10::i#2 do10::i#1 ]
 [ hello::i#2 hello::i#1 ]
+[ do10::i#2 do10::i#1 ]
 [ idx ]
-Allocated zp[1]:2 [ do10::i#2 do10::i#1 ]
-Allocated zp[1]:3 [ hello::i#2 hello::i#1 ]
+Allocated zp[1]:2 [ hello::i#2 hello::i#1 ]
+Allocated zp[1]:3 [ do10::i#2 do10::i#1 ]
 Allocated zp[1]:4 [ idx ]
 
 INITIAL ASM
@@ -267,7 +267,7 @@ __start: {
     // __start::@1
   __b1:
     // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
+    // [12] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -276,78 +276,78 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // [6] call do10 
-    // [8] phi from main to do10 [phi:main->do10]
-  do10_from_main:
-    jsr do10
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // do10
-do10: {
-    .label i = 2
-    // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
-  __b1_from_do10:
-    // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-  __b1_from___b1:
-    // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
-    jmp __b1
-    // do10::@1
-  __b1:
-    // [10] call hello 
-    jsr hello
-    // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$a
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // do10::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // hello
 hello: {
-    .label i = 3
-    // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
+    .label i = 2
+    // [6] phi from hello to hello::@1 [phi:hello->hello::@1]
   __b1_from_hello:
-    // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#0] -- vbuz1=vbuc1 
+    // [6] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+    // [6] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
   __b1_from___b1:
-    // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+    // [6] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#0] -- register_copy 
     jmp __b1
     // hello::@1
   __b1:
-    // [16] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
     ldy.z i
     lda msg,y
     ldy.z idx
     sta SCREEN,y
-    // [17] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuz1=_inc_vbuz1 
+    // [9] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [19] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
+    // [10] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
     lda #0
     ldy.z i
     cmp msg,y
     bne __b1_from___b1
     jmp __breturn
     // hello::@return
+  __breturn:
+    // [11] return 
+    rts
+}
+  // main
+main: {
+    // [13] call do10 
+    // [15] phi from main to do10 [phi:main->do10]
+  do10_from_main:
+    jsr do10
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // do10
+do10: {
+    .label i = 3
+    // [16] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  __b1_from_do10:
+    // [16] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [16] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  __b1_from___b1:
+    // [16] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    jmp __b1
+    // do10::@1
+  __b1:
+    // [17] call hello 
+    jsr hello
+    // [18] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [19] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp.z i
+    bne __b1_from___b1
+    jmp __breturn
+    // do10::@return
   __breturn:
     // [20] return 
     rts
@@ -358,35 +358,36 @@ hello: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) [ idx hello::i#2 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx hello::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:2 [ do10::i#2 do10::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:2 [ do10::i#2 do10::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:3 [ hello::i#2 hello::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:3 [ hello::i#2 hello::i#1 ]
-Statement [19] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 [ idx hello::i#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx hello::i#1 ] { }  ) always clobbers reg byte a 
+Statement [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) [ idx hello::i#2 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:3 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ hello::i#2 hello::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ hello::i#2 hello::i#1 ]
+Statement [10] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 [ idx hello::i#1 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#1 ] { }  ) always clobbers reg byte a 
 Statement [1] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) [ idx hello::i#2 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx hello::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 [ idx hello::i#1 ] ( main:3::do10:6::hello:10 [ do10::i#2 idx hello::i#1 ] { }  ) always clobbers reg byte a 
-Potential registers zp[1]:2 [ do10::i#2 do10::i#1 ] : zp[1]:2 , reg byte x , 
-Potential registers zp[1]:3 [ hello::i#2 hello::i#1 ] : zp[1]:3 , reg byte x , 
+Statement [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) [ idx hello::i#2 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 [ idx hello::i#1 ] ( main:3::do10:13::hello:17 [ do10::i#2 idx hello::i#1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ hello::i#2 hello::i#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[1]:3 [ do10::i#2 do10::i#1 ] : zp[1]:3 , reg byte x , 
 Potential registers zp[1]:4 [ idx ] : zp[1]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [hello] 250,002.5: zp[1]:3 [ hello::i#2 hello::i#1 ] 
+Uplift Scope [hello] 250,002.5: zp[1]:2 [ hello::i#2 hello::i#1 ] 
 Uplift Scope [] 20,000.33: zp[1]:4 [ idx ] 
-Uplift Scope [do10] 2,502.5: zp[1]:2 [ do10::i#2 do10::i#1 ] 
+Uplift Scope [do10] 2,502.5: zp[1]:3 [ do10::i#2 do10::i#1 ] 
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
 Uplifting [hello] best 800 combination reg byte x [ hello::i#2 hello::i#1 ] 
 Uplifting [] best 800 combination zp[1]:4 [ idx ] 
-Uplifting [do10] best 800 combination zp[1]:2 [ do10::i#2 do10::i#1 ] 
+Uplifting [do10] best 800 combination zp[1]:3 [ do10::i#2 do10::i#1 ] 
 Uplifting [main] best 800 combination 
 Uplifting [__start] best 800 combination 
 Attempting to uplift remaining variables inzp[1]:4 [ idx ]
 Uplifting [] best 800 combination zp[1]:4 [ idx ] 
-Attempting to uplift remaining variables inzp[1]:2 [ do10::i#2 do10::i#1 ]
-Uplifting [do10] best 800 combination zp[1]:2 [ do10::i#2 do10::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:3 [ do10::i#2 do10::i#1 ]
+Uplifting [do10] best 800 combination zp[1]:3 [ do10::i#2 do10::i#1 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ do10::i#2 do10::i#1 ]
 Allocated (was zp[1]:4) zp[1]:3 [ idx ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -413,7 +414,7 @@ __start: {
     // __start::@1
   __b1:
     // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
+    // [12] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -422,74 +423,74 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // [6] call do10 
-    // [8] phi from main to do10 [phi:main->do10]
-  do10_from_main:
-    jsr do10
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // do10
-do10: {
-    .label i = 2
-    // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
-  __b1_from_do10:
-    // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-  __b1_from___b1:
-    // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
-    jmp __b1
-    // do10::@1
-  __b1:
-    // [10] call hello 
-    jsr hello
-    // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$a
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // do10::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // hello
 hello: {
-    // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
+    // [6] phi from hello to hello::@1 [phi:hello->hello::@1]
   __b1_from_hello:
-    // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#0] -- vbuxx=vbuc1 
+    // [6] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+    // [6] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
   __b1_from___b1:
-    // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+    // [6] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#0] -- register_copy 
     jmp __b1
     // hello::@1
   __b1:
-    // [16] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
     lda msg,x
     ldy.z idx
     sta SCREEN,y
-    // [17] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    // [8] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
+    // [9] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [19] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [10] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda msg,x
     cmp #0
     bne __b1_from___b1
     jmp __breturn
     // hello::@return
+  __breturn:
+    // [11] return 
+    rts
+}
+  // main
+main: {
+    // [13] call do10 
+    // [15] phi from main to do10 [phi:main->do10]
+  do10_from_main:
+    jsr do10
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // do10
+do10: {
+    .label i = 2
+    // [16] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  __b1_from_do10:
+    // [16] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [16] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  __b1_from___b1:
+    // [16] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    jmp __b1
+    // do10::@1
+  __b1:
+    // [17] call hello 
+    jsr hello
+    // [18] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [19] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp.z i
+    bne __b1_from___b1
+    jmp __breturn
+    // do10::@return
   __breturn:
     // [20] return 
     rts
@@ -502,8 +503,8 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
-Removing instruction jmp __breturn
 Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
@@ -518,11 +519,11 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
+Removing instruction __b1_from_hello:
+Removing instruction __breturn:
 Removing instruction do10_from_main:
 Removing instruction __breturn:
 Removing instruction __b1_from_do10:
-Removing instruction __breturn:
-Removing instruction __b1_from_hello:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -553,8 +554,8 @@ __stackcall (void()) hello()
 (label) main::@return
 (const to_nomodify byte*) msg[]  = (byte*) "hello "
 
-zp[1]:2 [ do10::i#2 do10::i#1 ]
 reg byte x [ hello::i#2 hello::i#1 ]
+zp[1]:2 [ do10::i#2 do10::i#1 ]
 zp[1]:3 [ idx ]
 
 
@@ -580,74 +581,74 @@ __start: {
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
+    // [12] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [4] return 
     rts
 }
+  // hello
+hello: {
+    // [6] phi from hello to hello::@1 [phi:hello->hello::@1]
+    // [6] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [6] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
+    // [6] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#0] -- register_copy 
+    // hello::@1
+  __b1:
+    // SCREEN[idx++] = msg[i++]
+    // [7] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
+    lda msg,x
+    ldy.z idx
+    sta SCREEN,y
+    // SCREEN[idx++] = msg[i++];
+    // [8] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    inc.z idx
+    // [9] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // while(msg[i])
+    // [10] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    lda msg,x
+    cmp #0
+    bne __b1
+    // hello::@return
+    // }
+    // [11] return 
+    rts
+}
   // main
 main: {
     // do10(f)
-    // [6] call do10 
-    // [8] phi from main to do10 [phi:main->do10]
+    // [13] call do10 
+    // [15] phi from main to do10 [phi:main->do10]
     jsr do10
     // main::@return
     // }
-    // [7] return 
+    // [14] return 
     rts
 }
   // do10
 do10: {
     .label i = 2
-    // [9] phi from do10 to do10::@1 [phi:do10->do10::@1]
-    // [9] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    // [16] phi from do10 to do10::@1 [phi:do10->do10::@1]
+    // [16] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
-    // [9] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-    // [9] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // [16] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+    // [16] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
     // do10::@1
   __b1:
     // (*fn)()
-    // [10] call hello 
+    // [17] call hello 
     jsr hello
     // for( byte i: 0..9)
-    // [11] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    // [18] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [12] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [19] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #$a
     cmp.z i
     bne __b1
     // do10::@return
-    // }
-    // [13] return 
-    rts
-}
-  // hello
-hello: {
-    // [15] phi from hello to hello::@1 [phi:hello->hello::@1]
-    // [15] phi (byte) hello::i#2 = (byte) 0 [phi:hello->hello::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [15] phi from hello::@1 to hello::@1 [phi:hello::@1->hello::@1]
-    // [15] phi (byte) hello::i#2 = (byte) hello::i#1 [phi:hello::@1->hello::@1#0] -- register_copy 
-    // hello::@1
-  __b1:
-    // SCREEN[idx++] = msg[i++]
-    // [16] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((const to_nomodify byte*) msg + (byte) hello::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuxx 
-    lda msg,x
-    ldy.z idx
-    sta SCREEN,y
-    // SCREEN[idx++] = msg[i++];
-    // [17] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
-    inc.z idx
-    // [18] (byte) hello::i#1 ← ++ (byte) hello::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // while(msg[i])
-    // [19] if((byte) 0!=*((const to_nomodify byte*) msg + (byte) hello::i#1)) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
-    lda msg,x
-    cmp #0
-    bne __b1
-    // hello::@return
     // }
     // [20] return 
     rts

@@ -111,33 +111,33 @@
   // Screen Sprite pointers on screen 2
   .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
   // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
-  .label render_screen_showing = $22
+  .label render_screen_showing = $24
   // Current score in BCD-format
-  .label score_bcd = $23
+  .label score_bcd = $25
   // The raster line of the next IRQ
-  .label irq_raster_next = $27
+  .label irq_raster_next = $29
   // Y-pos of the sprites on the next IRQ
-  .label irq_sprite_ypos = $28
+  .label irq_sprite_ypos = $2a
   // Index of the sprites to show on the next IRQ
-  .label irq_sprite_ptr = $29
+  .label irq_sprite_ptr = $2b
   // Counting the 10 IRQs
-  .label irq_cnt = $2a
+  .label irq_cnt = $2c
   // Keyboard event buffer size. The number of events currently in the event buffer
-  .label keyboard_events_size = $21
+  .label keyboard_events_size = $a
   // The rate of moving down the current piece (number of frames between moves if movedown is  not forced)
-  .label current_movedown_slow = $11
+  .label current_movedown_slow = $15
   // Position of top left corner of current moving piece on the playfield
-  .label current_xpos = $19
-  .label current_ypos = $d
+  .label current_xpos = $1d
+  .label current_ypos = $11
   // The curent piece orientation - each piece have 4 orientations (00/0x10/0x20/0x30).
   // The orientation chooses one of the 4 sub-graphics of the piece.
-  .label current_orientation = $16
+  .label current_orientation = $1a
   // Pointer to the current piece in the current orientation. Updated each time current_orientation is updated.
-  .label current_piece_gfx = $17
+  .label current_piece_gfx = $1b
   // The char of the current piece
-  .label current_piece_char = $15
+  .label current_piece_char = $19
   // Current level BCD-format
-  .label level_bcd = $12
+  .label level_bcd = $16
   // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render = 3
   // The screen currently to show next to the user. 0x00 for screen 1 / 0x20 for screen 2.
@@ -146,17 +146,17 @@
   // Counts up to the next movedown of current piece
   .label current_movedown_counter = 4
   // Current number of cleared lines in BCD-format
-  .label lines_bcd = $e
+  .label lines_bcd = $12
   // Current level in normal (non-BCD) format
-  .label level = $10
+  .label level = $14
   // The current moving piece. Points to the start of the piece definition.
-  .label current_piece = $13
+  .label current_piece = $17
   // Is the game over?
-  .label game_over = $1b
+  .label game_over = $1e
   // The index of the next moving piece. (0-6)
-  .label next_piece_idx = $1a
+  .label next_piece_idx = $1f
   // The current moving piece. Points to the start of the piece definition.
-  .label current_piece_1 = $a
+  .label current_piece_1 = $e
   // The screen currently being rendered to. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_render_1 = 5
   // Position of top left corner of current moving piece on the playfield
@@ -191,6 +191,142 @@ __start: {
     sta.z irq_cnt
     jsr main
     rts
+}
+// Raster Interrupt Routine - sets up the sprites covering the playfield
+// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
+// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
+sprites_irq: {
+    .const toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
+    .label raster_sprite_gfx_modify = $2d
+    sta rega+1
+    stx regx+1
+    // asm
+    //(*BG_COLOR)++;
+    // Clear decimal flag (because it is used by the score algorithm)
+    cld
+    // ypos = irq_sprite_ypos
+    // Place the sprites
+    lda.z irq_sprite_ypos
+    // SPRITES_YPOS[0] = ypos
+    sta SPRITES_YPOS
+    // SPRITES_YPOS[2] = ypos
+    sta SPRITES_YPOS+2
+    // SPRITES_YPOS[4] = ypos
+    sta SPRITES_YPOS+4
+    // SPRITES_YPOS[6] = ypos
+    sta SPRITES_YPOS+6
+    // irq_raster_next+1
+    ldx.z irq_raster_next
+    inx
+    // raster_sprite_gfx_modify = irq_raster_next+1
+    // Wait for the y-position before changing sprite pointers
+    stx.z raster_sprite_gfx_modify
+  __b8:
+    // while(*RASTER<raster_sprite_gfx_modify)
+    lda RASTER
+    cmp.z raster_sprite_gfx_modify
+    bcc __b8
+    // ptr = irq_sprite_ptr
+    ldx.z irq_sprite_ptr
+    // if(render_screen_showing==0)
+    lda.z render_screen_showing
+    cmp #0
+    beq __b1
+    // PLAYFIELD_SPRITE_PTRS_2[0] = ptr++
+    stx PLAYFIELD_SPRITE_PTRS_2
+    // PLAYFIELD_SPRITE_PTRS_2[0] = ptr++;
+    inx
+    txa
+    // PLAYFIELD_SPRITE_PTRS_2[1] = ptr
+    sta PLAYFIELD_SPRITE_PTRS_2+1
+    // PLAYFIELD_SPRITE_PTRS_2[2] = ptr++
+    sta PLAYFIELD_SPRITE_PTRS_2+2
+    // PLAYFIELD_SPRITE_PTRS_2[2] = ptr++;
+    clc
+    adc #1
+    // PLAYFIELD_SPRITE_PTRS_2[3] = ptr
+    sta PLAYFIELD_SPRITE_PTRS_2+3
+  __b2:
+    // ++irq_cnt;
+    inc.z irq_cnt
+    // if(irq_cnt==9)
+    lda #9
+    cmp.z irq_cnt
+    beq __b3
+    // if(irq_cnt==10)
+    lda #$a
+    cmp.z irq_cnt
+    beq __b4
+    // irq_raster_next += 20
+    lax.z irq_raster_next
+    axs #-[$14]
+    stx.z irq_raster_next
+    // irq_sprite_ypos += 21
+    lax.z irq_sprite_ypos
+    axs #-[$15]
+    stx.z irq_sprite_ypos
+    // irq_sprite_ptr += 3
+    lax.z irq_sprite_ptr
+    axs #-[3]
+    stx.z irq_sprite_ptr
+  __b5:
+    // *RASTER = irq_raster_next
+    // Setup next interrupt
+    lda.z irq_raster_next
+    sta RASTER
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ and setup the next one
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // }
+  rega:
+    lda #00
+  regx:
+    ldx #00
+    rti
+  __b4:
+    // irq_cnt = 0
+    lda #0
+    sta.z irq_cnt
+    // irq_raster_next = IRQ_RASTER_FIRST
+    lda #IRQ_RASTER_FIRST
+    sta.z irq_raster_next
+    // irq_sprite_ypos += 21
+    lax.z irq_sprite_ypos
+    axs #-[$15]
+    stx.z irq_sprite_ypos
+    // irq_sprite_ptr += 3
+    lax.z irq_sprite_ptr
+    axs #-[3]
+    stx.z irq_sprite_ptr
+    jmp __b5
+  __b3:
+    // irq_raster_next += 21
+    lax.z irq_raster_next
+    axs #-[$15]
+    stx.z irq_raster_next
+    // irq_sprite_ypos = SPRITES_FIRST_YPOS
+    lda #SPRITES_FIRST_YPOS
+    sta.z irq_sprite_ypos
+    // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES)
+    lda #toSpritePtr1_return
+    sta.z irq_sprite_ptr
+    jmp __b5
+  __b1:
+    // PLAYFIELD_SPRITE_PTRS_1[0] = ptr++
+    stx PLAYFIELD_SPRITE_PTRS_1
+    // PLAYFIELD_SPRITE_PTRS_1[0] = ptr++;
+    inx
+    // PLAYFIELD_SPRITE_PTRS_1[1] = ptr
+    stx PLAYFIELD_SPRITE_PTRS_1+1
+    // PLAYFIELD_SPRITE_PTRS_1[2] = ptr++
+    stx PLAYFIELD_SPRITE_PTRS_1+2
+    // PLAYFIELD_SPRITE_PTRS_1[2] = ptr++;
+    inx
+    txa
+    // PLAYFIELD_SPRITE_PTRS_1[3] = ptr
+    sta PLAYFIELD_SPRITE_PTRS_1+3
+    jmp __b2
 }
 main: {
     // SID->CH3_FREQ = 0xffff
@@ -322,152 +458,434 @@ main: {
     jsr render_screen_swap
     jmp __b1
 }
-// Swap rendering to the other screen (used for double buffering)
-render_screen_swap: {
-    // render_screen_render ^= 0x20
-    lda #$20
-    eor.z render_screen_render
-    sta.z render_screen_render
-    // render_screen_show ^= 0x20
-    lda #$20
-    eor.z render_screen_show
-    sta.z render_screen_show
-    // }
-    rts
-}
-// Show the current score
-render_score: {
-    .const score_offset = $28*5+$1c
-    .const lines_offset = $28*1+$16
-    .const level_offset = $28*$13+$1f
-    .label score_bytes = score_bcd
-    .label screen = $2c
-    // if(render_screen_render==0)
-    lda.z render_screen_render
-    cmp #0
-    beq __b1
-    lda #<PLAYFIELD_SCREEN_2
-    sta.z screen
-    lda #>PLAYFIELD_SCREEN_2
-    sta.z screen+1
-    jmp __b2
-  __b1:
+// Initialize rendering
+render_init: {
+    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)/$40
+    // Initialize the screen line pointers;
+    .label li_1 = $c
+    .label li_2 = $36
+    // CIA2->PORT_A_DDR = %00000011
+    lda #3
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
+    lda #vicSelectGfxBank1_toDd001_return
+    sta CIA2
+    // *D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3
+    // Enable Extended Background Color Mode
+    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
+    sta D011
+    // *BORDER_COLOR = BLACK
+    lda #BLACK
+    sta BORDER_COLOR
+    // *BG_COLOR = BLACK
+    sta BG_COLOR
+    // *BG_COLOR1 = PIECES_COLORS_1[0]
+    lda PIECES_COLORS_1
+    sta BG_COLOR1
+    // *BG_COLOR2 = PIECES_COLORS_2[0]
+    lda PIECES_COLORS_2
+    sta BG_COLOR2
+    // *BG_COLOR3 = GREY
+    lda #GREY
+    sta BG_COLOR3
+    // render_screen_original(PLAYFIELD_SCREEN_1)
+  // Setup chars on the screens
     lda #<PLAYFIELD_SCREEN_1
-    sta.z screen
+    sta.z render_screen_original.screen
     lda #>PLAYFIELD_SCREEN_1
-    sta.z screen+1
-  __b2:
-    // render_bcd( screen, score_offset, score_bytes[2], 0)
-    ldx score_bytes+2
+    sta.z render_screen_original.screen+1
+    jsr render_screen_original
+    // render_screen_original(PLAYFIELD_SCREEN_2)
+    lda #<PLAYFIELD_SCREEN_2
+    sta.z render_screen_original.screen
+    lda #>PLAYFIELD_SCREEN_2
+    sta.z render_screen_original.screen+1
+    jsr render_screen_original
+    lda #<PLAYFIELD_SCREEN_2+2*$28+$10
+    sta.z li_2
+    lda #>PLAYFIELD_SCREEN_2+2*$28+$10
+    sta.z li_2+1
+    lda #<PLAYFIELD_SCREEN_1+2*$28+$10
+    sta.z li_1
+    lda #>PLAYFIELD_SCREEN_1+2*$28+$10
+    sta.z li_1+1
     ldy #0
-    lda #<score_offset
-    sta.z render_bcd.offset
-    lda #>score_offset
-    sta.z render_bcd.offset+1
-    jsr render_bcd
-    // render_bcd( screen, score_offset+2, score_bytes[1], 0)
-    ldx score_bytes+1
-    ldy #0
-    lda #<score_offset+2
-    sta.z render_bcd.offset
-    lda #>score_offset+2
-    sta.z render_bcd.offset+1
-    jsr render_bcd
-    // render_bcd( screen, score_offset+4, score_bytes[0], 0)
-    ldx.z score_bytes
-    ldy #0
-    lda #<score_offset+4
-    sta.z render_bcd.offset
-    lda #>score_offset+4
-    sta.z render_bcd.offset+1
-    jsr render_bcd
-    // render_bcd( screen, lines_offset, >lines_bcd, 1)
-    ldx.z lines_bcd+1
-    ldy #1
-    lda #<lines_offset
-    sta.z render_bcd.offset
-    lda #>lines_offset
-    sta.z render_bcd.offset+1
-    jsr render_bcd
-    // render_bcd( screen, lines_offset+1, <lines_bcd, 0)
-    ldx.z lines_bcd
-    ldy #0
-    lda #<lines_offset+1
-    sta.z render_bcd.offset
-    lda #>lines_offset+1
-    sta.z render_bcd.offset+1
-    jsr render_bcd
-    // render_bcd( screen, level_offset, level_bcd, 0)
-    ldx.z level_bcd
-    ldy #0
-    lda #<level_offset
-    sta.z render_bcd.offset
-    lda #>level_offset
-    sta.z render_bcd.offset+1
-    jsr render_bcd
+  __b1:
+    // screen_lines_1[i] = li_1
+    tya
+    asl
+    tax
+    lda.z li_1
+    sta screen_lines_1,x
+    lda.z li_1+1
+    sta screen_lines_1+1,x
+    // screen_lines_2[i] = li_2
+    lda.z li_2
+    sta screen_lines_2,x
+    lda.z li_2+1
+    sta screen_lines_2+1,x
+    // li_1 += 40
+    lda #$28
+    clc
+    adc.z li_1
+    sta.z li_1
+    bcc !+
+    inc.z li_1+1
+  !:
+    // li_2 += 40
+    lda #$28
+    clc
+    adc.z li_2
+    sta.z li_2
+    bcc !+
+    inc.z li_2+1
+  !:
+    // for(char i:0..PLAYFIELD_LINES-1)
+    iny
+    cpy #PLAYFIELD_LINES-1+1
+    bne __b1
     // }
     rts
 }
-// Render BCD digits on a screen.
-// - screen: pointer to the screen to render on
-// - offset: offset on the screen
-// - bcd: The BCD-value to render
-// - only_low: if non-zero only renders the low digit
-// render_bcd(byte* zp($2c) screen, word zp($2e) offset, byte register(X) bcd, byte register(Y) only_low)
-render_bcd: {
-    .const ZERO_CHAR = $35
-    .label screen = $2c
-    .label screen_pos = $2e
-    .label offset = $2e
-    // screen_pos = screen+offset
-    lda.z screen_pos
-    clc
-    adc.z screen
-    sta.z screen_pos
-    lda.z screen_pos+1
-    adc.z screen+1
-    sta.z screen_pos+1
-    // if(only_low==0)
-    cpy #0
-    bne __b1
-    // bcd >> 4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // ZERO_CHAR + (bcd >> 4)
-    clc
-    adc #ZERO_CHAR
-    // *screen_pos++ = ZERO_CHAR + (bcd >> 4)
+// Setup the sprites
+sprites_init: {
+    .label xpos = $22
+    // *SPRITES_ENABLE = %00001111
+    lda #$f
+    sta SPRITES_ENABLE
+    // *SPRITES_MC = 0
+    lda #0
+    sta SPRITES_MC
+    // *SPRITES_EXPAND_Y = *SPRITES_MC = 0
+    sta SPRITES_EXPAND_Y
+    // *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0
+    sta SPRITES_EXPAND_X
+    lda #$18+$f*8
+    sta.z xpos
     ldy #0
-    sta (screen_pos),y
-    // *screen_pos++ = ZERO_CHAR + (bcd >> 4);
-    inc.z screen_pos
-    bne !+
-    inc.z screen_pos+1
-  !:
   __b1:
-    // bcd & 0x0f
-    txa
-    and #$f
-    // ZERO_CHAR + (bcd & 0x0f)
-    clc
-    adc #ZERO_CHAR
-    // *screen_pos++ = ZERO_CHAR + (bcd & 0x0f)
-    ldy #0
-    sta (screen_pos),y
+    // s2 = s*2
+    tya
+    asl
+    tax
+    // SPRITES_XPOS[s2] = xpos
+    lda.z xpos
+    sta SPRITES_XPOS,x
+    // SPRITES_COLOR[s] = BLACK
+    lda #BLACK
+    sta SPRITES_COLOR,y
+    // xpos = xpos+24
+    lax.z xpos
+    axs #-[$18]
+    stx.z xpos
+    // for(char s:0..3)
+    iny
+    cpy #4
+    bne __b1
     // }
     rts
+}
+// Setup the IRQ
+sprites_irq_init: {
+    // asm
+    sei
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge any IRQ and setup the next one
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // asm
+    lda CIA1_INTERRUPT
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+    // Disable kernal & basic
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *VIC_CONTROL &=0x7f
+    // Set raster line
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = IRQ_RASTER_FIRST
+    lda #IRQ_RASTER_FIRST
+    sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // *HARDWARE_IRQ = &sprites_irq
+    // Set the IRQ routine
+    lda #<sprites_irq
+    sta HARDWARE_IRQ
+    lda #>sprites_irq
+    sta HARDWARE_IRQ+1
+    // asm
+    cli
+    // }
+    rts
+}
+// Initialize play data tables
+play_init: {
+    .label pli = $c
+    // Initialize the playfield line pointers;
+    .label idx = $22
+    lda #0
+    sta.z idx
+    lda #<playfield
+    sta.z pli
+    lda #>playfield
+    sta.z pli+1
+    ldy #0
+  __b1:
+    // playfield_lines[j] = pli
+    tya
+    asl
+    tax
+    lda.z pli
+    sta playfield_lines,x
+    lda.z pli+1
+    sta playfield_lines+1,x
+    // playfield_lines_idx[j] = idx
+    lda.z idx
+    sta playfield_lines_idx,y
+    // pli += PLAYFIELD_COLS
+    lda #PLAYFIELD_COLS
+    clc
+    adc.z pli
+    sta.z pli
+    bcc !+
+    inc.z pli+1
+  !:
+    // idx += PLAYFIELD_COLS
+    lax.z idx
+    axs #-[PLAYFIELD_COLS]
+    stx.z idx
+    // for(char j:0..PLAYFIELD_LINES-1)
+    iny
+    cpy #PLAYFIELD_LINES-1+1
+    bne __b1
+    // playfield_lines_idx[PLAYFIELD_LINES] = PLAYFIELD_COLS*PLAYFIELD_LINES
+    lda #PLAYFIELD_COLS*PLAYFIELD_LINES
+    sta playfield_lines_idx+PLAYFIELD_LINES
+    // current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level]
+    // Set initial speed of moving down a tetromino
+    lda MOVEDOWN_SLOW_SPEEDS
+    sta.z current_movedown_slow
+    ldx #0
+  // Set the initial score add values
+  __b3:
+    // score_add_bcd[b] = SCORE_BASE_BCD[b]
+    txa
+    asl
+    asl
+    tay
+    lda SCORE_BASE_BCD,y
+    sta score_add_bcd,y
+    lda SCORE_BASE_BCD+1,y
+    sta score_add_bcd+1,y
+    lda SCORE_BASE_BCD+2,y
+    sta score_add_bcd+2,y
+    lda SCORE_BASE_BCD+3,y
+    sta score_add_bcd+3,y
+    // for(char b: 0..4)
+    inx
+    cpx #5
+    bne __b3
+    // }
+    rts
+}
+// Spawn a new piece
+// Moves the next piece into the current and spawns a new next piece
+play_spawn_current: {
+    .label __7 = $2f
+    // Spawn a new next piece
+    // Pick a random piece (0-6)
+    .label piece_idx = $1f
+    // current_piece_idx = next_piece_idx
+    // Move next piece into current
+    ldx.z next_piece_idx
+    // current_piece = PIECES[current_piece_idx]
+    txa
+    asl
+    sta.z __7
+    // current_piece_char = PIECES_CHARS[current_piece_idx]
+    lda PIECES_CHARS,x
+    sta.z current_piece_char
+    // current_xpos = PIECES_START_X[current_piece_idx]
+    lda PIECES_START_X,x
+    sta.z current_xpos
+    // current_ypos = PIECES_START_Y[current_piece_idx]
+    lda PIECES_START_Y,x
+    sta.z current_ypos
+    // play_collision(current_xpos,current_ypos,current_orientation)
+    lda.z current_xpos
+    sta.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldy.z __7
+    lda PIECES,y
+    sta.z current_piece_1
+    lda PIECES+1,y
+    sta.z current_piece_1+1
+    // play_collision(current_xpos,current_ypos,current_orientation)
+    ldx #0
+    jsr play_collision
+    // play_collision(current_xpos,current_ypos,current_orientation)
+    // if(play_collision(current_xpos,current_ypos,current_orientation)==COLLISION_PLAYFIELD)
+    cmp #COLLISION_PLAYFIELD
+    bne __b1
+    lda #1
+    sta.z game_over
+  __b1:
+    lda #7
+    sta.z piece_idx
+  __b2:
+    // while(piece_idx==7)
+    lda #7
+    cmp.z piece_idx
+    beq sid_rnd1
+    // }
+    rts
+  sid_rnd1:
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
+    // piece_idx = sid_rnd()&7
+    and #7
+    sta.z piece_idx
+    jmp __b2
+}
+// Render the static playfield on the screen (all pieces already locked into place)
+render_playfield: {
+    .label screen_line = $36
+    // Do not render the top 2 lines.
+    .label i = $b
+    .label c = $23
+    .label l = $22
+    lda #PLAYFIELD_COLS*2
+    sta.z i
+    lda #2
+    sta.z l
+  __b1:
+    // render_screen_render+l
+    txa
+    clc
+    adc.z l
+    // screen_line = screen_lines_1[render_screen_render+l]
+    asl
+    tay
+    lda screen_lines_1,y
+    sta.z screen_line
+    lda screen_lines_1+1,y
+    sta.z screen_line+1
+    lda #0
+    sta.z c
+  __b2:
+    // *(screen_line++) = playfield[i++]
+    ldy.z i
+    lda playfield,y
+    ldy #0
+    sta (screen_line),y
+    // *(screen_line++) = playfield[i++];
+    inc.z screen_line
+    bne !+
+    inc.z screen_line+1
+  !:
+    inc.z i
+    // for(char c:0..PLAYFIELD_COLS-1)
+    inc.z c
+    lda #PLAYFIELD_COLS-1+1
+    cmp.z c
+    bne __b2
+    // for(char l:2..PLAYFIELD_LINES-1)
+    inc.z l
+    lda #PLAYFIELD_LINES-1+1
+    cmp.z l
+    bne __b1
+    // }
+    rts
+}
+// Render the current moving piece at position (current_xpos, current_ypos)
+// Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
+render_moving: {
+    .label ypos = $22
+    .label screen_line = $30
+    .label xpos = $10
+    .label i = $23
+    .label l = $b
+    // ypos = current_ypos
+    stx.z ypos
+    lda #0
+    sta.z l
+    sta.z i
+  __b1:
+    // if(ypos>1)
+    lda.z ypos
+    cmp #1+1
+    bcs __b2
+    // i += 4
+    lax.z i
+    axs #-[4]
+    stx.z i
+  __b3:
+    // ypos++;
+    inc.z ypos
+    // for(char l:0..3)
+    inc.z l
+    lda #4
+    cmp.z l
+    bne __b1
+    // }
+    rts
+  __b2:
+    // render_screen_render+ypos
+    lda.z render_screen_render_1
+    clc
+    adc.z ypos
+    // screen_line = screen_lines_1[render_screen_render+ypos]
+    asl
+    tay
+    lda screen_lines_1,y
+    sta.z screen_line
+    lda screen_lines_1+1,y
+    sta.z screen_line+1
+    // xpos = current_xpos
+    lda.z current_xpos_1
+    sta.z xpos
+    ldx #0
+  __b4:
+    // current_cell = current_piece_gfx[i++]
+    ldy.z i
+    lda (current_piece_gfx_1),y
+    inc.z i
+    // if(current_cell!=0)
+    cmp #0
+    beq __b5
+    // screen_line[xpos] = current_piece_char
+    lda.z current_piece_char_1
+    ldy.z xpos
+    sta (screen_line),y
+  __b5:
+    // xpos++;
+    inc.z xpos
+    // for(char c:0..3)
+    inx
+    cpx #4
+    bne __b4
+    jmp __b3
 }
 // Render the next tetromino in the "next" area
 render_next: {
     // Find the screen area
     .const next_area_offset = $28*$c+$18+4
     .label next_piece_char = $32
-    .label next_piece_gfx = $2c
-    .label screen_next_area = $2e
-    .label l = $c
+    .label next_piece_gfx = $c
+    .label screen_next_area = $36
+    .label l = $10
     // if(render_screen_render==0)
     cpx #0
     beq __b1
@@ -544,133 +962,172 @@ render_next: {
     sta (screen_next_area),y
     jmp __b6
 }
-// Render the current moving piece at position (current_xpos, current_ypos)
-// Ignores cases where parts of the tetromino is outside the playfield (sides/bottom) since the movement collision routine prevents this.
-render_moving: {
-    .label ypos = $c
-    .label screen_line = $2c
-    .label xpos = $1e
-    .label i = $1d
-    .label l = $1c
-    // ypos = current_ypos
-    stx.z ypos
-    lda #0
-    sta.z l
-    sta.z i
+// Update 0xD018 to show the current screen (used for double buffering)
+render_show: {
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
+    .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
+    // if(render_screen_show==0)
+    lda.z render_screen_show
+    cmp #0
+    beq toD0181
+    lda #toD0182_return
   __b1:
-    // if(ypos>1)
-    lda.z ypos
-    cmp #1+1
-    bcs __b2
-    // i += 4
-    lax.z i
-    axs #-[4]
-    stx.z i
-  __b3:
-    // ypos++;
-    inc.z ypos
-    // for(char l:0..3)
-    inc.z l
-    lda #4
-    cmp.z l
-    bne __b1
+    // *D018 = d018val
+    sta D018
+    // *BG_COLOR1 = PIECES_COLORS_1[level]
+    ldy.z level
+    lda PIECES_COLORS_1,y
+    sta BG_COLOR1
+    // *BG_COLOR2 = PIECES_COLORS_2[level]
+    lda PIECES_COLORS_2,y
+    sta BG_COLOR2
+    // render_screen_showing = render_screen_show
+    lda.z render_screen_show
+    sta.z render_screen_showing
     // }
     rts
-  __b2:
-    // render_screen_render+ypos
-    lda.z render_screen_render_1
-    clc
-    adc.z ypos
-    // screen_line = screen_lines_1[render_screen_render+ypos]
-    asl
-    tay
-    lda screen_lines_1,y
-    sta.z screen_line
-    lda screen_lines_1+1,y
-    sta.z screen_line+1
-    // xpos = current_xpos
-    lda.z current_xpos_1
-    sta.z xpos
-    ldx #0
-  __b4:
-    // current_cell = current_piece_gfx[i++]
-    ldy.z i
-    lda (current_piece_gfx_1),y
-    inc.z i
-    // if(current_cell!=0)
-    cmp #0
-    beq __b5
-    // screen_line[xpos] = current_piece_char
-    lda.z current_piece_char_1
-    ldy.z xpos
-    sta (screen_line),y
-  __b5:
-    // xpos++;
-    inc.z xpos
-    // for(char c:0..3)
-    inx
-    cpx #4
-    bne __b4
-    jmp __b3
+  toD0181:
+    lda #toD0181_return
+    jmp __b1
 }
-// Render the static playfield on the screen (all pieces already locked into place)
-render_playfield: {
-    .label screen_line = $2c
-    // Do not render the top 2 lines.
-    .label i = $1d
-    .label c = $1e
-    .label l = $1c
-    lda #PLAYFIELD_COLS*2
-    sta.z i
-    lda #2
-    sta.z l
-  __b1:
-    // render_screen_render+l
-    txa
-    clc
-    adc.z l
-    // screen_line = screen_lines_1[render_screen_render+l]
-    asl
-    tay
-    lda screen_lines_1,y
-    sta.z screen_line
-    lda screen_lines_1+1,y
-    sta.z screen_line+1
+// Scans the entire matrix to determine which keys have been pressed/depressed.
+// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+// Handles debounce and only generates events when the status of a key changes.
+// Also stores current status of modifiers in keyboard_modifiers.
+keyboard_event_scan: {
+    .label row_scan = $33
+    .label keycode = $23
+    .label row = $b
     lda #0
-    sta.z c
-  __b2:
-    // *(screen_line++) = playfield[i++]
-    ldy.z i
-    lda playfield,y
-    ldy #0
-    sta (screen_line),y
-    // *(screen_line++) = playfield[i++];
-    inc.z screen_line
-    bne !+
-    inc.z screen_line+1
-  !:
-    inc.z i
-    // for(char c:0..PLAYFIELD_COLS-1)
-    inc.z c
-    lda #PLAYFIELD_COLS-1+1
-    cmp.z c
-    bne __b2
-    // for(char l:2..PLAYFIELD_LINES-1)
-    inc.z l
-    lda #PLAYFIELD_LINES-1+1
-    cmp.z l
-    bne __b1
+    sta.z keycode
+    sta.z row
+  __b7:
+    // keyboard_matrix_read(row)
+    ldx.z row
+    jsr keyboard_matrix_read
+    // row_scan = keyboard_matrix_read(row)
+    sta.z row_scan
+    // if(row_scan!=keyboard_scan_values[row])
+    ldy.z row
+    cmp keyboard_scan_values,y
+    bne __b5
+    // keycode = keycode + 8
+    lax.z keycode
+    axs #-[8]
+    stx.z keycode
+  __b8:
+    // for(char row : 0..7)
+    inc.z row
+    lda #8
+    cmp.z row
+    bne __b7
+    // keyboard_event_pressed(KEY_LSHIFT)
+    ldx #KEY_LSHIFT
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_LSHIFT)
+    // if(keyboard_event_pressed(KEY_LSHIFT)!= 0)
+    cmp #0
+    // keyboard_event_pressed(KEY_RSHIFT)
+    ldx #KEY_RSHIFT
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_RSHIFT)
+    // if(keyboard_event_pressed(KEY_RSHIFT)!= 0)
+    cmp #0
+    // keyboard_event_pressed(KEY_CTRL)
+    ldx #KEY_CTRL
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_CTRL)
+    // if(keyboard_event_pressed(KEY_CTRL)!= 0)
+    cmp #0
+    // keyboard_event_pressed(KEY_COMMODORE)
+    ldx #KEY_COMMODORE
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_COMMODORE)
+    // if(keyboard_event_pressed(KEY_COMMODORE)!= 0)
+    cmp #0
+    // }
+    rts
+  // Something has changed on the keyboard row - check each column
+  __b5:
+    ldx #0
+  __b9:
+    // row_scan^keyboard_scan_values[row]
+    lda.z row_scan
+    ldy.z row
+    eor keyboard_scan_values,y
+    // (row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col]
+    and keyboard_matrix_col_bitmask,x
+    // if(((row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col])!=0)
+    cmp #0
+    beq __b10
+    // if(keyboard_events_size!=8)
+    lda #8
+    cmp.z keyboard_events_size
+    beq __b10
+    // event_type = row_scan&keyboard_matrix_col_bitmask[col]
+    lda keyboard_matrix_col_bitmask,x
+    and.z row_scan
+    // if(event_type==0)
+    cmp #0
+    beq __b11
+    // keyboard_events[keyboard_events_size++] = keycode
+    // Key pressed
+    lda.z keycode
+    ldy.z keyboard_events_size
+    sta keyboard_events,y
+    // keyboard_events[keyboard_events_size++] = keycode;
+    inc.z keyboard_events_size
+  __b10:
+    // keycode++;
+    inc.z keycode
+    // for(char col : 0..7)
+    inx
+    cpx #8
+    bne __b9
+    // keyboard_scan_values[row] = row_scan
+    // Store the current keyboard status for the row to debounce
+    lda.z row_scan
+    ldy.z row
+    sta keyboard_scan_values,y
+    jmp __b8
+  __b11:
+    // keycode|$40
+    lda #$40
+    ora.z keycode
+    // keyboard_events[keyboard_events_size++] = keycode|$40
+    // Key released
+    ldy.z keyboard_events_size
+    sta keyboard_events,y
+    // keyboard_events[keyboard_events_size++] = keycode|$40;
+    inc.z keyboard_events_size
+    jmp __b10
+}
+// Get the next event from the keyboard event buffer.
+// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+// The buffer is filled by keyboard_event_scan()
+keyboard_event_get: {
+    // if(keyboard_events_size==0)
+    lda.z keyboard_events_size
+    cmp #0
+    beq __b1
+    // return keyboard_events[--keyboard_events_size];
+    dec.z keyboard_events_size
+    ldy.z keyboard_events_size
+    lda keyboard_events,y
+    rts
+  __b1:
+    lda #$ff
     // }
     rts
 }
 // Perform any movement of the current piece
 // key_event is the next keyboard_event() og 0xff if no keyboard event is pending
 // Returns a byte signaling whether rendering is needed. (0 no render, >0 render needed)
-// play_movement(byte zp($2b) key_event)
+// play_movement(byte zp($2e) key_event)
 play_movement: {
-    .label render = $1f
-    .label return = $1f
-    .label key_event = $2b
+    .label render = $b
+    .label return = $b
+    .label key_event = $2e
     // play_move_down(key_event)
     lda.z key_event
     jsr play_move_down
@@ -700,81 +1157,216 @@ play_movement: {
     sta.z return
     rts
 }
-// Rotate the current piece  based on key-presses
-// Return non-zero if a render is needed
-// play_move_rotate(byte register(A) key_event)
-play_move_rotate: {
-    // Handle keyboard events
-    .label orientation = $c
-    // if(key_event==KEY_Z)
-    cmp #KEY_Z
+// Show the current score
+render_score: {
+    .const score_offset = $28*5+$1c
+    .const lines_offset = $28*1+$16
+    .const level_offset = $28*$13+$1f
+    .label score_bytes = score_bcd
+    .label screen = $c
+    // if(render_screen_render==0)
+    lda.z render_screen_render
+    cmp #0
     beq __b1
-    // if(key_event==KEY_X)
-    cmp #KEY_X
-    beq __b2
-  __b4:
-    lda #0
+    lda #<PLAYFIELD_SCREEN_2
+    sta.z screen
+    lda #>PLAYFIELD_SCREEN_2
+    sta.z screen+1
+    jmp __b2
+  __b1:
+    lda #<PLAYFIELD_SCREEN_1
+    sta.z screen
+    lda #>PLAYFIELD_SCREEN_1
+    sta.z screen+1
+  __b2:
+    // render_bcd( screen, score_offset, score_bytes[2], 0)
+    ldx score_bytes+2
+    ldy #0
+    lda #<score_offset
+    sta.z render_bcd.offset
+    lda #>score_offset
+    sta.z render_bcd.offset+1
+    jsr render_bcd
+    // render_bcd( screen, score_offset+2, score_bytes[1], 0)
+    ldx score_bytes+1
+    ldy #0
+    lda #<score_offset+2
+    sta.z render_bcd.offset
+    lda #>score_offset+2
+    sta.z render_bcd.offset+1
+    jsr render_bcd
+    // render_bcd( screen, score_offset+4, score_bytes[0], 0)
+    ldx.z score_bytes
+    ldy #0
+    lda #<score_offset+4
+    sta.z render_bcd.offset
+    lda #>score_offset+4
+    sta.z render_bcd.offset+1
+    jsr render_bcd
+    // render_bcd( screen, lines_offset, >lines_bcd, 1)
+    ldx.z lines_bcd+1
+    ldy #1
+    lda #<lines_offset
+    sta.z render_bcd.offset
+    lda #>lines_offset
+    sta.z render_bcd.offset+1
+    jsr render_bcd
+    // render_bcd( screen, lines_offset+1, <lines_bcd, 0)
+    ldx.z lines_bcd
+    ldy #0
+    lda #<lines_offset+1
+    sta.z render_bcd.offset
+    lda #>lines_offset+1
+    sta.z render_bcd.offset+1
+    jsr render_bcd
+    // render_bcd( screen, level_offset, level_bcd, 0)
+    ldx.z level_bcd
+    ldy #0
+    lda #<level_offset
+    sta.z render_bcd.offset
+    lda #>level_offset
+    sta.z render_bcd.offset+1
+    jsr render_bcd
     // }
     rts
-  __b2:
-    // current_orientation+0x10
-    lax.z current_orientation
-    axs #-[$10]
-    // orientation = (current_orientation+0x10)&0x3f
-    lda #$3f
-    sax.z orientation
-  __b3:
-    // play_collision(current_xpos, current_ypos, orientation)
-    lda.z current_xpos
-    sta.z play_collision.xpos
-    lda.z current_ypos
-    sta.z play_collision.ypos
-    ldx.z orientation
-    lda.z current_piece
-    sta.z current_piece_1
-    lda.z current_piece+1
-    sta.z current_piece_1+1
-    // play_collision(current_xpos, current_ypos, orientation)
-    jsr play_collision
-    // play_collision(current_xpos, current_ypos, orientation)
-    // if(play_collision(current_xpos, current_ypos, orientation) == COLLISION_NONE)
-    cmp #COLLISION_NONE
-    bne __b4
-    // current_orientation = orientation
-    lda.z orientation
-    sta.z current_orientation
-    // current_piece_gfx = current_piece + current_orientation
-    clc
-    adc.z current_piece
-    sta.z current_piece_gfx
-    lda #0
-    adc.z current_piece+1
-    sta.z current_piece_gfx+1
-    lda #1
+}
+// Swap rendering to the other screen (used for double buffering)
+render_screen_swap: {
+    // render_screen_render ^= 0x20
+    lda #$20
+    eor.z render_screen_render
+    sta.z render_screen_render
+    // render_screen_show ^= 0x20
+    lda #$20
+    eor.z render_screen_show
+    sta.z render_screen_show
+    // }
     rts
+}
+// Copy the original screen data to the passed screen
+// Also copies colors to 0xd800
+// render_screen_original(byte* zp($30) screen)
+render_screen_original: {
+    .const SPACE = 0
+    .label screen = $30
+    .label cols = $34
+    .label oscr = $36
+    .label ocols = $20
+    .label y = $23
+    lda #0
+    sta.z y
+    lda #<PLAYFIELD_COLORS_ORIGINAL+$20*2
+    sta.z ocols
+    lda #>PLAYFIELD_COLORS_ORIGINAL+$20*2
+    sta.z ocols+1
+    lda #<PLAYFIELD_SCREEN_ORIGINAL+$20*2
+    sta.z oscr
+    lda #>PLAYFIELD_SCREEN_ORIGINAL+$20*2
+    sta.z oscr+1
+    lda #<COLS
+    sta.z cols
+    lda #>COLS
+    sta.z cols+1
   __b1:
-    // current_orientation-0x10
-    lda.z current_orientation
-    sec
-    sbc #$10
-    // orientation = (current_orientation-0x10)&0x3f
-    and #$3f
-    sta.z orientation
-    jmp __b3
+    ldx #0
+  __b2:
+    // *screen++ = SPACE
+    lda #SPACE
+    ldy #0
+    sta (screen),y
+    // *screen++ = SPACE;
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // *cols++ = BLACK
+    lda #BLACK
+    ldy #0
+    sta (cols),y
+    // *cols++ = BLACK;
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
+    // while(++x!=4)
+    inx
+    cpx #4
+    bne __b2
+  __b3:
+    // *screen++ = *oscr++
+    ldy #0
+    lda (oscr),y
+    sta (screen),y
+    // *screen++ = *oscr++;
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    inc.z oscr
+    bne !+
+    inc.z oscr+1
+  !:
+    // *cols++ = *ocols++
+    ldy #0
+    lda (ocols),y
+    sta (cols),y
+    // *cols++ = *ocols++;
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
+    inc.z ocols
+    bne !+
+    inc.z ocols+1
+  !:
+    // while(++x!=36)
+    inx
+    cpx #$24
+    bne __b3
+  __b4:
+    // *screen++ = SPACE
+    lda #SPACE
+    ldy #0
+    sta (screen),y
+    // *screen++ = SPACE;
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // *cols++ = BLACK
+    lda #BLACK
+    ldy #0
+    sta (cols),y
+    // *cols++ = BLACK;
+    inc.z cols
+    bne !+
+    inc.z cols+1
+  !:
+    // while(++x!=40)
+    inx
+    cpx #$28
+    bne __b4
+    // for(char y:0..24)
+    inc.z y
+    lda #$19
+    cmp.z y
+    bne __b1
+    // }
+    rts
 }
 // Test if there is a collision between the current piece moved to (x, y) and anything on the playfield or the playfield boundaries
 // Returns information about the type of the collision detected
-// play_collision(byte zp($1c) xpos, byte zp($1d) ypos, byte register(X) orientation)
+// play_collision(byte zp($10) xpos, byte zp($32) ypos, byte register(X) orientation)
 play_collision: {
-    .label xpos = $1c
-    .label ypos = $1d
-    .label piece_gfx = $2e
-    .label yp = $1d
-    .label playfield_line = $30
-    .label i = $32
-    .label xp = $3b
-    .label l = $1e
-    .label i_1 = $20
+    .label xpos = $10
+    .label ypos = $32
+    .label piece_gfx = $34
+    .label yp = $32
+    .label playfield_line = $36
+    .label i = $38
+    .label xp = $22
+    .label l = $33
+    .label i_1 = $39
     // piece_gfx = current_piece + orientation
     txa
     clc
@@ -863,70 +1455,49 @@ play_collision: {
     sta.z i_1
     jmp __b2
 }
-// Move left/right or rotate the current piece
-// Return non-zero if a render is needed
-// play_move_leftright(byte register(A) key_event)
-play_move_leftright: {
-    // if(key_event==KEY_COMMA)
-    // Handle keyboard events
-    cmp #KEY_COMMA
-    beq __b1
-    // if(key_event==KEY_DOT)
-    cmp #KEY_DOT
-    bne __b3
-    // play_collision(current_xpos+1,current_ypos,current_orientation)
-    ldy.z current_xpos
-    iny
-    sty.z play_collision.xpos
-    lda.z current_ypos
-    sta.z play_collision.ypos
-    ldx.z current_orientation
-    lda.z current_piece
-    sta.z current_piece_1
-    lda.z current_piece+1
-    sta.z current_piece_1+1
-    // play_collision(current_xpos+1,current_ypos,current_orientation)
-    jsr play_collision
-    // play_collision(current_xpos+1,current_ypos,current_orientation)
-    // if(play_collision(current_xpos+1,current_ypos,current_orientation)==COLLISION_NONE)
-    cmp #COLLISION_NONE
-    bne __b3
-    // current_xpos++;
-    inc.z current_xpos
-  __b2:
-    lda #1
-    rts
-  __b3:
-    lda #0
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(X) rowid)
+keyboard_matrix_read: {
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
+    lda keyboard_matrix_row_bitmask,x
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
+    eor #$ff
     // }
     rts
-  __b1:
-    // play_collision(current_xpos-1,current_ypos,current_orientation)
-    ldx.z current_xpos
-    dex
-    stx.z play_collision.xpos
-    lda.z current_ypos
-    sta.z play_collision.ypos
-    ldx.z current_orientation
-    lda.z current_piece
-    sta.z current_piece_1
-    lda.z current_piece+1
-    sta.z current_piece_1+1
-    // play_collision(current_xpos-1,current_ypos,current_orientation)
-    jsr play_collision
-    // play_collision(current_xpos-1,current_ypos,current_orientation)
-    // if(play_collision(current_xpos-1,current_ypos,current_orientation)==COLLISION_NONE)
-    cmp #COLLISION_NONE
-    bne __b3
-    // current_xpos--;
-    dec.z current_xpos
-    jmp __b2
+}
+// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+// Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte register(X) keycode)
+keyboard_event_pressed: {
+    // keycode>>3
+    txa
+    lsr
+    lsr
+    lsr
+    tay
+    // row_bits = keyboard_scan_values[keycode>>3]
+    lda keyboard_scan_values,y
+    tay
+    // keycode&7
+    lda #7
+    axs #0
+    // row_bits & keyboard_matrix_col_bitmask[keycode&7]
+    tya
+    and keyboard_matrix_col_bitmask,x
+    // }
+    rts
 }
 // Move down the current piece
 // Return non-zero if a render is needed
 // play_move_down(byte register(A) key_event)
 play_move_down: {
-    .label movedown = $c
+    .label movedown = $10
     // ++current_movedown_counter;
     inc.z current_movedown_counter
     // if(key_event==KEY_SPACE)
@@ -1021,71 +1592,321 @@ play_move_down: {
     inc.z current_ypos
     jmp __b11
 }
-// Spawn a new piece
-// Moves the next piece into the current and spawns a new next piece
-play_spawn_current: {
-    .label __7 = $33
-    // Spawn a new next piece
-    // Pick a random piece (0-6)
-    .label piece_idx = $1a
-    // current_piece_idx = next_piece_idx
-    // Move next piece into current
-    ldx.z next_piece_idx
-    // current_piece = PIECES[current_piece_idx]
-    txa
-    asl
-    sta.z __7
-    // current_piece_char = PIECES_CHARS[current_piece_idx]
-    lda PIECES_CHARS,x
-    sta.z current_piece_char
-    // current_xpos = PIECES_START_X[current_piece_idx]
-    lda PIECES_START_X,x
-    sta.z current_xpos
-    // current_ypos = PIECES_START_Y[current_piece_idx]
-    lda PIECES_START_Y,x
-    sta.z current_ypos
-    // play_collision(current_xpos,current_ypos,current_orientation)
+// Move left/right or rotate the current piece
+// Return non-zero if a render is needed
+// play_move_leftright(byte register(A) key_event)
+play_move_leftright: {
+    // if(key_event==KEY_COMMA)
+    // Handle keyboard events
+    cmp #KEY_COMMA
+    beq __b1
+    // if(key_event==KEY_DOT)
+    cmp #KEY_DOT
+    bne __b3
+    // play_collision(current_xpos+1,current_ypos,current_orientation)
+    ldy.z current_xpos
+    iny
+    sty.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldx.z current_orientation
+    lda.z current_piece
+    sta.z current_piece_1
+    lda.z current_piece+1
+    sta.z current_piece_1+1
+    // play_collision(current_xpos+1,current_ypos,current_orientation)
+    jsr play_collision
+    // play_collision(current_xpos+1,current_ypos,current_orientation)
+    // if(play_collision(current_xpos+1,current_ypos,current_orientation)==COLLISION_NONE)
+    cmp #COLLISION_NONE
+    bne __b3
+    // current_xpos++;
+    inc.z current_xpos
+  __b2:
+    lda #1
+    rts
+  __b3:
+    lda #0
+    // }
+    rts
+  __b1:
+    // play_collision(current_xpos-1,current_ypos,current_orientation)
+    ldx.z current_xpos
+    dex
+    stx.z play_collision.xpos
+    lda.z current_ypos
+    sta.z play_collision.ypos
+    ldx.z current_orientation
+    lda.z current_piece
+    sta.z current_piece_1
+    lda.z current_piece+1
+    sta.z current_piece_1+1
+    // play_collision(current_xpos-1,current_ypos,current_orientation)
+    jsr play_collision
+    // play_collision(current_xpos-1,current_ypos,current_orientation)
+    // if(play_collision(current_xpos-1,current_ypos,current_orientation)==COLLISION_NONE)
+    cmp #COLLISION_NONE
+    bne __b3
+    // current_xpos--;
+    dec.z current_xpos
+    jmp __b2
+}
+// Rotate the current piece  based on key-presses
+// Return non-zero if a render is needed
+// play_move_rotate(byte register(A) key_event)
+play_move_rotate: {
+    // Handle keyboard events
+    .label orientation = $23
+    // if(key_event==KEY_Z)
+    cmp #KEY_Z
+    beq __b1
+    // if(key_event==KEY_X)
+    cmp #KEY_X
+    beq __b2
+  __b4:
+    lda #0
+    // }
+    rts
+  __b2:
+    // current_orientation+0x10
+    lax.z current_orientation
+    axs #-[$10]
+    // orientation = (current_orientation+0x10)&0x3f
+    lda #$3f
+    sax.z orientation
+  __b3:
+    // play_collision(current_xpos, current_ypos, orientation)
     lda.z current_xpos
     sta.z play_collision.xpos
     lda.z current_ypos
     sta.z play_collision.ypos
-    ldy.z __7
-    lda PIECES,y
+    ldx.z orientation
+    lda.z current_piece
     sta.z current_piece_1
-    lda PIECES+1,y
+    lda.z current_piece+1
     sta.z current_piece_1+1
-    // play_collision(current_xpos,current_ypos,current_orientation)
-    ldx #0
+    // play_collision(current_xpos, current_ypos, orientation)
     jsr play_collision
-    // play_collision(current_xpos,current_ypos,current_orientation)
-    // if(play_collision(current_xpos,current_ypos,current_orientation)==COLLISION_PLAYFIELD)
-    cmp #COLLISION_PLAYFIELD
-    bne __b1
+    // play_collision(current_xpos, current_ypos, orientation)
+    // if(play_collision(current_xpos, current_ypos, orientation) == COLLISION_NONE)
+    cmp #COLLISION_NONE
+    bne __b4
+    // current_orientation = orientation
+    lda.z orientation
+    sta.z current_orientation
+    // current_piece_gfx = current_piece + current_orientation
+    clc
+    adc.z current_piece
+    sta.z current_piece_gfx
+    lda #0
+    adc.z current_piece+1
+    sta.z current_piece_gfx+1
     lda #1
-    sta.z game_over
+    rts
   __b1:
-    lda #7
-    sta.z piece_idx
-  __b2:
-    // while(piece_idx==7)
-    lda #7
-    cmp.z piece_idx
-    beq sid_rnd1
+    // current_orientation-0x10
+    lda.z current_orientation
+    sec
+    sbc #$10
+    // orientation = (current_orientation-0x10)&0x3f
+    and #$3f
+    sta.z orientation
+    jmp __b3
+}
+// Render BCD digits on a screen.
+// - screen: pointer to the screen to render on
+// - offset: offset on the screen
+// - bcd: The BCD-value to render
+// - only_low: if non-zero only renders the low digit
+// render_bcd(byte* zp($c) screen, word zp($20) offset, byte register(X) bcd, byte register(Y) only_low)
+render_bcd: {
+    .const ZERO_CHAR = $35
+    .label screen = $c
+    .label screen_pos = $20
+    .label offset = $20
+    // screen_pos = screen+offset
+    lda.z screen_pos
+    clc
+    adc.z screen
+    sta.z screen_pos
+    lda.z screen_pos+1
+    adc.z screen+1
+    sta.z screen_pos+1
+    // if(only_low==0)
+    cpy #0
+    bne __b1
+    // bcd >> 4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // ZERO_CHAR + (bcd >> 4)
+    clc
+    adc #ZERO_CHAR
+    // *screen_pos++ = ZERO_CHAR + (bcd >> 4)
+    ldy #0
+    sta (screen_pos),y
+    // *screen_pos++ = ZERO_CHAR + (bcd >> 4);
+    inc.z screen_pos
+    bne !+
+    inc.z screen_pos+1
+  !:
+  __b1:
+    // bcd & 0x0f
+    txa
+    and #$f
+    // ZERO_CHAR + (bcd & 0x0f)
+    clc
+    adc #ZERO_CHAR
+    // *screen_pos++ = ZERO_CHAR + (bcd & 0x0f)
+    ldy #0
+    sta (screen_pos),y
     // }
     rts
-  sid_rnd1:
-    // return SID->CH3_OSC;
-    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
-    // piece_idx = sid_rnd()&7
-    and #7
-    sta.z piece_idx
+}
+// Lock the current piece onto the playfield
+play_lock_current: {
+    .label yp = $32
+    .label playfield_line = $36
+    .label xp = $22
+    .label i = $38
+    .label l = $33
+    .label i_1 = $39
+    // yp = current_ypos
+    lda.z current_ypos
+    sta.z yp
+    lda #0
+    sta.z l
+    sta.z i_1
+  __b1:
+    // playfield_line = playfield_lines[yp]
+    lda.z yp
+    asl
+    tay
+    lda playfield_lines,y
+    sta.z playfield_line
+    lda playfield_lines+1,y
+    sta.z playfield_line+1
+    // xp = current_xpos
+    lda.z current_xpos
+    sta.z xp
+    ldx #0
+  __b2:
+    // if(current_piece_gfx[i++]!=0)
+    ldy.z i_1
+    iny
+    sty.z i
+    ldy.z i_1
+    lda (current_piece_gfx),y
+    cmp #0
+    beq __b3
+    // playfield_line[xp] = current_piece_char
+    lda.z current_piece_char
+    ldy.z xp
+    sta (playfield_line),y
+  __b3:
+    // xp++;
+    inc.z xp
+    // for(char c:0..3)
+    inx
+    cpx #4
+    bne __b7
+    // yp++;
+    inc.z yp
+    // for(char l:0..3)
+    inc.z l
+    lda #4
+    cmp.z l
+    bne __b6
+    // }
+    rts
+  __b6:
+    lda.z i
+    sta.z i_1
+    jmp __b1
+  __b7:
+    lda.z i
+    sta.z i_1
     jmp __b2
+}
+// Look through the playfield for lines - and remove any lines found
+// Utilizes two cursors on the playfield - one reading cells and one writing cells
+// Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
+// Returns the number of lines removed
+play_remove_lines: {
+    .label c = $39
+    .label x = $32
+    .label y = $23
+    .label removed = $2f
+    .label full = $33
+    lda #0
+    sta.z removed
+    sta.z y
+    ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
+    ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
+  // Read all lines and rewrite them
+  __b1:
+    lda #1
+    sta.z full
+    lda #0
+    sta.z x
+  __b2:
+    // c = playfield[r--]
+    lda playfield,y
+    sta.z c
+    dey
+    // if(c==0)
+    cmp #0
+    bne __b3
+    lda #0
+    sta.z full
+  __b3:
+    // playfield[w--] = c
+    lda.z c
+    sta playfield,x
+    // playfield[w--] = c;
+    dex
+    // for(char x:0..PLAYFIELD_COLS-1)
+    inc.z x
+    lda #PLAYFIELD_COLS-1+1
+    cmp.z x
+    bne __b2
+    // if(full==1)
+    lda #1
+    cmp.z full
+    bne __b6
+    // w = w + PLAYFIELD_COLS
+    txa
+    axs #-[PLAYFIELD_COLS]
+    // removed++;
+    inc.z removed
+  __b6:
+    // for(char y:0..PLAYFIELD_LINES-1)
+    inc.z y
+    lda #PLAYFIELD_LINES-1+1
+    cmp.z y
+    bne __b1
+  __b4:
+  // Write zeros in the rest of the lines
+    // while(w!=0xff)
+    cpx #$ff
+    bne __b8
+    // }
+    rts
+  __b8:
+    // playfield[w--] = 0
+    lda #0
+    sta playfield,x
+    // playfield[w--] = 0;
+    dex
+    jmp __b4
 }
 // Update the score based on the number of lines removed
 // play_update_score(byte register(X) removed)
 play_update_score: {
-    .label lines_before = $33
-    .label add_bcd = $34
+    .label lines_before = $39
+    .label add_bcd = $3a
     // if(removed!=0)
     cpx #0
     beq __breturn
@@ -1209,827 +2030,6 @@ play_increase_level: {
     cld
     // }
     rts
-}
-// Look through the playfield for lines - and remove any lines found
-// Utilizes two cursors on the playfield - one reading cells and one writing cells
-// Whenever a full line is detected the writing cursor is instructed to write to the same line once more.
-// Returns the number of lines removed
-play_remove_lines: {
-    .label c = $3a
-    .label x = $1e
-    .label y = $1c
-    .label removed = $1d
-    .label full = $20
-    lda #0
-    sta.z removed
-    sta.z y
-    ldx #PLAYFIELD_LINES*PLAYFIELD_COLS-1
-    ldy #PLAYFIELD_LINES*PLAYFIELD_COLS-1
-  // Read all lines and rewrite them
-  __b1:
-    lda #1
-    sta.z full
-    lda #0
-    sta.z x
-  __b2:
-    // c = playfield[r--]
-    lda playfield,y
-    sta.z c
-    dey
-    // if(c==0)
-    cmp #0
-    bne __b3
-    lda #0
-    sta.z full
-  __b3:
-    // playfield[w--] = c
-    lda.z c
-    sta playfield,x
-    // playfield[w--] = c;
-    dex
-    // for(char x:0..PLAYFIELD_COLS-1)
-    inc.z x
-    lda #PLAYFIELD_COLS-1+1
-    cmp.z x
-    bne __b2
-    // if(full==1)
-    lda #1
-    cmp.z full
-    bne __b6
-    // w = w + PLAYFIELD_COLS
-    txa
-    axs #-[PLAYFIELD_COLS]
-    // removed++;
-    inc.z removed
-  __b6:
-    // for(char y:0..PLAYFIELD_LINES-1)
-    inc.z y
-    lda #PLAYFIELD_LINES-1+1
-    cmp.z y
-    bne __b1
-  __b4:
-  // Write zeros in the rest of the lines
-    // while(w!=0xff)
-    cpx #$ff
-    bne __b8
-    // }
-    rts
-  __b8:
-    // playfield[w--] = 0
-    lda #0
-    sta playfield,x
-    // playfield[w--] = 0;
-    dex
-    jmp __b4
-}
-// Lock the current piece onto the playfield
-play_lock_current: {
-    .label yp = $3b
-    .label playfield_line = $38
-    .label xp = $33
-    .label i = $3a
-    .label l = $20
-    .label i_1 = $32
-    // yp = current_ypos
-    lda.z current_ypos
-    sta.z yp
-    lda #0
-    sta.z l
-    sta.z i_1
-  __b1:
-    // playfield_line = playfield_lines[yp]
-    lda.z yp
-    asl
-    tay
-    lda playfield_lines,y
-    sta.z playfield_line
-    lda playfield_lines+1,y
-    sta.z playfield_line+1
-    // xp = current_xpos
-    lda.z current_xpos
-    sta.z xp
-    ldx #0
-  __b2:
-    // if(current_piece_gfx[i++]!=0)
-    ldy.z i_1
-    iny
-    sty.z i
-    ldy.z i_1
-    lda (current_piece_gfx),y
-    cmp #0
-    beq __b3
-    // playfield_line[xp] = current_piece_char
-    lda.z current_piece_char
-    ldy.z xp
-    sta (playfield_line),y
-  __b3:
-    // xp++;
-    inc.z xp
-    // for(char c:0..3)
-    inx
-    cpx #4
-    bne __b7
-    // yp++;
-    inc.z yp
-    // for(char l:0..3)
-    inc.z l
-    lda #4
-    cmp.z l
-    bne __b6
-    // }
-    rts
-  __b6:
-    lda.z i
-    sta.z i_1
-    jmp __b1
-  __b7:
-    lda.z i
-    sta.z i_1
-    jmp __b2
-}
-// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
-// Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte register(X) keycode)
-keyboard_event_pressed: {
-    // keycode>>3
-    txa
-    lsr
-    lsr
-    lsr
-    tay
-    // row_bits = keyboard_scan_values[keycode>>3]
-    lda keyboard_scan_values,y
-    tay
-    // keycode&7
-    lda #7
-    axs #0
-    // row_bits & keyboard_matrix_col_bitmask[keycode&7]
-    tya
-    and keyboard_matrix_col_bitmask,x
-    // }
-    rts
-}
-// Get the next event from the keyboard event buffer.
-// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
-// The buffer is filled by keyboard_event_scan()
-keyboard_event_get: {
-    // if(keyboard_events_size==0)
-    lda.z keyboard_events_size
-    cmp #0
-    beq __b1
-    // return keyboard_events[--keyboard_events_size];
-    dec.z keyboard_events_size
-    ldy.z keyboard_events_size
-    lda keyboard_events,y
-    rts
-  __b1:
-    lda #$ff
-    // }
-    rts
-}
-// Scans the entire matrix to determine which keys have been pressed/depressed.
-// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
-// Handles debounce and only generates events when the status of a key changes.
-// Also stores current status of modifiers in keyboard_modifiers.
-keyboard_event_scan: {
-    .label row_scan = $3b
-    .label keycode = $20
-    .label row = $1f
-    lda #0
-    sta.z keycode
-    sta.z row
-  __b7:
-    // keyboard_matrix_read(row)
-    ldx.z row
-    jsr keyboard_matrix_read
-    // row_scan = keyboard_matrix_read(row)
-    sta.z row_scan
-    // if(row_scan!=keyboard_scan_values[row])
-    ldy.z row
-    cmp keyboard_scan_values,y
-    bne __b5
-    // keycode = keycode + 8
-    lax.z keycode
-    axs #-[8]
-    stx.z keycode
-  __b8:
-    // for(char row : 0..7)
-    inc.z row
-    lda #8
-    cmp.z row
-    bne __b7
-    // keyboard_event_pressed(KEY_LSHIFT)
-    ldx #KEY_LSHIFT
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_LSHIFT)
-    // if(keyboard_event_pressed(KEY_LSHIFT)!= 0)
-    cmp #0
-    // keyboard_event_pressed(KEY_RSHIFT)
-    ldx #KEY_RSHIFT
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_RSHIFT)
-    // if(keyboard_event_pressed(KEY_RSHIFT)!= 0)
-    cmp #0
-    // keyboard_event_pressed(KEY_CTRL)
-    ldx #KEY_CTRL
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_CTRL)
-    // if(keyboard_event_pressed(KEY_CTRL)!= 0)
-    cmp #0
-    // keyboard_event_pressed(KEY_COMMODORE)
-    ldx #KEY_COMMODORE
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_COMMODORE)
-    // if(keyboard_event_pressed(KEY_COMMODORE)!= 0)
-    cmp #0
-    // }
-    rts
-  // Something has changed on the keyboard row - check each column
-  __b5:
-    ldx #0
-  __b9:
-    // row_scan^keyboard_scan_values[row]
-    lda.z row_scan
-    ldy.z row
-    eor keyboard_scan_values,y
-    // (row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col]
-    and keyboard_matrix_col_bitmask,x
-    // if(((row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col])!=0)
-    cmp #0
-    beq __b10
-    // if(keyboard_events_size!=8)
-    lda #8
-    cmp.z keyboard_events_size
-    beq __b10
-    // event_type = row_scan&keyboard_matrix_col_bitmask[col]
-    lda keyboard_matrix_col_bitmask,x
-    and.z row_scan
-    // if(event_type==0)
-    cmp #0
-    beq __b11
-    // keyboard_events[keyboard_events_size++] = keycode
-    // Key pressed
-    lda.z keycode
-    ldy.z keyboard_events_size
-    sta keyboard_events,y
-    // keyboard_events[keyboard_events_size++] = keycode;
-    inc.z keyboard_events_size
-  __b10:
-    // keycode++;
-    inc.z keycode
-    // for(char col : 0..7)
-    inx
-    cpx #8
-    bne __b9
-    // keyboard_scan_values[row] = row_scan
-    // Store the current keyboard status for the row to debounce
-    lda.z row_scan
-    ldy.z row
-    sta keyboard_scan_values,y
-    jmp __b8
-  __b11:
-    // keycode|$40
-    lda #$40
-    ora.z keycode
-    // keyboard_events[keyboard_events_size++] = keycode|$40
-    // Key released
-    ldy.z keyboard_events_size
-    sta keyboard_events,y
-    // keyboard_events[keyboard_events_size++] = keycode|$40;
-    inc.z keyboard_events_size
-    jmp __b10
-}
-// Read a single row of the keyboard matrix
-// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-// Returns the keys pressed on the row as bits according to the C64 key matrix.
-// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(X) rowid)
-keyboard_matrix_read: {
-    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
-    lda keyboard_matrix_row_bitmask,x
-    sta CIA1
-    // ~CIA1->PORT_B
-    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
-    eor #$ff
-    // }
-    rts
-}
-// Update 0xD018 to show the current screen (used for double buffering)
-render_show: {
-    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    .const toD0182_return = (>(PLAYFIELD_SCREEN_2&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    // if(render_screen_show==0)
-    lda.z render_screen_show
-    cmp #0
-    beq toD0181
-    lda #toD0182_return
-  __b1:
-    // *D018 = d018val
-    sta D018
-    // *BG_COLOR1 = PIECES_COLORS_1[level]
-    ldy.z level
-    lda PIECES_COLORS_1,y
-    sta BG_COLOR1
-    // *BG_COLOR2 = PIECES_COLORS_2[level]
-    lda PIECES_COLORS_2,y
-    sta BG_COLOR2
-    // render_screen_showing = render_screen_show
-    lda.z render_screen_show
-    sta.z render_screen_showing
-    // }
-    rts
-  toD0181:
-    lda #toD0181_return
-    jmp __b1
-}
-// Initialize play data tables
-play_init: {
-    .label pli = $2c
-    // Initialize the playfield line pointers;
-    .label idx = $32
-    lda #0
-    sta.z idx
-    lda #<playfield
-    sta.z pli
-    lda #>playfield
-    sta.z pli+1
-    ldy #0
-  __b1:
-    // playfield_lines[j] = pli
-    tya
-    asl
-    tax
-    lda.z pli
-    sta playfield_lines,x
-    lda.z pli+1
-    sta playfield_lines+1,x
-    // playfield_lines_idx[j] = idx
-    lda.z idx
-    sta playfield_lines_idx,y
-    // pli += PLAYFIELD_COLS
-    lda #PLAYFIELD_COLS
-    clc
-    adc.z pli
-    sta.z pli
-    bcc !+
-    inc.z pli+1
-  !:
-    // idx += PLAYFIELD_COLS
-    lax.z idx
-    axs #-[PLAYFIELD_COLS]
-    stx.z idx
-    // for(char j:0..PLAYFIELD_LINES-1)
-    iny
-    cpy #PLAYFIELD_LINES-1+1
-    bne __b1
-    // playfield_lines_idx[PLAYFIELD_LINES] = PLAYFIELD_COLS*PLAYFIELD_LINES
-    lda #PLAYFIELD_COLS*PLAYFIELD_LINES
-    sta playfield_lines_idx+PLAYFIELD_LINES
-    // current_movedown_slow = MOVEDOWN_SLOW_SPEEDS[level]
-    // Set initial speed of moving down a tetromino
-    lda MOVEDOWN_SLOW_SPEEDS
-    sta.z current_movedown_slow
-    ldx #0
-  // Set the initial score add values
-  __b3:
-    // score_add_bcd[b] = SCORE_BASE_BCD[b]
-    txa
-    asl
-    asl
-    tay
-    lda SCORE_BASE_BCD,y
-    sta score_add_bcd,y
-    lda SCORE_BASE_BCD+1,y
-    sta score_add_bcd+1,y
-    lda SCORE_BASE_BCD+2,y
-    sta score_add_bcd+2,y
-    lda SCORE_BASE_BCD+3,y
-    sta score_add_bcd+3,y
-    // for(char b: 0..4)
-    inx
-    cpx #5
-    bne __b3
-    // }
-    rts
-}
-// Setup the IRQ
-sprites_irq_init: {
-    // asm
-    sei
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge any IRQ and setup the next one
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // asm
-    lda CIA1_INTERRUPT
-    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // Disable kernal & basic
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
-    // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=0x7f
-    // Set raster line
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = IRQ_RASTER_FIRST
-    lda #IRQ_RASTER_FIRST
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // *HARDWARE_IRQ = &sprites_irq
-    // Set the IRQ routine
-    lda #<sprites_irq
-    sta HARDWARE_IRQ
-    lda #>sprites_irq
-    sta HARDWARE_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
-// Setup the sprites
-sprites_init: {
-    .label xpos = $33
-    // *SPRITES_ENABLE = %00001111
-    lda #$f
-    sta SPRITES_ENABLE
-    // *SPRITES_MC = 0
-    lda #0
-    sta SPRITES_MC
-    // *SPRITES_EXPAND_Y = *SPRITES_MC = 0
-    sta SPRITES_EXPAND_Y
-    // *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0
-    sta SPRITES_EXPAND_X
-    lda #$18+$f*8
-    sta.z xpos
-    ldy #0
-  __b1:
-    // s2 = s*2
-    tya
-    asl
-    tax
-    // SPRITES_XPOS[s2] = xpos
-    lda.z xpos
-    sta SPRITES_XPOS,x
-    // SPRITES_COLOR[s] = BLACK
-    lda #BLACK
-    sta SPRITES_COLOR,y
-    // xpos = xpos+24
-    lax.z xpos
-    axs #-[$18]
-    stx.z xpos
-    // for(char s:0..3)
-    iny
-    cpy #4
-    bne __b1
-    // }
-    rts
-}
-// Initialize rendering
-render_init: {
-    .const vicSelectGfxBank1_toDd001_return = 3^(>PLAYFIELD_CHARSET)/$40
-    // Initialize the screen line pointers;
-    .label li_1 = $2c
-    .label li_2 = $2e
-    // CIA2->PORT_A_DDR = %00000011
-    lda #3
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA2->PORT_A = toDd00(gfx)
-    lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2
-    // *D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3
-    // Enable Extended Background Color Mode
-    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
-    sta D011
-    // *BORDER_COLOR = BLACK
-    lda #BLACK
-    sta BORDER_COLOR
-    // *BG_COLOR = BLACK
-    sta BG_COLOR
-    // *BG_COLOR1 = PIECES_COLORS_1[0]
-    lda PIECES_COLORS_1
-    sta BG_COLOR1
-    // *BG_COLOR2 = PIECES_COLORS_2[0]
-    lda PIECES_COLORS_2
-    sta BG_COLOR2
-    // *BG_COLOR3 = GREY
-    lda #GREY
-    sta BG_COLOR3
-    // render_screen_original(PLAYFIELD_SCREEN_1)
-  // Setup chars on the screens
-    lda #<PLAYFIELD_SCREEN_1
-    sta.z render_screen_original.screen
-    lda #>PLAYFIELD_SCREEN_1
-    sta.z render_screen_original.screen+1
-    jsr render_screen_original
-    // render_screen_original(PLAYFIELD_SCREEN_2)
-    lda #<PLAYFIELD_SCREEN_2
-    sta.z render_screen_original.screen
-    lda #>PLAYFIELD_SCREEN_2
-    sta.z render_screen_original.screen+1
-    jsr render_screen_original
-    lda #<PLAYFIELD_SCREEN_2+2*$28+$10
-    sta.z li_2
-    lda #>PLAYFIELD_SCREEN_2+2*$28+$10
-    sta.z li_2+1
-    lda #<PLAYFIELD_SCREEN_1+2*$28+$10
-    sta.z li_1
-    lda #>PLAYFIELD_SCREEN_1+2*$28+$10
-    sta.z li_1+1
-    ldy #0
-  __b1:
-    // screen_lines_1[i] = li_1
-    tya
-    asl
-    tax
-    lda.z li_1
-    sta screen_lines_1,x
-    lda.z li_1+1
-    sta screen_lines_1+1,x
-    // screen_lines_2[i] = li_2
-    lda.z li_2
-    sta screen_lines_2,x
-    lda.z li_2+1
-    sta screen_lines_2+1,x
-    // li_1 += 40
-    lda #$28
-    clc
-    adc.z li_1
-    sta.z li_1
-    bcc !+
-    inc.z li_1+1
-  !:
-    // li_2 += 40
-    lda #$28
-    clc
-    adc.z li_2
-    sta.z li_2
-    bcc !+
-    inc.z li_2+1
-  !:
-    // for(char i:0..PLAYFIELD_LINES-1)
-    iny
-    cpy #PLAYFIELD_LINES-1+1
-    bne __b1
-    // }
-    rts
-}
-// Copy the original screen data to the passed screen
-// Also copies colors to 0xd800
-// render_screen_original(byte* zp($2e) screen)
-render_screen_original: {
-    .const SPACE = 0
-    .label screen = $2e
-    .label cols = $2c
-    .label oscr = $30
-    .label ocols = $38
-    .label y = $2b
-    lda #0
-    sta.z y
-    lda #<PLAYFIELD_COLORS_ORIGINAL+$20*2
-    sta.z ocols
-    lda #>PLAYFIELD_COLORS_ORIGINAL+$20*2
-    sta.z ocols+1
-    lda #<PLAYFIELD_SCREEN_ORIGINAL+$20*2
-    sta.z oscr
-    lda #>PLAYFIELD_SCREEN_ORIGINAL+$20*2
-    sta.z oscr+1
-    lda #<COLS
-    sta.z cols
-    lda #>COLS
-    sta.z cols+1
-  __b1:
-    ldx #0
-  __b2:
-    // *screen++ = SPACE
-    lda #SPACE
-    ldy #0
-    sta (screen),y
-    // *screen++ = SPACE;
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // *cols++ = BLACK
-    lda #BLACK
-    ldy #0
-    sta (cols),y
-    // *cols++ = BLACK;
-    inc.z cols
-    bne !+
-    inc.z cols+1
-  !:
-    // while(++x!=4)
-    inx
-    cpx #4
-    bne __b2
-  __b3:
-    // *screen++ = *oscr++
-    ldy #0
-    lda (oscr),y
-    sta (screen),y
-    // *screen++ = *oscr++;
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    inc.z oscr
-    bne !+
-    inc.z oscr+1
-  !:
-    // *cols++ = *ocols++
-    ldy #0
-    lda (ocols),y
-    sta (cols),y
-    // *cols++ = *ocols++;
-    inc.z cols
-    bne !+
-    inc.z cols+1
-  !:
-    inc.z ocols
-    bne !+
-    inc.z ocols+1
-  !:
-    // while(++x!=36)
-    inx
-    cpx #$24
-    bne __b3
-  __b4:
-    // *screen++ = SPACE
-    lda #SPACE
-    ldy #0
-    sta (screen),y
-    // *screen++ = SPACE;
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // *cols++ = BLACK
-    lda #BLACK
-    ldy #0
-    sta (cols),y
-    // *cols++ = BLACK;
-    inc.z cols
-    bne !+
-    inc.z cols+1
-  !:
-    // while(++x!=40)
-    inx
-    cpx #$28
-    bne __b4
-    // for(char y:0..24)
-    inc.z y
-    lda #$19
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// Raster Interrupt Routine - sets up the sprites covering the playfield
-// Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
-// Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
-sprites_irq: {
-    .const toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
-    .label raster_sprite_gfx_modify = $3c
-    sta rega+1
-    stx regx+1
-    // asm
-    //(*BG_COLOR)++;
-    // Clear decimal flag (because it is used by the score algorithm)
-    cld
-    // ypos = irq_sprite_ypos
-    // Place the sprites
-    lda.z irq_sprite_ypos
-    // SPRITES_YPOS[0] = ypos
-    sta SPRITES_YPOS
-    // SPRITES_YPOS[2] = ypos
-    sta SPRITES_YPOS+2
-    // SPRITES_YPOS[4] = ypos
-    sta SPRITES_YPOS+4
-    // SPRITES_YPOS[6] = ypos
-    sta SPRITES_YPOS+6
-    // irq_raster_next+1
-    ldx.z irq_raster_next
-    inx
-    // raster_sprite_gfx_modify = irq_raster_next+1
-    // Wait for the y-position before changing sprite pointers
-    stx.z raster_sprite_gfx_modify
-  __b8:
-    // while(*RASTER<raster_sprite_gfx_modify)
-    lda RASTER
-    cmp.z raster_sprite_gfx_modify
-    bcc __b8
-    // ptr = irq_sprite_ptr
-    ldx.z irq_sprite_ptr
-    // if(render_screen_showing==0)
-    lda.z render_screen_showing
-    cmp #0
-    beq __b1
-    // PLAYFIELD_SPRITE_PTRS_2[0] = ptr++
-    stx PLAYFIELD_SPRITE_PTRS_2
-    // PLAYFIELD_SPRITE_PTRS_2[0] = ptr++;
-    inx
-    txa
-    // PLAYFIELD_SPRITE_PTRS_2[1] = ptr
-    sta PLAYFIELD_SPRITE_PTRS_2+1
-    // PLAYFIELD_SPRITE_PTRS_2[2] = ptr++
-    sta PLAYFIELD_SPRITE_PTRS_2+2
-    // PLAYFIELD_SPRITE_PTRS_2[2] = ptr++;
-    clc
-    adc #1
-    // PLAYFIELD_SPRITE_PTRS_2[3] = ptr
-    sta PLAYFIELD_SPRITE_PTRS_2+3
-  __b2:
-    // ++irq_cnt;
-    inc.z irq_cnt
-    // if(irq_cnt==9)
-    lda #9
-    cmp.z irq_cnt
-    beq __b3
-    // if(irq_cnt==10)
-    lda #$a
-    cmp.z irq_cnt
-    beq __b4
-    // irq_raster_next += 20
-    lax.z irq_raster_next
-    axs #-[$14]
-    stx.z irq_raster_next
-    // irq_sprite_ypos += 21
-    lax.z irq_sprite_ypos
-    axs #-[$15]
-    stx.z irq_sprite_ypos
-    // irq_sprite_ptr += 3
-    lax.z irq_sprite_ptr
-    axs #-[3]
-    stx.z irq_sprite_ptr
-  __b5:
-    // *RASTER = irq_raster_next
-    // Setup next interrupt
-    lda.z irq_raster_next
-    sta RASTER
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ and setup the next one
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // }
-  rega:
-    lda #00
-  regx:
-    ldx #00
-    rti
-  __b4:
-    // irq_cnt = 0
-    lda #0
-    sta.z irq_cnt
-    // irq_raster_next = IRQ_RASTER_FIRST
-    lda #IRQ_RASTER_FIRST
-    sta.z irq_raster_next
-    // irq_sprite_ypos += 21
-    lax.z irq_sprite_ypos
-    axs #-[$15]
-    stx.z irq_sprite_ypos
-    // irq_sprite_ptr += 3
-    lax.z irq_sprite_ptr
-    axs #-[3]
-    stx.z irq_sprite_ptr
-    jmp __b5
-  __b3:
-    // irq_raster_next += 21
-    lax.z irq_raster_next
-    axs #-[$15]
-    stx.z irq_raster_next
-    // irq_sprite_ypos = SPRITES_FIRST_YPOS
-    lda #SPRITES_FIRST_YPOS
-    sta.z irq_sprite_ypos
-    // irq_sprite_ptr = toSpritePtr(PLAYFIELD_SPRITES)
-    lda #toSpritePtr1_return
-    sta.z irq_sprite_ptr
-    jmp __b5
-  __b1:
-    // PLAYFIELD_SPRITE_PTRS_1[0] = ptr++
-    stx PLAYFIELD_SPRITE_PTRS_1
-    // PLAYFIELD_SPRITE_PTRS_1[0] = ptr++;
-    inx
-    // PLAYFIELD_SPRITE_PTRS_1[1] = ptr
-    stx PLAYFIELD_SPRITE_PTRS_1+1
-    // PLAYFIELD_SPRITE_PTRS_1[2] = ptr++
-    stx PLAYFIELD_SPRITE_PTRS_1+2
-    // PLAYFIELD_SPRITE_PTRS_1[2] = ptr++;
-    inx
-    txa
-    // PLAYFIELD_SPRITE_PTRS_1[3] = ptr
-    sta PLAYFIELD_SPRITE_PTRS_1+3
-    jmp __b2
 }
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f

@@ -97,229 +97,17 @@ __start: {
     jsr main
     rts
 }
-// RESET Called when the NES is reset, including when it is turned on.
-main: {
-    // asm
-    cld
-    ldx #$ff
-    txs
-    // PPU->PPUCTRL = 0
-    lda #0
-    sta PPU
-    // PPU->PPUMASK = 0
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK
-    // *FR_COUNTER = 0b01000000
-    lda #$40
-    sta FR_COUNTER
-    // APU->DMC_FREQ  = 0b01000000
-    sta APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ
-    // asm
-    lda PPU_PPUSTATUS
-  initNES1_waitForVBlank1:
-    // PPU->PPUSTATUS&0x80
-    lda #$80
-    and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
-    // while(!(PPU->PPUSTATUS&0x80))
-    cmp #0
-    beq initNES1_waitForVBlank1
-    ldx #0
-  initNES1___b1:
-    // (MEMORY+0x000)[i] = 0
-    lda #0
-    sta MEMORY,x
-    // (MEMORY+0x100)[i] = 0
-    sta MEMORY+$100,x
-    // (MEMORY+0x200)[i] = 0
-    sta MEMORY+$200,x
-    // (MEMORY+0x300)[i] = 0
-    sta MEMORY+$300,x
-    // (MEMORY+0x400)[i] = 0
-    sta MEMORY+$400,x
-    // (MEMORY+0x500)[i] = 0
-    sta MEMORY+$500,x
-    // (MEMORY+0x600)[i] = 0
-    sta MEMORY+$600,x
-    // (MEMORY+0x700)[i] = 0
-    sta MEMORY+$700,x
-    // while (++i)
-    inx
-    cpx #0
-    bne initNES1___b1
-  initNES1_waitForVBlank2:
-    // PPU->PPUSTATUS&0x80
-    lda #$80
-    and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
-    // while(!(PPU->PPUSTATUS&0x80))
-    cmp #0
-    beq initNES1_waitForVBlank2
-    // asm
-    lda PPU_PPUSTATUS
-    // ppuDataTransfer(PPU_PALETTE, PALETTE, sizeof(PALETTE))
-  // Transfer the palette
-    jsr ppuDataTransfer
-    // ppuDataFill(PPU_NAME_TABLE_0, '*', 32*30)
-  // Fill the PPU attribute table
-    ldx #'*'
-    lda #<$20*$1e
-    sta.z ppuDataFill.size
-    lda #>$20*$1e
-    sta.z ppuDataFill.size+1
-    lda #<PPU_NAME_TABLE_0
-    sta.z ppuDataFill.ppuDataPrepare1_ppuData
-    lda #>PPU_NAME_TABLE_0
-    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
-    jsr ppuDataFill
-    // ppuDataFill(PPU_ATTRIBUTE_TABLE_0, 0, 0x40)
-    ldx #0
-    lda #<$40
-    sta.z ppuDataFill.size
-    lda #>$40
-    sta.z ppuDataFill.size+1
-    lda #<PPU_ATTRIBUTE_TABLE_0
-    sta.z ppuDataFill.ppuDataPrepare1_ppuData
-    lda #>PPU_ATTRIBUTE_TABLE_0
-    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
-    jsr ppuDataFill
-    ldx #0
-  // Initialize Sprite Buffer with the SPRITE data
-  __b1:
-    // for(char s=0;s<0x40;s++)
-    cpx #$40
-    bcc __b2
-    // PPU->PPUCTRL = 0b10000000
-    lda #$80
-    sta PPU
-    // PPU->PPUMASK = 0b00011110
-    lda #$1e
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK
-  __b3:
-  // Infinite loop
-    jmp __b3
-  __b2:
-    // SPRITE_BUFFER[s] = { 0, MESSAGE[s], 0b00000010, 0 }
-    txa
-    asl
-    asl
-    tay
-    lda #0
-    sta SPRITE_BUFFER,y
-    lda MESSAGE,x
-    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_TILE,y
-    lda #2
-    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES,y
-    lda #0
-    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X,y
-    // for(char s=0;s<0x40;s++)
-    inx
-    jmp __b1
-}
-// Fill a number of bytes in the PPU memory
-// - ppuData : Pointer in the PPU memory
-// - size : The number of bytes to transfer
-// ppuDataFill(byte register(X) val, word zp(6) size)
-ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = 4
-    .label i = 2
-    .label size = 6
-    // >ppuData
-    lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
-    lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    lda #<0
-    sta.z i
-    sta.z i+1
-  // Transfer to PPU
-  __b1:
-    // for(unsigned int i=0;i<size;i++)
-    lda.z i+1
-    cmp.z size+1
-    bcc ppuDataPut1
-    bne !+
-    lda.z i
-    cmp.z size
-    bcc ppuDataPut1
-  !:
-    // }
-    rts
-  ppuDataPut1:
-    // PPU->PPUDATA = val
-    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // for(unsigned int i=0;i<size;i++)
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    jmp __b1
-}
-// Transfer a number of bytes from the CPU memory to the PPU memory
-// - cpuData : Pointer to the CPU memory (RAM of ROM)
-// - ppuData : Pointer in the PPU memory
-// - size : The number of bytes to transfer
-ppuDataTransfer: {
-    .const size = $20*SIZEOF_BYTE
-    .label ppuData = PPU_PALETTE
-    .label cpuData = PALETTE
-    // Transfer to PPU
-    .label cpuSrc = 6
-    .label i = 4
-    // PPU->PPUADDR = >ppuData
-    lda #>ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // PPU->PPUADDR = <ppuData
-    lda #0
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    lda #<cpuData
-    sta.z cpuSrc
-    lda #>cpuData
-    sta.z cpuSrc+1
-    lda #<0
-    sta.z i
-    sta.z i+1
-  __b1:
-    // for(unsigned int i=0;i<size;i++)
-    lda.z i+1
-    cmp #>size
-    bcc __b2
-    bne !+
-    lda.z i
-    cmp #<size
-    bcc __b2
-  !:
-    // }
-    rts
-  __b2:
-    // ppuDataPut(*cpuSrc++)
-    ldy #0
-    lda (cpuSrc),y
-    // PPU->PPUDATA = val
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // ppuDataPut(*cpuSrc++);
-    inc.z cpuSrc
-    bne !+
-    inc.z cpuSrc+1
-  !:
-    // for(unsigned int i=0;i<size;i++)
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    jmp __b1
-}
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 vblank: {
-    .label __17 = $a
-    .label __19 = $a
-    .label __23 = $b
-    .label __25 = $b
+    .label __17 = 4
+    .label __19 = 4
+    .label __23 = 5
+    .label __25 = 5
     .label __28 = $f
-    .label y_idx = 9
-    .label x_idx = $a
-    .label x_idx_2 = $b
-    .label s = 8
+    .label y_idx = 3
+    .label x_idx = 4
+    .label x_idx_2 = 5
+    .label s = 2
     pha
     txa
     pha
@@ -448,6 +236,122 @@ vblank: {
     stx.z __19
     jmp __b10
 }
+// RESET Called when the NES is reset, including when it is turned on.
+main: {
+    // asm
+    cld
+    ldx #$ff
+    txs
+    // PPU->PPUCTRL = 0
+    lda #0
+    sta PPU
+    // PPU->PPUMASK = 0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK
+    // *FR_COUNTER = 0b01000000
+    lda #$40
+    sta FR_COUNTER
+    // APU->DMC_FREQ  = 0b01000000
+    sta APU+OFFSET_STRUCT_RICOH_2A03_DMC_FREQ
+    // asm
+    lda PPU_PPUSTATUS
+  initNES1_waitForVBlank1:
+    // PPU->PPUSTATUS&0x80
+    lda #$80
+    and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
+    // while(!(PPU->PPUSTATUS&0x80))
+    cmp #0
+    beq initNES1_waitForVBlank1
+    ldx #0
+  initNES1___b1:
+    // (MEMORY+0x000)[i] = 0
+    lda #0
+    sta MEMORY,x
+    // (MEMORY+0x100)[i] = 0
+    sta MEMORY+$100,x
+    // (MEMORY+0x200)[i] = 0
+    sta MEMORY+$200,x
+    // (MEMORY+0x300)[i] = 0
+    sta MEMORY+$300,x
+    // (MEMORY+0x400)[i] = 0
+    sta MEMORY+$400,x
+    // (MEMORY+0x500)[i] = 0
+    sta MEMORY+$500,x
+    // (MEMORY+0x600)[i] = 0
+    sta MEMORY+$600,x
+    // (MEMORY+0x700)[i] = 0
+    sta MEMORY+$700,x
+    // while (++i)
+    inx
+    cpx #0
+    bne initNES1___b1
+  initNES1_waitForVBlank2:
+    // PPU->PPUSTATUS&0x80
+    lda #$80
+    and PPU+OFFSET_STRUCT_RICOH_2C02_PPUSTATUS
+    // while(!(PPU->PPUSTATUS&0x80))
+    cmp #0
+    beq initNES1_waitForVBlank2
+    // asm
+    lda PPU_PPUSTATUS
+    // ppuDataTransfer(PPU_PALETTE, PALETTE, sizeof(PALETTE))
+  // Transfer the palette
+    jsr ppuDataTransfer
+    // ppuDataFill(PPU_NAME_TABLE_0, '*', 32*30)
+  // Fill the PPU attribute table
+    ldx #'*'
+    lda #<$20*$1e
+    sta.z ppuDataFill.size
+    lda #>$20*$1e
+    sta.z ppuDataFill.size+1
+    lda #<PPU_NAME_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData
+    lda #>PPU_NAME_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
+    jsr ppuDataFill
+    // ppuDataFill(PPU_ATTRIBUTE_TABLE_0, 0, 0x40)
+    ldx #0
+    lda #<$40
+    sta.z ppuDataFill.size
+    lda #>$40
+    sta.z ppuDataFill.size+1
+    lda #<PPU_ATTRIBUTE_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData
+    lda #>PPU_ATTRIBUTE_TABLE_0
+    sta.z ppuDataFill.ppuDataPrepare1_ppuData+1
+    jsr ppuDataFill
+    ldx #0
+  // Initialize Sprite Buffer with the SPRITE data
+  __b1:
+    // for(char s=0;s<0x40;s++)
+    cpx #$40
+    bcc __b2
+    // PPU->PPUCTRL = 0b10000000
+    lda #$80
+    sta PPU
+    // PPU->PPUMASK = 0b00011110
+    lda #$1e
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUMASK
+  __b3:
+  // Infinite loop
+    jmp __b3
+  __b2:
+    // SPRITE_BUFFER[s] = { 0, MESSAGE[s], 0b00000010, 0 }
+    txa
+    asl
+    asl
+    tay
+    lda #0
+    sta SPRITE_BUFFER,y
+    lda MESSAGE,x
+    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_TILE,y
+    lda #2
+    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES,y
+    lda #0
+    sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_X,y
+    // for(char s=0;s<0x40;s++)
+    inx
+    jmp __b1
+}
 // Read Standard Controller #1
 // Returns a byte representing the pushed buttons
 // - bit 0: right
@@ -485,6 +389,102 @@ readJoy1: {
     ora.z __1
     // for(char i=0;i<8;i++)
     inx
+    jmp __b1
+}
+// Transfer a number of bytes from the CPU memory to the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+ppuDataTransfer: {
+    .const size = $20*SIZEOF_BYTE
+    .label ppuData = PPU_PALETTE
+    .label cpuData = PALETTE
+    // Transfer to PPU
+    .label cpuSrc = 8
+    .label i = 6
+    // PPU->PPUADDR = >ppuData
+    lda #>ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // PPU->PPUADDR = <ppuData
+    lda #0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<cpuData
+    sta.z cpuSrc
+    lda #>cpuData
+    sta.z cpuSrc+1
+    lda #<0
+    sta.z i
+    sta.z i+1
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp #>size
+    bcc __b2
+    bne !+
+    lda.z i
+    cmp #<size
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    // ppuDataPut(*cpuSrc++)
+    ldy #0
+    lda (cpuSrc),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // ppuDataPut(*cpuSrc++);
+    inc.z cpuSrc
+    bne !+
+    inc.z cpuSrc+1
+  !:
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b1
+}
+// Fill a number of bytes in the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+// ppuDataFill(byte register(X) val, word zp(8) size)
+ppuDataFill: {
+    .label ppuDataPrepare1_ppuData = 6
+    .label i = $a
+    .label size = 8
+    // >ppuData
+    lda.z ppuDataPrepare1_ppuData+1
+    // PPU->PPUADDR = >ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    lda.z ppuDataPrepare1_ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<0
+    sta.z i
+    sta.z i+1
+  // Transfer to PPU
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp.z size+1
+    bcc ppuDataPut1
+    bne !+
+    lda.z i
+    cmp.z size
+    bcc ppuDataPut1
+  !:
+    // }
+    rts
+  ppuDataPut1:
+    // PPU->PPUDATA = val
+    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
     jmp __b1
 }
 .segment Data

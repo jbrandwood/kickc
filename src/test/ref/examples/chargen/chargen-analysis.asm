@@ -261,15 +261,44 @@ main: {
     str3: .text "f7"
     .byte 0
 }
+// Print a string at a specific screen position
+// print_str_at(byte* zp(8) str, byte* zp($c) at)
+print_str_at: {
+    .label at = $c
+    .label str = 8
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *(at++) = *(str++)
+    ldy #0
+    lda (str),y
+    sta (at),y
+    // *(at++) = *(str++);
+    inc.z at
+    bne !+
+    inc.z at+1
+  !:
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
 // Render 8x8 char (ch) as pixels on char canvas #pos
 // plot_chargen(byte register(Y) pos, byte register(A) ch, byte register(X) shift)
 plot_chargen: {
-    .label __0 = $a
-    .label __15 = $a
-    .label chargen = $a
+    .label __0 = 8
+    .label __15 = 8
+    .label chargen = 8
     .label sc = $c
-    .label bits = 9
-    .label y = 8
+    .label bits = $b
+    .label y = $a
     // asm
     sei
     // (unsigned int)ch*8
@@ -398,6 +427,17 @@ keyboard_key_pressed: {
     // }
     rts
 }
+// Get the keycode corresponding to a specific screen code character
+// ch is the character to get the key code for ($00-$3f)
+// Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
+// If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
+// keyboard_get_keycode(byte register(X) ch)
+keyboard_get_keycode: {
+    // return keyboard_char_keycodes[ch];
+    lda keyboard_char_keycodes,x
+    // }
+    rts
+}
 // Read a single row of the keyboard matrix
 // The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
 // Returns the keys pressed on the row as bits according to the C64 key matrix.
@@ -413,46 +453,6 @@ keyboard_matrix_read: {
     eor #$ff
     // }
     rts
-}
-// Get the keycode corresponding to a specific screen code character
-// ch is the character to get the key code for ($00-$3f)
-// Returns the key code corresponding to the passed character. Only characters with a non-shifted key are handled.
-// If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
-// keyboard_get_keycode(byte register(X) ch)
-keyboard_get_keycode: {
-    // return keyboard_char_keycodes[ch];
-    lda keyboard_char_keycodes,x
-    // }
-    rts
-}
-// Print a string at a specific screen position
-// print_str_at(byte* zp($a) str, byte* zp($c) at)
-print_str_at: {
-    .label at = $c
-    .label str = $a
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *(at++) = *(str++)
-    ldy #0
-    lda (str),y
-    sta (at),y
-    // *(at++) = *(str++);
-    inc.z at
-    bne !+
-    inc.z at+1
-  !:
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
 }
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).

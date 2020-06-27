@@ -728,7 +728,7 @@ Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@6
 CALL GRAPH
 Calls in [main] to keyboard_init:4 keyboard_matrix_read:12 keyboard_get_keycode:29 keyboard_key_pressed:34 
-Calls in [keyboard_key_pressed] to keyboard_matrix_read:66 
+Calls in [keyboard_key_pressed] to keyboard_matrix_read:75 
 
 Created 10 initial phi equivalence classes
 Coalesced [11] keyboard_matrix_read::rowid#4 ← keyboard_matrix_read::rowid#1
@@ -745,7 +745,7 @@ Coalesced [55] main::screen#18 ← main::screen#1
 Coalesced [56] main::row_pressed_bits#6 ← main::row_pressed_bits#1
 Coalesced [57] main::col#6 ← main::col#1
 Coalesced [61] main::sc#4 ← main::sc#1
-Coalesced [65] keyboard_matrix_read::rowid#3 ← keyboard_matrix_read::rowid#0
+Coalesced [74] keyboard_matrix_read::rowid#3 ← keyboard_matrix_read::rowid#0
 Coalesced down to 8 phi equivalence classes
 Culled Empty Block (label) main::@19
 Culled Empty Block (label) main::@4
@@ -868,46 +868,46 @@ main::@2: scope:[main]  from main::@1
   [44] (byte*) main::sc#1 ← ++ (byte*) main::sc#2
   to:main::@1
 
-(byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
-keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@14
-  [45] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7
-  [46] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3
-  [47] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0
-  [48] call keyboard_matrix_read 
-  [49] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-  to:keyboard_key_pressed::@1
-keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_pressed
-  [50] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-  [51] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0)
-  to:keyboard_key_pressed::@return
-keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
-  [52] return 
+(void()) keyboard_init()
+keyboard_init: scope:[keyboard_init]  from main::@3
+  [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff
+  [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0
+  to:keyboard_init::@return
+keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
+  [47] return 
   to:@return
 
 (byte()) keyboard_matrix_read((byte) keyboard_matrix_read::rowid)
 keyboard_matrix_read: scope:[keyboard_matrix_read]  from keyboard_key_pressed main::@5
-  [53] (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@5/(byte) keyboard_matrix_read::rowid#1 )
-  [54] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2)
-  [55] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
+  [48] (byte) keyboard_matrix_read::rowid#2 ← phi( keyboard_key_pressed/(byte) keyboard_matrix_read::rowid#0 main::@5/(byte) keyboard_matrix_read::rowid#1 )
+  [49] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2)
+  [50] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B)
   to:keyboard_matrix_read::@return
 keyboard_matrix_read::@return: scope:[keyboard_matrix_read]  from keyboard_matrix_read
-  [56] return 
+  [51] return 
   to:@return
 
 (byte()) keyboard_get_keycode((byte) keyboard_get_keycode::ch)
 keyboard_get_keycode: scope:[keyboard_get_keycode]  from main::@12
-  [57] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0)
+  [52] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0)
   to:keyboard_get_keycode::@return
 keyboard_get_keycode::@return: scope:[keyboard_get_keycode]  from keyboard_get_keycode
-  [58] return 
+  [53] return 
   to:@return
 
-(void()) keyboard_init()
-keyboard_init: scope:[keyboard_init]  from main::@3
-  [59] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff
-  [60] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0
-  to:keyboard_init::@return
-keyboard_init::@return: scope:[keyboard_init]  from keyboard_init
+(byte()) keyboard_key_pressed((byte) keyboard_key_pressed::key)
+keyboard_key_pressed: scope:[keyboard_key_pressed]  from main::@14
+  [54] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7
+  [55] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3
+  [56] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0
+  [57] call keyboard_matrix_read 
+  [58] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+  to:keyboard_key_pressed::@1
+keyboard_key_pressed::@1: scope:[keyboard_key_pressed]  from keyboard_key_pressed
+  [59] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+  [60] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0)
+  to:keyboard_key_pressed::@return
+keyboard_key_pressed::@return: scope:[keyboard_key_pressed]  from keyboard_key_pressed::@1
   [61] return 
   to:@return
 
@@ -1075,13 +1075,13 @@ Added variable main::key#0 to live range equivalence class [ main::key#0 ]
 Added variable keyboard_key_pressed::key#0 to live range equivalence class [ keyboard_key_pressed::key#0 ]
 Added variable keyboard_key_pressed::return#2 to live range equivalence class [ keyboard_key_pressed::return#2 ]
 Added variable main::$14 to live range equivalence class [ main::$14 ]
+Added variable keyboard_matrix_read::return#0 to live range equivalence class [ keyboard_matrix_read::return#0 ]
+Added variable keyboard_get_keycode::return#0 to live range equivalence class [ keyboard_get_keycode::return#0 ]
 Added variable keyboard_key_pressed::colidx#0 to live range equivalence class [ keyboard_key_pressed::colidx#0 ]
 Added variable keyboard_key_pressed::rowidx#0 to live range equivalence class [ keyboard_key_pressed::rowidx#0 ]
 Added variable keyboard_matrix_read::return#2 to live range equivalence class [ keyboard_matrix_read::return#2 ]
 Added variable keyboard_key_pressed::$2 to live range equivalence class [ keyboard_key_pressed::$2 ]
 Added variable keyboard_key_pressed::return#0 to live range equivalence class [ keyboard_key_pressed::return#0 ]
-Added variable keyboard_matrix_read::return#0 to live range equivalence class [ keyboard_matrix_read::return#0 ]
-Added variable keyboard_get_keycode::return#0 to live range equivalence class [ keyboard_get_keycode::return#0 ]
 Complete equivalence classes
 [ main::sc#2 main::sc#1 ]
 [ main::row#2 main::row#1 ]
@@ -1100,13 +1100,13 @@ Complete equivalence classes
 [ keyboard_key_pressed::key#0 ]
 [ keyboard_key_pressed::return#2 ]
 [ main::$14 ]
+[ keyboard_matrix_read::return#0 ]
+[ keyboard_get_keycode::return#0 ]
 [ keyboard_key_pressed::colidx#0 ]
 [ keyboard_key_pressed::rowidx#0 ]
 [ keyboard_matrix_read::return#2 ]
 [ keyboard_key_pressed::$2 ]
 [ keyboard_key_pressed::return#0 ]
-[ keyboard_matrix_read::return#0 ]
-[ keyboard_get_keycode::return#0 ]
 Allocated zp[2]:2 [ main::sc#2 main::sc#1 ]
 Allocated zp[1]:4 [ main::row#2 main::row#1 ]
 Allocated zp[2]:5 [ main::screen#13 main::screen#1 ]
@@ -1124,13 +1124,13 @@ Allocated zp[1]:18 [ main::key#0 ]
 Allocated zp[1]:19 [ keyboard_key_pressed::key#0 ]
 Allocated zp[1]:20 [ keyboard_key_pressed::return#2 ]
 Allocated zp[1]:21 [ main::$14 ]
-Allocated zp[1]:22 [ keyboard_key_pressed::colidx#0 ]
-Allocated zp[1]:23 [ keyboard_key_pressed::rowidx#0 ]
-Allocated zp[1]:24 [ keyboard_matrix_read::return#2 ]
-Allocated zp[1]:25 [ keyboard_key_pressed::$2 ]
-Allocated zp[1]:26 [ keyboard_key_pressed::return#0 ]
-Allocated zp[1]:27 [ keyboard_matrix_read::return#0 ]
-Allocated zp[1]:28 [ keyboard_get_keycode::return#0 ]
+Allocated zp[1]:22 [ keyboard_matrix_read::return#0 ]
+Allocated zp[1]:23 [ keyboard_get_keycode::return#0 ]
+Allocated zp[1]:24 [ keyboard_key_pressed::colidx#0 ]
+Allocated zp[1]:25 [ keyboard_key_pressed::rowidx#0 ]
+Allocated zp[1]:26 [ keyboard_matrix_read::return#2 ]
+Allocated zp[1]:27 [ keyboard_key_pressed::$2 ]
+Allocated zp[1]:28 [ keyboard_key_pressed::return#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -1269,9 +1269,9 @@ main: {
     lda.z row
     sta.z keyboard_matrix_read.rowid
     // [8] call keyboard_matrix_read 
-    // [53] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
+    // [48] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
   keyboard_matrix_read_from___b5:
-    // [53] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
+    // [48] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
     // [9] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
     lda.z keyboard_matrix_read.return
@@ -1470,55 +1470,21 @@ main: {
     // [1] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // keyboard_key_pressed
-// Determines whether a specific key is currently pressed by accessing the matrix directly
-// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-// All keys exist as as KEY_XXX constants.
-// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte zp($13) key)
-keyboard_key_pressed: {
-    .label __2 = $19
-    .label colidx = $16
-    .label rowidx = $17
-    .label return = $1a
-    .label key = $13
-    .label return_1 = $14
-    // [45] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
-    lda #7
-    and.z key
-    sta.z colidx
-    // [46] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
-    lda.z key
-    lsr
-    lsr
-    lsr
-    sta.z rowidx
-    // [47] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
-    lda.z rowidx
-    sta.z keyboard_matrix_read.rowid
-    // [48] call keyboard_matrix_read 
-    // [53] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
-  keyboard_matrix_read_from_keyboard_key_pressed:
-    // [53] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
-    jsr keyboard_matrix_read
-    // [49] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
-    lda.z keyboard_matrix_read.return
-    sta.z keyboard_matrix_read.return_1
-    jmp __b1
-    // keyboard_key_pressed::@1
-  __b1:
-    // [50] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
-    lda.z keyboard_matrix_read.return_1
-    sta.z __2
-    // [51] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
-    lda.z __2
-    ldy.z colidx
-    and keyboard_matrix_col_bitmask,y
-    sta.z return
+  // keyboard_init
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
     jmp __breturn
-    // keyboard_key_pressed::@return
+    // keyboard_init::@return
   __breturn:
-    // [52] return 
+    // [47] return 
     rts
 }
   // keyboard_matrix_read
@@ -1529,22 +1495,22 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte zp($b) rowid)
 keyboard_matrix_read: {
-    .label return = $1b
+    .label return = $16
     .label rowid = $b
-    .label return_1 = $18
+    .label return_1 = $1a
     .label return_2 = $c
-    // [54] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
+    // [49] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuz1 
     ldy.z rowid
     lda keyboard_matrix_row_bitmask,y
     sta CIA1
-    // [55] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
+    // [50] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuz1=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     sta.z return
     jmp __breturn
     // keyboard_matrix_read::@return
   __breturn:
-    // [56] return 
+    // [51] return 
     rts
 }
   // keyboard_get_keycode
@@ -1554,32 +1520,66 @@ keyboard_matrix_read: {
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte zp($10) ch)
 keyboard_get_keycode: {
-    .label return = $1c
+    .label return = $17
     .label ch = $10
     .label return_1 = $11
-    // [57] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [52] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z ch
     lda keyboard_char_keycodes,y
     sta.z return
     jmp __breturn
     // keyboard_get_keycode::@return
   __breturn:
-    // [58] return 
+    // [53] return 
     rts
 }
-  // keyboard_init
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // [59] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // [60] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+  // keyboard_key_pressed
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte zp($13) key)
+keyboard_key_pressed: {
+    .label __2 = $1b
+    .label colidx = $18
+    .label rowidx = $19
+    .label return = $1c
+    .label key = $13
+    .label return_1 = $14
+    // [54] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
+    lda #7
+    and.z key
+    sta.z colidx
+    // [55] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 -- vbuz1=vbuz2_ror_3 
+    lda.z key
+    lsr
+    lsr
+    lsr
+    sta.z rowidx
+    // [56] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuz1=vbuz2 
+    lda.z rowidx
+    sta.z keyboard_matrix_read.rowid
+    // [57] call keyboard_matrix_read 
+    // [48] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
+  keyboard_matrix_read_from_keyboard_key_pressed:
+    // [48] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
+    jsr keyboard_matrix_read
+    // [58] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0 -- vbuz1=vbuz2 
+    lda.z keyboard_matrix_read.return
+    sta.z keyboard_matrix_read.return_1
+    jmp __b1
+    // keyboard_key_pressed::@1
+  __b1:
+    // [59] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2 -- vbuz1=vbuz2 
+    lda.z keyboard_matrix_read.return_1
+    sta.z __2
+    // [60] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuz1=vbuz2_band_pbuc1_derefidx_vbuz3 
+    lda.z __2
+    ldy.z colidx
+    and keyboard_matrix_col_bitmask,y
+    sta.z return
     jmp __breturn
-    // keyboard_init::@return
+    // keyboard_key_pressed::@return
   __breturn:
     // [61] return 
     rts
@@ -1606,13 +1606,13 @@ Statement [39] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ mai
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ]
 Statement [42] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] (  [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] { }  ) always clobbers reg byte a 
 Statement [43] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [46] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( keyboard_key_pressed:29 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
+Statement [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:57 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::ch#2 main::ch#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:22 [ keyboard_key_pressed::colidx#0 ]
-Statement [54] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:48 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [55] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:48 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [59] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:24 [ keyboard_key_pressed::colidx#0 ]
+Statement [50] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:57 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [55] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( keyboard_key_pressed:29 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Statement [2] if((byte*) main::sc#2<(word)(number) $400+(number) $3e8) goto main::@2 [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a 
 Statement [5] if(*((const nomodify byte*) RASTER)!=(byte) $ff) goto main::@4 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] (byte~) main::$4 ← (byte) main::row_pressed_bits#2 & (byte) $80 [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] (  [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 main::$4 ] { }  ) always clobbers reg byte a 
@@ -1623,11 +1623,11 @@ Statement [33] *((byte*) main::screen#2 + (byte) main::i#3) ← (byte) main::ch#
 Statement [39] *((byte*) main::screen#2 + (byte) main::i#4) ← (byte) ' ' [ main::screen#2 main::i#4 ] (  [ main::screen#2 main::i#4 ] { }  ) always clobbers reg byte a 
 Statement [42] *((byte*) main::screen#13 + (byte) main::col#2) ← (byte) '1' [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] (  [ main::row#2 main::screen#13 main::row_pressed_bits#2 main::col#2 ] { }  ) always clobbers reg byte a 
 Statement [43] *((byte*) main::sc#2) ← (byte) ' ' [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [46] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( keyboard_key_pressed:29 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [54] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:48 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [55] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:48 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
-Statement [59] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
+Statement [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
+Statement [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 [ ] ( keyboard_init:4 [ ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) [ ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:57 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [50] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) [ keyboard_matrix_read::return#0 ] ( keyboard_matrix_read:8 [ main::row#2 main::screen#13 keyboard_matrix_read::return#0 ] { { keyboard_matrix_read::rowid#1 = keyboard_matrix_read::rowid#2 main::row#2 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#3 } }  keyboard_key_pressed:29::keyboard_matrix_read:57 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_matrix_read::return#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
+Statement [55] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 [ keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] ( keyboard_key_pressed:29 [ main::screen#2 main::ch#2 main::i#3 keyboard_key_pressed::colidx#0 keyboard_key_pressed::rowidx#0 ] { { keyboard_key_pressed::key#0 = main::key#0 } { keyboard_key_pressed::return#0 = keyboard_key_pressed::return#2 } { keyboard_matrix_read::rowid#0 = keyboard_matrix_read::rowid#2 keyboard_key_pressed::rowidx#0 } { keyboard_matrix_read::return#0 = keyboard_matrix_read::return#2 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::sc#2 main::sc#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::row#2 main::row#1 ] : zp[1]:4 , reg byte x , reg byte y , 
 Potential registers zp[2]:5 [ main::screen#13 main::screen#1 ] : zp[2]:5 , 
@@ -1645,19 +1645,19 @@ Potential registers zp[1]:18 [ main::key#0 ] : zp[1]:18 , reg byte a , reg byte 
 Potential registers zp[1]:19 [ keyboard_key_pressed::key#0 ] : zp[1]:19 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:20 [ keyboard_key_pressed::return#2 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:21 [ main::$14 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:22 [ keyboard_key_pressed::colidx#0 ] : zp[1]:22 , reg byte x , reg byte y , 
-Potential registers zp[1]:23 [ keyboard_key_pressed::rowidx#0 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:24 [ keyboard_matrix_read::return#2 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:25 [ keyboard_key_pressed::$2 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:26 [ keyboard_key_pressed::return#0 ] : zp[1]:26 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:27 [ keyboard_matrix_read::return#0 ] : zp[1]:27 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:28 [ keyboard_get_keycode::return#0 ] : zp[1]:28 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:22 [ keyboard_matrix_read::return#0 ] : zp[1]:22 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:23 [ keyboard_get_keycode::return#0 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:24 [ keyboard_key_pressed::colidx#0 ] : zp[1]:24 , reg byte x , reg byte y , 
+Potential registers zp[1]:25 [ keyboard_key_pressed::rowidx#0 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:26 [ keyboard_matrix_read::return#2 ] : zp[1]:26 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:27 [ keyboard_key_pressed::$2 ] : zp[1]:27 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:28 [ keyboard_key_pressed::return#0 ] : zp[1]:28 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [keyboard_matrix_read] 13,307: zp[1]:11 [ keyboard_matrix_read::rowid#2 keyboard_matrix_read::rowid#0 keyboard_matrix_read::rowid#1 ] 2,775.75: zp[1]:27 [ keyboard_matrix_read::return#0 ] 2,002: zp[1]:24 [ keyboard_matrix_read::return#2 ] 202: zp[1]:12 [ keyboard_matrix_read::return#3 ] 
+Uplift Scope [keyboard_matrix_read] 13,307: zp[1]:11 [ keyboard_matrix_read::rowid#2 keyboard_matrix_read::rowid#0 keyboard_matrix_read::rowid#1 ] 2,775.75: zp[1]:22 [ keyboard_matrix_read::return#0 ] 2,002: zp[1]:26 [ keyboard_matrix_read::return#2 ] 202: zp[1]:12 [ keyboard_matrix_read::return#3 ] 
 Uplift Scope [main] 2,168.83: zp[1]:8 [ main::col#2 main::col#1 ] 2,002: zp[1]:13 [ main::$4 ] 1,490.13: zp[1]:7 [ main::row_pressed_bits#2 main::row_pressed_bits#1 main::row_pressed_bits#0 ] 765.92: zp[1]:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ] 240.54: zp[2]:5 [ main::screen#13 main::screen#1 ] 202: zp[1]:21 [ main::$14 ] 180.36: zp[1]:9 [ main::ch#2 main::ch#1 ] 173.14: zp[1]:4 [ main::row#2 main::row#1 ] 151.5: zp[1]:18 [ main::key#0 ] 36.67: zp[2]:2 [ main::sc#2 main::sc#1 ] 10.14: zp[2]:14 [ main::screen#2 ] 
-Uplift Scope [keyboard_key_pressed] 2,002: zp[1]:23 [ keyboard_key_pressed::rowidx#0 ] 2,002: zp[1]:25 [ keyboard_key_pressed::$2 ] 1,051.5: zp[1]:19 [ keyboard_key_pressed::key#0 ] 367.33: zp[1]:26 [ keyboard_key_pressed::return#0 ] 333.67: zp[1]:22 [ keyboard_key_pressed::colidx#0 ] 202: zp[1]:20 [ keyboard_key_pressed::return#2 ] 
-Uplift Scope [keyboard_get_keycode] 1,102: zp[1]:16 [ keyboard_get_keycode::ch#0 ] 367.33: zp[1]:28 [ keyboard_get_keycode::return#0 ] 202: zp[1]:17 [ keyboard_get_keycode::return#2 ] 
+Uplift Scope [keyboard_key_pressed] 2,002: zp[1]:25 [ keyboard_key_pressed::rowidx#0 ] 2,002: zp[1]:27 [ keyboard_key_pressed::$2 ] 1,051.5: zp[1]:19 [ keyboard_key_pressed::key#0 ] 367.33: zp[1]:28 [ keyboard_key_pressed::return#0 ] 333.67: zp[1]:24 [ keyboard_key_pressed::colidx#0 ] 202: zp[1]:20 [ keyboard_key_pressed::return#2 ] 
+Uplift Scope [keyboard_get_keycode] 1,102: zp[1]:16 [ keyboard_get_keycode::ch#0 ] 367.33: zp[1]:23 [ keyboard_get_keycode::return#0 ] 202: zp[1]:17 [ keyboard_get_keycode::return#2 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -1668,7 +1668,7 @@ Uplifting [keyboard_matrix_read] best 101328 combination reg byte x [ keyboard_m
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [main] best 80228 combination reg byte y [ main::col#2 main::col#1 ] reg byte a [ main::$4 ] reg byte x [ main::row_pressed_bits#2 main::row_pressed_bits#1 main::row_pressed_bits#0 ] zp[1]:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ] zp[2]:5 [ main::screen#13 main::screen#1 ] zp[1]:21 [ main::$14 ] zp[1]:9 [ main::ch#2 main::ch#1 ] zp[1]:4 [ main::row#2 main::row#1 ] zp[1]:18 [ main::key#0 ] zp[2]:2 [ main::sc#2 main::sc#1 ] zp[2]:14 [ main::screen#2 ] 
 Limited combination testing to 100 combinations of 15552 possible.
-Uplifting [keyboard_key_pressed] best 79617 combination reg byte a [ keyboard_key_pressed::rowidx#0 ] zp[1]:25 [ keyboard_key_pressed::$2 ] reg byte x [ keyboard_key_pressed::key#0 ] reg byte a [ keyboard_key_pressed::return#0 ] zp[1]:22 [ keyboard_key_pressed::colidx#0 ] zp[1]:20 [ keyboard_key_pressed::return#2 ] 
+Uplifting [keyboard_key_pressed] best 79617 combination reg byte a [ keyboard_key_pressed::rowidx#0 ] zp[1]:27 [ keyboard_key_pressed::$2 ] reg byte x [ keyboard_key_pressed::key#0 ] reg byte a [ keyboard_key_pressed::return#0 ] zp[1]:24 [ keyboard_key_pressed::colidx#0 ] zp[1]:20 [ keyboard_key_pressed::return#2 ] 
 Limited combination testing to 100 combinations of 3072 possible.
 Uplifting [keyboard_get_keycode] best 78411 combination reg byte x [ keyboard_get_keycode::ch#0 ] reg byte a [ keyboard_get_keycode::return#0 ] reg byte a [ keyboard_get_keycode::return#2 ] 
 Uplifting [MOS6526_CIA] best 78411 combination 
@@ -1676,11 +1676,11 @@ Uplifting [MOS6569_VICII] best 78411 combination
 Uplifting [MOS6581_SID] best 78411 combination 
 Uplifting [keyboard_init] best 78411 combination 
 Uplifting [] best 78411 combination 
-Attempting to uplift remaining variables inzp[1]:25 [ keyboard_key_pressed::$2 ]
+Attempting to uplift remaining variables inzp[1]:27 [ keyboard_key_pressed::$2 ]
 Uplifting [keyboard_key_pressed] best 78405 combination reg byte a [ keyboard_key_pressed::$2 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ]
 Uplifting [main] best 78405 combination zp[1]:10 [ main::i#4 main::i#3 main::i#6 main::i#1 main::i#2 ] 
-Attempting to uplift remaining variables inzp[1]:22 [ keyboard_key_pressed::colidx#0 ]
+Attempting to uplift remaining variables inzp[1]:24 [ keyboard_key_pressed::colidx#0 ]
 Uplifting [keyboard_key_pressed] best 78403 combination reg byte y [ keyboard_key_pressed::colidx#0 ] 
 Attempting to uplift remaining variables inzp[1]:20 [ keyboard_key_pressed::return#2 ]
 Uplifting [keyboard_key_pressed] best 77803 combination reg byte a [ keyboard_key_pressed::return#2 ] 
@@ -1825,9 +1825,9 @@ main: {
     // [7] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuxx=vbuz1 
     ldx.z row
     // [8] call keyboard_matrix_read 
-    // [53] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
+    // [48] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
   keyboard_matrix_read_from___b5:
-    // [53] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
+    // [48] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
     // [9] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
     jmp __b17
@@ -2007,40 +2007,21 @@ main: {
     // [1] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // keyboard_key_pressed
-// Determines whether a specific key is currently pressed by accessing the matrix directly
-// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-// All keys exist as as KEY_XXX constants.
-// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte register(X) key)
-keyboard_key_pressed: {
-    // [45] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
-    txa
-    and #7
-    tay
-    // [46] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
-    txa
-    lsr
-    lsr
-    lsr
-    // [47] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
-    tax
-    // [48] call keyboard_matrix_read 
-    // [53] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
-  keyboard_matrix_read_from_keyboard_key_pressed:
-    // [53] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
-    jsr keyboard_matrix_read
-    // [49] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    jmp __b1
-    // keyboard_key_pressed::@1
-  __b1:
-    // [50] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // [51] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
-    and keyboard_matrix_col_bitmask,y
+  // keyboard_init
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
     jmp __breturn
-    // keyboard_key_pressed::@return
+    // keyboard_init::@return
   __breturn:
-    // [52] return 
+    // [47] return 
     rts
 }
   // keyboard_matrix_read
@@ -2051,16 +2032,16 @@ keyboard_key_pressed: {
 // leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
-    // [54] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [49] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
-    // [55] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [50] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     jmp __breturn
     // keyboard_matrix_read::@return
   __breturn:
-    // [56] return 
+    // [51] return 
     rts
 }
   // keyboard_get_keycode
@@ -2070,27 +2051,46 @@ keyboard_matrix_read: {
 // If there is no non-shifted key representing the char $3f is returned (representing RUN/STOP) .
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
-    // [57] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [52] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     jmp __breturn
     // keyboard_get_keycode::@return
   __breturn:
-    // [58] return 
+    // [53] return 
     rts
 }
-  // keyboard_init
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // [59] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // [60] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+  // keyboard_key_pressed
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(X) key)
+keyboard_key_pressed: {
+    // [54] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
+    txa
+    and #7
+    tay
+    // [55] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
+    txa
+    lsr
+    lsr
+    lsr
+    // [56] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+    tax
+    // [57] call keyboard_matrix_read 
+    // [48] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
+  keyboard_matrix_read_from_keyboard_key_pressed:
+    // [48] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
+    jsr keyboard_matrix_read
+    // [58] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+    jmp __b1
+    // keyboard_key_pressed::@1
+  __b1:
+    // [59] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+    // [60] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    and keyboard_matrix_col_bitmask,y
     jmp __breturn
-    // keyboard_init::@return
+    // keyboard_key_pressed::@return
   __breturn:
     // [61] return 
     rts
@@ -2122,10 +2122,10 @@ Removing instruction jmp __b19
 Removing instruction jmp __b15
 Removing instruction jmp __b13
 Removing instruction jmp __b16
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
-Removing instruction jmp __breturn
-Removing instruction jmp __breturn
-Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
@@ -2160,11 +2160,11 @@ Removing instruction __b19:
 Removing instruction __b15:
 Removing instruction __b16:
 Removing instruction __b1_from___b2:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction keyboard_matrix_read_from_keyboard_key_pressed:
 Removing instruction __b1:
-Removing instruction __breturn:
-Removing instruction __breturn:
-Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Relabelling long label __b16_from___b16 to __b3
@@ -2419,13 +2419,13 @@ reg byte a [ main::key#0 ]
 reg byte x [ keyboard_key_pressed::key#0 ]
 reg byte a [ keyboard_key_pressed::return#2 ]
 reg byte a [ main::$14 ]
+reg byte a [ keyboard_matrix_read::return#0 ]
+reg byte a [ keyboard_get_keycode::return#0 ]
 reg byte y [ keyboard_key_pressed::colidx#0 ]
 reg byte a [ keyboard_key_pressed::rowidx#0 ]
 reg byte a [ keyboard_matrix_read::return#2 ]
 reg byte a [ keyboard_key_pressed::$2 ]
 reg byte a [ keyboard_key_pressed::return#0 ]
-reg byte a [ keyboard_matrix_read::return#0 ]
-reg byte a [ keyboard_get_keycode::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -2557,8 +2557,8 @@ main: {
     // [7] (byte) keyboard_matrix_read::rowid#1 ← (byte) main::row#2 -- vbuxx=vbuz1 
     ldx.z row
     // [8] call keyboard_matrix_read 
-    // [53] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
-    // [53] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
+    // [48] phi from main::@5 to keyboard_matrix_read [phi:main::@5->keyboard_matrix_read]
+    // [48] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#1 [phi:main::@5->keyboard_matrix_read#0] -- register_copy 
     jsr keyboard_matrix_read
     // keyboard_matrix_read(row)
     // [9] (byte) keyboard_matrix_read::return#3 ← (byte) keyboard_matrix_read::return#0
@@ -2728,41 +2728,22 @@ main: {
     // [1] phi (byte*) main::sc#2 = (byte*) main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
-  // keyboard_key_pressed
-// Determines whether a specific key is currently pressed by accessing the matrix directly
-// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-// All keys exist as as KEY_XXX constants.
-// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte register(X) key)
-keyboard_key_pressed: {
-    // colidx = key&7
-    // [45] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
-    txa
-    and #7
-    tay
-    // rowidx = key>>3
-    // [46] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
-    txa
-    lsr
-    lsr
-    lsr
-    // keyboard_matrix_read(rowidx)
-    // [47] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
-    tax
-    // [48] call keyboard_matrix_read 
-    // [53] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
-    // [53] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
-    jsr keyboard_matrix_read
-    // keyboard_matrix_read(rowidx)
-    // [49] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
-    // keyboard_key_pressed::@1
-    // [50] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
-    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    // [51] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
-    and keyboard_matrix_col_bitmask,y
-    // keyboard_key_pressed::@return
+  // keyboard_init
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // CIA1->PORT_A_DDR = $ff
+    // [45] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
+    // [46] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+    // keyboard_init::@return
     // }
-    // [52] return 
+    // [47] return 
     rts
 }
   // keyboard_matrix_read
@@ -2774,16 +2755,16 @@ keyboard_key_pressed: {
 // keyboard_matrix_read(byte register(X) rowid)
 keyboard_matrix_read: {
     // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
-    // [54] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [49] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1) ← *((const byte*) keyboard_matrix_row_bitmask + (byte) keyboard_matrix_read::rowid#2) -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda keyboard_matrix_row_bitmask,x
     sta CIA1
     // ~CIA1->PORT_B
-    // [55] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
+    // [50] (byte) keyboard_matrix_read::return#0 ← ~ *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B) -- vbuaa=_bnot__deref_pbuc1 
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
     // keyboard_matrix_read::@return
     // }
-    // [56] return 
+    // [51] return 
     rts
 }
   // keyboard_get_keycode
@@ -2794,27 +2775,46 @@ keyboard_matrix_read: {
 // keyboard_get_keycode(byte register(X) ch)
 keyboard_get_keycode: {
     // return keyboard_char_keycodes[ch];
-    // [57] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [52] (byte) keyboard_get_keycode::return#0 ← *((const to_nomodify byte*) keyboard_char_keycodes + (byte) keyboard_get_keycode::ch#0) -- vbuaa=pbuc1_derefidx_vbuxx 
     lda keyboard_char_keycodes,x
     // keyboard_get_keycode::@return
     // }
-    // [58] return 
+    // [53] return 
     rts
 }
-  // keyboard_init
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // CIA1->PORT_A_DDR = $ff
-    // [59] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) ← (byte) $ff -- _deref_pbuc1=vbuc2 
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA1->PORT_B_DDR = $00
-    // [60] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
-    // keyboard_init::@return
+  // keyboard_key_pressed
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(X) key)
+keyboard_key_pressed: {
+    // colidx = key&7
+    // [54] (byte) keyboard_key_pressed::colidx#0 ← (byte) keyboard_key_pressed::key#0 & (byte) 7 -- vbuyy=vbuxx_band_vbuc1 
+    txa
+    and #7
+    tay
+    // rowidx = key>>3
+    // [55] (byte) keyboard_key_pressed::rowidx#0 ← (byte) keyboard_key_pressed::key#0 >> (byte) 3 -- vbuaa=vbuxx_ror_3 
+    txa
+    lsr
+    lsr
+    lsr
+    // keyboard_matrix_read(rowidx)
+    // [56] (byte) keyboard_matrix_read::rowid#0 ← (byte) keyboard_key_pressed::rowidx#0 -- vbuxx=vbuaa 
+    tax
+    // [57] call keyboard_matrix_read 
+    // [48] phi from keyboard_key_pressed to keyboard_matrix_read [phi:keyboard_key_pressed->keyboard_matrix_read]
+    // [48] phi (byte) keyboard_matrix_read::rowid#2 = (byte) keyboard_matrix_read::rowid#0 [phi:keyboard_key_pressed->keyboard_matrix_read#0] -- register_copy 
+    jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx)
+    // [58] (byte) keyboard_matrix_read::return#2 ← (byte) keyboard_matrix_read::return#0
+    // keyboard_key_pressed::@1
+    // [59] (byte~) keyboard_key_pressed::$2 ← (byte) keyboard_matrix_read::return#2
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
+    // [60] (byte) keyboard_key_pressed::return#0 ← (byte~) keyboard_key_pressed::$2 & *((const byte*) keyboard_matrix_col_bitmask + (byte) keyboard_key_pressed::colidx#0) -- vbuaa=vbuaa_band_pbuc1_derefidx_vbuyy 
+    and keyboard_matrix_col_bitmask,y
+    // keyboard_key_pressed::@return
     // }
     // [61] return 
     rts

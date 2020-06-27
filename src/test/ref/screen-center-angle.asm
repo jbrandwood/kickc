@@ -30,8 +30,8 @@ main: {
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
     .label BASE_SCREEN = $400
     .label BASE_CHARSET = $1000
-    .label __4 = $12
-    .label cyclecount = $12
+    .label __4 = $13
+    .label cyclecount = $13
     // init_font_hex(CHARSET)
     jsr init_font_hex
     // *D018 = toD018(SCREEN, CHARSET)
@@ -65,138 +65,153 @@ main: {
     // }
     rts
 }
-// Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp($12) dw)
-print_ulong_at: {
-    .label dw = $12
-    // print_uint_at(>dw, at)
-    lda.z dw+2
-    sta.z print_uint_at.w
-    lda.z dw+3
-    sta.z print_uint_at.w+1
-    lda #<main.BASE_SCREEN
-    sta.z print_uint_at.at
-    lda #>main.BASE_SCREEN
-    sta.z print_uint_at.at+1
-    jsr print_uint_at
-    // print_uint_at(<dw, at+4)
-    lda.z dw
-    sta.z print_uint_at.w
-    lda.z dw+1
-    sta.z print_uint_at.w+1
-    lda #<main.BASE_SCREEN+4
-    sta.z print_uint_at.at
-    lda #>main.BASE_SCREEN+4
-    sta.z print_uint_at.at+1
-    jsr print_uint_at
-    // }
-    rts
-}
-// Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp(2) w, byte* zp(4) at)
-print_uint_at: {
-    .label w = 2
-    .label at = 4
-    // print_uchar_at(>w, at)
-    lda.z w+1
-    sta.z print_uchar_at.b
-    jsr print_uchar_at
-    // print_uchar_at(<w, at+2)
-    lda.z w
-    sta.z print_uchar_at.b
-    lda #2
-    clc
-    adc.z print_uchar_at.at
-    sta.z print_uchar_at.at
-    bcc !+
-    inc.z print_uchar_at.at+1
-  !:
-    jsr print_uchar_at
-    // }
-    rts
-}
-// Print a char as HEX at a specific position
-// print_uchar_at(byte zp($1b) b, byte* zp(4) at)
-print_uchar_at: {
-    .label b = $1b
-    .label at = 4
-    // b>>4
-    lda.z b
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char_at(print_hextab[b>>4], at)
+// Make charset from proto chars
+// init_font_hex(byte* zp(5) charset)
+init_font_hex: {
+    .label __0 = $1b
+    .label idx = 8
+    .label proto_lo = 9
+    .label charset = 5
+    .label c1 = 7
+    .label proto_hi = 3
+    .label c = 2
+    lda #0
+    sta.z c
+    lda #<FONT_HEX_PROTO
+    sta.z proto_hi
+    lda #>FONT_HEX_PROTO
+    sta.z proto_hi+1
+    lda #<CHARSET
+    sta.z charset
+    lda #>CHARSET
+    sta.z charset+1
+  __b1:
+    lda #0
+    sta.z c1
+    lda #<FONT_HEX_PROTO
+    sta.z proto_lo
+    lda #>FONT_HEX_PROTO
+    sta.z proto_lo+1
+  __b2:
+    // charset[idx++] = 0
+    lda #0
     tay
-    ldx print_hextab,y
-    lda.z at
-    sta.z print_char_at.at
-    lda.z at+1
-    sta.z print_char_at.at+1
-  // Table of hexadecimal digits
-    jsr print_char_at
-    // b&$f
-    lda #$f
-    and.z b
-    tay
-    // print_char_at(print_hextab[b&$f], at+1)
-    lda.z at
-    clc
-    adc #1
-    sta.z print_char_at.at
-    lda.z at+1
-    adc #0
-    sta.z print_char_at.at+1
-    ldx print_hextab,y
-    jsr print_char_at
-    // }
-    rts
-}
-// Print a single char
-// print_char_at(byte register(X) ch, byte* zp(6) at)
-print_char_at: {
-    .label at = 6
-    // *(at) = ch
+    sta (charset),y
+    lda #1
+    sta.z idx
+    ldx #0
+  __b3:
+    // proto_hi[i]<<4
     txa
-    ldy #0
-    sta (at),y
+    tay
+    lda (proto_hi),y
+    asl
+    asl
+    asl
+    asl
+    sta.z __0
+    // proto_lo[i]<<1
+    txa
+    tay
+    lda (proto_lo),y
+    asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
+    ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
+    inc.z idx
+    // for( byte i: 0..4)
+    inx
+    cpx #5
+    bne __b3
+    // charset[idx++] = 0
+    lda #0
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = 0;
+    iny
+    // charset[idx++] = 0
+    sta (charset),y
+    // proto_lo += 5
+    lda #5
+    clc
+    adc.z proto_lo
+    sta.z proto_lo
+    bcc !+
+    inc.z proto_lo+1
+  !:
+    // charset += 8
+    lda #8
+    clc
+    adc.z charset
+    sta.z charset
+    bcc !+
+    inc.z charset+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c1
+    lda #$10
+    cmp.z c1
+    bne __b2
+    // proto_hi += 5
+    lda #5
+    clc
+    adc.z proto_hi
+    sta.z proto_hi
+    bcc !+
+    inc.z proto_hi+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c
+    lda #$10
+    cmp.z c
+    bne __b1
     // }
     rts
 }
-// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
-// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
-clock: {
-    .label return = $12
-    // 0xffffffff - *CIA2_TIMER_AB
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
     lda #<$ffffffff
-    sec
-    sbc CIA2_TIMER_AB
-    sta.z return
+    sta CIA2_TIMER_AB
     lda #>$ffffffff
-    sbc CIA2_TIMER_AB+1
-    sta.z return+1
+    sta CIA2_TIMER_AB+1
     lda #<$ffffffff>>$10
-    sbc CIA2_TIMER_AB+2
-    sta.z return+2
+    sta CIA2_TIMER_AB+2
     lda #>$ffffffff>>$10
-    sbc CIA2_TIMER_AB+3
-    sta.z return+3
+    sta CIA2_TIMER_AB+3
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label __7 = $d
-    .label xw = $16
-    .label yw = $18
-    .label angle_w = $d
-    .label ang_w = $1a
-    .label x = $c
-    .label xb = $11
-    .label screen_topline = 2
-    .label screen_bottomline = 4
-    .label y = $1b
+    .label __7 = $f
+    .label xw = $17
+    .label yw = $19
+    .label angle_w = $f
+    .label ang_w = $1b
+    .label x = 7
+    .label xb = 8
+    .label screen_topline = 3
+    .label screen_bottomline = 5
+    .label y = 2
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
@@ -299,21 +314,69 @@ init_angle_screen: {
     dec.z xb
     jmp __b2
 }
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = $13
+    // 0xffffffff - *CIA2_TIMER_AB
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta.z return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta.z return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta.z return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta.z return+3
+    // }
+    rts
+}
+// Print a unsigned long as HEX at a specific position
+// print_ulong_at(dword zp($13) dw)
+print_ulong_at: {
+    .label dw = $13
+    // print_uint_at(>dw, at)
+    lda.z dw+2
+    sta.z print_uint_at.w
+    lda.z dw+3
+    sta.z print_uint_at.w+1
+    lda #<main.BASE_SCREEN
+    sta.z print_uint_at.at
+    lda #>main.BASE_SCREEN
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // print_uint_at(<dw, at+4)
+    lda.z dw
+    sta.z print_uint_at.w
+    lda.z dw+1
+    sta.z print_uint_at.w+1
+    lda #<main.BASE_SCREEN+4
+    sta.z print_uint_at.at
+    lda #>main.BASE_SCREEN+4
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // }
+    rts
+}
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($16) x, signed word zp($18) y)
+// atan2_16(signed word zp($17) x, signed word zp($19) y)
 atan2_16: {
-    .label __2 = 6
-    .label __7 = $a
-    .label yi = 6
-    .label xi = $a
-    .label angle = $d
-    .label xd = 8
-    .label yd = $f
-    .label return = $d
-    .label x = $16
-    .label y = $18
+    .label __2 = 9
+    .label __7 = $d
+    .label yi = 9
+    .label xi = $d
+    .label angle = $f
+    .label xd = $b
+    .label yd = $11
+    .label return = $f
+    .label x = $17
+    .label y = $19
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -514,137 +577,74 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
-// Reset & start the processor clock time. The value can be read using clock().
-// This uses CIA #2 Timer A+B on the C64
-clock_start: {
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // *CIA2_TIMER_AB = 0xffffffff
-    lda #<$ffffffff
-    sta CIA2_TIMER_AB
-    lda #>$ffffffff
-    sta CIA2_TIMER_AB+1
-    lda #<$ffffffff>>$10
-    sta CIA2_TIMER_AB+2
-    lda #>$ffffffff>>$10
-    sta CIA2_TIMER_AB+3
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    lda #CIA_TIMER_CONTROL_START
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+// Print a unsigned int as HEX at a specific position
+// print_uint_at(word zp($d) w, byte* zp($f) at)
+print_uint_at: {
+    .label w = $d
+    .label at = $f
+    // print_uchar_at(>w, at)
+    lda.z w+1
+    sta.z print_uchar_at.b
+    jsr print_uchar_at
+    // print_uchar_at(<w, at+2)
+    lda.z w
+    sta.z print_uchar_at.b
+    lda #2
+    clc
+    adc.z print_uchar_at.at
+    sta.z print_uchar_at.at
+    bcc !+
+    inc.z print_uchar_at.at+1
+  !:
+    jsr print_uchar_at
     // }
     rts
 }
-// Make charset from proto chars
-// init_font_hex(byte* zp($d) charset)
-init_font_hex: {
-    .label __0 = $1b
-    .label idx = $1a
-    .label proto_lo = $f
-    .label charset = $d
-    .label c1 = $11
-    .label proto_hi = $a
-    .label c = $c
-    lda #0
-    sta.z c
-    lda #<FONT_HEX_PROTO
-    sta.z proto_hi
-    lda #>FONT_HEX_PROTO
-    sta.z proto_hi+1
-    lda #<CHARSET
-    sta.z charset
-    lda #>CHARSET
-    sta.z charset+1
-  __b1:
-    lda #0
-    sta.z c1
-    lda #<FONT_HEX_PROTO
-    sta.z proto_lo
-    lda #>FONT_HEX_PROTO
-    sta.z proto_lo+1
-  __b2:
-    // charset[idx++] = 0
-    lda #0
+// Print a char as HEX at a specific position
+// print_uchar_at(byte zp($1b) b, byte* zp($f) at)
+print_uchar_at: {
+    .label b = $1b
+    .label at = $f
+    // b>>4
+    lda.z b
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char_at(print_hextab[b>>4], at)
     tay
-    sta (charset),y
-    lda #1
-    sta.z idx
-    ldx #0
-  __b3:
-    // proto_hi[i]<<4
+    ldx print_hextab,y
+    lda.z at
+    sta.z print_char_at.at
+    lda.z at+1
+    sta.z print_char_at.at+1
+  // Table of hexadecimal digits
+    jsr print_char_at
+    // b&$f
+    lda #$f
+    and.z b
+    tay
+    // print_char_at(print_hextab[b&$f], at+1)
+    lda.z at
+    clc
+    adc #1
+    sta.z print_char_at.at
+    lda.z at+1
+    adc #0
+    sta.z print_char_at.at+1
+    ldx print_hextab,y
+    jsr print_char_at
+    // }
+    rts
+}
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zp($11) at)
+print_char_at: {
+    .label at = $11
+    // *(at) = ch
     txa
-    tay
-    lda (proto_hi),y
-    asl
-    asl
-    asl
-    asl
-    sta.z __0
-    // proto_lo[i]<<1
-    txa
-    tay
-    lda (proto_lo),y
-    asl
-    // proto_hi[i]<<4 | proto_lo[i]<<1
-    ora.z __0
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
-    inc.z idx
-    // for( byte i: 0..4)
-    inx
-    cpx #5
-    bne __b3
-    // charset[idx++] = 0
-    lda #0
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = 0;
-    iny
-    // charset[idx++] = 0
-    sta (charset),y
-    // proto_lo += 5
-    lda #5
-    clc
-    adc.z proto_lo
-    sta.z proto_lo
-    bcc !+
-    inc.z proto_lo+1
-  !:
-    // charset += 8
-    lda #8
-    clc
-    adc.z charset
-    sta.z charset
-    bcc !+
-    inc.z charset+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c1
-    lda #$10
-    cmp.z c1
-    bne __b2
-    // proto_hi += 5
-    lda #5
-    clc
-    adc.z proto_hi
-    sta.z proto_hi
-    bcc !+
-    inc.z proto_hi+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c
-    lda #$10
-    cmp.z c
-    bne __b1
+    ldy #0
+    sta (at),y
     // }
     rts
 }

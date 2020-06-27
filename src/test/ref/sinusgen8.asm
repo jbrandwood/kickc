@@ -14,7 +14,7 @@
   .const PI_HALF_u4f12 = $1922
   .const wavelength = $c0
   .label print_screen = $400
-  .label print_char_cursor = 3
+  .label print_char_cursor = 8
 main: {
     .label i = 2
     // sin8s_gen(sintab2, wavelength)
@@ -48,147 +48,16 @@ main: {
     str: .text "  "
     .byte 0
 }
-// Print a zero-terminated string
-// print_str(byte* zp(5) str)
-print_str: {
-    .label str = 5
-    lda #<main.str
-    sta.z str
-    lda #>main.str
-    sta.z str+1
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// Print a signed char as HEX
-// print_schar(signed byte register(X) b)
-print_schar: {
-    // if(b<0)
-    cpx #0
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_uchar((char)b)
-    jsr print_uchar
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // b = -b
-    txa
-    eor #$ff
-    clc
-    adc #1
-    tax
-    jmp __b2
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = 5
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b1
-}
 // Generate signed char sinus table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin8s_gen(signed byte* zp(7) sintab)
+// sin8s_gen(signed byte* zp(8) sintab)
 sin8s_gen: {
-    .label step = $f
-    .label sintab = 7
+    .label step = $c
+    .label sintab = 8
     // u[4.12]
     // Iterate over the table
-    .label x = 5
+    .label x = 6
     .label i = 3
     // div16u(PI2_u4f12, wavelength)
     jsr div16u
@@ -246,20 +115,93 @@ sin8s_gen: {
   !:
     jmp __b1
 }
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
+// Print a signed char as HEX
+// print_schar(signed byte register(X) b)
+print_schar: {
+    // if(b<0)
+    cpx #0
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_uchar((char)b)
+    jsr print_uchar
+    // }
+    rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // b = -b
+    txa
+    eor #$ff
+    clc
+    adc #1
+    tax
+    jmp __b2
+}
+// Print a zero-terminated string
+// print_str(byte* zp(3) str)
+print_str: {
+    .label str = 3
+    lda #<main.str
+    sta.z str
+    lda #>main.str
+    sta.z str+1
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Performs division on two 16 bit unsigned ints
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+div16u: {
+    .label return = $c
+    // divr16u(dividend, divisor, 0)
+    jsr divr16u
+    // divr16u(dividend, divisor, 0)
+    // }
+    rts
+}
 // Calculate signed char sinus sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
-// sin8s(word zp($b) x)
+// sin8s(word zp($a) x)
 sin8s: {
     // u[2.6] x^3
     .const DIV_6 = $2b
-    .label __4 = $b
-    .label x = $b
-    .label x1 = $11
-    .label x3 = $12
-    .label usinx = $13
+    .label __4 = $a
+    .label x = $a
+    .label x1 = $13
+    .label x3 = $14
+    .label usinx = $15
     // Move x1 into the range 0-PI/2 using sinus mirror symmetries
-    .label isUpper = 9
+    .label isUpper = 5
     // if(x >= PI_u4f12 )
     lda.z x+1
     cmp #>PI_u4f12
@@ -388,82 +330,73 @@ sin8s: {
     txa
     rts
 }
-// Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
-// The select parameter indicates how many of the highest bits of the 16-bit result to skip
-// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($a) select)
-mulu8_sel: {
-    .label __0 = $d
-    .label __1 = $d
-    .label select = $a
-    // mul8u(v1, v2)
-    tya
-    jsr mul8u
-    // mul8u(v1, v2)<<select
-    ldy.z select
-    beq !e+
-  !:
-    asl.z __1
-    rol.z __1+1
-    dey
-    bne !-
-  !e:
-    // >mul8u(v1, v2)<<select
-    lda.z __1+1
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
-mul8u: {
-    .label mb = $b
-    .label res = $d
-    .label return = $d
-    // mb = b
-    sta.z mb
-    lda #0
-    sta.z mb+1
-    sta.z res
-    sta.z res+1
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = 6
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
   __b1:
-    // while(a!=0)
-    cpx #0
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
     bne __b2
     // }
     rts
   __b2:
-    // a&1
-    txa
-    and #1
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-  __b3:
-    // a = a>>1
-    txa
-    lsr
-    tax
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
     jmp __b1
 }
-// Performs division on two 16 bit unsigned ints
-// Returns the quotient dividend/divisor.
-// The remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-div16u: {
-    .label return = $f
-    // divr16u(dividend, divisor, 0)
-    jsr divr16u
-    // divr16u(dividend, divisor, 0)
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
     // }
     rts
 }
@@ -471,12 +404,12 @@ div16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($d) dividend, word zp($b) rem)
+// divr16u(word zp($f) dividend, word zp($a) rem)
 divr16u: {
-    .label rem = $b
-    .label dividend = $d
-    .label quotient = $f
-    .label return = $f
+    .label rem = $a
+    .label dividend = $f
+    .label quotient = $c
+    .label return = $c
     ldx #0
     txa
     sta.z quotient
@@ -539,6 +472,73 @@ divr16u: {
     bne __b1
     // }
     rts
+}
+// Calculate val*val for two unsigned char values - the result is 8 selected bits of the 16-bit result.
+// The select parameter indicates how many of the highest bits of the 16-bit result to skip
+// mulu8_sel(byte register(X) v1, byte register(Y) v2, byte zp($e) select)
+mulu8_sel: {
+    .label __0 = $f
+    .label __1 = $f
+    .label select = $e
+    // mul8u(v1, v2)
+    tya
+    jsr mul8u
+    // mul8u(v1, v2)<<select
+    ldy.z select
+    beq !e+
+  !:
+    asl.z __1
+    rol.z __1+1
+    dey
+    bne !-
+  !e:
+    // >mul8u(v1, v2)<<select
+    lda.z __1+1
+    // }
+    rts
+}
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+// mul8u(byte register(X) a, byte register(A) b)
+mul8u: {
+    .label mb = $11
+    .label res = $f
+    .label return = $f
+    // mb = b
+    sta.z mb
+    lda #0
+    sta.z mb+1
+    sta.z res
+    sta.z res+1
+  __b1:
+    // while(a!=0)
+    cpx #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // a&1
+    txa
+    and #1
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+  __b3:
+    // a = a>>1
+    txa
+    lsr
+    tax
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   sintab2: .fill $c0, 0

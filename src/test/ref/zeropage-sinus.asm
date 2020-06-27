@@ -37,11 +37,23 @@ main: {
     rts
 }
 // Save all values on zeropage
-restoreZeropage: {
+saveZeropage: {
     // asm
     ldx #0
   !:
-    lda ZP_STORAGE,x
+    lda.z 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    // }
+    rts
+}
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm
+    ldx #0
+  !:
+    lda SINTABLE,x
     sta.z 0,x
     inx
     bne !-
@@ -75,25 +87,13 @@ animSprite: {
     // }
     rts
 }
-// Move the SINUS values to zeropage
-sinZeropage: {
-    // asm
-    ldx #0
-  !:
-    lda SINTABLE,x
-    sta.z 0,x
-    inx
-    bne !-
-    // }
-    rts
-}
 // Save all values on zeropage
-saveZeropage: {
+restoreZeropage: {
     // asm
     ldx #0
   !:
-    lda.z 0,x
-    sta ZP_STORAGE,x
+    lda ZP_STORAGE,x
+    sta.z 0,x
     inx
     bne !-
     // }

@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_line_cursor = 9
-  .label print_char_cursor = 7
+  .label print_line_cursor = 7
+  .label print_char_cursor = 5
 main: {
     .label w2 = $b
     .label w1 = 2
@@ -73,33 +73,17 @@ main: {
     sta.z print_char_cursor+1
     jmp __b1
 }
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
 }
 // Print a signed int as HEX
-// print_sint(signed word zp(5) w)
+// print_sint(signed word zp(9) w)
 print_sint: {
-    .label w = 5
+    .label w = 9
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -139,46 +123,26 @@ print_char: {
     // }
     rts
 }
-// Print a unsigned int as HEX
-// print_uint(word zp(5) w)
-print_uint: {
-    .label w = 5
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
     // }
     rts
 }
@@ -214,5 +178,41 @@ memset: {
     inc.z dst+1
   !:
     jmp __b1
+}
+// Print a unsigned int as HEX
+// print_uint(word zp(9) w)
+print_uint: {
+    .label w = 9
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
 }
   print_hextab: .text "0123456789abcdef"

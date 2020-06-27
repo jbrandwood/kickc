@@ -29,6 +29,13 @@ main: {
     // }
     rts
 }
+// sub1(byte register(A) i)
+sub1: {
+    // i+i
+    asl
+    // }
+    rts
+}
 // sub2(byte register(X) i)
 sub2: {
     // i+i
@@ -38,13 +45,6 @@ sub2: {
     stx.z $ff
     clc
     adc.z $ff
-    // }
-    rts
-}
-// sub1(byte register(A) i)
-sub1: {
-    // i+i
-    asl
     // }
     rts
 }

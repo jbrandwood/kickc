@@ -18,94 +18,39 @@ main: {
     // }
     rts
 }
-testSignedVals: {
-    .const sbc1 = -$78
-    .label sbv1 = 2
-    // sbv1 = -120
-    lda #-$78
-    sta.z sbv1
-    // SSCREEN[idx++] = (-120)
-    sta SSCREEN+$28*3
-    // SSCREEN[idx++] = (sbc1)
-    lda #sbc1
-    sta SSCREEN+$28*3+1
-    // SSCREEN[idx++] = (sbv1)
-    lda.z sbv1
-    sta SSCREEN+$28*3+1+1
-    // SSCREEN[idx++] = (-70+-50)
-    lda #-$46+-$32
-    sta SSCREEN+$28*3+1+1+1
-    // SSCREEN[idx++] = (sbc1+-120)
-    lda #sbc1+-$78
-    sta SSCREEN+$28*3+1+1+1+1
-    // SSCREEN[idx++] = (-120+sbc1)
-    lda #-$78+sbc1
-    sta SSCREEN+$28*3+1+1+1+1+1
-    // sbv1+-120
-    lda #-$78
-    clc
-    adc.z sbv1
-    // SSCREEN[idx++] = (sbv1+-120)
-    sta SSCREEN+$28*3+1+1+1+1+1+1
-    // -120+sbv1
-    lda #-$78
-    clc
-    adc.z sbv1
-    // SSCREEN[idx++] = (-120+sbv1)
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1
-    // sbv1+sbc1
-    lda #sbc1
-    clc
-    adc.z sbv1
-    // SSCREEN[idx++] = (sbv1+sbc1)
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1
-    // sbc1+sbv1
-    lda #sbc1
-    clc
-    adc.z sbv1
-    // SSCREEN[idx++] = (sbc1+sbv1)
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1
-    // sbv1+sbv1
-    lda.z sbv1
-    asl
-    // SSCREEN[idx++] = (sbv1+sbv1)
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1+1
-    // }
-    rts
-}
-testSigned: {
-    // SCREEN[idx++] = typeid(-120)
+testUnsigned: {
+    // SCREEN[idx++] = typeid(250)
     lda #0
-    sta SCREEN+$28*2
-    // SCREEN[idx++] = typeid(sbc1)
-    lda #TYPEID_SIGNED_BYTE
-    sta SCREEN+$28*2+1
-    // SCREEN[idx++] = typeid(sbv1)
-    sta SCREEN+$28*2+1+1
-    // SCREEN[idx++] = typeid(-120+-130)
+    sta SCREEN
+    // SCREEN[idx++] = typeid(ubc1)
+    lda #TYPEID_BYTE
+    sta SCREEN+1
+    // SCREEN[idx++] = typeid(ubv1)
+    sta SCREEN+2
+    // SCREEN[idx++] = typeid(120+130)
     lda #0
-    sta SCREEN+$28*2+1+1+1
-    // SCREEN[idx++] = typeid(sbc1+-120)
-    lda #TYPEID_SIGNED_BYTE
-    sta SCREEN+$28*2+1+1+1+1
-    // SCREEN[idx++] = typeid(-120+sbc1)
-    sta SCREEN+$28*2+1+1+1+1+1
-    // SCREEN[idx++] = typeid(sbv1+-120)
-    sta SCREEN+$28*2+1+1+1+1+1+1
-    // SCREEN[idx++] = typeid(-120+sbv1)
-    sta SCREEN+$28*2+1+1+1+1+1+1+1
-    // SCREEN[idx++] = typeid(sbv1+sbc1)
-    sta SCREEN+$28*2+1+1+1+1+1+1+1+1
-    // SCREEN[idx++] = typeid(sbc1+sbv1)
-    sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1
-    // SCREEN[idx++] = typeid(sbv1+sbv1)
-    sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1+1
+    sta SCREEN+3
+    // SCREEN[idx++] = typeid(ubc1+250)
+    lda #TYPEID_BYTE
+    sta SCREEN+4
+    // SCREEN[idx++] = typeid(250+ubc1)
+    sta SCREEN+5
+    // SCREEN[idx++] = typeid(ubv1+250)
+    sta SCREEN+6
+    // SCREEN[idx++] = typeid(250+ubv1)
+    sta SCREEN+7
+    // SCREEN[idx++] = typeid(ubv1+ubc1)
+    sta SCREEN+8
+    // SCREEN[idx++] = typeid(ubc1+ubv1)
+    sta SCREEN+9
+    // SCREEN[idx++] = typeid(ubv1+ubv1)
+    sta SCREEN+$a
     // }
     rts
 }
 testUnsignedVals: {
     .const ubc1 = $fa
-    .label ubv1 = 3
+    .label ubv1 = 2
     // ubv1 = 250
     lda #$fa
     sta.z ubv1
@@ -156,33 +101,88 @@ testUnsignedVals: {
     // }
     rts
 }
-testUnsigned: {
-    // SCREEN[idx++] = typeid(250)
+testSigned: {
+    // SCREEN[idx++] = typeid(-120)
     lda #0
-    sta SCREEN
-    // SCREEN[idx++] = typeid(ubc1)
-    lda #TYPEID_BYTE
-    sta SCREEN+1
-    // SCREEN[idx++] = typeid(ubv1)
-    sta SCREEN+2
-    // SCREEN[idx++] = typeid(120+130)
+    sta SCREEN+$28*2
+    // SCREEN[idx++] = typeid(sbc1)
+    lda #TYPEID_SIGNED_BYTE
+    sta SCREEN+$28*2+1
+    // SCREEN[idx++] = typeid(sbv1)
+    sta SCREEN+$28*2+1+1
+    // SCREEN[idx++] = typeid(-120+-130)
     lda #0
-    sta SCREEN+3
-    // SCREEN[idx++] = typeid(ubc1+250)
-    lda #TYPEID_BYTE
-    sta SCREEN+4
-    // SCREEN[idx++] = typeid(250+ubc1)
-    sta SCREEN+5
-    // SCREEN[idx++] = typeid(ubv1+250)
-    sta SCREEN+6
-    // SCREEN[idx++] = typeid(250+ubv1)
-    sta SCREEN+7
-    // SCREEN[idx++] = typeid(ubv1+ubc1)
-    sta SCREEN+8
-    // SCREEN[idx++] = typeid(ubc1+ubv1)
-    sta SCREEN+9
-    // SCREEN[idx++] = typeid(ubv1+ubv1)
-    sta SCREEN+$a
+    sta SCREEN+$28*2+1+1+1
+    // SCREEN[idx++] = typeid(sbc1+-120)
+    lda #TYPEID_SIGNED_BYTE
+    sta SCREEN+$28*2+1+1+1+1
+    // SCREEN[idx++] = typeid(-120+sbc1)
+    sta SCREEN+$28*2+1+1+1+1+1
+    // SCREEN[idx++] = typeid(sbv1+-120)
+    sta SCREEN+$28*2+1+1+1+1+1+1
+    // SCREEN[idx++] = typeid(-120+sbv1)
+    sta SCREEN+$28*2+1+1+1+1+1+1+1
+    // SCREEN[idx++] = typeid(sbv1+sbc1)
+    sta SCREEN+$28*2+1+1+1+1+1+1+1+1
+    // SCREEN[idx++] = typeid(sbc1+sbv1)
+    sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1
+    // SCREEN[idx++] = typeid(sbv1+sbv1)
+    sta SCREEN+$28*2+1+1+1+1+1+1+1+1+1+1
+    // }
+    rts
+}
+testSignedVals: {
+    .const sbc1 = -$78
+    .label sbv1 = 3
+    // sbv1 = -120
+    lda #-$78
+    sta.z sbv1
+    // SSCREEN[idx++] = (-120)
+    sta SSCREEN+$28*3
+    // SSCREEN[idx++] = (sbc1)
+    lda #sbc1
+    sta SSCREEN+$28*3+1
+    // SSCREEN[idx++] = (sbv1)
+    lda.z sbv1
+    sta SSCREEN+$28*3+1+1
+    // SSCREEN[idx++] = (-70+-50)
+    lda #-$46+-$32
+    sta SSCREEN+$28*3+1+1+1
+    // SSCREEN[idx++] = (sbc1+-120)
+    lda #sbc1+-$78
+    sta SSCREEN+$28*3+1+1+1+1
+    // SSCREEN[idx++] = (-120+sbc1)
+    lda #-$78+sbc1
+    sta SSCREEN+$28*3+1+1+1+1+1
+    // sbv1+-120
+    lda #-$78
+    clc
+    adc.z sbv1
+    // SSCREEN[idx++] = (sbv1+-120)
+    sta SSCREEN+$28*3+1+1+1+1+1+1
+    // -120+sbv1
+    lda #-$78
+    clc
+    adc.z sbv1
+    // SSCREEN[idx++] = (-120+sbv1)
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1
+    // sbv1+sbc1
+    lda #sbc1
+    clc
+    adc.z sbv1
+    // SSCREEN[idx++] = (sbv1+sbc1)
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1
+    // sbc1+sbv1
+    lda #sbc1
+    clc
+    adc.z sbv1
+    // SSCREEN[idx++] = (sbc1+sbv1)
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1
+    // sbv1+sbv1
+    lda.z sbv1
+    asl
+    // SSCREEN[idx++] = (sbv1+sbv1)
+    sta SSCREEN+$28*3+1+1+1+1+1+1+1+1+1+1
     // }
     rts
 }

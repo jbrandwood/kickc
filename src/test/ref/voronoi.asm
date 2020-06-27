@@ -17,6 +17,78 @@ main: {
     jsr animate
     jmp __b1
 }
+initscreen: {
+    .label screen = 3
+    lda #<SCREEN
+    sta.z screen
+    lda #>SCREEN
+    sta.z screen+1
+  __b1:
+    // for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen)
+    lda.z screen+1
+    cmp #>SCREEN+$3e8
+    bcc __b2
+    bne !+
+    lda.z screen
+    cmp #<SCREEN+$3e8
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    // *screen = FILL
+    lda #FILL
+    ldy #0
+    sta (screen),y
+    // for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen)
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    jmp __b1
+}
+render: {
+    .label x = 5
+    .label colline = 3
+    .label y = 2
+    lda #<COLORS
+    sta.z colline
+    lda #>COLORS
+    sta.z colline+1
+    lda #0
+    sta.z y
+  __b1:
+    lda #0
+    sta.z x
+  __b2:
+    // findcol(x, y)
+    jsr findcol
+    // findcol(x, y)
+    txa
+    // col = findcol(x, y)
+    // colline[x] = col
+    ldy.z x
+    sta (colline),y
+    // for( byte x : 0..39)
+    inc.z x
+    lda #$28
+    cmp.z x
+    bne __b2
+    // colline = colline+40
+    clc
+    adc.z colline
+    sta.z colline
+    bcc !+
+    inc.z colline+1
+  !:
+    // for( byte y : 0.. 24)
+    inc.z y
+    lda #$19
+    cmp.z y
+    bne __b1
+    // }
+    rts
+}
 animate: {
     // XPOS[0]+1
     ldx XPOS
@@ -102,56 +174,14 @@ animate: {
     // }
     rts
 }
-render: {
-    .label x = 3
-    .label colline = 6
-    .label y = 2
-    lda #<COLORS
-    sta.z colline
-    lda #>COLORS
-    sta.z colline+1
-    lda #0
-    sta.z y
-  __b1:
-    lda #0
-    sta.z x
-  __b2:
-    // findcol(x, y)
-    jsr findcol
-    // findcol(x, y)
-    txa
-    // col = findcol(x, y)
-    // colline[x] = col
-    ldy.z x
-    sta (colline),y
-    // for( byte x : 0..39)
-    inc.z x
-    lda #$28
-    cmp.z x
-    bne __b2
-    // colline = colline+40
-    clc
-    adc.z colline
-    sta.z colline
-    bcc !+
-    inc.z colline+1
-  !:
-    // for( byte y : 0.. 24)
-    inc.z y
-    lda #$19
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// findcol(byte zp(3) x, byte zp(2) y)
+// findcol(byte zp(5) x, byte zp(2) y)
 findcol: {
-    .label x = 3
+    .label x = 5
     .label y = 2
     .label xp = 8
     .label yp = 9
-    .label i = 4
-    .label mindiff = 5
+    .label i = 6
+    .label mindiff = 7
     lda #$ff
     sta.z mindiff
     ldx #0
@@ -235,36 +265,6 @@ findcol: {
     sbc.z x
     tay
     jmp __b5
-}
-initscreen: {
-    .label screen = 6
-    lda #<SCREEN
-    sta.z screen
-    lda #>SCREEN
-    sta.z screen+1
-  __b1:
-    // for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen)
-    lda.z screen+1
-    cmp #>SCREEN+$3e8
-    bcc __b2
-    bne !+
-    lda.z screen
-    cmp #<SCREEN+$3e8
-    bcc __b2
-  !:
-    // }
-    rts
-  __b2:
-    // *screen = FILL
-    lda #FILL
-    ldy #0
-    sta (screen),y
-    // for( byte* screen = SCREEN; screen<SCREEN+$03e8; ++screen)
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    jmp __b1
 }
   // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f

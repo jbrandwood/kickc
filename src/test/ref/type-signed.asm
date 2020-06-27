@@ -3,8 +3,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_line_cursor = 7
-  .label print_char_cursor = $b
+  .label print_line_cursor = $b
+  .label print_char_cursor = 9
 main: {
     .label a = 2
     .label b = 4
@@ -75,6 +75,62 @@ main: {
     sta.z print_char_cursor+1
     jmp __b1
 }
+// Print a signed int as HEX
+// print_sint(signed word zp(7) w)
+print_sint: {
+    .label w = 7
+    // if(w<0)
+    lda.z w+1
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_uint((unsigned int)w)
+    jsr print_uint
+    // }
+    rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // w = -w
+    sec
+    lda #0
+    sbc.z w
+    sta.z w
+    lda #0
+    sbc.z w+1
+    sta.z w+1
+    jmp __b2
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp(7) w)
+print_uint: {
+    .label w = 7
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -95,19 +151,6 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp(9) w)
-print_uint: {
-    .label w = 9
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
     // }
     rts
 }
@@ -133,48 +176,5 @@ print_uchar: {
     jsr print_char
     // }
     rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// Print a signed int as HEX
-// print_sint(signed word zp(9) w)
-print_sint: {
-    .label w = 9
-    // if(w<0)
-    lda.z w+1
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_uint((unsigned int)w)
-    jsr print_uint
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // w = -w
-    sec
-    lda #0
-    sbc.z w
-    sta.z w
-    lda #0
-    sbc.z w+1
-    sta.z w+1
-    jmp __b2
 }
   print_hextab: .text "0123456789abcdef"

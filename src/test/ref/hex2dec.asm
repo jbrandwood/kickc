@@ -119,6 +119,76 @@ main: {
     msg: .text "raster lines"
     .byte 0
 }
+cls: {
+    .label screen = $400
+    .label sc = 2
+    lda #<screen
+    sta.z sc
+    lda #>screen
+    sta.z sc+1
+  __b1:
+    // *sc=' '
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // for( unsigned char *sc: screen..screen+999)
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    lda.z sc+1
+    cmp #>screen+$3e7+1
+    bne __b1
+    lda.z sc
+    cmp #<screen+$3e7+1
+    bne __b1
+    // }
+    rts
+}
+// Hexadecimal utoa() for an unsigned int (16bits)
+// utoa16w(word zp(2) value, byte* zp(8) dst)
+utoa16w: {
+    .label dst = 8
+    .label value = 2
+    // >value
+    lda.z value+1
+    // utoa16n((>value)>>4, &dst, started)
+    lsr
+    lsr
+    lsr
+    lsr
+    ldx #0
+    jsr utoa16n
+    // utoa16n((>value)>>4, &dst, started)
+    // started = utoa16n((>value)>>4, &dst, started)
+    // >value
+    lda.z value+1
+    // utoa16n((>value)&0x0f, &dst, started)
+    and #$f
+    jsr utoa16n
+    // utoa16n((>value)&0x0f, &dst, started)
+    // started = utoa16n((>value)&0x0f, &dst, started)
+    // <value
+    lda.z value
+    // utoa16n((<value)>>4, &dst, started)
+    lsr
+    lsr
+    lsr
+    lsr
+    jsr utoa16n
+    // <value
+    lda.z value
+    // utoa16n((<value)&0x0f, &dst, 1)
+    and #$f
+    ldx #1
+    jsr utoa16n
+    // *dst = 0
+    lda #0
+    tay
+    sta (dst),y
+    // }
+    rts
+}
 // Decimal utoa() without using multiply or divide
 // utoa10w(word zp(2) value, byte* zp(4) dst)
 utoa10w: {
@@ -214,50 +284,6 @@ utoa10w: {
     sta.z bStarted
     jmp __b1
 }
-// Hexadecimal utoa() for an unsigned int (16bits)
-// utoa16w(word zp(2) value, byte* zp(8) dst)
-utoa16w: {
-    .label dst = 8
-    .label value = 2
-    // >value
-    lda.z value+1
-    // utoa16n((>value)>>4, &dst, started)
-    lsr
-    lsr
-    lsr
-    lsr
-    ldx #0
-    jsr utoa16n
-    // utoa16n((>value)>>4, &dst, started)
-    // started = utoa16n((>value)>>4, &dst, started)
-    // >value
-    lda.z value+1
-    // utoa16n((>value)&0x0f, &dst, started)
-    and #$f
-    jsr utoa16n
-    // utoa16n((>value)&0x0f, &dst, started)
-    // started = utoa16n((>value)&0x0f, &dst, started)
-    // <value
-    lda.z value
-    // utoa16n((<value)>>4, &dst, started)
-    lsr
-    lsr
-    lsr
-    lsr
-    jsr utoa16n
-    // <value
-    lda.z value
-    // utoa16n((<value)&0x0f, &dst, 1)
-    and #$f
-    ldx #1
-    jsr utoa16n
-    // *dst = 0
-    lda #0
-    tay
-    sta (dst),y
-    // }
-    rts
-}
 // Hexadecimal utoa() for a single nybble
 // utoa16n(byte register(A) nybble, byte register(X) started)
 utoa16n: {
@@ -284,32 +310,6 @@ utoa16n: {
     inc.z utoa16w.dst+1
   !:
   __breturn:
-    // }
-    rts
-}
-cls: {
-    .label screen = $400
-    .label sc = 4
-    lda #<screen
-    sta.z sc
-    lda #>screen
-    sta.z sc+1
-  __b1:
-    // *sc=' '
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for( unsigned char *sc: screen..screen+999)
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
-    lda.z sc+1
-    cmp #>screen+$3e7+1
-    bne __b1
-    lda.z sc
-    cmp #<screen+$3e7+1
-    bne __b1
     // }
     rts
 }

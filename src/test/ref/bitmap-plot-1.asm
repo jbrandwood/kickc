@@ -50,7 +50,7 @@
   // Counts frames - updated by the IRQ
   .label frame_cnt = $16
   // Remainder after unsigned 16-bit division
-  .label rem16u = $2e
+  .label rem16u = $2c
 __start: {
     // frame_cnt = 1
     lda #1
@@ -58,22 +58,47 @@ __start: {
     jsr main
     rts
 }
+// Interrupt Routine counting frames
+irq: {
+    sta rega+1
+    // *BG_COLOR = WHITE
+    lda #WHITE
+    sta BG_COLOR
+    // if(frame_cnt)
+    lda #0
+    cmp.z frame_cnt
+    beq __b1
+    // frame_cnt++;
+    inc.z frame_cnt
+  __b1:
+    // *BG_COLOR = BLACK
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // }
+  rega:
+    lda #00
+    rti
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
-    .label __6 = 8
-    .label __10 = 8
-    .label __19 = 6
-    .label __20 = 6
-    .label cos_x = 6
-    .label xpos = 8
+    .label __6 = $c
+    .label __10 = $c
+    .label __19 = $a
+    .label __20 = $a
+    .label cos_x = $a
+    .label xpos = $c
     .label x = $17
-    .label sin_y = 6
-    .label ypos = 8
+    .label sin_y = $a
+    .label ypos = $c
     .label y = $19
     .label idx_x = 2
     .label idx_y = 4
-    .label __21 = 6
-    .label __22 = 6
+    .label __21 = $a
+    .label __22 = $a
     // sin16s_gen2(SINUS, 512, -0x1001, 0x1001)
     jsr sin16s_gen2
     // bitmap_init(BITMAP, SCREEN)
@@ -246,346 +271,6 @@ main: {
     inc plots_per_frame,x
     jmp __b2
 }
-// Plot a single dot in the bitmap
-// bitmap_plot(word zp($17) x, byte register(A) y)
-bitmap_plot: {
-    .label __0 = $1d
-    .label plotter = $1b
-    .label x = $17
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    tay
-    lda bitmap_plot_yhi,y
-    sta.z plotter+1
-    lda bitmap_plot_ylo,y
-    sta.z plotter
-    // x & $fff8
-    lda.z x
-    and #<$fff8
-    sta.z __0
-    lda.z x+1
-    and #>$fff8
-    sta.z __0+1
-    // plotter += ( x & $fff8 )
-    lda.z plotter
-    clc
-    adc.z __0
-    sta.z plotter
-    lda.z plotter+1
-    adc.z __0+1
-    sta.z plotter+1
-    // <x
-    ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
-    lda bitmap_plot_bit,x
-    ldy #0
-    ora (plotter),y
-    sta (plotter),y
-    // }
-    rts
-}
-// Multiply of two signed ints to a signed long
-// Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($1b) a, signed word zp(6) b)
-mul16s: {
-    .label __6 = $24
-    .label __9 = $2a
-    .label __11 = $24
-    .label __12 = $1b
-    .label m = 8
-    .label return = 8
-    .label a = $1b
-    .label b = 6
-    // mul16u((unsigned int)a, (unsigned int) b)
-    lda.z a
-    sta.z mul16u.a
-    lda.z a+1
-    sta.z mul16u.a+1
-    lda.z b
-    sta.z mul16u.b
-    lda.z b+1
-    sta.z mul16u.b+1
-    jsr mul16u
-    // mul16u((unsigned int)a, (unsigned int) b)
-    // m = mul16u((unsigned int)a, (unsigned int) b)
-    // if(a<0)
-    lda.z a+1
-    bpl __b1
-    // >m
-    lda.z m+2
-    sta.z __6
-    lda.z m+3
-    sta.z __6+1
-    // >m = (>m)-(unsigned int)b
-    lda.z __11
-    sec
-    sbc.z b
-    sta.z __11
-    lda.z __11+1
-    sbc.z b+1
-    sta.z __11+1
-    lda.z __11
-    sta.z m+2
-    lda.z __11+1
-    sta.z m+3
-  __b1:
-    // if(b<0)
-    lda.z b+1
-    bpl __b2
-    // >m
-    lda.z m+2
-    sta.z __9
-    lda.z m+3
-    sta.z __9+1
-    // >m = (>m)-(unsigned int)a
-    lda.z __9
-    sec
-    sbc.z __12
-    sta.z __12
-    lda.z __9+1
-    sbc.z __12+1
-    sta.z __12+1
-    lda.z __12
-    sta.z m+2
-    lda.z __12+1
-    sta.z m+3
-  __b2:
-    // return (signed long)m;
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($24) a, word zp($1d) b)
-mul16u: {
-    .label mb = $10
-    .label a = $24
-    .label res = 8
-    .label b = $1d
-    .label return = 8
-    // mb = b
-    lda.z b
-    sta.z mb
-    lda.z b+1
-    sta.z mb+1
-    lda #0
-    sta.z mb+2
-    sta.z mb+3
-    sta.z res
-    sta.z res+1
-    lda #<0>>$10
-    sta.z res+2
-    lda #>0>>$10
-    sta.z res+3
-  __b1:
-    // while(a!=0)
-    lda.z a
-    bne __b2
-    lda.z a+1
-    bne __b2
-    // }
-    rts
-  __b2:
-    // a&1
-    lda #1
-    and.z a
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    lda.z res+2
-    adc.z mb+2
-    sta.z res+2
-    lda.z res+3
-    adc.z mb+3
-    sta.z res+3
-  __b3:
-    // a = a>>1
-    lsr.z a+1
-    ror.z a
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
-    rol.z mb+2
-    rol.z mb+3
-    jmp __b1
-}
-// Setup the IRQ
-init_irq: {
-    // asm
-    sei
-    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // Disable kernal & basic
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
-    // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL |=$80
-    // Set raster line to $100
-    lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = $00
-    lda #0
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // *HARDWARE_IRQ = &irq
-    // Set the IRQ routine
-    lda #<irq
-    sta HARDWARE_IRQ
-    lda #>irq
-    sta HARDWARE_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
-// Clear all graphics on the bitmap
-// bgcol - the background color to fill the screen with
-// fgcol - the foreground color to fill the screen with
-bitmap_clear: {
-    .const col = WHITE*$10
-    // memset(bitmap_screen, col, 1000uw)
-    ldx #col
-    lda #<SCREEN
-    sta.z memset.str
-    lda #>SCREEN
-    sta.z memset.str+1
-    lda #<$3e8
-    sta.z memset.num
-    lda #>$3e8
-    sta.z memset.num+1
-    jsr memset
-    // memset(bitmap_gfx, 0, 8000uw)
-    ldx #0
-    lda #<BITMAP
-    sta.z memset.str
-    lda #>BITMAP
-    sta.z memset.str+1
-    lda #<$1f40
-    sta.z memset.num
-    lda #>$1f40
-    sta.z memset.num+1
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($1d) str, byte register(X) c, word zp($1b) num)
-memset: {
-    .label end = $1b
-    .label dst = $1d
-    .label num = $1b
-    .label str = $1d
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
-    // end = (char*)str + num
-    lda.z end
-    clc
-    adc.z str
-    sta.z end
-    lda.z end+1
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-  __breturn:
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-// Initialize bitmap plotting tables
-bitmap_init: {
-    .label __7 = $1f
-    .label yoffs = $24
-    ldx #0
-    lda #$80
-  __b1:
-    // bitmap_plot_bit[x] = bits
-    sta bitmap_plot_bit,x
-    // bits >>= 1
-    lsr
-    // if(bits==0)
-    cmp #0
-    bne __b2
-    lda #$80
-  __b2:
-    // for(char x : 0..255)
-    inx
-    cpx #0
-    bne __b1
-    lda #<BITMAP
-    sta.z yoffs
-    lda #>BITMAP
-    sta.z yoffs+1
-    ldx #0
-  __b3:
-    // y&$7
-    lda #7
-    sax.z __7
-    // <yoffs
-    lda.z yoffs
-    // y&$7 | <yoffs
-    ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    sta bitmap_plot_ylo,x
-    // >yoffs
-    lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
-    sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
-    lda #7
-    cmp.z __7
-    bne __b4
-    // yoffs = yoffs + 40*8
-    clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-  __b4:
-    // for(char y : 0..255)
-    inx
-    cpx #0
-    bne __b3
-    // }
-    rts
-}
 // Generate signed int sinus table - with values in the range min-max.
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
@@ -595,13 +280,13 @@ sin16s_gen2: {
     .const max = $1001
     .const ampl = max-min
     .label wavelength = $200
-    .label __6 = 8
-    .label __8 = $24
-    .label step = $20
+    .label __6 = $c
+    .label __8 = $20
+    .label step = $1b
     .label sintab = $19
     // u[4.28]
     // Iterate over the table
-    .label x = $c
+    .label x = 6
     .label i = $17
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
@@ -693,23 +378,302 @@ sin16s_gen2: {
   !:
     jmp __b1
 }
+// Initialize bitmap plotting tables
+bitmap_init: {
+    .label __7 = $1f
+    .label yoffs = $17
+    ldx #0
+    lda #$80
+  __b1:
+    // bitmap_plot_bit[x] = bits
+    sta bitmap_plot_bit,x
+    // bits >>= 1
+    lsr
+    // if(bits==0)
+    cmp #0
+    bne __b2
+    lda #$80
+  __b2:
+    // for(char x : 0..255)
+    inx
+    cpx #0
+    bne __b1
+    lda #<BITMAP
+    sta.z yoffs
+    lda #>BITMAP
+    sta.z yoffs+1
+    ldx #0
+  __b3:
+    // y&$7
+    lda #7
+    sax.z __7
+    // <yoffs
+    lda.z yoffs
+    // y&$7 | <yoffs
+    ora.z __7
+    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    sta bitmap_plot_ylo,x
+    // >yoffs
+    lda.z yoffs+1
+    // bitmap_plot_yhi[y] = >yoffs
+    sta bitmap_plot_yhi,x
+    // if((y&$7)==7)
+    lda #7
+    cmp.z __7
+    bne __b4
+    // yoffs = yoffs + 40*8
+    clc
+    lda.z yoffs
+    adc #<$28*8
+    sta.z yoffs
+    lda.z yoffs+1
+    adc #>$28*8
+    sta.z yoffs+1
+  __b4:
+    // for(char y : 0..255)
+    inx
+    cpx #0
+    bne __b3
+    // }
+    rts
+}
+// Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
+bitmap_clear: {
+    .const col = WHITE*$10
+    // memset(bitmap_screen, col, 1000uw)
+    ldx #col
+    lda #<SCREEN
+    sta.z memset.str
+    lda #>SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
+    // memset(bitmap_gfx, 0, 8000uw)
+    ldx #0
+    lda #<BITMAP
+    sta.z memset.str
+    lda #>BITMAP
+    sta.z memset.str+1
+    lda #<$1f40
+    sta.z memset.num
+    lda #>$1f40
+    sta.z memset.num+1
+    jsr memset
+    // }
+    rts
+}
+// Setup the IRQ
+init_irq: {
+    // asm
+    sei
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+    // Disable kernal & basic
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *VIC_CONTROL |=$80
+    // Set raster line to $100
+    lda #$80
+    ora VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = $00
+    lda #0
+    sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // *HARDWARE_IRQ = &irq
+    // Set the IRQ routine
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+    // asm
+    cli
+    // }
+    rts
+}
+// Multiply of two signed ints to a signed long
+// Fixes offsets introduced by using unsigned multiplication
+// mul16s(signed word zp($20) a, signed word zp($a) b)
+mul16s: {
+    .label __6 = $22
+    .label __9 = $28
+    .label __11 = $22
+    .label __12 = $20
+    .label m = $c
+    .label return = $c
+    .label a = $20
+    .label b = $a
+    // mul16u((unsigned int)a, (unsigned int) b)
+    lda.z a
+    sta.z mul16u.a
+    lda.z a+1
+    sta.z mul16u.a+1
+    lda.z b
+    sta.z mul16u.b
+    lda.z b+1
+    sta.z mul16u.b+1
+    jsr mul16u
+    // mul16u((unsigned int)a, (unsigned int) b)
+    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // if(a<0)
+    lda.z a+1
+    bpl __b1
+    // >m
+    lda.z m+2
+    sta.z __6
+    lda.z m+3
+    sta.z __6+1
+    // >m = (>m)-(unsigned int)b
+    lda.z __11
+    sec
+    sbc.z b
+    sta.z __11
+    lda.z __11+1
+    sbc.z b+1
+    sta.z __11+1
+    lda.z __11
+    sta.z m+2
+    lda.z __11+1
+    sta.z m+3
+  __b1:
+    // if(b<0)
+    lda.z b+1
+    bpl __b2
+    // >m
+    lda.z m+2
+    sta.z __9
+    lda.z m+3
+    sta.z __9+1
+    // >m = (>m)-(unsigned int)a
+    lda.z __9
+    sec
+    sbc.z __12
+    sta.z __12
+    lda.z __9+1
+    sbc.z __12+1
+    sta.z __12+1
+    lda.z __12
+    sta.z m+2
+    lda.z __12+1
+    sta.z m+3
+  __b2:
+    // return (signed long)m;
+    // }
+    rts
+}
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp($17) x, byte register(A) y)
+bitmap_plot: {
+    .label __0 = $22
+    .label plotter = $20
+    .label x = $17
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    tay
+    lda bitmap_plot_yhi,y
+    sta.z plotter+1
+    lda bitmap_plot_ylo,y
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
+    lda.z plotter
+    clc
+    adc.z __0
+    sta.z plotter
+    lda.z plotter+1
+    adc.z __0+1
+    sta.z plotter+1
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
+    lda bitmap_plot_bit,x
+    ldy #0
+    ora (plotter),y
+    sta (plotter),y
+    // }
+    rts
+}
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
+div32u16u: {
+    .label quotient_hi = $28
+    .label quotient_lo = $14
+    .label return = $1b
+    // divr16u(>dividend, divisor, 0)
+    lda #<PI2_u4f28>>$10
+    sta.z divr16u.dividend
+    lda #>PI2_u4f28>>$10
+    sta.z divr16u.dividend+1
+    lda #<0
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
+    jsr divr16u
+    // divr16u(>dividend, divisor, 0)
+    // quotient_hi = divr16u(>dividend, divisor, 0)
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
+    // divr16u(<dividend, divisor, rem16u)
+    lda.z rem16u
+    sta.z divr16u.rem
+    lda.z rem16u+1
+    sta.z divr16u.rem+1
+    lda #<PI2_u4f28&$ffff
+    sta.z divr16u.dividend
+    lda #>PI2_u4f28&$ffff
+    sta.z divr16u.dividend+1
+    jsr divr16u
+    // divr16u(<dividend, divisor, rem16u)
+    // quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // quotient = { quotient_hi, quotient_lo}
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
+    // }
+    rts
+}
 // Calculate signed int sinus sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp($10) x)
 sin16s: {
-    .label __4 = $26
+    .label __4 = $24
     .label x = $10
-    .label return = $1b
-    .label x1 = $2a
+    .label return = $20
+    .label x1 = $28
     .label x2 = $14
     .label x3 = $14
-    .label x3_6 = $2c
-    .label usinx = $1b
+    .label x3_6 = $2a
+    .label usinx = $20
     .label x4 = $14
-    .label x5 = $2c
-    .label x5_128 = $2c
-    .label sinx = $1b
+    .label x5 = $2a
+    .label x5_128 = $2a
+    .label sinx = $20
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -905,97 +869,122 @@ sin16s: {
     // }
     rts
 }
-// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
-// The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($14) v1, word zp($1d) v2, byte register(X) select)
-mulu16_sel: {
-    .label __0 = 8
-    .label __1 = 8
-    .label v1 = $14
-    .label v2 = $1d
-    .label return = $2c
-    .label return_1 = $14
-    // mul16u(v1, v2)
-    lda.z v1
-    sta.z mul16u.a
-    lda.z v1+1
-    sta.z mul16u.a+1
-    jsr mul16u
-    // mul16u(v1, v2)
-    // mul16u(v1, v2)<<select
-    cpx #0
-    beq !e+
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($20) str, byte register(X) c, word zp($19) num)
+memset: {
+    .label end = $19
+    .label dst = $20
+    .label num = $19
+    .label str = $20
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
   !:
-    asl.z __1
-    rol.z __1+1
-    rol.z __1+2
-    rol.z __1+3
-    dex
-    bne !-
-  !e:
-    // >mul16u(v1, v2)<<select
-    lda.z __1+2
-    sta.z return
-    lda.z __1+3
-    sta.z return+1
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
     // }
     rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
 }
-// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
-// The 16-bit unsigned int remainder can be found in rem16u after the division
-div32u16u: {
-    .label quotient_hi = $2c
-    .label quotient_lo = $1d
-    .label return = $20
-    // divr16u(>dividend, divisor, 0)
-    lda #<PI2_u4f28>>$10
-    sta.z divr16u.dividend
-    lda #>PI2_u4f28>>$10
-    sta.z divr16u.dividend+1
-    lda #<0
-    sta.z divr16u.rem
-    sta.z divr16u.rem+1
-    jsr divr16u
-    // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
-    lda.z divr16u.return
-    sta.z quotient_hi
-    lda.z divr16u.return+1
-    sta.z quotient_hi+1
-    // divr16u(<dividend, divisor, rem16u)
-    lda.z rem16u
-    sta.z divr16u.rem
-    lda.z rem16u+1
-    sta.z divr16u.rem+1
-    lda #<PI2_u4f28&$ffff
-    sta.z divr16u.dividend
-    lda #>PI2_u4f28&$ffff
-    sta.z divr16u.dividend+1
-    jsr divr16u
-    // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
-    lda.z quotient_hi
-    sta.z return+2
-    lda.z quotient_hi+1
-    sta.z return+3
-    lda.z quotient_lo
-    sta.z return
-    lda.z quotient_lo+1
-    sta.z return+1
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
+// mul16u(word zp($2a) a, word zp($22) b)
+mul16u: {
+    .label mb = $24
+    .label a = $2a
+    .label res = $c
+    .label b = $22
+    .label return = $c
+    // mb = b
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
+    lda #0
+    sta.z mb+2
+    sta.z mb+3
+    sta.z res
+    sta.z res+1
+    lda #<0>>$10
+    sta.z res+2
+    lda #>0>>$10
+    sta.z res+3
+  __b1:
+    // while(a!=0)
+    lda.z a
+    bne __b2
+    lda.z a+1
+    bne __b2
     // }
     rts
+  __b2:
+    // a&1
+    lda #1
+    and.z a
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
+  __b3:
+    // a = a>>1
+    lsr.z a+1
+    ror.z a
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
+    jmp __b1
 }
 // Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($1b) dividend, word zp($14) rem)
+// divr16u(word zp($2a) dividend, word zp($22) rem)
 divr16u: {
-    .label rem = $14
-    .label dividend = $1b
-    .label quotient = $1d
-    .label return = $1d
+    .label rem = $22
+    .label dividend = $2a
+    .label quotient = $14
+    .label return = $14
     ldx #0
     txa
     sta.z quotient
@@ -1057,30 +1046,41 @@ divr16u: {
     // }
     rts
 }
-// Interrupt Routine counting frames
-irq: {
-    sta rega+1
-    // *BG_COLOR = WHITE
-    lda #WHITE
-    sta BG_COLOR
-    // if(frame_cnt)
-    lda #0
-    cmp.z frame_cnt
-    beq __b1
-    // frame_cnt++;
-    inc.z frame_cnt
-  __b1:
-    // *BG_COLOR = BLACK
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
+// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
+// The select parameter indicates how many of the highest bits of the 32-bit result to skip
+// mulu16_sel(word zp($14) v1, word zp($22) v2, byte register(X) select)
+mulu16_sel: {
+    .label __0 = $c
+    .label __1 = $c
+    .label v1 = $14
+    .label v2 = $22
+    .label return = $2a
+    .label return_1 = $14
+    // mul16u(v1, v2)
+    lda.z v1
+    sta.z mul16u.a
+    lda.z v1+1
+    sta.z mul16u.a+1
+    jsr mul16u
+    // mul16u(v1, v2)
+    // mul16u(v1, v2)<<select
+    cpx #0
+    beq !e+
+  !:
+    asl.z __1
+    rol.z __1+1
+    rol.z __1+2
+    rol.z __1+3
+    dex
+    bne !-
+  !e:
+    // >mul16u(v1, v2)<<select
+    lda.z __1+2
+    sta.z return
+    lda.z __1+3
+    sta.z return+1
     // }
-  rega:
-    lda #00
-    rti
+    rts
 }
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0

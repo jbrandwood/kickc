@@ -16,6 +16,26 @@ __start: {
     jsr main
     rts
 }
+next: {
+    .const OFFSET_STACK_RETURN = 0
+    .label return = 2
+    // return current++;
+    lda.z current
+    sta.z return
+    lda.z current+1
+    sta.z return+1
+    inc.z current
+    bne !+
+    inc.z current+1
+  !:
+    // }
+    tsx
+    lda.z return
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    lda.z return+1
+    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    rts
+}
 main: {
     .label __0 = 2
     .label __1 = 4
@@ -46,25 +66,5 @@ main: {
     lda.z __1+1
     sta SCREEN+1*SIZEOF_SIGNED_WORD+1
     // }
-    rts
-}
-next: {
-    .const OFFSET_STACK_RETURN = 0
-    .label return = 6
-    // return current++;
-    lda.z current
-    sta.z return
-    lda.z current+1
-    sta.z return+1
-    inc.z current
-    bne !+
-    inc.z current+1
-  !:
-    // }
-    tsx
-    lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
-    lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
     rts
 }

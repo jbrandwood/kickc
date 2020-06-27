@@ -20,11 +20,11 @@
   // Reset y velocity
   .label yvel_init = 2
   .label yvel = 2
-  .label yvel_1 = 4
+  .label yvel_1 = 6
   // Reset position
-  .label xpos = 6
-  .label ypos = 8
-  .label xvel = $a
+  .label xpos = 8
+  .label ypos = $a
+  .label xvel = 4
 main: {
     // init()
     jsr init
@@ -52,6 +52,63 @@ main: {
     bne __b1
     // anim()
     jsr anim
+    jmp __b1
+}
+// Fill and show a sprite, clear the screen
+init: {
+    .label sc = 4
+    // *SPRITES_ENABLE = %00000001
+    lda #1
+    sta SPRITES_ENABLE
+    // *SPRITES_EXPAND_X = 0
+    lda #0
+    sta SPRITES_EXPAND_X
+    // *SPRITES_EXPAND_Y = 0
+    sta SPRITES_EXPAND_Y
+    // SPRITES_XPOS[0] = 100
+    lda #$64
+    sta SPRITES_XPOS
+    // SPRITES_YPOS[0] = 100
+    sta SPRITES_YPOS
+    // SPRITES_COLOR[0] = WHITE
+    lda #WHITE
+    sta SPRITES_COLOR
+    // SPRITES_PTR[0] = (byte)(SPRITE/$40)
+    lda #SPRITE/$40
+    sta SPRITES_PTR
+    lda #<SCREEN
+    sta.z sc
+    lda #>SCREEN
+    sta.z sc+1
+  __b1:
+    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
+    lda.z sc+1
+    cmp #>SCREEN+$3e8
+    bne __b2
+    lda.z sc
+    cmp #<SCREEN+$3e8
+    bne __b2
+    ldx #0
+  __b3:
+    // SPRITE[i] = $ff
+    lda #$ff
+    sta SPRITE,x
+    // for(byte i : 0..63)
+    inx
+    cpx #$40
+    bne __b3
+    // }
+    rts
+  __b2:
+    // *sc = ' '
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
     jmp __b1
 }
 anim: {
@@ -188,61 +245,4 @@ anim: {
     sta SPRITES_XMSB
     // }
     rts
-}
-// Fill and show a sprite, clear the screen
-init: {
-    .label sc = $a
-    // *SPRITES_ENABLE = %00000001
-    lda #1
-    sta SPRITES_ENABLE
-    // *SPRITES_EXPAND_X = 0
-    lda #0
-    sta SPRITES_EXPAND_X
-    // *SPRITES_EXPAND_Y = 0
-    sta SPRITES_EXPAND_Y
-    // SPRITES_XPOS[0] = 100
-    lda #$64
-    sta SPRITES_XPOS
-    // SPRITES_YPOS[0] = 100
-    sta SPRITES_YPOS
-    // SPRITES_COLOR[0] = WHITE
-    lda #WHITE
-    sta SPRITES_COLOR
-    // SPRITES_PTR[0] = (byte)(SPRITE/$40)
-    lda #SPRITE/$40
-    sta SPRITES_PTR
-    lda #<SCREEN
-    sta.z sc
-    lda #>SCREEN
-    sta.z sc+1
-  __b1:
-    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
-    lda.z sc+1
-    cmp #>SCREEN+$3e8
-    bne __b2
-    lda.z sc
-    cmp #<SCREEN+$3e8
-    bne __b2
-    ldx #0
-  __b3:
-    // SPRITE[i] = $ff
-    lda #$ff
-    sta SPRITE,x
-    // for(byte i : 0..63)
-    inx
-    cpx #$40
-    bne __b3
-    // }
-    rts
-  __b2:
-    // *sc = ' '
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++ )
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
-    jmp __b1
 }

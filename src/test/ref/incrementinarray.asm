@@ -4,8 +4,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_char_cursor = 4
-  .label print_line_cursor = 6
+  .label print_char_cursor = 2
+  .label print_line_cursor = 4
 main: {
     // print_cls()
     jsr print_cls
@@ -38,33 +38,17 @@ main: {
     sta.z print_char_cursor+1
     jmp __b1
 }
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(6) str)
 print_str: {
-    .label str = 2
+    .label str = 6
     lda #<txt
     sta.z str
     lda #>txt
@@ -89,24 +73,26 @@ print_str: {
   !:
     jmp __b1
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
   !:
-    // }
-    rts
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
     // }
     rts
 }
@@ -142,6 +128,20 @@ memset: {
     inc.z dst+1
   !:
     jmp __b1
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
 }
   txt: .text "camelot"
   .byte 0

@@ -7,23 +7,23 @@
   .const SIZEOF_SIGNED_WORD = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $15
+  .label rem16u = $19
   // Remainder after signed 16 bit division
-  .label rem16s = $15
+  .label rem16s = $19
   .label testnum = 6
   .label lasttest = 2
-  .label primeptr = $19
+  .label primeptr = $15
   .label lastprime = 4
-  .label print_char_cursor = 8
+  .label print_char_cursor = $c
 main: {
-    .label __0 = $d
+    .label __0 = 8
     .label __12 = $15
-    .label __13 = $b
+    .label __13 = $12
     .label __14 = $19
     .label __15 = $17
     .label p = $15
     .label __16 = $15
-    .label __17 = $b
+    .label __17 = $12
     .label __18 = $19
     // primenum[1] = 2
     lda #<2
@@ -212,24 +212,98 @@ main: {
     // }
     rts
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+// Multiply of two signed ints to a signed long
+// Fixes offsets introduced by using unsigned multiplication
+// mul16s(signed word zp($15) a, signed word zp($15) b)
+mul16s: {
+    .label __6 = $1b
+    .label __9 = $1d
+    .label __11 = $1b
+    .label __12 = $1d
+    .label m = 8
+    .label return = 8
+    .label a = $15
+    .label b = $15
+    // mul16u((unsigned int)a, (unsigned int) b)
+    lda.z a
+    sta.z mul16u.a
+    lda.z a+1
+    sta.z mul16u.a+1
+    lda.z b
+    sta.z mul16u.b
+    lda.z b+1
+    sta.z mul16u.b+1
+    jsr mul16u
+    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // if(a<0)
+    lda.z a+1
+    bpl __b1
+    // >m
+    lda.z m+2
+    sta.z __6
+    lda.z m+3
+    sta.z __6+1
+    // >m = (>m)-(unsigned int)b
+    lda.z __11
+    sec
+    sbc.z b
+    sta.z __11
+    lda.z __11+1
+    sbc.z b+1
+    sta.z __11+1
+    lda.z __11
+    sta.z m+2
+    lda.z __11+1
+    sta.z m+3
+  __b1:
+    // if(b<0)
+    lda.z b+1
+    bpl __b2
+    // >m
+    lda.z m+2
+    sta.z __9
+    lda.z m+3
+    sta.z __9+1
+    // >m = (>m)-(unsigned int)a
+    lda.z __12
+    sec
+    sbc.z a
+    sta.z __12
+    lda.z __12+1
+    sbc.z a+1
+    sta.z __12+1
+    lda.z __12
+    sta.z m+2
+    lda.z __12+1
+    sta.z m+3
+  __b2:
+    // return (signed long)m;
+    // }
+    rts
+}
+// Perform division on two signed 16-bit numbers
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// div16s(signed word zp(6) dividend, signed word zp($12) divisor)
+div16s: {
+    .label dividend = 6
+    .label divisor = $12
+    // divr16s(dividend, divisor, 0)
+    lda.z dividend
+    sta.z divr16s.dividend
+    lda.z dividend+1
+    sta.z divr16s.dividend+1
+    jsr divr16s
     // }
     rts
 }
 // Print a signed int as DECIMAL
-// print_sint_decimal(signed word zp($19) w)
+// print_sint_decimal(signed word zp($15) w)
 print_sint_decimal: {
-    .label w = $19
+    .label w = $15
     // if(w<0)
     lda.z w+1
     bmi __b1
@@ -257,46 +331,156 @@ print_sint_decimal: {
     sta.z w+1
     jmp __b2
 }
-// Print a zero-terminated string
-// print_str(byte* zp($b) str)
-print_str: {
-    .label str = $b
-    lda #<decimal_digits
-    sta.z str
-    lda #>decimal_digits
-    sta.z str+1
-  __b1:
-    // while(*str)
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
-    lda (str),y
-    cmp #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
+// mul16u(word zp($17) a, word zp($1b) b)
+mul16u: {
+    .label mb = $e
+    .label a = $17
+    .label res = 8
+    .label b = $1b
+    .label return = 8
+    // mb = b
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
+    lda #0
+    sta.z mb+2
+    sta.z mb+3
+    sta.z res
+    sta.z res+1
+    lda #<0>>$10
+    sta.z res+2
+    lda #>0>>$10
+    sta.z res+3
+  __b1:
+    // while(a!=0)
+    lda.z a
+    bne __b2
+    lda.z a+1
     bne __b2
     // }
     rts
   __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
+    // a&1
+    lda #1
+    and.z a
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
+  __b3:
+    // a = a>>1
+    lsr.z a+1
+    ror.z a
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
     jmp __b1
+}
+// Perform division on two signed 16-bit numbers with an initial remainder.
+// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// divr16s(signed word zp($17) dividend, signed word zp($12) divisor)
+divr16s: {
+    .label dividendu = $17
+    .label divisoru = $12
+    .label dividend = $17
+    .label divisor = $12
+    // if(dividend<0 || rem<0)
+    lda.z dividend+1
+    bmi __b1
+    ldy #0
+  __b2:
+    // if(divisor<0)
+    lda.z divisor+1
+    bmi __b3
+  __b4:
+    // divr16u(dividendu, divisoru, remu)
+    jsr divr16u
+    // if(neg==0)
+    cpy #0
+    beq __breturn
+    // rem16s = -(signed int)rem16u
+    sec
+    lda #0
+    sbc.z rem16s
+    sta.z rem16s
+    lda #0
+    sbc.z rem16s+1
+    sta.z rem16s+1
+  __breturn:
+    // }
+    rts
+  __b3:
+    // -divisor
+    sec
+    lda #0
+    sbc.z divisoru
+    sta.z divisoru
+    lda #0
+    sbc.z divisoru+1
+    sta.z divisoru+1
+    // neg = neg ^ 1
+    tya
+    eor #1
+    tay
+    jmp __b4
+  __b1:
+    // -dividend
+    sec
+    lda #0
+    sbc.z dividendu
+    sta.z dividendu
+    lda #0
+    sbc.z dividendu+1
+    sta.z dividendu+1
+    ldy #1
+    jmp __b2
 }
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($19) value, byte* zp($b) buffer)
+// utoa(word zp($15) value, byte* zp($19) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $1d
-    .label buffer = $b
-    .label digit = $a
-    .label value = $19
+    .label buffer = $19
+    .label digit = $14
+    .label value = $15
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -362,142 +546,45 @@ utoa: {
     ldx #1
     jmp __b4
 }
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($b) buffer, word zp($19) value, word zp($1d) sub)
-utoa_append: {
-    .label buffer = $b
-    .label value = $19
-    .label sub = $1d
-    .label return = $19
-    ldx #0
+// Print a zero-terminated string
+// print_str(byte* zp($1b) str)
+print_str: {
+    .label str = $1b
+    lda #<decimal_digits
+    sta.z str
+    lda #>decimal_digits
+    sta.z str+1
   __b1:
-    // while (value >= sub)
-    lda.z sub+1
-    cmp.z value+1
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
     bne !+
-    lda.z sub
-    cmp.z value
-    beq __b2
+    inc.z str+1
   !:
-    bcc __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
-  __b2:
-    // digit++;
-    inx
-    // value -= sub
-    lda.z value
-    sec
-    sbc.z sub
-    sta.z value
-    lda.z value+1
-    sbc.z sub+1
-    sta.z value+1
     jmp __b1
-}
-// Perform division on two signed 16-bit numbers
-// Returns dividend/divisor.
-// The remainder will be set into the global variable rem16s.
-// Implemented using simple binary division
-// Follows the C99 standard by truncating toward zero on negative results.
-// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div16s(signed word zp(6) dividend, signed word zp($b) divisor)
-div16s: {
-    .label dividend = 6
-    .label divisor = $b
-    // divr16s(dividend, divisor, 0)
-    lda.z dividend
-    sta.z divr16s.dividend
-    lda.z dividend+1
-    sta.z divr16s.dividend+1
-    jsr divr16s
-    // }
-    rts
-}
-// Perform division on two signed 16-bit numbers with an initial remainder.
-// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
-// Implemented using simple binary division
-// Follows the C99 standard by truncating toward zero on negative results.
-// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp($1b) dividend, signed word zp($b) divisor)
-divr16s: {
-    .label dividendu = $1b
-    .label divisoru = $b
-    .label dividend = $1b
-    .label divisor = $b
-    // if(dividend<0 || rem<0)
-    lda.z dividend+1
-    bmi __b1
-    ldy #0
-  __b2:
-    // if(divisor<0)
-    lda.z divisor+1
-    bmi __b3
-  __b4:
-    // divr16u(dividendu, divisoru, remu)
-    jsr divr16u
-    // if(neg==0)
-    cpy #0
-    beq __breturn
-    // rem16s = -(signed int)rem16u
-    sec
-    lda #0
-    sbc.z rem16s
-    sta.z rem16s
-    lda #0
-    sbc.z rem16s+1
-    sta.z rem16s+1
-  __breturn:
-    // }
-    rts
-  __b3:
-    // -divisor
-    sec
-    lda #0
-    sbc.z divisoru
-    sta.z divisoru
-    lda #0
-    sbc.z divisoru+1
-    sta.z divisoru+1
-    // neg = neg ^ 1
-    tya
-    eor #1
-    tay
-    jmp __b4
-  __b1:
-    // -dividend
-    sec
-    lda #0
-    sbc.z dividendu
-    sta.z dividendu
-    lda #0
-    sbc.z dividendu+1
-    sta.z dividendu+1
-    ldy #1
-    jmp __b2
 }
 // Performs division on two 16 bit unsigned ints and an initial remainder
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($1b) dividend, word zp($b) divisor, word zp($15) rem)
+// divr16u(word zp($17) dividend, word zp($12) divisor, word zp($19) rem)
 divr16u: {
-    .label rem = $15
-    .label dividend = $1b
-    .label quotient = $17
-    .label return = $17
-    .label divisor = $b
+    .label rem = $19
+    .label dividend = $17
+    .label quotient = $1b
+    .label return = $1b
+    .label divisor = $12
     ldx #0
     txa
     sta.z quotient
@@ -557,135 +644,48 @@ divr16u: {
     // }
     rts
 }
-// Multiply of two signed ints to a signed long
-// Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($15) a, signed word zp($15) b)
-mul16s: {
-    .label __6 = $1b
-    .label __9 = $1d
-    .label __11 = $1b
-    .label __12 = $1d
-    .label m = $d
-    .label return = $d
-    .label a = $15
-    .label b = $15
-    // mul16u((unsigned int)a, (unsigned int) b)
-    lda.z a
-    sta.z mul16u.a
-    lda.z a+1
-    sta.z mul16u.a+1
-    lda.z b
-    sta.z mul16u.b
-    lda.z b+1
-    sta.z mul16u.b+1
-    jsr mul16u
-    // m = mul16u((unsigned int)a, (unsigned int) b)
-    // if(a<0)
-    lda.z a+1
-    bpl __b1
-    // >m
-    lda.z m+2
-    sta.z __6
-    lda.z m+3
-    sta.z __6+1
-    // >m = (>m)-(unsigned int)b
-    lda.z __11
-    sec
-    sbc.z b
-    sta.z __11
-    lda.z __11+1
-    sbc.z b+1
-    sta.z __11+1
-    lda.z __11
-    sta.z m+2
-    lda.z __11+1
-    sta.z m+3
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// utoa_append(byte* zp($19) buffer, word zp($15) value, word zp($1d) sub)
+utoa_append: {
+    .label buffer = $19
+    .label value = $15
+    .label sub = $1d
+    .label return = $15
+    ldx #0
   __b1:
-    // if(b<0)
-    lda.z b+1
-    bpl __b2
-    // >m
-    lda.z m+2
-    sta.z __9
-    lda.z m+3
-    sta.z __9+1
-    // >m = (>m)-(unsigned int)a
-    lda.z __12
-    sec
-    sbc.z a
-    sta.z __12
-    lda.z __12+1
-    sbc.z a+1
-    sta.z __12+1
-    lda.z __12
-    sta.z m+2
-    lda.z __12+1
-    sta.z m+3
-  __b2:
-    // return (signed long)m;
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($1b) a, word zp($1d) b)
-mul16u: {
-    .label mb = $11
-    .label a = $1b
-    .label res = $d
-    .label b = $1d
-    .label return = $d
-    // mb = b
-    lda.z b
-    sta.z mb
-    lda.z b+1
-    sta.z mb+1
-    lda #0
-    sta.z mb+2
-    sta.z mb+3
-    sta.z res
-    sta.z res+1
-    lda #<0>>$10
-    sta.z res+2
-    lda #>0>>$10
-    sta.z res+3
-  __b1:
-    // while(a!=0)
-    lda.z a
-    bne __b2
-    lda.z a+1
-    bne __b2
+    // while (value >= sub)
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
+  !:
+    bcc __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
     // }
     rts
   __b2:
-    // a&1
-    lda #1
-    and.z a
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    lda.z res+2
-    adc.z mb+2
-    sta.z res+2
-    lda.z res+3
-    adc.z mb+3
-    sta.z res+3
-  __b3:
-    // a = a>>1
-    lsr.z a+1
-    ror.z a
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
-    rol.z mb+2
-    rol.z mb+3
+    // digit++;
+    inx
+    // value -= sub
+    lda.z value
+    sec
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
     jmp __b1
 }
   // The digits used for numbers

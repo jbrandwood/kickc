@@ -96,27 +96,27 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
-main: scope:[main]  from __start::@1
-  [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [6] (volatile byte) col ← ++ (volatile byte) col
-  to:main::@1
-
 interrupt(KERNEL_MIN)(void()) irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
-  [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
+  [6] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col
   to:irq::@return
 irq::@return: scope:[irq]  from irq
-  [9] return 
+  [7] return 
   to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  [8] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [9] (volatile byte) col ← ++ (volatile byte) col
+  to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) __start()
-(volatile byte) col loadstore 41.199999999999996
+(volatile byte) col loadstore 41.2
 interrupt(KERNEL_MIN)(void()) irq()
 (void()) main()
 
@@ -158,9 +158,23 @@ __start: {
     // [4] return 
     rts
 }
+  // irq
+irq: {
+    // entry interrupt(KERNEL_MIN)
+    // asm { lda$dc0d  }
+    lda $dc0d
+    // [6] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    lda.z col
+    sta BG_COLOR
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [7] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
   // main
 main: {
-    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [8] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -168,31 +182,17 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
+    // [9] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
     jmp __b1
-}
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // asm { lda$dc0d  }
-    lda $dc0d
-    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
-    lda.z col
-    sta BG_COLOR
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [9] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (volatile byte) col ← (byte) 0 [ col ] (  [ col ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col ] ( main:3 [ col ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ col ] ( main:3 [ col ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ col ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -239,9 +239,23 @@ __start: {
     // [4] return 
     rts
 }
+  // irq
+irq: {
+    // entry interrupt(KERNEL_MIN)
+    // asm { lda$dc0d  }
+    lda $dc0d
+    // [6] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    lda.z col
+    sta BG_COLOR
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [7] return  - exit interrupt(KERNEL_MIN)
+    jmp $ea81
+}
   // main
 main: {
-    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    // [8] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -249,23 +263,9 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
+    // [9] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
     inc.z col
     jmp __b1
-}
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // asm { lda$dc0d  }
-    lda $dc0d
-    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
-    lda.z col
-    sta BG_COLOR
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [9] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
 }
   // File Data
 
@@ -273,8 +273,8 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -291,7 +291,7 @@ FINAL SYMBOL TABLE
 (label) __start::@1
 (label) __start::@return
 (label) __start::__init1
-(volatile byte) col loadstore zp[1]:2 41.199999999999996
+(volatile byte) col loadstore zp[1]:2 41.2
 interrupt(KERNEL_MIN)(void()) irq()
 (label) irq::@return
 (void()) main()
@@ -327,21 +327,6 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // *KERNEL_IRQ = &irq
-    // [5] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
-    lda #<irq
-    sta KERNEL_IRQ
-    lda #>irq
-    sta KERNEL_IRQ+1
-    // main::@1
-  __b1:
-    // col++;
-    // [6] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
-    inc.z col
-    jmp __b1
-}
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
@@ -349,13 +334,28 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // *BG_COLOR = col
-    // [8] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
+    // [6] *((const nomodify byte*) BG_COLOR) ← (volatile byte) col -- _deref_pbuc1=vbuz1 
     lda.z col
     sta BG_COLOR
     // irq::@return
     // }
-    // [9] return  - exit interrupt(KERNEL_MIN)
+    // [7] return  - exit interrupt(KERNEL_MIN)
     jmp $ea81
+}
+  // main
+main: {
+    // *KERNEL_IRQ = &irq
+    // [8] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_pptc1=pprc2 
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+    // main::@1
+  __b1:
+    // col++;
+    // [9] (volatile byte) col ← ++ (volatile byte) col -- vbuz1=_inc_vbuz1 
+    inc.z col
+    jmp __b1
 }
   // File Data
 

@@ -414,22 +414,22 @@ main::@5: scope:[main]  from main::toSpritePtr1
   [18] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $33
   to:main::@return
 
-(byte()) krill_loadraw((byte*) krill_loadraw::filename)
-krill_loadraw: scope:[krill_loadraw]  from main::@1
-  [19] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename
-  asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
-  [21] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status)
-  to:krill_loadraw::@return
-krill_loadraw::@return: scope:[krill_loadraw]  from krill_loadraw
-  [22] return 
-  to:@return
-
 (byte()) krill_install()
 krill_install: scope:[krill_install]  from main
   asm { jsrKRILL_INSTALL stastatus  }
-  [24] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status)
+  [20] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status)
   to:krill_install::@return
 krill_install::@return: scope:[krill_install]  from krill_install
+  [21] return 
+  to:@return
+
+(byte()) krill_loadraw((byte*) krill_loadraw::filename)
+krill_loadraw: scope:[krill_loadraw]  from main::@1
+  [22] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename
+  asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+  [24] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status)
+  to:krill_loadraw::@return
+krill_loadraw::@return: scope:[krill_loadraw]  from krill_loadraw
   [25] return 
   to:@return
 
@@ -540,21 +540,21 @@ Added variable krill_install::return#2 to live range equivalence class [ krill_i
 Added variable main::status#0 to live range equivalence class [ main::status#0 ]
 Added variable krill_loadraw::return#2 to live range equivalence class [ krill_loadraw::return#2 ]
 Added variable main::status#1 to live range equivalence class [ main::status#1 ]
-Added variable krill_loadraw::return#0 to live range equivalence class [ krill_loadraw::return#0 ]
 Added variable krill_install::return#0 to live range equivalence class [ krill_install::return#0 ]
+Added variable krill_loadraw::return#0 to live range equivalence class [ krill_loadraw::return#0 ]
 Complete equivalence classes
 [ krill_install::return#2 ]
 [ main::status#0 ]
 [ krill_loadraw::return#2 ]
 [ main::status#1 ]
-[ krill_loadraw::return#0 ]
 [ krill_install::return#0 ]
+[ krill_loadraw::return#0 ]
 Allocated zp[1]:2 [ krill_install::return#2 ]
 Allocated zp[1]:3 [ main::status#0 ]
 Allocated zp[1]:4 [ krill_loadraw::return#2 ]
 Allocated zp[1]:5 [ main::status#1 ]
-Allocated zp[1]:6 [ krill_loadraw::return#0 ]
-Allocated zp[1]:7 [ krill_install::return#0 ]
+Allocated zp[1]:6 [ krill_install::return#0 ]
+Allocated zp[1]:7 [ krill_loadraw::return#0 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -683,6 +683,29 @@ main: {
     .byte 0
 }
 .segment Code
+  // krill_install
+// Install drive-side code portion(s) must be installed in the active drive.
+// Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
+// The drive-side portion remains resident in the drive. After successful
+// installation, the install routine is not needed any more and may be overwritten.
+// The KERNAL ROM may be disabled and zeropage variables clobbered.
+// Returns the status of the installation
+krill_install: {
+    .label status = $ff
+    .label return = 6
+    .label return_1 = 2
+    // asm { jsrKRILL_INSTALL stastatus  }
+    jsr KRILL_INSTALL
+    sta status
+    // [20] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status) -- vbuz1=_deref_pbuc1 
+    lda status
+    sta.z return
+    jmp __breturn
+    // krill_install::@return
+  __breturn:
+    // [21] return 
+    rts
+}
   // krill_loadraw
 // Load a file from the active drive without decompression.
 // While loading using filenames with wildcards ("?" and "*") is not possible,
@@ -693,9 +716,9 @@ main: {
 krill_loadraw: {
     .label status = $ff
     .label fname = $fe
-    .label return = 6
+    .label return = 7
     .label return_1 = 4
-    // [19] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
+    // [22] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
     lda #<main.filename
     sta fname
     lda #>main.filename
@@ -705,34 +728,11 @@ krill_loadraw: {
     ldy fname+1
     jsr KRILL_LOADER
     sta status
-    // [21] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status) -- vbuz1=_deref_pbuc1 
+    // [24] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status) -- vbuz1=_deref_pbuc1 
     lda status
     sta.z return
     jmp __breturn
     // krill_loadraw::@return
-  __breturn:
-    // [22] return 
-    rts
-}
-  // krill_install
-// Install drive-side code portion(s) must be installed in the active drive.
-// Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
-// The drive-side portion remains resident in the drive. After successful
-// installation, the install routine is not needed any more and may be overwritten.
-// The KERNAL ROM may be disabled and zeropage variables clobbered.
-// Returns the status of the installation
-krill_install: {
-    .label status = $ff
-    .label return = 7
-    .label return_1 = 2
-    // asm { jsrKRILL_INSTALL stastatus  }
-    jsr KRILL_INSTALL
-    sta status
-    // [24] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status) -- vbuz1=_deref_pbuc1 
-    lda status
-    sta.z return
-    jmp __breturn
-    // krill_install::@return
   __breturn:
     // [25] return 
     rts
@@ -767,19 +767,19 @@ Statement [15] *((const nomodify byte*) SPRITES_PTR) ← (const byte) main::toSp
 Statement [16] *((const nomodify byte*) SPRITES_COLOR) ← (const nomodify byte) GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [17] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $15 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [18] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $33 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [19] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename [ ] ( krill_loadraw:8 [ ] { { krill_loadraw::return#0 = krill_loadraw::return#2 } }  ) always clobbers reg byte a 
-Statement asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  } always clobbers reg byte a reg byte x reg byte y 
 Statement asm { jsrKRILL_INSTALL stastatus  } always clobbers reg byte a reg byte x reg byte y 
+Statement [22] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename [ ] ( krill_loadraw:8 [ ] { { krill_loadraw::return#0 = krill_loadraw::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  } always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ krill_install::return#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::status#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ krill_loadraw::return#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::status#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:6 [ krill_loadraw::return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ krill_install::return#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ krill_install::return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ krill_loadraw::return#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [krill_install] 4.33: zp[1]:7 [ krill_install::return#0 ] 4: zp[1]:2 [ krill_install::return#2 ] 
-Uplift Scope [krill_loadraw] 4.33: zp[1]:6 [ krill_loadraw::return#0 ] 4: zp[1]:4 [ krill_loadraw::return#2 ] 
+Uplift Scope [krill_install] 4.33: zp[1]:6 [ krill_install::return#0 ] 4: zp[1]:2 [ krill_install::return#2 ] 
+Uplift Scope [krill_loadraw] 4.33: zp[1]:7 [ krill_loadraw::return#0 ] 4: zp[1]:4 [ krill_loadraw::return#2 ] 
 Uplift Scope [main] 4: zp[1]:3 [ main::status#0 ] 4: zp[1]:5 [ main::status#1 ] 
 Uplift Scope [KrillStatus] 
 Uplift Scope [MOS6526_CIA] 
@@ -910,34 +910,6 @@ main: {
     .byte 0
 }
 .segment Code
-  // krill_loadraw
-// Load a file from the active drive without decompression.
-// While loading using filenames with wildcards ("?" and "*") is not possible,
-// subsequent files following the previously-loaded file can be loaded via a
-// zero-length filename
-// - filename - The name of the file to load (zero-terminated in petscii encoding)
-// Returns the status of the load
-krill_loadraw: {
-    .label status = $ff
-    .label fname = $fe
-    // [19] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
-    lda #<main.filename
-    sta fname
-    lda #>main.filename
-    sta fname+1
-    // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
-    ldx fname
-    ldy fname+1
-    jsr KRILL_LOADER
-    sta status
-    // [21] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status) -- vbuaa=_deref_pbuc1 
-    lda status
-    jmp __breturn
-    // krill_loadraw::@return
-  __breturn:
-    // [22] return 
-    rts
-}
   // krill_install
 // Install drive-side code portion(s) must be installed in the active drive.
 // Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
@@ -950,10 +922,38 @@ krill_install: {
     // asm { jsrKRILL_INSTALL stastatus  }
     jsr KRILL_INSTALL
     sta status
-    // [24] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status) -- vbuaa=_deref_pbuc1 
+    // [20] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status) -- vbuaa=_deref_pbuc1 
     lda status
     jmp __breturn
     // krill_install::@return
+  __breturn:
+    // [21] return 
+    rts
+}
+  // krill_loadraw
+// Load a file from the active drive without decompression.
+// While loading using filenames with wildcards ("?" and "*") is not possible,
+// subsequent files following the previously-loaded file can be loaded via a
+// zero-length filename
+// - filename - The name of the file to load (zero-terminated in petscii encoding)
+// Returns the status of the load
+krill_loadraw: {
+    .label status = $ff
+    .label fname = $fe
+    // [22] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
+    lda #<main.filename
+    sta fname
+    lda #>main.filename
+    sta fname+1
+    // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+    ldx fname
+    ldy fname+1
+    jsr KRILL_LOADER
+    sta status
+    // [24] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status) -- vbuaa=_deref_pbuc1 
+    lda status
+    jmp __breturn
+    // krill_loadraw::@return
   __breturn:
     // [25] return 
     rts
@@ -992,8 +992,8 @@ Removing instruction jmp __b5
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldy fname+1 with TAY
 Removing instruction lda status
+Replacing instruction ldy fname+1 with TAY
 Removing instruction lda status
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b6 with __b1
@@ -1162,8 +1162,8 @@ reg byte a [ krill_install::return#2 ]
 reg byte a [ main::status#0 ]
 reg byte a [ krill_loadraw::return#2 ]
 reg byte a [ main::status#1 ]
-reg byte a [ krill_loadraw::return#0 ]
 reg byte a [ krill_install::return#0 ]
+reg byte a [ krill_loadraw::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -1279,35 +1279,6 @@ main: {
     .byte 0
 }
 .segment Code
-  // krill_loadraw
-// Load a file from the active drive without decompression.
-// While loading using filenames with wildcards ("?" and "*") is not possible,
-// subsequent files following the previously-loaded file can be loaded via a
-// zero-length filename
-// - filename - The name of the file to load (zero-terminated in petscii encoding)
-// Returns the status of the load
-krill_loadraw: {
-    .label status = $ff
-    .label fname = $fe
-    // *fname = filename
-    // [19] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
-    lda #<main.filename
-    sta fname
-    lda #>main.filename
-    sta fname+1
-    // asm
-    // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
-    ldx fname
-    tay
-    jsr KRILL_LOADER
-    sta status
-    // return *status;
-    // [21] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status) -- vbuaa=_deref_pbuc1 
-    // krill_loadraw::@return
-    // }
-    // [22] return 
-    rts
-}
   // krill_install
 // Install drive-side code portion(s) must be installed in the active drive.
 // Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
@@ -1322,8 +1293,37 @@ krill_install: {
     jsr KRILL_INSTALL
     sta status
     // return *status;
-    // [24] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status) -- vbuaa=_deref_pbuc1 
+    // [20] (byte) krill_install::return#0 ← *((const nomodify byte*) krill_install::status) -- vbuaa=_deref_pbuc1 
     // krill_install::@return
+    // }
+    // [21] return 
+    rts
+}
+  // krill_loadraw
+// Load a file from the active drive without decompression.
+// While loading using filenames with wildcards ("?" and "*") is not possible,
+// subsequent files following the previously-loaded file can be loaded via a
+// zero-length filename
+// - filename - The name of the file to load (zero-terminated in petscii encoding)
+// Returns the status of the load
+krill_loadraw: {
+    .label status = $ff
+    .label fname = $fe
+    // *fname = filename
+    // [22] *((const nomodify byte**) krill_loadraw::fname) ← (const byte*) main::filename -- _deref_pptc1=pbuc2 
+    lda #<main.filename
+    sta fname
+    lda #>main.filename
+    sta fname+1
+    // asm
+    // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+    ldx fname
+    tay
+    jsr KRILL_LOADER
+    sta status
+    // return *status;
+    // [24] (byte) krill_loadraw::return#0 ← *((const nomodify byte*) krill_loadraw::status) -- vbuaa=_deref_pbuc1 
+    // krill_loadraw::@return
     // }
     // [25] return 
     rts

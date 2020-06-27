@@ -70,19 +70,19 @@ main: {
     // }
     rts
 }
-setp: {
-    .const v = 5
-    // *p = v
-    lda #v
-    sta.z main.ptr
-    // }
-    rts
-}
 setv: {
     .const v = 4
     // val = v
     lda #v
     sta.z val
+    // }
+    rts
+}
+setp: {
+    .const v = 5
+    // *p = v
+    lda #v
+    sta.z main.ptr
     // }
     rts
 }

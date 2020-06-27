@@ -4,8 +4,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_char_cursor = 6
-  .label print_line_cursor = 2
+  .label print_char_cursor = 4
+  .label print_line_cursor = 6
 main: {
     // print_str(msg)
     lda #<print_screen
@@ -50,6 +50,30 @@ main: {
     // }
     rts
 }
+// Print a zero-terminated string
+// print_str(byte* zp(2) str)
+print_str: {
+    .label str = 2
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -72,30 +96,6 @@ print_ln: {
   !:
     // }
     rts
-}
-// Print a zero-terminated string
-// print_str(byte* zp(4) str)
-print_str: {
-    .label str = 4
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
 }
 // Print a single char
 // print_char(byte register(A) ch)

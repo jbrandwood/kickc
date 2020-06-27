@@ -32,39 +32,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // asm
-    sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=$7f
-    // Set raster line to $60
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = $60
-    lda #$60
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge any IRQ
-    sta IRQ_STATUS
-    // *KERNEL_IRQ = &table_driven_irq
-    // Setup the table driven IRQ routine
-    lda #<table_driven_irq
-    sta KERNEL_IRQ
-    lda #>table_driven_irq
-    sta KERNEL_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
 table_driven_irq: {
   __b1:
     // idx = IRQ_CHANGE_IDX[irq_idx]
@@ -109,6 +76,39 @@ table_driven_irq: {
     txa
     sta VIC_BASE,y
     jmp __b1
+}
+main: {
+    // asm
+    sei
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *VIC_CONTROL &=$7f
+    // Set raster line to $60
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = $60
+    lda #$60
+    sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge any IRQ
+    sta IRQ_STATUS
+    // *KERNEL_IRQ = &table_driven_irq
+    // Setup the table driven IRQ routine
+    lda #<table_driven_irq
+    sta KERNEL_IRQ
+    lda #>table_driven_irq
+    sta KERNEL_IRQ+1
+    // asm
+    cli
+    // }
+    rts
 }
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60

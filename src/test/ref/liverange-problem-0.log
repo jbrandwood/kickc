@@ -199,22 +199,22 @@ __start::@return: scope:[__start]  from __start::@1
   [10] return 
   to:@return
 
-(void()) main()
-main: scope:[main]  from __start::@1
-  [11] *((byte*) SCREEN_1#0) ← (byte) 0
-  [12] *((byte*) SCREEN_2#0) ← (byte) 0
-  to:main::@return
-main::@return: scope:[main]  from main
-  [13] return 
-  to:@return
-
 (byte*()) malloc()
 malloc: scope:[malloc]  from __start::@2 __start::__init1
-  [14] (byte*) MEM#6 ← phi( __start::@2/(byte*) MEM#0 __start::__init1/(byte*) 1024 )
-  [15] (byte*) MEM#0 ← ++ (byte*) MEM#6
-  [16] (byte*) malloc::return#0 ← (byte*) MEM#0
+  [11] (byte*) MEM#6 ← phi( __start::@2/(byte*) MEM#0 __start::__init1/(byte*) 1024 )
+  [12] (byte*) MEM#0 ← ++ (byte*) MEM#6
+  [13] (byte*) malloc::return#0 ← (byte*) MEM#0
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
+  [14] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  [15] *((byte*) SCREEN_1#0) ← (byte) 0
+  [16] *((byte*) SCREEN_2#0) ← (byte) 0
+  to:main::@return
+main::@return: scope:[main]  from main
   [17] return 
   to:@return
 
@@ -279,9 +279,9 @@ __start: {
     // __start::__init1
   __init1:
     // [2] call malloc 
-    // [14] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [11] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
   malloc_from___init1:
-    // [14] phi (byte*) MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z MEM
     lda #>$400
@@ -301,9 +301,9 @@ __start: {
     lda.z malloc.return_1+1
     sta.z SCREEN_1+1
     // [5] call malloc 
-    // [14] phi from __start::@2 to malloc [phi:__start::@2->malloc]
+    // [11] phi from __start::@2 to malloc [phi:__start::@2->malloc]
   malloc_from___b2:
-    // [14] phi (byte*) MEM#6 = (byte*) MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
+    // [11] phi (byte*) MEM#6 = (byte*) MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
     jsr malloc
     // [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0 -- pbuz1=pbuz2 
     lda.z malloc.return
@@ -331,39 +331,39 @@ __start: {
     // [10] return 
     rts
 }
-  // main
-main: {
-    // [11] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    lda #0
-    ldy #0
-    sta (SCREEN_1),y
-    // [12] *((byte*) SCREEN_2#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    lda #0
-    ldy #0
-    sta (SCREEN_2),y
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // malloc
 malloc: {
     .label return = $c
     .label return_1 = 4
     .label return_2 = 8
-    // [15] (byte*) MEM#0 ← ++ (byte*) MEM#6 -- pbuz1=_inc_pbuz1 
+    // [12] (byte*) MEM#0 ← ++ (byte*) MEM#6 -- pbuz1=_inc_pbuz1 
     inc.z MEM
     bne !+
     inc.z MEM+1
   !:
-    // [16] (byte*) malloc::return#0 ← (byte*) MEM#0 -- pbuz1=pbuz2 
+    // [13] (byte*) malloc::return#0 ← (byte*) MEM#0 -- pbuz1=pbuz2 
     lda.z MEM
     sta.z return
     lda.z MEM+1
     sta.z return+1
     jmp __breturn
     // malloc::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // main
+main: {
+    // [15] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    lda #0
+    ldy #0
+    sta (SCREEN_1),y
+    // [16] *((byte*) SCREEN_2#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    lda #0
+    ldy #0
+    sta (SCREEN_2),y
+    jmp __breturn
+    // main::@return
   __breturn:
     // [17] return 
     rts
@@ -375,9 +375,9 @@ Statement [3] (byte*) malloc::return#2 ← (byte*) malloc::return#0 [ malloc::re
 Statement [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2 [ SCREEN_1#0 MEM#0 ] (  [ SCREEN_1#0 MEM#0 ] { { MEM#0 = MEM#6 } { malloc::return#0 = malloc::return#3 } }  ) always clobbers reg byte a 
 Statement [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0 [ SCREEN_1#0 malloc::return#3 ] (  [ SCREEN_1#0 malloc::return#3 ] { { MEM#0 = MEM#6 } { malloc::return#0 = malloc::return#3 } }  ) always clobbers reg byte a 
 Statement [7] (byte*) SCREEN_2#0 ← (byte*) malloc::return#3 [ SCREEN_1#0 SCREEN_2#0 ] (  [ SCREEN_1#0 SCREEN_2#0 ] { }  ) always clobbers reg byte a 
-Statement [11] *((byte*) SCREEN_1#0) ← (byte) 0 [ SCREEN_2#0 ] ( main:9 [ SCREEN_2#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] *((byte*) SCREEN_2#0) ← (byte) 0 [ ] ( main:9 [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [16] (byte*) malloc::return#0 ← (byte*) MEM#0 [ malloc::return#0 MEM#0 ] ( malloc:2 [ malloc::return#0 MEM#0 ] { { malloc::return#0 = malloc::return#2 } }  malloc:5 [ SCREEN_1#0 malloc::return#0 MEM#0 ] { { MEM#0 = MEM#6 } { malloc::return#0 = malloc::return#3 } }  ) always clobbers reg byte a 
+Statement [13] (byte*) malloc::return#0 ← (byte*) MEM#0 [ malloc::return#0 MEM#0 ] ( malloc:2 [ malloc::return#0 MEM#0 ] { { malloc::return#0 = malloc::return#2 } }  malloc:5 [ SCREEN_1#0 malloc::return#0 MEM#0 ] { { MEM#0 = MEM#6 } { malloc::return#0 = malloc::return#3 } }  ) always clobbers reg byte a 
+Statement [15] *((byte*) SCREEN_1#0) ← (byte) 0 [ SCREEN_2#0 ] ( main:9 [ SCREEN_2#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] *((byte*) SCREEN_2#0) ← (byte) 0 [ ] ( main:9 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ MEM#6 MEM#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ malloc::return#2 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ SCREEN_1#0 ] : zp[2]:6 , 
@@ -422,9 +422,9 @@ __start: {
     // __start::__init1
   __init1:
     // [2] call malloc 
-    // [14] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [11] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
   malloc_from___init1:
-    // [14] phi (byte*) MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
+    // [11] phi (byte*) MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z MEM
     lda #>$400
@@ -440,9 +440,9 @@ __start: {
   __b2:
     // [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2
     // [5] call malloc 
-    // [14] phi from __start::@2 to malloc [phi:__start::@2->malloc]
+    // [11] phi from __start::@2 to malloc [phi:__start::@2->malloc]
   malloc_from___b2:
-    // [14] phi (byte*) MEM#6 = (byte*) MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
+    // [11] phi (byte*) MEM#6 = (byte*) MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
     jsr malloc
     // [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0
     jmp __b3
@@ -462,38 +462,38 @@ __start: {
     // [10] return 
     rts
 }
-  // main
-main: {
-    // [11] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    lda #0
-    ldy #0
-    sta (SCREEN_1),y
-    // [12] *((byte*) SCREEN_2#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    lda #0
-    ldy #0
-    sta (SCREEN_2),y
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // malloc
 malloc: {
     .label return = 6
     .label return_1 = 4
-    // [15] (byte*) MEM#0 ← ++ (byte*) MEM#6 -- pbuz1=_inc_pbuz1 
+    // [12] (byte*) MEM#0 ← ++ (byte*) MEM#6 -- pbuz1=_inc_pbuz1 
     inc.z MEM
     bne !+
     inc.z MEM+1
   !:
-    // [16] (byte*) malloc::return#0 ← (byte*) MEM#0 -- pbuz1=pbuz2 
+    // [13] (byte*) malloc::return#0 ← (byte*) MEM#0 -- pbuz1=pbuz2 
     lda.z MEM
     sta.z return
     lda.z MEM+1
     sta.z return+1
     jmp __breturn
     // malloc::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // main
+main: {
+    // [15] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    lda #0
+    ldy #0
+    sta (SCREEN_1),y
+    // [16] *((byte*) SCREEN_2#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    lda #0
+    ldy #0
+    sta (SCREEN_2),y
+    jmp __breturn
+    // main::@return
   __breturn:
     // [17] return 
     rts
@@ -577,8 +577,8 @@ __start: {
     // __start::__init1
     // malloc()
     // [2] call malloc 
-    // [14] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
-    // [14] phi (byte*) MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
+    // [11] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [11] phi (byte*) MEM#6 = (byte*) 1024 [phi:__start::__init1->malloc#0] -- pbuz1=pbuc1 
     lda #<$400
     sta.z MEM
     lda #>$400
@@ -593,8 +593,8 @@ __start: {
     // __start::@2
     // [4] (byte*) SCREEN_1#0 ← (byte*) malloc::return#2
     // [5] call malloc 
-    // [14] phi from __start::@2 to malloc [phi:__start::@2->malloc]
-    // [14] phi (byte*) MEM#6 = (byte*) MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
+    // [11] phi from __start::@2 to malloc [phi:__start::@2->malloc]
+    // [11] phi (byte*) MEM#6 = (byte*) MEM#0 [phi:__start::@2->malloc#0] -- register_copy 
     jsr malloc
     // malloc()
     // [6] (byte*) malloc::return#3 ← (byte*) malloc::return#0
@@ -608,37 +608,37 @@ __start: {
     // [10] return 
     rts
 }
-  // main
-main: {
-    // *SCREEN_1 = 0
-    // [11] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    lda #0
-    tay
-    sta (SCREEN_1),y
-    // *SCREEN_2 = 0
-    // [12] *((byte*) SCREEN_2#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    sta (SCREEN_2),y
-    // main::@return
-    // }
-    // [13] return 
-    rts
-}
   // malloc
 malloc: {
     .label return = 6
     .label return_1 = 4
     // return ++MEM;
-    // [15] (byte*) MEM#0 ← ++ (byte*) MEM#6 -- pbuz1=_inc_pbuz1 
+    // [12] (byte*) MEM#0 ← ++ (byte*) MEM#6 -- pbuz1=_inc_pbuz1 
     inc.z MEM
     bne !+
     inc.z MEM+1
   !:
-    // [16] (byte*) malloc::return#0 ← (byte*) MEM#0 -- pbuz1=pbuz2 
+    // [13] (byte*) malloc::return#0 ← (byte*) MEM#0 -- pbuz1=pbuz2 
     lda.z MEM
     sta.z return
     lda.z MEM+1
     sta.z return+1
     // malloc::@return
+    // }
+    // [14] return 
+    rts
+}
+  // main
+main: {
+    // *SCREEN_1 = 0
+    // [15] *((byte*) SCREEN_1#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    lda #0
+    tay
+    sta (SCREEN_1),y
+    // *SCREEN_2 = 0
+    // [16] *((byte*) SCREEN_2#0) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    sta (SCREEN_2),y
+    // main::@return
     // }
     // [17] return 
     rts

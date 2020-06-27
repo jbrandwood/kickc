@@ -204,14 +204,50 @@ main: {
     ldx #$27
     jmp __b6
 }
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(3) str, byte register(X) c)
+memset: {
+    .label end = $f
+    .label dst = 3
+    .label str = 3
+    // end = (char*)str + num
+    lda.z str
+    clc
+    adc #<$3e8
+    sta.z end
+    lda.z str+1
+    adc #>$3e8
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
 // Returns a pseudo-random number in the range of 0 to RAND_MAX (65535)
 // Uses an xorshift pseudorandom number generator that hits all different values
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $13
-    .label __1 = $f
-    .label __2 = $11
+    .label __0 = $f
+    .label __1 = $11
+    .label __2 = $13
     .label return = $d
     // rand_state << 7
     lda.z rand_state+1
@@ -260,42 +296,6 @@ rand: {
     sta.z return+1
     // }
     rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(3) str, byte register(X) c)
-memset: {
-    .label end = $13
-    .label dst = 3
-    .label str = 3
-    // end = (char*)str + num
-    lda.z str
-    clc
-    adc #<$3e8
-    sta.z end
-    lda.z str+1
-    adc #>$3e8
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
 }
 .segment Data
   // Colors to fade up/down when visiting a char multiple times

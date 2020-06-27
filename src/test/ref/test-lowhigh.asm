@@ -5,7 +5,7 @@
 .pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = $10
-  .label print_char_cursor = 8
+  .label print_char_cursor = $e
   .label print_char_cursor_1 = $10
   .label print_line_cursor_1 = 6
 main: {
@@ -180,81 +180,10 @@ main: {
     sta.z print_line_cursor_1+1
     jmp __b1
 }
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor_1
-    sta.z print_line_cursor
-    lda #0
-    adc.z print_line_cursor_1+1
-    sta.z print_line_cursor+1
-    // while (print_line_cursor<print_char_cursor)
-    cmp.z print_char_cursor+1
-    bcc __b2
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b2
-  !:
-    // }
-    rts
-  __b2:
-    lda.z print_line_cursor
-    sta.z print_line_cursor_1
-    lda.z print_line_cursor+1
-    sta.z print_line_cursor_1+1
-    jmp __b1
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp($e) w)
-print_uint: {
-    .label w = $e
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
 }
@@ -282,12 +211,83 @@ print_ulong: {
     // }
     rts
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
     // }
     rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp(8) w)
+print_uint: {
+    .label w = 8
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor_1
+    sta.z print_line_cursor
+    lda #0
+    adc.z print_line_cursor_1+1
+    sta.z print_line_cursor+1
+    // while (print_line_cursor<print_char_cursor)
+    cmp.z print_char_cursor+1
+    bcc __b2
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    lda.z print_line_cursor
+    sta.z print_line_cursor_1
+    lda.z print_line_cursor+1
+    sta.z print_line_cursor_1+1
+    jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {

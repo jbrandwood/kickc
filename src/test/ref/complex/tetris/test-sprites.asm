@@ -89,185 +89,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    .const toSpritePtr1_return = $ff&SIN_SPRITE/$40
-    .const vicSelectGfxBank1_toDd001_return = 3
-    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
-    .label xpos = 2
-    .label ypos = 3
-    // CIA2->PORT_A_DDR = %00000011
-    lda #3
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA2->PORT_A = toDd00(gfx)
-    lda #vicSelectGfxBank1_toDd001_return
-    sta CIA2
-    // *D018 = toD018(PLAYFIELD_SCREEN_1, PLAYFIELD_CHARSET)
-    lda #toD0181_return
-    sta D018
-    // sprites_init()
-    jsr sprites_init
-    // *SPRITES_ENABLE = 0xff
-    lda #$ff
-    sta SPRITES_ENABLE
-    lda #$32
-    sta.z ypos
-    lda #$18
-    sta.z xpos
-    ldy #4
-  __b1:
-    // s2 = s*2
-    tya
-    asl
-    tax
-    // SPRITES_XPOS[s2] = xpos
-    lda.z xpos
-    sta SPRITES_XPOS,x
-    // SPRITES_YPOS[s2] = ypos
-    lda.z ypos
-    sta SPRITES_YPOS,x
-    // s-3
-    tya
-    sec
-    sbc #3
-    // SPRITES_COLOR[s] = s-3
-    sta SPRITES_COLOR,y
-    // PLAYFIELD_SPRITE_PTRS_1[s] = toSpritePtr(SIN_SPRITE)
-    lda #toSpritePtr1_return
-    sta PLAYFIELD_SPRITE_PTRS_1,y
-    // xpos +=  24
-    lax.z xpos
-    axs #-[$18]
-    stx.z xpos
-    // ypos +=  24
-    lax.z ypos
-    axs #-[$18]
-    stx.z ypos
-    // for(char s:4..7)
-    iny
-    cpy #8
-    bne __b1
-    // sprites_irq_init()
-    jsr sprites_irq_init
-    // loop()
-    jsr loop
-    // }
-    rts
-}
-loop: {
-    .label s = 5
-    lda #0
-    sta.z sin_idx
-  __b2:
-    // while (*RASTER!=0xff)
-    lda #$ff
-    cmp RASTER
-    bne __b2
-    // idx = sin_idx
-    ldx.z sin_idx
-    lda #4
-    sta.z s
-  __b4:
-    // s*2
-    lda.z s
-    asl
-    // SPRITES_YPOS[s*2] = SIN[idx]
-    tay
-    lda SIN,x
-    sta SPRITES_YPOS,y
-    // idx += 10
-    txa
-    axs #-[$a]
-    // for(char s:4..7)
-    inc.z s
-    lda #8
-    cmp.z s
-    bne __b4
-    // sin_idx++;
-    inc.z sin_idx
-    jmp __b2
-}
-// Setup the IRQ
-sprites_irq_init: {
-    // asm
-    sei
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge any IRQ and setup the next one
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // asm
-    lda CIA1_INTERRUPT
-    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // Disable kernal & basic
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
-    // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=0x7f
-    // Set raster line
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = IRQ_RASTER_FIRST
-    lda #IRQ_RASTER_FIRST
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // *HARDWARE_IRQ = &sprites_irq
-    // Set the IRQ routine
-    lda #<sprites_irq
-    sta HARDWARE_IRQ
-    lda #>sprites_irq
-    sta HARDWARE_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
-// Setup the sprites
-sprites_init: {
-    .label xpos = 5
-    // *SPRITES_ENABLE = %00001111
-    lda #$f
-    sta SPRITES_ENABLE
-    // *SPRITES_MC = 0
-    lda #0
-    sta SPRITES_MC
-    // *SPRITES_EXPAND_Y = *SPRITES_MC = 0
-    sta SPRITES_EXPAND_Y
-    // *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0
-    sta SPRITES_EXPAND_X
-    lda #$18+$f*8
-    sta.z xpos
-    ldy #0
-  __b1:
-    // s2 = s*2
-    tya
-    asl
-    tax
-    // SPRITES_XPOS[s2] = xpos
-    lda.z xpos
-    sta SPRITES_XPOS,x
-    // SPRITES_COLOR[s] = BLACK
-    lda #BLACK
-    sta SPRITES_COLOR,y
-    // xpos = xpos+24
-    lax.z xpos
-    axs #-[$18]
-    stx.z xpos
-    // for(char s:0..3)
-    iny
-    cpy #4
-    bne __b1
-    // }
-    rts
-}
 // Raster Interrupt Routine - sets up the sprites covering the playfield
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
@@ -402,6 +223,185 @@ sprites_irq: {
     txa
     // PLAYFIELD_SPRITE_PTRS_1[3] = ptr
     sta PLAYFIELD_SPRITE_PTRS_1+3
+    jmp __b2
+}
+main: {
+    .const toSpritePtr1_return = $ff&SIN_SPRITE/$40
+    .const vicSelectGfxBank1_toDd001_return = 3
+    .const toD0181_return = (>(PLAYFIELD_SCREEN_1&$3fff)*4)|(>PLAYFIELD_CHARSET)/4&$f
+    .label xpos = 2
+    .label ypos = 3
+    // CIA2->PORT_A_DDR = %00000011
+    lda #3
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = toDd00(gfx)
+    lda #vicSelectGfxBank1_toDd001_return
+    sta CIA2
+    // *D018 = toD018(PLAYFIELD_SCREEN_1, PLAYFIELD_CHARSET)
+    lda #toD0181_return
+    sta D018
+    // sprites_init()
+    jsr sprites_init
+    // *SPRITES_ENABLE = 0xff
+    lda #$ff
+    sta SPRITES_ENABLE
+    lda #$32
+    sta.z ypos
+    lda #$18
+    sta.z xpos
+    ldy #4
+  __b1:
+    // s2 = s*2
+    tya
+    asl
+    tax
+    // SPRITES_XPOS[s2] = xpos
+    lda.z xpos
+    sta SPRITES_XPOS,x
+    // SPRITES_YPOS[s2] = ypos
+    lda.z ypos
+    sta SPRITES_YPOS,x
+    // s-3
+    tya
+    sec
+    sbc #3
+    // SPRITES_COLOR[s] = s-3
+    sta SPRITES_COLOR,y
+    // PLAYFIELD_SPRITE_PTRS_1[s] = toSpritePtr(SIN_SPRITE)
+    lda #toSpritePtr1_return
+    sta PLAYFIELD_SPRITE_PTRS_1,y
+    // xpos +=  24
+    lax.z xpos
+    axs #-[$18]
+    stx.z xpos
+    // ypos +=  24
+    lax.z ypos
+    axs #-[$18]
+    stx.z ypos
+    // for(char s:4..7)
+    iny
+    cpy #8
+    bne __b1
+    // sprites_irq_init()
+    jsr sprites_irq_init
+    // loop()
+    jsr loop
+    // }
+    rts
+}
+// Setup the sprites
+sprites_init: {
+    .label xpos = 5
+    // *SPRITES_ENABLE = %00001111
+    lda #$f
+    sta SPRITES_ENABLE
+    // *SPRITES_MC = 0
+    lda #0
+    sta SPRITES_MC
+    // *SPRITES_EXPAND_Y = *SPRITES_MC = 0
+    sta SPRITES_EXPAND_Y
+    // *SPRITES_EXPAND_X = *SPRITES_EXPAND_Y = *SPRITES_MC = 0
+    sta SPRITES_EXPAND_X
+    lda #$18+$f*8
+    sta.z xpos
+    ldy #0
+  __b1:
+    // s2 = s*2
+    tya
+    asl
+    tax
+    // SPRITES_XPOS[s2] = xpos
+    lda.z xpos
+    sta SPRITES_XPOS,x
+    // SPRITES_COLOR[s] = BLACK
+    lda #BLACK
+    sta SPRITES_COLOR,y
+    // xpos = xpos+24
+    lax.z xpos
+    axs #-[$18]
+    stx.z xpos
+    // for(char s:0..3)
+    iny
+    cpy #4
+    bne __b1
+    // }
+    rts
+}
+// Setup the IRQ
+sprites_irq_init: {
+    // asm
+    sei
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge any IRQ and setup the next one
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // asm
+    lda CIA1_INTERRUPT
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+    // Disable kernal & basic
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *VIC_CONTROL &=0x7f
+    // Set raster line
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = IRQ_RASTER_FIRST
+    lda #IRQ_RASTER_FIRST
+    sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // *HARDWARE_IRQ = &sprites_irq
+    // Set the IRQ routine
+    lda #<sprites_irq
+    sta HARDWARE_IRQ
+    lda #>sprites_irq
+    sta HARDWARE_IRQ+1
+    // asm
+    cli
+    // }
+    rts
+}
+loop: {
+    .label s = 5
+    lda #0
+    sta.z sin_idx
+  __b2:
+    // while (*RASTER!=0xff)
+    lda #$ff
+    cmp RASTER
+    bne __b2
+    // idx = sin_idx
+    ldx.z sin_idx
+    lda #4
+    sta.z s
+  __b4:
+    // s*2
+    lda.z s
+    asl
+    // SPRITES_YPOS[s*2] = SIN[idx]
+    tay
+    lda SIN,x
+    sta SPRITES_YPOS,y
+    // idx += 10
+    txa
+    axs #-[$a]
+    // for(char s:4..7)
+    inc.z s
+    lda #8
+    cmp.z s
+    bne __b4
+    // sin_idx++;
+    inc.z sin_idx
     jmp __b2
 }
 SIN:

@@ -47,115 +47,6 @@ main: {
     // }
     rts
 }
-end: {
-    // Ticks = last_time
-    lda.z last_time
-    sta.z Ticks
-    lda.z last_time+1
-    sta.z Ticks+1
-    // start()
-    jsr start
-    // last_time -= Ticks
-    lda.z last_time
-    sec
-    sbc.z Ticks
-    sta.z last_time
-    lda.z last_time+1
-    sbc.z Ticks+1
-    sta.z last_time+1
-    // Ticks = last_time
-    lda.z last_time
-    sta.z Ticks_1
-    lda.z last_time+1
-    sta.z Ticks_1+1
-    // print_uint(Ticks)
-    jsr print_uint
-    // print_ln()
-    jsr print_ln
-    // }
-    rts
-}
-// Print a newline
-print_ln: {
-    lda #<print_screen
-    sta.z print_line_cursor
-    lda #>print_screen
-    sta.z print_line_cursor+1
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp($a) w)
-print_uint: {
-    .label w = $a
-    // print_uchar(>w)
-    ldx.z w+1
-    lda #<print_screen
-    sta.z print_char_cursor
-    lda #>print_screen
-    sta.z print_char_cursor+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
 start: {
     .label LAST_TIME = last_time
     // asm
@@ -243,6 +134,115 @@ round: {
     inc.z p+1
   !:
     jmp __b1
+}
+end: {
+    // Ticks = last_time
+    lda.z last_time
+    sta.z Ticks
+    lda.z last_time+1
+    sta.z Ticks+1
+    // start()
+    jsr start
+    // last_time -= Ticks
+    lda.z last_time
+    sec
+    sbc.z Ticks
+    sta.z last_time
+    lda.z last_time+1
+    sbc.z Ticks+1
+    sta.z last_time+1
+    // Ticks = last_time
+    lda.z last_time
+    sta.z Ticks_1
+    lda.z last_time+1
+    sta.z Ticks_1+1
+    // print_uint(Ticks)
+    jsr print_uint
+    // print_ln()
+    jsr print_ln
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp($a) w)
+print_uint: {
+    .label w = $a
+    // print_uchar(>w)
+    ldx.z w+1
+    lda #<print_screen
+    sta.z print_char_cursor
+    lda #>print_screen
+    sta.z print_char_cursor+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a newline
+print_ln: {
+    lda #<print_screen
+    sta.z print_line_cursor
+    lda #>print_screen
+    sta.z print_line_cursor+1
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
 }
   print_hextab: .text "0123456789abcdef"
   .align $100

@@ -187,51 +187,15 @@ cscroll: {
     // }
     rts
 }
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(4) str, byte register(X) c)
-memset: {
-    .label end = $c
-    .label dst = 4
-    .label str = 4
-    // end = (char*)str + num
-    lda #$28
-    clc
-    adc.z str
-    sta.z end
-    lda #0
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($c) destination, void* zp(4) source)
+// memcpy(void* zp($e) destination, void* zp(4) source)
 memcpy: {
-    .label src_end = $e
-    .label dst = $c
+    .label src_end = $c
+    .label dst = $e
     .label src = 4
     .label source = 4
-    .label destination = $c
+    .label destination = $e
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -265,4 +229,40 @@ memcpy: {
     inc.z src+1
   !:
     jmp __b1
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(4) str, byte register(X) c)
+memset: {
+    .label end = $e
+    .label dst = 4
+    .label str = 4
+    // end = (char*)str + num
+    lda #$28
+    clc
+    adc.z str
+    sta.z end
+    lda #0
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
 }

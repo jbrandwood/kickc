@@ -27,6 +27,15 @@ outsw: {
     // }
     rts
 }
+// out(byte register(A) c)
+out: {
+    // idx++;
+    inx
+    // SCREEN[idx] = c
+    sta SCREEN,x
+    // }
+    rts
+}
 // outw(byte register(Y) c)
 outw: {
     // out(c<<4)
@@ -40,15 +49,6 @@ outw: {
     tya
     and #$f
     jsr out
-    // }
-    rts
-}
-// out(byte register(A) c)
-out: {
-    // idx++;
-    inx
-    // SCREEN[idx] = c
-    sta SCREEN,x
     // }
     rts
 }

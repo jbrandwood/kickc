@@ -32,11 +32,13 @@ main: {
     // cond(i)?m1(i):m2(i)
     jmp __b4
 }
-// m1(byte register(A) i)
-m1: {
-    // 5+i
-    clc
-    adc #5
+// cond(byte register(A) b)
+cond: {
+    // b<5
+    cmp #5
+    lda #0
+    rol
+    eor #1
     // }
     rts
 }
@@ -48,13 +50,11 @@ m2: {
     // }
     rts
 }
-// cond(byte register(A) b)
-cond: {
-    // b<5
-    cmp #5
-    lda #0
-    rol
-    eor #1
+// m1(byte register(A) i)
+m1: {
+    // 5+i
+    clc
+    adc #5
     // }
     rts
 }

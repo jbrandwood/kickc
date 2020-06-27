@@ -31,33 +31,29 @@
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label print_screen = $400
-  .label print_char_cursor = 4
-  .label print_line_cursor = 8
-  .label print_line_cursor_1 = $a
+  .label print_char_cursor = $a
+  .label print_line_cursor = $10
+  .label print_line_cursor_1 = 4
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
     .const fileEntry2_idx = 2
     .label fileEntry1___0 = 2
-    .label fileEntry2___0 = 6
-    .label entry1 = 2
-    .label entry2 = 6
+    .label fileEntry2___0 = 2
+    .label entry1 = 6
+    .label entry2 = 2
     // keyboard_init()
     jsr keyboard_init
     // mul8u(idx, SIZEOF_ENTRY)
     ldx #fileEntry1_idx
     jsr mul8u
     // mul8u(idx, SIZEOF_ENTRY)
-    lda.z mul8u.return
-    sta.z fileEntry1___0
-    lda.z mul8u.return+1
-    sta.z fileEntry1___0+1
     // files+mul8u(idx, SIZEOF_ENTRY)
+    lda.z fileEntry1___0
     clc
-    lda.z entry1
     adc #<files
     sta.z entry1
-    lda.z entry1+1
+    lda.z fileEntry1___0+1
     adc #>files
     sta.z entry1+1
     // mul8u(idx, SIZEOF_ENTRY)
@@ -215,6 +211,207 @@ main: {
     str2: .text "** entry 2 **"
     .byte 0
 }
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // CIA1->PORT_A_DDR = $ff
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+    // }
+    rts
+}
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+// mul8u(byte register(X) a)
+mul8u: {
+    .label mb = 4
+    .label res = 2
+    .label return = 2
+    lda #<SIZEOF_ENTRY
+    sta.z mb
+    lda #>SIZEOF_ENTRY
+    sta.z mb+1
+    lda #<0
+    sta.z res
+    sta.z res+1
+  __b1:
+    // while(a!=0)
+    cpx #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // a&1
+    txa
+    and #1
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+  __b3:
+    // a = a>>1
+    txa
+    lsr
+    tax
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    jmp __b1
+}
+// Set all values in the passed struct
+// Sets the values to n, n+1, n... to help test that everything works as intended
+// initEntry(byte* zp(4) entry, byte register(X) n)
+initEntry: {
+    .label __1 = 8
+    .label __3 = $10
+    .label __5 = $a
+    .label __7 = $c
+    .label __17 = $e
+    .label entry = 4
+    // 0x1111+n
+    txa
+    clc
+    adc #<$1111
+    sta.z __1
+    lda #>$1111
+    adc #0
+    sta.z __1+1
+    // *entryBufDisk(entry) = 0x1111+n
+    ldy #0
+    lda.z __1
+    sta (entry),y
+    iny
+    lda.z __1+1
+    sta (entry),y
+    // 0x2222+n
+    txa
+    clc
+    adc #<$2222
+    sta.z __3
+    lda #>$2222
+    adc #0
+    sta.z __3+1
+    // *entryBufEdit(entry) = 0x2222+n
+    ldy #2
+    lda.z __3
+    sta (entry),y
+    iny
+    lda.z __3+1
+    sta (entry),y
+    // 0x3333+n
+    txa
+    clc
+    adc #<$3333
+    sta.z __5
+    lda #>$3333
+    adc #0
+    sta.z __5+1
+    // *entryTsLen(entry) = 0x3333+n
+    ldy #4
+    lda.z __5
+    sta (entry),y
+    iny
+    lda.z __5+1
+    sta (entry),y
+    // 0x4444+n
+    txa
+    clc
+    adc #<$4444
+    sta.z __7
+    lda #>$4444
+    adc #0
+    sta.z __7+1
+    // *entryTsOrder(entry) = 0x4444+n
+    ldy #6
+    lda.z __7
+    sta (entry),y
+    iny
+    lda.z __7+1
+    sta (entry),y
+    // 0x55+n
+    txa
+    clc
+    adc #$55
+    // *entryTLastLink(entry) = 0x55+n
+    ldy #8
+    sta (entry),y
+    // 0x66+n
+    txa
+    clc
+    adc #$66
+    // *entrySLastLink(entry) = 0x66+n
+    ldy #9
+    sta (entry),y
+    // 0x77+n
+    txa
+    clc
+    adc #$77
+    // *entryBFlag(entry) = 0x77+n
+    ldy #$a
+    sta (entry),y
+    // 0x88+n
+    txa
+    clc
+    adc #$88
+    // *entryBError(entry) = 0x88+n
+    ldy #$b
+    sta (entry),y
+    // 0x9999+n
+    txa
+    clc
+    adc #<$9999
+    sta.z __17
+    lda #>$9999
+    adc #0
+    sta.z __17+1
+    // *entryUCross(entry) = 0x9999+n
+    ldy #$c
+    lda.z __17
+    sta (entry),y
+    iny
+    lda.z __17+1
+    sta (entry),y
+    // 0xaa+n
+    txa
+    clc
+    adc #$aa
+    // *entryBAddrLo(entry) = 0xaa+n
+    ldy #$e
+    sta (entry),y
+    // 0xbb+n
+    txa
+    clc
+    adc #$bb
+    // *entryBAddrHi(entry) = 0xbb+n
+    ldy #$f
+    sta (entry),y
+    // 0xcc+n
+    txa
+    clc
+    adc #$cc
+    // *entryTHi(entry) = 0xcc+n
+    ldy #$10
+    sta (entry),y
+    // 0xdd+n
+    txa
+    clc
+    adc #$dd
+    // *entryTLo(entry) = 0xdd+n
+    ldy #$11
+    sta (entry),y
+    // }
+    rts
+}
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -222,72 +419,10 @@ print_cls: {
     // }
     rts
 }
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = $a
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b1
-}
-// Determines whether a specific key is currently pressed by accessing the matrix directly
-// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-// All keys exist as as KEY_XXX constants.
-// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-keyboard_key_pressed: {
-    .const colidx = KEY_SPACE&7
-    .label rowidx = KEY_SPACE>>3
-    // keyboard_matrix_read(rowidx)
-    jsr keyboard_matrix_read
-    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    and keyboard_matrix_col_bitmask+colidx
-    // }
-    rts
-}
-// Read a single row of the keyboard matrix
-// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-// Returns the keys pressed on the row as bits according to the C64 key matrix.
-// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-keyboard_matrix_read: {
-    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
-    lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
-    sta CIA1
-    // ~CIA1->PORT_B
-    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
-    eor #$ff
-    // }
-    rts
-}
 // Print a zero-terminated string
-// print_str(byte* zp($a) str)
+// print_str(byte* zp(4) str)
 print_str: {
-    .label str = $a
+    .label str = 4
   __b1:
     // while(*str)
     ldy #0
@@ -307,20 +442,6 @@ print_str: {
     inc.z str+1
   !:
     jmp __b1
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
 }
 // Print a newline
 print_ln: {
@@ -351,9 +472,9 @@ print_ln: {
     jmp __b1
 }
 // Print the contents of a file entry
-// printEntry(byte* zp(2) entry)
+// printEntry(byte* zp(6) entry)
 printEntry: {
-    .label entry = 2
+    .label entry = 6
     lda.z print_line_cursor
     sta.z print_char_cursor
     lda.z print_line_cursor+1
@@ -671,6 +792,80 @@ printEntry: {
     str12: .text "tlo         "
     .byte 0
 }
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+keyboard_key_pressed: {
+    .const colidx = KEY_SPACE&7
+    .label rowidx = KEY_SPACE>>3
+    // keyboard_matrix_read(rowidx)
+    jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
+    and keyboard_matrix_col_bitmask+colidx
+    // }
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = $a
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
+  __b1:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b1
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp(8) w)
+print_uint: {
+    .label w = 8
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
 // Print a char as HEX
 // print_uchar(byte register(X) b)
 print_uchar: {
@@ -694,217 +889,18 @@ print_uchar: {
     // }
     rts
 }
-// Print a unsigned int as HEX
-// print_uint(word zp($a) w)
-print_uint: {
-    .label w = $a
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Set all values in the passed struct
-// Sets the values to n, n+1, n... to help test that everything works as intended
-// initEntry(byte* zp(4) entry, byte register(X) n)
-initEntry: {
-    .label __1 = 8
-    .label __3 = $a
-    .label __5 = $c
-    .label __7 = $e
-    .label __17 = $10
-    .label entry = 4
-    // 0x1111+n
-    txa
-    clc
-    adc #<$1111
-    sta.z __1
-    lda #>$1111
-    adc #0
-    sta.z __1+1
-    // *entryBufDisk(entry) = 0x1111+n
-    ldy #0
-    lda.z __1
-    sta (entry),y
-    iny
-    lda.z __1+1
-    sta (entry),y
-    // 0x2222+n
-    txa
-    clc
-    adc #<$2222
-    sta.z __3
-    lda #>$2222
-    adc #0
-    sta.z __3+1
-    // *entryBufEdit(entry) = 0x2222+n
-    ldy #2
-    lda.z __3
-    sta (entry),y
-    iny
-    lda.z __3+1
-    sta (entry),y
-    // 0x3333+n
-    txa
-    clc
-    adc #<$3333
-    sta.z __5
-    lda #>$3333
-    adc #0
-    sta.z __5+1
-    // *entryTsLen(entry) = 0x3333+n
-    ldy #4
-    lda.z __5
-    sta (entry),y
-    iny
-    lda.z __5+1
-    sta (entry),y
-    // 0x4444+n
-    txa
-    clc
-    adc #<$4444
-    sta.z __7
-    lda #>$4444
-    adc #0
-    sta.z __7+1
-    // *entryTsOrder(entry) = 0x4444+n
-    ldy #6
-    lda.z __7
-    sta (entry),y
-    iny
-    lda.z __7+1
-    sta (entry),y
-    // 0x55+n
-    txa
-    clc
-    adc #$55
-    // *entryTLastLink(entry) = 0x55+n
-    ldy #8
-    sta (entry),y
-    // 0x66+n
-    txa
-    clc
-    adc #$66
-    // *entrySLastLink(entry) = 0x66+n
-    ldy #9
-    sta (entry),y
-    // 0x77+n
-    txa
-    clc
-    adc #$77
-    // *entryBFlag(entry) = 0x77+n
-    ldy #$a
-    sta (entry),y
-    // 0x88+n
-    txa
-    clc
-    adc #$88
-    // *entryBError(entry) = 0x88+n
-    ldy #$b
-    sta (entry),y
-    // 0x9999+n
-    txa
-    clc
-    adc #<$9999
-    sta.z __17
-    lda #>$9999
-    adc #0
-    sta.z __17+1
-    // *entryUCross(entry) = 0x9999+n
-    ldy #$c
-    lda.z __17
-    sta (entry),y
-    iny
-    lda.z __17+1
-    sta (entry),y
-    // 0xaa+n
-    txa
-    clc
-    adc #$aa
-    // *entryBAddrLo(entry) = 0xaa+n
-    ldy #$e
-    sta (entry),y
-    // 0xbb+n
-    txa
-    clc
-    adc #$bb
-    // *entryBAddrHi(entry) = 0xbb+n
-    ldy #$f
-    sta (entry),y
-    // 0xcc+n
-    txa
-    clc
-    adc #$cc
-    // *entryTHi(entry) = 0xcc+n
-    ldy #$10
-    sta (entry),y
-    // 0xdd+n
-    txa
-    clc
-    adc #$dd
-    // *entryTLo(entry) = 0xdd+n
-    ldy #$11
-    sta (entry),y
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a)
-mul8u: {
-    .label mb = 8
-    .label res = 6
-    .label return = 6
-    lda #<SIZEOF_ENTRY
-    sta.z mb
-    lda #>SIZEOF_ENTRY
-    sta.z mb+1
-    lda #<0
-    sta.z res
-    sta.z res+1
-  __b1:
-    // while(a!=0)
-    cpx #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // a&1
-    txa
-    and #1
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-  __b3:
-    // a = a>>1
-    txa
-    lsr
-    tax
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
-    jmp __b1
-}
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // CIA1->PORT_A_DDR = $ff
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA1->PORT_B_DDR = $00
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+keyboard_matrix_read: {
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
+    lda keyboard_matrix_row_bitmask+keyboard_key_pressed.rowidx
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
+    eor #$ff
     // }
     rts
 }

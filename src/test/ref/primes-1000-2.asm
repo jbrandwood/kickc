@@ -6,19 +6,19 @@
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .label print_screen = $400
-  .label print_char_cursor = 7
+  .label print_char_cursor = $f
   // The number currently being tested for whether it is a prime
   .label potential = 5
   // The last index to test. It is the smallest index where PRIMES[test_last] > sqr(potential)
   .label test_last = 2
   // The index into PRIMES[] used for prime testing. It runs from 2 to test_last for each number tested.
-  .label test_idx = 9
+  .label test_idx = $c
   // The index of the last prime we put into the PRIME[] table
   .label prime_idx = 3
 main: {
-    .label __0 = $d
-    .label __14 = $f
-    .label __15 = $f
+    .label __0 = 7
+    .label __14 = $11
+    .label __15 = $11
     // PRIMES[1] = 2
     lda #0
     sta PRIMES+1*SIZEOF_WORD+1
@@ -148,17 +148,64 @@ main: {
     // }
     rts
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
+// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
+// mul8u(byte register(X) a, byte register(A) b)
+mul8u: {
+    .label mb = $11
+    .label res = 7
+    .label return = 7
+    // mb = b
+    sta.z mb
+    lda #0
+    sta.z mb+1
+    sta.z res
+    sta.z res+1
+  __b1:
+    // while(a!=0)
+    cpx #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // a&1
+    txa
+    and #1
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+  __b3:
+    // a = a>>1
+    txa
+    lsr
+    tax
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    jmp __b1
+}
+// Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
+// The 8-bit unsigned char remainder can be found in rem8u after the division
+// div16u8u(word zp(5) dividend, byte zp(9) divisor)
+div16u8u: {
+    .label dividend = 5
+    .label divisor = 9
+    // divr8u(>dividend, divisor, 0)
+    lda.z dividend+1
+    sta.z divr8u.dividend
     ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+    jsr divr8u
+    // divr8u(<dividend, divisor, rem8u)
+    lda.z dividend
+    sta.z divr8u.dividend
+    jsr divr8u
     // }
     rts
 }
@@ -177,46 +224,84 @@ print_uint_decimal: {
     // }
     rts
 }
-// Print a zero-terminated string
-// print_str(byte* zp($f) str)
-print_str: {
-    .label str = $f
-    lda #<decimal_digits
-    sta.z str
-    lda #>decimal_digits
-    sta.z str+1
-  __b1:
-    // while(*str)
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
     // }
     rts
+}
+// Performs division on two 8 bit unsigned chars and an initial remainder
+// Returns dividend/divisor.
+// The final remainder will be set into the global variable rem8u
+// Implemented using simple binary division
+// divr8u(byte zp($a) dividend, byte zp(9) divisor, byte register(Y) rem)
+divr8u: {
+    .label dividend = $a
+    .label quotient = $b
+    .label return = $b
+    .label divisor = 9
+    ldx #0
+    txa
+    sta.z quotient
+  __b1:
+    // rem = rem << 1
+    tya
+    asl
+    tay
+    // dividend & $80
+    lda #$80
+    and.z dividend
+    // if( (dividend & $80) != 0 )
+    cmp #0
+    beq __b2
+    // rem = rem | 1
+    tya
+    ora #1
+    tay
   __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
+    // dividend = dividend << 1
+    asl.z dividend
+    // quotient = quotient << 1
+    asl.z quotient
+    // if(rem>=divisor)
+    cpy.z divisor
+    bcc __b3
+    // quotient++;
+    inc.z quotient
+    // rem = rem - divisor
+    tya
+    sec
+    sbc.z divisor
+    tay
+  __b3:
+    // for( char i : 0..7)
+    inx
+    cpx #8
+    bne __b1
+    // rem8u = rem
+    // }
+    rts
 }
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($f) value, byte* zp($d) buffer)
+// utoa(word zp($11) value, byte* zp($d) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $11
+    .label digit_value = $13
     .label buffer = $d
-    .label digit = 9
-    .label value = $f
+    .label digit = $c
+    .label value = $11
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -282,6 +367,34 @@ utoa: {
     ldx #1
     jmp __b4
 }
+// Print a zero-terminated string
+// print_str(byte* zp($d) str)
+print_str: {
+    .label str = $d
+    lda #<decimal_digits
+    sta.z str
+    lda #>decimal_digits
+    sta.z str+1
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
 // Each time the digit is increased sub is subtracted from value.
@@ -290,12 +403,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($d) buffer, word zp($f) value, word zp($11) sub)
+// utoa_append(byte* zp($d) buffer, word zp($11) value, word zp($13) sub)
 utoa_append: {
     .label buffer = $d
-    .label value = $f
-    .label sub = $11
-    .label return = $f
+    .label value = $11
+    .label sub = $13
+    .label return = $11
     ldx #0
   __b1:
     // while (value >= sub)
@@ -324,119 +437,6 @@ utoa_append: {
     lda.z value+1
     sbc.z sub+1
     sta.z value+1
-    jmp __b1
-}
-// Divide unsigned 16-bit unsigned long dividend with a 8-bit unsigned char divisor
-// The 8-bit unsigned char remainder can be found in rem8u after the division
-// div16u8u(word zp(5) dividend, byte zp($a) divisor)
-div16u8u: {
-    .label dividend = 5
-    .label divisor = $a
-    // divr8u(>dividend, divisor, 0)
-    lda.z dividend+1
-    sta.z divr8u.dividend
-    ldy #0
-    jsr divr8u
-    // divr8u(<dividend, divisor, rem8u)
-    lda.z dividend
-    sta.z divr8u.dividend
-    jsr divr8u
-    // }
-    rts
-}
-// Performs division on two 8 bit unsigned chars and an initial remainder
-// Returns dividend/divisor.
-// The final remainder will be set into the global variable rem8u
-// Implemented using simple binary division
-// divr8u(byte zp($b) dividend, byte zp($a) divisor, byte register(Y) rem)
-divr8u: {
-    .label dividend = $b
-    .label quotient = $c
-    .label return = $c
-    .label divisor = $a
-    ldx #0
-    txa
-    sta.z quotient
-  __b1:
-    // rem = rem << 1
-    tya
-    asl
-    tay
-    // dividend & $80
-    lda #$80
-    and.z dividend
-    // if( (dividend & $80) != 0 )
-    cmp #0
-    beq __b2
-    // rem = rem | 1
-    tya
-    ora #1
-    tay
-  __b2:
-    // dividend = dividend << 1
-    asl.z dividend
-    // quotient = quotient << 1
-    asl.z quotient
-    // if(rem>=divisor)
-    cpy.z divisor
-    bcc __b3
-    // quotient++;
-    inc.z quotient
-    // rem = rem - divisor
-    tya
-    sec
-    sbc.z divisor
-    tay
-  __b3:
-    // for( char i : 0..7)
-    inx
-    cpx #8
-    bne __b1
-    // rem8u = rem
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
-// mul8u(byte register(X) a, byte register(A) b)
-mul8u: {
-    .label mb = $f
-    .label res = $d
-    .label return = $d
-    // mb = b
-    sta.z mb
-    lda #0
-    sta.z mb+1
-    sta.z res
-    sta.z res+1
-  __b1:
-    // while(a!=0)
-    cpx #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // a&1
-    txa
-    and #1
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-  __b3:
-    // a = a>>1
-    txa
-    lsr
-    tax
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
     jmp __b1
 }
   // The digits used for numbers

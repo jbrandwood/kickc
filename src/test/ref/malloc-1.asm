@@ -12,6 +12,15 @@ __start: {
     jsr main
     rts
 }
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
+// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+malloc: {
+    .const size = $200
+    .label mem = HEAP_TOP-size
+    .label return = mem
+    // }
+    rts
+}
 main: {
     .label w = 2
     lda #<WORDS
@@ -40,13 +49,5 @@ main: {
     cpx #0
     bne __b1
     // }
-    rts
-}
-// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
-// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-malloc: {
-    .const size = $200
-    .label mem = HEAP_TOP-size
-    .label return = mem
     rts
 }

@@ -3,12 +3,12 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_line_cursor = $11
-  .label print_char_cursor = 7
+  .label print_line_cursor = 4
+  .label print_char_cursor = $c
   // Remainder after unsigned 16-bit division
-  .label rem16u = $d
+  .label rem16u = $a
   // Remainder after signed 16 bit division
-  .label rem16s = $d
+  .label rem16s = $a
 main: {
     // print_cls()
     jsr print_cls
@@ -23,11 +23,248 @@ main: {
     // }
     rts
 }
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
+test_8u: {
+    .label dividend = 3
+    .label divisor = $10
+    .label res = $11
+    .label i = 2
+    lda #<print_screen
+    sta.z print_line_cursor
+    lda #>print_screen
+    sta.z print_line_cursor+1
+    lda #<print_screen
+    sta.z print_char_cursor
+    lda #>print_screen
+    sta.z print_char_cursor+1
+    lda #0
+    sta.z i
+  __b1:
+    // dividend = dividends[i]
+    ldy.z i
+    lda dividends,y
+    sta.z dividend
+    // divisor = divisors[i]
+    lda divisors,y
+    sta.z divisor
+    // div8u(dividend, divisor)
+    ldx.z dividend
+    jsr div8u
+    // div8u(dividend, divisor)
+    // res = div8u(dividend, divisor)
+    sta.z res
+    // print_uchar(dividend)
+    jsr print_uchar
+    // print_str(" / ")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uchar(divisor)
+    lda.z divisor
+    sta.z print_uchar.b
+    jsr print_uchar
+    // print_str(" = ")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uchar(res)
+    lda.z res
+    sta.z print_uchar.b
+    jsr print_uchar
+    // print_str(" ")
+    lda #<str2
+    sta.z print_str.str
+    lda #>str2
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uchar(rem8u)
+    stx.z print_uchar.b
+    jsr print_uchar
+    // print_ln()
+    jsr print_ln
+    // for( byte i: 0..5 )
+    inc.z i
+    lda #6
+    cmp.z i
+    bne __b11
+    // }
+    rts
+  __b11:
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    jmp __b1
+    dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
+    divisors: .byte 5, 7, $b, $d, $11, $13
+}
+test_16u: {
+    .label dividend = 6
+    .label divisor = 8
+    .label res = $e
+    .label i = 2
+    lda #0
+    sta.z i
+  __b1:
+    // dividend = dividends[i]
+    lda.z i
+    asl
+    tax
+    lda dividends,x
+    sta.z dividend
+    lda dividends+1,x
+    sta.z dividend+1
+    // divisor = divisors[i]
+    lda divisors,x
+    sta.z divisor
+    lda divisors+1,x
+    sta.z divisor+1
+    // div16u(dividend, divisor)
+    lda.z dividend
+    sta.z div16u.dividend
+    lda.z dividend+1
+    sta.z div16u.dividend+1
+    jsr div16u
+    // res = div16u(dividend, divisor)
+    // print_uint(dividend)
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    // print_uint(dividend)
+    jsr print_uint
+    // print_str(" / ")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uint(divisor)
+    lda.z divisor
+    sta.z print_uint.w
+    lda.z divisor+1
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_str(" = ")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uint(res)
+    lda.z res
+    sta.z print_uint.w
+    lda.z res+1
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_str(" ")
+    lda #<str2
+    sta.z print_str.str
+    lda #>str2
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uint(rem16u)
+    lda.z rem16u
+    sta.z print_uint.w
+    lda.z rem16u+1
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_ln()
+    jsr print_ln
+    // for( byte i : 0..5)
+    inc.z i
+    lda #6
+    cmp.z i
+    bne __b1
+    // }
+    rts
+    dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
+    divisors: .word 5, 7, $b, $d, $11, $13
+}
+test_8s: {
+    .label dividend = 3
+    .label divisor = $12
+    .label res = $13
+    .label i = 2
+    lda #0
+    sta.z i
+  __b1:
+    // dividend = dividends[i]
+    ldy.z i
+    lda dividends,y
+    sta.z dividend
+    // divisor = divisors[i]
+    lda divisors,y
+    sta.z divisor
+    // div8s(dividend, divisor)
+    ldx.z dividend
+    tay
+    jsr div8s
+    // res = div8s(dividend, divisor)
+    sta.z res
+    // print_schar(dividend)
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    // print_schar(dividend)
+    jsr print_schar
+    // print_str(" / ")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    // print_schar(divisor)
+    lda.z divisor
+    sta.z print_schar.b
+    jsr print_schar
+    // print_str(" = ")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_schar(res)
+    lda.z res
+    sta.z print_schar.b
+    jsr print_schar
+    // print_str(" ")
+    lda #<str2
+    sta.z print_str.str
+    lda #>str2
+    sta.z print_str.str+1
+    jsr print_str
+    // print_schar(rem8s)
+    stx.z print_schar.b
+    jsr print_schar
+    // print_ln()
+    jsr print_ln
+    // for( byte i: 0..5 )
+    inc.z i
+    lda #6
+    cmp.z i
+    bne __b1
+    // }
+    rts
+    dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
+    divisors: .byte 5, 7, -$b, -$d, $11, $13
+}
 test_16s: {
-    .label dividend = 2
-    .label divisor = $13
-    .label res = $b
-    .label i = $f
+    .label dividend = 6
+    .label divisor = $14
+    .label res = $e
+    .label i = 2
     lda #0
     sta.z i
   __b1:
@@ -102,6 +339,103 @@ test_16s: {
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = 6
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
+  __b1:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b1
+}
+// Performs division on two 8 bit unsigned chars
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem8u
+// Implemented using simple binary division
+// div8u(byte register(X) dividend, byte register(A) divisor)
+div8u: {
+    // divr8u(dividend, divisor, 0)
+    stx.z divr8u.dividend
+    sta.z divr8u.divisor
+    jsr divr8u
+    // divr8u(dividend, divisor, 0)
+    lda.z divr8u.return
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte zp(3) b)
+print_uchar: {
+    .label b = 3
+    // b>>4
+    lda.z b
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    and.z b
+    // print_char(print_hextab[b&$f])
+    tay
+    lda print_hextab,y
+    jsr print_char
+    // }
+    rts
+}
+// Print a zero-terminated string
+// print_str(byte* zp(6) str)
+print_str: {
+    .label str = 6
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -125,53 +459,25 @@ print_ln: {
     // }
     rts
 }
-// Print a signed int as HEX
-// print_sint(signed word zp(2) w)
-print_sint: {
-    .label w = 2
-    // if(w<0)
-    lda.z w+1
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_uint((unsigned int)w)
-    jsr print_uint
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // w = -w
-    sec
-    lda #0
-    sbc.z w
-    sta.z w
-    lda #0
-    sbc.z w+1
-    sta.z w+1
-    jmp __b2
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+// Performs division on two 16 bit unsigned ints
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// div16u(word zp($c) dividend, word zp(8) divisor)
+div16u: {
+    .label return = $e
+    .label dividend = $c
+    .label divisor = 8
+    // divr16u(dividend, divisor, 0)
+    jsr divr16u
+    // divr16u(dividend, divisor, 0)
     // }
     rts
 }
 // Print a unsigned int as HEX
-// print_uint(word zp(2) w)
+// print_uint(word zp(6) w)
 print_uint: {
-    .label w = 2
+    .label w = 6
     // print_uchar(>w)
     lda.z w+1
     sta.z print_uchar.b
@@ -182,319 +488,6 @@ print_uint: {
     jsr print_uchar
     // }
     rts
-}
-// Print a char as HEX
-// print_uchar(byte zp(4) b)
-print_uchar: {
-    .label b = 4
-    // b>>4
-    lda.z b
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    and.z b
-    // print_char(print_hextab[b&$f])
-    tay
-    lda print_hextab,y
-    jsr print_char
-    // }
-    rts
-}
-// Print a zero-terminated string
-// print_str(byte* zp(5) str)
-print_str: {
-    .label str = 5
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Perform division on two signed 16-bit numbers
-// Returns dividend/divisor.
-// The remainder will be set into the global variable rem16s.
-// Implemented using simple binary division
-// Follows the C99 standard by truncating toward zero on negative results.
-// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// div16s(signed word zp(2) dividend, signed word zp($13) divisor)
-div16s: {
-    .label return = $b
-    .label dividend = 2
-    .label divisor = $13
-    // divr16s(dividend, divisor, 0)
-    lda.z dividend
-    sta.z divr16s.dividend
-    lda.z dividend+1
-    sta.z divr16s.dividend+1
-    lda.z divisor
-    sta.z divr16s.divisor
-    lda.z divisor+1
-    sta.z divr16s.divisor+1
-    jsr divr16s
-    // }
-    rts
-}
-// Perform division on two signed 16-bit numbers with an initial remainder.
-// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
-// Implemented using simple binary division
-// Follows the C99 standard by truncating toward zero on negative results.
-// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp(7) dividend, signed word zp(9) divisor)
-divr16s: {
-    .label dividendu = 7
-    .label divisoru = 9
-    .label resultu = $b
-    .label return = $b
-    .label dividend = 7
-    .label divisor = 9
-    // if(dividend<0 || rem<0)
-    lda.z dividend+1
-    bmi __b1
-    ldy #0
-  __b2:
-    // if(divisor<0)
-    lda.z divisor+1
-    bmi __b3
-  __b4:
-    // divr16u(dividendu, divisoru, remu)
-    jsr divr16u
-    // divr16u(dividendu, divisoru, remu)
-    // resultu = divr16u(dividendu, divisoru, remu)
-    // if(neg==0)
-    cpy #0
-    beq __breturn
-    // rem16s = -(signed int)rem16u
-    sec
-    lda #0
-    sbc.z rem16s
-    sta.z rem16s
-    lda #0
-    sbc.z rem16s+1
-    sta.z rem16s+1
-    // return -(signed int)resultu;
-    sec
-    lda #0
-    sbc.z return
-    sta.z return
-    lda #0
-    sbc.z return+1
-    sta.z return+1
-  __breturn:
-    // }
-    rts
-  __b3:
-    // -divisor
-    sec
-    lda #0
-    sbc.z divisoru
-    sta.z divisoru
-    lda #0
-    sbc.z divisoru+1
-    sta.z divisoru+1
-    // neg = neg ^ 1
-    tya
-    eor #1
-    tay
-    jmp __b4
-  __b1:
-    // -dividend
-    sec
-    lda #0
-    sbc.z dividendu
-    sta.z dividendu
-    lda #0
-    sbc.z dividendu+1
-    sta.z dividendu+1
-    ldy #1
-    jmp __b2
-}
-// Performs division on two 16 bit unsigned ints and an initial remainder
-// Returns the quotient dividend/divisor.
-// The final remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// divr16u(word zp(7) dividend, word zp(9) divisor, word zp($d) rem)
-divr16u: {
-    .label rem = $d
-    .label dividend = 7
-    .label quotient = $b
-    .label return = $b
-    .label divisor = 9
-    ldx #0
-    txa
-    sta.z quotient
-    sta.z quotient+1
-    sta.z rem
-    sta.z rem+1
-  __b1:
-    // rem = rem << 1
-    asl.z rem
-    rol.z rem+1
-    // >dividend
-    lda.z dividend+1
-    // >dividend & $80
-    and #$80
-    // if( (>dividend & $80) != 0 )
-    cmp #0
-    beq __b2
-    // rem = rem | 1
-    lda #1
-    ora.z rem
-    sta.z rem
-  __b2:
-    // dividend = dividend << 1
-    asl.z dividend
-    rol.z dividend+1
-    // quotient = quotient << 1
-    asl.z quotient
-    rol.z quotient+1
-    // if(rem>=divisor)
-    lda.z rem+1
-    cmp.z divisor+1
-    bcc __b3
-    bne !+
-    lda.z rem
-    cmp.z divisor
-    bcc __b3
-  !:
-    // quotient++;
-    inc.z quotient
-    bne !+
-    inc.z quotient+1
-  !:
-    // rem = rem - divisor
-    lda.z rem
-    sec
-    sbc.z divisor
-    sta.z rem
-    lda.z rem+1
-    sbc.z divisor+1
-    sta.z rem+1
-  __b3:
-    // for( char i : 0..15)
-    inx
-    cpx #$10
-    bne __b1
-    // rem16u = rem
-    // }
-    rts
-}
-test_8s: {
-    .label dividend = 4
-    .label divisor = $15
-    .label res = $16
-    .label i = $f
-    lda #0
-    sta.z i
-  __b1:
-    // dividend = dividends[i]
-    ldy.z i
-    lda dividends,y
-    sta.z dividend
-    // divisor = divisors[i]
-    lda divisors,y
-    sta.z divisor
-    // div8s(dividend, divisor)
-    ldx.z dividend
-    tay
-    jsr div8s
-    // res = div8s(dividend, divisor)
-    sta.z res
-    // print_schar(dividend)
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    // print_schar(dividend)
-    jsr print_schar
-    // print_str(" / ")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    // print_schar(divisor)
-    lda.z divisor
-    sta.z print_schar.b
-    jsr print_schar
-    // print_str(" = ")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_schar(res)
-    lda.z res
-    sta.z print_schar.b
-    jsr print_schar
-    // print_str(" ")
-    lda #<str2
-    sta.z print_str.str
-    lda #>str2
-    sta.z print_str.str+1
-    jsr print_str
-    // print_schar(rem8s)
-    stx.z print_schar.b
-    jsr print_schar
-    // print_ln()
-    jsr print_ln
-    // for( byte i: 0..5 )
-    inc.z i
-    lda #6
-    cmp.z i
-    bne __b1
-    // }
-    rts
-    dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
-    divisors: .byte 5, 7, -$b, -$d, $11, $13
-}
-// Print a signed char as HEX
-// print_schar(signed byte zp(4) b)
-print_schar: {
-    .label b = 4
-    // if(b<0)
-    lda.z b
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_uchar((char)b)
-    jsr print_uchar
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // b = -b
-    lda.z b
-    eor #$ff
-    clc
-    adc #1
-    sta.z b
-    jmp __b2
 }
 // Perform division on two signed 8-bit numbers
 // Returns dividend/divisor.
@@ -565,31 +558,96 @@ div8s: {
     sta.z neg
     jmp __b2
 }
-// Performs division on two 8 bit unsigned chars
-// Returns dividend/divisor.
-// The remainder will be set into the global variable rem8u
-// Implemented using simple binary division
-// div8u(byte register(X) dividend, byte register(A) divisor)
-div8u: {
-    // divr8u(dividend, divisor, 0)
-    stx.z divr8u.dividend
-    sta.z divr8u.divisor
-    jsr divr8u
-    // divr8u(dividend, divisor, 0)
-    lda.z divr8u.return
+// Print a signed char as HEX
+// print_schar(signed byte zp(3) b)
+print_schar: {
+    .label b = 3
+    // if(b<0)
+    lda.z b
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_uchar((char)b)
+    jsr print_uchar
     // }
     rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // b = -b
+    lda.z b
+    eor #$ff
+    clc
+    adc #1
+    sta.z b
+    jmp __b2
+}
+// Perform division on two signed 16-bit numbers
+// Returns dividend/divisor.
+// The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// div16s(signed word zp(6) dividend, signed word zp($14) divisor)
+div16s: {
+    .label return = $e
+    .label dividend = 6
+    .label divisor = $14
+    // divr16s(dividend, divisor, 0)
+    lda.z dividend
+    sta.z divr16s.dividend
+    lda.z dividend+1
+    sta.z divr16s.dividend+1
+    lda.z divisor
+    sta.z divr16s.divisor
+    lda.z divisor+1
+    sta.z divr16s.divisor+1
+    jsr divr16s
+    // }
+    rts
+}
+// Print a signed int as HEX
+// print_sint(signed word zp(6) w)
+print_sint: {
+    .label w = 6
+    // if(w<0)
+    lda.z w+1
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_uint((unsigned int)w)
+    jsr print_uint
+    // }
+    rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // w = -w
+    sec
+    lda #0
+    sbc.z w
+    sta.z w
+    lda #0
+    sbc.z w+1
+    sta.z w+1
+    jmp __b2
 }
 // Performs division on two 8 bit unsigned chars and an initial remainder
 // Returns dividend/divisor.
 // The final remainder will be set into the global variable rem8u
 // Implemented using simple binary division
-// divr8u(byte zp($16) dividend, byte zp($17) divisor, byte register(Y) rem)
+// divr8u(byte zp($11) dividend, byte zp($16) divisor, byte register(Y) rem)
 divr8u: {
-    .label dividend = $16
-    .label divisor = $17
-    .label quotient = $18
-    .label return = $18
+    .label dividend = $11
+    .label divisor = $16
+    .label quotient = $13
+    .label return = $13
     ldx #0
     txa
     sta.z quotient
@@ -635,221 +693,163 @@ divr8u: {
     // }
     rts
 }
-test_16u: {
-    .label dividend = 2
-    .label divisor = 9
-    .label res = $b
-    .label i = $10
-    lda #0
-    sta.z i
-  __b1:
-    // dividend = dividends[i]
-    lda.z i
-    asl
-    tax
-    lda dividends,x
-    sta.z dividend
-    lda dividends+1,x
-    sta.z dividend+1
-    // divisor = divisors[i]
-    lda divisors,x
-    sta.z divisor
-    lda divisors+1,x
-    sta.z divisor+1
-    // div16u(dividend, divisor)
-    jsr div16u
-    // res = div16u(dividend, divisor)
-    // print_uint(dividend)
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    // print_uint(dividend)
-    jsr print_uint
-    // print_str(" / ")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uint(divisor)
-    lda.z divisor
-    sta.z print_uint.w
-    lda.z divisor+1
-    sta.z print_uint.w+1
-    jsr print_uint
-    // print_str(" = ")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uint(res)
-    lda.z res
-    sta.z print_uint.w
-    lda.z res+1
-    sta.z print_uint.w+1
-    jsr print_uint
-    // print_str(" ")
-    lda #<str2
-    sta.z print_str.str
-    lda #>str2
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uint(rem16u)
-    lda.z rem16u
-    sta.z print_uint.w
-    lda.z rem16u+1
-    sta.z print_uint.w+1
-    jsr print_uint
-    // print_ln()
-    jsr print_ln
-    // for( byte i : 0..5)
-    inc.z i
-    lda #6
-    cmp.z i
-    bne __b1
-    // }
-    rts
-    dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
-    divisors: .word 5, 7, $b, $d, $11, $13
-}
-// Performs division on two 16 bit unsigned ints
-// Returns the quotient dividend/divisor.
-// The remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// div16u(word zp(2) dividend, word zp(9) divisor)
-div16u: {
-    .label return = $b
-    .label dividend = 2
-    .label divisor = 9
-    // divr16u(dividend, divisor, 0)
-    lda.z dividend
-    sta.z divr16u.dividend
-    lda.z dividend+1
-    sta.z divr16u.dividend+1
-    jsr divr16u
-    // divr16u(dividend, divisor, 0)
-    // }
-    rts
-}
-test_8u: {
-    .label dividend = 4
-    .label divisor = $17
-    .label res = $18
-    .label i = $15
-    lda #<print_screen
-    sta.z print_line_cursor
-    lda #>print_screen
-    sta.z print_line_cursor+1
-    lda #<print_screen
-    sta.z print_char_cursor
-    lda #>print_screen
-    sta.z print_char_cursor+1
-    lda #0
-    sta.z i
-  __b1:
-    // dividend = dividends[i]
-    ldy.z i
-    lda dividends,y
-    sta.z dividend
-    // divisor = divisors[i]
-    lda divisors,y
-    sta.z divisor
-    // div8u(dividend, divisor)
-    ldx.z dividend
-    jsr div8u
-    // div8u(dividend, divisor)
-    // res = div8u(dividend, divisor)
-    sta.z res
-    // print_uchar(dividend)
-    jsr print_uchar
-    // print_str(" / ")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uchar(divisor)
-    lda.z divisor
-    sta.z print_uchar.b
-    jsr print_uchar
-    // print_str(" = ")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uchar(res)
-    lda.z res
-    sta.z print_uchar.b
-    jsr print_uchar
-    // print_str(" ")
-    lda #<str2
-    sta.z print_str.str
-    lda #>str2
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uchar(rem8u)
-    stx.z print_uchar.b
-    jsr print_uchar
-    // print_ln()
-    jsr print_ln
-    // for( byte i: 0..5 )
-    inc.z i
-    lda #6
-    cmp.z i
-    bne __b11
-    // }
-    rts
-  __b11:
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    jmp __b1
-    dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
-    divisors: .byte 5, 7, $b, $d, $11, $13
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = $11
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
     bne !+
-    inc.z dst+1
+    inc.z print_char_cursor+1
   !:
-    jmp __b1
+    // }
+    rts
+}
+// Performs division on two 16 bit unsigned ints and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// divr16u(word zp($c) dividend, word zp(8) divisor, word zp($a) rem)
+divr16u: {
+    .label rem = $a
+    .label dividend = $c
+    .label quotient = $e
+    .label return = $e
+    .label divisor = 8
+    ldx #0
+    txa
+    sta.z quotient
+    sta.z quotient+1
+    sta.z rem
+    sta.z rem+1
+  __b1:
+    // rem = rem << 1
+    asl.z rem
+    rol.z rem+1
+    // >dividend
+    lda.z dividend+1
+    // >dividend & $80
+    and #$80
+    // if( (>dividend & $80) != 0 )
+    cmp #0
+    beq __b2
+    // rem = rem | 1
+    lda #1
+    ora.z rem
+    sta.z rem
+  __b2:
+    // dividend = dividend << 1
+    asl.z dividend
+    rol.z dividend+1
+    // quotient = quotient << 1
+    asl.z quotient
+    rol.z quotient+1
+    // if(rem>=divisor)
+    lda.z rem+1
+    cmp.z divisor+1
+    bcc __b3
+    bne !+
+    lda.z rem
+    cmp.z divisor
+    bcc __b3
+  !:
+    // quotient++;
+    inc.z quotient
+    bne !+
+    inc.z quotient+1
+  !:
+    // rem = rem - divisor
+    lda.z rem
+    sec
+    sbc.z divisor
+    sta.z rem
+    lda.z rem+1
+    sbc.z divisor+1
+    sta.z rem+1
+  __b3:
+    // for( char i : 0..15)
+    inx
+    cpx #$10
+    bne __b1
+    // rem16u = rem
+    // }
+    rts
+}
+// Perform division on two signed 16-bit numbers with an initial remainder.
+// Returns dividend/divisor. The remainder will be set into the global variable rem16s.
+// Implemented using simple binary division
+// Follows the C99 standard by truncating toward zero on negative results.
+// See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
+// divr16s(signed word zp($c) dividend, signed word zp(8) divisor)
+divr16s: {
+    .label dividendu = $c
+    .label divisoru = 8
+    .label resultu = $e
+    .label return = $e
+    .label dividend = $c
+    .label divisor = 8
+    // if(dividend<0 || rem<0)
+    lda.z dividend+1
+    bmi __b1
+    ldy #0
+  __b2:
+    // if(divisor<0)
+    lda.z divisor+1
+    bmi __b3
+  __b4:
+    // divr16u(dividendu, divisoru, remu)
+    jsr divr16u
+    // divr16u(dividendu, divisoru, remu)
+    // resultu = divr16u(dividendu, divisoru, remu)
+    // if(neg==0)
+    cpy #0
+    beq __breturn
+    // rem16s = -(signed int)rem16u
+    sec
+    lda #0
+    sbc.z rem16s
+    sta.z rem16s
+    lda #0
+    sbc.z rem16s+1
+    sta.z rem16s+1
+    // return -(signed int)resultu;
+    sec
+    lda #0
+    sbc.z return
+    sta.z return
+    lda #0
+    sbc.z return+1
+    sta.z return+1
+  __breturn:
+    // }
+    rts
+  __b3:
+    // -divisor
+    sec
+    lda #0
+    sbc.z divisoru
+    sta.z divisoru
+    lda #0
+    sbc.z divisoru+1
+    sta.z divisoru+1
+    // neg = neg ^ 1
+    tya
+    eor #1
+    tay
+    jmp __b4
+  __b1:
+    // -dividend
+    sec
+    lda #0
+    sbc.z dividendu
+    sta.z dividendu
+    lda #0
+    sbc.z dividendu+1
+    sta.z dividendu+1
+    ldy #1
+    jmp __b2
 }
   print_hextab: .text "0123456789abcdef"
   str: .text " / "

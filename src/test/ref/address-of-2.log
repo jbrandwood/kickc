@@ -279,19 +279,19 @@ main::@return: scope:[main]  from main::@2
   [22] return 
   to:@return
 
-(void()) setp((byte*) setp::p , (byte) setp::v)
-setp: scope:[setp]  from main::@1
-  [23] *((const byte*) main::ptr) ← (const byte) setp::v#0
-  to:setp::@return
-setp::@return: scope:[setp]  from setp
+(void()) setv((byte) setv::v)
+setv: scope:[setv]  from main
+  [23] (volatile byte) val ← (const byte) setv::v#0
+  to:setv::@return
+setv::@return: scope:[setv]  from setv
   [24] return 
   to:@return
 
-(void()) setv((byte) setv::v)
-setv: scope:[setv]  from main
-  [25] (volatile byte) val ← (const byte) setv::v#0
-  to:setv::@return
-setv::@return: scope:[setv]  from setv
+(void()) setp((byte*) setp::p , (byte) setp::v)
+setp: scope:[setp]  from main::@1
+  [25] *((const byte*) main::ptr) ← (const byte) setp::v#0
+  to:setp::@return
+setp::@return: scope:[setp]  from setp
   [26] return 
   to:@return
 
@@ -416,26 +416,26 @@ main: {
     // [22] return 
     rts
 }
-  // setp
-setp: {
-    .const v = 5
-    // [23] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
-    lda #v
-    sta.z main.ptr
-    jmp __breturn
-    // setp::@return
-  __breturn:
-    // [24] return 
-    rts
-}
   // setv
 setv: {
     .const v = 4
-    // [25] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [23] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
     jmp __breturn
     // setv::@return
+  __breturn:
+    // [24] return 
+    rts
+}
+  // setp
+setp: {
+    .const v = 5
+    // [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    lda #v
+    sta.z main.ptr
+    jmp __breturn
+    // setp::@return
   __breturn:
     // [26] return 
     rts
@@ -459,8 +459,8 @@ Statement [17] *((const nomodify byte*) main::SCREEN1+(byte) 4) ← (volatile by
 Statement [18] *((const nomodify byte*) main::SCREEN2+(byte) 4) ← *((const byte*) main::ptr) [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
 Statement [20] *((const nomodify byte*) main::SCREEN1+(byte) 5) ← (volatile byte) val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *((const nomodify byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [23] *((const byte*) main::ptr) ← (const byte) setp::v#0 [ ] ( main:3::setp:19 [ val ] { }  ) always clobbers reg byte a 
-Statement [25] (volatile byte) val ← (const byte) setv::v#0 [ val ] ( main:3::setv:16 [ val ] { }  ) always clobbers reg byte a 
+Statement [23] (volatile byte) val ← (const byte) setv::v#0 [ val ] ( main:3::setv:16 [ val ] { }  ) always clobbers reg byte a 
+Statement [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 [ ] ( main:3::setp:19 [ val ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ val ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -580,26 +580,26 @@ main: {
     // [22] return 
     rts
 }
-  // setp
-setp: {
-    .const v = 5
-    // [23] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
-    lda #v
-    sta.z main.ptr
-    jmp __breturn
-    // setp::@return
-  __breturn:
-    // [24] return 
-    rts
-}
   // setv
 setv: {
     .const v = 4
-    // [25] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [23] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
     jmp __breturn
     // setv::@return
+  __breturn:
+    // [24] return 
+    rts
+}
+  // setp
+setp: {
+    .const v = 5
+    // [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    lda #v
+    sta.z main.ptr
+    jmp __breturn
+    // setp::@return
   __breturn:
     // [26] return 
     rts
@@ -766,26 +766,26 @@ main: {
     // [22] return 
     rts
 }
-  // setp
-setp: {
-    .const v = 5
-    // *p = v
-    // [23] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
-    lda #v
-    sta.z main.ptr
-    // setp::@return
-    // }
-    // [24] return 
-    rts
-}
   // setv
 setv: {
     .const v = 4
     // val = v
-    // [25] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [23] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
     // setv::@return
+    // }
+    // [24] return 
+    rts
+}
+  // setp
+setp: {
+    .const v = 5
+    // *p = v
+    // [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    lda #v
+    sta.z main.ptr
+    // setp::@return
     // }
     // [26] return 
     rts

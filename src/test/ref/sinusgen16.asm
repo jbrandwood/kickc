@@ -16,11 +16,11 @@
   .const SIZEOF_SIGNED_WORD = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $18
-  .label print_char_cursor = 6
+  .label rem16u = $12
+  .label print_char_cursor = $22
 main: {
     .label wavelength = $78
-    .label sw = 4
+    .label sw = $a
     .label st1 = 2
     // sin16s_gen(sintab1, wavelength)
     jsr sin16s_gen
@@ -86,161 +86,18 @@ main: {
     str1: .text " "
     .byte 0
 }
-// Print a zero-terminated string
-// print_str(byte* zp($c) str)
-print_str: {
-    .label str = $c
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// Print a signed int as HEX
-// print_sint(signed word zp(4) w)
-print_sint: {
-    .label w = 4
-    // if(w<0)
-    lda.z w+1
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_uint((unsigned int)w)
-    jsr print_uint
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // w = -w
-    sec
-    lda #0
-    sbc.z w
-    sta.z w
-    lda #0
-    sbc.z w+1
-    sta.z w+1
-    jmp __b2
-}
-// Print a unsigned int as HEX
-// print_uint(word zp(4) w)
-print_uint: {
-    .label w = 4
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = $c
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b1
-}
 // Generate signed (large) unsigned int sinus table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
-// sin16s_gen(signed word* zp($c) sintab)
+// sin16s_gen(signed word* zp($a) sintab)
 sin16s_gen: {
-    .label __2 = $12
-    .label step = $1c
-    .label sintab = $c
+    .label __2 = $10
+    .label step = $1a
+    .label sintab = $a
     // u[4.28]
     // Iterate over the table
-    .label x = 8
-    .label i = 6
+    .label x = 4
+    .label i = 8
     // div32u16u(PI2_u4f28, wavelength)
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
@@ -319,23 +176,124 @@ sin16s_gen: {
   !:
     jmp __b1
 }
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
+// Print a zero-terminated string
+// print_str(byte* zp(8) str)
+print_str: {
+    .label str = 8
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Print a signed int as HEX
+// print_sint(signed word zp($a) w)
+print_sint: {
+    .label w = $a
+    // if(w<0)
+    lda.z w+1
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_uint((unsigned int)w)
+    jsr print_uint
+    // }
+    rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // w = -w
+    sec
+    lda #0
+    sbc.z w
+    sta.z w
+    lda #0
+    sbc.z w+1
+    sta.z w+1
+    jmp __b2
+}
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
+div32u16u: {
+    .label quotient_hi = $24
+    .label quotient_lo = $14
+    .label return = $1a
+    // divr16u(>dividend, divisor, 0)
+    lda #<PI2_u4f28>>$10
+    sta.z divr16u.dividend
+    lda #>PI2_u4f28>>$10
+    sta.z divr16u.dividend+1
+    lda #<0
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
+    jsr divr16u
+    // divr16u(>dividend, divisor, 0)
+    // quotient_hi = divr16u(>dividend, divisor, 0)
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
+    // divr16u(<dividend, divisor, rem16u)
+    lda #<PI2_u4f28&$ffff
+    sta.z divr16u.dividend
+    lda #>PI2_u4f28&$ffff
+    sta.z divr16u.dividend+1
+    jsr divr16u
+    // divr16u(<dividend, divisor, rem16u)
+    // quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // quotient = { quotient_hi, quotient_lo}
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
+    // }
+    rts
+}
 // Calculate signed int sinus sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
-// sin16s(dword zp($e) x)
+// sin16s(dword zp($c) x)
 sin16s: {
-    .label __4 = $20
-    .label x = $e
-    .label return = $12
-    .label x1 = $26
-    .label x2 = $18
-    .label x3 = $18
+    .label __4 = $1e
+    .label x = $c
+    .label return = $10
+    .label x1 = $22
+    .label x2 = $12
+    .label x3 = $12
     .label x3_6 = $24
-    .label usinx = $12
-    .label x4 = $18
+    .label usinx = $10
+    .label x4 = $12
     .label x5 = $24
     .label x5_128 = $24
-    .label sinx = $12
+    .label sinx = $10
     // if(x >= PI_u4f28 )
     lda.z x+3
     cmp #>PI_u4f28>>$10
@@ -531,141 +489,63 @@ sin16s: {
     // }
     rts
 }
-// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
-// The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($18) v1, word zp($1a) v2, byte register(X) select)
-mulu16_sel: {
-    .label __0 = $20
-    .label __1 = $20
-    .label v1 = $18
-    .label v2 = $1a
-    .label return = $24
-    .label return_1 = $18
-    // mul16u(v1, v2)
-    lda.z v1
-    sta.z mul16u.a
-    lda.z v1+1
-    sta.z mul16u.a+1
-    jsr mul16u
-    // mul16u(v1, v2)<<select
-    cpx #0
-    beq !e+
-  !:
-    asl.z __1
-    rol.z __1+1
-    rol.z __1+2
-    rol.z __1+3
-    dex
-    bne !-
-  !e:
-    // >mul16u(v1, v2)<<select
-    lda.z __1+2
-    sta.z return
-    lda.z __1+3
-    sta.z return+1
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($24) a, word zp($1a) b)
-mul16u: {
-    .label mb = $14
-    .label a = $24
-    .label res = $20
-    .label b = $1a
-    .label return = $20
-    // mb = b
-    lda.z b
-    sta.z mb
-    lda.z b+1
-    sta.z mb+1
-    lda #0
-    sta.z mb+2
-    sta.z mb+3
-    sta.z res
-    sta.z res+1
-    lda #<0>>$10
-    sta.z res+2
-    lda #>0>>$10
-    sta.z res+3
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = $10
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
   __b1:
-    // while(a!=0)
-    lda.z a
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
     bne __b2
-    lda.z a+1
+    lda.z dst
+    cmp #<end
     bne __b2
     // }
     rts
   __b2:
-    // a&1
-    lda #1
-    and.z a
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    lda.z res+2
-    adc.z mb+2
-    sta.z res+2
-    lda.z res+3
-    adc.z mb+3
-    sta.z res+3
-  __b3:
-    // a = a>>1
-    lsr.z a+1
-    ror.z a
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
-    rol.z mb+2
-    rol.z mb+3
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
     jmp __b1
 }
-// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
-// The 16-bit unsigned int remainder can be found in rem16u after the division
-div32u16u: {
-    .label quotient_hi = $26
-    .label quotient_lo = $24
-    .label return = $1c
-    // divr16u(>dividend, divisor, 0)
-    lda #<PI2_u4f28>>$10
-    sta.z divr16u.dividend
-    lda #>PI2_u4f28>>$10
-    sta.z divr16u.dividend+1
-    lda #<0
-    sta.z divr16u.rem
-    sta.z divr16u.rem+1
-    jsr divr16u
-    // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
-    lda.z divr16u.return
-    sta.z quotient_hi
-    lda.z divr16u.return+1
-    sta.z quotient_hi+1
-    // divr16u(<dividend, divisor, rem16u)
-    lda #<PI2_u4f28&$ffff
-    sta.z divr16u.dividend
-    lda #>PI2_u4f28&$ffff
-    sta.z divr16u.dividend+1
-    jsr divr16u
-    // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
-    lda.z quotient_hi
-    sta.z return+2
-    lda.z quotient_hi+1
-    sta.z return+3
-    lda.z quotient_lo
-    sta.z return
-    lda.z quotient_lo+1
-    sta.z return+1
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp($a) w)
+print_uint: {
+    .label w = $a
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
     // }
     rts
 }
@@ -673,12 +553,12 @@ div32u16u: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($1a) dividend, word zp($18) rem)
+// divr16u(word zp($22) dividend, word zp($12) rem)
 divr16u: {
-    .label rem = $18
-    .label dividend = $1a
-    .label quotient = $24
-    .label return = $24
+    .label rem = $12
+    .label dividend = $22
+    .label quotient = $14
+    .label return = $14
     ldx #0
     txa
     sta.z quotient
@@ -735,5 +615,125 @@ divr16u: {
     // rem16u = rem
     // }
     rts
+}
+// Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
+// The select parameter indicates how many of the highest bits of the 32-bit result to skip
+// mulu16_sel(word zp($12) v1, word zp($14) v2, byte register(X) select)
+mulu16_sel: {
+    .label __0 = $1e
+    .label __1 = $1e
+    .label v1 = $12
+    .label v2 = $14
+    .label return = $24
+    .label return_1 = $12
+    // mul16u(v1, v2)
+    lda.z v1
+    sta.z mul16u.a
+    lda.z v1+1
+    sta.z mul16u.a+1
+    jsr mul16u
+    // mul16u(v1, v2)<<select
+    cpx #0
+    beq !e+
+  !:
+    asl.z __1
+    rol.z __1+1
+    rol.z __1+2
+    rol.z __1+3
+    dex
+    bne !-
+  !e:
+    // >mul16u(v1, v2)<<select
+    lda.z __1+2
+    sta.z return
+    lda.z __1+3
+    sta.z return+1
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
+// mul16u(word zp($24) a, word zp($14) b)
+mul16u: {
+    .label mb = $16
+    .label a = $24
+    .label res = $1e
+    .label b = $14
+    .label return = $1e
+    // mb = b
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
+    lda #0
+    sta.z mb+2
+    sta.z mb+3
+    sta.z res
+    sta.z res+1
+    lda #<0>>$10
+    sta.z res+2
+    lda #>0>>$10
+    sta.z res+3
+  __b1:
+    // while(a!=0)
+    lda.z a
+    bne __b2
+    lda.z a+1
+    bne __b2
+    // }
+    rts
+  __b2:
+    // a&1
+    lda #1
+    and.z a
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
+  __b3:
+    // a = a>>1
+    lsr.z a+1
+    ror.z a
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
+    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"

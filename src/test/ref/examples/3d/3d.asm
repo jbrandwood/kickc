@@ -35,8 +35,8 @@
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
   .label print_screen = $400
-  .label sx = 3
-  .label sy = 4
+  .label sx = 2
+  .label sy = 3
 main: {
     // asm
     sei
@@ -61,744 +61,25 @@ main: {
     // }
     rts
 }
-anim: {
-    .label i = 2
-    lda #0
-    sta.z sy
-    sta.z sx
-  __b2:
-    // while(VICII->RASTER!=$ff)
+// Initialize sprites
+sprites_init: {
+    .label SCREEN = $400
+    .label sprites_ptr = SCREEN+$3f8
+    // VICII->SPRITES_ENABLE = %11111111
     lda #$ff
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b2
-  __b3:
-    // while(VICII->RASTER!=$fe)
-    lda #$fe
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b3
-  __b4:
-    // while(VICII->RASTER!=$fd)
-    lda #$fd
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b4
-    // (VICII->BORDER_COLOR)++;
-    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // calculate_matrix(sx,sy,sz)
-    ldx.z sx
-    //calculate_matrix_16(sx,sy,sz);
-    jsr calculate_matrix
-    // store_matrix()
-    jsr store_matrix
-    lda #0
-    sta.z i
-  __b6:
-    // (VICII->BORDER_COLOR)++;
-    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // rotate_matrix(xs[i], ys[i], zs[i])
-    ldy.z i
-    ldx xs,y
-    lda ys,y
-    sta.z rotate_matrix.y
-    lda zs,y
-    sta.z rotate_matrix.z
-    jsr rotate_matrix
-    // xrs[i] = *xr
-    lda xr
-    ldy.z i
-    sta xrs,y
-    // yrs[i] = *yr
-    lda yr
-    sta yrs,y
-    // zrs[i] = *zr
-    lda zr
-    sta zrs,y
-    // pps[i] = *pp
-    lda pp
-    sta pps,y
-    // xps[i] = *xp
-    lda xp
-    sta xps,y
-    // yps[i] = *yp
-    lda yp
-    sta yps,y
-    // i2 = i*2
-    tya
-    asl
-    tax
-    // $80+(char)((*xp))
-    lda #$80
-    clc
-    adc xp
-    // SPRITES_XPOS[i2] = $80+(char)((*xp))
-    sta SPRITES_XPOS,x
-    // $80+(char)((*yp))
-    lda #$80
-    clc
-    adc yp
-    // SPRITES_YPOS[i2] = $80+(char)((*yp))
-    sta SPRITES_YPOS,x
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
+    ldx #0
+  __b1:
+    // sprites_ptr[i] = (char)(SPRITE/$40)
+    lda #$ff&SPRITE/$40
+    sta sprites_ptr,x
+    // SPRITES_COLOR[i] = GREEN
+    lda #GREEN
+    sta SPRITES_COLOR,x
     // for(char i: 0..7)
-    inc.z i
-    lda #8
-    cmp.z i
-    bne __b6
-    // VICII->BORDER_COLOR = LIGHT_GREY
-    lda #LIGHT_GREY
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // debug_print()
-    jsr debug_print
-    // VICII->BORDER_COLOR = LIGHT_BLUE
-    lda #LIGHT_BLUE
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // sx +=2
-    // Increment angles        
-    inc.z sx
-    inc.z sx
-    // sy -=3
-    lax.z sy
-    axs #3
-    stx.z sy
-    jmp __b2
-}
-debug_print: {
-    .const print_schar_pos1_col = $25
-    .const print_schar_pos2_row = 1
-    .const print_schar_pos2_col = $25
-    .const print_schar_pos3_row = 2
-    .const print_schar_pos3_col = $25
-    .const print_schar_pos4_row = 4
-    .const print_schar_pos4_col = $1d
-    .const print_schar_pos5_row = 4
-    .const print_schar_pos5_col = $21
-    .const print_schar_pos6_row = 4
-    .const print_schar_pos6_col = $25
-    .const print_schar_pos7_row = 5
-    .const print_schar_pos7_col = $1d
-    .const print_schar_pos8_row = 5
-    .const print_schar_pos8_col = $21
-    .const print_schar_pos9_row = 5
-    .const print_schar_pos9_col = $25
-    .const print_schar_pos10_row = 6
-    .const print_schar_pos10_col = $1d
-    .const print_schar_pos11_row = 6
-    .const print_schar_pos11_col = $21
-    .const print_schar_pos12_row = 6
-    .const print_schar_pos12_col = $25
-    .label at_line = SCREEN+$13*$28
-    .label c = 6
-    .label i = 7
-    // print_schar_pos(sx, 0, 37)
-    lda.z sx
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos1_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos1_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(sy, 1, 37)
-    lda.z sy
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos2_row*$28+print_schar_pos2_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos2_row*$28+print_schar_pos2_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_at(sb, print_screen+row*40+col)
-    lda #<print_screen+print_schar_pos3_row*$28+print_schar_pos3_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos3_row*$28+print_schar_pos3_col
-    sta.z print_schar_at.at+1
-    lda #sz
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[0], 4, 29)
-    lda rotation_matrix
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos4_row*$28+print_schar_pos4_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos4_row*$28+print_schar_pos4_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[1], 4, 33)
-    lda rotation_matrix+1
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos5_row*$28+print_schar_pos5_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos5_row*$28+print_schar_pos5_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[2], 4, 37)
-    lda rotation_matrix+2
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos6_row*$28+print_schar_pos6_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos6_row*$28+print_schar_pos6_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[3], 5, 29)
-    lda rotation_matrix+3
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos7_row*$28+print_schar_pos7_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos7_row*$28+print_schar_pos7_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[4], 5, 33)
-    lda rotation_matrix+4
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos8_row*$28+print_schar_pos8_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos8_row*$28+print_schar_pos8_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[5], 5, 37)
-    lda rotation_matrix+5
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos9_row*$28+print_schar_pos9_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos9_row*$28+print_schar_pos9_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[6], 6, 29)
-    lda rotation_matrix+6
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos10_row*$28+print_schar_pos10_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos10_row*$28+print_schar_pos10_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[7], 6, 33)
-    lda rotation_matrix+7
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos11_row*$28+print_schar_pos11_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos11_row*$28+print_schar_pos11_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    // print_schar_pos(rotation_matrix[8], 6, 37)
-    lda rotation_matrix+8
-    // print_schar_at(sb, print_screen+row*40+col)
-    sta.z print_schar_at.b
-    lda #<print_screen+print_schar_pos12_row*$28+print_schar_pos12_col
-    sta.z print_schar_at.at
-    lda #>print_screen+print_schar_pos12_row*$28+print_schar_pos12_col
-    sta.z print_schar_at.at+1
-    jsr print_schar_at
-    lda #0
-    sta.z i
-    lda #4
-    sta.z c
-  __b1:
-    // print_schar_at(xrs[i], at_line+40*0+c)
-    lda.z c
-    clc
-    adc #<at_line
-    sta.z print_schar_at.at
-    lda #>at_line
-    adc #0
-    sta.z print_schar_at.at+1
-    ldy.z i
-    lda xrs,y
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // print_schar_at(yrs[i], at_line+40*1+c)
-    lda.z c
-    clc
-    adc #<at_line+$28*1
-    sta.z print_schar_at.at
-    lda #>at_line+$28*1
-    adc #0
-    sta.z print_schar_at.at+1
-    ldy.z i
-    lda yrs,y
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // print_schar_at(zrs[i], at_line+40*2+c)
-    lda.z c
-    clc
-    adc #<at_line+$28*2
-    sta.z print_schar_at.at
-    lda #>at_line+$28*2
-    adc #0
-    sta.z print_schar_at.at+1
-    ldy.z i
-    lda zrs,y
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // print_schar_at(pps[i], at_line+40*3+c)
-    lda.z c
-    clc
-    adc #<at_line+$28*3
-    sta.z print_schar_at.at
-    lda #>at_line+$28*3
-    adc #0
-    sta.z print_schar_at.at+1
-    ldy.z i
-    lda pps,y
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // print_schar_at(xps[i], at_line+40*4+c)
-    lda.z c
-    clc
-    adc #<at_line+$28*4
-    sta.z print_schar_at.at
-    lda #>at_line+$28*4
-    adc #0
-    sta.z print_schar_at.at+1
-    ldy.z i
-    lda xps,y
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // print_schar_at(yps[i], at_line+40*5+c)
-    lda.z c
-    clc
-    adc #<at_line+$28*5
-    sta.z print_schar_at.at
-    lda #>at_line+$28*5
-    adc #0
-    sta.z print_schar_at.at+1
-    ldy.z i
-    lda yps,y
-    sta.z print_schar_at.b
-    jsr print_schar_at
-    // c += 4
-    lax.z c
-    axs #-[4]
-    stx.z c
-    // for( char i: 0..7)
-    inc.z i
-    lda #8
-    cmp.z i
-    beq !__b1+
-    jmp __b1
-  !__b1:
-    // }
-    rts
-}
-// Print a signed char as hex at a specific screen position
-// print_schar_at(signed byte zp(5) b, byte* zp($e) at)
-print_schar_at: {
-    .label b = 5
-    .label at = $e
-    // if(b<0)
-    lda.z b
-    bmi __b1
-    // print_char_at(' ', at)
-    ldx #' '
-    jsr print_char_at
-  __b2:
-    // print_uchar_at((char)b, at+1)
-    inc.z print_uchar_at.at
-    bne !+
-    inc.z print_uchar_at.at+1
-  !:
-    jsr print_uchar_at
-    // }
-    rts
-  __b1:
-    // print_char_at('-', at)
-    ldx #'-'
-    jsr print_char_at
-    // b = -b
-    lda.z b
-    eor #$ff
-    clc
-    adc #1
-    sta.z b
-    jmp __b2
-}
-// Print a single char
-// print_char_at(byte register(X) ch, byte* zp($e) at)
-print_char_at: {
-    .label at = $e
-    // *(at) = ch
-    txa
-    ldy #0
-    sta (at),y
-    // }
-    rts
-}
-// Print a char as HEX at a specific position
-// print_uchar_at(byte zp(5) b, byte* zp($e) at)
-print_uchar_at: {
-    .label b = 5
-    .label at = $e
-    // b>>4
-    lda.z b
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char_at(print_hextab[b>>4], at)
-    tay
-    ldx print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char_at
-    // b&$f
-    lda #$f
-    and.z b
-    tay
-    // print_char_at(print_hextab[b&$f], at+1)
-    inc.z print_char_at.at
-    bne !+
-    inc.z print_char_at.at+1
-  !:
-    ldx print_hextab,y
-    jsr print_char_at
-    // }
-    rts
-}
-// Rotate a 3D point (x,y,z) using the rotation matrix
-// The rotation matrix is prepared by calling prepare_matrix() 
-// The passed points must be in the interval [-$3f;$3f].
-// Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zp(6) y, signed byte zp(7) z)
-rotate_matrix: {
-    .label y = 6
-    .label z = 7
-    // *xr = x
-    txa
-    sta xr
-    // *yr = y
-    lda.z y
-    sta yr
-    // *zr = z
-    lda.z z
-    sta zr
-    // asm
-    tax
-  C1:
-    lda mulf_sqr1,x
-    sec
-  C2:
-    sbc mulf_sqr2,x
-    sta C3+1
-  F1:
-    lda mulf_sqr1,x
-    sec
-  F2:
-    sbc mulf_sqr2,x
-    sta F3+1
-  I1:
-    lda mulf_sqr1,x
-    sec
-  I2:
-    sbc mulf_sqr2,x
-    sta I3+1
-    ldx xr
-    ldy yr
-  I3:
-    lda #0
-    clc
-  G1:
-    adc mulf_sqr1,x
-    sec
-  G2:
-    sbc mulf_sqr2,x
-    clc
-  H1:
-    adc mulf_sqr1,y
-    sec
-  H2:
-    sbc mulf_sqr2,y
-    sta zr
-    sta PP+1
-  PP:
-    lda PERSP_Z
-    sta pp
-    sta psp1
-    eor #$ff
-    sta psp2
-  C3:
-    lda #0
-    clc
-  A1:
-    adc mulf_sqr1,x
-    sec
-  A2:
-    sbc mulf_sqr2,x
-    clc
-  B1:
-    adc mulf_sqr1,y
-    sec
-  B2:
-    sbc mulf_sqr2,y
-    sta xr
-    sta XX+1
-    clc
-  F3:
-    lda #0
-    clc
-  D1:
-    adc mulf_sqr1,x
-    sec
-  D2:
-    sbc mulf_sqr2,x
-    clc
-  E1:
-    adc mulf_sqr1,y
-    sec
-  E2:
-    sbc mulf_sqr2,y
-    sta yr
-    tay
-    lda (psp1),y
-    sec
-    sbc (psp2),y
-    sta yp
-  XX:
-    ldy #0
-    lda (psp1),y
-    sec
-    sbc (psp2),y
-    sta xp
-    // }
-    rts
-}
-// Store the rotation matrix into the rotation routine rotate()
-// After this each call to rotate() will rotate a point with the matrix
-// Implemented in assembler to utilize seriously fast multiplication 
-store_matrix: {
-    // asm
-    lda rotation_matrix+0
-    sta rotate_matrix.A1+1
-    eor #$ff
-    sta rotate_matrix.A2+1
-    lda rotation_matrix+1
-    sta rotate_matrix.B1+1
-    eor #$ff
-    sta rotate_matrix.B2+1
-    lda rotation_matrix+2
-    sta rotate_matrix.C1+1
-    eor #$ff
-    sta rotate_matrix.C2+1
-    lda rotation_matrix+3
-    sta rotate_matrix.D1+1
-    eor #$ff
-    sta rotate_matrix.D2+1
-    lda rotation_matrix+4
-    sta rotate_matrix.E1+1
-    eor #$ff
-    sta rotate_matrix.E2+1
-    lda rotation_matrix+5
-    sta rotate_matrix.F1+1
-    eor #$ff
-    sta rotate_matrix.F2+1
-    lda rotation_matrix+6
-    sta rotate_matrix.G1+1
-    eor #$ff
-    sta rotate_matrix.G2+1
-    lda rotation_matrix+7
-    sta rotate_matrix.H1+1
-    eor #$ff
-    sta rotate_matrix.H2+1
-    lda rotation_matrix+8
-    sta rotate_matrix.I1+1
-    eor #$ff
-    sta rotate_matrix.I2+1
-    // }
-    rts
-}
-// Prepare the 3x3 rotation matrix into rotation_matrix[]
-// Angles sx, sy, sz are based on 2*PI=$100 
-// Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
-// calculate_matrix(signed byte register(X) sx, signed byte zp(4) sy)
-calculate_matrix: {
-    .label sy = 4
-    .label t1 = 5
-    .label t2 = 6
-    .label t3 = 7
-    .label t4 = 8
-    .label t5 = 9
-    .label t6 = $a
-    .label t7 = $b
-    .label t8 = $c
-    .label t9 = $d
-    // t1 = sy-sz
-    lda.z sy
-    sta.z t1
-    // t2 = sy+sz
-    lda.z sy
-    sta.z t2
-    // t3 = sx+sz
-    stx.z t3
-    // t4 = sx-sz
-    stx.z t4
-    // t5 = sx+t2
-    txa
-    clc
-    adc.z t2
-    sta.z t5
-    // t6 = sx-t1
-    txa
-    sec
-    sbc.z t1
-    sta.z t6
-    // t7 = sx+t1
-    txa
-    clc
-    adc.z t1
-    sta.z t7
-    // t8 = t2-sx
-    txa
-    eor #$ff
-    sec
-    adc.z t2
-    sta.z t8
-    // t9 = sy-sx
-    txa
-    eor #$ff
-    sec
-    adc.z sy
-    sta.z t9
-    // t10 = sy+sx
-    txa
-    clc
-    adc.z sy
-    tax
-    // COSH[t1]+COSH[t2]
-    ldy.z t1
-    lda COSH,y
-    ldy.z t2
-    clc
-    adc COSH,y
-    // rotation_matrix[0] = COSH[t1]+COSH[t2]
-    sta rotation_matrix
-    // SINH[t1]-SINH[t2]
-    ldy.z t1
-    lda SINH,y
-    ldy.z t2
-    sec
-    sbc SINH,y
-    // rotation_matrix[1] = SINH[t1]-SINH[t2]
-    sta rotation_matrix+1
-    // SINH[sy]+SINH[sy]
-    ldy.z sy
-    clc
-    lda SINH,y
-    adc SINH,y
-    // rotation_matrix[2] = SINH[sy]+SINH[sy]
-    sta rotation_matrix+2
-    // SINH[t3]-SINH[t4]
-    ldy.z t3
-    lda SINH,y
-    ldy.z t4
-    sec
-    sbc SINH,y
-    // SINH[t3]-SINH[t4] + COSQ[t6]
-    ldy.z t6
-    clc
-    adc COSQ,y
-    // SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]
-    ldy.z t5
-    sec
-    sbc COSQ,y
-    // SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t8]
-    ldy.z t8
-    clc
-    adc COSQ,y
-    // SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t8]-COSQ[t7]
-    ldy.z t7
-    sec
-    sbc COSQ,y
-    // rotation_matrix[3] = SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t8]-COSQ[t7]
-    sta rotation_matrix+3
-    // COSH[t3]+COSH[t4]
-    ldy.z t3
-    lda COSH,y
-    ldy.z t4
-    clc
-    adc COSH,y
-    // COSH[t3]+COSH[t4] + SINQ[t5]
-    ldy.z t5
-    clc
-    adc SINQ,y
-    // COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]
-    ldy.z t6
-    sec
-    sbc SINQ,y
-    // COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]-SINQ[t7]
-    ldy.z t7
-    sec
-    sbc SINQ,y
-    // COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]-SINQ[t7]-SINQ[t8]
-    ldy.z t8
-    sec
-    sbc SINQ,y
-    // rotation_matrix[4] = COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]-SINQ[t7]-SINQ[t8]
-    sta rotation_matrix+4
-    // SINH[t9]-SINH[t10]
-    ldy.z t9
-    lda SINH,y
-    sec
-    sbc SINH,x
-    // rotation_matrix[5] = SINH[t9]-SINH[t10]
-    sta rotation_matrix+5
-    // COSH[t4]-COSH[t3]
-    ldy.z t4
-    lda COSH,y
-    ldy.z t3
-    sec
-    sbc COSH,y
-    // COSH[t4]-COSH[t3] + SINQ[t6]
-    ldy.z t6
-    clc
-    adc SINQ,y
-    // COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]
-    ldy.z t5
-    sec
-    sbc SINQ,y
-    // COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]
-    ldy.z t8
-    sec
-    sbc SINQ,y
-    // COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]-SINQ[t7]
-    ldy.z t7
-    sec
-    sbc SINQ,y
-    // rotation_matrix[6] = COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]-SINQ[t7]
-    sta rotation_matrix+6
-    // SINH[t3]+SINH[t4]
-    ldy.z t3
-    lda SINH,y
-    ldy.z t4
-    clc
-    adc SINH,y
-    // SINH[t3]+SINH[t4] + COSQ[t6]
-    ldy.z t6
-    clc
-    adc COSQ,y
-    // SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]
-    ldy.z t5
-    sec
-    sbc COSQ,y
-    // SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]
-    ldy.z t7
-    clc
-    adc COSQ,y
-    // SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]-COSQ[t8]
-    ldy.z t8
-    sec
-    sbc COSQ,y
-    // rotation_matrix[7] = SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]-COSQ[t8]
-    sta rotation_matrix+7
-    // COSH[t9]+COSH[t10]
-    lda COSH,x
-    ldy.z t9
-    clc
-    adc COSH,y
-    // rotation_matrix[8] = COSH[t9]+COSH[t10]
-    sta rotation_matrix+8
+    inx
+    cpx #8
+    bne __b1
     // }
     rts
 }
@@ -806,17 +87,17 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label __41 = $e
-    .label __44 = $10
-    .label __47 = $12
-    .label __50 = $14
-    .label __53 = $16
-    .label __56 = $18
-    .label __59 = $1a
-    .label __62 = $1c
-    .label __65 = $1e
-    .label c = 3
-    .label i = 4
+    .label __41 = 5
+    .label __44 = 7
+    .label __47 = 9
+    .label __50 = $b
+    .label __53 = $d
+    .label __56 = $f
+    .label __59 = $11
+    .label __62 = $13
+    .label __65 = $15
+    .label c = 2
+    .label i = 3
     // print_cls()
     jsr print_cls
     // print_str_at("sx", SCREEN+40*0+34)
@@ -1128,11 +409,117 @@ debug_print_init: {
     str11: .text "yp"
     .byte 0
 }
+anim: {
+    .label i = 4
+    lda #0
+    sta.z sy
+    sta.z sx
+  __b2:
+    // while(VICII->RASTER!=$ff)
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b2
+  __b3:
+    // while(VICII->RASTER!=$fe)
+    lda #$fe
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b3
+  __b4:
+    // while(VICII->RASTER!=$fd)
+    lda #$fd
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b4
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // calculate_matrix(sx,sy,sz)
+    ldx.z sx
+    //calculate_matrix_16(sx,sy,sz);
+    jsr calculate_matrix
+    // store_matrix()
+    jsr store_matrix
+    lda #0
+    sta.z i
+  __b6:
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // rotate_matrix(xs[i], ys[i], zs[i])
+    ldy.z i
+    ldx xs,y
+    lda ys,y
+    sta.z rotate_matrix.y
+    lda zs,y
+    sta.z rotate_matrix.z
+    jsr rotate_matrix
+    // xrs[i] = *xr
+    lda xr
+    ldy.z i
+    sta xrs,y
+    // yrs[i] = *yr
+    lda yr
+    sta yrs,y
+    // zrs[i] = *zr
+    lda zr
+    sta zrs,y
+    // pps[i] = *pp
+    lda pp
+    sta pps,y
+    // xps[i] = *xp
+    lda xp
+    sta xps,y
+    // yps[i] = *yp
+    lda yp
+    sta yps,y
+    // i2 = i*2
+    tya
+    asl
+    tax
+    // $80+(char)((*xp))
+    lda #$80
+    clc
+    adc xp
+    // SPRITES_XPOS[i2] = $80+(char)((*xp))
+    sta SPRITES_XPOS,x
+    // $80+(char)((*yp))
+    lda #$80
+    clc
+    adc yp
+    // SPRITES_YPOS[i2] = $80+(char)((*yp))
+    sta SPRITES_YPOS,x
+    // for(char i: 0..7)
+    inc.z i
+    lda #8
+    cmp.z i
+    bne __b6
+    // VICII->BORDER_COLOR = LIGHT_GREY
+    lda #LIGHT_GREY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // debug_print()
+    jsr debug_print
+    // VICII->BORDER_COLOR = LIGHT_BLUE
+    lda #LIGHT_BLUE
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // sx +=2
+    // Increment angles        
+    inc.z sx
+    inc.z sx
+    // sy -=3
+    lax.z sy
+    axs #3
+    stx.z sy
+    jmp __b2
+}
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
 // Print a string at a specific screen position
-// print_str_at(byte* zp($e) str, byte* zp($10) at)
+// print_str_at(byte* zp(5) str, byte* zp(7) at)
 print_str_at: {
-    .label at = $10
-    .label str = $e
+    .label at = 7
+    .label str = 5
   __b1:
     // while(*str)
     ldy #0
@@ -1157,10 +544,604 @@ print_str_at: {
   !:
     jmp __b1
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
+// Print a signed char as hex at a specific screen position
+// print_schar_at(signed byte zp($18) b, byte* zp(5) at)
+print_schar_at: {
+    .label b = $18
+    .label at = 5
+    // if(b<0)
+    lda.z b
+    bmi __b1
+    // print_char_at(' ', at)
+    ldx #' '
+    jsr print_char_at
+  __b2:
+    // print_uchar_at((char)b, at+1)
+    inc.z print_uchar_at.at
+    bne !+
+    inc.z print_uchar_at.at+1
+  !:
+    jsr print_uchar_at
+    // }
+    rts
+  __b1:
+    // print_char_at('-', at)
+    ldx #'-'
+    jsr print_char_at
+    // b = -b
+    lda.z b
+    eor #$ff
+    clc
+    adc #1
+    sta.z b
+    jmp __b2
+}
+// Prepare the 3x3 rotation matrix into rotation_matrix[]
+// Angles sx, sy, sz are based on 2*PI=$100 
+// Method described in C= Hacking Magazine Issue 8. http://www.ffd2.com/fridge/chacking/c=hacking8.txt
+// calculate_matrix(signed byte register(X) sx, signed byte zp(3) sy)
+calculate_matrix: {
+    .label sy = 3
+    .label t1 = $17
+    .label t2 = $18
+    .label t3 = $19
+    .label t4 = $1a
+    .label t5 = $1b
+    .label t6 = $1c
+    .label t7 = $1d
+    .label t8 = $1e
+    .label t9 = $1f
+    // t1 = sy-sz
+    lda.z sy
+    sta.z t1
+    // t2 = sy+sz
+    lda.z sy
+    sta.z t2
+    // t3 = sx+sz
+    stx.z t3
+    // t4 = sx-sz
+    stx.z t4
+    // t5 = sx+t2
+    txa
+    clc
+    adc.z t2
+    sta.z t5
+    // t6 = sx-t1
+    txa
+    sec
+    sbc.z t1
+    sta.z t6
+    // t7 = sx+t1
+    txa
+    clc
+    adc.z t1
+    sta.z t7
+    // t8 = t2-sx
+    txa
+    eor #$ff
+    sec
+    adc.z t2
+    sta.z t8
+    // t9 = sy-sx
+    txa
+    eor #$ff
+    sec
+    adc.z sy
+    sta.z t9
+    // t10 = sy+sx
+    txa
+    clc
+    adc.z sy
+    tax
+    // COSH[t1]+COSH[t2]
+    ldy.z t1
+    lda COSH,y
+    ldy.z t2
+    clc
+    adc COSH,y
+    // rotation_matrix[0] = COSH[t1]+COSH[t2]
+    sta rotation_matrix
+    // SINH[t1]-SINH[t2]
+    ldy.z t1
+    lda SINH,y
+    ldy.z t2
+    sec
+    sbc SINH,y
+    // rotation_matrix[1] = SINH[t1]-SINH[t2]
+    sta rotation_matrix+1
+    // SINH[sy]+SINH[sy]
+    ldy.z sy
+    clc
+    lda SINH,y
+    adc SINH,y
+    // rotation_matrix[2] = SINH[sy]+SINH[sy]
+    sta rotation_matrix+2
+    // SINH[t3]-SINH[t4]
+    ldy.z t3
+    lda SINH,y
+    ldy.z t4
+    sec
+    sbc SINH,y
+    // SINH[t3]-SINH[t4] + COSQ[t6]
+    ldy.z t6
+    clc
+    adc COSQ,y
+    // SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]
+    ldy.z t5
+    sec
+    sbc COSQ,y
+    // SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t8]
+    ldy.z t8
+    clc
+    adc COSQ,y
+    // SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t8]-COSQ[t7]
+    ldy.z t7
+    sec
+    sbc COSQ,y
+    // rotation_matrix[3] = SINH[t3]-SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t8]-COSQ[t7]
+    sta rotation_matrix+3
+    // COSH[t3]+COSH[t4]
+    ldy.z t3
+    lda COSH,y
+    ldy.z t4
+    clc
+    adc COSH,y
+    // COSH[t3]+COSH[t4] + SINQ[t5]
+    ldy.z t5
+    clc
+    adc SINQ,y
+    // COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]
+    ldy.z t6
+    sec
+    sbc SINQ,y
+    // COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]-SINQ[t7]
+    ldy.z t7
+    sec
+    sbc SINQ,y
+    // COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]-SINQ[t7]-SINQ[t8]
+    ldy.z t8
+    sec
+    sbc SINQ,y
+    // rotation_matrix[4] = COSH[t3]+COSH[t4] + SINQ[t5]-SINQ[t6]-SINQ[t7]-SINQ[t8]
+    sta rotation_matrix+4
+    // SINH[t9]-SINH[t10]
+    ldy.z t9
+    lda SINH,y
+    sec
+    sbc SINH,x
+    // rotation_matrix[5] = SINH[t9]-SINH[t10]
+    sta rotation_matrix+5
+    // COSH[t4]-COSH[t3]
+    ldy.z t4
+    lda COSH,y
+    ldy.z t3
+    sec
+    sbc COSH,y
+    // COSH[t4]-COSH[t3] + SINQ[t6]
+    ldy.z t6
+    clc
+    adc SINQ,y
+    // COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]
+    ldy.z t5
+    sec
+    sbc SINQ,y
+    // COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]
+    ldy.z t8
+    sec
+    sbc SINQ,y
+    // COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]-SINQ[t7]
+    ldy.z t7
+    sec
+    sbc SINQ,y
+    // rotation_matrix[6] = COSH[t4]-COSH[t3] + SINQ[t6]-SINQ[t5]-SINQ[t8]-SINQ[t7]
+    sta rotation_matrix+6
+    // SINH[t3]+SINH[t4]
+    ldy.z t3
+    lda SINH,y
+    ldy.z t4
+    clc
+    adc SINH,y
+    // SINH[t3]+SINH[t4] + COSQ[t6]
+    ldy.z t6
+    clc
+    adc COSQ,y
+    // SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]
+    ldy.z t5
+    sec
+    sbc COSQ,y
+    // SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]
+    ldy.z t7
+    clc
+    adc COSQ,y
+    // SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]-COSQ[t8]
+    ldy.z t8
+    sec
+    sbc COSQ,y
+    // rotation_matrix[7] = SINH[t3]+SINH[t4] + COSQ[t6]-COSQ[t5]+COSQ[t7]-COSQ[t8]
+    sta rotation_matrix+7
+    // COSH[t9]+COSH[t10]
+    lda COSH,x
+    ldy.z t9
+    clc
+    adc COSH,y
+    // rotation_matrix[8] = COSH[t9]+COSH[t10]
+    sta rotation_matrix+8
+    // }
+    rts
+}
+// Store the rotation matrix into the rotation routine rotate()
+// After this each call to rotate() will rotate a point with the matrix
+// Implemented in assembler to utilize seriously fast multiplication 
+store_matrix: {
+    // asm
+    lda rotation_matrix+0
+    sta rotate_matrix.A1+1
+    eor #$ff
+    sta rotate_matrix.A2+1
+    lda rotation_matrix+1
+    sta rotate_matrix.B1+1
+    eor #$ff
+    sta rotate_matrix.B2+1
+    lda rotation_matrix+2
+    sta rotate_matrix.C1+1
+    eor #$ff
+    sta rotate_matrix.C2+1
+    lda rotation_matrix+3
+    sta rotate_matrix.D1+1
+    eor #$ff
+    sta rotate_matrix.D2+1
+    lda rotation_matrix+4
+    sta rotate_matrix.E1+1
+    eor #$ff
+    sta rotate_matrix.E2+1
+    lda rotation_matrix+5
+    sta rotate_matrix.F1+1
+    eor #$ff
+    sta rotate_matrix.F2+1
+    lda rotation_matrix+6
+    sta rotate_matrix.G1+1
+    eor #$ff
+    sta rotate_matrix.G2+1
+    lda rotation_matrix+7
+    sta rotate_matrix.H1+1
+    eor #$ff
+    sta rotate_matrix.H2+1
+    lda rotation_matrix+8
+    sta rotate_matrix.I1+1
+    eor #$ff
+    sta rotate_matrix.I2+1
+    // }
+    rts
+}
+// Rotate a 3D point (x,y,z) using the rotation matrix
+// The rotation matrix is prepared by calling prepare_matrix() 
+// The passed points must be in the interval [-$3f;$3f].
+// Implemented in assembler to utilize seriously fast multiplication 
+// rotate_matrix(signed byte register(X) x, signed byte zp($18) y, signed byte zp($19) z)
+rotate_matrix: {
+    .label y = $18
+    .label z = $19
+    // *xr = x
+    txa
+    sta xr
+    // *yr = y
+    lda.z y
+    sta yr
+    // *zr = z
+    lda.z z
+    sta zr
+    // asm
+    tax
+  C1:
+    lda mulf_sqr1,x
+    sec
+  C2:
+    sbc mulf_sqr2,x
+    sta C3+1
+  F1:
+    lda mulf_sqr1,x
+    sec
+  F2:
+    sbc mulf_sqr2,x
+    sta F3+1
+  I1:
+    lda mulf_sqr1,x
+    sec
+  I2:
+    sbc mulf_sqr2,x
+    sta I3+1
+    ldx xr
+    ldy yr
+  I3:
+    lda #0
+    clc
+  G1:
+    adc mulf_sqr1,x
+    sec
+  G2:
+    sbc mulf_sqr2,x
+    clc
+  H1:
+    adc mulf_sqr1,y
+    sec
+  H2:
+    sbc mulf_sqr2,y
+    sta zr
+    sta PP+1
+  PP:
+    lda PERSP_Z
+    sta pp
+    sta psp1
+    eor #$ff
+    sta psp2
+  C3:
+    lda #0
+    clc
+  A1:
+    adc mulf_sqr1,x
+    sec
+  A2:
+    sbc mulf_sqr2,x
+    clc
+  B1:
+    adc mulf_sqr1,y
+    sec
+  B2:
+    sbc mulf_sqr2,y
+    sta xr
+    sta XX+1
+    clc
+  F3:
+    lda #0
+    clc
+  D1:
+    adc mulf_sqr1,x
+    sec
+  D2:
+    sbc mulf_sqr2,x
+    clc
+  E1:
+    adc mulf_sqr1,y
+    sec
+  E2:
+    sbc mulf_sqr2,y
+    sta yr
+    tay
+    lda (psp1),y
+    sec
+    sbc (psp2),y
+    sta yp
+  XX:
+    ldy #0
+    lda (psp1),y
+    sec
+    sbc (psp2),y
+    sta xp
+    // }
+    rts
+}
+debug_print: {
+    .const print_schar_pos1_col = $25
+    .const print_schar_pos2_row = 1
+    .const print_schar_pos2_col = $25
+    .const print_schar_pos3_row = 2
+    .const print_schar_pos3_col = $25
+    .const print_schar_pos4_row = 4
+    .const print_schar_pos4_col = $1d
+    .const print_schar_pos5_row = 4
+    .const print_schar_pos5_col = $21
+    .const print_schar_pos6_row = 4
+    .const print_schar_pos6_col = $25
+    .const print_schar_pos7_row = 5
+    .const print_schar_pos7_col = $1d
+    .const print_schar_pos8_row = 5
+    .const print_schar_pos8_col = $21
+    .const print_schar_pos9_row = 5
+    .const print_schar_pos9_col = $25
+    .const print_schar_pos10_row = 6
+    .const print_schar_pos10_col = $1d
+    .const print_schar_pos11_row = 6
+    .const print_schar_pos11_col = $21
+    .const print_schar_pos12_row = 6
+    .const print_schar_pos12_col = $25
+    .label at_line = SCREEN+$13*$28
+    .label c = $19
+    .label i = $17
+    // print_schar_pos(sx, 0, 37)
+    lda.z sx
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos1_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos1_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(sy, 1, 37)
+    lda.z sy
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos2_row*$28+print_schar_pos2_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos2_row*$28+print_schar_pos2_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_at(sb, print_screen+row*40+col)
+    lda #<print_screen+print_schar_pos3_row*$28+print_schar_pos3_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos3_row*$28+print_schar_pos3_col
+    sta.z print_schar_at.at+1
+    lda #sz
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[0], 4, 29)
+    lda rotation_matrix
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos4_row*$28+print_schar_pos4_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos4_row*$28+print_schar_pos4_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[1], 4, 33)
+    lda rotation_matrix+1
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos5_row*$28+print_schar_pos5_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos5_row*$28+print_schar_pos5_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[2], 4, 37)
+    lda rotation_matrix+2
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos6_row*$28+print_schar_pos6_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos6_row*$28+print_schar_pos6_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[3], 5, 29)
+    lda rotation_matrix+3
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos7_row*$28+print_schar_pos7_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos7_row*$28+print_schar_pos7_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[4], 5, 33)
+    lda rotation_matrix+4
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos8_row*$28+print_schar_pos8_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos8_row*$28+print_schar_pos8_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[5], 5, 37)
+    lda rotation_matrix+5
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos9_row*$28+print_schar_pos9_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos9_row*$28+print_schar_pos9_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[6], 6, 29)
+    lda rotation_matrix+6
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos10_row*$28+print_schar_pos10_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos10_row*$28+print_schar_pos10_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[7], 6, 33)
+    lda rotation_matrix+7
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos11_row*$28+print_schar_pos11_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos11_row*$28+print_schar_pos11_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    // print_schar_pos(rotation_matrix[8], 6, 37)
+    lda rotation_matrix+8
+    // print_schar_at(sb, print_screen+row*40+col)
+    sta.z print_schar_at.b
+    lda #<print_screen+print_schar_pos12_row*$28+print_schar_pos12_col
+    sta.z print_schar_at.at
+    lda #>print_screen+print_schar_pos12_row*$28+print_schar_pos12_col
+    sta.z print_schar_at.at+1
+    jsr print_schar_at
+    lda #0
+    sta.z i
+    lda #4
+    sta.z c
+  __b1:
+    // print_schar_at(xrs[i], at_line+40*0+c)
+    lda.z c
+    clc
+    adc #<at_line
+    sta.z print_schar_at.at
+    lda #>at_line
+    adc #0
+    sta.z print_schar_at.at+1
+    ldy.z i
+    lda xrs,y
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // print_schar_at(yrs[i], at_line+40*1+c)
+    lda.z c
+    clc
+    adc #<at_line+$28*1
+    sta.z print_schar_at.at
+    lda #>at_line+$28*1
+    adc #0
+    sta.z print_schar_at.at+1
+    ldy.z i
+    lda yrs,y
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // print_schar_at(zrs[i], at_line+40*2+c)
+    lda.z c
+    clc
+    adc #<at_line+$28*2
+    sta.z print_schar_at.at
+    lda #>at_line+$28*2
+    adc #0
+    sta.z print_schar_at.at+1
+    ldy.z i
+    lda zrs,y
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // print_schar_at(pps[i], at_line+40*3+c)
+    lda.z c
+    clc
+    adc #<at_line+$28*3
+    sta.z print_schar_at.at
+    lda #>at_line+$28*3
+    adc #0
+    sta.z print_schar_at.at+1
+    ldy.z i
+    lda pps,y
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // print_schar_at(xps[i], at_line+40*4+c)
+    lda.z c
+    clc
+    adc #<at_line+$28*4
+    sta.z print_schar_at.at
+    lda #>at_line+$28*4
+    adc #0
+    sta.z print_schar_at.at+1
+    ldy.z i
+    lda xps,y
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // print_schar_at(yps[i], at_line+40*5+c)
+    lda.z c
+    clc
+    adc #<at_line+$28*5
+    sta.z print_schar_at.at
+    lda #>at_line+$28*5
+    adc #0
+    sta.z print_schar_at.at+1
+    ldy.z i
+    lda yps,y
+    sta.z print_schar_at.b
+    jsr print_schar_at
+    // c += 4
+    lax.z c
+    axs #-[4]
+    stx.z c
+    // for( char i: 0..7)
+    inc.z i
+    lda #8
+    cmp.z i
+    beq !__b1+
+    jmp __b1
+  !__b1:
     // }
     rts
 }
@@ -1170,7 +1151,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $10
+    .label dst = 7
     lda #<str
     sta.z dst
     lda #>str
@@ -1197,25 +1178,44 @@ memset: {
   !:
     jmp __b1
 }
-// Initialize sprites
-sprites_init: {
-    .label SCREEN = $400
-    .label sprites_ptr = SCREEN+$3f8
-    // VICII->SPRITES_ENABLE = %11111111
-    lda #$ff
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
-    ldx #0
-  __b1:
-    // sprites_ptr[i] = (char)(SPRITE/$40)
-    lda #$ff&SPRITE/$40
-    sta sprites_ptr,x
-    // SPRITES_COLOR[i] = GREEN
-    lda #GREEN
-    sta SPRITES_COLOR,x
-    // for(char i: 0..7)
-    inx
-    cpx #8
-    bne __b1
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zp(5) at)
+print_char_at: {
+    .label at = 5
+    // *(at) = ch
+    txa
+    ldy #0
+    sta (at),y
+    // }
+    rts
+}
+// Print a char as HEX at a specific position
+// print_uchar_at(byte zp($18) b, byte* zp(5) at)
+print_uchar_at: {
+    .label b = $18
+    .label at = 5
+    // b>>4
+    lda.z b
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char_at(print_hextab[b>>4], at)
+    tay
+    ldx print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char_at
+    // b&$f
+    lda #$f
+    and.z b
+    tay
+    // print_char_at(print_hextab[b&$f], at+1)
+    inc.z print_char_at.at
+    bne !+
+    inc.z print_char_at.at+1
+  !:
+    ldx print_hextab,y
+    jsr print_char_at
     // }
     rts
 }

@@ -39,24 +39,46 @@ main: {
     // }
     rts
 }
+init: {
+    .label sprites_ptr = SCREEN+$3f8
+    // mulf_init()
+    jsr mulf_init
+    // VICII->SPRITES_ENABLE = %11111111
+    lda #$ff
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
+    ldx #0
+  __b1:
+    // sprites_ptr[i] = (char)(SPRITE/$40)
+    lda #$ff&SPRITE/$40
+    sta sprites_ptr,x
+    // SPRITES_COLOR[i] = GREEN
+    lda #GREEN
+    sta SPRITES_COLOR,x
+    // for(char i: 0..7)
+    inx
+    cpx #8
+    bne __b1
+    // }
+    rts
+}
 anim: {
-    .label __4 = 3
-    .label __6 = 3
-    .label __9 = 3
-    .label __10 = 3
-    .label __11 = 3
-    .label __12 = 3
-    .label __26 = $13
-    .label x = $b
-    .label y = $c
-    .label xr = $d
-    .label yr = $f
-    .label xpos = $11
+    .label __4 = 5
+    .label __6 = 5
+    .label __9 = 5
+    .label __10 = 5
+    .label __11 = 5
+    .label __12 = 5
+    .label __26 = $11
+    .label x = 9
+    .label y = $a
+    .label xr = $b
+    .label yr = $d
+    .label xpos = $f
     // signed fixed[0.7]
     .label sprite_msb = 2
-    .label i = $a
-    .label angle = 7
-    .label cyclecount = $13
+    .label i = 4
+    .label angle = 3
+    .label cyclecount = $11
     lda #0
     sta.z angle
   __b2:
@@ -219,269 +241,20 @@ anim: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b2
 }
-// Print a unsigned long as HEX at a specific position
-// print_ulong_at(dword zp($13) dw)
-print_ulong_at: {
-    .label dw = $13
-    // print_uint_at(>dw, at)
-    lda.z dw+2
-    sta.z print_uint_at.w
-    lda.z dw+3
-    sta.z print_uint_at.w+1
-    lda #<SCREEN
-    sta.z print_uint_at.at
-    lda #>SCREEN
-    sta.z print_uint_at.at+1
-    jsr print_uint_at
-    // print_uint_at(<dw, at+4)
-    lda.z dw
-    sta.z print_uint_at.w
-    lda.z dw+1
-    sta.z print_uint_at.w+1
-    lda #<SCREEN+4
-    sta.z print_uint_at.at
-    lda #>SCREEN+4
-    sta.z print_uint_at.at+1
-    jsr print_uint_at
-    // }
-    rts
-}
-// Print a unsigned int as HEX at a specific position
-// print_uint_at(word zp(3) w, byte* zp(5) at)
-print_uint_at: {
-    .label w = 3
-    .label at = 5
-    // print_uchar_at(>w, at)
-    lda.z w+1
-    sta.z print_uchar_at.b
-    jsr print_uchar_at
-    // print_uchar_at(<w, at+2)
-    lda.z w
-    sta.z print_uchar_at.b
-    lda #2
-    clc
-    adc.z print_uchar_at.at
-    sta.z print_uchar_at.at
-    bcc !+
-    inc.z print_uchar_at.at+1
-  !:
-    jsr print_uchar_at
-    // }
-    rts
-}
-// Print a char as HEX at a specific position
-// print_uchar_at(byte zp($b) b, byte* zp(5) at)
-print_uchar_at: {
-    .label b = $b
-    .label at = 5
-    // b>>4
-    lda.z b
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char_at(print_hextab[b>>4], at)
-    tay
-    ldx print_hextab,y
-    lda.z at
-    sta.z print_char_at.at
-    lda.z at+1
-    sta.z print_char_at.at+1
-  // Table of hexadecimal digits
-    jsr print_char_at
-    // b&$f
-    lda #$f
-    and.z b
-    tay
-    // print_char_at(print_hextab[b&$f], at+1)
-    lda.z at
-    clc
-    adc #1
-    sta.z print_char_at.at
-    lda.z at+1
-    adc #0
-    sta.z print_char_at.at+1
-    ldx print_hextab,y
-    jsr print_char_at
-    // }
-    rts
-}
-// Print a single char
-// print_char_at(byte register(X) ch, byte* zp(8) at)
-print_char_at: {
-    .label at = 8
-    // *(at) = ch
-    txa
-    ldy #0
-    sta (at),y
-    // }
-    rts
-}
-// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
-// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
-clock: {
-    .label return = $13
-    // 0xffffffff - *CIA2_TIMER_AB
-    lda #<$ffffffff
-    sec
-    sbc CIA2_TIMER_AB
-    sta.z return
-    lda #>$ffffffff
-    sbc CIA2_TIMER_AB+1
-    sta.z return+1
-    lda #<$ffffffff>>$10
-    sbc CIA2_TIMER_AB+2
-    sta.z return+2
-    lda #>$ffffffff>>$10
-    sbc CIA2_TIMER_AB+3
-    sta.z return+3
-    // }
-    rts
-}
-// Calculate fast multiply with a prepared unsigned char to a unsigned int result
-// The prepared number is set by calling mulf8s_prepare(char a)
-// mulf8s_prepared(signed byte register(Y) b)
-mulf8s_prepared: {
-    .label memA = $fd
-    .label m = 3
-    // mulf8u_prepared((char) b)
-    tya
-    jsr mulf8u_prepared
-    // m = mulf8u_prepared((char) b)
-    // if(*memA<0)
-    lda memA
-    cmp #0
-    bpl __b1
-    // >m
-    lda.z m+1
-    // >m = (>m)-(char)b
-    sty.z $ff
-    sec
-    sbc.z $ff
-    sta.z m+1
-  __b1:
-    // if(b<0)
-    cpy #0
-    bpl __b2
-    // >m
-    lda.z m+1
-    // >m = (>m)-(char)*memA
-    sec
-    sbc memA
-    sta.z m+1
-  __b2:
-    // }
-    rts
-}
-// Calculate fast multiply with a prepared unsigned char to a unsigned int result
-// The prepared number is set by calling mulf8u_prepare(char a)
-// mulf8u_prepared(byte register(A) b)
-mulf8u_prepared: {
-    .label resL = $fe
-    .label memB = $ff
-    .label return = 3
-    // *memB = b
-    sta memB
-    // asm
-    tax
-    sec
-  sm1:
-    lda mulf_sqr1_lo,x
-  sm2:
-    sbc mulf_sqr2_lo,x
-    sta resL
-  sm3:
-    lda mulf_sqr1_hi,x
-  sm4:
-    sbc mulf_sqr2_hi,x
-    sta memB
-    // return { *memB, *resL };
-    lda resL
-    sta.z return
-    lda memB
-    sta.z return+1
-    // }
-    rts
-}
-// Prepare for fast multiply with an unsigned char to a unsigned int result
-// mulf8u_prepare(byte register(A) a)
-mulf8u_prepare: {
-    .label memA = $fd
-    // *memA = a
-    sta memA
-    // asm
-    sta mulf8u_prepared.sm1+1
-    sta mulf8u_prepared.sm3+1
-    eor #$ff
-    sta mulf8u_prepared.sm2+1
-    sta mulf8u_prepared.sm4+1
-    // }
-    rts
-}
-// Reset & start the processor clock time. The value can be read using clock().
-// This uses CIA #2 Timer A+B on the C64
-clock_start: {
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // *CIA2_TIMER_AB = 0xffffffff
-    lda #<$ffffffff
-    sta CIA2_TIMER_AB
-    lda #>$ffffffff
-    sta CIA2_TIMER_AB+1
-    lda #<$ffffffff>>$10
-    sta CIA2_TIMER_AB+2
-    lda #>$ffffffff>>$10
-    sta CIA2_TIMER_AB+3
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    lda #CIA_TIMER_CONTROL_START
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // }
-    rts
-}
-init: {
-    .label sprites_ptr = SCREEN+$3f8
-    // mulf_init()
-    jsr mulf_init
-    // VICII->SPRITES_ENABLE = %11111111
-    lda #$ff
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
-    ldx #0
-  __b1:
-    // sprites_ptr[i] = (char)(SPRITE/$40)
-    lda #$ff&SPRITE/$40
-    sta sprites_ptr,x
-    // SPRITES_COLOR[i] = GREEN
-    lda #GREEN
-    sta SPRITES_COLOR,x
-    // for(char i: 0..7)
-    inx
-    cpx #8
-    bne __b1
-    // }
-    rts
-}
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 7
+    .label c = 3
     // Counter used for determining x%2==0
-    .label sqr1_hi = 8
+    .label sqr1_hi = $d
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $11
+    .label sqr = $b
     .label sqr1_lo = 5
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $f
-    .label sqr2_lo = $d
+    .label sqr2_hi = 7
+    .label sqr2_lo = $f
     //Start with g(0)=f(255)
-    .label dir = $a
+    .label dir = 4
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -606,6 +379,233 @@ mulf_init: {
     inc.z sqr1_lo+1
   !:
     jmp __b1
+}
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
+    lda #<$ffffffff
+    sta CIA2_TIMER_AB
+    lda #>$ffffffff
+    sta CIA2_TIMER_AB+1
+    lda #<$ffffffff>>$10
+    sta CIA2_TIMER_AB+2
+    lda #>$ffffffff>>$10
+    sta CIA2_TIMER_AB+3
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // }
+    rts
+}
+// Prepare for fast multiply with an unsigned char to a unsigned int result
+// mulf8u_prepare(byte register(A) a)
+mulf8u_prepare: {
+    .label memA = $fd
+    // *memA = a
+    sta memA
+    // asm
+    sta mulf8u_prepared.sm1+1
+    sta mulf8u_prepared.sm3+1
+    eor #$ff
+    sta mulf8u_prepared.sm2+1
+    sta mulf8u_prepared.sm4+1
+    // }
+    rts
+}
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8s_prepare(char a)
+// mulf8s_prepared(signed byte register(Y) b)
+mulf8s_prepared: {
+    .label memA = $fd
+    .label m = 5
+    // mulf8u_prepared((char) b)
+    tya
+    jsr mulf8u_prepared
+    // m = mulf8u_prepared((char) b)
+    // if(*memA<0)
+    lda memA
+    cmp #0
+    bpl __b1
+    // >m
+    lda.z m+1
+    // >m = (>m)-(char)b
+    sty.z $ff
+    sec
+    sbc.z $ff
+    sta.z m+1
+  __b1:
+    // if(b<0)
+    cpy #0
+    bpl __b2
+    // >m
+    lda.z m+1
+    // >m = (>m)-(char)*memA
+    sec
+    sbc memA
+    sta.z m+1
+  __b2:
+    // }
+    rts
+}
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = $11
+    // 0xffffffff - *CIA2_TIMER_AB
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta.z return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta.z return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta.z return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta.z return+3
+    // }
+    rts
+}
+// Print a unsigned long as HEX at a specific position
+// print_ulong_at(dword zp($11) dw)
+print_ulong_at: {
+    .label dw = $11
+    // print_uint_at(>dw, at)
+    lda.z dw+2
+    sta.z print_uint_at.w
+    lda.z dw+3
+    sta.z print_uint_at.w+1
+    lda #<SCREEN
+    sta.z print_uint_at.at
+    lda #>SCREEN
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // print_uint_at(<dw, at+4)
+    lda.z dw
+    sta.z print_uint_at.w
+    lda.z dw+1
+    sta.z print_uint_at.w+1
+    lda #<SCREEN+4
+    sta.z print_uint_at.at
+    lda #>SCREEN+4
+    sta.z print_uint_at.at+1
+    jsr print_uint_at
+    // }
+    rts
+}
+// Calculate fast multiply with a prepared unsigned char to a unsigned int result
+// The prepared number is set by calling mulf8u_prepare(char a)
+// mulf8u_prepared(byte register(A) b)
+mulf8u_prepared: {
+    .label resL = $fe
+    .label memB = $ff
+    .label return = 5
+    // *memB = b
+    sta memB
+    // asm
+    tax
+    sec
+  sm1:
+    lda mulf_sqr1_lo,x
+  sm2:
+    sbc mulf_sqr2_lo,x
+    sta resL
+  sm3:
+    lda mulf_sqr1_hi,x
+  sm4:
+    sbc mulf_sqr2_hi,x
+    sta memB
+    // return { *memB, *resL };
+    lda resL
+    sta.z return
+    lda memB
+    sta.z return+1
+    // }
+    rts
+}
+// Print a unsigned int as HEX at a specific position
+// print_uint_at(word zp($d) w, byte* zp($f) at)
+print_uint_at: {
+    .label w = $d
+    .label at = $f
+    // print_uchar_at(>w, at)
+    lda.z w+1
+    sta.z print_uchar_at.b
+    jsr print_uchar_at
+    // print_uchar_at(<w, at+2)
+    lda.z w
+    sta.z print_uchar_at.b
+    lda #2
+    clc
+    adc.z print_uchar_at.at
+    sta.z print_uchar_at.at
+    bcc !+
+    inc.z print_uchar_at.at+1
+  !:
+    jsr print_uchar_at
+    // }
+    rts
+}
+// Print a char as HEX at a specific position
+// print_uchar_at(byte zp(9) b, byte* zp($f) at)
+print_uchar_at: {
+    .label b = 9
+    .label at = $f
+    // b>>4
+    lda.z b
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char_at(print_hextab[b>>4], at)
+    tay
+    ldx print_hextab,y
+    lda.z at
+    sta.z print_char_at.at
+    lda.z at+1
+    sta.z print_char_at.at+1
+  // Table of hexadecimal digits
+    jsr print_char_at
+    // b&$f
+    lda #$f
+    and.z b
+    tay
+    // print_char_at(print_hextab[b&$f], at+1)
+    lda.z at
+    clc
+    adc #1
+    sta.z print_char_at.at
+    lda.z at+1
+    adc #0
+    sta.z print_char_at.at+1
+    ldx print_hextab,y
+    jsr print_char_at
+    // }
+    rts
+}
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zp(7) at)
+print_char_at: {
+    .label at = 7
+    // *(at) = ch
+    txa
+    ldy #0
+    sta (at),y
+    // }
+    rts
 }
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)

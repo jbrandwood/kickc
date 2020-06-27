@@ -206,27 +206,16 @@ main: {
   !:
     jmp __b1
 }
-// Determines whether a specific key is currently pressed by accessing the matrix directly
-// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
-// All keys exist as as KEY_XXX constants.
-// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
-// keyboard_key_pressed(byte register(X) key)
-keyboard_key_pressed: {
-    // colidx = key&7
-    txa
-    and #7
-    tay
-    // rowidx = key>>3
-    txa
-    lsr
-    lsr
-    lsr
-    // keyboard_matrix_read(rowidx)
-    tax
-    jsr keyboard_matrix_read
-    // keyboard_matrix_read(rowidx)
-    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
-    and keyboard_matrix_col_bitmask,y
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // CIA1->PORT_A_DDR = $ff
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
     // }
     rts
 }
@@ -257,16 +246,27 @@ keyboard_get_keycode: {
     // }
     rts
 }
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // CIA1->PORT_A_DDR = $ff
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA1->PORT_B_DDR = $00
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+// Determines whether a specific key is currently pressed by accessing the matrix directly
+// The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
+// All keys exist as as KEY_XXX constants.
+// Returns zero if the key is not pressed and a non-zero value if the key is currently pressed
+// keyboard_key_pressed(byte register(X) key)
+keyboard_key_pressed: {
+    // colidx = key&7
+    txa
+    and #7
+    tay
+    // rowidx = key>>3
+    txa
+    lsr
+    lsr
+    lsr
+    // keyboard_matrix_read(rowidx)
+    tax
+    jsr keyboard_matrix_read
+    // keyboard_matrix_read(rowidx)
+    // keyboard_matrix_read(rowidx) & keyboard_matrix_col_bitmask[colidx]
+    and keyboard_matrix_col_bitmask,y
     // }
     rts
 }

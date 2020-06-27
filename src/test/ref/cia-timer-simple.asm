@@ -24,6 +24,55 @@ main: {
     jsr print_ulong_at
     jmp __b1
 }
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
+    lda #<$ffffffff
+    sta CIA2_TIMER_AB
+    lda #>$ffffffff
+    sta CIA2_TIMER_AB+1
+    lda #<$ffffffff>>$10
+    sta CIA2_TIMER_AB+2
+    lda #>$ffffffff>>$10
+    sta CIA2_TIMER_AB+3
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // }
+    rts
+}
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = 9
+    // 0xffffffff - *CIA2_TIMER_AB
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta.z return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta.z return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta.z return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta.z return+3
+    // }
+    rts
+}
 // Print a unsigned long as HEX at a specific position
 // print_ulong_at(dword zp(9) dw)
 print_ulong_at: {
@@ -119,55 +168,6 @@ print_char_at: {
     txa
     ldy #0
     sta (at),y
-    // }
-    rts
-}
-// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
-// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
-clock: {
-    .label return = 9
-    // 0xffffffff - *CIA2_TIMER_AB
-    lda #<$ffffffff
-    sec
-    sbc CIA2_TIMER_AB
-    sta.z return
-    lda #>$ffffffff
-    sbc CIA2_TIMER_AB+1
-    sta.z return+1
-    lda #<$ffffffff>>$10
-    sbc CIA2_TIMER_AB+2
-    sta.z return+2
-    lda #>$ffffffff>>$10
-    sbc CIA2_TIMER_AB+3
-    sta.z return+3
-    // }
-    rts
-}
-// Reset & start the processor clock time. The value can be read using clock().
-// This uses CIA #2 Timer A+B on the C64
-clock_start: {
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // *CIA2_TIMER_AB = 0xffffffff
-    lda #<$ffffffff
-    sta CIA2_TIMER_AB
-    lda #>$ffffffff
-    sta CIA2_TIMER_AB+1
-    lda #<$ffffffff>>$10
-    sta CIA2_TIMER_AB+2
-    lda #>$ffffffff>>$10
-    sta CIA2_TIMER_AB+3
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    lda #CIA_TIMER_CONTROL_START
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // }
     rts
 }

@@ -115,22 +115,6 @@ keyboard_key_pressed: {
     // }
     rts
 }
-// Read a single row of the keyboard matrix
-// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-// Returns the keys pressed on the row as bits according to the C64 key matrix.
-// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(X) rowid)
-keyboard_matrix_read: {
-    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
-    lda keyboard_matrix_row_bitmask,x
-    sta CIA1
-    // ~CIA1->PORT_B
-    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
-    eor #$ff
-    // }
-    rts
-}
 pressed: {
     // (*BG_COLOR)++;
     inc BG_COLOR
@@ -144,6 +128,22 @@ pressed: {
     bne __breturn
     jmp __b1
   __breturn:
+    // }
+    rts
+}
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(X) rowid)
+keyboard_matrix_read: {
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
+    lda keyboard_matrix_row_bitmask,x
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
+    eor #$ff
     // }
     rts
 }

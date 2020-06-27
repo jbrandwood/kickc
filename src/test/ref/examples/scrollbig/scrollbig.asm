@@ -17,8 +17,8 @@
   .label SCREEN = $400
   .label current_bit = 2
   // Scroll the next bit from the current char onto the screen - trigger next char if needed
-  .label current_chargen = 7
-  .label nxt = 5
+  .label current_chargen = 3
+  .label nxt = 7
 main: {
     // fillscreen(SCREEN, $20)
     jsr fillscreen
@@ -52,6 +52,38 @@ main: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     jmp __b1
 }
+// Fill the screen with one char
+fillscreen: {
+    .const fill = $20
+    .label cursor = 3
+    lda #<SCREEN
+    sta.z cursor
+    lda #>SCREEN
+    sta.z cursor+1
+  __b1:
+    // for( char* cursor = screen; cursor < screen+1000; cursor++)
+    lda.z cursor+1
+    cmp #>SCREEN+$3e8
+    bcc __b2
+    bne !+
+    lda.z cursor
+    cmp #<SCREEN+$3e8
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    // *cursor = fill
+    lda #fill
+    ldy #0
+    sta (cursor),y
+    // for( char* cursor = screen; cursor < screen+1000; cursor++)
+    inc.z cursor
+    bne !+
+    inc.z cursor+1
+  !:
+    jmp __b1
+}
 scroll_soft: {
     // if(--scroll==$ff)
     dex
@@ -67,9 +99,9 @@ scroll_soft: {
     rts
 }
 scroll_bit: {
-    .label __7 = 7
-    .label c = 7
-    .label sc = 3
+    .label __7 = 3
+    .label c = 3
+    .label sc = 5
     // current_bit = current_bit/2
     lsr.z current_bit
     // if(current_bit==0)
@@ -151,6 +183,30 @@ scroll_bit: {
     // }
     rts
 }
+// Find the next char of the scroll text
+next_char: {
+    // c = *nxt
+    ldy #0
+    lda (nxt),y
+    tax
+    // if(c==0)
+    cpx #0
+    bne __b1
+    // c = *nxt
+    ldx TEXT
+    lda #<TEXT
+    sta.z nxt
+    lda #>TEXT
+    sta.z nxt+1
+  __b1:
+    // nxt++;
+    inc.z nxt
+    bne !+
+    inc.z nxt+1
+  !:
+    // }
+    rts
+}
 scroll_hard: {
     ldx #0
   // Hard scroll
@@ -187,62 +243,6 @@ scroll_hard: {
     sta SCREEN+$28*7,x
     // for(char i=0;i!=39;i++)
     inx
-    jmp __b1
-}
-// Find the next char of the scroll text
-next_char: {
-    // c = *nxt
-    ldy #0
-    lda (nxt),y
-    tax
-    // if(c==0)
-    cpx #0
-    bne __b1
-    // c = *nxt
-    ldx TEXT
-    lda #<TEXT
-    sta.z nxt
-    lda #>TEXT
-    sta.z nxt+1
-  __b1:
-    // nxt++;
-    inc.z nxt
-    bne !+
-    inc.z nxt+1
-  !:
-    // }
-    rts
-}
-// Fill the screen with one char
-fillscreen: {
-    .const fill = $20
-    .label cursor = 7
-    lda #<SCREEN
-    sta.z cursor
-    lda #>SCREEN
-    sta.z cursor+1
-  __b1:
-    // for( char* cursor = screen; cursor < screen+1000; cursor++)
-    lda.z cursor+1
-    cmp #>SCREEN+$3e8
-    bcc __b2
-    bne !+
-    lda.z cursor
-    cmp #<SCREEN+$3e8
-    bcc __b2
-  !:
-    // }
-    rts
-  __b2:
-    // *cursor = fill
-    lda #fill
-    ldy #0
-    sta (cursor),y
-    // for( char* cursor = screen; cursor < screen+1000; cursor++)
-    inc.z cursor
-    bne !+
-    inc.z cursor+1
-  !:
     jmp __b1
 }
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "

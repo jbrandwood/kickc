@@ -57,6 +57,32 @@ main: {
     // }
     rts
 }
+cls: {
+    .label screen = $400
+    .label sc = 2
+    lda #<screen
+    sta.z sc
+    lda #>screen
+    sta.z sc+1
+  __b1:
+    // *sc=' '
+    lda #' '
+    ldy #0
+    sta (sc),y
+    // for( unsigned char *sc: screen..screen+999)
+    inc.z sc
+    bne !+
+    inc.z sc+1
+  !:
+    lda.z sc+1
+    cmp #>screen+$3e7+1
+    bne __b1
+    lda.z sc
+    cmp #<screen+$3e7+1
+    bne __b1
+    // }
+    rts
+}
 // Hexadecimal utoa() for an unsigned int (16bits)
 // utoa16w(word zp(2) value, byte* zp(4) dst)
 utoa16w: {
@@ -127,32 +153,6 @@ utoa16n: {
     inc.z utoa16w.dst+1
   !:
   __breturn:
-    // }
-    rts
-}
-cls: {
-    .label screen = $400
-    .label sc = 2
-    lda #<screen
-    sta.z sc
-    lda #>screen
-    sta.z sc+1
-  __b1:
-    // *sc=' '
-    lda #' '
-    ldy #0
-    sta (sc),y
-    // for( unsigned char *sc: screen..screen+999)
-    inc.z sc
-    bne !+
-    inc.z sc+1
-  !:
-    lda.z sc+1
-    cmp #>screen+$3e7+1
-    bne __b1
-    lda.z sc
-    cmp #<screen+$3e7+1
-    bne __b1
     // }
     rts
 }

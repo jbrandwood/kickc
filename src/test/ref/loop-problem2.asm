@@ -11,23 +11,6 @@ main: {
     // }
     rts
 }
-mode_ctrl: {
-  __b1:
-    // before = *BORDER_COLOR
-    lda BORDER_COLOR
-    // if(before==$ff)
-    cmp #$ff
-    beq __b2
-    // *BORDER_COLOR = 3
-    lda #3
-    sta BORDER_COLOR
-    jmp __b1
-  __b2:
-    // *BORDER_COLOR = 2
-    lda #2
-    sta BORDER_COLOR
-    jmp __b1
-}
 print_cls: {
     .label sc = 2
     lda #<SCREEN
@@ -54,5 +37,22 @@ print_cls: {
     bne !+
     inc.z sc+1
   !:
+    jmp __b1
+}
+mode_ctrl: {
+  __b1:
+    // before = *BORDER_COLOR
+    lda BORDER_COLOR
+    // if(before==$ff)
+    cmp #$ff
+    beq __b2
+    // *BORDER_COLOR = 3
+    lda #3
+    sta BORDER_COLOR
+    jmp __b1
+  __b2:
+    // *BORDER_COLOR = 2
+    lda #2
+    sta BORDER_COLOR
     jmp __b1
 }

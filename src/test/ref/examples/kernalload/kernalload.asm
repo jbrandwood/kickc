@@ -69,6 +69,21 @@ main: {
     .byte 0
 }
 .segment Code
+// Load a file to memory
+// Returns a status:
+// - 0xff: Success
+// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
+loadFileToMemory: {
+    .label device = 8
+    // setnam(filename)
+    jsr setnam
+    // setlfs(device)
+    jsr setlfs
+    // load(address, false)
+    jsr load
+    // }
+    rts
+}
 // Basic ERROR function
 // ERROR. Show error.
 // error(byte register(A) err)
@@ -82,18 +97,42 @@ error: {
     // }
     rts
 }
-// Load a file to memory
-// Returns a status:
-// - 0xff: Success
-// - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
-loadFileToMemory: {
-    .label device = 8
-    // setnam(filename)
-    jsr setnam
-    // setlfs(device)
-    jsr setlfs
-    // load(address, false)
-    jsr load
+// Kernal SETNAM function
+// SETNAM. Set file name parameters.
+setnam: {
+    .label filename_len = $fd
+    .label filename_ptr = $fe
+    .label __0 = 4
+    // strlen(filename)
+    jsr strlen
+    // strlen(filename)
+    // *filename_len = (char)strlen(filename)
+    lda.z __0
+    sta filename_len
+    // *filename_ptr = filename
+    lda #<main.filename
+    sta filename_ptr
+    lda #>main.filename
+    sta filename_ptr+1
+    // asm
+    lda filename_len
+    ldx filename_ptr
+    ldy filename_ptr+1
+    jsr $ffbd
+    // }
+    rts
+}
+// SETLFS. Set file parameters.
+setlfs: {
+    .label deviceNum = $ff
+    // *deviceNum = device
+    lda #loadFileToMemory.device
+    sta deviceNum
+    // asm
+    tax
+    lda #1
+    ldy #0
+    jsr $ffba
     // }
     rts
 }
@@ -121,45 +160,6 @@ load: {
   error:
     sta status
     // return *status;
-    // }
-    rts
-}
-// SETLFS. Set file parameters.
-setlfs: {
-    .label deviceNum = $ff
-    // *deviceNum = device
-    lda #loadFileToMemory.device
-    sta deviceNum
-    // asm
-    tax
-    lda #1
-    ldy #0
-    jsr $ffba
-    // }
-    rts
-}
-// Kernal SETNAM function
-// SETNAM. Set file name parameters.
-setnam: {
-    .label filename_len = $fd
-    .label filename_ptr = $fe
-    .label __0 = 4
-    // strlen(filename)
-    jsr strlen
-    // strlen(filename)
-    // *filename_len = (char)strlen(filename)
-    lda.z __0
-    sta filename_len
-    // *filename_ptr = filename
-    lda #<main.filename
-    sta filename_ptr
-    lda #>main.filename
-    sta filename_ptr+1
-    // asm
-    lda filename_len
-    ldx filename_ptr
-    ldy filename_ptr+1
-    jsr $ffbd
     // }
     rts
 }

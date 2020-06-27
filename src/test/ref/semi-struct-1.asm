@@ -13,8 +13,8 @@
   // The number of points
   .const NUM_POINTS = 4
   .label print_screen = $400
-  .label print_line_cursor = 4
-  .label print_char_cursor = 9
+  .label print_line_cursor = 7
+  .label print_char_cursor = 5
 // Initialize some points and print them
 main: {
     // init_points()
@@ -24,10 +24,51 @@ main: {
     // }
     rts
 }
+// Initialize points
+init_points: {
+    .label getPoint1_return = 7
+    .label pos = 2
+    lda #$a
+    sta.z pos
+    ldx #0
+  __b1:
+    // idx*SIZEOF_POINT
+    txa
+    asl
+    tay
+    // points+idx*SIZEOF_POINT
+    tya
+    clc
+    adc #<points
+    sta.z getPoint1_return
+    lda #>points
+    adc #0
+    sta.z getPoint1_return+1
+    // *pointXpos(point) = pos
+    lda.z pos
+    sta points,y
+    // pos +=10
+    lda #$a
+    clc
+    adc.z pos
+    // *pointYpos(point) = pos
+    ldy #1
+    sta (getPoint1_return),y
+    // pos +=10
+    clc
+    adc #$a
+    sta.z pos
+    // for(byte i: 0..NUM_POINTS-1)
+    inx
+    cpx #NUM_POINTS-1+1
+    bne __b1
+    // }
+    rts
+}
 // Print points
 print_points: {
-    .label point = 7
-    .label i = 6
+    .label point = 9
+    .label i = 2
     // print_cls()
     jsr print_cls
     lda #<print_screen
@@ -81,26 +122,10 @@ print_points: {
     str: .text " "
     .byte 0
 }
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
 }
@@ -127,24 +152,10 @@ print_uchar: {
     // }
     rts
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
 // Print a zero-terminated string
-// print_str(byte* zp(2) str)
+// print_str(byte* zp(3) str)
 print_str: {
-    .label str = 2
+    .label str = 3
     lda #<print_points.str
     sta.z str
     lda #>print_points.str
@@ -169,10 +180,26 @@ print_str: {
   !:
     jmp __b1
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
     // }
     rts
 }
@@ -182,7 +209,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 4
+    .label dst = 3
     lda #<str
     sta.z dst
     lda #>str
@@ -209,44 +236,17 @@ memset: {
   !:
     jmp __b1
 }
-// Initialize points
-init_points: {
-    .label getPoint1_return = 9
-    .label pos = 6
-    lda #$a
-    sta.z pos
-    ldx #0
-  __b1:
-    // idx*SIZEOF_POINT
-    txa
-    asl
-    tay
-    // points+idx*SIZEOF_POINT
-    tya
-    clc
-    adc #<points
-    sta.z getPoint1_return
-    lda #>points
-    adc #0
-    sta.z getPoint1_return+1
-    // *pointXpos(point) = pos
-    lda.z pos
-    sta points,y
-    // pos +=10
-    lda #$a
-    clc
-    adc.z pos
-    // *pointYpos(point) = pos
-    ldy #1
-    sta (getPoint1_return),y
-    // pos +=10
-    clc
-    adc #$a
-    sta.z pos
-    // for(byte i: 0..NUM_POINTS-1)
-    inx
-    cpx #NUM_POINTS-1+1
-    bne __b1
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
     // }
     rts
 }

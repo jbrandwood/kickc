@@ -4,19 +4,19 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_char_cursor = $d
-  .label print_line_cursor = 6
-  .label print_char_cursor_1 = 6
-  .label print_line_cursor_1 = $f
+  .label print_char_cursor = $11
+  .label print_line_cursor = 8
+  .label print_char_cursor_1 = 8
+  .label print_line_cursor_1 = 6
 main: {
     .label i = 2
-    .label __5 = 9
-    .label __6 = 9
-    .label __7 = 9
-    .label __8 = 9
-    .label __9 = 9
-    .label __10 = 9
-    .label __11 = 9
+    .label __5 = $b
+    .label __6 = $b
+    .label __7 = $b
+    .label __8 = $b
+    .label __9 = $b
+    .label __10 = $b
+    .label __11 = $b
     // print_cls()
     jsr print_cls
     lda #<print_screen
@@ -175,6 +175,24 @@ main: {
     sta.z print_line_cursor_1+1
     jmp __b1
 }
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
+// Print a unsigned long as DECIMAL
+// print_ulong_decimal(dword zp($b) w)
+print_ulong_decimal: {
+    .label w = $b
+    // ultoa(w, decimal_digits_long, DECIMAL)
+    jsr ultoa
+    // print_str(decimal_digits_long)
+    jsr print_str
+    // }
+    rts
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -203,75 +221,51 @@ print_ln: {
     sta.z print_line_cursor_1+1
     jmp __b1
 }
-// Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp(9) w)
-print_ulong_decimal: {
-    .label w = 9
-    // ultoa(w, decimal_digits_long, DECIMAL)
-    jsr ultoa
-    // print_str(decimal_digits_long)
-    jsr print_str
-    // }
-    rts
-}
-// Print a zero-terminated string
-// print_str(byte* zp(6) str)
-print_str: {
-    .label str = 6
-    lda.z print_char_cursor_1
-    sta.z print_char_cursor
-    lda.z print_char_cursor_1+1
-    sta.z print_char_cursor+1
-    lda #<decimal_digits_long
-    sta.z str
-    lda #>decimal_digits_long
-    sta.z str+1
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = 8
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
   __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
     bne __b2
     // }
     rts
   __b2:
-    // print_char(*(str++))
+    // *dst = c
+    lda #c
     ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
     bne !+
-    inc.z str+1
+    inc.z dst+1
   !:
     jmp __b1
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
 }
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp(9) value, byte* zp($d) buffer)
+// ultoa(dword zp($b) value, byte* zp($f) buffer)
 ultoa: {
     .const max_digits = $a
-    .label digit_value = $11
-    .label buffer = $d
-    .label digit = 8
-    .label value = 9
+    .label digit_value = $13
+    .label buffer = $f
+    .label digit = $a
+    .label value = $b
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long
@@ -351,6 +345,38 @@ ultoa: {
     ldx #1
     jmp __b4
 }
+// Print a zero-terminated string
+// print_str(byte* zp($f) str)
+print_str: {
+    .label str = $f
+    lda.z print_char_cursor_1
+    sta.z print_char_cursor
+    lda.z print_char_cursor_1+1
+    sta.z print_char_cursor+1
+    lda #<decimal_digits_long
+    sta.z str
+    lda #>decimal_digits_long
+    sta.z str+1
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
 // Each time the digit is increased sub is subtracted from value.
@@ -359,12 +385,12 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($d) buffer, dword zp(9) value, dword zp($11) sub)
+// ultoa_append(byte* zp($f) buffer, dword zp($b) value, dword zp($13) sub)
 ultoa_append: {
-    .label buffer = $d
-    .label value = 9
-    .label sub = $11
-    .label return = 9
+    .label buffer = $f
+    .label value = $b
+    .label sub = $13
+    .label return = $b
     ldx #0
   __b1:
     // while (value >= sub)
@@ -409,45 +435,19 @@ ultoa_append: {
     sta.z value+3
     jmp __b1
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = $f
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
     bne !+
-    inc.z dst+1
+    inc.z print_char_cursor+1
   !:
-    jmp __b1
+    // }
+    rts
 }
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"

@@ -50,19 +50,125 @@ main: {
   !:
     jmp __b2
 }
+// Make charset from proto chars
+// init_font_hex(byte* zp(7) charset)
+init_font_hex: {
+    .label __0 = $19
+    .label idx = $a
+    .label proto_lo = $b
+    .label charset = 7
+    .label c1 = 9
+    .label proto_hi = 5
+    .label c = 4
+    lda #0
+    sta.z c
+    lda #<FONT_HEX_PROTO
+    sta.z proto_hi
+    lda #>FONT_HEX_PROTO
+    sta.z proto_hi+1
+    lda #<CHARSET
+    sta.z charset
+    lda #>CHARSET
+    sta.z charset+1
+  __b1:
+    lda #0
+    sta.z c1
+    lda #<FONT_HEX_PROTO
+    sta.z proto_lo
+    lda #>FONT_HEX_PROTO
+    sta.z proto_lo+1
+  __b2:
+    // charset[idx++] = 0
+    lda #0
+    tay
+    sta (charset),y
+    lda #1
+    sta.z idx
+    ldx #0
+  __b3:
+    // proto_hi[i]<<4
+    txa
+    tay
+    lda (proto_hi),y
+    asl
+    asl
+    asl
+    asl
+    sta.z __0
+    // proto_lo[i]<<1
+    txa
+    tay
+    lda (proto_lo),y
+    asl
+    // proto_hi[i]<<4 | proto_lo[i]<<1
+    ora.z __0
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
+    inc.z idx
+    // for( byte i: 0..4)
+    inx
+    cpx #5
+    bne __b3
+    // charset[idx++] = 0
+    lda #0
+    ldy.z idx
+    sta (charset),y
+    // charset[idx++] = 0;
+    iny
+    // charset[idx++] = 0
+    sta (charset),y
+    // proto_lo += 5
+    lda #5
+    clc
+    adc.z proto_lo
+    sta.z proto_lo
+    bcc !+
+    inc.z proto_lo+1
+  !:
+    // charset += 8
+    lda #8
+    clc
+    adc.z charset
+    sta.z charset
+    bcc !+
+    inc.z charset+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c1
+    lda #$10
+    cmp.z c1
+    bne __b2
+    // proto_hi += 5
+    lda #5
+    clc
+    adc.z proto_hi
+    sta.z proto_hi
+    bcc !+
+    inc.z proto_hi+1
+  !:
+    // for( byte c: 0..15 )
+    inc.z c
+    lda #$10
+    cmp.z c
+    bne __b1
+    // }
+    rts
+}
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
 init_angle_screen: {
-    .label __7 = 6
+    .label __7 = $f
     .label xw = $15
     .label yw = $17
-    .label angle_w = 6
+    .label angle_w = $f
     .label ang_w = $19
-    .label x = $13
-    .label xb = $14
-    .label screen_topline = $c
-    .label screen_bottomline = $f
-    .label y = $e
+    .label x = 9
+    .label xb = $a
+    .label screen_topline = 5
+    .label screen_bottomline = 7
+    .label y = 4
     lda #<SCREEN+$28*$c
     sta.z screen_bottomline
     lda #>SCREEN+$28*$c
@@ -172,14 +278,14 @@ init_angle_screen: {
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
 // atan2_16(signed word zp($15) x, signed word zp($17) y)
 atan2_16: {
-    .label __2 = $11
-    .label __7 = 4
-    .label yi = $11
-    .label xi = 4
-    .label angle = 6
-    .label xd = $a
-    .label yd = 8
-    .label return = 6
+    .label __2 = $b
+    .label __7 = $d
+    .label yi = $b
+    .label xi = $d
+    .label angle = $f
+    .label xd = $13
+    .label yd = $11
+    .label return = $f
     .label x = $15
     .label y = $17
     // (y>=0)?y:-y
@@ -381,112 +487,6 @@ atan2_16: {
     lda.z y+1
     sta.z yi+1
     jmp __b3
-}
-// Make charset from proto chars
-// init_font_hex(byte* zp($f) charset)
-init_font_hex: {
-    .label __0 = $19
-    .label idx = $14
-    .label proto_lo = $11
-    .label charset = $f
-    .label c1 = $13
-    .label proto_hi = $c
-    .label c = $e
-    lda #0
-    sta.z c
-    lda #<FONT_HEX_PROTO
-    sta.z proto_hi
-    lda #>FONT_HEX_PROTO
-    sta.z proto_hi+1
-    lda #<CHARSET
-    sta.z charset
-    lda #>CHARSET
-    sta.z charset+1
-  __b1:
-    lda #0
-    sta.z c1
-    lda #<FONT_HEX_PROTO
-    sta.z proto_lo
-    lda #>FONT_HEX_PROTO
-    sta.z proto_lo+1
-  __b2:
-    // charset[idx++] = 0
-    lda #0
-    tay
-    sta (charset),y
-    lda #1
-    sta.z idx
-    ldx #0
-  __b3:
-    // proto_hi[i]<<4
-    txa
-    tay
-    lda (proto_hi),y
-    asl
-    asl
-    asl
-    asl
-    sta.z __0
-    // proto_lo[i]<<1
-    txa
-    tay
-    lda (proto_lo),y
-    asl
-    // proto_hi[i]<<4 | proto_lo[i]<<1
-    ora.z __0
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = proto_hi[i]<<4 | proto_lo[i]<<1;
-    inc.z idx
-    // for( byte i: 0..4)
-    inx
-    cpx #5
-    bne __b3
-    // charset[idx++] = 0
-    lda #0
-    ldy.z idx
-    sta (charset),y
-    // charset[idx++] = 0;
-    iny
-    // charset[idx++] = 0
-    sta (charset),y
-    // proto_lo += 5
-    lda #5
-    clc
-    adc.z proto_lo
-    sta.z proto_lo
-    bcc !+
-    inc.z proto_lo+1
-  !:
-    // charset += 8
-    lda #8
-    clc
-    adc.z charset
-    sta.z charset
-    bcc !+
-    inc.z charset+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c1
-    lda #$10
-    cmp.z c1
-    bne __b2
-    // proto_hi += 5
-    lda #5
-    clc
-    adc.z proto_hi
-    sta.z proto_hi
-    bcc !+
-    inc.z proto_hi+1
-  !:
-    // for( byte c: 0..15 )
-    inc.z c
-    lda #$10
-    cmp.z c
-    bne __b1
-    // }
-    rts
 }
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4

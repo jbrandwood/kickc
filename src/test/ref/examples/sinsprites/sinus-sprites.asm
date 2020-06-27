@@ -29,11 +29,11 @@
   .label sprites = $2000
   .label SCREEN = $400
   // Current index within the progress cursor (0-7)
-  .label progress_idx = $a
+  .label progress_idx = 6
   // Current position of the progress cursor
-  .label progress_cursor = 2
-  .label sin_idx_x = 6
-  .label sin_idx_y = 8
+  .label progress_cursor = $a
+  .label sin_idx_x = 4
+  .label sin_idx_y = 5
 main: {
     // init()
     jsr init
@@ -49,14 +49,72 @@ main: {
     jsr anim
     jmp __b1
 }
+init: {
+    // clear_screen()
+    jsr clear_screen
+    ldx #0
+  __b1:
+    // COLS[i] = $0
+    lda #0
+    sta COLS,x
+    // COLS[40+i] = $b
+    lda #$b
+    sta COLS+$28,x
+    // for( char i : 0..39)
+    inx
+    cpx #$28
+    bne __b1
+    // place_sprites()
+    jsr place_sprites
+    // gen_sprites()
+    jsr gen_sprites
+    // progress_init(SCREEN)
+    lda #<SCREEN
+    sta.z progress_init.line
+    lda #>SCREEN
+    sta.z progress_init.line+1
+    jsr progress_init
+    // gen_sintab(sintab_x, sinlen_x, $00, $ff)
+    lda #<sintab_x
+    sta.z gen_sintab.sintab
+    lda #>sintab_x
+    sta.z gen_sintab.sintab+1
+    lda #sinlen_x
+    sta.z gen_sintab.length
+    lda #0
+    sta.z gen_sintab.min
+    ldx #$ff
+    jsr gen_sintab
+    // progress_init(SCREEN+40)
+    lda #<SCREEN+$28
+    sta.z progress_init.line
+    lda #>SCREEN+$28
+    sta.z progress_init.line+1
+    jsr progress_init
+    // gen_sintab(sintab_y, sinlen_y, $32, $d0)
+    lda #<sintab_y
+    sta.z gen_sintab.sintab
+    lda #>sintab_y
+    sta.z gen_sintab.sintab+1
+    lda #sinlen_y
+    sta.z gen_sintab.length
+    lda #$32
+    sta.z gen_sintab.min
+    ldx #$d0
+    jsr gen_sintab
+    // clear_screen()
+    jsr clear_screen
+    // }
+    rts
+}
 anim: {
-    .label __7 = $a
-    .label xidx = 9
-    .label yidx = 4
-    .label x = $f
-    .label x_msb = $a
-    .label j2 = $b
-    .label j = 5
+    .label __7 = 8
+    .label xidx = 6
+    .label yidx = 2
+    .label x = $13
+    .label x_msb = 8
+    .label j2 = 9
+    .label j = 3
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // xidx = sin_idx_x
@@ -155,64 +213,6 @@ anim: {
     // }
     rts
 }
-init: {
-    // clear_screen()
-    jsr clear_screen
-    ldx #0
-  __b1:
-    // COLS[i] = $0
-    lda #0
-    sta COLS,x
-    // COLS[40+i] = $b
-    lda #$b
-    sta COLS+$28,x
-    // for( char i : 0..39)
-    inx
-    cpx #$28
-    bne __b1
-    // place_sprites()
-    jsr place_sprites
-    // gen_sprites()
-    jsr gen_sprites
-    // progress_init(SCREEN)
-    lda #<SCREEN
-    sta.z progress_init.line
-    lda #>SCREEN
-    sta.z progress_init.line+1
-    jsr progress_init
-    // gen_sintab(sintab_x, sinlen_x, $00, $ff)
-    lda #<sintab_x
-    sta.z gen_sintab.sintab
-    lda #>sintab_x
-    sta.z gen_sintab.sintab+1
-    lda #sinlen_x
-    sta.z gen_sintab.length
-    lda #0
-    sta.z gen_sintab.min
-    ldx #$ff
-    jsr gen_sintab
-    // progress_init(SCREEN+40)
-    lda #<SCREEN+$28
-    sta.z progress_init.line
-    lda #>SCREEN+$28
-    sta.z progress_init.line+1
-    jsr progress_init
-    // gen_sintab(sintab_y, sinlen_y, $32, $d0)
-    lda #<sintab_y
-    sta.z gen_sintab.sintab
-    lda #>sintab_y
-    sta.z gen_sintab.sintab+1
-    lda #sinlen_y
-    sta.z gen_sintab.length
-    lda #$32
-    sta.z gen_sintab.min
-    ldx #$d0
-    jsr gen_sintab
-    // clear_screen()
-    jsr clear_screen
-    // }
-    rts
-}
 clear_screen: {
     .label sc = $f
     lda #<SCREEN
@@ -243,20 +243,126 @@ clear_screen: {
   !:
     jmp __b1
 }
+place_sprites: {
+    .label sprites_ptr = SCREEN+$3f8
+    .label spr_id = 4
+    .label spr_x = 6
+    .label col = 9
+    .label j2 = 8
+    .label j = 5
+    // VICII->SPRITES_ENABLE = %01111111
+    lda #$7f
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
+    // VICII->SPRITES_EXPAND_X = %01111111
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X
+    // VICII->SPRITES_EXPAND_Y = %01111111
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y
+    lda #5
+    sta.z col
+    lda #0
+    sta.z j2
+    lda #$3c
+    sta.z spr_x
+    lda #0
+    sta.z j
+    lda #sprites/$40
+    sta.z spr_id
+  __b1:
+    // sprites_ptr[j] = spr_id++
+    lda.z spr_id
+    ldy.z j
+    sta sprites_ptr,y
+    // sprites_ptr[j] = spr_id++;
+    inc.z spr_id
+    // SPRITES_XPOS[j2] = spr_x
+    lda.z spr_x
+    ldy.z j2
+    sta SPRITES_XPOS,y
+    // SPRITES_YPOS[j2] = 80
+    lda #$50
+    sta SPRITES_YPOS,y
+    // SPRITES_COLOR[j] = col
+    lda.z col
+    ldy.z j
+    sta SPRITES_COLOR,y
+    // spr_x = spr_x + 32
+    lax.z spr_x
+    axs #-[$20]
+    stx.z spr_x
+    // col = col^($7^$5)
+    lda #7^5
+    eor.z col
+    sta.z col
+    // j2++;
+    ldx.z j2
+    inx
+    inx
+    stx.z j2
+    // for( char j : 0..6)
+    inc.z j
+    lda #7
+    cmp.z j
+    bne __b1
+    // }
+    rts
+}
+gen_sprites: {
+    .label spr = $f
+    .label i = 2
+    lda #<sprites
+    sta.z spr
+    lda #>sprites
+    sta.z spr+1
+    lda #0
+    sta.z i
+  __b1:
+    // gen_chargen_sprite(cml[i], spr)
+    ldy.z i
+    ldx cml,y
+    lda.z spr
+    sta.z gen_chargen_sprite.sprite
+    lda.z spr+1
+    sta.z gen_chargen_sprite.sprite+1
+    jsr gen_chargen_sprite
+    // spr = spr + $40
+    lda #$40
+    clc
+    adc.z spr
+    sta.z spr
+    bcc !+
+    inc.z spr+1
+  !:
+    // for( char i : 0..6 )
+    inc.z i
+    lda #7
+    cmp.z i
+    bne __b1
+    // }
+    rts
+    cml: .text "camelot"
+}
+// Initialize the PETSCII progress bar
+// progress_init(byte* zp($a) line)
+progress_init: {
+    .label line = $a
+    // progress_cursor = line
+    // }
+    rts
+}
 // Generate a sinus table using BASIC floats
 // - sintab is a pointer to the table to fill
 // - length is the length of the sine table
 // - min is the minimum value of the generated sinus
 // - max is the maximum value of the generated sinus
-// gen_sintab(byte* zp($f) sintab, byte zp(8) length, byte zp(6) min, byte register(X) max)
+// gen_sintab(byte* zp($13) sintab, byte zp(4) length, byte zp(3) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
     .label f_2pi = $e2e5
-    .label __20 = $13
-    .label i = 9
-    .label min = 6
-    .label length = 8
-    .label sintab = $f
+    .label __20 = $15
+    .label i = 5
+    .label min = 3
+    .label length = 4
+    .label sintab = $13
     // setFAC((unsigned int)max)
     txa
     sta.z setFAC.w
@@ -399,230 +505,15 @@ gen_sintab: {
     // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
-// Increase PETSCII progress one bit
-// Done by increasing the character until the idx is 8 and then moving to the next char
-progress_inc: {
-    // if(++progress_idx==8)
-    inc.z progress_idx
-    lda #8
-    cmp.z progress_idx
-    bne __b1
-    // *progress_cursor = progress_chars[8]
-    lda progress_chars+8
-    ldy #0
-    sta (progress_cursor),y
-    // progress_cursor++;
-    inc.z progress_cursor
-    bne !+
-    inc.z progress_cursor+1
-  !:
-    lda #0
-    sta.z progress_idx
-  __b1:
-    // *progress_cursor = progress_chars[progress_idx]
-    ldy.z progress_idx
-    lda progress_chars,y
-    ldy #0
-    sta (progress_cursor),y
-    // }
-    rts
-    // Progress characters
-    progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
-}
-// unsigned int = FAC
-// Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
-// Destroys the value in the FAC in the process
-getFAC: {
-    .label return = $13
-    // asm
-    // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
-    jsr $b1aa
-    sty memLo
-    sta memHi
-    // w = { *memHi, *memLo }
-    tya
-    sta.z return
-    lda memHi
-    sta.z return+1
-    // }
-    rts
-}
-// FAC = MEM+FAC
-// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-// Reads 5 chars from memory
-addMEMtoFAC: {
-    // *memLo = <mem
-    lda #<gen_sintab.f_min
-    sta memLo
-    // *memHi = >mem
-    lda #>gen_sintab.f_min
-    sta memHi
-    // asm
-    lda memLo
-    ldy memHi
-    jsr $b867
-    // }
-    rts
-}
-// FAC = MEM*FAC
-// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-// Reads 5 chars from memory
-// mulFACbyMEM(byte* zp($13) mem)
-mulFACbyMEM: {
-    .label mem = $13
-    // <mem
-    lda.z mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    lda memLo
-    ldy memHi
-    jsr $ba28
-    // }
-    rts
-}
-// FAC = sin(FAC)
-// Set FAC to sinus of the FAC - sin(FAC)
-// Sinus is calculated on radians (0-2*PI)
-sinFAC: {
-    // asm
-    jsr $e26b
-    // }
-    rts
-}
-// FAC = MEM/FAC
-// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-// Reads 5 chars from memory
-// divMEMbyFAC(byte* zp($13) mem)
-divMEMbyFAC: {
-    .label mem = $13
-    // <mem
-    lda.z mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    lda memLo
-    ldy memHi
-    jsr $bb0f
-    // }
-    rts
-}
-// FAC = unsigned int
-// Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
-// setFAC(word zp($13) w)
-setFAC: {
-    .label prepareMEM1_mem = $13
-    .label w = $13
-    // <mem
-    lda.z prepareMEM1_mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z prepareMEM1_mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    // Load unsigned int register Y,A into FAC (floating point accumulator)
-    ldy memLo
-    jsr $b391
-    // }
-    rts
-}
-// MEM = FAC
-// Stores the value of the FAC to memory
-// Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zp($13) mem)
-setMEMtoFAC: {
-    .label mem = $13
-    // <mem
-    lda.z mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    ldx memLo
-    tay
-    jsr $bbd4
-    // }
-    rts
-}
-// FAC = ARG-FAC
-// Set FAC to ARG minus FAC
-subFACfromARG: {
-    // asm
-    jsr $b853
-    // }
-    rts
-}
-// ARG = FAC
-// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
-setARGtoFAC: {
-    // asm
-    jsr $bc0f
-    // }
-    rts
-}
-// Initialize the PETSCII progress bar
-// progress_init(byte* zp(2) line)
-progress_init: {
-    .label line = 2
-    rts
-}
-gen_sprites: {
-    .label spr = 2
-    .label i = $b
-    lda #<sprites
-    sta.z spr
-    lda #>sprites
-    sta.z spr+1
-    lda #0
-    sta.z i
-  __b1:
-    // gen_chargen_sprite(cml[i], spr)
-    ldy.z i
-    ldx cml,y
-    lda.z spr
-    sta.z gen_chargen_sprite.sprite
-    lda.z spr+1
-    sta.z gen_chargen_sprite.sprite+1
-    jsr gen_chargen_sprite
-    // spr = spr + $40
-    lda #$40
-    clc
-    adc.z spr
-    sta.z spr
-    bcc !+
-    inc.z spr+1
-  !:
-    // for( char i : 0..6 )
-    inc.z i
-    lda #7
-    cmp.z i
-    bne __b1
-    // }
-    rts
-    cml: .text "camelot"
-}
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
-// gen_chargen_sprite(byte register(X) ch, byte* zp($f) sprite)
+// gen_chargen_sprite(byte register(X) ch, byte* zp($a) sprite)
 gen_chargen_sprite: {
-    .label __0 = $13
-    .label __14 = $13
-    .label sprite = $f
-    .label chargen = $13
+    .label __0 = $15
+    .label __14 = $15
+    .label sprite = $a
+    .label chargen = $15
     .label bits = 5
     // current sprite char
     .label s_gen = 9
@@ -744,68 +635,179 @@ gen_chargen_sprite: {
     // }
     rts
 }
-place_sprites: {
-    .label sprites_ptr = SCREEN+$3f8
-    .label spr_id = 6
-    .label spr_x = 9
-    .label col = $b
-    .label j2 = $a
-    .label j = 8
-    // VICII->SPRITES_ENABLE = %01111111
-    lda #$7f
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
-    // VICII->SPRITES_EXPAND_X = %01111111
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_X
-    // VICII->SPRITES_EXPAND_Y = %01111111
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_EXPAND_Y
-    lda #5
-    sta.z col
-    lda #0
-    sta.z j2
-    lda #$3c
-    sta.z spr_x
-    lda #0
-    sta.z j
-    lda #sprites/$40
-    sta.z spr_id
-  __b1:
-    // sprites_ptr[j] = spr_id++
-    lda.z spr_id
-    ldy.z j
-    sta sprites_ptr,y
-    // sprites_ptr[j] = spr_id++;
-    inc.z spr_id
-    // SPRITES_XPOS[j2] = spr_x
-    lda.z spr_x
-    ldy.z j2
-    sta SPRITES_XPOS,y
-    // SPRITES_YPOS[j2] = 80
-    lda #$50
-    sta SPRITES_YPOS,y
-    // SPRITES_COLOR[j] = col
-    lda.z col
-    ldy.z j
-    sta SPRITES_COLOR,y
-    // spr_x = spr_x + 32
-    lax.z spr_x
-    axs #-[$20]
-    stx.z spr_x
-    // col = col^($7^$5)
-    lda #7^5
-    eor.z col
-    sta.z col
-    // j2++;
-    ldx.z j2
-    inx
-    inx
-    stx.z j2
-    // for( char j : 0..6)
-    inc.z j
-    lda #7
-    cmp.z j
-    bne __b1
+// FAC = unsigned int
+// Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
+// setFAC(word zp($f) w)
+setFAC: {
+    .label prepareMEM1_mem = $f
+    .label w = $f
+    // <mem
+    lda.z prepareMEM1_mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z prepareMEM1_mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    // Load unsigned int register Y,A into FAC (floating point accumulator)
+    ldy memLo
+    jsr $b391
     // }
     rts
+}
+// ARG = FAC
+// Set the ARG (floating point argument) to the value of the FAC (floating point accumulator)
+setARGtoFAC: {
+    // asm
+    jsr $bc0f
+    // }
+    rts
+}
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zp($f) mem)
+setMEMtoFAC: {
+    .label mem = $f
+    // <mem
+    lda.z mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    ldx memLo
+    tay
+    jsr $bbd4
+    // }
+    rts
+}
+// FAC = ARG-FAC
+// Set FAC to ARG minus FAC
+subFACfromARG: {
+    // asm
+    jsr $b853
+    // }
+    rts
+}
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 chars from memory
+// divMEMbyFAC(byte* zp($15) mem)
+divMEMbyFAC: {
+    .label mem = $15
+    // <mem
+    lda.z mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    lda memLo
+    ldy memHi
+    jsr $bb0f
+    // }
+    rts
+}
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 chars from memory
+addMEMtoFAC: {
+    // *memLo = <mem
+    lda #<gen_sintab.f_min
+    sta memLo
+    // *memHi = >mem
+    lda #>gen_sintab.f_min
+    sta memHi
+    // asm
+    lda memLo
+    ldy memHi
+    jsr $b867
+    // }
+    rts
+}
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 chars from memory
+// mulFACbyMEM(byte* zp($15) mem)
+mulFACbyMEM: {
+    .label mem = $15
+    // <mem
+    lda.z mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    lda memLo
+    ldy memHi
+    jsr $ba28
+    // }
+    rts
+}
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
+sinFAC: {
+    // asm
+    jsr $e26b
+    // }
+    rts
+}
+// unsigned int = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
+// Destroys the value in the FAC in the process
+getFAC: {
+    .label return = $15
+    // asm
+    // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
+    jsr $b1aa
+    sty memLo
+    sta memHi
+    // w = { *memHi, *memLo }
+    tya
+    sta.z return
+    lda memHi
+    sta.z return+1
+    // }
+    rts
+}
+// Increase PETSCII progress one bit
+// Done by increasing the character until the idx is 8 and then moving to the next char
+progress_inc: {
+    // if(++progress_idx==8)
+    inc.z progress_idx
+    lda #8
+    cmp.z progress_idx
+    bne __b1
+    // *progress_cursor = progress_chars[8]
+    lda progress_chars+8
+    ldy #0
+    sta (progress_cursor),y
+    // progress_cursor++;
+    inc.z progress_cursor
+    bne !+
+    inc.z progress_cursor+1
+  !:
+    lda #0
+    sta.z progress_idx
+  __b1:
+    // *progress_cursor = progress_chars[progress_idx]
+    ldy.z progress_idx
+    lda progress_chars,y
+    ldy #0
+    sta (progress_cursor),y
+    // }
+    rts
+    // Progress characters
+    progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
   sintab_x: .fill $dd, 0
   sintab_y: .fill $c5, 0

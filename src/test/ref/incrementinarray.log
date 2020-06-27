@@ -515,32 +515,32 @@ Added new block during phi lifting main::@5(between main::@4 and main::@1)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
-Adding NOP phi() at start of print_ln::@2
 Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of print_cls::@1
+Adding NOP phi() at start of print_ln::@2
 Adding NOP phi() at start of memset
 Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [main] to print_cls:1 print_str:4 print_ln:6 
-Calls in [print_str] to print_char:26 
-Calls in [print_cls] to memset:34 
+Calls in [print_cls] to memset:15 
+Calls in [print_str] to print_char:23 
 
 Created 7 initial phi equivalence classes
 Not coalescing [11] print_char_cursor#37 ← print_line_cursor#0
 Coalesced [12] print_line_cursor#26 ← print_line_cursor#0
 Coalesced [13] main::i#5 ← main::i#1
-Coalesced [14] print_line_cursor#24 ← print_line_cursor#21
-Coalesced (already) [20] print_line_cursor#25 ← print_line_cursor#0
-Coalesced [21] print_char_cursor#35 ← print_char_cursor#32
-Coalesced [28] print_str::str#6 ← print_str::str#0
-Coalesced [29] print_char_cursor#36 ← print_char_cursor#20
-Coalesced [45] memset::dst#4 ← memset::dst#1
+Coalesced [18] print_char_cursor#35 ← print_char_cursor#32
+Coalesced [25] print_str::str#6 ← print_str::str#0
+Coalesced [26] print_char_cursor#36 ← print_char_cursor#20
+Coalesced [27] print_line_cursor#24 ← print_line_cursor#21
+Coalesced (already) [33] print_line_cursor#25 ← print_line_cursor#0
+Coalesced [42] memset::dst#4 ← memset::dst#1
 Coalesced down to 5 phi equivalence classes
 Culled Empty Block (label) main::@2
+Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) print_ln::@2
 Culled Empty Block (label) print_ln::@3
-Culled Empty Block (label) print_cls::@1
 Culled Empty Block (label) memset::@2
 Culled Empty Block (label) memset::@1
 Renumbering block memset::@3 to memset::@1
@@ -550,9 +550,9 @@ Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of print_ln
-Adding NOP phi() at start of print_str
 Adding NOP phi() at start of print_cls
+Adding NOP phi() at start of print_str
+Adding NOP phi() at start of print_ln
 Adding NOP phi() at start of memset
 
 FINAL CONTROL FLOW GRAPH
@@ -584,72 +584,72 @@ main::@4: scope:[main]  from main::@3
   [10] (byte*) print_char_cursor#37 ← (byte*) print_line_cursor#0
   to:main::@1
 
-(void()) print_ln()
-print_ln: scope:[print_ln]  from main::@2
+(void()) print_cls()
+print_cls: scope:[print_cls]  from main
   [11] phi()
-  to:print_ln::@1
-print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
-  [12] (byte*) print_line_cursor#10 ← phi( print_ln/(byte*) print_line_cursor#21 print_ln::@1/(byte*) print_line_cursor#0 )
-  [13] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28
-  [14] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1
-  to:print_ln::@return
-print_ln::@return: scope:[print_ln]  from print_ln::@1
-  [15] return 
+  [12] call memset 
+  to:print_cls::@return
+print_cls::@return: scope:[print_cls]  from print_cls
+  [13] return 
   to:@return
 
 (void()) print_str((byte*) print_str::str)
 print_str: scope:[print_str]  from main::@1
-  [16] phi()
+  [14] phi()
   to:print_str::@1
 print_str::@1: scope:[print_str]  from print_str print_str::@3
-  [17] (byte*) print_char_cursor#1 ← phi( print_str/(byte*) print_char_cursor#32 print_str::@3/(byte*) print_char_cursor#20 )
-  [17] (byte*) print_str::str#2 ← phi( print_str/(const byte*) txt print_str::@3/(byte*) print_str::str#0 )
-  [18] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
+  [15] (byte*) print_char_cursor#1 ← phi( print_str/(byte*) print_char_cursor#32 print_str::@3/(byte*) print_char_cursor#20 )
+  [15] (byte*) print_str::str#2 ← phi( print_str/(const byte*) txt print_str::@3/(byte*) print_str::str#0 )
+  [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2
   to:print_str::@return
 print_str::@return: scope:[print_str]  from print_str::@1
-  [19] return 
+  [17] return 
   to:@return
 print_str::@2: scope:[print_str]  from print_str::@1
-  [20] (byte) print_char::ch#0 ← *((byte*) print_str::str#2)
-  [21] call print_char 
+  [18] (byte) print_char::ch#0 ← *((byte*) print_str::str#2)
+  [19] call print_char 
   to:print_str::@3
 print_str::@3: scope:[print_str]  from print_str::@2
-  [22] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2
+  [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2
   to:print_str::@1
 
-(void()) print_char((byte) print_char::ch)
-print_char: scope:[print_char]  from print_str::@2
-  [23] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0
-  [24] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1
-  to:print_char::@return
-print_char::@return: scope:[print_char]  from print_char
+(void()) print_ln()
+print_ln: scope:[print_ln]  from main::@2
+  [21] phi()
+  to:print_ln::@1
+print_ln::@1: scope:[print_ln]  from print_ln print_ln::@1
+  [22] (byte*) print_line_cursor#10 ← phi( print_ln/(byte*) print_line_cursor#21 print_ln::@1/(byte*) print_line_cursor#0 )
+  [23] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28
+  [24] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1
+  to:print_ln::@return
+print_ln::@return: scope:[print_ln]  from print_ln::@1
   [25] return 
-  to:@return
-
-(void()) print_cls()
-print_cls: scope:[print_cls]  from main
-  [26] phi()
-  [27] call memset 
-  to:print_cls::@return
-print_cls::@return: scope:[print_cls]  from print_cls
-  [28] return 
   to:@return
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from print_cls
-  [29] phi()
+  [26] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [30] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [31] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+  [27] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [28] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [32] return 
+  [29] return 
   to:@return
 memset::@2: scope:[memset]  from memset::@1
-  [33] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [34] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [30] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [31] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@1
+
+(void()) print_char((byte) print_char::ch)
+print_char: scope:[print_char]  from print_str::@2
+  [32] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0
+  [33] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1
+  to:print_char::@return
+print_char::@return: scope:[print_char]  from print_char
+  [34] return 
+  to:@return
 
 
 VARIABLE REGISTER WEIGHTS
@@ -688,22 +688,22 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-[ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
 [ print_str::str#2 print_str::str#0 ]
 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
+[ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
 [ memset::dst#2 memset::dst#1 ]
 Added variable print_char::ch#0 to live range equivalence class [ print_char::ch#0 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
 [ print_str::str#2 print_str::str#0 ]
 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
+[ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
 [ memset::dst#2 memset::dst#1 ]
 [ print_char::ch#0 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-Allocated zp[2]:3 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
-Allocated zp[2]:5 [ print_str::str#2 print_str::str#0 ]
-Allocated zp[2]:7 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
+Allocated zp[2]:3 [ print_str::str#2 print_str::str#0 ]
+Allocated zp[2]:5 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
+Allocated zp[2]:7 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
 Allocated zp[2]:9 [ memset::dst#2 memset::dst#1 ]
 Allocated zp[1]:11 [ print_char::ch#0 ]
 
@@ -718,13 +718,13 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
-  .label print_char_cursor = 7
-  .label print_line_cursor = 3
+  .label print_char_cursor = 5
+  .label print_line_cursor = 7
   // main
 main: {
     .label i = 2
     // [1] call print_cls 
-    // [26] phi from main to print_cls [phi:main->print_cls]
+    // [11] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -746,7 +746,7 @@ main: {
     // main::@1
   __b1:
     // [3] call print_str 
-    // [16] phi from main::@1 to print_str [phi:main::@1->print_str]
+    // [14] phi from main::@1 to print_str [phi:main::@1->print_str]
   print_str_from___b1:
     jsr print_str
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -755,7 +755,7 @@ main: {
     // main::@2
   __b2:
     // [5] call print_ln 
-    // [11] phi from main::@2 to print_ln [phi:main::@2->print_ln]
+    // [21] phi from main::@2 to print_ln [phi:main::@2->print_ln]
   print_ln_from___b2:
     jsr print_ln
     jmp __b3
@@ -788,17 +788,78 @@ main: {
     // [2] phi (byte*) print_char_cursor#32 = (byte*) print_char_cursor#37 [phi:main::@4->main::@1#2] -- register_copy 
     jmp __b1
 }
+  // print_cls
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // [12] call memset 
+    // [26] phi from print_cls to memset [phi:print_cls->memset]
+  memset_from_print_cls:
+    jsr memset
+    jmp __breturn
+    // print_cls::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // print_str
+// Print a zero-terminated string
+// print_str(byte* zp(3) str)
+print_str: {
+    .label str = 3
+    // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
+  __b1_from_print_str:
+    // [15] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#32 [phi:print_str->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (const byte*) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    lda #<txt
+    sta.z str
+    lda #>txt
+    sta.z str+1
+    jmp __b1
+    // print_str::@1
+  __b1:
+    // [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    jmp __breturn
+    // print_str::@return
+  __breturn:
+    // [17] return 
+    rts
+    // print_str::@2
+  __b2:
+    // [18] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) -- vbuz1=_deref_pbuz2 
+    ldy #0
+    lda (str),y
+    sta.z print_char.ch
+    // [19] call print_char 
+    jsr print_char
+    jmp __b3
+    // print_str::@3
+  __b3:
+    // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    // [15] phi from print_str::@3 to print_str::@1 [phi:print_str::@3->print_str::@1]
+  __b1_from___b3:
+    // [15] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#20 [phi:print_str::@3->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@3->print_str::@1#1] -- register_copy 
+    jmp __b1
+}
   // print_ln
 // Print a newline
 print_ln: {
-    // [12] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
+    // [22] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   __b1_from_print_ln:
   __b1_from___b1:
-    // [12] phi (byte*) print_line_cursor#10 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
+    // [22] phi (byte*) print_line_cursor#10 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     jmp __b1
     // print_ln::@1
   __b1:
-    // [13] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [23] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z print_line_cursor
@@ -806,7 +867,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
-    // [14] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+    // [24] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1_from___b1
@@ -818,88 +879,7 @@ print_ln: {
     jmp __breturn
     // print_ln::@return
   __breturn:
-    // [15] return 
-    rts
-}
-  // print_str
-// Print a zero-terminated string
-// print_str(byte* zp(5) str)
-print_str: {
-    .label str = 5
-    // [17] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
-  __b1_from_print_str:
-    // [17] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#32 [phi:print_str->print_str::@1#0] -- register_copy 
-    // [17] phi (byte*) print_str::str#2 = (const byte*) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
-    lda #<txt
-    sta.z str
-    lda #>txt
-    sta.z str+1
-    jmp __b1
-    // print_str::@1
-  __b1:
-    // [18] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    jmp __breturn
-    // print_str::@return
-  __breturn:
-    // [19] return 
-    rts
-    // print_str::@2
-  __b2:
-    // [20] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) -- vbuz1=_deref_pbuz2 
-    ldy #0
-    lda (str),y
-    sta.z print_char.ch
-    // [21] call print_char 
-    jsr print_char
-    jmp __b3
-    // print_str::@3
-  __b3:
-    // [22] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    // [17] phi from print_str::@3 to print_str::@1 [phi:print_str::@3->print_str::@1]
-  __b1_from___b3:
-    // [17] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#20 [phi:print_str::@3->print_str::@1#0] -- register_copy 
-    // [17] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@3->print_str::@1#1] -- register_copy 
-    jmp __b1
-}
-  // print_char
-// Print a single char
-// print_char(byte zp($b) ch)
-print_char: {
-    .label ch = $b
-    // [23] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 -- _deref_pbuz1=vbuz2 
-    lda.z ch
-    ldy #0
-    sta (print_char_cursor),y
-    // [24] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1 -- pbuz1=_inc_pbuz1 
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    jmp __breturn
-    // print_char::@return
-  __breturn:
     // [25] return 
-    rts
-}
-  // print_cls
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // [27] call memset 
-    // [29] phi from print_cls to memset [phi:print_cls->memset]
-  memset_from_print_cls:
-    jsr memset
-    jmp __breturn
-    // print_cls::@return
-  __breturn:
-    // [28] return 
     rts
 }
   // memset
@@ -910,9 +890,9 @@ memset: {
     .label str = print_screen
     .label end = str+num
     .label dst = 9
-    // [30] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [27] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [30] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [27] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -920,7 +900,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [31] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [28] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -930,23 +910,43 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [32] return 
+    // [29] return 
     rts
     // memset::@2
   __b2:
-    // [33] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [30] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [34] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [31] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [30] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [27] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [30] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [27] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
+}
+  // print_char
+// Print a single char
+// print_char(byte zp($b) ch)
+print_char: {
+    .label ch = $b
+    // [32] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 -- _deref_pbuz1=vbuz2 
+    lda.z ch
+    ldy #0
+    sta (print_char_cursor),y
+    // [33] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1 -- pbuz1=_inc_pbuz1 
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    jmp __breturn
+    // print_char::@return
+  __breturn:
+    // [34] return 
+    rts
 }
   // File Data
   txt: .text "camelot"
@@ -955,33 +955,33 @@ memset: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [10] (byte*) print_char_cursor#37 ← (byte*) print_line_cursor#0 [ print_char_cursor#37 print_line_cursor#0 main::i#1 ] (  [ print_char_cursor#37 print_line_cursor#0 main::i#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [13] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
-Statement [14] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
-Statement [18] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#1 print_str::str#2 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_char_cursor#1 print_str::str#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_str::str#2 print_char_cursor#1 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [20] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) [ print_char_cursor#1 print_str::str#2 print_char::ch#0 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_char_cursor#1 print_str::str#2 print_char::ch#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 [ print_char_cursor#1 ] ( print_str:3::print_char:21 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 ] { }  ) always clobbers reg byte y 
-Statement [31] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( print_cls:1::memset:27 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [33] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( print_cls:1::memset:27 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [18] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) [ print_str::str#2 print_char_cursor#1 print_char::ch#0 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 print_char::ch#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [23] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [24] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [28] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( print_cls:1::memset:12 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [30] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( print_cls:1::memset:12 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [32] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 [ print_char_cursor#1 ] ( print_str:3::print_char:19 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 ] { }  ) always clobbers reg byte y 
 Statement [10] (byte*) print_char_cursor#37 ← (byte*) print_line_cursor#0 [ print_char_cursor#37 print_line_cursor#0 main::i#1 ] (  [ print_char_cursor#37 print_line_cursor#0 main::i#1 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
-Statement [14] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
-Statement [18] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_char_cursor#1 print_str::str#2 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_char_cursor#1 print_str::str#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [20] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) [ print_char_cursor#1 print_str::str#2 print_char::ch#0 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_char_cursor#1 print_str::str#2 print_char::ch#0 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 [ print_char_cursor#1 ] ( print_str:3::print_char:21 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 ] { }  ) always clobbers reg byte y 
-Statement [31] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( print_cls:1::memset:27 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [33] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( print_cls:1::memset:27 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 [ print_str::str#2 print_char_cursor#1 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [18] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) [ print_str::str#2 print_char_cursor#1 print_char::ch#0 ] ( print_str:3 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 print_char::ch#0 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [23] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [24] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 [ print_line_cursor#0 print_char_cursor#1 ] ( print_ln:5 [ main::i#2 print_line_cursor#0 print_char_cursor#1 ] { }  ) always clobbers reg byte a 
+Statement [28] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( print_cls:1::memset:12 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [30] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( print_cls:1::memset:12 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [32] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 [ print_char_cursor#1 ] ( print_str:3::print_char:19 [ print_line_cursor#21 main::i#2 print_str::str#2 print_char_cursor#1 ] { }  ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
-Potential registers zp[2]:3 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] : zp[2]:3 , 
-Potential registers zp[2]:5 [ print_str::str#2 print_str::str#0 ] : zp[2]:5 , 
-Potential registers zp[2]:7 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ] : zp[2]:7 , 
+Potential registers zp[2]:3 [ print_str::str#2 print_str::str#0 ] : zp[2]:3 , 
+Potential registers zp[2]:5 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ] : zp[2]:5 , 
+Potential registers zp[2]:7 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] : zp[2]:7 , 
 Potential registers zp[2]:9 [ memset::dst#2 memset::dst#1 ] : zp[2]:9 , 
 Potential registers zp[1]:11 [ print_char::ch#0 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [print_char] 110,002: zp[1]:11 [ print_char::ch#0 ] 
-Uplift Scope [] 47,588.05: zp[2]:7 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ] 23,884.12: zp[2]:3 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] 
-Uplift Scope [print_str] 30,003: zp[2]:5 [ print_str::str#2 print_str::str#0 ] 
+Uplift Scope [] 47,588.05: zp[2]:5 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ] 23,884.12: zp[2]:7 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] 
+Uplift Scope [print_str] 30,003: zp[2]:3 [ print_str::str#2 print_str::str#0 ] 
 Uplift Scope [memset] 3,336.67: zp[2]:9 [ memset::dst#2 memset::dst#1 ] 
 Uplift Scope [main] 15.4: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [RADIX] 
@@ -989,17 +989,17 @@ Uplift Scope [print_ln]
 Uplift Scope [print_cls] 
 
 Uplifting [print_char] best 11629 combination reg byte a [ print_char::ch#0 ] 
-Uplifting [] best 11629 combination zp[2]:7 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ] zp[2]:3 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] 
-Uplifting [print_str] best 11629 combination zp[2]:5 [ print_str::str#2 print_str::str#0 ] 
+Uplifting [] best 11629 combination zp[2]:5 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ] zp[2]:7 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] 
+Uplifting [print_str] best 11629 combination zp[2]:3 [ print_str::str#2 print_str::str#0 ] 
 Uplifting [memset] best 11629 combination zp[2]:9 [ memset::dst#2 memset::dst#1 ] 
 Uplifting [main] best 11539 combination reg byte x [ main::i#2 main::i#1 ] 
 Uplifting [RADIX] best 11539 combination 
 Uplifting [print_ln] best 11539 combination 
 Uplifting [print_cls] best 11539 combination 
-Coalescing zero page register [ zp[2]:9 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:3 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ] ]
-Allocated (was zp[2]:5) zp[2]:2 [ print_str::str#2 print_str::str#0 ]
-Allocated (was zp[2]:7) zp[2]:4 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
-Allocated (was zp[2]:9) zp[2]:6 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
+Coalescing zero page register [ zp[2]:9 [ memset::dst#2 memset::dst#1 ] ] with [ zp[2]:3 [ print_str::str#2 print_str::str#0 ] ]
+Allocated (was zp[2]:5) zp[2]:2 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
+Allocated (was zp[2]:7) zp[2]:4 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
+Allocated (was zp[2]:9) zp[2]:6 [ memset::dst#2 memset::dst#1 print_str::str#2 print_str::str#0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1011,12 +1011,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
-  .label print_char_cursor = 4
-  .label print_line_cursor = 6
+  .label print_char_cursor = 2
+  .label print_line_cursor = 4
   // main
 main: {
     // [1] call print_cls 
-    // [26] phi from main to print_cls [phi:main->print_cls]
+    // [11] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -1037,7 +1037,7 @@ main: {
     // main::@1
   __b1:
     // [3] call print_str 
-    // [16] phi from main::@1 to print_str [phi:main::@1->print_str]
+    // [14] phi from main::@1 to print_str [phi:main::@1->print_str]
   print_str_from___b1:
     jsr print_str
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -1046,7 +1046,7 @@ main: {
     // main::@2
   __b2:
     // [5] call print_ln 
-    // [11] phi from main::@2 to print_ln [phi:main::@2->print_ln]
+    // [21] phi from main::@2 to print_ln [phi:main::@2->print_ln]
   print_ln_from___b2:
     jsr print_ln
     jmp __b3
@@ -1078,17 +1078,77 @@ main: {
     // [2] phi (byte*) print_char_cursor#32 = (byte*) print_char_cursor#37 [phi:main::@4->main::@1#2] -- register_copy 
     jmp __b1
 }
+  // print_cls
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // [12] call memset 
+    // [26] phi from print_cls to memset [phi:print_cls->memset]
+  memset_from_print_cls:
+    jsr memset
+    jmp __breturn
+    // print_cls::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // print_str
+// Print a zero-terminated string
+// print_str(byte* zp(6) str)
+print_str: {
+    .label str = 6
+    // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
+  __b1_from_print_str:
+    // [15] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#32 [phi:print_str->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (const byte*) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    lda #<txt
+    sta.z str
+    lda #>txt
+    sta.z str+1
+    jmp __b1
+    // print_str::@1
+  __b1:
+    // [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    jmp __breturn
+    // print_str::@return
+  __breturn:
+    // [17] return 
+    rts
+    // print_str::@2
+  __b2:
+    // [18] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) -- vbuaa=_deref_pbuz1 
+    ldy #0
+    lda (str),y
+    // [19] call print_char 
+    jsr print_char
+    jmp __b3
+    // print_str::@3
+  __b3:
+    // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    // [15] phi from print_str::@3 to print_str::@1 [phi:print_str::@3->print_str::@1]
+  __b1_from___b3:
+    // [15] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#20 [phi:print_str::@3->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@3->print_str::@1#1] -- register_copy 
+    jmp __b1
+}
   // print_ln
 // Print a newline
 print_ln: {
-    // [12] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
+    // [22] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
   __b1_from_print_ln:
   __b1_from___b1:
-    // [12] phi (byte*) print_line_cursor#10 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
+    // [22] phi (byte*) print_line_cursor#10 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     jmp __b1
     // print_ln::@1
   __b1:
-    // [13] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [23] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z print_line_cursor
@@ -1096,7 +1156,7 @@ print_ln: {
     bcc !+
     inc.z print_line_cursor+1
   !:
-    // [14] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+    // [24] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1_from___b1
@@ -1108,85 +1168,7 @@ print_ln: {
     jmp __breturn
     // print_ln::@return
   __breturn:
-    // [15] return 
-    rts
-}
-  // print_str
-// Print a zero-terminated string
-// print_str(byte* zp(2) str)
-print_str: {
-    .label str = 2
-    // [17] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
-  __b1_from_print_str:
-    // [17] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#32 [phi:print_str->print_str::@1#0] -- register_copy 
-    // [17] phi (byte*) print_str::str#2 = (const byte*) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
-    lda #<txt
-    sta.z str
-    lda #>txt
-    sta.z str+1
-    jmp __b1
-    // print_str::@1
-  __b1:
-    // [18] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    jmp __breturn
-    // print_str::@return
-  __breturn:
-    // [19] return 
-    rts
-    // print_str::@2
-  __b2:
-    // [20] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) -- vbuaa=_deref_pbuz1 
-    ldy #0
-    lda (str),y
-    // [21] call print_char 
-    jsr print_char
-    jmp __b3
-    // print_str::@3
-  __b3:
-    // [22] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    // [17] phi from print_str::@3 to print_str::@1 [phi:print_str::@3->print_str::@1]
-  __b1_from___b3:
-    // [17] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#20 [phi:print_str::@3->print_str::@1#0] -- register_copy 
-    // [17] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@3->print_str::@1#1] -- register_copy 
-    jmp __b1
-}
-  // print_char
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // [23] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 -- _deref_pbuz1=vbuaa 
-    ldy #0
-    sta (print_char_cursor),y
-    // [24] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1 -- pbuz1=_inc_pbuz1 
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    jmp __breturn
-    // print_char::@return
-  __breturn:
     // [25] return 
-    rts
-}
-  // print_cls
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // [27] call memset 
-    // [29] phi from print_cls to memset [phi:print_cls->memset]
-  memset_from_print_cls:
-    jsr memset
-    jmp __breturn
-    // print_cls::@return
-  __breturn:
-    // [28] return 
     rts
 }
   // memset
@@ -1197,9 +1179,9 @@ memset: {
     .label str = print_screen
     .label end = str+num
     .label dst = 6
-    // [30] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [27] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [30] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [27] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1207,7 +1189,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [31] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [28] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -1217,23 +1199,41 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [32] return 
+    // [29] return 
     rts
     // memset::@2
   __b2:
-    // [33] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [30] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [34] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [31] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [30] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [27] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [30] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [27] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
+}
+  // print_char
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // [32] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (print_char_cursor),y
+    // [33] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1 -- pbuz1=_inc_pbuz1 
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    jmp __breturn
+    // print_char::@return
+  __breturn:
+    // [34] return 
+    rts
 }
   // File Data
   txt: .text "camelot"
@@ -1244,14 +1244,14 @@ Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b3
-Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
@@ -1268,17 +1268,17 @@ Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __breturn:
 Removing instruction __b1_from___b4:
+Removing instruction memset_from_print_cls:
 Removing instruction __breturn:
 Removing instruction __b1_from_print_str:
 Removing instruction __breturn:
 Removing instruction __b3:
 Removing instruction __b1_from___b3:
 Removing instruction __breturn:
-Removing instruction memset_from_print_cls:
-Removing instruction __breturn:
 Removing instruction __b1_from_memset:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
+Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -1316,16 +1316,16 @@ FINAL SYMBOL TABLE
 (byte) print_char::ch
 (byte) print_char::ch#0 reg byte a 110002.0
 (byte*) print_char_cursor
-(byte*) print_char_cursor#1 print_char_cursor zp[2]:4 20009.545454545456
-(byte*) print_char_cursor#20 print_char_cursor zp[2]:4 27500.5
-(byte*) print_char_cursor#32 print_char_cursor zp[2]:4 56.0
-(byte*) print_char_cursor#37 print_char_cursor zp[2]:4 22.0
+(byte*) print_char_cursor#1 print_char_cursor zp[2]:2 20009.545454545456
+(byte*) print_char_cursor#20 print_char_cursor zp[2]:2 27500.5
+(byte*) print_char_cursor#32 print_char_cursor zp[2]:2 56.0
+(byte*) print_char_cursor#37 print_char_cursor zp[2]:2 22.0
 (void()) print_cls()
 (label) print_cls::@return
 (byte*) print_line_cursor
-(byte*) print_line_cursor#0 print_line_cursor zp[2]:6 3753.125
-(byte*) print_line_cursor#10 print_line_cursor zp[2]:6 20103.0
-(byte*) print_line_cursor#21 print_line_cursor zp[2]:6 28.0
+(byte*) print_line_cursor#0 print_line_cursor zp[2]:4 3753.125
+(byte*) print_line_cursor#10 print_line_cursor zp[2]:4 20103.0
+(byte*) print_line_cursor#21 print_line_cursor zp[2]:4 28.0
 (void()) print_ln()
 (label) print_ln::@1
 (label) print_ln::@return
@@ -1337,14 +1337,14 @@ FINAL SYMBOL TABLE
 (label) print_str::@3
 (label) print_str::@return
 (byte*) print_str::str
-(byte*) print_str::str#0 str zp[2]:2 20002.0
-(byte*) print_str::str#2 str zp[2]:2 10001.0
+(byte*) print_str::str#0 str zp[2]:6 20002.0
+(byte*) print_str::str#2 str zp[2]:6 10001.0
 (const byte*) txt[]  = (byte*) "camelot"
 
 reg byte x [ main::i#2 main::i#1 ]
-zp[2]:2 [ print_str::str#2 print_str::str#0 ]
-zp[2]:4 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
-zp[2]:6 [ memset::dst#2 memset::dst#1 print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
+zp[2]:2 [ print_char_cursor#1 print_char_cursor#32 print_char_cursor#37 print_char_cursor#20 ]
+zp[2]:4 [ print_line_cursor#10 print_line_cursor#21 print_line_cursor#0 ]
+zp[2]:6 [ memset::dst#2 memset::dst#1 print_str::str#2 print_str::str#0 ]
 reg byte a [ print_char::ch#0 ]
 
 
@@ -1360,13 +1360,13 @@ Score: 9880
 .pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
-  .label print_char_cursor = 4
-  .label print_line_cursor = 6
+  .label print_char_cursor = 2
+  .label print_line_cursor = 4
   // main
 main: {
     // print_cls()
     // [1] call print_cls 
-    // [26] phi from main to print_cls [phi:main->print_cls]
+    // [11] phi from main to print_cls [phi:main->print_cls]
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // [2] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
@@ -1385,13 +1385,13 @@ main: {
   __b1:
     // print_str(txt)
     // [3] call print_str 
-    // [16] phi from main::@1 to print_str [phi:main::@1->print_str]
+    // [14] phi from main::@1 to print_str [phi:main::@1->print_str]
     jsr print_str
     // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // print_ln()
     // [5] call print_ln 
-    // [11] phi from main::@2 to print_ln [phi:main::@2->print_ln]
+    // [21] phi from main::@2 to print_ln [phi:main::@2->print_ln]
     jsr print_ln
     // main::@3
     // txt[1]++;
@@ -1420,15 +1420,71 @@ main: {
     // [2] phi (byte*) print_char_cursor#32 = (byte*) print_char_cursor#37 [phi:main::@4->main::@1#2] -- register_copy 
     jmp __b1
 }
+  // print_cls
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    // [12] call memset 
+    // [26] phi from print_cls to memset [phi:print_cls->memset]
+    jsr memset
+    // print_cls::@return
+    // }
+    // [13] return 
+    rts
+}
+  // print_str
+// Print a zero-terminated string
+// print_str(byte* zp(6) str)
+print_str: {
+    .label str = 6
+    // [15] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
+    // [15] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#32 [phi:print_str->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (const byte*) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
+    lda #<txt
+    sta.z str
+    lda #>txt
+    sta.z str+1
+    // print_str::@1
+  __b1:
+    // while(*str)
+    // [16] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // print_str::@return
+    // }
+    // [17] return 
+    rts
+    // print_str::@2
+  __b2:
+    // print_char(*(str++))
+    // [18] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) -- vbuaa=_deref_pbuz1 
+    ldy #0
+    lda (str),y
+    // [19] call print_char 
+    jsr print_char
+    // print_str::@3
+    // print_char(*(str++));
+    // [20] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    // [15] phi from print_str::@3 to print_str::@1 [phi:print_str::@3->print_str::@1]
+    // [15] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#20 [phi:print_str::@3->print_str::@1#0] -- register_copy 
+    // [15] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@3->print_str::@1#1] -- register_copy 
+    jmp __b1
+}
   // print_ln
 // Print a newline
 print_ln: {
-    // [12] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
-    // [12] phi (byte*) print_line_cursor#10 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
+    // [22] phi from print_ln print_ln::@1 to print_ln::@1 [phi:print_ln/print_ln::@1->print_ln::@1]
+    // [22] phi (byte*) print_line_cursor#10 = (byte*) print_line_cursor#21 [phi:print_ln/print_ln::@1->print_ln::@1#0] -- register_copy 
     // print_ln::@1
   __b1:
     // print_line_cursor + $28
-    // [13] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [23] (byte*) print_line_cursor#0 ← (byte*) print_line_cursor#10 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z print_line_cursor
@@ -1437,7 +1493,7 @@ print_ln: {
     inc.z print_line_cursor+1
   !:
     // while (print_line_cursor<print_char_cursor)
-    // [14] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
+    // [24] if((byte*) print_line_cursor#0<(byte*) print_char_cursor#1) goto print_ln::@1 -- pbuz1_lt_pbuz2_then_la1 
     lda.z print_line_cursor+1
     cmp.z print_char_cursor+1
     bcc __b1
@@ -1448,82 +1504,7 @@ print_ln: {
   !:
     // print_ln::@return
     // }
-    // [15] return 
-    rts
-}
-  // print_str
-// Print a zero-terminated string
-// print_str(byte* zp(2) str)
-print_str: {
-    .label str = 2
-    // [17] phi from print_str to print_str::@1 [phi:print_str->print_str::@1]
-    // [17] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#32 [phi:print_str->print_str::@1#0] -- register_copy 
-    // [17] phi (byte*) print_str::str#2 = (const byte*) txt [phi:print_str->print_str::@1#1] -- pbuz1=pbuc1 
-    lda #<txt
-    sta.z str
-    lda #>txt
-    sta.z str+1
-    // print_str::@1
-  __b1:
-    // while(*str)
-    // [18] if((byte) 0!=*((byte*) print_str::str#2)) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // print_str::@return
-    // }
-    // [19] return 
-    rts
-    // print_str::@2
-  __b2:
-    // print_char(*(str++))
-    // [20] (byte) print_char::ch#0 ← *((byte*) print_str::str#2) -- vbuaa=_deref_pbuz1 
-    ldy #0
-    lda (str),y
-    // [21] call print_char 
-    jsr print_char
-    // print_str::@3
-    // print_char(*(str++));
-    // [22] (byte*) print_str::str#0 ← ++ (byte*) print_str::str#2 -- pbuz1=_inc_pbuz1 
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    // [17] phi from print_str::@3 to print_str::@1 [phi:print_str::@3->print_str::@1]
-    // [17] phi (byte*) print_char_cursor#1 = (byte*) print_char_cursor#20 [phi:print_str::@3->print_str::@1#0] -- register_copy 
-    // [17] phi (byte*) print_str::str#2 = (byte*) print_str::str#0 [phi:print_str::@3->print_str::@1#1] -- register_copy 
-    jmp __b1
-}
-  // print_char
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    // [23] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 -- _deref_pbuz1=vbuaa 
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    // [24] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1 -- pbuz1=_inc_pbuz1 
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // print_char::@return
-    // }
     // [25] return 
-    rts
-}
-  // print_cls
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    // [27] call memset 
-    // [29] phi from print_cls to memset [phi:print_cls->memset]
-    jsr memset
-    // print_cls::@return
-    // }
-    // [28] return 
     rts
 }
   // memset
@@ -1534,8 +1515,8 @@ memset: {
     .label str = print_screen
     .label end = str+num
     .label dst = 6
-    // [30] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [30] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [27] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [27] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1543,7 +1524,7 @@ memset: {
     // memset::@1
   __b1:
     // for(char* dst = str; dst!=end; dst++)
-    // [31] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [28] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -1552,24 +1533,43 @@ memset: {
     bne __b2
     // memset::@return
     // }
-    // [32] return 
+    // [29] return 
     rts
     // memset::@2
   __b2:
     // *dst = c
-    // [33] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [30] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [34] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [31] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [30] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [30] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [27] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [27] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
+}
+  // print_char
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    // [32] *((byte*) print_char_cursor#1) ← (byte) print_char::ch#0 -- _deref_pbuz1=vbuaa 
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    // [33] (byte*) print_char_cursor#20 ← ++ (byte*) print_char_cursor#1 -- pbuz1=_inc_pbuz1 
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // print_char::@return
+    // }
+    // [34] return 
+    rts
 }
   // File Data
   txt: .text "camelot"

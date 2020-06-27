@@ -49,6 +49,31 @@ __start: {
     jsr main
     rts
 }
+// Interrupt Routine counting frames
+irq: {
+    sta rega+1
+    // *BG_COLOR = WHITE
+    lda #WHITE
+    sta BG_COLOR
+    // if(frame_cnt)
+    lda #0
+    cmp.z frame_cnt
+    beq __b1
+    // frame_cnt++;
+    inc.z frame_cnt
+  __b1:
+    // *BG_COLOR = BLACK
+    lda #BLACK
+    sta BG_COLOR
+    // *IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta IRQ_STATUS
+    // }
+  rega:
+    lda #00
+    rti
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label x = 2
@@ -134,158 +159,10 @@ main: {
     inc plots_per_frame,x
     jmp __b2
 }
-// Plot a single dot in the bitmap
-// bitmap_plot(word zp(2) x, byte register(X) y)
-bitmap_plot: {
-    .label __0 = $b
-    .label plotter = 9
-    .label x = 2
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
-    sta.z plotter+1
-    lda bitmap_plot_ylo,x
-    sta.z plotter
-    // x & $fff8
-    lda.z x
-    and #<$fff8
-    sta.z __0
-    lda.z x+1
-    and #>$fff8
-    sta.z __0+1
-    // plotter += ( x & $fff8 )
-    lda.z plotter
-    clc
-    adc.z __0
-    sta.z plotter
-    lda.z plotter+1
-    adc.z __0+1
-    sta.z plotter+1
-    // <x
-    ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
-    lda bitmap_plot_bit,x
-    ldy #0
-    ora (plotter),y
-    sta (plotter),y
-    // }
-    rts
-}
-// Setup the IRQ
-init_irq: {
-    // asm
-    sei
-    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // Disable kernal & basic
-    lda #PROCPORT_DDR_MEMORY_MASK
-    sta PROCPORT_DDR
-    // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL |=$80
-    // Set raster line to $100
-    lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = $00
-    lda #0
-    sta RASTER
-    // *IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // *HARDWARE_IRQ = &irq
-    // Set the IRQ routine
-    lda #<irq
-    sta HARDWARE_IRQ
-    lda #>irq
-    sta HARDWARE_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
-// Clear all graphics on the bitmap
-// bgcol - the background color to fill the screen with
-// fgcol - the foreground color to fill the screen with
-bitmap_clear: {
-    .const col = WHITE*$10
-    // memset(bitmap_screen, col, 1000uw)
-    ldx #col
-    lda #<SCREEN
-    sta.z memset.str
-    lda #>SCREEN
-    sta.z memset.str+1
-    lda #<$3e8
-    sta.z memset.num
-    lda #>$3e8
-    sta.z memset.num+1
-    jsr memset
-    // memset(bitmap_gfx, 0, 8000uw)
-    ldx #0
-    lda #<BITMAP
-    sta.z memset.str
-    lda #>BITMAP
-    sta.z memset.str+1
-    lda #<$1f40
-    sta.z memset.num
-    lda #>$1f40
-    sta.z memset.num+1
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp(9) str, byte register(X) c, word zp($b) num)
-memset: {
-    .label end = $b
-    .label dst = 9
-    .label num = $b
-    .label str = 9
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
-    // end = (char*)str + num
-    lda.z end
-    clc
-    adc.z str
-    sta.z end
-    lda.z end+1
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-  __breturn:
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $d
-    .label yoffs = $b
+    .label __7 = 9
+    .label yoffs = $c
     ldx #0
     lda #$80
   __b1:
@@ -341,30 +218,153 @@ bitmap_init: {
     // }
     rts
 }
-// Interrupt Routine counting frames
-irq: {
-    sta rega+1
-    // *BG_COLOR = WHITE
-    lda #WHITE
-    sta BG_COLOR
-    // if(frame_cnt)
-    lda #0
-    cmp.z frame_cnt
-    beq __b1
-    // frame_cnt++;
-    inc.z frame_cnt
-  __b1:
-    // *BG_COLOR = BLACK
-    lda #BLACK
-    sta BG_COLOR
-    // *IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
+// Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
+bitmap_clear: {
+    .const col = WHITE*$10
+    // memset(bitmap_screen, col, 1000uw)
+    ldx #col
+    lda #<SCREEN
+    sta.z memset.str
+    lda #>SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
+    // memset(bitmap_gfx, 0, 8000uw)
+    ldx #0
+    lda #<BITMAP
+    sta.z memset.str
+    lda #>BITMAP
+    sta.z memset.str+1
+    lda #<$1f40
+    sta.z memset.num
+    lda #>$1f40
+    sta.z memset.num+1
+    jsr memset
     // }
-  rega:
-    lda #00
-    rti
+    rts
+}
+// Setup the IRQ
+init_irq: {
+    // asm
+    sei
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+    // Disable kernal & basic
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *VIC_CONTROL |=$80
+    // Set raster line to $100
+    lda #$80
+    ora VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = $00
+    lda #0
+    sta RASTER
+    // *IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // *HARDWARE_IRQ = &irq
+    // Set the IRQ routine
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+    // asm
+    cli
+    // }
+    rts
+}
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp(2) x, byte register(X) y)
+bitmap_plot: {
+    .label __0 = $c
+    .label plotter = $a
+    .label x = 2
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    lda bitmap_plot_yhi,x
+    sta.z plotter+1
+    lda bitmap_plot_ylo,x
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
+    lda.z plotter
+    clc
+    adc.z __0
+    sta.z plotter
+    lda.z plotter+1
+    adc.z __0+1
+    sta.z plotter+1
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
+    lda bitmap_plot_bit,x
+    ldy #0
+    ora (plotter),y
+    sta (plotter),y
+    // }
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($a) str, byte register(X) c, word zp($c) num)
+memset: {
+    .label end = $c
+    .label dst = $a
+    .label num = $c
+    .label str = $a
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
 }
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0

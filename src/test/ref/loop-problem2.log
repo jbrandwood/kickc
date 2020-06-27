@@ -135,14 +135,14 @@ Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of print_cls
 Adding NOP phi() at start of mode_ctrl
 Adding NOP phi() at start of mode_ctrl::@1
-Adding NOP phi() at start of print_cls
 CALL GRAPH
 Calls in [main] to print_cls:1 mode_ctrl:3 
 
 Created 1 initial phi equivalence classes
-Coalesced [18] print_cls::sc#4 ← print_cls::sc#1
+Coalesced [12] print_cls::sc#4 ← print_cls::sc#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) mode_ctrl::@1
@@ -151,8 +151,8 @@ Renumbering block mode_ctrl::@3 to mode_ctrl::@2
 Renumbering block mode_ctrl::@4 to mode_ctrl::@3
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
-Adding NOP phi() at start of mode_ctrl
 Adding NOP phi() at start of print_cls
+Adding NOP phi() at start of mode_ctrl
 
 FINAL CONTROL FLOW GRAPH
 
@@ -169,36 +169,36 @@ main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-(void()) mode_ctrl()
-mode_ctrl: scope:[mode_ctrl]  from main::@1
-  [5] phi()
-  to:mode_ctrl::@1
-mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@2 mode_ctrl::@3
-  [6] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR)
-  [7] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2
-  to:mode_ctrl::@3
-mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@1
-  [8] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3
-  to:mode_ctrl::@1
-mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
-  [9] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2
-  to:mode_ctrl::@1
-
 (void()) print_cls()
 print_cls: scope:[print_cls]  from main
-  [10] phi()
+  [5] phi()
   to:print_cls::@1
 print_cls::@1: scope:[print_cls]  from print_cls print_cls::@2
-  [11] (byte*) print_cls::sc#2 ← phi( print_cls/(const nomodify byte*) SCREEN print_cls::@2/(byte*) print_cls::sc#1 )
-  [12] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2
+  [6] (byte*) print_cls::sc#2 ← phi( print_cls/(const nomodify byte*) SCREEN print_cls::@2/(byte*) print_cls::sc#1 )
+  [7] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2
   to:print_cls::@return
 print_cls::@return: scope:[print_cls]  from print_cls::@1
-  [13] return 
+  [8] return 
   to:@return
 print_cls::@2: scope:[print_cls]  from print_cls::@1
-  [14] *((byte*) print_cls::sc#2) ← (byte) ' '
-  [15] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
+  [9] *((byte*) print_cls::sc#2) ← (byte) ' '
+  [10] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2
   to:print_cls::@1
+
+(void()) mode_ctrl()
+mode_ctrl: scope:[mode_ctrl]  from main::@1
+  [11] phi()
+  to:mode_ctrl::@1
+mode_ctrl::@1: scope:[mode_ctrl]  from mode_ctrl mode_ctrl::@2 mode_ctrl::@3
+  [12] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR)
+  [13] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2
+  to:mode_ctrl::@3
+mode_ctrl::@3: scope:[mode_ctrl]  from mode_ctrl::@1
+  [14] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3
+  to:mode_ctrl::@1
+mode_ctrl::@2: scope:[mode_ctrl]  from mode_ctrl::@1
+  [15] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2
+  to:mode_ctrl::@1
 
 
 VARIABLE REGISTER WEIGHTS
@@ -233,7 +233,7 @@ Target platform is c64basic / MOS6502X
   // main
 main: {
     // [1] call print_cls 
-    // [10] phi from main to print_cls [phi:main->print_cls]
+    // [5] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -242,7 +242,7 @@ main: {
     // main::@1
   __b1:
     // [3] call mode_ctrl 
-    // [5] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    // [11] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
   mode_ctrl_from___b1:
     jsr mode_ctrl
     jmp __breturn
@@ -251,39 +251,12 @@ main: {
     // [4] return 
     rts
 }
-  // mode_ctrl
-mode_ctrl: {
-    .label before = 4
-    jmp __b1
-    // mode_ctrl::@1
-  __b1:
-    // [6] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuz1=_deref_pbuc1 
-    lda BORDER_COLOR
-    sta.z before
-    // [7] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
-    lda #$ff
-    cmp.z before
-    beq __b2
-    jmp __b3
-    // mode_ctrl::@3
-  __b3:
-    // [8] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
-    lda #3
-    sta BORDER_COLOR
-    jmp __b1
-    // mode_ctrl::@2
-  __b2:
-    // [9] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
-    lda #2
-    sta BORDER_COLOR
-    jmp __b1
-}
   // print_cls
 print_cls: {
     .label sc = 2
-    // [11] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [6] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   __b1_from_print_cls:
-    // [11] phi (byte*) print_cls::sc#2 = (const nomodify byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) print_cls::sc#2 = (const nomodify byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -291,7 +264,7 @@ print_cls: {
     jmp __b1
     // print_cls::@1
   __b1:
-    // [12] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [7] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -301,31 +274,58 @@ print_cls: {
     jmp __breturn
     // print_cls::@return
   __breturn:
-    // [13] return 
+    // [8] return 
     rts
     // print_cls::@2
   __b2:
-    // [14] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [15] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [10] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
     inc.z sc+1
   !:
-    // [11] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
+    // [6] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
   __b1_from___b2:
-    // [11] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    // [6] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    jmp __b1
+}
+  // mode_ctrl
+mode_ctrl: {
+    .label before = 4
+    jmp __b1
+    // mode_ctrl::@1
+  __b1:
+    // [12] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuz1=_deref_pbuc1 
+    lda BORDER_COLOR
+    sta.z before
+    // [13] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuz1_eq_vbuc1_then_la1 
+    lda #$ff
+    cmp.z before
+    beq __b2
+    jmp __b3
+    // mode_ctrl::@3
+  __b3:
+    // [14] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    lda #3
+    sta BORDER_COLOR
+    jmp __b1
+    // mode_ctrl::@2
+  __b2:
+    // [15] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BORDER_COLOR
     jmp __b1
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 [ ] ( mode_ctrl:3 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 [ ] ( mode_ctrl:3 [ ] { }  ) always clobbers reg byte a 
-Statement [12] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( print_cls:1 [ print_cls::sc#2 ] { }  ) always clobbers reg byte a 
-Statement [14] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( print_cls:1 [ print_cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 [ print_cls::sc#2 ] ( print_cls:1 [ print_cls::sc#2 ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*) print_cls::sc#2) ← (byte) ' ' [ print_cls::sc#2 ] ( print_cls:1 [ print_cls::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 [ ] ( mode_ctrl:3 [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 [ ] ( mode_ctrl:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ print_cls::sc#2 print_cls::sc#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ mode_ctrl::before#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 
@@ -352,7 +352,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     // [1] call print_cls 
-    // [10] phi from main to print_cls [phi:main->print_cls]
+    // [5] phi from main to print_cls [phi:main->print_cls]
   print_cls_from_main:
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -361,7 +361,7 @@ main: {
     // main::@1
   __b1:
     // [3] call mode_ctrl 
-    // [5] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    // [11] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
   mode_ctrl_from___b1:
     jsr mode_ctrl
     jmp __breturn
@@ -370,36 +370,12 @@ main: {
     // [4] return 
     rts
 }
-  // mode_ctrl
-mode_ctrl: {
-    jmp __b1
-    // mode_ctrl::@1
-  __b1:
-    // [6] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuaa=_deref_pbuc1 
-    lda BORDER_COLOR
-    // [7] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
-    cmp #$ff
-    beq __b2
-    jmp __b3
-    // mode_ctrl::@3
-  __b3:
-    // [8] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
-    lda #3
-    sta BORDER_COLOR
-    jmp __b1
-    // mode_ctrl::@2
-  __b2:
-    // [9] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
-    lda #2
-    sta BORDER_COLOR
-    jmp __b1
-}
   // print_cls
 print_cls: {
     .label sc = 2
-    // [11] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [6] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
   __b1_from_print_cls:
-    // [11] phi (byte*) print_cls::sc#2 = (const nomodify byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [6] phi (byte*) print_cls::sc#2 = (const nomodify byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -407,7 +383,7 @@ print_cls: {
     jmp __b1
     // print_cls::@1
   __b1:
-    // [12] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [7] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -417,22 +393,46 @@ print_cls: {
     jmp __breturn
     // print_cls::@return
   __breturn:
-    // [13] return 
+    // [8] return 
     rts
     // print_cls::@2
   __b2:
-    // [14] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
-    // [15] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [10] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
     inc.z sc+1
   !:
-    // [11] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
+    // [6] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
   __b1_from___b2:
-    // [11] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    // [6] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    jmp __b1
+}
+  // mode_ctrl
+mode_ctrl: {
+    jmp __b1
+    // mode_ctrl::@1
+  __b1:
+    // [12] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuaa=_deref_pbuc1 
+    lda BORDER_COLOR
+    // [13] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #$ff
+    beq __b2
+    jmp __b3
+    // mode_ctrl::@3
+  __b3:
+    // [14] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    lda #3
+    sta BORDER_COLOR
+    jmp __b1
+    // mode_ctrl::@2
+  __b2:
+    // [15] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BORDER_COLOR
     jmp __b1
 }
   // File Data
@@ -441,9 +441,9 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
-Removing instruction jmp __b3
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1_from_main:
 Removing instruction mode_ctrl_from___b1:
@@ -451,10 +451,10 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction print_cls_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
-Removing instruction __b3:
 Removing instruction __b1_from_print_cls:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
+Removing instruction __b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
@@ -496,49 +496,24 @@ Score: 794
 main: {
     // print_cls()
     // [1] call print_cls 
-    // [10] phi from main to print_cls [phi:main->print_cls]
+    // [5] phi from main to print_cls [phi:main->print_cls]
     jsr print_cls
     // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // mode_ctrl()
     // [3] call mode_ctrl 
-    // [5] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
+    // [11] phi from main::@1 to mode_ctrl [phi:main::@1->mode_ctrl]
     jsr mode_ctrl
     // main::@return
     // }
     // [4] return 
     rts
 }
-  // mode_ctrl
-mode_ctrl: {
-    // mode_ctrl::@1
-  __b1:
-    // before = *BORDER_COLOR
-    // [6] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuaa=_deref_pbuc1 
-    lda BORDER_COLOR
-    // if(before==$ff)
-    // [7] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
-    cmp #$ff
-    beq __b2
-    // mode_ctrl::@3
-    // *BORDER_COLOR = 3
-    // [8] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
-    lda #3
-    sta BORDER_COLOR
-    jmp __b1
-    // mode_ctrl::@2
-  __b2:
-    // *BORDER_COLOR = 2
-    // [9] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
-    lda #2
-    sta BORDER_COLOR
-    jmp __b1
-}
   // print_cls
 print_cls: {
     .label sc = 2
-    // [11] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
-    // [11] phi (byte*) print_cls::sc#2 = (const nomodify byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
+    // [6] phi from print_cls to print_cls::@1 [phi:print_cls->print_cls::@1]
+    // [6] phi (byte*) print_cls::sc#2 = (const nomodify byte*) SCREEN [phi:print_cls->print_cls::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z sc
     lda #>SCREEN
@@ -546,7 +521,7 @@ print_cls: {
     // print_cls::@1
   __b1:
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
-    // [12] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [7] if((byte*) print_cls::sc#2!=(const nomodify byte*) SCREEN+(word) $3e8) goto print_cls::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z sc+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -555,23 +530,48 @@ print_cls: {
     bne __b2
     // print_cls::@return
     // }
-    // [13] return 
+    // [8] return 
     rts
     // print_cls::@2
   __b2:
     // *sc = ' '
-    // [14] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [9] *((byte*) print_cls::sc#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (sc),y
     // for(byte* sc=SCREEN; sc!=SCREEN+1000; sc++)
-    // [15] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
+    // [10] (byte*) print_cls::sc#1 ← ++ (byte*) print_cls::sc#2 -- pbuz1=_inc_pbuz1 
     inc.z sc
     bne !+
     inc.z sc+1
   !:
-    // [11] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
-    // [11] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    // [6] phi from print_cls::@2 to print_cls::@1 [phi:print_cls::@2->print_cls::@1]
+    // [6] phi (byte*) print_cls::sc#2 = (byte*) print_cls::sc#1 [phi:print_cls::@2->print_cls::@1#0] -- register_copy 
+    jmp __b1
+}
+  // mode_ctrl
+mode_ctrl: {
+    // mode_ctrl::@1
+  __b1:
+    // before = *BORDER_COLOR
+    // [12] (byte) mode_ctrl::before#0 ← *((const nomodify byte*) BORDER_COLOR) -- vbuaa=_deref_pbuc1 
+    lda BORDER_COLOR
+    // if(before==$ff)
+    // [13] if((byte) mode_ctrl::before#0==(byte) $ff) goto mode_ctrl::@2 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #$ff
+    beq __b2
+    // mode_ctrl::@3
+    // *BORDER_COLOR = 3
+    // [14] *((const nomodify byte*) BORDER_COLOR) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    lda #3
+    sta BORDER_COLOR
+    jmp __b1
+    // mode_ctrl::@2
+  __b2:
+    // *BORDER_COLOR = 2
+    // [15] *((const nomodify byte*) BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta BORDER_COLOR
     jmp __b1
 }
   // File Data

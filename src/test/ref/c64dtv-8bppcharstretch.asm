@@ -261,16 +261,64 @@ gfx_init: {
     // }
     rts
 }
+// Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
+gfx_init_screen0: {
+    .label __1 = 9
+    .label ch = 3
+    .label cy = 2
+    lda #<SCREEN
+    sta.z ch
+    lda #>SCREEN
+    sta.z ch+1
+    lda #0
+    sta.z cy
+  __b1:
+    ldx #0
+  __b2:
+    // cy&$f
+    lda #$f
+    and.z cy
+    // (cy&$f)*$10
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // cx&$f
+    txa
+    and #$f
+    // (cy&$f)*$10|(cx&$f)
+    ora.z __1
+    // *ch++ = (cy&$f)*$10|(cx&$f)
+    ldy #0
+    sta (ch),y
+    // *ch++ = (cy&$f)*$10|(cx&$f);
+    inc.z ch
+    bne !+
+    inc.z ch+1
+  !:
+    // for(byte cx: 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte cy: 0..24 )
+    inc.z cy
+    lda #$19
+    cmp.z cy
+    bne __b1
+    // }
+    rts
+}
 // Initialize Plane with 8bpp charset
 gfx_init_plane_charset8: {
     // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
     .const gfxbCpuBank = $ff&CHARSET8/$4000
-    .label bits = 2
-    .label chargen = 7
-    .label gfxa = 3
-    .label col = 5
+    .label bits = 5
+    .label chargen = 3
+    .label gfxa = 6
+    .label col = 8
     .label cr = 9
-    .label ch = 6
+    .label ch = 2
     // dtvSetCpuBankSegment1(gfxbCpuBank++)
     lda #gfxbCpuBank
     jsr dtvSetCpuBankSegment1
@@ -362,54 +410,6 @@ dtvSetCpuBankSegment1: {
     .byte $32, $dd
     lda.z $ff
     .byte $32, $00
-    // }
-    rts
-}
-// Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
-gfx_init_screen0: {
-    .label __1 = 9
-    .label ch = 7
-    .label cy = 6
-    lda #<SCREEN
-    sta.z ch
-    lda #>SCREEN
-    sta.z ch+1
-    lda #0
-    sta.z cy
-  __b1:
-    ldx #0
-  __b2:
-    // cy&$f
-    lda #$f
-    and.z cy
-    // (cy&$f)*$10
-    asl
-    asl
-    asl
-    asl
-    sta.z __1
-    // cx&$f
-    txa
-    and #$f
-    // (cy&$f)*$10|(cx&$f)
-    ora.z __1
-    // *ch++ = (cy&$f)*$10|(cx&$f)
-    ldy #0
-    sta (ch),y
-    // *ch++ = (cy&$f)*$10|(cx&$f);
-    inc.z ch
-    bne !+
-    inc.z ch+1
-  !:
-    // for(byte cx: 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte cy: 0..24 )
-    inc.z cy
-    lda #$19
-    cmp.z cy
-    bne __b1
     // }
     rts
 }

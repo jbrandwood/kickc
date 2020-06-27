@@ -13,6 +13,21 @@ __start: {
     jsr main
     rts
 }
+irq: {
+    // *IRQ_STATUS = 1
+    // Acknowledge the IRQ
+    lda #1
+    sta IRQ_STATUS
+    // asm
+    lda $dc0d
+    // SCREEN[40] = col1++
+    lda.z col1
+    sta SCREEN+$28
+    // SCREEN[40] = col1++;
+    inc.z col1
+    // }
+    jmp $ea81
+}
 main: {
     .label y = 2
     // *KERNEL_IRQ = &irq
@@ -48,19 +63,4 @@ main: {
     cpx #$b
     bne __b1
     jmp __b4
-}
-irq: {
-    // *IRQ_STATUS = 1
-    // Acknowledge the IRQ
-    lda #1
-    sta IRQ_STATUS
-    // asm
-    lda $dc0d
-    // SCREEN[40] = col1++
-    lda.z col1
-    sta SCREEN+$28
-    // SCREEN[40] = col1++;
-    inc.z col1
-    // }
-    jmp $ea81
 }

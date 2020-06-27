@@ -4,8 +4,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label print_screen = $400
-  .label print_line_cursor = $a
-  .label print_char_cursor = 8
+  .label print_line_cursor = 6
+  .label print_char_cursor = $a
 main: {
     .label b = $c
     .label a = 2
@@ -485,6 +485,37 @@ main: {
     op16: .text "=="
     .byte 0
 }
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
+    // }
+    rts
+}
+// printu(byte register(X) a, byte* zp(8) op, byte zp(5) b, byte zp(4) res)
+printu: {
+    .label b = 5
+    .label res = 4
+    .label op = 8
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+    // print_uchar(a)
+    jsr print_uchar
+    // print_str(op)
+    jsr print_str
+    // print_uchar(b)
+    ldx.z b
+    jsr print_uchar
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+    // print_char(res)
+    lda.z res
+    jsr print_char
+    // }
+    rts
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -508,29 +539,38 @@ print_ln: {
     // }
     rts
 }
-// printu(byte register(X) a, byte* zp(5) op, byte zp(7) b, byte zp(4) res)
-printu: {
-    .label b = 7
-    .label res = 4
-    .label op = 5
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-    // print_uchar(a)
-    jsr print_uchar
-    // print_str(op)
-    jsr print_str
-    // print_uchar(b)
-    ldx.z b
-    jsr print_uchar
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-    // print_char(res)
-    lda.z res
-    jsr print_char
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = 8
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
+  __b1:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
+    bne __b2
     // }
     rts
+  __b2:
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b1
 }
 // Print a single char
 // print_char(byte register(A) ch)
@@ -571,9 +611,9 @@ print_uchar: {
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp(5) str)
+// print_str(byte* zp(8) str)
 print_str: {
-    .label str = 5
+    .label str = 8
   __b1:
     // while(*str)
     ldy #0
@@ -591,46 +631,6 @@ print_str: {
     inc.z str
     bne !+
     inc.z str+1
-  !:
-    jmp __b1
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = $a
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
   !:
     jmp __b1
 }

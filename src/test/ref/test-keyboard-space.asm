@@ -53,6 +53,19 @@ main: {
     sta BG_COLOR
     jmp __b1
 }
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // CIA1->PORT_A_DDR = $ff
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+    // }
+    rts
+}
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
@@ -79,19 +92,6 @@ keyboard_matrix_read: {
     // ~CIA1->PORT_B
     lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
     eor #$ff
-    // }
-    rts
-}
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // CIA1->PORT_A_DDR = $ff
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA1->PORT_B_DDR = $00
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
     // }
     rts
 }

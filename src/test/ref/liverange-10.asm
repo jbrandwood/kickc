@@ -50,6 +50,29 @@ main: {
     // }
     rts
 }
+// outsw(signed word zp(4) sw)
+outsw: {
+    .label sw = 4
+    // if(sw<0)
+    lda.z sw+1
+    bpl __b1
+    // out('-')
+    lda #'-'
+    jsr out
+    // sw = -sw
+    sec
+    lda #0
+    sbc.z sw
+    sta.z sw
+    lda #0
+    sbc.z sw+1
+    sta.z sw+1
+  __b1:
+    // outw((unsigned int)sw)
+    jsr outw
+    // }
+    rts
+}
 // outw(word zp(4) w)
 outw: {
     .label w = 4
@@ -100,29 +123,6 @@ out: {
     inx
     // SCREEN[idx] = c
     sta SCREEN,x
-    // }
-    rts
-}
-// outsw(signed word zp(4) sw)
-outsw: {
-    .label sw = 4
-    // if(sw<0)
-    lda.z sw+1
-    bpl __b1
-    // out('-')
-    lda #'-'
-    jsr out
-    // sw = -sw
-    sec
-    lda #0
-    sbc.z sw
-    sta.z sw
-    lda #0
-    sbc.z sw+1
-    sta.z sw+1
-  __b1:
-    // outw((unsigned int)sw)
-    jsr outw
     // }
     rts
 }

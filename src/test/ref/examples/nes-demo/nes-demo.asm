@@ -178,45 +178,6 @@ vblank: {
     pla
     rti
 }
-// Read Standard Controller #1
-// Returns a byte representing the pushed buttons
-// - bit 0: right
-// - bit 1: left
-// - bit 2: down
-// - bit 3: up
-// - bit 4: start
-// - bit 5: select
-// - bit 6: B
-// - bit 7: A
-readJoy1: {
-    .label __1 = 8
-    // APU->JOY1 = 1
-    // Latch the controller buttons
-    lda #1
-    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // APU->JOY1 = 0
-    lda #0
-    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    tax
-  __b1:
-    // for(char i=0;i<8;i++)
-    cpx #8
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // joy<<1
-    asl
-    sta.z __1
-    // APU->JOY1&1
-    lda #1
-    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
-    // joy = joy<<1 | APU->JOY1&1
-    ora.z __1
-    // for(char i=0;i<8;i++)
-    inx
-    jmp __b1
-}
 // RESET Called when the NES is reset, including when it is turned on.
 main: {
     // asm
@@ -350,6 +311,141 @@ main: {
     inx
     jmp __b1
 }
+// Read Standard Controller #1
+// Returns a byte representing the pushed buttons
+// - bit 0: right
+// - bit 1: left
+// - bit 2: down
+// - bit 3: up
+// - bit 4: start
+// - bit 5: select
+// - bit 6: B
+// - bit 7: A
+readJoy1: {
+    .label __1 = 8
+    // APU->JOY1 = 1
+    // Latch the controller buttons
+    lda #1
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // APU->JOY1 = 0
+    lda #0
+    sta APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    tax
+  __b1:
+    // for(char i=0;i<8;i++)
+    cpx #8
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // joy<<1
+    asl
+    sta.z __1
+    // APU->JOY1&1
+    lda #1
+    and APU+OFFSET_STRUCT_RICOH_2A03_JOY1
+    // joy = joy<<1 | APU->JOY1&1
+    ora.z __1
+    // for(char i=0;i<8;i++)
+    inx
+    jmp __b1
+}
+// Transfer a number of bytes from the CPU memory to the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+ppuDataTransfer: {
+    .const size = $20*SIZEOF_BYTE
+    .label ppuData = PPU_PALETTE
+    .label cpuData = PALETTE
+    // Transfer to PPU
+    .label cpuSrc = 6
+    .label i = 4
+    // PPU->PPUADDR = >ppuData
+    lda #>ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // PPU->PPUADDR = <ppuData
+    lda #0
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<cpuData
+    sta.z cpuSrc
+    lda #>cpuData
+    sta.z cpuSrc+1
+    lda #<0
+    sta.z i
+    sta.z i+1
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp #>size
+    bcc __b2
+    bne !+
+    lda.z i
+    cmp #<size
+    bcc __b2
+  !:
+    // }
+    rts
+  __b2:
+    // ppuDataPut(*cpuSrc++)
+    ldy #0
+    lda (cpuSrc),y
+    // PPU->PPUDATA = val
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // ppuDataPut(*cpuSrc++);
+    inc.z cpuSrc
+    bne !+
+    inc.z cpuSrc+1
+  !:
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b1
+}
+// Fill a number of bytes in the PPU memory
+// - ppuData : Pointer in the PPU memory
+// - size : The number of bytes to transfer
+// ppuDataFill(byte register(X) val, word zp(6) size)
+ppuDataFill: {
+    .label ppuDataPrepare1_ppuData = 4
+    .label i = 2
+    .label size = 6
+    // >ppuData
+    lda.z ppuDataPrepare1_ppuData+1
+    // PPU->PPUADDR = >ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    // <ppuData
+    lda.z ppuDataPrepare1_ppuData
+    // PPU->PPUADDR = <ppuData
+    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
+    lda #<0
+    sta.z i
+    sta.z i+1
+  // Transfer to PPU
+  __b1:
+    // for(unsigned int i=0;i<size;i++)
+    lda.z i+1
+    cmp.z size+1
+    bcc ppuDataPut1
+    bne !+
+    lda.z i
+    cmp.z size
+    bcc ppuDataPut1
+  !:
+    // }
+    rts
+  ppuDataPut1:
+    // PPU->PPUDATA = val
+    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
+    // for(unsigned int i=0;i<size;i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b1
+}
 // Transfer a 2x2 tile into the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - tile : The tile to transfer
@@ -412,8 +508,8 @@ memcpy: {
     .label destination = SPRITE_BUFFER
     .label source = SPRITES
     .label src_end = source+num
-    .label dst = 4
-    .label src = 2
+    .label dst = 6
+    .label src = 4
     lda #<destination
     sta.z dst
     lda #>destination
@@ -445,102 +541,6 @@ memcpy: {
     inc.z src
     bne !+
     inc.z src+1
-  !:
-    jmp __b1
-}
-// Fill a number of bytes in the PPU memory
-// - ppuData : Pointer in the PPU memory
-// - size : The number of bytes to transfer
-// ppuDataFill(byte register(X) val, word zp(6) size)
-ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = 4
-    .label i = 2
-    .label size = 6
-    // >ppuData
-    lda.z ppuDataPrepare1_ppuData+1
-    // PPU->PPUADDR = >ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // <ppuData
-    lda.z ppuDataPrepare1_ppuData
-    // PPU->PPUADDR = <ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    lda #<0
-    sta.z i
-    sta.z i+1
-  // Transfer to PPU
-  __b1:
-    // for(unsigned int i=0;i<size;i++)
-    lda.z i+1
-    cmp.z size+1
-    bcc ppuDataPut1
-    bne !+
-    lda.z i
-    cmp.z size
-    bcc ppuDataPut1
-  !:
-    // }
-    rts
-  ppuDataPut1:
-    // PPU->PPUDATA = val
-    stx PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // for(unsigned int i=0;i<size;i++)
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    jmp __b1
-}
-// Transfer a number of bytes from the CPU memory to the PPU memory
-// - cpuData : Pointer to the CPU memory (RAM of ROM)
-// - ppuData : Pointer in the PPU memory
-// - size : The number of bytes to transfer
-ppuDataTransfer: {
-    .const size = $20*SIZEOF_BYTE
-    .label ppuData = PPU_PALETTE
-    .label cpuData = PALETTE
-    // Transfer to PPU
-    .label cpuSrc = 6
-    .label i = 4
-    // PPU->PPUADDR = >ppuData
-    lda #>ppuData
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    // PPU->PPUADDR = <ppuData
-    lda #0
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUADDR
-    lda #<cpuData
-    sta.z cpuSrc
-    lda #>cpuData
-    sta.z cpuSrc+1
-    lda #<0
-    sta.z i
-    sta.z i+1
-  __b1:
-    // for(unsigned int i=0;i<size;i++)
-    lda.z i+1
-    cmp #>size
-    bcc __b2
-    bne !+
-    lda.z i
-    cmp #<size
-    bcc __b2
-  !:
-    // }
-    rts
-  __b2:
-    // ppuDataPut(*cpuSrc++)
-    ldy #0
-    lda (cpuSrc),y
-    // PPU->PPUDATA = val
-    sta PPU+OFFSET_STRUCT_RICOH_2C02_PPUDATA
-    // ppuDataPut(*cpuSrc++);
-    inc.z cpuSrc
-    bne !+
-    inc.z cpuSrc+1
-  !:
-    // for(unsigned int i=0;i<size;i++)
-    inc.z i
-    bne !+
-    inc.z i+1
   !:
     jmp __b1
 }

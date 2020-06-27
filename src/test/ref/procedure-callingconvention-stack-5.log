@@ -111,7 +111,7 @@ Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
 CALL GRAPH
 Calls in [__start] to main:3 
-Calls in [main] to next:7 next:11 
+Calls in [main] to next:11 next:15 
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
@@ -136,28 +136,28 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
+__stackcall (signed word()) next()
+next: scope:[next]  from
+  [5] (signed word) next::return#0 ← (signed word) current
+  [6] (signed word) current ← ++ (signed word) current
+  to:next::@return
+next::@return: scope:[next]  from next
+  [7] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0
+  [8] return 
+  to:@return
+
 (void()) main()
 main: scope:[main]  from __start::@1
   sideeffect stackpushbytes((number) 2)
-  [6] callexecute next 
-  [7] (signed word~) main::$0 ← stackpull(signed word)
-  [8] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0
-  sideeffect stackpushbytes((number) 2)
   [10] callexecute next 
-  [11] (signed word~) main::$1 ← stackpull(signed word)
-  [12] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1
+  [11] (signed word~) main::$0 ← stackpull(signed word)
+  [12] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0
+  sideeffect stackpushbytes((number) 2)
+  [14] callexecute next 
+  [15] (signed word~) main::$1 ← stackpull(signed word)
+  [16] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1
   to:main::@return
 main::@return: scope:[main]  from main
-  [13] return 
-  to:@return
-
-__stackcall (signed word()) next()
-next: scope:[next]  from
-  [14] (signed word) next::return#0 ← (signed word) current
-  [15] (signed word) current ← ++ (signed word) current
-  to:next::@return
-next::@return: scope:[next]  from next
-  [16] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0
   [17] return 
   to:@return
 
@@ -174,18 +174,18 @@ __stackcall (signed word()) next()
 
 Initial phi equivalence classes
 Added variable current to live range equivalence class [ current ]
+Added variable next::return#0 to live range equivalence class [ next::return#0 ]
 Added variable main::$0 to live range equivalence class [ main::$0 ]
 Added variable main::$1 to live range equivalence class [ main::$1 ]
-Added variable next::return#0 to live range equivalence class [ next::return#0 ]
 Complete equivalence classes
 [ current ]
+[ next::return#0 ]
 [ main::$0 ]
 [ main::$1 ]
-[ next::return#0 ]
 Allocated zp[2]:2 [ current ]
-Allocated zp[2]:4 [ main::$0 ]
-Allocated zp[2]:6 [ main::$1 ]
-Allocated zp[2]:8 [ next::return#0 ]
+Allocated zp[2]:4 [ next::return#0 ]
+Allocated zp[2]:6 [ main::$0 ]
+Allocated zp[2]:8 [ main::$1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -224,56 +224,16 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    .label __0 = 4
-    .label __1 = 6
-    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
-    pha
-    pha
-    // [6] callexecute next  -- jsr 
-    jsr next
-    // [7] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
-    pla
-    sta.z __0
-    pla
-    sta.z __0+1
-    // [8] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 -- _deref_pwsc1=vwsz1 
-    lda.z __0
-    sta SCREEN
-    lda.z __0+1
-    sta SCREEN+1
-    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
-    pha
-    pha
-    // [10] callexecute next  -- jsr 
-    jsr next
-    // [11] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
-    pla
-    sta.z __1
-    pla
-    sta.z __1+1
-    // [12] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda.z __1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD
-    lda.z __1+1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // next
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 8
-    // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
+    .label return = 4
+    // [5] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
     lda.z current
     sta.z return
     lda.z current+1
     sta.z return+1
-    // [15] (signed word) current ← ++ (signed word) current -- vwsz1=_inc_vwsz1 
+    // [6] (signed word) current ← ++ (signed word) current -- vwsz1=_inc_vwsz1 
     inc.z current
     bne !+
     inc.z current+1
@@ -281,12 +241,52 @@ next: {
     jmp __breturn
     // next::@return
   __breturn:
-    // [16] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [7] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [8] return 
+    rts
+}
+  // main
+main: {
+    .label __0 = 6
+    .label __1 = 8
+    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
+    pha
+    pha
+    // [10] callexecute next  -- jsr 
+    jsr next
+    // [11] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    pla
+    sta.z __0
+    pla
+    sta.z __0+1
+    // [12] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 -- _deref_pwsc1=vwsz1 
+    lda.z __0
+    sta SCREEN
+    lda.z __0+1
+    sta SCREEN+1
+    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
+    pha
+    pha
+    // [14] callexecute next  -- jsr 
+    jsr next
+    // [15] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    pla
+    sta.z __1
+    pla
+    sta.z __1+1
+    // [16] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
+    lda.z __1
+    sta SCREEN+1*SIZEOF_SIGNED_WORD
+    lda.z __1+1
+    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
+    jmp __breturn
+    // main::@return
+  __breturn:
     // [17] return 
     rts
 }
@@ -294,31 +294,31 @@ next: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (signed word) current ← (signed word) $30 [ current ] (  [ current ] { }  ) always clobbers reg byte a 
-Statement [7] (signed word~) main::$0 ← stackpull(signed word) [ current main::$0 ] ( main:3 [ current main::$0 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 [ current ] ( main:3 [ current ] { }  ) always clobbers reg byte a 
-Statement [11] (signed word~) main::$1 ← stackpull(signed word) [ main::$1 ] ( main:3 [ main::$1 ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [14] (signed word) next::return#0 ← (signed word) current [ current next::return#0 ] ( main:3::next:6 [ current next::return#0 ] { }  main:3::next:10 [ current next::return#0 ] { }  ) always clobbers reg byte a 
-Statement [16] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 [ current ] ( main:3::next:6 [ current ] { }  main:3::next:10 [ current ] { }  ) always clobbers reg byte a reg byte x 
+Statement [5] (signed word) next::return#0 ← (signed word) current [ current next::return#0 ] ( main:3::next:10 [ current next::return#0 ] { }  main:3::next:14 [ current next::return#0 ] { }  ) always clobbers reg byte a 
+Statement [7] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 [ current ] ( main:3::next:10 [ current ] { }  main:3::next:14 [ current ] { }  ) always clobbers reg byte a reg byte x 
+Statement [11] (signed word~) main::$0 ← stackpull(signed word) [ current main::$0 ] ( main:3 [ current main::$0 ] { }  ) always clobbers reg byte a 
+Statement [12] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 [ current ] ( main:3 [ current ] { }  ) always clobbers reg byte a 
+Statement [15] (signed word~) main::$1 ← stackpull(signed word) [ main::$1 ] ( main:3 [ main::$1 ] { }  ) always clobbers reg byte a 
+Statement [16] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ current ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ main::$0 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ main::$1 ] : zp[2]:6 , 
-Potential registers zp[2]:8 [ next::return#0 ] : zp[2]:8 , 
+Potential registers zp[2]:4 [ next::return#0 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::$0 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::$1 ] : zp[2]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [next] 101: zp[2]:8 [ next::return#0 ] 
-Uplift Scope [main] 22: zp[2]:4 [ main::$0 ] 22: zp[2]:6 [ main::$1 ] 
+Uplift Scope [next] 101: zp[2]:4 [ next::return#0 ] 
+Uplift Scope [main] 22: zp[2]:6 [ main::$0 ] 22: zp[2]:8 [ main::$1 ] 
 Uplift Scope [] 27.73: zp[2]:2 [ current ] 
 Uplift Scope [__start] 
 
-Uplifting [next] best 198 combination zp[2]:8 [ next::return#0 ] 
-Uplifting [main] best 198 combination zp[2]:4 [ main::$0 ] zp[2]:6 [ main::$1 ] 
+Uplifting [next] best 198 combination zp[2]:4 [ next::return#0 ] 
+Uplifting [main] best 198 combination zp[2]:6 [ main::$0 ] zp[2]:8 [ main::$1 ] 
 Uplifting [] best 198 combination zp[2]:2 [ current ] 
 Uplifting [__start] best 198 combination 
-Coalescing zero page register [ zp[2]:6 [ main::$1 ] ] with [ zp[2]:2 [ current ] ]
-Allocated (was zp[2]:4) zp[2]:2 [ main::$0 ]
-Allocated (was zp[2]:6) zp[2]:4 [ main::$1 current ]
-Allocated (was zp[2]:8) zp[2]:6 [ next::return#0 ]
+Coalescing zero page register [ zp[2]:6 [ main::$0 ] ] with [ zp[2]:4 [ next::return#0 ] ]
+Coalescing zero page register [ zp[2]:8 [ main::$1 ] ] with [ zp[2]:2 [ current ] ]
+Allocated (was zp[2]:6) zp[2]:2 [ main::$0 next::return#0 ]
+Allocated (was zp[2]:8) zp[2]:4 [ main::$1 current ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -356,56 +356,16 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    .label __0 = 2
-    .label __1 = 4
-    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
-    pha
-    pha
-    // [6] callexecute next  -- jsr 
-    jsr next
-    // [7] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
-    pla
-    sta.z __0
-    pla
-    sta.z __0+1
-    // [8] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 -- _deref_pwsc1=vwsz1 
-    lda.z __0
-    sta SCREEN
-    lda.z __0+1
-    sta SCREEN+1
-    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
-    pha
-    pha
-    // [10] callexecute next  -- jsr 
-    jsr next
-    // [11] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
-    pla
-    sta.z __1
-    pla
-    sta.z __1+1
-    // [12] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
-    lda.z __1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD
-    lda.z __1+1
-    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // next
 next: {
     .const OFFSET_STACK_RETURN = 0
-    .label return = 6
-    // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
+    .label return = 2
+    // [5] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
     lda.z current
     sta.z return
     lda.z current+1
     sta.z return+1
-    // [15] (signed word) current ← ++ (signed word) current -- vwsz1=_inc_vwsz1 
+    // [6] (signed word) current ← ++ (signed word) current -- vwsz1=_inc_vwsz1 
     inc.z current
     bne !+
     inc.z current+1
@@ -413,12 +373,52 @@ next: {
     jmp __breturn
     // next::@return
   __breturn:
-    // [16] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    // [7] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
     tsx
     lda.z return
     sta STACK_BASE+OFFSET_STACK_RETURN,x
     lda.z return+1
     sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [8] return 
+    rts
+}
+  // main
+main: {
+    .label __0 = 2
+    .label __1 = 4
+    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
+    pha
+    pha
+    // [10] callexecute next  -- jsr 
+    jsr next
+    // [11] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    pla
+    sta.z __0
+    pla
+    sta.z __0+1
+    // [12] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 -- _deref_pwsc1=vwsz1 
+    lda.z __0
+    sta SCREEN
+    lda.z __0+1
+    sta SCREEN+1
+    // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
+    pha
+    pha
+    // [14] callexecute next  -- jsr 
+    jsr next
+    // [15] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    pla
+    sta.z __1
+    pla
+    sta.z __1+1
+    // [16] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
+    lda.z __1
+    sta SCREEN+1*SIZEOF_SIGNED_WORD
+    lda.z __1+1
+    sta SCREEN+1*SIZEOF_SIGNED_WORD+1
+    jmp __breturn
+    // main::@return
+  __breturn:
     // [17] return 
     rts
 }
@@ -457,11 +457,10 @@ __stackcall (signed word()) next()
 (label) next::@return
 (const byte) next::OFFSET_STACK_RETURN = (byte) 0
 (signed word) next::return
-(signed word) next::return#0 return zp[2]:6 101.0
+(signed word) next::return#0 return zp[2]:2 101.0
 
-zp[2]:2 [ main::$0 ]
+zp[2]:2 [ main::$0 next::return#0 ]
 zp[2]:4 [ main::$1 current ]
-zp[2]:6 [ next::return#0 ]
 
 
 FINAL ASSEMBLER
@@ -496,6 +495,32 @@ __start: {
     // [4] return 
     rts
 }
+  // next
+next: {
+    .const OFFSET_STACK_RETURN = 0
+    .label return = 2
+    // return current++;
+    // [5] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
+    lda.z current
+    sta.z return
+    lda.z current+1
+    sta.z return+1
+    // [6] (signed word) current ← ++ (signed word) current -- vwsz1=_inc_vwsz1 
+    inc.z current
+    bne !+
+    inc.z current+1
+  !:
+    // next::@return
+    // }
+    // [7] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
+    tsx
+    lda.z return
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    lda.z return+1
+    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
+    // [8] return 
+    rts
+}
   // main
 main: {
     .label __0 = 2
@@ -504,15 +529,15 @@ main: {
     // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
     pha
     pha
-    // [6] callexecute next  -- jsr 
+    // [10] callexecute next  -- jsr 
     jsr next
-    // [7] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    // [11] (signed word~) main::$0 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __0
     pla
     sta.z __0+1
     // SCREEN[0] = next()
-    // [8] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 -- _deref_pwsc1=vwsz1 
+    // [12] *((const nomodify signed word*) SCREEN) ← (signed word~) main::$0 -- _deref_pwsc1=vwsz1 
     lda.z __0
     sta SCREEN
     lda.z __0+1
@@ -521,47 +546,21 @@ main: {
     // sideeffect stackpushbytes((number) 2) -- _stackpushbyte_2 
     pha
     pha
-    // [10] callexecute next  -- jsr 
+    // [14] callexecute next  -- jsr 
     jsr next
-    // [11] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
+    // [15] (signed word~) main::$1 ← stackpull(signed word) -- vwsz1=_stackpullsword_ 
     pla
     sta.z __1
     pla
     sta.z __1+1
     // SCREEN[1] = next()
-    // [12] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
+    // [16] *((const nomodify signed word*) SCREEN+(byte) 1*(const byte) SIZEOF_SIGNED_WORD) ← (signed word~) main::$1 -- _deref_pwsc1=vwsz1 
     lda.z __1
     sta SCREEN+1*SIZEOF_SIGNED_WORD
     lda.z __1+1
     sta SCREEN+1*SIZEOF_SIGNED_WORD+1
     // main::@return
     // }
-    // [13] return 
-    rts
-}
-  // next
-next: {
-    .const OFFSET_STACK_RETURN = 0
-    .label return = 6
-    // return current++;
-    // [14] (signed word) next::return#0 ← (signed word) current -- vwsz1=vwsz2 
-    lda.z current
-    sta.z return
-    lda.z current+1
-    sta.z return+1
-    // [15] (signed word) current ← ++ (signed word) current -- vwsz1=_inc_vwsz1 
-    inc.z current
-    bne !+
-    inc.z current+1
-  !:
-    // next::@return
-    // }
-    // [16] stackidx(signed word,(const byte) next::OFFSET_STACK_RETURN) ← (signed word) next::return#0 -- _stackidxsword_vbuc1=vwsz1 
-    tsx
-    lda.z return
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
-    lda.z return+1
-    sta STACK_BASE+OFFSET_STACK_RETURN+1,x
     // [17] return 
     rts
 }

@@ -14,10 +14,10 @@ main: {
     rts
 }
 // A constant boolean inside an if()
-bool_const_inline: {
-    // SCREEN[2] = 't'
+bool_const_if: {
+    // SCREEN[0] = 't'
     lda #'t'
-    sta SCREEN+2
+    sta SCREEN
     // }
     rts
 }
@@ -30,10 +30,10 @@ bool_const_vars: {
     rts
 }
 // A constant boolean inside an if()
-bool_const_if: {
-    // SCREEN[0] = 't'
+bool_const_inline: {
+    // SCREEN[2] = 't'
     lda #'t'
-    sta SCREEN
+    sta SCREEN+2
     // }
     rts
 }

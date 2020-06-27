@@ -14,14 +14,14 @@
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
-  .label heap_head = $15
+  .label heap_head = 2
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
-  .label SQUARES = $17
+  .label SQUARES = 4
   // Screen containing distance to center
-  .label SCREEN_DIST = $19
+  .label SCREEN_DIST = $1b
   // Screen containing angle to center
-  .label SCREEN_ANGLE = $1b
+  .label SCREEN_ANGLE = $1d
 __start: {
     // malloc(1000)
     lda #<$3e8
@@ -51,14 +51,36 @@ __start: {
     jsr main
     rts
 }
+// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
+// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
+// malloc(word zp(4) size)
+malloc: {
+    .label mem = 4
+    .label size = 4
+    // mem = heap_head-size
+    lda.z heap_head
+    sec
+    sbc.z mem
+    sta.z mem
+    lda.z heap_head+1
+    sbc.z mem+1
+    sta.z mem+1
+    // heap_head = mem
+    lda.z mem
+    sta.z heap_head
+    lda.z mem+1
+    sta.z heap_head+1
+    // }
+    rts
+}
 main: {
-    .label dist = 2
-    .label angle = 4
-    .label fill = $15
-    .label dist_angle = $a
-    .label min_dist_angle = 6
-    .label min_dist_angle_1 = $a
-    .label min_fill = 8
+    .label dist = 4
+    .label angle = 6
+    .label fill = 2
+    .label dist_angle = $c
+    .label min_dist_angle = 8
+    .label min_dist_angle_1 = $c
+    .label min_fill = $a
     // init_dist_screen(SCREEN_DIST)
     lda.z SCREEN_DIST
     sta.z init_dist_screen.screen
@@ -179,21 +201,148 @@ main: {
     sta.z min_dist_angle_1+1
     jmp __b3
 }
+// Populates 1000 bytes (a screen) with values representing the distance to the center.
+// The actual value stored is distance*2 to increase precision
+// init_dist_screen(byte* zp($f) screen)
+init_dist_screen: {
+    .label screen = $f
+    .label screen_bottomline = $11
+    .label yds = $1f
+    .label screen_topline = $f
+    .label y = $e
+    .label xds = $21
+    .label ds = $21
+    .label x = $13
+    .label xb = $14
+    // init_squares()
+    jsr init_squares
+    // screen_bottomline = screen+40*24
+    lda.z screen
+    clc
+    adc #<$28*$18
+    sta.z screen_bottomline
+    lda.z screen+1
+    adc #>$28*$18
+    sta.z screen_bottomline+1
+    lda #0
+    sta.z y
+  __b1:
+    // y2 = y*2
+    lda.z y
+    asl
+    // (y2>=24)?(y2-24):(24-y2)
+    cmp #$18
+    bcs __b2
+    eor #$ff
+    sec
+    adc #$18
+  __b4:
+    // sqr(yd)
+    jsr sqr
+    // sqr(yd)
+    lda.z sqr.return
+    sta.z sqr.return_1
+    lda.z sqr.return+1
+    sta.z sqr.return_1+1
+    // yds = sqr(yd)
+    lda #$27
+    sta.z xb
+    lda #0
+    sta.z x
+  __b5:
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    lda.z x
+    cmp #$13+1
+    bcc __b6
+    // screen_topline += 40
+    lda #$28
+    clc
+    adc.z screen_topline
+    sta.z screen_topline
+    bcc !+
+    inc.z screen_topline+1
+  !:
+    // screen_bottomline -= 40
+    sec
+    lda.z screen_bottomline
+    sbc #$28
+    sta.z screen_bottomline
+    lda.z screen_bottomline+1
+    sbc #0
+    sta.z screen_bottomline+1
+    // for(byte y: 0..12)
+    inc.z y
+    lda #$d
+    cmp.z y
+    bne __b1
+    // }
+    rts
+  __b6:
+    // x2 = x*2
+    lda.z x
+    asl
+    // (x2>=39)?(x2-39):(39-x2)
+    cmp #$27
+    bcs __b8
+    eor #$ff
+    sec
+    adc #$27
+  __b10:
+    // sqr(xd)
+    jsr sqr
+    // sqr(xd)
+    // xds = sqr(xd)
+    // ds = xds+yds
+    lda.z ds
+    clc
+    adc.z yds
+    sta.z ds
+    lda.z ds+1
+    adc.z yds+1
+    sta.z ds+1
+    // sqrt(ds)
+    jsr sqrt
+    // d = sqrt(ds)
+    // screen_topline[x] = d
+    ldy.z x
+    sta (screen_topline),y
+    // screen_bottomline[x] = d
+    sta (screen_bottomline),y
+    // screen_topline[xb] = d
+    ldy.z xb
+    sta (screen_topline),y
+    // screen_bottomline[xb] = d
+    sta (screen_bottomline),y
+    // for( byte x=0,xb=39; x<=19; x++, xb--)
+    inc.z x
+    dec.z xb
+    jmp __b5
+  __b8:
+    // (x2>=39)?(x2-39):(39-x2)
+    sec
+    sbc #$27
+    jmp __b10
+  __b2:
+    // (y2>=24)?(y2-24):(24-y2)
+    sec
+    sbc #$18
+    jmp __b4
+}
 // Populates 1000 bytes (a screen) with values representing the angle to the center.
 // Utilizes symmetry around the  center
-// init_angle_screen(byte* zp($15) screen)
+// init_angle_screen(byte* zp($11) screen)
 init_angle_screen: {
-    .label __7 = $13
-    .label screen = $15
-    .label screen_topline = $d
-    .label screen_bottomline = $15
-    .label xw = $20
-    .label yw = $22
-    .label angle_w = $13
-    .label ang_w = $1d
-    .label x = $f
-    .label xb = $10
-    .label y = $c
+    .label __7 = $19
+    .label screen = $11
+    .label screen_topline = $f
+    .label screen_bottomline = $11
+    .label xw = $24
+    .label yw = $26
+    .label angle_w = $19
+    .label ang_w = $23
+    .label x = $13
+    .label xb = $14
+    .label y = $e
     // screen_topline = screen+40*12
     lda.z screen
     clc
@@ -304,21 +453,130 @@ init_angle_screen: {
     dec.z xb
     jmp __b2
 }
+// Initialize squares table
+// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
+init_squares: {
+    .label squares = $17
+    .label sqr = $15
+    // malloc(NUM_SQUARES*sizeof(unsigned int))
+    lda #<NUM_SQUARES*SIZEOF_WORD
+    sta.z malloc.size
+    lda #>NUM_SQUARES*SIZEOF_WORD
+    sta.z malloc.size+1
+    jsr malloc
+    // malloc(NUM_SQUARES*sizeof(unsigned int))
+    // squares = SQUARES
+    lda.z SQUARES
+    sta.z squares
+    lda.z SQUARES+1
+    sta.z squares+1
+    lda #<0
+    sta.z sqr
+    sta.z sqr+1
+    tax
+  __b1:
+    // for(char i=0;i<NUM_SQUARES;i++)
+    cpx #NUM_SQUARES
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // *squares++ = sqr
+    ldy #0
+    lda.z sqr
+    sta (squares),y
+    iny
+    lda.z sqr+1
+    sta (squares),y
+    // *squares++ = sqr;
+    lda #SIZEOF_WORD
+    clc
+    adc.z squares
+    sta.z squares
+    bcc !+
+    inc.z squares+1
+  !:
+    // i*2
+    txa
+    asl
+    // i*2+1
+    clc
+    adc #1
+    // sqr += i*2+1
+    clc
+    adc.z sqr
+    sta.z sqr
+    bcc !+
+    inc.z sqr+1
+  !:
+    // for(char i=0;i<NUM_SQUARES;i++)
+    inx
+    jmp __b1
+}
+// Find the square of a char value
+// Uses a table of squares that must be initialized by calling init_squares()
+// sqr(byte register(A) val)
+sqr: {
+    .label return = $21
+    .label return_1 = $1f
+    // return SQUARES[val];
+    asl
+    tay
+    lda (SQUARES),y
+    sta.z return
+    iny
+    lda (SQUARES),y
+    sta.z return+1
+    // }
+    rts
+}
+// Find the (integer) square root of a unsigned int value
+// If the square is not an integer then it returns the largest integer N where N*N <= val
+// Uses a table of squares that must be initialized by calling init_squares()
+// sqrt(word zp($21) val)
+sqrt: {
+    .label __1 = $19
+    .label __2 = $19
+    .label found = $19
+    .label val = $21
+    // bsearch16u(val, SQUARES, NUM_SQUARES)
+    lda.z SQUARES
+    sta.z bsearch16u.items
+    lda.z SQUARES+1
+    sta.z bsearch16u.items+1
+    jsr bsearch16u
+    // bsearch16u(val, SQUARES, NUM_SQUARES)
+    // found = bsearch16u(val, SQUARES, NUM_SQUARES)
+    // found-SQUARES
+    lda.z __2
+    sec
+    sbc.z SQUARES
+    sta.z __2
+    lda.z __2+1
+    sbc.z SQUARES+1
+    sta.z __2+1
+    lsr.z __1+1
+    ror.z __1
+    // sq = (char)(found-SQUARES)
+    lda.z __1
+    // }
+    rts
+}
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($20) x, signed word zp($22) y)
+// atan2_16(signed word zp($24) x, signed word zp($26) y)
 atan2_16: {
-    .label __2 = $11
-    .label __7 = $24
-    .label yi = $11
-    .label xi = $24
-    .label angle = $13
-    .label xd = $1e
-    .label yd = $17
-    .label return = $13
-    .label x = $20
-    .label y = $22
+    .label __2 = $15
+    .label __7 = $17
+    .label yi = $15
+    .label xi = $17
+    .label angle = $19
+    .label xd = $21
+    .label yd = $1f
+    .label return = $19
+    .label x = $24
+    .label y = $26
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+
@@ -519,178 +777,19 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
-// Populates 1000 bytes (a screen) with values representing the distance to the center.
-// The actual value stored is distance*2 to increase precision
-// init_dist_screen(byte* zp($d) screen)
-init_dist_screen: {
-    .label screen = $d
-    .label screen_bottomline = $15
-    .label yds = $1e
-    .label screen_topline = $d
-    .label y = $c
-    .label xds = $20
-    .label ds = $20
-    .label x = $f
-    .label xb = $10
-    // init_squares()
-    jsr init_squares
-    // screen_bottomline = screen+40*24
-    lda.z screen
-    clc
-    adc #<$28*$18
-    sta.z screen_bottomline
-    lda.z screen+1
-    adc #>$28*$18
-    sta.z screen_bottomline+1
-    lda #0
-    sta.z y
-  __b1:
-    // y2 = y*2
-    lda.z y
-    asl
-    // (y2>=24)?(y2-24):(24-y2)
-    cmp #$18
-    bcs __b2
-    eor #$ff
-    sec
-    adc #$18
-  __b4:
-    // sqr(yd)
-    jsr sqr
-    // sqr(yd)
-    lda.z sqr.return
-    sta.z sqr.return_1
-    lda.z sqr.return+1
-    sta.z sqr.return_1+1
-    // yds = sqr(yd)
-    lda #$27
-    sta.z xb
-    lda #0
-    sta.z x
-  __b5:
-    // for( byte x=0,xb=39; x<=19; x++, xb--)
-    lda.z x
-    cmp #$13+1
-    bcc __b6
-    // screen_topline += 40
-    lda #$28
-    clc
-    adc.z screen_topline
-    sta.z screen_topline
-    bcc !+
-    inc.z screen_topline+1
-  !:
-    // screen_bottomline -= 40
-    sec
-    lda.z screen_bottomline
-    sbc #$28
-    sta.z screen_bottomline
-    lda.z screen_bottomline+1
-    sbc #0
-    sta.z screen_bottomline+1
-    // for(byte y: 0..12)
-    inc.z y
-    lda #$d
-    cmp.z y
-    bne __b1
-    // }
-    rts
-  __b6:
-    // x2 = x*2
-    lda.z x
-    asl
-    // (x2>=39)?(x2-39):(39-x2)
-    cmp #$27
-    bcs __b8
-    eor #$ff
-    sec
-    adc #$27
-  __b10:
-    // sqr(xd)
-    jsr sqr
-    // sqr(xd)
-    // xds = sqr(xd)
-    // ds = xds+yds
-    lda.z ds
-    clc
-    adc.z yds
-    sta.z ds
-    lda.z ds+1
-    adc.z yds+1
-    sta.z ds+1
-    // sqrt(ds)
-    jsr sqrt
-    // d = sqrt(ds)
-    // screen_topline[x] = d
-    ldy.z x
-    sta (screen_topline),y
-    // screen_bottomline[x] = d
-    sta (screen_bottomline),y
-    // screen_topline[xb] = d
-    ldy.z xb
-    sta (screen_topline),y
-    // screen_bottomline[xb] = d
-    sta (screen_bottomline),y
-    // for( byte x=0,xb=39; x<=19; x++, xb--)
-    inc.z x
-    dec.z xb
-    jmp __b5
-  __b8:
-    // (x2>=39)?(x2-39):(39-x2)
-    sec
-    sbc #$27
-    jmp __b10
-  __b2:
-    // (y2>=24)?(y2-24):(24-y2)
-    sec
-    sbc #$18
-    jmp __b4
-}
-// Find the (integer) square root of a unsigned int value
-// If the square is not an integer then it returns the largest integer N where N*N <= val
-// Uses a table of squares that must be initialized by calling init_squares()
-// sqrt(word zp($20) val)
-sqrt: {
-    .label __1 = $11
-    .label __2 = $11
-    .label found = $11
-    .label val = $20
-    // bsearch16u(val, SQUARES, NUM_SQUARES)
-    lda.z SQUARES
-    sta.z bsearch16u.items
-    lda.z SQUARES+1
-    sta.z bsearch16u.items+1
-    jsr bsearch16u
-    // bsearch16u(val, SQUARES, NUM_SQUARES)
-    // found = bsearch16u(val, SQUARES, NUM_SQUARES)
-    // found-SQUARES
-    lda.z __2
-    sec
-    sbc.z SQUARES
-    sta.z __2
-    lda.z __2+1
-    sbc.z SQUARES+1
-    sta.z __2+1
-    lsr.z __1+1
-    ror.z __1
-    // sq = (char)(found-SQUARES)
-    lda.z __1
-    // }
-    rts
-}
 // Searches an array of nitems unsigned ints, the initial member of which is pointed to by base, for a member that matches the value key.
 // - key - The value to look for
 // - items - Pointer to the start of the array to search in
 // - num - The number of items in the array
 // Returns pointer to an entry in the array that matches the search key
-// bsearch16u(word zp($20) key, word* zp($11) items, byte register(X) num)
+// bsearch16u(word zp($21) key, word* zp($19) items, byte register(X) num)
 bsearch16u: {
-    .label __2 = $11
-    .label pivot = $22
-    .label result = $24
-    .label return = $11
-    .label items = $11
-    .label key = $20
+    .label __2 = $19
+    .label pivot = $24
+    .label result = $26
+    .label return = $19
+    .label items = $19
+    .label key = $21
     ldx #NUM_SQUARES
   __b3:
     // while (num > 0)
@@ -772,105 +871,6 @@ bsearch16u: {
     lsr
     tax
     jmp __b3
-}
-// Find the square of a char value
-// Uses a table of squares that must be initialized by calling init_squares()
-// sqr(byte register(A) val)
-sqr: {
-    .label return = $20
-    .label return_1 = $1e
-    // return SQUARES[val];
-    asl
-    tay
-    lda (SQUARES),y
-    sta.z return
-    iny
-    lda (SQUARES),y
-    sta.z return+1
-    // }
-    rts
-}
-// Initialize squares table
-// Uses iterative formula (x+1)^2 = x^2 + 2*x + 1
-init_squares: {
-    .label squares = $13
-    .label sqr = $24
-    // malloc(NUM_SQUARES*sizeof(unsigned int))
-    lda #<NUM_SQUARES*SIZEOF_WORD
-    sta.z malloc.size
-    lda #>NUM_SQUARES*SIZEOF_WORD
-    sta.z malloc.size+1
-    jsr malloc
-    // malloc(NUM_SQUARES*sizeof(unsigned int))
-    // squares = SQUARES
-    lda.z SQUARES
-    sta.z squares
-    lda.z SQUARES+1
-    sta.z squares+1
-    lda #<0
-    sta.z sqr
-    sta.z sqr+1
-    tax
-  __b1:
-    // for(char i=0;i<NUM_SQUARES;i++)
-    cpx #NUM_SQUARES
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // *squares++ = sqr
-    ldy #0
-    lda.z sqr
-    sta (squares),y
-    iny
-    lda.z sqr+1
-    sta (squares),y
-    // *squares++ = sqr;
-    lda #SIZEOF_WORD
-    clc
-    adc.z squares
-    sta.z squares
-    bcc !+
-    inc.z squares+1
-  !:
-    // i*2
-    txa
-    asl
-    // i*2+1
-    clc
-    adc #1
-    // sqr += i*2+1
-    clc
-    adc.z sqr
-    sta.z sqr
-    bcc !+
-    inc.z sqr+1
-  !:
-    // for(char i=0;i<NUM_SQUARES;i++)
-    inx
-    jmp __b1
-}
-// Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
-// The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zp($17) size)
-malloc: {
-    .label mem = $17
-    .label size = $17
-    // mem = heap_head-size
-    lda.z heap_head
-    sec
-    sbc.z mem
-    sta.z mem
-    lda.z heap_head+1
-    sbc.z mem+1
-    sta.z mem+1
-    // heap_head = mem
-    lda.z mem
-    sta.z heap_head
-    lda.z mem+1
-    sta.z heap_head+1
-    // }
-    rts
 }
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:

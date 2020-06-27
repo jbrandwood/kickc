@@ -258,21 +258,21 @@ main::@return: scope:[main]  from main::@3
   [18] return 
   to:@return
 
-(byte()) sum2((byte) sum2::a , (byte) sum2::b , (byte) sum2::c)
-sum2: scope:[sum2]  from main::@2
-  [19] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
-  [20] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0
-  to:sum2::@return
-sum2::@return: scope:[sum2]  from sum2
+(byte()) sum((byte) sum::a , (byte) sum::b , (byte) sum::c)
+sum: scope:[sum]  from main::@1
+  [19] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
+  [20] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0
+  to:sum::@return
+sum::@return: scope:[sum]  from sum
   [21] return 
   to:@return
 
-(byte()) sum((byte) sum::a , (byte) sum::b , (byte) sum::c)
-sum: scope:[sum]  from main::@1
-  [22] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0
-  [23] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0
-  to:sum::@return
-sum::@return: scope:[sum]  from sum
+(byte()) sum2((byte) sum2::a , (byte) sum2::b , (byte) sum2::c)
+sum2: scope:[sum2]  from main::@2
+  [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0
+  [23] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0
+  to:sum2::@return
+sum2::@return: scope:[sum2]  from sum2
   [24] return 
   to:@return
 
@@ -319,10 +319,10 @@ Added variable sum2::c#0 to live range equivalence class [ sum2::c#0 ]
 Added variable sum2::a#0 to live range equivalence class [ sum2::a#0 ]
 Added variable sum2::return#0 to live range equivalence class [ sum2::return#0 ]
 Added variable main::$5 to live range equivalence class [ main::$5 ]
-Added variable sum2::$0 to live range equivalence class [ sum2::$0 ]
-Added variable sum2::return#1 to live range equivalence class [ sum2::return#1 ]
 Added variable sum::$0 to live range equivalence class [ sum::$0 ]
 Added variable sum::return#1 to live range equivalence class [ sum::return#1 ]
+Added variable sum2::$0 to live range equivalence class [ sum2::$0 ]
+Added variable sum2::return#1 to live range equivalence class [ sum2::return#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ sum::b#0 ]
@@ -335,10 +335,10 @@ Complete equivalence classes
 [ sum2::a#0 ]
 [ sum2::return#0 ]
 [ main::$5 ]
-[ sum2::$0 ]
-[ sum2::return#1 ]
 [ sum::$0 ]
 [ sum::return#1 ]
+[ sum2::$0 ]
+[ sum2::return#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ sum::b#0 ]
 Allocated zp[1]:4 [ sum::c#0 ]
@@ -350,10 +350,10 @@ Allocated zp[1]:9 [ sum2::c#0 ]
 Allocated zp[1]:10 [ sum2::a#0 ]
 Allocated zp[1]:11 [ sum2::return#0 ]
 Allocated zp[1]:12 [ main::$5 ]
-Allocated zp[1]:13 [ sum2::$0 ]
-Allocated zp[1]:14 [ sum2::return#1 ]
-Allocated zp[1]:15 [ sum::$0 ]
-Allocated zp[1]:16 [ sum::return#1 ]
+Allocated zp[1]:13 [ sum::$0 ]
+Allocated zp[1]:14 [ sum::return#1 ]
+Allocated zp[1]:15 [ sum2::$0 ]
+Allocated zp[1]:16 [ sum2::return#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -448,46 +448,21 @@ main: {
     // [18] return 
     rts
 }
-  // sum2
-// sum2(byte zp($a) a, byte zp(8) b, byte zp(9) c)
-sum2: {
-    .label __0 = $d
-    .label a = $a
-    .label b = 8
-    .label c = 9
-    .label return = $b
-    .label return_1 = $e
-    // [19] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda.z a
-    clc
-    adc.z b
-    sta.z __0
-    // [20] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuz1=vbuz2_plus_vbuz3 
-    lda.z __0
-    clc
-    adc.z c
-    sta.z return_1
-    jmp __breturn
-    // sum2::@return
-  __breturn:
-    // [21] return 
-    rts
-}
   // sum
 // sum(byte zp(5) a, byte zp(3) b, byte zp(4) c)
 sum: {
-    .label __0 = $f
+    .label __0 = $d
     .label a = 5
     .label b = 3
     .label c = 4
     .label return = 6
-    .label return_1 = $10
-    // [22] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuz1=vbuz2_plus_vbuz3 
+    .label return_1 = $e
+    // [19] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z a
     clc
     adc.z b
     sta.z __0
-    // [23] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuz1=vbuz2_plus_vbuz3 
+    // [20] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuz1=vbuz2_plus_vbuz3 
     lda.z __0
     clc
     adc.z c
@@ -495,23 +470,48 @@ sum: {
     jmp __breturn
     // sum::@return
   __breturn:
+    // [21] return 
+    rts
+}
+  // sum2
+// sum2(byte zp($a) a, byte zp(8) b, byte zp(9) c)
+sum2: {
+    .label __0 = $f
+    .label a = $a
+    .label b = 8
+    .label c = 9
+    .label return = $b
+    .label return_1 = $10
+    // [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuz1=vbuz2_plus_vbuz3 
+    lda.z a
+    clc
+    adc.z b
+    sta.z __0
+    // [23] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuz1=vbuz2_plus_vbuz3 
+    lda.z __0
+    clc
+    adc.z c
+    sta.z return_1
+    jmp __breturn
+    // sum2::@return
+  __breturn:
     // [24] return 
     rts
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [19] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] ( sum2:12 [ main::i#2 sum2::c#0 sum2::$0 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
+Statement [19] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] ( sum:5 [ main::i#2 sum::c#0 sum::$0 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Removing always clobbered register reg byte a as potential for zp[1]:9 [ sum2::c#0 ]
-Statement [20] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#1 ] ( sum2:12 [ main::i#2 sum2::return#1 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
-Statement [22] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] ( sum:5 [ main::i#2 sum::c#0 sum::$0 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ sum::c#0 ]
-Statement [23] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#1 ] ( sum:5 [ main::i#2 sum::return#1 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
-Statement [19] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] ( sum2:12 [ main::i#2 sum2::c#0 sum2::$0 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
-Statement [20] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#1 ] ( sum2:12 [ main::i#2 sum2::return#1 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
-Statement [22] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] ( sum:5 [ main::i#2 sum::c#0 sum::$0 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
-Statement [23] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#1 ] ( sum:5 [ main::i#2 sum::return#1 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
+Statement [20] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#1 ] ( sum:5 [ main::i#2 sum::return#1 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
+Statement [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] ( sum2:12 [ main::i#2 sum2::c#0 sum2::$0 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ sum2::c#0 ]
+Statement [23] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#1 ] ( sum2:12 [ main::i#2 sum2::return#1 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
+Statement [19] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 [ sum::c#0 sum::$0 ] ( sum:5 [ main::i#2 sum::c#0 sum::$0 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
+Statement [20] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 [ sum::return#1 ] ( sum:5 [ main::i#2 sum::return#1 ] { { sum::a#0 = main::i#2 } { sum::return#0 = sum::return#1 } }  ) always clobbers reg byte a 
+Statement [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 [ sum2::c#0 sum2::$0 ] ( sum2:12 [ main::i#2 sum2::c#0 sum2::$0 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
+Statement [23] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 [ sum2::return#1 ] ( sum2:12 [ main::i#2 sum2::return#1 ] { { sum2::a#0 = main::i#2 } { sum2::return#0 = sum2::return#1 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ sum::b#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ sum::c#0 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -523,27 +523,27 @@ Potential registers zp[1]:9 [ sum2::c#0 ] : zp[1]:9 , reg byte x , reg byte y ,
 Potential registers zp[1]:10 [ sum2::a#0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:11 [ sum2::return#0 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:12 [ main::$5 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:13 [ sum2::$0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:14 [ sum2::return#1 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:15 [ sum::$0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:16 [ sum::return#1 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:13 [ sum::$0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:14 [ sum::return#1 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:15 [ sum2::$0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:16 [ sum2::return#1 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [sum] 202: zp[1]:15 [ sum::$0 ] 112: zp[1]:5 [ sum::a#0 ] 37.33: zp[1]:3 [ sum::b#0 ] 37.33: zp[1]:4 [ sum::c#0 ] 37.33: zp[1]:16 [ sum::return#1 ] 22: zp[1]:6 [ sum::return#0 ] 
-Uplift Scope [sum2] 202: zp[1]:13 [ sum2::$0 ] 112: zp[1]:10 [ sum2::a#0 ] 37.33: zp[1]:8 [ sum2::b#0 ] 37.33: zp[1]:9 [ sum2::c#0 ] 37.33: zp[1]:14 [ sum2::return#1 ] 22: zp[1]:11 [ sum2::return#0 ] 
+Uplift Scope [sum] 202: zp[1]:13 [ sum::$0 ] 112: zp[1]:5 [ sum::a#0 ] 37.33: zp[1]:3 [ sum::b#0 ] 37.33: zp[1]:4 [ sum::c#0 ] 37.33: zp[1]:14 [ sum::return#1 ] 22: zp[1]:6 [ sum::return#0 ] 
+Uplift Scope [sum2] 202: zp[1]:15 [ sum2::$0 ] 112: zp[1]:10 [ sum2::a#0 ] 37.33: zp[1]:8 [ sum2::b#0 ] 37.33: zp[1]:9 [ sum2::c#0 ] 37.33: zp[1]:16 [ sum2::return#1 ] 22: zp[1]:11 [ sum2::return#0 ] 
 Uplift Scope [main] 23.83: zp[1]:2 [ main::i#2 main::i#1 ] 22: zp[1]:7 [ main::$2 ] 22: zp[1]:12 [ main::$5 ] 
 Uplift Scope [] 
 
-Uplifting [sum] best 1380 combination reg byte a [ sum::$0 ] reg byte y [ sum::a#0 ] reg byte a [ sum::b#0 ] reg byte x [ sum::c#0 ] zp[1]:16 [ sum::return#1 ] zp[1]:6 [ sum::return#0 ] 
+Uplifting [sum] best 1380 combination reg byte a [ sum::$0 ] reg byte y [ sum::a#0 ] reg byte a [ sum::b#0 ] reg byte x [ sum::c#0 ] zp[1]:14 [ sum::return#1 ] zp[1]:6 [ sum::return#0 ] 
 Limited combination testing to 100 combinations of 3072 possible.
-Uplifting [sum2] best 1307 combination reg byte a [ sum2::$0 ] reg byte y [ sum2::a#0 ] reg byte a [ sum2::b#0 ] reg byte x [ sum2::c#0 ] zp[1]:14 [ sum2::return#1 ] zp[1]:11 [ sum2::return#0 ] 
+Uplifting [sum2] best 1307 combination reg byte a [ sum2::$0 ] reg byte y [ sum2::a#0 ] reg byte a [ sum2::b#0 ] reg byte x [ sum2::c#0 ] zp[1]:16 [ sum2::return#1 ] zp[1]:11 [ sum2::return#0 ] 
 Limited combination testing to 100 combinations of 3072 possible.
 Uplifting [main] best 1187 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$2 ] reg byte a [ main::$5 ] 
 Uplifting [] best 1187 combination 
-Attempting to uplift remaining variables inzp[1]:14 [ sum2::return#1 ]
-Uplifting [sum2] best 1154 combination reg byte a [ sum2::return#1 ] 
-Attempting to uplift remaining variables inzp[1]:16 [ sum::return#1 ]
-Uplifting [sum] best 1121 combination reg byte a [ sum::return#1 ] 
+Attempting to uplift remaining variables inzp[1]:14 [ sum::return#1 ]
+Uplifting [sum] best 1154 combination reg byte a [ sum::return#1 ] 
+Attempting to uplift remaining variables inzp[1]:16 [ sum2::return#1 ]
+Uplifting [sum2] best 1121 combination reg byte a [ sum2::return#1 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
 Uplifting [main] best 1121 combination zp[1]:2 [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ sum::return#0 ]
@@ -627,36 +627,36 @@ main: {
     // [18] return 
     rts
 }
-  // sum2
-// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
-sum2: {
-    // [19] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuaa=vbuyy_plus_vbuaa 
-    sty.z $ff
-    clc
-    adc.z $ff
-    // [20] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx.z $ff
-    clc
-    adc.z $ff
-    jmp __breturn
-    // sum2::@return
-  __breturn:
-    // [21] return 
-    rts
-}
   // sum
 // sum(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum: {
-    // [22] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuaa=vbuyy_plus_vbuaa 
+    // [19] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuaa=vbuyy_plus_vbuaa 
     sty.z $ff
     clc
     adc.z $ff
-    // [23] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuaa=vbuaa_plus_vbuxx 
+    // [20] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     jmp __breturn
     // sum::@return
+  __breturn:
+    // [21] return 
+    rts
+}
+  // sum2
+// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
+sum2: {
+    // [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuaa=vbuyy_plus_vbuaa 
+    sty.z $ff
+    clc
+    adc.z $ff
+    // [23] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuaa=vbuaa_plus_vbuxx 
+    stx.z $ff
+    clc
+    adc.z $ff
+    jmp __breturn
+    // sum2::@return
   __breturn:
     // [24] return 
     rts
@@ -736,10 +736,10 @@ reg byte x [ sum2::c#0 ]
 reg byte y [ sum2::a#0 ]
 reg byte a [ sum2::return#0 ]
 reg byte a [ main::$5 ]
-reg byte a [ sum2::$0 ]
-reg byte a [ sum2::return#1 ]
 reg byte a [ sum::$0 ]
 reg byte a [ sum::return#1 ]
+reg byte a [ sum2::$0 ]
+reg byte a [ sum2::return#1 ]
 
 
 FINAL ASSEMBLER
@@ -815,38 +815,38 @@ main: {
     // [18] return 
     rts
 }
-  // sum2
-// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
-sum2: {
-    // a+b
-    // [19] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuaa=vbuyy_plus_vbuaa 
-    sty.z $ff
-    clc
-    adc.z $ff
-    // a+b+c
-    // [20] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuaa=vbuaa_plus_vbuxx 
-    stx.z $ff
-    clc
-    adc.z $ff
-    // sum2::@return
-    // }
-    // [21] return 
-    rts
-}
   // sum
 // sum(byte register(Y) a, byte register(A) b, byte register(X) c)
 sum: {
     // a+b
-    // [22] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuaa=vbuyy_plus_vbuaa 
+    // [19] (byte~) sum::$0 ← (byte) sum::a#0 + (byte) sum::b#0 -- vbuaa=vbuyy_plus_vbuaa 
     sty.z $ff
     clc
     adc.z $ff
     // a+b+c
-    // [23] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuaa=vbuaa_plus_vbuxx 
+    // [20] (byte) sum::return#1 ← (byte~) sum::$0 + (byte) sum::c#0 -- vbuaa=vbuaa_plus_vbuxx 
     stx.z $ff
     clc
     adc.z $ff
     // sum::@return
+    // }
+    // [21] return 
+    rts
+}
+  // sum2
+// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
+sum2: {
+    // a+b
+    // [22] (byte~) sum2::$0 ← (byte) sum2::a#0 + (byte) sum2::b#0 -- vbuaa=vbuyy_plus_vbuaa 
+    sty.z $ff
+    clc
+    adc.z $ff
+    // a+b+c
+    // [23] (byte) sum2::return#1 ← (byte~) sum2::$0 + (byte) sum2::c#0 -- vbuaa=vbuaa_plus_vbuxx 
+    stx.z $ff
+    clc
+    adc.z $ff
+    // sum2::@return
     // }
     // [24] return 
     rts

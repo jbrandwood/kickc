@@ -179,110 +179,9 @@ main: {
     str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm"
     .byte 0
 }
-// Performs division on two 16 bit unsigned ints
-// Returns the quotient dividend/divisor.
-// The remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// div16u(word zp(2) dividend)
-div16u: {
-    .label divisor = $a
-    .label return = 4
-    .label dividend = 2
-    // divr16u(dividend, divisor, 0)
-    lda.z dividend
-    sta.z divr16u.dividend
-    lda.z dividend+1
-    sta.z divr16u.dividend+1
-    jsr divr16u
-    // divr16u(dividend, divisor, 0)
-    // }
-    rts
-}
-// Performs division on two 16 bit unsigned ints and an initial remainder
-// Returns the quotient dividend/divisor.
-// The final remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// divr16u(word zp($17) dividend, word zp(6) rem)
-divr16u: {
-    .label rem = 6
-    .label dividend = $17
-    .label quotient = 4
-    .label return = 4
-    ldx #0
-    txa
-    sta.z quotient
-    sta.z quotient+1
-    sta.z rem
-    sta.z rem+1
-  __b1:
-    // rem = rem << 1
-    asl.z rem
-    rol.z rem+1
-    // >dividend
-    lda.z dividend+1
-    // >dividend & $80
-    and #$80
-    // if( (>dividend & $80) != 0 )
-    cmp #0
-    beq __b2
-    // rem = rem | 1
-    lda #1
-    ora.z rem
-    sta.z rem
-  __b2:
-    // dividend = dividend << 1
-    asl.z dividend
-    rol.z dividend+1
-    // quotient = quotient << 1
-    asl.z quotient
-    rol.z quotient+1
-    // if(rem>=divisor)
-    lda.z rem+1
-    cmp #>div16u.divisor
-    bcc __b3
-    bne !+
-    lda.z rem
-    cmp #<div16u.divisor
-    bcc __b3
-  !:
-    // quotient++;
-    inc.z quotient
-    bne !+
-    inc.z quotient+1
-  !:
-    // rem = rem - divisor
-    lda.z rem
-    sec
-    sbc #<div16u.divisor
-    sta.z rem
-    lda.z rem+1
-    sbc #>div16u.divisor
-    sta.z rem+1
-  __b3:
-    // for( char i : 0..15)
-    inx
-    cpx #$10
-    bne __b1
-    // }
-    rts
-}
-Print: {
-    // asm
-    // can this assembly be placed in a separate file and call it from the C code here?
-    ldy #0
-  loop:
-    lda strTemp,y
-    beq done
-    jsr $ffd2
-    iny
-    jmp loop
-  done:
-    // }
-    rts
-}
-// myprintf(byte* zp($17) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
+// myprintf(byte* zp($15) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
 myprintf: {
-    .label str = $17
+    .label str = $15
     .label bDigits = $d
     .label bLen = $e
     // formats
@@ -291,7 +190,7 @@ myprintf: {
     .label w1 = 2
     .label w2 = 4
     .label w3 = 6
-    .label w = $f
+    .label w = $17
     .label bFormat = 8
     .label bTrailing = $a
     .label bLeadZero = $b
@@ -595,10 +494,126 @@ myprintf: {
     jmp __b32
     buf6: .fill 6, 0
 }
-// utoa(word zp($11) value, byte* zp($13) dst)
+Print: {
+    // asm
+    // can this assembly be placed in a separate file and call it from the C code here?
+    ldy #0
+  loop:
+    lda strTemp,y
+    beq done
+    jsr $ffd2
+    iny
+    jmp loop
+  done:
+    // }
+    rts
+}
+// div10(word zp($13) val)
+div10: {
+    .label __0 = $13
+    .label __2 = $15
+    .label __3 = $17
+    .label __4 = 4
+    .label val = $13
+    .label val_1 = $15
+    .label val_2 = $17
+    .label val_3 = 4
+    .label return = 4
+    .label val_4 = 2
+    // val >> 1
+    lda.z val_4+1
+    lsr
+    sta.z __0+1
+    lda.z val_4
+    ror
+    sta.z __0
+    // val = (val >> 1) + 1
+    inc.z val
+    bne !+
+    inc.z val+1
+  !:
+    // val << 1
+    lda.z val
+    asl
+    sta.z __2
+    lda.z val+1
+    rol
+    sta.z __2+1
+    // val += val << 1
+    lda.z val_1
+    clc
+    adc.z val
+    sta.z val_1
+    lda.z val_1+1
+    adc.z val+1
+    sta.z val_1+1
+    // val >> 4
+    lsr
+    sta.z __3+1
+    lda.z val_1
+    ror
+    sta.z __3
+    lsr.z __3+1
+    ror.z __3
+    lsr.z __3+1
+    ror.z __3
+    lsr.z __3+1
+    ror.z __3
+    // val += val >> 4
+    lda.z val_2
+    clc
+    adc.z val_1
+    sta.z val_2
+    lda.z val_2+1
+    adc.z val_1+1
+    sta.z val_2+1
+    // val >> 8
+    sta.z __4
+    lda #0
+    sta.z __4+1
+    // val += val >> 8
+    lda.z val_3
+    clc
+    adc.z val_2
+    sta.z val_3
+    lda.z val_3+1
+    adc.z val_2+1
+    sta.z val_3+1
+    // val >> 4
+    lsr.z return+1
+    ror.z return
+    lsr.z return+1
+    ror.z return
+    lsr.z return+1
+    ror.z return
+    lsr.z return+1
+    ror.z return
+    // }
+    rts
+}
+// Performs division on two 16 bit unsigned ints
+// Returns the quotient dividend/divisor.
+// The remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// div16u(word zp(2) dividend)
+div16u: {
+    .label divisor = $a
+    .label return = 4
+    .label dividend = 2
+    // divr16u(dividend, divisor, 0)
+    lda.z dividend
+    sta.z divr16u.dividend
+    lda.z dividend+1
+    sta.z divr16u.dividend+1
+    jsr divr16u
+    // divr16u(dividend, divisor, 0)
+    // }
+    rts
+}
+// utoa(word zp($f) value, byte* zp($11) dst)
 utoa: {
-    .label value = $11
-    .label dst = $13
+    .label value = $f
+    .label dst = $11
     // if (bStarted == 1 || value >= 10000)
     lda.z value+1
     cmp #>$2710
@@ -735,13 +750,81 @@ utoa: {
     ldx #1
     jmp __b1
 }
+// Performs division on two 16 bit unsigned ints and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// divr16u(word zp($17) dividend, word zp($15) rem)
+divr16u: {
+    .label rem = $15
+    .label dividend = $17
+    .label quotient = 4
+    .label return = 4
+    ldx #0
+    txa
+    sta.z quotient
+    sta.z quotient+1
+    sta.z rem
+    sta.z rem+1
+  __b1:
+    // rem = rem << 1
+    asl.z rem
+    rol.z rem+1
+    // >dividend
+    lda.z dividend+1
+    // >dividend & $80
+    and #$80
+    // if( (>dividend & $80) != 0 )
+    cmp #0
+    beq __b2
+    // rem = rem | 1
+    lda #1
+    ora.z rem
+    sta.z rem
+  __b2:
+    // dividend = dividend << 1
+    asl.z dividend
+    rol.z dividend+1
+    // quotient = quotient << 1
+    asl.z quotient
+    rol.z quotient+1
+    // if(rem>=divisor)
+    lda.z rem+1
+    cmp #>div16u.divisor
+    bcc __b3
+    bne !+
+    lda.z rem
+    cmp #<div16u.divisor
+    bcc __b3
+  !:
+    // quotient++;
+    inc.z quotient
+    bne !+
+    inc.z quotient+1
+  !:
+    // rem = rem - divisor
+    lda.z rem
+    sec
+    sbc #<div16u.divisor
+    sta.z rem
+    lda.z rem+1
+    sbc #>div16u.divisor
+    sta.z rem+1
+  __b3:
+    // for( char i : 0..15)
+    inx
+    cpx #$10
+    bne __b1
+    // }
+    rts
+}
 // simple 'utoa' without using multiply or divide
-// append(byte* zp($13) dst, word zp($11) value, word zp($15) sub)
+// append(byte* zp($11) dst, word zp($f) value, word zp($13) sub)
 append: {
-    .label value = $11
-    .label return = $11
-    .label dst = $13
-    .label sub = $15
+    .label value = $f
+    .label return = $f
+    .label dst = $11
+    .label sub = $13
     // *dst = '0'
     lda #'0'
     ldy #0
@@ -774,89 +857,6 @@ append: {
     sbc.z sub+1
     sta.z value+1
     jmp __b1
-}
-// div10(word zp($13) val)
-div10: {
-    .label __0 = $13
-    .label __2 = $15
-    .label __3 = $17
-    .label __4 = 4
-    .label val = $13
-    .label val_1 = $15
-    .label val_2 = $17
-    .label val_3 = 4
-    .label return = 4
-    .label val_4 = 2
-    // val >> 1
-    lda.z val_4+1
-    lsr
-    sta.z __0+1
-    lda.z val_4
-    ror
-    sta.z __0
-    // val = (val >> 1) + 1
-    inc.z val
-    bne !+
-    inc.z val+1
-  !:
-    // val << 1
-    lda.z val
-    asl
-    sta.z __2
-    lda.z val+1
-    rol
-    sta.z __2+1
-    // val += val << 1
-    lda.z val_1
-    clc
-    adc.z val
-    sta.z val_1
-    lda.z val_1+1
-    adc.z val+1
-    sta.z val_1+1
-    // val >> 4
-    lsr
-    sta.z __3+1
-    lda.z val_1
-    ror
-    sta.z __3
-    lsr.z __3+1
-    ror.z __3
-    lsr.z __3+1
-    ror.z __3
-    lsr.z __3+1
-    ror.z __3
-    // val += val >> 4
-    lda.z val_2
-    clc
-    adc.z val_1
-    sta.z val_2
-    lda.z val_2+1
-    adc.z val_1+1
-    sta.z val_2+1
-    // val >> 8
-    sta.z __4
-    lda #0
-    sta.z __4+1
-    // val += val >> 8
-    lda.z val_3
-    clc
-    adc.z val_2
-    sta.z val_3
-    lda.z val_3+1
-    adc.z val_2+1
-    sta.z val_3+1
-    // val >> 4
-    lsr.z return+1
-    ror.z return
-    lsr.z return+1
-    ror.z return
-    lsr.z return+1
-    ror.z return
-    lsr.z return+1
-    ror.z return
-    // }
-    rts
 }
   // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
   strTemp: .fill $64, 0

@@ -279,12 +279,20 @@ main::@return: scope:[main]  from main::@3
   [12] return 
   to:@return
 
-(void()) restoreZeropage()
-restoreZeropage: scope:[restoreZeropage]  from main::@3
-  asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
-  to:restoreZeropage::@return
-restoreZeropage::@return: scope:[restoreZeropage]  from restoreZeropage
+(void()) saveZeropage()
+saveZeropage: scope:[saveZeropage]  from main
+  asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+  to:saveZeropage::@return
+saveZeropage::@return: scope:[saveZeropage]  from saveZeropage
   [14] return 
+  to:@return
+
+(void()) sinZeropage()
+sinZeropage: scope:[sinZeropage]  from main::@1
+  asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+  to:sinZeropage::@return
+sinZeropage::@return: scope:[sinZeropage]  from sinZeropage
+  [16] return 
   to:@return
 
 (void()) animSprite()
@@ -312,22 +320,14 @@ animSprite: scope:[animSprite]  from main::@2
      }}
   to:animSprite::@return
 animSprite::@return: scope:[animSprite]  from animSprite
-  [16] return 
-  to:@return
-
-(void()) sinZeropage()
-sinZeropage: scope:[sinZeropage]  from main::@1
-  asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
-  to:sinZeropage::@return
-sinZeropage::@return: scope:[sinZeropage]  from sinZeropage
   [18] return 
   to:@return
 
-(void()) saveZeropage()
-saveZeropage: scope:[saveZeropage]  from main
-  asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
-  to:saveZeropage::@return
-saveZeropage::@return: scope:[saveZeropage]  from saveZeropage
+(void()) restoreZeropage()
+restoreZeropage: scope:[restoreZeropage]  from main::@3
+  asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+  to:restoreZeropage::@return
+restoreZeropage::@return: scope:[restoreZeropage]  from restoreZeropage
   [20] return 
   to:@return
 
@@ -489,20 +489,36 @@ main: {
     // [12] return 
     rts
 }
-  // restoreZeropage
+  // saveZeropage
 // Save all values on zeropage
-restoreZeropage: {
-    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+saveZeropage: {
+    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
     ldx #0
   !:
-    lda ZP_STORAGE,x
+    lda.z 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    jmp __breturn
+    // saveZeropage::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // sinZeropage
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda SINTABLE,x
     sta.z 0,x
     inx
     bne !-
     jmp __breturn
-    // restoreZeropage::@return
+    // sinZeropage::@return
   __breturn:
-    // [14] return 
+    // [16] return 
     rts
 }
   // animSprite
@@ -533,37 +549,21 @@ animSprite: {
     jmp __breturn
     // animSprite::@return
   __breturn:
-    // [16] return 
+    // [18] return 
     rts
 }
-  // sinZeropage
-// Move the SINUS values to zeropage
-sinZeropage: {
-    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+  // restoreZeropage
+// Save all values on zeropage
+restoreZeropage: {
+    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
     ldx #0
   !:
-    lda SINTABLE,x
+    lda ZP_STORAGE,x
     sta.z 0,x
     inx
     bne !-
     jmp __breturn
-    // sinZeropage::@return
-  __breturn:
-    // [18] return 
-    rts
-}
-  // saveZeropage
-// Save all values on zeropage
-saveZeropage: {
-    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
-    ldx #0
-  !:
-    lda.z 0,x
-    sta ZP_STORAGE,x
-    inx
-    bne !-
-    jmp __breturn
-    // saveZeropage::@return
+    // restoreZeropage::@return
   __breturn:
     // [20] return 
     rts
@@ -588,9 +588,9 @@ Statement [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] (  [ ] {
 Statement [2] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] *((const nomodify byte*) SCREEN+(const nomodify word) SPRITE_PTRS) ← (byte)(const to_nomodify byte*) SPRITE/(byte) $40 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
-Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  } always clobbers reg byte a reg byte x 
+Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
+Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [MOS6526_CIA] 
@@ -675,20 +675,36 @@ main: {
     // [12] return 
     rts
 }
-  // restoreZeropage
+  // saveZeropage
 // Save all values on zeropage
-restoreZeropage: {
-    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+saveZeropage: {
+    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
     ldx #0
   !:
-    lda ZP_STORAGE,x
+    lda.z 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    jmp __breturn
+    // saveZeropage::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // sinZeropage
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda SINTABLE,x
     sta.z 0,x
     inx
     bne !-
     jmp __breturn
-    // restoreZeropage::@return
+    // sinZeropage::@return
   __breturn:
-    // [14] return 
+    // [16] return 
     rts
 }
   // animSprite
@@ -719,37 +735,21 @@ animSprite: {
     jmp __breturn
     // animSprite::@return
   __breturn:
-    // [16] return 
+    // [18] return 
     rts
 }
-  // sinZeropage
-// Move the SINUS values to zeropage
-sinZeropage: {
-    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+  // restoreZeropage
+// Save all values on zeropage
+restoreZeropage: {
+    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
     ldx #0
   !:
-    lda SINTABLE,x
+    lda ZP_STORAGE,x
     sta.z 0,x
     inx
     bne !-
     jmp __breturn
-    // sinZeropage::@return
-  __breturn:
-    // [18] return 
-    rts
-}
-  // saveZeropage
-// Save all values on zeropage
-saveZeropage: {
-    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
-    ldx #0
-  !:
-    lda.z 0,x
-    sta ZP_STORAGE,x
-    inx
-    bne !-
-    jmp __breturn
-    // saveZeropage::@return
+    // restoreZeropage::@return
   __breturn:
     // [20] return 
     rts
@@ -968,20 +968,36 @@ main: {
     // [12] return 
     rts
 }
-  // restoreZeropage
+  // saveZeropage
 // Save all values on zeropage
-restoreZeropage: {
+saveZeropage: {
     // asm
-    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
+    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
     ldx #0
   !:
-    lda ZP_STORAGE,x
+    lda.z 0,x
+    sta ZP_STORAGE,x
+    inx
+    bne !-
+    // saveZeropage::@return
+    // }
+    // [14] return 
+    rts
+}
+  // sinZeropage
+// Move the SINUS values to zeropage
+sinZeropage: {
+    // asm
+    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
+    ldx #0
+  !:
+    lda SINTABLE,x
     sta.z 0,x
     inx
     bne !-
-    // restoreZeropage::@return
+    // sinZeropage::@return
     // }
-    // [14] return 
+    // [16] return 
     rts
 }
   // animSprite
@@ -1012,37 +1028,21 @@ animSprite: {
     
     // animSprite::@return
     // }
-    // [16] return 
-    rts
-}
-  // sinZeropage
-// Move the SINUS values to zeropage
-sinZeropage: {
-    // asm
-    // asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  }
-    ldx #0
-  !:
-    lda SINTABLE,x
-    sta.z 0,x
-    inx
-    bne !-
-    // sinZeropage::@return
-    // }
     // [18] return 
     rts
 }
-  // saveZeropage
+  // restoreZeropage
 // Save all values on zeropage
-saveZeropage: {
+restoreZeropage: {
     // asm
-    // asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  }
+    // asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  }
     ldx #0
   !:
-    lda.z 0,x
-    sta ZP_STORAGE,x
+    lda ZP_STORAGE,x
+    sta.z 0,x
     inx
     bne !-
-    // saveZeropage::@return
+    // restoreZeropage::@return
     // }
     // [20] return 
     rts

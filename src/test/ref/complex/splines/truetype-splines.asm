@@ -72,24 +72,252 @@ main: {
     stx.z angle
     jmp __b2
 }
+// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
+mulf_init: {
+    // x/2
+    .label c = $18
+    // Counter used for determining x%2==0
+    .label sqr1_hi = 3
+    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
+    .label sqr = $b
+    .label sqr1_lo = 7
+    // Decrease or increase x_255 - initially we decrease
+    .label sqr2_hi = 9
+    .label sqr2_lo = 5
+    //Start with g(0)=f(255)
+    .label dir = $f
+    ldx #0
+    lda #<mulf_sqr1_hi+1
+    sta.z sqr1_hi
+    lda #>mulf_sqr1_hi+1
+    sta.z sqr1_hi+1
+    txa
+    sta.z sqr
+    sta.z sqr+1
+    sta.z c
+    lda #<mulf_sqr1_lo+1
+    sta.z sqr1_lo
+    lda #>mulf_sqr1_lo+1
+    sta.z sqr1_lo+1
+  __b1:
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    lda.z sqr1_lo+1
+    cmp #>mulf_sqr1_lo+$200
+    bne __b2
+    lda.z sqr1_lo
+    cmp #<mulf_sqr1_lo+$200
+    bne __b2
+    lda #$ff
+    sta.z dir
+    lda #<mulf_sqr2_hi
+    sta.z sqr2_hi
+    lda #>mulf_sqr2_hi
+    sta.z sqr2_hi+1
+    ldx #-1
+    lda #<mulf_sqr2_lo
+    sta.z sqr2_lo
+    lda #>mulf_sqr2_lo
+    sta.z sqr2_lo+1
+  __b5:
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    lda.z sqr2_lo+1
+    cmp #>mulf_sqr2_lo+$1ff
+    bne __b6
+    lda.z sqr2_lo
+    cmp #<mulf_sqr2_lo+$1ff
+    bne __b6
+    // *(mulf_sqr2_lo+511) = *(mulf_sqr1_lo+256)
+    // Set the very last value g(511) = f(256)
+    lda mulf_sqr1_lo+$100
+    sta mulf_sqr2_lo+$1ff
+    // *(mulf_sqr2_hi+511) = *(mulf_sqr1_hi+256)
+    lda mulf_sqr1_hi+$100
+    sta mulf_sqr2_hi+$1ff
+    // }
+    rts
+  __b6:
+    // *sqr2_lo = mulf_sqr1_lo[x_255]
+    lda mulf_sqr1_lo,x
+    ldy #0
+    sta (sqr2_lo),y
+    // *sqr2_hi++ = mulf_sqr1_hi[x_255]
+    lda mulf_sqr1_hi,x
+    sta (sqr2_hi),y
+    // *sqr2_hi++ = mulf_sqr1_hi[x_255];
+    inc.z sqr2_hi
+    bne !+
+    inc.z sqr2_hi+1
+  !:
+    // x_255 = x_255 + dir
+    txa
+    clc
+    adc.z dir
+    tax
+    // if(x_255==0)
+    cpx #0
+    bne __b8
+    lda #1
+    sta.z dir
+  __b8:
+    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
+    inc.z sqr2_lo
+    bne !+
+    inc.z sqr2_lo+1
+  !:
+    jmp __b5
+  __b2:
+    // if((++c&1)==0)
+    inc.z c
+    // ++c&1
+    lda #1
+    and.z c
+    // if((++c&1)==0)
+    cmp #0
+    bne __b3
+    // x_2++;
+    inx
+    // sqr++;
+    inc.z sqr
+    bne !+
+    inc.z sqr+1
+  !:
+  __b3:
+    // <sqr
+    lda.z sqr
+    // *sqr1_lo = <sqr
+    ldy #0
+    sta (sqr1_lo),y
+    // >sqr
+    lda.z sqr+1
+    // *sqr1_hi++ = >sqr
+    sta (sqr1_hi),y
+    // *sqr1_hi++ = >sqr;
+    inc.z sqr1_hi
+    bne !+
+    inc.z sqr1_hi+1
+  !:
+    // sqr = sqr + x_2
+    txa
+    clc
+    adc.z sqr
+    sta.z sqr
+    bcc !+
+    inc.z sqr+1
+  !:
+    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
+    inc.z sqr1_lo
+    bne !+
+    inc.z sqr1_lo+1
+  !:
+    jmp __b1
+}
+// Initialize bitmap plotting tables
+bitmap_init: {
+    .label __7 = $18
+    .label yoffs = 7
+    ldx #0
+    lda #$80
+  __b1:
+    // bitmap_plot_bit[x] = bits
+    sta bitmap_plot_bit,x
+    // bits >>= 1
+    lsr
+    // if(bits==0)
+    cmp #0
+    bne __b2
+    lda #$80
+  __b2:
+    // for(char x : 0..255)
+    inx
+    cpx #0
+    bne __b1
+    lda #<BITMAP_GRAPHICS
+    sta.z yoffs
+    lda #>BITMAP_GRAPHICS
+    sta.z yoffs+1
+    ldx #0
+  __b3:
+    // y&$7
+    lda #7
+    sax.z __7
+    // <yoffs
+    lda.z yoffs
+    // y&$7 | <yoffs
+    ora.z __7
+    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    sta bitmap_plot_ylo,x
+    // >yoffs
+    lda.z yoffs+1
+    // bitmap_plot_yhi[y] = >yoffs
+    sta bitmap_plot_yhi,x
+    // if((y&$7)==7)
+    lda #7
+    cmp.z __7
+    bne __b4
+    // yoffs = yoffs + 40*8
+    clc
+    lda.z yoffs
+    adc #<$28*8
+    sta.z yoffs
+    lda.z yoffs+1
+    adc #>$28*8
+    sta.z yoffs+1
+  __b4:
+    // for(char y : 0..255)
+    inx
+    cpx #0
+    bne __b3
+    // }
+    rts
+}
+// Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
+bitmap_clear: {
+    .const col = WHITE<<4
+    // memset(bitmap_screen, col, 1000uw)
+    ldx #col
+    lda #<BITMAP_SCREEN
+    sta.z memset.str
+    lda #>BITMAP_SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
+    // memset(bitmap_gfx, 0, 8000uw)
+    ldx #0
+    lda #<BITMAP_GRAPHICS
+    sta.z memset.str
+    lda #>BITMAP_GRAPHICS
+    sta.z memset.str+1
+    lda #<$1f40
+    sta.z memset.num
+    lda #>$1f40
+    sta.z memset.num+1
+    jsr memset
+    // }
+    rts
+}
 // show_letter(byte zp(2) angle)
 show_letter: {
     .label angle = 2
     .label to_x = 7
     .label to_y = 9
-    .label to_x_1 = 3
-    .label to_y_1 = 5
+    .label to_x_1 = $b
+    .label to_y_1 = $d
     .label via_x = 7
     .label via_y = 9
-    .label via_x_1 = 3
-    .label via_y_1 = 5
-    .label segment_via_x = 3
-    .label segment_via_y = 5
-    .label i = $26
-    .label current_x = $f
-    .label current_y = $11
-    .label current_x_1 = $14
-    .label current_y_1 = $16
+    .label via_x_1 = $b
+    .label via_y_1 = $d
+    .label segment_via_x = $b
+    .label segment_via_y = $d
+    .label i = $18
+    .label current_x = 3
+    .label current_y = 5
+    .label current_x_1 = $19
+    .label current_y_1 = $1b
     lda #<0
     sta.z current_y
     sta.z current_y+1
@@ -249,74 +477,200 @@ show_letter: {
     jsr bitmap_plot_spline_8seg
     jmp __b3
 }
-// Plot the spline in the SPLINE_8SEG array
-bitmap_plot_spline_8seg: {
-    .label current_x = $f
-    .label current_y = $11
-    .label n = $13
-    // current = SPLINE_8SEG[0]
-    lda SPLINE_8SEG
-    sta.z current_x
-    lda SPLINE_8SEG+1
-    sta.z current_x+1
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y
-    sta.z current_y
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1
-    sta.z current_y+1
-    lda #1
-    sta.z n
-  __b1:
-    // bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y)
-    lda.z n
-    asl
-    asl
-    tax
-    lda SPLINE_8SEG,x
-    sta.z bitmap_line.x2
-    lda SPLINE_8SEG+1,x
-    sta.z bitmap_line.x2+1
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta.z bitmap_line.y2
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta.z bitmap_line.y2+1
-    // bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y)
-    jsr bitmap_line
-    // current = SPLINE_8SEG[n]
-    lda.z n
-    asl
-    asl
-    tax
-    lda SPLINE_8SEG,x
-    sta.z current_x
-    lda SPLINE_8SEG+1,x
-    sta.z current_x+1
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
-    sta.z current_y
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
-    sta.z current_y+1
-    // for(char n:1..8)
-    inc.z n
-    lda #9
-    cmp.z n
-    bne __b1
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($b) str, byte register(X) c, word zp(9) num)
+memset: {
+    .label end = 9
+    .label dst = $b
+    .label num = 9
+    .label str = $b
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
+// 2D-rotate a vector by an angle
+// rotate(signed word zp(7) vector_x, signed word zp(9) vector_y, byte register(Y) angle)
+rotate: {
+    .label __0 = $14
+    .label __2 = $14
+    .label __4 = $14
+    .label __5 = $1f
+    .label __6 = $14
+    .label __7 = $21
+    .label __10 = $1d
+    .label __11 = $2b
+    .label __12 = $1f
+    .label __13 = $21
+    .label vector_x = 7
+    .label vector_y = 9
+    .label return_x = $b
+    .label return_y = $d
+    .label cos_a = $10
+    .label xr = $1d
+    .label yr = $2b
+    .label sin_a = $10
+    // cos_a = (signed int) COS[angle]
+    lda COS,y
+    sta.z cos_a
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z cos_a+1
+    // mulf16s(cos_a, vector.x)
+    lda.z vector_x
+    sta.z mulf16s.b
+    lda.z vector_x+1
+    sta.z mulf16s.b+1
+    jsr mulf16s
+    // mulf16s(cos_a, vector.x)
+    // (signed int )mulf16s(cos_a, vector.x)*2
+    lda.z __0
+    sta.z __10
+    lda.z __0+1
+    sta.z __10+1
+    // xr = (signed int )mulf16s(cos_a, vector.x)*2
+    asl.z xr
+    rol.z xr+1
+    // mulf16s(cos_a, vector.y)
+    lda.z vector_y
+    sta.z mulf16s.b
+    lda.z vector_y+1
+    sta.z mulf16s.b+1
+    jsr mulf16s
+    // mulf16s(cos_a, vector.y)
+    // (signed int )mulf16s(cos_a, vector.y)*2
+    lda.z __2
+    sta.z __11
+    lda.z __2+1
+    sta.z __11+1
+    // yr = (signed int )mulf16s(cos_a, vector.y)*2
+    asl.z yr
+    rol.z yr+1
+    // sin_a = (signed int) SIN[angle]
+    // signed fixed[8.8]
+    lda SIN,y
+    sta.z sin_a
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z sin_a+1
+    // mulf16s(sin_a, vector.y)
+    lda.z vector_y
+    sta.z mulf16s.b
+    lda.z vector_y+1
+    sta.z mulf16s.b+1
+    jsr mulf16s
+    // mulf16s(sin_a, vector.y)
+    // (signed int)mulf16s(sin_a, vector.y)*2
+    lda.z __4
+    sta.z __12
+    lda.z __4+1
+    sta.z __12+1
+    asl.z __5
+    rol.z __5+1
+    // xr -= (signed int)mulf16s(sin_a, vector.y)*2
+    // signed fixed[0.7]
+    lda.z xr
+    sec
+    sbc.z __5
+    sta.z xr
+    lda.z xr+1
+    sbc.z __5+1
+    sta.z xr+1
+    // mulf16s(sin_a, vector.x)
+    lda.z vector_x
+    sta.z mulf16s.b
+    lda.z vector_x+1
+    sta.z mulf16s.b+1
+    jsr mulf16s
+    // mulf16s(sin_a, vector.x)
+    // (signed int)mulf16s(sin_a, vector.x)*2
+    lda.z __6
+    sta.z __13
+    lda.z __6+1
+    sta.z __13+1
+    asl.z __7
+    rol.z __7+1
+    // yr += (signed int)mulf16s(sin_a, vector.x)*2
+    // signed fixed[8.8]
+    lda.z yr
+    clc
+    adc.z __7
+    sta.z yr
+    lda.z yr+1
+    adc.z __7+1
+    sta.z yr+1
+    // >xr
+    lda.z xr+1
+    // >yr
+    ldx.z yr+1
+    // rotated = { (signed int)(signed char)>xr, (signed int)(signed char)>yr }
+    sta.z return_x
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z return_x+1
+    txa
+    sta.z return_y
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z return_y+1
     // }
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($f) x1, word zp($11) y1, word zp(3) x2, word zp(5) y2)
+// bitmap_line(word zp(3) x1, word zp(5) y1, word zp($b) x2, word zp($d) y2)
 bitmap_line: {
-    .label x = $f
-    .label y = $11
-    .label dx = $1c
-    .label dy = $1a
-    .label sx = $20
-    .label sy = $1e
-    .label e1 = 9
-    .label e = 7
-    .label x1 = $f
-    .label y1 = $11
-    .label x2 = 3
-    .label y2 = 5
+    .label x = 3
+    .label y = 5
+    .label dx = $21
+    .label dy = $1d
+    .label sx = $23
+    .label sy = $1f
+    .label e1 = $12
+    .label e = $10
+    .label x1 = 3
+    .label y1 = 5
+    .label x2 = $b
+    .label y2 = $d
     // abs_u16(x2-x1)
     lda.z x2
     sec
@@ -523,132 +877,45 @@ bitmap_line: {
     jsr bitmap_plot
     rts
 }
-// Plot a single dot in the bitmap
-// bitmap_plot(word zp($f) x, byte register(A) y)
-bitmap_plot: {
-    .label __0 = $22
-    .label plotter = $18
-    .label x = $f
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    tay
-    lda bitmap_plot_yhi,y
-    sta.z plotter+1
-    lda bitmap_plot_ylo,y
-    sta.z plotter
-    // x & $fff8
-    lda.z x
-    and #<$fff8
-    sta.z __0
-    lda.z x+1
-    and #>$fff8
-    sta.z __0+1
-    // plotter += ( x & $fff8 )
-    lda.z plotter
-    clc
-    adc.z __0
-    sta.z plotter
-    lda.z plotter+1
-    adc.z __0+1
-    sta.z plotter+1
-    // <x
-    ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
-    lda bitmap_plot_bit,x
-    ldy #0
-    ora (plotter),y
-    sta (plotter),y
-    // }
-    rts
-}
-// Get the sign of a 16-bit unsigned number treated as a signed number.
-// Returns unsigned -1 if the number is
-// sgn_u16(word zp($18) w)
-sgn_u16: {
-    .label w = $18
-    .label return = $1e
-    // >w
-    lda.z w+1
-    // >w&0x80
-    and #$80
-    // if(>w&0x80)
-    cmp #0
-    bne __b1
-    lda #<1
-    sta.z return
-    lda #>1
-    sta.z return+1
-    rts
-  __b1:
-    lda #<-1
-    sta.z return
-    sta.z return+1
-    // }
-    rts
-}
-// Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp($1a) w)
-abs_u16: {
-    .label w = $1a
-    .label return = $1a
-    // >w
-    lda.z w+1
-    // >w&0x80
-    and #$80
-    // if(>w&0x80)
-    cmp #0
-    bne __b1
-    rts
-  __b1:
-    // return -w;
-    sec
-    lda #0
-    sbc.z return
-    sta.z return
-    lda #0
-    sbc.z return+1
-    sta.z return+1
-    // }
-    rts
-}
 // Generate a 8-segment quadratic spline using 16-bit fixed point 1/64-format math (6 decimal bits).
 // The resulting spline segment points are returned in SPLINE_8SEG[]
 // Point values must be within [-200 ; 1ff] for the calculation to not overflow.
 // A quadratic spline is a curve defined by 3 points: P0, P1 and P2.
 // The curve connects P0 to P2 through a smooth curve that moves towards P1, but does usually not touch it.
-// spline_8segB(signed word zp($f) p0_x, signed word zp($11) p0_y, signed word zp(3) p1_x, signed word zp(5) p1_y, signed word zp($14) p2_x, signed word zp($16) p2_y)
+// spline_8segB(signed word zp(3) p0_x, signed word zp(5) p0_y, signed word zp($b) p1_x, signed word zp($d) p1_y, signed word zp($19) p2_x, signed word zp($1b) p2_y)
 spline_8segB: {
-    .label __0 = $22
-    .label __1 = $22
-    .label __3 = $1a
-    .label __4 = $1a
-    .label __6 = 3
-    .label __8 = 5
-    .label __10 = 3
-    .label __12 = 5
-    .label __18 = $f
-    .label __19 = $f
-    .label __20 = $11
-    .label __21 = $11
-    .label __22 = $1c
-    .label __23 = $1c
-    .label __24 = $1e
-    .label __25 = $1e
-    .label a_x = $22
-    .label a_y = $1a
-    .label b_x = 3
-    .label b_y = 5
-    .label i_x = 3
-    .label i_y = 5
-    .label j_x = $22
-    .label j_y = $1a
-    .label p_x = $f
-    .label p_y = $11
-    .label p0_x = $f
-    .label p0_y = $11
-    .label p1_x = 3
-    .label p1_y = 5
-    .label p2_x = $14
-    .label p2_y = $16
+    .label __0 = $23
+    .label __1 = $23
+    .label __3 = $29
+    .label __4 = $29
+    .label __6 = $b
+    .label __8 = $d
+    .label __10 = $b
+    .label __12 = $d
+    .label __18 = 3
+    .label __19 = 3
+    .label __20 = 5
+    .label __21 = 5
+    .label __22 = $25
+    .label __23 = $25
+    .label __24 = $27
+    .label __25 = $27
+    .label a_x = $23
+    .label a_y = $29
+    .label b_x = $b
+    .label b_y = $d
+    .label i_x = $b
+    .label i_y = $d
+    .label j_x = $23
+    .label j_y = $29
+    .label p_x = 3
+    .label p_y = 5
+    .label p0_x = 3
+    .label p0_y = 5
+    .label p1_x = $b
+    .label p1_y = $d
+    .label p2_x = $19
+    .label p2_y = $1b
     // p1.x*2
     lda.z p1_x
     asl
@@ -940,153 +1207,71 @@ spline_8segB: {
     // }
     rts
 }
-// 2D-rotate a vector by an angle
-// rotate(signed word zp(7) vector_x, signed word zp(9) vector_y, byte register(Y) angle)
-rotate: {
-    .label __0 = $b
-    .label __2 = $b
-    .label __4 = $b
-    .label __5 = $1e
-    .label __6 = $b
-    .label __7 = $20
-    .label __10 = $1a
-    .label __11 = $1c
-    .label __12 = $1e
-    .label __13 = $20
-    .label vector_x = 7
-    .label vector_y = 9
-    .label return_x = 3
-    .label return_y = 5
-    .label cos_a = $18
-    .label xr = $1a
-    .label yr = $1c
-    .label sin_a = $18
-    // cos_a = (signed int) COS[angle]
-    lda COS,y
-    sta.z cos_a
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z cos_a+1
-    // mulf16s(cos_a, vector.x)
-    lda.z vector_x
-    sta.z mulf16s.b
-    lda.z vector_x+1
-    sta.z mulf16s.b+1
-    jsr mulf16s
-    // mulf16s(cos_a, vector.x)
-    // (signed int )mulf16s(cos_a, vector.x)*2
-    lda.z __0
-    sta.z __10
-    lda.z __0+1
-    sta.z __10+1
-    // xr = (signed int )mulf16s(cos_a, vector.x)*2
-    asl.z xr
-    rol.z xr+1
-    // mulf16s(cos_a, vector.y)
-    lda.z vector_y
-    sta.z mulf16s.b
-    lda.z vector_y+1
-    sta.z mulf16s.b+1
-    jsr mulf16s
-    // mulf16s(cos_a, vector.y)
-    // (signed int )mulf16s(cos_a, vector.y)*2
-    lda.z __2
-    sta.z __11
-    lda.z __2+1
-    sta.z __11+1
-    // yr = (signed int )mulf16s(cos_a, vector.y)*2
-    asl.z yr
-    rol.z yr+1
-    // sin_a = (signed int) SIN[angle]
-    // signed fixed[8.8]
-    lda SIN,y
-    sta.z sin_a
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z sin_a+1
-    // mulf16s(sin_a, vector.y)
-    lda.z vector_y
-    sta.z mulf16s.b
-    lda.z vector_y+1
-    sta.z mulf16s.b+1
-    jsr mulf16s
-    // mulf16s(sin_a, vector.y)
-    // (signed int)mulf16s(sin_a, vector.y)*2
-    lda.z __4
-    sta.z __12
-    lda.z __4+1
-    sta.z __12+1
-    asl.z __5
-    rol.z __5+1
-    // xr -= (signed int)mulf16s(sin_a, vector.y)*2
-    // signed fixed[0.7]
-    lda.z xr
-    sec
-    sbc.z __5
-    sta.z xr
-    lda.z xr+1
-    sbc.z __5+1
-    sta.z xr+1
-    // mulf16s(sin_a, vector.x)
-    lda.z vector_x
-    sta.z mulf16s.b
-    lda.z vector_x+1
-    sta.z mulf16s.b+1
-    jsr mulf16s
-    // mulf16s(sin_a, vector.x)
-    // (signed int)mulf16s(sin_a, vector.x)*2
-    lda.z __6
-    sta.z __13
-    lda.z __6+1
-    sta.z __13+1
-    asl.z __7
-    rol.z __7+1
-    // yr += (signed int)mulf16s(sin_a, vector.x)*2
-    // signed fixed[8.8]
-    lda.z yr
-    clc
-    adc.z __7
-    sta.z yr
-    lda.z yr+1
-    adc.z __7+1
-    sta.z yr+1
-    // >xr
-    lda.z xr+1
-    // >yr
-    ldx.z yr+1
-    // rotated = { (signed int)(signed char)>xr, (signed int)(signed char)>yr }
-    sta.z return_x
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z return_x+1
-    txa
-    sta.z return_y
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z return_y+1
+// Plot the spline in the SPLINE_8SEG array
+bitmap_plot_spline_8seg: {
+    .label current_x = 3
+    .label current_y = 5
+    .label n = $f
+    // current = SPLINE_8SEG[0]
+    lda SPLINE_8SEG
+    sta.z current_x
+    lda SPLINE_8SEG+1
+    sta.z current_x+1
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y
+    sta.z current_y
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1
+    sta.z current_y+1
+    lda #1
+    sta.z n
+  __b1:
+    // bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y)
+    lda.z n
+    asl
+    asl
+    tax
+    lda SPLINE_8SEG,x
+    sta.z bitmap_line.x2
+    lda SPLINE_8SEG+1,x
+    sta.z bitmap_line.x2+1
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    sta.z bitmap_line.y2
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    sta.z bitmap_line.y2+1
+    // bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y)
+    jsr bitmap_line
+    // current = SPLINE_8SEG[n]
+    lda.z n
+    asl
+    asl
+    tax
+    lda SPLINE_8SEG,x
+    sta.z current_x
+    lda SPLINE_8SEG+1,x
+    sta.z current_x+1
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    sta.z current_y
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    sta.z current_y+1
+    // for(char n:1..8)
+    inc.z n
+    lda #9
+    cmp.z n
+    bne __b1
     // }
     rts
 }
 // Fast multiply two signed ints to a signed double unsigned int result
 // Fixes offsets introduced by using unsigned multiplication
-// mulf16s(signed word zp($18) a, signed word zp($1e) b)
+// mulf16s(signed word zp($10) a, signed word zp($12) b)
 mulf16s: {
-    .label __6 = $22
-    .label __9 = $24
-    .label __11 = $22
-    .label __12 = $24
-    .label m = $b
-    .label return = $b
-    .label a = $18
-    .label b = $1e
+    .label __6 = $27
+    .label __9 = $29
+    .label __11 = $27
+    .label __12 = $29
+    .label m = $14
+    .label return = $14
+    .label a = $10
+    .label b = $12
     // mulf16u((unsigned int)a, (unsigned int)b)
     lda.z a
     sta.z mulf16u.a
@@ -1144,16 +1329,103 @@ mulf16s: {
     // }
     rts
 }
+// Get the absolute value of a 16-bit unsigned number treated as a signed number.
+// abs_u16(word zp($1d) w)
+abs_u16: {
+    .label w = $1d
+    .label return = $1d
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
+    bne __b1
+    rts
+  __b1:
+    // return -w;
+    sec
+    lda #0
+    sbc.z return
+    sta.z return
+    lda #0
+    sbc.z return+1
+    sta.z return+1
+    // }
+    rts
+}
+// Get the sign of a 16-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is
+// sgn_u16(word zp($2b) w)
+sgn_u16: {
+    .label w = $2b
+    .label return = $1f
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
+    bne __b1
+    lda #<1
+    sta.z return
+    lda #>1
+    sta.z return+1
+    rts
+  __b1:
+    lda #<-1
+    sta.z return
+    sta.z return+1
+    // }
+    rts
+}
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp(3) x, byte register(A) y)
+bitmap_plot: {
+    .label __0 = $2b
+    .label plotter = $29
+    .label x = 3
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    tay
+    lda bitmap_plot_yhi,y
+    sta.z plotter+1
+    lda bitmap_plot_ylo,y
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
+    lda.z plotter
+    clc
+    adc.z __0
+    sta.z plotter
+    lda.z plotter+1
+    adc.z __0+1
+    sta.z plotter+1
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
+    lda bitmap_plot_bit,x
+    ldy #0
+    ora (plotter),y
+    sta (plotter),y
+    // }
+    rts
+}
 // Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
-// mulf16u(word zp($22) a, word zp($24) b)
+// mulf16u(word zp($29) a, word zp($25) b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
-    .label return = $b
-    .label a = $22
-    .label b = $24
+    .label return = $14
+    .label a = $29
+    .label b = $25
     // *memA = a
     lda.z a
     sta memA
@@ -1268,278 +1540,6 @@ mulf16u: {
     sta.z return+3
     // }
     rts
-}
-// Clear all graphics on the bitmap
-// bgcol - the background color to fill the screen with
-// fgcol - the foreground color to fill the screen with
-bitmap_clear: {
-    .const col = WHITE<<4
-    // memset(bitmap_screen, col, 1000uw)
-    ldx #col
-    lda #<BITMAP_SCREEN
-    sta.z memset.str
-    lda #>BITMAP_SCREEN
-    sta.z memset.str+1
-    lda #<$3e8
-    sta.z memset.num
-    lda #>$3e8
-    sta.z memset.num+1
-    jsr memset
-    // memset(bitmap_gfx, 0, 8000uw)
-    ldx #0
-    lda #<BITMAP_GRAPHICS
-    sta.z memset.str
-    lda #>BITMAP_GRAPHICS
-    sta.z memset.str+1
-    lda #<$1f40
-    sta.z memset.num
-    lda #>$1f40
-    sta.z memset.num+1
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($11) str, byte register(X) c, word zp($f) num)
-memset: {
-    .label end = $f
-    .label dst = $11
-    .label num = $f
-    .label str = $11
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
-    // end = (char*)str + num
-    lda.z end
-    clc
-    adc.z str
-    sta.z end
-    lda.z end+1
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-  __breturn:
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-// Initialize bitmap plotting tables
-bitmap_init: {
-    .label __7 = $26
-    .label yoffs = $1a
-    ldx #0
-    lda #$80
-  __b1:
-    // bitmap_plot_bit[x] = bits
-    sta bitmap_plot_bit,x
-    // bits >>= 1
-    lsr
-    // if(bits==0)
-    cmp #0
-    bne __b2
-    lda #$80
-  __b2:
-    // for(char x : 0..255)
-    inx
-    cpx #0
-    bne __b1
-    lda #<BITMAP_GRAPHICS
-    sta.z yoffs
-    lda #>BITMAP_GRAPHICS
-    sta.z yoffs+1
-    ldx #0
-  __b3:
-    // y&$7
-    lda #7
-    sax.z __7
-    // <yoffs
-    lda.z yoffs
-    // y&$7 | <yoffs
-    ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    sta bitmap_plot_ylo,x
-    // >yoffs
-    lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
-    sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
-    lda #7
-    cmp.z __7
-    bne __b4
-    // yoffs = yoffs + 40*8
-    clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-  __b4:
-    // for(char y : 0..255)
-    inx
-    cpx #0
-    bne __b3
-    // }
-    rts
-}
-// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
-mulf_init: {
-    // x/2
-    .label c = $26
-    // Counter used for determining x%2==0
-    .label sqr1_hi = $16
-    // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $18
-    .label sqr1_lo = $14
-    // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $20
-    .label sqr2_lo = $1c
-    //Start with g(0)=f(255)
-    .label dir = $13
-    ldx #0
-    lda #<mulf_sqr1_hi+1
-    sta.z sqr1_hi
-    lda #>mulf_sqr1_hi+1
-    sta.z sqr1_hi+1
-    txa
-    sta.z sqr
-    sta.z sqr+1
-    sta.z c
-    lda #<mulf_sqr1_lo+1
-    sta.z sqr1_lo
-    lda #>mulf_sqr1_lo+1
-    sta.z sqr1_lo+1
-  __b1:
-    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
-    lda.z sqr1_lo+1
-    cmp #>mulf_sqr1_lo+$200
-    bne __b2
-    lda.z sqr1_lo
-    cmp #<mulf_sqr1_lo+$200
-    bne __b2
-    lda #$ff
-    sta.z dir
-    lda #<mulf_sqr2_hi
-    sta.z sqr2_hi
-    lda #>mulf_sqr2_hi
-    sta.z sqr2_hi+1
-    ldx #-1
-    lda #<mulf_sqr2_lo
-    sta.z sqr2_lo
-    lda #>mulf_sqr2_lo
-    sta.z sqr2_lo+1
-  __b5:
-    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
-    lda.z sqr2_lo+1
-    cmp #>mulf_sqr2_lo+$1ff
-    bne __b6
-    lda.z sqr2_lo
-    cmp #<mulf_sqr2_lo+$1ff
-    bne __b6
-    // *(mulf_sqr2_lo+511) = *(mulf_sqr1_lo+256)
-    // Set the very last value g(511) = f(256)
-    lda mulf_sqr1_lo+$100
-    sta mulf_sqr2_lo+$1ff
-    // *(mulf_sqr2_hi+511) = *(mulf_sqr1_hi+256)
-    lda mulf_sqr1_hi+$100
-    sta mulf_sqr2_hi+$1ff
-    // }
-    rts
-  __b6:
-    // *sqr2_lo = mulf_sqr1_lo[x_255]
-    lda mulf_sqr1_lo,x
-    ldy #0
-    sta (sqr2_lo),y
-    // *sqr2_hi++ = mulf_sqr1_hi[x_255]
-    lda mulf_sqr1_hi,x
-    sta (sqr2_hi),y
-    // *sqr2_hi++ = mulf_sqr1_hi[x_255];
-    inc.z sqr2_hi
-    bne !+
-    inc.z sqr2_hi+1
-  !:
-    // x_255 = x_255 + dir
-    txa
-    clc
-    adc.z dir
-    tax
-    // if(x_255==0)
-    cpx #0
-    bne __b8
-    lda #1
-    sta.z dir
-  __b8:
-    // for(char* sqr2_lo = mulf_sqr2_lo; sqr2_lo!=mulf_sqr2_lo+511; sqr2_lo++)
-    inc.z sqr2_lo
-    bne !+
-    inc.z sqr2_lo+1
-  !:
-    jmp __b5
-  __b2:
-    // if((++c&1)==0)
-    inc.z c
-    // ++c&1
-    lda #1
-    and.z c
-    // if((++c&1)==0)
-    cmp #0
-    bne __b3
-    // x_2++;
-    inx
-    // sqr++;
-    inc.z sqr
-    bne !+
-    inc.z sqr+1
-  !:
-  __b3:
-    // <sqr
-    lda.z sqr
-    // *sqr1_lo = <sqr
-    ldy #0
-    sta (sqr1_lo),y
-    // >sqr
-    lda.z sqr+1
-    // *sqr1_hi++ = >sqr
-    sta (sqr1_hi),y
-    // *sqr1_hi++ = >sqr;
-    inc.z sqr1_hi
-    bne !+
-    inc.z sqr1_hi+1
-  !:
-    // sqr = sqr + x_2
-    txa
-    clc
-    adc.z sqr
-    sta.z sqr
-    bcc !+
-    inc.z sqr+1
-  !:
-    // for(char* sqr1_lo = mulf_sqr1_lo+1; sqr1_lo!=mulf_sqr1_lo+512; sqr1_lo++)
-    inc.z sqr1_lo
-    bne !+
-    inc.z sqr1_lo+1
-  !:
-    jmp __b1
 }
   // Array filled with spline segment points by splinePlot_8()
   SPLINE_8SEG: .fill 4*9, 0

@@ -11,6 +11,15 @@ __start: {
     jsr main
     rts
 }
+irq: {
+    // asm
+    lda $dc0d
+    // *BG_COLOR = col
+    lda.z col
+    sta BG_COLOR
+    // }
+    jmp $ea81
+}
 main: {
     // *KERNEL_IRQ = &irq
     lda #<irq
@@ -21,13 +30,4 @@ main: {
     // col++;
     inc.z col
     jmp __b1
-}
-irq: {
-    // asm
-    lda $dc0d
-    // *BG_COLOR = col
-    lda.z col
-    sta BG_COLOR
-    // }
-    jmp $ea81
 }

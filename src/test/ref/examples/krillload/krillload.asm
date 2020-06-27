@@ -77,6 +77,21 @@ main: {
     .byte 0
 }
 .segment Code
+// Install drive-side code portion(s) must be installed in the active drive.
+// Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
+// The drive-side portion remains resident in the drive. After successful
+// installation, the install routine is not needed any more and may be overwritten.
+// The KERNAL ROM may be disabled and zeropage variables clobbered.
+// Returns the status of the installation
+krill_install: {
+    .label status = $ff
+    // asm
+    jsr KRILL_INSTALL
+    sta status
+    // return *status;
+    // }
+    rts
+}
 // Load a file from the active drive without decompression.
 // While loading using filenames with wildcards ("?" and "*") is not possible,
 // subsequent files following the previously-loaded file can be loaded via a
@@ -95,21 +110,6 @@ krill_loadraw: {
     ldx fname
     tay
     jsr KRILL_LOADER
-    sta status
-    // return *status;
-    // }
-    rts
-}
-// Install drive-side code portion(s) must be installed in the active drive.
-// Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
-// The drive-side portion remains resident in the drive. After successful
-// installation, the install routine is not needed any more and may be overwritten.
-// The KERNAL ROM may be disabled and zeropage variables clobbered.
-// Returns the status of the installation
-krill_install: {
-    .label status = $ff
-    // asm
-    jsr KRILL_INSTALL
     sta status
     // return *status;
     // }

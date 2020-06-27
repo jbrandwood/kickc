@@ -14,15 +14,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // *KERNEL_IRQ = &irq
-    lda #<irq
-    sta KERNEL_IRQ
-    lda #>irq
-    sta KERNEL_IRQ+1
-    // }
-    rts
-}
 irq: {
     sta rega+1
     stx regx+1
@@ -55,4 +46,13 @@ irq: {
   regx:
     ldx #00
     rti
+}
+main: {
+    // *KERNEL_IRQ = &irq
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+    // }
+    rts
 }

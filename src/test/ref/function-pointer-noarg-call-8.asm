@@ -15,6 +15,23 @@ __start: {
     jsr main
     rts
 }
+hello: {
+    ldy #0
+  __b1:
+    // SCREEN[idx++] = msg[i++]
+    lda (msg),y
+    ldx.z idx
+    sta SCREEN,x
+    // SCREEN[idx++] = msg[i++];
+    inc.z idx
+    iny
+    // while(msg[i])
+    lda (msg),y
+    cmp #0
+    bne __b1
+    // }
+    rts
+}
 main: {
     // msg = msg1
     lda #<msg1
@@ -44,23 +61,6 @@ do10: {
     inc.z i
     lda #$a
     cmp.z i
-    bne __b1
-    // }
-    rts
-}
-hello: {
-    ldy #0
-  __b1:
-    // SCREEN[idx++] = msg[i++]
-    lda (msg),y
-    ldx.z idx
-    sta SCREEN,x
-    // SCREEN[idx++] = msg[i++];
-    inc.z idx
-    iny
-    // while(msg[i])
-    lda (msg),y
-    cmp #0
     bne __b1
     // }
     rts

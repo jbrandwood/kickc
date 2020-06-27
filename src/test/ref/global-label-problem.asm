@@ -26,24 +26,6 @@ main: {
     msg1: .text "b"
     .byte 0
 }
-print1: {
-    // print("c")
-    lda #<msg
-    sta.z print.msg
-    lda #>msg
-    sta.z print.msg+1
-    jsr print
-    // print("a")
-    lda #<@msg
-    sta.z print.msg
-    lda #>@msg
-    sta.z print.msg+1
-    jsr print
-    // }
-    rts
-    msg: .text "c"
-    .byte 0
-}
 // print(byte* zp(2) msg)
 print: {
     .label msg = 2
@@ -67,6 +49,24 @@ print: {
     inc.z msg+1
   !:
     jmp __b1
+}
+print1: {
+    // print("c")
+    lda #<msg
+    sta.z print.msg
+    lda #>msg
+    sta.z print.msg+1
+    jsr print
+    // print("a")
+    lda #<@msg
+    sta.z print.msg
+    lda #>@msg
+    sta.z print.msg+1
+    jsr print
+    // }
+    rts
+    msg: .text "c"
+    .byte 0
 }
   msg: .text "a"
   .byte 0

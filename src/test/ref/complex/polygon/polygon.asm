@@ -71,6 +71,74 @@ __start: {
     jsr main
     rts
 }
+// Interrupt Routine 2
+irq_bottom_2: {
+    .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LINE_BUFFER)/4&$f
+    // VICII->BORDER_COLOR = BLACK
+    // Change border color
+    lda #BLACK
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // kbhit()
+    jsr kbhit
+    // if(!kbhit())
+    // Show the current canvas (unless a key is being pressed)
+    cmp #0
+    beq __b1
+    // VICII->MEMORY = toD018(SCREEN, LINE_BUFFER)
+    lda #toD0181_return
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
+  __b2:
+    // canvas_show_flag = 0
+    lda #0
+    sta.z canvas_show_flag
+    // VICII->IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // VICII->RASTER = BORDER_YPOS_BOTTOM-8
+    // Trigger IRQ 1 at 8 pixels before the border
+    lda #BORDER_YPOS_BOTTOM-8
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // *KERNEL_IRQ = &irq_bottom_1
+    lda #<irq_bottom_1
+    sta KERNEL_IRQ
+    lda #>irq_bottom_1
+    sta KERNEL_IRQ+1
+    // }
+    jmp $ea31
+  __b1:
+    // VICII->MEMORY = canvas_show_memory
+    lda.z canvas_show_memory
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
+    jmp __b2
+}
+// Interrupt Routine 1: Just above last text line.
+irq_bottom_1: {
+    .const toD0181_return = (>(CONSOLE&$3fff)*4)|(>PETSCII)/4&$f
+    // VICII->BORDER_COLOR = DARK_GREY
+    // Change border color
+    lda #DARK_GREY
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->MEMORY = toD018(CONSOLE, PETSCII)
+    // Show the cycle counter
+    lda #toD0181_return
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
+    // VICII->IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // VICII->RASTER = BORDER_YPOS_BOTTOM
+    // Trigger IRQ 2 at bottom of text-line
+    lda #BORDER_YPOS_BOTTOM
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // *KERNEL_IRQ = &irq_bottom_2
+    lda #<irq_bottom_2
+    sta KERNEL_IRQ
+    lda #>irq_bottom_2
+    sta KERNEL_IRQ+1
+    // }
+    jmp $ea81
+}
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS1)/4&$f
     .const toD0182_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
@@ -305,61 +373,123 @@ main: {
     iny
     jmp __b4
 }
-// EOR fill from the line buffer onto the canvas
-// eorfill(byte* zp($1f) canvas)
-eorfill: {
-    .label canvas = $1f
-    .label line_column = $1c
-    .label fill_column = $1f
-    lda #<LINE_BUFFER
-    sta.z line_column
-    lda #>LINE_BUFFER
-    sta.z line_column+1
-    ldx #0
-  __b1:
-    // for(char x=0;x<16;x++)
-    cpx #$10
-    bcc __b2
+// Return true if there's a key waiting, return false if not
+kbhit: {
+    // CIA#1 Port A: keyboard matrix columns and joystick #2
+    .label CIA1_PORT_A = $dc00
+    // CIA#1 Port B: keyboard matrix rows and joystick #1.
+    .label CIA1_PORT_B = $dc01
+    // *CIA1_PORT_A = 0
+    lda #0
+    sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
+    lda CIA1_PORT_B
+    eor #$ff
     // }
     rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($1f) str, byte register(X) c, word zp($1c) num)
+memset: {
+    .label end = $1c
+    .label dst = $1f
+    .label num = $1c
+    .label str = $1f
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
   __b2:
-    // eor = line_column[0]
-    ldy #0
-    lda (line_column),y
-    // fill_column[0] = eor
-    sta (fill_column),y
-    ldy #1
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
+    // }
+    rts
   __b3:
-    // for(char y=1;y<16*8;y++)
-    cpy #$10*8
-    bcc __b4
-    // line_column += 16*8
-    lda #$10*8
-    clc
-    adc.z line_column
-    sta.z line_column
-    bcc !+
-    inc.z line_column+1
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
   !:
-    // fill_column += 16*8
-    lda #$10*8
-    clc
-    adc.z fill_column
-    sta.z fill_column
-    bcc !+
-    inc.z fill_column+1
-  !:
-    // for(char x=0;x<16;x++)
-    inx
-    jmp __b1
-  __b4:
-    // eor ^= line_column[y]
-    eor (line_column),y
-    // fill_column[y] = eor
-    sta (fill_column),y
-    // for(char y=1;y<16*8;y++)
-    iny
-    jmp __b3
+    jmp __b2
+}
+// Setup raster IRQ to change charset at different lines
+setup_irq: {
+    // asm
+    sei
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // VICII->CONTROL1 &= 0x7f
+    // Set raster line to 8 pixels before the border
+    lda #$7f
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->RASTER = BORDER_YPOS_BOTTOM-8
+    lda #BORDER_YPOS_BOTTOM-8
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // VICII->IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
+    // *KERNEL_IRQ = &irq_bottom_1
+    // Set the IRQ routine
+    lda #<irq_bottom_1
+    sta KERNEL_IRQ
+    lda #>irq_bottom_1
+    sta KERNEL_IRQ+1
+    // asm
+    cli
+    // }
+    rts
+}
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
+    lda #<$ffffffff
+    sta CIA2_TIMER_AB
+    lda #>$ffffffff
+    sta CIA2_TIMER_AB+1
+    lda #<$ffffffff>>$10
+    sta CIA2_TIMER_AB+2
+    lda #>$ffffffff>>$10
+    sta CIA2_TIMER_AB+3
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // }
+    rts
 }
 // Draw a EOR friendly line between two points
 // Uses bresenham line drawing routine
@@ -687,21 +817,61 @@ line: {
     sta (plot6_column),y
     rts
 }
-// Get the sign of a 8-bit unsigned number treated as a signed number.
-// Returns unsigned -1 if the number is negative
-// sgn_u8(byte register(A) u)
-sgn_u8: {
-    // u & 0x80
-    and #$80
-    // if(u & 0x80)
-    cmp #0
-    bne __b1
-    lda #1
-    rts
+// EOR fill from the line buffer onto the canvas
+// eorfill(byte* zp($1f) canvas)
+eorfill: {
+    .label canvas = $1f
+    .label line_column = $1c
+    .label fill_column = $1f
+    lda #<LINE_BUFFER
+    sta.z line_column
+    lda #>LINE_BUFFER
+    sta.z line_column+1
+    ldx #0
   __b1:
-    lda #-1
+    // for(char x=0;x<16;x++)
+    cpx #$10
+    bcc __b2
     // }
     rts
+  __b2:
+    // eor = line_column[0]
+    ldy #0
+    lda (line_column),y
+    // fill_column[0] = eor
+    sta (fill_column),y
+    ldy #1
+  __b3:
+    // for(char y=1;y<16*8;y++)
+    cpy #$10*8
+    bcc __b4
+    // line_column += 16*8
+    lda #$10*8
+    clc
+    adc.z line_column
+    sta.z line_column
+    bcc !+
+    inc.z line_column+1
+  !:
+    // fill_column += 16*8
+    lda #$10*8
+    clc
+    adc.z fill_column
+    sta.z fill_column
+    bcc !+
+    inc.z fill_column+1
+  !:
+    // for(char x=0;x<16;x++)
+    inx
+    jmp __b1
+  __b4:
+    // eor ^= line_column[y]
+    eor (line_column),y
+    // fill_column[y] = eor
+    sta (fill_column),y
+    // for(char y=1;y<16*8;y++)
+    iny
+    jmp __b3
 }
 // Get the absolute value of a u-bit unsigned number treated as a signed number.
 // abs_u8(byte register(A) u)
@@ -721,191 +891,21 @@ abs_u8: {
     // }
     rts
 }
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($1f) str, byte register(X) c, word zp($1c) num)
-memset: {
-    .label end = $1c
-    .label dst = $1f
-    .label num = $1c
-    .label str = $1f
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
-    // end = (char*)str + num
-    lda.z end
-    clc
-    adc.z str
-    sta.z end
-    lda.z end+1
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-  __breturn:
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-// Reset & start the processor clock time. The value can be read using clock().
-// This uses CIA #2 Timer A+B on the C64
-clock_start: {
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // *CIA2_TIMER_AB = 0xffffffff
-    lda #<$ffffffff
-    sta CIA2_TIMER_AB
-    lda #>$ffffffff
-    sta CIA2_TIMER_AB+1
-    lda #<$ffffffff>>$10
-    sta CIA2_TIMER_AB+2
-    lda #>$ffffffff>>$10
-    sta CIA2_TIMER_AB+3
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    lda #CIA_TIMER_CONTROL_START
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // }
-    rts
-}
-// Setup raster IRQ to change charset at different lines
-setup_irq: {
-    // asm
-    sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // VICII->CONTROL1 &= 0x7f
-    // Set raster line to 8 pixels before the border
-    lda #$7f
-    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // VICII->RASTER = BORDER_YPOS_BOTTOM-8
-    lda #BORDER_YPOS_BOTTOM-8
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // VICII->IRQ_ENABLE = IRQ_RASTER
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // *KERNEL_IRQ = &irq_bottom_1
-    // Set the IRQ routine
-    lda #<irq_bottom_1
-    sta KERNEL_IRQ
-    lda #>irq_bottom_1
-    sta KERNEL_IRQ+1
-    // asm
-    cli
-    // }
-    rts
-}
-// Interrupt Routine 2
-irq_bottom_2: {
-    .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LINE_BUFFER)/4&$f
-    // VICII->BORDER_COLOR = BLACK
-    // Change border color
-    lda #BLACK
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // kbhit()
-    jsr kbhit
-    // if(!kbhit())
-    // Show the current canvas (unless a key is being pressed)
+// Get the sign of a 8-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is negative
+// sgn_u8(byte register(A) u)
+sgn_u8: {
+    // u & 0x80
+    and #$80
+    // if(u & 0x80)
     cmp #0
-    beq __b1
-    // VICII->MEMORY = toD018(SCREEN, LINE_BUFFER)
-    lda #toD0181_return
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-  __b2:
-    // canvas_show_flag = 0
-    lda #0
-    sta.z canvas_show_flag
-    // VICII->IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // VICII->RASTER = BORDER_YPOS_BOTTOM-8
-    // Trigger IRQ 1 at 8 pixels before the border
-    lda #BORDER_YPOS_BOTTOM-8
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // *KERNEL_IRQ = &irq_bottom_1
-    lda #<irq_bottom_1
-    sta KERNEL_IRQ
-    lda #>irq_bottom_1
-    sta KERNEL_IRQ+1
-    // }
-    jmp $ea31
+    bne __b1
+    lda #1
+    rts
   __b1:
-    // VICII->MEMORY = canvas_show_memory
-    lda.z canvas_show_memory
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-    jmp __b2
-}
-// Return true if there's a key waiting, return false if not
-kbhit: {
-    // CIA#1 Port A: keyboard matrix columns and joystick #2
-    .label CIA1_PORT_A = $dc00
-    // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    .label CIA1_PORT_B = $dc01
-    // *CIA1_PORT_A = 0
-    lda #0
-    sta CIA1_PORT_A
-    // ~*CIA1_PORT_B
-    lda CIA1_PORT_B
-    eor #$ff
+    lda #-1
     // }
     rts
-}
-// Interrupt Routine 1: Just above last text line.
-irq_bottom_1: {
-    .const toD0181_return = (>(CONSOLE&$3fff)*4)|(>PETSCII)/4&$f
-    // VICII->BORDER_COLOR = DARK_GREY
-    // Change border color
-    lda #DARK_GREY
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // VICII->MEMORY = toD018(CONSOLE, PETSCII)
-    // Show the cycle counter
-    lda #toD0181_return
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-    // VICII->IRQ_STATUS = IRQ_RASTER
-    // Acknowledge the IRQ
-    lda #IRQ_RASTER
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // VICII->RASTER = BORDER_YPOS_BOTTOM
-    // Trigger IRQ 2 at bottom of text-line
-    lda #BORDER_YPOS_BOTTOM
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // *KERNEL_IRQ = &irq_bottom_2
-    lda #<irq_bottom_2
-    sta KERNEL_IRQ
-    lda #>irq_bottom_2
-    sta KERNEL_IRQ+1
-    // }
-    jmp $ea81
 }
   // SIN/COS tables
   .align $100

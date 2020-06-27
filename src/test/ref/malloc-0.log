@@ -190,13 +190,13 @@ Adding NOP phi() at start of __start::__init1
 Adding NOP phi() at start of __start::@2
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@3
-Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
+Adding NOP phi() at start of main
 CALL GRAPH
 Calls in [__start] to malloc:2 main:5 
 
 Created 1 initial phi equivalence classes
-Coalesced [14] main::i#3 ← main::i#1
+Coalesced [16] main::i#3 ← main::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) __start::@2
 Culled Empty Block (label) __start::@3
@@ -204,8 +204,8 @@ Culled Empty Block (label) main::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::__init1
 Adding NOP phi() at start of __start::@1
-Adding NOP phi() at start of main
 Adding NOP phi() at start of malloc
+Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
@@ -225,25 +225,25 @@ __start::@return: scope:[__start]  from __start::@1
   [5] return 
   to:@return
 
-(void()) main()
-main: scope:[main]  from __start::@1
-  [6] phi()
-  to:main::@1
-main::@1: scope:[main]  from main main::@1
-  [7] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [8] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2
-  [9] (byte) main::i#1 ← ++ (byte) main::i#2
-  [10] if((byte) main::i#1!=(byte) 0) goto main::@1
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [11] return 
-  to:@return
-
 (void*()) malloc((word) malloc::size)
 malloc: scope:[malloc]  from __start::__init1
-  [12] phi()
+  [6] phi()
   to:malloc::@return
 malloc::@return: scope:[malloc]  from malloc
+  [7] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  [8] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@1
+  [9] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [10] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2
+  [11] (byte) main::i#1 ← ++ (byte) main::i#2
+  [12] if((byte) main::i#1!=(byte) 0) goto main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@1
   [13] return 
   to:@return
 
@@ -287,7 +287,7 @@ __start: {
     // __start::__init1
   __init1:
     // [2] call malloc 
-    // [12] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
   malloc_from___init1:
     jsr malloc
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -296,44 +296,13 @@ __start: {
     // __start::@1
   __b1:
     // [4] call main 
-    // [6] phi from __start::@1 to main [phi:__start::@1->main]
+    // [8] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
     // __start::@return
   __breturn:
     // [5] return 
-    rts
-}
-  // main
-main: {
-    .label i = 2
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy.z i
-    tya
-    sta BYTES,y
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [10] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
-    lda.z i
-    cmp #0
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [11] return 
     rts
 }
   // malloc
@@ -345,6 +314,37 @@ malloc: {
     .label return = mem
     jmp __breturn
     // malloc::@return
+  __breturn:
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    .label i = 2
+    // [9] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  __b1_from___b1:
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [10] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
+    ldy.z i
+    tya
+    sta BYTES,y
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [12] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
+    lda.z i
+    cmp #0
+    bne __b1_from___b1
+    jmp __breturn
+    // main::@return
   __breturn:
     // [13] return 
     rts
@@ -386,7 +386,7 @@ __start: {
     // __start::__init1
   __init1:
     // [2] call malloc 
-    // [12] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
   malloc_from___init1:
     jsr malloc
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -395,40 +395,13 @@ __start: {
     // __start::@1
   __b1:
     // [4] call main 
-    // [6] phi from __start::@1 to main [phi:__start::@1->main]
+    // [8] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
     // __start::@return
   __breturn:
     // [5] return 
-    rts
-}
-  // main
-main: {
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    jmp __b1
-    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
-    txa
-    sta BYTES,x
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [10] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [11] return 
     rts
 }
   // malloc
@@ -441,6 +414,33 @@ malloc: {
     jmp __breturn
     // malloc::@return
   __breturn:
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    // [9] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+  __b1_from___b1:
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@1
+  __b1:
+    // [10] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta BYTES,x
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [12] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b1_from___b1
+    jmp __breturn
+    // main::@return
+  __breturn:
     // [13] return 
     rts
 }
@@ -450,8 +450,8 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
@@ -464,8 +464,8 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
-Removing instruction __b1_from_main:
 Removing instruction __breturn:
+Removing instruction __b1_from_main:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -521,39 +521,15 @@ __start: {
     // __start::__init1
     // malloc(0x100)
     // [2] call malloc 
-    // [12] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
+    // [6] phi from __start::__init1 to malloc [phi:__start::__init1->malloc]
     jsr malloc
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [4] call main 
-    // [6] phi from __start::@1 to main [phi:__start::@1->main]
+    // [8] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [5] return 
-    rts
-}
-  // main
-main: {
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-    // [7] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [7] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [7] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    // main::@1
-  __b1:
-    // BYTES[i] = i
-    // [8] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
-    txa
-    sta BYTES,x
-    // for( byte i: 0..255)
-    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [10] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
-    cpx #0
-    bne __b1
-    // main::@return
-    // }
-    // [11] return 
     rts
 }
   // malloc
@@ -564,6 +540,31 @@ malloc: {
     .label mem = HEAP_TOP-size
     .label return = mem
     // malloc::@return
+    // }
+    // [7] return 
+    rts
+}
+  // main
+main: {
+    // [9] phi from main to main::@1 [phi:main->main::@1]
+    // [9] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [9] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
+    // [9] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // main::@1
+  __b1:
+    // BYTES[i] = i
+    // [10] *((const byte*) BYTES#0 + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    txa
+    sta BYTES,x
+    // for( byte i: 0..255)
+    // [11] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [12] if((byte) main::i#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    cpx #0
+    bne __b1
+    // main::@return
+    // }
     // [13] return 
     rts
 }

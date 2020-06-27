@@ -6,7 +6,7 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label SCREEN = $400
-  .label print_char_cursor = 5
+  .label print_char_cursor = $c
 main: {
     .label a = $4d2
     .label b = $929
@@ -39,211 +39,20 @@ main: {
     sta.z print_char_cursor+1
     jmp __b2
 }
-// Print a unsigned long as HEX
-// print_ulong(dword zp($e) dw)
-print_ulong: {
-    .label dw = $e
-    // print_uint(>dw)
-    lda.z dw+2
-    sta.z print_uint.w
-    lda.z dw+3
-    sta.z print_uint.w+1
-    jsr print_uint
-    // print_uint(<dw)
-    lda.z dw
-    sta.z print_uint.w
-    lda.z dw+1
-    sta.z print_uint.w+1
-    jsr print_uint
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp(2) w)
-print_uint: {
-    .label w = 2
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// Fast multiply two unsigned words to a double word result
-// Done in assembler to utilize fast addition A+X
-mulf16u: {
-    .label memA = $f8
-    .label memB = $fa
-    .label memR = $fc
-    .label return = $e
-    // *memA = a
-    lda #<main.a
-    sta memA
-    lda #>main.a
-    sta memA+1
-    // *memB = b
-    lda #<main.b
-    sta memB
-    lda #>main.b
-    sta memB+1
-    // asm
-    lda memA
-    sta sm1a+1
-    sta sm3a+1
-    sta sm5a+1
-    sta sm7a+1
-    eor #$ff
-    sta sm2a+1
-    sta sm4a+1
-    sta sm6a+1
-    sta sm8a+1
-    lda memA+1
-    sta sm1b+1
-    sta sm3b+1
-    sta sm5b+1
-    sta sm7b+1
-    eor #$ff
-    sta sm2b+1
-    sta sm4b+1
-    sta sm6b+1
-    sta sm8b+1
-    ldx memB
-    sec
-  sm1a:
-    lda mulf_sqr1_lo,x
-  sm2a:
-    sbc mulf_sqr2_lo,x
-    sta memR+0
-  sm3a:
-    lda mulf_sqr1_hi,x
-  sm4a:
-    sbc mulf_sqr2_hi,x
-    sta _AA+1
-    sec
-  sm1b:
-    lda mulf_sqr1_lo,x
-  sm2b:
-    sbc mulf_sqr2_lo,x
-    sta _cc+1
-  sm3b:
-    lda mulf_sqr1_hi,x
-  sm4b:
-    sbc mulf_sqr2_hi,x
-    sta _CC+1
-    ldx memB+1
-    sec
-  sm5a:
-    lda mulf_sqr1_lo,x
-  sm6a:
-    sbc mulf_sqr2_lo,x
-    sta _bb+1
-  sm7a:
-    lda mulf_sqr1_hi,x
-  sm8a:
-    sbc mulf_sqr2_hi,x
-    sta _BB+1
-    sec
-  sm5b:
-    lda mulf_sqr1_lo,x
-  sm6b:
-    sbc mulf_sqr2_lo,x
-    sta _dd+1
-  sm7b:
-    lda mulf_sqr1_hi,x
-  sm8b:
-    sbc mulf_sqr2_hi,x
-    sta memR+3
-    clc
-  _AA:
-    lda #0
-  _bb:
-    adc #0
-    sta memR+1
-  _BB:
-    lda #0
-  _CC:
-    adc #0
-    sta memR+2
-    bcc !+
-    inc memR+3
-    clc
-  !:
-  _cc:
-    lda #0
-    adc memR+1
-    sta memR+1
-  _dd:
-    lda #0
-    adc memR+2
-    sta memR+2
-    bcc !+
-    inc memR+3
-  !:
-    // return *memR;
-    lda memR
-    sta.z return
-    lda memR+1
-    sta.z return+1
-    lda memR+2
-    sta.z return+2
-    lda memR+3
-    sta.z return+3
-    // }
-    rts
-}
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = 4
+    .label c = 2
     // Counter used for determining x%2==0
-    .label sqr1_hi = 5
+    .label sqr1_hi = $c
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $c
-    .label sqr1_lo = 2
+    .label sqr = 8
+    .label sqr1_lo = $a
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 9
-    .label sqr2_lo = 7
+    .label sqr2_hi = 5
+    .label sqr2_lo = 3
     //Start with g(0)=f(255)
-    .label dir = $b
+    .label dir = 7
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -368,6 +177,197 @@ mulf_init: {
     inc.z sqr1_lo+1
   !:
     jmp __b1
+}
+// Fast multiply two unsigned words to a double word result
+// Done in assembler to utilize fast addition A+X
+mulf16u: {
+    .label memA = $f8
+    .label memB = $fa
+    .label memR = $fc
+    .label return = $e
+    // *memA = a
+    lda #<main.a
+    sta memA
+    lda #>main.a
+    sta memA+1
+    // *memB = b
+    lda #<main.b
+    sta memB
+    lda #>main.b
+    sta memB+1
+    // asm
+    lda memA
+    sta sm1a+1
+    sta sm3a+1
+    sta sm5a+1
+    sta sm7a+1
+    eor #$ff
+    sta sm2a+1
+    sta sm4a+1
+    sta sm6a+1
+    sta sm8a+1
+    lda memA+1
+    sta sm1b+1
+    sta sm3b+1
+    sta sm5b+1
+    sta sm7b+1
+    eor #$ff
+    sta sm2b+1
+    sta sm4b+1
+    sta sm6b+1
+    sta sm8b+1
+    ldx memB
+    sec
+  sm1a:
+    lda mulf_sqr1_lo,x
+  sm2a:
+    sbc mulf_sqr2_lo,x
+    sta memR+0
+  sm3a:
+    lda mulf_sqr1_hi,x
+  sm4a:
+    sbc mulf_sqr2_hi,x
+    sta _AA+1
+    sec
+  sm1b:
+    lda mulf_sqr1_lo,x
+  sm2b:
+    sbc mulf_sqr2_lo,x
+    sta _cc+1
+  sm3b:
+    lda mulf_sqr1_hi,x
+  sm4b:
+    sbc mulf_sqr2_hi,x
+    sta _CC+1
+    ldx memB+1
+    sec
+  sm5a:
+    lda mulf_sqr1_lo,x
+  sm6a:
+    sbc mulf_sqr2_lo,x
+    sta _bb+1
+  sm7a:
+    lda mulf_sqr1_hi,x
+  sm8a:
+    sbc mulf_sqr2_hi,x
+    sta _BB+1
+    sec
+  sm5b:
+    lda mulf_sqr1_lo,x
+  sm6b:
+    sbc mulf_sqr2_lo,x
+    sta _dd+1
+  sm7b:
+    lda mulf_sqr1_hi,x
+  sm8b:
+    sbc mulf_sqr2_hi,x
+    sta memR+3
+    clc
+  _AA:
+    lda #0
+  _bb:
+    adc #0
+    sta memR+1
+  _BB:
+    lda #0
+  _CC:
+    adc #0
+    sta memR+2
+    bcc !+
+    inc memR+3
+    clc
+  !:
+  _cc:
+    lda #0
+    adc memR+1
+    sta memR+1
+  _dd:
+    lda #0
+    adc memR+2
+    sta memR+2
+    bcc !+
+    inc memR+3
+  !:
+    // return *memR;
+    lda memR
+    sta.z return
+    lda memR+1
+    sta.z return+1
+    lda memR+2
+    sta.z return+2
+    lda memR+3
+    sta.z return+3
+    // }
+    rts
+}
+// Print a unsigned long as HEX
+// print_ulong(dword zp($e) dw)
+print_ulong: {
+    .label dw = $e
+    // print_uint(>dw)
+    lda.z dw+2
+    sta.z print_uint.w
+    lda.z dw+3
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_uint(<dw)
+    lda.z dw
+    sta.z print_uint.w
+    lda.z dw+1
+    sta.z print_uint.w+1
+    jsr print_uint
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp($a) w)
+print_uint: {
+    .label w = $a
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

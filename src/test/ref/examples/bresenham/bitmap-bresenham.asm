@@ -39,8 +39,140 @@ main: {
     jsr lines
     jmp __b1
 }
+// Initialize the bitmap plotter tables for a specific bitmap
+bitmap_init: {
+    .label __10 = 9
+    .label yoffs = $b
+    ldy #$80
+    ldx #0
+  __b1:
+    // x&$f8
+    txa
+    and #$f8
+    // bitmap_plot_xlo[x] = x&$f8
+    sta bitmap_plot_xlo,x
+    // bitmap_plot_xhi[x] = >bitmap
+    lda #>BITMAP
+    sta bitmap_plot_xhi,x
+    // bitmap_plot_bit[x] = bits
+    tya
+    sta bitmap_plot_bit,x
+    // bits = bits>>1
+    tya
+    lsr
+    tay
+    // if(bits==0)
+    cpy #0
+    bne __b2
+    ldy #$80
+  __b2:
+    // for(char x : 0..255)
+    inx
+    cpx #0
+    bne __b1
+    lda #<0
+    sta.z yoffs
+    sta.z yoffs+1
+    tax
+  __b3:
+    // y&$7
+    lda #7
+    sax.z __10
+    // <yoffs
+    lda.z yoffs
+    // y&$7 | <yoffs
+    ora.z __10
+    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    sta bitmap_plot_ylo,x
+    // >yoffs
+    lda.z yoffs+1
+    // bitmap_plot_yhi[y] = >yoffs
+    sta bitmap_plot_yhi,x
+    // if((y&$7)==7)
+    lda #7
+    cmp.z __10
+    bne __b4
+    // yoffs = yoffs + 40*8
+    clc
+    lda.z yoffs
+    adc #<$28*8
+    sta.z yoffs
+    lda.z yoffs+1
+    adc #>$28*8
+    sta.z yoffs+1
+  __b4:
+    // for(char y : 0..255)
+    inx
+    cpx #0
+    bne __b3
+    // }
+    rts
+}
+// Clear all graphics on the bitmap
+bitmap_clear: {
+    .label bitmap = $b
+    .label y = 2
+    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    lda bitmap_plot_xlo
+    sta.z bitmap
+    lda bitmap_plot_xhi
+    sta.z bitmap+1
+    lda #0
+    sta.z y
+  __b1:
+    ldx #0
+  __b2:
+    // *bitmap++ = 0
+    lda #0
+    tay
+    sta (bitmap),y
+    // *bitmap++ = 0;
+    inc.z bitmap
+    bne !+
+    inc.z bitmap+1
+  !:
+    // for( char x: 0..199 )
+    inx
+    cpx #$c8
+    bne __b2
+    // for( char y: 0..39 )
+    inc.z y
+    lda #$28
+    cmp.z y
+    bne __b1
+    // }
+    rts
+}
+init_screen: {
+    .label c = $b
+    lda #<SCREEN
+    sta.z c
+    lda #>SCREEN
+    sta.z c+1
+  __b1:
+    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
+    lda.z c+1
+    cmp #>SCREEN+$400
+    bne __b2
+    lda.z c
+    cmp #<SCREEN+$400
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *c = $14
+    lda #$14
+    ldy #0
+    sta (c),y
+    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
+    inc.z c
+    bne !+
+    inc.z c+1
+  !:
+    jmp __b1
+}
 lines: {
-    .label l = 8
+    .label l = 2
     lda #0
     sta.z l
   __b1:
@@ -67,13 +199,13 @@ lines: {
     jmp __b1
 }
 // Draw a line on the bitmap
-// bitmap_line(byte zp(3) x0, byte zp(6) x1, byte zp(4) y0, byte register(Y) y1)
+// bitmap_line(byte zp(5) x0, byte zp(7) x1, byte zp(4) y0, byte register(Y) y1)
 bitmap_line: {
-    .label xd = 2
-    .label yd = 5
-    .label yd_1 = $e
-    .label x0 = 3
-    .label x1 = 6
+    .label xd = 9
+    .label yd = 6
+    .label yd_1 = 3
+    .label x0 = 5
+    .label x1 = 7
     .label y0 = 4
     // if(x0<x1)
     lda.z x0
@@ -189,89 +321,12 @@ bitmap_line: {
     jsr bitmap_line_xdyi
     rts
 }
-// bitmap_line_xdyi(byte register(X) x, byte zp(4) y, byte zp(3) x1, byte zp(2) xd, byte zp($e) yd)
-bitmap_line_xdyi: {
-    .label __6 = $d
-    .label y = 4
-    .label x1 = 3
-    .label xd = 2
-    .label yd = $e
-    .label e = 7
-    // e = yd>>1
-    lda.z yd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z y
-    jsr bitmap_plot
-    // x++;
-    inx
-    // e = e+yd
-    lda.z e
-    clc
-    adc.z yd
-    sta.z e
-    // if(xd<e)
-    lda.z xd
-    cmp.z e
-    bcs __b2
-    // y++;
-    inc.z y
-    // e = e - xd
-    lda.z e
-    sec
-    sbc.z xd
-    sta.z e
-  __b2:
-    // x1+1
-    ldy.z x1
-    iny
-    sty.z __6
-    // while (x!=(x1+1))
-    cpx.z __6
-    bne __b1
-    // }
-    rts
-}
-// bitmap_plot(byte register(X) x, byte register(Y) y)
-bitmap_plot: {
-    .label plotter_x = 9
-    .label plotter_y = $b
-    .label plotter = 9
-    // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    lda bitmap_plot_xhi,x
-    sta.z plotter_x+1
-    lda bitmap_plot_xlo,x
-    sta.z plotter_x
-    // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,y
-    sta.z plotter_y+1
-    lda bitmap_plot_ylo,y
-    sta.z plotter_y
-    // plotter_x+plotter_y
-    lda.z plotter
-    clc
-    adc.z plotter_y
-    sta.z plotter
-    lda.z plotter+1
-    adc.z plotter_y+1
-    sta.z plotter+1
-    // *plotter | bitmap_plot_bit[x]
-    lda bitmap_plot_bit,x
-    ldy #0
-    ora (plotter),y
-    // *plotter = *plotter | bitmap_plot_bit[x]
-    sta (plotter),y
-    // }
-    rts
-}
-// bitmap_line_ydxi(byte zp(7) y, byte register(X) x, byte zp(4) y1, byte zp($e) yd, byte zp(2) xd)
+// bitmap_line_ydxi(byte zp(6) y, byte register(X) x, byte zp(4) y1, byte zp(3) yd, byte zp(9) xd)
 bitmap_line_ydxi: {
-    .label y = 7
+    .label y = 6
     .label y1 = 4
-    .label yd = $e
-    .label xd = 2
+    .label yd = 3
+    .label xd = 9
     .label e = 5
     // e = xd>>1
     lda.z xd
@@ -309,14 +364,102 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// bitmap_line_xdyd(byte register(X) x, byte zp(4) y, byte zp(6) x1, byte zp(2) xd, byte zp(5) yd)
-bitmap_line_xdyd: {
-    .label __6 = $d
+// bitmap_line_xdyi(byte register(X) x, byte zp(4) y, byte zp(5) x1, byte zp(9) xd, byte zp(3) yd)
+bitmap_line_xdyi: {
+    .label __6 = $a
     .label y = 4
-    .label x1 = 6
-    .label xd = 2
-    .label yd = 5
+    .label x1 = 5
+    .label xd = 9
+    .label yd = 3
+    .label e = 6
+    // e = yd>>1
+    lda.z yd
+    lsr
+    sta.z e
+  __b1:
+    // bitmap_plot(x,y)
+    ldy.z y
+    jsr bitmap_plot
+    // x++;
+    inx
+    // e = e+yd
+    lda.z e
+    clc
+    adc.z yd
+    sta.z e
+    // if(xd<e)
+    lda.z xd
+    cmp.z e
+    bcs __b2
+    // y++;
+    inc.z y
+    // e = e - xd
+    lda.z e
+    sec
+    sbc.z xd
+    sta.z e
+  __b2:
+    // x1+1
+    ldy.z x1
+    iny
+    sty.z __6
+    // while (x!=(x1+1))
+    cpx.z __6
+    bne __b1
+    // }
+    rts
+}
+// bitmap_line_ydxd(byte zp(8) y, byte register(X) x, byte zp(4) y1, byte zp(6) yd, byte zp(9) xd)
+bitmap_line_ydxd: {
+    .label y = 8
+    .label y1 = 4
+    .label yd = 6
+    .label xd = 9
     .label e = 7
+    // e = xd>>1
+    lda.z xd
+    lsr
+    sta.z e
+  __b1:
+    // bitmap_plot(x,y)
+    ldy.z y
+    jsr bitmap_plot
+    // y = y++;
+    inc.z y
+    // e = e+xd
+    lda.z e
+    clc
+    adc.z xd
+    sta.z e
+    // if(yd<e)
+    lda.z yd
+    cmp.z e
+    bcs __b2
+    // x--;
+    dex
+    // e = e - yd
+    lda.z e
+    sec
+    sbc.z yd
+    sta.z e
+  __b2:
+    // y1+1
+    ldy.z y1
+    iny
+    // while (y!=(y1+1))
+    cpy.z y
+    bne __b1
+    // }
+    rts
+}
+// bitmap_line_xdyd(byte register(X) x, byte zp(4) y, byte zp(7) x1, byte zp(9) xd, byte zp(6) yd)
+bitmap_line_xdyd: {
+    .label __6 = $a
+    .label y = 4
+    .label x1 = 7
+    .label xd = 9
+    .label yd = 6
+    .label e = 8
     // e = yd>>1
     lda.z yd
     lsr
@@ -354,178 +497,35 @@ bitmap_line_xdyd: {
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp(7) y, byte register(X) x, byte zp(4) y1, byte zp(5) yd, byte zp(2) xd)
-bitmap_line_ydxd: {
-    .label y = 7
-    .label y1 = 4
-    .label yd = 5
-    .label xd = 2
-    .label e = $d
-    // e = xd>>1
-    lda.z xd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z y
-    jsr bitmap_plot
-    // y = y++;
-    inc.z y
-    // e = e+xd
-    lda.z e
+// bitmap_plot(byte register(X) x, byte register(Y) y)
+bitmap_plot: {
+    .label plotter_x = $b
+    .label plotter_y = $d
+    .label plotter = $b
+    // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
+    lda bitmap_plot_xhi,x
+    sta.z plotter_x+1
+    lda bitmap_plot_xlo,x
+    sta.z plotter_x
+    // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    lda bitmap_plot_yhi,y
+    sta.z plotter_y+1
+    lda bitmap_plot_ylo,y
+    sta.z plotter_y
+    // plotter_x+plotter_y
+    lda.z plotter
     clc
-    adc.z xd
-    sta.z e
-    // if(yd<e)
-    lda.z yd
-    cmp.z e
-    bcs __b2
-    // x--;
-    dex
-    // e = e - yd
-    lda.z e
-    sec
-    sbc.z yd
-    sta.z e
-  __b2:
-    // y1+1
-    ldy.z y1
-    iny
-    // while (y!=(y1+1))
-    cpy.z y
-    bne __b1
-    // }
-    rts
-}
-init_screen: {
-    .label c = 9
-    lda #<SCREEN
-    sta.z c
-    lda #>SCREEN
-    sta.z c+1
-  __b1:
-    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
-    lda.z c+1
-    cmp #>SCREEN+$400
-    bne __b2
-    lda.z c
-    cmp #<SCREEN+$400
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *c = $14
-    lda #$14
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
+    // *plotter | bitmap_plot_bit[x]
+    lda bitmap_plot_bit,x
     ldy #0
-    sta (c),y
-    // for(char* c = SCREEN; c!=SCREEN+$400;c++)
-    inc.z c
-    bne !+
-    inc.z c+1
-  !:
-    jmp __b1
-}
-// Clear all graphics on the bitmap
-bitmap_clear: {
-    .label bitmap = 9
-    .label y = 8
-    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
-    lda bitmap_plot_xlo
-    sta.z bitmap
-    lda bitmap_plot_xhi
-    sta.z bitmap+1
-    lda #0
-    sta.z y
-  __b1:
-    ldx #0
-  __b2:
-    // *bitmap++ = 0
-    lda #0
-    tay
-    sta (bitmap),y
-    // *bitmap++ = 0;
-    inc.z bitmap
-    bne !+
-    inc.z bitmap+1
-  !:
-    // for( char x: 0..199 )
-    inx
-    cpx #$c8
-    bne __b2
-    // for( char y: 0..39 )
-    inc.z y
-    lda #$28
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// Initialize the bitmap plotter tables for a specific bitmap
-bitmap_init: {
-    .label __10 = $e
-    .label yoffs = 9
-    ldy #$80
-    ldx #0
-  __b1:
-    // x&$f8
-    txa
-    and #$f8
-    // bitmap_plot_xlo[x] = x&$f8
-    sta bitmap_plot_xlo,x
-    // bitmap_plot_xhi[x] = >bitmap
-    lda #>BITMAP
-    sta bitmap_plot_xhi,x
-    // bitmap_plot_bit[x] = bits
-    tya
-    sta bitmap_plot_bit,x
-    // bits = bits>>1
-    tya
-    lsr
-    tay
-    // if(bits==0)
-    cpy #0
-    bne __b2
-    ldy #$80
-  __b2:
-    // for(char x : 0..255)
-    inx
-    cpx #0
-    bne __b1
-    lda #<0
-    sta.z yoffs
-    sta.z yoffs+1
-    tax
-  __b3:
-    // y&$7
-    lda #7
-    sax.z __10
-    // <yoffs
-    lda.z yoffs
-    // y&$7 | <yoffs
-    ora.z __10
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    sta bitmap_plot_ylo,x
-    // >yoffs
-    lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
-    sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
-    lda #7
-    cmp.z __10
-    bne __b4
-    // yoffs = yoffs + 40*8
-    clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-  __b4:
-    // for(char y : 0..255)
-    inx
-    cpx #0
-    bne __b3
+    ora (plotter),y
+    // *plotter = *plotter | bitmap_plot_bit[x]
+    sta (plotter),y
     // }
     rts
 }

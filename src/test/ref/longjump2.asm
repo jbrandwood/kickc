@@ -10,7 +10,7 @@ main: {
     // }
     rts
 }
-long2: {
+long1: {
     .label SCREEN = $400
     ldx #0
   __b1:
@@ -283,7 +283,7 @@ long2: {
     // }
     rts
 }
-long1: {
+long2: {
     .label SCREEN = $400
     ldx #0
   __b1:

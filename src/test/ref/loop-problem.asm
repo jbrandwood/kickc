@@ -14,6 +14,12 @@ main: {
     // }
     rts
 }
+d: {
+    // (*SCREEN)++;
+    inc SCREEN
+    // }
+    rts
+}
 b: {
     ldx #0
   __b1:
@@ -23,12 +29,6 @@ b: {
     inx
     cpx #4
     bne __b1
-    // }
-    rts
-}
-d: {
-    // (*SCREEN)++;
-    inc SCREEN
     // }
     rts
 }

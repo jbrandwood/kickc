@@ -377,12 +377,12 @@ Added new block during phi lifting main::@7(between main::@5 and main::@3)
 Added new block during phi lifting outsw::@5(between outsw and outsw::@1)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of outw::@4
 Adding NOP phi() at start of outsw::@3
+Adding NOP phi() at start of outw::@4
 CALL GRAPH
 Calls in [main] to outsw:3 outw:11 
-Calls in [outw] to out:24 out:30 out:36 out:42 
-Calls in [outsw] to out:51 outw:59 
+Calls in [outsw] to out:20 outw:28 
+Calls in [outw] to out:39 out:45 out:51 out:57 
 
 Created 9 initial phi equivalence classes
 Coalesced [9] outw::w#6 ← outw::w#0
@@ -390,28 +390,28 @@ Coalesced [10] idx#43 ← idx#11
 Coalesced [15] main::w#4 ← main::w#1
 Coalesced [16] main::sw#4 ← main::sw#1
 Coalesced [17] idx#40 ← idx#11
-Coalesced [22] idx#46 ← idx#35
-Coalesced [23] out::c#6 ← out::c#1
-Coalesced (already) [28] idx#47 ← idx#11
-Coalesced [29] out::c#7 ← out::c#2
-Coalesced (already) [34] idx#48 ← idx#11
-Coalesced [35] out::c#8 ← out::c#3
-Coalesced (already) [40] idx#49 ← idx#11
-Coalesced [41] out::c#9 ← out::c#4
-Coalesced (already) [50] idx#45 ← idx#31
-Coalesced [53] outsw::sw#7 ← outsw::sw#1
-Coalesced [54] idx#42 ← idx#11
-Coalesced [57] outw::w#7 ← outw::w#1
-Coalesced (already) [58] idx#44 ← idx#33
-Coalesced [62] outsw::sw#6 ← outsw::sw#0
-Coalesced (already) [63] idx#41 ← idx#31
+Coalesced [19] idx#45 ← idx#31
+Coalesced [22] outsw::sw#7 ← outsw::sw#1
+Coalesced [23] idx#42 ← idx#11
+Coalesced [26] outw::w#7 ← outw::w#1
+Coalesced (already) [27] idx#44 ← idx#33
+Coalesced [31] outsw::sw#6 ← outsw::sw#0
+Coalesced (already) [32] idx#41 ← idx#31
+Coalesced (already) [37] idx#46 ← idx#35
+Coalesced [38] out::c#6 ← out::c#1
+Coalesced (already) [43] idx#47 ← idx#11
+Coalesced [44] out::c#7 ← out::c#2
+Coalesced (already) [49] idx#48 ← idx#11
+Coalesced [50] out::c#8 ← out::c#3
+Coalesced (already) [55] idx#49 ← idx#11
+Coalesced [56] out::c#9 ← out::c#4
 Coalesced down to 6 phi equivalence classes
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) main::@7
 Culled Empty Block (label) main::@6
-Culled Empty Block (label) outw::@4
 Culled Empty Block (label) outsw::@3
 Culled Empty Block (label) outsw::@5
+Culled Empty Block (label) outw::@4
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
@@ -448,73 +448,73 @@ main::@return: scope:[main]  from main::@4
   [11] return 
   to:@return
 
+(void()) outsw((signed word) outsw::sw)
+outsw: scope:[outsw]  from main::@1
+  [12] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1
+  to:outsw::@2
+outsw::@2: scope:[outsw]  from outsw
+  [13] phi()
+  [14] call out 
+  to:outsw::@3
+outsw::@3: scope:[outsw]  from outsw::@2
+  [15] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0
+  to:outsw::@1
+outsw::@1: scope:[outsw]  from outsw outsw::@3
+  [16] (byte) idx#33 ← phi( outsw/(byte) idx#31 outsw::@3/(byte) idx#11 )
+  [16] (signed word) outsw::sw#3 ← phi( outsw/(signed word) outsw::sw#0 outsw::@3/(signed word) outsw::sw#1 )
+  [17] (word) outw::w#1 ← (word)(signed word) outsw::sw#3
+  [18] call outw 
+  to:outsw::@return
+outsw::@return: scope:[outsw]  from outsw::@1
+  [19] return 
+  to:@return
+
 (void()) outw((word) outw::w)
 outw: scope:[outw]  from main::@2 outsw::@1
-  [12] (byte) idx#35 ← phi( main::@2/(byte) idx#11 outsw::@1/(byte) idx#33 )
-  [12] (word) outw::w#2 ← phi( main::@2/(word) outw::w#0 outsw::@1/(word) outw::w#1 )
-  [13] (byte~) outw::$0 ← > (word) outw::w#2
-  [14] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4
-  [15] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1)
-  [16] call out 
+  [20] (byte) idx#35 ← phi( main::@2/(byte) idx#11 outsw::@1/(byte) idx#33 )
+  [20] (word) outw::w#2 ← phi( main::@2/(word) outw::w#0 outsw::@1/(word) outw::w#1 )
+  [21] (byte~) outw::$0 ← > (word) outw::w#2
+  [22] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4
+  [23] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1)
+  [24] call out 
   to:outw::@1
 outw::@1: scope:[outw]  from outw
-  [17] (byte~) outw::$3 ← > (word) outw::w#2
-  [18] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f
-  [19] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4)
-  [20] call out 
+  [25] (byte~) outw::$3 ← > (word) outw::w#2
+  [26] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f
+  [27] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4)
+  [28] call out 
   to:outw::@2
 outw::@2: scope:[outw]  from outw::@1
-  [21] (byte~) outw::$6 ← < (word) outw::w#2
-  [22] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4
-  [23] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7)
-  [24] call out 
+  [29] (byte~) outw::$6 ← < (word) outw::w#2
+  [30] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4
+  [31] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7)
+  [32] call out 
   to:outw::@3
 outw::@3: scope:[outw]  from outw::@2
-  [25] (byte~) outw::$9 ← < (word) outw::w#2
-  [26] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f
-  [27] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10)
-  [28] call out 
+  [33] (byte~) outw::$9 ← < (word) outw::w#2
+  [34] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f
+  [35] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10)
+  [36] call out 
   to:outw::@return
 outw::@return: scope:[outw]  from outw::@3
-  [29] return 
+  [37] return 
   to:@return
 
 (void()) out((byte) out::c)
 out: scope:[out]  from outsw::@2 outw outw::@1 outw::@2 outw::@3
-  [30] (byte) out::c#5 ← phi( outsw::@2/(byte) '-' outw/(byte) out::c#1 outw::@1/(byte) out::c#2 outw::@2/(byte) out::c#3 outw::@3/(byte) out::c#4 )
-  [30] (byte) idx#27 ← phi( outsw::@2/(byte) idx#31 outw/(byte) idx#35 outw::@1/(byte) idx#11 outw::@2/(byte) idx#11 outw::@3/(byte) idx#11 )
-  [31] (byte) idx#11 ← ++ (byte) idx#27
-  [32] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5
+  [38] (byte) out::c#5 ← phi( outsw::@2/(byte) '-' outw/(byte) out::c#1 outw::@1/(byte) out::c#2 outw::@2/(byte) out::c#3 outw::@3/(byte) out::c#4 )
+  [38] (byte) idx#27 ← phi( outsw::@2/(byte) idx#31 outw/(byte) idx#35 outw::@1/(byte) idx#11 outw::@2/(byte) idx#11 outw::@3/(byte) idx#11 )
+  [39] (byte) idx#11 ← ++ (byte) idx#27
+  [40] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5
   to:out::@return
 out::@return: scope:[out]  from out
-  [33] return 
-  to:@return
-
-(void()) outsw((signed word) outsw::sw)
-outsw: scope:[outsw]  from main::@1
-  [34] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1
-  to:outsw::@2
-outsw::@2: scope:[outsw]  from outsw
-  [35] phi()
-  [36] call out 
-  to:outsw::@3
-outsw::@3: scope:[outsw]  from outsw::@2
-  [37] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0
-  to:outsw::@1
-outsw::@1: scope:[outsw]  from outsw outsw::@3
-  [38] (byte) idx#33 ← phi( outsw/(byte) idx#31 outsw::@3/(byte) idx#11 )
-  [38] (signed word) outsw::sw#3 ← phi( outsw/(signed word) outsw::sw#0 outsw::@3/(signed word) outsw::sw#1 )
-  [39] (word) outw::w#1 ← (word)(signed word) outsw::sw#3
-  [40] call outw 
-  to:outsw::@return
-outsw::@return: scope:[outsw]  from outsw::@1
   [41] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
 (byte) idx
-(byte) idx#11 797.5172413793103
+(byte) idx#11 797.5172413793105
 (byte) idx#27 14106.0
 (byte) idx#31 53.25
 (byte) idx#33 151.5
@@ -555,10 +555,10 @@ VARIABLE REGISTER WEIGHTS
 Initial phi equivalence classes
 [ main::sw#2 main::sw#1 ]
 [ main::w#2 main::w#1 ]
-[ outw::w#2 outw::w#0 outw::w#1 ]
-[ idx#27 idx#35 idx#31 idx#11 idx#33 ]
-[ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ]
+[ outw::w#2 outw::w#0 outw::w#1 ]
+[ idx#27 idx#35 idx#33 idx#31 idx#11 ]
+[ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
 Added variable outw::$0 to live range equivalence class [ outw::$0 ]
 Added variable outw::$1 to live range equivalence class [ outw::$1 ]
 Added variable outw::$3 to live range equivalence class [ outw::$3 ]
@@ -570,10 +570,10 @@ Added variable outw::$10 to live range equivalence class [ outw::$10 ]
 Complete equivalence classes
 [ main::sw#2 main::sw#1 ]
 [ main::w#2 main::w#1 ]
-[ outw::w#2 outw::w#0 outw::w#1 ]
-[ idx#27 idx#35 idx#31 idx#11 idx#33 ]
-[ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ]
+[ outw::w#2 outw::w#0 outw::w#1 ]
+[ idx#27 idx#35 idx#33 idx#31 idx#11 ]
+[ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
 [ outw::$0 ]
 [ outw::$1 ]
 [ outw::$3 ]
@@ -584,10 +584,10 @@ Complete equivalence classes
 [ outw::$10 ]
 Allocated zp[2]:2 [ main::sw#2 main::sw#1 ]
 Allocated zp[2]:4 [ main::w#2 main::w#1 ]
-Allocated zp[2]:6 [ outw::w#2 outw::w#0 outw::w#1 ]
-Allocated zp[1]:8 [ idx#27 idx#35 idx#31 idx#11 idx#33 ]
-Allocated zp[1]:9 [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
-Allocated zp[2]:10 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ]
+Allocated zp[2]:6 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ]
+Allocated zp[2]:8 [ outw::w#2 outw::w#0 outw::w#1 ]
+Allocated zp[1]:10 [ idx#27 idx#35 idx#33 idx#31 idx#11 ]
+Allocated zp[1]:11 [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
 Allocated zp[1]:12 [ outw::$0 ]
 Allocated zp[1]:13 [ outw::$1 ]
 Allocated zp[1]:14 [ outw::$3 ]
@@ -608,7 +608,7 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
-  .label idx = 8
+  .label idx = $a
   // main
 main: {
     .label sw = 2
@@ -673,10 +673,10 @@ main: {
     lda.z w+1
     sta.z outw.w+1
     // [8] call outw 
-    // [12] phi from main::@2 to outw [phi:main::@2->outw]
+    // [20] phi from main::@2 to outw [phi:main::@2->outw]
   outw_from___b2:
-    // [12] phi (byte) idx#35 = (byte) idx#11 [phi:main::@2->outw#0] -- register_copy 
-    // [12] phi (word) outw::w#2 = (word) outw::w#0 [phi:main::@2->outw#1] -- register_copy 
+    // [20] phi (byte) idx#35 = (byte) idx#11 [phi:main::@2->outw#0] -- register_copy 
+    // [20] phi (word) outw::w#2 = (word) outw::w#0 [phi:main::@2->outw#1] -- register_copy 
     jsr outw
     jmp __b4
     // main::@4
@@ -699,8 +699,64 @@ main: {
     // [11] return 
     rts
 }
+  // outsw
+// outsw(signed word zp(6) sw)
+outsw: {
+    .label sw = 6
+    // [12] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 -- vwsz1_ge_0_then_la1 
+    lda.z sw+1
+    bpl __b1_from_outsw
+    // [13] phi from outsw to outsw::@2 [phi:outsw->outsw::@2]
+  __b2_from_outsw:
+    jmp __b2
+    // outsw::@2
+  __b2:
+    // [14] call out 
+    // [38] phi from outsw::@2 to out [phi:outsw::@2->out]
+  out_from___b2:
+    // [38] phi (byte) out::c#5 = (byte) '-' [phi:outsw::@2->out#0] -- vbuz1=vbuc1 
+    lda #'-'
+    sta.z out.c
+    // [38] phi (byte) idx#27 = (byte) idx#31 [phi:outsw::@2->out#1] -- register_copy 
+    jsr out
+    jmp __b3
+    // outsw::@3
+  __b3:
+    // [15] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 -- vwsz1=_neg_vwsz1 
+    sec
+    lda #0
+    sbc.z sw
+    sta.z sw
+    lda #0
+    sbc.z sw+1
+    sta.z sw+1
+    // [16] phi from outsw outsw::@3 to outsw::@1 [phi:outsw/outsw::@3->outsw::@1]
+  __b1_from_outsw:
+  __b1_from___b3:
+    // [16] phi (byte) idx#33 = (byte) idx#31 [phi:outsw/outsw::@3->outsw::@1#0] -- register_copy 
+    // [16] phi (signed word) outsw::sw#3 = (signed word) outsw::sw#0 [phi:outsw/outsw::@3->outsw::@1#1] -- register_copy 
+    jmp __b1
+    // outsw::@1
+  __b1:
+    // [17] (word) outw::w#1 ← (word)(signed word) outsw::sw#3 -- vwuz1=vwuz2 
+    lda.z sw
+    sta.z outw.w
+    lda.z sw+1
+    sta.z outw.w+1
+    // [18] call outw 
+    // [20] phi from outsw::@1 to outw [phi:outsw::@1->outw]
+  outw_from___b1:
+    // [20] phi (byte) idx#35 = (byte) idx#33 [phi:outsw::@1->outw#0] -- register_copy 
+    // [20] phi (word) outw::w#2 = (word) outw::w#1 [phi:outsw::@1->outw#1] -- register_copy 
+    jsr outw
+    jmp __breturn
+    // outsw::@return
+  __breturn:
+    // [19] return 
+    rts
+}
   // outw
-// outw(word zp(6) w)
+// outw(word zp(8) w)
 outw: {
     .label __0 = $c
     .label __1 = $d
@@ -710,164 +766,108 @@ outw: {
     .label __7 = $11
     .label __9 = $12
     .label __10 = $13
-    .label w = 6
-    // [13] (byte~) outw::$0 ← > (word) outw::w#2 -- vbuz1=_hi_vwuz2 
+    .label w = 8
+    // [21] (byte~) outw::$0 ← > (word) outw::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z __0
-    // [14] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    // [22] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 -- vbuz1=vbuz2_rol_4 
     lda.z __0
     asl
     asl
     asl
     asl
     sta.z __1
-    // [15] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [23] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __1
     lda HEXTAB,y
     sta.z out.c
-    // [16] call out 
-    // [30] phi from outw to out [phi:outw->out]
+    // [24] call out 
+    // [38] phi from outw to out [phi:outw->out]
   out_from_outw:
-    // [30] phi (byte) out::c#5 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#35 [phi:outw->out#1] -- register_copy 
+    // [38] phi (byte) out::c#5 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#35 [phi:outw->out#1] -- register_copy 
     jsr out
     jmp __b1
     // outw::@1
   __b1:
-    // [17] (byte~) outw::$3 ← > (word) outw::w#2 -- vbuz1=_hi_vwuz2 
+    // [25] (byte~) outw::$3 ← > (word) outw::w#2 -- vbuz1=_hi_vwuz2 
     lda.z w+1
     sta.z __3
-    // [18] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [26] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z __3
     sta.z __4
-    // [19] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [27] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __4
     lda HEXTAB,y
     sta.z out.c
-    // [20] call out 
-    // [30] phi from outw::@1 to out [phi:outw::@1->out]
+    // [28] call out 
+    // [38] phi from outw::@1 to out [phi:outw::@1->out]
   out_from___b1:
-    // [30] phi (byte) out::c#5 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@1->out#1] -- register_copy 
+    // [38] phi (byte) out::c#5 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@1->out#1] -- register_copy 
     jsr out
     jmp __b2
     // outw::@2
   __b2:
-    // [21] (byte~) outw::$6 ← < (word) outw::w#2 -- vbuz1=_lo_vwuz2 
+    // [29] (byte~) outw::$6 ← < (word) outw::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z __6
-    // [22] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    // [30] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 -- vbuz1=vbuz2_rol_4 
     lda.z __6
     asl
     asl
     asl
     asl
     sta.z __7
-    // [23] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [31] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __7
     lda HEXTAB,y
     sta.z out.c
-    // [24] call out 
-    // [30] phi from outw::@2 to out [phi:outw::@2->out]
+    // [32] call out 
+    // [38] phi from outw::@2 to out [phi:outw::@2->out]
   out_from___b2:
-    // [30] phi (byte) out::c#5 = (byte) out::c#3 [phi:outw::@2->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@2->out#1] -- register_copy 
+    // [38] phi (byte) out::c#5 = (byte) out::c#3 [phi:outw::@2->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@2->out#1] -- register_copy 
     jsr out
     jmp __b3
     // outw::@3
   __b3:
-    // [25] (byte~) outw::$9 ← < (word) outw::w#2 -- vbuz1=_lo_vwuz2 
+    // [33] (byte~) outw::$9 ← < (word) outw::w#2 -- vbuz1=_lo_vwuz2 
     lda.z w
     sta.z __9
-    // [26] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [34] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z __9
     sta.z __10
-    // [27] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [35] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z __10
     lda HEXTAB,y
     sta.z out.c
-    // [28] call out 
-    // [30] phi from outw::@3 to out [phi:outw::@3->out]
+    // [36] call out 
+    // [38] phi from outw::@3 to out [phi:outw::@3->out]
   out_from___b3:
-    // [30] phi (byte) out::c#5 = (byte) out::c#4 [phi:outw::@3->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@3->out#1] -- register_copy 
+    // [38] phi (byte) out::c#5 = (byte) out::c#4 [phi:outw::@3->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@3->out#1] -- register_copy 
     jsr out
     jmp __breturn
     // outw::@return
   __breturn:
-    // [29] return 
+    // [37] return 
     rts
 }
   // out
-// out(byte zp(9) c)
+// out(byte zp($b) c)
 out: {
-    .label c = 9
-    // [31] (byte) idx#11 ← ++ (byte) idx#27 -- vbuz1=_inc_vbuz1 
+    .label c = $b
+    // [39] (byte) idx#11 ← ++ (byte) idx#27 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [32] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [40] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z c
     ldy.z idx
     sta SCREEN,y
     jmp __breturn
     // out::@return
-  __breturn:
-    // [33] return 
-    rts
-}
-  // outsw
-// outsw(signed word zp($a) sw)
-outsw: {
-    .label sw = $a
-    // [34] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 -- vwsz1_ge_0_then_la1 
-    lda.z sw+1
-    bpl __b1_from_outsw
-    // [35] phi from outsw to outsw::@2 [phi:outsw->outsw::@2]
-  __b2_from_outsw:
-    jmp __b2
-    // outsw::@2
-  __b2:
-    // [36] call out 
-    // [30] phi from outsw::@2 to out [phi:outsw::@2->out]
-  out_from___b2:
-    // [30] phi (byte) out::c#5 = (byte) '-' [phi:outsw::@2->out#0] -- vbuz1=vbuc1 
-    lda #'-'
-    sta.z out.c
-    // [30] phi (byte) idx#27 = (byte) idx#31 [phi:outsw::@2->out#1] -- register_copy 
-    jsr out
-    jmp __b3
-    // outsw::@3
-  __b3:
-    // [37] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 -- vwsz1=_neg_vwsz1 
-    sec
-    lda #0
-    sbc.z sw
-    sta.z sw
-    lda #0
-    sbc.z sw+1
-    sta.z sw+1
-    // [38] phi from outsw outsw::@3 to outsw::@1 [phi:outsw/outsw::@3->outsw::@1]
-  __b1_from_outsw:
-  __b1_from___b3:
-    // [38] phi (byte) idx#33 = (byte) idx#31 [phi:outsw/outsw::@3->outsw::@1#0] -- register_copy 
-    // [38] phi (signed word) outsw::sw#3 = (signed word) outsw::sw#0 [phi:outsw/outsw::@3->outsw::@1#1] -- register_copy 
-    jmp __b1
-    // outsw::@1
-  __b1:
-    // [39] (word) outw::w#1 ← (word)(signed word) outsw::sw#3 -- vwuz1=vwuz2 
-    lda.z sw
-    sta.z outw.w
-    lda.z sw+1
-    sta.z outw.w+1
-    // [40] call outw 
-    // [12] phi from outsw::@1 to outw [phi:outsw::@1->outw]
-  outw_from___b1:
-    // [12] phi (byte) idx#35 = (byte) idx#33 [phi:outsw::@1->outw#0] -- register_copy 
-    // [12] phi (word) outw::w#2 = (word) outw::w#1 [phi:outsw::@1->outw#1] -- register_copy 
-    jsr outw
-    jmp __breturn
-    // outsw::@return
   __breturn:
     // [41] return 
     rts
@@ -878,30 +878,30 @@ outsw: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [2] (signed word) outsw::sw#0 ← (signed word) main::sw#2 [ main::sw#2 idx#31 outsw::sw#0 ] (  [ main::sw#2 idx#31 outsw::sw#0 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:8 [ idx#27 idx#35 idx#31 idx#11 idx#33 ]
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ idx#27 idx#35 idx#33 idx#31 idx#11 ]
 Statement [5] if((signed word) main::sw#1!=(signed byte) $14) goto main::@1 [ main::sw#1 idx#11 ] (  [ main::sw#1 idx#11 ] { }  ) always clobbers reg byte a 
 Statement [7] (word) outw::w#0 ← (word) main::w#2 [ idx#11 main::w#2 outw::w#0 ] (  [ idx#11 main::w#2 outw::w#0 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 } }  ) always clobbers reg byte a 
 Statement [10] if((word) main::w#1!=(byte) $28) goto main::@2 [ idx#11 main::w#1 ] (  [ idx#11 main::w#1 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 [ outw::w#2 idx#35 outw::$1 ] ( outw:8 [ main::w#2 outw::w#2 idx#35 outw::$1 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#1 = out::c#5 } }  outsw:3::outw:40 [ main::sw#2 outw::w#2 idx#35 outw::$1 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#27 = idx#35 idx#33 } { out::c#1 = out::c#5 } }  ) always clobbers reg byte a 
-Statement [22] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 [ idx#11 outw::w#2 outw::$7 ] ( outw:8 [ main::w#2 idx#11 outw::w#2 outw::$7 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#3 = out::c#5 } }  outsw:3::outw:40 [ main::sw#2 idx#11 outw::w#2 outw::$7 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } { idx#11 = idx#27 } { out::c#3 = out::c#5 } }  ) always clobbers reg byte a 
-Statement [34] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 [ idx#31 outsw::sw#0 ] ( outsw:3 [ main::sw#2 idx#31 outsw::sw#0 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
-Statement [37] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 [ idx#11 outsw::sw#1 ] ( outsw:3 [ main::sw#2 idx#11 outsw::sw#1 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
-Statement [39] (word) outw::w#1 ← (word)(signed word) outsw::sw#3 [ outw::w#1 idx#33 ] ( outsw:3 [ main::sw#2 outw::w#1 idx#33 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } }  ) always clobbers reg byte a 
+Statement [12] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 [ idx#31 outsw::sw#0 ] ( outsw:3 [ main::sw#2 idx#31 outsw::sw#0 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
+Statement [15] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 [ idx#11 outsw::sw#1 ] ( outsw:3 [ main::sw#2 idx#11 outsw::sw#1 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
+Statement [17] (word) outw::w#1 ← (word)(signed word) outsw::sw#3 [ idx#33 outw::w#1 ] ( outsw:3 [ main::sw#2 idx#33 outw::w#1 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } }  ) always clobbers reg byte a 
+Statement [22] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 [ outw::w#2 idx#35 outw::$1 ] ( outw:8 [ main::w#2 outw::w#2 idx#35 outw::$1 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#1 = out::c#5 } }  outsw:3::outw:18 [ main::sw#2 outw::w#2 idx#35 outw::$1 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#27 = idx#35 idx#33 } { out::c#1 = out::c#5 } }  ) always clobbers reg byte a 
+Statement [30] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 [ idx#11 outw::w#2 outw::$7 ] ( outw:8 [ main::w#2 idx#11 outw::w#2 outw::$7 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#3 = out::c#5 } }  outsw:3::outw:18 [ main::sw#2 idx#11 outw::w#2 outw::$7 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } { idx#11 = idx#27 } { out::c#3 = out::c#5 } }  ) always clobbers reg byte a 
 Statement [2] (signed word) outsw::sw#0 ← (signed word) main::sw#2 [ main::sw#2 idx#31 outsw::sw#0 ] (  [ main::sw#2 idx#31 outsw::sw#0 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
 Statement [5] if((signed word) main::sw#1!=(signed byte) $14) goto main::@1 [ main::sw#1 idx#11 ] (  [ main::sw#1 idx#11 ] { }  ) always clobbers reg byte a 
 Statement [7] (word) outw::w#0 ← (word) main::w#2 [ idx#11 main::w#2 outw::w#0 ] (  [ idx#11 main::w#2 outw::w#0 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 } }  ) always clobbers reg byte a 
 Statement [10] if((word) main::w#1!=(byte) $28) goto main::@2 [ idx#11 main::w#1 ] (  [ idx#11 main::w#1 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 [ outw::w#2 idx#35 outw::$1 ] ( outw:8 [ main::w#2 outw::w#2 idx#35 outw::$1 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#1 = out::c#5 } }  outsw:3::outw:40 [ main::sw#2 outw::w#2 idx#35 outw::$1 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#27 = idx#35 idx#33 } { out::c#1 = out::c#5 } }  ) always clobbers reg byte a 
-Statement [22] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 [ idx#11 outw::w#2 outw::$7 ] ( outw:8 [ main::w#2 idx#11 outw::w#2 outw::$7 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#3 = out::c#5 } }  outsw:3::outw:40 [ main::sw#2 idx#11 outw::w#2 outw::$7 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } { idx#11 = idx#27 } { out::c#3 = out::c#5 } }  ) always clobbers reg byte a 
-Statement [34] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 [ idx#31 outsw::sw#0 ] ( outsw:3 [ main::sw#2 idx#31 outsw::sw#0 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
-Statement [37] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 [ idx#11 outsw::sw#1 ] ( outsw:3 [ main::sw#2 idx#11 outsw::sw#1 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
-Statement [39] (word) outw::w#1 ← (word)(signed word) outsw::sw#3 [ outw::w#1 idx#33 ] ( outsw:3 [ main::sw#2 outw::w#1 idx#33 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } }  ) always clobbers reg byte a 
+Statement [12] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 [ idx#31 outsw::sw#0 ] ( outsw:3 [ main::sw#2 idx#31 outsw::sw#0 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
+Statement [15] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 [ idx#11 outsw::sw#1 ] ( outsw:3 [ main::sw#2 idx#11 outsw::sw#1 ] { { outsw::sw#0 = main::sw#2 } }  ) always clobbers reg byte a 
+Statement [17] (word) outw::w#1 ← (word)(signed word) outsw::sw#3 [ idx#33 outw::w#1 ] ( outsw:3 [ main::sw#2 idx#33 outw::w#1 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } }  ) always clobbers reg byte a 
+Statement [22] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 [ outw::w#2 idx#35 outw::$1 ] ( outw:8 [ main::w#2 outw::w#2 idx#35 outw::$1 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#1 = out::c#5 } }  outsw:3::outw:18 [ main::sw#2 outw::w#2 idx#35 outw::$1 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#27 = idx#35 idx#33 } { out::c#1 = out::c#5 } }  ) always clobbers reg byte a 
+Statement [30] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 [ idx#11 outw::w#2 outw::$7 ] ( outw:8 [ main::w#2 idx#11 outw::w#2 outw::$7 ] { { outw::w#0 = outw::w#2 main::w#2 } { idx#11 = idx#35 idx#27 } { out::c#3 = out::c#5 } }  outsw:3::outw:18 [ main::sw#2 idx#11 outw::w#2 outw::$7 ] { { outsw::sw#0 = main::sw#2 } { outw::w#1 = outw::w#2 } { idx#33 = idx#35 } { idx#11 = idx#27 } { out::c#3 = out::c#5 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::sw#2 main::sw#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::w#2 main::w#1 ] : zp[2]:4 , 
-Potential registers zp[2]:6 [ outw::w#2 outw::w#0 outw::w#1 ] : zp[2]:6 , 
-Potential registers zp[1]:8 [ idx#27 idx#35 idx#31 idx#11 idx#33 ] : zp[1]:8 , reg byte x , reg byte y , 
-Potential registers zp[1]:9 [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:10 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] : zp[2]:10 , 
+Potential registers zp[2]:6 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ outw::w#2 outw::w#0 outw::w#1 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ idx#27 idx#35 idx#33 idx#31 idx#11 ] : zp[1]:10 , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:12 [ outw::$0 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:13 [ outw::$1 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:14 [ outw::$3 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , 
@@ -912,17 +912,17 @@ Potential registers zp[1]:18 [ outw::$9 ] : zp[1]:18 , reg byte a , reg byte x ,
 Potential registers zp[1]:19 [ outw::$10 ] : zp[1]:19 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [outw] 2,002: zp[1]:12 [ outw::$0 ] 2,002: zp[1]:13 [ outw::$1 ] 2,002: zp[1]:14 [ outw::$3 ] 2,002: zp[1]:15 [ outw::$4 ] 2,002: zp[1]:16 [ outw::$6 ] 2,002: zp[1]:17 [ outw::$7 ] 2,002: zp[1]:18 [ outw::$9 ] 2,002: zp[1]:19 [ outw::$10 ] 540.62: zp[2]:6 [ outw::w#2 outw::w#0 outw::w#1 ] 
-Uplift Scope [] 15,386.52: zp[1]:8 [ idx#27 idx#35 idx#31 idx#11 idx#33 ] 
-Uplift Scope [out] 15,010.5: zp[1]:9 [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ] 
-Uplift Scope [outsw] 482.5: zp[2]:10 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] 
+Uplift Scope [outw] 2,002: zp[1]:12 [ outw::$0 ] 2,002: zp[1]:13 [ outw::$1 ] 2,002: zp[1]:14 [ outw::$3 ] 2,002: zp[1]:15 [ outw::$4 ] 2,002: zp[1]:16 [ outw::$6 ] 2,002: zp[1]:17 [ outw::$7 ] 2,002: zp[1]:18 [ outw::$9 ] 2,002: zp[1]:19 [ outw::$10 ] 540.62: zp[2]:8 [ outw::w#2 outw::w#0 outw::w#1 ] 
+Uplift Scope [] 15,386.52: zp[1]:10 [ idx#27 idx#35 idx#33 idx#31 idx#11 ] 
+Uplift Scope [out] 15,010.5: zp[1]:11 [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ] 
+Uplift Scope [outsw] 482.5: zp[2]:6 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] 
 Uplift Scope [main] 27.5: zp[2]:2 [ main::sw#2 main::sw#1 ] 27.5: zp[2]:4 [ main::w#2 main::w#1 ] 
 
-Uplifting [outw] best 1520 combination reg byte a [ outw::$0 ] reg byte a [ outw::$1 ] reg byte a [ outw::$3 ] reg byte a [ outw::$4 ] zp[1]:16 [ outw::$6 ] zp[1]:17 [ outw::$7 ] zp[1]:18 [ outw::$9 ] zp[1]:19 [ outw::$10 ] zp[2]:6 [ outw::w#2 outw::w#0 outw::w#1 ] 
+Uplifting [outw] best 1520 combination reg byte a [ outw::$0 ] reg byte a [ outw::$1 ] reg byte a [ outw::$3 ] reg byte a [ outw::$4 ] zp[1]:16 [ outw::$6 ] zp[1]:17 [ outw::$7 ] zp[1]:18 [ outw::$9 ] zp[1]:19 [ outw::$10 ] zp[2]:8 [ outw::w#2 outw::w#0 outw::w#1 ] 
 Limited combination testing to 100 combinations of 65536 possible.
-Uplifting [] best 1484 combination reg byte x [ idx#27 idx#35 idx#31 idx#11 idx#33 ] 
+Uplifting [] best 1484 combination reg byte x [ idx#27 idx#35 idx#33 idx#31 idx#11 ] 
 Uplifting [out] best 1466 combination reg byte a [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ] 
-Uplifting [outsw] best 1466 combination zp[2]:10 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] 
+Uplifting [outsw] best 1466 combination zp[2]:6 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] 
 Uplifting [main] best 1466 combination zp[2]:2 [ main::sw#2 main::sw#1 ] zp[2]:4 [ main::w#2 main::w#1 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ outw::$6 ]
 Uplifting [outw] best 1460 combination reg byte a [ outw::$6 ] 
@@ -932,8 +932,8 @@ Attempting to uplift remaining variables inzp[1]:18 [ outw::$9 ]
 Uplifting [outw] best 1450 combination reg byte a [ outw::$9 ] 
 Attempting to uplift remaining variables inzp[1]:19 [ outw::$10 ]
 Uplifting [outw] best 1446 combination reg byte a [ outw::$10 ] 
-Coalescing zero page register [ zp[2]:4 [ main::w#2 main::w#1 ] ] with [ zp[2]:6 [ outw::w#2 outw::w#0 outw::w#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ main::w#2 main::w#1 outw::w#2 outw::w#0 outw::w#1 ] ] with [ zp[2]:10 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ main::w#2 main::w#1 ] ] with [ zp[2]:8 [ outw::w#2 outw::w#0 outw::w#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ main::w#2 main::w#1 outw::w#2 outw::w#0 outw::w#1 ] ] with [ zp[2]:6 [ outsw::sw#3 outsw::sw#0 outsw::sw#1 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -1004,10 +1004,10 @@ main: {
   __b2:
     // [7] (word) outw::w#0 ← (word) main::w#2
     // [8] call outw 
-    // [12] phi from main::@2 to outw [phi:main::@2->outw]
+    // [20] phi from main::@2 to outw [phi:main::@2->outw]
   outw_from___b2:
-    // [12] phi (byte) idx#35 = (byte) idx#11 [phi:main::@2->outw#0] -- register_copy 
-    // [12] phi (word) outw::w#2 = (word) outw::w#0 [phi:main::@2->outw#1] -- register_copy 
+    // [20] phi (byte) idx#35 = (byte) idx#11 [phi:main::@2->outw#0] -- register_copy 
+    // [20] phi (word) outw::w#2 = (word) outw::w#0 [phi:main::@2->outw#1] -- register_copy 
     jsr outw
     jmp __b4
     // main::@4
@@ -1030,119 +1030,29 @@ main: {
     // [11] return 
     rts
 }
-  // outw
-// outw(word zp(4) w)
-outw: {
-    .label w = 4
-    // [13] (byte~) outw::$0 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
-    lda.z w+1
-    // [14] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 -- vbuaa=vbuaa_rol_4 
-    asl
-    asl
-    asl
-    asl
-    // [15] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [16] call out 
-    // [30] phi from outw to out [phi:outw->out]
-  out_from_outw:
-    // [30] phi (byte) out::c#5 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#35 [phi:outw->out#1] -- register_copy 
-    jsr out
-    jmp __b1
-    // outw::@1
-  __b1:
-    // [17] (byte~) outw::$3 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
-    lda.z w+1
-    // [18] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
-    and #$f
-    // [19] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [20] call out 
-    // [30] phi from outw::@1 to out [phi:outw::@1->out]
-  out_from___b1:
-    // [30] phi (byte) out::c#5 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@1->out#1] -- register_copy 
-    jsr out
-    jmp __b2
-    // outw::@2
-  __b2:
-    // [21] (byte~) outw::$6 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
-    lda.z w
-    // [22] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 -- vbuaa=vbuaa_rol_4 
-    asl
-    asl
-    asl
-    asl
-    // [23] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [24] call out 
-    // [30] phi from outw::@2 to out [phi:outw::@2->out]
-  out_from___b2:
-    // [30] phi (byte) out::c#5 = (byte) out::c#3 [phi:outw::@2->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@2->out#1] -- register_copy 
-    jsr out
-    jmp __b3
-    // outw::@3
-  __b3:
-    // [25] (byte~) outw::$9 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
-    lda.z w
-    // [26] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
-    and #$f
-    // [27] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [28] call out 
-    // [30] phi from outw::@3 to out [phi:outw::@3->out]
-  out_from___b3:
-    // [30] phi (byte) out::c#5 = (byte) out::c#4 [phi:outw::@3->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@3->out#1] -- register_copy 
-    jsr out
-    jmp __breturn
-    // outw::@return
-  __breturn:
-    // [29] return 
-    rts
-}
-  // out
-// out(byte register(A) c)
-out: {
-    // [31] (byte) idx#11 ← ++ (byte) idx#27 -- vbuxx=_inc_vbuxx 
-    inx
-    // [32] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5 -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-    jmp __breturn
-    // out::@return
-  __breturn:
-    // [33] return 
-    rts
-}
   // outsw
 // outsw(signed word zp(4) sw)
 outsw: {
     .label sw = 4
-    // [34] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 -- vwsz1_ge_0_then_la1 
+    // [12] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 -- vwsz1_ge_0_then_la1 
     lda.z sw+1
     bpl __b1_from_outsw
-    // [35] phi from outsw to outsw::@2 [phi:outsw->outsw::@2]
+    // [13] phi from outsw to outsw::@2 [phi:outsw->outsw::@2]
   __b2_from_outsw:
     jmp __b2
     // outsw::@2
   __b2:
-    // [36] call out 
-    // [30] phi from outsw::@2 to out [phi:outsw::@2->out]
+    // [14] call out 
+    // [38] phi from outsw::@2 to out [phi:outsw::@2->out]
   out_from___b2:
-    // [30] phi (byte) out::c#5 = (byte) '-' [phi:outsw::@2->out#0] -- vbuaa=vbuc1 
+    // [38] phi (byte) out::c#5 = (byte) '-' [phi:outsw::@2->out#0] -- vbuaa=vbuc1 
     lda #'-'
-    // [30] phi (byte) idx#27 = (byte) idx#31 [phi:outsw::@2->out#1] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#31 [phi:outsw::@2->out#1] -- register_copy 
     jsr out
     jmp __b3
     // outsw::@3
   __b3:
-    // [37] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 -- vwsz1=_neg_vwsz1 
+    // [15] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
     sbc.z sw
@@ -1150,23 +1060,113 @@ outsw: {
     lda #0
     sbc.z sw+1
     sta.z sw+1
-    // [38] phi from outsw outsw::@3 to outsw::@1 [phi:outsw/outsw::@3->outsw::@1]
+    // [16] phi from outsw outsw::@3 to outsw::@1 [phi:outsw/outsw::@3->outsw::@1]
   __b1_from_outsw:
   __b1_from___b3:
-    // [38] phi (byte) idx#33 = (byte) idx#31 [phi:outsw/outsw::@3->outsw::@1#0] -- register_copy 
-    // [38] phi (signed word) outsw::sw#3 = (signed word) outsw::sw#0 [phi:outsw/outsw::@3->outsw::@1#1] -- register_copy 
+    // [16] phi (byte) idx#33 = (byte) idx#31 [phi:outsw/outsw::@3->outsw::@1#0] -- register_copy 
+    // [16] phi (signed word) outsw::sw#3 = (signed word) outsw::sw#0 [phi:outsw/outsw::@3->outsw::@1#1] -- register_copy 
     jmp __b1
     // outsw::@1
   __b1:
-    // [39] (word) outw::w#1 ← (word)(signed word) outsw::sw#3
-    // [40] call outw 
-    // [12] phi from outsw::@1 to outw [phi:outsw::@1->outw]
+    // [17] (word) outw::w#1 ← (word)(signed word) outsw::sw#3
+    // [18] call outw 
+    // [20] phi from outsw::@1 to outw [phi:outsw::@1->outw]
   outw_from___b1:
-    // [12] phi (byte) idx#35 = (byte) idx#33 [phi:outsw::@1->outw#0] -- register_copy 
-    // [12] phi (word) outw::w#2 = (word) outw::w#1 [phi:outsw::@1->outw#1] -- register_copy 
+    // [20] phi (byte) idx#35 = (byte) idx#33 [phi:outsw::@1->outw#0] -- register_copy 
+    // [20] phi (word) outw::w#2 = (word) outw::w#1 [phi:outsw::@1->outw#1] -- register_copy 
     jsr outw
     jmp __breturn
     // outsw::@return
+  __breturn:
+    // [19] return 
+    rts
+}
+  // outw
+// outw(word zp(4) w)
+outw: {
+    .label w = 4
+    // [21] (byte~) outw::$0 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
+    lda.z w+1
+    // [22] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 -- vbuaa=vbuaa_rol_4 
+    asl
+    asl
+    asl
+    asl
+    // [23] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [24] call out 
+    // [38] phi from outw to out [phi:outw->out]
+  out_from_outw:
+    // [38] phi (byte) out::c#5 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#35 [phi:outw->out#1] -- register_copy 
+    jsr out
+    jmp __b1
+    // outw::@1
+  __b1:
+    // [25] (byte~) outw::$3 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
+    lda.z w+1
+    // [26] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [27] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [28] call out 
+    // [38] phi from outw::@1 to out [phi:outw::@1->out]
+  out_from___b1:
+    // [38] phi (byte) out::c#5 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@1->out#1] -- register_copy 
+    jsr out
+    jmp __b2
+    // outw::@2
+  __b2:
+    // [29] (byte~) outw::$6 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
+    lda.z w
+    // [30] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 -- vbuaa=vbuaa_rol_4 
+    asl
+    asl
+    asl
+    asl
+    // [31] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [32] call out 
+    // [38] phi from outw::@2 to out [phi:outw::@2->out]
+  out_from___b2:
+    // [38] phi (byte) out::c#5 = (byte) out::c#3 [phi:outw::@2->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@2->out#1] -- register_copy 
+    jsr out
+    jmp __b3
+    // outw::@3
+  __b3:
+    // [33] (byte~) outw::$9 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
+    lda.z w
+    // [34] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [35] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [36] call out 
+    // [38] phi from outw::@3 to out [phi:outw::@3->out]
+  out_from___b3:
+    // [38] phi (byte) out::c#5 = (byte) out::c#4 [phi:outw::@3->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@3->out#1] -- register_copy 
+    jsr out
+    jmp __breturn
+    // outw::@return
+  __breturn:
+    // [37] return 
+    rts
+}
+  // out
+// out(byte register(A) c)
+out: {
+    // [39] (byte) idx#11 ← ++ (byte) idx#27 -- vbuxx=_inc_vbuxx 
+    inx
+    // [40] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    jmp __breturn
+    // out::@return
   __breturn:
     // [41] return 
     rts
@@ -1181,14 +1181,14 @@ Removing instruction jmp __b3
 Removing instruction jmp __b2
 Removing instruction jmp __b4
 Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
 Removing instruction jmp __breturn
-Removing instruction jmp __breturn
-Removing instruction jmp __b2
-Removing instruction jmp __b3
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
@@ -1212,6 +1212,9 @@ Removing instruction __b3:
 Removing instruction __b2_from___b3:
 Removing instruction __b4:
 Removing instruction __breturn:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __breturn:
 Removing instruction out_from_outw:
 Removing instruction __b1:
 Removing instruction out_from___b1:
@@ -1220,9 +1223,6 @@ Removing instruction out_from___b2:
 Removing instruction __b3:
 Removing instruction out_from___b3:
 Removing instruction __breturn:
-Removing instruction __breturn:
-Removing instruction __b2:
-Removing instruction __b3:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -1233,7 +1233,7 @@ FINAL SYMBOL TABLE
 (const byte*) HEXTAB[]  = (byte*) "0123456789abcdef"
 (const nomodify byte*) SCREEN = (byte*) 1024
 (byte) idx
-(byte) idx#11 reg byte x 797.5172413793103
+(byte) idx#11 reg byte x 797.5172413793105
 (byte) idx#27 reg byte x 14106.0
 (byte) idx#31 reg byte x 53.25
 (byte) idx#33 reg byte x 151.5
@@ -1287,7 +1287,7 @@ FINAL SYMBOL TABLE
 
 zp[2]:2 [ main::sw#2 main::sw#1 ]
 zp[2]:4 [ main::w#2 main::w#1 outw::w#2 outw::w#0 outw::w#1 outsw::sw#3 outsw::sw#0 outsw::sw#1 ]
-reg byte x [ idx#27 idx#35 idx#31 idx#11 idx#33 ]
+reg byte x [ idx#27 idx#35 idx#33 idx#31 idx#11 ]
 reg byte a [ out::c#5 out::c#1 out::c#2 out::c#3 out::c#4 ]
 reg byte a [ outw::$0 ]
 reg byte a [ outw::$1 ]
@@ -1362,9 +1362,9 @@ main: {
     // outw(w)
     // [7] (word) outw::w#0 ← (word) main::w#2
     // [8] call outw 
-    // [12] phi from main::@2 to outw [phi:main::@2->outw]
-    // [12] phi (byte) idx#35 = (byte) idx#11 [phi:main::@2->outw#0] -- register_copy 
-    // [12] phi (word) outw::w#2 = (word) outw::w#0 [phi:main::@2->outw#1] -- register_copy 
+    // [20] phi from main::@2 to outw [phi:main::@2->outw]
+    // [20] phi (byte) idx#35 = (byte) idx#11 [phi:main::@2->outw#0] -- register_copy 
+    // [20] phi (word) outw::w#2 = (word) outw::w#0 [phi:main::@2->outw#1] -- register_copy 
     jsr outw
     // main::@4
     // for(unsigned int w: 0..39 )
@@ -1385,118 +1385,26 @@ main: {
     // [11] return 
     rts
 }
-  // outw
-// outw(word zp(4) w)
-outw: {
-    .label w = 4
-    // >w
-    // [13] (byte~) outw::$0 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
-    lda.z w+1
-    // (>w)<<4
-    // [14] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 -- vbuaa=vbuaa_rol_4 
-    asl
-    asl
-    asl
-    asl
-    // out(HEXTAB[(>w)<<4])
-    // [15] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [16] call out 
-    // [30] phi from outw to out [phi:outw->out]
-    // [30] phi (byte) out::c#5 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#35 [phi:outw->out#1] -- register_copy 
-    jsr out
-    // outw::@1
-    // >w
-    // [17] (byte~) outw::$3 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
-    lda.z w+1
-    // (>w)&0x0f
-    // [18] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
-    and #$f
-    // out(HEXTAB[(>w)&0x0f])
-    // [19] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [20] call out 
-    // [30] phi from outw::@1 to out [phi:outw::@1->out]
-    // [30] phi (byte) out::c#5 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@1->out#1] -- register_copy 
-    jsr out
-    // outw::@2
-    // <w
-    // [21] (byte~) outw::$6 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
-    lda.z w
-    // (<w)<<4
-    // [22] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 -- vbuaa=vbuaa_rol_4 
-    asl
-    asl
-    asl
-    asl
-    // out(HEXTAB[(<w)<<4])
-    // [23] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [24] call out 
-    // [30] phi from outw::@2 to out [phi:outw::@2->out]
-    // [30] phi (byte) out::c#5 = (byte) out::c#3 [phi:outw::@2->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@2->out#1] -- register_copy 
-    jsr out
-    // outw::@3
-    // <w
-    // [25] (byte~) outw::$9 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
-    lda.z w
-    // (<w)&0x0f
-    // [26] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
-    and #$f
-    // out(HEXTAB[(<w)&0x0f])
-    // [27] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10) -- vbuaa=pbuc1_derefidx_vbuaa 
-    tay
-    lda HEXTAB,y
-    // [28] call out 
-    // [30] phi from outw::@3 to out [phi:outw::@3->out]
-    // [30] phi (byte) out::c#5 = (byte) out::c#4 [phi:outw::@3->out#0] -- register_copy 
-    // [30] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@3->out#1] -- register_copy 
-    jsr out
-    // outw::@return
-    // }
-    // [29] return 
-    rts
-}
-  // out
-// out(byte register(A) c)
-out: {
-    // idx++;
-    // [31] (byte) idx#11 ← ++ (byte) idx#27 -- vbuxx=_inc_vbuxx 
-    inx
-    // SCREEN[idx] = c
-    // [32] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5 -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-    // out::@return
-    // }
-    // [33] return 
-    rts
-}
   // outsw
 // outsw(signed word zp(4) sw)
 outsw: {
     .label sw = 4
     // if(sw<0)
-    // [34] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 -- vwsz1_ge_0_then_la1 
+    // [12] if((signed word) outsw::sw#0>=(signed byte) 0) goto outsw::@1 -- vwsz1_ge_0_then_la1 
     lda.z sw+1
     bpl __b1
-    // [35] phi from outsw to outsw::@2 [phi:outsw->outsw::@2]
+    // [13] phi from outsw to outsw::@2 [phi:outsw->outsw::@2]
     // outsw::@2
     // out('-')
-    // [36] call out 
-    // [30] phi from outsw::@2 to out [phi:outsw::@2->out]
-    // [30] phi (byte) out::c#5 = (byte) '-' [phi:outsw::@2->out#0] -- vbuaa=vbuc1 
+    // [14] call out 
+    // [38] phi from outsw::@2 to out [phi:outsw::@2->out]
+    // [38] phi (byte) out::c#5 = (byte) '-' [phi:outsw::@2->out#0] -- vbuaa=vbuc1 
     lda #'-'
-    // [30] phi (byte) idx#27 = (byte) idx#31 [phi:outsw::@2->out#1] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#31 [phi:outsw::@2->out#1] -- register_copy 
     jsr out
     // outsw::@3
     // sw = -sw
-    // [37] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 -- vwsz1=_neg_vwsz1 
+    // [15] (signed word) outsw::sw#1 ← - (signed word) outsw::sw#0 -- vwsz1=_neg_vwsz1 
     sec
     lda #0
     sbc.z sw
@@ -1504,19 +1412,111 @@ outsw: {
     lda #0
     sbc.z sw+1
     sta.z sw+1
-    // [38] phi from outsw outsw::@3 to outsw::@1 [phi:outsw/outsw::@3->outsw::@1]
-    // [38] phi (byte) idx#33 = (byte) idx#31 [phi:outsw/outsw::@3->outsw::@1#0] -- register_copy 
-    // [38] phi (signed word) outsw::sw#3 = (signed word) outsw::sw#0 [phi:outsw/outsw::@3->outsw::@1#1] -- register_copy 
+    // [16] phi from outsw outsw::@3 to outsw::@1 [phi:outsw/outsw::@3->outsw::@1]
+    // [16] phi (byte) idx#33 = (byte) idx#31 [phi:outsw/outsw::@3->outsw::@1#0] -- register_copy 
+    // [16] phi (signed word) outsw::sw#3 = (signed word) outsw::sw#0 [phi:outsw/outsw::@3->outsw::@1#1] -- register_copy 
     // outsw::@1
   __b1:
     // outw((unsigned int)sw)
-    // [39] (word) outw::w#1 ← (word)(signed word) outsw::sw#3
-    // [40] call outw 
-    // [12] phi from outsw::@1 to outw [phi:outsw::@1->outw]
-    // [12] phi (byte) idx#35 = (byte) idx#33 [phi:outsw::@1->outw#0] -- register_copy 
-    // [12] phi (word) outw::w#2 = (word) outw::w#1 [phi:outsw::@1->outw#1] -- register_copy 
+    // [17] (word) outw::w#1 ← (word)(signed word) outsw::sw#3
+    // [18] call outw 
+    // [20] phi from outsw::@1 to outw [phi:outsw::@1->outw]
+    // [20] phi (byte) idx#35 = (byte) idx#33 [phi:outsw::@1->outw#0] -- register_copy 
+    // [20] phi (word) outw::w#2 = (word) outw::w#1 [phi:outsw::@1->outw#1] -- register_copy 
     jsr outw
     // outsw::@return
+    // }
+    // [19] return 
+    rts
+}
+  // outw
+// outw(word zp(4) w)
+outw: {
+    .label w = 4
+    // >w
+    // [21] (byte~) outw::$0 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
+    lda.z w+1
+    // (>w)<<4
+    // [22] (byte~) outw::$1 ← (byte~) outw::$0 << (byte) 4 -- vbuaa=vbuaa_rol_4 
+    asl
+    asl
+    asl
+    asl
+    // out(HEXTAB[(>w)<<4])
+    // [23] (byte) out::c#1 ← *((const byte*) HEXTAB + (byte~) outw::$1) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [24] call out 
+    // [38] phi from outw to out [phi:outw->out]
+    // [38] phi (byte) out::c#5 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#35 [phi:outw->out#1] -- register_copy 
+    jsr out
+    // outw::@1
+    // >w
+    // [25] (byte~) outw::$3 ← > (word) outw::w#2 -- vbuaa=_hi_vwuz1 
+    lda.z w+1
+    // (>w)&0x0f
+    // [26] (byte~) outw::$4 ← (byte~) outw::$3 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // out(HEXTAB[(>w)&0x0f])
+    // [27] (byte) out::c#2 ← *((const byte*) HEXTAB + (byte~) outw::$4) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [28] call out 
+    // [38] phi from outw::@1 to out [phi:outw::@1->out]
+    // [38] phi (byte) out::c#5 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@1->out#1] -- register_copy 
+    jsr out
+    // outw::@2
+    // <w
+    // [29] (byte~) outw::$6 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
+    lda.z w
+    // (<w)<<4
+    // [30] (byte~) outw::$7 ← (byte~) outw::$6 << (byte) 4 -- vbuaa=vbuaa_rol_4 
+    asl
+    asl
+    asl
+    asl
+    // out(HEXTAB[(<w)<<4])
+    // [31] (byte) out::c#3 ← *((const byte*) HEXTAB + (byte~) outw::$7) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [32] call out 
+    // [38] phi from outw::@2 to out [phi:outw::@2->out]
+    // [38] phi (byte) out::c#5 = (byte) out::c#3 [phi:outw::@2->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@2->out#1] -- register_copy 
+    jsr out
+    // outw::@3
+    // <w
+    // [33] (byte~) outw::$9 ← < (word) outw::w#2 -- vbuaa=_lo_vwuz1 
+    lda.z w
+    // (<w)&0x0f
+    // [34] (byte~) outw::$10 ← (byte~) outw::$9 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // out(HEXTAB[(<w)&0x0f])
+    // [35] (byte) out::c#4 ← *((const byte*) HEXTAB + (byte~) outw::$10) -- vbuaa=pbuc1_derefidx_vbuaa 
+    tay
+    lda HEXTAB,y
+    // [36] call out 
+    // [38] phi from outw::@3 to out [phi:outw::@3->out]
+    // [38] phi (byte) out::c#5 = (byte) out::c#4 [phi:outw::@3->out#0] -- register_copy 
+    // [38] phi (byte) idx#27 = (byte) idx#11 [phi:outw::@3->out#1] -- register_copy 
+    jsr out
+    // outw::@return
+    // }
+    // [37] return 
+    rts
+}
+  // out
+// out(byte register(A) c)
+out: {
+    // idx++;
+    // [39] (byte) idx#11 ← ++ (byte) idx#27 -- vbuxx=_inc_vbuxx 
+    inx
+    // SCREEN[idx] = c
+    // [40] *((const nomodify byte*) SCREEN + (byte) idx#11) ← (byte) out::c#5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    // out::@return
     // }
     // [41] return 
     rts

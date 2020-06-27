@@ -10,32 +10,6 @@ main: {
     // }
     rts
 }
-model_ssa_zp: {
-    // A local pointer
-    .label screen = 2
-    ldx #0
-    lda #<$428
-    sta.z screen
-    lda #>$428
-    sta.z screen+1
-  // A local counter
-  __b1:
-    // *(screen++) = 'b'
-    lda #'b'
-    ldy #0
-    sta (screen),y
-    // *(screen++) = 'b';
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // for( char i: 0..5 )
-    inx
-    cpx #6
-    bne __b1
-    // }
-    rts
-}
 model_ma_mem: {
     // screen = 0x0400
     // A local pointer
@@ -70,4 +44,30 @@ model_ma_mem: {
     rts
     screen: .word 0
     i: .byte 0
+}
+model_ssa_zp: {
+    // A local pointer
+    .label screen = 2
+    ldx #0
+    lda #<$428
+    sta.z screen
+    lda #>$428
+    sta.z screen+1
+  // A local counter
+  __b1:
+    // *(screen++) = 'b'
+    lda #'b'
+    ldy #0
+    sta (screen),y
+    // *(screen++) = 'b';
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // for( char i: 0..5 )
+    inx
+    cpx #6
+    bne __b1
+    // }
+    rts
 }

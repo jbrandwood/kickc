@@ -32,44 +32,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // asm
-    // Boosting 8580 Digis
-    // See https://gist.github.com/munshkr/30f35e39905e63876ff7 (line 909)
-    lda #$ff
-    sta $d406
-    sta $d40d
-    sta $d414
-    lda #$49
-    sta $d404
-    sta $d40b
-    sta $d412
-    sei
-    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *KERNEL_NMI = &nmi
-    lda #<nmi
-    sta KERNEL_NMI
-    lda #>nmi
-    sta KERNEL_NMI+1
-    // CIA2->TIMER_A = 0x88
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
-    lda #<$88
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
-    // CIA2->INTERRUPT = 0x81
-    // speed
-    lda #$81
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // CIA2->TIMER_A_CONTROL = 0x01
-    lda #1
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // asm
-    cli
-    // }
-    rts
-}
 nmi2: {
     sta rega+1
     stx regx+1
@@ -148,6 +110,44 @@ nmi: {
   regy:
     ldy #00
     rti
+}
+main: {
+    // asm
+    // Boosting 8580 Digis
+    // See https://gist.github.com/munshkr/30f35e39905e63876ff7 (line 909)
+    lda #$ff
+    sta $d406
+    sta $d40d
+    sta $d414
+    lda #$49
+    sta $d404
+    sta $d40b
+    sta $d412
+    sei
+    // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *KERNEL_NMI = &nmi
+    lda #<nmi
+    sta KERNEL_NMI
+    lda #>nmi
+    sta KERNEL_NMI+1
+    // CIA2->TIMER_A = 0x88
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
+    lda #<$88
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
+    // CIA2->INTERRUPT = 0x81
+    // speed
+    lda #$81
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // CIA2->TIMER_A_CONTROL = 0x01
+    lda #1
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // asm
+    cli
+    // }
+    rts
 }
 SAMPLE:
 .import binary "moments_sample.bin" 

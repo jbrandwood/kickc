@@ -11,6 +11,12 @@ __start: {
     jsr main
     rts
 }
+fn1: {
+    // idx++;
+    inc.z idx
+    // }
+    rts
+}
 main: {
     // (*f)()
     jsr fn1
@@ -24,12 +30,6 @@ main: {
     lda #'a'
     ldy.z idx
     sta SCREEN,y
-    // }
-    rts
-}
-fn1: {
-    // idx++;
-    inc.z idx
     // }
     rts
 }

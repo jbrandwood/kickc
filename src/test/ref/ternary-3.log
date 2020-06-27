@@ -275,11 +275,11 @@ main::@6: scope:[main]  from main::@2
   [19] (byte~) main::$4 ← (byte) m1::return#0
   to:main::@4
 
-(byte()) m1((byte) m1::i)
-m1: scope:[m1]  from main::@2
-  [20] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0
-  to:m1::@return
-m1::@return: scope:[m1]  from m1
+(bool()) cond((byte) cond::b)
+cond: scope:[cond]  from main::@1
+  [20] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5
+  to:cond::@return
+cond::@return: scope:[cond]  from cond
   [21] return 
   to:@return
 
@@ -291,11 +291,11 @@ m2::@return: scope:[m2]  from m2
   [23] return 
   to:@return
 
-(bool()) cond((byte) cond::b)
-cond: scope:[cond]  from main::@1
-  [24] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5
-  to:cond::@return
-cond::@return: scope:[cond]  from cond
+(byte()) m1((byte) m1::i)
+m1: scope:[m1]  from main::@2
+  [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0
+  to:m1::@return
+m1::@return: scope:[m1]  from m1
   [25] return 
   to:@return
 
@@ -338,9 +338,9 @@ Added variable m2::i#0 to live range equivalence class [ m2::i#0 ]
 Added variable m2::return#0 to live range equivalence class [ m2::return#0 ]
 Added variable m1::i#0 to live range equivalence class [ m1::i#0 ]
 Added variable m1::return#0 to live range equivalence class [ m1::return#0 ]
-Added variable m1::return#1 to live range equivalence class [ m1::return#1 ]
-Added variable m2::return#1 to live range equivalence class [ m2::return#1 ]
 Added variable cond::return#1 to live range equivalence class [ cond::return#1 ]
+Added variable m2::return#1 to live range equivalence class [ m2::return#1 ]
+Added variable m1::return#1 to live range equivalence class [ m1::return#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::$5 main::$4 main::$2 ]
@@ -351,9 +351,9 @@ Complete equivalence classes
 [ m2::return#0 ]
 [ m1::i#0 ]
 [ m1::return#0 ]
-[ m1::return#1 ]
-[ m2::return#1 ]
 [ cond::return#1 ]
+[ m2::return#1 ]
+[ m1::return#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ main::$5 main::$4 main::$2 ]
 Allocated zp[1]:4 [ cond::b#0 ]
@@ -363,9 +363,9 @@ Allocated zp[1]:7 [ m2::i#0 ]
 Allocated zp[1]:8 [ m2::return#0 ]
 Allocated zp[1]:9 [ m1::i#0 ]
 Allocated zp[1]:10 [ m1::return#0 ]
-Allocated zp[1]:11 [ m1::return#1 ]
+Allocated zp[1]:11 [ cond::return#1 ]
 Allocated zp[1]:12 [ m2::return#1 ]
-Allocated zp[1]:13 [ cond::return#1 ]
+Allocated zp[1]:13 [ m1::return#1 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -471,18 +471,21 @@ main: {
     sta.z __4
     jmp __b4_from___b6
 }
-  // m1
-// m1(byte zp(9) i)
-m1: {
-    .label i = 9
-    .label return = $a
+  // cond
+// cond(byte zp(4) b)
+cond: {
+    .label b = 4
+    .label return = 5
     .label return_1 = $b
-    // [20] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuz1=vbuc1_plus_vbuz2 
-    lax.z i
-    axs #-[5]
-    stx.z return_1
+    // [20] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboz1=vbuz2_lt_vbuc1 
+    lda.z b
+    cmp #5
+    lda #0
+    rol
+    eor #1
+    sta.z return_1
     jmp __breturn
-    // m1::@return
+    // cond::@return
   __breturn:
     // [21] return 
     rts
@@ -503,21 +506,18 @@ m2: {
     // [23] return 
     rts
 }
-  // cond
-// cond(byte zp(4) b)
-cond: {
-    .label b = 4
-    .label return = 5
+  // m1
+// m1(byte zp(9) i)
+m1: {
+    .label i = 9
+    .label return = $a
     .label return_1 = $d
-    // [24] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboz1=vbuz2_lt_vbuc1 
-    lda.z b
-    cmp #5
-    lda #0
-    rol
-    eor #1
-    sta.z return_1
+    // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuz1=vbuc1_plus_vbuz2 
+    lax.z i
+    axs #-[5]
+    stx.z return_1
     jmp __breturn
-    // cond::@return
+    // m1::@return
   __breturn:
     // [25] return 
     rts
@@ -525,9 +525,9 @@ cond: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [24] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 [ cond::return#1 ] ( cond:3 [ main::i#2 cond::return#1 ] { { cond::b#0 = main::i#2 } { cond::return#0 = cond::return#1 } }  ) always clobbers reg byte a 
+Statement [20] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 [ cond::return#1 ] ( cond:3 [ main::i#2 cond::return#1 ] { { cond::b#0 = main::i#2 } { cond::return#0 = cond::return#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [24] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 [ cond::return#1 ] ( cond:3 [ main::i#2 cond::return#1 ] { { cond::b#0 = main::i#2 } { cond::return#0 = cond::return#1 } }  ) always clobbers reg byte a 
+Statement [20] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 [ cond::return#1 ] ( cond:3 [ main::i#2 cond::return#1 ] { { cond::b#0 = main::i#2 } { cond::return#0 = cond::return#1 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$5 main::$4 main::$2 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ cond::b#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -537,13 +537,13 @@ Potential registers zp[1]:7 [ m2::i#0 ] : zp[1]:7 , reg byte a , reg byte x , re
 Potential registers zp[1]:8 [ m2::return#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:9 [ m1::i#0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:10 [ m1::return#0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:11 [ m1::return#1 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ cond::return#1 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:12 [ m2::return#1 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:13 [ cond::return#1 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:13 [ m1::return#1 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [cond] 112: zp[1]:4 [ cond::b#0 ] 37.33: zp[1]:13 [ cond::return#1 ] 22: zp[1]:5 [ cond::return#0 ] 
-Uplift Scope [m1] 112: zp[1]:9 [ m1::i#0 ] 37.33: zp[1]:11 [ m1::return#1 ] 22: zp[1]:10 [ m1::return#0 ] 
+Uplift Scope [cond] 112: zp[1]:4 [ cond::b#0 ] 37.33: zp[1]:11 [ cond::return#1 ] 22: zp[1]:5 [ cond::return#0 ] 
+Uplift Scope [m1] 112: zp[1]:9 [ m1::i#0 ] 37.33: zp[1]:13 [ m1::return#1 ] 22: zp[1]:10 [ m1::return#0 ] 
 Uplift Scope [m2] 112: zp[1]:7 [ m2::i#0 ] 37.33: zp[1]:12 [ m2::return#1 ] 22: zp[1]:8 [ m2::return#0 ] 
 Uplift Scope [main] 77: zp[1]:3 [ main::$5 main::$4 main::$2 ] 22: zp[1]:6 [ main::$0 ] 20.62: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
@@ -632,14 +632,16 @@ main: {
     // [19] (byte~) main::$4 ← (byte) m1::return#0
     jmp __b4_from___b6
 }
-  // m1
-// m1(byte register(A) i)
-m1: {
-    // [20] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuaa 
-    clc
-    adc #5
+  // cond
+// cond(byte register(A) b)
+cond: {
+    // [20] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuaa_lt_vbuc1 
+    cmp #5
+    lda #0
+    rol
+    eor #1
     jmp __breturn
-    // m1::@return
+    // cond::@return
   __breturn:
     // [21] return 
     rts
@@ -656,16 +658,14 @@ m2: {
     // [23] return 
     rts
 }
-  // cond
-// cond(byte register(A) b)
-cond: {
-    // [24] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuaa_lt_vbuc1 
-    cmp #5
-    lda #0
-    rol
-    eor #1
+  // m1
+// m1(byte register(A) i)
+m1: {
+    // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuaa 
+    clc
+    adc #5
     jmp __breturn
-    // cond::@return
+    // m1::@return
   __breturn:
     // [25] return 
     rts
@@ -752,9 +752,9 @@ reg byte a [ m2::i#0 ]
 reg byte a [ m2::return#0 ]
 reg byte a [ m1::i#0 ]
 reg byte a [ m1::return#0 ]
-reg byte a [ m1::return#1 ]
-reg byte a [ m2::return#1 ]
 reg byte a [ cond::return#1 ]
+reg byte a [ m2::return#1 ]
+reg byte a [ m1::return#1 ]
 
 
 FINAL ASSEMBLER
@@ -829,14 +829,16 @@ main: {
     // [19] (byte~) main::$4 ← (byte) m1::return#0
     jmp __b4
 }
-  // m1
-// m1(byte register(A) i)
-m1: {
-    // 5+i
-    // [20] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuaa 
-    clc
-    adc #5
-    // m1::@return
+  // cond
+// cond(byte register(A) b)
+cond: {
+    // b<5
+    // [20] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuaa_lt_vbuc1 
+    cmp #5
+    lda #0
+    rol
+    eor #1
+    // cond::@return
     // }
     // [21] return 
     rts
@@ -853,16 +855,14 @@ m2: {
     // [23] return 
     rts
 }
-  // cond
-// cond(byte register(A) b)
-cond: {
-    // b<5
-    // [24] (bool) cond::return#1 ← (byte) cond::b#0 < (byte) 5 -- vboaa=vbuaa_lt_vbuc1 
-    cmp #5
-    lda #0
-    rol
-    eor #1
-    // cond::@return
+  // m1
+// m1(byte register(A) i)
+m1: {
+    // 5+i
+    // [24] (byte) m1::return#1 ← (byte) 5 + (byte) m1::i#0 -- vbuaa=vbuc1_plus_vbuaa 
+    clc
+    adc #5
+    // m1::@return
     // }
     // [25] return 
     rts

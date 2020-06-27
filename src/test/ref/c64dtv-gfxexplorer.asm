@@ -169,15 +169,16 @@
   .label form_vic_bg2_lo = form_fields_val+$21
   .label form_vic_bg3_hi = form_fields_val+$22
   .label form_vic_bg3_lo = form_fields_val+$23
-  .label print_char_cursor = $d
-  .label print_line_cursor = $10
+  .label print_char_cursor = $18
+  .label print_line_cursor = 7
+  .label print_screen = 7
   // Keyboard event buffer size. The number of events currently in the event buffer
-  .label keyboard_events_size = 9
+  .label keyboard_events_size = $10
   // Counts down to blink for form cursor (it is inversed in the lower half)
   // Always blink cursor in new field
-  .label form_cursor_count = $b
+  .label form_cursor_count = $11
   // Current selected field in the form
-  .label form_field_idx = $c
+  .label form_field_idx = 2
 main: {
     // asm
     sei
@@ -211,25 +212,210 @@ main: {
     jsr gfx_mode
     jmp __b2
 }
+// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+keyboard_init: {
+    // CIA1->PORT_A_DDR = $ff
+    // Keyboard Matrix Columns Write Mode
+    lda #$ff
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA1->PORT_B_DDR = $00
+    // Keyboard Matrix Columns Read Mode
+    lda #0
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+    // }
+    rts
+}
+// Initialize the different graphics in the memory
+gfx_init: {
+    // gfx_init_screen0()
+    jsr gfx_init_screen0
+    // gfx_init_screen1()
+    jsr gfx_init_screen1
+    // gfx_init_screen2()
+    jsr gfx_init_screen2
+    // gfx_init_screen3()
+    jsr gfx_init_screen3
+    // gfx_init_screen4()
+    jsr gfx_init_screen4
+    // gfx_init_charset()
+    jsr gfx_init_charset
+    // gfx_init_vic_bitmap()
+    jsr gfx_init_vic_bitmap
+    // gfx_init_plane_8bppchunky()
+    jsr gfx_init_plane_8bppchunky
+    // gfx_init_plane_charset8()
+    jsr gfx_init_plane_charset8
+    // gfx_init_plane_horisontal()
+    jsr gfx_init_plane_horisontal
+    // gfx_init_plane_vertical()
+    jsr gfx_init_plane_vertical
+    // gfx_init_plane_horisontal2()
+    jsr gfx_init_plane_horisontal2
+    // gfx_init_plane_vertical2()
+    jsr gfx_init_plane_vertical2
+    // gfx_init_plane_blank()
+    jsr gfx_init_plane_blank
+    // gfx_init_plane_full()
+    jsr gfx_init_plane_full
+    // }
+    rts
+}
+// Show the form - and let the user change values
+form_mode: {
+    .label preset_current = $e
+    // print_set_screen(COLS)
+  // Form Colors
+    lda #<COLS
+    sta.z print_set_screen.screen
+    lda #>COLS
+    sta.z print_set_screen.screen+1
+    jsr print_set_screen
+    // print_cls()
+    jsr print_cls
+    // print_str_lines(FORM_COLS)
+    lda #<FORM_COLS
+    sta.z print_str_lines.str
+    lda #>FORM_COLS
+    sta.z print_str_lines.str+1
+    jsr print_str_lines
+    // print_set_screen(FORM_SCREEN)
+  // Form Text
+    lda #<FORM_SCREEN
+    sta.z print_set_screen.screen
+    lda #>FORM_SCREEN
+    sta.z print_set_screen.screen+1
+    jsr print_set_screen
+    // print_cls()
+    jsr print_cls
+    // print_str_lines(FORM_TEXT)
+    lda #<FORM_TEXT
+    sta.z print_str_lines.str
+    lda #>FORM_TEXT
+    sta.z print_str_lines.str+1
+    jsr print_str_lines
+    // form_set_screen(FORM_SCREEN)
+  // Form Fields
+    jsr form_set_screen
+    // form_render_values()
+    jsr form_render_values
+    // render_preset_name(*form_preset)
+    lda form_fields_val
+    jsr render_preset_name
+    // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000)
+    // DTV Graphics Bank
+    lda #0
+    sta DTV_GRAPHICS_VIC_BANK
+    // *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    // DTV Color Bank
+    lda #<DTV_COLOR_BANK_DEFAULT/$400
+    sta DTV_COLOR_BANK_LO
+    // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
+    lda #0
+    sta DTV_COLOR_BANK_HI
+    // CIA2->PORT_A_DDR = %00000011
+    // VIC Graphics Bank
+    lda #3
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000)
+    // Set VIC Bank bits to output - all others to input
+    sta CIA2
+    // *DTV_CONTROL = 0
+    // Set VIC Bank
+    // DTV Graphics Mode
+    lda #0
+    sta DTV_CONTROL
+    // VICII->CONTROL1 = VIC_DEN|VIC_RSEL|3
+    // VIC Graphics Mode
+    lda #VIC_DEN|VIC_RSEL|3
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->CONTROL2 = VIC_CSEL
+    lda #VIC_CSEL
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
+    // VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400))
+    // VIC Memory Pointers
+    lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
+    // *DTV_PLANEA_START_LO = < FORM_SCREEN
+    // DTV Plane A to FORM_SCREEN also
+    lda #0
+    sta DTV_PLANEA_START_LO
+    // *DTV_PLANEA_START_MI = > FORM_SCREEN
+    lda #>FORM_SCREEN
+    sta DTV_PLANEA_START_MI
+    // *DTV_PLANEA_START_HI = 0
+    lda #0
+    sta DTV_PLANEA_START_HI
+    tax
+  // DTV Palette - default
+  __b1:
+    // DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i]
+    lda DTV_PALETTE_DEFAULT,x
+    sta DTV_PALETTE,x
+    // for(byte i : 0..$f)
+    inx
+    cpx #$10
+    bne __b1
+    // VICII->BG_COLOR = 0
+    // Screen colors
+    lda #0
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
+    // VICII->BORDER_COLOR = 0
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // preset_current = *form_preset
+    lda form_fields_val
+    sta.z preset_current
+  __b2:
+  // Let the user change values in the form
+  __b4:
+    // while(VICII->RASTER!=$ff)
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b4
+    // form_control()
+    jsr form_control
+    txa
+    // if(form_control()!=0)
+    cmp #0
+    beq __b6
+    // }
+    rts
+  __b6:
+    // if(preset_current!=*form_preset)
+    lda form_fields_val
+    cmp.z preset_current
+    beq __b2
+    // apply_preset(*form_preset)
+    // Preset changed - update field values and render
+    jsr apply_preset
+    // preset_current = *form_preset
+    lda form_fields_val
+    sta.z preset_current
+    // form_render_values()
+    jsr form_render_values
+    // render_preset_name(*form_preset)
+    lda form_fields_val
+    jsr render_preset_name
+    jmp __b2
+}
 // Change graphics mode to show the selected graphics mode
 gfx_mode: {
-    .label __20 = 2
-    .label __24 = $1c
-    .label __26 = $1e
-    .label __34 = 2
-    .label __38 = $14
+    .label __20 = 9
+    .label __24 = $1d
+    .label __26 = $1f
+    .label __34 = 9
+    .label __38 = $18
     .label __40 = $1a
-    .label __47 = 6
-    .label __48 = 6
-    .label __50 = $10
-    .label __52 = $13
-    .label __82 = 6
-    .label __83 = $10
-    .label plane_a = 2
-    .label plane_b = 2
-    .label vic_colors = 6
-    .label col = $d
-    .label cy = $f
+    .label __47 = 3
+    .label __48 = 3
+    .label __50 = 7
+    .label __52 = $f
+    .label __82 = 3
+    .label __83 = 7
+    .label plane_a = 9
+    .label plane_b = 9
+    .label vic_colors = 3
+    .label col = 5
+    .label cy = $e
     // if(*form_ctrl_line!=0)
     lda form_ctrl_line
     cmp #0
@@ -640,282 +826,1189 @@ gfx_mode: {
     bne __b24
     jmp __b25
 }
-// Get the next event from the keyboard event buffer.
-// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
-// The buffer is filled by keyboard_event_scan()
-keyboard_event_get: {
-    // if(keyboard_events_size==0)
-    lda.z keyboard_events_size
-    cmp #0
-    beq __b1
-    // return keyboard_events[--keyboard_events_size];
-    dec.z keyboard_events_size
-    ldy.z keyboard_events_size
-    lda keyboard_events,y
-    rts
+// Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
+gfx_init_screen0: {
+    .label __1 = $10
+    .label ch = 3
+    .label cy = $11
+    lda #<VIC_SCREEN0
+    sta.z ch
+    lda #>VIC_SCREEN0
+    sta.z ch+1
+    lda #0
+    sta.z cy
   __b1:
-    lda #$ff
+    ldx #0
+  __b2:
+    // cy&$f
+    lda #$f
+    and.z cy
+    // (cy&$f)*$10
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // cx&$f
+    txa
+    and #$f
+    // (cy&$f)*$10|(cx&$f)
+    ora.z __1
+    // *ch++ = (cy&$f)*$10|(cx&$f)
+    ldy #0
+    sta (ch),y
+    // *ch++ = (cy&$f)*$10|(cx&$f);
+    inc.z ch
+    bne !+
+    inc.z ch+1
+  !:
+    // for(byte cx: 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte cy: 0..24 )
+    inc.z cy
+    lda #$19
+    cmp.z cy
+    bne __b1
     // }
     rts
 }
-// Scans the entire matrix to determine which keys have been pressed/depressed.
-// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
-// Handles debounce and only generates events when the status of a key changes.
-// Also stores current status of modifiers in keyboard_modifiers.
-keyboard_event_scan: {
-    .label row_scan = $20
-    .label keycode = 8
-    .label row = $22
+// Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
+gfx_init_screen1: {
+    .label ch = 5
+    .label cy = 2
+    lda #<VIC_SCREEN1
+    sta.z ch
+    lda #>VIC_SCREEN1
+    sta.z ch+1
     lda #0
-    sta.z keycode
-    sta.z row
-  __b7:
-    // keyboard_matrix_read(row)
-    ldx.z row
-    jsr keyboard_matrix_read
-    // row_scan = keyboard_matrix_read(row)
-    sta.z row_scan
-    // if(row_scan!=keyboard_scan_values[row])
-    ldy.z row
-    cmp keyboard_scan_values,y
-    bne __b6
-    // keycode = keycode + 8
-    lax.z keycode
-    axs #-[8]
-    stx.z keycode
-  __b8:
-    // for(char row : 0..7)
-    inc.z row
-    lda #8
-    cmp.z row
-    bne __b7
-    // keyboard_event_pressed(KEY_LSHIFT)
-    lda #KEY_LSHIFT
-    sta.z keyboard_event_pressed.keycode
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_LSHIFT)
-    // if(keyboard_event_pressed(KEY_LSHIFT)!= 0)
-    cmp #0
-    beq __b4
-    ldx #KEY_MODIFIER_LSHIFT
-    jmp __b1
-  __b4:
-    ldx #0
+    sta.z cy
   __b1:
-    // keyboard_event_pressed(KEY_RSHIFT)
-    lda #KEY_RSHIFT
-    sta.z keyboard_event_pressed.keycode
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_RSHIFT)
-    // if(keyboard_event_pressed(KEY_RSHIFT)!= 0)
-    cmp #0
-    beq __b2
-    // keyboard_modifiers = keyboard_modifiers | KEY_MODIFIER_RSHIFT
-    txa
-    ora #KEY_MODIFIER_RSHIFT
-    tax
+    ldx #0
   __b2:
-    // keyboard_event_pressed(KEY_CTRL)
-    lda #KEY_CTRL
-    sta.z keyboard_event_pressed.keycode
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_CTRL)
-    // if(keyboard_event_pressed(KEY_CTRL)!= 0)
-    cmp #0
-    beq __b3
-    // keyboard_modifiers = keyboard_modifiers | KEY_MODIFIER_CTRL
+    // cx+cy
     txa
-    ora #KEY_MODIFIER_CTRL
-    tax
-  __b3:
-    // keyboard_event_pressed(KEY_COMMODORE)
-    lda #KEY_COMMODORE
-    sta.z keyboard_event_pressed.keycode
-    jsr keyboard_event_pressed
-    // keyboard_event_pressed(KEY_COMMODORE)
-    // if(keyboard_event_pressed(KEY_COMMODORE)!= 0)
-    cmp #0
-    beq __breturn
-    // keyboard_modifiers = keyboard_modifiers | KEY_MODIFIER_COMMODORE
-    txa
-    ora #KEY_MODIFIER_COMMODORE
-    tax
-  __breturn:
+    clc
+    adc.z cy
+    // (cx+cy)&$f
+    and #$f
+    // *ch++ = (cx+cy)&$f
+    ldy #0
+    sta (ch),y
+    // *ch++ = (cx+cy)&$f;
+    inc.z ch
+    bne !+
+    inc.z ch+1
+  !:
+    // for(byte cx: 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte cy: 0..24 )
+    inc.z cy
+    lda #$19
+    cmp.z cy
+    bne __b1
     // }
     rts
-  // Something has changed on the keyboard row - check each column
-  __b6:
+}
+// Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
+gfx_init_screen2: {
+    .label col2 = $11
+    .label ch = 3
+    .label cy = $e
+    lda #<VIC_SCREEN2
+    sta.z ch
+    lda #>VIC_SCREEN2
+    sta.z ch+1
+    lda #0
+    sta.z cy
+  __b1:
     ldx #0
-  __b9:
-    // row_scan^keyboard_scan_values[row]
-    lda.z row_scan
-    ldy.z row
-    eor keyboard_scan_values,y
-    // (row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col]
-    and keyboard_matrix_col_bitmask,x
-    // if(((row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col])!=0)
-    cmp #0
-    beq __b10
-    // if(keyboard_events_size!=8)
-    lda #8
-    cmp.z keyboard_events_size
-    beq __b10
-    // event_type = row_scan&keyboard_matrix_col_bitmask[col]
-    lda keyboard_matrix_col_bitmask,x
-    and.z row_scan
-    // if(event_type==0)
-    cmp #0
-    beq __b11
-    // keyboard_events[keyboard_events_size++] = keycode
-    // Key pressed
-    lda.z keycode
-    ldy.z keyboard_events_size
-    sta keyboard_events,y
-    // keyboard_events[keyboard_events_size++] = keycode;
-    inc.z keyboard_events_size
-  __b10:
-    // keycode++;
-    inc.z keycode
-    // for(char col : 0..7)
+  __b2:
+    // cx+cy
+    txa
+    clc
+    adc.z cy
+    // col = (cx+cy)&$f
+    and #$f
+    tay
+    // col2 = ($f-col)
+    tya
+    eor #$ff
+    sec
+    adc #$f
+    sta.z col2
+    // col*$10
+    tya
+    asl
+    asl
+    asl
+    asl
+    // col*$10 | col2
+    ora.z col2
+    // *ch++ = col*$10 | col2
+    ldy #0
+    sta (ch),y
+    // *ch++ = col*$10 | col2;
+    inc.z ch
+    bne !+
+    inc.z ch+1
+  !:
+    // for(byte cx: 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte cy: 0..24 )
+    inc.z cy
+    lda #$19
+    cmp.z cy
+    bne __b1
+    // }
+    rts
+}
+// Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
+gfx_init_screen3: {
+    .label __1 = $12
+    .label ch = 3
+    .label cy = $e
+    lda #<VIC_SCREEN3
+    sta.z ch
+    lda #>VIC_SCREEN3
+    sta.z ch+1
+    lda #0
+    sta.z cy
+  __b1:
+    ldx #0
+  __b2:
+    // cx&3
+    txa
+    and #3
+    // (cx&3)*$10
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // cy&3
+    lda #3
+    and.z cy
+    // (cx&3)*$10|(cy&3)
+    ora.z __1
+    // *ch++ = (cx&3)*$10|(cy&3)
+    ldy #0
+    sta (ch),y
+    // *ch++ = (cx&3)*$10|(cy&3);
+    inc.z ch
+    bne !+
+    inc.z ch+1
+  !:
+    // for(byte cx: 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte cy: 0..24 )
+    inc.z cy
+    lda #$19
+    cmp.z cy
+    bne __b1
+    // }
+    rts
+}
+// Initialize VIC screen 4 - all chars are 00
+gfx_init_screen4: {
+    .label ch = 5
+    .label cy = $11
+    lda #0
+    sta.z cy
+    lda #<VIC_SCREEN4
+    sta.z ch
+    lda #>VIC_SCREEN4
+    sta.z ch+1
+  __b1:
+    ldx #0
+  __b2:
+    // *ch++ = 0
+    lda #0
+    tay
+    sta (ch),y
+    // *ch++ = 0;
+    inc.z ch
+    bne !+
+    inc.z ch+1
+  !:
+    // for(byte cx: 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte cy: 0..24 )
+    inc.z cy
+    lda #$19
+    cmp.z cy
+    bne __b1
+    // }
+    rts
+}
+gfx_init_charset: {
+    .label charset = 3
+    .label chargen = 5
+    .label c = $11
+    // *PROCPORT = $32
+    lda #$32
+    sta PROCPORT
+    lda #0
+    sta.z c
+    lda #<VIC_CHARSET_ROM
+    sta.z charset
+    lda #>VIC_CHARSET_ROM
+    sta.z charset+1
+    lda #<CHARGEN
+    sta.z chargen
+    lda #>CHARGEN
+    sta.z chargen+1
+  __b1:
+    ldx #0
+  __b2:
+    // *charset++ = *chargen++
+    ldy #0
+    lda (chargen),y
+    sta (charset),y
+    // *charset++ = *chargen++;
+    inc.z charset
+    bne !+
+    inc.z charset+1
+  !:
+    inc.z chargen
+    bne !+
+    inc.z chargen+1
+  !:
+    // for( byte l: 0..7)
     inx
     cpx #8
-    bne __b9
-    // keyboard_scan_values[row] = row_scan
-    // Store the current keyboard status for the row to debounce
-    lda.z row_scan
-    ldy.z row
-    sta keyboard_scan_values,y
-    jmp __b8
-  __b11:
-    // keycode|$40
-    lda #$40
-    ora.z keycode
-    // keyboard_events[keyboard_events_size++] = keycode|$40
-    // Key released
-    ldy.z keyboard_events_size
-    sta keyboard_events,y
-    // keyboard_events[keyboard_events_size++] = keycode|$40;
-    inc.z keyboard_events_size
-    jmp __b10
-}
-// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
-// Returns 0 is not pressed and non-0 if pressed
-// keyboard_event_pressed(byte zp($a) keycode)
-keyboard_event_pressed: {
-    .label row_bits = $21
-    .label keycode = $a
-    // keycode>>3
-    lda.z keycode
-    lsr
-    lsr
-    lsr
-    // row_bits = keyboard_scan_values[keycode>>3]
-    tay
-    lda keyboard_scan_values,y
-    sta.z row_bits
-    // keycode&7
-    lda #7
-    and.z keycode
-    // row_bits & keyboard_matrix_col_bitmask[keycode&7]
-    tay
-    lda keyboard_matrix_col_bitmask,y
-    and.z row_bits
-    // }
-    rts
-}
-// Read a single row of the keyboard matrix
-// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
-// Returns the keys pressed on the row as bits according to the C64 key matrix.
-// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
-// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
-// keyboard_matrix_read(byte register(X) rowid)
-keyboard_matrix_read: {
-    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
-    lda keyboard_matrix_row_bitmask,x
-    sta CIA1
-    // ~CIA1->PORT_B
-    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
-    eor #$ff
-    // }
-    rts
-}
-// Get the VIC screen address from the screen index
-// get_vic_screen(byte register(A) idx)
-get_vic_screen: {
-    .label return = 6
-    // if(idx==0)
+    bne __b2
+    // for(byte c: 0..$ff)
+    inc.z c
+    lda.z c
     cmp #0
-    beq __b1
-    // if(idx==1)
-    cmp #1
-    beq __b2
-    // if(idx==2)
-    cmp #2
-    beq __b3
-    // if(idx==3)
-    cmp #3
-    beq __b4
-    // if(idx==4)
-    cmp #4
     bne __b1
-    lda #<VIC_SCREEN4
-    sta.z return
-    lda #>VIC_SCREEN4
-    sta.z return+1
+    // *PROCPORT = $37
+    lda #$37
+    sta PROCPORT
+    // }
     rts
+}
+// Initialize VIC bitmap
+gfx_init_vic_bitmap: {
+    .const lines_cnt = 9
+    .label l = 2
+    // bitmap_init(VIC_BITMAP)
+  // Draw some lines on the bitmap
+    jsr bitmap_init
+    // bitmap_clear()
+    jsr bitmap_clear
+    lda #0
+    sta.z l
   __b1:
-    lda #<VIC_SCREEN0
-    sta.z return
-    lda #>VIC_SCREEN0
-    sta.z return+1
+    // for(byte l=0; l<lines_cnt;l++)
+    lda.z l
+    cmp #lines_cnt
+    bcc __b2
+    // }
     rts
   __b2:
-    lda #<VIC_SCREEN1
-    sta.z return
-    lda #>VIC_SCREEN1
-    sta.z return+1
-    rts
+    // bitmap_line(lines_x[l], lines_x[l+1], lines_y[l], lines_y[l+1])
+    ldy.z l
+    lda lines_x,y
+    sta.z bitmap_line.x0
+    lda lines_x+1,y
+    sta.z bitmap_line.x1
+    ldx lines_y,y
+    lda lines_y+1,y
+    sta.z bitmap_line.y1
+    jsr bitmap_line
+    // for(byte l=0; l<lines_cnt;l++)
+    inc.z l
+    jmp __b1
+    lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
+    lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
+}
+// Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
+gfx_init_plane_8bppchunky: {
+    .label __5 = $1d
+    .label gfxb = 5
+    .label x = 3
+    .label y = 2
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
+    lda #PLANE_8BPP_CHUNKY/$4000
+    jsr dtvSetCpuBankSegment1
+    ldx #PLANE_8BPP_CHUNKY/$4000+1
+    lda #0
+    sta.z y
+    lda #<$4000
+    sta.z gfxb
+    lda #>$4000
+    sta.z gfxb+1
+  __b1:
+    lda #<0
+    sta.z x
+    sta.z x+1
+  __b2:
+    // if(gfxb==$8000)
+    lda.z gfxb+1
+    cmp #>$8000
+    bne __b3
+    lda.z gfxb
+    cmp #<$8000
+    bne __b3
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
+    txa
+    jsr dtvSetCpuBankSegment1
+    // dtvSetCpuBankSegment1(gfxbCpuBank++);
+    inx
+    lda #<$4000
+    sta.z gfxb
+    lda #>$4000
+    sta.z gfxb+1
   __b3:
-    lda #<VIC_SCREEN2
-    sta.z return
-    lda #>VIC_SCREEN2
-    sta.z return+1
-    rts
-  __b4:
-    lda #<VIC_SCREEN3
-    sta.z return
-    lda #>VIC_SCREEN3
-    sta.z return+1
+    // x+y
+    lda.z y
+    clc
+    adc.z x
+    sta.z __5
+    lda #0
+    adc.z x+1
+    sta.z __5+1
+    // c = (byte)(x+y)
+    lda.z __5
+    // *gfxb++ = c
+    ldy #0
+    sta (gfxb),y
+    // *gfxb++ = c;
+    inc.z gfxb
+    bne !+
+    inc.z gfxb+1
+  !:
+    // for (word x : 0..319)
+    inc.z x
+    bne !+
+    inc.z x+1
+  !:
+    lda.z x+1
+    cmp #>$140
+    bne __b2
+    lda.z x
+    cmp #<$140
+    bne __b2
+    // for(byte y : 0..199)
+    inc.z y
+    lda #$c8
+    cmp.z y
+    bne __b1
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
     // }
     rts
 }
-// Get the VIC charset/bitmap address from the index
-// get_vic_charset(byte register(A) idx)
-get_vic_charset: {
-    .label return = $10
-    // if(idx==0)
-    cmp #0
-    beq __b1
-    // if(idx==1)
-    cmp #1
-    bne __b1
-    lda #<VIC_BITMAP
-    sta.z return
-    lda #>VIC_BITMAP
-    sta.z return+1
-    rts
+// Initialize Plane with 8bpp charset
+gfx_init_plane_charset8: {
+    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
+    .const gfxbCpuBank = PLANE_CHARSET8/$4000
+    .label bits = $12
+    .label chargen = 5
+    .label gfxa = 3
+    .label col = $d
+    .label cr = $10
+    .label ch = $f
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    // *PROCPORT = PROCPORT_RAM_CHARROM
+    lda #PROCPORT_RAM_CHARROM
+    sta PROCPORT
+    lda #0
+    sta.z ch
+    sta.z col
+    lda #<$4000
+    sta.z gfxa
+    lda #>$4000
+    sta.z gfxa+1
+    lda #<CHARGEN
+    sta.z chargen
+    lda #>CHARGEN
+    sta.z chargen+1
   __b1:
-    lda #<VIC_CHARSET_ROM
-    sta.z return
-    lda #>VIC_CHARSET_ROM
-    sta.z return+1
+    lda #0
+    sta.z cr
+  __b2:
+    // bits = *chargen++
+    ldy #0
+    lda (chargen),y
+    sta.z bits
+    inc.z chargen
+    bne !+
+    inc.z chargen+1
+  !:
+    ldx #0
+  __b3:
+    // bits & $80
+    lda #$80
+    and.z bits
+    // if((bits & $80) != 0)
+    cmp #0
+    beq __b5
+    lda.z col
+    jmp __b4
+  __b5:
+    lda #0
+  __b4:
+    // *gfxa++ = c
+    ldy #0
+    sta (gfxa),y
+    // *gfxa++ = c;
+    inc.z gfxa
+    bne !+
+    inc.z gfxa+1
+  !:
+    // bits = bits*2
+    asl.z bits
+    // col++;
+    inc.z col
+    // for ( byte cp : 0..7)
+    inx
+    cpx #8
+    bne __b3
+    // for ( byte cr : 0..7)
+    inc.z cr
+    lda #8
+    cmp.z cr
+    bne __b2
+    // for(byte ch : $00..$ff)
+    inc.z ch
+    lda.z ch
+    cmp #0
+    bne __b1
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
     // }
     rts
+}
+// Initialize Plane with Horizontal Stripes
+gfx_init_plane_horisontal: {
+    .const gfxbCpuBank = PLANE_HORISONTAL/$4000
+    .label gfxa = 3
+    .label ay = $f
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #<$4000
+    sta.z gfxa
+    lda #>$4000
+    sta.z gfxa+1
+    lda #0
+    sta.z ay
+  __b1:
+    ldx #0
+  __b2:
+    // ay&4
+    lda #4
+    and.z ay
+    // if((ay&4)==0)
+    cmp #0
+    beq __b3
+    // *gfxa++ = %11111111
+    lda #$ff
+    ldy #0
+    sta (gfxa),y
+    // *gfxa++ = %11111111;
+    inc.z gfxa
+    bne !+
+    inc.z gfxa+1
+  !:
+  __b4:
+    // for (byte ax : 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte ay : 0..199)
+    inc.z ay
+    lda #$c8
+    cmp.z ay
+    bne __b1
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    // }
+    rts
+  __b3:
+    // *gfxa++ = %00000000
+    lda #0
+    tay
+    sta (gfxa),y
+    // *gfxa++ = %00000000;
+    inc.z gfxa
+    bne !+
+    inc.z gfxa+1
+  !:
+    jmp __b4
+}
+// Initialize Plane with Vertical Stripes
+gfx_init_plane_vertical: {
+    .const gfxbCpuBank = PLANE_VERTICAL/$4000
+    .label gfxb = 5
+    .label by = $10
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #0
+    sta.z by
+    lda #<$4000+(PLANE_VERTICAL&$3fff)
+    sta.z gfxb
+    lda #>$4000+(PLANE_VERTICAL&$3fff)
+    sta.z gfxb+1
+  __b1:
+    ldx #0
+  __b2:
+    // *gfxb++ = %00001111
+    lda #$f
+    ldy #0
+    sta (gfxb),y
+    // *gfxb++ = %00001111;
+    inc.z gfxb
+    bne !+
+    inc.z gfxb+1
+  !:
+    // for ( byte bx : 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte by : 0..199)
+    inc.z by
+    lda #$c8
+    cmp.z by
+    bne __b1
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    // }
+    rts
+}
+// Initialize Plane with Horizontal Stripes every 2 pixels
+gfx_init_plane_horisontal2: {
+    .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
+    .label gfxa = 5
+    .label ay = $12
+    // dtvSetCpuBankSegment1(gfxbCpuBank++)
+    lda #gfxbCpuBank
+    jsr dtvSetCpuBankSegment1
+    lda #<$4000
+    sta.z gfxa
+    lda #>$4000
+    sta.z gfxa+1
+    lda #0
+    sta.z ay
+  __b1:
+    ldx #0
+  __b2:
+    // ay/2
+    lda.z ay
+    lsr
+    // row = (ay/2) & 3
+    and #3
+    // *gfxa++ = row_bitmask[row]
+    tay
+    lda row_bitmask,y
+    ldy #0
+    sta (gfxa),y
+    // *gfxa++ = row_bitmask[row];
+    inc.z gfxa
+    bne !+
+    inc.z gfxa+1
+  !:
+    // for (byte ax : 0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for(byte ay : 0..199)
+    inc.z ay
+    lda #$c8
+    cmp.z ay
+    bne __b1
+    // dtvSetCpuBankSegment1((byte)($4000/$4000))
+  // Reset CPU BANK segment to $4000
+    lda #$4000/$4000
+    jsr dtvSetCpuBankSegment1
+    // }
+    rts
+    row_bitmask: .byte 0, $55, $aa, $ff
+}
+// Initialize Plane with Vertical Stripes every 2 pixels
+gfx_init_plane_vertical2: {
+    // gfx_init_plane_fill(PLANE_VERTICAL2, %00011011)
+    lda #$1b
+    sta.z gfx_init_plane_fill.fill
+    lda #<PLANE_VERTICAL2
+    sta.z gfx_init_plane_fill.plane_addr
+    lda #>PLANE_VERTICAL2
+    sta.z gfx_init_plane_fill.plane_addr+1
+    lda #<PLANE_VERTICAL2>>$10
+    sta.z gfx_init_plane_fill.plane_addr+2
+    lda #>PLANE_VERTICAL2>>$10
+    sta.z gfx_init_plane_fill.plane_addr+3
+    jsr gfx_init_plane_fill
+    // }
+    rts
+}
+// Initialize Plane with blank pixels
+gfx_init_plane_blank: {
+    // gfx_init_plane_fill(PLANE_BLANK, 0)
+    lda #0
+    sta.z gfx_init_plane_fill.fill
+    lda #<PLANE_BLANK
+    sta.z gfx_init_plane_fill.plane_addr
+    lda #>PLANE_BLANK
+    sta.z gfx_init_plane_fill.plane_addr+1
+    lda #<PLANE_BLANK>>$10
+    sta.z gfx_init_plane_fill.plane_addr+2
+    lda #>PLANE_BLANK>>$10
+    sta.z gfx_init_plane_fill.plane_addr+3
+    jsr gfx_init_plane_fill
+    // }
+    rts
+}
+// Initialize Plane with all pixels
+gfx_init_plane_full: {
+    // gfx_init_plane_fill(PLANE_FULL, $ff)
+    lda #$ff
+    sta.z gfx_init_plane_fill.fill
+    lda #<PLANE_FULL
+    sta.z gfx_init_plane_fill.plane_addr
+    lda #>PLANE_FULL
+    sta.z gfx_init_plane_fill.plane_addr+1
+    lda #<PLANE_FULL>>$10
+    sta.z gfx_init_plane_fill.plane_addr+2
+    lda #>PLANE_FULL>>$10
+    sta.z gfx_init_plane_fill.plane_addr+3
+    jsr gfx_init_plane_fill
+    // }
+    rts
+}
+// Set the screen to print on. Also resets current line/char cursor.
+// print_set_screen(byte* zp(7) screen)
+print_set_screen: {
+    .label screen = 7
+    // print_screen = screen
+    // }
+    rts
+}
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    lda.z print_screen
+    sta.z memset.str
+    lda.z print_screen+1
+    sta.z memset.str+1
+    jsr memset
+    // }
+    rts
+}
+// Print a number of zero-terminated strings, each followed by a newline.
+// The sequence of lines is terminated by another zero.
+// print_str_lines(byte* zp($1a) str)
+print_str_lines: {
+    .label str = $1a
+    lda.z print_screen
+    sta.z print_char_cursor
+    lda.z print_screen+1
+    sta.z print_char_cursor+1
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // ch = *(str++)
+    ldy #0
+    lda (str),y
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    // if(ch)
+    cmp #0
+    beq __b3
+    // print_char(ch)
+    jsr print_char
+  __b3:
+    // while (ch)
+    cmp #0
+    bne __b2
+    // print_ln()
+    jsr print_ln
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    jmp __b1
+}
+// Set the screen to use for the form.
+// screen is the start address of the screen to use
+form_set_screen: {
+    .label line = 7
+    ldx #0
+    lda #<FORM_SCREEN
+    sta.z line
+    lda #>FORM_SCREEN
+    sta.z line+1
+  __b1:
+    // <line
+    lda.z line
+    // form_line_lo[y] = <line
+    sta form_line_lo,x
+    // >line
+    lda.z line+1
+    // form_line_hi[y] = >line
+    sta form_line_hi,x
+    // line = line + 40
+    lda #$28
+    clc
+    adc.z line
+    sta.z line
+    bcc !+
+    inc.z line+1
+  !:
+    // for(byte y: 0..24)
+    inx
+    cpx #$19
+    bne __b1
+    // }
+    rts
+}
+// Render all form values from the form_fields_val array
+form_render_values: {
+    ldx #0
+  __b1:
+    // for( byte idx=0; idx<form_fields_cnt; idx++)
+    cpx #form_fields_cnt
+    bcc __b2
+    // }
+    rts
+  __b2:
+    // form_field_ptr(idx)
+    jsr form_field_ptr
+    // *field = print_hextab[form_fields_val[idx]]
+    ldy form_fields_val,x
+    lda print_hextab,y
+    ldy.z form_field_ptr.x
+    sta (form_field_ptr.line),y
+    // for( byte idx=0; idx<form_fields_cnt; idx++)
+    inx
+    jmp __b1
+}
+// Render form preset name in the form
+// idx is the ID of the preset
+// render_preset_name(byte register(A) idx)
+render_preset_name: {
+    .label name = $1a
+    // if(idx==0)
+    cmp #0
+    beq __b3
+    // if(idx==1)
+    cmp #1
+    beq __b6
+    // if(idx==2)
+    cmp #2
+    beq __b7
+    // if(idx==3)
+    cmp #3
+    beq __b8
+    // if(idx==4)
+    cmp #4
+    beq __b9
+    // if(idx==5)
+    cmp #5
+    beq __b10
+    // if(idx==6)
+    cmp #6
+    beq __b11
+    // if(idx==7)
+    cmp #7
+    beq __b12
+    // if(idx==8)
+    cmp #8
+    beq __b4
+    // if(idx==9)
+    cmp #9
+    beq __b5
+    // if(idx==10)
+    cmp #$a
+    beq __b1
+  __b3:
+    lda #<name_1
+    sta.z name
+    lda #>name_1
+    sta.z name+1
+    jmp __b2
+  __b1:
+    lda #<name_11
+    sta.z name
+    lda #>name_11
+    sta.z name+1
+    jmp __b2
+  __b4:
+    lda #<name_9
+    sta.z name
+    lda #>name_9
+    sta.z name+1
+    jmp __b2
+  __b5:
+    lda #<name_10
+    sta.z name
+    lda #>name_10
+    sta.z name+1
+    jmp __b2
+  __b6:
+    lda #<name_2
+    sta.z name
+    lda #>name_2
+    sta.z name+1
+    jmp __b2
+  __b7:
+    lda #<name_3
+    sta.z name
+    lda #>name_3
+    sta.z name+1
+    jmp __b2
+  __b8:
+    lda #<name_4
+    sta.z name
+    lda #>name_4
+    sta.z name+1
+    jmp __b2
+  __b9:
+    lda #<name_5
+    sta.z name
+    lda #>name_5
+    sta.z name+1
+    jmp __b2
+  __b10:
+    lda #<name_6
+    sta.z name
+    lda #>name_6
+    sta.z name+1
+    jmp __b2
+  __b11:
+    lda #<name_7
+    sta.z name
+    lda #>name_7
+    sta.z name+1
+    jmp __b2
+  __b12:
+    lda #<name_8
+    sta.z name
+    lda #>name_8
+    sta.z name+1
+  __b2:
+    // print_str_at(name, FORM_SCREEN+40*2+10)
+  // Render it
+    jsr print_str_at
+    // }
+    rts
+    name_1: .text "Standard Charset              "
+    .byte 0
+    name_2: .text "Extended Color Charset        "
+    .byte 0
+    name_3: .text "Standard Bitmap               "
+    .byte 0
+    name_4: .text "Multicolor Bitmap             "
+    .byte 0
+    name_5: .text "Hicolor Charset               "
+    .byte 0
+    name_6: .text "Hicolor Extended Color Charset"
+    .byte 0
+    name_7: .text "Twoplane Bitmap               "
+    .byte 0
+    name_8: .text "Chunky 8bpp                   "
+    .byte 0
+    name_9: .text "Sixs Fred                     "
+    .byte 0
+    name_10: .text "Sixs Fred 2                   "
+    .byte 0
+    name_11: .text "8bpp Pixel Cell               "
+    .byte 0
+}
+// Reads keyboard and allows the user to navigate and change the fields of the form
+// Returns 0 if space is not pressed, non-0 if space is pressed
+form_control: {
+    .label field = $1f
+    // form_field_ptr(form_field_idx)
+    ldx.z form_field_idx
+    jsr form_field_ptr
+    // form_field_ptr(form_field_idx)
+    // field = form_field_ptr(form_field_idx)
+    // if(--form_cursor_count < 0)
+    dec.z form_cursor_count
+    lda.z form_cursor_count
+    cmp #0
+    bpl __b1
+    lda #FORM_CURSOR_BLINK
+    sta.z form_cursor_count
+  __b1:
+    // if(form_cursor_count<FORM_CURSOR_BLINK/2)
+    lda.z form_cursor_count
+    sec
+    sbc #FORM_CURSOR_BLINK/2
+    bvc !+
+    eor #$80
+  !:
+    bpl !__b2+
+    jmp __b2
+  !__b2:
+    // *field & $7f
+    lda #$7f
+    ldy #0
+    and (field),y
+    // *field = *field & $7f
+    sta (field),y
+  __b3:
+    // keyboard_event_scan()
+  // Scan the keyboard
+    jsr keyboard_event_scan
+    // keyboard_event_get()
+    jsr keyboard_event_get
+    // key_event = keyboard_event_get()
+    // if(key_event==KEY_CRSR_DOWN)
+    cmp #KEY_CRSR_DOWN
+    bne __b4
+    // *field & $7f
+    lda #$7f
+    ldy #0
+    and (field),y
+    // *field = *field & $7f
+    // Unblink the cursor
+    sta (field),y
+    // keyboard_modifiers&KEY_MODIFIER_SHIFT
+    txa
+    and #KEY_MODIFIER_SHIFT
+    // if((keyboard_modifiers&KEY_MODIFIER_SHIFT)==0)
+    cmp #0
+    beq __b13
+    // if(--form_field_idx==$ff)
+    dec.z form_field_idx
+    lda #$ff
+    cmp.z form_field_idx
+    bne __b14
+    lda #form_fields_cnt-1
+    sta.z form_field_idx
+  __b14:
+    lda #FORM_CURSOR_BLINK/2
+    sta.z form_cursor_count
+    ldx #0
+    // }
+    rts
+  __b13:
+    // if(++form_field_idx==form_fields_cnt)
+    inc.z form_field_idx
+    lda #form_fields_cnt
+    cmp.z form_field_idx
+    bne __b14
+    lda #0
+    sta.z form_field_idx
+    jmp __b14
+  __b4:
+    // if(key_event==KEY_CRSR_RIGHT)
+    cmp #KEY_CRSR_RIGHT
+    bne __b5
+    // keyboard_modifiers&KEY_MODIFIER_SHIFT
+    txa
+    and #KEY_MODIFIER_SHIFT
+    // if((keyboard_modifiers&KEY_MODIFIER_SHIFT)==0)
+    cmp #0
+    beq __b15
+    // if(--form_fields_val[form_field_idx]==$ff)
+    ldx.z form_field_idx
+    dec form_fields_val,x
+    lda #$ff
+    ldy.z form_field_idx
+    cmp form_fields_val,y
+    bne __b16
+    // form_fields_val[form_field_idx] = form_fields_max[form_field_idx]
+    lda form_fields_max,y
+    sta form_fields_val,y
+  __b16:
+    // *field = print_hextab[form_fields_val[form_field_idx]]
+    // Render field value
+    ldx.z form_field_idx
+    ldy form_fields_val,x
+    lda print_hextab,y
+    ldy #0
+    sta (field),y
+  __b7:
+    ldx #0
+    rts
+  __b15:
+    // if(++form_fields_val[form_field_idx]>form_fields_max[form_field_idx])
+    ldx.z form_field_idx
+    inc form_fields_val,x
+    ldy.z form_field_idx
+    lda form_fields_max,y
+    cmp form_fields_val,y
+    bcs __b16
+    // form_fields_val[form_field_idx] = 0
+    lda #0
+    sta form_fields_val,y
+    jmp __b16
+  __b5:
+    // if(key_event==KEY_SPACE)
+    cmp #KEY_SPACE
+    bne __b7
+    ldx #$ff
+    rts
+  __b2:
+    // *field | $80
+    lda #$80
+    ldy #0
+    ora (field),y
+    // *field = *field | $80
+    sta (field),y
+    jmp __b3
+}
+// Apply a form value preset to the form values
+// idx is the ID of the preset
+// apply_preset(byte register(A) idx)
+apply_preset: {
+    .label preset = $18
+    // if(idx==0)
+    cmp #0
+    beq __b3
+    // if(idx==1)
+    cmp #1
+    beq __b6
+    // if(idx==2)
+    cmp #2
+    beq __b7
+    // if(idx==3)
+    cmp #3
+    beq __b8
+    // if(idx==4)
+    cmp #4
+    beq __b9
+    // if(idx==5)
+    cmp #5
+    beq __b10
+    // if(idx==6)
+    cmp #6
+    beq __b11
+    // if(idx==7)
+    cmp #7
+    beq __b12
+    // if(idx==8)
+    cmp #8
+    beq __b4
+    // if(idx==9)
+    cmp #9
+    beq __b5
+    // if(idx==10)
+    cmp #$a
+    beq __b1
+  __b3:
+    lda #<preset_stdchar
+    sta.z preset
+    lda #>preset_stdchar
+    sta.z preset+1
+    jmp __b2
+  __b1:
+    lda #<preset_8bpppixelcell
+    sta.z preset
+    lda #>preset_8bpppixelcell
+    sta.z preset+1
+    jmp __b2
+  __b4:
+    lda #<preset_sixsfred
+    sta.z preset
+    lda #>preset_sixsfred
+    sta.z preset+1
+    jmp __b2
+  __b5:
+    lda #<preset_sixsfred2
+    sta.z preset
+    lda #>preset_sixsfred2
+    sta.z preset+1
+    jmp __b2
+  __b6:
+    lda #<preset_ecmchar
+    sta.z preset
+    lda #>preset_ecmchar
+    sta.z preset+1
+    jmp __b2
+  __b7:
+    lda #<preset_stdbm
+    sta.z preset
+    lda #>preset_stdbm
+    sta.z preset+1
+    jmp __b2
+  __b8:
+    lda #<preset_mcbm
+    sta.z preset
+    lda #>preset_mcbm
+    sta.z preset+1
+    jmp __b2
+  __b9:
+    lda #<preset_hi_stdchar
+    sta.z preset
+    lda #>preset_hi_stdchar
+    sta.z preset+1
+    jmp __b2
+  __b10:
+    lda #<preset_hi_ecmchar
+    sta.z preset
+    lda #>preset_hi_ecmchar
+    sta.z preset+1
+    jmp __b2
+  __b11:
+    lda #<preset_twoplane
+    sta.z preset
+    lda #>preset_twoplane
+    sta.z preset+1
+    jmp __b2
+  __b12:
+    lda #<preset_chunky
+    sta.z preset
+    lda #>preset_chunky
+    sta.z preset+1
+  __b2:
+    ldy #0
+  // Copy preset values into the fields
+  __b13:
+    // for( byte i=0; i != form_fields_cnt; i++)
+    cpy #form_fields_cnt
+    bne __b14
+    // }
+    rts
+  __b14:
+    // form_fields_val[i] = preset[i]
+    lda (preset),y
+    sta form_fields_val,y
+    // for( byte i=0; i != form_fields_cnt; i++)
+    iny
+    jmp __b13
 }
 // Get plane address from a plane index (from the form)
 // get_plane(byte register(A) idx)
 get_plane: {
-    .label return = 2
+    .label return = 9
     // if(idx==0)
     cmp #0
     beq __b1
@@ -1115,843 +2208,495 @@ get_plane: {
     // }
     rts
 }
-// Show the form - and let the user change values
-form_mode: {
-    .label preset_current = $f
-    // print_set_screen(COLS)
-  // Form Colors
-    lda #<COLS
-    sta.z print_set_screen.screen
-    lda #>COLS
-    sta.z print_set_screen.screen+1
-    jsr print_set_screen
-    // print_cls()
-    jsr print_cls
-    // print_str_lines(FORM_COLS)
-    lda #<FORM_COLS
-    sta.z print_str_lines.str
-    lda #>FORM_COLS
-    sta.z print_str_lines.str+1
-    jsr print_str_lines
-    // print_set_screen(FORM_SCREEN)
-  // Form Text
-    lda #<FORM_SCREEN
-    sta.z print_set_screen.screen
-    lda #>FORM_SCREEN
-    sta.z print_set_screen.screen+1
-    jsr print_set_screen
-    // print_cls()
-    jsr print_cls
-    // print_str_lines(FORM_TEXT)
-    lda #<FORM_TEXT
-    sta.z print_str_lines.str
-    lda #>FORM_TEXT
-    sta.z print_str_lines.str+1
-    jsr print_str_lines
-    // form_set_screen(FORM_SCREEN)
-  // Form Fields
-    jsr form_set_screen
-    // form_render_values()
-    jsr form_render_values
-    // render_preset_name(*form_preset)
-    lda form_fields_val
-    jsr render_preset_name
-    // *DTV_GRAPHICS_VIC_BANK = (byte)((dword)FORM_CHARSET/$10000)
-    // DTV Graphics Bank
-    lda #0
-    sta DTV_GRAPHICS_VIC_BANK
-    // *DTV_COLOR_BANK_LO = <((word)(DTV_COLOR_BANK_DEFAULT/$400))
-    // DTV Color Bank
-    lda #<DTV_COLOR_BANK_DEFAULT/$400
-    sta DTV_COLOR_BANK_LO
-    // *DTV_COLOR_BANK_HI = >((word)(DTV_COLOR_BANK_DEFAULT/$400))
-    lda #0
-    sta DTV_COLOR_BANK_HI
-    // CIA2->PORT_A_DDR = %00000011
-    // VIC Graphics Bank
-    lda #3
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA2->PORT_A = %00000011 ^ (byte)((word)FORM_CHARSET/$4000)
-    // Set VIC Bank bits to output - all others to input
-    sta CIA2
-    // *DTV_CONTROL = 0
-    // Set VIC Bank
-    // DTV Graphics Mode
-    lda #0
-    sta DTV_CONTROL
-    // VICII->CONTROL1 = VIC_DEN|VIC_RSEL|3
-    // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // VICII->CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    // VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400))
-    // VIC Memory Pointers
-    lda #(FORM_SCREEN&$3fff)/$40|(FORM_CHARSET&$3fff)/$400
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-    // *DTV_PLANEA_START_LO = < FORM_SCREEN
-    // DTV Plane A to FORM_SCREEN also
-    lda #0
-    sta DTV_PLANEA_START_LO
-    // *DTV_PLANEA_START_MI = > FORM_SCREEN
-    lda #>FORM_SCREEN
-    sta DTV_PLANEA_START_MI
-    // *DTV_PLANEA_START_HI = 0
-    lda #0
-    sta DTV_PLANEA_START_HI
-    tax
-  // DTV Palette - default
-  __b1:
-    // DTV_PALETTE[i] = DTV_PALETTE_DEFAULT[i]
-    lda DTV_PALETTE_DEFAULT,x
-    sta DTV_PALETTE,x
-    // for(byte i : 0..$f)
-    inx
-    cpx #$10
-    bne __b1
-    // VICII->BG_COLOR = 0
-    // Screen colors
-    lda #0
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // VICII->BORDER_COLOR = 0
-    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // preset_current = *form_preset
-    lda form_fields_val
-    sta.z preset_current
-  __b2:
-  // Let the user change values in the form
-  __b4:
-    // while(VICII->RASTER!=$ff)
-    lda #$ff
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b4
-    // form_control()
-    jsr form_control
-    txa
-    // if(form_control()!=0)
-    cmp #0
-    beq __b6
-    // }
-    rts
-  __b6:
-    // if(preset_current!=*form_preset)
-    lda form_fields_val
-    cmp.z preset_current
-    beq __b2
-    // apply_preset(*form_preset)
-    // Preset changed - update field values and render
-    jsr apply_preset
-    // preset_current = *form_preset
-    lda form_fields_val
-    sta.z preset_current
-    // form_render_values()
-    jsr form_render_values
-    // render_preset_name(*form_preset)
-    lda form_fields_val
-    jsr render_preset_name
-    jmp __b2
-}
-// Render form preset name in the form
-// idx is the ID of the preset
-// render_preset_name(byte register(A) idx)
-render_preset_name: {
-    .label name = 6
+// Get the VIC screen address from the screen index
+// get_vic_screen(byte register(A) idx)
+get_vic_screen: {
+    .label return = 3
     // if(idx==0)
     cmp #0
-    beq __b3
+    beq __b1
     // if(idx==1)
     cmp #1
-    beq __b6
+    beq __b2
     // if(idx==2)
     cmp #2
-    beq __b7
+    beq __b3
     // if(idx==3)
     cmp #3
-    beq __b8
+    beq __b4
     // if(idx==4)
     cmp #4
-    beq __b9
-    // if(idx==5)
-    cmp #5
-    beq __b10
-    // if(idx==6)
-    cmp #6
-    beq __b11
-    // if(idx==7)
-    cmp #7
-    beq __b12
-    // if(idx==8)
-    cmp #8
-    beq __b4
-    // if(idx==9)
-    cmp #9
-    beq __b5
-    // if(idx==10)
-    cmp #$a
-    beq __b1
-  __b3:
-    lda #<name_1
-    sta.z name
-    lda #>name_1
-    sta.z name+1
-    jmp __b2
-  __b1:
-    lda #<name_11
-    sta.z name
-    lda #>name_11
-    sta.z name+1
-    jmp __b2
-  __b4:
-    lda #<name_9
-    sta.z name
-    lda #>name_9
-    sta.z name+1
-    jmp __b2
-  __b5:
-    lda #<name_10
-    sta.z name
-    lda #>name_10
-    sta.z name+1
-    jmp __b2
-  __b6:
-    lda #<name_2
-    sta.z name
-    lda #>name_2
-    sta.z name+1
-    jmp __b2
-  __b7:
-    lda #<name_3
-    sta.z name
-    lda #>name_3
-    sta.z name+1
-    jmp __b2
-  __b8:
-    lda #<name_4
-    sta.z name
-    lda #>name_4
-    sta.z name+1
-    jmp __b2
-  __b9:
-    lda #<name_5
-    sta.z name
-    lda #>name_5
-    sta.z name+1
-    jmp __b2
-  __b10:
-    lda #<name_6
-    sta.z name
-    lda #>name_6
-    sta.z name+1
-    jmp __b2
-  __b11:
-    lda #<name_7
-    sta.z name
-    lda #>name_7
-    sta.z name+1
-    jmp __b2
-  __b12:
-    lda #<name_8
-    sta.z name
-    lda #>name_8
-    sta.z name+1
-  __b2:
-    // print_str_at(name, FORM_SCREEN+40*2+10)
-  // Render it
-    jsr print_str_at
-    // }
-    rts
-    name_1: .text "Standard Charset              "
-    .byte 0
-    name_2: .text "Extended Color Charset        "
-    .byte 0
-    name_3: .text "Standard Bitmap               "
-    .byte 0
-    name_4: .text "Multicolor Bitmap             "
-    .byte 0
-    name_5: .text "Hicolor Charset               "
-    .byte 0
-    name_6: .text "Hicolor Extended Color Charset"
-    .byte 0
-    name_7: .text "Twoplane Bitmap               "
-    .byte 0
-    name_8: .text "Chunky 8bpp                   "
-    .byte 0
-    name_9: .text "Sixs Fred                     "
-    .byte 0
-    name_10: .text "Sixs Fred 2                   "
-    .byte 0
-    name_11: .text "8bpp Pixel Cell               "
-    .byte 0
-}
-// Print a string at a specific screen position
-// print_str_at(byte* zp(6) str, byte* zp($d) at)
-print_str_at: {
-    .label at = $d
-    .label str = 6
-    lda #<FORM_SCREEN+$28*2+$a
-    sta.z at
-    lda #>FORM_SCREEN+$28*2+$a
-    sta.z at+1
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *(at++) = *(str++)
-    ldy #0
-    lda (str),y
-    sta (at),y
-    // *(at++) = *(str++);
-    inc.z at
-    bne !+
-    inc.z at+1
-  !:
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Render all form values from the form_fields_val array
-form_render_values: {
-    ldx #0
-  __b1:
-    // for( byte idx=0; idx<form_fields_cnt; idx++)
-    cpx #form_fields_cnt
-    bcc __b2
-    // }
-    rts
-  __b2:
-    // form_field_ptr(idx)
-    jsr form_field_ptr
-    // *field = print_hextab[form_fields_val[idx]]
-    ldy form_fields_val,x
-    lda print_hextab,y
-    ldy.z form_field_ptr.x
-    sta (form_field_ptr.line),y
-    // for( byte idx=0; idx<form_fields_cnt; idx++)
-    inx
-    jmp __b1
-}
-// Get the screen address of a form field
-// field_idx is the index of the field to get the screen address for
-// form_field_ptr(byte register(X) field_idx)
-form_field_ptr: {
-    .label line = $1c
-    .label x = $13
-    .label return = $1e
-    // y = form_fields_y[field_idx]
-    ldy form_fields_y,x
-    // line = (byte*) { form_line_hi[y], form_line_lo[y] }
-    lda form_line_hi,y
-    sta.z line+1
-    lda form_line_lo,y
-    sta.z line
-    // x = form_fields_x[field_idx]
-    lda form_fields_x,x
-    sta.z x
-    // line+x
-    clc
-    adc.z line
+    bne __b1
+    lda #<VIC_SCREEN4
     sta.z return
-    lda #0
-    adc.z line+1
+    lda #>VIC_SCREEN4
+    sta.z return+1
+    rts
+  __b1:
+    lda #<VIC_SCREEN0
+    sta.z return
+    lda #>VIC_SCREEN0
+    sta.z return+1
+    rts
+  __b2:
+    lda #<VIC_SCREEN1
+    sta.z return
+    lda #>VIC_SCREEN1
+    sta.z return+1
+    rts
+  __b3:
+    lda #<VIC_SCREEN2
+    sta.z return
+    lda #>VIC_SCREEN2
+    sta.z return+1
+    rts
+  __b4:
+    lda #<VIC_SCREEN3
+    sta.z return
+    lda #>VIC_SCREEN3
     sta.z return+1
     // }
     rts
 }
-// Apply a form value preset to the form values
-// idx is the ID of the preset
-// apply_preset(byte register(A) idx)
-apply_preset: {
-    .label preset = $10
+// Get the VIC charset/bitmap address from the index
+// get_vic_charset(byte register(A) idx)
+get_vic_charset: {
+    .label return = 7
     // if(idx==0)
     cmp #0
-    beq __b3
+    beq __b1
     // if(idx==1)
     cmp #1
-    beq __b6
-    // if(idx==2)
-    cmp #2
-    beq __b7
-    // if(idx==3)
-    cmp #3
-    beq __b8
-    // if(idx==4)
-    cmp #4
-    beq __b9
-    // if(idx==5)
-    cmp #5
-    beq __b10
-    // if(idx==6)
-    cmp #6
-    beq __b11
-    // if(idx==7)
-    cmp #7
-    beq __b12
-    // if(idx==8)
-    cmp #8
-    beq __b4
-    // if(idx==9)
-    cmp #9
-    beq __b5
-    // if(idx==10)
-    cmp #$a
-    beq __b1
-  __b3:
-    lda #<preset_stdchar
-    sta.z preset
-    lda #>preset_stdchar
-    sta.z preset+1
-    jmp __b2
+    bne __b1
+    lda #<VIC_BITMAP
+    sta.z return
+    lda #>VIC_BITMAP
+    sta.z return+1
+    rts
   __b1:
-    lda #<preset_8bpppixelcell
-    sta.z preset
-    lda #>preset_8bpppixelcell
-    sta.z preset+1
-    jmp __b2
-  __b4:
-    lda #<preset_sixsfred
-    sta.z preset
-    lda #>preset_sixsfred
-    sta.z preset+1
-    jmp __b2
-  __b5:
-    lda #<preset_sixsfred2
-    sta.z preset
-    lda #>preset_sixsfred2
-    sta.z preset+1
-    jmp __b2
-  __b6:
-    lda #<preset_ecmchar
-    sta.z preset
-    lda #>preset_ecmchar
-    sta.z preset+1
-    jmp __b2
+    lda #<VIC_CHARSET_ROM
+    sta.z return
+    lda #>VIC_CHARSET_ROM
+    sta.z return+1
+    // }
+    rts
+}
+// Scans the entire matrix to determine which keys have been pressed/depressed.
+// Generates keyboard events into the event buffer. Events can be read using keyboard_event_get().
+// Handles debounce and only generates events when the status of a key changes.
+// Also stores current status of modifiers in keyboard_modifiers.
+keyboard_event_scan: {
+    .label row_scan = $13
+    .label keycode = $f
+    .label row = $d
+    lda #0
+    sta.z keycode
+    sta.z row
   __b7:
-    lda #<preset_stdbm
-    sta.z preset
-    lda #>preset_stdbm
-    sta.z preset+1
-    jmp __b2
+    // keyboard_matrix_read(row)
+    ldx.z row
+    jsr keyboard_matrix_read
+    // row_scan = keyboard_matrix_read(row)
+    sta.z row_scan
+    // if(row_scan!=keyboard_scan_values[row])
+    ldy.z row
+    cmp keyboard_scan_values,y
+    bne __b6
+    // keycode = keycode + 8
+    lax.z keycode
+    axs #-[8]
+    stx.z keycode
   __b8:
-    lda #<preset_mcbm
-    sta.z preset
-    lda #>preset_mcbm
-    sta.z preset+1
-    jmp __b2
-  __b9:
-    lda #<preset_hi_stdchar
-    sta.z preset
-    lda #>preset_hi_stdchar
-    sta.z preset+1
-    jmp __b2
-  __b10:
-    lda #<preset_hi_ecmchar
-    sta.z preset
-    lda #>preset_hi_ecmchar
-    sta.z preset+1
-    jmp __b2
-  __b11:
-    lda #<preset_twoplane
-    sta.z preset
-    lda #>preset_twoplane
-    sta.z preset+1
-    jmp __b2
-  __b12:
-    lda #<preset_chunky
-    sta.z preset
-    lda #>preset_chunky
-    sta.z preset+1
-  __b2:
-    ldy #0
-  // Copy preset values into the fields
-  __b13:
-    // for( byte i=0; i != form_fields_cnt; i++)
-    cpy #form_fields_cnt
-    bne __b14
-    // }
-    rts
-  __b14:
-    // form_fields_val[i] = preset[i]
-    lda (preset),y
-    sta form_fields_val,y
-    // for( byte i=0; i != form_fields_cnt; i++)
-    iny
-    jmp __b13
-}
-// Reads keyboard and allows the user to navigate and change the fields of the form
-// Returns 0 if space is not pressed, non-0 if space is pressed
-form_control: {
-    .label field = $1e
-    // form_field_ptr(form_field_idx)
-    ldx.z form_field_idx
-    jsr form_field_ptr
-    // form_field_ptr(form_field_idx)
-    // field = form_field_ptr(form_field_idx)
-    // if(--form_cursor_count < 0)
-    dec.z form_cursor_count
-    lda.z form_cursor_count
-    cmp #0
-    bpl __b1
-    lda #FORM_CURSOR_BLINK
-    sta.z form_cursor_count
-  __b1:
-    // if(form_cursor_count<FORM_CURSOR_BLINK/2)
-    lda.z form_cursor_count
-    sec
-    sbc #FORM_CURSOR_BLINK/2
-    bvc !+
-    eor #$80
-  !:
-    bpl !__b2+
-    jmp __b2
-  !__b2:
-    // *field & $7f
-    lda #$7f
-    ldy #0
-    and (field),y
-    // *field = *field & $7f
-    sta (field),y
-  __b3:
-    // keyboard_event_scan()
-  // Scan the keyboard
-    jsr keyboard_event_scan
-    // keyboard_event_get()
-    jsr keyboard_event_get
-    // key_event = keyboard_event_get()
-    // if(key_event==KEY_CRSR_DOWN)
-    cmp #KEY_CRSR_DOWN
-    bne __b4
-    // *field & $7f
-    lda #$7f
-    ldy #0
-    and (field),y
-    // *field = *field & $7f
-    // Unblink the cursor
-    sta (field),y
-    // keyboard_modifiers&KEY_MODIFIER_SHIFT
-    txa
-    and #KEY_MODIFIER_SHIFT
-    // if((keyboard_modifiers&KEY_MODIFIER_SHIFT)==0)
-    cmp #0
-    beq __b13
-    // if(--form_field_idx==$ff)
-    dec.z form_field_idx
-    lda #$ff
-    cmp.z form_field_idx
-    bne __b14
-    lda #form_fields_cnt-1
-    sta.z form_field_idx
-  __b14:
-    lda #FORM_CURSOR_BLINK/2
-    sta.z form_cursor_count
-    ldx #0
-    // }
-    rts
-  __b13:
-    // if(++form_field_idx==form_fields_cnt)
-    inc.z form_field_idx
-    lda #form_fields_cnt
-    cmp.z form_field_idx
-    bne __b14
-    lda #0
-    sta.z form_field_idx
-    jmp __b14
-  __b4:
-    // if(key_event==KEY_CRSR_RIGHT)
-    cmp #KEY_CRSR_RIGHT
-    bne __b5
-    // keyboard_modifiers&KEY_MODIFIER_SHIFT
-    txa
-    and #KEY_MODIFIER_SHIFT
-    // if((keyboard_modifiers&KEY_MODIFIER_SHIFT)==0)
-    cmp #0
-    beq __b15
-    // if(--form_fields_val[form_field_idx]==$ff)
-    ldx.z form_field_idx
-    dec form_fields_val,x
-    lda #$ff
-    ldy.z form_field_idx
-    cmp form_fields_val,y
-    bne __b16
-    // form_fields_val[form_field_idx] = form_fields_max[form_field_idx]
-    lda form_fields_max,y
-    sta form_fields_val,y
-  __b16:
-    // *field = print_hextab[form_fields_val[form_field_idx]]
-    // Render field value
-    ldx.z form_field_idx
-    ldy form_fields_val,x
-    lda print_hextab,y
-    ldy #0
-    sta (field),y
-  __b7:
-    ldx #0
-    rts
-  __b15:
-    // if(++form_fields_val[form_field_idx]>form_fields_max[form_field_idx])
-    ldx.z form_field_idx
-    inc form_fields_val,x
-    ldy.z form_field_idx
-    lda form_fields_max,y
-    cmp form_fields_val,y
-    bcs __b16
-    // form_fields_val[form_field_idx] = 0
-    lda #0
-    sta form_fields_val,y
-    jmp __b16
-  __b5:
-    // if(key_event==KEY_SPACE)
-    cmp #KEY_SPACE
+    // for(char row : 0..7)
+    inc.z row
+    lda #8
+    cmp.z row
     bne __b7
-    ldx #$ff
-    rts
-  __b2:
-    // *field | $80
-    lda #$80
-    ldy #0
-    ora (field),y
-    // *field = *field | $80
-    sta (field),y
-    jmp __b3
-}
-// Set the screen to use for the form.
-// screen is the start address of the screen to use
-form_set_screen: {
-    .label line = 6
+    // keyboard_event_pressed(KEY_LSHIFT)
+    lda #KEY_LSHIFT
+    sta.z keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_LSHIFT)
+    // if(keyboard_event_pressed(KEY_LSHIFT)!= 0)
+    cmp #0
+    beq __b4
+    ldx #KEY_MODIFIER_LSHIFT
+    jmp __b1
+  __b4:
     ldx #0
-    lda #<FORM_SCREEN
-    sta.z line
-    lda #>FORM_SCREEN
-    sta.z line+1
   __b1:
-    // <line
-    lda.z line
-    // form_line_lo[y] = <line
-    sta form_line_lo,x
-    // >line
-    lda.z line+1
-    // form_line_hi[y] = >line
-    sta form_line_hi,x
-    // line = line + 40
-    lda #$28
-    clc
-    adc.z line
-    sta.z line
-    bcc !+
-    inc.z line+1
-  !:
-    // for(byte y: 0..24)
+    // keyboard_event_pressed(KEY_RSHIFT)
+    lda #KEY_RSHIFT
+    sta.z keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_RSHIFT)
+    // if(keyboard_event_pressed(KEY_RSHIFT)!= 0)
+    cmp #0
+    beq __b2
+    // keyboard_modifiers = keyboard_modifiers | KEY_MODIFIER_RSHIFT
+    txa
+    ora #KEY_MODIFIER_RSHIFT
+    tax
+  __b2:
+    // keyboard_event_pressed(KEY_CTRL)
+    lda #KEY_CTRL
+    sta.z keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_CTRL)
+    // if(keyboard_event_pressed(KEY_CTRL)!= 0)
+    cmp #0
+    beq __b3
+    // keyboard_modifiers = keyboard_modifiers | KEY_MODIFIER_CTRL
+    txa
+    ora #KEY_MODIFIER_CTRL
+    tax
+  __b3:
+    // keyboard_event_pressed(KEY_COMMODORE)
+    lda #KEY_COMMODORE
+    sta.z keyboard_event_pressed.keycode
+    jsr keyboard_event_pressed
+    // keyboard_event_pressed(KEY_COMMODORE)
+    // if(keyboard_event_pressed(KEY_COMMODORE)!= 0)
+    cmp #0
+    beq __breturn
+    // keyboard_modifiers = keyboard_modifiers | KEY_MODIFIER_COMMODORE
+    txa
+    ora #KEY_MODIFIER_COMMODORE
+    tax
+  __breturn:
+    // }
+    rts
+  // Something has changed on the keyboard row - check each column
+  __b6:
+    ldx #0
+  __b9:
+    // row_scan^keyboard_scan_values[row]
+    lda.z row_scan
+    ldy.z row
+    eor keyboard_scan_values,y
+    // (row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col]
+    and keyboard_matrix_col_bitmask,x
+    // if(((row_scan^keyboard_scan_values[row])&keyboard_matrix_col_bitmask[col])!=0)
+    cmp #0
+    beq __b10
+    // if(keyboard_events_size!=8)
+    lda #8
+    cmp.z keyboard_events_size
+    beq __b10
+    // event_type = row_scan&keyboard_matrix_col_bitmask[col]
+    lda keyboard_matrix_col_bitmask,x
+    and.z row_scan
+    // if(event_type==0)
+    cmp #0
+    beq __b11
+    // keyboard_events[keyboard_events_size++] = keycode
+    // Key pressed
+    lda.z keycode
+    ldy.z keyboard_events_size
+    sta keyboard_events,y
+    // keyboard_events[keyboard_events_size++] = keycode;
+    inc.z keyboard_events_size
+  __b10:
+    // keycode++;
+    inc.z keycode
+    // for(char col : 0..7)
     inx
-    cpx #$19
+    cpx #8
+    bne __b9
+    // keyboard_scan_values[row] = row_scan
+    // Store the current keyboard status for the row to debounce
+    lda.z row_scan
+    ldy.z row
+    sta keyboard_scan_values,y
+    jmp __b8
+  __b11:
+    // keycode|$40
+    lda #$40
+    ora.z keycode
+    // keyboard_events[keyboard_events_size++] = keycode|$40
+    // Key released
+    ldy.z keyboard_events_size
+    sta keyboard_events,y
+    // keyboard_events[keyboard_events_size++] = keycode|$40;
+    inc.z keyboard_events_size
+    jmp __b10
+}
+// Get the next event from the keyboard event buffer.
+// Returns $ff if there is no event waiting. As all events are <$7f it is enough to examine bit 7 when determining if there is any event to process.
+// The buffer is filled by keyboard_event_scan()
+keyboard_event_get: {
+    // if(keyboard_events_size==0)
+    lda.z keyboard_events_size
+    cmp #0
+    beq __b1
+    // return keyboard_events[--keyboard_events_size];
+    dec.z keyboard_events_size
+    ldy.z keyboard_events_size
+    lda keyboard_events,y
+    rts
+  __b1:
+    lda #$ff
+    // }
+    rts
+}
+// Initialize the bitmap plotter tables for a specific bitmap
+bitmap_init: {
+    .label __10 = $13
+    .label yoffs = 7
+    ldy #$80
+    ldx #0
+  __b1:
+    // x&$f8
+    txa
+    and #$f8
+    // bitmap_plot_xlo[x] = x&$f8
+    sta bitmap_plot_xlo,x
+    // bitmap_plot_xhi[x] = >bitmap
+    lda #>VIC_BITMAP
+    sta bitmap_plot_xhi,x
+    // bitmap_plot_bit[x] = bits
+    tya
+    sta bitmap_plot_bit,x
+    // bits = bits>>1
+    tya
+    lsr
+    tay
+    // if(bits==0)
+    cpy #0
+    bne __b2
+    ldy #$80
+  __b2:
+    // for(char x : 0..255)
+    inx
+    cpx #0
+    bne __b1
+    lda #<0
+    sta.z yoffs
+    sta.z yoffs+1
+    tax
+  __b3:
+    // y&$7
+    lda #7
+    sax.z __10
+    // <yoffs
+    lda.z yoffs
+    // y&$7 | <yoffs
+    ora.z __10
+    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    sta bitmap_plot_ylo,x
+    // >yoffs
+    lda.z yoffs+1
+    // bitmap_plot_yhi[y] = >yoffs
+    sta bitmap_plot_yhi,x
+    // if((y&$7)==7)
+    lda #7
+    cmp.z __10
+    bne __b4
+    // yoffs = yoffs + 40*8
+    clc
+    lda.z yoffs
+    adc #<$28*8
+    sta.z yoffs
+    lda.z yoffs+1
+    adc #>$28*8
+    sta.z yoffs+1
+  __b4:
+    // for(char y : 0..255)
+    inx
+    cpx #0
+    bne __b3
+    // }
+    rts
+}
+// Clear all graphics on the bitmap
+bitmap_clear: {
+    .label bitmap = $1a
+    .label y = $f
+    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
+    lda bitmap_plot_xlo
+    sta.z bitmap
+    lda bitmap_plot_xhi
+    sta.z bitmap+1
+    lda #0
+    sta.z y
+  __b1:
+    ldx #0
+  __b2:
+    // *bitmap++ = 0
+    lda #0
+    tay
+    sta (bitmap),y
+    // *bitmap++ = 0;
+    inc.z bitmap
+    bne !+
+    inc.z bitmap+1
+  !:
+    // for( char x: 0..199 )
+    inx
+    cpx #$c8
+    bne __b2
+    // for( char y: 0..39 )
+    inc.z y
+    lda #$28
+    cmp.z y
     bne __b1
     // }
     rts
 }
-// Print a number of zero-terminated strings, each followed by a newline.
-// The sequence of lines is terminated by another zero.
-// print_str_lines(byte* zp(6) str)
-print_str_lines: {
-    .label str = 6
-    lda.z print_set_screen.screen
-    sta.z print_char_cursor
-    lda.z print_set_screen.screen+1
-    sta.z print_char_cursor+1
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // ch = *(str++)
-    ldy #0
-    lda (str),y
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    // if(ch)
-    cmp #0
-    beq __b3
-    // print_char(ch)
-    jsr print_char
-  __b3:
-    // while (ch)
-    cmp #0
-    bne __b2
-    // print_ln()
-    jsr print_ln
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    jmp __b1
-}
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
+// Draw a line on the bitmap
+// bitmap_line(byte zp($11) x0, byte zp($13) x1, byte register(X) y0, byte zp($10) y1)
+bitmap_line: {
+    .label xd = $f
+    .label x0 = $11
+    .label x1 = $13
+    .label y1 = $10
+    // if(x0<x1)
+    lda.z x0
+    cmp.z x1
     bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
+    // xd = x0-x1
+    sec
+    sbc.z x1
+    sta.z xd
+    // if(y0<y1)
+    cpx.z y1
+    bcc __b7
+    // yd = y0-y1
+    txa
+    sec
+    sbc.z y1
+    tay
+    // if(yd<xd)
+    cpy.z xd
+    bcc __b8
+    // bitmap_line_ydxi(y1, x1, y0, yd, xd)
+    lda.z y1
+    sta.z bitmap_line_ydxi.y
+    lda.z x1
+    sta.z bitmap_line_ydxi.x
+    stx.z bitmap_line_ydxi.y1
+    sty.z bitmap_line_ydxi.yd
+    jsr bitmap_line_ydxi
     // }
     rts
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
+  __b8:
+    // bitmap_line_xdyi(x1, y1, x0, xd, yd)
+    lda.z x1
+    sta.z bitmap_line_xdyi.x
+    ldx.z y1
+    lda.z x0
+    sta.z bitmap_line_xdyi.x1
+    sty.z bitmap_line_xdyi.yd
+    jsr bitmap_line_xdyi
+    rts
+  __b7:
+    // yd = y1-y0
+    txa
+    eor #$ff
+    sec
+    adc.z y1
+    tay
+    // if(yd<xd)
+    cpy.z xd
+    bcc __b9
+    // bitmap_line_ydxd(y0, x0, y1, yd, xd)
+    stx.z bitmap_line_ydxd.y
+    sty.z bitmap_line_ydxd.yd
+    jsr bitmap_line_ydxd
+    rts
+  __b9:
+    // bitmap_line_xdyd(x1, y1, x0, xd, yd)
+    lda.z x1
+    sta.z bitmap_line_xdyd.x
+    ldx.z y1
+    sty.z bitmap_line_xdyd.yd
+    jsr bitmap_line_xdyd
+    rts
+  __b1:
+    // xd = x1-x0
+    lda.z x1
+    sec
+    sbc.z x0
+    sta.z xd
+    // if(y0<y1)
+    cpx.z y1
+    bcc __b11
+    // yd = y0-y1
+    txa
+    sec
+    sbc.z y1
+    tay
+    // if(yd<xd)
+    cpy.z xd
+    bcc __b12
+    // bitmap_line_ydxd(y1, x1, y0, yd, xd)
+    lda.z y1
+    sta.z bitmap_line_ydxd.y
+    lda.z x1
+    sta.z bitmap_line_ydxd.x
+    stx.z bitmap_line_ydxd.y1
+    sty.z bitmap_line_ydxd.yd
+    jsr bitmap_line_ydxd
+    rts
+  __b12:
+    // bitmap_line_xdyd(x0, y0, x1, xd, yd)
+    lda.z x0
+    sta.z bitmap_line_xdyd.x
+    lda.z x1
+    sta.z bitmap_line_xdyd.x1
+    sty.z bitmap_line_xdyd.yd
+    jsr bitmap_line_xdyd
+    rts
+  __b11:
+    // yd = y1-y0
+    txa
+    eor #$ff
+    sec
+    adc.z y1
+    tay
+    // if(yd<xd)
+    cpy.z xd
+    bcc __b13
+    // bitmap_line_ydxi(y0, x0, y1, yd, xd)
+    stx.z bitmap_line_ydxi.y
+    sty.z bitmap_line_ydxi.yd
+    jsr bitmap_line_ydxi
+    rts
+  __b13:
+    // bitmap_line_xdyi(x0, y0, x1, xd, yd)
+    lda.z x0
+    sta.z bitmap_line_xdyi.x
+    sty.z bitmap_line_xdyi.yd
+    jsr bitmap_line_xdyi
     rts
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    lda.z print_set_screen.screen
-    sta.z memset.str
-    lda.z print_set_screen.screen+1
-    sta.z memset.str+1
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($d) str)
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label end = $14
-    .label dst = $d
-    .label str = $d
-    // end = (char*)str + num
-    lda.z str
-    clc
-    adc #<num
-    sta.z end
-    lda.z str+1
-    adc #>num
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-    // }
-    rts
-  __b3:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-// Set the screen to print on. Also resets current line/char cursor.
-// print_set_screen(byte* zp($10) screen)
-print_set_screen: {
-    .label screen = $10
-    // }
-    rts
-}
-// Initialize the different graphics in the memory
-gfx_init: {
-    // gfx_init_screen0()
-    jsr gfx_init_screen0
-    // gfx_init_screen1()
-    jsr gfx_init_screen1
-    // gfx_init_screen2()
-    jsr gfx_init_screen2
-    // gfx_init_screen3()
-    jsr gfx_init_screen3
-    // gfx_init_screen4()
-    jsr gfx_init_screen4
-    // gfx_init_charset()
-    jsr gfx_init_charset
-    // gfx_init_vic_bitmap()
-    jsr gfx_init_vic_bitmap
-    // gfx_init_plane_8bppchunky()
-    jsr gfx_init_plane_8bppchunky
-    // gfx_init_plane_charset8()
-    jsr gfx_init_plane_charset8
-    // gfx_init_plane_horisontal()
-    jsr gfx_init_plane_horisontal
-    // gfx_init_plane_vertical()
-    jsr gfx_init_plane_vertical
-    // gfx_init_plane_horisontal2()
-    jsr gfx_init_plane_horisontal2
-    // gfx_init_plane_vertical2()
-    jsr gfx_init_plane_vertical2
-    // gfx_init_plane_blank()
-    jsr gfx_init_plane_blank
-    // gfx_init_plane_full()
-    jsr gfx_init_plane_full
-    // }
-    rts
-}
-// Initialize Plane with all pixels
-gfx_init_plane_full: {
-    // gfx_init_plane_fill(PLANE_FULL, $ff)
-    lda #$ff
-    sta.z gfx_init_plane_fill.fill
-    lda #<PLANE_FULL
-    sta.z gfx_init_plane_fill.plane_addr
-    lda #>PLANE_FULL
-    sta.z gfx_init_plane_fill.plane_addr+1
-    lda #<PLANE_FULL>>$10
-    sta.z gfx_init_plane_fill.plane_addr+2
-    lda #>PLANE_FULL>>$10
-    sta.z gfx_init_plane_fill.plane_addr+3
-    jsr gfx_init_plane_fill
+// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
+// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
+// The actual memory addressed will be $4000*cpuSegmentIdx
+// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
+dtvSetCpuBankSegment1: {
+    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
+    .label cpuBank = $ff
+    // *cpuBank = cpuBankIdx
+    sta cpuBank
+    // asm
+    .byte $32, $dd
+    lda.z $ff
+    .byte $32, $00
     // }
     rts
 }
 // Initialize 320*200 1bpp pixel ($2000) plane with identical bytes
-// gfx_init_plane_fill(dword zp(2) plane_addr, byte zp($22) fill)
+// gfx_init_plane_fill(dword zp(9) plane_addr, byte zp($10) fill)
 gfx_init_plane_fill: {
-    .label __0 = $16
-    .label __1 = $1a
-    .label __4 = $10
-    .label __5 = $10
-    .label gfxb = $10
-    .label by = 8
-    .label plane_addr = 2
-    .label fill = $22
+    .label __0 = $14
+    .label __1 = $18
+    .label __4 = $1a
+    .label __5 = $1a
+    .label gfxb = $1a
+    .label by = $12
+    .label plane_addr = 9
+    .label fill = $10
     // plane_addr*4
     lda.z plane_addr
     asl
@@ -2028,620 +2773,190 @@ gfx_init_plane_fill: {
     // }
     rts
 }
-// Set the memory pointed to by CPU BANK 1 SEGMENT ($4000-$7fff)
-// This sets which actual memory is addressed when the CPU reads/writes to $4000-$7fff
-// The actual memory addressed will be $4000*cpuSegmentIdx
-// dtvSetCpuBankSegment1(byte register(A) cpuBankIdx)
-dtvSetCpuBankSegment1: {
-    // Move CPU BANK 1 SEGMENT ($4000-$7fff)
-    .label cpuBank = $ff
-    // *cpuBank = cpuBankIdx
-    sta cpuBank
-    // asm
-    .byte $32, $dd
-    lda.z $ff
-    .byte $32, $00
-    // }
-    rts
-}
-// Initialize Plane with blank pixels
-gfx_init_plane_blank: {
-    // gfx_init_plane_fill(PLANE_BLANK, 0)
-    lda #0
-    sta.z gfx_init_plane_fill.fill
-    lda #<PLANE_BLANK
-    sta.z gfx_init_plane_fill.plane_addr
-    lda #>PLANE_BLANK
-    sta.z gfx_init_plane_fill.plane_addr+1
-    lda #<PLANE_BLANK>>$10
-    sta.z gfx_init_plane_fill.plane_addr+2
-    lda #>PLANE_BLANK>>$10
-    sta.z gfx_init_plane_fill.plane_addr+3
-    jsr gfx_init_plane_fill
-    // }
-    rts
-}
-// Initialize Plane with Vertical Stripes every 2 pixels
-gfx_init_plane_vertical2: {
-    // gfx_init_plane_fill(PLANE_VERTICAL2, %00011011)
-    lda #$1b
-    sta.z gfx_init_plane_fill.fill
-    lda #<PLANE_VERTICAL2
-    sta.z gfx_init_plane_fill.plane_addr
-    lda #>PLANE_VERTICAL2
-    sta.z gfx_init_plane_fill.plane_addr+1
-    lda #<PLANE_VERTICAL2>>$10
-    sta.z gfx_init_plane_fill.plane_addr+2
-    lda #>PLANE_VERTICAL2>>$10
-    sta.z gfx_init_plane_fill.plane_addr+3
-    jsr gfx_init_plane_fill
-    // }
-    rts
-}
-// Initialize Plane with Horizontal Stripes every 2 pixels
-gfx_init_plane_horisontal2: {
-    .const gfxbCpuBank = PLANE_HORISONTAL2/$4000
-    .label gfxa = 6
-    .label ay = 9
-    // dtvSetCpuBankSegment1(gfxbCpuBank++)
-    lda #gfxbCpuBank
-    jsr dtvSetCpuBankSegment1
-    lda #<$4000
-    sta.z gfxa
-    lda #>$4000
-    sta.z gfxa+1
-    lda #0
-    sta.z ay
-  __b1:
-    ldx #0
-  __b2:
-    // ay/2
-    lda.z ay
-    lsr
-    // row = (ay/2) & 3
-    and #3
-    // *gfxa++ = row_bitmask[row]
-    tay
-    lda row_bitmask,y
-    ldy #0
-    sta (gfxa),y
-    // *gfxa++ = row_bitmask[row];
-    inc.z gfxa
-    bne !+
-    inc.z gfxa+1
-  !:
-    // for (byte ax : 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte ay : 0..199)
-    inc.z ay
-    lda #$c8
-    cmp.z ay
-    bne __b1
-    // dtvSetCpuBankSegment1((byte)($4000/$4000))
-  // Reset CPU BANK segment to $4000
-    lda #$4000/$4000
-    jsr dtvSetCpuBankSegment1
-    // }
-    rts
-    row_bitmask: .byte 0, $55, $aa, $ff
-}
-// Initialize Plane with Vertical Stripes
-gfx_init_plane_vertical: {
-    .const gfxbCpuBank = PLANE_VERTICAL/$4000
-    .label gfxb = 6
-    .label by = $a
-    // dtvSetCpuBankSegment1(gfxbCpuBank++)
-    lda #gfxbCpuBank
-    jsr dtvSetCpuBankSegment1
-    lda #0
-    sta.z by
-    lda #<$4000+(PLANE_VERTICAL&$3fff)
-    sta.z gfxb
-    lda #>$4000+(PLANE_VERTICAL&$3fff)
-    sta.z gfxb+1
-  __b1:
-    ldx #0
-  __b2:
-    // *gfxb++ = %00001111
-    lda #$f
-    ldy #0
-    sta (gfxb),y
-    // *gfxb++ = %00001111;
-    inc.z gfxb
-    bne !+
-    inc.z gfxb+1
-  !:
-    // for ( byte bx : 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte by : 0..199)
-    inc.z by
-    lda #$c8
-    cmp.z by
-    bne __b1
-    // dtvSetCpuBankSegment1((byte)($4000/$4000))
-  // Reset CPU BANK segment to $4000
-    lda #$4000/$4000
-    jsr dtvSetCpuBankSegment1
-    // }
-    rts
-}
-// Initialize Plane with Horizontal Stripes
-gfx_init_plane_horisontal: {
-    .const gfxbCpuBank = PLANE_HORISONTAL/$4000
-    .label gfxa = 6
-    .label ay = $b
-    // dtvSetCpuBankSegment1(gfxbCpuBank++)
-    lda #gfxbCpuBank
-    jsr dtvSetCpuBankSegment1
-    lda #<$4000
-    sta.z gfxa
-    lda #>$4000
-    sta.z gfxa+1
-    lda #0
-    sta.z ay
-  __b1:
-    ldx #0
-  __b2:
-    // ay&4
-    lda #4
-    and.z ay
-    // if((ay&4)==0)
-    cmp #0
-    beq __b3
-    // *gfxa++ = %11111111
-    lda #$ff
-    ldy #0
-    sta (gfxa),y
-    // *gfxa++ = %11111111;
-    inc.z gfxa
-    bne !+
-    inc.z gfxa+1
-  !:
-  __b4:
-    // for (byte ax : 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte ay : 0..199)
-    inc.z ay
-    lda #$c8
-    cmp.z ay
-    bne __b1
-    // dtvSetCpuBankSegment1((byte)($4000/$4000))
-  // Reset CPU BANK segment to $4000
-    lda #$4000/$4000
-    jsr dtvSetCpuBankSegment1
-    // }
-    rts
-  __b3:
-    // *gfxa++ = %00000000
-    lda #0
-    tay
-    sta (gfxa),y
-    // *gfxa++ = %00000000;
-    inc.z gfxa
-    bne !+
-    inc.z gfxa+1
-  !:
-    jmp __b4
-}
-// Initialize Plane with 8bpp charset
-gfx_init_plane_charset8: {
-    // 8bpp cells for Plane B (charset) - ROM charset with 256 colors
-    .const gfxbCpuBank = PLANE_CHARSET8/$4000
-    .label bits = $22
-    .label chargen = 6
-    .label gfxa = $d
-    .label col = 8
-    .label cr = $f
-    .label ch = $c
-    // dtvSetCpuBankSegment1(gfxbCpuBank++)
-    lda #gfxbCpuBank
-    jsr dtvSetCpuBankSegment1
-    // *PROCPORT = PROCPORT_RAM_CHARROM
-    lda #PROCPORT_RAM_CHARROM
-    sta PROCPORT
-    lda #0
-    sta.z ch
-    sta.z col
-    lda #<$4000
-    sta.z gfxa
-    lda #>$4000
-    sta.z gfxa+1
-    lda #<CHARGEN
-    sta.z chargen
-    lda #>CHARGEN
-    sta.z chargen+1
-  __b1:
-    lda #0
-    sta.z cr
-  __b2:
-    // bits = *chargen++
-    ldy #0
-    lda (chargen),y
-    sta.z bits
-    inc.z chargen
-    bne !+
-    inc.z chargen+1
-  !:
-    ldx #0
-  __b3:
-    // bits & $80
-    lda #$80
-    and.z bits
-    // if((bits & $80) != 0)
-    cmp #0
-    beq __b5
-    lda.z col
-    jmp __b4
-  __b5:
-    lda #0
-  __b4:
-    // *gfxa++ = c
-    ldy #0
-    sta (gfxa),y
-    // *gfxa++ = c;
-    inc.z gfxa
-    bne !+
-    inc.z gfxa+1
-  !:
-    // bits = bits*2
-    asl.z bits
-    // col++;
-    inc.z col
-    // for ( byte cp : 0..7)
-    inx
-    cpx #8
-    bne __b3
-    // for ( byte cr : 0..7)
-    inc.z cr
-    lda #8
-    cmp.z cr
-    bne __b2
-    // for(byte ch : $00..$ff)
-    inc.z ch
-    lda.z ch
-    cmp #0
-    bne __b1
-    // *PROCPORT = PROCPORT_RAM_IO
-    lda #PROCPORT_RAM_IO
-    sta PROCPORT
-    // dtvSetCpuBankSegment1((byte)($4000/$4000))
-  // Reset CPU BANK segment to $4000
-    lda #$4000/$4000
-    jsr dtvSetCpuBankSegment1
-    // }
-    rts
-}
-// Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
-gfx_init_plane_8bppchunky: {
-    .label __5 = $1c
-    .label gfxb = $10
-    .label x = $d
-    .label y = $f
-    // dtvSetCpuBankSegment1(gfxbCpuBank++)
-    lda #PLANE_8BPP_CHUNKY/$4000
-    jsr dtvSetCpuBankSegment1
-    ldx #PLANE_8BPP_CHUNKY/$4000+1
-    lda #0
-    sta.z y
-    lda #<$4000
-    sta.z gfxb
-    lda #>$4000
-    sta.z gfxb+1
-  __b1:
-    lda #<0
-    sta.z x
-    sta.z x+1
-  __b2:
-    // if(gfxb==$8000)
-    lda.z gfxb+1
-    cmp #>$8000
-    bne __b3
-    lda.z gfxb
-    cmp #<$8000
-    bne __b3
-    // dtvSetCpuBankSegment1(gfxbCpuBank++)
-    txa
-    jsr dtvSetCpuBankSegment1
-    // dtvSetCpuBankSegment1(gfxbCpuBank++);
-    inx
-    lda #<$4000
-    sta.z gfxb
-    lda #>$4000
-    sta.z gfxb+1
-  __b3:
-    // x+y
-    lda.z y
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($18) str)
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label end = $1a
+    .label dst = $18
+    .label str = $18
+    // end = (char*)str + num
+    lda.z str
     clc
-    adc.z x
-    sta.z __5
-    lda #0
-    adc.z x+1
-    sta.z __5+1
-    // c = (byte)(x+y)
-    lda.z __5
-    // *gfxb++ = c
-    ldy #0
-    sta (gfxb),y
-    // *gfxb++ = c;
-    inc.z gfxb
-    bne !+
-    inc.z gfxb+1
-  !:
-    // for (word x : 0..319)
-    inc.z x
-    bne !+
-    inc.z x+1
-  !:
-    lda.z x+1
-    cmp #>$140
-    bne __b2
-    lda.z x
-    cmp #<$140
-    bne __b2
-    // for(byte y : 0..199)
-    inc.z y
-    lda #$c8
-    cmp.z y
-    bne __b1
-    // dtvSetCpuBankSegment1((byte)($4000/$4000))
-  // Reset CPU BANK segment to $4000
-    lda #$4000/$4000
-    jsr dtvSetCpuBankSegment1
-    // }
-    rts
-}
-// Initialize VIC bitmap
-gfx_init_vic_bitmap: {
-    .const lines_cnt = 9
-    .label l = $22
-    // bitmap_init(VIC_BITMAP)
-  // Draw some lines on the bitmap
-    jsr bitmap_init
-    // bitmap_clear()
-    jsr bitmap_clear
-    lda #0
-    sta.z l
-  __b1:
-    // for(byte l=0; l<lines_cnt;l++)
-    lda.z l
-    cmp #lines_cnt
-    bcc __b2
-    // }
-    rts
+    adc #<num
+    sta.z end
+    lda.z str+1
+    adc #>num
+    sta.z end+1
   __b2:
-    // bitmap_line(lines_x[l], lines_x[l+1], lines_y[l], lines_y[l+1])
-    ldy.z l
-    lda lines_x,y
-    sta.z bitmap_line.x0
-    lda lines_x+1,y
-    sta.z bitmap_line.x1
-    ldx lines_y,y
-    lda lines_y+1,y
-    sta.z bitmap_line.y1
-    jsr bitmap_line
-    // for(byte l=0; l<lines_cnt;l++)
-    inc.z l
-    jmp __b1
-    lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
-    lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // }
+    rts
+  __b3:
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
 }
-// Draw a line on the bitmap
-// bitmap_line(byte zp($13) x0, byte zp($f) x1, byte register(X) y0, byte zp($a) y1)
-bitmap_line: {
-    .label xd = $12
-    .label x0 = $13
-    .label x1 = $f
-    .label y1 = $a
-    // if(x0<x1)
-    lda.z x0
-    cmp.z x1
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
     bcc __b1
-    // xd = x0-x1
-    sec
-    sbc.z x1
-    sta.z xd
-    // if(y0<y1)
-    cpx.z y1
-    bcc __b7
-    // yd = y0-y1
-    txa
-    sec
-    sbc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b8
-    // bitmap_line_ydxi(y1, x1, y0, yd, xd)
-    lda.z y1
-    sta.z bitmap_line_ydxi.y
-    stx.z bitmap_line_ydxi.y1
-    sty.z bitmap_line_ydxi.yd
-    jsr bitmap_line_ydxi
-    // }
-    rts
-  __b8:
-    // bitmap_line_xdyi(x1, y1, x0, xd, yd)
-    lda.z x1
-    sta.z bitmap_line_xdyi.x
-    ldx.z y1
-    sty.z bitmap_line_xdyi.yd
-    jsr bitmap_line_xdyi
-    rts
-  __b7:
-    // yd = y1-y0
-    txa
-    eor #$ff
-    sec
-    adc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b9
-    // bitmap_line_ydxd(y0, x0, y1, yd, xd)
-    stx.z bitmap_line_ydxd.y
-    sty.z bitmap_line_ydxd.yd
-    jsr bitmap_line_ydxd
-    rts
-  __b9:
-    // bitmap_line_xdyd(x1, y1, x0, xd, yd)
-    lda.z x1
-    sta.z bitmap_line_xdyd.x
-    ldx.z y1
-    sty.z bitmap_line_xdyd.yd
-    jsr bitmap_line_xdyd
-    rts
-  __b1:
-    // xd = x1-x0
-    lda.z x1
-    sec
-    sbc.z x0
-    sta.z xd
-    // if(y0<y1)
-    cpx.z y1
-    bcc __b11
-    // yd = y0-y1
-    txa
-    sec
-    sbc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b12
-    // bitmap_line_ydxd(y1, x1, y0, yd, xd)
-    lda.z y1
-    sta.z bitmap_line_ydxd.y
-    lda.z x1
-    sta.z bitmap_line_ydxd.x
-    stx.z bitmap_line_ydxd.y1
-    sty.z bitmap_line_ydxd.yd
-    jsr bitmap_line_ydxd
-    rts
-  __b12:
-    // bitmap_line_xdyd(x0, y0, x1, xd, yd)
-    lda.z x0
-    sta.z bitmap_line_xdyd.x
-    lda.z x1
-    sta.z bitmap_line_xdyd.x1
-    sty.z bitmap_line_xdyd.yd
-    jsr bitmap_line_xdyd
-    rts
-  __b11:
-    // yd = y1-y0
-    txa
-    eor #$ff
-    sec
-    adc.z y1
-    tay
-    // if(yd<xd)
-    cpy.z xd
-    bcc __b13
-    // bitmap_line_ydxi(y0, x0, y1, yd, xd)
-    stx.z bitmap_line_ydxi.y
-    lda.z x0
-    sta.z bitmap_line_ydxi.x
-    sty.z bitmap_line_ydxi.yd
-    jsr bitmap_line_ydxi
-    rts
-  __b13:
-    // bitmap_line_xdyi(x0, y0, x1, xd, yd)
-    lda.z x0
-    sta.z bitmap_line_xdyi.x
-    lda.z x1
-    sta.z bitmap_line_xdyi.x1
-    sty.z bitmap_line_xdyi.yd
-    jsr bitmap_line_xdyi
-    rts
-}
-// bitmap_line_xdyi(byte zp(9) x, byte register(X) y, byte zp($13) x1, byte zp($12) xd, byte zp(8) yd)
-bitmap_line_xdyi: {
-    .label x = 9
-    .label x1 = $13
-    .label xd = $12
-    .label yd = 8
-    .label e = $a
-    // e = yd>>1
-    lda.z yd
-    lsr
-    sta.z e
-  __b1:
-    // bitmap_plot(x,y)
-    ldy.z x
-    jsr bitmap_plot
-    // x++;
-    inc.z x
-    // e = e+yd
-    lda.z e
-    clc
-    adc.z yd
-    sta.z e
-    // if(xd<e)
-    lda.z xd
-    cmp.z e
-    bcs __b2
-    // y++;
-    inx
-    // e = e - xd
-    lda.z e
-    sec
-    sbc.z xd
-    sta.z e
-  __b2:
-    // x1+1
-    lda.z x1
-    clc
-    adc #1
-    // while (x!=(x1+1))
-    cmp.z x
-    bne __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
     // }
     rts
 }
-// bitmap_plot(byte register(Y) x, byte register(X) y)
-bitmap_plot: {
-    .label plotter_x = $1c
-    .label plotter_y = $1e
-    .label plotter = $1c
-    // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
-    lda bitmap_plot_xhi,y
-    sta.z plotter_x+1
-    lda bitmap_plot_xlo,y
-    sta.z plotter_x
-    // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
-    sta.z plotter_y+1
-    lda bitmap_plot_ylo,x
-    sta.z plotter_y
-    // plotter_x+plotter_y
-    lda.z plotter
+// Get the screen address of a form field
+// field_idx is the index of the field to get the screen address for
+// form_field_ptr(byte register(X) field_idx)
+form_field_ptr: {
+    .label line = $1d
+    .label x = $1c
+    .label return = $1f
+    // y = form_fields_y[field_idx]
+    ldy form_fields_y,x
+    // line = (byte*) { form_line_hi[y], form_line_lo[y] }
+    lda form_line_hi,y
+    sta.z line+1
+    lda form_line_lo,y
+    sta.z line
+    // x = form_fields_x[field_idx]
+    lda form_fields_x,x
+    sta.z x
+    // line+x
     clc
-    adc.z plotter_y
-    sta.z plotter
-    lda.z plotter+1
-    adc.z plotter_y+1
-    sta.z plotter+1
-    // *plotter | bitmap_plot_bit[x]
-    lda bitmap_plot_bit,y
+    adc.z line
+    sta.z return
+    lda #0
+    adc.z line+1
+    sta.z return+1
+    // }
+    rts
+}
+// Print a string at a specific screen position
+// print_str_at(byte* zp($1a) str, byte* zp($18) at)
+print_str_at: {
+    .label at = $18
+    .label str = $1a
+    lda #<FORM_SCREEN+$28*2+$a
+    sta.z at
+    lda #>FORM_SCREEN+$28*2+$a
+    sta.z at+1
+  __b1:
+    // while(*str)
     ldy #0
-    ora (plotter),y
-    // *plotter = *plotter | bitmap_plot_bit[x]
-    sta (plotter),y
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *(at++) = *(str++)
+    ldy #0
+    lda (str),y
+    sta (at),y
+    // *(at++) = *(str++);
+    inc.z at
+    bne !+
+    inc.z at+1
+  !:
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Read a single row of the keyboard matrix
+// The row ID (0-7) of the keyboard matrix row to read. See the C64 key matrix for row IDs.
+// Returns the keys pressed on the row as bits according to the C64 key matrix.
+// Notice: If the C64 normal interrupt is still running it will occasionally interrupt right between the read & write
+// leading to erroneous readings. You must disable the normal interrupt or sei/cli around calls to the keyboard matrix reader.
+// keyboard_matrix_read(byte register(X) rowid)
+keyboard_matrix_read: {
+    // CIA1->PORT_A = keyboard_matrix_row_bitmask[rowid]
+    lda keyboard_matrix_row_bitmask,x
+    sta CIA1
+    // ~CIA1->PORT_B
+    lda CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B
+    eor #$ff
     // }
     rts
 }
-// bitmap_line_ydxi(byte zp($b) y, byte zp($f) x, byte zp($a) y1, byte zp(9) yd, byte zp($12) xd)
+// Determine if a specific key is currently pressed based on the last keyboard_event_scan()
+// Returns 0 is not pressed and non-0 if pressed
+// keyboard_event_pressed(byte zp($12) keycode)
+keyboard_event_pressed: {
+    .label row_bits = $1c
+    .label keycode = $12
+    // keycode>>3
+    lda.z keycode
+    lsr
+    lsr
+    lsr
+    // row_bits = keyboard_scan_values[keycode>>3]
+    tay
+    lda keyboard_scan_values,y
+    sta.z row_bits
+    // keycode&7
+    lda #7
+    and.z keycode
+    // row_bits & keyboard_matrix_col_bitmask[keycode&7]
+    tay
+    lda keyboard_matrix_col_bitmask,y
+    and.z row_bits
+    // }
+    rts
+}
+// bitmap_line_ydxi(byte zp($e) y, byte zp($11) x, byte zp($10) y1, byte zp($d) yd, byte zp($f) xd)
 bitmap_line_ydxi: {
-    .label y = $b
-    .label x = $f
-    .label y1 = $a
-    .label yd = 9
-    .label xd = $12
-    .label e = $c
+    .label y = $e
+    .label x = $11
+    .label y1 = $10
+    .label yd = $d
+    .label xd = $f
+    .label e = $13
     // e = xd>>1
     lda.z xd
     lsr
@@ -2679,13 +2994,13 @@ bitmap_line_ydxi: {
     // }
     rts
 }
-// bitmap_line_xdyd(byte zp($c) x, byte register(X) y, byte zp($13) x1, byte zp($12) xd, byte zp($b) yd)
-bitmap_line_xdyd: {
-    .label x = $c
+// bitmap_line_xdyi(byte zp($e) x, byte register(X) y, byte zp($13) x1, byte zp($f) xd, byte zp($d) yd)
+bitmap_line_xdyi: {
+    .label x = $e
     .label x1 = $13
-    .label xd = $12
-    .label yd = $b
-    .label e = $f
+    .label xd = $f
+    .label yd = $d
+    .label e = $12
     // e = yd>>1
     lda.z yd
     lsr
@@ -2705,8 +3020,8 @@ bitmap_line_xdyd: {
     lda.z xd
     cmp.z e
     bcs __b2
-    // y--;
-    dex
+    // y++;
+    inx
     // e = e - xd
     lda.z e
     sec
@@ -2723,14 +3038,14 @@ bitmap_line_xdyd: {
     // }
     rts
 }
-// bitmap_line_ydxd(byte zp($20) y, byte zp($13) x, byte zp($a) y1, byte zp($f) yd, byte zp($12) xd)
+// bitmap_line_ydxd(byte zp($e) y, byte zp($11) x, byte zp($10) y1, byte zp($12) yd, byte zp($f) xd)
 bitmap_line_ydxd: {
-    .label y = $20
-    .label x = $13
-    .label y1 = $a
-    .label yd = $f
-    .label xd = $12
-    .label e = $21
+    .label y = $e
+    .label x = $11
+    .label y1 = $10
+    .label yd = $12
+    .label xd = $f
+    .label e = $1c
     // e = xd>>1
     lda.z xd
     lsr
@@ -2768,392 +3083,79 @@ bitmap_line_ydxd: {
     // }
     rts
 }
-// Clear all graphics on the bitmap
-bitmap_clear: {
-    .label bitmap = $10
-    .label y = $12
-    // bitmap = (char*) { bitmap_plot_xhi[0], bitmap_plot_xlo[0] }
-    lda bitmap_plot_xlo
-    sta.z bitmap
-    lda bitmap_plot_xhi
-    sta.z bitmap+1
-    lda #0
-    sta.z y
-  __b1:
-    ldx #0
-  __b2:
-    // *bitmap++ = 0
-    lda #0
-    tay
-    sta (bitmap),y
-    // *bitmap++ = 0;
-    inc.z bitmap
-    bne !+
-    inc.z bitmap+1
-  !:
-    // for( char x: 0..199 )
-    inx
-    cpx #$c8
-    bne __b2
-    // for( char y: 0..39 )
-    inc.z y
-    lda #$28
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// Initialize the bitmap plotter tables for a specific bitmap
-bitmap_init: {
-    .label __10 = $20
-    .label yoffs = $d
-    ldy #$80
-    ldx #0
-  __b1:
-    // x&$f8
-    txa
-    and #$f8
-    // bitmap_plot_xlo[x] = x&$f8
-    sta bitmap_plot_xlo,x
-    // bitmap_plot_xhi[x] = >bitmap
-    lda #>VIC_BITMAP
-    sta bitmap_plot_xhi,x
-    // bitmap_plot_bit[x] = bits
-    tya
-    sta bitmap_plot_bit,x
-    // bits = bits>>1
-    tya
+// bitmap_line_xdyd(byte zp($1c) x, byte register(X) y, byte zp($11) x1, byte zp($f) xd, byte zp($e) yd)
+bitmap_line_xdyd: {
+    .label x = $1c
+    .label x1 = $11
+    .label xd = $f
+    .label yd = $e
+    .label e = $12
+    // e = yd>>1
+    lda.z yd
     lsr
-    tay
-    // if(bits==0)
-    cpy #0
-    bne __b2
-    ldy #$80
-  __b2:
-    // for(char x : 0..255)
-    inx
-    cpx #0
-    bne __b1
-    lda #<0
-    sta.z yoffs
-    sta.z yoffs+1
-    tax
-  __b3:
-    // y&$7
-    lda #7
-    sax.z __10
-    // <yoffs
-    lda.z yoffs
-    // y&$7 | <yoffs
-    ora.z __10
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    sta bitmap_plot_ylo,x
-    // >yoffs
-    lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
-    sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
-    lda #7
-    cmp.z __10
-    bne __b4
-    // yoffs = yoffs + 40*8
+    sta.z e
+  __b1:
+    // bitmap_plot(x,y)
+    ldy.z x
+    jsr bitmap_plot
+    // x++;
+    inc.z x
+    // e = e+yd
+    lda.z e
     clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-  __b4:
-    // for(char y : 0..255)
-    inx
-    cpx #0
-    bne __b3
-    // }
-    rts
-}
-gfx_init_charset: {
-    .label charset = $10
-    .label chargen = $d
-    .label c = $13
-    // *PROCPORT = $32
-    lda #$32
-    sta PROCPORT
-    lda #0
-    sta.z c
-    lda #<VIC_CHARSET_ROM
-    sta.z charset
-    lda #>VIC_CHARSET_ROM
-    sta.z charset+1
-    lda #<CHARGEN
-    sta.z chargen
-    lda #>CHARGEN
-    sta.z chargen+1
-  __b1:
-    ldx #0
-  __b2:
-    // *charset++ = *chargen++
-    ldy #0
-    lda (chargen),y
-    sta (charset),y
-    // *charset++ = *chargen++;
-    inc.z charset
-    bne !+
-    inc.z charset+1
-  !:
-    inc.z chargen
-    bne !+
-    inc.z chargen+1
-  !:
-    // for( byte l: 0..7)
-    inx
-    cpx #8
-    bne __b2
-    // for(byte c: 0..$ff)
-    inc.z c
-    lda.z c
-    cmp #0
-    bne __b1
-    // *PROCPORT = $37
-    lda #$37
-    sta PROCPORT
-    // }
-    rts
-}
-// Initialize VIC screen 4 - all chars are 00
-gfx_init_screen4: {
-    .label ch = $10
-    .label cy = $f
-    lda #0
-    sta.z cy
-    lda #<VIC_SCREEN4
-    sta.z ch
-    lda #>VIC_SCREEN4
-    sta.z ch+1
-  __b1:
-    ldx #0
-  __b2:
-    // *ch++ = 0
-    lda #0
-    tay
-    sta (ch),y
-    // *ch++ = 0;
-    inc.z ch
-    bne !+
-    inc.z ch+1
-  !:
-    // for(byte cx: 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte cy: 0..24 )
-    inc.z cy
-    lda #$19
-    cmp.z cy
-    bne __b1
-    // }
-    rts
-}
-// Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
-gfx_init_screen3: {
-    .label __1 = $21
-    .label ch = $14
-    .label cy = $20
-    lda #<VIC_SCREEN3
-    sta.z ch
-    lda #>VIC_SCREEN3
-    sta.z ch+1
-    lda #0
-    sta.z cy
-  __b1:
-    ldx #0
-  __b2:
-    // cx&3
-    txa
-    and #3
-    // (cx&3)*$10
-    asl
-    asl
-    asl
-    asl
-    sta.z __1
-    // cy&3
-    lda #3
-    and.z cy
-    // (cx&3)*$10|(cy&3)
-    ora.z __1
-    // *ch++ = (cx&3)*$10|(cy&3)
-    ldy #0
-    sta (ch),y
-    // *ch++ = (cx&3)*$10|(cy&3);
-    inc.z ch
-    bne !+
-    inc.z ch+1
-  !:
-    // for(byte cx: 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte cy: 0..24 )
-    inc.z cy
-    lda #$19
-    cmp.z cy
-    bne __b1
-    // }
-    rts
-}
-// Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
-gfx_init_screen2: {
-    .label col2 = $22
-    .label ch = $14
-    .label cy = $21
-    lda #<VIC_SCREEN2
-    sta.z ch
-    lda #>VIC_SCREEN2
-    sta.z ch+1
-    lda #0
-    sta.z cy
-  __b1:
-    ldx #0
-  __b2:
-    // cx+cy
-    txa
-    clc
-    adc.z cy
-    // col = (cx+cy)&$f
-    and #$f
-    tay
-    // col2 = ($f-col)
-    tya
-    eor #$ff
+    adc.z yd
+    sta.z e
+    // if(xd<e)
+    lda.z xd
+    cmp.z e
+    bcs __b2
+    // y--;
+    dex
+    // e = e - xd
+    lda.z e
     sec
-    adc #$f
-    sta.z col2
-    // col*$10
-    tya
-    asl
-    asl
-    asl
-    asl
-    // col*$10 | col2
-    ora.z col2
-    // *ch++ = col*$10 | col2
-    ldy #0
-    sta (ch),y
-    // *ch++ = col*$10 | col2;
-    inc.z ch
-    bne !+
-    inc.z ch+1
-  !:
-    // for(byte cx: 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte cy: 0..24 )
-    inc.z cy
-    lda #$19
-    cmp.z cy
-    bne __b1
-    // }
-    rts
-}
-// Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
-gfx_init_screen1: {
-    .label ch = $14
-    .label cy = $12
-    lda #<VIC_SCREEN1
-    sta.z ch
-    lda #>VIC_SCREEN1
-    sta.z ch+1
-    lda #0
-    sta.z cy
-  __b1:
-    ldx #0
+    sbc.z xd
+    sta.z e
   __b2:
-    // cx+cy
-    txa
+    // x1+1
+    lda.z x1
     clc
-    adc.z cy
-    // (cx+cy)&$f
-    and #$f
-    // *ch++ = (cx+cy)&$f
-    ldy #0
-    sta (ch),y
-    // *ch++ = (cx+cy)&$f;
-    inc.z ch
-    bne !+
-    inc.z ch+1
-  !:
-    // for(byte cx: 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte cy: 0..24 )
-    inc.z cy
-    lda #$19
-    cmp.z cy
+    adc #1
+    // while (x!=(x1+1))
+    cmp.z x
     bne __b1
     // }
     rts
 }
-// Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
-gfx_init_screen0: {
-    .label __1 = $22
-    .label ch = $14
-    .label cy = $12
-    lda #<VIC_SCREEN0
-    sta.z ch
-    lda #>VIC_SCREEN0
-    sta.z ch+1
-    lda #0
-    sta.z cy
-  __b1:
-    ldx #0
-  __b2:
-    // cy&$f
-    lda #$f
-    and.z cy
-    // (cy&$f)*$10
-    asl
-    asl
-    asl
-    asl
-    sta.z __1
-    // cx&$f
-    txa
-    and #$f
-    // (cy&$f)*$10|(cx&$f)
-    ora.z __1
-    // *ch++ = (cy&$f)*$10|(cx&$f)
+// bitmap_plot(byte register(Y) x, byte register(X) y)
+bitmap_plot: {
+    .label plotter_x = $1d
+    .label plotter_y = $1f
+    .label plotter = $1d
+    // plotter_x = { bitmap_plot_xhi[x], bitmap_plot_xlo[x] }
+    lda bitmap_plot_xhi,y
+    sta.z plotter_x+1
+    lda bitmap_plot_xlo,y
+    sta.z plotter_x
+    // plotter_y = { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    lda bitmap_plot_yhi,x
+    sta.z plotter_y+1
+    lda bitmap_plot_ylo,x
+    sta.z plotter_y
+    // plotter_x+plotter_y
+    lda.z plotter
+    clc
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
+    // *plotter | bitmap_plot_bit[x]
+    lda bitmap_plot_bit,y
     ldy #0
-    sta (ch),y
-    // *ch++ = (cy&$f)*$10|(cx&$f);
-    inc.z ch
-    bne !+
-    inc.z ch+1
-  !:
-    // for(byte cx: 0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for(byte cy: 0..24 )
-    inc.z cy
-    lda #$19
-    cmp.z cy
-    bne __b1
-    // }
-    rts
-}
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
-keyboard_init: {
-    // CIA1->PORT_A_DDR = $ff
-    // Keyboard Matrix Columns Write Mode
-    lda #$ff
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA1->PORT_B_DDR = $00
-    // Keyboard Matrix Columns Read Mode
-    lda #0
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_B_DDR
+    ora (plotter),y
+    // *plotter = *plotter | bitmap_plot_bit[x]
+    sta (plotter),y
     // }
     rts
 }

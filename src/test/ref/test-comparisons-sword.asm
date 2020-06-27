@@ -13,8 +13,8 @@
   // filled circle
   .const TT = $51
   .label print_screen = $400
-  .label print_line_cursor = $d
-  .label print_char_cursor = 9
+  .label print_line_cursor = 7
+  .label print_char_cursor = $d
 main: {
     .label w1 = $f
     .label w2 = $11
@@ -98,26 +98,10 @@ main: {
   // loop forever
     jmp __b5
 }
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
 }
@@ -126,8 +110,8 @@ print_ln: {
 compare: {
     .label w1 = $b
     .label w2 = $11
-    .label ops = 6
-    .label r = 8
+    .label ops = 9
+    .label r = 6
     // if(op==LT)
     cmp #LT
     bne !__b1+
@@ -317,19 +301,61 @@ compare: {
     ops_6: .text "< "
     .byte 0
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
     bne !+
-    inc.z print_char_cursor+1
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
   !:
     // }
     rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+memset: {
+    .const c = ' '
+    .const num = $3e8
+    .label str = print_screen
+    .label end = str+num
+    .label dst = 9
+    lda #<str
+    sta.z dst
+    lda #>str
+    sta.z dst+1
+  __b1:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp #>end
+    bne __b2
+    lda.z dst
+    cmp #<end
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *dst = c
+    lda #c
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b1
 }
 // Print a signed int as HEX
 // print_sint(signed word zp($b) w)
@@ -359,6 +385,44 @@ print_sint: {
     sbc.z w+1
     sta.z w+1
     jmp __b2
+}
+// Print a zero-terminated string
+// print_str(byte* zp(9) str)
+print_str: {
+    .label str = 9
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
 }
 // Print a unsigned int as HEX
 // print_uint(word zp($b) w)
@@ -395,70 +459,6 @@ print_uchar: {
     jsr print_char
     // }
     rts
-}
-// Print a zero-terminated string
-// print_str(byte* zp(6) str)
-print_str: {
-    .label str = 6
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $3e8
-    .label str = print_screen
-    .label end = str+num
-    .label dst = $d
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-  __b1:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *dst = c
-    lda #c
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b1
 }
   print_hextab: .text "0123456789abcdef"
   swords: .word -$6fed, $12, $7fed

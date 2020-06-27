@@ -50,18 +50,54 @@ main: {
   __b1:
     jmp __b1
 }
+// Fill some memory with a value
+// fill(signed word zp(2) size, byte register(X) val)
+fill: {
+    .label end = 2
+    .label addr = 4
+    .label size = 2
+    // end = start + size
+    lda.z end
+    clc
+    adc.z addr
+    sta.z end
+    lda.z end+1
+    adc.z addr+1
+    sta.z end+1
+  __b1:
+    // for(byte* addr = start; addr!=end; addr++)
+    lda.z addr+1
+    cmp.z end+1
+    bne __b2
+    lda.z addr
+    cmp.z end
+    bne __b2
+    // }
+    rts
+  __b2:
+    // *addr = val
+    txa
+    ldy #0
+    sta (addr),y
+    // for(byte* addr = start; addr!=end; addr++)
+    inc.z addr
+    bne !+
+    inc.z addr+1
+  !:
+    jmp __b1
+}
 circle: {
     .const xc = $64
     .const yc = $64
     .const r = $32
     .label __5 = 8
     .label __6 = 8
-    .label __7 = 2
+    .label __7 = 6
     .label __9 = $a
-    .label __10 = 2
-    .label p = 2
-    .label y = 6
-    .label x1 = 4
+    .label __10 = 6
+    .label p = 6
+    .label y = 4
+    .label x1 = 2
     lda #<3-(r<<1)
     sta.z p
     lda #>3-(r<<1)
@@ -388,41 +424,5 @@ plot: {
     sta (location),y
     // }
     rts
-}
-// Fill some memory with a value
-// fill(signed word zp(4) size, byte register(X) val)
-fill: {
-    .label end = 4
-    .label addr = 6
-    .label size = 4
-    // end = start + size
-    lda.z end
-    clc
-    adc.z addr
-    sta.z end
-    lda.z end+1
-    adc.z addr+1
-    sta.z end+1
-  __b1:
-    // for(byte* addr = start; addr!=end; addr++)
-    lda.z addr+1
-    cmp.z end+1
-    bne __b2
-    lda.z addr
-    cmp.z end
-    bne __b2
-    // }
-    rts
-  __b2:
-    // *addr = val
-    txa
-    ldy #0
-    sta (addr),y
-    // for(byte* addr = start; addr!=end; addr++)
-    inc.z addr
-    bne !+
-    inc.z addr+1
-  !:
-    jmp __b1
 }
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

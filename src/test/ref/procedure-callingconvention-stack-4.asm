@@ -13,6 +13,28 @@ __start: {
     jsr main
     rts
 }
+// plus(byte zp(4) a, byte register(A) b)
+plus: {
+    .const OFFSET_STACK_A = 1
+    .const OFFSET_STACK_B = 0
+    .const OFFSET_STACK_RETURN = 1
+    .label a = 4
+    // }
+    tsx
+    lda STACK_BASE+OFFSET_STACK_A,x
+    sta.z a
+    tsx
+    lda STACK_BASE+OFFSET_STACK_B,x
+    // i++;
+    inc.z i
+    // return a+b;
+    clc
+    adc.z a
+    // }
+    tsx
+    sta STACK_BASE+OFFSET_STACK_RETURN,x
+    rts
+}
 main: {
     .label a = 2
     lda #0
@@ -42,26 +64,5 @@ main: {
     cmp.z a
     bne __b1
     // }
-    rts
-}
-// plus(byte zp(4) a, byte register(A) b)
-plus: {
-    .const OFFSET_STACK_A = 1
-    .const OFFSET_STACK_B = 0
-    .const OFFSET_STACK_RETURN = 1
-    .label a = 4
-    tsx
-    lda STACK_BASE+OFFSET_STACK_A,x
-    sta.z a
-    tsx
-    lda STACK_BASE+OFFSET_STACK_B,x
-    // i++;
-    inc.z i
-    // return a+b;
-    clc
-    adc.z a
-    // }
-    tsx
-    sta STACK_BASE+OFFSET_STACK_RETURN,x
     rts
 }

@@ -39,8 +39,8 @@ main: {
     // }
     rts
 }
-// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
-sum2: {
+// sum(byte register(Y) a, byte register(A) b, byte register(X) c)
+sum: {
     // a+b
     sty.z $ff
     clc
@@ -52,8 +52,8 @@ sum2: {
     // }
     rts
 }
-// sum(byte register(Y) a, byte register(A) b, byte register(X) c)
-sum: {
+// sum2(byte register(Y) a, byte register(A) b, byte register(X) c)
+sum2: {
     // a+b
     sty.z $ff
     clc

@@ -95,6 +95,153 @@ main: {
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
+// FAC = unsigned int
+// Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
+// setFAC(word zp(7) w)
+setFAC: {
+    .label prepareMEM1_mem = 7
+    .label w = 7
+    // <mem
+    lda.z prepareMEM1_mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z prepareMEM1_mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    // Load unsigned int register Y,A into FAC (floating point accumulator)
+    ldy memLo
+    jsr $b391
+    // }
+    rts
+}
+// FAC = FAC/10
+// Set FAC to FAC divided by 10
+divFACby10: {
+    // asm
+    jsr $bafe
+    // }
+    rts
+}
+// MEM = FAC
+// Stores the value of the FAC to memory
+// Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
+// setMEMtoFAC(byte* zp(7) mem)
+setMEMtoFAC: {
+    .label mem = 7
+    // <mem
+    lda.z mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    ldx memLo
+    tay
+    jsr $bbd4
+    // }
+    rts
+}
+// FAC = MEM*FAC
+// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
+// Reads 5 chars from memory
+// mulFACbyMEM(byte* zp(7) mem)
+mulFACbyMEM: {
+    .label mem = 7
+    // <mem
+    lda.z mem
+    // *memLo = <mem
+    sta memLo
+    // >mem
+    lda.z mem+1
+    // *memHi = >mem
+    sta memHi
+    // asm
+    lda memLo
+    ldy memHi
+    jsr $ba28
+    // }
+    rts
+}
+// FAC = MEM/FAC
+// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
+// Reads 5 chars from memory
+divMEMbyFAC: {
+    .const prepareMEM1_mem = main.f_i
+    // *memLo = <mem
+    lda #<prepareMEM1_mem
+    sta memLo
+    // *memHi = >mem
+    lda #>prepareMEM1_mem
+    sta memHi
+    // asm
+    lda memLo
+    ldy memHi
+    jsr $bb0f
+    // }
+    rts
+}
+// FAC = sin(FAC)
+// Set FAC to sinus of the FAC - sin(FAC)
+// Sinus is calculated on radians (0-2*PI)
+sinFAC: {
+    // asm
+    jsr $e26b
+    // }
+    rts
+}
+// FAC = MEM+FAC
+// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
+// Reads 5 chars from memory
+addMEMtoFAC: {
+    .const prepareMEM1_mem = main.f_127
+    // *memLo = <mem
+    lda #<prepareMEM1_mem
+    sta memLo
+    // *memHi = >mem
+    lda #>prepareMEM1_mem
+    sta memHi
+    // asm
+    lda memLo
+    ldy memHi
+    jsr $b867
+    // }
+    rts
+}
+// unsigned int = FAC
+// Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
+// Destroys the value in the FAC in the process
+getFAC: {
+    .label return = 7
+    // asm
+    // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
+    jsr $b1aa
+    sty memLo
+    sta memHi
+    // w = { *memHi, *memLo }
+    tya
+    sta.z return
+    lda memHi
+    sta.z return+1
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp(7) w)
+print_uint: {
+    .label w = 7
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -115,19 +262,6 @@ print_ln: {
     cmp.z print_char_cursor
     bcc __b1
   !:
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp(7) w)
-print_uint: {
-    .label w = 7
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
     // }
     rts
 }
@@ -165,140 +299,6 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    // }
-    rts
-}
-// unsigned int = FAC
-// Get the value of the FAC (floating point accumulator) as an integer 16bit unsigned int
-// Destroys the value in the FAC in the process
-getFAC: {
-    .label return = 7
-    // asm
-    // Load FAC (floating point accumulator) integer part into unsigned int register Y,A
-    jsr $b1aa
-    sty memLo
-    sta memHi
-    // w = { *memHi, *memLo }
-    tya
-    sta.z return
-    lda memHi
-    sta.z return+1
-    // }
-    rts
-}
-// FAC = MEM+FAC
-// Set FAC to MEM (float saved in memory) plus FAC (float accumulator)
-// Reads 5 chars from memory
-addMEMtoFAC: {
-    .const prepareMEM1_mem = main.f_127
-    // *memLo = <mem
-    lda #<prepareMEM1_mem
-    sta memLo
-    // *memHi = >mem
-    lda #>prepareMEM1_mem
-    sta memHi
-    // asm
-    lda memLo
-    ldy memHi
-    jsr $b867
-    // }
-    rts
-}
-// FAC = MEM*FAC
-// Set FAC to MEM (float saved in memory) multiplied by FAC (float accumulator)
-// Reads 5 chars from memory
-// mulFACbyMEM(byte* zp(7) mem)
-mulFACbyMEM: {
-    .label mem = 7
-    // <mem
-    lda.z mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    lda memLo
-    ldy memHi
-    jsr $ba28
-    // }
-    rts
-}
-// FAC = sin(FAC)
-// Set FAC to sinus of the FAC - sin(FAC)
-// Sinus is calculated on radians (0-2*PI)
-sinFAC: {
-    // asm
-    jsr $e26b
-    // }
-    rts
-}
-// FAC = MEM/FAC
-// Set FAC to MEM (float saved in memory) divided by FAC (float accumulator)
-// Reads 5 chars from memory
-divMEMbyFAC: {
-    .const prepareMEM1_mem = main.f_i
-    // *memLo = <mem
-    lda #<prepareMEM1_mem
-    sta memLo
-    // *memHi = >mem
-    lda #>prepareMEM1_mem
-    sta memHi
-    // asm
-    lda memLo
-    ldy memHi
-    jsr $bb0f
-    // }
-    rts
-}
-// FAC = unsigned int
-// Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
-// setFAC(word zp(7) w)
-setFAC: {
-    .label prepareMEM1_mem = 7
-    .label w = 7
-    // <mem
-    lda.z prepareMEM1_mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z prepareMEM1_mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    // Load unsigned int register Y,A into FAC (floating point accumulator)
-    ldy memLo
-    jsr $b391
-    // }
-    rts
-}
-// MEM = FAC
-// Stores the value of the FAC to memory
-// Stores 5 chars (means it is necessary to allocate 5 chars to avoid clobbering other data using eg. char[] mem = {0, 0, 0, 0, 0};)
-// setMEMtoFAC(byte* zp(7) mem)
-setMEMtoFAC: {
-    .label mem = 7
-    // <mem
-    lda.z mem
-    // *memLo = <mem
-    sta memLo
-    // >mem
-    lda.z mem+1
-    // *memHi = >mem
-    sta memHi
-    // asm
-    ldx memLo
-    tay
-    jsr $bbd4
-    // }
-    rts
-}
-// FAC = FAC/10
-// Set FAC to FAC divided by 10
-divFACby10: {
-    // asm
-    jsr $bafe
     // }
     rts
 }

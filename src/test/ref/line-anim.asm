@@ -91,56 +91,149 @@ main: {
     inc BORDER_COLOR
     jmp __b2
 }
-// Plot a single dot in the bitmap
-// bitmap_plot(word zp(9) x, byte register(X) y)
-bitmap_plot: {
-    .label __0 = $d
-    .label x = 9
-    .label plotter = $b
-    // plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
-    sta.z plotter+1
-    lda bitmap_plot_ylo,x
-    sta.z plotter
-    // x & $fff8
-    lda.z x
-    and #<$fff8
-    sta.z __0
-    lda.z x+1
-    and #>$fff8
-    sta.z __0+1
-    // plotter += ( x & $fff8 )
-    lda.z plotter
+bitmap_init: {
+    .label __7 = 9
+    .label yoffs = 3
+    ldx #0
+    lda #$80
+  __b1:
+    // bitmap_plot_bit[x] = bits
+    sta bitmap_plot_bit,x
+    // bits >>= 1
+    lsr
+    // if(bits==0)
+    cmp #0
+    bne __b2
+    lda #$80
+  __b2:
+    // for(byte x : 0..255)
+    inx
+    cpx #0
+    bne __b1
+    lda #<BITMAP
+    sta.z yoffs
+    lda #>BITMAP
+    sta.z yoffs+1
+    ldx #0
+  __b3:
+    // y&$7
+    lda #7
+    sax.z __7
+    // <yoffs
+    lda.z yoffs
+    // y&$7 | <yoffs
+    ora.z __7
+    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    sta bitmap_plot_ylo,x
+    // >yoffs
+    lda.z yoffs+1
+    // bitmap_plot_yhi[y] = >yoffs
+    sta bitmap_plot_yhi,x
+    // if((y&$7)==7)
+    lda #7
+    cmp.z __7
+    bne __b4
+    // yoffs = yoffs + 40*8
     clc
-    adc.z __0
-    sta.z plotter
-    lda.z plotter+1
-    adc.z __0+1
-    sta.z plotter+1
-    // <x
-    ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
-    lda bitmap_plot_bit,x
+    lda.z yoffs
+    adc #<$28*8
+    sta.z yoffs
+    lda.z yoffs+1
+    adc #>$28*8
+    sta.z yoffs+1
+  __b4:
+    // for(byte y : 0..255)
+    inx
+    cpx #0
+    bne __b3
+    // }
+    rts
+}
+// Clear all graphics on the bitmap
+bitmap_clear: {
+    .label bitmap = 3
+    .label y = 9
+    // bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
+    lda bitmap_plot_ylo
+    sta.z bitmap
+    lda bitmap_plot_yhi
+    sta.z bitmap+1
+    lda #0
+    sta.z y
+  __b1:
+    ldx #0
+  __b2:
+    // *bitmap++ = 0
+    lda #0
+    tay
+    sta (bitmap),y
+    // *bitmap++ = 0;
+    inc.z bitmap
+    bne !+
+    inc.z bitmap+1
+  !:
+    // for( byte x: 0..199 )
+    inx
+    cpx #$c8
+    bne __b2
+    // for( byte y: 0..39 )
+    inc.z y
+    lda #$28
+    cmp.z y
+    bne __b1
+    // }
+    rts
+}
+// Fill the screen with a specific char
+// screen_fill(byte* zp(3) screen)
+screen_fill: {
+    .const ch = $10
+    .label screen = 3
+    .label y = 9
+    lda #0
+    sta.z y
+    lda #<SCREEN
+    sta.z screen
+    lda #>SCREEN
+    sta.z screen+1
+  __b1:
+    ldx #0
+  __b2:
+    // *screen++ = ch
+    lda #ch
     ldy #0
-    ora (plotter),y
-    sta (plotter),y
+    sta (screen),y
+    // *screen++ = ch;
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    // for(byte x:0..39)
+    inx
+    cpx #$28
+    bne __b2
+    // for( byte y: 0..24)
+    inc.z y
+    lda #$19
+    cmp.z y
+    bne __b1
     // }
     rts
 }
 // Initialize the points to be animated
 // point_init(byte zp(2) point_idx)
 point_init: {
-    .label __5 = $f
-    .label __6 = $11
-    .label __17 = 7
-    .label __18 = $d
-    .label __19 = $11
+    .label __5 = $c
+    .label __6 = $e
+    .label __17 = $10
+    .label __18 = $a
+    .label __19 = $e
     .label point_idx = 2
-    .label y_diff = 7
+    .label y_diff = $10
     .label abs16s1_return = 3
-    .label abs16s2_return = 5
-    .label x_stepf = $b
-    .label x_diff = 9
+    .label abs16s2_return = 7
+    .label x_stepf = 5
+    .label x_diff = $12
     // ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
     lda.z point_idx
     asl
@@ -299,19 +392,55 @@ point_init: {
     sta.z abs16s1_return+1
     jmp abs16s2
 }
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp(7) x, byte register(X) y)
+bitmap_plot: {
+    .label __0 = $12
+    .label x = 7
+    .label plotter = $10
+    // plotter = (byte*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    lda bitmap_plot_yhi,x
+    sta.z plotter+1
+    lda bitmap_plot_ylo,x
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
+    lda.z plotter
+    clc
+    adc.z __0
+    sta.z plotter
+    lda.z plotter+1
+    adc.z __0+1
+    sta.z plotter+1
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
+    lda bitmap_plot_bit,x
+    ldy #0
+    ora (plotter),y
+    sta (plotter),y
+    // }
+    rts
+}
 // Perform division on two signed 16-bit numbers with an initial remainder.
 // Returns dividend/divisor. The remainder will be set into the global variable rem16s.
 // Implemented using simple binary division
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-// divr16s(signed word zp(9) divisor, signed word zp(7) rem)
+// divr16s(signed word zp($12) divisor, signed word zp($10) rem)
 divr16s: {
-    .label remu = 7
-    .label divisoru = 9
-    .label resultu = $b
-    .label return = $b
-    .label divisor = 9
-    .label rem = 7
+    .label remu = $10
+    .label divisoru = $12
+    .label resultu = 5
+    .label return = 5
+    .label divisor = $12
+    .label rem = $10
     // if(dividend<0 || rem<0)
     lda.z rem+1
     bmi __b1
@@ -369,13 +498,13 @@ divr16s: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($d) dividend, word zp(9) divisor, word zp(7) rem)
+// divr16u(word zp($a) dividend, word zp($12) divisor, word zp($10) rem)
 divr16u: {
-    .label rem = 7
-    .label dividend = $d
-    .label quotient = $b
-    .label return = $b
-    .label divisor = 9
+    .label rem = $10
+    .label dividend = $a
+    .label quotient = 5
+    .label return = 5
+    .label divisor = $12
     ldx #0
     txa
     sta.z quotient
@@ -431,135 +560,6 @@ divr16u: {
     inx
     cpx #$10
     bne __b1
-    // }
-    rts
-}
-// Fill the screen with a specific char
-// screen_fill(byte* zp(3) screen)
-screen_fill: {
-    .const ch = $10
-    .label screen = 3
-    .label y = $13
-    lda #0
-    sta.z y
-    lda #<SCREEN
-    sta.z screen
-    lda #>SCREEN
-    sta.z screen+1
-  __b1:
-    ldx #0
-  __b2:
-    // *screen++ = ch
-    lda #ch
-    ldy #0
-    sta (screen),y
-    // *screen++ = ch;
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // for(byte x:0..39)
-    inx
-    cpx #$28
-    bne __b2
-    // for( byte y: 0..24)
-    inc.z y
-    lda #$19
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-// Clear all graphics on the bitmap
-bitmap_clear: {
-    .label bitmap = 5
-    .label y = $13
-    // bitmap = (byte*) { bitmap_plot_yhi[0], bitmap_plot_ylo[0] }
-    lda bitmap_plot_ylo
-    sta.z bitmap
-    lda bitmap_plot_yhi
-    sta.z bitmap+1
-    lda #0
-    sta.z y
-  __b1:
-    ldx #0
-  __b2:
-    // *bitmap++ = 0
-    lda #0
-    tay
-    sta (bitmap),y
-    // *bitmap++ = 0;
-    inc.z bitmap
-    bne !+
-    inc.z bitmap+1
-  !:
-    // for( byte x: 0..199 )
-    inx
-    cpx #$c8
-    bne __b2
-    // for( byte y: 0..39 )
-    inc.z y
-    lda #$28
-    cmp.z y
-    bne __b1
-    // }
-    rts
-}
-bitmap_init: {
-    .label __7 = $13
-    .label yoffs = 7
-    ldx #0
-    lda #$80
-  __b1:
-    // bitmap_plot_bit[x] = bits
-    sta bitmap_plot_bit,x
-    // bits >>= 1
-    lsr
-    // if(bits==0)
-    cmp #0
-    bne __b2
-    lda #$80
-  __b2:
-    // for(byte x : 0..255)
-    inx
-    cpx #0
-    bne __b1
-    lda #<BITMAP
-    sta.z yoffs
-    lda #>BITMAP
-    sta.z yoffs+1
-    ldx #0
-  __b3:
-    // y&$7
-    lda #7
-    sax.z __7
-    // <yoffs
-    lda.z yoffs
-    // y&$7 | <yoffs
-    ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    sta bitmap_plot_ylo,x
-    // >yoffs
-    lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
-    sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
-    lda #7
-    cmp.z __7
-    bne __b4
-    // yoffs = yoffs + 40*8
-    clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-  __b4:
-    // for(byte y : 0..255)
-    inx
-    cpx #0
-    bne __b3
     // }
     rts
 }

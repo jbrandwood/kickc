@@ -2,7 +2,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label screen = 2
+  .label screen = 6
 main: {
     // strip(msg1, ' ')
     ldx #' '
@@ -37,34 +37,9 @@ main: {
     // }
     rts
 }
-// print(byte* zp(4) msg)
-print: {
-    .label msg = 4
-  __b1:
-    // *screen++ = *msg++
-    ldy #0
-    lda (msg),y
-    sta (screen),y
-    // *screen++ = *msg++;
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    inc.z msg
-    bne !+
-    inc.z msg+1
-  !:
-    // while(*msg!=0)
-    ldy #0
-    lda (msg),y
-    cmp #0
-    bne __b1
-    // }
-    rts
-}
 // strip(byte* zp(8) p, byte register(X) c)
 strip: {
-    .label dest = 6
+    .label dest = 2
     .label p = 8
     .label p_1 = 4
     lda.z dest
@@ -106,6 +81,31 @@ strip: {
     lda.z p+1
     sta.z p_1+1
     jmp __b1
+}
+// print(byte* zp(4) msg)
+print: {
+    .label msg = 4
+  __b1:
+    // *screen++ = *msg++
+    ldy #0
+    lda (msg),y
+    sta (screen),y
+    // *screen++ = *msg++;
+    inc.z screen
+    bne !+
+    inc.z screen+1
+  !:
+    inc.z msg
+    bne !+
+    inc.z msg+1
+  !:
+    // while(*msg!=0)
+    ldy #0
+    lda (msg),y
+    cmp #0
+    bne __b1
+    // }
+    rts
 }
   msg1: .text "hello world!"
   .byte 0

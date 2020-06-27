@@ -117,105 +117,9 @@ main: {
     // }
     rts
 }
-// Print a signed char as hex at a specific screen position
-// print_schar_at(signed byte zp($b) b, byte* zp($c) at)
-print_schar_at: {
-    .label b = $b
-    .label at = $c
-    // if(b<0)
-    lda.z b
-    bmi __b1
-    // print_char_at(' ', at)
-    ldx #' '
-    jsr print_char_at
-  __b2:
-    // print_uchar_at((char)b, at+1)
-    inc.z print_uchar_at.at
-    bne !+
-    inc.z print_uchar_at.at+1
-  !:
-    jsr print_uchar_at
-    // }
-    rts
-  __b1:
-    // print_char_at('-', at)
-    ldx #'-'
-    jsr print_char_at
-    // b = -b
-    lda.z b
-    eor #$ff
-    clc
-    adc #1
-    sta.z b
-    jmp __b2
-}
-// Print a single char
-// print_char_at(byte register(X) ch, byte* zp($c) at)
-print_char_at: {
-    .label at = $c
-    // *(at) = ch
-    txa
-    ldy #0
-    sta (at),y
-    // }
-    rts
-}
-// Print a char as HEX at a specific position
-// print_uchar_at(byte zp($b) b, byte* zp($c) at)
-print_uchar_at: {
-    .label b = $b
-    .label at = $c
-    // b>>4
-    lda.z b
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char_at(print_hextab[b>>4], at)
-    tay
-    ldx print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char_at
-    // b&$f
-    lda #$f
-    and.z b
-    tay
-    // print_char_at(print_hextab[b&$f], at+1)
-    inc.z print_char_at.at
-    bne !+
-    inc.z print_char_at.at+1
-  !:
-    ldx print_hextab,y
-    jsr print_char_at
-    // }
-    rts
-}
-// fmul8(signed byte register(A) a, signed byte register(X) b)
-fmul8: {
-    // *ap = a
-    sta ap
-    // *bp = b
-    txa
-    sta bp
-    // asm
-    lda ap
-    sta A1+1
-    eor #$ff
-    sta A2+1
-    ldx bp
-    sec
-  A1:
-    lda mulf_sqr1,x
-  A2:
-    sbc mulf_sqr2,x
-    sta cp
-    // return *cp;
-    // }
-    rts
-}
 init_screen: {
     .const WHITE = 1
-    .label COLS = $c
+    .label COLS = $b
     // print_cls()
     jsr print_cls
     ldx #0
@@ -261,10 +165,106 @@ init_screen: {
     // }
     rts
 }
+// Print a signed char as hex at a specific screen position
+// print_schar_at(signed byte zp($d) b, byte* zp($b) at)
+print_schar_at: {
+    .label b = $d
+    .label at = $b
+    // if(b<0)
+    lda.z b
+    bmi __b1
+    // print_char_at(' ', at)
+    ldx #' '
+    jsr print_char_at
+  __b2:
+    // print_uchar_at((char)b, at+1)
+    inc.z print_uchar_at.at
+    bne !+
+    inc.z print_uchar_at.at+1
+  !:
+    jsr print_uchar_at
+    // }
+    rts
+  __b1:
+    // print_char_at('-', at)
+    ldx #'-'
+    jsr print_char_at
+    // b = -b
+    lda.z b
+    eor #$ff
+    clc
+    adc #1
+    sta.z b
+    jmp __b2
+}
+// fmul8(signed byte register(A) a, signed byte register(X) b)
+fmul8: {
+    // *ap = a
+    sta ap
+    // *bp = b
+    txa
+    sta bp
+    // asm
+    lda ap
+    sta A1+1
+    eor #$ff
+    sta A2+1
+    ldx bp
+    sec
+  A1:
+    lda mulf_sqr1,x
+  A2:
+    sbc mulf_sqr2,x
+    sta cp
+    // return *cp;
+    // }
+    rts
+}
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
     jsr memset
+    // }
+    rts
+}
+// Print a single char
+// print_char_at(byte register(X) ch, byte* zp($b) at)
+print_char_at: {
+    .label at = $b
+    // *(at) = ch
+    txa
+    ldy #0
+    sta (at),y
+    // }
+    rts
+}
+// Print a char as HEX at a specific position
+// print_uchar_at(byte zp($d) b, byte* zp($b) at)
+print_uchar_at: {
+    .label b = $d
+    .label at = $b
+    // b>>4
+    lda.z b
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char_at(print_hextab[b>>4], at)
+    tay
+    ldx print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char_at
+    // b&$f
+    lda #$f
+    and.z b
+    tay
+    // print_char_at(print_hextab[b&$f], at+1)
+    inc.z print_char_at.at
+    bne !+
+    inc.z print_char_at.at+1
+  !:
+    ldx print_hextab,y
+    jsr print_char_at
     // }
     rts
 }

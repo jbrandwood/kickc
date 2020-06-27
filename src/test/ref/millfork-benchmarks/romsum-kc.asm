@@ -5,11 +5,11 @@
 .pc = $80d "Program"
   .label rom = $e000
   .label print_screen = $400
-  .label last_time = $b
-  .label print_char_cursor = 4
+  .label last_time = 9
+  .label print_char_cursor = 7
   .label print_line_cursor = 2
-  .label Ticks = $d
-  .label Ticks_1 = $f
+  .label Ticks = $b
+  .label Ticks_1 = $d
 __start: {
     // last_time
     lda #<0
@@ -19,7 +19,7 @@ __start: {
     rts
 }
 main: {
-    .label i = $d
+    .label i = $b
     // start()
     jsr start
     lda #<print_screen
@@ -66,6 +66,102 @@ main: {
     sta.z print_char_cursor+1
     jmp __b1
 }
+start: {
+    .label LAST_TIME = last_time
+    // asm
+    jsr $ffde
+    sta LAST_TIME
+    stx LAST_TIME+1
+    // }
+    rts
+}
+end: {
+    // Ticks = last_time
+    lda.z last_time
+    sta.z Ticks
+    lda.z last_time+1
+    sta.z Ticks+1
+    // start()
+    jsr start
+    // last_time -= Ticks
+    lda.z last_time
+    sec
+    sbc.z Ticks
+    sta.z last_time
+    lda.z last_time+1
+    sbc.z Ticks+1
+    sta.z last_time+1
+    // Ticks = last_time
+    lda.z last_time
+    sta.z Ticks_1
+    lda.z last_time+1
+    sta.z Ticks_1+1
+    // print_uint(Ticks)
+    jsr print_uint
+    // print_ln()
+    jsr print_ln
+    // }
+    rts
+}
+sum: {
+    .label s = $d
+    .label p = 5
+    .label return = $d
+    lda #<rom
+    sta.z p
+    lda #>rom
+    sta.z p+1
+    lda #<0
+    sta.z s
+    sta.z s+1
+    tax
+  /* doing it page-by-page is faster than doing just one huge loop */
+  __b1:
+    // for (page = 0; page < 0x20; page++)
+    cpx #$20
+    bcc __b3
+    // }
+    rts
+  __b3:
+    ldy #0
+  __b2:
+    // tmp = p[i]
+    lda (p),y
+    // s += tmp
+    clc
+    adc.z s
+    sta.z s
+    bcc !+
+    inc.z s+1
+  !:
+    // i++;
+    iny
+    // while (i)
+    cpy #0
+    bne __b2
+    // p += 0x100
+    clc
+    lda.z p
+    adc #<$100
+    sta.z p
+    lda.z p+1
+    adc #>$100
+    sta.z p+1
+    // for (page = 0; page < 0x20; page++)
+    inx
+    jmp __b1
+}
+// Print a unsigned int as DECIMAL
+// print_uint_decimal(word zp($d) w)
+print_uint_decimal: {
+    .label w = $d
+    // utoa(w, decimal_digits, DECIMAL)
+    jsr utoa
+    // print_str(decimal_digits)
+    jsr print_str
+    // }
+    rts
+}
 // Print a newline
 print_ln: {
   __b1:
@@ -89,56 +185,16 @@ print_ln: {
     // }
     rts
 }
-// Print a unsigned int as DECIMAL
-// print_uint_decimal(word zp(7) w)
-print_uint_decimal: {
-    .label w = 7
-    // utoa(w, decimal_digits, DECIMAL)
-    jsr utoa
-    // print_str(decimal_digits)
-    jsr print_str
-    // }
-    rts
-}
-// Print a zero-terminated string
-// print_str(byte* zp(7) str)
-print_str: {
-    .label str = 7
-    lda #<decimal_digits
-    sta.z str
-    lda #>decimal_digits
-    sta.z str+1
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
+// Print a unsigned int as HEX
+// print_uint(word zp($d) w)
+print_uint: {
+    .label w = $d
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
     // }
     rts
 }
@@ -147,13 +203,13 @@ print_char: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(7) value, byte* zp(9) buffer)
+// utoa(word zp($d) value, byte* zp(5) buffer)
 utoa: {
     .const max_digits = 5
     .label digit_value = $f
-    .label buffer = 9
-    .label digit = 6
-    .label value = 7
+    .label buffer = 5
+    .label digit = 4
+    .label value = $d
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -219,6 +275,57 @@ utoa: {
     ldx #1
     jmp __b4
 }
+// Print a zero-terminated string
+// print_str(byte* zp($f) str)
+print_str: {
+    .label str = $f
+    lda #<decimal_digits
+    sta.z str
+    lda #>decimal_digits
+    sta.z str+1
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda DIGITS,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda DIGITS,x
+    jsr print_char
+    // }
+    rts
+}
 // Used to convert a single digit of an unsigned number value to a string representation
 // Counts a single digit up from '0' as long as the value is larger than sub.
 // Each time the digit is increased sub is subtracted from value.
@@ -227,12 +334,12 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(9) buffer, word zp(7) value, word zp($f) sub)
+// utoa_append(byte* zp(5) buffer, word zp($d) value, word zp($f) sub)
 utoa_append: {
-    .label buffer = 9
-    .label value = 7
+    .label buffer = 5
+    .label value = $d
     .label sub = $f
-    .label return = 7
+    .label return = $d
     ldx #0
   __b1:
     // while (value >= sub)
@@ -263,124 +370,17 @@ utoa_append: {
     sta.z value+1
     jmp __b1
 }
-sum: {
-    .label s = 7
-    .label p = 9
-    .label return = 7
-    lda #<rom
-    sta.z p
-    lda #>rom
-    sta.z p+1
-    lda #<0
-    sta.z s
-    sta.z s+1
-    tax
-  /* doing it page-by-page is faster than doing just one huge loop */
-  __b1:
-    // for (page = 0; page < 0x20; page++)
-    cpx #$20
-    bcc __b3
-    // }
-    rts
-  __b3:
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
     ldy #0
-  __b2:
-    // tmp = p[i]
-    lda (p),y
-    // s += tmp
-    clc
-    adc.z s
-    sta.z s
-    bcc !+
-    inc.z s+1
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
   !:
-    // i++;
-    iny
-    // while (i)
-    cpy #0
-    bne __b2
-    // p += 0x100
-    clc
-    lda.z p
-    adc #<$100
-    sta.z p
-    lda.z p+1
-    adc #>$100
-    sta.z p+1
-    // for (page = 0; page < 0x20; page++)
-    inx
-    jmp __b1
-}
-end: {
-    // Ticks = last_time
-    lda.z last_time
-    sta.z Ticks
-    lda.z last_time+1
-    sta.z Ticks+1
-    // start()
-    jsr start
-    // last_time -= Ticks
-    lda.z last_time
-    sec
-    sbc.z Ticks
-    sta.z last_time
-    lda.z last_time+1
-    sbc.z Ticks+1
-    sta.z last_time+1
-    // Ticks = last_time
-    lda.z last_time
-    sta.z Ticks_1
-    lda.z last_time+1
-    sta.z Ticks_1+1
-    // print_uint(Ticks)
-    jsr print_uint
-    // print_ln()
-    jsr print_ln
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp($f) w)
-print_uint: {
-    .label w = $f
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda DIGITS,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda DIGITS,x
-    jsr print_char
-    // }
-    rts
-}
-start: {
-    .label LAST_TIME = last_time
-    // asm
-    jsr $ffde
-    sta LAST_TIME
-    stx LAST_TIME+1
     // }
     rts
 }

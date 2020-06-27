@@ -14,7 +14,7 @@
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
-  .label next = $a
+  .label next = 2
 main: {
     // *BORDER_COLOR = 0
     lda #0
@@ -54,21 +54,110 @@ main: {
     sta.z next+1
     jmp __b1
 }
+// Initialize bitmap plotting tables
+bitmap_init: {
+    .label __7 = $10
+    .label yoffs = 2
+    ldx #0
+    lda #$80
+  __b1:
+    // bitmap_plot_bit[x] = bits
+    sta bitmap_plot_bit,x
+    // bits >>= 1
+    lsr
+    // if(bits==0)
+    cmp #0
+    bne __b2
+    lda #$80
+  __b2:
+    // for(char x : 0..255)
+    inx
+    cpx #0
+    bne __b1
+    lda #<BITMAP
+    sta.z yoffs
+    lda #>BITMAP
+    sta.z yoffs+1
+    ldx #0
+  __b3:
+    // y&$7
+    lda #7
+    sax.z __7
+    // <yoffs
+    lda.z yoffs
+    // y&$7 | <yoffs
+    ora.z __7
+    // bitmap_plot_ylo[y] = y&$7 | <yoffs
+    sta bitmap_plot_ylo,x
+    // >yoffs
+    lda.z yoffs+1
+    // bitmap_plot_yhi[y] = >yoffs
+    sta bitmap_plot_yhi,x
+    // if((y&$7)==7)
+    lda #7
+    cmp.z __7
+    bne __b4
+    // yoffs = yoffs + 40*8
+    clc
+    lda.z yoffs
+    adc #<$28*8
+    sta.z yoffs
+    lda.z yoffs+1
+    adc #>$28*8
+    sta.z yoffs+1
+  __b4:
+    // for(char y : 0..255)
+    inx
+    cpx #0
+    bne __b3
+    // }
+    rts
+}
+// Clear all graphics on the bitmap
+// bgcol - the background color to fill the screen with
+// fgcol - the foreground color to fill the screen with
+bitmap_clear: {
+    .const col = WHITE*$10+PURPLE
+    // memset(bitmap_screen, col, 1000uw)
+    ldx #col
+    lda #<SCREEN
+    sta.z memset.str
+    lda #>SCREEN
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
+    // memset(bitmap_gfx, 0, 8000uw)
+    ldx #0
+    lda #<BITMAP
+    sta.z memset.str
+    lda #>BITMAP
+    sta.z memset.str+1
+    lda #<$1f40
+    sta.z memset.num
+    lda #>$1f40
+    sta.z memset.num+1
+    jsr memset
+    // }
+    rts
+}
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp($a) x2)
+// bitmap_line(word zp(2) x2)
 bitmap_line: {
     .const x1 = 0
     .const y1 = 0
     .const y2 = $64
-    .label dx = $10
-    .label dy = 8
-    .label sx = $12
-    .label sy = 6
-    .label e1 = 4
-    .label e = $c
-    .label y = 2
-    .label x = $e
-    .label x2 = $a
+    .label dx = $11
+    .label dy = $c
+    .label sx = $13
+    .label sy = $e
+    .label e1 = 6
+    .label e = 8
+    .label y = 4
+    .label x = $a
+    .label x2 = 2
     // abs_u16(x2-x1)
     lda.z x2
     sta.z abs_u16.w
@@ -286,129 +375,13 @@ bitmap_line: {
     jsr bitmap_plot
     rts
 }
-// Plot a single dot in the bitmap
-// bitmap_plot(word zp($e) x, byte register(X) y)
-bitmap_plot: {
-    .label __0 = $16
-    .label plotter = $14
-    .label x = $e
-    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
-    lda bitmap_plot_yhi,x
-    sta.z plotter+1
-    lda bitmap_plot_ylo,x
-    sta.z plotter
-    // x & $fff8
-    lda.z x
-    and #<$fff8
-    sta.z __0
-    lda.z x+1
-    and #>$fff8
-    sta.z __0+1
-    // plotter += ( x & $fff8 )
-    lda.z plotter
-    clc
-    adc.z __0
-    sta.z plotter
-    lda.z plotter+1
-    adc.z __0+1
-    sta.z plotter+1
-    // <x
-    ldx.z x
-    // *plotter |= bitmap_plot_bit[<x]
-    lda bitmap_plot_bit,x
-    ldy #0
-    ora (plotter),y
-    sta (plotter),y
-    // }
-    rts
-}
-// Get the sign of a 16-bit unsigned number treated as a signed number.
-// Returns unsigned -1 if the number is
-// sgn_u16(word zp($14) w)
-sgn_u16: {
-    .label w = $14
-    .label return = 6
-    // >w
-    lda.z w+1
-    // >w&0x80
-    and #$80
-    // if(>w&0x80)
-    cmp #0
-    bne __b1
-    lda #<1
-    sta.z return
-    lda #>1
-    sta.z return+1
-    rts
-  __b1:
-    lda #<-1
-    sta.z return
-    sta.z return+1
-    // }
-    rts
-}
-// Get the absolute value of a 16-bit unsigned number treated as a signed number.
-// abs_u16(word zp(8) w)
-abs_u16: {
-    .label w = 8
-    .label return = 8
-    // >w
-    lda.z w+1
-    // >w&0x80
-    and #$80
-    // if(>w&0x80)
-    cmp #0
-    bne __b1
-    rts
-  __b1:
-    // return -w;
-    sec
-    lda #0
-    sbc.z return
-    sta.z return
-    lda #0
-    sbc.z return+1
-    sta.z return+1
-    // }
-    rts
-}
-// Clear all graphics on the bitmap
-// bgcol - the background color to fill the screen with
-// fgcol - the foreground color to fill the screen with
-bitmap_clear: {
-    .const col = WHITE*$10+PURPLE
-    // memset(bitmap_screen, col, 1000uw)
-    ldx #col
-    lda #<SCREEN
-    sta.z memset.str
-    lda #>SCREEN
-    sta.z memset.str+1
-    lda #<$3e8
-    sta.z memset.num
-    lda #>$3e8
-    sta.z memset.num+1
-    jsr memset
-    // memset(bitmap_gfx, 0, 8000uw)
-    ldx #0
-    lda #<BITMAP
-    sta.z memset.str
-    lda #>BITMAP
-    sta.z memset.str+1
-    lda #<$1f40
-    sta.z memset.num
-    lda #>$1f40
-    sta.z memset.num+1
-    jsr memset
-    // }
-    rts
-}
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($c) str, byte register(X) c, word zp($a) num)
+// memset(void* zp($a) str, byte register(X) c, word zp(8) num)
 memset: {
-    .label end = $a
-    .label dst = $c
-    .label num = $a
-    .label str = $c
+    .label end = 8
+    .label dst = $a
+    .label num = 8
+    .label str = $a
     // if(num>0)
     lda.z num
     bne !+
@@ -446,62 +419,89 @@ memset: {
   !:
     jmp __b2
 }
-// Initialize bitmap plotting tables
-bitmap_init: {
-    .label __7 = $18
-    .label yoffs = $e
-    ldx #0
-    lda #$80
-  __b1:
-    // bitmap_plot_bit[x] = bits
-    sta bitmap_plot_bit,x
-    // bits >>= 1
-    lsr
-    // if(bits==0)
+// Get the absolute value of a 16-bit unsigned number treated as a signed number.
+// abs_u16(word zp($c) w)
+abs_u16: {
+    .label w = $c
+    .label return = $c
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
     cmp #0
-    bne __b2
-    lda #$80
-  __b2:
-    // for(char x : 0..255)
-    inx
-    cpx #0
     bne __b1
-    lda #<BITMAP
-    sta.z yoffs
-    lda #>BITMAP
-    sta.z yoffs+1
-    ldx #0
-  __b3:
-    // y&$7
-    lda #7
-    sax.z __7
-    // <yoffs
-    lda.z yoffs
-    // y&$7 | <yoffs
-    ora.z __7
-    // bitmap_plot_ylo[y] = y&$7 | <yoffs
-    sta bitmap_plot_ylo,x
-    // >yoffs
-    lda.z yoffs+1
-    // bitmap_plot_yhi[y] = >yoffs
-    sta bitmap_plot_yhi,x
-    // if((y&$7)==7)
-    lda #7
-    cmp.z __7
-    bne __b4
-    // yoffs = yoffs + 40*8
+    rts
+  __b1:
+    // return -w;
+    sec
+    lda #0
+    sbc.z return
+    sta.z return
+    lda #0
+    sbc.z return+1
+    sta.z return+1
+    // }
+    rts
+}
+// Get the sign of a 16-bit unsigned number treated as a signed number.
+// Returns unsigned -1 if the number is
+// sgn_u16(word zp($15) w)
+sgn_u16: {
+    .label w = $15
+    .label return = $e
+    // >w
+    lda.z w+1
+    // >w&0x80
+    and #$80
+    // if(>w&0x80)
+    cmp #0
+    bne __b1
+    lda #<1
+    sta.z return
+    lda #>1
+    sta.z return+1
+    rts
+  __b1:
+    lda #<-1
+    sta.z return
+    sta.z return+1
+    // }
+    rts
+}
+// Plot a single dot in the bitmap
+// bitmap_plot(word zp($a) x, byte register(X) y)
+bitmap_plot: {
+    .label __0 = $17
+    .label plotter = $15
+    .label x = $a
+    // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
+    lda bitmap_plot_yhi,x
+    sta.z plotter+1
+    lda bitmap_plot_ylo,x
+    sta.z plotter
+    // x & $fff8
+    lda.z x
+    and #<$fff8
+    sta.z __0
+    lda.z x+1
+    and #>$fff8
+    sta.z __0+1
+    // plotter += ( x & $fff8 )
+    lda.z plotter
     clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-  __b4:
-    // for(char y : 0..255)
-    inx
-    cpx #0
-    bne __b3
+    adc.z __0
+    sta.z plotter
+    lda.z plotter+1
+    adc.z __0+1
+    sta.z plotter+1
+    // <x
+    ldx.z x
+    // *plotter |= bitmap_plot_bit[<x]
+    lda bitmap_plot_bit,x
+    ldy #0
+    ora (plotter),y
+    sta (plotter),y
     // }
     rts
 }

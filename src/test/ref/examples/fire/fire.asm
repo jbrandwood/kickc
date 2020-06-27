@@ -96,118 +96,37 @@ main: {
     sta D018
     jmp __b1
 }
-// Animate the fire on the passed screen. Uses BUFFER to store the current values.
-fire: {
-    .label screen = 2
-    .label screen_1 = $b
-    .label buffer = 4
-    .label buffer_1 = 9
-    lda.z screen
-    sta.z screen_1
-    lda.z screen+1
-    sta.z screen_1+1
-    lda #<BUFFER
-    sta.z buffer
-    lda #>BUFFER
-    sta.z buffer+1
+// Fill a screen (1000 chars) with a specific char
+// fillscreen(byte* zp(5) screen, byte register(X) fill)
+fillscreen: {
+    .label screen = 5
+    .label i = 7
+    lda #<0
+    sta.z i
+    sta.z i+1
   __b1:
-    // while (buffer != (BUFFER + (24 * 40)))
-    lda.z buffer+1
-    cmp #>BUFFER+$18*$28
-    bne __b2
-    lda.z buffer
-    cmp #<BUFFER+$18*$28
-    bne __b2
-    // screen = (screenbase + (24 * 40))
-    clc
-    lda.z screen
-    adc #<$18*$28
-    sta.z screen
-    lda.z screen+1
-    adc #>$18*$28
-    sta.z screen+1
-    lda #<BUFFER+$18*$28
-    sta.z buffer_1
-    lda #>BUFFER+$18*$28
-    sta.z buffer_1+1
-  __b6:
-    // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
-    lda.z buffer_1+1
-    cmp #>BUFFER+$19*$28
-    bne sid_rnd1
-    lda.z buffer_1
-    cmp #<BUFFER+$19*$28
-    bne sid_rnd1
-    // }
-    rts
-  sid_rnd1:
-    // return SID->CH3_OSC;
-    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
-    // (sid_rnd())/$10
-    lsr
-    lsr
-    lsr
-    lsr
-    // 0x30 + (sid_rnd())/$10
-    clc
-    adc #$30
-    // *buffer = 0x30 + (sid_rnd())/$10
+    // *screen++ = fill
+    txa
     ldy #0
-    sta (buffer_1),y
-    // *screen = *buffer = 0x30 + (sid_rnd())/$10
-    lda (buffer_1),y
     sta (screen),y
-    // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
+    // *screen++ = fill;
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    inc.z buffer_1
+    // for( unsigned int i : 0..999)
+    inc.z i
     bne !+
-    inc.z buffer_1+1
+    inc.z i+1
   !:
-    jmp __b6
-  __b2:
-    // buffer[40-1] + buffer[40-1]
-    ldy #$28-1
-    lda (buffer),y
-    clc
-    adc (buffer),y
-    // buffer[40-1] + buffer[40-1] + buffer[40]
-    ldy #$28
-    clc
-    adc (buffer),y
-    // buffer[40-1] + buffer[40-1] + buffer[40] + buffer[41]
-    ldy #$29
-    clc
-    adc (buffer),y
-    // c = ( buffer[40-1] + buffer[40-1] + buffer[40] + buffer[41] )/4
-    lsr
-    lsr
-    // if (c > 2)
-    cmp #2+1
-    bcc __b4
-    // c -= 3
-    sec
-    sbc #3
-  __b4:
-    // *buffer = c
-    ldy #0
-    sta (buffer),y
-    // *screen = *buffer = c
-    lda (buffer),y
-    sta (screen_1),y
-    // ++screen;
-    inc.z screen_1
-    bne !+
-    inc.z screen_1+1
-  !:
-    // ++buffer;
-    inc.z buffer
-    bne !+
-    inc.z buffer+1
-  !:
-    jmp __b1
+    lda.z i+1
+    cmp #>$3e8
+    bne __b1
+    lda.z i
+    cmp #<$3e8
+    bne __b1
+    // }
+    rts
 }
 // Make a fire-friendly charset in chars $00-$3f of the passed charset
 makecharset: {
@@ -215,11 +134,11 @@ makecharset: {
     .label __15 = $b
     .label __16 = $b
     .label __17 = $b
-    .label font = 2
-    .label font1 = 4
-    .label c = 6
-    .label i = 7
-    .label ii = 8
+    .label font = 5
+    .label font1 = 7
+    .label c = 2
+    .label i = 3
+    .label ii = 4
     .label __18 = $b
     lda #<CHARSET
     sta.z font
@@ -371,35 +290,116 @@ makecharset: {
     jmp __b1
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
-// Fill a screen (1000 chars) with a specific char
-// fillscreen(byte* zp($b) screen, byte register(X) fill)
-fillscreen: {
+// Animate the fire on the passed screen. Uses BUFFER to store the current values.
+fire: {
     .label screen = $b
-    .label i = 9
-    lda #<0
-    sta.z i
-    sta.z i+1
+    .label screen_1 = 7
+    .label buffer = 5
+    .label buffer_1 = 9
+    lda.z screen
+    sta.z screen_1
+    lda.z screen+1
+    sta.z screen_1+1
+    lda #<BUFFER
+    sta.z buffer
+    lda #>BUFFER
+    sta.z buffer+1
   __b1:
-    // *screen++ = fill
-    txa
+    // while (buffer != (BUFFER + (24 * 40)))
+    lda.z buffer+1
+    cmp #>BUFFER+$18*$28
+    bne __b2
+    lda.z buffer
+    cmp #<BUFFER+$18*$28
+    bne __b2
+    // screen = (screenbase + (24 * 40))
+    clc
+    lda.z screen
+    adc #<$18*$28
+    sta.z screen
+    lda.z screen+1
+    adc #>$18*$28
+    sta.z screen+1
+    lda #<BUFFER+$18*$28
+    sta.z buffer_1
+    lda #>BUFFER+$18*$28
+    sta.z buffer_1+1
+  __b6:
+    // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
+    lda.z buffer_1+1
+    cmp #>BUFFER+$19*$28
+    bne sid_rnd1
+    lda.z buffer_1
+    cmp #<BUFFER+$19*$28
+    bne sid_rnd1
+    // }
+    rts
+  sid_rnd1:
+    // return SID->CH3_OSC;
+    lda SID+OFFSET_STRUCT_MOS6581_SID_CH3_OSC
+    // (sid_rnd())/$10
+    lsr
+    lsr
+    lsr
+    lsr
+    // 0x30 + (sid_rnd())/$10
+    clc
+    adc #$30
+    // *buffer = 0x30 + (sid_rnd())/$10
     ldy #0
+    sta (buffer_1),y
+    // *screen = *buffer = 0x30 + (sid_rnd())/$10
+    lda (buffer_1),y
     sta (screen),y
-    // *screen++ = fill;
+    // for(; buffer != (BUFFER+(25*40)); ++screen, ++buffer)
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // for( unsigned int i : 0..999)
-    inc.z i
+    inc.z buffer_1
     bne !+
-    inc.z i+1
+    inc.z buffer_1+1
   !:
-    lda.z i+1
-    cmp #>$3e8
-    bne __b1
-    lda.z i
-    cmp #<$3e8
-    bne __b1
-    // }
-    rts
+    jmp __b6
+  __b2:
+    // buffer[40-1] + buffer[40-1]
+    ldy #$28-1
+    lda (buffer),y
+    clc
+    adc (buffer),y
+    // buffer[40-1] + buffer[40-1] + buffer[40]
+    ldy #$28
+    clc
+    adc (buffer),y
+    // buffer[40-1] + buffer[40-1] + buffer[40] + buffer[41]
+    ldy #$29
+    clc
+    adc (buffer),y
+    // c = ( buffer[40-1] + buffer[40-1] + buffer[40] + buffer[41] )/4
+    lsr
+    lsr
+    // if (c > 2)
+    cmp #2+1
+    bcc __b4
+    // c -= 3
+    sec
+    sbc #3
+  __b4:
+    // *buffer = c
+    ldy #0
+    sta (buffer),y
+    // *screen = *buffer = c
+    lda (buffer),y
+    sta (screen_1),y
+    // ++screen;
+    inc.z screen_1
+    bne !+
+    inc.z screen_1+1
+  !:
+    // ++buffer;
+    inc.z buffer
+    bne !+
+    inc.z buffer+1
+  !:
+    jmp __b1
 }

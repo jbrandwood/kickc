@@ -4,8 +4,8 @@
 .pc = $80d "Program"
   .label BG_COLOR = $d021
   .label print_screen = $400
-  .label print_char_cursor = $19
-  .label print_line_cursor = $17
+  .label print_char_cursor = $16
+  .label print_line_cursor = $10
 main: {
     // *BG_COLOR = 5
     lda #5
@@ -21,1145 +21,27 @@ main: {
     // }
     rts
 }
-// Perform many possible word multiplications (slow and fast) and compare the results
-mul16s_compare: {
-    .label a = $12
-    .label b = $14
-    .label ms = 2
-    .label mn = $a
-    .label mf = 6
-    .label i = $16
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    lda #0
-    sta.z i
-    lda #<-$7fff
-    sta.z b
-    lda #>-$7fff
-    sta.z b+1
-    lda #<-$7fff
-    sta.z a
-    lda #>-$7fff
-    sta.z a+1
-  __b1:
-    // print_str(".")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    ldy #0
-  __b2:
-    // a=a+3371
-    clc
-    lda.z a
-    adc #<$d2b
-    sta.z a
-    lda.z a+1
-    adc #>$d2b
-    sta.z a+1
-    // b=b+4093
-    clc
-    lda.z b
-    adc #<$ffd
-    sta.z b
-    lda.z b+1
-    adc #>$ffd
-    sta.z b+1
-    // muls16s(a, b)
-    jsr muls16s
-    // ms = muls16s(a, b)
-    // mul16s(a,b)
-    jsr mul16s
-    // mn = mul16s(a,b)
-    // mulf16s(a,b)
-    jsr mulf16s
-    // mf = mulf16s(a,b)
-    // if(ms!=mf)
-    lda.z ms
-    cmp.z mf
-    bne !+
-    lda.z ms+1
-    cmp.z mf+1
-    bne !+
-    lda.z ms+2
-    cmp.z mf+2
-    bne !+
-    lda.z ms+3
-    cmp.z mf+3
-    beq __b6
-  !:
-    ldx #0
-    jmp __b3
-  __b6:
-    ldx #1
-  __b3:
-    // if(ms!=mn)
-    lda.z ms
-    cmp.z mn
-    bne !+
-    lda.z ms+1
-    cmp.z mn+1
-    bne !+
-    lda.z ms+2
-    cmp.z mn+2
-    bne !+
-    lda.z ms+3
-    cmp.z mn+3
-    beq __b4
-  !:
-    ldx #0
-  __b4:
-    // if(ok==0)
-    cpx #0
-    bne __b5
-    // *BG_COLOR = 2
-    lda #2
-    sta BG_COLOR
-    // mul16s_error(a,b, ms, mn, mf)
-    jsr mul16s_error
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    jsr memset
     // }
     rts
-  __b5:
-    // for(byte j: 0..15)
-    iny
-    cpy #$10
-    bne __b2
-    // for(byte i: 0..15)
-    inc.z i
-    lda #$10
-    cmp.z i
-    beq !__b1+
-    jmp __b1
-  !__b1:
-    // print_ln()
-    jsr print_ln
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    // print_str("signed word multiply results match!")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_ln()
-    jsr print_ln
-    rts
-    str1: .text "signed word multiply results match!"
-    .byte 0
-}
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
-    // }
-    rts
-}
-// Print a zero-terminated string
-// print_str(byte* zp($20) str)
-print_str: {
-    .label str = $20
-  __b1:
-    // while(*str)
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    // }
-    rts
-  __b2:
-    // print_char(*(str++))
-    ldy #0
-    lda (str),y
-    jsr print_char
-    // print_char(*(str++));
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    jmp __b1
-}
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    inc.z print_char_cursor
-    bne !+
-    inc.z print_char_cursor+1
-  !:
-    // }
-    rts
-}
-// mul16s_error(signed word zp($12) a, signed word zp($14) b, signed dword zp(2) ms, signed dword zp($a) mn, signed dword zp(6) mf)
-mul16s_error: {
-    .label a = $12
-    .label b = $14
-    .label ms = 2
-    .label mn = $a
-    .label mf = 6
-    // print_str("signed word multiply mismatch ")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    // print_sint(a)
-    jsr print_sint
-    // print_str("*")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_sint(b)
-    lda.z b
-    sta.z print_sint.w
-    lda.z b+1
-    sta.z print_sint.w+1
-    jsr print_sint
-    // print_str(" slow:")
-    lda #<str2
-    sta.z print_str.str
-    lda #>str2
-    sta.z print_str.str+1
-    jsr print_str
-    // print_slong(ms)
-    jsr print_slong
-    // print_str(" / normal:")
-    lda #<str3
-    sta.z print_str.str
-    lda #>str3
-    sta.z print_str.str+1
-    jsr print_str
-    // print_slong(mn)
-    lda.z mn
-    sta.z print_slong.dw
-    lda.z mn+1
-    sta.z print_slong.dw+1
-    lda.z mn+2
-    sta.z print_slong.dw+2
-    lda.z mn+3
-    sta.z print_slong.dw+3
-    jsr print_slong
-    // print_str(" / fast:")
-    lda #<str4
-    sta.z print_str.str
-    lda #>str4
-    sta.z print_str.str+1
-    jsr print_str
-    // print_slong(mf)
-    lda.z mf
-    sta.z print_slong.dw
-    lda.z mf+1
-    sta.z print_slong.dw+1
-    lda.z mf+2
-    sta.z print_slong.dw+2
-    lda.z mf+3
-    sta.z print_slong.dw+3
-    jsr print_slong
-    // print_ln()
-    jsr print_ln
-    // }
-    rts
-    str: .text "signed word multiply mismatch "
-    .byte 0
-}
-// Print a signed long as HEX
-// print_slong(signed dword zp(2) dw)
-print_slong: {
-    .label dw = 2
-    // if(dw<0)
-    lda.z dw+3
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_ulong((unsigned long)dw)
-    jsr print_ulong
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // dw = -dw
-    sec
-    lda.z dw
-    eor #$ff
-    adc #0
-    sta.z dw
-    lda.z dw+1
-    eor #$ff
-    adc #0
-    sta.z dw+1
-    lda.z dw+2
-    eor #$ff
-    adc #0
-    sta.z dw+2
-    lda.z dw+3
-    eor #$ff
-    adc #0
-    sta.z dw+3
-    jmp __b2
-}
-// Print a unsigned long as HEX
-// print_ulong(dword zp(2) dw)
-print_ulong: {
-    .label dw = 2
-    // print_uint(>dw)
-    lda.z dw+2
-    sta.z print_uint.w
-    lda.z dw+3
-    sta.z print_uint.w+1
-    jsr print_uint
-    // print_uint(<dw)
-    lda.z dw
-    sta.z print_uint.w
-    lda.z dw+1
-    sta.z print_uint.w+1
-    jsr print_uint
-    // }
-    rts
-}
-// Print a unsigned int as HEX
-// print_uint(word zp($12) w)
-print_uint: {
-    .label w = $12
-    // print_uchar(>w)
-    ldx.z w+1
-    jsr print_uchar
-    // print_uchar(<w)
-    ldx.z w
-    jsr print_uchar
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
-    // }
-    rts
-}
-// Print a signed int as HEX
-// print_sint(signed word zp($12) w)
-print_sint: {
-    .label w = $12
-    // if(w<0)
-    lda.z w+1
-    bmi __b1
-    // print_char(' ')
-    lda #' '
-    jsr print_char
-  __b2:
-    // print_uint((unsigned int)w)
-    jsr print_uint
-    // }
-    rts
-  __b1:
-    // print_char('-')
-    lda #'-'
-    jsr print_char
-    // w = -w
-    sec
-    lda #0
-    sbc.z w
-    sta.z w
-    lda #0
-    sbc.z w+1
-    sta.z w+1
-    jmp __b2
-}
-// Fast multiply two signed ints to a signed double unsigned int result
-// Fixes offsets introduced by using unsigned multiplication
-// mulf16s(signed word zp($12) a, signed word zp($14) b)
-mulf16s: {
-    .label __6 = $1c
-    .label __9 = $1e
-    .label __11 = $1c
-    .label __12 = $1e
-    .label m = 6
-    .label return = 6
-    .label a = $12
-    .label b = $14
-    // mulf16u((unsigned int)a, (unsigned int)b)
-    lda.z a
-    sta.z mulf16u.a
-    lda.z a+1
-    sta.z mulf16u.a+1
-    lda.z b
-    sta.z mulf16u.b
-    lda.z b+1
-    sta.z mulf16u.b+1
-    jsr mulf16u
-    // mulf16u((unsigned int)a, (unsigned int)b)
-    // m = mulf16u((unsigned int)a, (unsigned int)b)
-    // if(a<0)
-    lda.z a+1
-    bpl __b1
-    // >m
-    lda.z m+2
-    sta.z __6
-    lda.z m+3
-    sta.z __6+1
-    // >m = (>m)-(unsigned int)b
-    lda.z __11
-    sec
-    sbc.z b
-    sta.z __11
-    lda.z __11+1
-    sbc.z b+1
-    sta.z __11+1
-    lda.z __11
-    sta.z m+2
-    lda.z __11+1
-    sta.z m+3
-  __b1:
-    // if(b<0)
-    lda.z b+1
-    bpl __b2
-    // >m
-    lda.z m+2
-    sta.z __9
-    lda.z m+3
-    sta.z __9+1
-    // >m = (>m)-(unsigned int)a
-    lda.z __12
-    sec
-    sbc.z a
-    sta.z __12
-    lda.z __12+1
-    sbc.z a+1
-    sta.z __12+1
-    lda.z __12
-    sta.z m+2
-    lda.z __12+1
-    sta.z m+3
-  __b2:
-    // return (signed long)m;
-    // }
-    rts
-}
-// Fast multiply two unsigned ints to a double unsigned int result
-// Done in assembler to utilize fast addition A+X
-// mulf16u(word zp($1c) a, word zp($1e) b)
-mulf16u: {
-    .label memA = $f8
-    .label memB = $fa
-    .label memR = $fc
-    .label return = 6
-    .label a = $1c
-    .label b = $1e
-    // *memA = a
-    lda.z a
-    sta memA
-    lda.z a+1
-    sta memA+1
-    // *memB = b
-    lda.z b
-    sta memB
-    lda.z b+1
-    sta memB+1
-    // asm
-    lda memA
-    sta sm1a+1
-    sta sm3a+1
-    sta sm5a+1
-    sta sm7a+1
-    eor #$ff
-    sta sm2a+1
-    sta sm4a+1
-    sta sm6a+1
-    sta sm8a+1
-    lda memA+1
-    sta sm1b+1
-    sta sm3b+1
-    sta sm5b+1
-    sta sm7b+1
-    eor #$ff
-    sta sm2b+1
-    sta sm4b+1
-    sta sm6b+1
-    sta sm8b+1
-    ldx memB
-    sec
-  sm1a:
-    lda mulf_sqr1_lo,x
-  sm2a:
-    sbc mulf_sqr2_lo,x
-    sta memR+0
-  sm3a:
-    lda mulf_sqr1_hi,x
-  sm4a:
-    sbc mulf_sqr2_hi,x
-    sta _AA+1
-    sec
-  sm1b:
-    lda mulf_sqr1_lo,x
-  sm2b:
-    sbc mulf_sqr2_lo,x
-    sta _cc+1
-  sm3b:
-    lda mulf_sqr1_hi,x
-  sm4b:
-    sbc mulf_sqr2_hi,x
-    sta _CC+1
-    ldx memB+1
-    sec
-  sm5a:
-    lda mulf_sqr1_lo,x
-  sm6a:
-    sbc mulf_sqr2_lo,x
-    sta _bb+1
-  sm7a:
-    lda mulf_sqr1_hi,x
-  sm8a:
-    sbc mulf_sqr2_hi,x
-    sta _BB+1
-    sec
-  sm5b:
-    lda mulf_sqr1_lo,x
-  sm6b:
-    sbc mulf_sqr2_lo,x
-    sta _dd+1
-  sm7b:
-    lda mulf_sqr1_hi,x
-  sm8b:
-    sbc mulf_sqr2_hi,x
-    sta memR+3
-    clc
-  _AA:
-    lda #0
-  _bb:
-    adc #0
-    sta memR+1
-  _BB:
-    lda #0
-  _CC:
-    adc #0
-    sta memR+2
-    bcc !+
-    inc memR+3
-    clc
-  !:
-  _cc:
-    lda #0
-    adc memR+1
-    sta memR+1
-  _dd:
-    lda #0
-    adc memR+2
-    sta memR+2
-    bcc !+
-    inc memR+3
-  !:
-    // return *memR;
-    lda memR
-    sta.z return
-    lda memR+1
-    sta.z return+1
-    lda memR+2
-    sta.z return+2
-    lda memR+3
-    sta.z return+3
-    // }
-    rts
-}
-// Multiply of two signed ints to a signed long
-// Fixes offsets introduced by using unsigned multiplication
-// mul16s(signed word zp($12) a, signed word zp($14) b)
-mul16s: {
-    .label __6 = $1e
-    .label __9 = $20
-    .label __11 = $1e
-    .label __12 = $20
-    .label m = $a
-    .label return = $a
-    .label a = $12
-    .label b = $14
-    // mul16u((unsigned int)a, (unsigned int) b)
-    lda.z a
-    sta.z mul16u.a
-    lda.z a+1
-    sta.z mul16u.a+1
-    lda.z b
-    sta.z mul16u.b
-    lda.z b+1
-    sta.z mul16u.b+1
-    jsr mul16u
-    // mul16u((unsigned int)a, (unsigned int) b)
-    // m = mul16u((unsigned int)a, (unsigned int) b)
-    // if(a<0)
-    lda.z a+1
-    bpl __b1
-    // >m
-    lda.z m+2
-    sta.z __6
-    lda.z m+3
-    sta.z __6+1
-    // >m = (>m)-(unsigned int)b
-    lda.z __11
-    sec
-    sbc.z b
-    sta.z __11
-    lda.z __11+1
-    sbc.z b+1
-    sta.z __11+1
-    lda.z __11
-    sta.z m+2
-    lda.z __11+1
-    sta.z m+3
-  __b1:
-    // if(b<0)
-    lda.z b+1
-    bpl __b2
-    // >m
-    lda.z m+2
-    sta.z __9
-    lda.z m+3
-    sta.z __9+1
-    // >m = (>m)-(unsigned int)a
-    lda.z __12
-    sec
-    sbc.z a
-    sta.z __12
-    lda.z __12+1
-    sbc.z a+1
-    sta.z __12+1
-    lda.z __12
-    sta.z m+2
-    lda.z __12+1
-    sta.z m+3
-  __b2:
-    // return (signed long)m;
-    // }
-    rts
-}
-// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($20) a, word zp($1e) b)
-mul16u: {
-    .label mb = $e
-    .label a = $20
-    .label res = $a
-    .label b = $1e
-    .label return = $a
-    // mb = b
-    lda.z b
-    sta.z mb
-    lda.z b+1
-    sta.z mb+1
-    lda #0
-    sta.z mb+2
-    sta.z mb+3
-    sta.z res
-    sta.z res+1
-    lda #<0>>$10
-    sta.z res+2
-    lda #>0>>$10
-    sta.z res+3
-  __b1:
-    // while(a!=0)
-    lda.z a
-    bne __b2
-    lda.z a+1
-    bne __b2
-    // }
-    rts
-  __b2:
-    // a&1
-    lda #1
-    and.z a
-    // if( (a&1) != 0)
-    cmp #0
-    beq __b3
-    // res = res + mb
-    lda.z res
-    clc
-    adc.z mb
-    sta.z res
-    lda.z res+1
-    adc.z mb+1
-    sta.z res+1
-    lda.z res+2
-    adc.z mb+2
-    sta.z res+2
-    lda.z res+3
-    adc.z mb+3
-    sta.z res+3
-  __b3:
-    // a = a>>1
-    lsr.z a+1
-    ror.z a
-    // mb = mb<<1
-    asl.z mb
-    rol.z mb+1
-    rol.z mb+2
-    rol.z mb+3
-    jmp __b1
-}
-// Slow multiplication of signed words
-// Perform a signed multiplication by repeated addition/subtraction
-// muls16s(signed word zp($12) a, signed word zp($14) b)
-muls16s: {
-    .label m = 2
-    .label j = $1c
-    .label return = 2
-    .label i = $1e
-    .label a = $12
-    .label b = $14
-    // if(a<0)
-    lda.z a+1
-    bmi __b8
-    // if (a>0)
-    bmi __b7
-    bne !+
-    lda.z a
-    beq __b7
-  !:
-    lda #<0
-    sta.z m
-    sta.z m+1
-    lda #<0>>$10
-    sta.z m+2
-    lda #>0>>$10
-    sta.z m+3
-    lda #<0
-    sta.z j
-    sta.z j+1
-  __b3:
-    // for(signed word j = 0; j!=a; j++)
-    lda.z j+1
-    cmp.z a+1
-    bne __b4
-    lda.z j
-    cmp.z a
-    bne __b4
-    rts
-  __b7:
-    lda #<0
-    sta.z return
-    sta.z return+1
-    lda #<0>>$10
-    sta.z return+2
-    lda #>0>>$10
-    sta.z return+3
-    // }
-    rts
-  __b4:
-    // m = m + b
-    lda.z b+1
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z $ff
-    lda.z m
-    clc
-    adc.z b
-    sta.z m
-    lda.z m+1
-    adc.z b+1
-    sta.z m+1
-    lda.z m+2
-    adc.z $ff
-    sta.z m+2
-    lda.z m+3
-    adc.z $ff
-    sta.z m+3
-    // for(signed word j = 0; j!=a; j++)
-    inc.z j
-    bne !+
-    inc.z j+1
-  !:
-    jmp __b3
-  __b8:
-    lda #<0
-    sta.z m
-    sta.z m+1
-    lda #<0>>$10
-    sta.z m+2
-    lda #>0>>$10
-    sta.z m+3
-    lda #<0
-    sta.z i
-    sta.z i+1
-  __b5:
-    // for(signed word i = 0; i!=a; i--)
-    lda.z i+1
-    cmp.z a+1
-    bne __b6
-    lda.z i
-    cmp.z a
-    bne __b6
-    rts
-  __b6:
-    // m = m - b
-    lda.z b+1
-    ora #$7f
-    bmi !+
-    lda #0
-  !:
-    sta.z $ff
-    sec
-    lda.z m
-    sbc.z b
-    sta.z m
-    lda.z m+1
-    sbc.z b+1
-    sta.z m+1
-    lda.z m+2
-    sbc.z $ff
-    sta.z m+2
-    lda.z m+3
-    sbc.z $ff
-    sta.z m+3
-    // for(signed word i = 0; i!=a; i--)
-    lda.z i
-    bne !+
-    dec.z i+1
-  !:
-    dec.z i
-    jmp __b5
-}
-// Perform many possible word multiplications (slow and fast) and compare the results
-mul16u_compare: {
-    .label a = $1c
-    .label b = $1e
-    .label ms = 2
-    .label mn = $a
-    .label mf = 6
-    .label i = $16
-    lda #0
-    sta.z i
-    sta.z b
-    sta.z b+1
-    sta.z a
-    sta.z a+1
-    lda #<print_screen
-    sta.z print_char_cursor
-    lda #>print_screen
-    sta.z print_char_cursor+1
-  __b1:
-    // print_str(".")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    ldy #0
-  __b2:
-    // a=a+3371
-    clc
-    lda.z a
-    adc #<$d2b
-    sta.z a
-    lda.z a+1
-    adc #>$d2b
-    sta.z a+1
-    // b=b+4093
-    clc
-    lda.z b
-    adc #<$ffd
-    sta.z b
-    lda.z b+1
-    adc #>$ffd
-    sta.z b+1
-    // muls16u(a, b)
-    jsr muls16u
-    // ms = muls16u(a, b)
-    // mul16u(a,b)
-    lda.z a
-    sta.z mul16u.a
-    lda.z a+1
-    sta.z mul16u.a+1
-    jsr mul16u
-    // mul16u(a,b)
-    // mn = mul16u(a,b)
-    // mulf16u(a,b)
-    jsr mulf16u
-    // mulf16u(a,b)
-    // mf = mulf16u(a,b)
-    // if(ms!=mf)
-    lda.z ms
-    cmp.z mf
-    bne !+
-    lda.z ms+1
-    cmp.z mf+1
-    bne !+
-    lda.z ms+2
-    cmp.z mf+2
-    bne !+
-    lda.z ms+3
-    cmp.z mf+3
-    beq __b6
-  !:
-    ldx #0
-    jmp __b3
-  __b6:
-    ldx #1
-  __b3:
-    // if(ms!=mn)
-    lda.z ms
-    cmp.z mn
-    bne !+
-    lda.z ms+1
-    cmp.z mn+1
-    bne !+
-    lda.z ms+2
-    cmp.z mn+2
-    bne !+
-    lda.z ms+3
-    cmp.z mn+3
-    beq __b4
-  !:
-    ldx #0
-  __b4:
-    // if(ok==0)
-    cpx #0
-    bne __b5
-    // *BG_COLOR = 2
-    lda #2
-    sta BG_COLOR
-    // mul16u_error(a,b, ms, mn, mf)
-    lda.z a
-    sta.z mul16u_error.a
-    lda.z a+1
-    sta.z mul16u_error.a+1
-    jsr mul16u_error
-    // }
-    rts
-  __b5:
-    // for(byte j: 0..15)
-    iny
-    cpy #$10
-    bne __b2
-    // for(byte i: 0..15)
-    inc.z i
-    lda #$10
-    cmp.z i
-    beq !__b1+
-    jmp __b1
-  !__b1:
-    // print_ln()
-    lda #<print_screen
-    sta.z print_line_cursor
-    lda #>print_screen
-    sta.z print_line_cursor+1
-    jsr print_ln
-    lda.z print_line_cursor
-    sta.z print_char_cursor
-    lda.z print_line_cursor+1
-    sta.z print_char_cursor+1
-    // print_str("word multiply results match!")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_ln()
-    jsr print_ln
-    rts
-    str1: .text "word multiply results match!"
-    .byte 0
-}
-// mul16u_error(word zp($12) a, word zp($1e) b, dword zp(2) ms, dword zp($a) mn, dword zp(6) mf)
-mul16u_error: {
-    .label a = $12
-    .label b = $1e
-    .label ms = 2
-    .label mn = $a
-    .label mf = 6
-    // print_str("multiply mismatch ")
-    lda #<str
-    sta.z print_str.str
-    lda #>str
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uint(a)
-    jsr print_uint
-    // print_str("*")
-    lda #<str1
-    sta.z print_str.str
-    lda #>str1
-    sta.z print_str.str+1
-    jsr print_str
-    // print_uint(b)
-    lda.z b
-    sta.z print_uint.w
-    lda.z b+1
-    sta.z print_uint.w+1
-    jsr print_uint
-    // print_str(" slow:")
-    lda #<str2
-    sta.z print_str.str
-    lda #>str2
-    sta.z print_str.str+1
-    jsr print_str
-    // print_ulong(ms)
-    jsr print_ulong
-    // print_str(" / normal:")
-    lda #<str3
-    sta.z print_str.str
-    lda #>str3
-    sta.z print_str.str+1
-    jsr print_str
-    // print_ulong(mn)
-    lda.z mn
-    sta.z print_ulong.dw
-    lda.z mn+1
-    sta.z print_ulong.dw+1
-    lda.z mn+2
-    sta.z print_ulong.dw+2
-    lda.z mn+3
-    sta.z print_ulong.dw+3
-    jsr print_ulong
-    // print_str(" / fast:")
-    lda #<str4
-    sta.z print_str.str
-    lda #>str4
-    sta.z print_str.str+1
-    jsr print_str
-    // print_ulong(mf)
-    lda.z mf
-    sta.z print_ulong.dw
-    lda.z mf+1
-    sta.z print_ulong.dw+1
-    lda.z mf+2
-    sta.z print_ulong.dw+2
-    lda.z mf+3
-    sta.z print_ulong.dw+3
-    jsr print_ulong
-    // print_ln()
-    lda #<print_screen
-    sta.z print_line_cursor
-    lda #>print_screen
-    sta.z print_line_cursor+1
-    jsr print_ln
-    // }
-    rts
-    str: .text "multiply mismatch "
-    .byte 0
-}
-// Slow multiplication of unsigned words
-// Calculate an unsigned multiplication by repeated addition
-// muls16u(word zp($1c) a, word zp($1e) b)
-muls16u: {
-    .label return = 2
-    .label m = 2
-    .label i = $12
-    .label a = $1c
-    .label b = $1e
-    // if(a!=0)
-    lda.z a
-    bne !+
-    lda.z a+1
-    beq __b4
-  !:
-    lda #<0
-    sta.z m
-    sta.z m+1
-    lda #<0>>$10
-    sta.z m+2
-    lda #>0>>$10
-    sta.z m+3
-    lda #<0
-    sta.z i
-    sta.z i+1
-  __b2:
-    // for(word i = 0; i!=a; i++)
-    lda.z i+1
-    cmp.z a+1
-    bne __b3
-    lda.z i
-    cmp.z a
-    bne __b3
-    rts
-  __b4:
-    lda #<0
-    sta.z return
-    sta.z return+1
-    lda #<0>>$10
-    sta.z return+2
-    lda #>0>>$10
-    sta.z return+3
-    // }
-    rts
-  __b3:
-    // m = m + b
-    lda.z m
-    clc
-    adc.z b
-    sta.z m
-    lda.z m+1
-    adc.z b+1
-    sta.z m+1
-    lda.z m+2
-    adc #0
-    sta.z m+2
-    lda.z m+3
-    adc #0
-    sta.z m+3
-    // for(word i = 0; i!=a; i++)
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    jmp __b2
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $16
+    .label c = 2
     // Counter used for determining x%2==0
-    .label sqr1_hi = $17
+    .label sqr1_hi = $1a
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
     .label sqr = $1c
-    .label sqr1_lo = $14
+    .label sqr1_lo = $18
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = $20
-    .label sqr2_lo = $19
+    .label sqr2_hi = 6
+    .label sqr2_lo = 4
     //Start with g(0)=f(255)
-    .label dir = $1b
+    .label dir = 3
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -1285,12 +167,273 @@ mulf_init: {
   !:
     jmp __b1
 }
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    jsr memset
+// Perform many possible word multiplications (slow and fast) and compare the results
+mul16u_compare: {
+    .label a = $18
+    .label b = $1a
+    .label ms = 8
+    .label mn = $c
+    .label mf = $12
+    .label i = 2
+    lda #0
+    sta.z i
+    sta.z b
+    sta.z b+1
+    sta.z a
+    sta.z a+1
+    lda #<print_screen
+    sta.z print_char_cursor
+    lda #>print_screen
+    sta.z print_char_cursor+1
+  __b1:
+    // print_str(".")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    ldy #0
+  __b2:
+    // a=a+3371
+    clc
+    lda.z a
+    adc #<$d2b
+    sta.z a
+    lda.z a+1
+    adc #>$d2b
+    sta.z a+1
+    // b=b+4093
+    clc
+    lda.z b
+    adc #<$ffd
+    sta.z b
+    lda.z b+1
+    adc #>$ffd
+    sta.z b+1
+    // muls16u(a, b)
+    jsr muls16u
+    // ms = muls16u(a, b)
+    // mul16u(a,b)
+    lda.z a
+    sta.z mul16u.a
+    lda.z a+1
+    sta.z mul16u.a+1
+    jsr mul16u
+    // mul16u(a,b)
+    // mn = mul16u(a,b)
+    // mulf16u(a,b)
+    jsr mulf16u
+    // mulf16u(a,b)
+    // mf = mulf16u(a,b)
+    // if(ms!=mf)
+    lda.z ms
+    cmp.z mf
+    bne !+
+    lda.z ms+1
+    cmp.z mf+1
+    bne !+
+    lda.z ms+2
+    cmp.z mf+2
+    bne !+
+    lda.z ms+3
+    cmp.z mf+3
+    beq __b6
+  !:
+    ldx #0
+    jmp __b3
+  __b6:
+    ldx #1
+  __b3:
+    // if(ms!=mn)
+    lda.z ms
+    cmp.z mn
+    bne !+
+    lda.z ms+1
+    cmp.z mn+1
+    bne !+
+    lda.z ms+2
+    cmp.z mn+2
+    bne !+
+    lda.z ms+3
+    cmp.z mn+3
+    beq __b4
+  !:
+    ldx #0
+  __b4:
+    // if(ok==0)
+    cpx #0
+    bne __b5
+    // *BG_COLOR = 2
+    lda #2
+    sta BG_COLOR
+    // mul16u_error(a,b, ms, mn, mf)
+    jsr mul16u_error
     // }
     rts
+  __b5:
+    // for(byte j: 0..15)
+    iny
+    cpy #$10
+    bne __b2
+    // for(byte i: 0..15)
+    inc.z i
+    lda #$10
+    cmp.z i
+    beq !__b1+
+    jmp __b1
+  !__b1:
+    // print_ln()
+    lda #<print_screen
+    sta.z print_line_cursor
+    lda #>print_screen
+    sta.z print_line_cursor+1
+    jsr print_ln
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    // print_str("word multiply results match!")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_ln()
+    jsr print_ln
+    rts
+    str1: .text "word multiply results match!"
+    .byte 0
+}
+// Perform many possible word multiplications (slow and fast) and compare the results
+mul16s_compare: {
+    .label a = 4
+    .label b = 6
+    .label ms = 8
+    .label mn = $c
+    .label mf = $12
+    .label i = 3
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    lda #0
+    sta.z i
+    lda #<-$7fff
+    sta.z b
+    lda #>-$7fff
+    sta.z b+1
+    lda #<-$7fff
+    sta.z a
+    lda #>-$7fff
+    sta.z a+1
+  __b1:
+    // print_str(".")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    ldy #0
+  __b2:
+    // a=a+3371
+    clc
+    lda.z a
+    adc #<$d2b
+    sta.z a
+    lda.z a+1
+    adc #>$d2b
+    sta.z a+1
+    // b=b+4093
+    clc
+    lda.z b
+    adc #<$ffd
+    sta.z b
+    lda.z b+1
+    adc #>$ffd
+    sta.z b+1
+    // muls16s(a, b)
+    jsr muls16s
+    // ms = muls16s(a, b)
+    // mul16s(a,b)
+    jsr mul16s
+    // mn = mul16s(a,b)
+    // mulf16s(a,b)
+    jsr mulf16s
+    // mf = mulf16s(a,b)
+    // if(ms!=mf)
+    lda.z ms
+    cmp.z mf
+    bne !+
+    lda.z ms+1
+    cmp.z mf+1
+    bne !+
+    lda.z ms+2
+    cmp.z mf+2
+    bne !+
+    lda.z ms+3
+    cmp.z mf+3
+    beq __b6
+  !:
+    ldx #0
+    jmp __b3
+  __b6:
+    ldx #1
+  __b3:
+    // if(ms!=mn)
+    lda.z ms
+    cmp.z mn
+    bne !+
+    lda.z ms+1
+    cmp.z mn+1
+    bne !+
+    lda.z ms+2
+    cmp.z mn+2
+    bne !+
+    lda.z ms+3
+    cmp.z mn+3
+    beq __b4
+  !:
+    ldx #0
+  __b4:
+    // if(ok==0)
+    cpx #0
+    bne __b5
+    // *BG_COLOR = 2
+    lda #2
+    sta BG_COLOR
+    // mul16s_error(a,b, ms, mn, mf)
+    jsr mul16s_error
+    // }
+    rts
+  __b5:
+    // for(byte j: 0..15)
+    iny
+    cpy #$10
+    bne __b2
+    // for(byte i: 0..15)
+    inc.z i
+    lda #$10
+    cmp.z i
+    beq !__b1+
+    jmp __b1
+  !__b1:
+    // print_ln()
+    jsr print_ln
+    lda.z print_line_cursor
+    sta.z print_char_cursor
+    lda.z print_line_cursor+1
+    sta.z print_char_cursor+1
+    // print_str("signed word multiply results match!")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_ln()
+    jsr print_ln
+    rts
+    str1: .text "signed word multiply results match!"
+    .byte 0
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -1298,7 +441,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = $20
+    .label dst = $1c
     lda #<str
     sta.z dst
     lda #>str
@@ -1324,6 +467,863 @@ memset: {
     inc.z dst+1
   !:
     jmp __b1
+}
+// Print a zero-terminated string
+// print_str(byte* zp($1c) str)
+print_str: {
+    .label str = $1c
+  __b1:
+    // while(*str)
+    ldy #0
+    lda (str),y
+    cmp #0
+    bne __b2
+    // }
+    rts
+  __b2:
+    // print_char(*(str++))
+    ldy #0
+    lda (str),y
+    jsr print_char
+    // print_char(*(str++));
+    inc.z str
+    bne !+
+    inc.z str+1
+  !:
+    jmp __b1
+}
+// Slow multiplication of unsigned words
+// Calculate an unsigned multiplication by repeated addition
+// muls16u(word zp($18) a, word zp($1a) b)
+muls16u: {
+    .label return = 8
+    .label m = 8
+    .label i = $1c
+    .label a = $18
+    .label b = $1a
+    // if(a!=0)
+    lda.z a
+    bne !+
+    lda.z a+1
+    beq __b4
+  !:
+    lda #<0
+    sta.z m
+    sta.z m+1
+    lda #<0>>$10
+    sta.z m+2
+    lda #>0>>$10
+    sta.z m+3
+    lda #<0
+    sta.z i
+    sta.z i+1
+  __b2:
+    // for(word i = 0; i!=a; i++)
+    lda.z i+1
+    cmp.z a+1
+    bne __b3
+    lda.z i
+    cmp.z a
+    bne __b3
+    rts
+  __b4:
+    lda #<0
+    sta.z return
+    sta.z return+1
+    lda #<0>>$10
+    sta.z return+2
+    lda #>0>>$10
+    sta.z return+3
+    // }
+    rts
+  __b3:
+    // m = m + b
+    lda.z m
+    clc
+    adc.z b
+    sta.z m
+    lda.z m+1
+    adc.z b+1
+    sta.z m+1
+    lda.z m+2
+    adc #0
+    sta.z m+2
+    lda.z m+3
+    adc #0
+    sta.z m+3
+    // for(word i = 0; i!=a; i++)
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    jmp __b2
+}
+// Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
+// mul16u(word zp($1c) a, word zp($1a) b)
+mul16u: {
+    .label mb = $12
+    .label a = $1c
+    .label res = $c
+    .label b = $1a
+    .label return = $c
+    // mb = b
+    lda.z b
+    sta.z mb
+    lda.z b+1
+    sta.z mb+1
+    lda #0
+    sta.z mb+2
+    sta.z mb+3
+    sta.z res
+    sta.z res+1
+    lda #<0>>$10
+    sta.z res+2
+    lda #>0>>$10
+    sta.z res+3
+  __b1:
+    // while(a!=0)
+    lda.z a
+    bne __b2
+    lda.z a+1
+    bne __b2
+    // }
+    rts
+  __b2:
+    // a&1
+    lda #1
+    and.z a
+    // if( (a&1) != 0)
+    cmp #0
+    beq __b3
+    // res = res + mb
+    lda.z res
+    clc
+    adc.z mb
+    sta.z res
+    lda.z res+1
+    adc.z mb+1
+    sta.z res+1
+    lda.z res+2
+    adc.z mb+2
+    sta.z res+2
+    lda.z res+3
+    adc.z mb+3
+    sta.z res+3
+  __b3:
+    // a = a>>1
+    lsr.z a+1
+    ror.z a
+    // mb = mb<<1
+    asl.z mb
+    rol.z mb+1
+    rol.z mb+2
+    rol.z mb+3
+    jmp __b1
+}
+// Fast multiply two unsigned ints to a double unsigned int result
+// Done in assembler to utilize fast addition A+X
+// mulf16u(word zp($18) a, word zp($1a) b)
+mulf16u: {
+    .label memA = $f8
+    .label memB = $fa
+    .label memR = $fc
+    .label return = $12
+    .label a = $18
+    .label b = $1a
+    // *memA = a
+    lda.z a
+    sta memA
+    lda.z a+1
+    sta memA+1
+    // *memB = b
+    lda.z b
+    sta memB
+    lda.z b+1
+    sta memB+1
+    // asm
+    lda memA
+    sta sm1a+1
+    sta sm3a+1
+    sta sm5a+1
+    sta sm7a+1
+    eor #$ff
+    sta sm2a+1
+    sta sm4a+1
+    sta sm6a+1
+    sta sm8a+1
+    lda memA+1
+    sta sm1b+1
+    sta sm3b+1
+    sta sm5b+1
+    sta sm7b+1
+    eor #$ff
+    sta sm2b+1
+    sta sm4b+1
+    sta sm6b+1
+    sta sm8b+1
+    ldx memB
+    sec
+  sm1a:
+    lda mulf_sqr1_lo,x
+  sm2a:
+    sbc mulf_sqr2_lo,x
+    sta memR+0
+  sm3a:
+    lda mulf_sqr1_hi,x
+  sm4a:
+    sbc mulf_sqr2_hi,x
+    sta _AA+1
+    sec
+  sm1b:
+    lda mulf_sqr1_lo,x
+  sm2b:
+    sbc mulf_sqr2_lo,x
+    sta _cc+1
+  sm3b:
+    lda mulf_sqr1_hi,x
+  sm4b:
+    sbc mulf_sqr2_hi,x
+    sta _CC+1
+    ldx memB+1
+    sec
+  sm5a:
+    lda mulf_sqr1_lo,x
+  sm6a:
+    sbc mulf_sqr2_lo,x
+    sta _bb+1
+  sm7a:
+    lda mulf_sqr1_hi,x
+  sm8a:
+    sbc mulf_sqr2_hi,x
+    sta _BB+1
+    sec
+  sm5b:
+    lda mulf_sqr1_lo,x
+  sm6b:
+    sbc mulf_sqr2_lo,x
+    sta _dd+1
+  sm7b:
+    lda mulf_sqr1_hi,x
+  sm8b:
+    sbc mulf_sqr2_hi,x
+    sta memR+3
+    clc
+  _AA:
+    lda #0
+  _bb:
+    adc #0
+    sta memR+1
+  _BB:
+    lda #0
+  _CC:
+    adc #0
+    sta memR+2
+    bcc !+
+    inc memR+3
+    clc
+  !:
+  _cc:
+    lda #0
+    adc memR+1
+    sta memR+1
+  _dd:
+    lda #0
+    adc memR+2
+    sta memR+2
+    bcc !+
+    inc memR+3
+  !:
+    // return *memR;
+    lda memR
+    sta.z return
+    lda memR+1
+    sta.z return+1
+    lda memR+2
+    sta.z return+2
+    lda memR+3
+    sta.z return+3
+    // }
+    rts
+}
+// mul16u_error(word zp($18) a, word zp($1a) b, dword zp(8) ms, dword zp($c) mn, dword zp($12) mf)
+mul16u_error: {
+    .label a = $18
+    .label b = $1a
+    .label ms = 8
+    .label mn = $c
+    .label mf = $12
+    // print_str("multiply mismatch ")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uint(a)
+    jsr print_uint
+    // print_str("*")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_uint(b)
+    lda.z b
+    sta.z print_uint.w
+    lda.z b+1
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_str(" slow:")
+    lda #<str2
+    sta.z print_str.str
+    lda #>str2
+    sta.z print_str.str+1
+    jsr print_str
+    // print_ulong(ms)
+    jsr print_ulong
+    // print_str(" / normal:")
+    lda #<str3
+    sta.z print_str.str
+    lda #>str3
+    sta.z print_str.str+1
+    jsr print_str
+    // print_ulong(mn)
+    lda.z mn
+    sta.z print_ulong.dw
+    lda.z mn+1
+    sta.z print_ulong.dw+1
+    lda.z mn+2
+    sta.z print_ulong.dw+2
+    lda.z mn+3
+    sta.z print_ulong.dw+3
+    jsr print_ulong
+    // print_str(" / fast:")
+    lda #<str4
+    sta.z print_str.str
+    lda #>str4
+    sta.z print_str.str+1
+    jsr print_str
+    // print_ulong(mf)
+    lda.z mf
+    sta.z print_ulong.dw
+    lda.z mf+1
+    sta.z print_ulong.dw+1
+    lda.z mf+2
+    sta.z print_ulong.dw+2
+    lda.z mf+3
+    sta.z print_ulong.dw+3
+    jsr print_ulong
+    // print_ln()
+    lda #<print_screen
+    sta.z print_line_cursor
+    lda #>print_screen
+    sta.z print_line_cursor+1
+    jsr print_ln
+    // }
+    rts
+    str: .text "multiply mismatch "
+    .byte 0
+}
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
+    // }
+    rts
+}
+// Slow multiplication of signed words
+// Perform a signed multiplication by repeated addition/subtraction
+// muls16s(signed word zp(4) a, signed word zp(6) b)
+muls16s: {
+    .label m = 8
+    .label j = $1c
+    .label return = 8
+    .label i = $18
+    .label a = 4
+    .label b = 6
+    // if(a<0)
+    lda.z a+1
+    bmi __b8
+    // if (a>0)
+    bmi __b7
+    bne !+
+    lda.z a
+    beq __b7
+  !:
+    lda #<0
+    sta.z m
+    sta.z m+1
+    lda #<0>>$10
+    sta.z m+2
+    lda #>0>>$10
+    sta.z m+3
+    lda #<0
+    sta.z j
+    sta.z j+1
+  __b3:
+    // for(signed word j = 0; j!=a; j++)
+    lda.z j+1
+    cmp.z a+1
+    bne __b4
+    lda.z j
+    cmp.z a
+    bne __b4
+    rts
+  __b7:
+    lda #<0
+    sta.z return
+    sta.z return+1
+    lda #<0>>$10
+    sta.z return+2
+    lda #>0>>$10
+    sta.z return+3
+    // }
+    rts
+  __b4:
+    // m = m + b
+    lda.z b+1
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z $ff
+    lda.z m
+    clc
+    adc.z b
+    sta.z m
+    lda.z m+1
+    adc.z b+1
+    sta.z m+1
+    lda.z m+2
+    adc.z $ff
+    sta.z m+2
+    lda.z m+3
+    adc.z $ff
+    sta.z m+3
+    // for(signed word j = 0; j!=a; j++)
+    inc.z j
+    bne !+
+    inc.z j+1
+  !:
+    jmp __b3
+  __b8:
+    lda #<0
+    sta.z m
+    sta.z m+1
+    lda #<0>>$10
+    sta.z m+2
+    lda #>0>>$10
+    sta.z m+3
+    lda #<0
+    sta.z i
+    sta.z i+1
+  __b5:
+    // for(signed word i = 0; i!=a; i--)
+    lda.z i+1
+    cmp.z a+1
+    bne __b6
+    lda.z i
+    cmp.z a
+    bne __b6
+    rts
+  __b6:
+    // m = m - b
+    lda.z b+1
+    ora #$7f
+    bmi !+
+    lda #0
+  !:
+    sta.z $ff
+    sec
+    lda.z m
+    sbc.z b
+    sta.z m
+    lda.z m+1
+    sbc.z b+1
+    sta.z m+1
+    lda.z m+2
+    sbc.z $ff
+    sta.z m+2
+    lda.z m+3
+    sbc.z $ff
+    sta.z m+3
+    // for(signed word i = 0; i!=a; i--)
+    lda.z i
+    bne !+
+    dec.z i+1
+  !:
+    dec.z i
+    jmp __b5
+}
+// Multiply of two signed ints to a signed long
+// Fixes offsets introduced by using unsigned multiplication
+// mul16s(signed word zp(4) a, signed word zp(6) b)
+mul16s: {
+    .label __6 = $18
+    .label __9 = $1a
+    .label __11 = $18
+    .label __12 = $1a
+    .label m = $c
+    .label return = $c
+    .label a = 4
+    .label b = 6
+    // mul16u((unsigned int)a, (unsigned int) b)
+    lda.z a
+    sta.z mul16u.a
+    lda.z a+1
+    sta.z mul16u.a+1
+    lda.z b
+    sta.z mul16u.b
+    lda.z b+1
+    sta.z mul16u.b+1
+    jsr mul16u
+    // mul16u((unsigned int)a, (unsigned int) b)
+    // m = mul16u((unsigned int)a, (unsigned int) b)
+    // if(a<0)
+    lda.z a+1
+    bpl __b1
+    // >m
+    lda.z m+2
+    sta.z __6
+    lda.z m+3
+    sta.z __6+1
+    // >m = (>m)-(unsigned int)b
+    lda.z __11
+    sec
+    sbc.z b
+    sta.z __11
+    lda.z __11+1
+    sbc.z b+1
+    sta.z __11+1
+    lda.z __11
+    sta.z m+2
+    lda.z __11+1
+    sta.z m+3
+  __b1:
+    // if(b<0)
+    lda.z b+1
+    bpl __b2
+    // >m
+    lda.z m+2
+    sta.z __9
+    lda.z m+3
+    sta.z __9+1
+    // >m = (>m)-(unsigned int)a
+    lda.z __12
+    sec
+    sbc.z a
+    sta.z __12
+    lda.z __12+1
+    sbc.z a+1
+    sta.z __12+1
+    lda.z __12
+    sta.z m+2
+    lda.z __12+1
+    sta.z m+3
+  __b2:
+    // return (signed long)m;
+    // }
+    rts
+}
+// Fast multiply two signed ints to a signed double unsigned int result
+// Fixes offsets introduced by using unsigned multiplication
+// mulf16s(signed word zp(4) a, signed word zp(6) b)
+mulf16s: {
+    .label __6 = $1a
+    .label __9 = $1c
+    .label __11 = $1a
+    .label __12 = $1c
+    .label m = $12
+    .label return = $12
+    .label a = 4
+    .label b = 6
+    // mulf16u((unsigned int)a, (unsigned int)b)
+    lda.z a
+    sta.z mulf16u.a
+    lda.z a+1
+    sta.z mulf16u.a+1
+    lda.z b
+    sta.z mulf16u.b
+    lda.z b+1
+    sta.z mulf16u.b+1
+    jsr mulf16u
+    // mulf16u((unsigned int)a, (unsigned int)b)
+    // m = mulf16u((unsigned int)a, (unsigned int)b)
+    // if(a<0)
+    lda.z a+1
+    bpl __b1
+    // >m
+    lda.z m+2
+    sta.z __6
+    lda.z m+3
+    sta.z __6+1
+    // >m = (>m)-(unsigned int)b
+    lda.z __11
+    sec
+    sbc.z b
+    sta.z __11
+    lda.z __11+1
+    sbc.z b+1
+    sta.z __11+1
+    lda.z __11
+    sta.z m+2
+    lda.z __11+1
+    sta.z m+3
+  __b1:
+    // if(b<0)
+    lda.z b+1
+    bpl __b2
+    // >m
+    lda.z m+2
+    sta.z __9
+    lda.z m+3
+    sta.z __9+1
+    // >m = (>m)-(unsigned int)a
+    lda.z __12
+    sec
+    sbc.z a
+    sta.z __12
+    lda.z __12+1
+    sbc.z a+1
+    sta.z __12+1
+    lda.z __12
+    sta.z m+2
+    lda.z __12+1
+    sta.z m+3
+  __b2:
+    // return (signed long)m;
+    // }
+    rts
+}
+// mul16s_error(signed word zp(4) a, signed word zp(6) b, signed dword zp(8) ms, signed dword zp($c) mn, signed dword zp($12) mf)
+mul16s_error: {
+    .label a = 4
+    .label b = 6
+    .label ms = 8
+    .label mn = $c
+    .label mf = $12
+    // print_str("signed word multiply mismatch ")
+    lda #<str
+    sta.z print_str.str
+    lda #>str
+    sta.z print_str.str+1
+    jsr print_str
+    // print_sint(a)
+    lda.z a
+    sta.z print_sint.w
+    lda.z a+1
+    sta.z print_sint.w+1
+    jsr print_sint
+    // print_str("*")
+    lda #<str1
+    sta.z print_str.str
+    lda #>str1
+    sta.z print_str.str+1
+    jsr print_str
+    // print_sint(b)
+    lda.z b
+    sta.z print_sint.w
+    lda.z b+1
+    sta.z print_sint.w+1
+    jsr print_sint
+    // print_str(" slow:")
+    lda #<str2
+    sta.z print_str.str
+    lda #>str2
+    sta.z print_str.str+1
+    jsr print_str
+    // print_slong(ms)
+    jsr print_slong
+    // print_str(" / normal:")
+    lda #<str3
+    sta.z print_str.str
+    lda #>str3
+    sta.z print_str.str+1
+    jsr print_str
+    // print_slong(mn)
+    lda.z mn
+    sta.z print_slong.dw
+    lda.z mn+1
+    sta.z print_slong.dw+1
+    lda.z mn+2
+    sta.z print_slong.dw+2
+    lda.z mn+3
+    sta.z print_slong.dw+3
+    jsr print_slong
+    // print_str(" / fast:")
+    lda #<str4
+    sta.z print_str.str
+    lda #>str4
+    sta.z print_str.str+1
+    jsr print_str
+    // print_slong(mf)
+    lda.z mf
+    sta.z print_slong.dw
+    lda.z mf+1
+    sta.z print_slong.dw+1
+    lda.z mf+2
+    sta.z print_slong.dw+2
+    lda.z mf+3
+    sta.z print_slong.dw+3
+    jsr print_slong
+    // print_ln()
+    jsr print_ln
+    // }
+    rts
+    str: .text "signed word multiply mismatch "
+    .byte 0
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    inc.z print_char_cursor
+    bne !+
+    inc.z print_char_cursor+1
+  !:
+    // }
+    rts
+}
+// Print a unsigned int as HEX
+// print_uint(word zp($18) w)
+print_uint: {
+    .label w = $18
+    // print_uchar(>w)
+    ldx.z w+1
+    jsr print_uchar
+    // print_uchar(<w)
+    ldx.z w
+    jsr print_uchar
+    // }
+    rts
+}
+// Print a unsigned long as HEX
+// print_ulong(dword zp(8) dw)
+print_ulong: {
+    .label dw = 8
+    // print_uint(>dw)
+    lda.z dw+2
+    sta.z print_uint.w
+    lda.z dw+3
+    sta.z print_uint.w+1
+    jsr print_uint
+    // print_uint(<dw)
+    lda.z dw
+    sta.z print_uint.w
+    lda.z dw+1
+    sta.z print_uint.w+1
+    jsr print_uint
+    // }
+    rts
+}
+// Print a signed int as HEX
+// print_sint(signed word zp($18) w)
+print_sint: {
+    .label w = $18
+    // if(w<0)
+    lda.z w+1
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_uint((unsigned int)w)
+    jsr print_uint
+    // }
+    rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // w = -w
+    sec
+    lda #0
+    sbc.z w
+    sta.z w
+    lda #0
+    sbc.z w+1
+    sta.z w+1
+    jmp __b2
+}
+// Print a signed long as HEX
+// print_slong(signed dword zp(8) dw)
+print_slong: {
+    .label dw = 8
+    // if(dw<0)
+    lda.z dw+3
+    bmi __b1
+    // print_char(' ')
+    lda #' '
+    jsr print_char
+  __b2:
+    // print_ulong((unsigned long)dw)
+    jsr print_ulong
+    // }
+    rts
+  __b1:
+    // print_char('-')
+    lda #'-'
+    jsr print_char
+    // dw = -dw
+    sec
+    lda.z dw
+    eor #$ff
+    adc #0
+    sta.z dw
+    lda.z dw+1
+    eor #$ff
+    adc #0
+    sta.z dw+1
+    lda.z dw+2
+    eor #$ff
+    adc #0
+    sta.z dw+2
+    lda.z dw+3
+    eor #$ff
+    adc #0
+    sta.z dw+3
+    jmp __b2
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
 }
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).

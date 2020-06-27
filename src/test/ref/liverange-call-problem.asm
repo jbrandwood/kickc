@@ -4,8 +4,8 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
   .const SIZEOF_WORD = 2
-  .label w1 = 4
-  .label w2 = 2
+  .label w1 = 2
+  .label w2 = 4
 main: {
     .label SCREEN = $400
     // incw1()
@@ -35,20 +35,20 @@ main: {
     // }
     rts
 }
-incw2: {
-    // w2++;
-    inc.z w2
-    bne !+
-    inc.z w2+1
-  !:
-    // }
-    rts
-}
 incw1: {
     // w1++;
     inc.z w1
     bne !+
     inc.z w1+1
+  !:
+    // }
+    rts
+}
+incw2: {
+    // w2++;
+    inc.z w2
+    bne !+
+    inc.z w2+1
   !:
     // }
     rts

@@ -12,22 +12,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // *KERNEL_IRQ = &irq
-    lda #<irq
-    sta KERNEL_IRQ
-    lda #>irq
-    sta KERNEL_IRQ+1
-  __b1:
-    // if(col>10)
-    lda.z col
-    cmp #$a+1
-    bcc __b1
-    // col = 0
-    lda #0
-    sta.z col
-    jmp __b1
-}
 irq: {
     // asm
     lda $dc0d
@@ -44,4 +28,20 @@ irq: {
     inc.z col
     // }
     jmp $ea81
+}
+main: {
+    // *KERNEL_IRQ = &irq
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+  __b1:
+    // if(col>10)
+    lda.z col
+    cmp #$a+1
+    bcc __b1
+    // col = 0
+    lda #0
+    sta.z col
+    jmp __b1
 }

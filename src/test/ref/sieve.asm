@@ -31,16 +31,16 @@
   .label sieve = $1000
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $13
+  .label rem16u = $e
   .label print_char_cursor = $a
   .label print_line_cursor = $c
   .label print_char_cursor_1 = $c
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label toD0181_gfx = $1800
-    .label __10 = $f
+    .label __10 = $11
     .label __12 = $17
-    .label cyclecount = $f
+    .label cyclecount = $11
     .label sec100s = 4
     .label i = $a
     .label sieve_i = 2
@@ -303,46 +303,26 @@ main: {
     str4: .text "..."
     .byte 0
 }
-// Print a single char
-// print_char(byte register(A) ch)
-print_char: {
-    // *(print_char_cursor++) = ch
-    ldy #0
-    sta (print_char_cursor),y
-    // *(print_char_cursor++) = ch;
-    lda.z print_char_cursor
-    clc
-    adc #1
-    sta.z print_char_cursor_1
-    lda.z print_char_cursor+1
-    adc #0
-    sta.z print_char_cursor_1+1
-    // }
-    rts
-}
-// Print a unsigned int as DECIMAL
-// print_uint_decimal(word zp(4) w)
-print_uint_decimal: {
-    .label w = 4
-    // utoa(w, decimal_digits, DECIMAL)
-    lda.z w
-    sta.z utoa.value
-    lda.z w+1
-    sta.z utoa.value+1
-    jsr utoa
-    // print_str(decimal_digits)
-    lda #<decimal_digits
-    sta.z print_str.str
-    lda #>decimal_digits
-    sta.z print_str.str+1
-    jsr print_str
+// Clear the screen. Also resets current line/char cursor.
+print_cls: {
+    // memset(print_screen, ' ', 1000)
+    ldx #' '
+    lda #<print_screen
+    sta.z memset.str
+    lda #>print_screen
+    sta.z memset.str+1
+    lda #<$3e8
+    sta.z memset.num
+    lda #>$3e8
+    sta.z memset.num+1
+    jsr memset
     // }
     rts
 }
 // Print a zero-terminated string
-// print_str(byte* zp($13) str)
+// print_str(byte* zp($e) str)
 print_str: {
-    .label str = $13
+    .label str = $e
   __b1:
     // while(*str)
     ldy #0
@@ -367,18 +347,229 @@ print_str: {
     sta.z print_char_cursor+1
     jmp __b1
 }
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
+    // }
+    rts
+}
+// Print a unsigned int as DECIMAL
+// print_uint_decimal(word zp(4) w)
+print_uint_decimal: {
+    .label w = 4
+    // utoa(w, decimal_digits, DECIMAL)
+    lda.z w
+    sta.z utoa.value
+    lda.z w+1
+    sta.z utoa.value+1
+    jsr utoa
+    // print_str(decimal_digits)
+    lda #<decimal_digits
+    sta.z print_str.str
+    lda #>decimal_digits
+    sta.z print_str.str+1
+    jsr print_str
+    // }
+    rts
+}
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp($15) str, byte register(X) c, word zp($e) num)
+memset: {
+    .label end = $e
+    .label dst = $15
+    .label num = $e
+    .label str = $15
+    // if(num>0)
+    lda.z num
+    bne !+
+    lda.z num+1
+    beq __breturn
+  !:
+    // end = (char*)str + num
+    lda.z end
+    clc
+    adc.z str
+    sta.z end
+    lda.z end+1
+    adc.z str+1
+    sta.z end+1
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+  __breturn:
+    // }
+    rts
+  __b3:
+    // *dst = c
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
+// Reset & start the processor clock time. The value can be read using clock().
+// This uses CIA #2 Timer A+B on the C64
+clock_start: {
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    // Setup CIA#2 timer A to count (down) CPU cycles
+    lda #0
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // *CIA2_TIMER_AB = 0xffffffff
+    lda #<$ffffffff
+    sta CIA2_TIMER_AB
+    lda #>$ffffffff
+    sta CIA2_TIMER_AB+1
+    lda #<$ffffffff>>$10
+    sta CIA2_TIMER_AB+2
+    lda #>$ffffffff>>$10
+    sta CIA2_TIMER_AB+3
+    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
+    lda #CIA_TIMER_CONTROL_START
+    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // }
+    rts
+}
+// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
+// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
+clock: {
+    .label return = $11
+    // 0xffffffff - *CIA2_TIMER_AB
+    lda #<$ffffffff
+    sec
+    sbc CIA2_TIMER_AB
+    sta.z return
+    lda #>$ffffffff
+    sbc CIA2_TIMER_AB+1
+    sta.z return+1
+    lda #<$ffffffff>>$10
+    sbc CIA2_TIMER_AB+2
+    sta.z return+2
+    lda #>$ffffffff>>$10
+    sbc CIA2_TIMER_AB+3
+    sta.z return+3
+    // }
+    rts
+}
+// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
+// The 16-bit unsigned int remainder can be found in rem16u after the division
+// div32u16u(dword zp($11) dividend)
+div32u16u: {
+    .label divisor = CLOCKS_PER_SEC/$64
+    .label quotient_hi = $1d
+    .label quotient_lo = $1b
+    .label return = $17
+    .label dividend = $11
+    // divr16u(>dividend, divisor, 0)
+    lda.z dividend+2
+    sta.z divr16u.dividend
+    lda.z dividend+3
+    sta.z divr16u.dividend+1
+    lda #<0
+    sta.z divr16u.rem
+    sta.z divr16u.rem+1
+    jsr divr16u
+    // divr16u(>dividend, divisor, 0)
+    // quotient_hi = divr16u(>dividend, divisor, 0)
+    lda.z divr16u.return
+    sta.z quotient_hi
+    lda.z divr16u.return+1
+    sta.z quotient_hi+1
+    // divr16u(<dividend, divisor, rem16u)
+    lda.z dividend
+    sta.z divr16u.dividend
+    lda.z dividend+1
+    sta.z divr16u.dividend+1
+    jsr divr16u
+    // divr16u(<dividend, divisor, rem16u)
+    // quotient_lo = divr16u(<dividend, divisor, rem16u)
+    // quotient = { quotient_hi, quotient_lo}
+    lda.z quotient_hi
+    sta.z return+2
+    lda.z quotient_hi+1
+    sta.z return+3
+    lda.z quotient_lo
+    sta.z return
+    lda.z quotient_lo+1
+    sta.z return+1
+    // }
+    rts
+}
+// Print a unsigned long as DECIMAL
+// print_ulong_decimal(dword zp($11) w)
+print_ulong_decimal: {
+    .label w = $11
+    // ultoa(w, decimal_digits_long, DECIMAL)
+    jsr ultoa
+    // print_str(decimal_digits_long)
+    lda #<decimal_digits_long
+    sta.z print_str.str
+    lda #>decimal_digits_long
+    sta.z print_str.str+1
+    jsr print_str
+    // }
+    rts
+}
+// Print a single char
+// print_char(byte register(A) ch)
+print_char: {
+    // *(print_char_cursor++) = ch
+    ldy #0
+    sta (print_char_cursor),y
+    // *(print_char_cursor++) = ch;
+    lda.z print_char_cursor
+    clc
+    adc #1
+    sta.z print_char_cursor_1
+    lda.z print_char_cursor+1
+    adc #0
+    sta.z print_char_cursor_1+1
+    // }
+    rts
+}
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp($13) value, byte* zp($15) buffer)
+// utoa(word zp($15) value, byte* zp($e) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $21
-    .label buffer = $15
-    .label digit = $e
-    .label value = $13
+    .label digit_value = $1d
+    .label buffer = $e
+    .label digit = $10
+    .label value = $15
     lda #<decimal_digits
     sta.z buffer
     lda #>decimal_digits
@@ -444,85 +635,70 @@ utoa: {
     ldx #1
     jmp __b4
 }
-// Used to convert a single digit of an unsigned number value to a string representation
-// Counts a single digit up from '0' as long as the value is larger than sub.
-// Each time the digit is increased sub is subtracted from value.
-// - buffer : pointer to the char that receives the digit
-// - value : The value where the digit will be derived from
-// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
-//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
-// returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($15) buffer, word zp($13) value, word zp($21) sub)
-utoa_append: {
-    .label buffer = $15
-    .label value = $13
-    .label sub = $21
-    .label return = $13
+// Performs division on two 16 bit unsigned ints and an initial remainder
+// Returns the quotient dividend/divisor.
+// The final remainder will be set into the global variable rem16u
+// Implemented using simple binary division
+// divr16u(word zp($15) dividend, word zp($e) rem)
+divr16u: {
+    .label rem = $e
+    .label dividend = $15
+    .label quotient = $1b
+    .label return = $1b
     ldx #0
+    txa
+    sta.z quotient
+    sta.z quotient+1
   __b1:
-    // while (value >= sub)
-    lda.z sub+1
-    cmp.z value+1
-    bne !+
-    lda.z sub
-    cmp.z value
+    // rem = rem << 1
+    asl.z rem
+    rol.z rem+1
+    // >dividend
+    lda.z dividend+1
+    // >dividend & $80
+    and #$80
+    // if( (>dividend & $80) != 0 )
+    cmp #0
     beq __b2
-  !:
-    bcc __b2
-    // *buffer = DIGITS[digit]
-    lda DIGITS,x
-    ldy #0
-    sta (buffer),y
-    // }
-    rts
+    // rem = rem | 1
+    lda #1
+    ora.z rem
+    sta.z rem
   __b2:
-    // digit++;
-    inx
-    // value -= sub
-    lda.z value
-    sec
-    sbc.z sub
-    sta.z value
-    lda.z value+1
-    sbc.z sub+1
-    sta.z value+1
-    jmp __b1
-}
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
+    // dividend = dividend << 1
+    asl.z dividend
+    rol.z dividend+1
+    // quotient = quotient << 1
+    asl.z quotient
+    rol.z quotient+1
+    // if(rem>=divisor)
+    lda.z rem+1
+    cmp #>div32u16u.divisor
+    bcc __b3
     bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
+    lda.z rem
+    cmp #<div32u16u.divisor
+    bcc __b3
   !:
-    // }
-    rts
-}
-// Print a unsigned long as DECIMAL
-// print_ulong_decimal(dword zp($f) w)
-print_ulong_decimal: {
-    .label w = $f
-    // ultoa(w, decimal_digits_long, DECIMAL)
-    jsr ultoa
-    // print_str(decimal_digits_long)
-    lda #<decimal_digits_long
-    sta.z print_str.str
-    lda #>decimal_digits_long
-    sta.z print_str.str+1
-    jsr print_str
+    // quotient++;
+    inc.z quotient
+    bne !+
+    inc.z quotient+1
+  !:
+    // rem = rem - divisor
+    lda.z rem
+    sec
+    sbc #<div32u16u.divisor
+    sta.z rem
+    lda.z rem+1
+    sbc #>div32u16u.divisor
+    sta.z rem+1
+  __b3:
+    // for( char i : 0..15)
+    inx
+    cpx #$10
+    bne __b1
+    // rem16u = rem
     // }
     rts
 }
@@ -531,13 +707,13 @@ print_ulong_decimal: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// ultoa(dword zp($f) value, byte* zp($15) buffer)
+// ultoa(dword zp($11) value, byte* zp($15) buffer)
 ultoa: {
     .const max_digits = $a
-    .label digit_value = $1d
+    .label digit_value = $1f
     .label buffer = $15
-    .label digit = $e
-    .label value = $f
+    .label digit = $10
+    .label value = $11
     lda #<decimal_digits_long
     sta.z buffer
     lda #>decimal_digits_long
@@ -625,12 +801,56 @@ ultoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// ultoa_append(byte* zp($15) buffer, dword zp($f) value, dword zp($1d) sub)
+// utoa_append(byte* zp($e) buffer, word zp($15) value, word zp($1d) sub)
+utoa_append: {
+    .label buffer = $e
+    .label value = $15
+    .label sub = $1d
+    .label return = $15
+    ldx #0
+  __b1:
+    // while (value >= sub)
+    lda.z sub+1
+    cmp.z value+1
+    bne !+
+    lda.z sub
+    cmp.z value
+    beq __b2
+  !:
+    bcc __b2
+    // *buffer = DIGITS[digit]
+    lda DIGITS,x
+    ldy #0
+    sta (buffer),y
+    // }
+    rts
+  __b2:
+    // digit++;
+    inx
+    // value -= sub
+    lda.z value
+    sec
+    sbc.z sub
+    sta.z value
+    lda.z value+1
+    sbc.z sub+1
+    sta.z value+1
+    jmp __b1
+}
+// Used to convert a single digit of an unsigned number value to a string representation
+// Counts a single digit up from '0' as long as the value is larger than sub.
+// Each time the digit is increased sub is subtracted from value.
+// - buffer : pointer to the char that receives the digit
+// - value : The value where the digit will be derived from
+// - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
+//        (For decimal the subs used are 10000, 1000, 100, 10, 1)
+// returns : the value reduced by sub * digit so that it is less than sub.
+// ultoa_append(byte* zp($15) buffer, dword zp($11) value, dword zp($1f) sub)
 ultoa_append: {
     .label buffer = $15
-    .label value = $f
-    .label sub = $1d
-    .label return = $f
+    .label value = $11
+    .label sub = $1f
+    .label return = $11
     ldx #0
   __b1:
     // while (value >= sub)
@@ -674,226 +894,6 @@ ultoa_append: {
     sbc.z sub+3
     sta.z value+3
     jmp __b1
-}
-// Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
-// The 16-bit unsigned int remainder can be found in rem16u after the division
-// div32u16u(dword zp($f) dividend)
-div32u16u: {
-    .label divisor = CLOCKS_PER_SEC/$64
-    .label quotient_hi = $21
-    .label quotient_lo = $1b
-    .label return = $17
-    .label dividend = $f
-    // divr16u(>dividend, divisor, 0)
-    lda.z dividend+2
-    sta.z divr16u.dividend
-    lda.z dividend+3
-    sta.z divr16u.dividend+1
-    lda #<0
-    sta.z divr16u.rem
-    sta.z divr16u.rem+1
-    jsr divr16u
-    // divr16u(>dividend, divisor, 0)
-    // quotient_hi = divr16u(>dividend, divisor, 0)
-    lda.z divr16u.return
-    sta.z quotient_hi
-    lda.z divr16u.return+1
-    sta.z quotient_hi+1
-    // divr16u(<dividend, divisor, rem16u)
-    lda.z dividend
-    sta.z divr16u.dividend
-    lda.z dividend+1
-    sta.z divr16u.dividend+1
-    jsr divr16u
-    // divr16u(<dividend, divisor, rem16u)
-    // quotient_lo = divr16u(<dividend, divisor, rem16u)
-    // quotient = { quotient_hi, quotient_lo}
-    lda.z quotient_hi
-    sta.z return+2
-    lda.z quotient_hi+1
-    sta.z return+3
-    lda.z quotient_lo
-    sta.z return
-    lda.z quotient_lo+1
-    sta.z return+1
-    // }
-    rts
-}
-// Performs division on two 16 bit unsigned ints and an initial remainder
-// Returns the quotient dividend/divisor.
-// The final remainder will be set into the global variable rem16u
-// Implemented using simple binary division
-// divr16u(word zp($15) dividend, word zp($13) rem)
-divr16u: {
-    .label rem = $13
-    .label dividend = $15
-    .label quotient = $1b
-    .label return = $1b
-    ldx #0
-    txa
-    sta.z quotient
-    sta.z quotient+1
-  __b1:
-    // rem = rem << 1
-    asl.z rem
-    rol.z rem+1
-    // >dividend
-    lda.z dividend+1
-    // >dividend & $80
-    and #$80
-    // if( (>dividend & $80) != 0 )
-    cmp #0
-    beq __b2
-    // rem = rem | 1
-    lda #1
-    ora.z rem
-    sta.z rem
-  __b2:
-    // dividend = dividend << 1
-    asl.z dividend
-    rol.z dividend+1
-    // quotient = quotient << 1
-    asl.z quotient
-    rol.z quotient+1
-    // if(rem>=divisor)
-    lda.z rem+1
-    cmp #>div32u16u.divisor
-    bcc __b3
-    bne !+
-    lda.z rem
-    cmp #<div32u16u.divisor
-    bcc __b3
-  !:
-    // quotient++;
-    inc.z quotient
-    bne !+
-    inc.z quotient+1
-  !:
-    // rem = rem - divisor
-    lda.z rem
-    sec
-    sbc #<div32u16u.divisor
-    sta.z rem
-    lda.z rem+1
-    sbc #>div32u16u.divisor
-    sta.z rem+1
-  __b3:
-    // for( char i : 0..15)
-    inx
-    cpx #$10
-    bne __b1
-    // rem16u = rem
-    // }
-    rts
-}
-// Returns the processor clock time used since the beginning of an implementation defined era (normally the beginning of the program).
-// This uses CIA #2 Timer A+B on the C64, and must be initialized using clock_start()
-clock: {
-    .label return = $f
-    // 0xffffffff - *CIA2_TIMER_AB
-    lda #<$ffffffff
-    sec
-    sbc CIA2_TIMER_AB
-    sta.z return
-    lda #>$ffffffff
-    sbc CIA2_TIMER_AB+1
-    sta.z return+1
-    lda #<$ffffffff>>$10
-    sbc CIA2_TIMER_AB+2
-    sta.z return+2
-    lda #>$ffffffff>>$10
-    sbc CIA2_TIMER_AB+3
-    sta.z return+3
-    // }
-    rts
-}
-// Reset & start the processor clock time. The value can be read using clock().
-// This uses CIA #2 Timer A+B on the C64
-clock_start: {
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    // Setup CIA#2 timer A to count (down) CPU cycles
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_STOP | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // *CIA2_TIMER_AB = 0xffffffff
-    lda #<$ffffffff
-    sta CIA2_TIMER_AB
-    lda #>$ffffffff
-    sta CIA2_TIMER_AB+1
-    lda #<$ffffffff>>$10
-    sta CIA2_TIMER_AB+2
-    lda #>$ffffffff>>$10
-    sta CIA2_TIMER_AB+3
-    // CIA2->TIMER_B_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    lda #CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA2->TIMER_A_CONTROL = CIA_TIMER_CONTROL_START | CIA_TIMER_CONTROL_CONTINUOUS | CIA_TIMER_CONTROL_A_COUNT_CYCLES
-    lda #CIA_TIMER_CONTROL_START
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // }
-    rts
-}
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($15) str, byte register(X) c, word zp($13) num)
-memset: {
-    .label end = $13
-    .label dst = $15
-    .label num = $13
-    .label str = $15
-    // if(num>0)
-    lda.z num
-    bne !+
-    lda.z num+1
-    beq __breturn
-  !:
-    // end = (char*)str + num
-    lda.z end
-    clc
-    adc.z str
-    sta.z end
-    lda.z end+1
-    adc.z str+1
-    sta.z end+1
-  __b2:
-    // for(char* dst = str; dst!=end; dst++)
-    lda.z dst+1
-    cmp.z end+1
-    bne __b3
-    lda.z dst
-    cmp.z end
-    bne __b3
-  __breturn:
-    // }
-    rts
-  __b3:
-    // *dst = c
-    txa
-    ldy #0
-    sta (dst),y
-    // for(char* dst = str; dst!=end; dst++)
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    jmp __b2
-}
-// Clear the screen. Also resets current line/char cursor.
-print_cls: {
-    // memset(print_screen, ' ', 1000)
-    ldx #' '
-    lda #<print_screen
-    sta.z memset.str
-    lda #>print_screen
-    sta.z memset.str+1
-    lda #<$3e8
-    sta.z memset.num
-    lda #>$3e8
-    sta.z memset.num+1
-    jsr memset
-    // }
-    rts
 }
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"

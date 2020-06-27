@@ -257,21 +257,21 @@ main::@return: scope:[main]  from main::@4
   [10] return 
   to:@return
 
-(void()) incw2()
-incw2: scope:[incw2]  from main::@1 main::@3
-  [11] (word) w2#11 ← phi( main::@1/(word) 0 main::@3/(word) w2#12 )
-  [12] (word) w2#12 ← ++ (word) w2#11
-  to:incw2::@return
-incw2::@return: scope:[incw2]  from incw2
+(void()) incw1()
+incw1: scope:[incw1]  from main main::@2
+  [11] (word) w1#12 ← phi( main/(word) 0 main::@2/(word) w1#13 )
+  [12] (word) w1#13 ← ++ (word) w1#12
+  to:incw1::@return
+incw1::@return: scope:[incw1]  from incw1
   [13] return 
   to:@return
 
-(void()) incw1()
-incw1: scope:[incw1]  from main main::@2
-  [14] (word) w1#12 ← phi( main/(word) 0 main::@2/(word) w1#13 )
-  [15] (word) w1#13 ← ++ (word) w1#12
-  to:incw1::@return
-incw1::@return: scope:[incw1]  from incw1
+(void()) incw2()
+incw2: scope:[incw2]  from main::@1 main::@3
+  [14] (word) w2#11 ← phi( main::@1/(word) 0 main::@3/(word) w2#12 )
+  [15] (word) w2#12 ← ++ (word) w2#11
+  to:incw2::@return
+incw2::@return: scope:[incw2]  from incw2
   [16] return 
   to:@return
 
@@ -288,13 +288,13 @@ VARIABLE REGISTER WEIGHTS
 (word) w2#12 1.875
 
 Initial phi equivalence classes
-[ w2#11 w2#12 ]
 [ w1#12 w1#13 ]
+[ w2#11 w2#12 ]
 Complete equivalence classes
-[ w2#11 w2#12 ]
 [ w1#12 w1#13 ]
-Allocated zp[2]:2 [ w2#11 w2#12 ]
-Allocated zp[2]:4 [ w1#12 w1#13 ]
+[ w2#11 w2#12 ]
+Allocated zp[2]:2 [ w1#12 w1#13 ]
+Allocated zp[2]:4 [ w2#11 w2#12 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -307,15 +307,15 @@ Target platform is c64basic / MOS6502X
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  .label w1 = 4
-  .label w2 = 2
+  .label w1 = 2
+  .label w2 = 4
   // main
 main: {
     .label SCREEN = $400
     // [1] call incw1 
-    // [14] phi from main to incw1 [phi:main->incw1]
+    // [11] phi from main to incw1 [phi:main->incw1]
   incw1_from_main:
-    // [14] phi (word) w1#12 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
+    // [11] phi (word) w1#12 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w1
     lda #>0
@@ -327,9 +327,9 @@ main: {
     // main::@1
   __b1:
     // [3] call incw2 
-    // [11] phi from main::@1 to incw2 [phi:main::@1->incw2]
+    // [14] phi from main::@1 to incw2 [phi:main::@1->incw2]
   incw2_from___b1:
-    // [11] phi (word) w2#11 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
+    // [14] phi (word) w2#11 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w2
     lda #>0
@@ -341,9 +341,9 @@ main: {
     // main::@2
   __b2:
     // [5] call incw1 
-    // [14] phi from main::@2 to incw1 [phi:main::@2->incw1]
+    // [11] phi from main::@2 to incw1 [phi:main::@2->incw1]
   incw1_from___b2:
-    // [14] phi (word) w1#12 = (word) w1#13 [phi:main::@2->incw1#0] -- register_copy 
+    // [11] phi (word) w1#12 = (word) w1#13 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
     // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
@@ -351,9 +351,9 @@ main: {
     // main::@3
   __b3:
     // [7] call incw2 
-    // [11] phi from main::@3 to incw2 [phi:main::@3->incw2]
+    // [14] phi from main::@3 to incw2 [phi:main::@3->incw2]
   incw2_from___b3:
-    // [11] phi (word) w2#11 = (word) w2#12 [phi:main::@3->incw2#0] -- register_copy 
+    // [14] phi (word) w2#11 = (word) w2#12 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
     jmp __b4
     // main::@4
@@ -374,28 +374,28 @@ main: {
     // [10] return 
     rts
 }
-  // incw2
-incw2: {
-    // [12] (word) w2#12 ← ++ (word) w2#11 -- vwuz1=_inc_vwuz1 
-    inc.z w2
-    bne !+
-    inc.z w2+1
-  !:
-    jmp __breturn
-    // incw2::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // incw1
 incw1: {
-    // [15] (word) w1#13 ← ++ (word) w1#12 -- vwuz1=_inc_vwuz1 
+    // [12] (word) w1#13 ← ++ (word) w1#12 -- vwuz1=_inc_vwuz1 
     inc.z w1
     bne !+
     inc.z w1+1
   !:
     jmp __breturn
     // incw1::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // incw2
+incw2: {
+    // [15] (word) w2#12 ← ++ (word) w2#11 -- vwuz1=_inc_vwuz1 
+    inc.z w2
+    bne !+
+    inc.z w2+1
+  !:
+    jmp __breturn
+    // incw2::@return
   __breturn:
     // [16] return 
     rts
@@ -405,16 +405,16 @@ incw1: {
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [8] *((const word*) main::SCREEN) ← (word) w1#13 [ w2#12 ] (  [ w2#12 ] { }  ) always clobbers reg byte a 
 Statement [9] *((const word*) main::SCREEN+(byte) 2*(const byte) SIZEOF_WORD) ← (word) w2#12 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ w2#11 w2#12 ] : zp[2]:2 , 
-Potential registers zp[2]:4 [ w1#12 w1#13 ] : zp[2]:4 , 
+Potential registers zp[2]:2 [ w1#12 w1#13 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ w2#11 w2#12 ] : zp[2]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 14.88: zp[2]:2 [ w2#11 w2#12 ] 14.67: zp[2]:4 [ w1#12 w1#13 ] 
+Uplift Scope [] 14.88: zp[2]:4 [ w2#11 w2#12 ] 14.67: zp[2]:2 [ w1#12 w1#13 ] 
 Uplift Scope [main] 
 Uplift Scope [incw1] 
 Uplift Scope [incw2] 
 
-Uplifting [] best 135 combination zp[2]:2 [ w2#11 w2#12 ] zp[2]:4 [ w1#12 w1#13 ] 
+Uplifting [] best 135 combination zp[2]:4 [ w2#11 w2#12 ] zp[2]:2 [ w1#12 w1#13 ] 
 Uplifting [main] best 135 combination 
 Uplifting [incw1] best 135 combination 
 Uplifting [incw2] best 135 combination 
@@ -429,15 +429,15 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  .label w1 = 4
-  .label w2 = 2
+  .label w1 = 2
+  .label w2 = 4
   // main
 main: {
     .label SCREEN = $400
     // [1] call incw1 
-    // [14] phi from main to incw1 [phi:main->incw1]
+    // [11] phi from main to incw1 [phi:main->incw1]
   incw1_from_main:
-    // [14] phi (word) w1#12 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
+    // [11] phi (word) w1#12 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w1
     lda #>0
@@ -449,9 +449,9 @@ main: {
     // main::@1
   __b1:
     // [3] call incw2 
-    // [11] phi from main::@1 to incw2 [phi:main::@1->incw2]
+    // [14] phi from main::@1 to incw2 [phi:main::@1->incw2]
   incw2_from___b1:
-    // [11] phi (word) w2#11 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
+    // [14] phi (word) w2#11 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w2
     lda #>0
@@ -463,9 +463,9 @@ main: {
     // main::@2
   __b2:
     // [5] call incw1 
-    // [14] phi from main::@2 to incw1 [phi:main::@2->incw1]
+    // [11] phi from main::@2 to incw1 [phi:main::@2->incw1]
   incw1_from___b2:
-    // [14] phi (word) w1#12 = (word) w1#13 [phi:main::@2->incw1#0] -- register_copy 
+    // [11] phi (word) w1#12 = (word) w1#13 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
     // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
@@ -473,9 +473,9 @@ main: {
     // main::@3
   __b3:
     // [7] call incw2 
-    // [11] phi from main::@3 to incw2 [phi:main::@3->incw2]
+    // [14] phi from main::@3 to incw2 [phi:main::@3->incw2]
   incw2_from___b3:
-    // [11] phi (word) w2#11 = (word) w2#12 [phi:main::@3->incw2#0] -- register_copy 
+    // [14] phi (word) w2#11 = (word) w2#12 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
     jmp __b4
     // main::@4
@@ -496,28 +496,28 @@ main: {
     // [10] return 
     rts
 }
-  // incw2
-incw2: {
-    // [12] (word) w2#12 ← ++ (word) w2#11 -- vwuz1=_inc_vwuz1 
-    inc.z w2
-    bne !+
-    inc.z w2+1
-  !:
-    jmp __breturn
-    // incw2::@return
-  __breturn:
-    // [13] return 
-    rts
-}
   // incw1
 incw1: {
-    // [15] (word) w1#13 ← ++ (word) w1#12 -- vwuz1=_inc_vwuz1 
+    // [12] (word) w1#13 ← ++ (word) w1#12 -- vwuz1=_inc_vwuz1 
     inc.z w1
     bne !+
     inc.z w1+1
   !:
     jmp __breturn
     // incw1::@return
+  __breturn:
+    // [13] return 
+    rts
+}
+  // incw2
+incw2: {
+    // [15] (word) w2#12 ← ++ (word) w2#11 -- vwuz1=_inc_vwuz1 
+    inc.z w2
+    bne !+
+    inc.z w2+1
+  !:
+    jmp __breturn
+    // incw2::@return
   __breturn:
     // [16] return 
     rts
@@ -567,14 +567,14 @@ FINAL SYMBOL TABLE
 (label) main::@return
 (const word*) main::SCREEN = (word*) 1024
 (word) w1
-(word) w1#12 w1 zp[2]:4 13.0
-(word) w1#13 w1 zp[2]:4 1.6666666666666667
+(word) w1#12 w1 zp[2]:2 13.0
+(word) w1#13 w1 zp[2]:2 1.6666666666666667
 (word) w2
-(word) w2#11 w2 zp[2]:2 13.0
-(word) w2#12 w2 zp[2]:2 1.875
+(word) w2#11 w2 zp[2]:4 13.0
+(word) w2#12 w2 zp[2]:4 1.875
 
-zp[2]:2 [ w2#11 w2#12 ]
-zp[2]:4 [ w1#12 w1#13 ]
+zp[2]:2 [ w1#12 w1#13 ]
+zp[2]:4 [ w2#11 w2#12 ]
 
 
 FINAL ASSEMBLER
@@ -589,15 +589,15 @@ Score: 110
 .pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
-  .label w1 = 4
-  .label w2 = 2
+  .label w1 = 2
+  .label w2 = 4
   // main
 main: {
     .label SCREEN = $400
     // incw1()
     // [1] call incw1 
-    // [14] phi from main to incw1 [phi:main->incw1]
-    // [14] phi (word) w1#12 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
+    // [11] phi from main to incw1 [phi:main->incw1]
+    // [11] phi (word) w1#12 = (word) 0 [phi:main->incw1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w1
     sta.z w1+1
@@ -606,8 +606,8 @@ main: {
     // main::@1
     // incw2()
     // [3] call incw2 
-    // [11] phi from main::@1 to incw2 [phi:main::@1->incw2]
-    // [11] phi (word) w2#11 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
+    // [14] phi from main::@1 to incw2 [phi:main::@1->incw2]
+    // [14] phi (word) w2#11 = (word) 0 [phi:main::@1->incw2#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z w2
     sta.z w2+1
@@ -616,15 +616,15 @@ main: {
     // main::@2
     // incw1()
     // [5] call incw1 
-    // [14] phi from main::@2 to incw1 [phi:main::@2->incw1]
-    // [14] phi (word) w1#12 = (word) w1#13 [phi:main::@2->incw1#0] -- register_copy 
+    // [11] phi from main::@2 to incw1 [phi:main::@2->incw1]
+    // [11] phi (word) w1#12 = (word) w1#13 [phi:main::@2->incw1#0] -- register_copy 
     jsr incw1
     // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // incw2()
     // [7] call incw2 
-    // [11] phi from main::@3 to incw2 [phi:main::@3->incw2]
-    // [11] phi (word) w2#11 = (word) w2#12 [phi:main::@3->incw2#0] -- register_copy 
+    // [14] phi from main::@3 to incw2 [phi:main::@3->incw2]
+    // [14] phi (word) w2#11 = (word) w2#12 [phi:main::@3->incw2#0] -- register_copy 
     jsr incw2
     // main::@4
     // SCREEN[0] = w1
@@ -644,28 +644,28 @@ main: {
     // [10] return 
     rts
 }
-  // incw2
-incw2: {
-    // w2++;
-    // [12] (word) w2#12 ← ++ (word) w2#11 -- vwuz1=_inc_vwuz1 
-    inc.z w2
-    bne !+
-    inc.z w2+1
-  !:
-    // incw2::@return
-    // }
-    // [13] return 
-    rts
-}
   // incw1
 incw1: {
     // w1++;
-    // [15] (word) w1#13 ← ++ (word) w1#12 -- vwuz1=_inc_vwuz1 
+    // [12] (word) w1#13 ← ++ (word) w1#12 -- vwuz1=_inc_vwuz1 
     inc.z w1
     bne !+
     inc.z w1+1
   !:
     // incw1::@return
+    // }
+    // [13] return 
+    rts
+}
+  // incw2
+incw2: {
+    // w2++;
+    // [15] (word) w2#12 ← ++ (word) w2#11 -- vwuz1=_inc_vwuz1 
+    inc.z w2
+    bne !+
+    inc.z w2+1
+  !:
+    // incw2::@return
     // }
     // [16] return 
     rts

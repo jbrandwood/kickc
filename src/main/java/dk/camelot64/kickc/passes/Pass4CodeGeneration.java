@@ -288,22 +288,14 @@ public class Pass4CodeGeneration {
 
    private boolean hasData(Variable constantVar) {
       ConstantValue constantValue = constantVar.getInitValue();
-      if(constantValue instanceof ConstantArray) {
+      if(constantValue instanceof ConstantArray)
          return true;
-      } else if(constantValue instanceof ConstantStructValue) {
+      else if(constantValue instanceof ConstantStructValue)
          return true;
-      } else {
-         try {
-            // TODO: Literal calculation should not be necessary anymore.
-            ConstantLiteral literal = constantValue.calculateLiteral(getScope());
-            if(literal instanceof ConstantString) {
-               return true;
-            }
-         } catch(ConstantNotLiteral e) {
-            // can't calculate literal value, so it is not data
-         }
-      }
-      return false;
+      else if(constantValue instanceof ConstantString)
+         return true;
+      else
+         return false;
    }
 
    /**

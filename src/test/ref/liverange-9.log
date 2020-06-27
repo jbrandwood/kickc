@@ -257,16 +257,16 @@ Adding NOP phi() at start of outw::@2
 CALL GRAPH
 Calls in [main] to outsw:3 
 Calls in [outsw] to out:10 outw:12 
-Calls in [outw] to out:18 out:22 
+Calls in [outw] to out:22 out:26 
 
 Created 4 initial phi equivalence classes
 Coalesced [7] main::c#4 ← main::c#1
 Coalesced [8] idx#30 ← idx#22
 Coalesced [9] idx#31 ← idx#25
-Coalesced (already) [16] idx#32 ← idx#22
-Coalesced [17] out::c#4 ← out::c#1
-Coalesced (already) [20] idx#33 ← idx#22
-Coalesced [21] out::c#5 ← out::c#2
+Coalesced (already) [20] idx#32 ← idx#22
+Coalesced [21] out::c#4 ← out::c#1
+Coalesced (already) [24] idx#33 ← idx#22
+Coalesced [25] out::c#5 ← out::c#2
 Coalesced down to 3 phi equivalence classes
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) outsw::@2
@@ -307,27 +307,27 @@ outsw::@return: scope:[outsw]  from outsw::@1
   [11] return 
   to:@return
 
-(void()) outw((byte) outw::c)
-outw: scope:[outw]  from outsw::@1
-  [12] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4
-  [13] call out 
-  to:outw::@1
-outw::@1: scope:[outw]  from outw
-  [14] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f
-  [15] call out 
-  to:outw::@return
-outw::@return: scope:[outw]  from outw::@1
-  [16] return 
-  to:@return
-
 (void()) out((byte) out::c)
 out: scope:[out]  from outsw outw outw::@1
-  [17] (byte) out::c#3 ← phi( outsw/(byte) '-' outw/(byte) out::c#1 outw::@1/(byte) out::c#2 )
-  [17] (byte) idx#21 ← phi( outsw/(byte) idx#25 outw/(byte) idx#22 outw::@1/(byte) idx#22 )
-  [18] (byte) idx#22 ← ++ (byte) idx#21
-  [19] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3
+  [12] (byte) out::c#3 ← phi( outsw/(byte) '-' outw/(byte) out::c#1 outw::@1/(byte) out::c#2 )
+  [12] (byte) idx#21 ← phi( outsw/(byte) idx#25 outw/(byte) idx#22 outw::@1/(byte) idx#22 )
+  [13] (byte) idx#22 ← ++ (byte) idx#21
+  [14] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3
   to:out::@return
 out::@return: scope:[out]  from out
+  [15] return 
+  to:@return
+
+(void()) outw((byte) outw::c)
+outw: scope:[outw]  from outsw::@1
+  [16] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4
+  [17] call out 
+  to:outw::@1
+outw::@1: scope:[outw]  from outw
+  [18] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f
+  [19] call out 
+  to:outw::@return
+outw::@return: scope:[outw]  from outw::@1
   [20] return 
   to:@return
 
@@ -429,12 +429,12 @@ main: {
 outsw: {
     .label c = 5
     // [8] call out 
-    // [17] phi from outsw to out [phi:outsw->out]
+    // [12] phi from outsw to out [phi:outsw->out]
   out_from_outsw:
-    // [17] phi (byte) out::c#3 = (byte) '-' [phi:outsw->out#0] -- vbuz1=vbuc1 
+    // [12] phi (byte) out::c#3 = (byte) '-' [phi:outsw->out#0] -- vbuz1=vbuc1 
     lda #'-'
     sta.z out.c
-    // [17] phi (byte) idx#21 = (byte) idx#25 [phi:outsw->out#1] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#25 [phi:outsw->out#1] -- register_copy 
     jsr out
     jmp __b1
     // outsw::@1
@@ -450,54 +450,54 @@ outsw: {
     // [11] return 
     rts
 }
-  // outw
-// outw(byte zp(6) c)
-outw: {
-    .label c = 6
-    // [12] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 -- vbuz1=vbuz2_rol_4 
-    lda.z c
-    asl
-    asl
-    asl
-    asl
-    sta.z out.c
-    // [13] call out 
-    // [17] phi from outw to out [phi:outw->out]
-  out_from_outw:
-    // [17] phi (byte) out::c#3 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
-    // [17] phi (byte) idx#21 = (byte) idx#22 [phi:outw->out#1] -- register_copy 
-    jsr out
-    jmp __b1
-    // outw::@1
-  __b1:
-    // [14] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
-    lda #$f
-    and.z c
-    sta.z out.c
-    // [15] call out 
-    // [17] phi from outw::@1 to out [phi:outw::@1->out]
-  out_from___b1:
-    // [17] phi (byte) out::c#3 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
-    // [17] phi (byte) idx#21 = (byte) idx#22 [phi:outw::@1->out#1] -- register_copy 
-    jsr out
-    jmp __breturn
-    // outw::@return
-  __breturn:
-    // [16] return 
-    rts
-}
   // out
 // out(byte zp(4) c)
 out: {
     .label c = 4
-    // [18] (byte) idx#22 ← ++ (byte) idx#21 -- vbuz1=_inc_vbuz1 
+    // [13] (byte) idx#22 ← ++ (byte) idx#21 -- vbuz1=_inc_vbuz1 
     inc.z idx
-    // [19] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3 -- pbuc1_derefidx_vbuz1=vbuz2 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3 -- pbuc1_derefidx_vbuz1=vbuz2 
     lda.z c
     ldy.z idx
     sta SCREEN,y
     jmp __breturn
     // out::@return
+  __breturn:
+    // [15] return 
+    rts
+}
+  // outw
+// outw(byte zp(6) c)
+outw: {
+    .label c = 6
+    // [16] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    lda.z c
+    asl
+    asl
+    asl
+    asl
+    sta.z out.c
+    // [17] call out 
+    // [12] phi from outw to out [phi:outw->out]
+  out_from_outw:
+    // [12] phi (byte) out::c#3 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#22 [phi:outw->out#1] -- register_copy 
+    jsr out
+    jmp __b1
+    // outw::@1
+  __b1:
+    // [18] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f
+    and.z c
+    sta.z out.c
+    // [19] call out 
+    // [12] phi from outw::@1 to out [phi:outw::@1->out]
+  out_from___b1:
+    // [12] phi (byte) out::c#3 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#22 [phi:outw::@1->out#1] -- register_copy 
+    jsr out
+    jmp __breturn
+    // outw::@return
   __breturn:
     // [20] return 
     rts
@@ -505,13 +505,13 @@ out: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [12] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 [ idx#22 outw::c#0 out::c#1 ] ( outsw:3::outw:10 [ main::c#2 idx#22 outw::c#0 out::c#1 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#1 = out::c#3 } }  ) always clobbers reg byte a 
+Statement [16] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 [ idx#22 outw::c#0 out::c#1 ] ( outsw:3::outw:10 [ main::c#2 idx#22 outw::c#0 out::c#1 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#1 = out::c#3 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#2 main::c#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ idx#21 idx#25 idx#22 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ outw::c#0 ]
-Statement [14] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f [ idx#22 out::c#2 ] ( outsw:3::outw:10 [ main::c#2 idx#22 out::c#2 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#2 = out::c#3 } }  ) always clobbers reg byte a 
-Statement [12] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 [ idx#22 outw::c#0 out::c#1 ] ( outsw:3::outw:10 [ main::c#2 idx#22 outw::c#0 out::c#1 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#1 = out::c#3 } }  ) always clobbers reg byte a 
-Statement [14] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f [ idx#22 out::c#2 ] ( outsw:3::outw:10 [ main::c#2 idx#22 out::c#2 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#2 = out::c#3 } }  ) always clobbers reg byte a 
+Statement [18] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f [ idx#22 out::c#2 ] ( outsw:3::outw:10 [ main::c#2 idx#22 out::c#2 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#2 = out::c#3 } }  ) always clobbers reg byte a 
+Statement [16] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 [ idx#22 outw::c#0 out::c#1 ] ( outsw:3::outw:10 [ main::c#2 idx#22 outw::c#0 out::c#1 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#1 = out::c#3 } }  ) always clobbers reg byte a 
+Statement [18] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f [ idx#22 out::c#2 ] ( outsw:3::outw:10 [ main::c#2 idx#22 out::c#2 ] { { outsw::c#0 = main::c#2 outw::c#0 } { idx#21 = idx#22 } { out::c#2 = out::c#3 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ idx#21 idx#25 idx#22 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ out::c#3 out::c#1 out::c#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -580,11 +580,11 @@ main: {
 // outsw(byte register(Y) c)
 outsw: {
     // [8] call out 
-    // [17] phi from outsw to out [phi:outsw->out]
+    // [12] phi from outsw to out [phi:outsw->out]
   out_from_outsw:
-    // [17] phi (byte) out::c#3 = (byte) '-' [phi:outsw->out#0] -- vbuaa=vbuc1 
+    // [12] phi (byte) out::c#3 = (byte) '-' [phi:outsw->out#0] -- vbuaa=vbuc1 
     lda #'-'
-    // [17] phi (byte) idx#21 = (byte) idx#25 [phi:outsw->out#1] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#25 [phi:outsw->out#1] -- register_copy 
     jsr out
     jmp __b1
     // outsw::@1
@@ -598,48 +598,48 @@ outsw: {
     // [11] return 
     rts
 }
+  // out
+// out(byte register(A) c)
+out: {
+    // [13] (byte) idx#22 ← ++ (byte) idx#21 -- vbuxx=_inc_vbuxx 
+    inx
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    jmp __breturn
+    // out::@return
+  __breturn:
+    // [15] return 
+    rts
+}
   // outw
 // outw(byte register(Y) c)
 outw: {
-    // [12] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 -- vbuaa=vbuyy_rol_4 
+    // [16] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 -- vbuaa=vbuyy_rol_4 
     tya
     asl
     asl
     asl
     asl
-    // [13] call out 
-    // [17] phi from outw to out [phi:outw->out]
+    // [17] call out 
+    // [12] phi from outw to out [phi:outw->out]
   out_from_outw:
-    // [17] phi (byte) out::c#3 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
-    // [17] phi (byte) idx#21 = (byte) idx#22 [phi:outw->out#1] -- register_copy 
+    // [12] phi (byte) out::c#3 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#22 [phi:outw->out#1] -- register_copy 
     jsr out
     jmp __b1
     // outw::@1
   __b1:
-    // [14] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f -- vbuaa=vbuyy_band_vbuc1 
+    // [18] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f -- vbuaa=vbuyy_band_vbuc1 
     tya
     and #$f
-    // [15] call out 
-    // [17] phi from outw::@1 to out [phi:outw::@1->out]
+    // [19] call out 
+    // [12] phi from outw::@1 to out [phi:outw::@1->out]
   out_from___b1:
-    // [17] phi (byte) out::c#3 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
-    // [17] phi (byte) idx#21 = (byte) idx#22 [phi:outw::@1->out#1] -- register_copy 
+    // [12] phi (byte) out::c#3 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#22 [phi:outw::@1->out#1] -- register_copy 
     jsr out
     jmp __breturn
     // outw::@return
-  __breturn:
-    // [16] return 
-    rts
-}
-  // out
-// out(byte register(A) c)
-out: {
-    // [18] (byte) idx#22 ← ++ (byte) idx#21 -- vbuxx=_inc_vbuxx 
-    inx
-    // [19] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3 -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-    jmp __breturn
-    // out::@return
   __breturn:
     // [20] return 
     rts
@@ -652,8 +652,8 @@ Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b2 with __b1
@@ -666,10 +666,10 @@ Removing instruction __breturn:
 Removing instruction out_from_outsw:
 Removing instruction __b1:
 Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction out_from_outw:
 Removing instruction __b1:
 Removing instruction out_from___b1:
-Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -758,10 +758,10 @@ main: {
 outsw: {
     // out('-')
     // [8] call out 
-    // [17] phi from outsw to out [phi:outsw->out]
-    // [17] phi (byte) out::c#3 = (byte) '-' [phi:outsw->out#0] -- vbuaa=vbuc1 
+    // [12] phi from outsw to out [phi:outsw->out]
+    // [12] phi (byte) out::c#3 = (byte) '-' [phi:outsw->out#0] -- vbuaa=vbuc1 
     lda #'-'
-    // [17] phi (byte) idx#21 = (byte) idx#25 [phi:outsw->out#1] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#25 [phi:outsw->out#1] -- register_copy 
     jsr out
     // outsw::@1
     // outw(c)
@@ -773,46 +773,46 @@ outsw: {
     // [11] return 
     rts
 }
-  // outw
-// outw(byte register(Y) c)
-outw: {
-    // out(c<<4)
-    // [12] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 -- vbuaa=vbuyy_rol_4 
-    tya
-    asl
-    asl
-    asl
-    asl
-    // [13] call out 
-    // [17] phi from outw to out [phi:outw->out]
-    // [17] phi (byte) out::c#3 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
-    // [17] phi (byte) idx#21 = (byte) idx#22 [phi:outw->out#1] -- register_copy 
-    jsr out
-    // outw::@1
-    // out(c&0x0f)
-    // [14] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f -- vbuaa=vbuyy_band_vbuc1 
-    tya
-    and #$f
-    // [15] call out 
-    // [17] phi from outw::@1 to out [phi:outw::@1->out]
-    // [17] phi (byte) out::c#3 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
-    // [17] phi (byte) idx#21 = (byte) idx#22 [phi:outw::@1->out#1] -- register_copy 
-    jsr out
-    // outw::@return
-    // }
-    // [16] return 
-    rts
-}
   // out
 // out(byte register(A) c)
 out: {
     // idx++;
-    // [18] (byte) idx#22 ← ++ (byte) idx#21 -- vbuxx=_inc_vbuxx 
+    // [13] (byte) idx#22 ← ++ (byte) idx#21 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[idx] = c
-    // [19] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [14] *((const nomodify byte*) SCREEN + (byte) idx#22) ← (byte) out::c#3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // out::@return
+    // }
+    // [15] return 
+    rts
+}
+  // outw
+// outw(byte register(Y) c)
+outw: {
+    // out(c<<4)
+    // [16] (byte) out::c#1 ← (byte) outw::c#0 << (byte) 4 -- vbuaa=vbuyy_rol_4 
+    tya
+    asl
+    asl
+    asl
+    asl
+    // [17] call out 
+    // [12] phi from outw to out [phi:outw->out]
+    // [12] phi (byte) out::c#3 = (byte) out::c#1 [phi:outw->out#0] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#22 [phi:outw->out#1] -- register_copy 
+    jsr out
+    // outw::@1
+    // out(c&0x0f)
+    // [18] (byte) out::c#2 ← (byte) outw::c#0 & (byte) $f -- vbuaa=vbuyy_band_vbuc1 
+    tya
+    and #$f
+    // [19] call out 
+    // [12] phi from outw::@1 to out [phi:outw::@1->out]
+    // [12] phi (byte) out::c#3 = (byte) out::c#2 [phi:outw::@1->out#0] -- register_copy 
+    // [12] phi (byte) idx#21 = (byte) idx#22 [phi:outw::@1->out#1] -- register_copy 
+    jsr out
+    // outw::@return
     // }
     // [20] return 
     rts

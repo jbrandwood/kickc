@@ -44,7 +44,7 @@
   .label plex_free_next = $b
   .label framedone = $c
   // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = 6
+  .label PLEX_SCREEN_PTR = 2
 __start: {
     // plex_show_idx=0
     lda #0
@@ -63,232 +63,8 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // asm
-    sei
-    // init()
-    jsr init
-    // loop()
-    jsr loop
-    // }
-    rts
-}
-// The raster loop
-loop: {
-    // The current index into the y-sinus
-    .label sin_idx = 2
-    lda #0
-    sta.z sin_idx
-  __b2:
-    // while(!framedone)
-    lda.z framedone
-    cmp #0
-    bne __b3
-    jmp __b2
-  __b3:
-    // *BORDER_COLOR = RED
-    lda #RED
-    sta BORDER_COLOR
-    ldx.z sin_idx
-    ldy #0
-  __b4:
-    // PLEX_YPOS[sy] = YSIN[y_idx]
-    lda YSIN,x
-    sta PLEX_YPOS,y
-    // y_idx += 8
-    txa
-    axs #-[8]
-    // for(char sy: 0..PLEX_COUNT-1)
-    iny
-    cpy #PLEX_COUNT-1+1
-    bne __b4
-    // sin_idx +=1
-    inc.z sin_idx
-    // (*BORDER_COLOR)++;
-    inc BORDER_COLOR
-    // plexSort()
-    jsr plexSort
-    // *BORDER_COLOR = GREEN
-    lda #GREEN
-    sta BORDER_COLOR
-    // framedone = false
-    lda #0
-    sta.z framedone
-    jmp __b2
-}
-// Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
-// Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
-// Uses an insertion sort:
-// 1. Moves a marker (m) from the start to end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
-// 2a. If the next element after the marker is larger that the current element
-//     the marker can be moved forwards (as the sorting is correct).
-// 2b. If the next element after the marker is smaller than the current element:
-//     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
-//      It is then inserted at the spot. Now the marker can move forward.
-plexSort: {
-    .label nxt_idx = $d
-    .label nxt_y = $e
-    .label m = 3
-    lda #0
-    sta.z m
-  __b1:
-    // nxt_idx = PLEX_SORTED_IDX[m+1]
-    ldy.z m
-    lda PLEX_SORTED_IDX+1,y
-    sta.z nxt_idx
-    // nxt_y = PLEX_YPOS[nxt_idx]
-    tay
-    lda PLEX_YPOS,y
-    sta.z nxt_y
-    // if(nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[m]])
-    ldx.z m
-    ldy PLEX_SORTED_IDX,x
-    cmp PLEX_YPOS,y
-    bcs __b2
-  __b3:
-    // PLEX_SORTED_IDX[s+1] = PLEX_SORTED_IDX[s]
-    lda PLEX_SORTED_IDX,x
-    sta PLEX_SORTED_IDX+1,x
-    // s--;
-    dex
-    // while((s!=0xff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
-    cpx #$ff
-    beq __b4
-    lda.z nxt_y
-    ldy PLEX_SORTED_IDX,x
-    cmp PLEX_YPOS,y
-    bcc __b3
-  __b4:
-    // s++;
-    inx
-    // PLEX_SORTED_IDX[s] = nxt_idx
-    lda.z nxt_idx
-    sta PLEX_SORTED_IDX,x
-  __b2:
-    // for(char m: 0..PLEX_COUNT-2)
-    inc.z m
-    lda #PLEX_COUNT-2+1
-    cmp.z m
-    bne __b1
-    // plex_show_idx = 0
-    // Prepare for showing the sprites
-    lda #0
-    sta.z plex_show_idx
-    // plex_sprite_idx = 0
-    sta.z plex_sprite_idx
-    // plex_sprite_msb = 1
-    lda #1
-    sta.z plex_sprite_msb
-    ldx #0
-  plexFreePrepare1___b1:
-    // PLEX_FREE_YPOS[s] = 0
-    lda #0
-    sta PLEX_FREE_YPOS,x
-    // for( char s: 0..7)
-    inx
-    cpx #8
-    bne plexFreePrepare1___b1
-    // plex_free_next = 0
-    sta.z plex_free_next
-    // }
-    rts
-}
-// Initialize the program
-init: {
-    // Set the x-positions & pointers
-    .label xp = 4
-    // *D011 = VIC_DEN | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_RSEL|3
-    sta D011
-    // plexInit(SCREEN)
-  // Initialize the multiplexer
-    jsr plexInit
-    lda #<$20
-    sta.z xp
-    lda #>$20
-    sta.z xp+1
-    ldx #0
-  __b1:
-    // PLEX_PTR[sx] = (char)(SPRITE/0x40)
-    lda #$ff&SPRITE/$40
-    sta PLEX_PTR,x
-    // PLEX_XPOS[sx] = xp
-    txa
-    asl
-    tay
-    lda.z xp
-    sta PLEX_XPOS,y
-    lda.z xp+1
-    sta PLEX_XPOS+1,y
-    // xp += 9
-    lda #9
-    clc
-    adc.z xp
-    sta.z xp
-    bcc !+
-    inc.z xp+1
-  !:
-    // for(char sx: 0..PLEX_COUNT-1)
-    inx
-    cpx #PLEX_COUNT-1+1
-    bne __b1
-    // *SPRITES_ENABLE = 0xff
-    // Enable & initialize sprites
-    lda #$ff
-    sta SPRITES_ENABLE
-    ldx #0
-  __b3:
-    // SPRITES_COLOR[ss] = GREEN
-    lda #GREEN
-    sta SPRITES_COLOR,x
-    // for(char ss: 0..7)
-    inx
-    cpx #8
-    bne __b3
-    // asm
-    // enable the interrupt
-    sei
-    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *IRQ_ENABLE = IRQ_RASTER
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // *IRQ_STATUS = IRQ_RASTER
-    sta IRQ_STATUS
-    // *KERNEL_IRQ = &plex_irq
-    lda #<plex_irq
-    sta KERNEL_IRQ
-    lda #>plex_irq
-    sta KERNEL_IRQ+1
-    // *VIC_CONTROL &= 0x7f
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // *RASTER = 0x0
-    lda #0
-    sta RASTER
-    // asm
-    cli
-    // }
-    rts
-}
-// Initialize the multiplexer data structures
-plexInit: {
-    ldx #0
-  __b1:
-    // PLEX_SORTED_IDX[i] = i
-    txa
-    sta PLEX_SORTED_IDX,x
-    // for(char i: 0..PLEX_COUNT-1)
-    inx
-    cpx #PLEX_COUNT-1+1
-    bne __b1
-    // }
-    rts
-}
 plex_irq: {
-    .label __4 = $f
+    .label __4 = $d
     // asm
     sei
     // *BORDER_COLOR = WHITE
@@ -338,10 +114,20 @@ plex_irq: {
     stx RASTER
     jmp __b2
 }
+main: {
+    // asm
+    sei
+    // init()
+    jsr init
+    // loop()
+    jsr loop
+    // }
+    rts
+}
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $10
+    .label plex_sprite_idx2 = $e
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -423,6 +209,220 @@ plexShowSprite: {
     ora.z plex_sprite_msb
     sta SPRITES_XMSB
     jmp __b2
+}
+// Initialize the program
+init: {
+    // Set the x-positions & pointers
+    .label xp = 4
+    // *D011 = VIC_DEN | VIC_RSEL | 3
+    lda #VIC_DEN|VIC_RSEL|3
+    sta D011
+    // plexInit(SCREEN)
+  // Initialize the multiplexer
+    jsr plexInit
+    lda #<$20
+    sta.z xp
+    lda #>$20
+    sta.z xp+1
+    ldx #0
+  __b1:
+    // PLEX_PTR[sx] = (char)(SPRITE/0x40)
+    lda #$ff&SPRITE/$40
+    sta PLEX_PTR,x
+    // PLEX_XPOS[sx] = xp
+    txa
+    asl
+    tay
+    lda.z xp
+    sta PLEX_XPOS,y
+    lda.z xp+1
+    sta PLEX_XPOS+1,y
+    // xp += 9
+    lda #9
+    clc
+    adc.z xp
+    sta.z xp
+    bcc !+
+    inc.z xp+1
+  !:
+    // for(char sx: 0..PLEX_COUNT-1)
+    inx
+    cpx #PLEX_COUNT-1+1
+    bne __b1
+    // *SPRITES_ENABLE = 0xff
+    // Enable & initialize sprites
+    lda #$ff
+    sta SPRITES_ENABLE
+    ldx #0
+  __b3:
+    // SPRITES_COLOR[ss] = GREEN
+    lda #GREEN
+    sta SPRITES_COLOR,x
+    // for(char ss: 0..7)
+    inx
+    cpx #8
+    bne __b3
+    // asm
+    // enable the interrupt
+    sei
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // *IRQ_ENABLE = IRQ_RASTER
+    lda #IRQ_RASTER
+    sta IRQ_ENABLE
+    // *IRQ_STATUS = IRQ_RASTER
+    sta IRQ_STATUS
+    // *KERNEL_IRQ = &plex_irq
+    lda #<plex_irq
+    sta KERNEL_IRQ
+    lda #>plex_irq
+    sta KERNEL_IRQ+1
+    // *VIC_CONTROL &= 0x7f
+    lda #$7f
+    and VIC_CONTROL
+    sta VIC_CONTROL
+    // *RASTER = 0x0
+    lda #0
+    sta RASTER
+    // asm
+    cli
+    // }
+    rts
+}
+// The raster loop
+loop: {
+    // The current index into the y-sinus
+    .label sin_idx = 6
+    lda #0
+    sta.z sin_idx
+  __b2:
+    // while(!framedone)
+    lda.z framedone
+    cmp #0
+    bne __b3
+    jmp __b2
+  __b3:
+    // *BORDER_COLOR = RED
+    lda #RED
+    sta BORDER_COLOR
+    ldx.z sin_idx
+    ldy #0
+  __b4:
+    // PLEX_YPOS[sy] = YSIN[y_idx]
+    lda YSIN,x
+    sta PLEX_YPOS,y
+    // y_idx += 8
+    txa
+    axs #-[8]
+    // for(char sy: 0..PLEX_COUNT-1)
+    iny
+    cpy #PLEX_COUNT-1+1
+    bne __b4
+    // sin_idx +=1
+    inc.z sin_idx
+    // (*BORDER_COLOR)++;
+    inc BORDER_COLOR
+    // plexSort()
+    jsr plexSort
+    // *BORDER_COLOR = GREEN
+    lda #GREEN
+    sta BORDER_COLOR
+    // framedone = false
+    lda #0
+    sta.z framedone
+    jmp __b2
+}
+// Initialize the multiplexer data structures
+plexInit: {
+    ldx #0
+  __b1:
+    // PLEX_SORTED_IDX[i] = i
+    txa
+    sta PLEX_SORTED_IDX,x
+    // for(char i: 0..PLEX_COUNT-1)
+    inx
+    cpx #PLEX_COUNT-1+1
+    bne __b1
+    // }
+    rts
+}
+// Ensure that the indices in PLEX_SORTED_IDX is sorted based on the y-positions in PLEX_YPOS
+// Assumes that the positions are nearly sorted already (as each sprite just moves a bit)
+// Uses an insertion sort:
+// 1. Moves a marker (m) from the start to end of the array. Every time the marker moves forward all elements before the marker are sorted correctly.
+// 2a. If the next element after the marker is larger that the current element
+//     the marker can be moved forwards (as the sorting is correct).
+// 2b. If the next element after the marker is smaller than the current element:
+//     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
+//      It is then inserted at the spot. Now the marker can move forward.
+plexSort: {
+    .label nxt_idx = $f
+    .label nxt_y = $10
+    .label m = 7
+    lda #0
+    sta.z m
+  __b1:
+    // nxt_idx = PLEX_SORTED_IDX[m+1]
+    ldy.z m
+    lda PLEX_SORTED_IDX+1,y
+    sta.z nxt_idx
+    // nxt_y = PLEX_YPOS[nxt_idx]
+    tay
+    lda PLEX_YPOS,y
+    sta.z nxt_y
+    // if(nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[m]])
+    ldx.z m
+    ldy PLEX_SORTED_IDX,x
+    cmp PLEX_YPOS,y
+    bcs __b2
+  __b3:
+    // PLEX_SORTED_IDX[s+1] = PLEX_SORTED_IDX[s]
+    lda PLEX_SORTED_IDX,x
+    sta PLEX_SORTED_IDX+1,x
+    // s--;
+    dex
+    // while((s!=0xff) && (nxt_y<PLEX_YPOS[PLEX_SORTED_IDX[s]]))
+    cpx #$ff
+    beq __b4
+    lda.z nxt_y
+    ldy PLEX_SORTED_IDX,x
+    cmp PLEX_YPOS,y
+    bcc __b3
+  __b4:
+    // s++;
+    inx
+    // PLEX_SORTED_IDX[s] = nxt_idx
+    lda.z nxt_idx
+    sta PLEX_SORTED_IDX,x
+  __b2:
+    // for(char m: 0..PLEX_COUNT-2)
+    inc.z m
+    lda #PLEX_COUNT-2+1
+    cmp.z m
+    bne __b1
+    // plex_show_idx = 0
+    // Prepare for showing the sprites
+    lda #0
+    sta.z plex_show_idx
+    // plex_sprite_idx = 0
+    sta.z plex_sprite_idx
+    // plex_sprite_msb = 1
+    lda #1
+    sta.z plex_sprite_msb
+    ldx #0
+  plexFreePrepare1___b1:
+    // PLEX_FREE_YPOS[s] = 0
+    lda #0
+    sta PLEX_FREE_YPOS,x
+    // for( char s: 0..7)
+    inx
+    cpx #8
+    bne plexFreePrepare1___b1
+    // plex_free_next = 0
+    sta.z plex_free_next
+    // }
+    rts
 }
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0

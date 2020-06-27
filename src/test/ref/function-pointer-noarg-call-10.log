@@ -182,35 +182,35 @@ Added new block during phi lifting print::@2(between print::@1 and print::@1)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
-Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@1
-Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of world
 Adding NOP phi() at start of world::@1
 Adding NOP phi() at start of hello
 Adding NOP phi() at start of hello::@1
-CALL GRAPH
-Calls in [__start] to main:3 
-Calls in [main] to do10:7 do10:9 
-Calls in [world] to print:20 
-Calls in [hello] to print:32 
-
-Created 4 initial phi equivalence classes
-Coalesced [18] do10::i#3 ← do10::i#1
-Coalesced [30] print::i#3 ← print::i#1
-Coalesced down to 4 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) do10::@2
-Culled Empty Block (label) world::@1
-Culled Empty Block (label) print::@2
-Culled Empty Block (label) hello::@1
-Adding NOP phi() at start of __start
-Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+CALL GRAPH
+Calls in [__start] to main:3 
+Calls in [world] to print:7 
+Calls in [hello] to print:11 
+Calls in [main] to do10:15 do10:17 
+
+Created 4 initial phi equivalence classes
+Coalesced [27] print::i#3 ← print::i#1
+Coalesced [34] do10::i#3 ← do10::i#1
+Coalesced down to 4 phi equivalence classes
+Culled Empty Block (label) __start::@2
+Culled Empty Block (label) world::@1
+Culled Empty Block (label) hello::@1
+Culled Empty Block (label) main::@2
+Culled Empty Block (label) print::@2
+Culled Empty Block (label) do10::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of world
 Adding NOP phi() at start of hello
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 
@@ -229,63 +229,63 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
-main: scope:[main]  from __start::@1
-  [5] phi()
-  [6] call do10 
-  to:main::@1
-main::@1: scope:[main]  from main
-  [7] phi()
-  [8] call do10 
-  to:main::@return
-main::@return: scope:[main]  from main::@1
-  [9] return 
-  to:@return
-
-(void()) do10((void()*) do10::fn)
-do10: scope:[do10]  from main main::@1
-  [10] (void()*) do10::fn#3 ← phi( main/&(void()) hello() main::@1/&(void()) world() )
-  to:do10::@1
-do10::@1: scope:[do10]  from do10 do10::@1
-  [11] (byte) do10::i#2 ← phi( do10/(byte) 0 do10::@1/(byte) do10::i#1 )
-  [12] call *((void()*) do10::fn#3) 
-  [13] (byte) do10::i#1 ← ++ (byte) do10::i#2
-  [14] if((byte) do10::i#1!=(byte) $a) goto do10::@1
-  to:do10::@return
-do10::@return: scope:[do10]  from do10::@1
-  [15] return 
-  to:@return
-
 (void()) world()
 world: scope:[world]  from
-  [16] phi()
-  [17] call print 
+  [5] phi()
+  [6] call print 
   to:world::@return
 world::@return: scope:[world]  from world
-  [18] return 
-  to:@return
-
-(void()) print((byte*) print::msg)
-print: scope:[print]  from hello world
-  [19] (byte*) print::msg#3 ← phi( hello/(const byte*) hello::msg world/(const byte*) world::msg )
-  to:print::@1
-print::@1: scope:[print]  from print print::@1
-  [20] (byte) print::i#2 ← phi( print/(byte) 0 print::@1/(byte) print::i#1 )
-  [21] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2)
-  [22] (volatile byte) idx ← ++ (volatile byte) idx
-  [23] (byte) print::i#1 ← ++ (byte) print::i#2
-  [24] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1
-  to:print::@return
-print::@return: scope:[print]  from print::@1
-  [25] return 
+  [7] return 
   to:@return
 
 (void()) hello()
 hello: scope:[hello]  from
-  [26] phi()
-  [27] call print 
+  [8] phi()
+  [9] call print 
   to:hello::@return
 hello::@return: scope:[hello]  from hello
+  [10] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  [11] phi()
+  [12] call do10 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [13] phi()
+  [14] call do10 
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [15] return 
+  to:@return
+
+(void()) print((byte*) print::msg)
+print: scope:[print]  from hello world
+  [16] (byte*) print::msg#3 ← phi( hello/(const byte*) hello::msg world/(const byte*) world::msg )
+  to:print::@1
+print::@1: scope:[print]  from print print::@1
+  [17] (byte) print::i#2 ← phi( print/(byte) 0 print::@1/(byte) print::i#1 )
+  [18] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2)
+  [19] (volatile byte) idx ← ++ (volatile byte) idx
+  [20] (byte) print::i#1 ← ++ (byte) print::i#2
+  [21] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1
+  to:print::@return
+print::@return: scope:[print]  from print::@1
+  [22] return 
+  to:@return
+
+(void()) do10((void()*) do10::fn)
+do10: scope:[do10]  from main main::@1
+  [23] (void()*) do10::fn#3 ← phi( main/&(void()) hello() main::@1/&(void()) world() )
+  to:do10::@1
+do10::@1: scope:[do10]  from do10 do10::@1
+  [24] (byte) do10::i#2 ← phi( do10/(byte) 0 do10::@1/(byte) do10::i#1 )
+  [25] call *((void()*) do10::fn#3) 
+  [26] (byte) do10::i#1 ← ++ (byte) do10::i#2
+  [27] if((byte) do10::i#1!=(byte) $a) goto do10::@1
+  to:do10::@return
+do10::@return: scope:[do10]  from do10::@1
   [28] return 
   to:@return
 
@@ -310,21 +310,21 @@ VARIABLE REGISTER WEIGHTS
 (void()) world()
 
 Initial phi equivalence classes
-[ do10::fn#3 ]
-[ do10::i#2 do10::i#1 ]
 [ print::msg#3 ]
 [ print::i#2 print::i#1 ]
+[ do10::fn#3 ]
+[ do10::i#2 do10::i#1 ]
 Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
-[ do10::fn#3 ]
-[ do10::i#2 do10::i#1 ]
 [ print::msg#3 ]
 [ print::i#2 print::i#1 ]
+[ do10::fn#3 ]
+[ do10::i#2 do10::i#1 ]
 [ idx ]
-Allocated zp[2]:2 [ do10::fn#3 ]
-Allocated zp[1]:4 [ do10::i#2 do10::i#1 ]
-Allocated zp[2]:5 [ print::msg#3 ]
-Allocated zp[1]:7 [ print::i#2 print::i#1 ]
+Allocated zp[2]:2 [ print::msg#3 ]
+Allocated zp[1]:4 [ print::i#2 print::i#1 ]
+Allocated zp[2]:5 [ do10::fn#3 ]
+Allocated zp[1]:7 [ do10::i#2 do10::i#1 ]
 Allocated zp[1]:8 [ idx ]
 
 INITIAL ASM
@@ -352,7 +352,7 @@ __start: {
     // __start::@1
   __b1:
     // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
+    // [11] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -361,76 +361,12 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // [6] call do10 
-    // [10] phi from main to do10 [phi:main->do10]
-  do10_from_main:
-    // [10] phi (void()*) do10::fn#3 = &(void()) hello() [phi:main->do10#0] -- pprz1=pprc1 
-    lda #<hello
-    sta.z do10.fn
-    lda #>hello
-    sta.z do10.fn+1
-    jsr do10
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] call do10 
-    // [10] phi from main::@1 to do10 [phi:main::@1->do10]
-  do10_from___b1:
-    // [10] phi (void()*) do10::fn#3 = &(void()) world() [phi:main::@1->do10#0] -- pprz1=pprc1 
-    lda #<world
-    sta.z do10.fn
-    lda #>world
-    sta.z do10.fn+1
-    jsr do10
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [9] return 
-    rts
-}
-  // do10
-// do10(void()* zp(2) fn)
-do10: {
-    .label i = 4
-    .label fn = 2
-    // [11] phi from do10 to do10::@1 [phi:do10->do10::@1]
-  __b1_from_do10:
-    // [11] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [11] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-  __b1_from___b1:
-    // [11] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
-    jmp __b1
-    // do10::@1
-  __b1:
-    // [12] call *((void()*) do10::fn#3) 
-    jsr bi_fn
-    // [13] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [14] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$a
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // do10::@return
-  __breturn:
-    // [15] return 
-    rts
-  bi_fn:
-    jmp (fn)
-}
   // world
 world: {
-    // [17] call print 
-    // [19] phi from world to print [phi:world->print]
+    // [6] call print 
+    // [16] phi from world to print [phi:world->print]
   print_from_world:
-    // [19] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -439,54 +375,17 @@ world: {
     jmp __breturn
     // world::@return
   __breturn:
-    // [18] return 
+    // [7] return 
     rts
     msg: .text "world "
     .byte 0
 }
-  // print
-// print(byte* zp(5) msg)
-print: {
-    .label i = 7
-    .label msg = 5
-    // [20] phi from print to print::@1 [phi:print->print::@1]
-  __b1_from_print:
-    // [20] phi (byte) print::i#2 = (byte) 0 [phi:print->print::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [20] phi from print::@1 to print::@1 [phi:print::@1->print::@1]
-  __b1_from___b1:
-    // [20] phi (byte) print::i#2 = (byte) print::i#1 [phi:print::@1->print::@1#0] -- register_copy 
-    jmp __b1
-    // print::@1
-  __b1:
-    // [21] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
-    ldx.z idx
-    ldy.z i
-    lda (msg),y
-    sta SCREEN,x
-    // [22] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
-    inc.z idx
-    // [23] (byte) print::i#1 ← ++ (byte) print::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [24] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuz2_then_la1 
-    ldy.z i
-    lda (msg),y
-    cmp #0
-    bne __b1_from___b1
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [25] return 
-    rts
-}
   // hello
 hello: {
-    // [27] call print 
-    // [19] phi from hello to print [phi:hello->print]
+    // [9] call print 
+    // [16] phi from hello to print [phi:hello->print]
   print_from_hello:
-    // [19] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -495,55 +394,158 @@ hello: {
     jmp __breturn
     // hello::@return
   __breturn:
-    // [28] return 
+    // [10] return 
     rts
     msg: .text "hello "
     .byte 0
+}
+  // main
+main: {
+    // [12] call do10 
+    // [23] phi from main to do10 [phi:main->do10]
+  do10_from_main:
+    // [23] phi (void()*) do10::fn#3 = &(void()) hello() [phi:main->do10#0] -- pprz1=pprc1 
+    lda #<hello
+    sta.z do10.fn
+    lda #>hello
+    sta.z do10.fn+1
+    jsr do10
+    // [13] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [14] call do10 
+    // [23] phi from main::@1 to do10 [phi:main::@1->do10]
+  do10_from___b1:
+    // [23] phi (void()*) do10::fn#3 = &(void()) world() [phi:main::@1->do10#0] -- pprz1=pprc1 
+    lda #<world
+    sta.z do10.fn
+    lda #>world
+    sta.z do10.fn+1
+    jsr do10
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [15] return 
+    rts
+}
+  // print
+// print(byte* zp(2) msg)
+print: {
+    .label i = 4
+    .label msg = 2
+    // [17] phi from print to print::@1 [phi:print->print::@1]
+  __b1_from_print:
+    // [17] phi (byte) print::i#2 = (byte) 0 [phi:print->print::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [17] phi from print::@1 to print::@1 [phi:print::@1->print::@1]
+  __b1_from___b1:
+    // [17] phi (byte) print::i#2 = (byte) print::i#1 [phi:print::@1->print::@1#0] -- register_copy 
+    jmp __b1
+    // print::@1
+  __b1:
+    // [18] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuz3 
+    ldx.z idx
+    ldy.z i
+    lda (msg),y
+    sta SCREEN,x
+    // [19] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    inc.z idx
+    // [20] (byte) print::i#1 ← ++ (byte) print::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [21] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuz2_then_la1 
+    ldy.z i
+    lda (msg),y
+    cmp #0
+    bne __b1_from___b1
+    jmp __breturn
+    // print::@return
+  __breturn:
+    // [22] return 
+    rts
+}
+  // do10
+// do10(void()* zp(5) fn)
+do10: {
+    .label i = 7
+    .label fn = 5
+    // [24] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  __b1_from_do10:
+    // [24] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [24] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  __b1_from___b1:
+    // [24] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    jmp __b1
+    // do10::@1
+  __b1:
+    // [25] call *((void()*) do10::fn#3) 
+    jsr bi_fn
+    // [26] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [27] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp.z i
+    bne __b1_from___b1
+    jmp __breturn
+    // do10::@return
+  __breturn:
+    // [28] return 
+    rts
+  bi_fn:
+    jmp (fn)
 }
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (volatile byte) idx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [12] call *((void()*) do10::fn#3)  [ do10::fn#3 do10::i#2 ] ( main:3::do10:6 [ do10::fn#3 do10::i#2 ] { }  main:3::do10:8 [ do10::fn#3 do10::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ do10::i#2 do10::i#1 ]
-Removing always clobbered register reg byte x as potential for zp[1]:4 [ do10::i#2 do10::i#1 ]
-Removing always clobbered register reg byte y as potential for zp[1]:4 [ do10::i#2 do10::i#1 ]
-Statement [14] if((byte) do10::i#1!=(byte) $a) goto do10::@1 [ do10::fn#3 do10::i#1 ] ( main:3::do10:6 [ do10::fn#3 do10::i#1 ] { }  main:3::do10:8 [ do10::fn#3 do10::i#1 ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) [ idx print::msg#3 print::i#2 ] ( print:17 [ idx print::msg#3 print::i#2 ] { }  print:27 [ idx print::msg#3 print::i#2 ] { }  ) always clobbers reg byte a reg byte x 
-Removing always clobbered register reg byte a as potential for zp[1]:7 [ print::i#2 print::i#1 ]
-Removing always clobbered register reg byte x as potential for zp[1]:7 [ print::i#2 print::i#1 ]
-Statement [24] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 [ idx print::msg#3 print::i#1 ] ( print:17 [ idx print::msg#3 print::i#1 ] { }  print:27 [ idx print::msg#3 print::i#1 ] { }  ) always clobbers reg byte a 
+Statement [18] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) [ idx print::msg#3 print::i#2 ] ( print:6 [ idx print::msg#3 print::i#2 ] { }  print:9 [ idx print::msg#3 print::i#2 ] { }  ) always clobbers reg byte a reg byte x 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ print::i#2 print::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:4 [ print::i#2 print::i#1 ]
+Statement [21] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 [ idx print::msg#3 print::i#1 ] ( print:6 [ idx print::msg#3 print::i#1 ] { }  print:9 [ idx print::msg#3 print::i#1 ] { }  ) always clobbers reg byte a 
+Statement [25] call *((void()*) do10::fn#3)  [ do10::fn#3 do10::i#2 ] ( main:3::do10:12 [ do10::fn#3 do10::i#2 ] { }  main:3::do10:14 [ do10::fn#3 do10::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Removing always clobbered register reg byte a as potential for zp[1]:7 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte x as potential for zp[1]:7 [ do10::i#2 do10::i#1 ]
+Removing always clobbered register reg byte y as potential for zp[1]:7 [ do10::i#2 do10::i#1 ]
+Statement [27] if((byte) do10::i#1!=(byte) $a) goto do10::@1 [ do10::fn#3 do10::i#1 ] ( main:3::do10:12 [ do10::fn#3 do10::i#1 ] { }  main:3::do10:14 [ do10::fn#3 do10::i#1 ] { }  ) always clobbers reg byte a 
 Statement [1] (volatile byte) idx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [12] call *((void()*) do10::fn#3)  [ do10::fn#3 do10::i#2 ] ( main:3::do10:6 [ do10::fn#3 do10::i#2 ] { }  main:3::do10:8 [ do10::fn#3 do10::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [14] if((byte) do10::i#1!=(byte) $a) goto do10::@1 [ do10::fn#3 do10::i#1 ] ( main:3::do10:6 [ do10::fn#3 do10::i#1 ] { }  main:3::do10:8 [ do10::fn#3 do10::i#1 ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) [ idx print::msg#3 print::i#2 ] ( print:17 [ idx print::msg#3 print::i#2 ] { }  print:27 [ idx print::msg#3 print::i#2 ] { }  ) always clobbers reg byte a reg byte x 
-Statement [24] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 [ idx print::msg#3 print::i#1 ] ( print:17 [ idx print::msg#3 print::i#1 ] { }  print:27 [ idx print::msg#3 print::i#1 ] { }  ) always clobbers reg byte a 
-Potential registers zp[2]:2 [ do10::fn#3 ] : zp[2]:2 , 
-Potential registers zp[1]:4 [ do10::i#2 do10::i#1 ] : zp[1]:4 , 
-Potential registers zp[2]:5 [ print::msg#3 ] : zp[2]:5 , 
-Potential registers zp[1]:7 [ print::i#2 print::i#1 ] : zp[1]:7 , reg byte y , 
+Statement [18] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) [ idx print::msg#3 print::i#2 ] ( print:6 [ idx print::msg#3 print::i#2 ] { }  print:9 [ idx print::msg#3 print::i#2 ] { }  ) always clobbers reg byte a reg byte x 
+Statement [21] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 [ idx print::msg#3 print::i#1 ] ( print:6 [ idx print::msg#3 print::i#1 ] { }  print:9 [ idx print::msg#3 print::i#1 ] { }  ) always clobbers reg byte a 
+Statement [25] call *((void()*) do10::fn#3)  [ do10::fn#3 do10::i#2 ] ( main:3::do10:12 [ do10::fn#3 do10::i#2 ] { }  main:3::do10:14 [ do10::fn#3 do10::i#2 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [27] if((byte) do10::i#1!=(byte) $a) goto do10::@1 [ do10::fn#3 do10::i#1 ] ( main:3::do10:12 [ do10::fn#3 do10::i#1 ] { }  main:3::do10:14 [ do10::fn#3 do10::i#1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ print::msg#3 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ print::i#2 print::i#1 ] : zp[1]:4 , reg byte y , 
+Potential registers zp[2]:5 [ do10::fn#3 ] : zp[2]:5 , 
+Potential registers zp[1]:7 [ do10::i#2 do10::i#1 ] : zp[1]:7 , 
 Potential registers zp[1]:8 [ idx ] : zp[1]:8 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [do10] 2,502.5: zp[1]:4 [ do10::i#2 do10::i#1 ] 0: zp[2]:2 [ do10::fn#3 ] 
-Uplift Scope [print] 252.5: zp[1]:7 [ print::i#2 print::i#1 ] 33.67: zp[2]:5 [ print::msg#3 ] 
+Uplift Scope [do10] 2,502.5: zp[1]:7 [ do10::i#2 do10::i#1 ] 0: zp[2]:5 [ do10::fn#3 ] 
+Uplift Scope [print] 252.5: zp[1]:4 [ print::i#2 print::i#1 ] 33.67: zp[2]:2 [ print::msg#3 ] 
 Uplift Scope [] 38.12: zp[1]:8 [ idx ] 
 Uplift Scope [hello] 
 Uplift Scope [world] 
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [do10] best 1024 combination zp[1]:4 [ do10::i#2 do10::i#1 ] zp[2]:2 [ do10::fn#3 ] 
-Uplifting [print] best 904 combination reg byte y [ print::i#2 print::i#1 ] zp[2]:5 [ print::msg#3 ] 
+Uplifting [do10] best 1024 combination zp[1]:7 [ do10::i#2 do10::i#1 ] zp[2]:5 [ do10::fn#3 ] 
+Uplifting [print] best 904 combination reg byte y [ print::i#2 print::i#1 ] zp[2]:2 [ print::msg#3 ] 
 Uplifting [] best 904 combination zp[1]:8 [ idx ] 
 Uplifting [hello] best 904 combination 
 Uplifting [world] best 904 combination 
 Uplifting [main] best 904 combination 
 Uplifting [__start] best 904 combination 
-Attempting to uplift remaining variables inzp[1]:4 [ do10::i#2 do10::i#1 ]
-Uplifting [do10] best 904 combination zp[1]:4 [ do10::i#2 do10::i#1 ] 
+Attempting to uplift remaining variables inzp[1]:7 [ do10::i#2 do10::i#1 ]
+Uplifting [do10] best 904 combination zp[1]:7 [ do10::i#2 do10::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ idx ]
 Uplifting [] best 904 combination zp[1]:8 [ idx ] 
+Allocated (was zp[2]:5) zp[2]:4 [ do10::fn#3 ]
+Allocated (was zp[1]:7) zp[1]:6 [ do10::i#2 do10::i#1 ]
 Allocated (was zp[1]:8) zp[1]:7 [ idx ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -570,7 +572,7 @@ __start: {
     // __start::@1
   __b1:
     // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
+    // [11] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -579,76 +581,12 @@ __start: {
     // [4] return 
     rts
 }
-  // main
-main: {
-    // [6] call do10 
-    // [10] phi from main to do10 [phi:main->do10]
-  do10_from_main:
-    // [10] phi (void()*) do10::fn#3 = &(void()) hello() [phi:main->do10#0] -- pprz1=pprc1 
-    lda #<hello
-    sta.z do10.fn
-    lda #>hello
-    sta.z do10.fn+1
-    jsr do10
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] call do10 
-    // [10] phi from main::@1 to do10 [phi:main::@1->do10]
-  do10_from___b1:
-    // [10] phi (void()*) do10::fn#3 = &(void()) world() [phi:main::@1->do10#0] -- pprz1=pprc1 
-    lda #<world
-    sta.z do10.fn
-    lda #>world
-    sta.z do10.fn+1
-    jsr do10
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [9] return 
-    rts
-}
-  // do10
-// do10(void()* zp(2) fn)
-do10: {
-    .label i = 4
-    .label fn = 2
-    // [11] phi from do10 to do10::@1 [phi:do10->do10::@1]
-  __b1_from_do10:
-    // [11] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [11] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-  __b1_from___b1:
-    // [11] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
-    jmp __b1
-    // do10::@1
-  __b1:
-    // [12] call *((void()*) do10::fn#3) 
-    jsr bi_fn
-    // [13] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [14] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$a
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // do10::@return
-  __breturn:
-    // [15] return 
-    rts
-  bi_fn:
-    jmp (fn)
-}
   // world
 world: {
-    // [17] call print 
-    // [19] phi from world to print [phi:world->print]
+    // [6] call print 
+    // [16] phi from world to print [phi:world->print]
   print_from_world:
-    // [19] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -657,50 +595,17 @@ world: {
     jmp __breturn
     // world::@return
   __breturn:
-    // [18] return 
+    // [7] return 
     rts
     msg: .text "world "
     .byte 0
 }
-  // print
-// print(byte* zp(5) msg)
-print: {
-    .label msg = 5
-    // [20] phi from print to print::@1 [phi:print->print::@1]
-  __b1_from_print:
-    // [20] phi (byte) print::i#2 = (byte) 0 [phi:print->print::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-    jmp __b1
-    // [20] phi from print::@1 to print::@1 [phi:print::@1->print::@1]
-  __b1_from___b1:
-    // [20] phi (byte) print::i#2 = (byte) print::i#1 [phi:print::@1->print::@1#0] -- register_copy 
-    jmp __b1
-    // print::@1
-  __b1:
-    // [21] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
-    lda (msg),y
-    ldx.z idx
-    sta SCREEN,x
-    // [22] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
-    inc.z idx
-    // [23] (byte) print::i#1 ← ++ (byte) print::i#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // [24] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
-    lda (msg),y
-    cmp #0
-    bne __b1_from___b1
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [25] return 
-    rts
-}
   // hello
 hello: {
-    // [27] call print 
-    // [19] phi from hello to print [phi:hello->print]
+    // [9] call print 
+    // [16] phi from hello to print [phi:hello->print]
   print_from_hello:
-    // [19] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
+    // [16] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -709,10 +614,107 @@ hello: {
     jmp __breturn
     // hello::@return
   __breturn:
-    // [28] return 
+    // [10] return 
     rts
     msg: .text "hello "
     .byte 0
+}
+  // main
+main: {
+    // [12] call do10 
+    // [23] phi from main to do10 [phi:main->do10]
+  do10_from_main:
+    // [23] phi (void()*) do10::fn#3 = &(void()) hello() [phi:main->do10#0] -- pprz1=pprc1 
+    lda #<hello
+    sta.z do10.fn
+    lda #>hello
+    sta.z do10.fn+1
+    jsr do10
+    // [13] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [14] call do10 
+    // [23] phi from main::@1 to do10 [phi:main::@1->do10]
+  do10_from___b1:
+    // [23] phi (void()*) do10::fn#3 = &(void()) world() [phi:main::@1->do10#0] -- pprz1=pprc1 
+    lda #<world
+    sta.z do10.fn
+    lda #>world
+    sta.z do10.fn+1
+    jsr do10
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [15] return 
+    rts
+}
+  // print
+// print(byte* zp(2) msg)
+print: {
+    .label msg = 2
+    // [17] phi from print to print::@1 [phi:print->print::@1]
+  __b1_from_print:
+    // [17] phi (byte) print::i#2 = (byte) 0 [phi:print->print::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp __b1
+    // [17] phi from print::@1 to print::@1 [phi:print::@1->print::@1]
+  __b1_from___b1:
+    // [17] phi (byte) print::i#2 = (byte) print::i#1 [phi:print::@1->print::@1#0] -- register_copy 
+    jmp __b1
+    // print::@1
+  __b1:
+    // [18] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
+    lda (msg),y
+    ldx.z idx
+    sta SCREEN,x
+    // [19] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    inc.z idx
+    // [20] (byte) print::i#1 ← ++ (byte) print::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [21] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    lda (msg),y
+    cmp #0
+    bne __b1_from___b1
+    jmp __breturn
+    // print::@return
+  __breturn:
+    // [22] return 
+    rts
+}
+  // do10
+// do10(void()* zp(4) fn)
+do10: {
+    .label i = 6
+    .label fn = 4
+    // [24] phi from do10 to do10::@1 [phi:do10->do10::@1]
+  __b1_from_do10:
+    // [24] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // [24] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+  __b1_from___b1:
+    // [24] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    jmp __b1
+    // do10::@1
+  __b1:
+    // [25] call *((void()*) do10::fn#3) 
+    jsr bi_fn
+    // [26] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [27] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp.z i
+    bne __b1_from___b1
+    jmp __breturn
+    // do10::@return
+  __breturn:
+    // [28] return 
+    rts
+  bi_fn:
+    jmp (fn)
 }
   // File Data
 
@@ -720,13 +722,13 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
-Removing instruction jmp __b1
-Removing instruction jmp __breturn
-Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
@@ -741,16 +743,16 @@ Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
+Removing instruction print_from_world:
+Removing instruction __breturn:
+Removing instruction print_from_hello:
+Removing instruction __breturn:
 Removing instruction do10_from_main:
 Removing instruction __b1:
 Removing instruction __breturn:
-Removing instruction __b1_from_do10:
-Removing instruction __breturn:
-Removing instruction print_from_world:
-Removing instruction __breturn:
 Removing instruction __b1_from_print:
 Removing instruction __breturn:
-Removing instruction print_from_hello:
+Removing instruction __b1_from_do10:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -767,10 +769,10 @@ FINAL SYMBOL TABLE
 (label) do10::@1
 (label) do10::@return
 (void()*) do10::fn
-(void()*) do10::fn#3 fn zp[2]:2
+(void()*) do10::fn#3 fn zp[2]:4
 (byte) do10::i
-(byte) do10::i#1 i zp[1]:4 1501.5
-(byte) do10::i#2 i zp[1]:4 1001.0
+(byte) do10::i#1 i zp[1]:6 1501.5
+(byte) do10::i#2 i zp[1]:6 1001.0
 (void()) hello()
 (label) hello::@return
 (const byte*) hello::msg[(byte) 7]  = (byte*) "hello "
@@ -785,15 +787,15 @@ FINAL SYMBOL TABLE
 (byte) print::i#1 reg byte y 151.5
 (byte) print::i#2 reg byte y 101.0
 (byte*) print::msg
-(byte*) print::msg#3 msg zp[2]:5 33.666666666666664
+(byte*) print::msg#3 msg zp[2]:2 33.666666666666664
 (void()) world()
 (label) world::@return
 (const byte*) world::msg[(byte) 7]  = (byte*) "world "
 
-zp[2]:2 [ do10::fn#3 ]
-zp[1]:4 [ do10::i#2 do10::i#1 ]
-zp[2]:5 [ print::msg#3 ]
+zp[2]:2 [ print::msg#3 ]
 reg byte y [ print::i#2 print::i#1 ]
+zp[2]:4 [ do10::fn#3 ]
+zp[1]:6 [ do10::i#2 do10::i#1 ]
 zp[1]:7 [ idx ]
 
 
@@ -819,75 +821,18 @@ __start: {
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
+    // [11] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [4] return 
     rts
 }
-  // main
-main: {
-    // do10(&hello)
-    // [6] call do10 
-    // [10] phi from main to do10 [phi:main->do10]
-    // [10] phi (void()*) do10::fn#3 = &(void()) hello() [phi:main->do10#0] -- pprz1=pprc1 
-    lda #<hello
-    sta.z do10.fn
-    lda #>hello
-    sta.z do10.fn+1
-    jsr do10
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-    // main::@1
-    // do10(&world)
-    // [8] call do10 
-    // [10] phi from main::@1 to do10 [phi:main::@1->do10]
-    // [10] phi (void()*) do10::fn#3 = &(void()) world() [phi:main::@1->do10#0] -- pprz1=pprc1 
-    lda #<world
-    sta.z do10.fn
-    lda #>world
-    sta.z do10.fn+1
-    jsr do10
-    // main::@return
-    // }
-    // [9] return 
-    rts
-}
-  // do10
-// do10(void()* zp(2) fn)
-do10: {
-    .label i = 4
-    .label fn = 2
-    // [11] phi from do10 to do10::@1 [phi:do10->do10::@1]
-    // [11] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    // [11] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
-    // [11] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
-    // do10::@1
-  __b1:
-    // (*fn)()
-    // [12] call *((void()*) do10::fn#3) 
-    jsr bi_fn
-    // for( byte i: 0..9)
-    // [13] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [14] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$a
-    cmp.z i
-    bne __b1
-    // do10::@return
-    // }
-    // [15] return 
-    rts
-  bi_fn:
-    jmp (fn)
-}
   // world
 world: {
     // print("world ")
-    // [17] call print 
-    // [19] phi from world to print [phi:world->print]
-    // [19] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
+    // [6] call print 
+    // [16] phi from world to print [phi:world->print]
+    // [16] phi (byte*) print::msg#3 = (const byte*) world::msg [phi:world->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -895,48 +840,17 @@ world: {
     jsr print
     // world::@return
     // }
-    // [18] return 
+    // [7] return 
     rts
     msg: .text "world "
     .byte 0
 }
-  // print
-// print(byte* zp(5) msg)
-print: {
-    .label msg = 5
-    // [20] phi from print to print::@1 [phi:print->print::@1]
-    // [20] phi (byte) print::i#2 = (byte) 0 [phi:print->print::@1#0] -- vbuyy=vbuc1 
-    ldy #0
-    // [20] phi from print::@1 to print::@1 [phi:print::@1->print::@1]
-    // [20] phi (byte) print::i#2 = (byte) print::i#1 [phi:print::@1->print::@1#0] -- register_copy 
-    // print::@1
-  __b1:
-    // SCREEN[idx++] = msg[i++]
-    // [21] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
-    lda (msg),y
-    ldx.z idx
-    sta SCREEN,x
-    // SCREEN[idx++] = msg[i++];
-    // [22] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
-    inc.z idx
-    // [23] (byte) print::i#1 ← ++ (byte) print::i#2 -- vbuyy=_inc_vbuyy 
-    iny
-    // while(msg[i])
-    // [24] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
-    lda (msg),y
-    cmp #0
-    bne __b1
-    // print::@return
-    // }
-    // [25] return 
-    rts
-}
   // hello
 hello: {
     // print("hello ")
-    // [27] call print 
-    // [19] phi from hello to print [phi:hello->print]
-    // [19] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
+    // [9] call print 
+    // [16] phi from hello to print [phi:hello->print]
+    // [16] phi (byte*) print::msg#3 = (const byte*) hello::msg [phi:hello->print#0] -- pbuz1=pbuc1 
     lda #<msg
     sta.z print.msg
     lda #>msg
@@ -944,10 +858,98 @@ hello: {
     jsr print
     // hello::@return
     // }
-    // [28] return 
+    // [10] return 
     rts
     msg: .text "hello "
     .byte 0
+}
+  // main
+main: {
+    // do10(&hello)
+    // [12] call do10 
+    // [23] phi from main to do10 [phi:main->do10]
+    // [23] phi (void()*) do10::fn#3 = &(void()) hello() [phi:main->do10#0] -- pprz1=pprc1 
+    lda #<hello
+    sta.z do10.fn
+    lda #>hello
+    sta.z do10.fn+1
+    jsr do10
+    // [13] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // do10(&world)
+    // [14] call do10 
+    // [23] phi from main::@1 to do10 [phi:main::@1->do10]
+    // [23] phi (void()*) do10::fn#3 = &(void()) world() [phi:main::@1->do10#0] -- pprz1=pprc1 
+    lda #<world
+    sta.z do10.fn
+    lda #>world
+    sta.z do10.fn+1
+    jsr do10
+    // main::@return
+    // }
+    // [15] return 
+    rts
+}
+  // print
+// print(byte* zp(2) msg)
+print: {
+    .label msg = 2
+    // [17] phi from print to print::@1 [phi:print->print::@1]
+    // [17] phi (byte) print::i#2 = (byte) 0 [phi:print->print::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [17] phi from print::@1 to print::@1 [phi:print::@1->print::@1]
+    // [17] phi (byte) print::i#2 = (byte) print::i#1 [phi:print::@1->print::@1#0] -- register_copy 
+    // print::@1
+  __b1:
+    // SCREEN[idx++] = msg[i++]
+    // [18] *((const nomodify byte*) SCREEN + (volatile byte) idx) ← *((byte*) print::msg#3 + (byte) print::i#2) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuyy 
+    lda (msg),y
+    ldx.z idx
+    sta SCREEN,x
+    // SCREEN[idx++] = msg[i++];
+    // [19] (volatile byte) idx ← ++ (volatile byte) idx -- vbuz1=_inc_vbuz1 
+    inc.z idx
+    // [20] (byte) print::i#1 ← ++ (byte) print::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // while(msg[i])
+    // [21] if((byte) 0!=*((byte*) print::msg#3 + (byte) print::i#1)) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    lda (msg),y
+    cmp #0
+    bne __b1
+    // print::@return
+    // }
+    // [22] return 
+    rts
+}
+  // do10
+// do10(void()* zp(4) fn)
+do10: {
+    .label i = 6
+    .label fn = 4
+    // [24] phi from do10 to do10::@1 [phi:do10->do10::@1]
+    // [24] phi (byte) do10::i#2 = (byte) 0 [phi:do10->do10::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    // [24] phi from do10::@1 to do10::@1 [phi:do10::@1->do10::@1]
+    // [24] phi (byte) do10::i#2 = (byte) do10::i#1 [phi:do10::@1->do10::@1#0] -- register_copy 
+    // do10::@1
+  __b1:
+    // (*fn)()
+    // [25] call *((void()*) do10::fn#3) 
+    jsr bi_fn
+    // for( byte i: 0..9)
+    // [26] (byte) do10::i#1 ← ++ (byte) do10::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [27] if((byte) do10::i#1!=(byte) $a) goto do10::@1 -- vbuz1_neq_vbuc1_then_la1 
+    lda #$a
+    cmp.z i
+    bne __b1
+    // do10::@return
+    // }
+    // [28] return 
+    rts
+  bi_fn:
+    jmp (fn)
 }
   // File Data
 

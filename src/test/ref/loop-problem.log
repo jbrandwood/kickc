@@ -112,10 +112,10 @@ Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of b
 CALL GRAPH
 Calls in [main] to d:1 b:3 
-Calls in [b] to d:8 
+Calls in [b] to d:10 
 
 Created 1 initial phi equivalence classes
-Coalesced [12] b::i#4 ← b::i#1
+Coalesced [14] b::i#4 ← b::i#1
 Coalesced down to 1 phi equivalence classes
 Culled Empty Block (label) main::@2
 Culled Empty Block (label) b::@3
@@ -137,27 +137,27 @@ main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-(void()) b()
-b: scope:[b]  from main::@1
-  [5] phi()
-  to:b::@1
-b::@1: scope:[b]  from b b::@2
-  [6] (byte) b::i#2 ← phi( b/(byte) 0 b::@2/(byte) b::i#1 )
-  [7] call d 
-  to:b::@2
-b::@2: scope:[b]  from b::@1
-  [8] (byte) b::i#1 ← ++ (byte) b::i#2
-  [9] if((byte) b::i#1!=(byte) 4) goto b::@1
-  to:b::@return
-b::@return: scope:[b]  from b::@2
-  [10] return 
-  to:@return
-
 (void()) d()
 d: scope:[d]  from b::@1 main
-  [11] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
+  [5] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN)
   to:d::@return
 d::@return: scope:[d]  from d
+  [6] return 
+  to:@return
+
+(void()) b()
+b: scope:[b]  from main::@1
+  [7] phi()
+  to:b::@1
+b::@1: scope:[b]  from b b::@2
+  [8] (byte) b::i#2 ← phi( b/(byte) 0 b::@2/(byte) b::i#1 )
+  [9] call d 
+  to:b::@2
+b::@2: scope:[b]  from b::@1
+  [10] (byte) b::i#1 ← ++ (byte) b::i#2
+  [11] if((byte) b::i#1!=(byte) 4) goto b::@1
+  to:b::@return
+b::@return: scope:[b]  from b::@2
   [12] return 
   to:@return
 
@@ -200,7 +200,7 @@ main: {
     // main::@1
   __b1:
     // [3] call b 
-    // [5] phi from main::@1 to b [phi:main::@1->b]
+    // [7] phi from main::@1 to b [phi:main::@1->b]
   b_from___b1:
     jsr b
     jmp __breturn
@@ -209,44 +209,44 @@ main: {
     // [4] return 
     rts
 }
+  // d
+d: {
+    // [5] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc SCREEN
+    jmp __breturn
+    // d::@return
+  __breturn:
+    // [6] return 
+    rts
+}
   // b
 b: {
     .label i = 2
-    // [6] phi from b to b::@1 [phi:b->b::@1]
+    // [8] phi from b to b::@1 [phi:b->b::@1]
   __b1_from_b:
-    // [6] phi (byte) b::i#2 = (byte) 0 [phi:b->b::@1#0] -- vbuz1=vbuc1 
+    // [8] phi (byte) b::i#2 = (byte) 0 [phi:b->b::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
-    // [6] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
+    // [8] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
   __b1_from___b2:
-    // [6] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
+    // [8] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
     jmp __b1
     // b::@1
   __b1:
-    // [7] call d 
+    // [9] call d 
     jsr d
     jmp __b2
     // b::@2
   __b2:
-    // [8] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuz1=_inc_vbuz1 
+    // [10] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [9] if((byte) b::i#1!=(byte) 4) goto b::@1 -- vbuz1_neq_vbuc1_then_la1 
+    // [11] if((byte) b::i#1!=(byte) 4) goto b::@1 -- vbuz1_neq_vbuc1_then_la1 
     lda #4
     cmp.z i
     bne __b1_from___b2
     jmp __breturn
     // b::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // d
-d: {
-    // [11] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc SCREEN
-    jmp __breturn
-    // d::@return
   __breturn:
     // [12] return 
     rts
@@ -290,7 +290,7 @@ main: {
     // main::@1
   __b1:
     // [3] call b 
-    // [5] phi from main::@1 to b [phi:main::@1->b]
+    // [7] phi from main::@1 to b [phi:main::@1->b]
   b_from___b1:
     jsr b
     jmp __breturn
@@ -299,41 +299,41 @@ main: {
     // [4] return 
     rts
 }
+  // d
+d: {
+    // [5] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc SCREEN
+    jmp __breturn
+    // d::@return
+  __breturn:
+    // [6] return 
+    rts
+}
   // b
 b: {
-    // [6] phi from b to b::@1 [phi:b->b::@1]
+    // [8] phi from b to b::@1 [phi:b->b::@1]
   __b1_from_b:
-    // [6] phi (byte) b::i#2 = (byte) 0 [phi:b->b::@1#0] -- vbuxx=vbuc1 
+    // [8] phi (byte) b::i#2 = (byte) 0 [phi:b->b::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [6] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
+    // [8] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
   __b1_from___b2:
-    // [6] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
+    // [8] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
     jmp __b1
     // b::@1
   __b1:
-    // [7] call d 
+    // [9] call d 
     jsr d
     jmp __b2
     // b::@2
   __b2:
-    // [8] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuxx=_inc_vbuxx 
+    // [10] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [9] if((byte) b::i#1!=(byte) 4) goto b::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [11] if((byte) b::i#1!=(byte) 4) goto b::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
     bne __b1_from___b2
     jmp __breturn
     // b::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // d
-d: {
-    // [11] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc SCREEN
-    jmp __breturn
-    // d::@return
   __breturn:
     // [12] return 
     rts
@@ -343,9 +343,9 @@ d: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
-Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b2 with __b1
@@ -355,9 +355,9 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b1:
 Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction __b1_from_b:
 Removing instruction __b2:
-Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b1
@@ -405,43 +405,43 @@ main: {
     // main::@1
     // b()
     // [3] call b 
-    // [5] phi from main::@1 to b [phi:main::@1->b]
+    // [7] phi from main::@1 to b [phi:main::@1->b]
     jsr b
     // main::@return
     // }
     // [4] return 
     rts
 }
-  // b
-b: {
-    // [6] phi from b to b::@1 [phi:b->b::@1]
-    // [6] phi (byte) b::i#2 = (byte) 0 [phi:b->b::@1#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [6] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
-    // [6] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
-    // b::@1
-  __b1:
-    // d()
-    // [7] call d 
-    jsr d
-    // b::@2
-    // for( byte i: 0..3)
-    // [8] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuxx=_inc_vbuxx 
-    inx
-    // [9] if((byte) b::i#1!=(byte) 4) goto b::@1 -- vbuxx_neq_vbuc1_then_la1 
-    cpx #4
-    bne __b1
-    // b::@return
-    // }
-    // [10] return 
-    rts
-}
   // d
 d: {
     // (*SCREEN)++;
-    // [11] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((const byte*) SCREEN) ← ++ *((const byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     // d::@return
+    // }
+    // [6] return 
+    rts
+}
+  // b
+b: {
+    // [8] phi from b to b::@1 [phi:b->b::@1]
+    // [8] phi (byte) b::i#2 = (byte) 0 [phi:b->b::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [8] phi from b::@2 to b::@1 [phi:b::@2->b::@1]
+    // [8] phi (byte) b::i#2 = (byte) b::i#1 [phi:b::@2->b::@1#0] -- register_copy 
+    // b::@1
+  __b1:
+    // d()
+    // [9] call d 
+    jsr d
+    // b::@2
+    // for( byte i: 0..3)
+    // [10] (byte) b::i#1 ← ++ (byte) b::i#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [11] if((byte) b::i#1!=(byte) 4) goto b::@1 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #4
+    bne __b1
+    // b::@return
     // }
     // [12] return 
     rts

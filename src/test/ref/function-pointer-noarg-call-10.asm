@@ -11,6 +11,30 @@ __start: {
     jsr main
     rts
 }
+world: {
+    // print("world ")
+    lda #<msg
+    sta.z print.msg
+    lda #>msg
+    sta.z print.msg+1
+    jsr print
+    // }
+    rts
+    msg: .text "world "
+    .byte 0
+}
+hello: {
+    // print("hello ")
+    lda #<msg
+    sta.z print.msg
+    lda #>msg
+    sta.z print.msg+1
+    jsr print
+    // }
+    rts
+    msg: .text "hello "
+    .byte 0
+}
 main: {
     // do10(&hello)
     lda #<hello
@@ -27,40 +51,9 @@ main: {
     // }
     rts
 }
-// do10(void()* zp(2) fn)
-do10: {
-    .label i = 4
-    .label fn = 2
-    lda #0
-    sta.z i
-  __b1:
-    // (*fn)()
-    jsr bi_fn
-    // for( byte i: 0..9)
-    inc.z i
-    lda #$a
-    cmp.z i
-    bne __b1
-    // }
-    rts
-  bi_fn:
-    jmp (fn)
-}
-world: {
-    // print("world ")
-    lda #<msg
-    sta.z print.msg
-    lda #>msg
-    sta.z print.msg+1
-    jsr print
-    // }
-    rts
-    msg: .text "world "
-    .byte 0
-}
-// print(byte* zp(5) msg)
+// print(byte* zp(2) msg)
 print: {
-    .label msg = 5
+    .label msg = 2
     ldy #0
   __b1:
     // SCREEN[idx++] = msg[i++]
@@ -77,15 +70,22 @@ print: {
     // }
     rts
 }
-hello: {
-    // print("hello ")
-    lda #<msg
-    sta.z print.msg
-    lda #>msg
-    sta.z print.msg+1
-    jsr print
+// do10(void()* zp(4) fn)
+do10: {
+    .label i = 6
+    .label fn = 4
+    lda #0
+    sta.z i
+  __b1:
+    // (*fn)()
+    jsr bi_fn
+    // for( byte i: 0..9)
+    inc.z i
+    lda #$a
+    cmp.z i
+    bne __b1
     // }
     rts
-    msg: .text "hello "
-    .byte 0
+  bi_fn:
+    jmp (fn)
 }

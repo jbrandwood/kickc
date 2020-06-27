@@ -41,72 +41,61 @@ main: {
     dec BG_COLOR
     jmp __b1
 }
-plots: {
-    ldx #0
+init_screen: {
+    .label b = 6
+    .label c = 4
+    lda #<BITMAP
+    sta.z b
+    lda #>BITMAP
+    sta.z b+1
   __b1:
-    // for(byte i=0; i<plots_cnt;i++)
-    cpx #plots_cnt
-    bcc __b2
+    // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
+    lda.z b+1
+    cmp #>BITMAP+$2000
+    bne __b2
+    lda.z b
+    cmp #<BITMAP+$2000
+    bne __b2
+    lda #<SCREEN
+    sta.z c
+    lda #>SCREEN
+    sta.z c+1
+  __b3:
+    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
+    lda.z c+1
+    cmp #>SCREEN+$400
+    bne __b4
+    lda.z c
+    cmp #<SCREEN+$400
+    bne __b4
     // }
     rts
+  __b4:
+    // *c = $14
+    lda #$14
+    ldy #0
+    sta (c),y
+    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
+    inc.z c
+    bne !+
+    inc.z c+1
+  !:
+    jmp __b3
   __b2:
-    // plot(plots_x[i], plots_y[i])
-    lda plots_x,x
-    sta.z plot.x
-    lda plots_y,x
-    sta.z plot.y
-    jsr plot
-    // for(byte i=0; i<plots_cnt;i++)
-    inx
+    // *b = 0
+    lda #0
+    tay
+    sta (b),y
+    // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
+    inc.z b
+    bne !+
+    inc.z b+1
+  !:
     jmp __b1
 }
-// plot(byte zp(7) x, byte zp(2) y)
-plot: {
-    .label x = 7
-    .label y = 2
-    .label plotter_x = 3
-    .label plotter_y = 5
-    .label plotter = 3
-    // >plotter_x = plot_xhi[x]
-    ldy.z x
-    lda plot_xhi,y
-    sta.z plotter_x+1
-    lda #<0
-    sta.z plotter_x
-    // <plotter_x = plot_xlo[x]
-    lda plot_xlo,y
-    sta.z plotter_x
-    // >plotter_y = plot_yhi[y]
-    ldy.z y
-    lda plot_yhi,y
-    sta.z plotter_y+1
-    lda #<0
-    sta.z plotter_y
-    // <plotter_y = plot_ylo[y]
-    lda plot_ylo,y
-    sta.z plotter_y
-    // plotter = plotter_x+plotter_y
-    lda.z plotter
-    clc
-    adc.z plotter_y
-    sta.z plotter
-    lda.z plotter+1
-    adc.z plotter_y+1
-    sta.z plotter+1
-    // *plotter | plot_bit[x]
-    ldy #0
-    lda (plotter),y
-    ldy.z x
-    ora plot_bit,y
-    // *plotter = *plotter | plot_bit[x]
-    ldy #0
-    sta (plotter),y
-    // }
-    rts
-}
 init_plot_tables: {
-    .label __9 = 7
-    .label yoffs = 5
+    .label __9 = 2
+    .label yoffs = 6
     ldy #$80
     ldx #0
   __b1:
@@ -172,57 +161,68 @@ init_plot_tables: {
     // }
     rts
 }
-init_screen: {
-    .label b = 5
-    .label c = 3
-    lda #<BITMAP
-    sta.z b
-    lda #>BITMAP
-    sta.z b+1
+plots: {
+    ldx #0
   __b1:
-    // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
-    lda.z b+1
-    cmp #>BITMAP+$2000
-    bne __b2
-    lda.z b
-    cmp #<BITMAP+$2000
-    bne __b2
-    lda #<SCREEN
-    sta.z c
-    lda #>SCREEN
-    sta.z c+1
-  __b3:
-    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
-    lda.z c+1
-    cmp #>SCREEN+$400
-    bne __b4
-    lda.z c
-    cmp #<SCREEN+$400
-    bne __b4
+    // for(byte i=0; i<plots_cnt;i++)
+    cpx #plots_cnt
+    bcc __b2
     // }
     rts
-  __b4:
-    // *c = $14
-    lda #$14
-    ldy #0
-    sta (c),y
-    // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
-    inc.z c
-    bne !+
-    inc.z c+1
-  !:
-    jmp __b3
   __b2:
-    // *b = 0
-    lda #0
-    tay
-    sta (b),y
-    // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
-    inc.z b
-    bne !+
-    inc.z b+1
-  !:
+    // plot(plots_x[i], plots_y[i])
+    lda plots_x,x
+    sta.z plot.x
+    lda plots_y,x
+    sta.z plot.y
+    jsr plot
+    // for(byte i=0; i<plots_cnt;i++)
+    inx
     jmp __b1
+}
+// plot(byte zp(2) x, byte zp(3) y)
+plot: {
+    .label x = 2
+    .label y = 3
+    .label plotter_x = 4
+    .label plotter_y = 6
+    .label plotter = 4
+    // >plotter_x = plot_xhi[x]
+    ldy.z x
+    lda plot_xhi,y
+    sta.z plotter_x+1
+    lda #<0
+    sta.z plotter_x
+    // <plotter_x = plot_xlo[x]
+    lda plot_xlo,y
+    sta.z plotter_x
+    // >plotter_y = plot_yhi[y]
+    ldy.z y
+    lda plot_yhi,y
+    sta.z plotter_y+1
+    lda #<0
+    sta.z plotter_y
+    // <plotter_y = plot_ylo[y]
+    lda plot_ylo,y
+    sta.z plotter_y
+    // plotter = plotter_x+plotter_y
+    lda.z plotter
+    clc
+    adc.z plotter_y
+    sta.z plotter
+    lda.z plotter+1
+    adc.z plotter_y+1
+    sta.z plotter+1
+    // *plotter | plot_bit[x]
+    ldy #0
+    lda (plotter),y
+    ldy.z x
+    ora plot_bit,y
+    // *plotter = *plotter | plot_bit[x]
+    ldy #0
+    sta (plotter),y
+    // }
+    rts
 }
   plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28
   plots_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28

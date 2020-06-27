@@ -28,52 +28,24 @@ main: {
     jsr plot
     jmp __b3
 }
-// Plot buffer on screen
-plot: {
-    .label line = 2
-    .label y = 4
-    lda #$10
-    sta.z y
-    lda #<SCREEN+5*$28+$c
-    sta.z line
-    lda #>SCREEN+5*$28+$c
-    sta.z line+1
+// Prepare buffer
+prepare: {
     ldx #0
   __b1:
-    ldy #0
-  __b2:
-    // for(byte x=0; x<16; x++ )
-    cpy #$10
-    bcc __b3
-    // line = line+40
-    lda #$28
-    clc
-    adc.z line
-    sta.z line
-    bcc !+
-    inc.z line+1
-  !:
-    // for(byte y : 16..1)
-    dec.z y
-    lda.z y
-    cmp #0
+    // buffer1[i] = i
+    txa
+    sta buffer1,x
+    // for( byte i : 0..255)
+    inx
+    cpx #0
     bne __b1
     // }
     rts
-  __b3:
-    // line[x] = buffer1[i++]
-    lda buffer1,x
-    sta (line),y
-    // line[x] = buffer1[i++];
-    inx
-    // for(byte x=0; x<16; x++ )
-    iny
-    jmp __b2
 }
 // Flip buffer
 flip: {
-    .label c = 5
-    .label r = 4
+    .label c = 2
+    .label r = 5
     lda #$10
     sta.z r
     ldx #$f
@@ -114,19 +86,47 @@ flip: {
     // }
     rts
 }
-// Prepare buffer
-prepare: {
+// Plot buffer on screen
+plot: {
+    .label line = 3
+    .label y = 5
+    lda #$10
+    sta.z y
+    lda #<SCREEN+5*$28+$c
+    sta.z line
+    lda #>SCREEN+5*$28+$c
+    sta.z line+1
     ldx #0
   __b1:
-    // buffer1[i] = i
-    txa
-    sta buffer1,x
-    // for( byte i : 0..255)
-    inx
-    cpx #0
+    ldy #0
+  __b2:
+    // for(byte x=0; x<16; x++ )
+    cpy #$10
+    bcc __b3
+    // line = line+40
+    lda #$28
+    clc
+    adc.z line
+    sta.z line
+    bcc !+
+    inc.z line+1
+  !:
+    // for(byte y : 16..1)
+    dec.z y
+    lda.z y
+    cmp #0
     bne __b1
     // }
     rts
+  __b3:
+    // line[x] = buffer1[i++]
+    lda buffer1,x
+    sta (line),y
+    // line[x] = buffer1[i++];
+    inx
+    // for(byte x=0; x<16; x++ )
+    iny
+    jmp __b2
 }
   buffer1: .fill $10*$10, 0
   buffer2: .fill $10*$10, 0

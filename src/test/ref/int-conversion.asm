@@ -46,6 +46,42 @@ main: {
   !:
     jmp __b1
 }
+testUnaryOperator: {
+    // assertType(typeid(-12ub), typeid(unsigned byte))
+  // Unary Operations
+    ldx #0
+    lda #TYPEID_BYTE
+    sta.z assertType.t2
+    tay
+    jsr assertType
+    // assertType(typeid(-12sb), typeid(signed byte))
+    lda #TYPEID_SIGNED_BYTE
+    sta.z assertType.t2
+    tay
+    jsr assertType
+    // assertType(typeid(-12uw), typeid(unsigned word))
+    lda #TYPEID_WORD
+    sta.z assertType.t2
+    tay
+    jsr assertType
+    // assertType(typeid(-12sw), typeid(signed word))
+    lda #TYPEID_SIGNED_WORD
+    sta.z assertType.t2
+    tay
+    jsr assertType
+    // assertType(typeid(-12ud), typeid(unsigned dword))
+    lda #TYPEID_DWORD
+    sta.z assertType.t2
+    tay
+    jsr assertType
+    // assertType(typeid(-12sd), typeid(signed dword))
+    lda #TYPEID_SIGNED_DWORD
+    sta.z assertType.t2
+    tay
+    jsr assertType
+    // }
+    rts
+}
 testBinaryOperator: {
     // assertType(typeid(12ub+12ub), typeid(unsigned byte))
   // Binary Operations between unsigned byte & other types
@@ -272,40 +308,4 @@ assertType: {
     lda #GREEN
     sta COLS,x
     jmp __b2
-}
-testUnaryOperator: {
-    // assertType(typeid(-12ub), typeid(unsigned byte))
-  // Unary Operations
-    ldx #0
-    lda #TYPEID_BYTE
-    sta.z assertType.t2
-    tay
-    jsr assertType
-    // assertType(typeid(-12sb), typeid(signed byte))
-    lda #TYPEID_SIGNED_BYTE
-    sta.z assertType.t2
-    tay
-    jsr assertType
-    // assertType(typeid(-12uw), typeid(unsigned word))
-    lda #TYPEID_WORD
-    sta.z assertType.t2
-    tay
-    jsr assertType
-    // assertType(typeid(-12sw), typeid(signed word))
-    lda #TYPEID_SIGNED_WORD
-    sta.z assertType.t2
-    tay
-    jsr assertType
-    // assertType(typeid(-12ud), typeid(unsigned dword))
-    lda #TYPEID_DWORD
-    sta.z assertType.t2
-    tay
-    jsr assertType
-    // assertType(typeid(-12sd), typeid(signed dword))
-    lda #TYPEID_SIGNED_DWORD
-    sta.z assertType.t2
-    tay
-    jsr assertType
-    // }
-    rts
 }

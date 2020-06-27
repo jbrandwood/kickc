@@ -4,8 +4,8 @@
 .pc = $80d "Program"
   .const READY_FRAMES = 5
   .label print_screen = $400
-  .label print_char_cursor = 7
-  .label print_line_cursor = 5
+  .label print_char_cursor = 5
+  .label print_line_cursor = 7
 main: {
     .label i = 2
     lda #0
@@ -54,6 +54,31 @@ main: {
     str: .text "ready!"
     .byte 0
 }
+game_ready: {
+    // if (action_count == 0)
+    cpx #0
+    bne __b1
+    ldx #READY_FRAMES
+  __b1:
+    // print_str_ln("ready")
+    lda #<str
+    sta.z print_str_ln.str
+    lda #>str
+    sta.z print_str_ln.str+1
+    jsr print_str_ln
+    // action_count--;
+    dex
+    // action_count==0
+    lda #1
+    cpx #0
+    beq !+
+    lda #0
+  !:
+    // }
+    rts
+    str: .text "ready"
+    .byte 0
+}
 // Print a zero-terminated string followed by a newline
 // print_str_ln(byte* zp(3) str)
 print_str_ln: {
@@ -62,29 +87,6 @@ print_str_ln: {
     jsr print_str
     // print_ln()
     jsr print_ln
-    // }
-    rts
-}
-// Print a newline
-print_ln: {
-  __b1:
-    // print_line_cursor + $28
-    lda #$28
-    clc
-    adc.z print_line_cursor
-    sta.z print_line_cursor
-    bcc !+
-    inc.z print_line_cursor+1
-  !:
-    // while (print_line_cursor<print_char_cursor)
-    lda.z print_line_cursor+1
-    cmp.z print_char_cursor+1
-    bcc __b1
-    bne !+
-    lda.z print_line_cursor
-    cmp.z print_char_cursor
-    bcc __b1
-  !:
     // }
     rts
 }
@@ -112,6 +114,29 @@ print_str: {
   !:
     jmp __b1
 }
+// Print a newline
+print_ln: {
+  __b1:
+    // print_line_cursor + $28
+    lda #$28
+    clc
+    adc.z print_line_cursor
+    sta.z print_line_cursor
+    bcc !+
+    inc.z print_line_cursor+1
+  !:
+    // while (print_line_cursor<print_char_cursor)
+    lda.z print_line_cursor+1
+    cmp.z print_char_cursor+1
+    bcc __b1
+    bne !+
+    lda.z print_line_cursor
+    cmp.z print_char_cursor
+    bcc __b1
+  !:
+    // }
+    rts
+}
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
@@ -125,29 +150,4 @@ print_char: {
   !:
     // }
     rts
-}
-game_ready: {
-    // if (action_count == 0)
-    cpx #0
-    bne __b1
-    ldx #READY_FRAMES
-  __b1:
-    // print_str_ln("ready")
-    lda #<str
-    sta.z print_str_ln.str
-    lda #>str
-    sta.z print_str_ln.str+1
-    jsr print_str_ln
-    // action_count--;
-    dex
-    // action_count==0
-    lda #1
-    cpx #0
-    beq !+
-    lda #0
-  !:
-    // }
-    rts
-    str: .text "ready"
-    .byte 0
 }

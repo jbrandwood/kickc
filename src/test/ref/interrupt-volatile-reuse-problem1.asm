@@ -16,15 +16,6 @@ __start: {
     jsr main
     rts
 }
-main: {
-    // *KERNEL_IRQ = &irq
-    lda #<irq
-    sta KERNEL_IRQ
-    lda #>irq
-    sta KERNEL_IRQ+1
-    // }
-    rts
-}
 irq: {
     // SCREEN[40] = col1++
     lda.z col1
@@ -38,4 +29,13 @@ irq: {
     inc.z col2
     // }
     jmp $ea81
+}
+main: {
+    // *KERNEL_IRQ = &irq
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+    // }
+    rts
 }

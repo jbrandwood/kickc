@@ -59,45 +59,10 @@ irq: {
     // }
     jmp $ea81
 }
-sub_irq: {
-    .label i = 5
-    lda #0
-    sta.z i
-  __b1:
-    ldx #0
-  __b2:
-    ldy #0
-  __b3:
-    // i+j
-    txa
-    clc
-    adc.z i
-    // i+j+k
-    sty.z $ff
-    clc
-    adc.z $ff
-    // *BG_COLOR = i+j+k
-    sta BG_COLOR
-    // for( byte k: 0..10 )
-    iny
-    cpy #$b
-    bne __b3
-    // for( byte j: 0..10 )
-    inx
-    cpx #$b
-    bne __b2
-    // for( byte i: 0..10 )
-    inc.z i
-    lda #$b
-    cmp.z i
-    bne __b1
-    // }
-    rts
-}
 main: {
-    .label k = 8
-    .label j = 7
-    .label i = 6
+    .label k = 7
+    .label j = 6
+    .label i = 5
     // asm
     sei
     // *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
@@ -159,6 +124,41 @@ main: {
     cmp.z i
     bne __b1
     jmp __b4
+}
+sub_irq: {
+    .label i = 8
+    lda #0
+    sta.z i
+  __b1:
+    ldx #0
+  __b2:
+    ldy #0
+  __b3:
+    // i+j
+    txa
+    clc
+    adc.z i
+    // i+j+k
+    sty.z $ff
+    clc
+    adc.z $ff
+    // *BG_COLOR = i+j+k
+    sta BG_COLOR
+    // for( byte k: 0..10 )
+    iny
+    cpy #$b
+    bne __b3
+    // for( byte j: 0..10 )
+    inx
+    cpx #$b
+    bne __b2
+    // for( byte i: 0..10 )
+    inc.z i
+    lda #$b
+    cmp.z i
+    bne __b1
+    // }
+    rts
 }
 sub_main: {
     .label i = 9

@@ -43,7 +43,12 @@ public class TestPrograms {
    }
 
    @Test
-   public void testStmtEmpty() throws IOException, URISyntaxException {
+   public void testStmtEmpty1() throws IOException, URISyntaxException {
+      compileAndCompare("stmt-empty-1.c");
+   }
+
+   @Test
+   public void testStmtEmpty0() throws IOException, URISyntaxException {
       compileAndCompare("stmt-empty.c");
    }
 

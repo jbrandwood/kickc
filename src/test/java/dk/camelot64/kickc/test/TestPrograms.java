@@ -3374,6 +3374,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testForRangedNpe() throws IOException, URISyntaxException {
+      assertError("forranged-npe.c", "Error! Loop variable not declared i");
+   }
+
+   @Test
    public void testForRangedWords() throws IOException, URISyntaxException {
       compileAndCompare("forrangedwords.c");
    }

@@ -9,7 +9,9 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.statements.StatementConditionalJump;
 import dk.camelot64.kickc.model.statements.StatementExprSideEffect;
-import dk.camelot64.kickc.model.symbols.*;
+import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Symbol;
+import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
@@ -144,8 +146,8 @@ public class AsmFragmentInstanceSpecFactory {
 
    private String assignmentRightSideSignature(RValue rValue1, Operator operator, RValue rValue2) {
 
-      final SymbolType rValue1Type = rValue1==null?null:SymbolTypeInference.inferType(program.getScope(), rValue1);
-      final SymbolType rValue2Type = rValue2==null?null:SymbolTypeInference.inferType(program.getScope(), rValue2);
+      final SymbolType rValue1Type = rValue1 == null ? null : SymbolTypeInference.inferType(program.getScope(), rValue1);
+      final SymbolType rValue2Type = rValue2 == null ? null : SymbolTypeInference.inferType(program.getScope(), rValue2);
 
       StringBuilder signature = new StringBuilder();
       if(rValue1 != null) {
@@ -427,51 +429,53 @@ public class AsmFragmentInstanceSpecFactory {
     * @return The type name
     */
    static String getTypePrefix(SymbolType type) {
-      if(SymbolType.BYTE.equals(type)) {
-         return "vbu";
-      } else if(SymbolType.SBYTE.equals(type)) {
-         return "vbs";
-      } else if(SymbolType.WORD.equals(type)) {
-         return "vwu";
-      } else if(SymbolType.SWORD.equals(type)) {
-         return "vws";
-      } else if(SymbolType.DWORD.equals(type)) {
-         return "vdu";
-      } else if(SymbolType.SDWORD.equals(type)) {
-         return "vds";
-      } else if(SymbolType.BOOLEAN.equals(type)) {
-         return "vbo";
-      } else if(type instanceof SymbolTypeStruct) {
-         return "vss";
-      } else if(type instanceof SymbolTypePointer) {
-         SymbolType elementType = ((SymbolTypePointer) type).getElementType();
-         if(SymbolType.BYTE.equals(elementType)) {
-            return "pbu";
-         } else if(SymbolType.SBYTE.equals(elementType)) {
-            return "pbs";
-         } else if(SymbolType.WORD.equals(elementType)) {
-            return "pwu";
-         } else if(SymbolType.SWORD.equals(elementType)) {
-            return "pws";
-         } else if(SymbolType.DWORD.equals(elementType)) {
-            return "pdu";
-         } else if(SymbolType.SDWORD.equals(elementType)) {
-            return "pds";
-         } else if(SymbolType.BOOLEAN.equals(elementType)) {
-            return "pbo";
-         } else if(SymbolType.VOID.equals(elementType)) {
-            return "pvo";
-         } else if(elementType instanceof SymbolTypeProcedure) {
-            return "ppr";
-         } else if(elementType instanceof SymbolTypePointer) {
-            return "ppt";
-         } else if(elementType instanceof SymbolTypeStruct) {
-            return "pss";
+      if(type instanceof SymbolTypePointer) {
+         SymbolType elmType = ((SymbolTypePointer) type).getElementType();
+         if(elmType instanceof SymbolTypePointer) {
+            SymbolType eml2Type = ((SymbolTypePointer) elmType).getElementType();
+            if(eml2Type instanceof SymbolTypePointer) {
+               throw new RuntimeException("Not implemented " + type);
+            } else {
+               return "q" + getBaseTypePrefix(eml2Type);
+            }
          } else {
-            throw new RuntimeException("Not implemented " + type);
+            return "p" + getBaseTypePrefix(elmType);
          }
       } else {
-         throw new RuntimeException("Not implemented " + type);
+         return "v" + getBaseTypePrefix(type);
+      }
+   }
+
+   /**
+    * Get the base symbol type part of the binding name (eg. bu/ws/...).
+    * This only handles basic types (not pointers)
+    *
+    * @param baseType The basic type
+    * @return The 2-letter base type name (eg. bu/ws/...).
+    */
+   static String getBaseTypePrefix(SymbolType baseType) {
+      if(SymbolType.BYTE.equals(baseType)) {
+         return "bu";
+      } else if(SymbolType.SBYTE.equals(baseType)) {
+         return "bs";
+      } else if(SymbolType.WORD.equals(baseType)) {
+         return "wu";
+      } else if(SymbolType.SWORD.equals(baseType)) {
+         return "ws";
+      } else if(SymbolType.DWORD.equals(baseType)) {
+         return "du";
+      } else if(SymbolType.SDWORD.equals(baseType)) {
+         return "ds";
+      } else if(SymbolType.VOID.equals(baseType)) {
+         return "vo";
+      } else if(SymbolType.BOOLEAN.equals(baseType)) {
+         return "bo";
+      } else if(baseType instanceof SymbolTypeStruct) {
+         return "ss";
+      } else if(baseType instanceof SymbolTypeProcedure) {
+         return "pr";
+      } else {
+         throw new InternalError("Not implemented " + baseType);
       }
    }
 

@@ -712,7 +712,9 @@ class AsmFragmentTemplateSynthesisRule {
 
       // Synthesize typed pointer math using void pointers
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p[^v][^o]([czm][1-9])(.*)", null, null, "$1pvo$2$3", null, null));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p[^v][^o]([czm][1-9])(.*p.*)", null, null, "$1pvo$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p[^v][^o]([czm][1-9])(.*[pq].*)", null, null, "$1pvo$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)q[^v][^o]([czm][1-9])(.*)", null, null, "$1qvo$2$3", null, null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)q[^v][^o]([czm][1-9])(.*[pq].*)", null, null, "$1qvo$2$3", null, null));
 
       // Synthesize some constant pointers as constant words (remove when the above section can be included)
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_(lt|gt|le|ge|eq|neq)_p..([czm].)_then_(.*)", null, null, "$1_$2_vwu$3_then_$4", null, null));

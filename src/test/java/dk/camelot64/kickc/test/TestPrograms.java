@@ -1048,6 +1048,11 @@ public class TestPrograms {
       assertError("function-as-array.c", "Error! Dereferencing a non-pointer type void()");
    }
 
+   //@Test
+   //public void testFunctionInfiniteLoop() throws IOException, URISyntaxException {
+   //   compileAndCompare("function-infinite-loop.c");
+   //}
+
    @Test
    public void testCodeAfterReturn1() throws IOException, URISyntaxException {
       compileAndCompare("code-after-return-1.c");

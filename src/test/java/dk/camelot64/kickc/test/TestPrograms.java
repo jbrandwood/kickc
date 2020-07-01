@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPointerToPointerProblem() throws IOException, URISyntaxException {
+      compileAndCompare("pointer-to-pointer-problem.c");
+   }
+
+   @Test
    public void testStmtEmpty1() throws IOException, URISyntaxException {
       compileAndCompare("stmt-empty-1.c");
    }

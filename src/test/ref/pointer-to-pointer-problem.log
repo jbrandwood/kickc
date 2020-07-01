@@ -1,0 +1,192 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  *(*((const word**) p1)) ← *(*((const word**) p2))
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
+(void()) main()
+(label) main::@return
+(const word**) p1 = (word**) 0
+(const word**) p2 = (word**) 0
+
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] *(*((const word**) p1)) ← *(*((const word**) p2))
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Demonstrates problem with pointer to pointer
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label p1 = 0
+  .label p2 = 0
+  // main
+main: {
+    // [0] *(*((const word**) p1)) ← *(*((const word**) p2)) -- _deref_(_deref_qwuc1)=_deref_(_deref_qwuc2) 
+    ldy p2
+    sty.z $fe
+    ldy p2+1
+    sty.z $ff
+    ldy #0
+    lda ($fe),y
+    ldy p1
+    sty.z $fe
+    ldy p1+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *(*((const word**) p1)) ← *(*((const word**) p2)) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 52 combination 
+Uplifting [] best 52 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates problem with pointer to pointer
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label p1 = 0
+  .label p2 = 0
+  // main
+main: {
+    // [0] *(*((const word**) p1)) ← *(*((const word**) p2)) -- _deref_(_deref_qwuc1)=_deref_(_deref_qwuc2) 
+    ldy p2
+    sty.z $fe
+    ldy p2+1
+    sty.z $ff
+    ldy #0
+    lda ($fe),y
+    ldy p1
+    sty.z $fe
+    ldy p1+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(void()) main()
+(label) main::@return
+(const word**) p1 = (word**) 0
+(const word**) p2 = (word**) 0
+
+
+
+FINAL ASSEMBLER
+Score: 49
+
+  // File Comments
+// Demonstrates problem with pointer to pointer
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label p1 = 0
+  .label p2 = 0
+  // main
+main: {
+    // **p1 = **p2
+    // [0] *(*((const word**) p1)) ← *(*((const word**) p2)) -- _deref_(_deref_qwuc1)=_deref_(_deref_qwuc2) 
+    ldy p2
+    sty.z $fe
+    ldy p2+1
+    sty.z $ff
+    ldy #0
+    lda ($fe),y
+    ldy p1
+    sty.z $fe
+    ldy p1+1
+    sty.z $ff
+    ldy #0
+    sta ($fe),y
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

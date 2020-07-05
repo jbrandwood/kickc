@@ -247,7 +247,7 @@ void eorfill(char* line_buffer, char* canvas) {
     }
 }
 
-// Get the absolute value of a u-bit unsigned number treated as a signed number.
+// Get the absolute value of a 8-bit unsigned number treated as a signed number.
 unsigned char abs_u8(unsigned char u) {
     if(u & 0x80) {
         return -u;

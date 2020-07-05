@@ -55,7 +55,7 @@ inline void initNES() {
     // which may be accomplished by waiting for 2 (two) vertical blank intervals.
     clearVBlankFlag();
     waitForVBlank();
-    // Clear RAM - since it has all variables and the stack it is necesary to do it inline
+    // Clear RAM - since it has all variables and the stack it is necessary to do it inline
     char i=0;
     do {
         (MEMORY+0x000)[i] = 0;

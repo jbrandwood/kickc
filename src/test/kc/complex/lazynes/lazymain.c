@@ -40,8 +40,9 @@ interrupt(hardware_stack) void vblank() {
  
 // Tile Set (in CHR ROM)
 #pragma data_seg(Tiles)
-export char TILES[] = kickasm(resource "example.chr") {{
+export char TILES[] = kickasm(resource "example.chr", resource "sprites.chr") {{
 	.import binary "example.chr"
+	.import binary "sprites.chr"
 }};
 
 // Sprite Buffer (in GAME RAM)

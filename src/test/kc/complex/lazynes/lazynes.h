@@ -87,8 +87,8 @@ enum {
   //  port: Joypad port (1 or 2)
  // result: Set of joypad flags (see below)
 //
-// TODO: ubyte lnGetPad(ubyte port);
-// TODO: 	enum { lfU=8, lfD=4, lfL=2, lfR=1, lfA=128, lfB=64, lfStart=16, lfSelect=32 };
+ubyte lnGetPad(ubyte port);
+enum { lfU=8, lfD=4, lfL=2, lfR=1, lfA=128, lfB=64, lfStart=16, lfSelect=32 };
 
   //
  // advanced usage

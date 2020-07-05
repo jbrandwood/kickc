@@ -42,6 +42,11 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   //@Test
+   //public void testForEver() throws IOException, URISyntaxException {
+   //   compileAndCompare("for-ever.c");
+   //}
+
    @Test
    public void testPointerToPointerProblem() throws IOException, URISyntaxException {
       compileAndCompare("pointer-to-pointer-problem.c");

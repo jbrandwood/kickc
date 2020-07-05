@@ -8,7 +8,7 @@
 #include <nes.h>
 #include <string.h>
 #include "lazynes.c"
-#include "lazyhello.c"
+#include "balloon.c"
 
 // RESET Called when the NES is reset, including when it is turned on.
 void main() {

@@ -38,10 +38,10 @@ print: {
     rts
   __b2:
     // SCREEN[idx++] = *(str++)
-    ldx.z idx
     ldy #0
     lda (str),y
-    sta SCREEN,x
+    ldy.z idx
+    sta SCREEN,y
     // SCREEN[idx++] = *(str++);
     inc.z idx
     inc.z str

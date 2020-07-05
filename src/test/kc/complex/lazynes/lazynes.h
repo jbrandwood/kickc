@@ -10,6 +10,11 @@ typedef unsigned char  ubyte;
 typedef signed short   sword;
 typedef unsigned short uword;
 
+// RESET Called when the NES is reset, including when it is turned on.
+void main();
+// NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
+interrupt(hardware_stack) void vblank();
+
    // Wait for next vblank
   // flags: 0, lfBlank or lfSplit (see below)
  // result: Amount of frames since last sync [0..31], 128 is added on NTSC
@@ -74,7 +79,7 @@ enum {
   //   x,y: Sprite coordinates
  // result: New position offset in OAM after the meta sprite has been added
 //
-// TODO: ubyte lnAddSpr(void* p, sword x, sword y);
+ubyte lnAddSpr(void* p, sword x, sword y);
 	//
 	// remarks:
 	// - The format for the metasprite data is an array of unsigned bytes.
@@ -94,10 +99,10 @@ enum { lfU=8, lfD=4, lfL=2, lfR=1, lfA=128, lfB=64, lfStart=16, lfSelect=32 };
  // advanced usage
 //
 
-extern __zp volatile ubyte
-	lnSpr0Wait,  // delay until scroll registers will be set after a SPR0HIT
-	lnPPUCTRL,  // current value of PPUCTRL register (will be written in NMI)
-	lnPPUMASK; // current value of PPUMASK register (will be written in NMI)
+// TODO: extern __zp volatile ubyte
+// TODO: 	lnSpr0Wait,  // delay until scroll registers will be set after a SPR0HIT
+// TODO: 	lnPPUCTRL,  // current value of PPUCTRL register (will be written in NMI)
+// TODO: 	lnPPUMASK; // current value of PPUMASK register (will be written in NMI)
 	//
 	// remark: The lazyNES NMI will write the PPUCTRL and PPUMASK registers,
 	//         so don't write PPUCTRL and PPUMASK directly - use these two

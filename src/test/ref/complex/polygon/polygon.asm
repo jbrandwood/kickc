@@ -873,7 +873,7 @@ eorfill: {
     iny
     jmp __b3
 }
-// Get the absolute value of a u-bit unsigned number treated as a signed number.
+// Get the absolute value of a 8-bit unsigned number treated as a signed number.
 // abs_u8(byte register(A) u)
 abs_u8: {
     // u & 0x80

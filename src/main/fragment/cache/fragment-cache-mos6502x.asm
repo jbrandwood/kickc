@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 160b017651
+//KICKC FRAGMENT CACHE 160b015f22
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -8562,6 +8562,52 @@ sty {z1}
 //FRAGMENT _deref_pbsc1=vbsc2
 lda #{c2}
 sta {c1}
+//FRAGMENT vbuz1=_dec_vbuz2
+ldy {z2}
+dey
+sty {z1}
+//FRAGMENT vbuz1=_dec_vbuaa
+sec
+sbc #1
+sta {z1}
+//FRAGMENT vbuz1=_dec_vbuxx
+dex
+stx {z1}
+//FRAGMENT vbuz1=_dec_vbuyy
+dey
+sty {z1}
+//FRAGMENT vbuaa=_dec_vbuz1
+lda {z1}
+sec
+sbc #1
+//FRAGMENT vbuaa=_dec_vbuxx
+txa
+sec
+sbc #1
+//FRAGMENT vbuaa=_dec_vbuyy
+tya
+sec
+sbc #1
+//FRAGMENT vbuxx=_dec_vbuz1
+ldx {z1}
+dex
+//FRAGMENT vbuxx=_dec_vbuaa
+tax
+dex
+//FRAGMENT vbuxx=_dec_vbuyy
+tya
+tax
+dex
+//FRAGMENT vbuyy=_dec_vbuz1
+ldy {z1}
+dey
+//FRAGMENT vbuyy=_dec_vbuaa
+tay
+dey
+//FRAGMENT vbuyy=_dec_vbuxx
+txa
+tay
+dey
 //FRAGMENT vwuz1=vwuz2_bor_vbuz3
 lda {z3}
 ora {z2}
@@ -17737,49 +17783,3 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
-//FRAGMENT vbuz1=_dec_vbuz2
-ldy {z2}
-dey
-sty {z1}
-//FRAGMENT vbuz1=_dec_vbuaa
-sec
-sbc #1
-sta {z1}
-//FRAGMENT vbuz1=_dec_vbuxx
-dex
-stx {z1}
-//FRAGMENT vbuz1=_dec_vbuyy
-dey
-sty {z1}
-//FRAGMENT vbuaa=_dec_vbuz1
-lda {z1}
-sec
-sbc #1
-//FRAGMENT vbuaa=_dec_vbuxx
-txa
-sec
-sbc #1
-//FRAGMENT vbuaa=_dec_vbuyy
-tya
-sec
-sbc #1
-//FRAGMENT vbuxx=_dec_vbuz1
-ldx {z1}
-dex
-//FRAGMENT vbuxx=_dec_vbuaa
-tax
-dex
-//FRAGMENT vbuxx=_dec_vbuyy
-tya
-tax
-dex
-//FRAGMENT vbuyy=_dec_vbuz1
-ldy {z1}
-dey
-//FRAGMENT vbuyy=_dec_vbuaa
-tay
-dey
-//FRAGMENT vbuyy=_dec_vbuxx
-txa
-tay
-dey

@@ -58,6 +58,17 @@ struct SpriteData align(0x100) SPRITE_BUFFER[0x40];
 // Index of the next SpriteData in SPRITE_BUFFER to write to in lnAddSpr()
 volatile char add_sprite_idx;
 
+// Counts the vblanks between syncs
+volatile char vblank_count;
+
+// The current mode set by lnSync. 
+//	lfBlank = 1,  activates blank mode, blanks screen and allows lnPush() calls
+//	lfSplit = 2   activates split mode, NMI waits for SPR0HIT and sets registers
+volatile char sync_mode;
+
+// Signal when vblank occurs. The NMI sets this to zero. To wait for a vblank set this no non-zero and wait for it to become zero.
+volatile char vblank_signal;
+
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
     // DMA transfer the entire sprite buffer to the PPU
@@ -65,36 +76,58 @@ interrupt(hardware_stack) void vblank() {
     // Set scroll
     PPU->PPUSCROLL = 0;
     PPU->PPUSCROLL = 0;
-    // move all sprites off the screen
-    //for(char i=0;i!=0x40;i++)
-    //    SPRITE_BUFFER[i].y = 0xff;
-    // Reset the index of sprites to add
-    add_sprite_idx = 0;
+    // count vblanks
+    vblank_count++;
+    // send vblank signal
+    vblank_signal = 0;
 }
 
    // Wait for next vblank
   // flags: 0, lfBlank or lfSplit (see below)
  // result: Amount of frames since last sync [0..31], 128 is added on NTSC
-//
+//	lfBlank = 0,  disables blank mode (if set), wait for vblank
+//	lfBlank = 1,  activates blank mode, blanks screen and allows lnPush() calls
+//	lfSplit = 2   activates split mode, NMI waits for SPR0HIT and sets registers
 ubyte lnSync(ubyte flags) {
-    // Enable video output if lfBlank not set
+    // Is video output enabled (lfBlank==0)
     if(!(flags&lfBlank)) {
-        // Set sprite tileset to upper - enable vblank NMI
-        PPU->PPUCTRL = 0b10001000;
-        // Enable sprite and tile rendering
-        PPU->PPUMASK = 0b00011110;    
+        // Move remaining sprites off the screen
+        for(char i=add_sprite_idx;i!=0x40;i++)
+            SPRITE_BUFFER[i].y = 0xff;
+        // Reset add sprite index
+        add_sprite_idx = 0;
+        // Enable video output (if it was disabled)
+        if(sync_mode&lfBlank) {
+            // Set sprite tileset to upper - enable vblank NMI
+            PPU->PPUCTRL = 0b10001000;
+            // Enable sprite and tile rendering
+            PPU->PPUMASK = 0b00011110;    
+        }
     }
     
-    // Wait for V-Blank
-    waitForVBlank();
+    // Wait for V-Blank signal from the NMI (if vblank is currently enabled)
+    if(!(sync_mode&lfBlank)) {
+        vblank_signal = 0xff;
+        while(vblank_signal) ;
+    }
+
     // Disable video output if lfBlank set
-    if(flags&lfBlank)
+    if(flags&lfBlank) {
         // lfBlank = 1, activates blank mode, blanks screen and allows lnPush() calls
-        disableVideoOutput();
+        // Disable vertical blank interrupt
+        PPU->PPUCTRL = 0;
+        // Disable sprite rendering
+        PPU->PPUMASK = 0;
+    }
+
+    // Update the mode
+    sync_mode = flags;
 
     // TODO: Handle lfSplit = 2 : activates split mode, NMI waits for SPR0HIT and sets registers
-   // TODO: Count frames
-    return 0;
+    // Return number of vblank since last sync
+    char res = vblank_count;
+    vblank_count = 0;
+    return res;
 }
 
      // Write data into nametables, palettes, CHRRAM, etc.

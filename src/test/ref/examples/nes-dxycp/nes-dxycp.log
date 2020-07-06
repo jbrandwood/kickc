@@ -238,8 +238,9 @@ main::initNES1_@1: scope:[main]  from main::initNES1_@1 main::initNES1_@6
   *((const nomodify byte*) MEMORY+(number) $600 + (byte) main::initNES1_i#2) ← (number) 0
   *((const nomodify byte*) MEMORY+(number) $700 + (byte) main::initNES1_i#2) ← (number) 0
   (byte) main::initNES1_i#1 ← ++ (byte) main::initNES1_i#2
-  (bool~) main::initNES1_$5 ← (number) 0 != (byte) main::initNES1_i#1
-  if((bool~) main::initNES1_$5) goto main::initNES1_@1
+  (byte~) main::initNES1_$5 ← (byte) main::initNES1_i#1
+  (bool~) main::initNES1_$6 ← (number) 0 != (byte~) main::initNES1_$5
+  if((bool~) main::initNES1_$6) goto main::initNES1_@1
   to:main::initNES1_waitForVBlank2
 main::initNES1_waitForVBlank2: scope:[main]  from main::initNES1_@1
   to:main::initNES1_waitForVBlank2_@1
@@ -574,7 +575,8 @@ SYMBOL TABLE SSA
 (byte*~) main::enableVideoOutput1_$2
 (byte*~) main::enableVideoOutput1_$3
 (label) main::initNES1
-(bool~) main::initNES1_$5
+(byte~) main::initNES1_$5
+(bool~) main::initNES1_$6
 (label) main::initNES1_@1
 (label) main::initNES1_@6
 (label) main::initNES1_@7
@@ -898,7 +900,7 @@ Adding number conversion cast (unumber) 0 in *((const nomodify byte*) MEMORY+(nu
 Adding number conversion cast (unumber) $600 in *((const nomodify byte*) MEMORY+(number) $600 + (byte) main::initNES1_i#2) ← ((unumber)) (number) 0
 Adding number conversion cast (unumber) 0 in *((const nomodify byte*) MEMORY+(number) $700 + (byte) main::initNES1_i#2) ← (number) 0
 Adding number conversion cast (unumber) $700 in *((const nomodify byte*) MEMORY+(number) $700 + (byte) main::initNES1_i#2) ← ((unumber)) (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::initNES1_$5 ← (number) 0 != (byte) main::initNES1_i#1
+Adding number conversion cast (unumber) 0 in (bool~) main::initNES1_$6 ← (number) 0 != (byte~) main::initNES1_$5
 Adding number conversion cast (unumber) $80 in (number~) main::initNES1_waitForVBlank2_$0 ← *((byte*~) main::initNES1_waitForVBlank2_$2) & (number) $80
 Adding number conversion cast (unumber) main::initNES1_waitForVBlank2_$0 in (number~) main::initNES1_waitForVBlank2_$0 ← *((byte*~) main::initNES1_waitForVBlank2_$2) & (unumber)(number) $80
 Adding number conversion cast (unumber) 0 in (bool~) main::initNES1_waitForVBlank2_$4 ← (number) 0 != (unumber~) main::initNES1_waitForVBlank2_$0
@@ -1124,8 +1126,8 @@ Inferred type updated to byte in (unumber~) vblank::$22 ← (byte) vblank::x_idx
 Inferred type updated to byte in (unumber~) vblank::$23 ← (byte~) vblank::$22
 Inferred type updated to byte for (unumber~) vblank::$26
 Inversing boolean not [92] (bool~) main::initNES1_waitForVBlank1_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank1_$0 from [91] (bool~) main::initNES1_waitForVBlank1_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank1_$0
-Inversing boolean not [111] (bool~) main::initNES1_waitForVBlank2_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank2_$0 from [110] (bool~) main::initNES1_waitForVBlank2_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank2_$0
-Inversing boolean not [168] (bool~) vblank::$2 ← (byte) 0 == (byte) vblank::joy#0 from [167] (bool~) vblank::$33 ← (byte) 0 != (byte) vblank::joy#0
+Inversing boolean not [112] (bool~) main::initNES1_waitForVBlank2_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank2_$0 from [111] (bool~) main::initNES1_waitForVBlank2_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank2_$0
+Inversing boolean not [169] (bool~) vblank::$2 ← (byte) 0 == (byte) vblank::joy#0 from [168] (bool~) vblank::$33 ← (byte) 0 != (byte) vblank::joy#0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)x_sin_idx = vblank::$7 
 Alias candidate removed (volatile)x_sin_idx_2 = vblank::$12 
@@ -1145,6 +1147,7 @@ Alias ppuDataTransfer::cpuSrc#2 = ppuDataTransfer::cpuSrc#4 ppuDataTransfer::cpu
 Alias ppuDataTransfer::i#2 = ppuDataTransfer::i#5 ppuDataTransfer::i#4 ppuDataTransfer::i#3 
 Alias ppuDataTransfer::size#1 = ppuDataTransfer::size#7 ppuDataTransfer::size#5 ppuDataTransfer::size#3 
 Alias ppuDataTransfer::ppuDataPut1_val#0 = ppuDataTransfer::ppuDataPut1_val#1 
+Alias main::initNES1_i#1 = main::initNES1_$5 
 Alias ppuDataTransfer::size#0 = main::$1 
 Alias main::s#2 = main::s#3 
 Alias vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer#0 = vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer#1 
@@ -1188,13 +1191,13 @@ Identical Phi Values (nomodify void*) ppuDataTransfer::cpuData#1 (nomodify void*
 Identical Phi Values (word) ppuDataTransfer::size#2 (word) ppuDataTransfer::size#0
 Identical Phi Values (word) ppuDataTransfer::size#1 (word) ppuDataTransfer::size#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [202] (byte~) vblank::$28 ← (byte) vblank::s#2 * (const byte) SIZEOF_STRUCT_SPRITEDATA
+Identified duplicate assignment right side [203] (byte~) vblank::$28 ← (byte) vblank::s#2 * (const byte) SIZEOF_STRUCT_SPRITEDATA
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Simple Condition (bool~) readJoy1::$0 [10] if((byte) readJoy1::i#2<(byte) 8) goto readJoy1::@2
 Simple Condition (bool~) ppuDataFill::$1 [30] if((word) ppuDataFill::i#2<(word) ppuDataFill::size#3) goto ppuDataFill::@2
 Simple Condition (bool~) ppuDataTransfer::$1 [49] if((word) ppuDataTransfer::i#2<(word) ppuDataTransfer::size#0) goto ppuDataTransfer::@2
 Simple Condition (bool~) main::initNES1_waitForVBlank1_$1 [73] if((byte) 0==(byte~) main::initNES1_waitForVBlank1_$0) goto main::initNES1_waitForVBlank1_@1
-Simple Condition (bool~) main::initNES1_$5 [86] if((byte) 0!=(byte) main::initNES1_i#1) goto main::initNES1_@1
+Simple Condition (bool~) main::initNES1_$6 [86] if((byte) 0!=(byte) main::initNES1_i#1) goto main::initNES1_@1
 Simple Condition (bool~) main::initNES1_waitForVBlank2_$1 [91] if((byte) 0==(byte~) main::initNES1_waitForVBlank2_$0) goto main::initNES1_waitForVBlank2_@1
 Simple Condition (bool~) main::$6 [108] if((byte) main::s#2<(byte) $40) goto main::@2
 Simple Condition (bool~) main::$8 [122] if((number) 0!=(number) 1) goto main::@3

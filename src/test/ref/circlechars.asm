@@ -262,10 +262,9 @@ printf_uint: {
 cputs: {
     .label s = 7
   __b1:
-    // c=*s++
+    // while(c=*s++)
     ldy #0
     lda (s),y
-    // while(c=*s++)
     inc.z s
     bne !+
     inc.z s+1

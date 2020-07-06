@@ -237,9 +237,10 @@ cputs: scope:[cputs]  from main
 cputs::@1: scope:[cputs]  from cputs cputs::@3
   (to_nomodify byte*) cputs::s#2 ← phi( cputs/(to_nomodify byte*) cputs::s#3 cputs::@3/(to_nomodify byte*) cputs::s#4 )
   (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2)
+  (byte~) cputs::$0 ← (byte) cputs::c#1
   (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2
-  (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
-  if((bool~) cputs::$1) goto cputs::@2
+  (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
+  if((bool~) cputs::$2) goto cputs::@2
   to:cputs::@return
 cputs::@2: scope:[cputs]  from cputs::@1
   (to_nomodify byte*) cputs::s#5 ← phi( cputs::@1/(to_nomodify byte*) cputs::s#0 )
@@ -409,7 +410,8 @@ SYMBOL TABLE SSA
 (label) cputln::@1
 (label) cputln::@return
 (void()) cputs((to_nomodify byte*) cputs::s)
-(bool~) cputs::$1
+(byte~) cputs::$0
+(bool~) cputs::$2
 (label) cputs::@1
 (label) cputs::@2
 (label) cputs::@3
@@ -600,7 +602,7 @@ Adding number conversion cast (unumber) $28 in (byte*) conio_line_text ← (byte
 Adding number conversion cast (unumber) $28 in (byte*) conio_line_color ← (byte*) conio_line_color - (number) $28
 Adding number conversion cast (unumber) 0 in (byte) gotoxy::x#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) gotoxy::y#1 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
+Adding number conversion cast (unumber) 0 in (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memcpy::src#0 ← (byte*)(void*) memcpy::source#2
 Inlining cast (byte*) memcpy::dst#0 ← (byte*)(void*) memcpy::destination#2
@@ -692,7 +694,7 @@ Alias gotoxy::x#4 = gotoxy::x#5
 Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#4 = gotoxy::y#5 
 Alias cputc::c#1 = cputc::c#2 
-Alias cputs::c#1 = cputs::c#2 
+Alias cputs::c#1 = cputs::$0 cputs::c#2 
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
@@ -724,7 +726,7 @@ Simple Condition (bool~) cputc::$0 [45] if((byte) cputc::c#0==(byte) '
 Simple Condition (bool~) cputc::$2 [51] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
 Simple Condition (bool~) cscroll::$1 [61] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
 Simple Condition (bool~) cscroll::$7 [63] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [97] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) cputs::$2 [97] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [66] (word) memcpy::num#0 ← (unumber)(number) $19*(number) $28-(number) $28
 Constant right-side identified [71] (word) memcpy::num#1 ← (unumber)(number) $19*(number) $28-(number) $28
@@ -2525,11 +2527,10 @@ cputs: {
     sta.z s+1
     // cputs::@1
   __b1:
-    // c=*s++
+    // while(c=*s++)
     // [13] (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (s),y
-    // while(c=*s++)
     // [14] (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+

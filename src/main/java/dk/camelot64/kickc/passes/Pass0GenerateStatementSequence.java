@@ -460,6 +460,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       private RValue cycles;
       /** Declared clobber for the inline kick-assembler . */
       private AsmClobber declaredClobber;
+
       public KickAsm(String kickAsmCode) {
          this.kickAsmCode = kickAsmCode;
          this.uses = new ArrayList<>();
@@ -990,7 +991,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                if(variable.getScope().getRef().equals(ScopeRef.ROOT)) {
                   // Add comments to variable for global vars
                   variable.setComments(ensureUnusedComments(declComments));
-               }  else {
+               } else {
                   // Add comments to statement for local vars
                   initStmt.setComments(ensureUnusedComments(declComments));
                }
@@ -1394,9 +1395,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       PrePostModifierHandler.addPreModifiers(this, conditionCtx, statementSource);
       RValue rValue = (RValue) this.visit(conditionCtx);
       // Add any post-modifiers
-      if(PrePostModifierHandler.hasPrePostModifiers(this, conditionCtx, statementSource)) {
+      if(PrePostModifierHandler.hasPostModifiers(this, conditionCtx, statementSource)) {
          // If modifiers are present the RValue must be assigned before the post-modifier is executed
-         if(!(rValue instanceof VariableRef)) {
+         if(!(rValue instanceof VariableRef) || !((VariableRef) rValue).isIntermediate()) {
             // Make a new temporary variable and assign that
             Variable tmpVar = addIntermediateVar();
             Statement stmtExpr = new StatementAssignment(tmpVar.getVariableRef(), rValue, true, statementSource, Comment.NO_COMMENTS);
@@ -1534,7 +1535,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addLoopContinueLabel(loopStack.peek(), ctx);
       KickCParser.CommaExprContext incrementCtx = ctx.commaExpr(1);
       if(incrementCtx != null) {
-         addCondition(incrementCtx, StatementSource.forClassic(ctx));
+         PrePostModifierHandler.addPreModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
+         this.visit(incrementCtx);
+         PrePostModifierHandler.addPostModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
       }
       // Jump back to beginning
       Statement beginJmpStmt = new StatementJump(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
@@ -2654,7 +2657,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       static boolean hasPrePostModifiers(Pass0GenerateStatementSequence parser, ParserRuleContext ctx, StatementSource statementSource) {
          PrePostModifierHandler modifierHandler = new PrePostModifierHandler(parser);
          modifierHandler.visit(ctx);
-         return modifierHandler.getPreMods().size() > 0 || (modifierHandler.getPostMods().size() > 0);
+         return (modifierHandler.getPreMods().size() > 0) || (modifierHandler.getPostMods().size() > 0);
+      }
+
+      static boolean hasPostModifiers(Pass0GenerateStatementSequence parser, ParserRuleContext ctx, StatementSource statementSource) {
+         PrePostModifierHandler modifierHandler = new PrePostModifierHandler(parser);
+         modifierHandler.visit(ctx);
+         return modifierHandler.getPostMods().size() > 0;
       }
 
 

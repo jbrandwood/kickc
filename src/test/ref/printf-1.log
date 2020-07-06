@@ -321,9 +321,10 @@ cputs: scope:[cputs]  from printf_string::@2
 cputs::@1: scope:[cputs]  from cputs cputs::@3
   (to_nomodify byte*) cputs::s#2 ← phi( cputs/(to_nomodify byte*) cputs::s#3 cputs::@3/(to_nomodify byte*) cputs::s#4 )
   (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2)
+  (byte~) cputs::$0 ← (byte) cputs::c#1
   (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2
-  (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
-  if((bool~) cputs::$1) goto cputs::@2
+  (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
+  if((bool~) cputs::$2) goto cputs::@2
   to:cputs::@return
 cputs::@2: scope:[cputs]  from cputs::@1
   (to_nomodify byte*) cputs::s#5 ← phi( cputs::@1/(to_nomodify byte*) cputs::s#0 )
@@ -681,7 +682,8 @@ SYMBOL TABLE SSA
 (label) cputln::@1
 (label) cputln::@return
 (void()) cputs((to_nomodify byte*) cputs::s)
-(bool~) cputs::$1
+(byte~) cputs::$0
+(bool~) cputs::$2
 (label) cputs::@1
 (label) cputs::@2
 (label) cputs::@3
@@ -1011,7 +1013,7 @@ Adding number conversion cast (unumber) $28 in (byte*) conio_line_text ← (byte
 Adding number conversion cast (unumber) $28 in (byte*) conio_line_color ← (byte*) conio_line_color - (number) $28
 Adding number conversion cast (unumber) 0 in (byte) gotoxy::x#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) gotoxy::y#1 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
+Adding number conversion cast (unumber) 0 in (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
 Adding number conversion cast (unumber) 0 in (bool~) printf_string::$14 ← (number) 0 != (byte) printf_string::format_min_length#4
 Adding number conversion cast (unumber) 0 in (bool~) printf_string::$15 ← (number) 0 != (byte) printf_string::format_justify_left#4
 Adding number conversion cast (snumber) 0 in (bool~) printf_string::$11 ← (signed byte) printf_string::padding#1 < (number) 0
@@ -1143,9 +1145,9 @@ Inversing boolean not [77] (bool~) gotoxy::$1 ← (byte) gotoxy::y#2 <= (byte) $
 Inversing boolean not [81] (bool~) gotoxy::$3 ← (byte) gotoxy::x#2 < (byte) $28 from [80] (bool~) gotoxy::$2 ← (byte) gotoxy::x#2 >= (byte) $28
 Inversing boolean not [107] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [106] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
 Inversing boolean not [118] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [117] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
-Inversing boolean not [175] (bool~) printf_string::$0 ← (byte) 0 == (byte) printf_string::format_min_length#4 from [174] (bool~) printf_string::$14 ← (byte) 0 != (byte) printf_string::format_min_length#4
-Inversing boolean not [179] (bool~) printf_string::$1 ← (byte) 0 == (byte) printf_string::format_justify_left#4 from [178] (bool~) printf_string::$15 ← (byte) 0 != (byte) printf_string::format_justify_left#4
-Inversing boolean not [194] (bool~) printf_string::$12 ← (signed byte) printf_string::padding#1 >= (signed byte) 0 from [193] (bool~) printf_string::$11 ← (signed byte) printf_string::padding#1 < (signed byte) 0
+Inversing boolean not [176] (bool~) printf_string::$0 ← (byte) 0 == (byte) printf_string::format_min_length#4 from [175] (bool~) printf_string::$14 ← (byte) 0 != (byte) printf_string::format_min_length#4
+Inversing boolean not [180] (bool~) printf_string::$1 ← (byte) 0 == (byte) printf_string::format_justify_left#4 from [179] (bool~) printf_string::$15 ← (byte) 0 != (byte) printf_string::format_justify_left#4
+Inversing boolean not [195] (bool~) printf_string::$12 ← (signed byte) printf_string::padding#1 >= (signed byte) 0 from [194] (bool~) printf_string::$11 ← (signed byte) printf_string::padding#1 < (signed byte) 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -1176,7 +1178,7 @@ Alias gotoxy::x#4 = gotoxy::x#5
 Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#4 = gotoxy::y#5 
 Alias cputc::c#2 = cputc::c#3 
-Alias cputs::c#1 = cputs::c#2 
+Alias cputs::c#1 = cputs::$0 cputs::c#2 
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
 Alias printf_padding::pad#2 = printf_padding::pad#3 printf_padding::pad#5 
 Alias printf_padding::i#2 = printf_padding::i#4 printf_padding::i#3 
@@ -1232,7 +1234,7 @@ Simple Condition (bool~) cputc::$0 [74] if((byte) cputc::c#2==(byte) '
 Simple Condition (bool~) cputc::$2 [80] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
 Simple Condition (bool~) cscroll::$1 [90] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
 Simple Condition (bool~) cscroll::$7 [92] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [126] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) cputs::$2 [126] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
 Simple Condition (bool~) printf_padding::$0 [134] if((byte) printf_padding::i#2<(byte) printf_padding::length#3) goto printf_padding::@2
 Simple Condition (bool~) printf_string::$0 [142] if((byte) 0==(byte) printf_string::format_min_length#4) goto printf_string::@1
 Simple Condition (bool~) printf_string::$12 [156] if((signed byte) printf_string::padding#1>=(signed byte) 0) goto printf_string::@1
@@ -4923,11 +4925,10 @@ cputs: {
     // [82] phi (to_nomodify byte*) cputs::s#2 = (to_nomodify byte*) cputs::s#1 [phi:cputs/cputs::@2->cputs::@1#0] -- register_copy 
     // cputs::@1
   __b1:
-    // c=*s++
+    // while(c=*s++)
     // [83] (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (s),y
-    // while(c=*s++)
     // [84] (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+

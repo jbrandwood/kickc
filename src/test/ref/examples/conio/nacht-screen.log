@@ -328,9 +328,10 @@ cputs: scope:[cputs]  from cputsxy::@1
 cputs::@1: scope:[cputs]  from cputs cputs::@3
   (to_nomodify byte*) cputs::s#2 ← phi( cputs/(to_nomodify byte*) cputs::s#3 cputs::@3/(to_nomodify byte*) cputs::s#4 )
   (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2)
+  (byte~) cputs::$0 ← (byte) cputs::c#1
   (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2
-  (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
-  if((bool~) cputs::$1) goto cputs::@2
+  (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
+  if((bool~) cputs::$2) goto cputs::@2
   to:cputs::@return
 cputs::@2: scope:[cputs]  from cputs::@1
   (to_nomodify byte*) cputs::s#5 ← phi( cputs::@1/(to_nomodify byte*) cputs::s#0 )
@@ -1076,7 +1077,8 @@ SYMBOL TABLE SSA
 (label) cputln::@1
 (label) cputln::@return
 (void()) cputs((to_nomodify byte*) cputs::s)
-(bool~) cputs::$1
+(byte~) cputs::$0
+(bool~) cputs::$2
 (label) cputs::@1
 (label) cputs::@2
 (label) cputs::@3
@@ -1424,7 +1426,7 @@ Adding number conversion cast (unumber) $28 in (byte*) conio_line_text ← (byte
 Adding number conversion cast (unumber) $28 in (byte*) conio_line_color ← (byte*) conio_line_color - (number) $28
 Adding number conversion cast (unumber) 0 in (byte) gotoxy::x#1 ← (number) 0
 Adding number conversion cast (unumber) 0 in (byte) gotoxy::y#1 ← (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
+Adding number conversion cast (unumber) 0 in (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
 Adding number conversion cast (unumber) 0 in *((const nomodify byte*) kbhit::CIA1_PORT_A) ← (number) 0
 Adding number conversion cast (unumber) $17 in *((const nomodify byte*) VIC_MEMORY) ← (number) $17
 Adding number conversion cast (unumber) 0 in (bool~) main::$5 ← (number) 0 != (byte~) main::$3
@@ -1608,7 +1610,7 @@ Inversing boolean not [77] (bool~) gotoxy::$1 ← (byte) gotoxy::y#6 <= (byte) $
 Inversing boolean not [81] (bool~) gotoxy::$3 ← (byte) gotoxy::x#6 < (byte) $28 from [80] (bool~) gotoxy::$2 ← (byte) gotoxy::x#6 >= (byte) $28
 Inversing boolean not [111] (bool~) cputc::$2 ← (byte) conio_cursor_x != (byte) $28 from [110] (bool~) cputc::$1 ← (byte) conio_cursor_x == (byte) $28
 Inversing boolean not [122] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $19 from [121] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $19
-Inversing boolean not [269] (bool~) main::$4 ← (byte) 0 == (byte~) main::$3 from [268] (bool~) main::$5 ← (byte) 0 != (byte~) main::$3
+Inversing boolean not [270] (bool~) main::$4 ← (byte) 0 == (byte~) main::$3 from [269] (bool~) main::$5 ← (byte) 0 != (byte~) main::$3
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -1639,7 +1641,7 @@ Alias gotoxy::x#8 = gotoxy::x#9
 Alias gotoxy::line_offset#0 = gotoxy::$4 
 Alias gotoxy::y#8 = gotoxy::y#9 
 Alias cputc::c#8 = cputc::c#9 
-Alias cputs::c#1 = cputs::c#2 
+Alias cputs::c#1 = cputs::$0 cputs::c#2 
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
 Alias cputcxy::c#2 = cputcxy::c#3 
 Alias cputsxy::s#1 = cputsxy::s#2 
@@ -1716,7 +1718,7 @@ Simple Condition (bool~) cputc::$0 [78] if((byte) cputc::c#8==(byte) '
 Simple Condition (bool~) cputc::$2 [84] if((byte) conio_cursor_x!=(byte) $28) goto cputc::@return
 Simple Condition (bool~) cscroll::$1 [94] if((byte) conio_cursor_y!=(byte) $19) goto cscroll::@return
 Simple Condition (bool~) cscroll::$7 [96] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
-Simple Condition (bool~) cputs::$1 [130] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) cputs::$2 [130] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
 Simple Condition (bool~) chline::$0 [175] if((byte) chline::i#2<(byte) chline::length#4) goto chline::@2
 Simple Condition (bool~) cvline::$0 [186] if((byte) cvline::i#2<(byte) cvline::length#0) goto cvline::@2
 Simple Condition (bool~) main::$4 [211] if((byte) 0==(byte~) main::$3) goto main::@1
@@ -7986,11 +7988,10 @@ cputs: {
     // [187] phi (to_nomodify byte*) cputs::s#2 = (to_nomodify byte*) cputs::s#1 [phi:cputs/cputs::@2->cputs::@1#0] -- register_copy 
     // cputs::@1
   __b1:
-    // c=*s++
+    // while(c=*s++)
     // [188] (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (s),y
-    // while(c=*s++)
     // [189] (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+

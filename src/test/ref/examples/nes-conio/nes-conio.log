@@ -466,9 +466,10 @@ cputs: scope:[cputs]  from cputsxy::@1
 cputs::@1: scope:[cputs]  from cputs cputs::@3
   (to_nomodify byte*) cputs::s#2 ← phi( cputs/(to_nomodify byte*) cputs::s#3 cputs::@3/(to_nomodify byte*) cputs::s#4 )
   (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2)
+  (byte~) cputs::$0 ← (byte) cputs::c#1
   (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2
-  (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
-  if((bool~) cputs::$1) goto cputs::@2
+  (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
+  if((bool~) cputs::$2) goto cputs::@2
   to:cputs::@return
 cputs::@2: scope:[cputs]  from cputs::@1
   (to_nomodify byte*) cputs::s#5 ← phi( cputs::@1/(to_nomodify byte*) cputs::s#0 )
@@ -748,8 +749,9 @@ main::initNES1_@1: scope:[main]  from main::initNES1_@1 main::initNES1_@6
   *((const nomodify byte*) MEMORY+(number) $600 + (byte) main::initNES1_i#2) ← (number) 0
   *((const nomodify byte*) MEMORY+(number) $700 + (byte) main::initNES1_i#2) ← (number) 0
   (byte) main::initNES1_i#1 ← ++ (byte) main::initNES1_i#2
-  (bool~) main::initNES1_$5 ← (number) 0 != (byte) main::initNES1_i#1
-  if((bool~) main::initNES1_$5) goto main::initNES1_@1
+  (byte~) main::initNES1_$5 ← (byte) main::initNES1_i#1
+  (bool~) main::initNES1_$6 ← (number) 0 != (byte~) main::initNES1_$5
+  if((bool~) main::initNES1_$6) goto main::initNES1_@1
   to:main::initNES1_waitForVBlank2
 main::initNES1_waitForVBlank2: scope:[main]  from main::initNES1_@1
   to:main::initNES1_waitForVBlank2_@1
@@ -1186,7 +1188,8 @@ SYMBOL TABLE SSA
 (label) cputln::@1
 (label) cputln::@return
 (void()) cputs((to_nomodify byte*) cputs::s)
-(bool~) cputs::$1
+(byte~) cputs::$0
+(bool~) cputs::$2
 (label) cputs::@1
 (label) cputs::@2
 (label) cputs::@3
@@ -1341,7 +1344,8 @@ SYMBOL TABLE SSA
 (byte) main::i#6
 (byte) main::i#7
 (label) main::initNES1
-(bool~) main::initNES1_$5
+(byte~) main::initNES1_$5
+(bool~) main::initNES1_$6
 (label) main::initNES1_@1
 (label) main::initNES1_@6
 (label) main::initNES1_@7
@@ -1906,7 +1910,7 @@ Adding number conversion cast (unumber) $20 in (nomodify void*) ppuDataFill::ppu
 Adding number conversion cast (unumber) $1e*$20 in (nomodify void*) ppuDataFill::ppuData#1 ← (void*)(const nomodify byte*) CONIO_SCREEN_TEXT+(number) $1e*(number) $20-(unumber)(number) $20
 Adding number conversion cast (unumber) $20 in (word) ppuDataFill::size#1 ← (number) $20
 Adding number conversion cast (unumber) $20 in (byte*) conio_line_text ← (byte*) conio_line_text - (number) $20
-Adding number conversion cast (unumber) 0 in (bool~) cputs::$1 ← (number) 0 != (byte) cputs::c#1
+Adding number conversion cast (unumber) 0 in (bool~) cputs::$2 ← (number) 0 != (byte~) cputs::$0
 Adding number conversion cast (unumber) 3 in (byte) uctoa::max_digits#1 ← (number) 3
 Adding number conversion cast (unumber) 2 in (byte) uctoa::max_digits#2 ← (number) 2
 Adding number conversion cast (unumber) 3 in (byte) uctoa::max_digits#3 ← (number) 3
@@ -1939,7 +1943,7 @@ Adding number conversion cast (unumber) 0 in *((const nomodify byte*) MEMORY+(nu
 Adding number conversion cast (unumber) $600 in *((const nomodify byte*) MEMORY+(number) $600 + (byte) main::initNES1_i#2) ← ((unumber)) (number) 0
 Adding number conversion cast (unumber) 0 in *((const nomodify byte*) MEMORY+(number) $700 + (byte) main::initNES1_i#2) ← (number) 0
 Adding number conversion cast (unumber) $700 in *((const nomodify byte*) MEMORY+(number) $700 + (byte) main::initNES1_i#2) ← ((unumber)) (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::initNES1_$5 ← (number) 0 != (byte) main::initNES1_i#1
+Adding number conversion cast (unumber) 0 in (bool~) main::initNES1_$6 ← (number) 0 != (byte~) main::initNES1_$5
 Adding number conversion cast (unumber) $80 in (number~) main::initNES1_waitForVBlank2_$0 ← *((byte*~) main::initNES1_waitForVBlank2_$2) & (number) $80
 Adding number conversion cast (unumber) main::initNES1_waitForVBlank2_$0 in (number~) main::initNES1_waitForVBlank2_$0 ← *((byte*~) main::initNES1_waitForVBlank2_$2) & (unumber)(number) $80
 Adding number conversion cast (unumber) 0 in (bool~) main::initNES1_waitForVBlank2_$4 ← (number) 0 != (unumber~) main::initNES1_waitForVBlank2_$0
@@ -2236,14 +2240,14 @@ Inversing boolean not [134] (bool~) gotoxy::$1 ← (byte) gotoxy::y#4 <= (byte) 
 Inversing boolean not [138] (bool~) gotoxy::$3 ← (byte) gotoxy::x#4 < (byte) $20 from [137] (bool~) gotoxy::$2 ← (byte) gotoxy::x#4 >= (byte) $20
 Inversing boolean not [164] (bool~) cputc::$4 ← (byte) conio_cursor_x != (byte) $20 from [163] (bool~) cputc::$3 ← (byte) conio_cursor_x == (byte) $20
 Inversing boolean not [174] (bool~) cscroll::$1 ← (byte) conio_cursor_y != (byte) $1e from [173] (bool~) cscroll::$0 ← (byte) conio_cursor_y == (byte) $1e
-Inversing boolean not [332] (bool~) main::initNES1_waitForVBlank1_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank1_$0 from [331] (bool~) main::initNES1_waitForVBlank1_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank1_$0
-Inversing boolean not [351] (bool~) main::initNES1_waitForVBlank2_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank2_$0 from [350] (bool~) main::initNES1_waitForVBlank2_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank2_$0
-Inversing boolean not [466] (bool~) vblank::$2 ← (byte) 0 == (byte~) vblank::$1 from [465] (bool~) vblank::$17 ← (byte) 0 != (byte~) vblank::$1
-Inversing boolean not [471] (bool~) vblank::$4 ← (byte) 0 == (byte~) vblank::$3 from [470] (bool~) vblank::$18 ← (byte) 0 != (byte~) vblank::$3
-Inversing boolean not [476] (bool~) vblank::$10 ← (volatile byte) y_scroll != (byte) $f0 from [475] (bool~) vblank::$9 ← (volatile byte) y_scroll == (byte) $f0
-Inversing boolean not [483] (bool~) vblank::$6 ← (byte) 0 == (byte~) vblank::$5 from [482] (bool~) vblank::$19 ← (byte) 0 != (byte~) vblank::$5
-Inversing boolean not [488] (bool~) vblank::$12 ← (volatile byte) y_scroll != (byte) $ff from [487] (bool~) vblank::$11 ← (volatile byte) y_scroll == (byte) $ff
-Inversing boolean not [495] (bool~) vblank::$8 ← (byte) 0 == (byte~) vblank::$7 from [494] (bool~) vblank::$20 ← (byte) 0 != (byte~) vblank::$7
+Inversing boolean not [333] (bool~) main::initNES1_waitForVBlank1_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank1_$0 from [332] (bool~) main::initNES1_waitForVBlank1_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank1_$0
+Inversing boolean not [353] (bool~) main::initNES1_waitForVBlank2_$1 ← (byte) 0 == (byte~) main::initNES1_waitForVBlank2_$0 from [352] (bool~) main::initNES1_waitForVBlank2_$4 ← (byte) 0 != (byte~) main::initNES1_waitForVBlank2_$0
+Inversing boolean not [468] (bool~) vblank::$2 ← (byte) 0 == (byte~) vblank::$1 from [467] (bool~) vblank::$17 ← (byte) 0 != (byte~) vblank::$1
+Inversing boolean not [473] (bool~) vblank::$4 ← (byte) 0 == (byte~) vblank::$3 from [472] (bool~) vblank::$18 ← (byte) 0 != (byte~) vblank::$3
+Inversing boolean not [478] (bool~) vblank::$10 ← (volatile byte) y_scroll != (byte) $f0 from [477] (bool~) vblank::$9 ← (volatile byte) y_scroll == (byte) $f0
+Inversing boolean not [485] (bool~) vblank::$6 ← (byte) 0 == (byte~) vblank::$5 from [484] (bool~) vblank::$19 ← (byte) 0 != (byte~) vblank::$5
+Inversing boolean not [490] (bool~) vblank::$12 ← (volatile byte) y_scroll != (byte) $ff from [489] (bool~) vblank::$11 ← (volatile byte) y_scroll == (byte) $ff
+Inversing boolean not [497] (bool~) vblank::$8 ← (byte) 0 == (byte~) vblank::$7 from [496] (bool~) vblank::$20 ← (byte) 0 != (byte~) vblank::$7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias readJoy1::joy#2 = readJoy1::joy#4 readJoy1::joy#3 readJoy1::return#0 readJoy1::return#3 readJoy1::return#1 
@@ -2278,7 +2282,7 @@ Alias cputc::c#2 = cputc::c#3
 Alias cscroll::line2#2 = cscroll::line2#4 cscroll::line2#5 cscroll::line2#3 
 Alias cscroll::line1#2 = cscroll::line1#4 cscroll::line1#5 cscroll::line1#3 
 Alias cscroll::y#2 = cscroll::y#5 cscroll::y#4 cscroll::y#3 
-Alias cputs::c#1 = cputs::c#2 
+Alias cputs::c#1 = cputs::$0 cputs::c#2 
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
 Alias cputcxy::c#4 = cputcxy::c#5 
 Alias cputsxy::s#1 = cputsxy::s#2 
@@ -2298,6 +2302,7 @@ Alias uctoa_append::digit#2 = uctoa_append::digit#4 uctoa_append::digit#3
 Alias uctoa_append::value#2 = uctoa_append::value#3 uctoa_append::value#4 uctoa_append::return#1 uctoa_append::return#4 uctoa_append::return#2 
 Alias uctoa_append::sub#1 = uctoa_append::sub#2 
 Alias uctoa_append::buffer#1 = uctoa_append::buffer#4 uctoa_append::buffer#2 
+Alias main::initNES1_i#1 = main::initNES1_$5 
 Alias ppuDataTransfer::size#1 = main::$1 
 Alias main::screensizex1_return#0 = main::screensizex1_return#2 main::screensizex1_return#1 main::screensizex1_return#3 main::$7 
 Alias main::x#10 = main::x#6 main::x#8 main::x#2 main::x#3 main::x#9 main::x#7 main::x#4 main::x#5 
@@ -2362,7 +2367,7 @@ Simple Condition (bool~) cputc::$4 [126] if((byte) conio_cursor_x!=(byte) $20) g
 Simple Condition (bool~) cscroll::$1 [135] if((byte) conio_cursor_y!=(byte) $1e) goto cscroll::@return
 Simple Condition (bool~) cscroll::$7 [137] if((byte) 0!=(byte) conio_scroll_enable) goto cscroll::@3
 Simple Condition (bool~) cscroll::$3 [146] if((byte) cscroll::y#2<(byte)(number) $1e-(number) 1) goto cscroll::@5
-Simple Condition (bool~) cputs::$1 [171] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
+Simple Condition (bool~) cputs::$2 [171] if((byte) 0!=(byte) cputs::c#1) goto cputs::@2
 Simple Condition (bool~) uctoa::$0 [193] if((byte) uctoa::radix#0==(const byte) DECIMAL) goto uctoa::@1
 Simple Condition (bool~) uctoa::$1 [197] if((byte) uctoa::radix#0==(const byte) HEXADECIMAL) goto uctoa::@2
 Simple Condition (bool~) uctoa::$2 [201] if((byte) uctoa::radix#0==(const byte) OCTAL) goto uctoa::@3
@@ -2370,7 +2375,7 @@ Simple Condition (bool~) uctoa::$3 [205] if((byte) uctoa::radix#0==(const byte) 
 Simple Condition (bool~) uctoa::$5 [222] if((byte) uctoa::digit#2<(byte~) uctoa::$4) goto uctoa::@11
 Simple Condition (bool~) uctoa_append::$0 [245] if((byte) uctoa_append::value#2>=(byte) uctoa_append::sub#0) goto uctoa_append::@2
 Simple Condition (bool~) main::initNES1_waitForVBlank1_$1 [266] if((byte) 0==(byte~) main::initNES1_waitForVBlank1_$0) goto main::initNES1_waitForVBlank1_@1
-Simple Condition (bool~) main::initNES1_$5 [279] if((byte) 0!=(byte) main::initNES1_i#1) goto main::initNES1_@1
+Simple Condition (bool~) main::initNES1_$6 [279] if((byte) 0!=(byte) main::initNES1_i#1) goto main::initNES1_@1
 Simple Condition (bool~) main::initNES1_waitForVBlank2_$1 [284] if((byte) 0==(byte~) main::initNES1_waitForVBlank2_$0) goto main::initNES1_waitForVBlank2_@1
 Simple Condition (bool~) main::$9 [304] if((byte) main::x#10<(byte~) main::$8) goto main::@1
 Simple Condition (bool~) main::$16 [320] if((byte) main::y#10<(byte~) main::$15) goto main::@3
@@ -9536,11 +9541,10 @@ cputs: {
     sta.z s+1
     // cputs::@1
   __b1:
-    // c=*s++
+    // while(c=*s++)
     // [187] (byte) cputs::c#1 ← *((to_nomodify byte*) cputs::s#2) -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (s),y
-    // while(c=*s++)
     // [188] (to_nomodify byte*) cputs::s#0 ← ++ (to_nomodify byte*) cputs::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+

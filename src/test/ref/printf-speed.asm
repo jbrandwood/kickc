@@ -332,10 +332,9 @@ tod_str: {
 cputs: {
     .label s = 4
   __b1:
-    // c=*s++
+    // while(c=*s++)
     ldy #0
     lda (s),y
-    // while(c=*s++)
     inc.z s
     bne !+
     inc.z s+1

@@ -11,12 +11,12 @@
   .label TIMELO = $a2
   .label VICBANK = $d018
 main: {
-    .label __4 = 6
-    .label __13 = 6
-    .label __18 = 6
-    .label __19 = $11
-    .label __20 = 6
-    .label __21 = $f
+    .label __3 = 6
+    .label __10 = 6
+    .label __14 = 6
+    .label __15 = $11
+    .label __16 = 6
+    .label __17 = $f
     .label v = 4
     // test performance of 'div16u(10)'
     // test performance of 'div10'
@@ -67,25 +67,25 @@ main: {
     bcc __b10
     // (word)*TIMEHI << 8
     lda TIMEHI
-    sta.z __20
+    sta.z __16
     lda #0
-    sta.z __20+1
-    lda.z __13
-    sta.z __13+1
+    sta.z __16+1
+    lda.z __10
+    sta.z __10+1
     lda #0
-    sta.z __13
+    sta.z __10
     // ((word)*TIMEHI << 8) + (word)*TIMELO
     lda TIMELO
-    sta.z __21
+    sta.z __17
     lda #0
-    sta.z __21+1
+    sta.z __17+1
     // myprintf(strTemp, "200 DIV10 : %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
     lda.z myprintf.w3
     clc
-    adc.z __21
+    adc.z __17
     sta.z myprintf.w3
     lda.z myprintf.w3+1
-    adc.z __21+1
+    adc.z __17+1
     sta.z myprintf.w3+1
     lda #<str1
     sta.z myprintf.str
@@ -127,25 +127,25 @@ main: {
     bcc __b5
     // (word)*TIMEHI << 8
     lda TIMEHI
-    sta.z __18
+    sta.z __14
     lda #0
-    sta.z __18+1
-    lda.z __4
-    sta.z __4+1
+    sta.z __14+1
+    lda.z __3
+    sta.z __3+1
     lda #0
-    sta.z __4
+    sta.z __3
     // ((word)*TIMEHI << 8) + (word)*TIMELO
     lda TIMELO
-    sta.z __19
+    sta.z __15
     lda #0
-    sta.z __19+1
+    sta.z __15+1
     // myprintf(strTemp, "200 DIV16U: %5d,%4d IN %04d FRAMESm", u, v, ((word)*TIMEHI << 8) + (word)*TIMELO)
     lda.z myprintf.w3
     clc
-    adc.z __19
+    adc.z __15
     sta.z myprintf.w3
     lda.z myprintf.w3+1
-    adc.z __19+1
+    adc.z __15+1
     sta.z myprintf.w3+1
   // lower case letters in string literal are placed in string as 0x01-0x1A, should be 0x61-0x7A
   // -- as a side-effect of above issue, we can use "m" for carriage return.  The normal way is the escape code "\r" but that is not supported --

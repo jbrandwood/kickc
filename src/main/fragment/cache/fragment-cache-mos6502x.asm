@@ -17510,3 +17510,230 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT pbuz1=_stackidxptr_vbuc1
+tsx
+lda STACK_BASE+{c1},x
+sta {z1}
+lda STACK_BASE+{c1}+1,x
+sta {z1}+1
+//FRAGMENT pbuc1_derefidx_vbuz1=_deref_pbuz2
+ldy #0
+lda ({z2}),y
+ldy {z1}
+sta {c1},y
+//FRAGMENT _stackpushptr_=pbuc1
+lda #>{c1}
+pha
+lda #<{c1}
+pha
+//FRAGMENT _stackpullbyte_3
+tsx
+txa
+axs #-3
+txs
+//FRAGMENT pbuc1_derefidx_vbuaa=_deref_pbuz1
+tax
+ldy #0
+lda ({z1}),y
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuxx=_deref_pbuz1
+ldy #0
+lda ({z1}),y
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=_deref_pbuz1
+tya
+tax
+ldy #0
+lda ({z1}),y
+sta {c1},x
+//FRAGMENT vwuz1=pbuz2_bxor_vwuc1
+lda #<{c1}
+eor {z2}
+sta {z1}
+lda #>{c1}
+eor {z2}+1
+sta {z1}+1
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuz3
+ldy {z2}
+lda ({z1}),y
+ldy {z3}
+ora {c1},y
+ldy {z2}
+sta ({z1}),y
+//FRAGMENT vbuz1=vbuz1_bxor_pbuz2_derefidx_vbuz3
+lda {z1}
+ldy {z3}
+eor ({z2}),y
+sta {z1}
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuaa
+ldy {z2}
+tax
+lda ({z1}),y
+ora {c1},x
+ldy {z2}
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuxx
+ldy {z2}
+lda ({z1}),y
+ora {c1},x
+ldy {z2}
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuz2=pbuz1_derefidx_vbuz2_bor_pbuc1_derefidx_vbuyy
+tya
+ldy {z2}
+tax
+lda ({z1}),y
+ora {c1},x
+ldy {z2}
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuz2
+txa
+tay
+lda ({z1}),y
+ldy {z2}
+stx $ff
+ora {c1},y
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuaa
+tay
+txa
+ldx {c1},y
+tay
+lda ({z1}),y
+sty $ff
+
+stx $ff
+ora $ff
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuxx
+txa
+tay
+lda ({z1}),y
+stx $ff
+ora {c1},x
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuxx=pbuz1_derefidx_vbuxx_bor_pbuc1_derefidx_vbuyy
+txa
+ldx {c1},y
+tay
+lda ({z1}),y
+sty $ff
+
+stx $ff
+ora $ff
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuyy=pbuz1_derefidx_vbuyy_bor_pbuc1_derefidx_vbuz2
+lda ({z1}),y
+sty $ff
+
+ldy {z2}
+ora {c1},y
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuyy=pbuz1_derefidx_vbuyy_bor_pbuc1_derefidx_vbuaa
+tax
+lda ({z1}),y
+sty $ff
+
+ora {c1},x
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuyy=pbuz1_derefidx_vbuyy_bor_pbuc1_derefidx_vbuxx
+lda ({z1}),y
+sty $ff
+
+ora {c1},x
+ldy $ff
+sta ({z1}),y
+//FRAGMENT pbuz1_derefidx_vbuyy=pbuz1_derefidx_vbuyy_bor_pbuc1_derefidx_vbuyy
+lda ({z1}),y
+sty $ff
+
+ora {c1},y
+ldy $ff
+sta ({z1}),y
+//FRAGMENT vbuz1=vbuz1_bxor_pbuz2_derefidx_vbuaa
+tay
+lda {z1}
+eor ({z2}),y
+sta {z1}
+//FRAGMENT vbuz1=vbuz1_bxor_pbuz2_derefidx_vbuxx
+txa
+tay
+lda {z1}
+eor ({z2}),y
+sta {z1}
+//FRAGMENT vbuz1=vbuz1_bxor_pbuz2_derefidx_vbuyy
+lda {z1}
+eor ({z2}),y
+sta {z1}
+//FRAGMENT vbuaa=vbuaa_bxor_pbuz1_derefidx_vbuz2
+ldy {z2}
+eor ({z1}),y
+//FRAGMENT vbuaa=vbuaa_bxor_pbuz1_derefidx_vbuaa
+tay
+eor ({z1}),y
+//FRAGMENT vbuaa=vbuaa_bxor_pbuz1_derefidx_vbuxx
+stx $ff
+ldy $ff
+eor ({z1}),y
+//FRAGMENT vbuaa=vbuaa_bxor_pbuz1_derefidx_vbuyy
+eor ({z1}),y
+//FRAGMENT vbuxx=vbuxx_bxor_pbuz1_derefidx_vbuz2
+ldy {z2}
+txa
+eor ({z1}),y
+tax
+//FRAGMENT vbuxx=vbuxx_bxor_pbuz1_derefidx_vbuaa
+tay
+txa
+eor ({z1}),y
+tax
+//FRAGMENT vbuxx=vbuxx_bxor_pbuz1_derefidx_vbuxx
+txa
+tay
+eor ({z1}),y
+tax
+//FRAGMENT vbuxx=vbuxx_bxor_pbuz1_derefidx_vbuyy
+txa
+eor ({z1}),y
+tax
+//FRAGMENT vwuz1=pbuz1_bxor_vwuc1
+lda #<{c1}
+eor {z1}
+sta {z1}
+lda #>{c1}
+eor {z1}+1
+sta {z1}+1
+//FRAGMENT pbuc1_derefidx_vbuz1=pbuc2_derefidx_(_deref_pbuz2)
+ldy #0
+lda ({z2}),y
+tay
+lda {c2},y
+ldy {z1}
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuxx=pbuc2_derefidx_(_deref_pbuz1)
+ldy #0
+lda ({z1}),y
+tay
+lda {c2},y
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuaa=pbuc2_derefidx_(_deref_pbuz1)
+tax
+ldy #0
+lda ({z1}),y
+tay
+lda {c2},y
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=pbuc2_derefidx_(_deref_pbuz1)
+tya
+tax
+ldy #0
+lda ({z1}),y
+tay
+lda {c2},y
+sta {c1},x

@@ -14,7 +14,6 @@ export char TILES[] = kickasm(resource "example.chr", resource "sprites.chr") {{
 	.import binary "sprites.chr"
 }};
 
-
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)
 export void()* const VECTORS[] = { 
@@ -155,6 +154,8 @@ ubyte lnAddSpr(void* p, sword x, sword y) {
         SPRITE_BUFFER[add_sprite_idx].y = (char) (y+ptr[1]);
         SPRITE_BUFFER[add_sprite_idx].tile = ptr[2];
         SPRITE_BUFFER[add_sprite_idx].attributes = ptr[3];
+        // Temporary debug code to detect bug with vblanking in balloon.c
+        if(add_sprite_idx>=6) SPRITE_BUFFER[add_sprite_idx].tile = 6;
         ptr+=4;
         add_sprite_idx++;
     }

@@ -1,5 +1,5 @@
 // Tests using integer conditions in while() / for() / do..while
-// This should produce 'ba ba ba' at the top of the screen
+// This should produce 'ba ba@ ba@' at the top of the screen
 
 byte* const SCREEN = 0x0400;
 byte idx = 0;

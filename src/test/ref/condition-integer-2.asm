@@ -1,60 +1,73 @@
 // Tests using integer conditions in while() / for() / do..while
-// This should produce 'ba ba ba' at the top of the screen
+// This should produce 'ba ba@ ba@' at the top of the screen
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   .label SCREEN = $400
 main: {
-    ldy #0
-    ldx #2
+    // while()
+    .label j = 2
+    ldx #0
+    lda #2
   // for()
   __b1:
     // for( byte i=2;i;i--)
-    cpx #0
+    cmp #0
     bne __b2
     // SCREEN[idx++] = ' '
     lda #' '
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = ' ';
-    iny
+    inx
     lda #3
+    sta.z j
   __b4:
     // while( j-- )
-    sec
-    sbc #1
-    cmp #0
+    ldy.z j
+    dey
+    lda #0
+    cmp.z j
     bne __b5
     // SCREEN[idx++] = ' '
     lda #' '
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = ' ';
+    txa
+    tay
     iny
-    lda #2
+    ldx #2
   __b7:
     // SCREEN[idx++] = k
+    txa
     sta SCREEN,y
     // SCREEN[idx++] = k;
     iny
     // while(k--)
+    txa
     sec
     sbc #1
-    cmp #0
-    bne __b7
+    cpx #0
+    bne __b8
     // }
     rts
+  __b8:
+    tax
+    jmp __b7
   __b5:
     // SCREEN[idx++] = j
-    sta SCREEN,y
+    tya
+    sta SCREEN,x
     // SCREEN[idx++] = j;
-    iny
+    inx
+    sty.z j
     jmp __b4
   __b2:
     // SCREEN[idx++] = i
-    txa
-    sta SCREEN,y
+    sta SCREEN,x
     // SCREEN[idx++] = i;
-    iny
+    inx
     // for( byte i=2;i;i--)
-    dex
+    sec
+    sbc #1
     jmp __b1
 }

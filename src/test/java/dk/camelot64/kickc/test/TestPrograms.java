@@ -42,10 +42,15 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-   //@Test
-   //public void testForEver() throws IOException, URISyntaxException {
-   //   compileAndCompare("for-ever.c");
-   //}
+   @Test
+   public void testForEver2() throws IOException, URISyntaxException {
+      compileAndCompare("for-ever-2.c", log());
+   }
+
+   @Test
+   public void testForEver() throws IOException, URISyntaxException {
+      compileAndCompare("for-ever.c");
+   }
 
    @Test
    public void testPointerToPointerProblem() throws IOException, URISyntaxException {

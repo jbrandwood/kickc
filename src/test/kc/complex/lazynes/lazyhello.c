@@ -1,4 +1,7 @@
 // lazyNES lazyhello demo
+  // lazyNES - As lazy as possible NES hardware support library for vbcc6502
+ // (happily cooperates with Shiru's famitone2 replay code)
+// V1.0, 'Lazycow 2020
 
 // Ported to KickC 2020 by Jesper Gravgaard 
 // Original Source VBCC alpha 2 http://www.ibaug.de/vbcc/vbcc6502_2.zip

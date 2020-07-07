@@ -40,7 +40,7 @@ void lnPush(uword o, ubyte a, void* s);
  // updateList: Pointer to update list
 //
 // TODO: void lnList(void* updateList);
-// TODO: 	enum { lfHor=64, lfVer=128, lfEnd=255 };
+enum { lfHor=64, lfVer=128, lfEnd=255 };
 	//
 	// remarks:
 	// - The format of the update list is an array of unsigned bytes.

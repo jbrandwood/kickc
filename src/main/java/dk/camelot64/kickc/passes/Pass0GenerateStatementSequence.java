@@ -1521,12 +1521,23 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementLabel repeatTarget = new StatementLabel(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), comments);
       addStatement(repeatTarget);
       // Add condition
-      RValue rValue = addCondition(ctx.commaExpr(0), StatementSource.forClassic(ctx));
+      final KickCParser.CommaExprContext conditionCtx = ctx.commaExpr(0);
+      RValue conditionRvalue = null;
+      if(conditionCtx!=null) {
+         conditionRvalue = addCondition(conditionCtx, StatementSource.forClassic(ctx));
+      }
       // Add jump if condition was met
-      StatementConditionalJump doJmpStmt = new StatementConditionalJump(rValue, doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
-      addStatement(doJmpStmt);
-      Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
-      addStatement(endJmpStmt);
+      Statement doJmpStmt;
+      if(conditionRvalue!=null) {
+         doJmpStmt = new StatementConditionalJump(conditionRvalue, doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+         addStatement(doJmpStmt);
+         Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+         addStatement(endJmpStmt);
+      } else {
+         // No condition - loop forever
+         doJmpStmt = new StatementJump( doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+         addStatement(doJmpStmt);
+      }
       StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
       addStatement(doJumpTarget);
       // Add body
@@ -1544,7 +1555,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addStatement(beginJmpStmt);
       StatementLabel endJumpTarget = new StatementLabel(endJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
       addStatement(endJumpTarget);
-      addDirectives(doJmpStmt, stmtForCtx.directive());
+      if(doJmpStmt instanceof StatementConditionalJump)
+         addDirectives((StatementConditionalJump) doJmpStmt, stmtForCtx.directive());
       addLoopBreakLabel(loopStack.pop(), ctx);
       scopeStack.pop();
       return null;

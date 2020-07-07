@@ -44,7 +44,7 @@ public class TestPrograms {
 
    @Test
    public void testForEver2() throws IOException, URISyntaxException {
-      compileAndCompare("for-ever-2.c", log());
+      compileAndCompare("for-ever-2.c");
    }
 
    @Test

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.8
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -1081,6 +1081,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterForClassicCondition(KickCParser.ForClassicConditionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitForClassicCondition(KickCParser.ForClassicConditionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

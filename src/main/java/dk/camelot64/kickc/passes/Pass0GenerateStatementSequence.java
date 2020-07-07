@@ -1521,10 +1521,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       StatementLabel repeatTarget = new StatementLabel(beginJumpLabel.getRef(), StatementSource.forClassic(ctx), comments);
       addStatement(repeatTarget);
       // Add condition
-      final KickCParser.CommaExprContext conditionCtx = ctx.commaExpr(0);
+      KickCParser.ForClassicConditionContext conditionCtx = ctx.forClassicCondition();
       RValue conditionRvalue = null;
       if(conditionCtx!=null) {
-         conditionRvalue = addCondition(conditionCtx, StatementSource.forClassic(ctx));
+         conditionRvalue = addCondition(conditionCtx.commaExpr(), StatementSource.forClassic(ctx));
       }
       // Add jump if condition was met
       Statement doJmpStmt;
@@ -1544,7 +1544,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       addLoopBody(stmtForCtx.stmt());
       // Add increment
       addLoopContinueLabel(loopStack.peek(), ctx);
-      KickCParser.CommaExprContext incrementCtx = ctx.commaExpr(1);
+      KickCParser.CommaExprContext incrementCtx = ctx.commaExpr();
       if(incrementCtx != null) {
          PrePostModifierHandler.addPreModifiers(this, incrementCtx, StatementSource.forClassic(ctx));
          this.visit(incrementCtx);

@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/main/java/dk/camelot64/kickc/parser/KickCParser.g4 by ANTLR 4.8
+// Generated from C:/c64/kickc/src/main/java/dk/camelot64/kickc/parser\KickCParser.g4 by ANTLR 4.7.2
 package dk.camelot64.kickc.parser;
 
 
@@ -611,6 +611,12 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitForClassicInitExpr(KickCParser.ForClassicInitExprContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link KickCParser#forClassicCondition}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitForClassicCondition(KickCParser.ForClassicConditionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code commaNone}
 	 * labeled alternative in {@link KickCParser#commaExpr}.

@@ -1,4 +1,6 @@
-//KICKC FRAGMENT CACHE 160b015f22
+//KICKC FRAGMENT CACHE 160b017651
+//FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
+inc {c1}
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -1611,8 +1613,6 @@ lda #<{c2}
 sta {c1}
 lda #>{c2}
 sta {c1}+1
-//FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
-inc {c1}
 //FRAGMENT _deref_pbuc1_lt_vbuc2_then_la1
 lda {c1}
 cmp #{c2}

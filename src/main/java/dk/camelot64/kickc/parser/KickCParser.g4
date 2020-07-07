@@ -202,13 +202,17 @@ switchCase:
     ;
 
 forLoop
-    : forClassicInit ';' commaExpr? ';' commaExpr? #forClassic
+    : forClassicInit ';' forClassicCondition? ';' commaExpr? #forClassic
     | (declType declPointer*)? NAME COLON expr RANGE expr  #forRange
     ;
 
 forClassicInit
     : declVariables? #forClassicInitDecl
     | commaExpr      #forClassicInitExpr
+    ;
+
+forClassicCondition
+    : commaExpr
     ;
 
 commaExpr

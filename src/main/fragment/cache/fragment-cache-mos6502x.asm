@@ -1,9 +1,34 @@
-//KICKC FRAGMENT CACHE 160b017651
-//FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
-inc {c1}
+//KICKC FRAGMENT CACHE 160b015f22
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
+//FRAGMENT pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1
+ldx {z1}
+inc {c1},x
+//FRAGMENT vbuz1=_inc_vbuz1
+inc {z1}
+//FRAGMENT pbuc1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuaa
+tax
+inc {c1},x
+//FRAGMENT pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx
+inc {c1},x
+//FRAGMENT vbuaa=vbuc1
+lda #{c1}
+//FRAGMENT vbuaa=_inc_vbuaa
+clc
+adc #1
+//FRAGMENT vbuxx=vbuc1
+ldx #{c1}
+//FRAGMENT vbuxx=_inc_vbuxx
+inx
+//FRAGMENT vbuyy=vbuc1
+ldy #{c1}
+//FRAGMENT pbuc1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuyy
+tya
+tax
+inc {c1},x
+//FRAGMENT vbuyy=_inc_vbuyy
+iny
 //FRAGMENT pbuz1=pbuc1
 lda #<{c1}
 sta {z1}
@@ -45,8 +70,6 @@ lda {z2}
 sta {z1}
 lda {z2}+1
 sta {z1}+1
-//FRAGMENT vbuz1=_inc_vbuz1
-inc {z1}
 //FRAGMENT vbuz1_neq_vbuc1_then_la1
 lda #{c1}
 cmp {z1}
@@ -255,12 +278,6 @@ tay
 txa
 and #{c1}
 tay
-//FRAGMENT vbuaa=vbuc1
-lda #{c1}
-//FRAGMENT vbuxx=vbuc1
-ldx #{c1}
-//FRAGMENT vbuyy=vbuc1
-ldy #{c1}
 //FRAGMENT vbuaa=pbuc1_derefidx_vbuxx
 lda {c1},x
 //FRAGMENT vbuaa=pbuc1_derefidx_vbuyy
@@ -1280,10 +1297,6 @@ ldy {z1}+1
 //FRAGMENT vbuyy=vbuaa_band_vbuc1
 and #{c1}
 tay
-//FRAGMENT vbuxx=_inc_vbuxx
-inx
-//FRAGMENT vbuyy=_inc_vbuyy
-iny
 //FRAGMENT vbuyy_neq_vbuc1_then_la1
 cpy #{c1}
 bne {la1}
@@ -1601,9 +1614,6 @@ sta {c1},x
 //FRAGMENT vbuaa_neq_vbuc1_then_la1
 cmp #{c1}
 bne {la1}
-//FRAGMENT vbuaa=_inc_vbuaa
-clc
-adc #1
 //FRAGMENT _deref_pbuc1=_deref_pbuc1_bor_vbuc2
 lda #{c2}
 ora {c1}
@@ -1613,6 +1623,8 @@ lda #<{c2}
 sta {c1}
 lda #>{c2}
 sta {c1}+1
+//FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
+inc {c1}
 //FRAGMENT _deref_pbuc1_lt_vbuc2_then_la1
 lda {c1}
 cmp #{c2}
@@ -8006,9 +8018,6 @@ ldy {z1}
 lda {c1},y
 cmp #{c2}
 beq {la1}
-//FRAGMENT pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1
-ldx {z1}
-inc {c1},x
 //FRAGMENT pbuc1_derefidx_vbuaa_eq_vbuc2_then_la1
 tay
 lda {c1},y
@@ -8022,12 +8031,6 @@ beq {la1}
 lda {c1},y
 cmp #{c2}
 beq {la1}
-//FRAGMENT pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx
-inc {c1},x
-//FRAGMENT pbuc1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuyy
-tya
-tax
-inc {c1},x
 //FRAGMENT vduz1=vduc1_plus_vbuz2
 lda {z2}
 clc
@@ -13791,9 +13794,6 @@ lda {z1}
 sta {c1}
 lda {z1}+1
 sta {c1}+1
-//FRAGMENT pbuc1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuaa
-tax
-inc {c1},x
 //FRAGMENT vbuaa=vbuaa_bor_vbuc1
 ora #{c1}
 //FRAGMENT vbuz1=_deref_pbuz2_rol_1

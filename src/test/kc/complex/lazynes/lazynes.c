@@ -41,6 +41,8 @@ void main() {
     PPU->PPUCTRL = 0b10001000;
     // Enable sprite and tile rendering
     PPU->PPUMASK = 0b00011110; 
+    // Reset scroll
+    scroll_x = scroll_y = 0;
     // Execute lazynes main code
     lnMain();
     // Infinite loop
@@ -69,13 +71,18 @@ volatile char sync_mode;
 // Signal when vblank occurs. The NMI sets this to zero. To wait for a vblank set this no non-zero and wait for it to become zero.
 volatile char vblank_signal;
 
+// Scroll x-position
+volatile char scroll_x;
+// Scroll y-position
+volatile char scroll_y;
+
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
     // DMA transfer the entire sprite buffer to the PPU
     ppuSpriteBufferDmaTransfer(SPRITE_BUFFER);
     // Set scroll
-    PPU->PPUSCROLL = 0;
-    PPU->PPUSCROLL = 0;
+    PPU->PPUSCROLL = scroll_x;
+    PPU->PPUSCROLL = scroll_y;
     // count vblanks
     vblank_count++;
     // send vblank signal
@@ -163,13 +170,14 @@ void lnPush(uword o, ubyte a, void* s) {
   // x: New horizotnal scrolling offset in pixels, allowed range: [0..511]
  //  y: New vertical scrolling offset in pixels, allowed range: [0..479]
 //
-// TODO: void lnScroll(uword x, uword y);
-	//
-	// remarks:
-	// - If a SPR0HIT based splitscreen is used, the 1st call of lnScroll() sets
-	//   the scrolling offsets of the area above the split and the 2nd call of
-	//   lnScroll() sets the scrolling offsets of the area below the split.
-
+// remarks:
+// - If a SPR0HIT based splitscreen is used, the 1st call of lnScroll() sets
+//   the scrolling offsets of the area above the split and the 2nd call of
+//   lnScroll() sets the scrolling offsets of the area below the split.
+void lnScroll(uword x, uword y) {
+    scroll_x = <x;
+    scroll_y = <y;
+}
 
     // Add meta-sprite to display list
    //    p: Pointer to metasprite data

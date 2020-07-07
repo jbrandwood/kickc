@@ -55,24 +55,20 @@ enum { lfHor=64, lfVer=128, lfEnd=255 };
 
 
         // Common offsets for lnPush() and lnList()
-enum {
-	lnNameTab0=0x2000, lnNameTab1=0x2400, lnNameTab2=0x2800, lnNameTab3=0x2C00,
+	const uword lnNameTab0=0x2000, lnNameTab1=0x2400, lnNameTab2=0x2800, lnNameTab3=0x2C00,
 	lnAttrTab0=0x23C0, lnAttrTab1=0x27C0, lnAttrTab2=0x2BC0, lnAttrTab3=0x2FC0,
 	 lnBackCol=0x3F00,
 	 lnChrPal0=0x3F01,  lnChrPal1=0x3F05,  lnChrPal2=0x3F09,  lnChrPal3=0x3F0D,
-	 lnSprPal0=0x3F11,  lnSprPal1=0x3F15,  lnSprPal2=0x3F19,  lnSprPal3=0x3F1D
-};
+	 lnSprPal0=0x3F11,  lnSprPal1=0x3F15,  lnSprPal2=0x3F19,  lnSprPal3=0x3F1D;
 
    // Scroll background
   // x: New horizotnal scrolling offset in pixels, allowed range: [0..511]
  //  y: New vertical scrolling offset in pixels, allowed range: [0..479]
-//
-// TODO: void lnScroll(uword x, uword y);
-	//
-	// remarks:
-	// - If a SPR0HIT based splitscreen is used, the 1st call of lnScroll() sets
-	//   the scrolling offsets of the area above the split and the 2nd call of
-	//   lnScroll() sets the scrolling offsets of the area below the split.
+// remarks:
+// - If a SPR0HIT based splitscreen is used, the 1st call of lnScroll() sets
+//   the scrolling offsets of the area above the split and the 2nd call of
+//   lnScroll() sets the scrolling offsets of the area below the split.
+void lnScroll(uword x, uword y);
 
     // Add meta-sprite to display list
    //    p: Pointer to metasprite data

@@ -142,8 +142,8 @@ void ppuDataFill(void* const ppuData, char val, unsigned int size) {
 }
 
 // Transfer a number of bytes from the CPU memory to the PPU memory
-// - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - ppuData : Pointer in the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
 void ppuDataTransfer(void* const ppuData, void* const cpuData, unsigned int size) {
     ppuDataPrepare(ppuData);
@@ -154,8 +154,8 @@ void ppuDataTransfer(void* const ppuData, void* const cpuData, unsigned int size
 }
 
 // Transfer a number of bytes from the PPU memory to the CPU memory
-// - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
+// - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
 void ppuDataFetch(void* const cpuData, void* const ppuData, unsigned int size) {
     ppuDataPrepare(ppuData);

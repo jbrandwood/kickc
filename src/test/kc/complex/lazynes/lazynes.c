@@ -76,6 +76,20 @@ volatile char scroll_x;
 // Scroll y-position
 volatile char scroll_y;
 
+// Update list with data to be moved to VRAM during blank
+// The data is moved by when lnSync() is called
+// - The format of the update list is an array of unsigned bytes.
+// - There can be 3 different commands in the update list:
+//   a) addressHi, addressLo, value
+//   b) addressHi|lfHor, addressLo, amountOfBytes, byte1, byte2, byte3, ...
+//   c) addressHi|lfVer, addressLo, amountOfBytes, byte1, byte2, byte3, ...
+// - Multiple commands can be queued in one list,
+//   but there can only be one activated updatelist at a time.
+// - The end of the list is marked by lfEnd! (important!)
+// - It's the same format that's used in set_vram_update() of Shiru's neslib
+// See https://nesdoug.com/2017/04/13/my-neslib-notes/
+char * volatile vram_update_list;
+
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
     // DMA transfer the entire sprite buffer to the PPU
@@ -130,7 +144,11 @@ ubyte lnSync(ubyte flags) {
     // Update the mode
     sync_mode = flags;
 
+    // Move any pending data to the VRAM
+    lnListTransfer();
+
     // TODO: Handle lfSplit = 2 : activates split mode, NMI waits for SPR0HIT and sets registers
+
     // Return number of vblank since last sync
     char res = vblank_count;
     vblank_count = 0;
@@ -147,23 +165,65 @@ void lnPush(uword o, ubyte a, void* s) {
     ppuDataTransfer(o, s, a);
 }
 
-   // Write data into nametables, palettes, CHRRAM, etc.
+   // Plan a write of data into nametables, palettes, CHRRAM, etc.
+   // The data will be written next time lnSync() is called.
   //  (Screen has to be visible, doesn't work in blank mode!)
  // updateList: Pointer to update list
 //
-// TODO: void lnList(void* updateList);
-// TODO:   enum { lfHor=64, lfVer=128, lfEnd=255 };
+// remarks:
+// - The format of the update list is an array of unsigned bytes.
+// - There can be 3 different commands in the update list:
+//   a) addressHi, addressLo, value
+//   b) addressHi|lfHor, addressLo, amountOfBytes, byte1, byte2, byte3, ...
+//   c) addressHi|lfVer, addressLo, amountOfBytes, byte1, byte2, byte3, ...
+// - Multiple commands can be queued in one list,
+//   but there can only be one activated updatelist at a time.
+// - The end of the list is marked by lfEnd! (important!)
+// - It's the same format that's used in set_vram_update() of Shiru's neslib
+// See https://nesdoug.com/2017/04/13/my-neslib-notes/
+void lnList(void* update_list) {
+    vram_update_list = update_list;
+}
 
-	// remarks:
-	// - The format of the update list is an array of unsigned bytes.
-	// - There can be 3 different commands in the update list:
-	//   a) addressHi, addressLo, value
-	//   b) addressHi|lfHor, addressLo, amountOfBytes, byte1, byte2, byte3, ...
-	//   c) addressHi|lfVer, addressLo, amountOfBytes, byte1, byte2, byte3, ...
-	// - Multiple commands can be queued in one list,
-	//   but there can only be one activated updatelist at a time.
-	// - The end of the list is marked by lfEnd! (important!)
-	// - It's the same format that's used in set_vram_update() of Shiru's neslib
+// Execute any planned transfer of data into nametables, palettes, CHRRAM, etc. by lnList()
+void lnListTransfer() {
+    if(vram_update_list) {
+        // Index into the update list (assumes no more than 256 bytes)
+        char idx = 0;
+        for(;;) {
+            char addrHi = vram_update_list[idx++];
+            // Have we reached the end of the lsit
+            if(addrHi==0xff) break;
+            if(addrHi&lfHor) {
+                // The write is horizontal
+                char addrLo = vram_update_list[idx++];
+                char* ppuAddr = (char*)(uword){ addrHi&0x3f, addrLo };
+                char size = vram_update_list[idx++];
+                ppuDataTransfer(ppuAddr, vram_update_list+idx, size);
+            } else if(addrHi&lfVer) {
+                // The write is vertical
+                char addrLo = vram_update_list[idx++];
+                char* ppuAddr = (char*)(uword){ addrHi&0x3f, addrLo };
+                char size = vram_update_list[idx++];
+                // Set vertical mode ibit in PPUCTRL
+                char ppuCtrl = PPU->PPUCTRL;
+                PPU->PPUCTRL = ppuCtrl|4;
+                ppuDataTransfer(ppuAddr, vram_update_list+idx, size);
+                // restore PPUCTRL
+                PPU->PPUCTRL = ppuCtrl;
+            } else {
+                // The write is single-byte
+                char addrLo = vram_update_list[idx++];
+                char* ppuAddr = (char*)(uword){ addrHi, addrLo };
+                char value = vram_update_list[idx++];
+                ppuDataSet(ppuAddr, value);
+            }
+        }
+        // Set update list to zero
+        vram_update_list = 0;
+    }
+}
+
 
 
    // Scroll background

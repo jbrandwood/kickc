@@ -39,27 +39,28 @@ void lnPush(uword o, ubyte a, void* s);
   //  (Screen has to be visible, doesn't work in blank mode!)
  // updateList: Pointer to update list
 //
-// TODO: void lnList(void* updateList);
+// remarks:
+// - The format of the update list is an array of unsigned bytes.
+// - There can be 3 different commands in the update list:
+//   a) addressHi, addressLo, value
+//   b) addressHi|lfHor, addressLo, amountOfBytes, byte1, byte2, byte3, ...
+//   c) addressHi|lfVer, addressLo, amountOfBytes, byte1, byte2, byte3, ...
+// - Multiple commands can be queued in one list,
+//   but there can only be one activated updatelist at a time.
+// - The end of the list is marked by lfEnd! (important!)
+// - It's the same format that's used in set_vram_update() of Shiru's neslib
+// See https://nesdoug.com/2017/04/13/my-neslib-notes/
+void lnList(void* update_list);
+
+// Constants used to control VRAM updates in the list passed to lnList()
 enum { lfHor=64, lfVer=128, lfEnd=255 };
-	//
-	// remarks:
-	// - The format of the update list is an array of unsigned bytes.
-	// - There can be 3 different commands in the update list:
-	//   a) addressHi, addressLo, value
-	//   b) addressHi|lfHor, addressLo, amountOfBytes, byte1, byte2, byte3, ...
-	//   c) addressHi|lfVer, addressLo, amountOfBytes, byte1, byte2, byte3, ...
-	// - Multiple commands can be queued in one list,
-	//   but there can only be one activated updatelist at a time.
-	// - The end of the list is marked by lfEnd! (important!)
-	// - It's the same format that's used in set_vram_update() of Shiru's neslib
 
-
-        // Common offsets for lnPush() and lnList()
-	const uword lnNameTab0=0x2000, lnNameTab1=0x2400, lnNameTab2=0x2800, lnNameTab3=0x2C00,
+// Common offsets for lnPush() and lnList()
+const uword lnNameTab0=0x2000, lnNameTab1=0x2400, lnNameTab2=0x2800, lnNameTab3=0x2C00,
 	lnAttrTab0=0x23C0, lnAttrTab1=0x27C0, lnAttrTab2=0x2BC0, lnAttrTab3=0x2FC0,
-	 lnBackCol=0x3F00,
-	 lnChrPal0=0x3F01,  lnChrPal1=0x3F05,  lnChrPal2=0x3F09,  lnChrPal3=0x3F0D,
-	 lnSprPal0=0x3F11,  lnSprPal1=0x3F15,  lnSprPal2=0x3F19,  lnSprPal3=0x3F1D;
+	lnBackCol=0x3F00,
+	lnChrPal0=0x3F01,  lnChrPal1=0x3F05,  lnChrPal2=0x3F09,  lnChrPal3=0x3F0D,
+	lnSprPal0=0x3F11,  lnSprPal1=0x3F15,  lnSprPal2=0x3F19,  lnSprPal3=0x3F1D;
 
    // Scroll background
   // x: New horizotnal scrolling offset in pixels, allowed range: [0..511]

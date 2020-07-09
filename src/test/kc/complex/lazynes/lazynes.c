@@ -200,6 +200,7 @@ void lnListTransfer() {
                 char* ppuAddr = (char*)(uword){ addrHi&0x3f, addrLo };
                 char size = vram_update_list[idx++];
                 ppuDataTransfer(ppuAddr, vram_update_list+idx, size);
+                idx += size;
             } else if(addrHi&lfVer) {
                 // The write is vertical
                 char addrLo = vram_update_list[idx++];
@@ -211,6 +212,7 @@ void lnListTransfer() {
                 ppuDataTransfer(ppuAddr, vram_update_list+idx, size);
                 // restore PPUCTRL
                 PPU->PPUCTRL = ppuCtrl;
+                idx += size;
             } else {
                 // The write is single-byte
                 char addrLo = vram_update_list[idx++];

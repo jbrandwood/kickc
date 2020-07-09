@@ -792,18 +792,16 @@ muls8s: {
   __b4:
     // m = m + b
     txa
-    sta.z $fe
+    pha
+    clc
+    adc.z m
+    sta.z m
+    pla
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z $ff
-    clc
-    lda.z m
-    adc.z $fe
-    sta.z m
-    lda.z m+1
-    adc.z $ff
+    adc.z m+1
     sta.z m+1
     // for(signed byte j = 0; j!=a; j++)
     iny

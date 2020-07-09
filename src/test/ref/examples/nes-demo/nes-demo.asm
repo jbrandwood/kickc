@@ -351,8 +351,8 @@ readJoy1: {
     jmp __b1
 }
 // Transfer a number of bytes from the CPU memory to the PPU memory
-// - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - ppuData : Pointer in the PPU memory
+// - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
 ppuDataTransfer: {
     .const size = $20*SIZEOF_BYTE

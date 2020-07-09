@@ -1,13 +1,11 @@
-sta $fe
+pha
+clc
+adc {m1}
+sta {m1}
+pla
 ora #$7f
 bmi !+
 lda #0
 !:
-sta $ff
-clc
-lda {m1}
-adc $fe
-sta {m1}
-lda {m1}+1
-adc $ff
+adc {m1}+1
 sta {m1}+1

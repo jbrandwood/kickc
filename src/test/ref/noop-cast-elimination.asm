@@ -13,18 +13,16 @@ main: {
   __b1:
     // sw += (signed byte)i
     txa
-    sta.z $fe
+    pha
+    clc
+    adc.z sw
+    sta.z sw
+    pla
     ora #$7f
     bmi !+
     lda #0
   !:
-    sta.z $ff
-    clc
-    lda.z sw
-    adc.z $fe
-    sta.z sw
-    lda.z sw+1
-    adc.z $ff
+    adc.z sw+1
     sta.z sw+1
     // screen[i] = sw
     txa

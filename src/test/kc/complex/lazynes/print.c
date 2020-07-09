@@ -9,13 +9,13 @@
 #pragma target(nes)
 #include "lazynes.h"
 
-// A string in ROM
-#pragma data_seg(Data)
-ubyte b_init[]={0,0,10,'B','U','B','B','L','E','S',':',0,0,lfEnd};
-
 // A string in RAM
 #pragma data_seg(GameRam)
 ubyte b[14];
+
+// A string in ROM
+#pragma data_seg(Data)
+ubyte b_init[]={0,0,10,'B','U','B','B','L','E','S',':',0,0,lfEnd};
 
  // print some text in the static area using lnList
 void Print(uword offset, ubyte value) {
@@ -26,14 +26,16 @@ void Print(uword offset, ubyte value) {
 }
 
 int lnMain() {
-	// Copy string from ROM to RAM
-	for(char i=0;i<sizeof(b_init);i++)
-		b[i] = b_init[i];
 	static const ubyte bgColors[]={45,33,2};
-	ubyte objects=0;
+	ubyte objects=17;
 	uword tics=0;
 	lnSync(lfBlank); // blank screen to enable lnPush() usage
 	lnPush(lnBackCol,3,bgColors); // set background colors
+	
+	// Copy string from ROM to RAM
+	for(char i=0;i<sizeof(b_init);i++)
+		b[i] = b_init[i];
+
 	for(;;) {
 		// update the number to display
 		tics+=1;  

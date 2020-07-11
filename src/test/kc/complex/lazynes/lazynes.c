@@ -205,12 +205,11 @@ void lnListTransfer() {
                 char addrLo = vram_update_list[idx++];
                 char* ppuAddr = (char*)(uword){ addrHi&0x3f, addrLo };
                 char size = vram_update_list[idx++];
-                // Set vertical mode ibit in PPUCTRL
-                char ppuCtrl = PPU->PPUCTRL;
-                PPU->PPUCTRL = ppuCtrl|4;
+                // Set vertical mode bit in PPUCTRL
+                PPU->PPUCTRL = 0b10001100;
                 ppuDataTransfer(ppuAddr, vram_update_list+idx, size);
                 // restore PPUCTRL
-                PPU->PPUCTRL = ppuCtrl;
+                PPU->PPUCTRL = 0b10001000;
                 idx += size;
             } else {
                 // The write is single-byte

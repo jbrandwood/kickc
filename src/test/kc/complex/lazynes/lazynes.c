@@ -92,6 +92,8 @@ char * volatile vram_update_list;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 interrupt(hardware_stack) void vblank() {
+    // Transfer any queued data to the PPU
+    lnListTransfer();
     // DMA transfer the entire sprite buffer to the PPU
     ppuSpriteBufferDmaTransfer(SPRITE_BUFFER);
     // Set scroll
@@ -143,9 +145,6 @@ ubyte lnSync(ubyte flags) {
 
     // Update the mode
     sync_mode = flags;
-
-    // Move any pending data to the VRAM
-    lnListTransfer();
 
     // TODO: Handle lfSplit = 2 : activates split mode, NMI waits for SPR0HIT and sets registers
 

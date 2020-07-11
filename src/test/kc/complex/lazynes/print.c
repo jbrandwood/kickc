@@ -7,6 +7,7 @@
 // Original Source VBCC alpha 2 http://www.ibaug.de/vbcc/vbcc6502_2.zip
 
 #pragma target(nes)
+#pragma emulator("java -jar c:/c64/Nintaco/Nintaco.jar")
 #include "lazynes.h"
 
 // A string in RAM
@@ -36,6 +37,9 @@ int lnMain() {
 	for(char i=0;i<sizeof(b_init);i++)
 		b[i] = b_init[i];
 
+	static const char text[]="HELLO LAZYNES!";
+	lnPush(lnNameTab0+32, sizeof(text)-1, text); // draw text in 2nd line
+
 	for(;;) {
 		// update the number to display
 		tics+=1;  
@@ -44,7 +48,7 @@ int lnMain() {
 			objects = (objects+1)&0x3f;
 		}
 		// display a number
-		Print(lnNameTab0+32,objects+1);		
+		Print(lnNameTab0+64,objects+1);		
 		lnSync(0); // sync with vblank		
 	}
 	return 0;

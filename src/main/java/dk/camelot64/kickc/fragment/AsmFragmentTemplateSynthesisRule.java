@@ -764,6 +764,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)z1_derefidx_vbuyy", twoZM1+"|"+rvalAa, "lda ({z1}),y", "$1=$2vb$3aa", null, mapZM1, null));
       // Rewrite trailing right-size (Z1),y to use AA - when 2 Z1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z1(.*)pb(.)z1_derefidx_vbuyy", rvalAa, "lda ({z1}),y", "$1z1$2vb$3aa", null, null, null));
+      // TODO: New fragment synth rule creates non-optimal ASM https://gitlab.com/camelot/kickc/-/issues/494
+      // Rewrite trailing right-size (Z2),y to use AA
+      // synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)z2_derefidx_vbuyy", twoZM2+"|"+rvalAa, "lda ({z2}),y", "$1=$2vb$3aa", null, mapZM2, null));
 
       // Rewrite wv.z1=(word)_ror_4 to wv.z1=(word)
       synths.add(new AsmFragmentTemplateSynthesisRule("vw(.*)m1=(.*)_ror_4", rvalAa, null, "vw$1m1=$2", "lsr {m1}+1\nror {m1}\nlsr {m1}+1\nror {m1}\nlsr {m1}+1\nror {m1}\nlsr {m1}+1\nror {m1}", null, null));

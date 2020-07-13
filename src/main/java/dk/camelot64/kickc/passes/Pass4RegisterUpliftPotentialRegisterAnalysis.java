@@ -192,13 +192,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          }
          AsmClobber clobber = asm.getClobber();
          Collection<Registers.Register> clobberRegisters = Pass4AssertNoCpuClobber.getClobberRegisters(clobber);
-         Iterator<Registers.Register> alwaysClobberIt = alwaysClobbered.iterator();
-         while(alwaysClobberIt.hasNext()) {
-            Registers.Register alwaysClobberRegister = alwaysClobberIt.next();
-            if(!clobberRegisters.contains(alwaysClobberRegister)) {
-               alwaysClobberIt.remove();
-            }
-         }
+         alwaysClobbered.removeIf(alwaysClobberRegister -> !clobberRegisters.contains(alwaysClobberRegister));
          if(alwaysClobbered.isEmpty()) {
             // No register is always clobbered - abort combination search
             break;

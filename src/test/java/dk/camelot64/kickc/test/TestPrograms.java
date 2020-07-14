@@ -189,6 +189,11 @@ public class TestPrograms {
 
    @Test
    public void testPolygon() throws IOException, URISyntaxException {
+      compileAndCompare("complex/xy-scroller/xy-scroller.c");
+   }
+
+   @Test
+   public void testXyScroller() throws IOException, URISyntaxException {
       compileAndCompare("complex/polygon/polygon.c");
    }
 

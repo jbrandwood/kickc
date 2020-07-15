@@ -53,7 +53,7 @@ unsigned int x_pos_coarse;
 unsigned int y_pos_coarse;
 
 // The current screen displayed (0/1)
-char screen = 0;
+char screen_buffer = 0;
 
 void main() {
     // Stop the kernel IRQ
@@ -89,38 +89,37 @@ void main() {
         // If coarse scrolling is needed execute it
         if(movement) {
             // Move chars from active screen to hidden screen - while applying any needed movement
-            char * screen_active = (screen?MAIN_SCREEN1:MAIN_SCREEN0) + movement;
-            char * screen_hidden = screen?MAIN_SCREEN0:MAIN_SCREEN1;
+            char * screen_active = (screen_buffer?MAIN_SCREEN1:MAIN_SCREEN0) + movement;
+            char * screen_hidden = screen_buffer?MAIN_SCREEN0:MAIN_SCREEN1;
             screencpy(screen_hidden, screen_active);
 
             // Update any new row if needed
-            if(y_movement==-1) {
-                // Update Bottom row 
-                char* petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse+12);
-                char* scrn = screen_hidden+24*40; 
-                for(char i=0;i<40;i++)
-                    scrn[i] = petscii[i];
-            } else if(y_movement==1) {
-                // Update Top row 
-                char* petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse-12);
-                char* scrn = screen_hidden; 
+            char* petscii;
+            char* scrn;
+            if(y_movement) {
+                if(y_movement==-1) {
+                    // Update Bottom row 
+                    petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse+12);
+                    scrn = screen_hidden+24*40; 
+                } else { // y_movement==1
+                    // Update Top row 
+                    petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse-12);
+                    scrn = screen_hidden; 
+                }
                 for(char i=0;i<40;i++)
                     scrn[i] = petscii[i];
             }
             // Update any new column if needed
-            if(x_movement==-1) {
-                // Update Right column
-                char* petscii = petscii_ptr(x_pos_coarse+19, y_pos_coarse-12);
-                char* scrn = screen_hidden+39; 
-                for(char i=0;i<25;i++) {
-                    *scrn = *petscii;
-                    scrn += 40;
-                    petscii += 140;
+            if(x_movement) {
+                if(x_movement==-1) {
+                    // Update Right column
+                    petscii = petscii_ptr(x_pos_coarse+19, y_pos_coarse-12);
+                    scrn = screen_hidden+39; 
+                } else { // x_movement==1
+                    // Update Left column
+                    petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse-12);
+                    scrn = screen_hidden; 
                 }
-            } else if(x_movement==1) {
-                // Update Left column
-                char* petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse-12);
-                char* scrn = screen_hidden; 
                 for(char i=0;i<25;i++) {
                     *scrn = *petscii;
                     scrn += 40;
@@ -129,7 +128,7 @@ void main() {
             }
 
             // Change current screen
-            screen ^=1;
+            screen_buffer ^=1;
 
         }
         //VICII->BORDER_COLOR = BLACK;
@@ -143,7 +142,7 @@ void main() {
         // X-scroll fine
         VICII->CONTROL2 = VICII->CONTROL2 & 0xf0 | (7-x_pos_fine);
         // Display current screen
-        if(screen) {
+        if(screen_buffer) {
             VICII->MEMORY = toD018(MAIN_SCREEN1, MAIN_CHARSET);
         } else {
             VICII->MEMORY = toD018(MAIN_SCREEN0, MAIN_CHARSET);
@@ -202,7 +201,3 @@ void next_position() {
         y_pos_fine = (unsigned char)y_pos_u & 7;
         y_pos_coarse = y_pos_u/8;  
 }
-
-
-
-

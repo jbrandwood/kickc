@@ -22,10 +22,10 @@
   // Display charset
   .label MAIN_CHARSET = $1000
   // The current screen displayed (0/1)
-  .label screen = 2
+  .label screen_buffer = 2
   // Current index into the sinus
-  .label x_sin_idx = 9
-  .label y_sin_idx = $b
+  .label x_sin_idx = $b
+  .label y_sin_idx = $d
   // Current x/y-position (the center of the screen)
   .label x_pos = $16
   .label y_pos = $18
@@ -39,24 +39,21 @@ main: {
     .const toD0181_return = (>(MAIN_SCREEN0&$3fff)*4)|(>MAIN_CHARSET)/4&$f
     .const toD0182_return = (>(MAIN_SCREEN1&$3fff)*4)|(>MAIN_CHARSET)/4&$f
     .const toD0183_return = (>(MAIN_SCREEN0&$3fff)*4)|(>MAIN_CHARSET)/4&$f
-    .label __5 = $f
-    .label __9 = $d
+    .label __5 = $11
+    .label __9 = $f
     .label __13 = 3
-    .label __45 = $13
-    .label __48 = $1b
-    .label x_pos_coarse_old = $d
-    .label y_pos_coarse_old = $f
-    .label y_movement = $11
-    .label x_movement = $12
+    .label __41 = $15
+    .label __44 = $1b
+    .label x_pos_coarse_old = $f
+    .label y_pos_coarse_old = $11
+    .label y_movement = $13
+    .label x_movement = $14
     .label screen_active = 3
-    .label screen_hidden = 7
-    .label petscii1 = 5
-    .label scrn1 = $14
+    .label screen_hidden = 9
+    // Update any new row if needed
     .label petscii = 5
-    .label petscii3 = 5
-    .label scrn3 = 7
-    .label petscii2 = 5
-    .label scrn2 = 7
+    .label scrn = 7
+    .label scrn_1 = 9
     // asm
     sei
     // memset(MAIN_SCREEN0, ' ', 1000)
@@ -77,7 +74,7 @@ main: {
     sta.z x_sin_idx+1
     jsr next_position
     lda #0
-    sta.z screen
+    sta.z screen_buffer
   __b1:
     // x_pos_coarse_old = x_pos_coarse
     // The old coarse values x/y-positions
@@ -109,17 +106,17 @@ main: {
     // if(y_movement==1)
     lda #1
     cmp.z y_movement
-    beq __b20
+    beq __b18
     // if(y_movement==-1)
     lda #-1
     cmp.z y_movement
-    bne __b19
+    bne __b17
     ldx #$28
     jmp __b2
-  __b19:
+  __b17:
     ldx #0
     jmp __b2
-  __b20:
+  __b18:
     ldx #-$28
   __b2:
     // x_pos_coarse_old-x_pos_coarse
@@ -141,12 +138,12 @@ main: {
     tax
     // if(movement)
     cpx #0
-    bne !__b21+
-    jmp __b21
-  !__b21:
-    // screen?MAIN_SCREEN1:MAIN_SCREEN0
+    bne !__b19+
+    jmp __b19
+  !__b19:
+    // screen_buffer?MAIN_SCREEN1:MAIN_SCREEN0
     lda #0
-    cmp.z screen
+    cmp.z screen_buffer
     bne __b3
     lda #<MAIN_SCREEN0
     sta.z __13
@@ -154,13 +151,13 @@ main: {
     sta.z __13+1
     jmp __b4
   __b3:
-    // screen?MAIN_SCREEN1:MAIN_SCREEN0
+    // screen_buffer?MAIN_SCREEN1:MAIN_SCREEN0
     lda #<MAIN_SCREEN1
     sta.z __13
     lda #>MAIN_SCREEN1
     sta.z __13+1
   __b4:
-    // screen_active = (screen?MAIN_SCREEN1:MAIN_SCREEN0) + movement
+    // screen_active = (screen_buffer?MAIN_SCREEN1:MAIN_SCREEN0) + movement
     txa
     pha
     clc
@@ -173,9 +170,9 @@ main: {
   !:
     adc.z screen_active+1
     sta.z screen_active+1
-    // screen?MAIN_SCREEN0:MAIN_SCREEN1
+    // screen_buffer?MAIN_SCREEN0:MAIN_SCREEN1
     lda #0
-    cmp.z screen
+    cmp.z screen_buffer
     bne __b5
     lda #<MAIN_SCREEN1
     sta.z screen_hidden
@@ -183,7 +180,7 @@ main: {
     sta.z screen_hidden+1
     jmp __b6
   __b5:
-    // screen?MAIN_SCREEN0:MAIN_SCREEN1
+    // screen_buffer?MAIN_SCREEN0:MAIN_SCREEN1
     lda #<MAIN_SCREEN0
     sta.z screen_hidden
     lda #>MAIN_SCREEN0
@@ -191,17 +188,16 @@ main: {
   __b6:
     // screencpy(screen_hidden, screen_active)
     jsr screencpy
+    // if(y_movement)
+    lda #0
+    cmp.z y_movement
+    beq __b7
     // if(y_movement==-1)
-    // Update any new row if needed
     lda #-1
     cmp.z y_movement
-    bne !__b7+
-    jmp __b7
-  !__b7:
-    // if(y_movement==1)
-    lda #1
-    cmp.z y_movement
-    bne __b10
+    bne !__b8+
+    jmp __b8
+  !__b8:
     // petscii_ptr(x_pos_coarse-20, y_pos_coarse-12)
     sec
     lda.z x_pos_coarse
@@ -220,25 +216,29 @@ main: {
     jsr petscii_ptr
     // petscii_ptr(x_pos_coarse-20, y_pos_coarse-12)
     // petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse-12)
+    lda.z screen_hidden
+    sta.z scrn
+    lda.z screen_hidden+1
+    sta.z scrn+1
+  __b9:
     ldy #0
-  __b8:
+  __b10:
     // for(char i=0;i<40;i++)
     cpy #$28
-    bcs !__b9+
-    jmp __b9
-  !__b9:
-  __b10:
+    bcs !__b11+
+    jmp __b11
+  !__b11:
+  __b7:
+    // if(x_movement)
+    lda #0
+    cmp.z x_movement
+    beq __b12
     // if(x_movement==-1)
-    // Update any new column if needed
     lda #-1
     cmp.z x_movement
     bne !__b13+
     jmp __b13
   !__b13:
-    // if(x_movement==1)
-    lda #1
-    cmp.z x_movement
-    bne __b16
     // petscii_ptr(x_pos_coarse-20, y_pos_coarse-12)
     sec
     lda.z x_pos_coarse
@@ -257,99 +257,100 @@ main: {
     jsr petscii_ptr
     // petscii_ptr(x_pos_coarse-20, y_pos_coarse-12)
     // petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse-12)
-    ldx #0
   __b14:
+    ldx #0
+  __b15:
     // for(char i=0;i<25;i++)
     cpx #$19
-    bcc __b15
-  __b16:
-    // screen ^=1
+    bcc __b16
+  __b12:
+    // screen_buffer ^=1
     // Change current screen
     lda #1
-    eor.z screen
-    sta.z screen
-  __b21:
+    eor.z screen_buffer
+    sta.z screen_buffer
+  __b19:
   // Update the display - wait for the raster
     // while(VICII->RASTER!=0xfe)
     lda #$fe
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b21
-  __b24:
+    bne __b19
+  __b22:
     // while(VICII->RASTER!=0xff)
     lda #$ff
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b24
+    bne __b22
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // VICII->CONTROL1 & 0xf0
     lda #$f0
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    sta.z __45
+    sta.z __41
     // 7-y_pos_fine
     lda #7
     sec
     sbc.z y_pos_fine
     // VICII->CONTROL1 & 0xf0 | (7-y_pos_fine)
-    ora.z __45
+    ora.z __41
     // VICII->CONTROL1 = VICII->CONTROL1 & 0xf0 | (7-y_pos_fine)
     // Y-scroll fine
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->CONTROL2 & 0xf0
     lda #$f0
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    sta.z __48
+    sta.z __44
     // 7-x_pos_fine
     lda #7
     sec
     sbc.z x_pos_fine
     // VICII->CONTROL2 & 0xf0 | (7-x_pos_fine)
-    ora.z __48
+    ora.z __44
     // VICII->CONTROL2 = VICII->CONTROL2 & 0xf0 | (7-x_pos_fine)
     // X-scroll fine
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    // if(screen)
+    // if(screen_buffer)
     // Display current screen
     lda #0
-    cmp.z screen
-    bne __b32
+    cmp.z screen_buffer
+    bne __b30
     // VICII->MEMORY = toD018(MAIN_SCREEN0, MAIN_CHARSET)
     lda #toD0183_return
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-  __b26:
+  __b24:
     // VICII->BORDER_COLOR = BLACK
     lda #BLACK
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
-  __b32:
+  __b30:
     // VICII->MEMORY = toD018(MAIN_SCREEN1, MAIN_CHARSET)
     lda #toD0182_return
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_MEMORY
-    jmp __b26
-  __b15:
+    jmp __b24
+  __b16:
     // *scrn = *petscii
     ldy #0
-    lda (petscii2),y
-    sta (scrn2),y
+    lda (petscii),y
+    sta (scrn_1),y
     // scrn += 40
     lda #$28
     clc
-    adc.z scrn2
-    sta.z scrn2
+    adc.z scrn_1
+    sta.z scrn_1
     bcc !+
-    inc.z scrn2+1
+    inc.z scrn_1+1
   !:
     // petscii += 140
     lda #$8c
     clc
-    adc.z petscii2
-    sta.z petscii2
+    adc.z petscii
+    sta.z petscii
     bcc !+
-    inc.z petscii2+1
+    inc.z petscii+1
   !:
     // for(char i=0;i<25;i++)
     inx
-    jmp __b14
+    jmp __b15
   __b13:
     // petscii_ptr(x_pos_coarse+19, y_pos_coarse-12)
     lda #$13
@@ -372,49 +373,20 @@ main: {
     // scrn = screen_hidden+39
     lda #$27
     clc
-    adc.z scrn3
-    sta.z scrn3
+    adc.z scrn_1
+    sta.z scrn_1
     bcc !+
-    inc.z scrn3+1
+    inc.z scrn_1+1
   !:
-    ldx #0
-  __b17:
-    // for(char i=0;i<25;i++)
-    cpx #$19
-    bcc __b18
-    jmp __b16
-  __b18:
-    // *scrn = *petscii
-    ldy #0
-    lda (petscii3),y
-    sta (scrn3),y
-    // scrn += 40
-    lda #$28
-    clc
-    adc.z scrn3
-    sta.z scrn3
-    bcc !+
-    inc.z scrn3+1
-  !:
-    // petscii += 140
-    lda #$8c
-    clc
-    adc.z petscii3
-    sta.z petscii3
-    bcc !+
-    inc.z petscii3+1
-  !:
-    // for(char i=0;i<25;i++)
-    inx
-    jmp __b17
-  __b9:
+    jmp __b14
+  __b11:
     // scrn[i] = petscii[i]
     lda (petscii),y
-    sta (screen_hidden),y
+    sta (scrn),y
     // for(char i=0;i<40;i++)
     iny
-    jmp __b8
-  __b7:
+    jmp __b10
+  __b8:
     // petscii_ptr(x_pos_coarse-20, y_pos_coarse+12)
     sec
     lda.z x_pos_coarse
@@ -437,23 +409,11 @@ main: {
     lda.z screen_hidden
     clc
     adc #<$18*$28
-    sta.z scrn1
+    sta.z scrn
     lda.z screen_hidden+1
     adc #>$18*$28
-    sta.z scrn1+1
-    ldy #0
-  __b11:
-    // for(char i=0;i<40;i++)
-    cpy #$28
-    bcc __b12
-    jmp __b10
-  __b12:
-    // scrn[i] = petscii[i]
-    lda (petscii1),y
-    sta (scrn1),y
-    // for(char i=0;i<40;i++)
-    iny
-    jmp __b11
+    sta.z scrn+1
+    jmp __b9
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -461,7 +421,7 @@ memset: {
     .const num = $3e8
     .label str = MAIN_SCREEN0
     .label end = str+num
-    .label dst = 9
+    .label dst = $b
     lda #<str
     sta.z dst
     lda #>str
@@ -636,9 +596,9 @@ next_position: {
 // Copy an entire screen (40x25 = 1000 chars)
 // - dst - destination
 // - src - source
-// screencpy(byte* zp(7) dst, byte* zp(3) src)
+// screencpy(byte* zp(9) dst, byte* zp(3) src)
 screencpy: {
-    .label dst = 7
+    .label dst = 9
     .label src = 3
     .label src_250 = $26
     .label dst_250 = $1c
@@ -719,17 +679,17 @@ screencpy: {
     jmp __b1
 }
 // Get a pointer to a specific x,y-position in the PETSCII art
-// petscii_ptr(word zp(5) row_x, word zp($d) row_y)
+// petscii_ptr(word zp(5) row_x, word zp($f) row_y)
 petscii_ptr: {
-    .label __0 = $d
-    .label __1 = $d
+    .label __0 = $f
+    .label __1 = $f
     .label row_x = 5
-    .label row_y = $d
+    .label row_y = $f
     .label return = 5
     .label __3 = $26
     .label __4 = $26
     .label __5 = $26
-    .label __6 = $d
+    .label __6 = $f
     // row_y * 140
     lda.z row_y
     asl

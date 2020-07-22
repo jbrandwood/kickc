@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCastingNegative() throws IOException, URISyntaxException {
+      compileAndCompare("casting-negative.c");
+   }
+
+   @Test
    public void testForEver2() throws IOException, URISyntaxException {
       compileAndCompare("for-ever-2.c");
    }
@@ -188,12 +193,12 @@ public class TestPrograms {
    }
 
    @Test
-   public void testPolygon() throws IOException, URISyntaxException {
+   public void testXyScroller() throws IOException, URISyntaxException {
       compileAndCompare("complex/xy-scroller/xy-scroller.c");
    }
 
    @Test
-   public void testXyScroller() throws IOException, URISyntaxException {
+   public void testPolygon() throws IOException, URISyntaxException {
       compileAndCompare("complex/polygon/polygon.c");
    }
 

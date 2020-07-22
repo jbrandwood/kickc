@@ -818,15 +818,25 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx_(lt|gt|le|ge|eq|neq)_(.*c1.*)", rvalAa, "lda {c1},x", "vb$1aa_$2_$3", null, null));
 
       // Use unsigned ASM to synthesize signed ASM ( ...vbs... -> ...vbu... )
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)_(eq|neq)_(v.s..)_then_(.*)", null, null, "$1_$2_$3_then_$4", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=(v.s..)", null, null, "$1=$2", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=(v.s..)_(band|bxor|bor)_(v.s..)", null, null, "$1=$2_$3_$4", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=(p.s..)_derefidx_(vbu..)", null, null, "$1=$2_derefidx_$3", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(v.s..)=_(inc|dec)_(v.s..)", null, null, "$1=_$2_$3", null, mapSToU));
-      synths.add(new AsmFragmentTemplateSynthesisRule("(vbuz.|vbuaa|vbuxx|vbuyy)=_(lo|hi)_vws(z.|c.|m.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=(vbs..)", null, null, "$1=$2", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(vws..)", null, null, "$1=$2", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(vds..)", null, null, "$1=$2", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)_(eq|neq)_(vbs..)_then_(.*)", null, null, "$1_$2_$3_then_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)_(eq|neq)_(vws..)_then_(.*)", null, null, "$1_$2_$3_then_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)_(eq|neq)_(vds..)_then_(.*)", null, null, "$1_$2_$3_then_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=(vbs..)_(band|bxor|bor)_(v.s..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(vws..)_(band|bxor|bor)_(v.s..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(vds..)_(band|bxor|bor)_(v.s..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=(pbs..)_derefidx_(vbu..)", null, null, "$1=$2_derefidx_$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=(pws..)_derefidx_(vbu..)", null, null, "$1=$2_derefidx_$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=(pds..)_derefidx_(vbu..)", null, null, "$1=$2_derefidx_$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbs..)=_(inc|dec)_(vbs..)", null, null, "$1=_$2_$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vws..)=_(inc|dec)_(vws..)", null, null, "$1=_$2_$3", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vds..)=_(inc|dec)_(vds..)", null, null, "$1=_$2_$3", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vb[su]..)=(vb[su]..)_(plus|minus)_(vb[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vw[su]..)=(vw[su]..)_(plus|minus)_(vw[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));
       synths.add(new AsmFragmentTemplateSynthesisRule("(vd[su]..)=(vd[su]..)_(plus|minus)_(vd[su]..)", null, null, "$1=$2_$3_$4", null, mapSToU));
+      synths.add(new AsmFragmentTemplateSynthesisRule("(vbu..)=_(lo|hi)_vws(z.|c.|m.)", null, null, "$1=_$2_vwu$3", null, mapSToU));
 
       // Use Z1/Z2 ASM to synthesize Z1-only code ( ...z1...z1... -> ...z1...z2... )
       synths.add(new AsmFragmentTemplateSynthesisRule("(v..[zm])1=(v..[zm])1_(plus|minus|band|bxor|bor)_(.*)", oneZM2, null, "$11=$22_$3_$4", null, mapZM1, false));

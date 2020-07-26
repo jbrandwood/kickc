@@ -7,22 +7,22 @@ public class AsmClobber implements Serializable {
 
    public static final AsmClobber CLOBBER_ALL = new AsmClobber(true, true, true, true, true, true, true);
 
-   final boolean clobberA;
-   final boolean clobberX;
-   final boolean clobberY;
-   final boolean clobberC;
-   final boolean clobberN;
-   final boolean clobberZ;
-   final boolean clobberV;
+   final boolean registerA;
+   final boolean registerX;
+   final boolean registerY;
+   final boolean flagC;
+   final boolean flagN;
+   final boolean flagZ;
+   final boolean flagV;
 
-   public AsmClobber(boolean clobberA, boolean clobberX, boolean clobberY, boolean clobberC, boolean clobberN, boolean clobberZ, boolean clobberV) {
-      this.clobberA = clobberA;
-      this.clobberX = clobberX;
-      this.clobberY = clobberY;
-      this.clobberC = clobberC;
-      this.clobberN = clobberN;
-      this.clobberZ = clobberZ;
-      this.clobberV = clobberV;
+   public AsmClobber(boolean registerA, boolean registerX, boolean registerY, boolean flagC, boolean flagN, boolean flagZ, boolean flagV) {
+      this.registerA = registerA;
+      this.registerX = registerX;
+      this.registerY = registerY;
+      this.flagC = flagC;
+      this.flagN = flagN;
+      this.flagZ = flagZ;
+      this.flagV = flagV;
    }
 
    public AsmClobber() {
@@ -30,7 +30,9 @@ public class AsmClobber implements Serializable {
    }
 
    /**
-    * Create clobber from a string containing the names of the clobbered registers/flags. EG. "AX" means that the A and X registers are clobbered.
+    * Create clobber from a string containing the names of the clobbered registers/flags.
+    * Registers are upper-case and flags are lower-case. (This is because the 65C02 has both a "Z" register and a "Z" flag. )
+    * EG. "AXcz" means that the A and X registers a and the carry and zero flags are clobbered.
     *
     * @param clobberString The clobber string.
     */
@@ -39,10 +41,10 @@ public class AsmClobber implements Serializable {
             clobberString.contains("A"),
             clobberString.contains("X"),
             clobberString.contains("Y"),
-            clobberString.contains("C"),
-            clobberString.contains("N"),
-            clobberString.contains("Z"),
-            clobberString.contains("V")
+            clobberString.contains("c"),
+            clobberString.contains("n"),
+            clobberString.contains("z"),
+            clobberString.contains("v")
       );
    }
 
@@ -54,84 +56,84 @@ public class AsmClobber implements Serializable {
     */
    public AsmClobber(AsmClobber clobber1, AsmClobber clobber2) {
       this(
-            clobber1.clobberA | clobber2.clobberA,
-            clobber1.clobberX | clobber2.clobberX,
-            clobber1.clobberY | clobber2.clobberY,
-            clobber1.clobberC | clobber2.clobberC,
-            clobber1.clobberN | clobber2.clobberN,
-            clobber1.clobberZ | clobber2.clobberZ,
-            clobber1.clobberV | clobber2.clobberV
+            clobber1.registerA | clobber2.registerA,
+            clobber1.registerX | clobber2.registerX,
+            clobber1.registerY | clobber2.registerY,
+            clobber1.flagC | clobber2.flagC,
+            clobber1.flagN | clobber2.flagN,
+            clobber1.flagZ | clobber2.flagZ,
+            clobber1.flagV | clobber2.flagV
       );
    }
 
 
-   public boolean isClobberA() {
-      return clobberA;
+   public boolean isRegisterA() {
+      return registerA;
    }
 
-   public boolean isClobberX() {
-      return clobberX;
+   public boolean isRegisterX() {
+      return registerX;
    }
 
-   public boolean isClobberY() {
-      return clobberY;
+   public boolean isRegisterY() {
+      return registerY;
    }
 
-   public boolean isClobberC() {
-      return clobberC;
+   public boolean isFlagC() {
+      return flagC;
    }
 
-   public boolean isClobberN() {
-      return clobberN;
+   public boolean isFlagN() {
+      return flagN;
    }
 
-   public boolean isClobberZ() {
-      return clobberZ;
+   public boolean isFlagZ() {
+      return flagZ;
    }
 
-   public boolean isClobberV() {
-      return clobberV;
+   public boolean isFlagV() {
+      return flagV;
    }
 
-   public AsmClobber addClobberA(boolean clobberA) {
-      return new AsmClobber(clobberA, this.clobberX, this.clobberY, this.clobberC, this.clobberN, this.clobberZ, this.clobberV);
+   public AsmClobber addRegisterA() {
+      return new AsmClobber(true, this.registerX, this.registerY, this.flagC, this.flagN, this.flagZ, this.flagV);
    }
 
-   public AsmClobber addClobberX(boolean clobberX) {
-      return new AsmClobber(this.clobberA, clobberX, this.clobberY, this.clobberC, this.clobberN, this.clobberZ, this.clobberV);
+   public AsmClobber addRegisterX() {
+      return new AsmClobber(this.registerA, true, this.registerY, this.flagC, this.flagN, this.flagZ, this.flagV);
    }
 
-   public AsmClobber addClobberY(boolean clobberY) {
-      return new AsmClobber(this.clobberA, this.clobberX, clobberY, this.clobberC, this.clobberN, this.clobberZ, this.clobberV);
+   public AsmClobber addRegisterY() {
+      return new AsmClobber(this.registerA, this.registerX, true, this.flagC, this.flagN, this.flagZ, this.flagV);
    }
 
-   public AsmClobber addClobberC(boolean clobberC) {
-      return new AsmClobber(this.clobberA, this.clobberX, this.clobberY, clobberC, this.clobberN, this.clobberZ, this.clobberV);
+   public AsmClobber addFlagC() {
+      return new AsmClobber(this.registerA, this.registerX, this.registerY, true, this.flagN, this.flagZ, this.flagV);
    }
 
-   public AsmClobber addClobberN(boolean clobberN) {
-      return new AsmClobber(this.clobberA, this.clobberX, this.clobberY, this.clobberC, clobberN, this.clobberZ, this.clobberV);
+   public AsmClobber addFlagN() {
+      return new AsmClobber(this.registerA, this.registerX, this.registerY, this.flagC, true, this.flagZ, this.flagV);
    }
 
-   public AsmClobber addClobberZ(boolean clobberZ) {
-      return new AsmClobber(this.clobberA, this.clobberX, this.clobberY, this.clobberC, this.clobberN, clobberZ, this.clobberV);
+   public AsmClobber addFlagZ() {
+      return new AsmClobber(this.registerA, this.registerX, this.registerY, this.flagC, this.flagN, true, this.flagV);
    }
 
-   public AsmClobber addClobberV(boolean clobberV) {
-      return new AsmClobber(this.clobberA, this.clobberX, this.clobberY, this.clobberC, this.clobberN, this.clobberZ, clobberV);
+   public AsmClobber addFlagV() {
+      return new AsmClobber(this.registerA, this.registerX, this.registerY, this.flagC, this.flagN, this.flagZ, true);
    }
 
 
    @Override
    public String toString() {
       return
-            (clobberA ? "A" : "") +
-                  (clobberX ? "X" : "") +
-                  (clobberY ? "Y" : "") +
-                  (clobberC ? "C" : "") +
-                  (clobberN ? "N" : "") +
-                  (clobberZ ? "Z" : "") +
-                  (clobberV ? "V" : "");
+            (registerA ? "A" : "") +
+                  (registerX ? "X" : "") +
+                  (registerY ? "Y" : "") +
+                  (flagC ? "c" : "") +
+                  (flagN ? "n" : "") +
+                  (flagZ ? "z" : "") +
+                  (flagV ? "v" : "");
 
    }
 

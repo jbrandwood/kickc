@@ -31,13 +31,13 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     */
    public static Collection<Registers.Register> getClobberRegisters(AsmClobber clobber) {
       List<Registers.Register> clobberRegisters = new ArrayList<>();
-      if(clobber.isClobberA()) {
+      if(clobber.isRegisterA()) {
          clobberRegisters.add(Registers.getRegisterA());
       }
-      if(clobber.isClobberX()) {
+      if(clobber.isRegisterX()) {
          clobberRegisters.add(Registers.getRegisterX());
       }
-      if(clobber.isClobberY()) {
+      if(clobber.isRegisterY()) {
          clobberRegisters.add(Registers.getRegisterY());
       }
       return clobberRegisters;

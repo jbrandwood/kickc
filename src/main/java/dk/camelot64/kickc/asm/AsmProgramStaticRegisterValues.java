@@ -92,28 +92,28 @@ public class AsmProgramStaticRegisterValues {
          if(instruction.getAsmOpcode().getMnemonic().equals("jsr")) {
             asmClobber = AsmClobber.CLOBBER_ALL;
          }
-         if(asmClobber.isClobberA()) {
+         if(asmClobber.isRegisterA()) {
             current.setA(null);
             current.setaMem(null);
          }
-         if(asmClobber.isClobberX()) {
+         if(asmClobber.isRegisterX()) {
             current.setX(null);
             current.setxMem(null);
          }
-         if(asmClobber.isClobberY()) {
+         if(asmClobber.isRegisterY()) {
             current.setY(null);
             current.setyMem(null);
          }
-         if(asmClobber.isClobberC()) {
+         if(asmClobber.isFlagC()) {
             current.setC(null);
          }
-         if(asmClobber.isClobberN()) {
+         if(asmClobber.isFlagN()) {
             current.setN(null);
          }
-         if(asmClobber.isClobberV()) {
+         if(asmClobber.isFlagV()) {
             current.setV(null);
          }
-         if(asmClobber.isClobberZ()) {
+         if(asmClobber.isFlagZ()) {
             current.setZ(null);
          }
          String mnemnonic = asmOpcode.getMnemonic();

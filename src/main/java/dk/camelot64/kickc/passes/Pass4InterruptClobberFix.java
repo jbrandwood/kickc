@@ -98,13 +98,13 @@ public class Pass4InterruptClobberFix extends Pass2Base {
 
    private List<String> getNonClobberedRegisterNames(AsmClobber procClobber) {
       List<String> notClobberedRegisters = new ArrayList<>();
-      if(!procClobber.isClobberA()) {
+      if(!procClobber.isRegisterA()) {
          notClobberedRegisters.add("a");
       }
-      if(!procClobber.isClobberX()) {
+      if(!procClobber.isRegisterX()) {
          notClobberedRegisters.add("x");
       }
-      if(!procClobber.isClobberY()) {
+      if(!procClobber.isRegisterY()) {
          notClobberedRegisters.add("y");
       }
       return notClobberedRegisters;

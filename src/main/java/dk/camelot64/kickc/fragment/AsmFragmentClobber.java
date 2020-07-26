@@ -16,7 +16,7 @@ public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
    }
 
    public AsmFragmentClobber(AsmClobber clobber) {
-      this(clobber.isClobberA(), clobber.isClobberX(), clobber.isClobberY());
+      this(clobber.isRegisterA(), clobber.isRegisterX(), clobber.isRegisterY());
    }
 
    public boolean isClobberA() {

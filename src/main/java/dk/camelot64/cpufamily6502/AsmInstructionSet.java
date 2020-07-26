@@ -289,51 +289,51 @@ public class AsmInstructionSet {
       List<String> cxs = Arrays.asList("dex", "inx", "ldx", "tax", "tsx", "las", "lax", "axs");
       for(AsmOpcode instruction : instructions) {
          if(cxs.contains(instruction.getMnemonic())) {
-            instruction.setClobber(instruction.getClobber().addClobberX(true));
+            instruction.setClobber(instruction.getClobber().addRegisterX());
          }
       }
       List<String> cys = Arrays.asList("dey", "iny", "ldy", "tay");
       for(AsmOpcode instruction : instructions) {
          if(cys.contains(instruction.getMnemonic())) {
-            instruction.setClobber(instruction.getClobber().addClobberY(true));
+            instruction.setClobber(instruction.getClobber().addRegisterY());
          }
       }
       List<String> cas = Arrays.asList("ora", "and", "eor", "adc", "sbc", "lda", "txa", "tya", "pla", "slo", "rla", "sre", "rra", "isc", "anc", "alr", "arr", "xaa", "lax", "las");
       for(AsmOpcode instruction : instructions) {
          if(cas.contains(instruction.getMnemonic())) {
-            instruction.setClobber(instruction.getClobber().addClobberA(true));
+            instruction.setClobber(instruction.getClobber().addRegisterA());
          } else if(instruction.hasOpcode(0x0a)) {
             // Special handling of ASL A
-            instruction.setClobber(instruction.getClobber().addClobberA(true));
+            instruction.setClobber(instruction.getClobber().addRegisterA());
          } else if(instruction.hasOpcode(0x2a)) {
             // Special handling of ROL A
-            instruction.setClobber(instruction.getClobber().addClobberA(true));
+            instruction.setClobber(instruction.getClobber().addRegisterA());
          } else if(instruction.hasOpcode(0x4a)) {
             // Special handling of LSR A
-            instruction.setClobber(instruction.getClobber().addClobberA(true));
+            instruction.setClobber(instruction.getClobber().addRegisterA());
          } else if(instruction.hasOpcode(0x6a)) {
             // Special handling of ROR A
-            instruction.setClobber(instruction.getClobber().addClobberA(true));
+            instruction.setClobber(instruction.getClobber().addRegisterA());
          }
 
       }
       List<String> ccs = Arrays.asList("adc", "sbc", "cmp", "cpx", "cpy", "asl", "rol", "lsr", "ror", "plp", "rti", "clc", "sec", "slo", "rla", "sre", "rra", "dcp", "isc", "anc", "alr", "arr", "axs");
       for(AsmOpcode instruction : instructions) {
          if(ccs.contains(instruction.getMnemonic())) {
-            instruction.setClobber(instruction.getClobber().addClobberC(true));
+            instruction.setClobber(instruction.getClobber().addFlagC());
          }
       }
       List<String> cvs = Arrays.asList("adc", "sbc", "plp", "rti", "bit", "rra", "isc", "arr");
       for(AsmOpcode instruction : instructions) {
          if(cvs.contains(instruction.getMnemonic())) {
-            instruction.setClobber(instruction.getClobber().addClobberV(true));
+            instruction.setClobber(instruction.getClobber().addFlagV());
          }
       }
       List<String> czs = Arrays.asList("ora", "and", "eor", "adc", "sbc", "cmp", "cpx", "cpy", "dec", "dex", "dey", "inc", "inx", "iny", "asl", "rol", "lsr", "ror", "lda", "ldx", "ldy", "tax", "txa", "tay", "tya", "tsx", "txs", "pla", "plp", "rti", "bit", "slo", "rla", "sre", "rra", "lax", "dcp", "isc", "anc", "alr", "arr", "xaa", "lax", "axs", "las");
       for(AsmOpcode instruction : instructions) {
          if(czs.contains(instruction.getMnemonic())) {
-            instruction.setClobber(instruction.getClobber().addClobberZ(true));
-            instruction.setClobber(instruction.getClobber().addClobberN(true));
+            instruction.setClobber(instruction.getClobber().addFlagZ());
+            instruction.setClobber(instruction.getClobber().addFlagN());
          }
       }
    }

@@ -1,5 +1,6 @@
 // Test the 6502 CPU without support for illegal opcodes
 // By a program that normally uses illegal opcodes
+.cpu _6502NoIllegals
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

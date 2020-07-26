@@ -284,6 +284,11 @@ public class AsmInstructionSet {
       add(0xfd, "sbc", abx, 4.5);
       add(0xfe, "inc", abx, 7.0);
       add(0xff, "isc", abx, 7.0);
+
+      // 65c02 instructions
+      // TODO: create instruction set model that knows the different CPU's
+      add(0x1a, "inc", non, 2.0);
+
       List<String> jumps = Arrays.asList("jmp", "beq", "bne", "bcc", "bcs", "bvs", "bvc", "bmi", "bpl", "jsr");
       for(AsmInstructionType instruction : instructions) {
          if(jumps.contains(instruction.getMnemnonic())) {

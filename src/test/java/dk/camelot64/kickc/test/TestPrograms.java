@@ -43,11 +43,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testMega65C65ce02() throws IOException, URISyntaxException {
-      compileAndCompare("mega65-c65ce02.c");
-   }
-
-   @Test
    public void testCastingNegative() throws IOException, URISyntaxException {
       compileAndCompare("casting-negative.c");
    }
@@ -948,6 +943,16 @@ public class TestPrograms {
       compileAndCompare("complex/unit5/os5.1.c");
    }
 */
+
+   @Test
+   public void testMega65C65ce02() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-45gs02.c");
+   }
+
+   @Test
+   public void testCpu65C02() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-65c02.c");
+   }
 
    @Test
    public void testCpu6502() throws IOException, URISyntaxException {

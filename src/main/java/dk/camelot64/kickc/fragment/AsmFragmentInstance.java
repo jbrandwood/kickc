@@ -223,10 +223,14 @@ public class AsmFragmentInstance {
          KickCParser.AsmParamModeContext paramModeCtx = ctx.asmParamMode();
          AsmInstruction instruction;
          if(paramModeCtx == null) {
+            final String mnemonic = ctx.ASM_MNEMONIC().getText();
             AsmInstructionType type = AsmInstructionSet.getInstructionType(
-                  ctx.ASM_MNEMONIC().getText(),
+                  mnemonic,
                   AsmAddressingMode.NON,
                   false);
+            if(type == null) {
+               throw new InternalError("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + AsmAddressingMode.NON);
+            }
             instruction = new AsmInstruction(type, null);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
@@ -291,14 +295,14 @@ public class AsmFragmentInstance {
             KickCParser.AsmExprContext exprCtx,
             AsmAddressingMode addressingMode) {
          KickCParser.AsmInstructionContext instructionCtx = (KickCParser.AsmInstructionContext) ctx.getParent();
-         String mnemonic = instructionCtx.ASM_MNEMONIC().getSymbol().getText();
          AsmParameter parameter = (AsmParameter) this.visit(exprCtx);
+         String mnemonic = instructionCtx.ASM_MNEMONIC().getSymbol().getText();
          AsmInstructionType type = AsmInstructionSet.getInstructionType(
                mnemonic,
                addressingMode,
                parameter.isZp());
          if(type == null) {
-            throw new InternalError("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
+            throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }
          return new AsmInstruction(type, parameter.getParam());
       }

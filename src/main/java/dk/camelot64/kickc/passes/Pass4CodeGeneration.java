@@ -81,6 +81,12 @@ public class Pass4CodeGeneration {
       generateComments(asm, program.getFileComments());
       asm.startChunk(currentScope, null, "Upstart");
       final TargetPlatform targetPlatform = program.getTargetPlatform();
+
+      // Add Target CPU - if it is not the default
+      final TargetCpu targetCpu = program.getTargetCpu();
+      if(!targetCpu.equals(TargetCpu.DEFAULT))
+         asm.addLine(new AsmSetCpu(targetCpu));
+
       String linkScriptBody = targetPlatform.getLinkScriptBody();
       String outputFileName = new File(program.getPrimaryFileName()).getName() + "." + program.getTargetPlatform().getOutFileExtension();
       linkScriptBody = linkScriptBody.replace("%O", outputFileName);

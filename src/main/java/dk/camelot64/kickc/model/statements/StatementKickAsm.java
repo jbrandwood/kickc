@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
-import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;

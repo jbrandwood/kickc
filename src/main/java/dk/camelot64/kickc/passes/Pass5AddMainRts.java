@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmInstructionSet;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -25,7 +27,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
                AsmLine line = lineIterator.next();
                if(line instanceof AsmInstruction) {
                   AsmInstruction instruction = (AsmInstruction) line;
-                  if(instruction.getType().getMnemnonic().equals("jsr")) {
+                  if(instruction.getAsmOpcode().getMnemnonic().equals("jsr")) {
                      if(instruction.getParameter().equals(SymbolRef.MAIN_PROC_NAME)) {
                         // Add RTS if it is missing
                         if(!lineIterator.hasNext()) {
@@ -38,7 +40,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
                            return true;
                         }
                         AsmInstruction nextInstruction = (AsmInstruction) nextLine;
-                        if(!nextInstruction.getType().getMnemnonic().equals("rts")) {
+                        if(!nextInstruction.getAsmOpcode().getMnemnonic().equals("rts")) {
                            addRts(lineIterator);
                            return true;
                         }
@@ -52,7 +54,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
    }
 
    private void addRts(ListIterator<AsmLine> lineIterator) {
-      lineIterator.add(new AsmInstruction(AsmInstructionSet.getInstructionType("rts", AsmAddressingMode.NON, false), null));
+      lineIterator.add(new AsmInstruction(AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false), null));
       getLog().append("Adding RTS to root block ");
    }
 

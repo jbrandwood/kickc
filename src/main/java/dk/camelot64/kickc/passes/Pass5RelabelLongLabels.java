@@ -95,7 +95,7 @@ public class Pass5RelabelLongLabels extends Pass5AsmOptimization {
                }
             } else if(asmLine instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-               if(asmInstruction.getType().isJump()) {
+               if(asmInstruction.getAsmOpcode().isJump()) {
                   String parameter = asmInstruction.getParameter();
                   Map<String, String> scopeRelabels = relabels.get(currentScope);
                   if(scopeRelabels != null) {

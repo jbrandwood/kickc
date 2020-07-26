@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmClobber;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;

@@ -1,4 +1,4 @@
-package dk.camelot64.kickc.asm;
+package dk.camelot64.cpufamily6502;
 
 import java.io.Serializable;
 

@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmOpcode;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -83,37 +87,37 @@ public class AsmProgramStaticRegisterValues {
          AsmInstruction instruction = (AsmInstruction) line;
          values.put(instruction, current);
          current = new AsmRegisterValues(current);
-         AsmInstructionType instructionType = instruction.getType();
-         AsmClobber clobber = instructionType.getClobber();
-         if(instruction.getType().getMnemnonic().equals("jsr")) {
-            clobber = AsmClobber.CLOBBER_ALL;
+         AsmOpcode asmOpcode = instruction.getAsmOpcode();
+         AsmClobber asmClobber = asmOpcode.getClobber();
+         if(instruction.getAsmOpcode().getMnemnonic().equals("jsr")) {
+            asmClobber = AsmClobber.CLOBBER_ALL;
          }
-         if(clobber.isClobberA()) {
+         if(asmClobber.isClobberA()) {
             current.setA(null);
             current.setaMem(null);
          }
-         if(clobber.isClobberX()) {
+         if(asmClobber.isClobberX()) {
             current.setX(null);
             current.setxMem(null);
          }
-         if(clobber.isClobberY()) {
+         if(asmClobber.isClobberY()) {
             current.setY(null);
             current.setyMem(null);
          }
-         if(clobber.isClobberC()) {
+         if(asmClobber.isClobberC()) {
             current.setC(null);
          }
-         if(clobber.isClobberN()) {
+         if(asmClobber.isClobberN()) {
             current.setN(null);
          }
-         if(clobber.isClobberV()) {
+         if(asmClobber.isClobberV()) {
             current.setV(null);
          }
-         if(clobber.isClobberZ()) {
+         if(asmClobber.isClobberZ()) {
             current.setZ(null);
          }
-         String mnemnonic = instructionType.getMnemnonic();
-         AsmAddressingMode addressingMode = instructionType.getAddressingMode();
+         String mnemnonic = asmOpcode.getMnemnonic();
+         AsmAddressingMode addressingMode = asmOpcode.getAddressingMode();
          if((mnemnonic.equals("inc") || mnemnonic.equals("dec") || mnemnonic.equals("ror") || mnemnonic.equals("rol") || mnemnonic.equals("lsr") || mnemnonic.equals("asl")) && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             String modParam = instruction.getParameter();
             if(current.getaMem() != null && current.getaMem().equals(modParam)) {

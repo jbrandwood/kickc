@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmClobber;
 
 /** The clobber profile for a fragment template. Only distinguishes the 3 registers A/X/Y and not the flags. */
 public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {

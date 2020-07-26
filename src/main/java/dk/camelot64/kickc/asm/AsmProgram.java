@@ -1,5 +1,9 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmInstructionSet;
+import dk.camelot64.cpufamily6502.AsmOpcode;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.ScopeRef;
@@ -100,10 +104,10 @@ public class AsmProgram {
    }
 
    public AsmInstruction addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter, boolean zp) {
-      AsmInstructionType instructionType = AsmInstructionSet.getInstructionType(mnemonic, addressingMode, zp);
-      AsmInstruction instruction = new AsmInstruction(instructionType, parameter);
-      addLine(instruction);
-      return instruction;
+      AsmOpcode asmOpcode = AsmInstructionSet.getOpcode(mnemonic, addressingMode, zp);
+      AsmInstruction asmInstruction = new AsmInstruction(asmOpcode, parameter);
+      addLine(asmInstruction);
+      return asmInstruction;
    }
 
    public void addLabelDecl(String name, String value) {

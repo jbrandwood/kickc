@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmInstructionSet;
+import dk.camelot64.cpufamily6502.AsmOpcode;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.ConstantNotLiteral;
@@ -80,7 +83,7 @@ public class AsmFragmentInstance {
          Registers.Register register = boundVar.getAllocation();
          if(register != null && register instanceof Registers.RegisterZpMem) {
             return new AsmParameter(AsmFormat.getAsmSymbolName(program, boundVar, codeScopeRef), true);
-         } else if(register!=null && register instanceof Registers.RegisterMainMem) {
+         } else if(register != null && register instanceof Registers.RegisterMainMem) {
             return new AsmParameter(AsmFormat.getAsmSymbolName(program, boundVar, codeScopeRef), false);
          } else {
             throw new RuntimeException("Register Type not implemented " + register);
@@ -109,6 +112,7 @@ public class AsmFragmentInstance {
 
    /**
     * Determine whether a constant value representing an address in memory is located on zeropage.
+    *
     * @param boundConst The constant value
     * @return true if the address represented by the constant is 0<=val<=255
     */
@@ -224,14 +228,11 @@ public class AsmFragmentInstance {
          AsmInstruction instruction;
          if(paramModeCtx == null) {
             final String mnemonic = ctx.ASM_MNEMONIC().getText();
-            AsmInstructionType type = AsmInstructionSet.getInstructionType(
-                  mnemonic,
-                  AsmAddressingMode.NON,
-                  false);
-            if(type == null) {
+            AsmOpcode asmOpcode = AsmInstructionSet.getOpcode(mnemonic, AsmAddressingMode.NON, false);
+            if(asmOpcode == null) {
                throw new InternalError("Error in " + name + ".asm line " + ctx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + AsmAddressingMode.NON);
             }
-            instruction = new AsmInstruction(type, null);
+            instruction = new AsmInstruction(asmOpcode, null);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
          }
@@ -297,14 +298,11 @@ public class AsmFragmentInstance {
          KickCParser.AsmInstructionContext instructionCtx = (KickCParser.AsmInstructionContext) ctx.getParent();
          AsmParameter parameter = (AsmParameter) this.visit(exprCtx);
          String mnemonic = instructionCtx.ASM_MNEMONIC().getSymbol().getText();
-         AsmInstructionType type = AsmInstructionSet.getInstructionType(
-               mnemonic,
-               addressingMode,
-               parameter.isZp());
-         if(type == null) {
+         AsmOpcode asmOpcode = AsmInstructionSet.getOpcode(mnemonic, addressingMode, parameter.isZp());
+         if(asmOpcode == null) {
             throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type unknown " + mnemonic + " " + addressingMode + " " + parameter);
          }
-         return new AsmInstruction(type, parameter.getParam());
+         return new AsmInstruction(asmOpcode, parameter.getParam());
       }
 
       @Override

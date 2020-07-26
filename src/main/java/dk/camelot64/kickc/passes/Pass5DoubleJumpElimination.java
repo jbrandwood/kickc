@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmInstructionSet;
+import dk.camelot64.cpufamily6502.AsmOpcode;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.Program;
 
@@ -39,12 +42,12 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmInstruction) {
                if(currentLabel != null) {
                   AsmInstruction asmInstruction = (AsmInstruction) line;
-                  AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
-                  AsmInstructionType rtsType = AsmInstructionSet.getInstructionType("rts", AsmAddressingMode.NON, false);
-                  if(asmInstruction.getType().equals(jmpType)) {
+                  AsmOpcode jmpOpcode = AsmInstructionSet.getOpcode("jmp", AsmAddressingMode.ABS, false);
+                  AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
+                  if(asmInstruction.getAsmOpcode().equals(jmpOpcode)) {
                      immediateJumps.put(currentScope + "::" + currentLabel, asmInstruction.getParameter());
                   }
-                  if(asmInstruction.getType().equals(rtsType)) {
+                  if(asmInstruction.getAsmOpcode().equals(rtsOpcode)) {
                      immediateJumps.put(currentScope + "::" + currentLabel, "rts");
                   }
                }
@@ -64,12 +67,12 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                currentScope = "";
             } else if(line instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) line;
-               if(asmInstruction.getType().isJump()) {
+               if(asmInstruction.getAsmOpcode().isJump()) {
                   String immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
-                  if(immediateJmpTarget == "rts" && asmInstruction.getType().getMnemnonic() == "jmp") {
+                  if(immediateJmpTarget == "rts" && asmInstruction.getAsmOpcode().getMnemnonic() == "jmp") {
                      getLog().append("Replacing jump to rts with rts in " + asmInstruction.toString());
-                     AsmInstructionType rtsType = AsmInstructionSet.getInstructionType("rts", AsmAddressingMode.NON, false);
-                     asmInstruction.setType(rtsType);
+                     AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
+                     asmInstruction.setAsmOpcode(rtsOpcode);
                      optimized = true;
                   } else if(immediateJmpTarget != null && immediateJmpTarget != "rts" && !immediateJmpTarget.equals(asmInstruction.getParameter())) {
                      getLog().append("Skipping double jump to " + immediateJmpTarget + " in " + asmInstruction.toString());

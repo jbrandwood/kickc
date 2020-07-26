@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.asm;
 
+import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmOpcode;
 import dk.camelot64.kickc.model.PhiTransitions;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -176,8 +178,8 @@ public class AsmChunk {
       for(AsmLine line : lines) {
          if(line instanceof AsmInstruction) {
             AsmInstruction asmInstruction = (AsmInstruction) line;
-            AsmInstructionType asmInstructionType = asmInstruction.getType();
-            AsmClobber asmClobber = asmInstructionType.getClobber();
+            AsmOpcode asmOpcode = asmInstruction.getAsmOpcode();
+            AsmClobber asmClobber = asmOpcode.getClobber();
             clobber.add(asmClobber);
          }
       }

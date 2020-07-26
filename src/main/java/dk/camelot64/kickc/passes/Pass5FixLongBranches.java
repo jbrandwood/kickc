@@ -1,5 +1,8 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmInstructionSet;
+import dk.camelot64.cpufamily6502.AsmOpcode;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -157,17 +160,17 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
          if(asmLine != null && asmLine instanceof AsmInstruction) {
             //getLog().append("Found ASM line "+asmLine);
             AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-            AsmInstructionType asmInstructionType = asmInstruction.getType();
-            AsmInstructionType inverseType = invertBranch(asmInstructionType);
-            if(inverseType != null) {
+            AsmOpcode asmOpcode = asmInstruction.getAsmOpcode();
+            AsmOpcode inverseAsmOpcode = invertBranch(asmOpcode);
+            if(inverseAsmOpcode != null) {
                //getLog().append("Inversed branch instruction "+asmInstructionType.getMnemnonic()+" -> "+inverseType.getMnemnonic());
-               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseType.getMnemnonic());
+               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseAsmOpcode.getMnemnonic());
                String branchDest = asmInstruction.getParameter();
-               asmInstruction.setType(inverseType);
+               asmInstruction.setAsmOpcode(inverseAsmOpcode);
                String newLabel = AsmFormat.asmFix("!" + branchDest);
                asmInstruction.setParameter(newLabel+"+");
-               AsmInstructionType jmpType = AsmInstructionSet.getInstructionType("jmp", AsmAddressingMode.ABS, false);
-               AsmInstruction jmpInstruction = new AsmInstruction(jmpType, branchDest);
+               AsmOpcode jmpOpcode = AsmInstructionSet.getOpcode("jmp", AsmAddressingMode.ABS, false);
+               AsmInstruction jmpInstruction = new AsmInstruction(jmpOpcode, branchDest);
                asmChunk.addLineAfter(asmInstruction, jmpInstruction);
                asmChunk.addLineAfter(jmpInstruction, new AsmLabel(newLabel));
                return true;
@@ -177,24 +180,24 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       return false;
    }
 
-   private AsmInstructionType invertBranch(AsmInstructionType type) {
-      switch(type.getMnemnonic()) {
+   private AsmOpcode invertBranch(AsmOpcode asmOpcode) {
+      switch(asmOpcode.getMnemnonic()) {
          case "bcc":
-            return AsmInstructionSet.getInstructionType("bcs", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bcs", AsmAddressingMode.REL, false);
          case "bcs":
-            return AsmInstructionSet.getInstructionType("bcc", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bcc", AsmAddressingMode.REL, false);
          case "beq":
-            return AsmInstructionSet.getInstructionType("bne", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bne", AsmAddressingMode.REL, false);
          case "bne":
-            return AsmInstructionSet.getInstructionType("beq", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("beq", AsmAddressingMode.REL, false);
          case "bpl":
-            return AsmInstructionSet.getInstructionType("bmi", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bmi", AsmAddressingMode.REL, false);
          case "bmi":
-            return AsmInstructionSet.getInstructionType("bpl", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bpl", AsmAddressingMode.REL, false);
          case "bvs":
-            return AsmInstructionSet.getInstructionType("bvc", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bvc", AsmAddressingMode.REL, false);
          case "bvc":
-            return AsmInstructionSet.getInstructionType("bvs", AsmAddressingMode.REL, false);
+            return AsmInstructionSet.getOpcode("bvs", AsmAddressingMode.REL, false);
          default:
             return null;
       }

@@ -1,12 +1,9 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAsm;
-import dk.camelot64.kickc.model.values.LabelRef;
-import dk.camelot64.kickc.model.values.SymbolRef;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -44,7 +41,7 @@ public class Pass5UnusedLabelElimination extends Pass5AsmOptimization {
                usedLabels.add(labelStr);
             } else if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
-               if(instruction.getType().isJump()) {
+               if(instruction.getAsmOpcode().isJump()) {
                   String labelStr = currentScope + "::" + instruction.getParameter();
                   usedLabels.add(labelStr);
                }

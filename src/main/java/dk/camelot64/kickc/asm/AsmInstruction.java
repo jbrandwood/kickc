@@ -1,9 +1,11 @@
 package dk.camelot64.kickc.asm;
 
-/** An assembler instruction */
+import dk.camelot64.cpufamily6502.AsmOpcode;
+
+/** A specific assembler instruction line (opcode, addressing mode and specific parameter value)*/
 public class AsmInstruction implements AsmLine {
 
-   private AsmInstructionType type;
+   private AsmOpcode asmOpcode;
 
    private String parameter;
 
@@ -11,8 +13,8 @@ public class AsmInstruction implements AsmLine {
 
    private boolean dontOptimize;
 
-   public AsmInstruction(AsmInstructionType type, String parameter) {
-      this.type = type;
+   public AsmInstruction(AsmOpcode asmOpcode, String parameter) {
+      this.asmOpcode = asmOpcode;
       this.parameter = parameter;
    }
 
@@ -24,27 +26,27 @@ public class AsmInstruction implements AsmLine {
       this.parameter = parameter;
    }
 
-   public AsmInstructionType getType() {
-      return type;
+   public AsmOpcode getAsmOpcode() {
+      return asmOpcode;
    }
 
-   public void setType(AsmInstructionType type) {
-      this.type = type;
+   public void setAsmOpcode(AsmOpcode type) {
+      this.asmOpcode = type;
    }
 
    @Override
    public int getLineBytes() {
-      return type.getBytes();
+      return asmOpcode.getBytes();
    }
 
    @Override
    public double getLineCycles() {
-      return type.getCycles();
+      return asmOpcode.getCycles();
    }
 
    @Override
    public String getAsm() {
-      return type.getAsm(parameter);
+      return asmOpcode.getAsm(parameter);
    }
 
    @Override

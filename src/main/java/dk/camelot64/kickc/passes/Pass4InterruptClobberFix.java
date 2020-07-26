@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmChunk;
-import dk.camelot64.kickc.asm.AsmClobber;
+import dk.camelot64.cpufamily6502.AsmClobber;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CallGraph;

@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.cpufamily6502.AsmAddressingMode;
+import dk.camelot64.cpufamily6502.AsmClobber;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.InternalError;
@@ -914,7 +916,7 @@ public class Pass4CodeGeneration {
                for(AsmLine asmLine : currentChunk.getLines()) {
                   if(asmLine instanceof AsmInstruction) {
                      AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-                     if(asmInstruction.getType().getMnemnonic().equals("jsr")) {
+                     if(asmInstruction.getAsmOpcode().getMnemnonic().equals("jsr")) {
                         currentChunk.setClobberOverwrite(AsmClobber.CLOBBER_ALL);
                      }
                   }

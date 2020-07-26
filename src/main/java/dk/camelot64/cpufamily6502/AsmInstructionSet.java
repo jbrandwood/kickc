@@ -282,58 +282,58 @@ public class AsmInstructionSet {
 
       List<String> jumps = Arrays.asList("jmp", "beq", "bne", "bcc", "bcs", "bvs", "bvc", "bmi", "bpl", "jsr");
       for(AsmOpcode instruction : instructions) {
-         if(jumps.contains(instruction.getMnemnonic())) {
+         if(jumps.contains(instruction.getMnemonic())) {
             instruction.setJump(true);
          }
       }
       List<String> cxs = Arrays.asList("dex", "inx", "ldx", "tax", "tsx", "las", "lax", "axs");
       for(AsmOpcode instruction : instructions) {
-         if(cxs.contains(instruction.getMnemnonic())) {
-            instruction.getClobber().setClobberX(true);
+         if(cxs.contains(instruction.getMnemonic())) {
+            instruction.setClobber(instruction.getClobber().addClobberX(true));
          }
       }
       List<String> cys = Arrays.asList("dey", "iny", "ldy", "tay");
       for(AsmOpcode instruction : instructions) {
-         if(cys.contains(instruction.getMnemnonic())) {
-            instruction.getClobber().setClobberY(true);
+         if(cys.contains(instruction.getMnemonic())) {
+            instruction.setClobber(instruction.getClobber().addClobberY(true));
          }
       }
       List<String> cas = Arrays.asList("ora", "and", "eor", "adc", "sbc", "lda", "txa", "tya", "pla", "slo", "rla", "sre", "rra", "isc", "anc", "alr", "arr", "xaa", "lax", "las");
       for(AsmOpcode instruction : instructions) {
-         if(cas.contains(instruction.getMnemnonic())) {
-            instruction.getClobber().setClobberA(true);
-         } else if(instruction.getOpcode()==0x0a) {
+         if(cas.contains(instruction.getMnemonic())) {
+            instruction.setClobber(instruction.getClobber().addClobberA(true));
+         } else if(instruction.hasOpcode(0x0a)) {
             // Special handling of ASL A
-            instruction.getClobber().setClobberA(true);
-         } else if(instruction.getOpcode()==0x2a) {
+            instruction.setClobber(instruction.getClobber().addClobberA(true));
+         } else if(instruction.hasOpcode(0x2a)) {
             // Special handling of ROL A
-            instruction.getClobber().setClobberA(true);
-         } else if(instruction.getOpcode()==0x4a) {
+            instruction.setClobber(instruction.getClobber().addClobberA(true));
+         } else if(instruction.hasOpcode(0x4a)) {
             // Special handling of LSR A
-            instruction.getClobber().setClobberA(true);
-         } else if(instruction.getOpcode()==0x6a) {
+            instruction.setClobber(instruction.getClobber().addClobberA(true));
+         } else if(instruction.hasOpcode(0x6a)) {
             // Special handling of ROR A
-            instruction.getClobber().setClobberA(true);
+            instruction.setClobber(instruction.getClobber().addClobberA(true));
          }
 
       }
       List<String> ccs = Arrays.asList("adc", "sbc", "cmp", "cpx", "cpy", "asl", "rol", "lsr", "ror", "plp", "rti", "clc", "sec", "slo", "rla", "sre", "rra", "dcp", "isc", "anc", "alr", "arr", "axs");
       for(AsmOpcode instruction : instructions) {
-         if(ccs.contains(instruction.getMnemnonic())) {
-            instruction.getClobber().setClobberC(true);
+         if(ccs.contains(instruction.getMnemonic())) {
+            instruction.setClobber(instruction.getClobber().addClobberC(true));
          }
       }
       List<String> cvs = Arrays.asList("adc", "sbc", "plp", "rti", "bit", "rra", "isc", "arr");
       for(AsmOpcode instruction : instructions) {
-         if(cvs.contains(instruction.getMnemnonic())) {
-            instruction.getClobber().setClobberV(true);
+         if(cvs.contains(instruction.getMnemonic())) {
+            instruction.setClobber(instruction.getClobber().addClobberV(true));
          }
       }
       List<String> czs = Arrays.asList("ora", "and", "eor", "adc", "sbc", "cmp", "cpx", "cpy", "dec", "dex", "dey", "inc", "inx", "iny", "asl", "rol", "lsr", "ror", "lda", "ldx", "ldy", "tax", "txa", "tay", "tya", "tsx", "txs", "pla", "plp", "rti", "bit", "slo", "rla", "sre", "rra", "lax", "dcp", "isc", "anc", "alr", "arr", "xaa", "lax", "axs", "las");
       for(AsmOpcode instruction : instructions) {
-         if(czs.contains(instruction.getMnemnonic())) {
-            instruction.getClobber().setClobberZ(true);
-            instruction.getClobber().setClobberN(true);
+         if(czs.contains(instruction.getMnemonic())) {
+            instruction.setClobber(instruction.getClobber().addClobberZ(true));
+            instruction.setClobber(instruction.getClobber().addClobberN(true));
          }
       }
    }
@@ -343,13 +343,13 @@ public class AsmInstructionSet {
     * Add an instruction to the instruction set.
     * @param opcode The numeric opcode
     * @param mnemonic The lower case mnemonic
-    * @param addressingmMode The addressing mode
+    * @param addressingMode The addressing mode
     * @param cycles The number of cycles
     */
-   private void add(int opcode, String mnemonic, AsmAddressingMode addressingmMode, double cycles) {
-      AsmOpcode instructionType = new AsmOpcode(opcode, mnemonic, addressingmMode, cycles);
-      instructions.add(instructionType);
-      instructionsMap.put(mnemonic + "_" + addressingmMode.getName(), instructionType);
+   private void add(int opcode, String mnemonic, AsmAddressingMode addressingMode, double cycles) {
+      AsmOpcode asmOpcode = new AsmOpcode(opcode, mnemonic, addressingMode, cycles);
+      instructions.add(asmOpcode);
+      instructionsMap.put(mnemonic + "_" + addressingMode.getName(), asmOpcode);
    }
 
    /**
@@ -372,23 +372,23 @@ public class AsmInstructionSet {
     * @return The opcode, if it exists. If you have requested an absolute addressing mode passed isZp as true the resulting opcode will have zeropage-based addressing the instruction set offers that.
     */
    public static AsmOpcode getOpcode(String mnemonic, AsmAddressingMode mode, boolean isZp) {
-      AsmOpcode type = null;
+      AsmOpcode asmOpcode = null;
       if(AsmAddressingMode.ABS.equals(mode) && isZp) {
-         type = set.getOpcode(mnemonic, AsmAddressingMode.ZP);
+         asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZP);
       }
       if(AsmAddressingMode.ABX.equals(mode) && isZp) {
-         type = set.getOpcode(mnemonic, AsmAddressingMode.ZPX);
+         asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZPX);
       }
       if(AsmAddressingMode.ABY.equals(mode) && isZp) {
-         type = set.getOpcode(mnemonic, AsmAddressingMode.ZPY);
+         asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZPY);
       }
-      if(type == null) {
-         type = set.getOpcode(mnemonic, mode);
+      if(asmOpcode == null) {
+         asmOpcode = set.getOpcode(mnemonic, mode);
       }
-      if(type == null && AsmAddressingMode.ABS.equals(mode)) {
-         type = set.getOpcode(mnemonic, AsmAddressingMode.REL);
+      if(asmOpcode == null && AsmAddressingMode.ABS.equals(mode)) {
+         asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.REL);
       }
-      return type;
+      return asmOpcode;
    }
 
 

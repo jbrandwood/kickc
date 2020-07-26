@@ -69,7 +69,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                AsmInstruction asmInstruction = (AsmInstruction) line;
                if(asmInstruction.getAsmOpcode().isJump()) {
                   String immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
-                  if(immediateJmpTarget == "rts" && asmInstruction.getAsmOpcode().getMnemnonic() == "jmp") {
+                  if(immediateJmpTarget == "rts" && asmInstruction.getAsmOpcode().getMnemonic() == "jmp") {
                      getLog().append("Replacing jump to rts with rts in " + asmInstruction.toString());
                      AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
                      asmInstruction.setAsmOpcode(rtsOpcode);

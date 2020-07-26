@@ -174,16 +174,16 @@ public class AsmChunk {
       if(clobberOverwrite != null) {
          return clobberOverwrite;
       }
-      AsmClobber clobber = new AsmClobber();
+      AsmClobber chunkClobber = new AsmClobber();
       for(AsmLine line : lines) {
          if(line instanceof AsmInstruction) {
             AsmInstruction asmInstruction = (AsmInstruction) line;
             AsmOpcode asmOpcode = asmInstruction.getAsmOpcode();
-            AsmClobber asmClobber = asmOpcode.getClobber();
-            clobber.add(asmClobber);
+            AsmClobber opcodeClobber = asmOpcode.getClobber();
+            chunkClobber = new AsmClobber(chunkClobber, opcodeClobber);
          }
       }
-      return clobber;
+      return chunkClobber;
    }
 
    /**

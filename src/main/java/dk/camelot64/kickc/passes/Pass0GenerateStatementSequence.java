@@ -652,10 +652,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(!clobberString.matches("[AXY]*")) {
          throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
       }
-      AsmClobber clobber = new AsmClobber();
-      clobber.setClobberA(clobberString.contains("A"));
-      clobber.setClobberX(clobberString.contains("X"));
-      clobber.setClobberY(clobberString.contains("Y"));
+      AsmClobber clobber = new AsmClobber(clobberString);
       return new AsmDirectiveClobber(clobber);
    }
 

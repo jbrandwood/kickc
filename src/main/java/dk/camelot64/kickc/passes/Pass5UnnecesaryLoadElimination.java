@@ -35,7 +35,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                }
                AsmOpcode asmOpcode = instruction.getAsmOpcode();
 
-               if(asmOpcode.getMnemnonic().equals("lda") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+               if(asmOpcode.getMnemonic().equals("lda") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
                   String immValue = instruction.getParameter();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getA(), immValue)) {
@@ -50,7 +50,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      instruction.setParameter(null);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("lda") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+               if(asmOpcode.getMnemonic().equals("lda") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
                   String memValue = instruction.getParameter();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
@@ -65,7 +65,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      instruction.setParameter(null);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("ldx") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+               if(asmOpcode.getMnemonic().equals("ldx") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
                   String immValue = instruction.getParameter();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getX(), immValue)) {
@@ -76,7 +76,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      instruction.setParameter(null);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("ldx") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+               if(asmOpcode.getMnemonic().equals("ldx") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
                   String memValue = instruction.getParameter();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(instructionValues.getxMem() != null && instructionValues.getxMem().equals(memValue)) {
@@ -87,7 +87,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      instruction.setParameter(null);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("ldy") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+               if(asmOpcode.getMnemonic().equals("ldy") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
                   String immValue = instruction.getParameter();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getY(), immValue)) {
@@ -98,7 +98,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      instruction.setParameter(null);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("ldy") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+               if(asmOpcode.getMnemonic().equals("ldy") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
                   String memValue = instruction.getParameter();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(instructionValues.getyMem() != null && instructionValues.getyMem().equals(memValue)) {
@@ -109,13 +109,13 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                      instruction.setParameter(null);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("clc")) {
+               if(asmOpcode.getMnemonic().equals("clc")) {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(Boolean.FALSE.equals(instructionValues.getC())) {
                      modified = remove(lineIt);
                   }
                }
-               if(asmOpcode.getMnemnonic().equals("sec")) {
+               if(asmOpcode.getMnemonic().equals("sec")) {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(Boolean.TRUE.equals(instructionValues.getC())) {
                      modified = remove(lineIt);

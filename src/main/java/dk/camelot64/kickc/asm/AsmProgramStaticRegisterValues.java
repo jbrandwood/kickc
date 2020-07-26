@@ -89,7 +89,7 @@ public class AsmProgramStaticRegisterValues {
          current = new AsmRegisterValues(current);
          AsmOpcode asmOpcode = instruction.getAsmOpcode();
          AsmClobber asmClobber = asmOpcode.getClobber();
-         if(instruction.getAsmOpcode().getMnemnonic().equals("jsr")) {
+         if(instruction.getAsmOpcode().getMnemonic().equals("jsr")) {
             asmClobber = AsmClobber.CLOBBER_ALL;
          }
          if(asmClobber.isClobberA()) {
@@ -116,7 +116,7 @@ public class AsmProgramStaticRegisterValues {
          if(asmClobber.isClobberZ()) {
             current.setZ(null);
          }
-         String mnemnonic = asmOpcode.getMnemnonic();
+         String mnemnonic = asmOpcode.getMnemonic();
          AsmAddressingMode addressingMode = asmOpcode.getAddressingMode();
          if((mnemnonic.equals("inc") || mnemnonic.equals("dec") || mnemnonic.equals("ror") || mnemnonic.equals("rol") || mnemnonic.equals("lsr") || mnemnonic.equals("asl")) && (addressingMode.equals(AsmAddressingMode.ZP) || addressingMode.equals(AsmAddressingMode.ABS))) {
             String modParam = instruction.getParameter();

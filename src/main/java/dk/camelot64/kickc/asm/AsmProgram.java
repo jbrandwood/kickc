@@ -220,11 +220,11 @@ public class AsmProgram {
     * @return The clobbered registers
     */
    public AsmClobber getClobber() {
-      AsmClobber clobber = new AsmClobber();
+      AsmClobber programClobber = new AsmClobber();
       for(AsmChunk chunk : chunks) {
-         clobber.add(chunk.getClobber());
+         programClobber = new AsmClobber(programClobber, chunk.getClobber());
       }
-      return clobber;
+      return programClobber;
    }
 
    public String toString(AsmPrintState printState, Program program) {

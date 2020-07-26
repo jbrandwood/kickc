@@ -70,15 +70,15 @@ public class Pass4InterruptClobberFix extends Pass2Base {
 
    private AsmClobber getProcedureClobber(Procedure procedure) {
       AsmProgram asm = getProgram().getAsm();
-      AsmClobber procClobber =new AsmClobber();
+      AsmClobber procClobber = new AsmClobber();
       for(AsmChunk asmChunk : asm.getChunks()) {
          if(procedure.getFullName().equals(asmChunk.getScopeLabel())) {
             if(asmChunk.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
                // Do not count clobber in the entry/exit
                continue;
             }
-            AsmClobber asmChunkClobber = asmChunk.getClobber();
-            procClobber.add(asmChunkClobber);
+            AsmClobber chunkClobber = asmChunk.getClobber();
+            procClobber = new AsmClobber(procClobber, chunkClobber);
          }
       }
 
@@ -90,7 +90,7 @@ public class Pass4InterruptClobberFix extends Pass2Base {
          ProcedureRef calledProcRef = new ProcedureRef(calledProcLabel.getFullName());
          Procedure calledProc = getProgram().getScope().getProcedure(calledProcRef);
          AsmClobber calledClobber = getProcedureClobber(calledProc);
-         procClobber.add(calledClobber);
+         procClobber = new AsmClobber(procClobber, calledClobber);
       }
 
       return procClobber;

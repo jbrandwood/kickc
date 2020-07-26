@@ -164,7 +164,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
             AsmOpcode inverseAsmOpcode = invertBranch(asmOpcode);
             if(inverseAsmOpcode != null) {
                //getLog().append("Inversed branch instruction "+asmInstructionType.getMnemnonic()+" -> "+inverseType.getMnemnonic());
-               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseAsmOpcode.getMnemnonic());
+               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseAsmOpcode.getMnemonic());
                String branchDest = asmInstruction.getParameter();
                asmInstruction.setAsmOpcode(inverseAsmOpcode);
                String newLabel = AsmFormat.asmFix("!" + branchDest);
@@ -181,7 +181,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
    }
 
    private AsmOpcode invertBranch(AsmOpcode asmOpcode) {
-      switch(asmOpcode.getMnemnonic()) {
+      switch(asmOpcode.getMnemonic()) {
          case "bcc":
             return AsmInstructionSet.getOpcode("bcs", AsmAddressingMode.REL, false);
          case "bcs":

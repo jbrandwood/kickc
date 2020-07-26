@@ -916,7 +916,7 @@ public class Pass4CodeGeneration {
                for(AsmLine asmLine : currentChunk.getLines()) {
                   if(asmLine instanceof AsmInstruction) {
                      AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-                     if(asmInstruction.getAsmOpcode().getMnemnonic().equals("jsr")) {
+                     if(asmInstruction.getAsmOpcode().getMnemonic().equals("jsr")) {
                         currentChunk.setClobberOverwrite(AsmClobber.CLOBBER_ALL);
                      }
                   }

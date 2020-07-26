@@ -6,8 +6,6 @@ public class AsmOpcode {
    /** The mnemonic of the instruction. */
    private final String mnemonic;
 
-   // TODO: Handle mnemonic aliasing?
-
    /** The addressing mode of the instruction. */
    private final AsmAddressingMode addressingMode;
 
@@ -25,22 +23,15 @@ public class AsmOpcode {
     */
    private final double cycles;
 
-   /**
-    * True if the instruction is a jump or a branch.
-    * A jump is any instruction that can modify the program counter in a way that is not just incrementing it to the
-    * next instruction in memory. This includes JSR and RTS.
-    */
-   private boolean jump;
-
    /** Which registers/flags of the CPU are clobbered by the instruction. */
    private AsmClobber clobber;
 
-   AsmOpcode(int opcode, String mnemonic, AsmAddressingMode addressingMode, double cycles) {
+   AsmOpcode(int opcode, String mnemonic, AsmAddressingMode addressingMode, double cycles, String clobberString) {
       this.opcode = new int[]{opcode};
       this.mnemonic = mnemonic;
       this.addressingMode = addressingMode;
       this.cycles = cycles;
-      this.clobber = new AsmClobber();
+      this.clobber = new AsmClobber(clobberString);
    }
 
    /**
@@ -129,17 +120,7 @@ public class AsmOpcode {
     * @return true if the instruction is a jump/branch
     */
    public boolean isJump() {
-      return jump;
-   }
-
-   /**
-    * Modify the jump property.
-    * TODO: Remove this setter and initialize using the constructor instead.
-    *
-    * @param jump New jump value
-    */
-   void setJump(boolean jump) {
-      this.jump = jump;
+      return clobber.isRegisterPC();
    }
 
    /**

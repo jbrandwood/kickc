@@ -5,7 +5,7 @@ import java.io.Serializable;
 /** Information about what registers/flags of the CPU an ASM instruction clobbers */
 public class AsmClobber implements Serializable {
 
-   public static final AsmClobber CLOBBER_ALL = new AsmClobber(true, true, true, true, true, true, true);
+   public static final AsmClobber CLOBBER_ALL = new AsmClobber(true, true, true, true, true, true, true, true, true, true, true);
 
    final boolean registerA;
    final boolean registerX;
@@ -14,8 +14,14 @@ public class AsmClobber implements Serializable {
    final boolean flagN;
    final boolean flagZ;
    final boolean flagV;
+   final boolean flagI;
+   final boolean flagD;
+   /** true if the program counter is modified (not just incremented to the next instruction). */
+   final boolean registerPC;
+   /** true if the stack pointer is modified.*/
+   final boolean registerSP;
 
-   public AsmClobber(boolean registerA, boolean registerX, boolean registerY, boolean flagC, boolean flagN, boolean flagZ, boolean flagV) {
+   public AsmClobber(boolean registerA, boolean registerX, boolean registerY, boolean flagC, boolean flagN, boolean flagZ, boolean flagV, boolean flagI, boolean flagD, boolean registerPC, boolean registerSP) {
       this.registerA = registerA;
       this.registerX = registerX;
       this.registerY = registerY;
@@ -23,10 +29,14 @@ public class AsmClobber implements Serializable {
       this.flagN = flagN;
       this.flagZ = flagZ;
       this.flagV = flagV;
+      this.flagI = flagI;
+      this.flagD = flagD;
+      this.registerPC = registerPC;
+      this.registerSP = registerSP;
    }
 
    public AsmClobber() {
-      this(false, false, false, false, false, false, false);
+      this(false, false, false, false, false, false, false, false, false, false, false);
    }
 
    /**
@@ -44,7 +54,11 @@ public class AsmClobber implements Serializable {
             clobberString.contains("c"),
             clobberString.contains("n"),
             clobberString.contains("z"),
-            clobberString.contains("v")
+            clobberString.contains("v"),
+            clobberString.contains("i"),
+            clobberString.contains("d"),
+            clobberString.contains("P"),
+            clobberString.contains("S")
       );
    }
 
@@ -62,7 +76,11 @@ public class AsmClobber implements Serializable {
             clobber1.flagC | clobber2.flagC,
             clobber1.flagN | clobber2.flagN,
             clobber1.flagZ | clobber2.flagZ,
-            clobber1.flagV | clobber2.flagV
+            clobber1.flagV | clobber2.flagV,
+            clobber1.flagI | clobber2.flagI,
+            clobber1.flagD | clobber2.flagD,
+            clobber1.registerPC | clobber2.registerPC,
+            clobber1.registerSP | clobber2.registerSP
       );
    }
 
@@ -95,34 +113,21 @@ public class AsmClobber implements Serializable {
       return flagV;
    }
 
-   public AsmClobber addRegisterA() {
-      return new AsmClobber(true, this.registerX, this.registerY, this.flagC, this.flagN, this.flagZ, this.flagV);
+   public boolean isFlagI() {
+      return flagI;
    }
 
-   public AsmClobber addRegisterX() {
-      return new AsmClobber(this.registerA, true, this.registerY, this.flagC, this.flagN, this.flagZ, this.flagV);
+   public boolean isFlagD() {
+      return flagD;
    }
 
-   public AsmClobber addRegisterY() {
-      return new AsmClobber(this.registerA, this.registerX, true, this.flagC, this.flagN, this.flagZ, this.flagV);
+   public boolean isRegisterPC() {
+      return registerPC;
    }
 
-   public AsmClobber addFlagC() {
-      return new AsmClobber(this.registerA, this.registerX, this.registerY, true, this.flagN, this.flagZ, this.flagV);
+   public boolean isRegisterSP() {
+      return registerSP;
    }
-
-   public AsmClobber addFlagN() {
-      return new AsmClobber(this.registerA, this.registerX, this.registerY, this.flagC, true, this.flagZ, this.flagV);
-   }
-
-   public AsmClobber addFlagZ() {
-      return new AsmClobber(this.registerA, this.registerX, this.registerY, this.flagC, this.flagN, true, this.flagV);
-   }
-
-   public AsmClobber addFlagV() {
-      return new AsmClobber(this.registerA, this.registerX, this.registerY, this.flagC, this.flagN, this.flagZ, true);
-   }
-
 
    @Override
    public String toString() {
@@ -133,7 +138,11 @@ public class AsmClobber implements Serializable {
                   (flagC ? "c" : "") +
                   (flagN ? "n" : "") +
                   (flagZ ? "z" : "") +
-                  (flagV ? "v" : "");
+                  (flagV ? "v" : "") +
+                  (flagI ? "i" : "") +
+                  (flagD ? "d" : "") +
+                  (registerPC ? "P" : "") +
+                  (registerSP ? "S" : "") ;
 
    }
 

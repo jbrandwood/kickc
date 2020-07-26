@@ -1,15 +1,15 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.*;
-import dk.camelot64.kickc.asm.AsmFormat;
 import dk.camelot64.kickc.model.CompileError;
-import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
-import kickass.KickAssembler;
+import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -86,7 +86,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       int asmRes = -1;
       try {
          CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
-         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-o", binaryFile.getAbsolutePath()});
+         asmRes = KickAssembler65CE02.main2(new String[]{asmFile.getAbsolutePath(), "-o", binaryFile.getAbsolutePath()});
       } catch(Throwable e) {
          if(e instanceof AssertionError && e.getMessage().contains("Invalid number of bytes in memblock!")) {
             throw new CompileError("Error! KickAssembler failed due to assertion. Please run java without -ea / -enableassertions.", e);

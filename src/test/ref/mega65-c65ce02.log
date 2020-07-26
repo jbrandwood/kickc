@@ -1,0 +1,159 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  kickasm() {{ .cpu _45gs02
+        ldz #2
+        stz $0800
+        adcq ($2)
+     }}
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(void()) main()
+(label) main::@return
+
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  kickasm() {{ .cpu _45gs02
+        ldz #2
+        stz $0800
+        adcq ($2)
+     }}
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Tests compiling inline C65CE02 Assembler
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    // kickasm() {{ .cpu _45gs02         ldz #2         stz $0800         adcq ($2)      }}
+    .cpu _45gs02
+        ldz #2
+        stz $0800
+        adcq ($2)
+    
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 265 combination 
+Uplifting [] best 265 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests compiling inline C65CE02 Assembler
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    // kickasm() {{ .cpu _45gs02         ldz #2         stz $0800         adcq ($2)      }}
+    .cpu _45gs02
+        ldz #2
+        stz $0800
+        adcq ($2)
+    
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 262
+
+  // File Comments
+// Tests compiling inline C65CE02 Assembler
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    // kickasm
+    // kickasm() {{ .cpu _45gs02         ldz #2         stz $0800         adcq ($2)      }}
+    .cpu _45gs02
+        ldz #2
+        stz $0800
+        adcq ($2)
+    
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

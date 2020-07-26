@@ -9,7 +9,7 @@ import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.parser.CTargetPlatformParser;
-import kickass.KickAssembler;
+import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
 
@@ -448,7 +448,7 @@ public class KickC implements Callable<Integer> {
             int kasmResult = -1;
             try {
                CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
-               kasmResult = KickAssembler.main2(assembleCommand.toArray(new String[0]));
+               kasmResult = KickAssembler65CE02.main2(assembleCommand.toArray(new String[0]));
             } catch(Throwable e) {
                throw new CompileError("KickAssembling file failed! ", e);
             } finally {

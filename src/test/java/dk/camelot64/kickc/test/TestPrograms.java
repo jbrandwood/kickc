@@ -8,7 +8,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
 import dk.camelot64.kickc.parser.CTargetPlatformParser;
-import kickass.KickAssembler;
+import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -40,6 +40,11 @@ public class TestPrograms {
    final String refPath = "src/test/ref/";
 
    public TestPrograms() {
+   }
+
+   @Test
+   public void testMega65C65ce02() throws IOException, URISyntaxException {
+      compileAndCompare("mega65-c65ce02.c");
    }
 
    @Test
@@ -4610,7 +4615,7 @@ public class TestPrograms {
       int asmRes = -1;
       try {
          CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
-         asmRes = KickAssembler.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem", "-bytedump"});
+         asmRes = KickAssembler65CE02.main2(new String[]{asmFile.getAbsolutePath(), "-log", asmLogFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath(), "-vicesymbols", "-showmem", "-bytedump"});
       } catch(Throwable e) {
          fail("KickAssembling file failed! " + e.getMessage());
       } finally {

@@ -1,4 +1,4 @@
-// Demonstrates Wrong allocation of arrays.
+// Demonstrates wrong padding for non-byte arrays.
 // https://gitlab.com/camelot/kickc/-/issues/497
 .pc = $801 "Basic"
 :BasicUpstart(main)

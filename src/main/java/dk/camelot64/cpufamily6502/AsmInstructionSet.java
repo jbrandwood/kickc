@@ -282,7 +282,6 @@ public class AsmInstructionSet {
 
    }
 
-
    /**
     * Add an instruction to the instruction set.
     *
@@ -304,7 +303,7 @@ public class AsmInstructionSet {
     * @param addressingMode The addressing mode
     * @return The opcode, if is exists. Null if the instruction set does not have the opcode.
     */
-   public AsmOpcode getOpcode(String mnemonic, AsmAddressingMode addressingMode) {
+   private AsmOpcode getOpcode(String mnemonic, AsmAddressingMode addressingMode) {
       String key = mnemonic.toLowerCase() + "_" + addressingMode.getName();
       return instructionsMap.get(key);
    }
@@ -316,7 +315,8 @@ public class AsmInstructionSet {
     * @param mnemonic The mnemonic
     * @param mode The addressing mode you want.
     * @param isZp Indicates whether you are interested in a zeropage-based opcode.
-    * @return The opcode, if it exists. If you have requested an absolute addressing mode passed isZp as true the resulting opcode will have zeropage-based addressing the instruction set offers that.
+    * @return The opcode, if it exists. If you have requested an absolute addressing mode passed isZp as true the
+    * resulting opcode will have zeropage-based addressing the instruction set offers that.
     */
    public static AsmOpcode getOpcode(String mnemonic, AsmAddressingMode mode, boolean isZp) {
       AsmOpcode asmOpcode = null;

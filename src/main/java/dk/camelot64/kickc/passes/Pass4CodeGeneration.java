@@ -665,7 +665,7 @@ public class Pass4CodeGeneration {
             final ConstantRef structSize = SizeOfConstants.getSizeOfConstantVar(getScope(), typeStruct);
             String totalSizeBytesAsm = AsmFormat.getAsmConstant(program, structSize, 99, scopeRef);
             int totalSizeBytes = typeStruct.getSizeBytes();
-            dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
+            dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, null);
          }
       } else if(valueType instanceof SymbolTypePointer && valueArraySpec != null) {
          SymbolTypePointer constTypeArray = (SymbolTypePointer) valueType;
@@ -684,17 +684,18 @@ public class Pass4CodeGeneration {
             int elementSizeBytes = elementType.getSizeBytes();
             String totalSizeBytesAsm;
             if(elementSizeBytes > 1) {
+               // TODO: Use a SIZEOF constant for the element size ASM
                totalSizeBytesAsm = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) elementSizeBytes, SymbolType.NUMBER), Operators.MULTIPLY, arraySize), 99, scopeRef);
             } else {
                totalSizeBytesAsm = AsmFormat.getAsmConstant(program, arraySize, 99, scopeRef);
             }
             if(elementType instanceof SymbolTypeIntegerFixed || elementType instanceof SymbolTypePointer) {
                // Use an ASM type in the fill that matches the element type
-               dataChunk.addDataFilled(getNumericType(elementType), totalSizeBytesAsm, dataNumElements, "0", null);
+               dataChunk.addDataZeroFilled(getNumericType(elementType), totalSizeBytesAsm, dataNumElements, null);
             } else {
                // Complex fill type - calculate byte size and use that
                int totalSizeBytes = elementSizeBytes * dataNumElements;
-               dataChunk.addDataFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, "0", null);
+               dataChunk.addDataZeroFilled(AsmDataNumeric.Type.BYTE, totalSizeBytesAsm, totalSizeBytes, null);
             }
          } else if(value instanceof ConstantArrayKickAsm) {
             ConstantArrayKickAsm kickAsm = (ConstantArrayKickAsm) value;
@@ -727,31 +728,34 @@ public class Pass4CodeGeneration {
          if(!(value instanceof ConstantArrayKickAsm)) {
             Integer declaredSize = getArrayDeclaredSize(valueArraySpec.getArraySize());
             if(declaredSize != null && declaredSize > dataNumElements) {
-               int padding = declaredSize - dataNumElements;
-               ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType, valueArraySpec), null);
-               if(zeroValue instanceof ConstantInteger) {
-                  dataChunk.addDataFilled(getNumericType(elementType), AsmFormat.getAsmNumber(padding), padding, AsmFormat.getAsmConstant(program, zeroValue, 99, scopeRef), getEncoding(zeroValue));
+               long paddingSize = declaredSize - dataNumElements;
+               ConstantValue paddingSizeVal = new ConstantInteger(paddingSize);
+               int elementSizeBytes = elementType.getSizeBytes();
+               String paddingBytesAsm;
+               if(elementSizeBytes > 1) {
+                  // TODO: Use a SIZEOF constant for the element size ASM - combine this with ConstantArrayFilled above
+                  paddingBytesAsm = AsmFormat.getAsmConstant(program, new ConstantBinary(new ConstantInteger((long) elementSizeBytes, SymbolType.NUMBER), Operators.MULTIPLY, paddingSizeVal), 99, scopeRef);
                } else {
-                  for(int i = 0; i < padding; i++) {
+                  paddingBytesAsm = AsmFormat.getAsmConstant(program, paddingSizeVal, 99, scopeRef);
+               }
+               ConstantValue zeroValue = Initializers.createZeroValue(new Initializers.ValueTypeSpec(elementType, null), null);
+               if(zeroValue instanceof ConstantInteger | zeroValue instanceof ConstantPointer) {
+                  dataChunk.addDataZeroFilled(getNumericType(elementType), paddingBytesAsm, (int) paddingSize, getEncoding(zeroValue));
+               } else {
+                  for(int i = 0; i < paddingSize; i++) {
                      addChunkData(dataChunk, zeroValue, elementType, null, scopeRef);
                   }
                }
             }
          }
       } else if(value instanceof ConstantString) {
-         try {
-            ConstantLiteral literal = value.calculateLiteral(getScope());
-            if(literal instanceof ConstantString) {
+               ConstantString stringValue = (ConstantString) value;
                // Ensure encoding is good
-               String asmConstant = AsmFormat.getAsmConstant(program, literal, 99, scopeRef);
-               dataChunk.addDataString(asmConstant, getEncoding(literal));
-               if(((ConstantString) literal).isZeroTerminated()) {
+               String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
+               dataChunk.addDataString(asmConstant, getEncoding(stringValue));
+               if(stringValue.isZeroTerminated()) {
                   dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
                }
-            }
-         } catch(ConstantNotLiteral e) {
-            // can't calculate literal value, so it is not data - just return
-         }
       } else if(SymbolType.BYTE.equals(valueType) || SymbolType.SBYTE.equals(valueType)) {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else if(SymbolType.WORD.equals(valueType) || SymbolType.SWORD.equals(valueType)) {

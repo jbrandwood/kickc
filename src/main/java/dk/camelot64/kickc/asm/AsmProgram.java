@@ -142,8 +142,8 @@ public class AsmProgram {
     * @param type The type of the data
     * @param numElements The size of data to fill
     */
-   public void addDataFilled(String label, AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue) {
-      addLine(new AsmDataFill(label, type, totalSizeBytesAsm, numElements, fillValue));
+   public void addDataZeroFilled(String label, AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements) {
+      addLine(new AsmDataZeroFill(label, type, totalSizeBytesAsm, numElements));
    }
 
    /**

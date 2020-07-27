@@ -313,7 +313,7 @@ public class AsmChunk {
             line instanceof AsmLabelDecl ||
             line instanceof AsmConstant ||
             line instanceof AsmDataNumeric ||
-            line instanceof AsmDataFill ||
+            line instanceof AsmDataZeroFill ||
             line instanceof AsmDataString ||
             line instanceof AsmDataAlignment ||
             (line instanceof AsmInlineKickAsm && !line.getAsm().contains(".pc"));

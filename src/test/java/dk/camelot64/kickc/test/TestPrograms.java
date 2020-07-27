@@ -1264,6 +1264,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testArray16bitInit() throws IOException, URISyntaxException {
+      compileAndCompare("array-16bit-init.c");
+   }
+
+   @Test
    public void testArray16bitLookup() throws IOException, URISyntaxException {
       compileAndCompare("array-16bit-lookup.c");
    }

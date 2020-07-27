@@ -42,24 +42,22 @@ public class AsmDataChunk {
       }
    }
 
-   /** A number of identical numerical data elements. */
-   public static class AsmDataFilledElement implements AsmDataElement {
+   /** A number of zero data elements. */
+   public static class AsmDataZeroFilledElement implements AsmDataElement {
+
       /** The ASM specifying how the total size in bytes - in ASM-format. */
       String totalSizeBytesAsm;
       /** The type of the element */
       AsmDataNumeric.Type type;
       /** The literal integer number of elements. */
       int numElements;
-      /** The fill value. */
-      String fillValue;
       /** The string encoding used in any char/string value */
       Set<StringEncoding> encoding;
 
-      AsmDataFilledElement(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<StringEncoding> encoding) {
+      AsmDataZeroFilledElement(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, Set<StringEncoding> encoding) {
          this.type = type;
          this.totalSizeBytesAsm = totalSizeBytesAsm;
          this.numElements = numElements;
-         this.fillValue = fillValue;
          this.encoding = encoding;
       }
 
@@ -73,10 +71,6 @@ public class AsmDataChunk {
 
       public int getNumElements() {
          return numElements;
-      }
-
-      String getFillValue() {
-         return fillValue;
       }
 
       public Set<StringEncoding> getEncoding() {
@@ -145,8 +139,8 @@ public class AsmDataChunk {
       elements.add(new AsmDataNumericElement(type, value, encoding));
    }
 
-   public void addDataFilled(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, String fillValue, Set<StringEncoding> encoding) {
-      elements.add(new AsmDataFilledElement(type, totalSizeBytesAsm, numElements, fillValue, encoding));
+   public void addDataZeroFilled(AsmDataNumeric.Type type, String totalSizeBytesAsm, int numElements, Set<StringEncoding> encoding) {
+      elements.add(new AsmDataZeroFilledElement(type, totalSizeBytesAsm, numElements, encoding));
    }
 
    public void addDataString(String string, Set<StringEncoding> encoding) {
@@ -173,7 +167,7 @@ public class AsmDataChunk {
       AsmDataNumeric.Type currentNumericType = null;
       List<String> currentNumericElements = null;
       for(AsmDataChunk.AsmDataElement element : this.getElements()) {
-         if(element instanceof AsmDataFilledElement || element instanceof AsmDataStringElement || element instanceof AsmDataKickAsmElement) {
+         if(element instanceof AsmDataZeroFilledElement || element instanceof AsmDataStringElement || element instanceof AsmDataKickAsmElement) {
             if(currentNumericElements != null && currentNumericElements.size() > 0) {
                asm.addDataNumeric(label, currentNumericType, currentNumericElements);
                label = null; // Only output label once
@@ -181,10 +175,10 @@ public class AsmDataChunk {
                currentNumericType = null;
             }
          }
-         if(element instanceof AsmDataFilledElement) {
-            AsmDataFilledElement filledElement = (AsmDataFilledElement) element;
+         if(element instanceof AsmDataZeroFilledElement) {
+            AsmDataZeroFilledElement filledElement = (AsmDataZeroFilledElement) element;
             asm.ensureEncoding(filledElement.getEncoding());
-            asm.addDataFilled(label, filledElement.getType(), filledElement.getTotalSizeBytesAsm(), filledElement.getNumElements(), filledElement.getFillValue());
+            asm.addDataZeroFilled(label, filledElement.getType(), filledElement.getTotalSizeBytesAsm(), filledElement.getNumElements());
             label = null; // Only output label once
          } else if(element instanceof AsmDataKickAsmElement) {
             AsmDataKickAsmElement kickAsmElement = (AsmDataKickAsmElement) element;

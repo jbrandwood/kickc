@@ -1,0 +1,333 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  (byte) main::c#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::c#2 ← phi( main/(byte) main::c#0 main::@2/(byte) main::c#1 )
+  (byte~) main::$0 ← sizeof  (const byte**) levelRowOff
+  (byte~) main::$1 ← (byte~) main::$0 / (const byte) SIZEOF_POINTER
+  (bool~) main::$2 ← (byte) main::c#2 < (byte~) main::$1
+  if((bool~) main::$2) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::c#3 ← phi( main::@1/(byte) main::c#2 )
+  (byte~) main::$3 ← (byte) main::c#3 * (const byte) SIZEOF_POINTER
+  *((const byte**) levelRowOff + (byte~) main::$3) ← ((byte*)) (number) $3039
+  (byte) main::c#1 ← ++ (byte) main::c#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const byte) SIZEOF_POINTER = (byte) 2
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(const byte**) levelRowOff[(number) $1f]  = { (byte*)(number) 1, (byte*)(number) 2, (byte*)(number) 3 }
+(void()) main()
+(byte~) main::$0
+(byte~) main::$1
+(bool~) main::$2
+(byte~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::c
+(byte) main::c#0
+(byte) main::c#1
+(byte) main::c#2
+(byte) main::c#3
+
+Inlining cast *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*)(number) $3039
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1
+Simplifying constant pointer cast (byte*) 2
+Simplifying constant pointer cast (byte*) 3
+Simplifying constant pointer cast (byte*) 12345
+Successful SSA optimization PassNCastSimplification
+Alias main::c#2 = main::c#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition (bool~) main::$2 [5] if((byte) main::c#2<(byte~) main::$1) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [2] (byte~) main::$0 ← sizeof  (const byte**) levelRowOff
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::c#0 = 0
+Constant (const byte) main::$0 = sizeof levelRowOff
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Resolving array sizeof() sizeof (const byte**) levelRowOff
+Successful SSA optimization PassNSizeOfSimplification
+Constant right-side identified [1] (byte~) main::$1 ← (const byte) main::$0 / (const byte) SIZEOF_POINTER
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::$1 = main::$0/SIZEOF_POINTER
+Successful SSA optimization Pass2ConstantIdentification
+Adding number conversion cast (unumber) $1f in 
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $1f
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $1f
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Rewriting multiplication to use shift [2] (byte~) main::$3 ← (byte) main::c#2 * (const byte) SIZEOF_POINTER
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte) main::c#0
+Constant inlined main::$1 = (byte) $1f*(const byte) SIZEOF_POINTER/(const byte) SIZEOF_POINTER
+Constant inlined main::c#0 = (byte) 0
+Constant inlined main::$0 = (byte) $1f*(const byte) SIZEOF_POINTER
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [7] main::c#4 ← main::c#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] (byte) main::c#2 ← phi( main/(byte) 0 main::@2/(byte) main::c#1 )
+  [2] if((byte) main::c#2<(byte) $1f*(const byte) SIZEOF_POINTER/(const byte) SIZEOF_POINTER) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] (byte~) main::$3 ← (byte) main::c#2 << (byte) 1
+  [5] *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*) 12345
+  [6] (byte) main::c#1 ← ++ (byte) main::c#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(byte~) main::$3 22.0
+(byte) main::c
+(byte) main::c#1 22.0
+(byte) main::c#2 11.0
+
+Initial phi equivalence classes
+[ main::c#2 main::c#1 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Complete equivalence classes
+[ main::c#2 main::c#1 ]
+[ main::$3 ]
+Allocated zp[1]:2 [ main::c#2 main::c#1 ]
+Allocated zp[1]:3 [ main::$3 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Demonstrates Wrong allocation of arrays.
+// https://gitlab.com/camelot/kickc/-/issues/497
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  // main
+main: {
+    .label __3 = 3
+    .label c = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi (byte) main::c#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z c
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((byte) main::c#2<(byte) $1f*(const byte) SIZEOF_POINTER/(const byte) SIZEOF_POINTER) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z c
+    cmp #$1f*SIZEOF_POINTER/SIZEOF_POINTER
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] (byte~) main::$3 ← (byte) main::c#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda.z c
+    asl
+    sta.z __3
+    // [5] *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*) 12345 -- qbuc1_derefidx_vbuz1=pbuc2 
+    ldy.z __3
+    lda #<$3039
+    sta levelRowOff,y
+    lda #>$3039
+    sta levelRowOff+1,y
+    // [6] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuz1=_inc_vbuz1 
+    inc.z c
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  levelRowOff: .word 1, 2, 3
+  .fill 2*$1c, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (byte~) main::$3 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::$3 ] (  [ main::c#2 main::$3 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#2 main::c#1 ]
+Statement [5] *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*) 12345 [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte~) main::$3 ← (byte) main::c#2 << (byte) 1 [ main::c#2 main::$3 ] (  [ main::c#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [5] *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*) 12345 [ main::c#2 ] (  [ main::c#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::$3 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 33: zp[1]:2 [ main::c#2 main::c#1 ] 22: zp[1]:3 [ main::$3 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 381 combination reg byte x [ main::c#2 main::c#1 ] reg byte a [ main::$3 ] 
+Uplifting [] best 381 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates Wrong allocation of arrays.
+// https://gitlab.com/camelot/kickc/-/issues/497
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi (byte) main::c#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((byte) main::c#2<(byte) $1f*(const byte) SIZEOF_POINTER/(const byte) SIZEOF_POINTER) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$1f*SIZEOF_POINTER/SIZEOF_POINTER
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] (byte~) main::$3 ← (byte) main::c#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    txa
+    asl
+    // [5] *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*) 12345 -- qbuc1_derefidx_vbuaa=pbuc2 
+    tay
+    lda #<$3039
+    sta levelRowOff,y
+    lda #>$3039
+    sta levelRowOff+1,y
+    // [6] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  levelRowOff: .word 1, 2, 3
+  .fill 2*$1c, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const byte) SIZEOF_POINTER = (byte) 2
+(const byte**) levelRowOff[(number) $1f]  = { (byte*) 1, (byte*) 2, (byte*) 3 }
+(void()) main()
+(byte~) main::$3 reg byte a 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::c
+(byte) main::c#1 reg byte x 22.0
+(byte) main::c#2 reg byte x 11.0
+
+reg byte x [ main::c#2 main::c#1 ]
+reg byte a [ main::$3 ]
+
+
+FINAL ASSEMBLER
+Score: 321
+
+  // File Comments
+// Demonstrates Wrong allocation of arrays.
+// https://gitlab.com/camelot/kickc/-/issues/497
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const SIZEOF_POINTER = 2
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::c#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char c=0;c<sizeof(levelRowOff)/sizeof(char*); c++)
+    // [2] if((byte) main::c#2<(byte) $1f*(const byte) SIZEOF_POINTER/(const byte) SIZEOF_POINTER) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$1f*SIZEOF_POINTER/SIZEOF_POINTER
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // levelRowOff[c] = 12345
+    // [4] (byte~) main::$3 ← (byte) main::c#2 << (byte) 1 -- vbuaa=vbuxx_rol_1 
+    txa
+    asl
+    // [5] *((const byte**) levelRowOff + (byte~) main::$3) ← (byte*) 12345 -- qbuc1_derefidx_vbuaa=pbuc2 
+    tay
+    lda #<$3039
+    sta levelRowOff,y
+    lda #>$3039
+    sta levelRowOff+1,y
+    // for(char c=0;c<sizeof(levelRowOff)/sizeof(char*); c++)
+    // [6] (byte) main::c#1 ← ++ (byte) main::c#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi (byte) main::c#2 = (byte) main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  levelRowOff: .word 1, 2, 3
+  .fill 2*$1c, 0
+

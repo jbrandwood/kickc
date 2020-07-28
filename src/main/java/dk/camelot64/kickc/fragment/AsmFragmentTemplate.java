@@ -1,9 +1,10 @@
 package dk.camelot64.kickc.fragment;
 
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.Registers;
+import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.model.symbols.Label;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
@@ -28,14 +29,15 @@ public class AsmFragmentTemplate {
    /** true if the fragment was loaded from the disk cache. */
    private boolean cache;
    /** The fragment template signature name. */
-   private String signature;
+   private final String signature;
    /** The fragment template body */
    private String body;
    /** The synthesis that created the fragment. null if the fragment template was loaded. */
    private AsmFragmentTemplateSynthesisRule synthesis;
    /** The sub fragment template that the synthesis modified to create this. null if the fragment template was loaded. */
    private AsmFragmentTemplate subFragment;
-
+   /** The target CPU. */
+   private final TargetCpu targetCpu;
    /** The parsed ASM lines. Initially null. Will be non-null, is the template is ever used to generate ASM code. */
    private KickCParser.AsmLinesContext bodyAsm;
    /** The ASM clobber of the fragment. */
@@ -43,9 +45,10 @@ public class AsmFragmentTemplate {
    /** The cycles consumed by the ASM of the fragment. */
    private Double cycles;
 
-   AsmFragmentTemplate(String signature, String body, boolean cache) {
+   AsmFragmentTemplate(String signature, String body, TargetCpu targetCpu, boolean cache) {
       this.signature = signature;
       this.body = body;
+      this.targetCpu = targetCpu;
       this.file = true;
       this.cache = cache;
    }
@@ -55,6 +58,7 @@ public class AsmFragmentTemplate {
       this.body = body;
       this.synthesis = synthesis;
       this.subFragment = subFragment;
+      this.targetCpu = subFragment.targetCpu;
       this.file = false;
       this.cache = false;
    }
@@ -64,9 +68,10 @@ public class AsmFragmentTemplate {
     *
     * @param bodyLines Parsed ASM body
     */
-   public AsmFragmentTemplate(KickCParser.AsmLinesContext bodyLines) {
+   public AsmFragmentTemplate(KickCParser.AsmLinesContext bodyLines, TargetCpu targetCpu) {
       this.signature = "--inline--";
       this.bodyAsm = bodyLines;
+      this.targetCpu = targetCpu;
    }
 
    /**
@@ -128,11 +133,11 @@ public class AsmFragmentTemplate {
       if(signature.contains("la1")) bindings.put("la1", new Label("@1", scope, true));
       AsmFragmentInstance fragmentInstance =
             new AsmFragmentInstance(new Program(), signature, ScopeRef.ROOT, this, bindings);
-      AsmProgram asm = new AsmProgram();
+      AsmProgram asm = new AsmProgram(targetCpu);
       asm.startChunk(ScopeRef.ROOT, null, signature);
       fragmentInstance.generate(asm);
-      AsmClobber asmClobber = asm.getClobber();
-      this.clobber = new AsmFragmentClobber(asmClobber);
+      CpuClobber cpuClobber = asm.getClobber();
+      this.clobber = new AsmFragmentClobber(cpuClobber);
       this.cycles = asm.getCycles();
    }
 
@@ -149,6 +154,10 @@ public class AsmFragmentTemplate {
          initAsm();
       }
       return bodyAsm;
+   }
+
+   public TargetCpu getTargetCpu() {
+      return targetCpu;
    }
 
    public AsmFragmentClobber getClobber() {

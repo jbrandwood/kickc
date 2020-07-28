@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.RValue;
@@ -25,7 +25,7 @@ public class StatementKickAsm extends StatementBase {
    private List<SymbolRef> uses;
 
    /** Declared clobber for the inline kick-assembler . */
-   private AsmClobber declaredClobber;
+   private CpuClobber declaredClobber;
 
    public StatementKickAsm(String kickAsmCode, StatementSource source, List<Comment> comments) {
       super(source, comments);
@@ -33,7 +33,7 @@ public class StatementKickAsm extends StatementBase {
       this.uses = new ArrayList<>();
    }
 
-   public StatementKickAsm(String kickAsmCode, RValue bytes, RValue cycles, List<SymbolRef> uses, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
+   public StatementKickAsm(String kickAsmCode, RValue bytes, RValue cycles, List<SymbolRef> uses, CpuClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(source, comments);
       this.kickAsmCode = kickAsmCode;
       this.bytes = bytes;
@@ -42,11 +42,11 @@ public class StatementKickAsm extends StatementBase {
       this.declaredClobber = declaredClobber;
    }
 
-   public AsmClobber getDeclaredClobber() {
+   public CpuClobber getDeclaredClobber() {
       return declaredClobber;
    }
 
-   public void setDeclaredClobber(AsmClobber declaredClobber) {
+   public void setDeclaredClobber(CpuClobber declaredClobber) {
       this.declaredClobber = declaredClobber;
    }
 

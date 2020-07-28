@@ -1,8 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmInstructionSet;
-import dk.camelot64.cpufamily6502.AsmOpcode;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -160,16 +159,16 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
          if(asmLine instanceof AsmInstruction) {
             //getLog().append("Found ASM line "+asmLine);
             AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-            AsmOpcode asmOpcode = asmInstruction.getAsmOpcode();
-            AsmOpcode inverseAsmOpcode = invertBranch(asmOpcode);
-            if(inverseAsmOpcode != null) {
+            CpuOpcode cpuOpcode = asmInstruction.getCpuOpcode();
+            CpuOpcode inverseCpuOpcode = invertBranch(cpuOpcode);
+            if(inverseCpuOpcode != null) {
                //getLog().append("Inversed branch instruction "+asmInstructionType.getMnemnonic()+" -> "+inverseType.getMnemnonic());
-               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseAsmOpcode.getMnemonic());
+               getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseCpuOpcode.getMnemonic());
                String branchDest = asmInstruction.getOperandJumpTarget();
-               asmInstruction.setAsmOpcode(inverseAsmOpcode);
+               asmInstruction.setCpuOpcode(inverseCpuOpcode);
                String newLabel = AsmFormat.asmFix("!" + branchDest);
                asmInstruction.setOperandJumpTarget(newLabel+"+");
-               AsmOpcode jmpOpcode = AsmInstructionSet.getOpcode("jmp", AsmAddressingMode.ABS, false);
+               CpuOpcode jmpOpcode = getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("jmp", CpuAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpOpcode, branchDest);
                asmChunk.addLineAfter(asmInstruction, jmpInstruction);
                asmChunk.addLineAfter(jmpInstruction, new AsmLabel(newLabel));
@@ -180,24 +179,24 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       return false;
    }
 
-   private AsmOpcode invertBranch(AsmOpcode asmOpcode) {
-      switch(asmOpcode.getMnemonic()) {
+   private CpuOpcode invertBranch(CpuOpcode cpuOpcode) {
+      switch(cpuOpcode.getMnemonic()) {
          case "bcc":
-            return AsmInstructionSet.getOpcode("bcs", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bcs", CpuAddressingMode.REL, false);
          case "bcs":
-            return AsmInstructionSet.getOpcode("bcc", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bcc", CpuAddressingMode.REL, false);
          case "beq":
-            return AsmInstructionSet.getOpcode("bne", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bne", CpuAddressingMode.REL, false);
          case "bne":
-            return AsmInstructionSet.getOpcode("beq", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("beq", CpuAddressingMode.REL, false);
          case "bpl":
-            return AsmInstructionSet.getOpcode("bmi", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bmi", CpuAddressingMode.REL, false);
          case "bmi":
-            return AsmInstructionSet.getOpcode("bpl", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bpl", CpuAddressingMode.REL, false);
          case "bvs":
-            return AsmInstructionSet.getOpcode("bvc", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bvc", CpuAddressingMode.REL, false);
          case "bvc":
-            return AsmInstructionSet.getOpcode("bvs", AsmAddressingMode.REL, false);
+            return getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("bvs", CpuAddressingMode.REL, false);
          default:
             return null;
       }

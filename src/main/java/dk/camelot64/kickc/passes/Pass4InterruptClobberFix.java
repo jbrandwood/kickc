@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmChunk;
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CallGraph;
@@ -31,7 +31,7 @@ public class Pass4InterruptClobberFix extends Pass2Base {
          if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(procedure.getInterruptType())) {
 
             // Find the interrupt routine clobber
-            AsmClobber procClobber = getProcedureClobber(procedure);
+            CpuClobber procClobber = getProcedureClobber(procedure);
             getLog().append("Interrupt procedure "+procedure.getFullName()+" clobbers "+procClobber.toString());
 
             // Find the entry/exit blocks for the interrupt
@@ -68,17 +68,17 @@ public class Pass4InterruptClobberFix extends Pass2Base {
       }
    }
 
-   private AsmClobber getProcedureClobber(Procedure procedure) {
+   private CpuClobber getProcedureClobber(Procedure procedure) {
       AsmProgram asm = getProgram().getAsm();
-      AsmClobber procClobber = new AsmClobber();
+      CpuClobber procClobber = new CpuClobber();
       for(AsmChunk asmChunk : asm.getChunks()) {
          if(procedure.getFullName().equals(asmChunk.getScopeLabel())) {
             if(asmChunk.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {
                // Do not count clobber in the entry/exit
                continue;
             }
-            AsmClobber chunkClobber = asmChunk.getClobber();
-            procClobber = new AsmClobber(procClobber, chunkClobber);
+            CpuClobber chunkClobber = asmChunk.getClobber();
+            procClobber = new CpuClobber(procClobber, chunkClobber);
          }
       }
 
@@ -89,14 +89,14 @@ public class Pass4InterruptClobberFix extends Pass2Base {
          ScopeRef calledProcLabel = call.getProcedure();
          ProcedureRef calledProcRef = new ProcedureRef(calledProcLabel.getFullName());
          Procedure calledProc = getProgram().getScope().getProcedure(calledProcRef);
-         AsmClobber calledClobber = getProcedureClobber(calledProc);
-         procClobber = new AsmClobber(procClobber, calledClobber);
+         CpuClobber calledClobber = getProcedureClobber(calledProc);
+         procClobber = new CpuClobber(procClobber, calledClobber);
       }
 
       return procClobber;
    }
 
-   private List<String> getNonClobberedRegisterNames(AsmClobber procClobber) {
+   private List<String> getNonClobberedRegisterNames(CpuClobber procClobber) {
       List<String> notClobberedRegisters = new ArrayList<>();
       if(!procClobber.isRegisterA()) {
          notClobberedRegisters.add("a");

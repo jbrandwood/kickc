@@ -1,7 +1,7 @@
 package dk.camelot64.cpufamily6502;
 
 /** 6502 Family Addressing Modes. */
-public enum AsmAddressingMode {
+public enum CpuAddressingMode {
 
    /**
     * None / Implied / Accumulator
@@ -187,7 +187,7 @@ public enum AsmAddressingMode {
    /** The number of bytes that an instruction takes up when using the addressing mode. This includes both opcode and operands. */
    private int bytes;
 
-   AsmAddressingMode(String name, String template, int bytes) {
+   CpuAddressingMode(String name, String template, int bytes) {
       this.bytes = bytes;
       this.template = template;
       this.name = name;

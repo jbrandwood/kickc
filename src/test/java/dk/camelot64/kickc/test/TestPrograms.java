@@ -43,8 +43,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testCpuAddressingModes() throws IOException, URISyntaxException {
-      compileAndCompare("cpu-addressing-modes.c");
+   public void testCpu65C02AddressingModes() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-65c02-addressing-modes.c");
+   }
+
+   @Test
+   public void testCpu6502AddressingModes() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-6502-addressing-modes.c");
    }
 
    @Test

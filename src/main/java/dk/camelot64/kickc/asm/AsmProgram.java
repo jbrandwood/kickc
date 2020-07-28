@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmClobber;
-import dk.camelot64.cpufamily6502.AsmInstructionSet;
-import dk.camelot64.cpufamily6502.AsmOpcode;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.cpufamily6502.CpuClobber;
+import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
+import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.StringEncoding;
 
@@ -18,6 +18,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A 6502 assembler program
  */
 public class AsmProgram {
+
+   /**
+    * The target CPU
+    */
+   private TargetCpu targetCpu;
 
    /**
     * The chunks of the program. The chunks hold the ASM lines.
@@ -37,10 +42,15 @@ public class AsmProgram {
    /** The current encoding used for printing strings. */
    private StringEncoding currentEncoding = StringEncoding.SCREENCODE_MIXED;
 
-   public AsmProgram() {
+   public AsmProgram(TargetCpu targetCpu) {
+      this.targetCpu = targetCpu;
       this.chunks = new ArrayList<>();
       this.nextLineIndex = 0;
       this.nextChunkIndex = 0;
+   }
+
+   public TargetCpu getTargetCpu() {
+      return targetCpu;
    }
 
    public Collection<AsmChunk> getChunks() {
@@ -84,7 +94,6 @@ public class AsmProgram {
       }
    }
 
-
    public void addComment(String comment, boolean isBlock) {
       addLine(new AsmComment(comment, isBlock));
    }
@@ -103,9 +112,9 @@ public class AsmProgram {
       addLine(new AsmScopeEnd());
    }
 
-   public AsmInstruction addInstruction(String mnemonic, AsmAddressingMode addressingMode, String parameter, boolean zp) {
-      AsmOpcode asmOpcode = AsmInstructionSet.getOpcode(mnemonic, addressingMode, zp);
-      AsmInstruction asmInstruction = new AsmInstruction(asmOpcode, parameter);
+   public AsmInstruction addInstruction(String mnemonic, CpuAddressingMode addressingMode, String operand1, boolean isOperandZp) {
+      CpuOpcode cpuOpcode = targetCpu.getCpu65xx().getOpcode(mnemonic, addressingMode, isOperandZp);
+      AsmInstruction asmInstruction = new AsmInstruction(cpuOpcode, operand1);
       addLine(asmInstruction);
       return asmInstruction;
    }
@@ -125,7 +134,7 @@ public class AsmProgram {
    }
 
    /**
-    * Add a BYTE/WORD/DWORD data declaration tot the ASM
+    * Add a BYTE/WORD/DWORD data declaration to the ASM
     *
     * @param label The label of the data
     * @param type The type of the data
@@ -219,10 +228,10 @@ public class AsmProgram {
     *
     * @return The clobbered registers
     */
-   public AsmClobber getClobber() {
-      AsmClobber programClobber = new AsmClobber();
+   public CpuClobber getClobber() {
+      CpuClobber programClobber = new CpuClobber();
       for(AsmChunk chunk : chunks) {
-         programClobber = new AsmClobber(programClobber, chunk.getClobber());
+         programClobber = new CpuClobber(programClobber, chunk.getClobber());
       }
       return programClobber;
    }

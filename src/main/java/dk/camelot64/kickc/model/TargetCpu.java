@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.cpufamily6502.Cpu65xx;
+import dk.camelot64.cpufamily6502.cpus.*;
 import kickass._65xx.cpus.*;
 
 import java.util.Arrays;
@@ -12,19 +14,19 @@ import java.util.List;
  * */
 public enum TargetCpu {
    /** Vanilla MOS 6502 CPU running in ROM - no illegal opcodes, no self-modifying code. */
-   ROM6502("rom6502", CPU_6502NoIllegals.name, Collections.singletonList(Feature.MOS6502_COMMON)),
+   ROM6502("rom6502", CPU_6502NoIllegals.name, Cpu6502Official.INSTANCE, Collections.singletonList(Feature.MOS6502_COMMON)),
    /** MOS 6502 CPU running in ROM - allows illegal instructions, no self-modifying code. */
-   ROM6502X("rom6502x", CPU_6502WithIllegals.name, Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_UNODC)),
+   ROM6502X("rom6502x", CPU_6502WithIllegals.name, Cpu6502Illegal.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_UNODC)),
    /** Vanilla MOS 6502 CPU - no illegal opcodes, allows self-modifying code. */
-   MOS6502("mos6502", CPU_6502NoIllegals.name, Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_SELFMOD)),
+   MOS6502("mos6502", CPU_6502NoIllegals.name, Cpu6502Official.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_SELFMOD)),
    /** MOS 6502 CPU - allows illegal instructions, allows self-modifying code. */
-   MOS6502X("mos6502x", CPU_6502WithIllegals.name, Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_UNODC, Feature.MOS6502_SELFMOD)),
+   MOS6502X("mos6502x", CPU_6502WithIllegals.name, Cpu6502Illegal.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.MOS6502_UNODC, Feature.MOS6502_SELFMOD)),
    /** WDC 65C02 CPU - More addressing modes and instructions, no self-modifying code. http://westerndesigncenter.com/wdc/documentation/w65c02s.pdf */
-   WDC65C02("wdc65c02", CPU_65C02.name, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.WDC65C02_SPECIFIC)),
+   WDC65C02("wdc65c02", CPU_65C02.name, Cpu65C02.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.WDC65C02_SPECIFIC)),
    /** CSG 65CE02 CPU - Even more addressing modes and instructions, no self-modifying code. http://www.zimmers.net/anonftp/pub/cbm/documents/chipdata/65ce02.txt  */
-   CSG65CE02("csg65ce02", CPU_65CE02.name, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.CSG65CE02_COMMON)),
+   CSG65CE02("csg65ce02", CPU_65CE02.name, Cpu65CE02.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.CSG65CE02_COMMON)),
    /** 45GS02 CPU - Even more addressing modes and instructions, no self-modifying code. https://github.com/MEGA65/mega65-user-guide/blob/master/MEGA65-Book_draft.pdf  */
-   MEGA45GS02("mega45gs02", CPU_45GS02.name, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.CSG65CE02_COMMON, Feature.MEGA45GS02_COMMON)),
+   MEGA45GS02("mega45gs02", CPU_45GS02.name, Cpu45GS02.INSTANCE, Arrays.asList(Feature.MOS6502_COMMON, Feature.WDC65C02_COMMON, Feature.CSG65CE02_COMMON, Feature.MEGA45GS02_COMMON)),
    ///** 65C186 CPU - 16-bit instructions, 24-bit addressing modes and more instructions. http://www.westerndesigncenter.com/wdc/documentation/w65c816s.pdf  */
    //WDC65C186("65C186"),
    ;
@@ -63,22 +65,30 @@ public enum TargetCpu {
    }
 
    /** The name of the CPU. */
-   private String name;
+   private final String name;
 
    /** The CPU name used by KickAsm */
-   private String asmName;
+   private final String asmName;
+
+   /** The SM CPU knowing the instruction set. */
+   private final Cpu65xx cpu65xx;
 
    /** Features of the CPU */
    private List<Feature> features;
 
-   TargetCpu(String name, String asmName, List<Feature> features) {
+   TargetCpu(String name, String asmName, Cpu65xx cpu65xx, List<Feature> features) {
       this.name = name;
       this.asmName = asmName;
+      this.cpu65xx = cpu65xx;
       this.features = features;
    }
 
    public String getName() {
       return name;
+   }
+
+   public Cpu65xx getCpu65xx() {
+      return cpu65xx;
    }
 
    /**

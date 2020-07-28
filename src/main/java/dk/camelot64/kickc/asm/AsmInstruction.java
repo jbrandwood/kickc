@@ -1,19 +1,19 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmOpcode;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.model.InternalError;
 
 /** A specific assembler instruction line (opcode, addressing mode and specific parameter value) */
 public class AsmInstruction implements AsmLine {
 
    /** The instruction opcode. */
-   private AsmOpcode asmOpcode;
+   private CpuOpcode cpuOpcode;
 
-   /** The ASM opcode parameter. Null if the opcode addressing mode is Implied/A/None {@link AsmAddressingMode#NON} - eg. DEX */
+   /** The ASM opcode parameter. Null if the opcode addressing mode is Implied/A/None {@link CpuAddressingMode#NON} - eg. DEX */
    private String operand1;
 
-   /** The second ASM opcode parameter. Null if not used. Only used for addressing mode Zeropage Test Relative  {@link AsmAddressingMode#REZ} - eg. BBR0 $12,label */
+   /** The second ASM opcode parameter. Null if not used. Only used for addressing mode Zeropage Test Relative  {@link CpuAddressingMode#REZ} - eg. BBR0 $12,label */
    private String operand2;
 
    /** The index of the instruction in the program. */
@@ -22,20 +22,20 @@ public class AsmInstruction implements AsmLine {
    /** If true the instruction will not be optimized away. */
    private boolean dontOptimize;
 
-   public AsmInstruction(AsmOpcode asmOpcode) {
-      this.asmOpcode = asmOpcode;
+   public AsmInstruction(CpuOpcode cpuOpcode) {
+      this.cpuOpcode = cpuOpcode;
       this.operand1 = null;
       this.operand2 = null;
    }
 
-   public AsmInstruction(AsmOpcode asmOpcode, String operand1) {
-      this.asmOpcode = asmOpcode;
+   public AsmInstruction(CpuOpcode cpuOpcode, String operand1) {
+      this.cpuOpcode = cpuOpcode;
       this.operand1 = operand1;
       this.operand2 = null;
    }
 
-   public AsmInstruction(AsmOpcode asmOpcode, String operand1, String operand2) {
-      this.asmOpcode = asmOpcode;
+   public AsmInstruction(CpuOpcode cpuOpcode, String operand1, String operand2) {
+      this.cpuOpcode = cpuOpcode;
       this.operand1 = operand1;
       this.operand2 = operand2;
    }
@@ -56,27 +56,27 @@ public class AsmInstruction implements AsmLine {
       this.operand2 = operand2;
    }
 
-   public AsmOpcode getAsmOpcode() {
-      return asmOpcode;
+   public CpuOpcode getCpuOpcode() {
+      return cpuOpcode;
    }
 
-   public void setAsmOpcode(AsmOpcode type) {
-      this.asmOpcode = type;
+   public void setCpuOpcode(CpuOpcode type) {
+      this.cpuOpcode = type;
    }
 
    @Override
    public int getLineBytes() {
-      return asmOpcode.getBytes();
+      return cpuOpcode.getBytes();
    }
 
    @Override
    public double getLineCycles() {
-      return asmOpcode.getCycles();
+      return cpuOpcode.getCycles();
    }
 
    @Override
    public String getAsm() {
-      return asmOpcode.getAsm(operand1, operand2);
+      return cpuOpcode.getAsm(operand1, operand2);
    }
 
    @Override
@@ -103,12 +103,12 @@ public class AsmInstruction implements AsmLine {
    }
 
    /***
-    * Get the operand value that represents a jump target (if the opcode is a jump as defined by {@link AsmOpcode#isJump()}
+    * Get the operand value that represents a jump target (if the opcode is a jump as defined by {@link CpuOpcode#isJump()}
     * @return The jump target operand
     */
    public String getOperandJumpTarget() {
-      if(asmOpcode.isJump()) {
-         if(AsmAddressingMode.REZ.equals(asmOpcode.getAddressingMode())) {
+      if(cpuOpcode.isJump()) {
+         if(CpuAddressingMode.REZ.equals(cpuOpcode.getAddressingMode())) {
             // For addressing mode Zeropage Test Relative the jump target is operand2: bbr0 zp,rel
             return operand2;
          } else {
@@ -121,12 +121,12 @@ public class AsmInstruction implements AsmLine {
    }
 
    /***
-    * Set the operand value that represents a jump target (if the opcode is a jump as defined by {@link AsmOpcode#isJump()}
+    * Set the operand value that represents a jump target (if the opcode is a jump as defined by {@link CpuOpcode#isJump()}
     * @param operand The new jump target operand
     */
    public void setOperandJumpTarget(String operand) {
-      if(asmOpcode.isJump()) {
-         if(AsmAddressingMode.REZ.equals(asmOpcode.getAddressingMode())) {
+      if(cpuOpcode.isJump()) {
+         if(CpuAddressingMode.REZ.equals(cpuOpcode.getAddressingMode())) {
             // For addressing mode Zeropage Test Relative the jump target is operand2: bbr0 zp,rel
             operand2 = operand;
          } else {

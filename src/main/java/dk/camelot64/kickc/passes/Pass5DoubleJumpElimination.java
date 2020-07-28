@@ -1,8 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmInstructionSet;
-import dk.camelot64.cpufamily6502.AsmOpcode;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.Program;
 
@@ -42,12 +41,12 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmInstruction) {
                if(currentLabel != null) {
                   AsmInstruction asmInstruction = (AsmInstruction) line;
-                  AsmOpcode jmpOpcode = AsmInstructionSet.getOpcode("jmp", AsmAddressingMode.ABS, false);
-                  AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
-                  if(asmInstruction.getAsmOpcode().equals(jmpOpcode)) {
+                  CpuOpcode jmpOpcode = getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("jmp", CpuAddressingMode.ABS, false);
+                  CpuOpcode rtsOpcode = getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("rts", CpuAddressingMode.NON, false);
+                  if(asmInstruction.getCpuOpcode().equals(jmpOpcode)) {
                      immediateJumps.put(currentScope + "::" + currentLabel, asmInstruction.getOperand1());
                   }
-                  if(asmInstruction.getAsmOpcode().equals(rtsOpcode)) {
+                  if(asmInstruction.getCpuOpcode().equals(rtsOpcode)) {
                      immediateJumps.put(currentScope + "::" + currentLabel, "rts");
                   }
                }
@@ -67,12 +66,12 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                currentScope = "";
             } else if(line instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) line;
-               if(asmInstruction.getAsmOpcode().isJump()) {
+               if(asmInstruction.getCpuOpcode().isJump()) {
                   String jumpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getOperandJumpTarget());
-                  if(jumpTarget == "rts" && asmInstruction.getAsmOpcode().getMnemonic() == "jmp") {
+                  if(jumpTarget == "rts" && asmInstruction.getCpuOpcode().getMnemonic() == "jmp") {
                      getLog().append("Replacing jump to rts with rts in " + asmInstruction.toString());
-                     AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
-                     asmInstruction.setAsmOpcode(rtsOpcode);
+                     CpuOpcode rtsOpcode = getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("rts", CpuAddressingMode.NON, false);
+                     asmInstruction.setCpuOpcode(rtsOpcode);
                      asmInstruction.setOperand1(null);
                      asmInstruction.setOperand2(null);
                      optimized = true;

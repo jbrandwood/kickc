@@ -41,7 +41,7 @@ public class AsmFragmentTemplateCache {
    }
 
    /** Special singleton representing that the fragment can not be synthesized or loaded. */
-   public static AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", "NO_SYNTHESIS", false);
+   public static AsmFragmentTemplate NO_SYNTHESIS = new AsmFragmentTemplate("NO_SYNTHESIS", "NO_SYNTHESIS", null, false);
 
    /** Prefix for the fragment hash file header. */
    public static final String HASH_HEADER = "//KICKC FRAGMENT CACHE ";
@@ -137,7 +137,7 @@ public class AsmFragmentTemplateCache {
             if(cacheLine.startsWith(FRAGMENT_HEADER)) {
                // New fragment - first put the current one into the cache
                if(signature != null)
-                  addFragment(cache, signature, body);
+                  addFragment(cache, signature, body, cpu);
                // Clear body and initialize signature
                body = new StringBuilder();
                signature = cacheLine.substring(FRAGMENT_HEADER.length());
@@ -149,7 +149,7 @@ public class AsmFragmentTemplateCache {
          }
          // Put the last fragment into the cache
          if(signature != null)
-            addFragment(cache, signature, body);
+            addFragment(cache, signature, body, cpu);
          final Date after = new Date();
          final long millis = after.getTime() - before.getTime();
          if(log.isVerboseFragmentLog())
@@ -162,13 +162,13 @@ public class AsmFragmentTemplateCache {
       }
    }
 
-   private static void addFragment(LinkedHashMap<String, AsmFragmentTemplate> cache, String signature, StringBuilder body) {
+   private static void addFragment(LinkedHashMap<String, AsmFragmentTemplate> cache, String signature, StringBuilder body, TargetCpu targetCpu) {
       final String bodyString = body.toString();
       if(bodyString.startsWith(NO_SYNTHESIS.getBody())) {
          cache.put(signature, NO_SYNTHESIS);
       } else {
          CharStream fragmentCharStream = CharStreams.fromString(bodyString);
-         AsmFragmentTemplate template = new AsmFragmentTemplate(signature, AsmFragmentTemplateSynthesizer.fixNewlines(fragmentCharStream.toString()), true);
+         AsmFragmentTemplate template = new AsmFragmentTemplate(signature, AsmFragmentTemplateSynthesizer.fixNewlines(fragmentCharStream.toString()), targetCpu, true);
          cache.put(signature, template);
       }
    }

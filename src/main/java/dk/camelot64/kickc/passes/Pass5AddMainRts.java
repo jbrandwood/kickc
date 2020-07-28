@@ -1,8 +1,9 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmInstructionSet;
-import dk.camelot64.kickc.asm.*;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.kickc.asm.AsmChunk;
+import dk.camelot64.kickc.asm.AsmInstruction;
+import dk.camelot64.kickc.asm.AsmLine;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -27,7 +28,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
                AsmLine line = lineIterator.next();
                if(line instanceof AsmInstruction) {
                   AsmInstruction instruction = (AsmInstruction) line;
-                  if(instruction.getAsmOpcode().getMnemonic().equals("jsr")) {
+                  if(instruction.getCpuOpcode().getMnemonic().equals("jsr")) {
                      if(instruction.getOperand1().equals(SymbolRef.MAIN_PROC_NAME)) {
                         // Add RTS if it is missing
                         if(!lineIterator.hasNext()) {
@@ -40,7 +41,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
                            return true;
                         }
                         AsmInstruction nextInstruction = (AsmInstruction) nextLine;
-                        if(!nextInstruction.getAsmOpcode().getMnemonic().equals("rts")) {
+                        if(!nextInstruction.getCpuOpcode().getMnemonic().equals("rts")) {
                            addRts(lineIterator);
                            return true;
                         }
@@ -54,7 +55,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
    }
 
    private void addRts(ListIterator<AsmLine> lineIterator) {
-      lineIterator.add(new AsmInstruction(AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false), null));
+      lineIterator.add(new AsmInstruction(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("rts", CpuAddressingMode.NON, false)));
       getLog().append("Adding RTS to root block ");
    }
 

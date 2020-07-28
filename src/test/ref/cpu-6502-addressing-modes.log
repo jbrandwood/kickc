@@ -3,7 +3,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from __start
-  asm { lda$12,x jmp($1234)  }
+  asm { inx lda#$12 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y lda$1234 lda$1234,x lda$1234,y beq!+ jmp($1234) !:  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
@@ -40,7 +40,7 @@ FINAL CONTROL FLOW GRAPH
 
 (void()) main()
 main: scope:[main]  from
-  asm { lda$12,x jmp($1234)  }
+  asm { inx lda#$12 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y lda$1234 lda$1234,x lda$1234,y beq!+ jmp($1234) !:  }
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -54,19 +54,31 @@ Initial phi equivalence classes
 Complete equivalence classes
 
 INITIAL ASM
-Target platform is c64basic / MOS6502X
+Target platform is c64basic / MOS6502
   // File Comments
 // Tests the different ASM addressing modes
   // Upstart
+.cpu _6502NoIllegals
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
   // main
 main: {
-    // asm { lda$12,x jmp($1234)  }
+    // asm { inx lda#$12 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y lda$1234 lda$1234,x lda$1234,y beq!+ jmp($1234) !:  }
+    inx
+    lda #$12
+    lda.z $12
     lda.z $12,x
+    ldx.z $12,y
+    lda ($12,x)
+    lda ($12),y
+    lda $1234
+    lda $1234,x
+    lda $1234,y
+    beq !+
     jmp ($1234)
+  !:
     jmp __breturn
     // main::@return
   __breturn:
@@ -76,28 +88,40 @@ main: {
   // File Data
 
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement asm { lda$12,x jmp($1234)  } always clobbers reg byte a 
+Statement asm { inx lda#$12 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y lda$1234 lda$1234,x lda$1234,y beq!+ jmp($1234) !:  } always clobbers reg byte a reg byte x 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [main] best 18 combination 
-Uplifting [] best 18 combination 
+Uplifting [main] best 56 combination 
+Uplifting [] best 56 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests the different ASM addressing modes
   // Upstart
+.cpu _6502NoIllegals
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
   // Global Constants & labels
   // main
 main: {
-    // asm { lda$12,x jmp($1234)  }
+    // asm { inx lda#$12 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y lda$1234 lda$1234,x lda$1234,y beq!+ jmp($1234) !:  }
+    inx
+    lda #$12
+    lda.z $12
     lda.z $12,x
+    ldx.z $12,y
+    lda ($12,x)
+    lda ($12),y
+    lda $1234
+    lda $1234,x
+    lda $1234,y
+    beq !+
     jmp ($1234)
+  !:
     jmp __breturn
     // main::@return
   __breturn:
@@ -111,8 +135,6 @@ Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing unreachable instruction rts
-Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
 (void()) main()
@@ -121,11 +143,12 @@ FINAL SYMBOL TABLE
 
 
 FINAL ASSEMBLER
-Score: 9
+Score: 53
 
   // File Comments
 // Tests the different ASM addressing modes
   // Upstart
+.cpu _6502NoIllegals
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -133,12 +156,24 @@ Score: 9
   // main
 main: {
     // asm
-    // asm { lda$12,x jmp($1234)  }
+    // asm { inx lda#$12 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y lda$1234 lda$1234,x lda$1234,y beq!+ jmp($1234) !:  }
+    inx
+    lda #$12
+    lda.z $12
     lda.z $12,x
+    ldx.z $12,y
+    lda ($12,x)
+    lda ($12),y
+    lda $1234
+    lda $1234,x
+    lda $1234,y
+    beq !+
     jmp ($1234)
+  !:
     // main::@return
     // }
     // [1] return 
+    rts
 }
   // File Data
 

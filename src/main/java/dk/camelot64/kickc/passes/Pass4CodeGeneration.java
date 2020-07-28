@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.fragment.*;
 import dk.camelot64.kickc.model.InternalError;
@@ -75,7 +75,7 @@ public class Pass4CodeGeneration {
    }
 
    public void generate() {
-      AsmProgram asm = new AsmProgram();
+      AsmProgram asm = new AsmProgram(program.getTargetCpu());
       ScopeRef currentScope = ScopeRef.ROOT;
 
       // Add file level comments
@@ -156,14 +156,14 @@ public class Pass4CodeGeneration {
                if(!transitionIsGenerated(transition)) {
                   genBlockPhiTransition(asm, block, defaultSuccessor, defaultSuccessor.getScope());
                   String label = AsmFormat.asmFix(defaultSuccessor.getLabel().getLocalName());
-                  asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+                  asm.addInstruction("JMP", CpuAddressingMode.ABS, label, false);
                } else {
                   String label = AsmFormat.asmFix(defaultSuccessor.getLabel().getLocalName() + "_from_" + block.getLabel().getLocalName());
-                  asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+                  asm.addInstruction("JMP", CpuAddressingMode.ABS, label, false);
                }
             } else {
                String label = AsmFormat.asmFix(defaultSuccessor.getLabel().getLocalName());
-               asm.addInstruction("JMP", AsmAddressingMode.ABS, label, false);
+               asm.addInstruction("JMP", CpuAddressingMode.ABS, label, false);
             }
          }
       }
@@ -215,7 +215,7 @@ public class Pass4CodeGeneration {
          // Generate any indirect calls pending
          for(String indirectCallAsmName : indirectCallAsmNames) {
             asm.addLabel("bi_" + indirectCallAsmName);
-            asm.addInstruction("jmp", AsmAddressingMode.IND, indirectCallAsmName, false);
+            asm.addInstruction("jmp", CpuAddressingMode.IND, indirectCallAsmName, false);
          }
          indirectCallAsmNames = new ArrayList<>();
          addData(asm, currentScope);
@@ -233,7 +233,7 @@ public class Pass4CodeGeneration {
    private void generateIndirectCall(AsmProgram asm, Variable procedureVariable, ScopeRef codeScopeRef) {
       String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, codeScopeRef);
       indirectCallAsmNames.add(varAsmName);
-      asm.addInstruction("jsr", AsmAddressingMode.ABS, "bi_" + varAsmName, false);
+      asm.addInstruction("jsr", CpuAddressingMode.ABS, "bi_" + varAsmName, false);
    }
 
    /**
@@ -887,11 +887,11 @@ public class Pass4CodeGeneration {
                   }
                }
             }
-            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementCallExecute) {
             StatementCallExecute call = (StatementCallExecute) statement;
             asm.getCurrentChunk().setFragment("jsr");
-            asm.addInstruction("jsr", AsmAddressingMode.ABS, call.getProcedure().getFullName(), false);
+            asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementExprSideEffect) {
             AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementExprSideEffect) statement, program);
             ensureEncoding(asm, asmFragmentInstanceSpecFactory);
@@ -903,14 +903,14 @@ public class Pass4CodeGeneration {
                procedure = getScope().getProcedure((ProcedureRef) scope);
             }
             if(procedure == null || procedure.getInterruptType() == null) {
-               asm.addInstruction("rts", AsmAddressingMode.NON, null, false);
+               asm.addInstruction("rts", CpuAddressingMode.NON, null, false);
             } else {
                generateInterruptExit(asm, statement, procedure.getInterruptType());
             }
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
             HashMap<String, Value> bindings = new HashMap<>();
-            AsmFragmentInstance asmFragmentInstance = new AsmFragmentInstance(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines()), bindings);
+            AsmFragmentInstance asmFragmentInstance = new AsmFragmentInstance(program, "inline", block.getScope(), new AsmFragmentTemplate(statementAsm.getAsmLines(), program.getTargetCpu()), bindings);
             asmFragmentInstance.generate(asm);
             AsmChunk currentChunk = asm.getCurrentChunk();
 
@@ -920,8 +920,8 @@ public class Pass4CodeGeneration {
                for(AsmLine asmLine : currentChunk.getLines()) {
                   if(asmLine instanceof AsmInstruction) {
                      AsmInstruction asmInstruction = (AsmInstruction) asmLine;
-                     if(asmInstruction.getAsmOpcode().getMnemonic().equals("jsr")) {
-                        currentChunk.setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+                     if(asmInstruction.getCpuOpcode().getMnemonic().equals("jsr")) {
+                        currentChunk.setClobberOverwrite(CpuClobber.CLOBBER_ALL);
                      }
                   }
                }
@@ -940,7 +940,7 @@ public class Pass4CodeGeneration {
                RValue pointer = ((PointerDereferenceSimple) procedure).getPointer();
                if(pointer instanceof ConstantValue) {
                   ensureEncoding(asm, pointer);
-                  asm.addInstruction("jsr", AsmAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
+                  asm.addInstruction("jsr", CpuAddressingMode.ABS, AsmFormat.getAsmConstant(program, (ConstantValue) pointer, 99, block.getScope()), false);
                   supported = true;
                } else if(pointer instanceof VariableRef) {
                   Variable variable = getScope().getVariable((VariableRef) pointer);
@@ -966,13 +966,13 @@ public class Pass4CodeGeneration {
                if(procedureVariableType instanceof SymbolTypePointer) {
                   if(((SymbolTypePointer) procedureVariableType).getElementType() instanceof SymbolTypeProcedure) {
                      String varAsmName = AsmFormat.getAsmSymbolName(program, procedureVariable, block.getScope());
-                     asm.addInstruction("jsr", AsmAddressingMode.ABS, varAsmName, false);
+                     asm.addInstruction("jsr", CpuAddressingMode.ABS, varAsmName, false);
                      supported = true;
                   }
                }
             }
             if(supported) {
-               asm.getCurrentChunk().setClobberOverwrite(AsmClobber.CLOBBER_ALL);
+               asm.getCurrentChunk().setClobberOverwrite(CpuClobber.CLOBBER_ALL);
             }
             if(!supported) {
                throw new InternalError("Call Pointer not supported " + statement);
@@ -1030,21 +1030,21 @@ public class Pass4CodeGeneration {
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
-         asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
-         asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
-         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+         asm.addInstruction("sta", CpuAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
+         asm.addInstruction("stx", CpuAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
+         asm.addInstruction("sty", CpuAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
       } else if(Procedure.InterruptType.HARDWARE_STACK.equals(interruptType)) {
-         asm.addInstruction("pha", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("txa", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pha", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("tya", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pha", AsmAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pha", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("txa", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pha", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("tya", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pha", CpuAddressingMode.NON, null, false).setDontOptimize(true);
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
          // No entry ASM needed
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
-         asm.addInstruction("sta", AsmAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
-         asm.addInstruction("stx", AsmAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
-         asm.addInstruction("sty", AsmAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+         asm.addInstruction("sta", CpuAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
+         asm.addInstruction("stx", CpuAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
+         asm.addInstruction("sty", CpuAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
       } else {
          throw new RuntimeException("Interrupt Type not supported " + interruptType.name());
       }
@@ -1060,34 +1060,34 @@ public class Pass4CodeGeneration {
    private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
       asm.getCurrentChunk().setSource(asm.getCurrentChunk().getSource() + " - exit interrupt(" + interruptType.name() + ")");
       if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
-         asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea81", false);
+         asm.addInstruction("jmp", CpuAddressingMode.ABS, "$ea81", false);
       } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
-         asm.addInstruction("jmp", AsmAddressingMode.ABS, "$ea31", false);
+         asm.addInstruction("jmp", CpuAddressingMode.ABS, "$ea31", false);
       } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
          asm.addLabel("rega").setDontOptimize(true);
-         asm.addInstruction("lda", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("lda", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
          asm.addLabel("regx").setDontOptimize(true);
-         asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("ldx", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
          asm.addLabel("regy").setDontOptimize(true);
-         asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+         asm.addInstruction("ldy", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
       } else if(Procedure.InterruptType.HARDWARE_STACK.equals(interruptType)) {
-         asm.addInstruction("pla", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("tay", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pla", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("tax", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pla", AsmAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+         asm.addInstruction("pla", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("tay", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pla", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("tax", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("pla", CpuAddressingMode.NON, null, false).setDontOptimize(true);
+         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
       } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
-         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
       } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
          asm.addLabel("rega").setDontOptimize(true);
-         asm.addInstruction("lda", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("lda", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
          asm.addLabel("regx").setDontOptimize(true);
-         asm.addInstruction("ldx", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("ldx", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
          asm.addLabel("regy").setDontOptimize(true);
-         asm.addInstruction("ldy", AsmAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addInstruction("rti", AsmAddressingMode.NON, null, false);
+         asm.addInstruction("ldy", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
+         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
       } else {
          throw new RuntimeException("Interrupt Type not supported " + statement);
       }
@@ -1121,7 +1121,7 @@ public class Pass4CodeGeneration {
          PhiTransitions.PhiTransition transition = transitions.getTransition(fromBlock);
          if(!transitionIsGenerated(transition) && toBlock.getLabel().equals(fromBlock.getConditionalSuccessor())) {
             genBlockPhiTransition(asm, fromBlock, toBlock, toBlock.getScope());
-            asm.addInstruction("JMP", AsmAddressingMode.ABS, AsmFormat.asmFix(toBlock.getLabel().getLocalName()), false);
+            asm.addInstruction("JMP", CpuAddressingMode.ABS, AsmFormat.asmFix(toBlock.getLabel().getLocalName()), false);
          }
       }
    }

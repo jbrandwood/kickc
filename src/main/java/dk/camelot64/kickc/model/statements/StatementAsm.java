@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.model.statements;
 
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.values.SymbolRef;
@@ -19,9 +19,9 @@ public class StatementAsm extends StatementBase {
    private Map<String, SymbolRef> referenced;
 
    /** Declared clobber for the inline ASM. */
-   private AsmClobber declaredClobber;
+   private CpuClobber declaredClobber;
 
-   public StatementAsm(KickCParser.AsmLinesContext asmBody, Map<String, SymbolRef> referenced, AsmClobber declaredClobber, StatementSource source, List<Comment> comments) {
+   public StatementAsm(KickCParser.AsmLinesContext asmBody, Map<String, SymbolRef> referenced, CpuClobber declaredClobber, StatementSource source, List<Comment> comments) {
       super(source, comments);
       this.asmLines = asmBody;
       this.referenced = referenced;
@@ -51,11 +51,11 @@ public class StatementAsm extends StatementBase {
       return referenced;
    }
 
-   public AsmClobber getDeclaredClobber() {
+   public CpuClobber getDeclaredClobber() {
       return declaredClobber;
    }
 
-   public void setDeclaredClobber(AsmClobber declaredClobber) {
+   public void setDeclaredClobber(CpuClobber declaredClobber) {
       this.declaredClobber = declaredClobber;
    }
 }

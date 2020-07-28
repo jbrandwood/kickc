@@ -1,13 +1,13 @@
 package dk.camelot64.cpufamily6502;
 
 /** A specific opcode in the instruction set of a 6502 family CPU. */
-public class AsmOpcode {
+public class CpuOpcode {
 
    /** The mnemonic of the instruction. */
    private final String mnemonic;
 
    /** The addressing mode of the instruction. */
-   private final AsmAddressingMode addressingMode;
+   private final CpuAddressingMode addressingMode;
 
    /**
     * The byte opcodes of the instruction.
@@ -24,14 +24,14 @@ public class AsmOpcode {
    private final double cycles;
 
    /** Which registers/flags of the CPU are clobbered by the instruction. */
-   private final AsmClobber clobber;
+   private final CpuClobber clobber;
 
-   AsmOpcode(int opcode, String mnemonic, AsmAddressingMode addressingMode, double cycles, String clobberString) {
+   CpuOpcode(int opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
       this.opcode = new int[]{opcode};
       this.mnemonic = mnemonic;
       this.addressingMode = addressingMode;
       this.cycles = cycles;
-      this.clobber = new AsmClobber(clobberString);
+      this.clobber = new CpuClobber(clobberString);
    }
 
    /**
@@ -48,7 +48,7 @@ public class AsmOpcode {
     *
     * @return The addressing mdoe
     */
-   public AsmAddressingMode getAddressingMode() {
+   public CpuAddressingMode getAddressingMode() {
       return addressingMode;
    }
 
@@ -110,7 +110,7 @@ public class AsmOpcode {
     *
     * @return The clobber information
     */
-   public AsmClobber getClobber() {
+   public CpuClobber getClobber() {
       return clobber;
    }
 

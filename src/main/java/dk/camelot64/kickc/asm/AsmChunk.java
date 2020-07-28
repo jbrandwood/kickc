@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.asm;
 
-import dk.camelot64.cpufamily6502.AsmClobber;
-import dk.camelot64.cpufamily6502.AsmOpcode;
+import dk.camelot64.cpufamily6502.CpuClobber;
+import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.model.PhiTransitions;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -56,7 +56,7 @@ public class AsmChunk {
    private String scopeLabel;
 
    /** If non-null this overwrites the clobber of the chunk that is calculated by examining the ASM instruction lines. */
-   private AsmClobber clobberOverwrite;
+   private CpuClobber clobberOverwrite;
 
    public AsmChunk(int index, ScopeRef scope, Integer statementIdx, String source) {
       this.lines = new ArrayList<>();
@@ -74,11 +74,11 @@ public class AsmChunk {
       lines.add(line);
    }
 
-   public AsmClobber getClobberOverwrite() {
+   public CpuClobber getClobberOverwrite() {
       return clobberOverwrite;
    }
 
-   public void setClobberOverwrite(AsmClobber clobberOverwrite) {
+   public void setClobberOverwrite(CpuClobber clobberOverwrite) {
       this.clobberOverwrite = clobberOverwrite;
    }
 
@@ -170,17 +170,17 @@ public class AsmChunk {
     *
     * @return The registers clobbered
     */
-   public AsmClobber getClobber() {
+   public CpuClobber getClobber() {
       if(clobberOverwrite != null) {
          return clobberOverwrite;
       }
-      AsmClobber chunkClobber = new AsmClobber();
+      CpuClobber chunkClobber = new CpuClobber();
       for(AsmLine line : lines) {
          if(line instanceof AsmInstruction) {
             AsmInstruction asmInstruction = (AsmInstruction) line;
-            AsmOpcode asmOpcode = asmInstruction.getAsmOpcode();
-            AsmClobber opcodeClobber = asmOpcode.getClobber();
-            chunkClobber = new AsmClobber(chunkClobber, opcodeClobber);
+            CpuOpcode cpuOpcode = asmInstruction.getCpuOpcode();
+            CpuClobber opcodeClobber = cpuOpcode.getClobber();
+            chunkClobber = new CpuClobber(chunkClobber, opcodeClobber);
          }
       }
       return chunkClobber;

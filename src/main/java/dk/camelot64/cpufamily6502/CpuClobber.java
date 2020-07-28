@@ -3,9 +3,9 @@ package dk.camelot64.cpufamily6502;
 import java.io.Serializable;
 
 /** Information about what registers/flags of the CPU an ASM instruction clobbers */
-public class AsmClobber implements Serializable {
+public class CpuClobber implements Serializable {
 
-   public static final AsmClobber CLOBBER_ALL = new AsmClobber(true, true, true, true, true, true, true, true, true, true, true);
+   public static final CpuClobber CLOBBER_ALL = new CpuClobber(true, true, true, true, true, true, true, true, true, true, true);
 
    final boolean registerA;
    final boolean registerX;
@@ -21,7 +21,7 @@ public class AsmClobber implements Serializable {
    /** true if the stack pointer is modified.*/
    final boolean registerSP;
 
-   public AsmClobber(boolean registerA, boolean registerX, boolean registerY, boolean flagC, boolean flagN, boolean flagZ, boolean flagV, boolean flagI, boolean flagD, boolean registerPC, boolean registerSP) {
+   public CpuClobber(boolean registerA, boolean registerX, boolean registerY, boolean flagC, boolean flagN, boolean flagZ, boolean flagV, boolean flagI, boolean flagD, boolean registerPC, boolean registerSP) {
       this.registerA = registerA;
       this.registerX = registerX;
       this.registerY = registerY;
@@ -35,7 +35,7 @@ public class AsmClobber implements Serializable {
       this.registerSP = registerSP;
    }
 
-   public AsmClobber() {
+   public CpuClobber() {
       this(false, false, false, false, false, false, false, false, false, false, false);
    }
 
@@ -46,7 +46,7 @@ public class AsmClobber implements Serializable {
     *
     * @param clobberString The clobber string.
     */
-   public AsmClobber(String clobberString) {
+   public CpuClobber(String clobberString) {
       this(
             clobberString.contains("A"),
             clobberString.contains("X"),
@@ -68,7 +68,7 @@ public class AsmClobber implements Serializable {
     * @param clobber1 One clobber
     * @param clobber2 Another clobber
     */
-   public AsmClobber(AsmClobber clobber1, AsmClobber clobber2) {
+   public CpuClobber(CpuClobber clobber1, CpuClobber clobber2) {
       this(
             clobber1.registerA | clobber2.registerA,
             clobber1.registerX | clobber2.registerX,

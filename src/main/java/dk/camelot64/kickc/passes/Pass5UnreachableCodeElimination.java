@@ -34,7 +34,7 @@ public class Pass5UnreachableCodeElimination extends Pass5AsmOptimization {
                   optimized = true;
                } else {
                   AsmInstruction asmInstruction = (AsmInstruction) line;
-                  if(asmInstruction.getAsmOpcode().getMnemonic().equals("rts") || asmInstruction.getAsmOpcode().getMnemonic().equals("jmp")) {
+                  if(asmInstruction.getCpuOpcode().getMnemonic().equals("rts") || asmInstruction.getCpuOpcode().getMnemonic().equals("jmp")) {
                      afterExit = true;
                   }
                }

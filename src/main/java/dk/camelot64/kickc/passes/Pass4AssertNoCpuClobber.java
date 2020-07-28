@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.asm.AsmChunk;
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.statements.*;
@@ -29,7 +29,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
     * @param clobber The clobber
     * @return The clobbered CPU registers
     */
-   public static Collection<Registers.Register> getClobberRegisters(AsmClobber clobber) {
+   public static Collection<Registers.Register> getClobberRegisters(CpuClobber clobber) {
       List<Registers.Register> clobberRegisters = new ArrayList<>();
       if(clobber.isRegisterA()) {
          clobberRegisters.add(Registers.getRegisterA());
@@ -67,7 +67,7 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
             int statementIdx = asmChunk.getStatementIdx();
             Statement statement = getProgram().getStatementInfos().getStatement(statementIdx);
             // Find the registered clobbered by the ASM asmChunk
-            AsmClobber asmChunkClobber = asmChunk.getClobber();
+            CpuClobber asmChunkClobber = asmChunk.getClobber();
             Collection<Registers.Register> clobberRegisters = getClobberRegisters(asmChunkClobber);
             // Find vars assigned to in the statement
             Collection<VariableRef> assignedVars = Pass4RegisterUpliftPotentialRegisterAnalysis.getAssignedVars(statement);

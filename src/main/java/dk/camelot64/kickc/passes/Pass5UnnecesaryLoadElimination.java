@@ -1,9 +1,11 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.cpufamily6502.AsmAddressingMode;
-import dk.camelot64.cpufamily6502.AsmInstructionSet;
-import dk.camelot64.cpufamily6502.AsmOpcode;
-import dk.camelot64.kickc.asm.*;
+import dk.camelot64.cpufamily6502.CpuAddressingMode;
+import dk.camelot64.cpufamily6502.CpuOpcode;
+import dk.camelot64.kickc.asm.AsmChunk;
+import dk.camelot64.kickc.asm.AsmInstruction;
+import dk.camelot64.kickc.asm.AsmLine;
+import dk.camelot64.kickc.asm.AsmProgramStaticRegisterValues;
 import dk.camelot64.kickc.model.Program;
 
 import java.util.List;
@@ -33,89 +35,89 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
                if(instruction.isDontOptimize()) {
                   continue;
                }
-               AsmOpcode asmOpcode = instruction.getAsmOpcode();
+               CpuOpcode cpuOpcode = instruction.getCpuOpcode();
 
-               if(asmOpcode.getMnemonic().equals("lda") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+               if(cpuOpcode.getMnemonic().equals("lda") && cpuOpcode.getAddressingMode().equals(CpuAddressingMode.IMM)) {
                   String immValue = instruction.getOperand1();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getA(), immValue)) {
                      modified = remove(lineIt);
                   } else if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getX(), immValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TXA");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("txa", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("txa", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   } else if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getY(), immValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TYA");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("tya", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("tya", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("lda") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+               if(cpuOpcode.getMnemonic().equals("lda") && (cpuOpcode.getAddressingMode().equals(CpuAddressingMode.ZP) || cpuOpcode.getAddressingMode().equals(CpuAddressingMode.ABS))) {
                   String memValue = instruction.getOperand1();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
                      modified = remove(lineIt);
                   } else if(instructionValues.getxMem() != null && instructionValues.getxMem().equals(memValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TXA");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("txa", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("txa", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   } else if(instructionValues.getyMem() != null && instructionValues.getyMem().equals(memValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TYA");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("tya", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("tya", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("ldx") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+               if(cpuOpcode.getMnemonic().equals("ldx") && cpuOpcode.getAddressingMode().equals(CpuAddressingMode.IMM)) {
                   String immValue = instruction.getOperand1();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getX(), immValue)) {
                      modified = remove(lineIt);
                   } else if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getA(), immValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TAX");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("tax", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("tax", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("ldx") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+               if(cpuOpcode.getMnemonic().equals("ldx") && (cpuOpcode.getAddressingMode().equals(CpuAddressingMode.ZP) || cpuOpcode.getAddressingMode().equals(CpuAddressingMode.ABS))) {
                   String memValue = instruction.getOperand1();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(instructionValues.getxMem() != null && instructionValues.getxMem().equals(memValue)) {
                      modified = remove(lineIt);
                   } else if(instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TAX");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("tax", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("tax", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("ldy") && asmOpcode.getAddressingMode().equals(AsmAddressingMode.IMM)) {
+               if(cpuOpcode.getMnemonic().equals("ldy") && cpuOpcode.getAddressingMode().equals(CpuAddressingMode.IMM)) {
                   String immValue = instruction.getOperand1();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getY(), immValue)) {
                      modified = remove(lineIt);
                   } else if(AsmProgramStaticRegisterValues.matchImm(instructionValues.getA(), immValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TAY");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("tay", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("tay", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("ldy") && (asmOpcode.getAddressingMode().equals(AsmAddressingMode.ZP) || asmOpcode.getAddressingMode().equals(AsmAddressingMode.ABS))) {
+               if(cpuOpcode.getMnemonic().equals("ldy") && (cpuOpcode.getAddressingMode().equals(CpuAddressingMode.ZP) || cpuOpcode.getAddressingMode().equals(CpuAddressingMode.ABS))) {
                   String memValue = instruction.getOperand1();
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(instructionValues.getyMem() != null && instructionValues.getyMem().equals(memValue)) {
                      modified = remove(lineIt);
                   } else if(instructionValues.getaMem() != null && instructionValues.getaMem().equals(memValue)) {
                      getLog().append("Replacing instruction " + instruction + " with TAY");
-                     instruction.setAsmOpcode(AsmInstructionSet.getOpcode("tay", AsmAddressingMode.NON, false));
+                     instruction.setCpuOpcode(getAsmProgram().getTargetCpu().getCpu65xx().getOpcode("tay", CpuAddressingMode.NON, false));
                      instruction.setOperand1(null);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("clc")) {
+               if(cpuOpcode.getMnemonic().equals("clc")) {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(Boolean.FALSE.equals(instructionValues.getC())) {
                      modified = remove(lineIt);
                   }
                }
-               if(asmOpcode.getMnemonic().equals("sec")) {
+               if(cpuOpcode.getMnemonic().equals("sec")) {
                   AsmProgramStaticRegisterValues.AsmRegisterValues instructionValues = staticValues.getValues(instruction);
                   if(Boolean.TRUE.equals(instructionValues.getC())) {
                      modified = remove(lineIt);

@@ -116,6 +116,7 @@ class AsmFragmentTemplateSynthesisRule {
          if(subDontClobber.contains("aa") && subTemplate.getClobber().isClobberA()) return null;
          if(subDontClobber.contains("xx") && subTemplate.getClobber().isClobberX()) return null;
          if(subDontClobber.contains("yy") && subTemplate.getClobber().isClobberY()) return null;
+         // TODO Z register: if(subDontClobber.contains("zz") && subTemplate.getClobber().isClobberZ()) return null;
       }
 
       StringBuilder newFragment = new StringBuilder();

@@ -26,22 +26,22 @@ import java.util.*;
 public class AsmFragmentTemplateSynthesizer {
 
    /** Create synthesizer. */
-   public AsmFragmentTemplateSynthesizer(TargetCpu cpu, Path baseFragmentFolder, boolean useFragmentCache, CompileLog log) {
+   public AsmFragmentTemplateSynthesizer(TargetCpu targetCpu, Path baseFragmentFolder, boolean useFragmentCache, CompileLog log) {
       this.baseFragmentFolder = baseFragmentFolder;
-      this.cpu = cpu;
+      this.targetCpu = targetCpu;
       this.synthesisGraph = new LinkedHashMap<>();
       this.bestTemplateUpdate = new ArrayDeque<>();
       if(useFragmentCache)
-         this.fragmentCache = AsmFragmentTemplateCache.load(cpu, baseFragmentFolder, log);
+         this.fragmentCache = AsmFragmentTemplateCache.load(targetCpu, baseFragmentFolder, log);
       else
-         this.fragmentCache = AsmFragmentTemplateCache.memory(cpu);
+         this.fragmentCache = AsmFragmentTemplateCache.memory(targetCpu);
    }
 
    /** The folder containing fragment files. */
    private Path baseFragmentFolder;
 
    /** The Target CPU - used for obtaining CPU-specific fragment files. */
-   private TargetCpu cpu;
+   private TargetCpu targetCpu;
 
    /** Cache for the best fragment templates. Maps signature to the best fragment template for the signature. */
    private AsmFragmentTemplateCache fragmentCache;
@@ -501,7 +501,7 @@ public class AsmFragmentTemplateSynthesizer {
     */
    private List<AsmFragmentTemplate> loadFragmentTemplates(String signature) {
       ArrayList<AsmFragmentTemplate> fileTemplates = new ArrayList<>();
-      List<TargetCpu.Feature> cpuFeatures = cpu.getFeatures();
+      List<TargetCpu.Feature> cpuFeatures = targetCpu.getFeatures();
       for(TargetCpu.Feature cpuFeature : cpuFeatures) {
          AsmFragmentTemplate fileFragment = loadFragmentTemplate(signature, baseFragmentFolder.resolve(cpuFeature.getName()));
          if(fileFragment != null)
@@ -532,7 +532,7 @@ public class AsmFragmentTemplateSynthesizer {
             body = fixNewlines(fragmentCharStream.toString());
 
          }
-         return new AsmFragmentTemplate(signature, body, false);
+         return new AsmFragmentTemplate(signature, body, targetCpu, false);
       } catch(IOException e) {
          throw new RuntimeException("Error loading fragment file " + signature, e);
       } catch(StringIndexOutOfBoundsException e) {

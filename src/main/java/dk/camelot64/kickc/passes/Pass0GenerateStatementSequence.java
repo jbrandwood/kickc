@@ -2,7 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
@@ -459,7 +459,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       /** The number of cycles used by the generated kick-assembler code. */
       private RValue cycles;
       /** Declared clobber for the inline kick-assembler . */
-      private AsmClobber declaredClobber;
+      private CpuClobber declaredClobber;
 
       public KickAsm(String kickAsmCode) {
          this.kickAsmCode = kickAsmCode;
@@ -628,13 +628,13 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    /** ASM Directive specifying clobber registers. */
    private static class AsmDirectiveClobber implements AsmDirective {
-      private AsmClobber clobber;
+      private CpuClobber clobber;
 
-      AsmDirectiveClobber(AsmClobber clobber) {
+      AsmDirectiveClobber(CpuClobber clobber) {
          this.clobber = clobber;
       }
 
-      public AsmClobber getClobber() {
+      public CpuClobber getClobber() {
          return clobber;
       }
 
@@ -652,7 +652,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(!clobberString.matches("[AXY]*")) {
          throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
       }
-      AsmClobber clobber = new AsmClobber(clobberString);
+      CpuClobber clobber = new CpuClobber(clobberString);
       return new AsmDirectiveClobber(clobber);
    }
 
@@ -1700,7 +1700,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Map<String, SymbolRef> referenced = getAsmReferencedSymbolVariables(ctx, definedLabels);
       List<Comment> comments = ensureUnusedComments(getCommentsSymbol(ctx));
 
-      AsmClobber declaredClobber = null;
+      CpuClobber declaredClobber = null;
       if(ctx.asmDirectives() != null) {
          List<AsmDirective> asmDirectives = this.visitAsmDirectives(ctx.asmDirectives());
          for(AsmDirective asmDirective : asmDirectives) {

@@ -1,6 +1,6 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.cpufamily6502.AsmClobber;
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
@@ -167,7 +167,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
          // Apply the combination
          combination.allocate(getProgram());
          // Generate ASM
-         AsmProgram asm = new AsmProgram();
+         AsmProgram asm = new AsmProgram(getProgram().getTargetCpu());
          asm.startChunk(block.getScope(), statement.getIndex(), statement.toString(getProgram(), false));
          Pass4CodeGeneration.AsmCodegenAluState aluState = new Pass4CodeGeneration.AsmCodegenAluState();
          try {
@@ -190,7 +190,7 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
             }
             continue;
          }
-         AsmClobber clobber = asm.getClobber();
+         CpuClobber clobber = asm.getClobber();
          Collection<Registers.Register> clobberRegisters = Pass4AssertNoCpuClobber.getClobberRegisters(clobber);
          alwaysClobbered.removeIf(alwaysClobberRegister -> !clobberRegisters.contains(alwaysClobberRegister));
          if(alwaysClobbered.isEmpty()) {

@@ -313,33 +313,33 @@ public class AsmInstructionSet {
     * This will try to find a zeropage-based addressing mode if you indicate that you are interested in that.
     *
     * @param mnemonic The mnemonic
-    * @param mode The addressing mode you want.
-    * @param isZp Indicates whether you are interested in a zeropage-based opcode.
-    * @return The opcode, if it exists. If you have requested an absolute addressing mode passed isZp as true the
-    * resulting opcode will have zeropage-based addressing the instruction set offers that.
+    * @param addressingMode The addressing mode you want.
+    * @param isOperandZp Indicates whether the operand is <256 meaning the opcode could be zeropage-based.
+    * @return The opcode, if it exists. If you have requested an absolute addressing mode and pass isOperandZp as true the
+    * resulting opcode will have zeropage-based addressing if the instruction set offers that.
     */
-   public static AsmOpcode getOpcode(String mnemonic, AsmAddressingMode mode, boolean isZp) {
+   public static AsmOpcode getOpcode(String mnemonic, AsmAddressingMode addressingMode, boolean isOperandZp) {
       AsmOpcode asmOpcode = null;
-      if(AsmAddressingMode.ABS.equals(mode) && isZp) {
+      if(AsmAddressingMode.ABS.equals(addressingMode) && isOperandZp) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZP);
       }
-      if(AsmAddressingMode.ABX.equals(mode) && isZp) {
+      if(AsmAddressingMode.ABX.equals(addressingMode) && isOperandZp) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZPX);
       }
-      if(AsmAddressingMode.ABY.equals(mode) && isZp) {
+      if(AsmAddressingMode.ABY.equals(addressingMode) && isOperandZp) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZPY);
       }
-      if(AsmAddressingMode.IND.equals(mode) && isZp) {
+      if(AsmAddressingMode.IND.equals(addressingMode) && isOperandZp) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.INZ);
       }
-      if(AsmAddressingMode.IAX.equals(mode) && isZp) {
+      if(AsmAddressingMode.IAX.equals(addressingMode) && isOperandZp) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.IZX);
       }
       if(asmOpcode == null) {
-         // If the ZP-variation does not exist use the ABS-variation
-         asmOpcode = set.getOpcode(mnemonic, mode);
+         // If the ZP-form does not exist use the ABS-variation
+         asmOpcode = set.getOpcode(mnemonic, addressingMode);
       }
-      if(asmOpcode == null && AsmAddressingMode.ABS.equals(mode)) {
+      if(asmOpcode == null && AsmAddressingMode.ABS.equals(addressingMode)) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.REL);
       }
       return asmOpcode;

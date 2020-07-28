@@ -173,7 +173,10 @@ ASM_MNEMONIC:
     'brk' | 'ora' | 'kil' | 'slo' | 'nop' | 'asl' | 'php' | 'anc' | 'bpl' | 'clc' | 'jsr' | 'and' | 'rla' | 'bit' | 'rol' | 'pla' | 'plp' | 'bmi' | 'sec' |
     'rti' | 'eor' | 'sre' | 'lsr' | 'pha' | 'alr' | 'jmp' | 'bvc' | 'cli' | 'rts' | 'adc' | 'rra' | 'bvs' | 'sei' | 'sax' | 'sty' | 'sta' | 'stx' | 'dey' |
     'txa' | 'xaa' | 'bcc' | 'ahx' | 'tya' | 'txs' | 'tas' | 'shy' | 'shx' | 'ldy' | 'lda' | 'ldx' | 'lax' | 'tay' | 'tax' | 'bcs' | 'clv' | 'tsx' | 'las' |
-    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror'
+    'cpy' | 'cmp' | 'cpx' | 'dcp' | 'dec' | 'inc' | 'axs' | 'bne' | 'cld' | 'sbc' | 'isc' | 'inx' | 'beq' | 'sed' | 'dex' | 'iny' | 'ror' | 'bbr0'| 'bbr1'|
+    'bbr2'| 'bbr3'| 'bbr4'| 'bbr5'| 'bbr6'| 'bbr7'| 'bbs0'| 'bbs1'| 'bbs2'| 'bbs3'| 'bbs4'| 'bbs5'| 'bbs6'| 'bbs7'| 'bra' | 'phx' | 'phy' | 'plx' | 'ply' |
+    'rmb0'| 'rmb1'| 'rmb2'| 'rmb3'| 'rmb4'| 'rmb5'| 'rmb6'| 'rmb7'| 'smb0'| 'smb1'| 'smb2'| 'smb3'| 'smb4'| 'smb5'| 'smb6'| 'smb7'| 'stp' | 'stz' | 'trb' |
+    'tsb'| 'wai'
     ;
 
 ASM_IMM : '#' ;

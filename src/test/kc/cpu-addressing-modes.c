@@ -8,11 +8,11 @@ void main() {
         // Indirect
         jmp ($1234)
 
+        // TODO Indirect Zeropage
+        // ora ($12)
+
         // TODO: Indirect ABS,x
         // jmp ($1234,x)
-
-        // TODO Indirect Zeropage
-        //jmp ($12)
 
         // TODO test relative
         // lda $12, $1234

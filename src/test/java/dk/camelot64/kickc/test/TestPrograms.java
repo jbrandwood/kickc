@@ -43,8 +43,23 @@ public class TestPrograms {
    }
 
    @Test
-   public void testAsmAddressingModes() throws IOException, URISyntaxException {
-      compileAndCompare("asm-addressing-modes.c");
+   public void testCpuAddressingModes() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-addressing-modes.c");
+   }
+
+   @Test
+   public void testMega65C65ce02() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-45gs02.c");
+   }
+
+   @Test
+   public void testCpu65C02() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-65c02.c");
+   }
+
+   @Test
+   public void testCpu6502() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-6502.c");
    }
 
    @Test
@@ -948,21 +963,6 @@ public class TestPrograms {
       compileAndCompare("complex/unit5/os5.1.c");
    }
 */
-
-   @Test
-   public void testMega65C65ce02() throws IOException, URISyntaxException {
-      compileAndCompare("cpu-45gs02.c");
-   }
-
-   @Test
-   public void testCpu65C02() throws IOException, URISyntaxException {
-      compileAndCompare("cpu-65c02.c");
-   }
-
-   @Test
-   public void testCpu6502() throws IOException, URISyntaxException {
-      compileAndCompare("cpu-6502.c");
-   }
 
    @Test
    public void testZpCode() throws IOException, URISyntaxException {
@@ -4056,6 +4056,11 @@ public class TestPrograms {
    @Test
    public void testIncD020() throws IOException, URISyntaxException {
       compileAndCompare("incd020.c");
+   }
+
+   @Test
+   public void testIncD0202() throws IOException, URISyntaxException {
+      compileAndCompare("incd020-2.c", log());
    }
 
    @Test

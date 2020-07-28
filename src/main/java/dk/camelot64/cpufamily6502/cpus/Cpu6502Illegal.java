@@ -9,10 +9,10 @@ import dk.camelot64.cpufamily6502.AsmCpu;
  */
 public class Cpu6502Illegal extends AsmCpu {
 
-   /** The 6502 with illegal CPU name. */
+   /** The 6502 with illegal instructions CPU name. */
    public final static String NAME = "6502x";
 
-   /** The 6502 with illegal CPU. */
+   /** The 6502 with illegal instructions CPU. */
    public final static Cpu6502Illegal INSTANCE = new Cpu6502Illegal();
 
    public Cpu6502Illegal() {

@@ -1743,6 +1743,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          @Override
          public Void visitAsmExprLabel(KickCParser.AsmExprLabelContext ctxLabel) {
             String label = ctxLabel.ASM_NAME().toString();
+            if(label.equalsIgnoreCase("x") || label.equalsIgnoreCase("y") || label.equalsIgnoreCase("z")|| label.equalsIgnoreCase("sp"))
+               // Skip registers
+               return super.visitAsmExprLabel(ctxLabel);
             if(!definedLabels.contains(label)) {
                // Look for the symbol
                Symbol symbol = getCurrentScope().findSymbol(ctxLabel.ASM_NAME().getText());

@@ -24,7 +24,7 @@ public class AsmOpcode {
    private final double cycles;
 
    /** Which registers/flags of the CPU are clobbered by the instruction. */
-   private AsmClobber clobber;
+   private final AsmClobber clobber;
 
    AsmOpcode(int opcode, String mnemonic, AsmAddressingMode addressingMode, double cycles, String clobberString) {
       this.opcode = new int[]{opcode};
@@ -85,22 +85,24 @@ public class AsmOpcode {
 
    /**
     * Determines if this instruction has a specific single byte opcode
+    *
     * @param opcode The byte opcode to check
     * @return true if this instruction has a 1-byte opcode that matches the passed value.
     */
    public boolean hasOpcode(int opcode) {
-      return this.opcode.length==1 && this.opcode[0]==(byte)opcode;
+      return this.opcode.length == 1 && this.opcode[0] == (byte) opcode;
    }
 
    /**
     * Get the printed ASM code for the instruction with an operand value.
     * This prints to the syntax that KickAssembler expects.
     *
-    * @param operand The operand value
+    * @param operand The operand value. Null if addressing mode is Implied/A/None
+    * @param operand2 The second operand value (only used for addressing mode Zeropage Test Relative)
     * @return The printed ASM code for the instruction
     */
-   public String getAsm(String operand) {
-      return addressingMode.getAsm(mnemonic, operand);
+   public String getAsm(String operand, String operand2) {
+      return addressingMode.getAsm(mnemonic, operand, operand2);
    }
 
    /**
@@ -121,15 +123,6 @@ public class AsmOpcode {
     */
    public boolean isJump() {
       return clobber.isRegisterPC();
-   }
-
-   /**
-    * Set the clobber information of the opcode.
-    * TODO: Remove this setter and initialize using the constructor instead.
-    * @param asmClobber The new clobber information
-    */
-   public void setClobber(AsmClobber asmClobber) {
-      this.clobber = asmClobber;
    }
 
 }

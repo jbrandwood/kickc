@@ -25,7 +25,7 @@ public class Pass5NextJumpElimination extends Pass5AsmOptimization {
             }
             if(candidate != null) {
                if(line instanceof AsmLabel) {
-                  if(((AsmLabel) line).getLabel().equals(candidate.getParameter())) {
+                  if(((AsmLabel) line).getLabel().equals(candidate.getOperandJumpTarget())) {
                      removeLines.add(candidate);
                   }
                }

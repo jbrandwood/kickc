@@ -45,7 +45,7 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
                   AsmOpcode jmpOpcode = AsmInstructionSet.getOpcode("jmp", AsmAddressingMode.ABS, false);
                   AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
                   if(asmInstruction.getAsmOpcode().equals(jmpOpcode)) {
-                     immediateJumps.put(currentScope + "::" + currentLabel, asmInstruction.getParameter());
+                     immediateJumps.put(currentScope + "::" + currentLabel, asmInstruction.getOperand1());
                   }
                   if(asmInstruction.getAsmOpcode().equals(rtsOpcode)) {
                      immediateJumps.put(currentScope + "::" + currentLabel, "rts");
@@ -68,16 +68,17 @@ public class Pass5DoubleJumpElimination extends Pass5AsmOptimization {
             } else if(line instanceof AsmInstruction) {
                AsmInstruction asmInstruction = (AsmInstruction) line;
                if(asmInstruction.getAsmOpcode().isJump()) {
-                  String immediateJmpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getParameter());
-                  if(immediateJmpTarget == "rts" && asmInstruction.getAsmOpcode().getMnemonic() == "jmp") {
+                  String jumpTarget = immediateJumps.get(currentScope + "::" + asmInstruction.getOperandJumpTarget());
+                  if(jumpTarget == "rts" && asmInstruction.getAsmOpcode().getMnemonic() == "jmp") {
                      getLog().append("Replacing jump to rts with rts in " + asmInstruction.toString());
                      AsmOpcode rtsOpcode = AsmInstructionSet.getOpcode("rts", AsmAddressingMode.NON, false);
                      asmInstruction.setAsmOpcode(rtsOpcode);
-                     asmInstruction.setParameter(null);
+                     asmInstruction.setOperand1(null);
+                     asmInstruction.setOperand2(null);
                      optimized = true;
-                  } else if(immediateJmpTarget != null && immediateJmpTarget != "rts" && !immediateJmpTarget.equals(asmInstruction.getParameter())) {
-                     getLog().append("Skipping double jump to " + immediateJmpTarget + " in " + asmInstruction.toString());
-                     asmInstruction.setParameter(immediateJmpTarget);
+                  } else if(jumpTarget != null && jumpTarget != "rts" && !jumpTarget.equals(asmInstruction.getOperandJumpTarget())) {
+                     getLog().append("Skipping double jump to " + jumpTarget + " in " + asmInstruction.toString());
+                     asmInstruction.setOperandJumpTarget(jumpTarget);
                      optimized = true;
                   }
                }

@@ -1614,6 +1614,30 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterAsmModeIndLongIdxXY(KickCParser.AsmModeIndLongIdxXYContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAsmModeIndLongIdxXY(KickCParser.AsmModeIndLongIdxXYContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAsmModeSPIndIdx(KickCParser.AsmModeSPIndIdxContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAsmModeSPIndIdx(KickCParser.AsmModeSPIndIdxContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAsmModeIdxIndXY(KickCParser.AsmModeIdxIndXYContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -1633,6 +1657,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAsmModeInd(KickCParser.AsmModeIndContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterAsmModeIndLong(KickCParser.AsmModeIndLongContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitAsmModeIndLong(KickCParser.AsmModeIndLongContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

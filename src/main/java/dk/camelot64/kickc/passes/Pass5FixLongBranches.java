@@ -157,7 +157,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       if(asmChunk != null) {
          //getLog().append("Found ASM chunk "+asmChunk);
          AsmLine asmLine = asmChunk.getAsmLine(idx);
-         if(asmLine != null && asmLine instanceof AsmInstruction) {
+         if(asmLine instanceof AsmInstruction) {
             //getLog().append("Found ASM line "+asmLine);
             AsmInstruction asmInstruction = (AsmInstruction) asmLine;
             AsmOpcode asmOpcode = asmInstruction.getAsmOpcode();
@@ -165,10 +165,10 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
             if(inverseAsmOpcode != null) {
                //getLog().append("Inversed branch instruction "+asmInstructionType.getMnemnonic()+" -> "+inverseType.getMnemnonic());
                getLog().append("Fixing long branch [" + idx + "] " + asmLine.toString() + " to " + inverseAsmOpcode.getMnemonic());
-               String branchDest = asmInstruction.getParameter();
+               String branchDest = asmInstruction.getOperandJumpTarget();
                asmInstruction.setAsmOpcode(inverseAsmOpcode);
                String newLabel = AsmFormat.asmFix("!" + branchDest);
-               asmInstruction.setParameter(newLabel+"+");
+               asmInstruction.setOperandJumpTarget(newLabel+"+");
                AsmOpcode jmpOpcode = AsmInstructionSet.getOpcode("jmp", AsmAddressingMode.ABS, false);
                AsmInstruction jmpInstruction = new AsmInstruction(jmpOpcode, branchDest);
                asmChunk.addLineAfter(asmInstruction, jmpInstruction);

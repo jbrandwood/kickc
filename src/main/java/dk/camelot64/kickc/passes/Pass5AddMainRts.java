@@ -28,7 +28,7 @@ public class Pass5AddMainRts extends Pass5AsmOptimization {
                if(line instanceof AsmInstruction) {
                   AsmInstruction instruction = (AsmInstruction) line;
                   if(instruction.getAsmOpcode().getMnemonic().equals("jsr")) {
-                     if(instruction.getParameter().equals(SymbolRef.MAIN_PROC_NAME)) {
+                     if(instruction.getOperand1().equals(SymbolRef.MAIN_PROC_NAME)) {
                         // Add RTS if it is missing
                         if(!lineIterator.hasNext()) {
                            addRts(lineIterator);

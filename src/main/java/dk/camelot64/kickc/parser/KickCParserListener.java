@@ -1542,6 +1542,30 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code asmModeIndLongIdxXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeIndLongIdxXY(KickCParser.AsmModeIndLongIdxXYContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeIndLongIdxXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeIndLongIdxXY(KickCParser.AsmModeIndLongIdxXYContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeSPIndIdx}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeSPIndIdx(KickCParser.AsmModeSPIndIdxContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeSPIndIdx}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeSPIndIdx(KickCParser.AsmModeSPIndIdxContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code asmModeIdxIndXY}
 	 * labeled alternative in {@link KickCParser#asmParamMode}.
 	 * @param ctx the parse tree
@@ -1565,6 +1589,18 @@ public interface KickCParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAsmModeInd(KickCParser.AsmModeIndContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code asmModeIndLong}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void enterAsmModeIndLong(KickCParser.AsmModeIndLongContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code asmModeIndLong}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 */
+	void exitAsmModeIndLong(KickCParser.AsmModeIndLongContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code asmExprReplace}
 	 * labeled alternative in {@link KickCParser#asmExpr}.

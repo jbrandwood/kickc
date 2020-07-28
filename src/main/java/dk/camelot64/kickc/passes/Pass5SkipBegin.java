@@ -42,7 +42,7 @@ public class Pass5SkipBegin extends Pass5AsmOptimization {
                } else if(line instanceof AsmInstruction) {
                   AsmInstruction instruction = (AsmInstruction) line;
                   if(instruction.getAsmOpcode().getMnemonic().equals("jsr")) {
-                     if(instruction.getParameter().equals(SymbolRef.MAIN_PROC_NAME)) {
+                     if(instruction.getOperandJumpTarget().equals(SymbolRef.MAIN_PROC_NAME)) {
                         lineIterator.remove();
                         optimized = true;
                         getLog().append("Removing instruction " + line.getAsm());

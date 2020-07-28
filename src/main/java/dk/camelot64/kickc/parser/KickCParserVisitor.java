@@ -912,6 +912,20 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAsmModeIndIdxXY(KickCParser.AsmModeIndIdxXYContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code asmModeIndLongIdxXY}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeIndLongIdxXY(KickCParser.AsmModeIndLongIdxXYContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeSPIndIdx}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeSPIndIdx(KickCParser.AsmModeSPIndIdxContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code asmModeIdxIndXY}
 	 * labeled alternative in {@link KickCParser#asmParamMode}.
 	 * @param ctx the parse tree
@@ -925,6 +939,13 @@ public interface KickCParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitAsmModeInd(KickCParser.AsmModeIndContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code asmModeIndLong}
+	 * labeled alternative in {@link KickCParser#asmParamMode}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsmModeIndLong(KickCParser.AsmModeIndLongContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code asmExprReplace}
 	 * labeled alternative in {@link KickCParser#asmExpr}.

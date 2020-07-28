@@ -329,7 +329,14 @@ public class AsmInstructionSet {
       if(AsmAddressingMode.ABY.equals(mode) && isZp) {
          asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.ZPY);
       }
+      if(AsmAddressingMode.IND.equals(mode) && isZp) {
+         asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.INZ);
+      }
+      if(AsmAddressingMode.IAX.equals(mode) && isZp) {
+         asmOpcode = set.getOpcode(mnemonic, AsmAddressingMode.IZX);
+      }
       if(asmOpcode == null) {
+         // If the ZP-variation does not exist use the ABS-variation
          asmOpcode = set.getOpcode(mnemonic, mode);
       }
       if(asmOpcode == null && AsmAddressingMode.ABS.equals(mode)) {

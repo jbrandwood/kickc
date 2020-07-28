@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAsmAddressingModes() throws IOException, URISyntaxException {
+      compileAndCompare("asm-addressing-modes.c");
+   }
+
+   @Test
    public void testCastingNegative() throws IOException, URISyntaxException {
       compileAndCompare("casting-negative.c");
    }

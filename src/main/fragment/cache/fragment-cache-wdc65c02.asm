@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 15c356fca7
+//KICKC FRAGMENT CACHE 155084773d
 //FRAGMENT vbuz1=_deref_pbuc1
 lda {c1}
 sta {z1}
@@ -16,11 +16,11 @@ ldx {c1}
 //FRAGMENT vbuz1=vbuaa_plus_1
 inc
 sta {z1}
-//FRAGMENT _deref_pbuc1=vbuaa
-sta {c1}
 //FRAGMENT vbuz1=vbuxx_plus_1
 inx
 stx {z1}
+//FRAGMENT _deref_pbuc1=vbuaa
+sta {c1}
 //FRAGMENT vbuyy=_deref_pbuc1
 ldy {c1}
 //FRAGMENT vbuz1=vbuyy_plus_1
@@ -43,8 +43,8 @@ inx
 //FRAGMENT _deref_pbuc1=vbuxx
 stx {c1}
 //FRAGMENT vbuxx=vbuaa_plus_1
-inc
 tax
+inx
 //FRAGMENT vbuxx=vbuxx_plus_1
 inx
 //FRAGMENT vbuxx=vbuyy_plus_1
@@ -57,8 +57,8 @@ iny
 //FRAGMENT _deref_pbuc1=vbuyy
 sty {c1}
 //FRAGMENT vbuyy=vbuaa_plus_1
-inc
 tay
+iny
 //FRAGMENT vbuyy=vbuxx_plus_1
 txa
 inc

@@ -1,4 +1,8 @@
-lsr
-lsr
-lsr
-lsr
+cmp #$80
+ror
+cmp #$80
+ror
+cmp #$80
+ror
+cmp #$80
+ror

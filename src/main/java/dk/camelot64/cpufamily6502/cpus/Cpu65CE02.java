@@ -56,7 +56,7 @@ public class Cpu65CE02 extends Cpu65xx {
       addOpcode(0xB3, "lbcs", CpuAddressingMode.REL, 3, "P");
       addOpcode(0xBB, "ldz", CpuAddressingMode.ABS, 4, "Znz");
       addOpcode(0xC2, "cpz", CpuAddressingMode.IMM, 2, "cnz");
-      addOpcode(0xC3, "dew", CpuAddressingMode.ABS, 5, "nz");
+      addOpcode(0xC3, "dew", CpuAddressingMode.ZP, 5, "nz");
       addOpcode(0xCB, "asw", CpuAddressingMode.ABS, 7, "cnz");
       addOpcode(0xD2, "cmp", CpuAddressingMode.IZZ, 5, "cnz");
       addOpcode(0xD3, "lbne", CpuAddressingMode.REL, 3, "P");
@@ -64,7 +64,7 @@ public class Cpu65CE02 extends Cpu65xx {
       addOpcode(0xDB, "phz", CpuAddressingMode.NON, 3, "S");
       addOpcode(0xDC, "cpz", CpuAddressingMode.ABS, 4, "cnz");
       addOpcode(0xE2, "lda", CpuAddressingMode.ISY, 6, "Anz");
-      addOpcode(0xE3, "inw", CpuAddressingMode.ABS, 5, "nz");
+      addOpcode(0xE3, "inw", CpuAddressingMode.ZP, 5, "nz");
       addOpcode(0xEA, "eom", CpuAddressingMode.NON, 1, "");
       addOpcode(0xEB, "row", CpuAddressingMode.ABS, 6, "cnz");
       addOpcode(0xF2, "sbc", CpuAddressingMode.IZZ, 5, "Acvnz");

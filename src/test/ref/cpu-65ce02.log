@@ -1,0 +1,260 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN + (number) 0)
+  (signed byte~) main::$0 ← - (signed byte) main::a#0
+  (signed byte) main::a#1 ← (signed byte~) main::$0
+  *((const nomodify signed byte*) SCREEN + (number) 1) ← (signed byte) main::a#1
+  (number~) main::$1 ← (signed byte) main::a#1 / (number) 4
+  *((const nomodify signed byte*) SCREEN + (number) 2) ← (number~) main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const nomodify signed byte*) SCREEN = (signed byte*)(number) $400
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(void()) main()
+(signed byte~) main::$0
+(number~) main::$1
+(label) main::@return
+(signed byte) main::a
+(signed byte) main::a#0
+(signed byte) main::a#1
+
+Adding number conversion cast (unumber) 0 in (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN + (number) 0)
+Adding number conversion cast (unumber) 1 in *((const nomodify signed byte*) SCREEN + (number) 1) ← (signed byte) main::a#1
+Adding number conversion cast (snumber) 4 in (number~) main::$1 ← (signed byte) main::a#1 / (number) 4
+Adding number conversion cast (snumber) main::$1 in (number~) main::$1 ← (signed byte) main::a#1 / (snumber)(number) 4
+Adding number conversion cast (unumber) 2 in *((const nomodify signed byte*) SCREEN + (number) 2) ← (snumber~) main::$1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (signed byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 4
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized signed number type (signed byte) 4
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to signed byte in (snumber~) main::$1 ← (signed byte) main::a#1 / (signed byte) 4
+Alias main::a#1 = main::$0 
+Successful SSA optimization Pass2AliasElimination
+Simplifying expression containing zero SCREEN in [0] (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN + (byte) 0)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Rewriting division to use shift [3] (signed byte~) main::$1 ← (signed byte) main::a#1 / (signed byte) 4
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Consolidated array index constant in *(SCREEN+1)
+Consolidated array index constant in *(SCREEN+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN)
+  [1] (signed byte) main::a#1 ← - (signed byte) main::a#0
+  [2] *((const nomodify signed byte*) SCREEN+(byte) 1) ← (signed byte) main::a#1
+  [3] (signed byte~) main::$1 ← (signed byte) main::a#1 >> (byte) 2
+  [4] *((const nomodify signed byte*) SCREEN+(byte) 2) ← (signed byte~) main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+(signed byte~) main::$1 4.0
+(signed byte) main::a
+(signed byte) main::a#0 4.0
+(signed byte) main::a#1 3.0
+
+Initial phi equivalence classes
+Added variable main::a#0 to live range equivalence class [ main::a#0 ]
+Added variable main::a#1 to live range equivalence class [ main::a#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Complete equivalence classes
+[ main::a#0 ]
+[ main::a#1 ]
+[ main::$1 ]
+Allocated zp[1]:2 [ main::a#0 ]
+Allocated zp[1]:3 [ main::a#1 ]
+Allocated zp[1]:4 [ main::$1 ]
+
+INITIAL ASM
+Target platform is c64basic / CSG65CE02
+  // File Comments
+// Test the 65CE02 CPU
+// A program that uses 65CE02 instructions
+  // Upstart
+.cpu _65ce02
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    .label __1 = 4
+    .label a = 2
+    .label a_1 = 3
+    // [0] (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN) -- vbsz1=_deref_pbsc1 
+    lda SCREEN
+    sta.z a
+    // [1] (signed byte) main::a#1 ← - (signed byte) main::a#0 -- vbsz1=_neg_vbsz2 
+    lda.z a
+    neg
+    sta.z a_1
+    // [2] *((const nomodify signed byte*) SCREEN+(byte) 1) ← (signed byte) main::a#1 -- _deref_pbsc1=vbsz1 
+    lda.z a_1
+    sta SCREEN+1
+    // [3] (signed byte~) main::$1 ← (signed byte) main::a#1 >> (byte) 2 -- vbsz1=vbsz2_ror_2 
+    lda.z a_1
+    asr
+    asr
+    sta.z __1
+    // [4] *((const nomodify signed byte*) SCREEN+(byte) 2) ← (signed byte~) main::$1 -- _deref_pbsc1=vbsz1 
+    // Becomes a NEG
+    lda.z __1
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] (signed byte) main::a#1 ← - (signed byte) main::a#0 [ main::a#1 ] (  [ main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [3] (signed byte~) main::$1 ← (signed byte) main::a#1 >> (byte) 2 [ main::$1 ] (  [ main::$1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::a#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::a#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 4: zp[1]:2 [ main::a#0 ] 4: zp[1]:4 [ main::$1 ] 3: zp[1]:3 [ main::a#1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination reg byte a [ main::a#0 ] reg byte a [ main::$1 ] reg byte a [ main::a#1 ] 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test the 65CE02 CPU
+// A program that uses 65CE02 instructions
+  // Upstart
+.cpu _65ce02
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN) -- vbsaa=_deref_pbsc1 
+    lda SCREEN
+    // [1] (signed byte) main::a#1 ← - (signed byte) main::a#0 -- vbsaa=_neg_vbsaa 
+    neg
+    // [2] *((const nomodify signed byte*) SCREEN+(byte) 1) ← (signed byte) main::a#1 -- _deref_pbsc1=vbsaa 
+    sta SCREEN+1
+    // [3] (signed byte~) main::$1 ← (signed byte) main::a#1 >> (byte) 2 -- vbsaa=vbsaa_ror_2 
+    asr
+    asr
+    // [4] *((const nomodify signed byte*) SCREEN+(byte) 2) ← (signed byte~) main::$1 -- _deref_pbsc1=vbsaa 
+    // Becomes a NEG
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const nomodify signed byte*) SCREEN = (signed byte*) 1024
+(void()) main()
+(signed byte~) main::$1 reg byte a 4.0
+(label) main::@return
+(signed byte) main::a
+(signed byte) main::a#0 reg byte a 4.0
+(signed byte) main::a#1 reg byte a 3.0
+
+reg byte a [ main::a#0 ]
+reg byte a [ main::a#1 ]
+reg byte a [ main::$1 ]
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// Test the 65CE02 CPU
+// A program that uses 65CE02 instructions
+  // Upstart
+.cpu _65ce02
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // a = SCREEN[0]
+    // [0] (signed byte) main::a#0 ← *((const nomodify signed byte*) SCREEN) -- vbsaa=_deref_pbsc1 
+    lda SCREEN
+    // a = -a
+    // [1] (signed byte) main::a#1 ← - (signed byte) main::a#0 -- vbsaa=_neg_vbsaa 
+    neg
+    // SCREEN[1] = a
+    // [2] *((const nomodify signed byte*) SCREEN+(byte) 1) ← (signed byte) main::a#1 -- _deref_pbsc1=vbsaa 
+    sta SCREEN+1
+    // a/4
+    // [3] (signed byte~) main::$1 ← (signed byte) main::a#1 >> (byte) 2 -- vbsaa=vbsaa_ror_2 
+    asr
+    asr
+    // SCREEN[2] = a/4
+    // [4] *((const nomodify signed byte*) SCREEN+(byte) 2) ← (signed byte~) main::$1 -- _deref_pbsc1=vbsaa 
+    // Becomes a NEG
+    sta SCREEN+2
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // File Data
+

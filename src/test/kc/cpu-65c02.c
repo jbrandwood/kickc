@@ -7,5 +7,5 @@ char* const SCREEN = 0x0400;
 
 void main() {
     char a = SCREEN[0];
-    SCREEN[1] = a+1;
+    SCREEN[1] = a+1; // will use INC A
 }

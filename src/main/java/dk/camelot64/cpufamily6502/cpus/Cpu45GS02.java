@@ -17,6 +17,8 @@ public class Cpu45GS02 extends Cpu65xx {
    public Cpu45GS02() {
       super(NAME, Cpu65CE02.INSTANCE);
       // TODO: Add 45GS02 instructions
+
+      // TODO: Disable NOP?
    }
 
 }

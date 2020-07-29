@@ -229,7 +229,7 @@ public class AsmProgram {
     * @return The clobbered registers
     */
    public CpuClobber getClobber() {
-      CpuClobber programClobber = new CpuClobber();
+      CpuClobber programClobber = CpuClobber.CLOBBER_NONE;
       for(AsmChunk chunk : chunks) {
          programClobber = new CpuClobber(programClobber, chunk.getClobber());
       }

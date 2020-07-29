@@ -70,7 +70,7 @@ public class Pass4InterruptClobberFix extends Pass2Base {
 
    private CpuClobber getProcedureClobber(Procedure procedure) {
       AsmProgram asm = getProgram().getAsm();
-      CpuClobber procClobber = new CpuClobber();
+      CpuClobber procClobber = CpuClobber.CLOBBER_NONE;
       for(AsmChunk asmChunk : asm.getChunks()) {
          if(procedure.getFullName().equals(asmChunk.getScopeLabel())) {
             if(asmChunk.getSource().contains(Procedure.InterruptType.HARDWARE_CLOBBER.name())) {

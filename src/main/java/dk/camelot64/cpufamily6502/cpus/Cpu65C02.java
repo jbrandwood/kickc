@@ -65,12 +65,10 @@ public class Cpu65C02 extends Cpu65xx {
       addOpcode(0xB7,"smb3", CpuAddressingMode.ZP,5,"");
       addOpcode(0xBF,"bbs3", CpuAddressingMode.REZ,5,"");
       addOpcode(0xC7,"smb4", CpuAddressingMode.ZP,5,"");
-      addOpcode(0xCB,"wai", CpuAddressingMode.NON,3,"");
       addOpcode(0xCF,"bbs4", CpuAddressingMode.REZ,5,"");
       addOpcode(0xD2,"cmp", CpuAddressingMode.INZ,5,"cnz");
       addOpcode(0xD7,"smb5", CpuAddressingMode.ZP,5,"");
       addOpcode(0xDA,"phx", CpuAddressingMode.NON,3,"");
-      addOpcode(0xDB,"stp", CpuAddressingMode.NON,3,"");
       addOpcode(0xDF,"bbs5", CpuAddressingMode.REZ,5,"");
       addOpcode(0xE7,"smb6", CpuAddressingMode.ZP,5,"");
       addOpcode(0xEF,"bbs6", CpuAddressingMode.REZ,5,"");
@@ -79,7 +77,12 @@ public class Cpu65C02 extends Cpu65xx {
       addOpcode(0xFA,"plx", CpuAddressingMode.NON,4,"Xnz");
       addOpcode(0xFF,"bbs7", CpuAddressingMode.REZ,5,"");
 
-      // TODO: Cycle differences for   ASL LSR ROL ROR abs,X - http://6502.org/tutorials/65c02opcodes.html
+      // TODO: Cycle differences for ASL LSR ROL ROR abs,X - http://6502.org/tutorials/65c02opcodes.html
+
+      // TODO: Maybe add the 65C02S CPU - which adds the following 2 instructions
+      //addOpcode(0xCB,"wai", CpuAddressingMode.NON,3,"");
+      //addOpcode(0xDB,"stp", CpuAddressingMode.NON,3,"");
+
    }
 
 }

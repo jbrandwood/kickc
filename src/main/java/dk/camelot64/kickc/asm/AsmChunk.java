@@ -174,7 +174,7 @@ public class AsmChunk {
       if(clobberOverwrite != null) {
          return clobberOverwrite;
       }
-      CpuClobber chunkClobber = new CpuClobber();
+      CpuClobber chunkClobber = CpuClobber.CLOBBER_NONE;
       for(AsmLine line : lines) {
          if(line instanceof AsmInstruction) {
             AsmInstruction asmInstruction = (AsmInstruction) line;

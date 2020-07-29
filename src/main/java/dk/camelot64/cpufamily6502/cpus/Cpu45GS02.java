@@ -11,7 +11,7 @@ public class Cpu45GS02 extends Cpu65xx {
    /** The 45GS02 CPU name. */
    public final static String NAME = "45gs02";
 
-   /** The 45GS02 with illegal CPU. */
+   /** The 45GS02 CPU. */
    public final static Cpu45GS02 INSTANCE = new Cpu45GS02();
 
    public Cpu45GS02() {

@@ -12,7 +12,7 @@ public class Cpu65CE02 extends Cpu65xx {
    /** The 65CE02 CPU name. */
    public final static String NAME = "65ce02";
 
-   /** The 65CE02 with illegal CPU. */
+   /** The 65CE02 CPU. */
    public final static Cpu65CE02 INSTANCE = new Cpu65CE02();
 
    public Cpu65CE02() {
@@ -30,18 +30,18 @@ public class Cpu65CE02 extends Cpu65xx {
       addOpcode(0x33, "lbmi", CpuAddressingMode.REL, 3, "P");
       addOpcode(0x3B, "dez", CpuAddressingMode.NON, 1, "Znz");
       addOpcode(0x42, "neg", CpuAddressingMode.NON, 2, "Anz");
-      addOpcode(0x43, "asr", CpuAddressingMode.NON, 2, "Anzc");
-      addOpcode(0x44, "asr", CpuAddressingMode.ZP, 4, "nzc");
+      addOpcode(0x43, "asr", CpuAddressingMode.NON, 2, "Acnz");
+      addOpcode(0x44, "asr", CpuAddressingMode.ZP, 4, "cnz");
       addOpcode(0x4B, "taz", CpuAddressingMode.NON, 1, "Znz");
       addOpcode(0x52, "eor", CpuAddressingMode.IZZ, 5, "Anz");
       addOpcode(0x53, "lbvc", CpuAddressingMode.REL, 3, "P");
-      addOpcode(0x54, "asr", CpuAddressingMode.ZPX, 4, "nzc");
+      addOpcode(0x54, "asr", CpuAddressingMode.ZPX, 4, "cnz");
       addOpcode(0x5B, "tab", CpuAddressingMode.NON, 1, "B");
       addOpcode(0x5C, "map", CpuAddressingMode.NON, 2, "");
       addOpcode(0x62, "rtn", CpuAddressingMode.IMM, 7, "P");
       addOpcode(0x63, "lbsr", CpuAddressingMode.REL, 3, "P");
       addOpcode(0x6B, "tza", CpuAddressingMode.NON, 1, "Anz");
-      addOpcode(0x72, "adc", CpuAddressingMode.IZZ, 5, "Anzvc");
+      addOpcode(0x72, "adc", CpuAddressingMode.IZZ, 5, "Acvnz");
       addOpcode(0x73, "lbvs", CpuAddressingMode.REL, 3, "P");
       addOpcode(0x7B, "tba", CpuAddressingMode.NON, 1, "Anz");
       addOpcode(0x82, "sta", CpuAddressingMode.ISY, 6, "");
@@ -55,19 +55,19 @@ public class Cpu65CE02 extends Cpu65xx {
       addOpcode(0xB2, "lda", CpuAddressingMode.IZZ, 5, "Anz");
       addOpcode(0xB3, "lbcs", CpuAddressingMode.REL, 3, "P");
       addOpcode(0xBB, "ldz", CpuAddressingMode.ABS, 4, "Znz");
-      addOpcode(0xC2, "cpz", CpuAddressingMode.IMM, 2, "nzc");
+      addOpcode(0xC2, "cpz", CpuAddressingMode.IMM, 2, "cnz");
       addOpcode(0xC3, "dew", CpuAddressingMode.ABS, 5, "nz");
-      addOpcode(0xCB, "asw", CpuAddressingMode.ABS, 7, "nzc");
-      addOpcode(0xD2, "cmp", CpuAddressingMode.IZZ, 5, "nzc");
+      addOpcode(0xCB, "asw", CpuAddressingMode.ABS, 7, "cnz");
+      addOpcode(0xD2, "cmp", CpuAddressingMode.IZZ, 5, "cnz");
       addOpcode(0xD3, "lbne", CpuAddressingMode.REL, 3, "P");
-      addOpcode(0xD4, "cpz", CpuAddressingMode.ZP, 3, "nzc");
+      addOpcode(0xD4, "cpz", CpuAddressingMode.ZP, 3, "cnz");
       addOpcode(0xDB, "phz", CpuAddressingMode.NON, 3, "S");
-      addOpcode(0xDC, "cpz", CpuAddressingMode.ABS, 4, "nzc");
+      addOpcode(0xDC, "cpz", CpuAddressingMode.ABS, 4, "cnz");
       addOpcode(0xE2, "lda", CpuAddressingMode.ISY, 6, "Anz");
       addOpcode(0xE3, "inw", CpuAddressingMode.ABS, 5, "nz");
       addOpcode(0xEA, "eom", CpuAddressingMode.NON, 1, "");
-      addOpcode(0xEB, "row", CpuAddressingMode.ABS, 6, "nzc");
-      addOpcode(0xF2, "sbc", CpuAddressingMode.IZZ, 5, "Anzcv");
+      addOpcode(0xEB, "row", CpuAddressingMode.ABS, 6, "cnz");
+      addOpcode(0xF2, "sbc", CpuAddressingMode.IZZ, 5, "Acvnz");
       addOpcode(0xF3, "lbeq", CpuAddressingMode.REL, 3, "P");
       addOpcode(0xF4, "phw", CpuAddressingMode.IMM, 5, "S");
       addOpcode(0xFB, "plz", CpuAddressingMode.NON, 3, "ZnzS");

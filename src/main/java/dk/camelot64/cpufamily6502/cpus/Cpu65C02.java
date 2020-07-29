@@ -12,7 +12,7 @@ public class Cpu65C02 extends Cpu65xx {
    /** The 65C02 CPU name. */
    public final static String NAME = "65c02";
 
-   /** The 65C02 with illegal CPU. */
+   /** The 65C02 CPU. */
    public final static Cpu65C02 INSTANCE = new Cpu65C02();
 
    public Cpu65C02() {

@@ -1,6 +1,6 @@
 // Tests the different ASM addressing modes
 
-#pragma cpu(csg65ce02)
+#pragma cpu(mega45gs02)
 
 void main() {
 
@@ -45,9 +45,12 @@ void main() {
         lbl2:
         // 65C02: ($1234,X)
         jmp ($1234,x)
+        lbl3:
+        // 45GS02: Indirect Long,Z
+        lda (($12)),z
+        // 45GS02: Indirect Long
+        ldq (($12))
     }
-
-
 
 }
 

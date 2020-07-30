@@ -37,19 +37,6 @@ void main() {
         lbl2:
         // 65C02: ($1234,X)
         jmp ($1234,x)
-
-        // TODO Stack Pointer Indirect Indexed
-        //lda ($12,sp),y
-
-        // TODO Indirect,Z
-        //lda ($12),z
-
-        // TODO Indirect Long,Z
-        //lda (($12)),z
-
-        // TODO Indirect Long
-        //lda (($12))
-
     }
 
 }

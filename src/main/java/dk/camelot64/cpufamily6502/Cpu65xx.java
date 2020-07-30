@@ -1,13 +1,16 @@
 package dk.camelot64.cpufamily6502;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A 6502 family CPU. The CPU has an instruction set.
  */
 public class Cpu65xx {
 
-   /**  The CPU name. */
+   /** The CPU name. */
    private final String name;
 
    /** All opcodes in the instruction set. */
@@ -40,8 +43,19 @@ public class Cpu65xx {
     * @param cycles The number of cycles
     */
    protected void addOpcode(int opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
-      CpuOpcode cpuOpcode = new CpuOpcode(opcode, mnemonic, addressingMode, cycles, clobberString);
-      addOpcode(cpuOpcode);
+      addOpcode(new int[opcode], mnemonic, addressingMode, cycles, clobberString);
+   }
+
+   /**
+    * Add an instruction opcode to the instruction set.
+    *
+    * @param opcode The numeric opcodes
+    * @param mnemonic The lower case mnemonic
+    * @param addressingMode The addressing mode
+    * @param cycles The number of cycles
+    */
+   protected void addOpcode(int[] opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
+      addOpcode(new CpuOpcode(opcode, mnemonic, addressingMode, cycles, clobberString));
    }
 
    /**

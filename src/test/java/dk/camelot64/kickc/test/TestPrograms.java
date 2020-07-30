@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCpu45GS02AddressingModes() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-45gs02-addressing-modes.c");
+   }
+
+   @Test
    public void testCpu65CE02AddressingModes() throws IOException, URISyntaxException {
       compileAndCompare("cpu-65ce02-addressing-modes.c");
    }
@@ -58,13 +63,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testMega65C65ce02() throws IOException, URISyntaxException {
+   public void testCpu45GS02() throws IOException, URISyntaxException {
       compileAndCompare("cpu-45gs02.c");
    }
 
    @Test
    public void testCpu65CE02() throws IOException, URISyntaxException {
-      compileAndCompare("cpu-65ce02.c", log());
+      compileAndCompare("cpu-65ce02.c");
    }
 
    @Test

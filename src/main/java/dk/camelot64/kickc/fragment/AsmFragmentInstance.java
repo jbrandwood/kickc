@@ -338,7 +338,7 @@ public class AsmFragmentInstance {
          String operand1 = param1 == null ? null : param1.getParam();
          String operand2 = param2 == null ? null : param2.getParam();
          if(cpuOpcode == null) {
-            throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2));
+            throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2) +" by CPU "+this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
          }
          return new AsmInstruction(cpuOpcode, operand1, operand2);
       }

@@ -26,8 +26,8 @@ public class CpuOpcode {
    /** Which registers/flags of the CPU are clobbered by the instruction. */
    private final CpuClobber clobber;
 
-   CpuOpcode(int opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
-      this.opcode = new int[]{opcode};
+   CpuOpcode(int[] opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
+      this.opcode = opcode;
       this.mnemonic = mnemonic;
       this.addressingMode = addressingMode;
       this.cycles = cycles;

@@ -1,9 +1,6 @@
 package dk.camelot64.cpufamily6502;
 
-import dk.camelot64.cpufamily6502.cpus.Cpu6502Illegal;
-import dk.camelot64.cpufamily6502.cpus.Cpu6502Official;
-import dk.camelot64.cpufamily6502.cpus.Cpu65C02;
-import dk.camelot64.cpufamily6502.cpus.Cpu65CE02;
+import dk.camelot64.cpufamily6502.cpus.*;
 import kickass._65xx._65xxArgType;
 import kickass._65xx.cpus.*;
 import org.junit.Assert;
@@ -36,6 +33,11 @@ public class TestCpuFamilyKickAssCompatibility {
       assertOpcodesMatch(Cpu65CE02.INSTANCE, CPU_65CE02.instance);
    }
 
+   @Test
+   public void testOpcodes45GS02() {
+      assertOpcodesMatch(Cpu45GS02.INSTANCE, CPU_45GS02.instance);
+   }
+
    private void assertOpcodesMatch(Cpu65xx kcCpu, Cpu kaCpu) {
       final Collection<CpuOpcode> kcAllOpcodes = kcCpu.getAllOpcodes();
       final Map<String, int[]> kaAllMnemonics = kaCpu.mnemonics;
@@ -55,7 +57,22 @@ public class TestCpuFamilyKickAssCompatibility {
                final int kaOpcodeRaw = kaOpcodes[kaArgTypeIdx];
                if(kaOpcodeRaw >= 0) {
                   found = true;
-                  final int[] kaOpcode = new int[]{kaOpcodeRaw};
+                  int[] kaOpcode;
+                  if(kcOpcode.getOpcode().length==1) {
+                     kaOpcode  = new int[]{kaOpcodeRaw};
+                  }  else {
+                     List<Integer> kaOpcodeList = new ArrayList<>();
+                     if(CPU_45GS02.R32_MNEMONICS.contains(kcOpcode.getMnemonic())) {
+                        kaOpcodeList.add((int)CPU_45GS02.R32_OPCODE_PREFIX);
+                        kaOpcodeList.add((int)CPU_45GS02.R32_OPCODE_PREFIX);
+                     }
+                     if (kaArgType == _65xxArgType.indirect32ZeropageZ || kaArgType == _65xxArgType.indirect32Zeropage) {
+                        // Make sure the prefix is unsigned
+                        kaOpcodeList.add(CPU_45GS02.A32_OPCODE_PREFIX&0xff);
+                     }
+                     kaOpcodeList.add(kaOpcodeRaw);
+                     kaOpcode = kaOpcodeList.stream().mapToInt(i->i).toArray();
+                  }
                   Assert.assertArrayEquals("KickAss opcode not matching for mnemonic " + kcOpcode.toString(), kcOpcode.getOpcode(), kaOpcode);
                }
             }

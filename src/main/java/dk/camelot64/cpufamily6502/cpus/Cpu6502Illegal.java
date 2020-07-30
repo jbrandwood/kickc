@@ -27,7 +27,7 @@ public class Cpu6502Illegal extends Cpu65xx {
       addOpcode(0x1f, "slo", CpuAddressingMode.ABX, 7.0, "Acnz");
       addOpcode(0x23, "rla", CpuAddressingMode.IZX, 8.0, "Acnz");
       addOpcode(0x27, "rla", CpuAddressingMode.ZP, 5.0, "Acnz");
-      addOpcode(0x2b, "anc", CpuAddressingMode.IMM, 2.0, "Acnz");
+      addOpcode(0x2b, "anc2", CpuAddressingMode.IMM, 2.0, "Acnz");
       addOpcode(0x2f, "rla", CpuAddressingMode.ABS, 6.0, "Acnz");
       addOpcode(0x33, "rla", CpuAddressingMode.IZY, 8.0, "Acnz");
       addOpcode(0x37, "rla", CpuAddressingMode.ZPX, 6.0, "Acnz");
@@ -74,11 +74,11 @@ public class Cpu6502Illegal extends Cpu65xx {
       addOpcode(0xd3, "dcp", CpuAddressingMode.IZY, 8.0, "cnz");
       addOpcode(0xd7, "dcp", CpuAddressingMode.ZPX, 6.0, "cnz");
       addOpcode(0xdb, "dcp", CpuAddressingMode.ABY, 7.0, "cnz");
-      addOpcode(0xe2, "isc", CpuAddressingMode.IZX, 8.0, "Acvnz");
-      addOpcode(0xe6, "isc", CpuAddressingMode.ZP, 5.0, "Acvnz");
-      addOpcode(0xea, "sbc", CpuAddressingMode.IMM, 2.0, "Acvnz");
-      addOpcode(0xee, "isc", CpuAddressingMode.ABS, 6.0, "Acvnz");
-      addOpcode(0xef, "dcp", CpuAddressingMode.ABX, 7.0, "cnz");
+      addOpcode(0xdf, "dcp", CpuAddressingMode.ABX, 7.0, "cnz");
+      addOpcode(0xe3, "isc", CpuAddressingMode.IZX, 8.0, "Acvnz");
+      addOpcode(0xe7, "isc", CpuAddressingMode.ZP, 5.0, "Acvnz");
+      addOpcode(0xe9, "sbc", CpuAddressingMode.IMM, 2.0, "Acvnz");
+      addOpcode(0xef, "isc", CpuAddressingMode.ABS, 6.0, "Acvnz");
       addOpcode(0xf3, "isc", CpuAddressingMode.IZY, 8.0, "Acvnz");
       addOpcode(0xf7, "isc", CpuAddressingMode.ZPX, 6.0, "Acvnz");
       addOpcode(0xfb, "isc", CpuAddressingMode.ABY, 7.0, "Acvnz");

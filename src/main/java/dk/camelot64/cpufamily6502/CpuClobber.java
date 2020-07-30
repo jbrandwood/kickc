@@ -123,7 +123,7 @@ public class CpuClobber implements Serializable {
       );
    }
 
-   private String toClobberString() {
+   public String toClobberString() {
       return
             (registerA ? "A" : "") +
                   (registerX ? "X" : "") +

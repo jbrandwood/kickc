@@ -1,9 +1,6 @@
 package dk.camelot64.cpufamily6502;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A 6502 family CPU. The CPU has an instruction set.
@@ -35,6 +32,14 @@ public class Cpu65xx {
    }
 
    /**
+    * Get the CPU name.
+    * @return The name
+    */
+   public String getName() {
+      return name;
+   }
+
+   /**
     * Add an instruction opcode to the instruction set.
     *
     * @param opcode The numeric opcode
@@ -43,7 +48,7 @@ public class Cpu65xx {
     * @param cycles The number of cycles
     */
    protected void addOpcode(int opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
-      addOpcode(new int[opcode], mnemonic, addressingMode, cycles, clobberString);
+      addOpcode(new int[] { opcode }, mnemonic, addressingMode, cycles, clobberString);
    }
 
    /**
@@ -68,6 +73,20 @@ public class Cpu65xx {
       opcodesByMnemonicAddrMode.put(cpuOpcode.getMnemonic() + "_" + cpuOpcode.getAddressingMode().getName(), cpuOpcode);
    }
 
+   /**
+    * Remove an opcode from the instruction set. (should only be done during initialization)
+    * @param mnemonic The lower case mnemonic
+    * @param addressingMode The addressing mode
+    */
+   protected void removeOpcode(String mnemonic, CpuAddressingMode addressingMode) {
+      final CpuOpcode opcode = getOpcode(mnemonic, addressingMode);
+      if(opcode==null)
+         throw new RuntimeException("Opcode not found "+mnemonic+" "+addressingMode.getName());
+      allOpcodes.remove(opcode);
+      opcodesByMnemonicAddrMode.remove(opcode.getMnemonic() + "_" + opcode.getAddressingMode().getName());
+   }
+
+
 
    /**
     * Get a specific instruction opcode form the instruction set
@@ -76,7 +95,7 @@ public class Cpu65xx {
     * @param addressingMode The addressing mode
     * @return The opcode, if is exists. Null if the instruction set does not have the opcode.
     */
-   private CpuOpcode getOpcode(String mnemonic, CpuAddressingMode addressingMode) {
+   protected CpuOpcode getOpcode(String mnemonic, CpuAddressingMode addressingMode) {
       String key = mnemonic.toLowerCase() + "_" + addressingMode.getName();
       return opcodesByMnemonicAddrMode.get(key);
    }
@@ -119,4 +138,11 @@ public class Cpu65xx {
       return cpuOpcode;
    }
 
+   /**
+    * Get all the opcodes of the CPU
+    * @return The opcodes
+    */
+   public Collection<CpuOpcode> getAllOpcodes() {
+      return Collections.unmodifiableCollection(allOpcodes);
+   }
 }

@@ -1,5 +1,7 @@
 package dk.camelot64.cpufamily6502;
 
+import java.util.Arrays;
+
 /** A specific opcode in the instruction set of a 6502 family CPU. */
 public class CpuOpcode {
 
@@ -125,4 +127,13 @@ public class CpuOpcode {
       return clobber.isRegisterPC();
    }
 
+   @Override
+   public String toString() {
+      return
+            Arrays.toString(opcode) +     " "+
+                  mnemonic + " " + addressingMode.getName() + " - " +
+                  "cycles:" +cycles + " " +
+                  "clobber:" + clobber.toClobberString()
+            ;
+   }
 }

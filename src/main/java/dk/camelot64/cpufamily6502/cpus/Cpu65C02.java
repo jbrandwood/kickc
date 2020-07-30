@@ -33,7 +33,7 @@ public class Cpu65C02 extends Cpu65xx {
       addOpcode(0x34,"bit", CpuAddressingMode.ZPX,4,"nvz");
       addOpcode(0x37,"rmb3", CpuAddressingMode.ZP,5,"");
       addOpcode(0x3A,"dec", CpuAddressingMode.NON,2,"Anz");
-      addOpcode(0x3C,"bit", CpuAddressingMode.ZPX,4.5,"nvz");
+      addOpcode(0x3C,"bit", CpuAddressingMode.ABX,4.5,"nvz");
       addOpcode(0x3F,"bbr3", CpuAddressingMode.REZ,5,"");
       addOpcode(0x47,"rmb4", CpuAddressingMode.ZP,5,"");
       addOpcode(0x4F,"bbr4", CpuAddressingMode.REZ,5,"");
@@ -50,14 +50,14 @@ public class Cpu65C02 extends Cpu65xx {
       addOpcode(0x7A,"ply", CpuAddressingMode.NON,4,"Ynz");
       addOpcode(0x7C,"jmp", CpuAddressingMode.IAX,6,"");
       addOpcode(0x7F,"bbr7", CpuAddressingMode.REZ,5,"");
-      addOpcode(0x80,"bra", CpuAddressingMode.NON,3,"");
+      addOpcode(0x80,"bra", CpuAddressingMode.REL,3,"");
       addOpcode(0x87,"smb0", CpuAddressingMode.ZP,5,"");
-      addOpcode(0x89,"bit", CpuAddressingMode.IAX,2,"z");
+      addOpcode(0x89,"bit", CpuAddressingMode.IMM,2,"z");
       addOpcode(0x8F,"bbs0", CpuAddressingMode.REZ,5,"");
       addOpcode(0x92,"sta", CpuAddressingMode.INZ,5,"");
       addOpcode(0x97,"smb1", CpuAddressingMode.ZP,5,"");
       addOpcode(0x9C,"stz", CpuAddressingMode.ABS,4,"");
-      addOpcode(0x9E,"stz", CpuAddressingMode.ZPX,5,"");
+      addOpcode(0x9E,"stz", CpuAddressingMode.ABX,5,"");
       addOpcode(0x9F,"bbs1", CpuAddressingMode.REZ,5,"");
       addOpcode(0xA7,"smb2", CpuAddressingMode.ZP,5,"");
       addOpcode(0xAF,"bbs2", CpuAddressingMode.REZ,5,"");

@@ -1,6 +1,7 @@
 package dk.camelot64.cpufamily6502;
 
 import java.util.Arrays;
+import java.util.List;
 
 /** A specific opcode in the instruction set of a 6502 family CPU. */
 public class CpuOpcode {
@@ -65,13 +66,18 @@ public class CpuOpcode {
       return cycles;
    }
 
+   /** Opcodes that use an extra byte for their operand that the addressing mode reports. This is immediate word and long branches.
+    * The format of the string is <code>mnemonic + " " +  addressingMode</code> */
+   public static List<String> LONG_MNEMONICS = Arrays.asList("phw #imm", "lbra rel", "lbne rel", "lbeq rel", "lbcc rel", "lbcs rel", "lbmi rel", "lbpl rel", "lbvs rel", "lbvc rel", "lbsr rel" );
+
    /**
     * Get the number of bytes the instruction with operands takes up in memory
     *
     * @return The number of bytes.
     */
    public int getBytes() {
-      return addressingMode.getBytes();
+      final int numBytes = opcode.length + addressingMode.getBytes() + (LONG_MNEMONICS.contains(mnemonic+" "+addressingMode.getName())?1:0);
+      return numBytes;
    }
 
    /**
@@ -83,16 +89,6 @@ public class CpuOpcode {
     */
    public int[] getOpcode() {
       return opcode;
-   }
-
-   /**
-    * Determines if this instruction has a specific single byte opcode
-    *
-    * @param opcode The byte opcode to check
-    * @return true if this instruction has a 1-byte opcode that matches the passed value.
-    */
-   public boolean hasOpcode(int opcode) {
-      return this.opcode.length == 1 && this.opcode[0] == (byte) opcode;
    }
 
    /**

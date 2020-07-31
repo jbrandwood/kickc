@@ -8,8 +8,7 @@ import org.junit.Test;
 
 import java.util.*;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.*;
 
 public class TestCpuFamilyKickAssCompatibility {
 
@@ -49,41 +48,57 @@ public class TestCpuFamilyKickAssCompatibility {
          assertNotNull("KickAss CPU " + kaCpu.name + " does not know the KickC CPU " + kcCpu.getName() + " mnemonic", kcOpcode.getMnemonic());
          final List<_65xxArgType> kaArgTypes = kaAddressingModeMap.get(kcOpcode.getAddressingMode());
          assertNotNull("KickAss addressing mode not found " + kcOpcode.getAddressingMode().getName(), kaArgTypes);
-         // Try each argtype
+         // Try each argtype to find the one that works
          boolean found = false;
          for(_65xxArgType kaArgType : kaArgTypes) {
             final int kaArgTypeIdx = kaArgType.getIdNo();
-            if(kaOpcodes!=null && kaOpcodes.length>kaArgTypeIdx) {
+            if(kaOpcodes != null && kaOpcodes.length > kaArgTypeIdx) {
                final int kaOpcodeRaw = kaOpcodes[kaArgTypeIdx];
                if(kaOpcodeRaw >= 0) {
                   found = true;
-                  int[] kaOpcode;
-                  if(kcOpcode.getOpcode().length==1) {
-                     kaOpcode  = new int[]{kaOpcodeRaw};
-                  }  else {
-                     List<Integer> kaOpcodeList = new ArrayList<>();
-                     if(CPU_45GS02.R32_MNEMONICS.contains(kcOpcode.getMnemonic())) {
-                        kaOpcodeList.add((int)CPU_45GS02.R32_OPCODE_PREFIX);
-                        kaOpcodeList.add((int)CPU_45GS02.R32_OPCODE_PREFIX);
-                     }
-                     if (kaArgType == _65xxArgType.indirect32ZeropageZ || kaArgType == _65xxArgType.indirect32Zeropage) {
-                        // Make sure the prefix is unsigned
-                        kaOpcodeList.add(CPU_45GS02.A32_OPCODE_PREFIX&0xff);
-                     }
-                     kaOpcodeList.add(kaOpcodeRaw);
-                     kaOpcode = kaOpcodeList.stream().mapToInt(i->i).toArray();
-                  }
+                  int[] kaOpcode = getKAOpcode(kaOpcodeRaw, kaArgType, kcOpcode.getMnemonic());
                   Assert.assertArrayEquals("KickAss opcode not matching for mnemonic " + kcOpcode.toString(), kcOpcode.getOpcode(), kaOpcode);
+
+                  int kaByteSize = kaOpcode.length + kaArgType.getByteSize();
+                  assertEquals("KickAss opcode byte size not matching KickC byte size "+kcOpcode.toString(), kcOpcode.getBytes(), kaByteSize);
                }
             }
          }
          assertTrue("KickAss opcode not found for mnemonic " + kcOpcode.toString(), found);
       }
 
+      // Test that each KickAss opcode has a matching KickC opcode
+
+
+   }
+
+   /**
+    * Convert KickAssembler opcode to int array, that also contains the prefix opcodes used by 45GS02.
+    *
+    * @param kaOpcodeRaw The "raw" one-byte opcode
+    * @param kaArgType The addressing mode
+    * @param mnemonic The instruction mnemonic
+    * @return The opcode list.
+    */
+   private int[] getKAOpcode(int kaOpcodeRaw, _65xxArgType kaArgType, String mnemonic) {
+      List<Integer> kaOpcodeList = new ArrayList<>();
+      if(CPU_45GS02.R32_MNEMONICS.contains(mnemonic)) {
+         // Make sure the prefix is unsigned
+         kaOpcodeList.add((int) CPU_45GS02.R32_OPCODE_PREFIX & 0xff);
+         kaOpcodeList.add((int) CPU_45GS02.R32_OPCODE_PREFIX & 0xff);
+      }
+      if(kaArgType == _65xxArgType.indirect32ZeropageZ || kaArgType == _65xxArgType.indirect32Zeropage) {
+         // Make sure the prefix is unsigned
+         kaOpcodeList.add(CPU_45GS02.A32_OPCODE_PREFIX & 0xff);
+      }
+      kaOpcodeList.add(kaOpcodeRaw);
+      int[] kaOpcode = kaOpcodeList.stream().mapToInt(i -> i).toArray();
+      return kaOpcode;
    }
 
    /**
     * Get the KickAss ArgType that matches a KickC addressing mode.
+    *
     * @return The argtype.
     */
    Map<CpuAddressingMode, List<_65xxArgType>> getKAAddressingModeMap() {
@@ -107,7 +122,6 @@ public class TestCpuFamilyKickAssCompatibility {
       map.put(CpuAddressingMode.ISY, Collections.singletonList(_65xxArgType.indirectStackZeropageY));
       map.put(CpuAddressingMode.REL, Arrays.asList(_65xxArgType.relative, _65xxArgType.relativeWord));
       map.put(CpuAddressingMode.REZ, Collections.singletonList(_65xxArgType.zeropageRelative));
-      // TODO: Handle Immediate Word, relative Word
       return map;
    }
 

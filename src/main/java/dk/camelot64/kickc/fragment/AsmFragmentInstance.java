@@ -181,17 +181,17 @@ public class AsmFragmentInstance {
    private static class AsmSequenceGenerator extends KickCParserBaseVisitor {
 
       private final String name;
-      private final AsmProgram program;
+      private final AsmProgram asmProgram;
       private final AsmFragmentInstance fragmentInstance;
 
-      public AsmSequenceGenerator(String name, AsmFragmentInstance fragmentInstance, AsmProgram program) {
+      public AsmSequenceGenerator(String name, AsmFragmentInstance fragmentInstance, AsmProgram asmProgram) {
          this.name = name;
          this.fragmentInstance = fragmentInstance;
-         this.program = program;
+         this.asmProgram = asmProgram;
       }
 
-      public AsmProgram getProgram() {
-         return program;
+      public AsmProgram getAsmProgram() {
+         return asmProgram;
       }
 
       public void generate(KickCParser.AsmLinesContext context) {
@@ -200,14 +200,14 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-         program.addLine(new AsmLabel(ctx.ASM_NAME().getText()));
+         asmProgram.addLine(new AsmLabel(ctx.ASM_NAME().getText()));
          return null;
       }
 
       @Override
       public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
          String label = ctx.ASM_MULTI_NAME().getText();
-         program.addLine(new AsmLabel(label));
+         asmProgram.addLine(new AsmLabel(label));
          return null;
       }
 
@@ -217,7 +217,7 @@ public class AsmFragmentInstance {
          for(int i = 1; i < ctx.getChildCount(); i = i + 2) {
             values.add(ctx.getChild(i).getText());
          }
-         program.addLine(new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values));
+         asmProgram.addLine(new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values));
          return null;
       }
 
@@ -231,7 +231,7 @@ public class AsmFragmentInstance {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
          }
          if(instruction != null) {
-            program.addLine(instruction);
+            asmProgram.addLine(instruction);
          } else {
             throw new RuntimeException("Error parsing ASM fragment line " + name + ".asm\n - Line: " + ctx.getText());
          }
@@ -334,7 +334,7 @@ public class AsmFragmentInstance {
          AsmParameter param2 = operand2Ctx == null ? null : (AsmParameter) this.visit(operand2Ctx);
          // Convert to ZP-addressing mode if possible
          boolean isZp = param1 != null && param1.isZp();
-         CpuOpcode cpuOpcode = this.fragmentInstance.fragmentTemplate.getTargetCpu().getCpu65xx().getOpcode(mnemonic, addressingMode, isZp);
+         CpuOpcode cpuOpcode = this.getAsmProgram().getTargetCpu().getCpu65xx().getOpcode(mnemonic, addressingMode, isZp);
          String operand1 = param1 == null ? null : param1.getParam();
          String operand2 = param2 == null ? null : param2.getParam();
          if(cpuOpcode == null) {

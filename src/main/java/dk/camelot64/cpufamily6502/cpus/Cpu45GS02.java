@@ -16,7 +16,7 @@ public class Cpu45GS02 extends Cpu65xx {
    public final static Cpu45GS02 INSTANCE = new Cpu45GS02();
 
    public Cpu45GS02() {
-      super(NAME, Cpu65CE02.INSTANCE);
+      super(NAME, Cpu65CE02.INSTANCE, true);
 
       addOpcode( new int[] {0x42, 0x42, 0x5},"orq",CpuAddressingMode.ZP,8,"AXYZnz");
       addOpcode( new int[] {0x42, 0x42, 0x6},"aslq",CpuAddressingMode.ZP,12,"cnz");

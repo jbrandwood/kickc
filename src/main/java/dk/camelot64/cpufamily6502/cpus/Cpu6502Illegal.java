@@ -16,7 +16,7 @@ public class Cpu6502Illegal extends Cpu65xx {
    public final static Cpu6502Illegal INSTANCE = new Cpu6502Illegal();
 
    public Cpu6502Illegal() {
-      super(NAME, Cpu6502Official.INSTANCE);
+      super(NAME, Cpu6502Official.INSTANCE, false);
       addOpcode(0x03, "slo", CpuAddressingMode.IZX, 8.0, "Acnz");
       addOpcode(0x07, "slo", CpuAddressingMode.ZP, 5.0, "Acnz");
       addOpcode(0x0b, "anc", CpuAddressingMode.IMM, 2.0, "Acnz");

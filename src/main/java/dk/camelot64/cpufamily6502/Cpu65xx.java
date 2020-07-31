@@ -13,19 +13,21 @@ public class Cpu65xx {
    /** All opcodes in the instruction set. */
    private final List<CpuOpcode> allOpcodes;
 
+   /** true if the CPU has a Z register. */
+   private boolean registerZ;
+
    /** Maps mnemonic_addressingMode to the instruction opcode */
    private final Map<String, CpuOpcode> opcodesByMnemonicAddrMode;
 
-   public Cpu65xx(String name) {
+   public Cpu65xx(String name, boolean registerZ) {
       this.name = name;
+      this.registerZ = registerZ;
       this.allOpcodes = new ArrayList<>();
       this.opcodesByMnemonicAddrMode = new LinkedHashMap<>();
    }
 
-   public Cpu65xx(String name, Cpu65xx basedOn) {
-      this.name = name;
-      this.allOpcodes = new ArrayList<>();
-      this.opcodesByMnemonicAddrMode = new LinkedHashMap<>();
+   public Cpu65xx(String name, Cpu65xx basedOn, boolean registerZ) {
+      this(name, registerZ);
       for(CpuOpcode opcode : basedOn.allOpcodes) {
          addOpcode(opcode);
       }
@@ -33,10 +35,20 @@ public class Cpu65xx {
 
    /**
     * Get the CPU name.
+    *
     * @return The name
     */
    public String getName() {
       return name;
+   }
+
+   /**
+    * Does the CPU have an extra Z-register. (only the 65ce02 and 45gs02) have this.
+    *
+    * @return true if the CPU has a Z register
+    */
+   public boolean hasRegisterZ() {
+      return registerZ;
    }
 
    /**
@@ -48,7 +60,7 @@ public class Cpu65xx {
     * @param cycles The number of cycles
     */
    protected void addOpcode(int opcode, String mnemonic, CpuAddressingMode addressingMode, double cycles, String clobberString) {
-      addOpcode(new int[] { opcode }, mnemonic, addressingMode, cycles, clobberString);
+      addOpcode(new int[]{opcode}, mnemonic, addressingMode, cycles, clobberString);
    }
 
    /**
@@ -75,18 +87,17 @@ public class Cpu65xx {
 
    /**
     * Remove an opcode from the instruction set. (should only be done during initialization)
+    *
     * @param mnemonic The lower case mnemonic
     * @param addressingMode The addressing mode
     */
    protected void removeOpcode(String mnemonic, CpuAddressingMode addressingMode) {
       final CpuOpcode opcode = getOpcode(mnemonic, addressingMode);
-      if(opcode==null)
-         throw new RuntimeException("Opcode not found "+mnemonic+" "+addressingMode.getName());
+      if(opcode == null)
+         throw new RuntimeException("Opcode not found " + mnemonic + " " + addressingMode.getName());
       allOpcodes.remove(opcode);
       opcodesByMnemonicAddrMode.remove(opcode.getMnemonic() + "_" + opcode.getAddressingMode().getName());
    }
-
-
 
    /**
     * Get a specific instruction opcode form the instruction set
@@ -140,6 +151,7 @@ public class Cpu65xx {
 
    /**
     * Get all the opcodes of the CPU
+    *
     * @return The opcodes
     */
    public Collection<CpuOpcode> getAllOpcodes() {

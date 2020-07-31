@@ -1,4 +1,15 @@
-//KICKC FRAGMENT CACHE 15bc71afc6
+//KICKC FRAGMENT CACHE 1368a0c981
+//FRAGMENT vbuzz=vbuc1
+ldz #{c1}
+//FRAGMENT vbuzz_lt_vbuc1_then_la1
+cpz #{c1}
+bcc {la1}
+//FRAGMENT pbuc1_derefidx_vbuzz=vbuzz
+tza
+tax
+sta {c1},x
+//FRAGMENT vbuzz=_inc_vbuzz
+inz
 //FRAGMENT vbsz1=_deref_pbsc1
 lda {c1}
 sta {z1}
@@ -29,6 +40,10 @@ sta {z1}
 tya
 neg
 sta {z1}
+//FRAGMENT vbsz1=_neg_vbszz
+tza
+neg
+sta {z1}
 //FRAGMENT vbsaa=_neg_vbsz1
 lda {z1}
 neg
@@ -39,6 +54,9 @@ txa
 neg
 //FRAGMENT vbsaa=_neg_vbsyy
 tya
+neg
+//FRAGMENT vbsaa=_neg_vbszz
+tza
 neg
 //FRAGMENT vbsxx=_neg_vbsz1
 lda {z1}
@@ -53,6 +71,10 @@ neg
 tax
 //FRAGMENT vbsxx=_neg_vbsyy
 tya
+neg
+tax
+//FRAGMENT vbsxx=_neg_vbszz
+tza
 neg
 tax
 //FRAGMENT vbsyy=_neg_vbsz1
@@ -70,6 +92,29 @@ tay
 tya
 neg
 tay
+//FRAGMENT vbsyy=_neg_vbszz
+tza
+neg
+tay
+//FRAGMENT vbszz=_neg_vbsz1
+lda {z1}
+neg
+taz
+//FRAGMENT vbszz=_neg_vbsaa
+neg
+taz
+//FRAGMENT vbszz=_neg_vbsxx
+txa
+neg
+taz
+//FRAGMENT vbszz=_neg_vbsyy
+tya
+neg
+taz
+//FRAGMENT vbszz=_neg_vbszz
+tza
+neg
+taz
 //FRAGMENT _deref_pbsc1=vbsaa
 sta {c1}
 //FRAGMENT vbsz1=vbsaa_ror_2
@@ -83,6 +128,11 @@ asr
 sta {z1}
 //FRAGMENT vbsz1=vbsyy_ror_2
 tya
+asr
+asr
+sta {z1}
+//FRAGMENT vbsz1=vbszz_ror_2
+tza
 asr
 asr
 sta {z1}
@@ -101,6 +151,10 @@ asr
 tya
 asr
 asr
+//FRAGMENT vbsaa=vbszz_ror_2
+tza
+asr
+asr
 //FRAGMENT vbsxx=vbsz1_ror_2
 lda {z1}
 asr
@@ -117,6 +171,11 @@ asr
 tax
 //FRAGMENT vbsxx=vbsyy_ror_2
 tya
+asr
+asr
+tax
+//FRAGMENT vbsxx=vbszz_ror_2
+tza
 asr
 asr
 tax
@@ -139,11 +198,46 @@ tya
 asr
 asr
 tay
+//FRAGMENT vbsyy=vbszz_ror_2
+tza
+asr
+asr
+tay
+//FRAGMENT vbszz=vbsz1_ror_2
+lda {z1}
+asr
+asr
+taz
+//FRAGMENT vbszz=vbsaa_ror_2
+asr
+asr
+taz
+//FRAGMENT vbszz=vbsxx_ror_2
+txa
+asr
+asr
+taz
+//FRAGMENT vbszz=vbsyy_ror_2
+tya
+asr
+asr
+taz
+//FRAGMENT vbszz=vbszz_ror_2
+tza
+asr
+asr
+taz
 //FRAGMENT vbsyy=_deref_pbsc1
 ldy {c1}
+//FRAGMENT vbszz=_deref_pbsc1
+lda {c1}
+taz
 //FRAGMENT _deref_pbsc1=vbsxx
 txa
 sta {c1}
 //FRAGMENT _deref_pbsc1=vbsyy
 tya
+sta {c1}
+//FRAGMENT _deref_pbsc1=vbszz
+tza
 sta {c1}

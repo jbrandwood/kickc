@@ -16,7 +16,7 @@ public class Cpu65C02 extends Cpu65xx {
    public final static Cpu65C02 INSTANCE = new Cpu65C02();
 
    public Cpu65C02() {
-      super(NAME, Cpu6502Official.INSTANCE);
+      super(NAME, Cpu6502Official.INSTANCE, false);
       addOpcode(0x4,"tsb", CpuAddressingMode.ZP,5,"z");
       addOpcode(0x7,"rmb0", CpuAddressingMode.ZP,5,"");
       addOpcode(0xC,"tsb", CpuAddressingMode.ABS,6,"z");

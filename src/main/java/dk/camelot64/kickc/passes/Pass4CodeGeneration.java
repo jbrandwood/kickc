@@ -272,6 +272,8 @@ public class Pass4CodeGeneration {
             signature.append("register(X)");
          } else if(allocation instanceof Registers.RegisterYByte) {
             signature.append("register(Y)");
+         } else if(allocation instanceof Registers.RegisterZByte) {
+            signature.append("register(Z)");
          }
          signature.append(" ");
          signature.append(parameter.getLocalName());

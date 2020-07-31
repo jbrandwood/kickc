@@ -5,7 +5,9 @@ import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.fragment.AsmFragmentInstance;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.model.*;
-import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.statements.Statement;
+import dk.camelot64.kickc.model.statements.StatementLValue;
+import dk.camelot64.kickc.model.statements.StatementPhiBlock;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
 import dk.camelot64.kickc.model.values.ValueList;
@@ -157,6 +159,8 @@ public class Pass4RegisterUpliftPotentialRegisterAnalysis extends Pass2Base {
       alwaysClobbered.add(Registers.getRegisterA());
       alwaysClobbered.add(Registers.getRegisterX());
       alwaysClobbered.add(Registers.getRegisterY());
+      if(getProgram().getTargetCpu().getCpu65xx().hasRegisterZ())
+         alwaysClobbered.add(Registers.getRegisterZ());
 
       Set<String> unknownFragments = new LinkedHashSet<>();
 

@@ -155,7 +155,7 @@ public class CpuClobber implements Serializable {
    }
 
    public boolean isRegisterZ() {
-      return registerY;
+      return registerZ;
    }
 
    public boolean isFlagC() {

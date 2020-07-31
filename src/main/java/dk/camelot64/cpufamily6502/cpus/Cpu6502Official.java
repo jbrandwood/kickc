@@ -17,7 +17,7 @@ public class Cpu6502Official extends Cpu65xx {
    public final static Cpu6502Official INSTANCE = new Cpu6502Official();
 
    public Cpu6502Official() {
-      super(NAME);
+      super(NAME, false);
       addOpcode(0x00, "brk", CpuAddressingMode.NON, 7.0, "");
       addOpcode(0x01, "ora", CpuAddressingMode.IZX, 6.0, "Anz");
       addOpcode(0x05, "ora", CpuAddressingMode.ZP, 3.0, "Anz");

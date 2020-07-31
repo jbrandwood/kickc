@@ -19,6 +19,10 @@ public class Registers {
       return new RegisterYByte();
    }
 
+   public static Register getRegisterZ() {
+      return new RegisterZByte();
+   }
+
    public static Register getRegisterA() {
       return new RegisterAByte();
    }
@@ -35,6 +39,8 @@ public class Registers {
             return getRegisterX();
          case "Y":
             return getRegisterY();
+         case "Z":
+            return getRegisterZ();
          default:
             return null;
       }
@@ -45,6 +51,7 @@ public class Registers {
       REG_A,
       REG_Y,
       REG_X,
+      REG_Z,
       REG_ALU,
       ZP_MEM,
       MAIN_MEM,
@@ -250,6 +257,19 @@ public class Registers {
 
    }
 
+   /** The Z register. */
+   public static class RegisterZByte extends RegisterCpuByte {
+      @Override
+      public RegisterType getType() {
+         return RegisterType.REG_Z;
+      }
+
+      @Override
+      public String toString() {
+         return "reg byte z";
+      }
+
+   }
 
    /** The X register. */
    public static class RegisterXByte extends RegisterCpuByte {

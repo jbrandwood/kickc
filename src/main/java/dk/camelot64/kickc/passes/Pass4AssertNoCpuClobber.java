@@ -40,6 +40,9 @@ public class Pass4AssertNoCpuClobber extends Pass2Base {
       if(clobber.isRegisterY()) {
          clobberRegisters.add(Registers.getRegisterY());
       }
+      if(clobber.isRegisterZ()) {
+         clobberRegisters.add(Registers.getRegisterZ());
+      }
       return clobberRegisters;
    }
 

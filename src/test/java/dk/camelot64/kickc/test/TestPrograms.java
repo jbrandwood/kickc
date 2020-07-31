@@ -68,6 +68,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCpu65CE02b() throws IOException, URISyntaxException {
+      compileAndCompare("cpu-65ce02-b.c");
+   }
+
+   @Test
    public void testCpu65CE02() throws IOException, URISyntaxException {
       compileAndCompare("cpu-65ce02.c");
    }

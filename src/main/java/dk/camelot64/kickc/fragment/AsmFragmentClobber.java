@@ -2,21 +2,25 @@ package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.cpufamily6502.CpuClobber;
 
+import java.util.Objects;
+
 /** The clobber profile for a fragment template. Only distinguishes the 3 registers A/X/Y and not the flags. */
 public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
 
    private boolean clobberA;
    private boolean clobberX;
    private boolean clobberY;
+   private boolean clobberZ;
 
-   public AsmFragmentClobber(boolean clobberA, boolean clobberX, boolean clobberY) {
+   public AsmFragmentClobber(boolean clobberA, boolean clobberX, boolean clobberY, boolean clobberZ) {
       this.clobberA = clobberA;
       this.clobberX = clobberX;
       this.clobberY = clobberY;
+      this.clobberZ = clobberZ;
    }
 
    public AsmFragmentClobber(CpuClobber clobber) {
-      this(clobber.isRegisterA(), clobber.isRegisterX(), clobber.isRegisterY());
+      this(clobber.isRegisterA(), clobber.isRegisterX(), clobber.isRegisterY(), clobber.isRegisterZ());
    }
 
    public boolean isClobberA() {
@@ -31,22 +35,24 @@ public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
       return clobberY;
    }
 
+   public boolean isClobberZ() {
+      return clobberY;
+   }
+
    @Override
    public boolean equals(Object o) {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
       AsmFragmentClobber that = (AsmFragmentClobber) o;
-      if(clobberA != that.clobberA) return false;
-      if(clobberX != that.clobberX) return false;
-      return clobberY == that.clobberY;
+      return clobberA == that.clobberA &&
+            clobberX == that.clobberX &&
+            clobberY == that.clobberY &&
+            clobberZ == that.clobberZ;
    }
 
    @Override
    public int hashCode() {
-      int result = (clobberA ? 1 : 0);
-      result = 31 * result + (clobberX ? 1 : 0);
-      result = 31 * result + (clobberY ? 1 : 0);
-      return result;
+      return Objects.hash(clobberA, clobberX, clobberY, clobberZ);
    }
 
    /**
@@ -62,11 +68,15 @@ public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
          return false;
       }
       if(!other.isClobberX() && this.isClobberX()) {
-         // This clobber clobbers A, while the other does not - not a subset
+         // This clobber clobbers X, while the other does not - not a subset
          return false;
       }
       if(!other.isClobberY() && this.isClobberY()) {
-         // This clobber clobbers A, while the other does not - not a subset
+         // This clobber clobbers Y, while the other does not - not a subset
+         return false;
+      }
+      if(!other.isClobberZ() && this.isClobberZ()) {
+         // This clobber clobbers Z, while the other does not - not a subset
          return false;
       }
       // This is a subset
@@ -86,11 +96,12 @@ public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
 
    @Override
    public String toString() {
-      return (clobberA?"A ":"")+(clobberX?"X ":"")+(clobberY?"Y ":" ");
+      return (clobberA?"A ":"")+(clobberX?"X ":"")+(clobberY?"Y ":" ")+(clobberZ?"Z ":" ");
    }
 
    @Override
    public int compareTo(AsmFragmentClobber o) {
       return toString().compareTo(o.toString());
    }
+
 }

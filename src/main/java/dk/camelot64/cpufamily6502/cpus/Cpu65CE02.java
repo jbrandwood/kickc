@@ -16,7 +16,7 @@ public class Cpu65CE02 extends Cpu65xx {
    public final static Cpu65CE02 INSTANCE = new Cpu65CE02();
 
    public Cpu65CE02() {
-      super(NAME, Cpu65C02.INSTANCE);
+      super(NAME, Cpu65C02.INSTANCE, true);
 
       // Remove all opcodes not present on 65CE02 - eg. (zp), which is changed to (zp),y
       removeOpcode("ora", CpuAddressingMode.INZ);

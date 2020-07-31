@@ -70,7 +70,7 @@ public enum TargetCpu {
    /** The CPU name used by KickAsm */
    private final String asmName;
 
-   /** The SM CPU knowing the instruction set. */
+   /** The CPU instruction set. */
    private final Cpu65xx cpu65xx;
 
    /** Features of the CPU */

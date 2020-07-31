@@ -62,6 +62,8 @@ public class Pass4RegisterUpliftPotentialInitialize extends Pass2Base {
                potentials.add(Registers.getRegisterA());
                potentials.add(Registers.getRegisterX());
                potentials.add(Registers.getRegisterY());
+               if(getProgram().getTargetCpu().getCpu65xx().hasRegisterZ())
+                  potentials.add(Registers.getRegisterZ());
             }
             registerPotentials.setPotentialRegisters(equivalenceClass, potentials);
          }

@@ -3,7 +3,7 @@
 
 void main() {
     char* const SCREEN = 0x0400;
-    char register(Z) idx = 3;
+    char register(H) idx = 3;
     while(idx++<7)
         SCREEN[idx] = 'a';
 }

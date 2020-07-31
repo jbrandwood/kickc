@@ -536,6 +536,8 @@ public class AsmFragmentInstanceSpecFactory {
          return "xx";
       } else if(Registers.RegisterType.REG_Y.equals(register.getType())) {
          return "yy";
+      } else if(Registers.RegisterType.REG_Z.equals(register.getType())) {
+         return "zz";
       } else if(Registers.RegisterType.REG_ALU.equals(register.getType())) {
          throw new AsmFragmentInstance.AluNotApplicableException();
       } else {

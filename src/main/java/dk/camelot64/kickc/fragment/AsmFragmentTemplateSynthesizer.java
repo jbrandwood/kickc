@@ -112,6 +112,7 @@ public class AsmFragmentTemplateSynthesizer {
          for(AsmFragmentTemplate candidateTemplate : candidates) {
             double score = candidateTemplate.getCycles();
             if(candidateTemplate.getClobber().isClobberA()) score += 0.5;
+            if(candidateTemplate.getClobber().isClobberZ()) score += 1.0;
             if(candidateTemplate.getClobber().isClobberY()) score += 1.0;
             if(candidateTemplate.getClobber().isClobberX()) score += 1.5;
             if(score < minScore) {

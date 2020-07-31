@@ -1,2 +1,2 @@
-cpz #{c1}
+cpz {m1}
 bcc {la1}

@@ -36,7 +36,7 @@ public class AsmFragmentClobber implements Comparable<AsmFragmentClobber> {
    }
 
    public boolean isClobberZ() {
-      return clobberY;
+      return clobberZ;
    }
 
    @Override

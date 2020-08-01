@@ -1212,8 +1212,7 @@ printf_number_buffer: {
     // strlen(buffer.digits)
     // len = (signed char)strlen(buffer.digits)
     // There is a minimum length - work out the padding
-    lda.z __19
-    tax
+    ldx.z __19
     // if(buffer.sign)
     lda #0
     cmp.z buffer_sign

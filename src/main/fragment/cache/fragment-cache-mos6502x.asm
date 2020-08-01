@@ -17616,3 +17616,299 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT vbsz1=_sbyte_vwuz2
+lda {z2}
+sta {z1}
+//FRAGMENT pbuc1_derefidx_vbuaa_eq_vbuz1_then_la1
+tay
+lda {c1},y
+cmp {z1}
+beq {la1}
+//FRAGMENT pbuc1_derefidx_vbuz1_eq_vbuaa_then_la1
+ldx {z1}
+tay
+lda {c1},x
+tax
+sty $ff
+cpx $ff
+beq  {la1}
+//FRAGMENT pbuc1_derefidx_vbuaa_eq_vbuaa_then_la1
+tax
+lda {c1},x
+tay
+sty $ff
+cpx $ff
+beq  {la1}
+//FRAGMENT pbuc1_derefidx_vbuxx_eq_vbuaa_then_la1
+tay
+lda {c1},x
+tax
+sty $ff
+cpx $ff
+beq  {la1}
+//FRAGMENT pbuc1_derefidx_vbuyy_eq_vbuaa_then_la1
+tax
+lda {c1},y
+tay
+sty $ff
+cpx $ff
+beq  {la1}
+//FRAGMENT pbuc1_derefidx_vbuaa_eq_vbuxx_then_la1
+tay
+lda {c1},y
+tay
+sty $ff
+cpx $ff
+beq  {la1}
+//FRAGMENT pbuc1_derefidx_vbuaa_eq_vbuyy_then_la1
+tax
+lda {c1},x
+tax
+sty $ff
+cpx $ff
+beq  {la1}
+//FRAGMENT vbsaa=_sbyte_vwuz1
+lda {z1}
+//FRAGMENT vbsxx=_sbyte_vwuz1
+ldx {z1}
+//FRAGMENT vbsz1=vbsyy_minus_vbsaa
+sta $ff
+tya
+sec
+sbc $ff
+sta {z1}
+//FRAGMENT vbsxx=vbsyy_minus_vbsaa
+sta $ff
+tya
+sec
+sbc $ff
+tax
+//FRAGMENT vbuz1=vbuyy_minus_1
+tya
+sec
+sbc #1
+sta {z1}
+//FRAGMENT vbsyy=_sbyte_vwuz1
+ldy {z1}
+//FRAGMENT vbuaa_lt_vbuyy_then_la1
+tax
+sty $ff
+cpx $ff
+bcc {la1}
+//FRAGMENT vbuyy_lt_vbuaa_then_la1
+sta $ff
+cpy $ff
+bcc {la1}
+//FRAGMENT vbuz1=vbuz2_minus_vbuz1
+lda {z2}
+sec
+sbc {z1}
+sta {z1}
+//FRAGMENT vbuz1=vbuc1_plus_vbuz1
+lax {z1}
+axs #-[{c1}]
+stx {z1}
+//FRAGMENT vbuz1=vbuz1_band_vbuc1
+lda #{c1}
+and {z1}
+sta {z1}
+//FRAGMENT vbsz1=vbsc1_minus_vbsz2
+lda #{c1}
+sec
+sbc {z2}
+sta {z1}
+//FRAGMENT vbsz1=vbsc1_minus_vbsaa
+eor #$ff
+sec
+adc #{c1}
+sta {z1}
+//FRAGMENT vbsz1=vbsc1_minus_vbsxx
+txa
+eor #$ff
+sec
+adc #{c1}
+sta {z1}
+//FRAGMENT vbsz1=vbsc1_minus_vbsyy
+tya
+eor #$ff
+sec
+adc #{c1}
+sta {z1}
+//FRAGMENT vbsaa=vbsc1_minus_vbsz1
+lda #{c1}
+sec
+sbc {z1}
+//FRAGMENT vbsaa=vbsc1_minus_vbsaa
+eor #$ff
+sec
+adc #{c1}
+//FRAGMENT vbsaa=vbsc1_minus_vbsxx
+txa
+eor #$ff
+sec
+adc #{c1}
+//FRAGMENT vbsaa=vbsc1_minus_vbsyy
+tya
+eor #$ff
+sec
+adc #{c1}
+//FRAGMENT vbsxx=vbsc1_minus_vbsz1
+lda #{c1}
+sec
+sbc {z1}
+tax
+//FRAGMENT vbsxx=vbsc1_minus_vbsaa
+eor #$ff
+tax
+axs #-{c1}-1
+//FRAGMENT vbsxx=vbsc1_minus_vbsxx
+txa
+eor #$ff
+tax
+axs #-{c1}-1
+//FRAGMENT vbsxx=vbsc1_minus_vbsyy
+tya
+eor #$ff
+tax
+axs #-{c1}-1
+//FRAGMENT vbsyy=vbsc1_minus_vbsz1
+lda #{c1}
+sec
+sbc {z1}
+tay
+//FRAGMENT vbsyy=vbsc1_minus_vbsaa
+eor #$ff
+sec
+adc #{c1}
+tay
+//FRAGMENT vbsyy=vbsc1_minus_vbsxx
+txa
+eor #$ff
+sec
+adc #{c1}
+tay
+//FRAGMENT vbsyy=vbsc1_minus_vbsyy
+tya
+eor #$ff
+sec
+adc #{c1}
+tay
+//FRAGMENT vbsaa_ge_0_then_la1
+cmp #0
+bpl {la1}
+//FRAGMENT vbsyy=vbsyy_minus_vbsaa
+sta $ff
+tya
+sec
+sbc $ff
+tay
+//FRAGMENT vbuyy_neq_vbuaa_then_la1
+tax
+stx $ff
+cpy $ff
+bne {la1}
+//FRAGMENT vbsz1_eq_vbsc1_then_la1
+lda #{c1}
+cmp {z1}
+beq {la1}
+//FRAGMENT vbsc1_eq_vbsz1_then_la1
+lda #{c1}
+cmp {z1}
+beq {la1}
+//FRAGMENT pbuz1=pbuz2_plus_vbsz3
+lda {z3}
+pha
+clc
+adc {z2}
+sta {z1}
+pla
+ora #$7f
+bmi !+
+lda #0
+!:
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz2_minus_vbuc1
+sec
+lda {z2}
+sbc #{c1}
+sta {z1}
+lda {z2}+1
+sbc #0
+sta {z1}+1
+//FRAGMENT vbsaa_eq_vbsc1_then_la1
+cmp #{c1}
+beq {la1}
+//FRAGMENT vbsaa=vbsyy_minus_vbsaa
+sta $ff
+tya
+sec
+sbc $ff
+//FRAGMENT vbsc1_eq_vbsaa_then_la1
+cmp #{c1}
+beq {la1}
+//FRAGMENT pbuz1=pbuz2_plus_vbsaa
+pha
+clc
+adc {z2}
+sta {z1}
+pla
+ora #$7f
+bmi !+
+lda #0
+!:
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT pbuz1=pbuz2_plus_vbsxx
+txa
+pha
+clc
+adc {z2}
+sta {z1}
+pla
+ora #$7f
+bmi !+
+lda #0
+!:
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT pbuz1=pbuz2_plus_vbsyy
+tya
+pha
+clc
+adc {z2}
+sta {z1}
+pla
+ora #$7f
+bmi !+
+lda #0
+!:
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT vbsc1_eq_vbsxx_then_la1
+cpx #{c1}
+beq {la1}
+//FRAGMENT vbsxx_eq_vbsc1_then_la1
+cpx #{c1}
+beq {la1}
+//FRAGMENT vbsc1_eq_vbsyy_then_la1
+cpy #{c1}
+beq {la1}
+//FRAGMENT pbuz1=pbuz1_plus_vbsxx
+txa
+pha
+clc
+adc {z1}
+sta {z1}
+pla
+ora #$7f
+bmi !+
+lda #0
+!:
+adc {z1}+1
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz1_rol_2
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1

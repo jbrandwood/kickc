@@ -1,8 +1,11 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.TargetCpu;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -12,59 +15,144 @@ import java.nio.file.Path;
  */
 public class AsmFragmentSystemHash {
 
-   /** Hash of the fragment source files. */
-   private long hash;
+   /** Hash of the fragment source files on any system where a newline is LF. */
+   private Long hashLF;
+
+   /** Hash of the fragment source files on any system where a newline is CRLF. */
+   private Long hashCRLF;
 
    /** Last modified date for the fragment source files. */
    private long lastModified;
 
-
-   AsmFragmentSystemHash(long hash, long lastModified) {
+   public AsmFragmentSystemHash(Long hashLF, Long hashCRLF, long lastModified) {
+      this.hashCRLF = hashCRLF;
+      this.hashLF = hashLF;
       this.lastModified = lastModified;
-      this.hash = hash;
    }
 
    /**
     * Run through the fragment folder and calculate the hash/modify time
+    *
     * @param baseFragmentFolder The fragment folder
+    * @param allSystems Should hash code be calculated for all systems (both LF and CRLF newlines).
+    * If false hash is only calculated for the current system, which is fast.
+    * If true calculate for all systems, which requires reading through all files to count newlines - so it is a lot slower.
     * @return The fragment system hash
     */
-   public static AsmFragmentSystemHash calculate(Path baseFragmentFolder) {
-      long hash = 0;
+   public static AsmFragmentSystemHash calculate(Path baseFragmentFolder, boolean allSystems) {
+      Long hashLF = 0L;
+      Long hashCRLF = 0L;
       long lastModified = 0;
       final TargetCpu.Feature[] cpuFeatures = TargetCpu.Feature.values();
       for(TargetCpu.Feature cpuFeature : cpuFeatures) {
-         hash += cpuFeature.getName().hashCode();
+         hashCRLF += cpuFeature.getName().hashCode();
+         hashLF += cpuFeature.getName().hashCode();
          final Path cpuFeatureFolder = baseFragmentFolder.resolve(cpuFeature.getName());
          final File cpuFeatureFolderFile = cpuFeatureFolder.toFile();
          if(cpuFeatureFolderFile.exists() && cpuFeatureFolderFile.isDirectory()) {
             final File[] files = cpuFeatureFolderFile.listFiles((dir, name) -> name.endsWith(".asm"));
             if(files != null)
                for(File file : files) {
-                  hash += file.length();
-                  hash += file.getName().hashCode();
+                  long lengthLF;
+                  long lengthCRLF;
+                  if(allSystems) {
+                     // Calculate length for all systems by reading the file
+                     int fileNewlines = getFileNewlineCount(file);
+                     if(isSystemLF()) {
+                        lengthLF = file.length();
+                        lengthCRLF = file.length() + fileNewlines;
+                     } else {
+                        lengthLF = file.length() - fileNewlines;
+                        lengthCRLF = file.length();
+                     }
+                  }  else {
+                     // Only find length for current system - set other to zero
+                     if(isSystemLF()) {
+                        lengthLF = file.length();
+                        lengthCRLF = 0;
+                     } else {
+                        lengthLF = 0;
+                        lengthCRLF = file.length();
+                     }
+                  }
+                  hashCRLF += lengthCRLF;
+                  hashLF += lengthLF;
+                  hashCRLF += file.getName().hashCode();
+                  hashLF += file.getName().hashCode();
                   if(file.lastModified() > lastModified)
                      lastModified = file.lastModified();
-
                }
          }
       }
       // Also hash in all synthesis rules
       for(AsmFragmentTemplateSynthesisRule synthesisRule : AsmFragmentTemplateSynthesisRule.getSynthesisRules()) {
-         hash += synthesisRule.hashCode();
+         hashCRLF += synthesisRule.hashCode();
+         hashLF += synthesisRule.hashCode();
       }
-      return new AsmFragmentSystemHash(hash, lastModified);
+      if(!allSystems) {
+         // If not all systems - null out other system hash since it is wrong
+         if(isSystemLF())
+            hashCRLF = null;
+         else
+            hashLF = null;
+      }
+      return new AsmFragmentSystemHash(hashLF, hashCRLF, lastModified);
    }
 
-   public long getHash() {
-      return hash;
+   /**
+    * Get the number of newlines in a file
+    * @param file The file to examine
+    * @return The number of newline characters
+    */
+   private static int getFileNewlineCount(File file) {
+      int fileNewlines = 0;
+      final byte[] fileBytes;
+      try {
+         fileBytes = Files.readAllBytes(file.toPath());
+      } catch(IOException e) {
+         throw new InternalError("Error reading ASM fragment file "+file.getAbsolutePath(),e);
+      }
+      for(int i = 0; i < fileBytes.length; i++) {
+         byte fileByte = fileBytes[i];
+         if(fileByte=='\n') fileNewlines++;
+      }
+      return fileNewlines;
    }
 
-   public String getHashString() {
-      return Long.toHexString(hash);
+   /**
+    * Does the current system use LF as newline
+    *
+    * @return true if the line separator is LF
+    */
+   static boolean isSystemLF() {
+      return System.lineSeparator().length() == 1;
+   }
+
+   public String getHashStringLF() {
+      return hashLF==null?null:Long.toHexString(hashLF);
+   }
+
+   public String getHashStringCRLF() {
+      return hashCRLF==null?null:Long.toHexString(hashCRLF);
+   }
+
+   /** Determines if this hash mathes the passed hash values.
+    * Only examines the value relevant for the current system
+    * @param hashLF Hash of the fragment source files on any system where a newline is LF
+    * @param hashCRLF Hash of the fragment source files on any system where a newline is CRLF
+    * @return true if the hash matches
+    */
+   public boolean matches(String hashLF, String hashCRLF) {
+      if(isSystemLF()) {
+         return getHashStringLF().equals(hashLF);
+      } else {
+         return getHashStringCRLF().equals(hashCRLF);
+      }
    }
 
    public long getLastModified() {
       return lastModified;
    }
+
+
 }

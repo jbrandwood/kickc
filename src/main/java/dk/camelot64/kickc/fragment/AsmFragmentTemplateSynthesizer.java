@@ -34,7 +34,7 @@ public class AsmFragmentTemplateSynthesizer {
       if(useFragmentCache)
          this.fragmentCache = AsmFragmentTemplateCache.load(targetCpu, baseFragmentFolder, log);
       else
-         this.fragmentCache = AsmFragmentTemplateCache.memory(targetCpu);
+         this.fragmentCache = AsmFragmentTemplateCache.memoryCache(targetCpu);
    }
 
    /** The folder containing fragment files. */
@@ -58,7 +58,7 @@ public class AsmFragmentTemplateSynthesizer {
    /** Finalize the fragment template synthesizer. */
    void finalize(CompileLog log) {
       if(fragmentCache != null)
-         fragmentCache.save(log);
+         fragmentCache.save(baseFragmentFolder, log);
    }
 
    /**

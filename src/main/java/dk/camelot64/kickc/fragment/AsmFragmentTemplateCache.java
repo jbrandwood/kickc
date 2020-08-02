@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.TargetCpu;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -32,7 +33,12 @@ public class AsmFragmentTemplateCache {
    /** Detects any modification of the cache. */
    private boolean modified;
 
-   AsmFragmentTemplateCache(Path cacheFolder, TargetCpu cpu, AsmFragmentSystemHash fragmentSystemHash, Map<String, AsmFragmentTemplate> cache) {
+   /**
+    * Creates a cache
+    *
+    * @param cpu The target CPU
+    */
+   private AsmFragmentTemplateCache(Path cacheFolder, TargetCpu cpu, AsmFragmentSystemHash fragmentSystemHash, Map<String, AsmFragmentTemplate> cache) {
       this.cacheFolder = cacheFolder;
       this.cpu = cpu;
       this.fragmentSystemHash = fragmentSystemHash;
@@ -84,8 +90,18 @@ public class AsmFragmentTemplateCache {
     * @param cpu The CPU to make a cache for
     * @return The new empty cache
     */
-   public static AsmFragmentTemplateCache memory(TargetCpu cpu) {
-      return new AsmFragmentTemplateCache(null, cpu, new AsmFragmentSystemHash(0, 0), new LinkedHashMap<>());
+   public static AsmFragmentTemplateCache memoryCache(TargetCpu cpu) {
+      return new AsmFragmentTemplateCache(null, cpu, new AsmFragmentSystemHash(0L, 0L, 0), new LinkedHashMap<>());
+   }
+
+   /**
+    * Creates a disk fragment cache
+    *
+    * @param cpu The CPU to make a cache for
+    * @return The new empty cache
+    */
+   public static AsmFragmentTemplateCache diskCache(Path cacheFolder, TargetCpu cpu, AsmFragmentSystemHash fragmentSystemHash, Map<String, AsmFragmentTemplate> cache) {
+      return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, cache);
    }
 
    /**
@@ -96,37 +112,41 @@ public class AsmFragmentTemplateCache {
     * @return The map with all best fragments from the cache file. null if the cache file is not found.
     */
    public static AsmFragmentTemplateCache load(TargetCpu cpu, Path baseFragmentFolder, CompileLog log) {
-      final AsmFragmentSystemHash fragmentSystemHash = AsmFragmentSystemHash.calculate(baseFragmentFolder);
+      final AsmFragmentSystemHash fragmentSystemHash = AsmFragmentSystemHash.calculate(baseFragmentFolder, false);
       Path cacheFolder = baseFragmentFolder.resolve(CACHE_FOLDER_NAME);
       final Date before = new Date();
       if(!cacheFolder.toFile().exists()) {
          if(log.isVerboseFragmentLog())
             log.append("Creating fragment cache folder " + cacheFolder.toAbsolutePath().toString());
          cacheFolder.toFile().mkdir();
-         return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
+         return diskCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
       }
       try {
          File cacheFile = cacheFolder.resolve(getCacheFileName(cpu)).toFile();
          if(!cacheFile.exists()) {
-            return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
+            return diskCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
          }
          if(cacheFile.lastModified() < fragmentSystemHash.getLastModified()) {
             if(log.isVerboseFragmentLog())
                log.append("Deleting outdated fragment cache file " + cacheFile.getAbsolutePath());
             cacheFile.delete();
-            return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
+            return diskCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
          }
          LinkedHashMap<String, AsmFragmentTemplate> cache = new LinkedHashMap<>();
          BufferedReader fragmentCacheReader = new BufferedReader(new FileReader(cacheFile));
          String hashLine = fragmentCacheReader.readLine();
-         final String hash = hashLine.substring(HASH_HEADER.length());
+         final String hashPayload = hashLine.substring(HASH_HEADER.length());
+         final String[] hashes = hashPayload.split(" ");
+         final String hashLF = hashes[0];
+         final String hashCRLF = (hashes.length > 1) ? hashes[1] : null;
          // Compare cache file hash with fragment system hash
-         if(!hash.equals(fragmentSystemHash.getHashString())) {
+         if(!fragmentSystemHash.matches(hashLF, hashCRLF)) {
             // Cache file hash does not match fragment system hash
             if(log.isVerboseFragmentLog())
                log.append("Deleting hash mismatch fragment cache file " + cacheFile.getAbsolutePath());
             cacheFile.delete();
-            return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
+            // And make a new cache to hold the fragments
+            return diskCache(cacheFolder, cpu, fragmentSystemHash, new LinkedHashMap<>());
          }
          // Read the first "real" line
          String cacheLine = fragmentCacheReader.readLine();
@@ -154,7 +174,7 @@ public class AsmFragmentTemplateCache {
          final long millis = after.getTime() - before.getTime();
          if(log.isVerboseFragmentLog())
             log.append("Loaded cached fragments " + cache.size() + " from " + cacheFile.getPath() + " in " + millis + "ms");
-         return new AsmFragmentTemplateCache(cacheFolder, cpu, fragmentSystemHash, cache);
+         return diskCache(cacheFolder, cpu, fragmentSystemHash, cache);
       } catch(IOException e) {
          throw new RuntimeException("Error loading fragment cache file " + cacheFolder, e);
       } catch(StringIndexOutOfBoundsException e) {
@@ -178,16 +198,20 @@ public class AsmFragmentTemplateCache {
     *
     * @param log The compile log
     */
-   public void save(CompileLog log) {
+   public void save(Path baseFragmentFolder, CompileLog log) {
       if(!modified)
          return;
       if(this.cacheFolder == null)
          return;
       Date before = new Date();
+      // Calculate a new hash which handles all systems
+      final AsmFragmentSystemHash newFragmentSystemHash = AsmFragmentSystemHash.calculate(baseFragmentFolder, true);
       File cacheFile = this.cacheFolder.resolve(getCacheFileName(cpu)).toFile();
       try {
          PrintStream fragmentFilePrint = new PrintStream(cacheFile);
-         fragmentFilePrint.println(HASH_HEADER + fragmentSystemHash.getHashString());
+         if(newFragmentSystemHash.getHashStringLF() == null || newFragmentSystemHash.getHashStringCRLF() == null)
+            throw new InternalError("Error saving ASM fragment cache file. Not calculated for all systems!");
+         fragmentFilePrint.println(HASH_HEADER + newFragmentSystemHash.getHashStringLF() + " " + newFragmentSystemHash.getHashStringCRLF());
          for(String signature : this.cache.keySet()) {
             AsmFragmentTemplate fragmentTemplate = this.cache.get(signature);
             fragmentFilePrint.println(FRAGMENT_HEADER + signature);

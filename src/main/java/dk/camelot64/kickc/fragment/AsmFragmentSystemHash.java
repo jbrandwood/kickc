@@ -56,7 +56,7 @@ public class AsmFragmentSystemHash {
                   long lengthLF;
                   long lengthCRLF;
                   if(allSystems) {
-                     // Calculate length for all systems by reading the file
+                     // Calculate length for all systems by reading the file (slow!)
                      int fileNewlines = getFileNewlineCount(file);
                      if(isSystemLF()) {
                         lengthLF = file.length();
@@ -66,7 +66,7 @@ public class AsmFragmentSystemHash {
                         lengthCRLF = file.length();
                      }
                   }  else {
-                     // Only find length for current system - set other to zero
+                     // Use filesystem length for current system only - set other to zero (fast!)
                      if(isSystemLF()) {
                         lengthLF = file.length();
                         lengthCRLF = 0;

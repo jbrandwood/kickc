@@ -216,8 +216,7 @@ bitmap_line: {
     sbc.z x1
     sta.z xd
     // if(y0<y1)
-    tya
-    cmp.z y0
+    cpy.z y0
     beq !+
     bcs __b7
   !:
@@ -273,8 +272,7 @@ bitmap_line: {
     sbc.z x0
     sta.z xd
     // if(y0<y1)
-    tya
-    cmp.z y0
+    cpy.z y0
     beq !+
     bcs __b11
   !:

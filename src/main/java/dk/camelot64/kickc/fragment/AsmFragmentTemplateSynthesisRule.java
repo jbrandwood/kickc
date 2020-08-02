@@ -665,6 +665,10 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("vb(.)m1=(.*[mz]1.*)", null, null, "vb$1aa=$2", "sta {m1}", null));
       // Rewrite Assignments to *C1 from A
       synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", null, null, "vb$1aa=$2", "sta {c1}", null));
+      // Rewrite Assignments to *C1 from X
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", null, null, "vb$1xx=$2", "stx {c1}", null));
+      // Rewrite Assignments to *C1 from Y
+      synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)c1=(.*)", null, null, "vb$1yy=$2", "sty {c1}", null));
       // Rewrite Assignments to *Z1 from A
       synths.add(new AsmFragmentTemplateSynthesisRule("_deref_pb(.)z1=(.*)", twoZM1, null, "vb$1aa=$2", "ldy #0\n" + "sta ({z1}),y", mapZM1));
       // Rewrite Assignments to *Z1 from A

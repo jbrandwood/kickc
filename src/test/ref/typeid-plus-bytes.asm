@@ -155,17 +155,15 @@ testSignedVals: {
     lda #-$78+sbc1
     sta SSCREEN+$28*3+1+1+1+1+1
     // sbv1+-120
-    lda #-$78
-    clc
-    adc.z sbv1
+    lax.z sbv1
+    axs #-[-$78]
     // SSCREEN[idx++] = (sbv1+-120)
-    sta SSCREEN+$28*3+1+1+1+1+1+1
+    stx SSCREEN+$28*3+1+1+1+1+1+1
     // -120+sbv1
-    lda #-$78
-    clc
-    adc.z sbv1
+    lax.z sbv1
+    axs #-[-$78]
     // SSCREEN[idx++] = (-120+sbv1)
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1
+    stx SSCREEN+$28*3+1+1+1+1+1+1+1
     // sbv1+sbc1
     lda #sbc1
     clc

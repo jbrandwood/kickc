@@ -1443,20 +1443,20 @@ Uplift Scope []
 
 Uplifting [testUnsignedVals] best 424 combination reg byte x [ testUnsignedVals::$2 ] reg byte x [ testUnsignedVals::$3 ] reg byte a [ testUnsignedVals::$4 ] reg byte a [ testUnsignedVals::$5 ] zp[1]:7 [ testUnsignedVals::$6 ] zp[1]:2 [ testUnsignedVals::ubv1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [testSignedVals] best 408 combination reg byte a [ testSignedVals::$2 ] reg byte a [ testSignedVals::$3 ] reg byte a [ testSignedVals::$4 ] reg byte a [ testSignedVals::$5 ] zp[1]:13 [ testSignedVals::$6 ] zp[1]:8 [ testSignedVals::sbv1 ] 
+Uplifting [testSignedVals] best 404 combination reg byte x [ testSignedVals::$2 ] reg byte x [ testSignedVals::$3 ] reg byte a [ testSignedVals::$4 ] reg byte a [ testSignedVals::$5 ] zp[1]:13 [ testSignedVals::$6 ] zp[1]:8 [ testSignedVals::sbv1 ] 
 Limited combination testing to 100 combinations of 1024 possible.
-Uplifting [main] best 408 combination 
-Uplifting [testUnsigned] best 408 combination 
-Uplifting [testSigned] best 408 combination 
-Uplifting [] best 408 combination 
+Uplifting [main] best 404 combination 
+Uplifting [testUnsigned] best 404 combination 
+Uplifting [testSigned] best 404 combination 
+Uplifting [] best 404 combination 
 Attempting to uplift remaining variables inzp[1]:7 [ testUnsignedVals::$6 ]
-Uplifting [testUnsignedVals] best 402 combination reg byte a [ testUnsignedVals::$6 ] 
+Uplifting [testUnsignedVals] best 398 combination reg byte a [ testUnsignedVals::$6 ] 
 Attempting to uplift remaining variables inzp[1]:13 [ testSignedVals::$6 ]
-Uplifting [testSignedVals] best 396 combination reg byte a [ testSignedVals::$6 ] 
+Uplifting [testSignedVals] best 392 combination reg byte a [ testSignedVals::$6 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ testUnsignedVals::ubv1 ]
-Uplifting [testUnsignedVals] best 396 combination zp[1]:2 [ testUnsignedVals::ubv1 ] 
+Uplifting [testUnsignedVals] best 392 combination zp[1]:2 [ testUnsignedVals::ubv1 ] 
 Attempting to uplift remaining variables inzp[1]:8 [ testSignedVals::sbv1 ]
-Uplifting [testSignedVals] best 396 combination zp[1]:8 [ testSignedVals::sbv1 ] 
+Uplifting [testSignedVals] best 392 combination zp[1]:8 [ testSignedVals::sbv1 ] 
 Allocated (was zp[1]:8) zp[1]:3 [ testSignedVals::sbv1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -1667,18 +1667,16 @@ testSignedVals: {
     // [57] *((const nomodify signed byte*) SSCREEN+++++++++++(byte)(number) $28*(number) 3) ← (signed byte) -$78+(const signed byte) testSignedVals::sbc1 -- _deref_pbsc1=vbsc2 
     lda #-$78+sbc1
     sta SSCREEN+$28*3+1+1+1+1+1
-    // [58] (signed byte~) testSignedVals::$2 ← (volatile signed byte) testSignedVals::sbv1 + (signed byte) -$78 -- vbsaa=vbsz1_plus_vbsc1 
-    lda #-$78
-    clc
-    adc.z sbv1
-    // [59] *((const nomodify signed byte*) SSCREEN+++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$2 -- _deref_pbsc1=vbsaa 
-    sta SSCREEN+$28*3+1+1+1+1+1+1
-    // [60] (signed byte~) testSignedVals::$3 ← (signed byte) -$78 + (volatile signed byte) testSignedVals::sbv1 -- vbsaa=vbsc1_plus_vbsz1 
-    lda #-$78
-    clc
-    adc.z sbv1
-    // [61] *((const nomodify signed byte*) SSCREEN+++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$3 -- _deref_pbsc1=vbsaa 
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1
+    // [58] (signed byte~) testSignedVals::$2 ← (volatile signed byte) testSignedVals::sbv1 + (signed byte) -$78 -- vbsxx=vbsz1_plus_vbsc1 
+    lax.z sbv1
+    axs #-[-$78]
+    // [59] *((const nomodify signed byte*) SSCREEN+++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$2 -- _deref_pbsc1=vbsxx 
+    stx SSCREEN+$28*3+1+1+1+1+1+1
+    // [60] (signed byte~) testSignedVals::$3 ← (signed byte) -$78 + (volatile signed byte) testSignedVals::sbv1 -- vbsxx=vbsc1_plus_vbsz1 
+    lax.z sbv1
+    axs #-[-$78]
+    // [61] *((const nomodify signed byte*) SSCREEN+++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$3 -- _deref_pbsc1=vbsxx 
+    stx SSCREEN+$28*3+1+1+1+1+1+1+1
     // [62] (signed byte~) testSignedVals::$4 ← (volatile signed byte) testSignedVals::sbv1 + (const signed byte) testSignedVals::sbc1 -- vbsaa=vbsz1_plus_vbsc1 
     lda #sbc1
     clc
@@ -1759,8 +1757,8 @@ FINAL SYMBOL TABLE
 (void()) testSigned()
 (label) testSigned::@return
 (void()) testSignedVals()
-(signed byte~) testSignedVals::$2 reg byte a 22.0
-(signed byte~) testSignedVals::$3 reg byte a 22.0
+(signed byte~) testSignedVals::$2 reg byte x 22.0
+(signed byte~) testSignedVals::$3 reg byte x 22.0
 (signed byte~) testSignedVals::$4 reg byte a 22.0
 (signed byte~) testSignedVals::$5 reg byte a 22.0
 (signed byte~) testSignedVals::$6 reg byte a 22.0
@@ -1786,15 +1784,15 @@ reg byte a [ testUnsignedVals::$4 ]
 reg byte a [ testUnsignedVals::$5 ]
 reg byte a [ testUnsignedVals::$6 ]
 zp[1]:3 [ testSignedVals::sbv1 ]
-reg byte a [ testSignedVals::$2 ]
-reg byte a [ testSignedVals::$3 ]
+reg byte x [ testSignedVals::$2 ]
+reg byte x [ testSignedVals::$3 ]
 reg byte a [ testSignedVals::$4 ]
 reg byte a [ testSignedVals::$5 ]
 reg byte a [ testSignedVals::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 340
+Score: 336
 
   // File Comments
 // Test that plus creates the expected type for all legal combinations of bytes (signed/unsigned - constant/variable)
@@ -2025,21 +2023,19 @@ testSignedVals: {
     lda #-$78+sbc1
     sta SSCREEN+$28*3+1+1+1+1+1
     // sbv1+-120
-    // [58] (signed byte~) testSignedVals::$2 ← (volatile signed byte) testSignedVals::sbv1 + (signed byte) -$78 -- vbsaa=vbsz1_plus_vbsc1 
-    lda #-$78
-    clc
-    adc.z sbv1
+    // [58] (signed byte~) testSignedVals::$2 ← (volatile signed byte) testSignedVals::sbv1 + (signed byte) -$78 -- vbsxx=vbsz1_plus_vbsc1 
+    lax.z sbv1
+    axs #-[-$78]
     // SSCREEN[idx++] = (sbv1+-120)
-    // [59] *((const nomodify signed byte*) SSCREEN+++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$2 -- _deref_pbsc1=vbsaa 
-    sta SSCREEN+$28*3+1+1+1+1+1+1
+    // [59] *((const nomodify signed byte*) SSCREEN+++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$2 -- _deref_pbsc1=vbsxx 
+    stx SSCREEN+$28*3+1+1+1+1+1+1
     // -120+sbv1
-    // [60] (signed byte~) testSignedVals::$3 ← (signed byte) -$78 + (volatile signed byte) testSignedVals::sbv1 -- vbsaa=vbsc1_plus_vbsz1 
-    lda #-$78
-    clc
-    adc.z sbv1
+    // [60] (signed byte~) testSignedVals::$3 ← (signed byte) -$78 + (volatile signed byte) testSignedVals::sbv1 -- vbsxx=vbsc1_plus_vbsz1 
+    lax.z sbv1
+    axs #-[-$78]
     // SSCREEN[idx++] = (-120+sbv1)
-    // [61] *((const nomodify signed byte*) SSCREEN+++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$3 -- _deref_pbsc1=vbsaa 
-    sta SSCREEN+$28*3+1+1+1+1+1+1+1
+    // [61] *((const nomodify signed byte*) SSCREEN+++++++++++++++(byte)(number) $28*(number) 3) ← (signed byte~) testSignedVals::$3 -- _deref_pbsc1=vbsxx 
+    stx SSCREEN+$28*3+1+1+1+1+1+1+1
     // sbv1+sbc1
     // [62] (signed byte~) testSignedVals::$4 ← (volatile signed byte) testSignedVals::sbv1 + (const signed byte) testSignedVals::sbc1 -- vbsaa=vbsz1_plus_vbsc1 
     lda #sbc1

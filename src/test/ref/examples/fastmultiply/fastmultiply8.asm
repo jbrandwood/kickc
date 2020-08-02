@@ -93,9 +93,9 @@ main: {
   !:
     // fmul8(vals[i], vals[j])
     ldy.z i
-    lda vals,y
-    ldy.z j
     ldx vals,y
+    ldy.z j
+    lda vals,y
     jsr fmul8
     // r = fmul8(vals[i], vals[j])
     // print_schar_at(r, at)
@@ -197,15 +197,14 @@ print_schar_at: {
     sta.z b
     jmp __b2
 }
-// fmul8(signed byte register(A) a, signed byte register(X) b)
+// fmul8(signed byte register(X) a, signed byte register(A) b)
 fmul8: {
     // *ap = a
-    sta ap
+    stx ap
     // *bp = b
-    txa
     sta bp
     // asm
-    lda ap
+    txa
     sta A1+1
     eor #$ff
     sta A2+1

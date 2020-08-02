@@ -822,8 +822,7 @@ rotate_matrix: {
     .label y = $18
     .label z = $19
     // *xr = x
-    txa
-    sta xr
+    stx xr
     // *yr = y
     lda.z y
     sta yr

@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 1776b64820 1776b6602f
+//KICKC FRAGMENT CACHE 17a3d463b0 17a3d47bef
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -337,22 +337,20 @@ sta {z1}
 cmp #{c1}
 bcc {la1}
 //FRAGMENT pbuz1_derefidx_vbuaa=vbuc1
-tay
+taz
 lda #{c1}
-sta ({z1}),y
+sta ({z1}),z
 //FRAGMENT pbuz1_derefidx_vbuxx=vbuc1
 txa
-tay
+taz
 lda #{c1}
-sta ({z1}),y
+sta ({z1}),z
 //FRAGMENT pbuz1_derefidx_vbuyy=vbuc1
 lda #{c1}
 sta ({z1}),y
 //FRAGMENT pbuz1_derefidx_vbuzz=vbuc1
-tza
-tay
 lda #{c1}
-sta ({z1}),y
+sta ({z1}),z
 //FRAGMENT vbuaa=_deref_pbuz1
 ldy #0
 lda ({z1}),y
@@ -426,17 +424,9 @@ beq {la1}
 ldy {z2}
 sta ({z1}),y
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuxx
-ldy {z2}
 txa
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuyy
-tya
-ldy {z2}
-sta ({z1}),y
-//FRAGMENT pbuz1_derefidx_vbuz2=vbuzz
-ldy {z2}
-tza
-sta ({z1}),y
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT vbuaa=_byte_vwuz1
 lda {z1}
 //FRAGMENT vbuxx=_byte_vwuz1
@@ -2041,9 +2031,17 @@ taz
 //FRAGMENT vbuyy_eq_vbuc1_then_la1
 cpy #{c1}
 beq {la1}
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuyy
+tya
+ldy {z2}
+sta ({z1}),y
 //FRAGMENT vbuzz_eq_vbuc1_then_la1
 cpz #{c1}
 beq {la1}
+//FRAGMENT pbuz1_derefidx_vbuz2=vbuzz
+tza
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT vbuz1_lt_vbuxx_then_la1
 cpx {z1}
 beq !+

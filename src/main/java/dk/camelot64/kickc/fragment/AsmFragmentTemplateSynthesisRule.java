@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.model.TargetCpu;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -182,17 +184,26 @@ class AsmFragmentTemplateSynthesisRule {
       return Objects.hash(sigMatch, sigAvoid, asmPrefix, sigReplace, asmPostfix, bindMappings, mapSignature, subDontClobber);
    }
 
-   /** All the synthesize rules available. */
-   private static List<AsmFragmentTemplateSynthesisRule> fragmentSyntheses;
+   /** All the synthesize rules available for each CPU. */
+   private static Map<TargetCpu, List<AsmFragmentTemplateSynthesisRule>> fragmentSyntheses = new LinkedHashMap<>();
 
-   static List<AsmFragmentTemplateSynthesisRule> getSynthesisRules() {
-      if(fragmentSyntheses == null) {
-         fragmentSyntheses = initFragmentSyntheses();
+   static List<AsmFragmentTemplateSynthesisRule> getSynthesisRules(TargetCpu targetCpu) {
+      if(fragmentSyntheses.get(targetCpu) == null) {
+         fragmentSyntheses.put(targetCpu, initFragmentSyntheses(targetCpu));
       }
-      return fragmentSyntheses;
+      return fragmentSyntheses.get(targetCpu);
    }
 
-   private static List<AsmFragmentTemplateSynthesisRule> initFragmentSyntheses() {
+   static Collection<AsmFragmentTemplateSynthesisRule> getAllSynthesisRules() {
+      final LinkedHashSet<AsmFragmentTemplateSynthesisRule> allRules = new LinkedHashSet<>();
+      for(TargetCpu targetCpu : TargetCpu.values()) {
+         allRules.addAll(getSynthesisRules(targetCpu));
+      }
+      return allRules;
+   }
+
+
+   private static List<AsmFragmentTemplateSynthesisRule> initFragmentSyntheses(TargetCpu targetCpu) {
       // Z1 is replaced by something non-ZP - all above are moved down
       Map<String, String> mapZM1 = new LinkedHashMap<>();
       mapZM1.put("z2", "z1");
@@ -731,6 +742,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_deref_pb(.)c3(.*)", rvalYy+"|"+lvalDerefC3, "ldy {c3}", "$1vb$2yy$3", null, null));
       // Rewrite (Z1),y to AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)pb(.)z1_derefidx_vbuyy(.*)_then_(.*)", twoZM1+"|"+rvalAa, "lda ({z1}),y\n" , "$1vb$2aa$3_then_$4", null, mapZM1));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite (Z1),z to AA
+         synths.add(new AsmFragmentTemplateSynthesisRule("(.*)pb(.)z1_derefidx_vbuzz(.*)_then_(.*)", twoZM1+"|"+rvalAa, "lda ({z1}),z\n" , "$1vb$2aa$3_then_$4", null, mapZM1));
 
       // Rewrite left-size C1,y to use AA and a STA C1,y
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", null, null, "vb$1aa=$2", "sta {c1},y", null, "yy"));
@@ -738,6 +752,9 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", null, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta {c1},y", null));
       // Rewrite (Z1),y to save and reload YY from $FF
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZM1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite (Z1),z to save and reload ZZ from $FF
+         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuzz=(.*)", twoZM1, "stz $ff\n" , "vb$1aa=$2", "ldz $ff\nsta ({z1}),z", mapZM1));
 
       // Rewrite left-size C1,x to use AA and a STA C1,x
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", null, null, "vb$1aa=$2", "sta {c1},x", null, "xx"));
@@ -745,11 +762,27 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", null, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", null));
       // Rewrite (Z1),x to save Y to $FF and reload it into YY
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZM1, "stx $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite (Z1),x to save Y to $FF and reload it into YY
+         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZM1, "stx $ff" , "vb$1aa=$2", "ldz $ff\nsta ({z1}),z", mapZM1));
+
+      // TODO: Rewrite (Z1),y assignment to use A
+      //synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZM1+"|"+rvalYy, null , "vb$1aa=$2", "sta ({z1}),y", null, "yy"));
+      //if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite (Z1),z assignment to use A
+      //   synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuzz=(.*)", twoZM1+"|"+rvalZz, null , "vb$1aa=$2", "sta ({z1}),z", null, "zz"));
 
       // Rewrite (Z1),a to use TAY prefix
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1+"|"+rvalYy, "tay" , "vb$1aa=$2", "sta ({z1}),y", mapZM1, "yy"));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite (Z1),a to use TAZ prefix
+         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1+"|"+rvalZz, "taz" , "vb$1aa=$2", "sta ({z1}),z", mapZM1, "zz"));
+
       // Rewrite (Z1),a to save A to $FF and reload it into YY
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1, "sta $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite (Z1),a to save A to $FF and reload it into ZZ
+         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1, "sta $ff" , "vb$1aa=$2", "ldz $ff\nsta ({z1}),z", mapZM1));
 
       // Synthesize typed pointer math using void pointers
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)p[^v][^o]([czm][1-9])(.*)", null, null, "$1pvo$2$3", null, null));
@@ -790,8 +823,17 @@ class AsmFragmentTemplateSynthesisRule {
 
       // Rewrite trailing right-size (Z1),y to use AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)z1_derefidx_vbuyy", twoZM1+"|"+rvalAa, "lda ({z1}),y", "$1=$2vb$3aa", null, mapZM1, null));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite trailing right-size (Z1),z to use AA
+         synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)z1_derefidx_vbuzz", twoZM1+"|"+rvalAa, "lda ({z1}),z", "$1=$2vb$3aa", null, mapZM1, null));
+
+
       // Rewrite trailing right-size (Z1),y to use AA - when 2 Z1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z1(.*)pb(.)z1_derefidx_vbuyy", rvalAa, "lda ({z1}),y", "$1z1$2vb$3aa", null, null, null));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite trailing right-size (Z1),z to use AA - when 2 Z1
+         synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z1(.*)pb(.)z1_derefidx_vbuzz", rvalAa, "lda ({z1}),z", "$1z1$2vb$3aa", null, null, null));
+
       // TODO: New fragment synth rule creates non-optimal ASM https://gitlab.com/camelot/kickc/-/issues/494
       // Rewrite trailing right-size (Z2),y to use AA
       // synths.add(new AsmFragmentTemplateSynthesisRule("(.*)=(.*)pb(.)z2_derefidx_vbuyy", twoZM2+"|"+rvalAa, "lda ({z2}),y", "$1=$2vb$3aa", null, mapZM2, null));
@@ -807,11 +849,15 @@ class AsmFragmentTemplateSynthesisRule {
 
       // Rewrite multiple _derefidx_vbuc1 to use YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuc1(.*)_derefidx_vbuc1(.*)", rvalYy+"|"+ threeC1, "ldy #{c1}", "$1_derefidx_vbuyy$2_derefidx_vbuyy$3", null, mapC1));
-
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         // Rewrite multiple _derefidx_vbuc1 to use ZZ
+         synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuc1(.*)_derefidx_vbuc1(.*)", rvalZz+"|"+ threeC1, "ldz #{c1}", "$1_derefidx_vbuzz$2_derefidx_vbuzz$3", null, mapC1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*)", twoZM1+"|"+twoC1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapZM1C1));
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbum2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldy {m2}\n" + "sta ({z1}),y", mapZM12));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*c1.*)", twoZM1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapZM1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbum1=(.*[mz]1.*)", twoC1, null, "vb$1aa=$2", "ldx {m1}\n" + "sta {c1},x", mapC1));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbum2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldy {m2}\n" + "sta ({z1}),y", mapZM12));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbum2=(.*)", twoZM1+"|"+twoZM2, null, "vb$1aa=$2", "ldz {m2}\n" + "sta ({z1}),z", mapZM12));
 
       // Convert X/Y-based array indexing of a constant pointer into A-register by prefixing lda cn,x / lda cn,y ( ...pb.c1_derefidx_vbuxx... / ...pb.c1_derefidx_vbuyy... -> ...vb.aa... )
 
@@ -839,6 +885,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)\\(([vp][bwd][us][mzcaxy][123456axyz])\\)(.*)", null, null, "$1$2$3", null, null));
 
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1_(.*)", rvalYy+"|"+twoZM1, "ldy {z1}", "$1_derefidx_vbuyy_$2", null, mapZM1));
+      if(targetCpu.getCpu65xx().hasRegisterZ())
+         synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1_(.*)", rvalZz+"|"+twoZM1, "ldz {z1}", "$1_derefidx_vbuzz_$2", null, mapZM1));
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1_(lt|gt|le|ge|eq|neq)_(.*)", rvalXx+"|"+twoZM1, "ldx {z1}", "$1_derefidx_vbuxx_$2_$3", null, mapZM1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy_(lt|gt|le|ge|eq|neq)_(.*)", rvalAa+"|"+twoC1, "lda {c1},y", "vb$1aa_$2_$3", null, mapC1));
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy_(lt|gt|le|ge|eq|neq)_(.*c1.*)", rvalAa, "lda {c1},y", "vb$1aa_$2_$3", null, null));

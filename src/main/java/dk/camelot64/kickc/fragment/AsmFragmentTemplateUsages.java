@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.fragment;
 
 import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.model.TargetCpu;
 
 import java.io.File;
 import java.util.*;
@@ -114,19 +115,18 @@ public class AsmFragmentTemplateUsages {
 
       if(logUnusedRules) {
          log.append("\nUNUSED ASM FRAGMENT SYNTHESIS RULE ANALYSIS (if found consider removing them)");
-         Set<AsmFragmentTemplateSynthesisRule> rules =
-               new LinkedHashSet<>(AsmFragmentTemplateSynthesisRule.getSynthesisRules());
+         final Collection<AsmFragmentTemplateSynthesisRule> allRules = AsmFragmentTemplateSynthesisRule.getAllSynthesisRules();
          for(String signature : signatures) {
             Collection<AsmFragmentTemplate> templates =
                   synthesizer.getBestTemplates(signature, log);
             for(AsmFragmentTemplate template : templates) {
                while(template.getSynthesis()!=null) {
-                  rules.remove(template.getSynthesis());
+                  allRules.remove(template.getSynthesis());
                   template = template.getSubFragment();
                }
             }
          }
-         for(AsmFragmentTemplateSynthesisRule rule : rules) {
+         for(AsmFragmentTemplateSynthesisRule rule : allRules) {
             log.append("Synthesis Rule Unused: - match:" + rule.sigMatch+ " avoid:"+rule.sigAvoid+" replace:"+rule.sigReplace);
          }
       }

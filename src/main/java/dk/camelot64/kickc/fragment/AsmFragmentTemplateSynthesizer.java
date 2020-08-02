@@ -406,7 +406,7 @@ public class AsmFragmentTemplateSynthesizer {
          }
       }
       // Populate with synthesis options
-      for(AsmFragmentTemplateSynthesisRule rule : AsmFragmentTemplateSynthesisRule.getSynthesisRules()) {
+      for(AsmFragmentTemplateSynthesisRule rule : AsmFragmentTemplateSynthesisRule.getSynthesisRules(targetCpu)) {
          if(rule.matches(signature)) {
             AsmFragmentSynthesisOption synthesisOption = new AsmFragmentSynthesisOption(signature, rule);
             synthesis.addSynthesisOption(synthesisOption);

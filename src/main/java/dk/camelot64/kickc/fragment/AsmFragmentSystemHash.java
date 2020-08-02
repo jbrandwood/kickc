@@ -84,8 +84,8 @@ public class AsmFragmentSystemHash {
                }
          }
       }
-      // Also hash in all synthesis rules
-      for(AsmFragmentTemplateSynthesisRule synthesisRule : AsmFragmentTemplateSynthesisRule.getSynthesisRules()) {
+      // Also hash in all synthesis rules for all CPU's
+      for(AsmFragmentTemplateSynthesisRule synthesisRule : AsmFragmentTemplateSynthesisRule.getAllSynthesisRules()) {
          hashCRLF += synthesisRule.hashCode();
          hashLF += synthesisRule.hashCode();
       }

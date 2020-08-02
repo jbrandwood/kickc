@@ -98,10 +98,10 @@ clrscr: {
     sta.z line_text
     lda #>DEFAULT_SCREEN
     sta.z line_text+1
-    ldz #0
+    ldx #0
   __b1:
     // for( char l=0;l<CONIO_HEIGHT; l++ )
-    cpz #$19
+    cpx #$19
     bcc __b2
     // conio_cursor_x = 0
     lda #0
@@ -121,10 +121,10 @@ clrscr: {
     // }
     rts
   __b2:
-    ldy #0
+    ldz #0
   __b3:
     // for( char c=0;c<CONIO_WIDTH; c++ )
-    cpy #$28
+    cpz #$28
     bcc __b4
     // line_text += CONIO_WIDTH
     lda #$28
@@ -143,17 +143,17 @@ clrscr: {
     inc.z line_cols+1
   !:
     // for( char l=0;l<CONIO_HEIGHT; l++ )
-    inz
+    inx
     jmp __b1
   __b4:
     // line_text[c] = ' '
     lda #' '
-    sta (line_text),y
+    sta.z (line_text),z
     // line_cols[c] = conio_textcolor
     lda #LIGHT_BLUE
-    sta (line_cols),y
+    sta.z (line_cols),z
     // for( char c=0;c<CONIO_WIDTH; c++ )
-    iny
+    inz
     jmp __b3
 }
 // Output a NUL-terminated string at the current cursor position

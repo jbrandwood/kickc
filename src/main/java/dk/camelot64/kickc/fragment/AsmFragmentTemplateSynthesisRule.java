@@ -766,12 +766,6 @@ class AsmFragmentTemplateSynthesisRule {
          // Rewrite (Z1),x to save Y to $FF and reload it into YY
          synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZM1, "stx $ff" , "vb$1aa=$2", "ldz $ff\nsta ({z1}),z", mapZM1));
 
-      // TODO: Rewrite (Z1),y assignment to use A
-      //synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZM1+"|"+rvalYy, null , "vb$1aa=$2", "sta ({z1}),y", null, "yy"));
-      //if(targetCpu.getCpu65xx().hasRegisterZ())
-         // Rewrite (Z1),z assignment to use A
-      //   synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuzz=(.*)", twoZM1+"|"+rvalZz, null , "vb$1aa=$2", "sta ({z1}),z", null, "zz"));
-
       // Rewrite (Z1),a to use TAY prefix
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuaa=(.*)", twoZM1+"|"+rvalYy, "tay" , "vb$1aa=$2", "sta ({z1}),y", mapZM1, "yy"));
       if(targetCpu.getCpu65xx().hasRegisterZ())

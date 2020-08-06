@@ -19,7 +19,7 @@ ProgramEnd:
 // Binary File Header
 .byte $ff, $ff
 // Program segment [start address, end address, data]
-.word ProgramStart, ProgramEnd
+.word ProgramStart, ProgramEnd-1
 .segmentout [ segments="Program" ]
 // RunAd - Run Address Segment [start address, end address, data]
 .word $02e0, $02e1

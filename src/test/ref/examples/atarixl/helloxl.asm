@@ -5,15 +5,6 @@
   // Atari XL/XE XEX file minimal file
 // https://www.atarimax.com/jindroush.atari.org/afmtexe.html
 .file [name="helloxl.xex", type="bin", segments="XexFile"]
-.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
-.segmentdef ProgramStart [start=$2000]
-.segmentdef Code [startAfter="ProgramStart"]
-.segmentdef Data [startAfter="Code"]
-.segmentdef ProgramEnd [startAfter="Data"]
-.segment ProgramStart
-ProgramStart:
-.segment ProgramEnd
-ProgramEnd:
 .segmentdef XexFile
 .segment XexFile
 // Binary File Header
@@ -23,10 +14,20 @@ ProgramEnd:
 .segmentout [ segments="Program" ]
 // RunAd - Run Address Segment [start address, end address, data]
 .word $02e0, $02e1
-.word main 
-  // OS Shadow ANTIC Direct Memory Access Control
+.word main
+.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
+.segmentdef ProgramStart [start=$2000]
+.segment ProgramStart
+ProgramStart:
+.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef Data [startAfter="Code"]
+.segmentdef ProgramEnd [startAfter="Data"]
+.segment ProgramEnd
+ProgramEnd:
+
+  // OS Shadow ANTIC Direct Memory Access Control ($D400)
   .label SDMCTL = $22f
-  // OS Shadow ANTIC Display List Pointer
+  // OS Shadow ANTIC Display List Pointer ($D402)
   .label SDLST = $230
 .segment Code
 main: {
@@ -46,7 +47,7 @@ main: {
 }
 .segment Data
   // Message to show
-  // Encoding: atari_internal
+  // Encoding: atari_screencode
   TEXT: .byte 'h'|$20, 'e'|$20, 'l'|$20, 'l'|$20, 'o'|$20, 0, 'x'|$60, 't'|$60, 0, 'w'|$20, 'o'|$20, 'r'|$20, 'l'|$20, 'd'|$20, $41, 0, 0, 0, 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC

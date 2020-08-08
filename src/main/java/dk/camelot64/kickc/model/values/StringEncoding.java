@@ -15,7 +15,7 @@ public enum StringEncoding {
    SCREENCODE_UPPER("screencode_upper", "screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper),
    ASCII("ascii", "ascii", "as", CharToPetsciiConverter.charToAscii),
    ATASCII("atascii", "ascii", "at", CharToAtasciiConverter.charToAtascii),
-   SCREENCODE_ATARI("screencode_atari", null, "sa", CharToAtasciiConverter.charToScreenCodeAtari),
+   SCREENCODE_ATARI("screencode_atari", null, "sa", CharToAtasciiConverter.charToScreenCodeAtari)
    ;
 
    /** Char value used to encode \xnn chars without a value within the chosen encoding. A char C is  encoded as CHAR_SPECIAL_VAL+C */

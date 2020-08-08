@@ -44,13 +44,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** The memory area used by default for variables. */
    private Variable.MemoryArea defaultMemoryArea;
 
-   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention) {
+   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding) {
       this.cParser = cParser;
       this.fileCtx = fileCtx;
       this.program = program;
       this.scopeStack = new Stack<>();
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
       this.currentCallingConvention = initialCallingConvention;
+      this.currentEncoding = defaultEncoding;
       scopeStack.push(program.getScope());
    }
 
@@ -2323,7 +2324,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /** The current string encoding used if no explicit encoding is specified. */
-   private StringEncoding currentEncoding = StringEncoding.SCREENCODE_MIXED;
+   private StringEncoding currentEncoding;
 
    @Override
    public RValue visitExprString(KickCParser.ExprStringContext ctx) {

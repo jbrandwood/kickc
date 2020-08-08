@@ -1,5 +1,7 @@
 package dk.camelot64.kickc.model;
 
+import dk.camelot64.kickc.model.values.StringEncoding;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +34,9 @@ public class TargetPlatform {
 
    /** The output file extension. */
    private String outFileExtension;
+
+   /** The default string encoding. */
+   private StringEncoding encoding;
 
    /** A number of preprocessor macro defines. */
    private Map<String, String> defines = null;
@@ -126,4 +131,13 @@ public class TargetPlatform {
    public void setVariableBuilderConfig(VariableBuilderConfig variableBuilderConfig) {
       this.variableBuilderConfig = variableBuilderConfig;
    }
+
+   public StringEncoding getEncoding() {
+      return encoding;
+   }
+
+   public void setEncoding(StringEncoding encoding) {
+      this.encoding = encoding;
+   }
+
 }

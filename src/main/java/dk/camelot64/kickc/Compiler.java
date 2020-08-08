@@ -6,6 +6,7 @@ import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.ProcedureCompilation;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.StringEncoding;
 import dk.camelot64.kickc.parser.CParser;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.passes.*;
@@ -171,9 +172,13 @@ public class Compiler {
             callingConvention = Procedure.CallingConvention.PHI_CALL;
          }
 
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention);
-         pass0GenerateStatementSequence.generate();
+         // Find encoding
+         StringEncoding encoding = program.getTargetPlatform().getEncoding();
+         if(encoding==null)
+            encoding = StringEncoding.SCREENCODE_MIXED;
 
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding);
+         pass0GenerateStatementSequence.generate();
 
          pass1GenerateSSA();
          pass2Optimize();

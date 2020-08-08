@@ -7,6 +7,7 @@ import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.TargetPlatform;
 import dk.camelot64.kickc.model.VariableBuilderConfig;
 import dk.camelot64.kickc.model.statements.StatementSource;
+import dk.camelot64.kickc.model.values.StringEncoding;
 
 import javax.json.*;
 import javax.json.stream.JsonParsingException;
@@ -52,6 +53,11 @@ public class CTargetPlatformParser {
             final String outExtension = platformJson.getString("extension", null);
             if(outExtension != null)
                targetPlatform.setOutFileExtension(outExtension);
+         }
+         {
+            final String encoding = platformJson.getString("encoding", null);
+            if(encoding != null)
+               targetPlatform.setEncoding(StringEncoding.fromName(encoding.toUpperCase()));
          }
          {
             final JsonArray zpReserves = platformJson.getJsonArray("zp_reserve");

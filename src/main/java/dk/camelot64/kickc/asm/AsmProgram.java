@@ -70,8 +70,6 @@ public class AsmProgram {
    public void addLine(AsmLine line) {
       line.setIndex(nextLineIndex++);
       getCurrentChunk().addLine(line);
-      if(line instanceof AsmSetEncoding)
-         currentEncoding = ((AsmSetEncoding) line).getEncoding();
    }
 
    /**
@@ -90,7 +88,13 @@ public class AsmProgram {
       // Size is 1 - grab it!
       StringEncoding encoding = encodings.iterator().next();
       if(!getCurrentEncoding().equals(encoding)) {
-         addLine(new AsmSetEncoding(encoding));
+         if(encoding.asmEncoding != null) {
+            addLine(new AsmSetEncoding(encoding));
+         } else {
+            addLine(new AsmSetEncoding(StringEncoding.ASCII));
+         }
+         currentEncoding = encoding;
+
       }
    }
 

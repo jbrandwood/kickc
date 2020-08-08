@@ -47,8 +47,9 @@ main: {
 }
 .segment Data
   // Message to show
-  // Encoding: atari_screencode
-  TEXT: .byte 'h'|$20, 'e'|$20, 'l'|$20, 'l'|$20, 'o'|$20, 0, 'x'|$60, 't'|$60, 0, 'w'|$20, 'o'|$20, 'r'|$20, 'l'|$20, 'd'|$20, $41, 0, 0, 0, 0
+.encoding "ascii"
+  TEXT: .text @"hello\$00\$38\$34\$00world\$01\$00"
+  .byte 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC
   DISPLAY_LIST: .byte $70, $70, $70, $47, <TEXT, >TEXT, $41, <DISPLAY_LIST, >DISPLAY_LIST

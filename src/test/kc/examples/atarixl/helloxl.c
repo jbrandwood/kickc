@@ -4,6 +4,8 @@
 // Display Lists atariarchives.org/mapping/appendix8.php
 
 #pragma target(atarixl)
+#pragma encoding(screencode_atari)
+#pragma emulator("65XEDebugger")
 #include <atari-xl.h>
 
 void main() {
@@ -16,14 +18,13 @@ void main() {
 }
 
 // Message to show
-// Encoding: atari_screencode
-char TEXT[] = {'h'|0x20,'e'|0x20,'l'|0x20,'l'|0x20,'o'|0x20,0x0,'x'|0x60,'t'|0x60,0x0,'w'|0x20,'o'|0x20,'r'|0x20,'l'|0x20,'d'|0x20,0x41,0x0,0x0,0x0,0x0};
+char TEXT[] = "hello XT world! ";
 
 // ANTIC Display List Program
 // https://en.wikipedia.org/wiki/ANTIC
 char DISPLAY_LIST[] = {
    0x70, 0x70, 0x70,                    // 3* BLK 8             (0x70) 8 blank lines 
-   0x47, <TEXT, >TEXT,                  //    LMS 7, TEXT       (0x47)  Load memory address and set to charmode 7 (16/20/24 chars wide, 16 lines per char)
+   0x47, <TEXT, >TEXT,                  //    LMS 7, TEXT       (0x47) Load memory address and set to charmode 7 (16/20/24 chars wide, 16 lines per char)
    0x41, <DISPLAY_LIST, >DISPLAY_LIST   //    JVB DISPLAY_LIST  (0x41) jump and wait for VBLANK
 };
 

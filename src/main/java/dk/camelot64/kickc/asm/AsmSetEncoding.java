@@ -24,7 +24,7 @@ public class AsmSetEncoding implements AsmLine {
 
    @Override
    public String getAsm() {
-      return ".encoding \"" + encoding.name+ "\"";
+      return ".encoding \"" + encoding.asmEncoding+ "\"";
    }
 
    @Override

@@ -9,11 +9,14 @@ import java.util.PrimitiveIterator;
 /** String encoding. */
 public enum StringEncoding {
 
-   PETSCII_MIXED("petscii_mixed", "pm", CharToPetsciiConverter.charToPetscii_mixed),
-   PETSCII_UPPER("petscii_upper", "pu", CharToPetsciiConverter.charToPetscii_mixed),
-   SCREENCODE_MIXED("screencode_mixed", "sm", CharToPetsciiConverter.charToScreenCode_mixed),
-   SCREENCODE_UPPER("screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper);
-
+   PETSCII_MIXED("petscii_mixed", "petscii_mixed", "pm", CharToPetsciiConverter.charToPetscii_mixed),
+   PETSCII_UPPER("petscii_upper", "petscii_upper", "pu", CharToPetsciiConverter.charToPetscii_mixed),
+   SCREENCODE_MIXED("screencode_mixed", "screencode_mixed", "sm", CharToPetsciiConverter.charToScreenCode_mixed),
+   SCREENCODE_UPPER("screencode_upper", "screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper),
+   ASCII("ascii", "ascii", "as", CharToPetsciiConverter.charToAscii),
+   ATASCII("atascii", "ascii", "at", CharToAtasciiConverter.charToAtascii),
+   SCREENCODE_ATARI("screencode_atari", null, "sa", CharToAtasciiConverter.charToScreenCodeAtari),
+   ;
 
    /** Char value used to encode \xnn chars without a value within the chosen encoding. A char C is  encoded as CHAR_SPECIAL_VAL+C */
    public static final char CHAR_SPECIAL_VAL = 64000;
@@ -25,14 +28,18 @@ public enum StringEncoding {
    /** The encoding name. */
    public final String name;
 
+   /** The KickAsm Encoding name. Null if KickAsm does not support the encoding. */
+   public final String asmEncoding;
+
    /** The string suffix usable for selecting the encoding. */
    public final String suffix;
 
-   /** The mapping from character value to integer value for the encoding. */
+   /** The mapping from character value to integer (byte) value for the encoding. */
    public final Map<Character, Byte> mapping;
 
-   StringEncoding(String name, String suffix, Map<Character, Byte> mapping) {
+   StringEncoding(String name, String asmEncoding, String suffix, Map<Character, Byte> mapping) {
       this.name = name;
+      this.asmEncoding = asmEncoding;
       this.suffix = suffix;
       this.mapping = mapping;
    }
@@ -163,8 +170,7 @@ public enum StringEncoding {
             hexNum += (char) escapedCharsIterator.nextInt();
             hexNum += (char) escapedCharsIterator.nextInt();
             final byte hexEncoding = (byte) Integer.parseInt(hexNum, 16);
-            final Character aChar = charFromEncoded(hexEncoding);
-            return aChar;
+            return charFromEncoded(hexEncoding);
          default:
             throw new CompileError("Illegal string escape sequence \\" + escapeChar);
       }
@@ -178,6 +184,14 @@ public enum StringEncoding {
     * @return The char itself - or the appropriate escape sequence if needed.
     */
    public String asciiToEscapedEncoded(char aChar, boolean escapeSingleQuotes) {
+      if(this.asmEncoding == null) {
+         // Encoding not supported by KickAsm - convert to ASCII / use escapes
+         final byte encoded = encodedFromChar(aChar);
+         if(encoded != ASCII.encodedFromChar(aChar))
+            // Not the same as in ASCII - use escape
+            return String.format("\\$%02x", encoded);
+      }
+
       switch(aChar) {
          case '\n':
             return "\\n";
@@ -198,7 +212,7 @@ public enum StringEncoding {
       if(aChar > 127) {
          // Encode all large chars - including SPECIAL's
          final byte encoded = encodedFromChar(aChar);
-         return String.format("\\$%x", encoded);
+         return String.format("\\$%02x", encoded);
       } else
          return Character.toString(aChar);
    }

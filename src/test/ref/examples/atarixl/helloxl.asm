@@ -48,8 +48,8 @@ main: {
 .segment Data
   // Message to show
 .encoding "ascii"
-  TEXT: .text @"hello\$00\$38\$34\$00world\$01\$00"
+  TEXT: .text @"\$28\$25\$2c\$2c\$2f\$00atari\$00\$18\$22\$29\$34\$24emonstrates\$00\$21\$2e\$34\$29\$23\$00display\$00list"
   .byte 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC
-  DISPLAY_LIST: .byte $70, $70, $70, $47, <TEXT, >TEXT, $41, <DISPLAY_LIST, >DISPLAY_LIST
+  DISPLAY_LIST: .byte $70, $70, $70, $47, <TEXT, >TEXT, $70, 2, $41, <DISPLAY_LIST, >DISPLAY_LIST

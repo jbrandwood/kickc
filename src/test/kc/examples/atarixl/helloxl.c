@@ -17,13 +17,16 @@ void main() {
 }
 
 // Message to show
-char TEXT[] = "hello XT world! ";
+char TEXT[] = "HELLO atari 8BIT"
+              "Demonstrates ANTIC display list"
+            ;
 
 // ANTIC Display List Program
 // https://en.wikipedia.org/wiki/ANTIC
 char DISPLAY_LIST[] = {
    0x70, 0x70, 0x70,                    // 3* BLK 8             (0x70) 8 blank lines 
-   0x47, <TEXT, >TEXT,                  //    LMS 7, TEXT       (0x47) Load memory address and set to charmode 7 (16/20/24 chars wide, 16 lines per char)
+   0x47, <TEXT, >TEXT,                 //    LMS 7, TEXT       (0x47) Load memory address and set to charmode 7 (16/20/24 chars wide, 16 lines per char)
+   0x70,                                //    BLK 8             (0x70) 8 blank lines 
+   0x02,                                   //    2, TEXT           (0x02) Charmode 2 (32/40/48 chars wide, 8 lines per char)
    0x41, <DISPLAY_LIST, >DISPLAY_LIST   //    JVB DISPLAY_LIST  (0x41) jump and wait for VBLANK
 };
-

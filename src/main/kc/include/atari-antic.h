@@ -111,3 +111,63 @@ struct ATARI_ANTIC {
     char NMIST;
     
 };
+
+// ANTIC Display List Instruction Set
+
+// 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+const char MODE2 = 0x02;
+// 3: High Resolution Text Mode. 10 scanlines per char, 32/40/48 chars wide
+const char MODE3 = 0x03;
+// 4:  Multicolor text. 8 scanlines per char, 32/40/48 chars wide.
+const char MODE4 = 0x04;
+// 5:  Multicolor text. 16 scanlines per char, 32/40/48 chars wide. each character is instead 4x8 with pixels twice as wide. Normally each pair of bits produces either the background color (00) or PF0-PF2 (01-11). If bit 7 is set, however, the 11 pair produces PF3 instead of PF2.
+const char MODE5 = 0x05;
+// 6:  Single color text in five colors. 8 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+const char MODE6 = 0x06;
+// 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+const char MODE7 = 0x07;
+// 8: Bitmap mode with 8x8 pixels. 40 pixel screen. four-color mode.
+const char MODE8 = 0x08;
+// 9: Bitmap mode with 4x4 pixels. 80 pixel screen. two-color mode.
+const char MODE9 = 0x09;
+// A: Bitmap mode with 4x4 pixels. 80 pixel screen. four-color mode.
+const char MODEA = 0x0a;
+// B: Bitmap mode with 2x2 pixels. 160 pixel screen. two-color mode.
+const char MODEB = 0x0b;
+// C: Bitmap mode with 2x1 pixels. 160 pixel screen. two-color mode.
+const char MODEC = 0x0c;
+// D: Bitmap mode with 2x2 pixels. 160 pixel screen. four-color mode.
+const char MODED = 0x0d;
+// E: Bitmap mode with 2x1 pixels. 160 pixel screen. four-color mode.
+const char MODEE = 0x0e;
+// F: Bitmap mode with 1x1 pixels. 320 pixel screen. two-color mode.
+const char MODEF = 0x0f;
+
+// Display list interrupt - Interrupt CPU at beginning of last scan line. Can be combined with mode or blank instructions by OR.
+const char DLI = 0x80;
+// Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+const char LMS = 0x40;
+// Vertical scroll - Enable vertical scrolling. Can be combined with mode or blank instructions by OR.
+const char VS = 0x20;
+// Horizontal scroll - Enable horizontal scrolling. Can be combined with mode or blank instructions by OR.
+const char HS = 0x10;
+// Jump command - followed by two bytes indicating the new instruction pointer for the display list.
+const char JMP = 0x01;
+// Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+const char JVB = 0x41;
+// Blank 1 line
+const char BLANK1 = 0x00;
+// Blank 2 lines
+const char BLANK2 = 0x10;
+// Blank 3 lines
+const char BLANK3 = 0x20;
+// Blank 4 lines
+const char BLANK4 = 0x30;
+// Blank 5 lines
+const char BLANK5 = 0x40;
+// Blank 6 lines
+const char BLANK6 = 0x50;
+// Blank 7 lines
+const char BLANK7 = 0x60;
+// Blank 8 lines
+const char BLANK8 = 0x70;

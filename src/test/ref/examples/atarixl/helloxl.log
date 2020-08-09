@@ -138,7 +138,12 @@ SYMBOL TABLE SSA
 (byte) ATARI_POKEY_WRITE::SKREST
 (byte) ATARI_POKEY_WRITE::STIMER
 (byte) ATARI_POKEY_WRITE::UNUSED
-(const byte*) DISPLAY_LIST[]  = { (byte) $70, (byte) $70, (byte) $70, (byte) $47, <(const byte*) TEXT, >(const byte*) TEXT, (byte) $70, (byte) 2, (byte) $41, <(const byte*) DISPLAY_LIST, >(const byte*) DISPLAY_LIST }
+(const nomodify byte) BLANK8 = (byte) $70
+(const byte*) DISPLAY_LIST[]  = { (const nomodify byte) BLANK8, (const nomodify byte) BLANK8, (const nomodify byte) BLANK8, (const nomodify byte) LMS|(const nomodify byte) MODE7, <(const byte*) TEXT, >(const byte*) TEXT, (const nomodify byte) BLANK8, (const nomodify byte) MODE2, (const nomodify byte) JVB, <(const byte*) DISPLAY_LIST, >(const byte*) DISPLAY_LIST }
+(const nomodify byte) JVB = (byte) $41
+(const nomodify byte) LMS = (byte) $40
+(const nomodify byte) MODE2 = (byte) 2
+(const nomodify byte) MODE7 = (byte) 7
 (const nomodify byte**) SDLST = (byte**)(number) $230
 (const nomodify byte*) SDMCTL = (byte*)(number) $22f
 (const byte*) TEXT[]  = (byte*) "HELLO atari 8BITDemonstrates ANTIC display list"sa
@@ -331,6 +336,16 @@ ProgramStart:
 ProgramEnd:
 
   // Global Constants & labels
+  // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+  .const MODE2 = 2
+  // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+  .const MODE7 = 7
+  // Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+  .const LMS = $40
+  // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+  .const JVB = $41
+  // Blank 8 lines
+  .const BLANK8 = $70
   // OS Shadow ANTIC Direct Memory Access Control ($D400)
   .label SDMCTL = $22f
   // OS Shadow ANTIC Display List Pointer ($D402)
@@ -365,7 +380,7 @@ main: {
   .byte 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC
-  DISPLAY_LIST: .byte $70, $70, $70, $47, <TEXT, >TEXT, $70, 2, $41, <DISPLAY_LIST, >DISPLAY_LIST
+  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK8, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *((const nomodify byte*) SDMCTL) ← (byte) $21 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -419,6 +434,16 @@ ProgramStart:
 ProgramEnd:
 
   // Global Constants & labels
+  // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+  .const MODE2 = 2
+  // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+  .const MODE7 = 7
+  // Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+  .const LMS = $40
+  // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+  .const JVB = $41
+  // Blank 8 lines
+  .const BLANK8 = $70
   // OS Shadow ANTIC Direct Memory Access Control ($D400)
   .label SDMCTL = $22f
   // OS Shadow ANTIC Display List Pointer ($D402)
@@ -453,7 +478,7 @@ main: {
   .byte 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC
-  DISPLAY_LIST: .byte $70, $70, $70, $47, <TEXT, >TEXT, $70, 2, $41, <DISPLAY_LIST, >DISPLAY_LIST
+  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK8, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST
 
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
@@ -567,7 +592,12 @@ FINAL SYMBOL TABLE
 (byte) ATARI_POKEY_WRITE::SKREST
 (byte) ATARI_POKEY_WRITE::STIMER
 (byte) ATARI_POKEY_WRITE::UNUSED
-(const byte*) DISPLAY_LIST[]  = { (byte) $70, (byte) $70, (byte) $70, (byte) $47, <(const byte*) TEXT, >(const byte*) TEXT, (byte) $70, (byte) 2, (byte) $41, <(const byte*) DISPLAY_LIST, >(const byte*) DISPLAY_LIST }
+(const nomodify byte) BLANK8 = (byte) $70
+(const byte*) DISPLAY_LIST[]  = { (const nomodify byte) BLANK8, (const nomodify byte) BLANK8, (const nomodify byte) BLANK8, (const nomodify byte) LMS|(const nomodify byte) MODE7, <(const byte*) TEXT, >(const byte*) TEXT, (const nomodify byte) BLANK8, (const nomodify byte) MODE2, (const nomodify byte) JVB, <(const byte*) DISPLAY_LIST, >(const byte*) DISPLAY_LIST }
+(const nomodify byte) JVB = (byte) $41
+(const nomodify byte) LMS = (byte) $40
+(const nomodify byte) MODE2 = (byte) 2
+(const nomodify byte) MODE7 = (byte) 7
 (const nomodify byte**) SDLST = (byte**) 560
 (const nomodify byte*) SDMCTL = (byte*) 559
 (const byte*) TEXT[]  = (byte*) "HELLO atari 8BITDemonstrates ANTIC display list"sa
@@ -609,6 +639,16 @@ ProgramStart:
 ProgramEnd:
 
   // Global Constants & labels
+  // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
+  .const MODE2 = 2
+  // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.
+  .const MODE7 = 7
+  // Load memory scan counter (LMS operation) - Load memory scan counter with new 16-bit address. Can be combined with mode instructions by OR.
+  .const LMS = $40
+  // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
+  .const JVB = $41
+  // Blank 8 lines
+  .const BLANK8 = $70
   // OS Shadow ANTIC Direct Memory Access Control ($D400)
   .label SDMCTL = $22f
   // OS Shadow ANTIC Display List Pointer ($D402)
@@ -642,5 +682,5 @@ main: {
   .byte 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC
-  DISPLAY_LIST: .byte $70, $70, $70, $47, <TEXT, >TEXT, $70, 2, $41, <DISPLAY_LIST, >DISPLAY_LIST
+  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK8, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST
 

@@ -193,6 +193,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMega65Addressing32bit() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/32bit-addressing-mega65.c");
+   }
+
+   @Test
    public void testMega65Hello() throws IOException, URISyntaxException {
       compileAndCompare("examples/mega65/hello-mega65.c");
    }

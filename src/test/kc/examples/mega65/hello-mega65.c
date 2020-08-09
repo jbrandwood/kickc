@@ -1,5 +1,4 @@
-// Hello World for MEGA 65
-
+// Hello World for MEGA 65 - putting chars directly to the screen
 #pragma target(mega65)
 
 char * SCREEN = 0x0800;

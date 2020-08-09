@@ -1,4 +1,4 @@
-// Hello World for MEGA 65
+// Hello World for MEGA 65 - putting chars directly to the screen
 .cpu _45gs02
   .file [name="hello-mega65.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]

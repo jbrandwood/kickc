@@ -1,0 +1,421 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  (volatile dword) ADDR32 ← (number) $ff80000
+  asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
+  (volatile dword) ADDR32 ← (number) $800
+  asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  (volatile dword) ADDR32 ← (dword) 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(volatile dword) ADDR32 loadstore
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
+(void()) main()
+(label) main::@return
+
+Adding number conversion cast (unumber) $ff80000 in (volatile dword) ADDR32 ← (number) $ff80000
+Adding number conversion cast (unumber) $800 in (volatile dword) ADDR32 ← (number) $800
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (volatile dword) ADDR32 ← (unumber)(number) $ff80000
+Inlining cast (volatile dword) ADDR32 ← (unumber)(number) $800
+Successful SSA optimization Pass2InlineCast
+Simplifying constant integer cast $ff80000
+Simplifying constant integer cast $800
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (dword) $ff80000
+Finalized unsigned number type (word) $800
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
+CALL GRAPH
+Calls in [__start] to main:3 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block (label) __start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) __start()
+__start: scope:[__start]  from
+  [0] phi()
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  [1] (volatile dword) ADDR32 ← (dword) 0
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  [2] phi()
+  [3] call main 
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  [4] return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  [5] (volatile dword) ADDR32 ← (dword) $ff80000
+  asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
+  [7] (volatile dword) ADDR32 ← (word) $800
+  asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [9] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(volatile dword) ADDR32 loadstore 12.0
+(void()) __start()
+(void()) main()
+
+Initial phi equivalence classes
+Added variable ADDR32 to live range equivalence class [ ADDR32 ]
+Complete equivalence classes
+[ ADDR32 ]
+Allocated zp[4]:2 [ ADDR32 ]
+
+INITIAL ASM
+Target platform is mega65 / MEGA45GS02
+  // File Comments
+// 32-bit addressing using the new addressing mode
+  // Upstart
+.cpu _45gs02
+  .file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(__start)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  // Absolute 32-bit address to use for storing/loading data
+  .label ADDR32 = 2
+.segment Code
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
+    // [1] (volatile dword) ADDR32 ← (dword) 0 -- vduz1=vduc1 
+    lda #<0
+    sta.z ADDR32
+    lda #>0
+    sta.z ADDR32+1
+    lda #<0>>$10
+    sta.z ADDR32+2
+    lda #>0>>$10
+    sta.z ADDR32+3
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
+    jmp __b1
+    // __start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // __start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // main
+main: {
+    // [5] (volatile dword) ADDR32 ← (dword) $ff80000 -- vduz1=vduc1 
+    // Modify Color Ram using 32-bit addressing
+    lda #<$ff80000
+    sta.z ADDR32
+    lda #>$ff80000
+    sta.z ADDR32+1
+    lda #<$ff80000>>$10
+    sta.z ADDR32+2
+    lda #>$ff80000>>$10
+    sta.z ADDR32+3
+    // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
+    ldz #0
+  !:
+    tza
+    sta.z ((ADDR32)),z
+    inz
+    cpz #$50
+    bne !-
+    // [7] (volatile dword) ADDR32 ← (word) $800 -- vduz1=vduc1 
+    // Modify Screen using 32-bit addressing
+    lda #<$800
+    sta.z ADDR32
+    lda #>$800
+    sta.z ADDR32+1
+    lda #<$800>>$10
+    sta.z ADDR32+2
+    lda #>$800>>$10
+    sta.z ADDR32+3
+    // asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
+    lda #'*'
+    ldz #$4f
+  !:
+    sta.z ((ADDR32)),z
+    dez
+    bpl !-
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] (volatile dword) ADDR32 ← (dword) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile dword) ADDR32 ← (dword) $ff80000 [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
+Statement asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  } always clobbers reg byte a reg byte z 
+Statement [7] (volatile dword) ADDR32 ← (word) $800 [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
+Statement asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  } always clobbers reg byte a reg byte z 
+Potential registers zp[4]:2 [ ADDR32 ] : zp[4]:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [] 12: zp[4]:2 [ ADDR32 ] 
+Uplift Scope [main] 
+Uplift Scope [__start] 
+
+Uplifting [] best 148 combination zp[4]:2 [ ADDR32 ] 
+Uplifting [main] best 148 combination 
+Uplifting [__start] best 148 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// 32-bit addressing using the new addressing mode
+  // Upstart
+.cpu _45gs02
+  .file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(__start)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  // Absolute 32-bit address to use for storing/loading data
+  .label ADDR32 = 2
+.segment Code
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
+    // [1] (volatile dword) ADDR32 ← (dword) 0 -- vduz1=vduc1 
+    lda #<0
+    sta.z ADDR32
+    lda #>0
+    sta.z ADDR32+1
+    lda #<0>>$10
+    sta.z ADDR32+2
+    lda #>0>>$10
+    sta.z ADDR32+3
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
+    jmp __b1
+    // __start::@1
+  __b1:
+    // [3] call main 
+    jsr main
+    jmp __breturn
+    // __start::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // main
+main: {
+    // [5] (volatile dword) ADDR32 ← (dword) $ff80000 -- vduz1=vduc1 
+    // Modify Color Ram using 32-bit addressing
+    lda #<$ff80000
+    sta.z ADDR32
+    lda #>$ff80000
+    sta.z ADDR32+1
+    lda #<$ff80000>>$10
+    sta.z ADDR32+2
+    lda #>$ff80000>>$10
+    sta.z ADDR32+3
+    // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
+    ldz #0
+  !:
+    tza
+    sta.z ((ADDR32)),z
+    inz
+    cpz #$50
+    bne !-
+    // [7] (volatile dword) ADDR32 ← (word) $800 -- vduz1=vduc1 
+    // Modify Screen using 32-bit addressing
+    lda #<$800
+    sta.z ADDR32
+    lda #>$800
+    sta.z ADDR32+1
+    lda #<$800>>$10
+    sta.z ADDR32+2
+    lda #>$800>>$10
+    sta.z ADDR32+3
+    // asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
+    lda #'*'
+    ldz #$4f
+  !:
+    sta.z ((ADDR32)),z
+    dez
+    bpl !-
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [9] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __init1
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from___init1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __init1:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(volatile dword) ADDR32 loadstore zp[4]:2 12.0
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(label) __start::__init1
+(void()) main()
+(label) main::@return
+
+zp[4]:2 [ ADDR32 ]
+
+
+FINAL ASSEMBLER
+Score: 107
+
+  // File Comments
+// 32-bit addressing using the new addressing mode
+  // Upstart
+.cpu _45gs02
+  .file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(__start)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  // Absolute 32-bit address to use for storing/loading data
+  .label ADDR32 = 2
+.segment Code
+  // __start
+__start: {
+    // __start::__init1
+    // ADDR32
+    // [1] (volatile dword) ADDR32 ← (dword) 0 -- vduz1=vduc1 
+    lda #<0
+    sta.z ADDR32
+    sta.z ADDR32+1
+    lda #<0>>$10
+    sta.z ADDR32+2
+    lda #>0>>$10
+    sta.z ADDR32+3
+    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
+    // [3] call main 
+    jsr main
+    // __start::@return
+    // [4] return 
+    rts
+}
+  // main
+main: {
+    // ADDR32 = 0xff80000
+    // [5] (volatile dword) ADDR32 ← (dword) $ff80000 -- vduz1=vduc1 
+    // Modify Color Ram using 32-bit addressing
+    lda #<$ff80000
+    sta.z ADDR32
+    lda #>$ff80000
+    sta.z ADDR32+1
+    lda #<$ff80000>>$10
+    sta.z ADDR32+2
+    lda #>$ff80000>>$10
+    sta.z ADDR32+3
+    // asm
+    // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
+    ldz #0
+  !:
+    tza
+    sta.z ((ADDR32)),z
+    inz
+    cpz #$50
+    bne !-
+    // ADDR32 = 0x00000800
+    // [7] (volatile dword) ADDR32 ← (word) $800 -- vduz1=vduc1 
+    // Modify Screen using 32-bit addressing
+    lda #<$800
+    sta.z ADDR32
+    lda #>$800
+    sta.z ADDR32+1
+    lda #<$800>>$10
+    sta.z ADDR32+2
+    lda #>$800>>$10
+    sta.z ADDR32+3
+    // asm
+    // asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
+    lda #'*'
+    ldz #$4f
+  !:
+    sta.z ((ADDR32)),z
+    dez
+    bpl !-
+    // main::@return
+    // }
+    // [9] return 
+    rts
+}
+  // File Data
+

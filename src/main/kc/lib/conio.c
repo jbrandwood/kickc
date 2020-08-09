@@ -11,6 +11,8 @@
 #include "conio-plus4.c"
 #elif defined(__VIC20__)
 #include "conio-vic20.c"
+#elif defined(__MEGA65__)
+#include "conio-mega65.c"
 #elif defined(__NES__)
 #include "conio-nes.c"
 #else

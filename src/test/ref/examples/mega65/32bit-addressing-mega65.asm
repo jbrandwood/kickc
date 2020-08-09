@@ -10,6 +10,8 @@
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
 .text toIntString(__start)                                   //         NNNN
 .byte $00, $00, $00                                     // 
+  // The address of the coloir RAM in MEGA65 main memory
+  .const MEGA65_MEM_COLOR_RAM = $ff80000
   // Absolute 32-bit address to use for storing/loading data
   .label ADDR32 = 2
 .segment Code
@@ -26,15 +28,15 @@ __start: {
     rts
 }
 main: {
-    // ADDR32 = 0xff80000
+    // ADDR32 = MEGA65_MEM_COLOR_RAM
     // Modify Color Ram using 32-bit addressing
-    lda #<$ff80000
+    lda #<MEGA65_MEM_COLOR_RAM
     sta.z ADDR32
-    lda #>$ff80000
+    lda #>MEGA65_MEM_COLOR_RAM
     sta.z ADDR32+1
-    lda #<$ff80000>>$10
+    lda #<MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+2
-    lda #>$ff80000>>$10
+    lda #>MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+3
     // asm
     ldz #0

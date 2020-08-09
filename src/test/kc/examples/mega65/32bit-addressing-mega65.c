@@ -4,9 +4,12 @@
 // Absolute 32-bit address to use for storing/loading data
 volatile __zp unsigned long ADDR32; 
 
+// The address of the coloir RAM in MEGA65 main memory
+const unsigned long MEGA65_MEM_COLOR_RAM = 0xff80000;
+
 void main() {
     // Modify Color Ram using 32-bit addressing
-    ADDR32 = 0xff80000;
+    ADDR32 = MEGA65_MEM_COLOR_RAM;
     asm {
         ldz #0
     !:

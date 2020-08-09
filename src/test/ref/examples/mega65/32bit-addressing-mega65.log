@@ -4,7 +4,7 @@ CONTROL FLOW GRAPH SSA
 
 (void()) main()
 main: scope:[main]  from __start::@1
-  (volatile dword) ADDR32 ← (number) $ff80000
+  (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM
   asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
   (volatile dword) ADDR32 ← (number) $800
   asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
@@ -30,6 +30,7 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 (volatile dword) ADDR32 loadstore
+(const nomodify dword) MEGA65_MEM_COLOR_RAM = (dword) $ff80000
 (void()) __start()
 (label) __start::@1
 (label) __start::@2
@@ -38,16 +39,12 @@ SYMBOL TABLE SSA
 (void()) main()
 (label) main::@return
 
-Adding number conversion cast (unumber) $ff80000 in (volatile dword) ADDR32 ← (number) $ff80000
 Adding number conversion cast (unumber) $800 in (volatile dword) ADDR32 ← (number) $800
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (volatile dword) ADDR32 ← (unumber)(number) $ff80000
 Inlining cast (volatile dword) ADDR32 ← (unumber)(number) $800
 Successful SSA optimization Pass2InlineCast
-Simplifying constant integer cast $ff80000
 Simplifying constant integer cast $800
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (dword) $ff80000
 Finalized unsigned number type (word) $800
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
@@ -81,7 +78,7 @@ __start::@return: scope:[__start]  from __start::@1
 
 (void()) main()
 main: scope:[main]  from __start::@1
-  [5] (volatile dword) ADDR32 ← (dword) $ff80000
+  [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM
   asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
   [7] (volatile dword) ADDR32 ← (word) $800
   asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
@@ -119,6 +116,8 @@ Target platform is mega65 / MEGA45GS02
 .text toIntString(__start)                                   //         NNNN
 .byte $00, $00, $00                                     // 
   // Global Constants & labels
+  // The address of the coloir RAM in MEGA65 main memory
+  .const MEGA65_MEM_COLOR_RAM = $ff80000
   // Absolute 32-bit address to use for storing/loading data
   .label ADDR32 = 2
 .segment Code
@@ -151,15 +150,15 @@ __start: {
 }
   // main
 main: {
-    // [5] (volatile dword) ADDR32 ← (dword) $ff80000 -- vduz1=vduc1 
+    // [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
     // Modify Color Ram using 32-bit addressing
-    lda #<$ff80000
+    lda #<MEGA65_MEM_COLOR_RAM
     sta.z ADDR32
-    lda #>$ff80000
+    lda #>MEGA65_MEM_COLOR_RAM
     sta.z ADDR32+1
-    lda #<$ff80000>>$10
+    lda #<MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+2
-    lda #>$ff80000>>$10
+    lda #>MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+3
     // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
     ldz #0
@@ -196,7 +195,7 @@ main: {
 
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] (volatile dword) ADDR32 ← (dword) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] (volatile dword) ADDR32 ← (dword) $ff80000 [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
+Statement [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
 Statement asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  } always clobbers reg byte a reg byte z 
 Statement [7] (volatile dword) ADDR32 ← (word) $800 [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
 Statement asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  } always clobbers reg byte a reg byte z 
@@ -227,6 +226,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .text toIntString(__start)                                   //         NNNN
 .byte $00, $00, $00                                     // 
   // Global Constants & labels
+  // The address of the coloir RAM in MEGA65 main memory
+  .const MEGA65_MEM_COLOR_RAM = $ff80000
   // Absolute 32-bit address to use for storing/loading data
   .label ADDR32 = 2
 .segment Code
@@ -259,15 +260,15 @@ __start: {
 }
   // main
 main: {
-    // [5] (volatile dword) ADDR32 ← (dword) $ff80000 -- vduz1=vduc1 
+    // [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
     // Modify Color Ram using 32-bit addressing
-    lda #<$ff80000
+    lda #<MEGA65_MEM_COLOR_RAM
     sta.z ADDR32
-    lda #>$ff80000
+    lda #>MEGA65_MEM_COLOR_RAM
     sta.z ADDR32+1
-    lda #<$ff80000>>$10
+    lda #<MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+2
-    lda #>$ff80000>>$10
+    lda #>MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+3
     // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
     ldz #0
@@ -320,6 +321,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 (volatile dword) ADDR32 loadstore zp[4]:2 12.0
+(const nomodify dword) MEGA65_MEM_COLOR_RAM = (dword) $ff80000
 (void()) __start()
 (label) __start::@1
 (label) __start::@return
@@ -348,6 +350,8 @@ Score: 107
 .text toIntString(__start)                                   //         NNNN
 .byte $00, $00, $00                                     // 
   // Global Constants & labels
+  // The address of the coloir RAM in MEGA65 main memory
+  .const MEGA65_MEM_COLOR_RAM = $ff80000
   // Absolute 32-bit address to use for storing/loading data
   .label ADDR32 = 2
 .segment Code
@@ -373,16 +377,16 @@ __start: {
 }
   // main
 main: {
-    // ADDR32 = 0xff80000
-    // [5] (volatile dword) ADDR32 ← (dword) $ff80000 -- vduz1=vduc1 
+    // ADDR32 = MEGA65_MEM_COLOR_RAM
+    // [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
     // Modify Color Ram using 32-bit addressing
-    lda #<$ff80000
+    lda #<MEGA65_MEM_COLOR_RAM
     sta.z ADDR32
-    lda #>$ff80000
+    lda #>MEGA65_MEM_COLOR_RAM
     sta.z ADDR32+1
-    lda #<$ff80000>>$10
+    lda #<MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+2
-    lda #>$ff80000>>$10
+    lda #>MEGA65_MEM_COLOR_RAM>>$10
     sta.z ADDR32+3
     // asm
     // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }

@@ -33,6 +33,8 @@ ProgramEnd:
   .const LMS = $40
   // Jump and wait for Vertical Blank - suspends the display list until vertical blank and then jumps. This is usually used to terminate the display list and restart it for the next frame.
   .const JVB = $41
+  // Blank 4 lines
+  .const BLANK4 = $30
   // Blank 8 lines
   .const BLANK8 = $70
   // OS Shadow ANTIC Direct Memory Access Control ($D400)
@@ -62,4 +64,4 @@ main: {
   .byte 0
   // ANTIC Display List Program
   // https://en.wikipedia.org/wiki/ANTIC
-  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK8, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST
+  DISPLAY_LIST: .byte BLANK8, BLANK8, BLANK8, LMS|MODE7, <TEXT, >TEXT, BLANK4, MODE2, JVB, <DISPLAY_LIST, >DISPLAY_LIST

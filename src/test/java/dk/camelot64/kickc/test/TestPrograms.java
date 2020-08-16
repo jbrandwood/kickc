@@ -203,6 +203,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAtariXlRasterbars() throws IOException, URISyntaxException {
+      compileAndCompare("examples/atarixl/rasterbars.c");
+   }
+
+   @Test
    public void testAtariXlHello() throws IOException, URISyntaxException {
       compileAndCompare("examples/atarixl/helloxl.c");
    }

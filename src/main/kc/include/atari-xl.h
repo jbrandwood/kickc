@@ -6,10 +6,10 @@
 #include <atari-pokey.h>
 
 // Atari GTIA write registers
-struct ATARI_GTIA_WRITE * const TIA = 0xd000;
+struct ATARI_GTIA_WRITE * const GTIA = 0xd000;
 
 // Atari GTIA read registers
-struct ATARI_GTIA_READ * const TIA_READ = 0xd000;
+struct ATARI_GTIA_READ * const GTIA_READ = 0xd000;
 
 // Atari POKEY write registers
 struct ATARI_POKEY_WRITE * const POKEY = 0xd200;

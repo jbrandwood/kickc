@@ -43,6 +43,21 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLibraryConstructor2() throws IOException, URISyntaxException {
+      compileAndCompare("library-constructor-2.c");
+   }
+
+   @Test
+   public void testLibraryConstructor1() throws IOException, URISyntaxException {
+      compileAndCompare("library-constructor-1.c");
+   }
+
+   //@Test
+   //public void testLibraryConstructor0() throws IOException, URISyntaxException {
+   //   compileAndCompare("library-constructor-0.c");
+   //}
+
+   @Test
    public void testCpu45GS02AddressingModes() throws IOException, URISyntaxException {
       compileAndCompare("cpu-45gs02-addressing-modes.c");
    }
@@ -201,7 +216,6 @@ public class TestPrograms {
    public void testMega65Hello() throws IOException, URISyntaxException {
       compileAndCompare("examples/mega65/hello-mega65.c");
    }
-
 
    @Test
    public void testMega65Vic4() throws IOException, URISyntaxException {

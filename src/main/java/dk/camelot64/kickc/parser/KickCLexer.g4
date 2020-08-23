@@ -91,6 +91,7 @@ INTRINSIC: '__intrinsic' ;
 CALLING: 'calling';
 CALLINGCONVENTION: '__stackcall' | '__phicall' ;
 VARMODEL: 'var_model';
+CONSTRUCTORFOR: 'constructor_for';
 IF: 'if' ;
 ELSE: 'else' ;
 WHILE: 'while' ;

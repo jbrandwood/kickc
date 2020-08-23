@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.ControlFlowGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.*;
 import dk.camelot64.kickc.model.symbols.Label;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
@@ -39,6 +40,9 @@ public class ProgramValueIterator {
       for(Variable variable : programScope.getAllVars(true)) {
          execute(variable, handler);
       }
+      for(Procedure procedure : programScope.getAllProcedures(true)) {
+         execute(procedure, handler);
+      }
    }
 
    /**
@@ -54,6 +58,17 @@ public class ProgramValueIterator {
       if(variable.isArray()) {
          execute(new ProgramValue.ProgramValueArraySize(variable), programValueHandler, null, null, null);
       }
+   }
+
+   /**
+    * Execute a programValueHandler on all values in a procedure (not in the body of the procedure).
+    *
+    * @param procedure The procedure
+    * @param programValueHandler The programValueHandler to execute
+    */
+   public static void execute(Procedure procedure, ProgramValueHandler programValueHandler) {
+      for(int i = 0; i<procedure.getConstructorRefs().size(); i++)
+         execute(new ProgramValue.ProcedureConstructorRef(procedure, i), programValueHandler, null, null, null);
    }
 
    /**

@@ -618,6 +618,18 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx) { }
 	/**
 	 * {@inheritDoc}

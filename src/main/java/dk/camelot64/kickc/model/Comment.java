@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * A comment in the source code.
@@ -12,6 +13,9 @@ public class Comment implements Serializable {
 
    /** Empty comments collection. */
    public static final ArrayList<Comment> NO_COMMENTS = new ArrayList<>();
+
+   /** Special comment used for constructor calls in __init(). */
+   public static final Comment CONSTRUCTOR = new Comment("#pragma constructor");
 
    /** The comment. */
    private String comment;
@@ -46,5 +50,20 @@ public class Comment implements Serializable {
 
    public void setBlock(boolean block) {
       isBlock = block;
+   }
+
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      Comment comment1 = (Comment) o;
+      return isBlock == comment1.isBlock &&
+            tokenIndex == comment1.tokenIndex &&
+            Objects.equals(comment, comment1.comment);
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hash(comment, isBlock, tokenIndex);
    }
 }

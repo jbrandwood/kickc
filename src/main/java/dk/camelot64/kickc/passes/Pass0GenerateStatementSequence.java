@@ -1,8 +1,8 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.NumberParser;
 import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.cpufamily6502.CpuClobber;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.*;
 import dk.camelot64.kickc.model.operators.*;
@@ -43,6 +43,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    private Stack<Scope> scopeStack;
    /** The memory area used by default for variables. */
    private Variable.MemoryArea defaultMemoryArea;
+   /** All #pragma constructor_for() statements. Collected during parsing and handled by {@link #generate()} before returning. */
+   private List<KickCParser.GlobalDirectiveConstructorForContext> pragmaConstructorFors;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding) {
       this.cParser = cParser;
@@ -52,6 +54,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
       this.currentCallingConvention = initialCallingConvention;
       this.currentEncoding = defaultEncoding;
+      this.pragmaConstructorFors = new ArrayList();
       scopeStack.push(program.getScope());
    }
 
@@ -123,6 +126,34 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public void generate() {
       this.visit(fileCtx);
 
+      // TODO: Handle all forward references here?
+
+      // Handle #pragma constructor_for()
+      List<ProcedureRef> constructorProcs = new ArrayList<>();
+      for(KickCParser.GlobalDirectiveConstructorForContext pragmaConstructorFor : pragmaConstructorFors) {
+         final List<TerminalNode> names = pragmaConstructorFor.NAME();
+         if(names.size() < 2)
+            throw new CompileError("Error! #pragma constructor_for requires at least 2 parameters.", new StatementSource(pragmaConstructorFor));
+         final String constructorProcName = names.get(0).getText();
+         final Procedure constructorProc = program.getScope().getLocalProcedure(constructorProcName);
+         if(constructorProc == null)
+            throw new CompileError("Error! Constructor procedure not found " + constructorProcName, new StatementSource(pragmaConstructorFor));
+         for(int i = 1; i < names.size(); i++) {
+            final String procName = names.get(i).getText();
+            final Procedure proc = program.getScope().getLocalProcedure(procName);
+            if(proc == null)
+               throw new CompileError("Error! Procedure not found " + procName, new StatementSource(pragmaConstructorFor));
+            if(program.getLog().isVerboseParse())
+               program.getLog().append("Added constructor procedure " + constructorProc.getRef().toString() + " to procedure " + proc.getRef().toString());
+            proc.getConstructorRefs().add(constructorProc.getRef());
+         }
+         if(!constructorProcs.contains(constructorProc.getRef())) {
+            constructorProcs.add(constructorProc.getRef());
+            // Add call to constructor procedure to the __init() procedure
+            addStatement(new StatementCall(null, constructorProc.getLocalName(), new ArrayList<>(), new StatementSource(pragmaConstructorFor), Collections.singletonList(Comment.CONSTRUCTOR)));
+         }
+      }
+
       // Finalize the _init() procedure - if present
       final ProcedureRef initProcedureRef = new ProcedureRef(SymbolRef.INIT_PROC_NAME);
       final ProcedureCompilation initCompilation = program.getProcedureCompilation(initProcedureRef);
@@ -156,11 +187,17 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Void visitFile(KickCParser.FileContext ctx) {
-      if(program.getFileComments() == null) {
+      if(program.getMainFileComments() == null) {
          // Only set program file level comments for the first file.
-         program.setFileComments(ensureUnusedComments(getCommentsFile(ctx)));
+         program.setMainFileComments(ensureUnusedComments(getCommentsFile(ctx)));
       }
       this.visit(ctx.declSeq());
+      return null;
+   }
+
+   @Override
+   public Object visitGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) {
+      this.pragmaConstructorFors.add(ctx);
       return null;
    }
 
@@ -1521,19 +1558,19 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Add condition
       KickCParser.ForClassicConditionContext conditionCtx = ctx.forClassicCondition();
       RValue conditionRvalue = null;
-      if(conditionCtx!=null) {
+      if(conditionCtx != null) {
          conditionRvalue = addCondition(conditionCtx.commaExpr(), StatementSource.forClassic(ctx));
       }
       // Add jump if condition was met
       Statement doJmpStmt;
-      if(conditionRvalue!=null) {
+      if(conditionRvalue != null) {
          doJmpStmt = new StatementConditionalJump(conditionRvalue, doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
          addStatement(doJmpStmt);
          Statement endJmpStmt = new StatementJump(endJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
          addStatement(endJmpStmt);
       } else {
          // No condition - loop forever
-         doJmpStmt = new StatementJump( doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
+         doJmpStmt = new StatementJump(doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
          addStatement(doJmpStmt);
       }
       StatementLabel doJumpTarget = new StatementLabel(doJumpLabel.getRef(), StatementSource.forClassic(ctx), Comment.NO_COMMENTS);
@@ -1744,7 +1781,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          @Override
          public Void visitAsmExprLabel(KickCParser.AsmExprLabelContext ctxLabel) {
             String label = ctxLabel.ASM_NAME().toString();
-            if(label.equalsIgnoreCase("x") || label.equalsIgnoreCase("y") || label.equalsIgnoreCase("z")|| label.equalsIgnoreCase("sp"))
+            if(label.equalsIgnoreCase("x") || label.equalsIgnoreCase("y") || label.equalsIgnoreCase("z") || label.equalsIgnoreCase("sp"))
                // Skip registers
                return super.visitAsmExprLabel(ctxLabel);
             if(!definedLabels.contains(label)) {
@@ -1765,7 +1802,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /**
-    * Find all labels defined in the ASM (not multilabels).
+    * Find all labels defined in the ASM (not multi-labels).
     *
     * @param ctx An ASM statement
     * @return All labels defined in the ASM.

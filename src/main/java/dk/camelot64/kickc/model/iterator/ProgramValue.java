@@ -2,6 +2,7 @@ package dk.camelot64.kickc.model.iterator;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.statements.*;
+import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
@@ -1050,7 +1051,6 @@ public interface ProgramValue {
 
    }
 
-
    /** Uses inside a constant array initialized using inline kickasm. */
    class ProgramValueConstantArrayKickAsmUses implements ProgramValue {
       private final ConstantArrayKickAsm constantArrayKickAsm;
@@ -1071,4 +1071,27 @@ public interface ProgramValue {
          constantArrayKickAsm.getUses().set(idx, (SymbolVariableRef) value);
       }
    }
+
+   /** Reference to an constructor-procedure from a library-procedure. */
+   class ProcedureConstructorRef implements ProgramValue {
+
+      private final Procedure procedure;
+      private final int idx;
+
+      public ProcedureConstructorRef(Procedure procedure, int idx) {
+         this.procedure = procedure;
+         this.idx = idx;
+      }
+
+      @Override
+      public Value get() {
+         return procedure.getConstructorRefs().get(idx);
+      }
+
+      @Override
+      public void set(Value value) {
+         procedure.getConstructorRefs().set(idx, (ProcedureRef) value);
+      }
+   }
+
 }

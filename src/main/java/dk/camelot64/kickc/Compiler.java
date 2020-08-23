@@ -367,14 +367,8 @@ public class Compiler {
       optimizations.add(new Pass2DuplicateRValueIdentification(program));
       optimizations.add(() -> {
          program.clearStatementIndices();
-         return false;
-      });
-      optimizations.add(() -> {
          program.clearVariableReferenceInfos();
          program.clearControlFlowBlockSuccessorClosure();
-         return false;
-      });
-      optimizations.add(() -> {
          program.clearStatementInfos();
          return false;
       });
@@ -397,6 +391,7 @@ public class Compiler {
       optimizations.add(new Pass2DeInlineWordDerefIdx(program));
       optimizations.add(new PassNSimplifyConstantZero(program));
       optimizations.add(new PassNSimplifyExpressionWithZero(program));
+      optimizations.add(new PassNEliminateUnusedConstructors(program));
       optimizations.add(new PassNEliminateUnusedVars(program, true));
       optimizations.add(new Pass2EliminateUnusedBlocks(program));
       optimizations.add(new PassNEliminateEmptyProcedure(program));
@@ -405,9 +400,6 @@ public class Compiler {
          optimizations.add(new PassNStatementIndices(program));
          optimizations.add(() -> {
             program.clearDominators();
-            return false;
-         });
-         optimizations.add(() -> {
             program.clearLoopSet();
             return false;
          });

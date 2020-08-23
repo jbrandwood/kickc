@@ -192,7 +192,7 @@ public class Pass1ProcedureInline extends Pass1Base {
          inlinedStatement = new StatementAssignment(procAssignment.getlValue(), procAssignment.getrValue1(), procAssignment.getOperator(), procAssignment.getrValue2(), procAssignment.isInitialAssignment(), procAssignment.getSource(), Comment.NO_COMMENTS);
       } else if(procStatement instanceof StatementCall) {
          StatementCall procCall = (StatementCall) procStatement;
-         StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()), procCall.getSource(), Comment.NO_COMMENTS);
+         StatementCall inlinedCall = new StatementCall(procCall.getlValue(), procCall.getProcedureName(), new ArrayList<>(procCall.getParameters()), procCall.getSource(), procCall.getComments());
          inlinedCall.setProcedure(procCall.getProcedure());
          inlinedStatement = inlinedCall;
       } else if(procStatement instanceof StatementAsm) {

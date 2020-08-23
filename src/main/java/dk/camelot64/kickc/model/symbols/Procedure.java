@@ -29,7 +29,9 @@ public class Procedure extends Scope {
    /** Reserved zeropage addresses. */
    private List<Integer> reservedZps;
    /** The code segment to put the procedure into. */
-   private String codeSegment;
+   private final String codeSegment;
+   /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
+   private final List<ProcedureRef> constructorRefs;
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Collections.singletonList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME);
@@ -41,7 +43,7 @@ public class Procedure extends Scope {
       /** Parameters and return value over the stack. */
       STACK_CALL("__stackcall");
 
-      private String name;
+      private final String name;
 
       CallingConvention(String name) {
          this.name = name;
@@ -73,6 +75,7 @@ public class Procedure extends Scope {
       this.comments = new ArrayList<>();
       this.codeSegment = codeSegment;
       this.callingConvention = callingConvention;
+      this.constructorRefs = new ArrayList<>();
    }
 
    public CallingConvention getCallingConvention() {
@@ -194,6 +197,15 @@ public class Procedure extends Scope {
       this.reservedZps = reservedZps;
    }
 
+   /**
+    * Get references to all constructors needed for this procedure
+    * @return The references
+    */
+   public List<ProcedureRef> getConstructorRefs() {
+      return constructorRefs;
+   }
+
+
    /** The different types of supported interrupts. */
    public enum InterruptType {
       /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea31. */
@@ -232,9 +244,9 @@ public class Procedure extends Scope {
          res.append(getCallingConvention().getName()).append(" ");
       }
       if(interruptType != null) {
-         res.append("interrupt(" + interruptType + ")");
+         res.append("interrupt(").append(interruptType).append(")");
       }
-      res.append("(" + getType().getTypeName() + ") ");
+      res.append("(").append(getType().getTypeName()).append(") ");
       res.append(getFullName());
       res.append("(");
       boolean first = true;

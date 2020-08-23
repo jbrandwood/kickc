@@ -111,3 +111,60 @@ inz
 NO_SYNTHESIS
 //FRAGMENT vduz1=vwsc1
 NO_SYNTHESIS
+//FRAGMENT _deref_pbuc1=vbuc2
+lda #{c2}
+sta {c1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_bor_vbuc2
+lda #{c2}
+ora {c1}
+sta {c1}
+//FRAGMENT pbuz1=pbuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT pbuz1_lt_pbuc1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bcc {la1}
+bne !+
+lda {z1}
+cmp #<{c1}
+bcc {la1}
+!:
+//FRAGMENT vbuz1=_lo_pbuz2
+lda {z2}
+sta {z1}
+//FRAGMENT _deref_pbuz1=vbuz2
+lda {z2}
+ldy #0
+sta ({z1}),y
+//FRAGMENT pbuz1=_inc_pbuz1
+inw {z1}
+//FRAGMENT _deref_pbuz1=vbuc1
+lda #{c1}
+ldy #0
+sta ({z1}),y
+//FRAGMENT vbuaa=_lo_pbuz1
+lda {z1}
+//FRAGMENT vbuxx=_lo_pbuz1
+ldx {z1}
+//FRAGMENT _deref_pbuz1=vbuaa
+ldy #0
+sta ({z1}),y
+//FRAGMENT _deref_pbuz1=vbuxx
+txa
+ldy #0
+sta ({z1}),y
+//FRAGMENT _deref_pbuz1=vbuyy
+tya
+ldy #0
+sta ({z1}),y
+//FRAGMENT _deref_pbuz1=vbuzz
+tza
+ldy #0
+sta ({z1}),y
+//FRAGMENT vbuyy=_lo_pbuz1
+ldy {z1}
+//FRAGMENT vbuzz=_lo_pbuz1
+ldz {z1}

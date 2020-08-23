@@ -54,7 +54,7 @@ public class Program {
    /** Resource files that should be copied to the output folder to be compiled with the generated ASM. PASS 0-5 (STATIC) */
    private final List<Path> asmResourceFiles;
    /** Comments for the (main) file. PASS 0-4 (STATIC) */
-   private List<Comment> fileComments;
+   private List<Comment> mainFileComments;
 
    /** The main scope. PASS 0-5 (DYNAMIC) */
    private ProgramScope scope;
@@ -70,7 +70,7 @@ public class Program {
    private CallGraph callGraph;
 
    /** The procedures being compiled. */
-   private Map<ProcedureRef, ProcedureCompilation> procedureCompilations;
+   private final Map<ProcedureRef, ProcedureCompilation> procedureCompilations;
 
    /** Variables modified inside procedures. PASS 1 (STATIC) */
    private ProcedureModifiedVars procedureModifiedVars;
@@ -130,7 +130,6 @@ public class Program {
       this.loadedFiles = null;
       this.procedureModifiedVars = null;
       this.structVariableMemberUnwinding = null;
-
    }
 
    /**
@@ -138,7 +137,7 @@ public class Program {
     */
    public void endPass4() {
       this.snapshot = null;
-      this.fileComments = null;
+      this.mainFileComments = null;
       this.callGraph = null;
       this.variableReferenceInfos = null;
       this.dominators = null;
@@ -236,12 +235,12 @@ public class Program {
       this.structVariableMemberUnwinding = structVariableMemberUnwinding;
    }
 
-   public List<Comment> getFileComments() {
-      return fileComments;
+   public List<Comment> getMainFileComments() {
+      return mainFileComments;
    }
 
-   public void setFileComments(List<Comment> fileComments) {
-      this.fileComments = fileComments;
+   public void setMainFileComments(List<Comment> mainFileComments) {
+      this.mainFileComments = mainFileComments;
    }
 
    public List<String> getIncludePaths() {

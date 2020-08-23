@@ -1,0 +1,195 @@
+Resolved forward reference SCREEN to (const nomodify byte*) SCREEN
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+(void()) my_init()
+my_init: scope:[my_init]  from __start::__init1
+  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) '*'
+  to:my_init::@return
+my_init::@return: scope:[my_init]  from my_init
+  return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  *((const nomodify byte*) SCREEN + (number) 2) ← (byte) '*'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  call my_init 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::__init1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::@2
+  call main 
+  to:__start::@3
+__start::@3: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@3
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(const nomodify byte*) SCREEN = (byte*)(number) $400
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@3
+(label) __start::@return
+(label) __start::__init1
+(void()) main()
+(label) main::@return
+(void()) my_init()
+(label) my_init::@return
+
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) '*'
+Adding number conversion cast (unumber) 2 in *((const nomodify byte*) SCREEN + (number) 2) ← (byte) '*'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) '*'
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing call to constructor procedure [4] call my_init 
+Removing unused procedure my_init
+Removing unused procedure block my_init
+Removing unused procedure block my_init::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@3
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Consolidated array index constant in *(SCREEN+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '*'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Demonstrates Library Constructor Functionality
+// Constructors are removed if not needed
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 15 combination 
+Uplifting [] best 15 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates Library Constructor Functionality
+// Constructors are removed if not needed
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(const nomodify byte*) SCREEN = (byte*) 1024
+(void()) main()
+(label) main::@return
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+  // File Comments
+// Demonstrates Library Constructor Functionality
+// Constructors are removed if not needed
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // SCREEN[2] = '*'
+    // [0] *((const nomodify byte*) SCREEN+(byte) 2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    lda #'*'
+    sta SCREEN+2
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

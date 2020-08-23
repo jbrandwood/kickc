@@ -80,7 +80,7 @@ public class Pass4CodeGeneration {
 
       // Add file level comments
       asm.startChunk(currentScope, null, "File Comments");
-      generateComments(asm, program.getFileComments());
+      generateComments(asm, program.getMainFileComments());
       asm.startChunk(currentScope, null, "Upstart");
       final TargetPlatform targetPlatform = program.getTargetPlatform();
 

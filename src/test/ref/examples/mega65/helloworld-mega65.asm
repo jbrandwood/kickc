@@ -48,7 +48,7 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
-    // #pragma constructor_for(conio_mega65_init, cputc)
+    // #pragma constructor_for(conio_mega65_init, cputc, clrscr, cscroll)
     //#pragma constructor
     jsr conio_mega65_init
     jsr main

@@ -17,7 +17,7 @@ const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE;
 #include "conio-cbm-shared.c"
 
 // Initializer for conio.h on MEGA65
-#pragma constructor_for(conio_mega65_init, cputc)
+#pragma constructor_for(conio_mega65_init, cputc, clrscr, cscroll)
 
 // Enable 2K Color ROM
 void conio_mega65_init() {

@@ -213,6 +213,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMega65HelloWorld() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/helloworld-mega65.c");
+   }
+
+   @Test
    public void testMega65Hello() throws IOException, URISyntaxException {
       compileAndCompare("examples/mega65/hello-mega65.c");
    }

@@ -16,6 +16,31 @@ const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE;
 // Use the shared CBM flat memory implementation
 #include "conio-cbm-shared.c"
 
+// Initializer for conio.h on MEGA65
+#pragma constructor_for(conio_mega65_init, cputc)
+
+// Enable 2K Color ROM
+void conio_mega65_init() {
+    // Disable BASIC/KERNAL interrupts
+    asm {
+        sei
+    }
+    // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
+    asm {
+        lda #0
+        tax
+        tay
+        taz
+        map
+        eom
+    }
+    // Enable the VIC 4
+    *IO_KEY = 0x47;
+    *IO_KEY = 0x53;
+    // Enable 2K Color RAM
+    *IO_BANK |= CRAM2K;
+}
+
 // Return true if there's a key waiting, return false if not
 unsigned char kbhit (void) {
     // CIA#1 Port A: keyboard matrix columns and joystick #2

@@ -164,7 +164,7 @@ cputs: {
     // while(c=*s++)
     ldy #0
     lda (s),y
-    inw s
+    inw.z s
     cmp #0
     bne __b2
     // }
@@ -368,7 +368,7 @@ utoa: {
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];
-    inw buffer
+    inw.z buffer
     // *buffer = 0
     tya
     sta (buffer),y
@@ -403,7 +403,7 @@ utoa: {
     // utoa_append(buffer++, value, digit_value)
     // value = utoa_append(buffer++, value, digit_value)
     // value = utoa_append(buffer++, value, digit_value);
-    inw buffer
+    inw.z buffer
     ldz #1
     jmp __b4
 }
@@ -710,7 +710,7 @@ ultoa: {
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];
-    inw buffer
+    inw.z buffer
     // *buffer = 0
     tya
     sta (buffer),y
@@ -759,7 +759,7 @@ ultoa: {
     // ultoa_append(buffer++, value, digit_value)
     // value = ultoa_append(buffer++, value, digit_value)
     // value = ultoa_append(buffer++, value, digit_value);
-    inw buffer
+    inw.z buffer
     ldz #1
     jmp __b4
 }
@@ -860,9 +860,9 @@ strlen: {
     rts
   __b2:
     // len++;
-    inw len
+    inw.z len
     // str++;
-    inw str
+    inw.z str
     jmp __b1
 }
 // Print a padding char a number of times
@@ -910,7 +910,7 @@ strupr: {
     ldy #0
     sta (src),y
     // src++;
-    inw src
+    inw.z src
     jmp __b1
 }
 // Set the cursor to the specified position
@@ -1132,7 +1132,7 @@ uctoa: {
     ldy #0
     sta (buffer),y
     // *buffer++ = DIGITS[(char)value];
-    inw buffer
+    inw.z buffer
     // *buffer = 0
     tya
     sta (buffer),y
@@ -1160,7 +1160,7 @@ uctoa: {
     // value = uctoa_append(buffer++, value, digit_value)
     taz
     // value = uctoa_append(buffer++, value, digit_value);
-    inw buffer
+    inw.z buffer
     ldx #1
     jmp __b4
 }
@@ -1197,8 +1197,8 @@ memcpy: {
     lda (src),y
     sta (dst),y
     // *dst++ = *src++;
-    inw dst
-    inw src
+    inw.z dst
+    inw.z src
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
@@ -1231,7 +1231,7 @@ memset: {
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    inw dst
+    inw.z dst
     jmp __b2
 }
 // Used to convert a single digit of an unsigned number value to a string representation

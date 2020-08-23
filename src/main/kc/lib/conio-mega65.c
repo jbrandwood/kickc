@@ -13,7 +13,7 @@ char * const CONIO_SCREEN_COLORS = COLORRAM;
 // The default text color
 const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE;
 
-// Use the shared CMB flat memory implementation
+// Use the shared CBM flat memory implementation
 #include "conio-cbm-shared.c"
 
 // Return true if there's a key waiting, return false if not

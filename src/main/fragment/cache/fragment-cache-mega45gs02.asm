@@ -42,3 +42,72 @@ inc {z1}
 //FRAGMENT vbuaa_lt_vbuc1_then_la1
 cmp #{c1}
 bcc {la1}
+//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1
+lda #{c1}
+ldy {z1}
+cmp {c2},y
+bne {la1}
+//FRAGMENT pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1
+ldy {z1}
+lda {c2},y
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuz1=vbuz1
+ldy {z1}
+tya
+sta {c1},y
+//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuaa_then_la1
+tay
+lda #{c1}
+cmp {c2},y
+bne {la1}
+//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1
+lda {c2},x
+cmp #{c1}
+bne {la1}
+//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1
+lda #{c1}
+cmp {c2},y
+bne {la1}
+//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuzz_then_la1
+tza
+tay
+lda #{c1}
+cmp {c2},y
+bne {la1}
+//FRAGMENT pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx
+lda {c2},x
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=pbuc2_derefidx_vbuyy
+lda {c2},y
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuzz=pbuc2_derefidx_vbuzz
+tza
+tay
+lda {c2},y
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuxx=vbuxx
+txa
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=vbuyy
+tya
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuzz=vbuzz
+tza
+tax
+sta {c1},x
+//FRAGMENT vbuxx=vbuc1
+ldx #{c1}
+//FRAGMENT vbuxx=_inc_vbuxx
+inx
+//FRAGMENT vbuyy=vbuc1
+ldy #{c1}
+//FRAGMENT vbuyy=_inc_vbuyy
+iny
+//FRAGMENT vbuzz=vbuc1
+ldz #{c1}
+//FRAGMENT vbuzz=_inc_vbuzz
+inz
+//FRAGMENT vduz1=vwuc1
+NO_SYNTHESIS
+//FRAGMENT vduz1=vwsc1
+NO_SYNTHESIS

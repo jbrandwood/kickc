@@ -43,8 +43,28 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLibraryConstructorError2() throws IOException, URISyntaxException {
+      assertError("library-constructor-error-2.c", "Error! Procedure not found print");
+   }
+
+   @Test
+   public void testLibraryConstructorError1() throws IOException, URISyntaxException {
+      assertError("library-constructor-error-1.c", "Error! Constructor procedure not found my_init");
+   }
+
+   @Test
+   public void testLibraryConstructorError0() throws IOException, URISyntaxException {
+      assertError("library-constructor-error-0.c", "Error! #pragma constructor_for requires at least 2 parameters.");
+   }
+
+   @Test
    public void testLibraryConstructor2() throws IOException, URISyntaxException {
       compileAndCompare("library-constructor-2.c");
+   }
+
+   @Test
+   public void testLibraryConstructor3() throws IOException, URISyntaxException {
+      compileAndCompare("library-constructor-3.c", log());
    }
 
    @Test

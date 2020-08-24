@@ -3,12 +3,11 @@ package dk.camelot64.cpufamily6502;
 import dk.camelot64.cpufamily6502.cpus.*;
 import kickass._65xx._65xxArgType;
 import kickass._65xx.cpus.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 
-import static junit.framework.TestCase.*;
 
 public class TestCpuFamilyKickAssCompatibility {
 
@@ -45,9 +44,9 @@ public class TestCpuFamilyKickAssCompatibility {
       // Test that each KickC opcode has a matching KickAss opcode
       for(CpuOpcode kcOpcode : kcAllOpcodes) {
          final int[] kaOpcodes = kaAllMnemonics.get(kcOpcode.getMnemonic());
-         assertNotNull("KickAss CPU " + kaCpu.name + " does not know the KickC CPU " + kcCpu.getName() + " mnemonic", kcOpcode.getMnemonic());
+         assertNotNull(kcOpcode.getMnemonic(), "KickAss CPU " + kaCpu.name + " does not know the KickC CPU " + kcCpu.getName() + " mnemonic");
          final List<_65xxArgType> kaArgTypes = kaAddressingModeMap.get(kcOpcode.getAddressingMode());
-         assertNotNull("KickAss addressing mode not found " + kcOpcode.getAddressingMode().getName(), kaArgTypes);
+         assertNotNull(kaArgTypes, "KickAss addressing mode not found " + kcOpcode.getAddressingMode().getName());
          // Try each argtype to find the one that works
          boolean found = false;
          for(_65xxArgType kaArgType : kaArgTypes) {
@@ -57,14 +56,14 @@ public class TestCpuFamilyKickAssCompatibility {
                if(kaOpcodeRaw >= 0) {
                   found = true;
                   int[] kaOpcode = getKAOpcode(kaOpcodeRaw, kaArgType, kcOpcode.getMnemonic());
-                  Assert.assertArrayEquals("KickAss opcode not matching for mnemonic " + kcOpcode.toString(), kcOpcode.getOpcode(), kaOpcode);
+                  assertArrayEquals(kcOpcode.getOpcode(), kaOpcode, "KickAss opcode not matching for mnemonic " + kcOpcode.toString());
 
                   int kaByteSize = kaOpcode.length + kaArgType.getByteSize();
-                  assertEquals("KickAss opcode byte size not matching KickC byte size "+kcOpcode.toString(), kcOpcode.getBytes(), kaByteSize);
+                  assertEquals(kcOpcode.getBytes(), kaByteSize, "KickAss opcode byte size not matching KickC byte size "+kcOpcode.toString());
                }
             }
          }
-         assertTrue("KickAss opcode not found for mnemonic " + kcOpcode.toString(), found);
+         assertTrue(found, "KickAss opcode not found for mnemonic " + kcOpcode.toString());
       }
 
       // Test that each KickAss opcode has a matching KickC opcode

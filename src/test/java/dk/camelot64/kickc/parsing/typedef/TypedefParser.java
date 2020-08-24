@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.8
 package dk.camelot64.kickc.parsing.typedef;
 
     import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class TypedefParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.8", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -25,17 +25,26 @@ public class TypedefParser extends Parser {
 		WHITESPACE=9;
 	public static final int
 		RULE_stmtSeq = 0, RULE_stmt = 1, RULE_expr = 2, RULE_typeName = 3;
-	public static final String[] ruleNames = {
-		"stmtSeq", "stmt", "expr", "typeName"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"stmtSeq", "stmt", "expr", "typeName"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'typedef'", "';'", "'('", "')'", "'&'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, "SIMPLETYPE", "IDENTIFIER", "TYPEIDENTIFIER", 
-		"WHITESPACE"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'typedef'", "';'", "'('", "')'", "'&'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, "SIMPLETYPE", "IDENTIFIER", "TYPEIDENTIFIER", 
+			"WHITESPACE"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -94,6 +103,7 @@ public class TypedefParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class StmtSeqContext extends ParserRuleContext {
 		public List<StmtContext> stmt() {
 			return getRuleContexts(StmtContext.class);

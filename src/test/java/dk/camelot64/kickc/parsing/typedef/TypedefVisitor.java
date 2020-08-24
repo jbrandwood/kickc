@@ -1,4 +1,4 @@
-// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.7
+// Generated from /Users/jespergravgaard/c64/kickc/src/test/java/dk/camelot64/kickc/parsing/typedef/Typedef.g4 by ANTLR 4.8
 package dk.camelot64.kickc.parsing.typedef;
 
     import java.util.ArrayList;

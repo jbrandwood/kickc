@@ -10,9 +10,9 @@ import dk.camelot64.kickc.model.TargetPlatform;
 import dk.camelot64.kickc.parser.CTargetPlatformParser;
 import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.lang.management.GarbageCollectorMXBean;
@@ -25,8 +25,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Compile a number of source files and compare the resulting assembler with expected output
@@ -4554,11 +4554,11 @@ public class TestPrograms {
       compileAndCompare("condition-type-mismatch.c");
    }
 
-   @BeforeClass
+   @BeforeAll
    public static void setUp() {
    }
 
-   @AfterClass
+   @AfterAll
    public static void tearDown() {
       //AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
       //printGCStats();
@@ -4614,10 +4614,10 @@ public class TestPrograms {
       } catch(CompileError e) {
          System.out.println("Got error: " + e.getMessage());
          // expecting error!
-         assertTrue("Error message expected  '" + expectError + "' - was:" + e.getMessage(), e.getMessage().contains(expectError));
+         assertTrue(e.getMessage().contains(expectError), "Error message expected  '" + expectError + "' - was:" + e.getMessage());
          if(expectLineNumber) {
             // expecting line number!
-            assertTrue("Error message expected line number - was:" + e.getMessage(), e.getMessage().contains("Line"));
+            assertTrue(e.getMessage().contains("Line"), "Error message expected line number - was:" + e.getMessage());
          }
          return;
       }

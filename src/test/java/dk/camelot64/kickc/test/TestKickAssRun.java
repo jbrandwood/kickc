@@ -2,7 +2,7 @@ package dk.camelot64.kickc.test;
 
 import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.net.URI;

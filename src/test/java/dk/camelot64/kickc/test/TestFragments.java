@@ -6,28 +6,28 @@ import dk.camelot64.kickc.fragment.AsmFragmentTemplateSynthesizer;
 import dk.camelot64.kickc.fragment.AsmFragmentTemplateUsages;
 import dk.camelot64.kickc.model.TargetCpu;
 import dk.camelot64.kickc.model.operators.Operators;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static junit.framework.TestCase.assertTrue;
-import static junit.framework.TestCase.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /** Test the ASM fragment sub-system by loading/synthesizing a lot of different fragments and comparing with reference fragments. */
 public class TestFragments {
 
    private static AsmFragmentTemplateSynthesizer asmFragmentTemplateSynthesizer;
 
-   @BeforeClass
+   @BeforeAll
    public static void setUp() {
       asmFragmentTemplateSynthesizer = new AsmFragmentTemplateSynthesizer(TargetCpu.MOS6502X, new File("src/main/fragment/").toPath(), false, new CompileLog());
    }
 
-   @AfterClass
+   @AfterAll
    public static void tearDown() {
       CompileLog log = new CompileLog();
       log.setSysOut(true);
@@ -205,7 +205,7 @@ public class TestFragments {
          }
          log.append("");
       }
-      assertTrue("Fragment cannot be synthesized " + signature, templates.size() > 0);
+      assertTrue(templates.size() > 0, "Fragment cannot be synthesized " + signature);
    }
 
 

@@ -6,11 +6,9 @@ import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test the C preprocessor
@@ -204,10 +202,10 @@ public class TestPreprocessor {
       } catch(CompileError e) {
          System.out.println("Got error: " + e.getMessage());
          // expecting error!
-         assertTrue("Error message expected  '" + expectError + "' - was:" + e.getMessage(), e.getMessage().contains(expectError));
+         assertTrue(e.getMessage().contains(expectError), "Error message expected  '" + expectError + "' - was:" + e.getMessage());
          if(expectLineNumber) {
             // expecting line number!
-            assertTrue("Error message expected line number - was:" + e.getMessage(), e.getMessage().contains("Line"));
+            assertTrue(e.getMessage().contains("Line"), "Error message expected line number - was:" + e.getMessage());
          }
          return;
       }

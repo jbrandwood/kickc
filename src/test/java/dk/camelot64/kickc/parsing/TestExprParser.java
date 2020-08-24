@@ -1,11 +1,13 @@
 package dk.camelot64.kickc.parsing;
 
 import dk.camelot64.kickc.parser.*;
-import junit.framework.TestCase;
+
+import org.junit.jupiter.api.Test;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestExprParser {
 
@@ -28,7 +30,7 @@ public class TestExprParser {
       KickCParser.ExprContext exprContext = ExprParser.parseExpression(kickCLexer);
       final KickCParserBaseVisitor<String> exprVisitor = new ExprPrinter();
       final String exprOut = exprVisitor.visit(exprContext);
-      TestCase.assertEquals("Expression output does not match ", expected, exprOut);
+      assertEquals(expected, exprOut, "Expression output does not match ");
    }
 
    /** Prints the expression. */

@@ -2,13 +2,12 @@ package dk.camelot64.kickc.parsing.typedef;
 
 import dk.camelot64.kickc.model.CompileError;
 import org.antlr.v4.runtime.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestTypedefParser {
 

@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.passes;
 
-import dk.camelot64.kickc.model.Comment;
 import dk.camelot64.kickc.model.ControlFlowBlock;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
@@ -36,11 +35,14 @@ public class PassNEliminateUnusedConstructors extends Pass2SsaOptimization {
          final List<ControlFlowBlock> startProcBlocks = getGraph().getScopeBlocks(startProc.getRef());
          for(ControlFlowBlock block : startProcBlocks) {
             for(Statement statement : block.getStatements()) {
-               if(statement instanceof StatementCalling && statement.getComments().size() == 1 && statement.getComments().get(0).equals(Comment.CONSTRUCTOR)) {
-                  // This is a constructor call!
-                  final ProcedureRef constructorRef = ((StatementCalling) statement).getProcedure();
-                  if(!allConstructors.contains(constructorRef)) {
-                     unusedConstructors.add(constructorRef);
+               if(statement instanceof StatementCalling) {
+                  final ProcedureRef procedureRef = ((StatementCalling) statement).getProcedure();
+                  final Procedure procedure = getScope().getProcedure(procedureRef);
+                  if(procedure.isConstructor()) {
+                     // This is a constructor call!
+                     if(!allConstructors.contains(procedureRef)) {
+                        unusedConstructors.add(procedureRef);
+                     }
                   }
                }
             }
@@ -48,6 +50,7 @@ public class PassNEliminateUnusedConstructors extends Pass2SsaOptimization {
          // Remove all calls to unused constructors
          for(ProcedureRef unusedConstructor : unusedConstructors) {
             removeAllCalls(unusedConstructor, startProcBlocks);
+            optimized = true;
          }
       }
 

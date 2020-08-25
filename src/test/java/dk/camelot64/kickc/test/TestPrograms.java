@@ -58,13 +58,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testLibraryConstructor2() throws IOException, URISyntaxException {
-      compileAndCompare("library-constructor-2.c");
+   public void testLibraryConstructor3() throws IOException, URISyntaxException {
+      compileAndCompare("library-constructor-3.c");
    }
 
    @Test
-   public void testLibraryConstructor3() throws IOException, URISyntaxException {
-      compileAndCompare("library-constructor-3.c", log());
+   public void testLibraryConstructor2() throws IOException, URISyntaxException {
+      compileAndCompare("library-constructor-2.c");
    }
 
    @Test

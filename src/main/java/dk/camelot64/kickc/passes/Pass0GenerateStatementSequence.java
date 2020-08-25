@@ -150,7 +150,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(!constructorProcs.contains(constructorProc.getRef())) {
             constructorProcs.add(constructorProc.getRef());
             // Add call to constructor procedure to the __init() procedure
-            addStatement(new StatementCall(null, constructorProc.getLocalName(), new ArrayList<>(), new StatementSource(pragmaConstructorFor), Collections.singletonList(Comment.CONSTRUCTOR)));
+            addStatement(new StatementCall(null, constructorProc.getLocalName(), new ArrayList<>(), new StatementSource(pragmaConstructorFor), Comment.NO_COMMENTS));
+            // Mark the constructor procedure
+            constructorProc.setConstructor(true);
          }
       }
 

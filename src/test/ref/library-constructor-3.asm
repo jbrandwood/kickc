@@ -13,10 +13,8 @@ __start: {
     sta.z SCREEN
     sta.z SCREEN+1
     // #pragma constructor_for(init_1, print)
-    //#pragma constructor
     jsr init_1
     // #pragma constructor_for(init_2, print)
-    //#pragma constructor
     jsr init_2
     jsr main
     rts

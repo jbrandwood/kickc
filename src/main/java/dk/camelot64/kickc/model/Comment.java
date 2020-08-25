@@ -14,9 +14,6 @@ public class Comment implements Serializable {
    /** Empty comments collection. */
    public static final ArrayList<Comment> NO_COMMENTS = new ArrayList<>();
 
-   /** Special comment used for constructor calls in __init(). */
-   public static final Comment CONSTRUCTOR = new Comment("#pragma constructor");
-
    /** The comment. */
    private String comment;
 

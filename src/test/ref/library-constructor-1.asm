@@ -10,7 +10,6 @@ __start: {
     lda #0
     sta.z my_value
     // #pragma constructor_for(my_init, print)
-    //#pragma constructor
     jsr my_init
     jsr main
     rts

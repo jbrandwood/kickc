@@ -32,6 +32,8 @@ public class Procedure extends Scope {
    private final String codeSegment;
    /** The list of constructor procedures for this procedure. The constructor procedures are called during program initialization. */
    private final List<ProcedureRef> constructorRefs;
+   /** Is this procedure declared as a constructor procedure. */
+   private boolean isConstructor;
 
    /** The names of all legal intrinsic procedures. */
    final public static List<String> INTRINSIC_PROCEDURES = Collections.singletonList(Pass1PrintfIntrinsicRewrite.INTRINSIC_PRINTF_NAME);
@@ -76,6 +78,7 @@ public class Procedure extends Scope {
       this.codeSegment = codeSegment;
       this.callingConvention = callingConvention;
       this.constructorRefs = new ArrayList<>();
+      this.isConstructor = false;
    }
 
    public CallingConvention getCallingConvention() {
@@ -205,6 +208,13 @@ public class Procedure extends Scope {
       return constructorRefs;
    }
 
+   public boolean isConstructor() {
+      return isConstructor;
+   }
+
+   public void setConstructor(boolean constructor) {
+      isConstructor = constructor;
+   }
 
    /** The different types of supported interrupts. */
    public enum InterruptType {

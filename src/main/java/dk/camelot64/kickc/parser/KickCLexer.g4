@@ -62,16 +62,6 @@ ASSIGN_COMPOUND : '+=' | '-=' | '*=' | '/=' | '%=' | '<<=' | '>>=' | '&=' | '|='
 
 // Keywords
 TYPEDEF: 'typedef' ;
-RESERVE: 'zp_reserve' ;
-PC:'pc';
-TARGET:'target';
-LINK:'link';
-EXTENSION:'extension';
-EMULATOR:'emulator';
-CPU:'cpu';
-CODESEG:'code_seg';
-DATASEG:'data_seg';
-ENCODING:'encoding';
 CONST: 'const' ;
 EXTERN: 'extern' ;
 EXPORT: 'export' ;
@@ -88,10 +78,7 @@ ADDRESS_MAINMEM: '__mem' ;
 FORM_SSA: '__ssa' ;
 FORM_MA: '__ma' ;
 INTRINSIC: '__intrinsic' ;
-CALLING: 'calling';
 CALLINGCONVENTION: '__stackcall' | '__phicall' ;
-VARMODEL: 'var_model';
-CONSTRUCTORFOR: 'constructor_for';
 IF: 'if' ;
 ELSE: 'else' ;
 WHILE: 'while' ;

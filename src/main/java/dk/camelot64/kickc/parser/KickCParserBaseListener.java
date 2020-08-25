@@ -474,169 +474,73 @@ public class KickCParserBaseListener implements KickCParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) { }
+	@Override public void enterPragma(KickCParser.PragmaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) { }
+	@Override public void exitPragma(KickCParser.PragmaContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx) { }
+	@Override public void enterPragmaParamNumber(KickCParser.PragmaParamNumberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx) { }
+	@Override public void exitPragmaParamNumber(KickCParser.PragmaParamNumberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) { }
+	@Override public void enterPragmaParamRange(KickCParser.PragmaParamRangeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) { }
+	@Override public void exitPragmaParamRange(KickCParser.PragmaParamRangeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) { }
+	@Override public void enterPragmaParamName(KickCParser.PragmaParamNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) { }
+	@Override public void exitPragmaParamName(KickCParser.PragmaParamNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { }
+	@Override public void enterPragmaParamString(KickCParser.PragmaParamStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { }
+	@Override public void exitPragmaParamString(KickCParser.PragmaParamStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
+	@Override public void enterPragmaParamCallingConvention(KickCParser.PragmaParamCallingConventionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx) { }
+	@Override public void exitPragmaParamCallingConvention(KickCParser.PragmaParamCallingConventionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

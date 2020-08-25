@@ -44,7 +44,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** The memory area used by default for variables. */
    private Variable.MemoryArea defaultMemoryArea;
    /** All #pragma constructor_for() statements. Collected during parsing and handled by {@link #generate()} before returning. */
-   private List<KickCParser.GlobalDirectiveConstructorForContext> pragmaConstructorFors;
+   private List<KickCParser.PragmaContext> pragmaConstructorFors;
 
    public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding) {
       this.cParser = cParser;
@@ -130,16 +130,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
       // Handle #pragma constructor_for()
       List<ProcedureRef> constructorProcs = new ArrayList<>();
-      for(KickCParser.GlobalDirectiveConstructorForContext pragmaConstructorFor : pragmaConstructorFors) {
-         final List<TerminalNode> names = pragmaConstructorFor.NAME();
+      for(KickCParser.PragmaContext pragmaConstructorFor : pragmaConstructorFors) {
+         final List<KickCParser.PragmaParamContext> names = pragmaConstructorFor.pragmaParam();
          if(names.size() < 2)
             throw new CompileError("Error! #pragma constructor_for requires at least 2 parameters.", new StatementSource(pragmaConstructorFor));
-         final String constructorProcName = names.get(0).getText();
+         final String constructorProcName = pragmaParamName(names.get(0));
          final Procedure constructorProc = program.getScope().getLocalProcedure(constructorProcName);
          if(constructorProc == null)
             throw new CompileError("Error! Constructor procedure not found " + constructorProcName, new StatementSource(pragmaConstructorFor));
          for(int i = 1; i < names.size(); i++) {
-            final String procName = names.get(i).getText();
+            final String procName = pragmaParamName(names.get(i));
             final Procedure proc = program.getScope().getLocalProcedure(procName);
             if(proc == null)
                throw new CompileError("Error! Procedure not found " + procName, new StatementSource(pragmaConstructorFor));
@@ -198,71 +198,162 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    @Override
-   public Object visitGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) {
-      this.pragmaConstructorFors.add(ctx);
-      return null;
-   }
+   public Object visitPragma(KickCParser.PragmaContext ctx) {
+      final String pragmaName = ctx.NAME().getText();
+      switch(pragmaName) {
+         case CParser.PRAGMA_TARGET:
+            throw new InternalError("Error! #pragma target() should be handled in preprocessor!");
+         case CParser.PRAGMA_CPU:
+            final String cpuName = pragmaParamName(pragmaParamSingle(ctx));
+            TargetCpu cpu = TargetCpu.getTargetCpu(cpuName, false);
+            program.getTargetPlatform().setCpu(cpu);
+            break;
+         case CParser.PRAGMA_VAR_MODEL:
+            final List<KickCParser.PragmaParamContext> pragmaParams = ctx.pragmaParam();
+            List<String> settings = pragmaParams.stream().map(Pass0GenerateStatementSequence::pragmaParamName).collect(Collectors.toList());
+            final VariableBuilderConfig variableBuilderConfig = VariableBuilderConfig.fromSettings(settings, new StatementSource(ctx));
+            program.getTargetPlatform().setVariableBuilderConfig(variableBuilderConfig);
+            break;
+         case CParser.PRAGMA_LINKSCRIPT:
+            final String linkScriptName = pragmaParamString(pragmaParamSingle(ctx));
+            program.getLog().append("Loading link script \"" + linkScriptName + "\"");
+            Path currentPath = cParser.getSourceFolderPath(ctx);
+            final File linkScriptFile = SourceLoader.loadFile(linkScriptName, currentPath, program.getTargetPlatformPaths());
+            program.getTargetPlatform().setLinkScriptFile(linkScriptFile);
+            break;
+         case CParser.PRAGMA_EXTENSION:
+            String extension = pragmaParamString(pragmaParamSingle(ctx));
+            program.getTargetPlatform().setOutFileExtension(extension);
+            break;
+         case CParser.PRAGMA_EMULATOR:
+            String emuName = pragmaParamString(pragmaParamSingle(ctx));
+            program.getTargetPlatform().setEmulatorCommand(emuName);
+            break;
+         case CParser.PRAGMA_ENCODING:
+            final String encodingName = pragmaParamName(pragmaParamSingle(ctx));
+            try {
+               this.currentEncoding = StringEncoding.fromName(encodingName.toUpperCase(Locale.ENGLISH));
+            } catch(IllegalArgumentException e) {
+               throw new CompileError("Unknown string encoding " + encodingName, new StatementSource(ctx));
+            }
+            break;
+         case CParser.PRAGMA_CODE_SEG:
+            this.currentCodeSegment = pragmaParamName(pragmaParamSingle(ctx));
+            break;
+         case CParser.PRAGMA_DATA_SEG:
+            this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
+            break;
+         case CParser.PRAGMA_PC:
+            Number programPc = pragmaParamNumber(pragmaParamSingle(ctx));
+            program.setProgramPc(programPc);
+            break;
+         case CParser.PRAGMA_CALLING:
+            currentCallingConvention = pragmaParamCallingConvention(pragmaParamSingle(ctx));
+            break;
+         case CParser.PRAGMA_ZP_RESERVE:
+            List<Integer> reservedZps = pragmaParamRanges(ctx.pragmaParam());
+            program.addReservedZps(reservedZps);
+            break;
+         case CParser.PRAGMA_CONSTRUCTOR_FOR:
+            this.pragmaConstructorFors.add(ctx);
+            return null;
+         default:
+            program.getLog().append("Warning! Unknown #pragma " + pragmaName + "\n" + new StatementSource(ctx).toString());
 
-   @Override
-   public Object visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) {
-      List<TerminalNode> settingNodes = new ArrayList<>(ctx.NAME());
-      List<String> settings = settingNodes.stream().map(ParseTree::getText).collect(Collectors.toList());
-      final VariableBuilderConfig variableBuilderConfig = VariableBuilderConfig.fromSettings(settings, new StatementSource(ctx));
-      program.getTargetPlatform().setVariableBuilderConfig(variableBuilderConfig);
-      return null;
-   }
-
-   @Override
-   public Object visitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) {
-      String linkName = ctx.STRING().getText();
-      String linkScriptName = linkName.substring(1, linkName.length() - 1);
-      program.getLog().append("Loading link script " + linkName);
-      Path currentPath = cParser.getSourceFolderPath(ctx);
-      final File linkScriptFile = SourceLoader.loadFile(linkScriptName, currentPath, program.getTargetPlatformPaths());
-      program.getTargetPlatform().setLinkScriptFile(linkScriptFile);
-      return null;
-   }
-
-   @Override
-   public Object visitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) {
-      String extension = ctx.STRING().getText();
-      extension = extension.substring(1, extension.length() - 1);
-      program.getTargetPlatform().setOutFileExtension(extension);
-      return null;
-   }
-
-   @Override
-   public Object visitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) {
-      String emuName = ctx.STRING().getText();
-      emuName = emuName.substring(1, emuName.length() - 1);
-      program.getTargetPlatform().setEmulatorCommand(emuName);
-      return null;
-   }
-
-   @Override
-   public Object visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) {
-      final List<KickCParser.DirectiveReserveParamContext> reserveParams = ctx.directiveReserveParam();
-      List<Integer> reservedZps = getReservedZps(reserveParams);
-      program.addReservedZps(reservedZps);
+      }
       return null;
    }
 
    /**
-    * Find the list of all reserved ZP-addresses from a list of reserve parameters (potentially including ranges)
+    * Check that a #pragma has a single parameter - and return that parameter
+    *
+    * @param ctx The #pragma
+    * @return The single parameter
+    */
+   private static KickCParser.PragmaParamContext pragmaParamSingle(KickCParser.PragmaContext ctx) {
+      if(ctx.pragmaParam().size() != 1)
+         throw new CompileError("Error! #pragma expects a single parameter!", new StatementSource(ctx));
+      return ctx.pragmaParam().get(0);
+   }
+
+   /**
+    * Parse a single NUMBER parameter of a #pragma
+    * If the parameter is not a NUMBER the compiler will fail out
+    *
+    * @param paramCtx The parameter to parse
+    * @return The number
+    */
+   private static Number pragmaParamNumber(KickCParser.PragmaParamContext paramCtx) {
+      if(!(paramCtx instanceof KickCParser.PragmaParamNumberContext))
+         throw new CompileError("Error! Expected a NUMBER parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      final Number number = NumberParser.parseLiteral(((KickCParser.PragmaParamNumberContext) paramCtx).NUMBER().getText());
+      if(number == null)
+         throw new CompileError("Error! Expected a NUMBER parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      return number;
+   }
+
+   /**
+    * Parse a single CALLINGCONVENTION parameter of a #pragma
+    * If the parameter is not a CALLINGCONVENTION the compiler will fail out
+    *
+    * @param paramCtx The parameter to parse
+    * @return The name
+    */
+   private static Procedure.CallingConvention pragmaParamCallingConvention(KickCParser.PragmaParamContext paramCtx) {
+      if(!(paramCtx instanceof KickCParser.PragmaParamCallingConventionContext))
+         throw new CompileError("Error! Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      final String callingConventionName = ((KickCParser.PragmaParamCallingConventionContext) paramCtx).CALLINGCONVENTION().getText();
+      final Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(callingConventionName);
+      if(callingConvention == null)
+         throw new CompileError("Error! Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      return callingConvention;
+   }
+
+
+   /**
+    * Parse a single NAME parameter of a #pragma
+    * If the parameter is not a NAME the compiler will fail out
+    *
+    * @param paramCtx The parameter to parse
+    * @return The name
+    */
+   private static String pragmaParamName(KickCParser.PragmaParamContext paramCtx) {
+      if(!(paramCtx instanceof KickCParser.PragmaParamNameContext))
+         throw new CompileError("Error! Expected a NAME parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      return ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
+   }
+
+   /**
+    * Parse a single STRING parameter of a #pragma
+    * If the parameter is not a STRING the compiler will fail out
+    *
+    * @param paramCtx The parameter to parse
+    * @return The string
+    */
+   private static String pragmaParamString(KickCParser.PragmaParamContext paramCtx) {
+      if(!(paramCtx instanceof KickCParser.PragmaParamStringContext))
+         throw new CompileError("Error! Expected a STRING parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+      final String stringLiteral = ((KickCParser.PragmaParamStringContext) paramCtx).STRING().getText();
+      return stringLiteral.substring(1, stringLiteral.length() - 1);
+   }
+
+   /**
+    * Find a reserved ZP-addresses from a list of pragma parameters (consisting of numbers and number ranges).
     *
     * @param reserveParams The params
     * @return The list of reserved zeropage addresses
     */
-   private List<Integer> getReservedZps(List<KickCParser.DirectiveReserveParamContext> reserveParams) {
+   private List<Integer> pragmaParamRanges(List<KickCParser.PragmaParamContext> reserveParams) {
       List<Integer> reservedZps = new ArrayList<>();
-      for(KickCParser.DirectiveReserveParamContext reserveCtx : reserveParams) {
-         final TerminalNode rangeStart = reserveCtx.NUMBER(0);
-         final TerminalNode rangeEnd = reserveCtx.NUMBER(1);
-         if(rangeEnd == null) {
+      for(KickCParser.PragmaParamContext reserveCtx : reserveParams) {
+         if(reserveCtx instanceof KickCParser.PragmaParamNumberContext) {
+            final TerminalNode number = ((KickCParser.PragmaParamNumberContext) reserveCtx).NUMBER();
             // Only a single reserved address
-            Number reservedZp = NumberParser.parseLiteral(rangeStart.getText());
+            Number reservedZp = NumberParser.parseLiteral(number.getText());
             reservedZps.add(reservedZp.intValue());
-         } else {
+         } else if(reserveCtx instanceof KickCParser.PragmaParamRangeContext) {
+            final TerminalNode rangeStart = ((KickCParser.PragmaParamRangeContext) reserveCtx).NUMBER(0);
+            final TerminalNode rangeEnd = ((KickCParser.PragmaParamRangeContext) reserveCtx).NUMBER(1);
             // A range of reserved addresses
             Number startZp = NumberParser.parseLiteral(rangeStart.getText());
             Number endZp = NumberParser.parseLiteral(rangeEnd.getText());
@@ -271,74 +362,21 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                reservedZps.add(zp);
                zp++;
             }
+         } else {
+            throw new CompileError("Error! Expected a NUMBER or RANGE parameter. Found '" + reserveCtx.getText() + "'.", new StatementSource(reserveCtx.getParent()));
          }
       }
       return reservedZps;
    }
 
-   @Override
-   public Object visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) {
-      try {
-         this.currentEncoding = StringEncoding.fromName(ctx.NAME().getText().toUpperCase(Locale.ENGLISH));
-      } catch(IllegalArgumentException e) {
-         throw new CompileError("Unknown string encoding " + ctx.NAME().getText(), new StatementSource(ctx));
-      }
-      return null;
-   }
-
-   @Override
-   public Object visitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) {
-      Number programPc = NumberParser.parseLiteral(ctx.NUMBER().getText());
-      if(programPc != null) {
-         program.setProgramPc(programPc);
-      } else {
-         throw new CompileError("Cannot parse #pc directive", new StatementSource(ctx));
-      }
-      return null;
-   }
-
-   @Override
-   public Object visitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) {
-      throw new InternalError("Error! #pragma target() should be handled in preprocessor!");
-   }
-
-   @Override
-   public Object visitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx) {
-      final String cpuName = ctx.NAME().getText();
-      TargetCpu cpu = TargetCpu.getTargetCpu(cpuName, false);
-      program.getTargetPlatform().setCpu(cpu);
-      return null;
-   }
-
    /** The current calling convention for procedures. */
    private Procedure.CallingConvention currentCallingConvention;
-
-   @Override
-   public Object visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) {
-      Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(ctx.CALLINGCONVENTION().getText());
-      if(callingConvention != null) {
-         currentCallingConvention = callingConvention;
-      }
-      return null;
-   }
 
    /** The current code segment - if null the default segment is used. */
    private String currentCodeSegment = Scope.SEGMENT_CODE_DEFAULT;
 
-   @Override
-   public Object visitGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) {
-      this.currentCodeSegment = ctx.NAME().getText();
-      return null;
-   }
-
    /** The current data segment - if null the default segment is used. */
    private String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
-
-   @Override
-   public Object visitGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) {
-      this.currentDataSegment = ctx.NAME().getText();
-      return null;
-   }
 
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
@@ -1260,8 +1298,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
 
    @Override
    public Directive visitDirectiveReserveZp(KickCParser.DirectiveReserveZpContext ctx) {
-      final List<KickCParser.DirectiveReserveParamContext> reserveParams = ctx.directiveReserveParam();
-      final List<Integer> reservedZps = getReservedZps(reserveParams);
+      final List<KickCParser.PragmaParamContext> reserveParams = ctx.pragmaParam();
+      final List<Integer> reservedZps = pragmaParamRanges(reserveParams);
       return new Directive.ReserveZp(reservedZps);
    }
 

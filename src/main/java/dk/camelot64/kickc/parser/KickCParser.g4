@@ -34,7 +34,7 @@ decl
     | structDef ';'
     | enumDef ';'
     | declFunction
-    | globalDirective
+    | pragma
     | typeDef ';'
     ;
 
@@ -133,24 +133,16 @@ parameterDecl
     | PARAM_LIST #parameterDeclList
     ;
 
-globalDirective
-    : (PRAGMA TARGET) PAR_BEGIN NAME PAR_END #globalDirectivePlatform
-    | (PRAGMA CPU) PAR_BEGIN NAME PAR_END #globalDirectiveCpu
-    | (PRAGMA LINK) PAR_BEGIN STRING PAR_END #globalDirectiveLinkScript
-    | (PRAGMA EXTENSION) PAR_BEGIN STRING PAR_END #globalDirectiveExtension
-    | (PRAGMA EMULATOR) PAR_BEGIN STRING PAR_END #globalDirectiveEmulator
-    | (PRAGMA RESERVE) PAR_BEGIN directiveReserveParam ( COMMA directiveReserveParam )* PAR_END #globalDirectiveReserve
-    | (PRAGMA PC) PAR_BEGIN NUMBER PAR_END #globalDirectivePc
-    | (PRAGMA CODESEG) PAR_BEGIN NAME PAR_END #globalDirectiveCodeSeg
-    | (PRAGMA DATASEG) PAR_BEGIN NAME PAR_END #globalDirectiveDataSeg
-    | (PRAGMA ENCODING) PAR_BEGIN NAME PAR_END #globalDirectiveEncoding
-    | (PRAGMA CALLING) PAR_BEGIN CALLINGCONVENTION PAR_END #globalDirectiveCalling
-    | (PRAGMA VARMODEL) PAR_BEGIN NAME ( COMMA NAME )* PAR_END #globalDirectiveVarModel
-    | (PRAGMA CONSTRUCTORFOR) PAR_BEGIN NAME ( COMMA NAME )* PAR_END #globalDirectiveConstructorFor
+pragma
+    : PRAGMA NAME PAR_BEGIN pragmaParam (COMMA pragmaParam)* PAR_END
     ;
 
-directiveReserveParam
-    : NUMBER (RANGE NUMBER)?
+pragmaParam
+    : NUMBER #pragmaParamNumber
+    | NUMBER RANGE NUMBER #pragmaParamRange
+    | NAME #pragmaParamName
+    | STRING #pragmaParamString
+    | CALLINGCONVENTION #pragmaParamCallingConvention
     ;
 
 directive
@@ -169,7 +161,7 @@ directive
     | INLINE #directiveInline
     | INTRINSIC #directiveIntrinsic
     | INTERRUPT ( PAR_BEGIN NAME PAR_END )? #directiveInterrupt
-    | LOCAL_RESERVE PAR_BEGIN directiveReserveParam ( COMMA directiveReserveParam )* PAR_END  #directiveReserveZp
+    | LOCAL_RESERVE PAR_BEGIN pragmaParam ( COMMA pragmaParam )* PAR_END  #directiveReserveZp
     | CALLINGCONVENTION #directiveCallingConvention
     ;
 

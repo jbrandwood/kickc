@@ -28,6 +28,21 @@ public class CParser {
    /** The hidden lexer channel containing comments. */
    public static final int CHANNEL_COMMENTS = 2;
 
+   /** Pragma Names. */
+   public static final String PRAGMA_TARGET = "target";
+   public static final String PRAGMA_CPU = "cpu";
+   public static final String PRAGMA_VAR_MODEL = "var_model";
+   public static final String PRAGMA_LINKSCRIPT = "link";
+   public static final String PRAGMA_EXTENSION = "extension";
+   public static final String PRAGMA_EMULATOR = "emulator";
+   public static final String PRAGMA_ENCODING = "encoding";
+   public static final String PRAGMA_CODE_SEG = "code_seg";
+   public static final String PRAGMA_DATA_SEG = "data_seg";
+   public static final String PRAGMA_PC = "pc";
+   public static final String PRAGMA_CALLING = "calling";
+   public static final String PRAGMA_ZP_RESERVE = "zp_reserve";
+   public static final String PRAGMA_CONSTRUCTOR_FOR = "constructor_for";
+
    /** The Program. */
    private Program program;
 

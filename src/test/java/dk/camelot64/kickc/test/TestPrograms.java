@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPragmaUnknown() throws IOException, URISyntaxException {
+      compileAndCompare("pragma-unknown.c");
+   }
+
+   @Test
    public void testLibraryConstructorError2() throws IOException, URISyntaxException {
       assertError("library-constructor-error-2.c", "Error! Procedure not found print");
    }

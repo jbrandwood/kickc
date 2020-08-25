@@ -426,171 +426,75 @@ public interface KickCParserListener extends ParseTreeListener {
 	 */
 	void exitParameterDeclList(KickCParser.ParameterDeclListContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code globalDirectivePlatform}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by {@link KickCParser#pragma}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx);
+	void enterPragma(KickCParser.PragmaContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code globalDirectivePlatform}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by {@link KickCParser#pragma}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx);
+	void exitPragma(KickCParser.PragmaContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveCpu}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by the {@code pragmaParamNumber}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx);
+	void enterPragmaParamNumber(KickCParser.PragmaParamNumberContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveCpu}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by the {@code pragmaParamNumber}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx);
+	void exitPragmaParamNumber(KickCParser.PragmaParamNumberContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveLinkScript}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by the {@code pragmaParamRange}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx);
+	void enterPragmaParamRange(KickCParser.PragmaParamRangeContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveLinkScript}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by the {@code pragmaParamRange}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx);
+	void exitPragmaParamRange(KickCParser.PragmaParamRangeContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveExtension}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by the {@code pragmaParamName}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx);
+	void enterPragmaParamName(KickCParser.PragmaParamNameContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveExtension}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by the {@code pragmaParamName}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx);
+	void exitPragmaParamName(KickCParser.PragmaParamNameContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveEmulator}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by the {@code pragmaParamString}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx);
+	void enterPragmaParamString(KickCParser.PragmaParamStringContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveEmulator}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by the {@code pragmaParamString}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx);
+	void exitPragmaParamString(KickCParser.PragmaParamStringContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveReserve}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Enter a parse tree produced by the {@code pragmaParamCallingConvention}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void enterGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx);
+	void enterPragmaParamCallingConvention(KickCParser.PragmaParamCallingConventionContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveReserve}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
+	 * Exit a parse tree produced by the {@code pragmaParamCallingConvention}
+	 * labeled alternative in {@link KickCParser#pragmaParam}.
 	 * @param ctx the parse tree
 	 */
-	void exitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectivePc}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectivePc}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveCodeSeg}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveCodeSeg}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveDataSeg}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveDataSeg}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveEncoding}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveEncoding}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveCalling}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveCalling}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveVarModel}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveVarModel}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code globalDirectiveConstructorFor}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void enterGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code globalDirectiveConstructorFor}
-	 * labeled alternative in {@link KickCParser#globalDirective}.
-	 * @param ctx the parse tree
-	 */
-	void exitGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link KickCParser#directiveReserveParam}.
-	 * @param ctx the parse tree
-	 */
-	void enterDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link KickCParser#directiveReserveParam}.
-	 * @param ctx the parse tree
-	 */
-	void exitDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx);
+	void exitPragmaParamCallingConvention(KickCParser.PragmaParamCallingConventionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code directiveConst}
 	 * labeled alternative in {@link KickCParser#directive}.

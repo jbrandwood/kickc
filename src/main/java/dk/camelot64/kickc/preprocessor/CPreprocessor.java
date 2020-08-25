@@ -169,8 +169,8 @@ public class CPreprocessor implements TokenSource {
          // Already examined by the preprocessor - and determined to be for the parser
          return false;
       final List<Token> ws = skipWhitespace(cTokenSource);
-      final Token pragmaType = cTokenSource.nextToken();
-      if(KickCLexer.TARGET == pragmaType.getType()) {
+      final Token pragmaType = nextToken(cTokenSource, KickCLexer.NAME);
+      if(pragmaType.getText().equals(CParser.PRAGMA_TARGET)) {
          skipWhitespace(cTokenSource);
          nextToken(cTokenSource, KickCLexer.PAR_BEGIN);
          skipWhitespace(cTokenSource);

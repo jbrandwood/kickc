@@ -285,98 +285,42 @@ public class KickCParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobalDirectivePlatform(KickCParser.GlobalDirectivePlatformContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPragma(KickCParser.PragmaContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobalDirectiveCpu(KickCParser.GlobalDirectiveCpuContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPragmaParamNumber(KickCParser.PragmaParamNumberContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobalDirectiveLinkScript(KickCParser.GlobalDirectiveLinkScriptContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPragmaParamRange(KickCParser.PragmaParamRangeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobalDirectiveExtension(KickCParser.GlobalDirectiveExtensionContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPragmaParamName(KickCParser.PragmaParamNameContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobalDirectiveEmulator(KickCParser.GlobalDirectiveEmulatorContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPragmaParamString(KickCParser.PragmaParamStringContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitGlobalDirectiveReserve(KickCParser.GlobalDirectiveReserveContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectivePc(KickCParser.GlobalDirectivePcContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectiveCodeSeg(KickCParser.GlobalDirectiveCodeSegContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectiveDataSeg(KickCParser.GlobalDirectiveDataSegContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectiveEncoding(KickCParser.GlobalDirectiveEncodingContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectiveCalling(KickCParser.GlobalDirectiveCallingContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectiveVarModel(KickCParser.GlobalDirectiveVarModelContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitGlobalDirectiveConstructorFor(KickCParser.GlobalDirectiveConstructorForContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitDirectiveReserveParam(KickCParser.DirectiveReserveParamContext ctx) { return visitChildren(ctx); }
+	@Override public T visitPragmaParamCallingConvention(KickCParser.PragmaParamCallingConventionContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

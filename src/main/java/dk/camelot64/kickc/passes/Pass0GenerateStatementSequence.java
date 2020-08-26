@@ -258,7 +258,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             this.pragmaConstructorFors.add(ctx);
             return null;
          default:
-            program.getLog().append("Warning! Unknown #pragma " + pragmaName + "\n" + new StatementSource(ctx).toString());
+            program.getLog().append("Warning! Unknown #pragma " + pragmaName);
 
       }
       return null;

@@ -1,4 +1,6 @@
 // Test reading keyboard port on the TED of the Plus/4
+// C standard library string.h
+// Functions to manipulate C strings and arrays.
 .pc = $1001 "Basic"
 :BasicUpstart(main)
 .pc = $100d "Program"

@@ -168,26 +168,49 @@ public class CPreprocessor implements TokenSource {
       if(parserPragmas.contains(inputToken))
          // Already examined by the preprocessor - and determined to be for the parser
          return false;
+
       final List<Token> ws = skipWhitespace(cTokenSource);
       final Token pragmaType = nextToken(cTokenSource, KickCLexer.NAME);
+
+      // Handle #pragma target here - do not not send the tokens to the parser
       if(pragmaType.getText().equals(CParser.PRAGMA_TARGET)) {
          skipWhitespace(cTokenSource);
-         nextToken(cTokenSource, KickCLexer.PAR_BEGIN);
-         skipWhitespace(cTokenSource);
+         boolean parenthesis = false;
+         if(cTokenSource.peekToken().getType() == KickCLexer.PAR_BEGIN) {
+            cTokenSource.nextToken();
+            parenthesis = true;
+         }
          final String targetName = nextToken(cTokenSource, KickCLexer.NAME).getText();
+         if(parenthesis) {
+            skipWhitespace(cTokenSource);
+            nextToken(cTokenSource, KickCLexer.PAR_END);
+         }
+         // Check for a newline ending the pragma
          skipWhitespace(cTokenSource);
-         nextToken(cTokenSource, KickCLexer.PAR_END);
+         Token nl = nextToken(cTokenSource, KickCLexer.WS);
+         if(nl.getChannel() != CParser.CHANNEL_WHITESPACE || !nl.getText().contains("\n"))
+            throw new CompileError("Unexpected token. Was expecting newline after #pragma");
          cParser.loadTargetPlatform(targetName, cParser.getCurrentSourceFolderPath());
          return true;
       }
 
-      // Pass on the #pragma to the parser
-      parserPragmas.add(inputToken);
+      // Forward #pragma to parser
+      // Convert space-based pragma to parenthesis-based for easier parsing
+      // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
       final ArrayList<Token> pragmaTokens = new ArrayList<>();
       pragmaTokens.add(inputToken);
       pragmaTokens.addAll(ws);
       pragmaTokens.add(pragmaType);
+      pragmaTokens.addAll(skipWhitespace(cTokenSource));
+      ArrayList<Token> pragmaBody = readBody(cTokenSource);
+      if(pragmaBody.get(0).getType() != KickCLexer.PAR_BEGIN) {
+         // Parenthesize the parameter list
+         throw new InternalError("TODO: Parenthesize #pragmas!");
+      }
+      pragmaTokens.addAll(pragmaBody);
+      // Pass on the #pragma to the parser - and mark it as already handled
       cTokenSource.addSourceFirst(new ListTokenSource(pragmaTokens));
+      parserPragmas.add(inputToken);
       return true;
    }
 

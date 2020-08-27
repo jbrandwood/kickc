@@ -1,4 +1,5 @@
 // 32-bit addressing using the new addressing mode
+// Absolute 32-bit address to use for storing/loading data
 .cpu _45gs02
   .file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
@@ -12,7 +13,6 @@
 .byte $00, $00, $00                                     // 
   // The address of the coloir RAM in MEGA65 main memory
   .const MEGA65_MEM_COLOR_RAM = $ff80000
-  // Absolute 32-bit address to use for storing/loading data
   .label ADDR32 = 2
 .segment Code
 __start: {

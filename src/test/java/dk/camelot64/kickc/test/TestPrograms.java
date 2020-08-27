@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPragmaNoParenthesis() throws IOException, URISyntaxException {
+      compileAndCompare("pragma-noparenthesis.c");
+   }
+
+   @Test
    public void testPragmaUnknown() throws IOException, URISyntaxException {
       compileAndCompare("pragma-unknown.c");
    }

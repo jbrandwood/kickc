@@ -195,17 +195,29 @@ public class CPreprocessor implements TokenSource {
       }
 
       // Forward #pragma to parser
-      // Convert space-based pragma to parenthesis-based for easier parsing
-      // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
       final ArrayList<Token> pragmaTokens = new ArrayList<>();
       pragmaTokens.add(inputToken);
       pragmaTokens.addAll(ws);
       pragmaTokens.add(pragmaType);
       pragmaTokens.addAll(skipWhitespace(cTokenSource));
       ArrayList<Token> pragmaBody = readBody(cTokenSource);
-      if(pragmaBody.get(0).getType() != KickCLexer.PAR_BEGIN) {
+      final Token pragmaBodyStart = pragmaBody.get(0);
+      // Convert space-based pragma to parenthesis-based for easier parsing
+      // #pragma NAME XXX YYY \n  =>   #pragma NAME (  XXX , YYY ) \n
+      if(pragmaBodyStart.getType() != KickCLexer.PAR_BEGIN) {
+         ArrayList<Token> parenthesizedBody = new ArrayList<>();
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_BEGIN, "(" ));
          // Parenthesize the parameter list
-         throw new InternalError("TODO: Parenthesize #pragmas!");
+         boolean first = true;
+         for(Token token : pragmaBody) {
+            if(token.getChannel() != CParser.CHANNEL_WHITESPACE && !first) {
+               parenthesizedBody.add(new CommonToken(KickCLexer.COMMA, "," ));
+            }
+            parenthesizedBody.add(token);
+            first = false;
+         }
+         parenthesizedBody.add(new CommonToken(KickCLexer.PAR_END, ")" ));
+         pragmaBody = parenthesizedBody;
       }
       pragmaTokens.addAll(pragmaBody);
       // Pass on the #pragma to the parser - and mark it as already handled

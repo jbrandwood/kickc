@@ -37,12 +37,12 @@ public class StatementSource implements Serializable {
    public static StatementSource NONE = new StatementSource(null, null, null, 0, 0);
 
    public StatementSource(Token tokenStart, Token tokenStop) {
-      if(tokenStart != null) {
+      if(tokenStart != null && tokenStart.getStartIndex() != 0) {
          this.startIndex = tokenStart.getStartIndex();
          CharStream stream = tokenStart.getInputStream();
          this.fileName = stream.getSourceName();
          this.lineNumber = tokenStart.getLine();
-         if(tokenStop != null) {
+         if(tokenStop != null && tokenStop.getStopIndex() != 0) {
             this.stopIndex = tokenStop.getStopIndex();
             Interval interval = getInterval();
             this.code = stream.getText(interval);

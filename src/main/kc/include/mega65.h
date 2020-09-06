@@ -36,8 +36,16 @@ char*  const CHARGEN = 0xd000;
 struct MOS6581_SID * const SID = 0xd400;
 // The VIC-II MOS 6567/6569
 struct MOS6569_VICII* const VICII = 0xd000;
+// The VIC III MOS 4567/4569
+struct MOS6569_VICIII* const VICIII = 0xd000;
 // Color Ram
 char * const COLORRAM = 0xd800;
+// Palette RED
+char * const PALRED = 0xd100;
+// Palette GREEN
+char * const PALGREEN = 0xd200;
+// Palette BLUE
+char * const PALBLUE = 0xd300;
 
 // Default address of screen character matrix
 char * const DEFAULT_SCREEN = 0x0800;

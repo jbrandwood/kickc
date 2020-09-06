@@ -1,9 +1,10 @@
 // MEGA65 Registers and Constants
 #ifndef __MEGA65__
-#error "Target platform must be MEGA64"
+#error "Target platform must be MEGA65"
 #endif
 #include <mos6526.h>
 #include <mos6569.h>
+#include <mos4569.h>
 #include <mos6581.h>
 
 // I/O Personality selection
@@ -37,7 +38,7 @@ struct MOS6581_SID * const SID = 0xd400;
 // The VIC-II MOS 6567/6569
 struct MOS6569_VICII* const VICII = 0xd000;
 // The VIC III MOS 4567/4569
-struct MOS6569_VICIII* const VICIII = 0xd000;
+struct MOS4569_VICIII* const VICIII = 0xd000;
 // Color Ram
 char * const COLORRAM = 0xd800;
 // Palette RED

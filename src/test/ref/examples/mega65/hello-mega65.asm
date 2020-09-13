@@ -1,6 +1,7 @@
 // Hello World for MEGA 65 - putting chars directly to the screen
 .cpu _45gs02
-  .file [name="hello-mega65.prg", type="prg", segments="Program"]
+  // MEGA65 platform PRG executable starting in MEGA65 mode.
+.file [name="hello-mega65.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$2001]
 .segmentdef Code [start=$2017]

@@ -4,8 +4,9 @@
 #endif
 #include <mos6526.h>
 #include <mos6569.h>
-#include <mos4569.h>
 #include <mos6581.h>
+#include <mos4569.h>
+#include <mega65-viciv.h>
 
 // I/O Personality selection
 volatile char * const IO_KEY = 0xd02f;
@@ -32,21 +33,24 @@ const char PROCPORT_KERNEL_IO       = 0b00000110;
 const char PROCPORT_BASIC_KERNEL_IO = 0b00000111;
 
 // The address of the CHARGEN character set
-char*  const CHARGEN = 0xd000;
+char * const CHARGEN = 0xd000;
 // The SID MOS 6581/8580
 struct MOS6581_SID * const SID = 0xd400;
 // The VIC-II MOS 6567/6569
 struct MOS6569_VICII* const VICII = 0xd000;
 // The VIC III MOS 4567/4569
 struct MOS4569_VICIII* const VICIII = 0xd000;
+// The VIC IV
+struct MEGA65_VICIV* const VICIV = 0xd000;
+
 // Color Ram
 char * const COLORRAM = 0xd800;
 // Palette RED
-char * const PALRED = 0xd100;
+char * const PALETTE_RED = 0xd100;
 // Palette GREEN
-char * const PALGREEN = 0xd200;
+char * const PALETTE_GREEN = 0xd200;
 // Palette BLUE
-char * const PALBLUE = 0xd300;
+char * const PALETTE_BLUE = 0xd300;
 
 // Default address of screen character matrix
 char * const DEFAULT_SCREEN = 0x0800;

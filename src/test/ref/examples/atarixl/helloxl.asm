@@ -2,7 +2,7 @@
 // XEX file format https://www.atarimax.com/jindroush.atari.org/afmtexe.html
 // Minimal Hello World https://atariage.com/forums/topic/229742-help-with-hello-world-in-mads/
 // Display Lists atariarchives.org/mapping/appendix8.php
-  // Atari XL/XE XEX file minimal file
+  // Atari XL/XE executable XEX file with a single segment
 // https://www.atarimax.com/jindroush.atari.org/afmtexe.html
 .file [name="helloxl.xex", type="bin", segments="XexFile"]
 .segmentdef XexFile

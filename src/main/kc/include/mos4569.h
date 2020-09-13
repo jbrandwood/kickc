@@ -32,20 +32,35 @@ struct MOS4569_VICIII {
   char SPRITES_EXPAND_X;
   char SPRITES_COLLISION;
   char SPRITES_BG_COLLISION;
+  // $D020 Border Color
   char BORDER_COLOR;
+  // $D021 Background Color 0
   char BG_COLOR;
+  // $D022 Background Color 1
   char BG_COLOR1;
+  // $D023 Background Color 2
   char BG_COLOR2;
+  // $D024 Background Color 3
   char BG_COLOR3;
+  // $D025 Sprite multicolor 0
   char SPRITES_MCOLOR1;
+  // $D026 Sprite multicolor 1
   char SPRITES_MCOLOR2;
+  // $D027 Color Sprite 0
   char SPRITE0_COLOR;
+  // $D028 Color Sprite 1
   char SPRITE1_COLOR;
+  // $D029 Color Sprite 2
   char SPRITE2_COLOR;
+  // $D02a Color Sprite 3
   char SPRITE3_COLOR;
+  // $D02b Color Sprite 4
   char SPRITE4_COLOR;
+  // $D02c Color Sprite 5
   char SPRITE5_COLOR;
+  // $D02d Color Sprite 6
   char SPRITE6_COLOR;
+  // $D02e Color Sprite 7
   char SPRITE7_COLOR;
   // $D02f KEY register is used for choosing between the different I/O personalities.
   // This disables/enables different registers in $D000-$DFFF
@@ -54,7 +69,7 @@ struct MOS4569_VICIII {
   // $45, $54: MEGA65 ETHERNET  personality
   // $47, $53: MEGA65  personality
   char KEY;
-  // $D030 ROM_BANKS;
+  // $D030 VIC-III Control Register A (ROM banks)
   // Bit        20-bit Address       16-bit Address  Read-Write
   // 0 CRAM2K   $1F800 – $1FFFF,     $D800 – $DFFF   Y
   //            $FF80000 – $FF807FF
@@ -63,8 +78,8 @@ struct MOS4569_VICIII {
   // 5 ROMC     $2C000 – $2CFFF      $C000 – $CFFF   N
   // 6 CROM9    $29000 – $29FFF      $D000 – $DFFF   N
   // 7 ROME     $3E000 – $3FFFF      $E000 – $FFFF   N
-  char ROM_BANKS;
-  // $D031 CONTROL3
+  char CONTROLA;
+  // $D031 VIC-III Control Register B
   // BIT
   // 0    INT   Enable VIC-III interlaced mode
   // 1    MONO  Enable VIC-III MONO video output (not implemented)
@@ -74,7 +89,7 @@ struct MOS4569_VICIII {
   // 5    ATTR  Enable extended attributes and 8 bit colour entries
   // 6    FAST  Enable C65 FAST mode (3 .5MHz)
   // 7    H640  Enable C64 640 horizontal pixels / 80 column mode
-  char CONTROL3;
+  char CONTROLB;
   char UNUSED;
   // $D033  Bitplane 0 Address
   // 1-3    B0ADEVN    Bitplane 0 address, even lines

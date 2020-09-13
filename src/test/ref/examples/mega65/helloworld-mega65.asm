@@ -1,7 +1,8 @@
 // Hello World for MEGA 65 - using stdio.h and conio.h
 // Functions for performing input and output.
 .cpu _45gs02
-  .file [name="helloworld-mega65.prg", type="prg", segments="Program"]
+  // MEGA65 platform PRG executable starting in MEGA65 mode.
+.file [name="helloworld-mega65.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$2001]
 .segmentdef Code [start=$2017]

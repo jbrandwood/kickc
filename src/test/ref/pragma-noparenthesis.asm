@@ -1,5 +1,6 @@
 // Test #pragma without parenthesis
-  .file [name="pragma-noparenthesis.prg", type="prg", segments="Program"]
+  // Commodore VIC 20 executable PRG file
+.file [name="pragma-noparenthesis.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$1001]
 .segmentdef Code [start=$100e]

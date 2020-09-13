@@ -1,5 +1,5 @@
 // Raster Bars for Atari XL / XE
-  // Atari XL/XE XEX file minimal file
+  // Atari XL/XE executable XEX file with a single segment
 // https://www.atarimax.com/jindroush.atari.org/afmtexe.html
 .file [name="rasterbars.xex", type="bin", segments="XexFile"]
 .segmentdef XexFile

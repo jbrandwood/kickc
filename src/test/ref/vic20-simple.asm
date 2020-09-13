@@ -5,7 +5,8 @@
 // MOS 6560/6561 VIDEO INTERFACE CHIP
 // Used in VIC 20
 // http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
-  .file [name="vic20-simple.prg", type="prg", segments="Program"]
+  // Commodore VIC 20 executable PRG file
+.file [name="vic20-simple.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$1001]
 .segmentdef Code [start=$100e]

@@ -1,8 +1,8 @@
-// Commodore VIC 20 executable PRG file
+// MEGA65 platform executable starting in C64 mode.
 .file [name="%O", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$1001]
-.segmentdef Code [start=$100e]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$080d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(%E)

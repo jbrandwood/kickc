@@ -1,7 +1,8 @@
 // 32-bit addressing using the new addressing mode
 // Absolute 32-bit address to use for storing/loading data
 .cpu _45gs02
-  .file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
+  // MEGA65 platform PRG executable starting in MEGA65 mode.
+.file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$2001]
 .segmentdef Code [start=$2017]

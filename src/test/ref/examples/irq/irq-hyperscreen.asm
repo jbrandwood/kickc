@@ -10,6 +10,10 @@
   .const VIC_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
   .const WHITE = 1
   .const RED = 2
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
@@ -18,15 +22,24 @@
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
-  // The vector used when the KERNAL serves IRQ interrupts
-  .label KERNEL_IRQ = $314
+  // The vector used when the HARDWARE serves IRQ interrupts
+  .label HARDWARE_IRQ = $fffe
   .label GHOST_BYTE = $3fff
 // Interrupt Routine 2
 irq_bottom_2: {
+    pha
+    txa
+    pha
+    tya
+    pha
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -43,19 +56,29 @@ irq_bottom_2: {
     // Trigger IRQ 1 at line $fa
     lda #$fa
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // *KERNEL_IRQ = &irq_bottom_1
+    // *HARDWARE_IRQ = &irq_bottom_1
     lda #<irq_bottom_1
-    sta KERNEL_IRQ
+    sta HARDWARE_IRQ
     lda #>irq_bottom_1
-    sta KERNEL_IRQ+1
+    sta HARDWARE_IRQ+1
     // VICII->BORDER_COLOR = RED
     lda #RED
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    jmp $ea31
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
 }
 // Interrupt Routine 1
 irq_bottom_1: {
+    pha
+    txa
+    pha
+    tya
+    pha
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -72,16 +95,21 @@ irq_bottom_1: {
     // Trigger IRQ 2 at line $fd
     lda #$fd
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // *KERNEL_IRQ = &irq_bottom_2
+    // *HARDWARE_IRQ = &irq_bottom_2
     lda #<irq_bottom_2
-    sta KERNEL_IRQ
+    sta HARDWARE_IRQ
     lda #>irq_bottom_2
-    sta KERNEL_IRQ+1
+    sta HARDWARE_IRQ+1
     // VICII->BORDER_COLOR = RED
     lda #RED
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    jmp $ea81
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
 }
 main: {
     // *GHOST_BYTE = 0
@@ -105,14 +133,21 @@ main: {
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // *KERNEL_IRQ = &irq_bottom_1
+    // *HARDWARE_IRQ = &irq_bottom_1
     // Set the IRQ routine
     lda #<irq_bottom_1
-    sta KERNEL_IRQ
+    sta HARDWARE_IRQ
     lda #>irq_bottom_1
-    sta KERNEL_IRQ+1
+    sta HARDWARE_IRQ+1
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+    // no kernal or BASIC rom visible
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
     // asm
     cli
-    // }
-    rts
+  __b1:
+    jmp __b1
 }

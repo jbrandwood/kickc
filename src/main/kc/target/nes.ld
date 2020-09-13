@@ -1,4 +1,4 @@
-// Nintendo Entertainment System (NES) ROM
+// Nintendo Entertainment System (NES) ROM (Mapper 0 NROM, Vertical Mirroring)
 // https://sadistech.com/nesromtool/romdoc.html
 // https://forums.nesdev.com/viewtopic.php?f=2&t=9896
 // https://github.com/gregkrsak/first_nes

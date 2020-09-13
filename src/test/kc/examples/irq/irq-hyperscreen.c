@@ -14,12 +14,17 @@ void main() {
     // Enable Raster Interrupt
     VICII->IRQ_ENABLE = IRQ_RASTER;
     // Set the IRQ routine
-    *KERNEL_IRQ = &irq_bottom_1;
+    *HARDWARE_IRQ = &irq_bottom_1;
+    // no kernal or BASIC rom visible
+    *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
+    *PROCPORT = PROCPORT_RAM_IO;
     asm { cli }
+    // Loop
+    for (;;) ;
 }
 
 // Interrupt Routine 1
-interrupt(kernel_min) void irq_bottom_1() {
+interrupt(hardware_stack) void irq_bottom_1() {
     VICII->BORDER_COLOR = WHITE;
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
     VICII->CONTROL1 &= ($ff^VIC_RSEL);
@@ -27,12 +32,12 @@ interrupt(kernel_min) void irq_bottom_1() {
     VICII->IRQ_STATUS = IRQ_RASTER;
     // Trigger IRQ 2 at line $fd
     VICII->RASTER = $fd;
-    *KERNEL_IRQ = &irq_bottom_2;
+    *HARDWARE_IRQ = &irq_bottom_2;
     VICII->BORDER_COLOR = RED;
 }
 
 // Interrupt Routine 2
-interrupt(kernel_keyboard) void irq_bottom_2() {
+interrupt(hardware_stack) void irq_bottom_2() {
     VICII->BORDER_COLOR = WHITE;
     // Set screen height back to 25 lines (preparing for the next screen)
     VICII->CONTROL1 |= VIC_RSEL;
@@ -40,6 +45,6 @@ interrupt(kernel_keyboard) void irq_bottom_2() {
     VICII->IRQ_STATUS = IRQ_RASTER;
     // Trigger IRQ 1 at line $fa
     VICII->RASTER = $fa;
-    *KERNEL_IRQ = &irq_bottom_1;
+    *HARDWARE_IRQ = &irq_bottom_1;
     VICII->BORDER_COLOR = RED;
 }

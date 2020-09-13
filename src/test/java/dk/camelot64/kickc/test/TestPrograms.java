@@ -258,6 +258,12 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMega65Raster65() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/raster65.c");
+   }
+
+
+   @Test
    public void testAtariXlRasterbars() throws IOException, URISyntaxException {
       compileAndCompare("examples/atarixl/rasterbars.c");
    }

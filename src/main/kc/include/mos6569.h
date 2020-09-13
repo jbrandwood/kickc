@@ -33,20 +33,35 @@ struct MOS6569_VICII {
   char SPRITES_EXPAND_X;
   char SPRITES_COLLISION;
   char SPRITES_BG_COLLISION;
+  // $D020 Border Color
   char BORDER_COLOR;
+  // $D021 Background Color 0
   char BG_COLOR;
+  // $D022 Background Color 1
   char BG_COLOR1;
+  // $D023 Background Color 2
   char BG_COLOR2;
+  // $D024 Background Color 3
   char BG_COLOR3;
+  // $D025 Sprite multicolor 0
   char SPRITES_MCOLOR1;
+  // $D026 Sprite multicolor 1
   char SPRITES_MCOLOR2;
+  // $D027 Color Sprite 0
   char SPRITE0_COLOR;
+  // $D028 Color Sprite 1
   char SPRITE1_COLOR;
+  // $D029 Color Sprite 2
   char SPRITE2_COLOR;
+  // $D02a Color Sprite 3
   char SPRITE3_COLOR;
+  // $D02b Color Sprite 4
   char SPRITE4_COLOR;
+  // $D02c Color Sprite 5
   char SPRITE5_COLOR;
+  // $D02d Color Sprite 6
   char SPRITE6_COLOR;
+  // $D02e Color Sprite 7
   char SPRITE7_COLOR;
 };
 

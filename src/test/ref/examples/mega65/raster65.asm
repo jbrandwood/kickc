@@ -24,7 +24,11 @@
   .const PROCPORT_RAM_IO = 5
   // The number of greetings
   .const GREETCOUNT = $10
+  // The number of raster lines
+  .const NUMBERL = $e0
   .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
@@ -114,15 +118,36 @@ irq1: {
     // wobblepos = ++sinpos
     inc.z sinpos
     // Generate Raster Bars and more
-    ldx.z sinpos
-    ldz #0
+    ldz sinpos
+    tax
   __b1:
-    // for(char line=0;line!=0xe0;line++)
-    cpz #$e0
+    // for(char line=0;line!=NUMBERL;line++)
+    cpx #NUMBERL
     bne __b2
+    // VICIII->BORDER_COLOR = 1
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // VICIII->BG_COLOR = 1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    ldx #0
+  // Set all raster bars to black
+  __b16:
+    // for(char l=0;l!=NUMBERL;l++)
+    cpx #NUMBERL
+    bne __b17
+    // VICIII->BORDER_COLOR = 1
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // VICIII->BG_COLOR = 1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // (*songPlay)()
     // play music
     jsr songPlay
+    // VICIII->BORDER_COLOR = 2
+    lda #2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // VICIII->BG_COLOR = 2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // }
     pla
     tay
@@ -130,26 +155,31 @@ irq1: {
     tax
     pla
     rti
+  __b17:
+    // rasters[l] = 0
+    lda #0
+    sta rasters,x
+    // for(char l=0;l!=NUMBERL;l++)
+    inx
+    jmp __b16
   __b2:
     // col = rasters[line]
-    tza
-    tay
-    lda rasters,y
+    lda rasters,x
     // VICIII->BORDER_COLOR = col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
     // VICIII->BG_COLOR = col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < scrollypos)
-    cpz #scrollypos
+    cpx #scrollypos
     bcc __b4
     // if(line == scrollypos)
-    cpz #scrollypos
+    cpx #scrollypos
     beq __b5
     // if(line == scrollypos+blackbar)
-    cpz #scrollypos+blackbar
+    cpx #scrollypos+blackbar
     beq __b6
     // if(line == scrollypos+blackbar+1)
-    cpz #scrollypos+blackbar+1
+    cpx #scrollypos+blackbar+1
     bne __b7
     // zoomval = SINUS[zoomx++]
     // if raster position > scrolly pos do zoom
@@ -182,8 +212,8 @@ irq1: {
     // while(raster == VICII->RASTER)
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b8
-    // for(char line=0;line!=0xe0;line++)
-    inz
+    // for(char line=0;line!=NUMBERL;line++)
+    inx
     jmp __b1
   __b6:
     // VICIV->TEXTXPOS_LO = 0x50
@@ -204,14 +234,16 @@ irq1: {
     jmp __b7
   __b4:
     // 0x28 + SINUS[wobblepos++]
+    tza
+    tay
     lda #$28
     clc
-    adc SINUS,x
+    adc SINUS,y
     // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++]
     // if raster position < scrolly pos do wobble Logo!
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
-    inx
+    inz
     // VICIV->CHRXSCL = 0x66
     // No zooming
     lda #$66
@@ -226,6 +258,15 @@ main: {
     // VICIII->KEY = 0x53
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    // VICIV->CONTROLB |= 0x40
+    // Enable 48MHz fast mode
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    // VICIV->CONTROLC |= 0x40
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     // memset(SCREEN, ' ', 40*25)
   // Clear screen 
     jsr memset
@@ -292,6 +333,7 @@ main: {
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // asm
+    // Enable IRQ
     cli
   __b5:
     jmp __b5

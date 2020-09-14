@@ -29,6 +29,9 @@ void main() {
     // Enable MEGA65 features
     VICIII->KEY = 0x47;   
     VICIII->KEY = 0x53;
+    // Enable 48MHz fast mode
+    VICIV->CONTROLB |= 0x40;
+    VICIV->CONTROLC |= 0x40;
     // Clear screen 
     memset(SCREEN, ' ', 40*25);
     // Initialize music
@@ -60,7 +63,9 @@ void main() {
     *PROCPORT = PROCPORT_RAM_IO;
     // open sideborder
     VICIV->SIDBDRWD_LO = 1;
+    // Enable IRQ
     asm { cli }
+    // Loop forever
     for(;;) ;
 }
 
@@ -74,63 +79,77 @@ volatile char xpos = 7;
 volatile char greetnm;
 // The number of greetings
 const char GREETCOUNT = 16;
+// The number of raster lines
+const char NUMBERL = 0xe0;
 // Moving Raster Bars
 char rasters[256];
 
 // BIG INTERRUPT LOOP
 interrupt(hardware_stack) void irq1() {
-        // force NTSC every frame (hehe)
-        VICIV->RASLINE0 |= 0x80;
-        // Acknowledge the IRQ
-        VICII->IRQ_STATUS = IRQ_RASTER;
-        // reset x scroll
-        VICII->CONTROL2 = 0;
+    // force NTSC every frame (hehe)
+    VICIV->RASLINE0 |= 0x80;
+    // Acknowledge the IRQ
+    VICII->IRQ_STATUS = IRQ_RASTER;
+    // reset x scroll
+    VICII->CONTROL2 = 0;
 
-        // y rasterline where scrolly starts
-        const char scrollypos = 0x66;
-        // size of raster behind scrolly
-        const char blackbar = 19;
+    // y rasterline where scrolly starts
+    const char scrollypos = 0x66;
+    // size of raster behind scrolly
+    const char blackbar = 19;
 
-        // Generate Raster Bars and more
-        char wobblepos = ++sinpos;
-        for(char line=0;line!=0xe0;line++) {
-            char col = rasters[line];
-            VICIII->BORDER_COLOR = col;
-            VICIII->BG_COLOR = col;
-            if(line < scrollypos) {
-                // if raster position < scrolly pos do wobble Logo!
-                VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
-                // No zooming
-                VICIV->CHRXSCL = 0x66;
-            } else if(line == scrollypos) {
-                // if raster position = scrolly pos do scrolly
-                // no wobbling from this point
-                VICIV->TEXTXPOS_LO = 0x50;
-                // set softscroll
-                VICII->CONTROL2 = xpos;
-            } else if(line == scrollypos+blackbar) {
-                // if raster position > scrolly pos do nozoom
-                // default value
-                VICIV->TEXTXPOS_LO = 0x50;
-            } else if(line == scrollypos+blackbar+1) {
-                // if raster position > scrolly pos do zoom
-                char zoomval = SINUS[zoomx++];
-                VICIV->CHRXSCL = zoomval;
-                VICIV->TEXTXPOS_LO = zoomval+1;
-                if(zoomx==0) {
-                    // Advance greetings
-                    if(++greetnm==GREETCOUNT)
-                        greetnm =0;
-                }
+    // Generate Raster Bars and more
+    char wobblepos = ++sinpos;
+    for(char line=0;line!=NUMBERL;line++) {
+        char col = rasters[line];
+        VICIII->BORDER_COLOR = col;
+        VICIII->BG_COLOR = col;
+        if(line < scrollypos) {
+            // if raster position < scrolly pos do wobble Logo!
+            VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
+            // No zooming
+            VICIV->CHRXSCL = 0x66;
+        } else if(line == scrollypos) {
+            // if raster position = scrolly pos do scrolly
+            // no wobbling from this point
+            VICIV->TEXTXPOS_LO = 0x50;
+            // set softscroll
+            VICII->CONTROL2 = xpos;
+        } else if(line == scrollypos+blackbar) {
+            // if raster position > scrolly pos do nozoom
+            // default value
+            VICIV->TEXTXPOS_LO = 0x50;
+        } else if(line == scrollypos+blackbar+1) {
+            // if raster position > scrolly pos do zoom
+            char zoomval = SINUS[zoomx++];
+            VICIV->CHRXSCL = zoomval;
+            VICIV->TEXTXPOS_LO = zoomval+1;
+            if(zoomx==0) {
+                // Advance greetings
+                if(++greetnm==GREETCOUNT)
+                    greetnm =0;
             }
-            // Wait for the next raster line
-            char raster = VICII->RASTER;
-            while(raster == VICII->RASTER) ;
         }
+        // Wait for the next raster line
+        char raster = VICII->RASTER;
+        while(raster == VICII->RASTER) ;
+    }
 
-        // play music
-        (*songPlay)();
+    VICIII->BORDER_COLOR = 1;
+    VICIII->BG_COLOR = 1;
 
+    // Set all raster bars to black
+    for(char l=0;l!=NUMBERL;l++) 
+        rasters[l] = 0;
+
+    VICIII->BORDER_COLOR = 1;
+    VICIII->BG_COLOR = 1;
+
+    // play music
+    (*songPlay)();
+
+    VICIII->BORDER_COLOR = 2;
+    VICIII->BG_COLOR = 2;
 
 }
 
@@ -205,5 +224,3 @@ char PAL_BLUE[] = {
     0x00,0x00,0x00,0x00,0x00,0x70,0x61,0x62,0xe2,0xe3,0xd4,0xd5,0xb6,0xa7,0xb8,0xa9,
     0x00,0x00,0x00,0x00,0xa0,0xb1,0xa2,0xa3,0x44,0x35,0x26,0x37,0xf7,0x19,0xf9,0xfa
 };
-
-              

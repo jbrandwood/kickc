@@ -57,6 +57,8 @@ memset::@return: scope:[memset]  from memset::@1
 main: scope:[main]  from __start::@1
   *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (number) $47
   *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (number) $53
+  *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (number) $40
+  *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (number) $40
   (void*) memset::str#0 ← (void*)(const nomodify byte*) SCREEN
   (byte) memset::c#0 ← (byte) ' '
   (word) memset::num#0 ← (number) $28*(number) $19
@@ -121,7 +123,7 @@ irq1: scope:[irq1]  from
 irq1::@1: scope:[irq1]  from irq1 irq1::@9
   (byte) irq1::wobblepos#4 ← phi( irq1/(byte) irq1::wobblepos#0 irq1::@9/(byte) irq1::wobblepos#5 )
   (byte) irq1::line#2 ← phi( irq1/(byte) irq1::line#0 irq1::@9/(byte) irq1::line#1 )
-  (bool~) irq1::$1 ← (byte) irq1::line#2 != (number) $e0
+  (bool~) irq1::$1 ← (byte) irq1::line#2 != (const nomodify byte) NUMBERL
   if((bool~) irq1::$1) goto irq1::@2
   to:irq1::@3
 irq1::@2: scope:[irq1]  from irq1::@1
@@ -134,8 +136,10 @@ irq1::@2: scope:[irq1]  from irq1::@1
   if((bool~) irq1::$2) goto irq1::@4
   to:irq1::@10
 irq1::@3: scope:[irq1]  from irq1::@1
-  call *((const void()*) songPlay) 
-  to:irq1::@return
+  *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (number) 1
+  *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (number) 1
+  (byte) irq1::l#0 ← (byte) 0
+  to:irq1::@16
 irq1::@4: scope:[irq1]  from irq1::@2
   (byte) irq1::line#13 ← phi( irq1::@2/(byte) irq1::line#3 )
   (byte) irq1::wobblepos#2 ← phi( irq1::@2/(byte) irq1::wobblepos#3 )
@@ -216,7 +220,24 @@ irq1::@9: scope:[irq1]  from irq1::@8
   (byte) irq1::line#7 ← phi( irq1::@8/(byte) irq1::line#8 )
   (byte) irq1::line#1 ← ++ (byte) irq1::line#7
   to:irq1::@1
-irq1::@return: scope:[irq1]  from irq1::@3
+irq1::@16: scope:[irq1]  from irq1::@17 irq1::@3
+  (byte) irq1::l#2 ← phi( irq1::@17/(byte) irq1::l#1 irq1::@3/(byte) irq1::l#0 )
+  (bool~) irq1::$14 ← (byte) irq1::l#2 != (const nomodify byte) NUMBERL
+  if((bool~) irq1::$14) goto irq1::@17
+  to:irq1::@18
+irq1::@17: scope:[irq1]  from irq1::@16
+  (byte) irq1::l#3 ← phi( irq1::@16/(byte) irq1::l#2 )
+  *((const byte*) rasters + (byte) irq1::l#3) ← (number) 0
+  (byte) irq1::l#1 ← ++ (byte) irq1::l#3
+  to:irq1::@16
+irq1::@18: scope:[irq1]  from irq1::@16
+  *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (number) 1
+  *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (number) 1
+  call *((const void()*) songPlay) 
+  *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (number) 2
+  *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (number) 2
+  to:irq1::@return
+irq1::@return: scope:[irq1]  from irq1::@18
   return 
   to:@return
 
@@ -529,7 +550,10 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const nomodify byte) NUMBERL = (byte) $e0
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL = (byte) $5a
+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = (byte) $31
+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = (byte) $54
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0 = (byte) $6f
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = (byte) $5c
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO = (byte) $4c
@@ -572,6 +596,7 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (bool~) irq1::$11
 (number~) irq1::$12
 (bool~) irq1::$13
+(bool~) irq1::$14
 (bool~) irq1::$2
 (bool~) irq1::$3
 (bool~) irq1::$4
@@ -587,6 +612,9 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (label) irq1::@13
 (label) irq1::@14
 (label) irq1::@15
+(label) irq1::@16
+(label) irq1::@17
+(label) irq1::@18
 (label) irq1::@2
 (label) irq1::@3
 (label) irq1::@4
@@ -599,6 +627,11 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (const nomodify byte) irq1::blackbar = (byte) $13
 (byte) irq1::col
 (byte) irq1::col#0
+(byte) irq1::l
+(byte) irq1::l#0
+(byte) irq1::l#1
+(byte) irq1::l#2
+(byte) irq1::l#3
 (byte) irq1::line
 (byte) irq1::line#0
 (byte) irq1::line#1
@@ -713,6 +746,8 @@ Adding number conversion cast (unumber) 3 in
 Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
 Adding number conversion cast (unumber) $47 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (number) $47
 Adding number conversion cast (unumber) $53 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (number) $53
+Adding number conversion cast (unumber) $40 in *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (number) $40
+Adding number conversion cast (unumber) $40 in *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (number) $40
 Adding number conversion cast (unumber) $28*$19 in (word) memset::num#0 ← (number) $28*(number) $19
 Adding number conversion cast (unumber) 3*$28 in *((const nomodify byte*) SCREEN+(number) 3*(number) $28 + (byte) main::i1#3) ← *((const byte*) MEGA_LOGO + (byte) main::i1#3)
 Adding number conversion cast (unumber) 0 in (bool~) main::$4 ← (byte) main::i#1 != (number) 0
@@ -721,7 +756,8 @@ Adding number conversion cast (unumber) $7f in *((byte*)(const nomodify struct M
 Adding number conversion cast (unumber) 1 in *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (number) 1
 Adding number conversion cast (unumber) $80 in *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0) | (number) $80
 Adding number conversion cast (unumber) 0 in *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (number) 0
-Adding number conversion cast (unumber) $e0 in (bool~) irq1::$1 ← (byte) irq1::line#2 != (number) $e0
+Adding number conversion cast (unumber) 1 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (number) 1
 Adding number conversion cast (unumber) $28 in (number~) irq1::$12 ← (number) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#2)
 Adding number conversion cast (unumber) irq1::$12 in (number~) irq1::$12 ← (unumber)(number) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#2)
 Adding number conversion cast (unumber) $66 in *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (number) $66
@@ -733,6 +769,11 @@ Adding number conversion cast (unumber) 1 in (number~) irq1::$7 ← (byte) irq1:
 Adding number conversion cast (unumber) irq1::$7 in (number~) irq1::$7 ← (byte) irq1::zoomval#0 + (unumber)(number) 1
 Adding number conversion cast (unumber) 0 in (bool~) irq1::$8 ← (volatile byte) zoomx == (number) 0
 Adding number conversion cast (unumber) 0 in (volatile byte) greetnm ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) rasters + (byte) irq1::l#3) ← (number) 0
+Adding number conversion cast (unumber) 1 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (number) 1
+Adding number conversion cast (unumber) 2 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (number) 2
+Adding number conversion cast (unumber) 2 in *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (number) 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
 Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (unumber)(number) $47
@@ -741,10 +782,17 @@ Inlining cast (word) memset::num#0 ← (unumber)(number) $28*(number) $19
 Inlining cast *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (unumber)(number) $16
 Inlining cast *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (unumber)(number) 1
 Inlining cast *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (unumber)(number) 0
+Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (unumber)(number) 1
+Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (unumber)(number) 1
 Inlining cast *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (unumber)(number) $66
 Inlining cast *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (unumber)(number) $50
 Inlining cast *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (unumber)(number) $50
 Inlining cast (volatile byte) greetnm ← (unumber)(number) 0
+Inlining cast *((const byte*) rasters + (byte) irq1::l#3) ← (unumber)(number) 0
+Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (unumber)(number) 1
+Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (unumber)(number) 1
+Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (unumber)(number) 2
+Inlining cast *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (unumber)(number) 2
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 0
 Simplifying constant pointer cast (byte*) 1
@@ -761,13 +809,16 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant integer cast $47
 Simplifying constant integer cast $53
+Simplifying constant integer cast $40
+Simplifying constant integer cast $40
 Simplifying constant integer cast 0
 Simplifying constant integer cast $16
 Simplifying constant integer cast $7f
 Simplifying constant integer cast 1
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
-Simplifying constant integer cast $e0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
 Simplifying constant integer cast $28
 Simplifying constant integer cast $66
 Simplifying constant integer cast $50
@@ -777,18 +828,26 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 3
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $47
 Finalized unsigned number type (byte) $53
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $40
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $16
 Finalized unsigned number type (byte) $7f
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $e0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $28
 Finalized unsigned number type (byte) $66
 Finalized unsigned number type (byte) $50
@@ -797,13 +856,18 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#2)
 Inferred type updated to byte in (unumber~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1
 Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [90] (bool~) irq1::$6 ← (byte) irq1::line#6 != (const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1 from [89] (bool~) irq1::$5 ← (byte) irq1::line#6 == (const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1
-Inversing boolean not [99] (bool~) irq1::$9 ← (volatile byte) zoomx != (byte) 0 from [98] (bool~) irq1::$8 ← (volatile byte) zoomx == (byte) 0
-Inversing boolean not [104] (bool~) irq1::$11 ← (volatile byte) greetnm != (const nomodify byte) GREETCOUNT from [103] (bool~) irq1::$10 ← (volatile byte) greetnm == (const nomodify byte) GREETCOUNT
+Inversing boolean not [94] (bool~) irq1::$6 ← (byte) irq1::line#6 != (const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1 from [93] (bool~) irq1::$5 ← (byte) irq1::line#6 == (const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1
+Inversing boolean not [103] (bool~) irq1::$9 ← (volatile byte) zoomx != (byte) 0 from [102] (bool~) irq1::$8 ← (volatile byte) zoomx == (byte) 0
+Inversing boolean not [108] (bool~) irq1::$11 ← (volatile byte) greetnm != (const nomodify byte) GREETCOUNT from [107] (bool~) irq1::$10 ← (volatile byte) greetnm == (const nomodify byte) GREETCOUNT
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
@@ -819,6 +883,7 @@ Alias irq1::line#10 = irq1::line#3 irq1::line#2 irq1::line#13 irq1::line#4 irq1:
 Alias irq1::wobblepos#10 = irq1::wobblepos#3 irq1::wobblepos#4 irq1::wobblepos#2 irq1::wobblepos#14 irq1::wobblepos#12 irq1::wobblepos#15 irq1::wobblepos#13 irq1::wobblepos#8 irq1::wobblepos#9 irq1::wobblepos#11 
 Alias irq1::line#7 = irq1::line#8 
 Alias irq1::wobblepos#5 = irq1::wobblepos#6 
+Alias irq1::l#2 = irq1::l#3 
 Successful SSA optimization Pass2AliasElimination
 Alias irq1::line#10 = irq1::line#9 
 Successful SSA optimization Pass2AliasElimination
@@ -836,19 +901,20 @@ Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
 Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) main::$3 [26] if((byte) main::i1#2<(byte~) main::$2) goto main::@2
-Simple Condition (bool~) main::$4 [36] if((byte) main::i#1!=(byte) 0) goto main::@4
-Simple Condition (bool~) irq1::$1 [56] if((byte) irq1::line#10!=(byte) $e0) goto irq1::@2
-Simple Condition (bool~) irq1::$2 [61] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4
-Simple Condition (bool~) irq1::$3 [68] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5
-Simple Condition (bool~) irq1::$4 [72] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6
-Simple Condition (bool~) irq1::$6 [75] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7
-Simple Condition (bool~) irq1::$9 [82] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7
-Simple Condition (bool~) irq1::$11 [85] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7
-Simple Condition (bool~) irq1::$13 [91] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8
+Simple Condition (bool~) main::$3 [28] if((byte) main::i1#2<(byte~) main::$2) goto main::@2
+Simple Condition (bool~) main::$4 [38] if((byte) main::i#1!=(byte) 0) goto main::@4
+Simple Condition (bool~) irq1::$1 [58] if((byte) irq1::line#10!=(const nomodify byte) NUMBERL) goto irq1::@2
+Simple Condition (bool~) irq1::$2 [63] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4
+Simple Condition (bool~) irq1::$3 [72] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5
+Simple Condition (bool~) irq1::$4 [76] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6
+Simple Condition (bool~) irq1::$6 [79] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7
+Simple Condition (bool~) irq1::$9 [86] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7
+Simple Condition (bool~) irq1::$11 [89] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7
+Simple Condition (bool~) irq1::$13 [95] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8
+Simple Condition (bool~) irq1::$14 [99] if((byte) irq1::l#2!=(const nomodify byte) NUMBERL) goto irq1::@17
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [17] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
-Constant right-side identified [24] (byte~) main::$2 ← sizeof  (const byte*) MEGA_LOGO
+Constant right-side identified [19] (word) memset::num#0 ← (unumber)(number) $28*(number) $19
+Constant right-side identified [26] (byte~) main::$2 ← sizeof  (const byte*) MEGA_LOGO
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const void*) memset::str#0 = (void*)SCREEN
 Constant (const byte) memset::c#0 = ' '
@@ -857,6 +923,7 @@ Constant (const byte) main::i1#0 = 0
 Constant (const byte) main::$2 = sizeof MEGA_LOGO
 Constant (const byte) main::i#0 = 0
 Constant (const byte) irq1::line#0 = 0
+Constant (const byte) irq1::l#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Constant (const byte*) memset::$4 = (byte*)memset::str#0
 Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
@@ -884,17 +951,19 @@ Inlining constant with var siblings (const byte*) memset::dst#0
 Inlining constant with var siblings (const byte) main::i1#0
 Inlining constant with var siblings (const byte) main::i#0
 Inlining constant with var siblings (const byte) irq1::line#0
-Constant inlined main::i1#0 = (byte) 0
-Constant inlined main::i#0 = (byte) 0
-Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
+Inlining constant with var siblings (const byte) irq1::l#0
+Constant inlined irq1::l#0 = (byte) 0
 Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
 Constant inlined main::$2 = (byte) $bc*(const byte) SIZEOF_BYTE
 Constant inlined irq1::line#0 = (byte) 0
+Constant inlined main::i1#0 = (byte) 0
+Constant inlined main::i#0 = (byte) 0
+Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@8(between main::@4 and main::@4)
-Added new block during phi lifting irq1::@16(between irq1::@12 and irq1::@7)
-Added new block during phi lifting irq1::@17(between irq1::@13 and irq1::@7)
-Added new block during phi lifting irq1::@18(between irq1::@14 and irq1::@7)
+Added new block during phi lifting irq1::@19(between irq1::@12 and irq1::@7)
+Added new block during phi lifting irq1::@20(between irq1::@13 and irq1::@7)
+Added new block during phi lifting irq1::@21(between irq1::@14 and irq1::@7)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
@@ -905,27 +974,28 @@ Adding NOP phi() at start of memset::@2
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [__start] to main:6 
-Calls in [main] to memset:57 
+Calls in [main] to memset:70 
 
-Created 6 initial phi equivalence classes
+Created 7 initial phi equivalence classes
 Coalesced [14] irq1::wobblepos#16 ← irq1::wobblepos#0
-Coalesced [35] irq1::wobblepos#21 ← irq1::wobblepos#10
-Coalesced [40] irq1::line#16 ← irq1::line#1
-Coalesced (already) [41] irq1::wobblepos#17 ← irq1::wobblepos#7
-Coalesced (already) [42] irq1::wobblepos#20 ← irq1::wobblepos#10
-Coalesced (already) [43] irq1::wobblepos#19 ← irq1::wobblepos#10
-Coalesced (already) [44] irq1::wobblepos#18 ← irq1::wobblepos#10
-Coalesced (already) [46] irq1::wobblepos#24 ← irq1::wobblepos#10
-Coalesced (already) [49] irq1::wobblepos#23 ← irq1::wobblepos#10
-Coalesced [54] irq1::wobblepos#22 ← irq1::wobblepos#1
-Coalesced [80] main::i#3 ← main::i#1
-Coalesced [83] main::i1#4 ← main::i1#1
-Coalesced [92] memset::dst#4 ← memset::dst#1
-Coalesced down to 5 phi equivalence classes
+Coalesced [29] irq1::l#4 ← irq1::l#1
+Coalesced [46] irq1::wobblepos#21 ← irq1::wobblepos#10
+Coalesced [51] irq1::line#16 ← irq1::line#1
+Coalesced (already) [52] irq1::wobblepos#17 ← irq1::wobblepos#7
+Coalesced (already) [53] irq1::wobblepos#20 ← irq1::wobblepos#10
+Coalesced (already) [54] irq1::wobblepos#19 ← irq1::wobblepos#10
+Coalesced (already) [55] irq1::wobblepos#18 ← irq1::wobblepos#10
+Coalesced (already) [57] irq1::wobblepos#24 ← irq1::wobblepos#10
+Coalesced (already) [60] irq1::wobblepos#23 ← irq1::wobblepos#10
+Coalesced [65] irq1::wobblepos#22 ← irq1::wobblepos#1
+Coalesced [93] main::i#3 ← main::i#1
+Coalesced [96] main::i1#4 ← main::i1#1
+Coalesced [105] memset::dst#4 ← memset::dst#1
+Coalesced down to 6 phi equivalence classes
 Culled Empty Block (label) __start::@2
-Culled Empty Block (label) irq1::@18
-Culled Empty Block (label) irq1::@17
-Culled Empty Block (label) irq1::@16
+Culled Empty Block (label) irq1::@21
+Culled Empty Block (label) irq1::@20
+Culled Empty Block (label) irq1::@19
 Culled Empty Block (label) main::@3
 Culled Empty Block (label) main::@8
 Culled Empty Block (label) memset::@2
@@ -972,124 +1042,142 @@ irq1: scope:[irq1]  from
 irq1::@1: scope:[irq1]  from irq1 irq1::@9
   [13] (byte) irq1::wobblepos#10 ← phi( irq1/(byte) irq1::wobblepos#0 irq1::@9/(byte) irq1::wobblepos#7 )
   [13] (byte) irq1::line#10 ← phi( irq1/(byte) 0 irq1::@9/(byte) irq1::line#1 )
-  [14] if((byte) irq1::line#10!=(byte) $e0) goto irq1::@2
+  [14] if((byte) irq1::line#10!=(const nomodify byte) NUMBERL) goto irq1::@2
   to:irq1::@3
 irq1::@3: scope:[irq1]  from irq1::@1
-  [15] call *((const void()*) songPlay) 
+  [15] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1
+  [16] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1
+  to:irq1::@16
+irq1::@16: scope:[irq1]  from irq1::@17 irq1::@3
+  [17] (byte) irq1::l#2 ← phi( irq1::@17/(byte) irq1::l#1 irq1::@3/(byte) 0 )
+  [18] if((byte) irq1::l#2!=(const nomodify byte) NUMBERL) goto irq1::@17
+  to:irq1::@18
+irq1::@18: scope:[irq1]  from irq1::@16
+  [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1
+  [20] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1
+  [21] call *((const void()*) songPlay) 
+  [22] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 2
+  [23] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 2
   to:irq1::@return
-irq1::@return: scope:[irq1]  from irq1::@3
-  [16] return 
+irq1::@return: scope:[irq1]  from irq1::@18
+  [24] return 
   to:@return
+irq1::@17: scope:[irq1]  from irq1::@16
+  [25] *((const byte*) rasters + (byte) irq1::l#2) ← (byte) 0
+  [26] (byte) irq1::l#1 ← ++ (byte) irq1::l#2
+  to:irq1::@16
 irq1::@2: scope:[irq1]  from irq1::@1
-  [17] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10)
-  [18] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0
-  [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0
-  [20] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4
+  [27] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10)
+  [28] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0
+  [29] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0
+  [30] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4
   to:irq1::@10
 irq1::@10: scope:[irq1]  from irq1::@2
-  [21] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5
+  [31] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5
   to:irq1::@11
 irq1::@11: scope:[irq1]  from irq1::@10
-  [22] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6
+  [32] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6
   to:irq1::@12
 irq1::@12: scope:[irq1]  from irq1::@11
-  [23] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7
+  [33] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7
   to:irq1::@13
 irq1::@13: scope:[irq1]  from irq1::@12
-  [24] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx)
-  [25] (volatile byte) zoomx ← ++ (volatile byte) zoomx
-  [26] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0
-  [27] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1
-  [28] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7
-  [29] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7
+  [34] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx)
+  [35] (volatile byte) zoomx ← ++ (volatile byte) zoomx
+  [36] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0
+  [37] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1
+  [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7
+  [39] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7
   to:irq1::@14
 irq1::@14: scope:[irq1]  from irq1::@13
-  [30] (volatile byte) greetnm ← ++ (volatile byte) greetnm
-  [31] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7
+  [40] (volatile byte) greetnm ← ++ (volatile byte) greetnm
+  [41] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7
   to:irq1::@15
 irq1::@15: scope:[irq1]  from irq1::@14
-  [32] (volatile byte) greetnm ← (byte) 0
+  [42] (volatile byte) greetnm ← (byte) 0
   to:irq1::@7
 irq1::@7: scope:[irq1]  from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6
-  [33] (byte) irq1::wobblepos#7 ← phi( irq1::@12/(byte) irq1::wobblepos#10 irq1::@13/(byte) irq1::wobblepos#10 irq1::@14/(byte) irq1::wobblepos#10 irq1::@15/(byte) irq1::wobblepos#10 irq1::@4/(byte) irq1::wobblepos#1 irq1::@5/(byte) irq1::wobblepos#10 irq1::@6/(byte) irq1::wobblepos#10 )
-  [34] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  [43] (byte) irq1::wobblepos#7 ← phi( irq1::@12/(byte) irq1::wobblepos#10 irq1::@13/(byte) irq1::wobblepos#10 irq1::@14/(byte) irq1::wobblepos#10 irq1::@15/(byte) irq1::wobblepos#10 irq1::@4/(byte) irq1::wobblepos#1 irq1::@5/(byte) irq1::wobblepos#10 irq1::@6/(byte) irq1::wobblepos#10 )
+  [44] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)
   to:irq1::@8
 irq1::@8: scope:[irq1]  from irq1::@7 irq1::@8
-  [35] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8
+  [45] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8
   to:irq1::@9
 irq1::@9: scope:[irq1]  from irq1::@8
-  [36] (byte) irq1::line#1 ← ++ (byte) irq1::line#10
+  [46] (byte) irq1::line#1 ← ++ (byte) irq1::line#10
   to:irq1::@1
 irq1::@6: scope:[irq1]  from irq1::@11
-  [37] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50
+  [47] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50
   to:irq1::@7
 irq1::@5: scope:[irq1]  from irq1::@10
-  [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50
-  [39] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos
+  [48] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50
+  [49] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos
   to:irq1::@7
 irq1::@4: scope:[irq1]  from irq1::@2
-  [40] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10)
-  [41] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12
-  [42] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10
-  [43] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66
+  [50] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10)
+  [51] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12
+  [52] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10
+  [53] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66
   to:irq1::@7
 
 (void()) main()
 main: scope:[main]  from __start::@1
-  [44] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47
-  [45] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53
-  [46] call memset 
+  [54] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47
+  [55] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53
+  [56] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (byte) $40
+  [57] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (byte) $40
+  [58] call memset 
   to:main::@6
 main::@6: scope:[main]  from main
   asm { lda#0  }
-  [48] call *((const void()*) songInit) 
+  [60] call *((const void()*) songInit) 
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@6
-  [49] (byte) main::i1#2 ← phi( main::@2/(byte) main::i1#1 main::@6/(byte) 0 )
-  [50] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2
+  [61] (byte) main::i1#2 ← phi( main::@2/(byte) main::i1#1 main::@6/(byte) 0 )
+  [62] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1 main::@3
-  [51] (byte) main::i#2 ← phi( main::@1/(byte) 0 main::@3/(byte) main::i#1 )
-  [52] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2)
-  [53] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2)
-  [54] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2)
-  [55] (byte) main::i#1 ← ++ (byte) main::i#2
-  [56] if((byte) main::i#1!=(byte) 0) goto main::@3
+  [63] (byte) main::i#2 ← phi( main::@1/(byte) 0 main::@3/(byte) main::i#1 )
+  [64] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2)
+  [65] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2)
+  [66] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2)
+  [67] (byte) main::i#1 ← ++ (byte) main::i#2
+  [68] if((byte) main::i#1!=(byte) 0) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
   asm { sei  }
-  [58] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  [59] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16
-  [60] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f
-  [61] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
-  [62] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1()
-  [63] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
-  [64] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
-  [65] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1
+  [70] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
+  [71] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16
+  [72] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f
+  [73] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
+  [74] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1()
+  [75] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK
+  [76] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO
+  [77] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1
   asm { cli  }
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@5
-  [67] phi()
+  [79] phi()
   to:main::@5
 main::@2: scope:[main]  from main::@1
-  [68] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2)
-  [69] (byte) main::i1#1 ← ++ (byte) main::i1#2
+  [80] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2)
+  [81] (byte) main::i1#1 ← ++ (byte) main::i1#2
   to:main::@1
 
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 memset: scope:[memset]  from main
-  [70] phi()
+  [82] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [71] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [72] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+  [83] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
+  [84] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [73] return 
+  [85] return 
   to:@return
 memset::@2: scope:[memset]  from memset::@1
-  [74] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [86] *((byte*) memset::dst#2) ← (const byte) memset::c#0
+  [87] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
   to:memset::@1
 
 
@@ -1385,6 +1473,9 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (byte~) irq1::$7 22.0
 (byte) irq1::col
 (byte) irq1::col#0 16.5
+(byte) irq1::l
+(byte) irq1::l#1 22.0
+(byte) irq1::l#2 14.666666666666666
 (byte) irq1::line
 (byte) irq1::line#1 22.0
 (byte) irq1::line#10 3.142857142857143
@@ -1420,6 +1511,7 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 Initial phi equivalence classes
 [ irq1::line#10 irq1::line#1 ]
 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
+[ irq1::l#2 irq1::l#1 ]
 [ main::i1#2 main::i1#1 ]
 [ main::i#2 main::i#1 ]
 [ memset::dst#2 memset::dst#1 ]
@@ -1435,6 +1527,7 @@ Added variable irq1::$12 to live range equivalence class [ irq1::$12 ]
 Complete equivalence classes
 [ irq1::line#10 irq1::line#1 ]
 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
+[ irq1::l#2 irq1::l#1 ]
 [ main::i1#2 main::i1#1 ]
 [ main::i#2 main::i#1 ]
 [ memset::dst#2 memset::dst#1 ]
@@ -1449,18 +1542,19 @@ Complete equivalence classes
 [ irq1::$12 ]
 Allocated zp[1]:2 [ irq1::line#10 irq1::line#1 ]
 Allocated zp[1]:3 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
-Allocated zp[1]:4 [ main::i1#2 main::i1#1 ]
-Allocated zp[1]:5 [ main::i#2 main::i#1 ]
-Allocated zp[2]:6 [ memset::dst#2 memset::dst#1 ]
-Allocated zp[1]:8 [ sinpos ]
-Allocated zp[1]:9 [ zoomx ]
-Allocated zp[1]:10 [ xpos ]
-Allocated zp[1]:11 [ greetnm ]
-Allocated zp[1]:12 [ irq1::col#0 ]
-Allocated zp[1]:13 [ irq1::zoomval#0 ]
-Allocated zp[1]:14 [ irq1::$7 ]
-Allocated zp[1]:15 [ irq1::raster#0 ]
-Allocated zp[1]:16 [ irq1::$12 ]
+Allocated zp[1]:4 [ irq1::l#2 irq1::l#1 ]
+Allocated zp[1]:5 [ main::i1#2 main::i1#1 ]
+Allocated zp[1]:6 [ main::i#2 main::i#1 ]
+Allocated zp[2]:7 [ memset::dst#2 memset::dst#1 ]
+Allocated zp[1]:9 [ sinpos ]
+Allocated zp[1]:10 [ zoomx ]
+Allocated zp[1]:11 [ xpos ]
+Allocated zp[1]:12 [ greetnm ]
+Allocated zp[1]:13 [ irq1::col#0 ]
+Allocated zp[1]:14 [ irq1::zoomval#0 ]
+Allocated zp[1]:15 [ irq1::$7 ]
+Allocated zp[1]:16 [ irq1::raster#0 ]
+Allocated zp[1]:17 [ irq1::$12 ]
 
 INITIAL ASM
 Target platform is mega65_c64 / MEGA45GS02
@@ -1493,7 +1587,11 @@ Target platform is mega65_c64 / MEGA45GS02
   .const PROCPORT_RAM_IO = 5
   // The number of greetings
   .const GREETCOUNT = $10
+  // The number of raster lines
+  .const NUMBERL = $e0
   .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
@@ -1533,13 +1631,13 @@ Target platform is mega65_c64 / MEGA45GS02
   // Pointer to the song play routine
   .label songPlay = SONG+3
   // Sinus Position
-  .label sinpos = 8
+  .label sinpos = 9
   // Zoom Position
-  .label zoomx = 9
+  .label zoomx = $a
   // soft scroll position of text scrolly (0-7)
-  .label xpos = $a
+  .label xpos = $b
   // The greeting currently being shown
-  .label greetnm = $b
+  .label greetnm = $c
 .segment Code
   // __start
 __start: {
@@ -1578,13 +1676,14 @@ irq1: {
     .const scrollypos = $66
     // size of raster behind scrolly
     .const blackbar = $13
-    .label __7 = $e
-    .label __12 = $10
+    .label __7 = $f
+    .label __12 = $11
     .label wobblepos = 3
-    .label col = $c
-    .label zoomval = $d
-    .label raster = $f
+    .label col = $d
+    .label zoomval = $e
+    .label raster = $10
     .label line = 2
+    .label l = 4
     // entry interrupt(HARDWARE_STACK)
     pha
     txa
@@ -1619,103 +1718,149 @@ irq1: {
     jmp __b1
     // irq1::@1
   __b1:
-    // [14] if((byte) irq1::line#10!=(byte) $e0) goto irq1::@2 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$e0
+    // [14] if((byte) irq1::line#10!=(const nomodify byte) NUMBERL) goto irq1::@2 -- vbuz1_neq_vbuc1_then_la1 
+    lda #NUMBERL
     cmp.z line
     bne __b2
     jmp __b3
     // irq1::@3
   __b3:
-    // [15] call *((const void()*) songPlay) 
+    // [15] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // [16] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    // [17] phi from irq1::@3 to irq1::@16 [phi:irq1::@3->irq1::@16]
+  __b16_from___b3:
+    // [17] phi (byte) irq1::l#2 = (byte) 0 [phi:irq1::@3->irq1::@16#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z l
+    jmp __b16
+  // Set all raster bars to black
+    // irq1::@16
+  __b16:
+    // [18] if((byte) irq1::l#2!=(const nomodify byte) NUMBERL) goto irq1::@17 -- vbuz1_neq_vbuc1_then_la1 
+    lda #NUMBERL
+    cmp.z l
+    bne __b17
+    jmp __b18
+    // irq1::@18
+  __b18:
+    // [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // [20] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    // [21] call *((const void()*) songPlay) 
     // play music
     jsr songPlay
+    // [22] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // [23] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     jmp __breturn
     // irq1::@return
   __breturn:
-    // [16] return  - exit interrupt(HARDWARE_STACK)
+    // [24] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
     pla
     tax
     pla
     rti
+    // irq1::@17
+  __b17:
+    // [25] *((const byte*) rasters + (byte) irq1::l#2) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #0
+    ldy.z l
+    sta rasters,y
+    // [26] (byte) irq1::l#1 ← ++ (byte) irq1::l#2 -- vbuz1=_inc_vbuz1 
+    inc.z l
+    // [17] phi from irq1::@17 to irq1::@16 [phi:irq1::@17->irq1::@16]
+  __b16_from___b17:
+    // [17] phi (byte) irq1::l#2 = (byte) irq1::l#1 [phi:irq1::@17->irq1::@16#0] -- register_copy 
+    jmp __b16
     // irq1::@2
   __b2:
-    // [17] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [27] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10) -- vbuz1=pbuc1_derefidx_vbuz2 
     ldy.z line
     lda rasters,y
     sta.z col
-    // [18] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuz1 
+    // [28] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
-    // [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuz1 
+    // [29] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuz1 
     lda.z col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
-    // [20] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4 -- vbuz1_lt_vbuc1_then_la1 
+    // [30] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda.z line
     cmp #scrollypos
     bcc __b4
     jmp __b10
     // irq1::@10
   __b10:
-    // [21] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5 -- vbuz1_eq_vbuc1_then_la1 
+    // [31] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5 -- vbuz1_eq_vbuc1_then_la1 
     lda #scrollypos
     cmp.z line
     beq __b5
     jmp __b11
     // irq1::@11
   __b11:
-    // [22] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6 -- vbuz1_eq_vbuc1_then_la1 
+    // [32] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6 -- vbuz1_eq_vbuc1_then_la1 
     lda #scrollypos+blackbar
     cmp.z line
     beq __b6
     jmp __b12
     // irq1::@12
   __b12:
-    // [23] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [33] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #scrollypos+blackbar+1
     cmp.z line
     bne __b7_from___b12
     jmp __b13
     // irq1::@13
   __b13:
-    // [24] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx) -- vbuz1=pbuc1_derefidx_vbuz2 
+    // [34] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx) -- vbuz1=pbuc1_derefidx_vbuz2 
     // if raster position > scrolly pos do zoom
     ldy.z zoomx
     lda SINUS,y
     sta.z zoomval
-    // [25] (volatile byte) zoomx ← ++ (volatile byte) zoomx -- vbuz1=_inc_vbuz1 
+    // [35] (volatile byte) zoomx ← ++ (volatile byte) zoomx -- vbuz1=_inc_vbuz1 
     inc.z zoomx
-    // [26] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0 -- _deref_pbuc1=vbuz1 
+    // [36] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0 -- _deref_pbuc1=vbuz1 
     lda.z zoomval
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    // [27] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1 -- vbuz1=vbuz2_plus_1 
+    // [37] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1 -- vbuz1=vbuz2_plus_1 
     lda.z zoomval
     inc
     sta.z __7
-    // [28] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7 -- _deref_pbuc1=vbuz1 
+    // [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7 -- _deref_pbuc1=vbuz1 
     lda.z __7
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [29] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 -- vbuz1_neq_0_then_la1 
+    // [39] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 -- vbuz1_neq_0_then_la1 
     lda.z zoomx
     cmp #0
     bne __b7_from___b13
     jmp __b14
     // irq1::@14
   __b14:
-    // [30] (volatile byte) greetnm ← ++ (volatile byte) greetnm -- vbuz1=_inc_vbuz1 
+    // [40] (volatile byte) greetnm ← ++ (volatile byte) greetnm -- vbuz1=_inc_vbuz1 
     inc.z greetnm
-    // [31] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [41] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #GREETCOUNT
     cmp.z greetnm
     bne __b7_from___b14
     jmp __b15
     // irq1::@15
   __b15:
-    // [32] (volatile byte) greetnm ← (byte) 0 -- vbuz1=vbuc1 
+    // [42] (volatile byte) greetnm ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z greetnm
-    // [33] phi from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6 to irq1::@7 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7]
+    // [43] phi from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6 to irq1::@7 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7]
   __b7_from___b12:
   __b7_from___b13:
   __b7_from___b14:
@@ -1723,25 +1868,25 @@ irq1: {
   __b7_from___b4:
   __b7_from___b5:
   __b7_from___b6:
-    // [33] phi (byte) irq1::wobblepos#7 = (byte) irq1::wobblepos#10 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7#0] -- register_copy 
+    // [43] phi (byte) irq1::wobblepos#7 = (byte) irq1::wobblepos#10 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7#0] -- register_copy 
     jmp __b7
     // irq1::@7
   __b7:
-    // [34] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuz1=_deref_pbuc1 
+    // [44] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuz1=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     sta.z raster
     jmp __b8
     // irq1::@8
   __b8:
-    // [35] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8 -- vbuz1_eq__deref_pbuc1_then_la1 
+    // [45] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8 -- vbuz1_eq__deref_pbuc1_then_la1 
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     cmp.z raster
     beq __b8
     jmp __b9
     // irq1::@9
   __b9:
-    // [36] (byte) irq1::line#1 ← ++ (byte) irq1::line#10 -- vbuz1=_inc_vbuz1 
+    // [46] (byte) irq1::line#1 ← ++ (byte) irq1::line#10 -- vbuz1=_inc_vbuz1 
     inc.z line
     // [13] phi from irq1::@9 to irq1::@1 [phi:irq1::@9->irq1::@1]
   __b1_from___b9:
@@ -1750,7 +1895,7 @@ irq1: {
     jmp __b1
     // irq1::@6
   __b6:
-    // [37] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
+    // [47] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
     // if raster position > scrolly pos do nozoom
     // default value
     lda #$50
@@ -1758,31 +1903,31 @@ irq1: {
     jmp __b7_from___b6
     // irq1::@5
   __b5:
-    // [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
+    // [48] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
     // if raster position = scrolly pos do scrolly
     // no wobbling from this point
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [39] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos -- _deref_pbuc1=vbuz1 
+    // [49] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos -- _deref_pbuc1=vbuz1 
     // set softscroll
     lda.z xpos
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     jmp __b7_from___b5
     // irq1::@4
   __b4:
-    // [40] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) -- vbuz1=vbuc1_plus_pbuc2_derefidx_vbuz2 
+    // [50] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) -- vbuz1=vbuc1_plus_pbuc2_derefidx_vbuz2 
     lda #$28
     ldy.z wobblepos
     clc
     adc SINUS,y
     sta.z __12
-    // [41] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12 -- _deref_pbuc1=vbuz1 
+    // [51] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12 -- _deref_pbuc1=vbuz1 
     // if raster position < scrolly pos do wobble Logo!
     lda.z __12
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [42] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10 -- vbuz1=_inc_vbuz1 
+    // [52] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10 -- vbuz1=_inc_vbuz1 
     inc.z wobblepos
-    // [43] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 -- _deref_pbuc1=vbuc2 
+    // [53] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 -- _deref_pbuc1=vbuc2 
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
@@ -1790,19 +1935,28 @@ irq1: {
 }
   // main
 main: {
-    .label i1 = 4
+    .label i1 = 5
     // Set up 256 color palette
-    .label i = 5
-    // [44] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 -- _deref_pbuc1=vbuc2 
+    .label i = 6
+    // [54] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [45] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 -- _deref_pbuc1=vbuc2 
+    // [55] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [46] call memset 
+    // [56] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (byte) $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // Enable 48MHz fast mode
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    // [57] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (byte) $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    // [58] call memset 
   // Clear screen 
-    // [70] phi from main to memset [phi:main->memset]
+    // [82] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
     jmp __b6
@@ -1811,48 +1965,48 @@ main: {
     // asm { lda#0  }
     // Initialize music
     lda #0
-    // [48] call *((const void()*) songInit) 
+    // [60] call *((const void()*) songInit) 
     jsr songInit
-    // [49] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+    // [61] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
   __b1_from___b6:
-    // [49] phi (byte) main::i1#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuz1=vbuc1 
+    // [61] phi (byte) main::i1#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i1
     jmp __b1
   // Put MEGA logo on screen
     // main::@1
   __b1:
-    // [50] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [62] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i1
     cmp #$bc*SIZEOF_BYTE
     bcc __b2
-    // [51] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+    // [63] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   __b3_from___b1:
-    // [51] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuz1=vbuc1 
+    // [63] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b3
-    // [51] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+    // [63] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   __b3_from___b3:
-    // [51] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [63] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [52] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [64] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda PAL_RED,y
     sta PALETTE_RED,y
-    // [53] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [65] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda PAL_GREEN,y
     sta PALETTE_GREEN,y
-    // [54] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [66] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i
     lda PAL_BLUE,y
     sta PALETTE_BLUE,y
-    // [55] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [67] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [56] if((byte) main::i#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
+    // [68] if((byte) main::i#1!=(byte) 0) goto main::@3 -- vbuz1_neq_0_then_la1 
     lda.z i
     cmp #0
     bne __b3_from___b3
@@ -1862,42 +2016,43 @@ main: {
     // asm { sei  }
     // Set up raster interrupts C64 style
     sei
-    // [58] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [70] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [59] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 -- _deref_pbuc1=vbuc2 
+    // [71] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 -- _deref_pbuc1=vbuc2 
     // Set raster line to 0x16
     lda #$16
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // [60] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [72] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // [61] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [73] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // [62] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() -- _deref_qprc1=pprc2 
+    // [74] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
     sta HARDWARE_IRQ+1
-    // [63] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [75] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-    // [64] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [76] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [65] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [77] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // asm { cli  }
+    // Enable IRQ
     cli
-    // [67] phi from main::@4 main::@5 to main::@5 [phi:main::@4/main::@5->main::@5]
+    // [79] phi from main::@4 main::@5 to main::@5 [phi:main::@4/main::@5->main::@5]
   __b5_from___b4:
   __b5_from___b5:
     jmp __b5
@@ -1906,15 +2061,15 @@ main: {
     jmp __b5_from___b5
     // main::@2
   __b2:
-    // [68] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
+    // [80] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
     ldy.z i1
     lda MEGA_LOGO,y
     sta SCREEN+3*$28,y
-    // [69] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuz1=_inc_vbuz1 
+    // [81] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuz1=_inc_vbuz1 
     inc.z i1
-    // [49] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [61] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [49] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [61] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // memset
@@ -1924,10 +2079,10 @@ memset: {
     .const num = $28*$19
     .label str = SCREEN
     .label end = str+num
-    .label dst = 6
-    // [71] phi from memset to memset::@1 [phi:memset->memset::@1]
+    .label dst = 7
+    // [83] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [71] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [83] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1935,7 +2090,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [72] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [84] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -1945,19 +2100,19 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [73] return 
+    // [85] return 
     rts
     // memset::@2
   __b2:
-    // [74] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [86] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [87] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [71] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [83] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [71] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [83] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -1987,38 +2142,48 @@ Statement [4] (volatile byte) greetnm ← (byte) 0 [ ] (  [ ] { }  ) always clob
 Statement [8] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0) | (byte) $80 [ sinpos zoomx xpos greetnm ] (  [ sinpos zoomx xpos greetnm ] { }  ) always clobbers reg byte a 
 Statement [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ sinpos zoomx xpos greetnm ] (  [ sinpos zoomx xpos greetnm ] { }  ) always clobbers reg byte a 
 Statement [10] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) 0 [ sinpos zoomx xpos greetnm ] (  [ sinpos zoomx xpos greetnm ] { }  ) always clobbers reg byte a 
-Statement [15] call *((const void()*) songPlay)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [16] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [29] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [15] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [20] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [21] call *((const void()*) songPlay)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [22] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [23] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [24] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [25] *((const byte*) rasters + (byte) irq1::l#2) ← (byte) 0 [ irq1::l#2 ] (  [ irq1::l#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ irq1::l#2 irq1::l#1 ]
+Statement [39] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ irq1::line#10 irq1::line#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
-Statement [31] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [32] (volatile byte) greetnm ← (byte) 0 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [37] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [39] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [40] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] { }  ) always clobbers reg byte a 
-Statement [43] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] { }  ) always clobbers reg byte a 
-Statement [44] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [45] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [41] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [42] (volatile byte) greetnm ← (byte) 0 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [47] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [48] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [50] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] { }  ) always clobbers reg byte a 
+Statement [53] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] { }  ) always clobbers reg byte a 
+Statement [54] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [55] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [56] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (byte) $40 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [57] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (byte) $40 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
-Statement [48] call *((const void()*) songInit)  [ ] ( main:6 [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [52] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::i#2 main::i#1 ]
-Statement [53] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [54] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [58] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [63] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [64] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [65] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [68] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) [ main::i1#2 ] ( main:6 [ main::i1#2 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::i1#2 main::i1#1 ]
-Statement [72] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:6::memset:46 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [74] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:6::memset:46 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [60] call *((const void()*) songInit)  [ ] ( main:6 [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [64] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::i#2 main::i#1 ]
+Statement [65] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [66] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [70] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [71] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [72] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [73] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [74] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [75] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [76] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [77] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [80] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) [ main::i1#2 ] ( main:6 [ main::i1#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::i1#2 main::i1#1 ]
+Statement [84] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:6::memset:58 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [86] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:6::memset:58 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [1] (volatile byte) sinpos ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] (volatile byte) zoomx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] (volatile byte) xpos ← (byte) 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -2026,54 +2191,64 @@ Statement [4] (volatile byte) greetnm ← (byte) 0 [ ] (  [ ] { }  ) always clob
 Statement [8] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0) | (byte) $80 [ sinpos zoomx xpos greetnm ] (  [ sinpos zoomx xpos greetnm ] { }  ) always clobbers reg byte a 
 Statement [9] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ sinpos zoomx xpos greetnm ] (  [ sinpos zoomx xpos greetnm ] { }  ) always clobbers reg byte a 
 Statement [10] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (byte) 0 [ sinpos zoomx xpos greetnm ] (  [ sinpos zoomx xpos greetnm ] { }  ) always clobbers reg byte a 
-Statement [15] call *((const void()*) songPlay)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [16] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [29] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [31] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [32] (volatile byte) greetnm ← (byte) 0 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [37] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [39] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
-Statement [40] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] { }  ) always clobbers reg byte a 
-Statement [43] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] { }  ) always clobbers reg byte a 
-Statement [44] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [45] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [15] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [20] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [21] call *((const void()*) songPlay)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [22] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [23] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [24] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [25] *((const byte*) rasters + (byte) irq1::l#2) ← (byte) 0 [ irq1::l#2 ] (  [ irq1::l#2 ] { }  ) always clobbers reg byte a 
+Statement [39] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [41] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [42] (volatile byte) greetnm ← (byte) 0 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [47] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [48] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [49] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 ] { }  ) always clobbers reg byte a 
+Statement [50] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#10 irq1::$12 ] { }  ) always clobbers reg byte a 
+Statement [53] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] (  [ zoomx xpos greetnm irq1::line#10 irq1::wobblepos#1 ] { }  ) always clobbers reg byte a 
+Statement [54] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [55] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [56] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (byte) $40 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [57] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (byte) $40 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
 Statement asm { lda#0  } always clobbers reg byte a 
-Statement [48] call *((const void()*) songInit)  [ ] ( main:6 [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [52] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [53] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [54] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [58] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [59] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [60] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [61] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [62] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [63] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [64] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [65] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
-Statement [68] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) [ main::i1#2 ] ( main:6 [ main::i1#2 ] { }  ) always clobbers reg byte a 
-Statement [72] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:6::memset:46 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [74] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:6::memset:46 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [60] call *((const void()*) songInit)  [ ] ( main:6 [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [64] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [65] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [66] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) [ main::i#2 ] ( main:6 [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [70] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [71] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [72] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [73] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [74] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [75] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [76] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [77] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 [ ] ( main:6 [ ] { }  ) always clobbers reg byte a 
+Statement [80] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) [ main::i1#2 ] ( main:6 [ main::i1#2 ] { }  ) always clobbers reg byte a 
+Statement [84] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( main:6::memset:58 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [86] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( main:6::memset:58 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ irq1::line#10 irq1::line#1 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:3 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ] : zp[1]:3 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:4 [ main::i1#2 main::i1#1 ] : zp[1]:4 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:5 [ main::i#2 main::i#1 ] : zp[1]:5 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[2]:6 [ memset::dst#2 memset::dst#1 ] : zp[2]:6 , 
-Potential registers zp[1]:8 [ sinpos ] : zp[1]:8 , 
-Potential registers zp[1]:9 [ zoomx ] : zp[1]:9 , 
-Potential registers zp[1]:10 [ xpos ] : zp[1]:10 , 
-Potential registers zp[1]:11 [ greetnm ] : zp[1]:11 , 
-Potential registers zp[1]:12 [ irq1::col#0 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:13 [ irq1::zoomval#0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:14 [ irq1::$7 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:15 [ irq1::raster#0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:16 [ irq1::$12 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:4 [ irq1::l#2 irq1::l#1 ] : zp[1]:4 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:5 [ main::i1#2 main::i1#1 ] : zp[1]:5 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:6 [ main::i#2 main::i#1 ] : zp[1]:6 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:7 [ memset::dst#2 memset::dst#1 ] : zp[2]:7 , 
+Potential registers zp[1]:9 [ sinpos ] : zp[1]:9 , 
+Potential registers zp[1]:10 [ zoomx ] : zp[1]:10 , 
+Potential registers zp[1]:11 [ xpos ] : zp[1]:11 , 
+Potential registers zp[1]:12 [ greetnm ] : zp[1]:12 , 
+Potential registers zp[1]:13 [ irq1::col#0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:14 [ irq1::zoomval#0 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:15 [ irq1::$7 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:16 [ irq1::raster#0 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:17 [ irq1::$12 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memset] 3,336.67: zp[2]:6 [ memset::dst#2 memset::dst#1 ] 
-Uplift Scope [main] 370.33: zp[1]:4 [ main::i1#2 main::i1#1 ] 353.5: zp[1]:5 [ main::i#2 main::i#1 ] 
-Uplift Scope [irq1] 56: zp[1]:15 [ irq1::raster#0 ] 41.39: zp[1]:3 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ] 25.14: zp[1]:2 [ irq1::line#10 irq1::line#1 ] 22: zp[1]:14 [ irq1::$7 ] 22: zp[1]:16 [ irq1::$12 ] 16.5: zp[1]:12 [ irq1::col#0 ] 11: zp[1]:13 [ irq1::zoomval#0 ] 
-Uplift Scope [] 2: zp[1]:8 [ sinpos ] 1.35: zp[1]:9 [ zoomx ] 1.35: zp[1]:11 [ greetnm ] 0.38: zp[1]:10 [ xpos ] 
+Uplift Scope [memset] 3,336.67: zp[2]:7 [ memset::dst#2 memset::dst#1 ] 
+Uplift Scope [main] 370.33: zp[1]:5 [ main::i1#2 main::i1#1 ] 353.5: zp[1]:6 [ main::i#2 main::i#1 ] 
+Uplift Scope [irq1] 56: zp[1]:16 [ irq1::raster#0 ] 41.39: zp[1]:3 [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ] 36.67: zp[1]:4 [ irq1::l#2 irq1::l#1 ] 25.14: zp[1]:2 [ irq1::line#10 irq1::line#1 ] 22: zp[1]:15 [ irq1::$7 ] 22: zp[1]:17 [ irq1::$12 ] 16.5: zp[1]:13 [ irq1::col#0 ] 11: zp[1]:14 [ irq1::zoomval#0 ] 
+Uplift Scope [] 2: zp[1]:9 [ sinpos ] 1.35: zp[1]:10 [ zoomx ] 1.35: zp[1]:12 [ greetnm ] 0.38: zp[1]:11 [ xpos ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -2081,38 +2256,40 @@ Uplift Scope [MOS4569_VICIII]
 Uplift Scope [MEGA65_VICIV] 
 Uplift Scope [__start] 
 
-Uplifting [memset] best 5509 combination zp[2]:6 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [main] best 5209 combination reg byte x [ main::i1#2 main::i1#1 ] reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [irq1] best 4596 combination reg byte a [ irq1::raster#0 ] reg byte x [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ] reg byte z [ irq1::line#10 irq1::line#1 ] zp[1]:14 [ irq1::$7 ] zp[1]:16 [ irq1::$12 ] zp[1]:12 [ irq1::col#0 ] zp[1]:13 [ irq1::zoomval#0 ] 
-Limited combination testing to 100 combinations of 50000 possible.
-Uplifting [] best 4596 combination zp[1]:8 [ sinpos ] zp[1]:9 [ zoomx ] zp[1]:11 [ greetnm ] zp[1]:10 [ xpos ] 
-Uplifting [MOS6526_CIA] best 4596 combination 
-Uplifting [MOS6569_VICII] best 4596 combination 
-Uplifting [MOS6581_SID] best 4596 combination 
-Uplifting [MOS4569_VICIII] best 4596 combination 
-Uplifting [MEGA65_VICIV] best 4596 combination 
-Uplifting [__start] best 4596 combination 
-Attempting to uplift remaining variables inzp[1]:14 [ irq1::$7 ]
-Uplifting [irq1] best 4536 combination reg byte a [ irq1::$7 ] 
-Attempting to uplift remaining variables inzp[1]:16 [ irq1::$12 ]
-Uplifting [irq1] best 4476 combination reg byte a [ irq1::$12 ] 
-Attempting to uplift remaining variables inzp[1]:12 [ irq1::col#0 ]
-Uplifting [irq1] best 4386 combination reg byte a [ irq1::col#0 ] 
-Attempting to uplift remaining variables inzp[1]:13 [ irq1::zoomval#0 ]
-Uplifting [irq1] best 4296 combination reg byte a [ irq1::zoomval#0 ] 
-Attempting to uplift remaining variables inzp[1]:8 [ sinpos ]
-Uplifting [] best 4296 combination zp[1]:8 [ sinpos ] 
-Attempting to uplift remaining variables inzp[1]:9 [ zoomx ]
-Uplifting [] best 4296 combination zp[1]:9 [ zoomx ] 
-Attempting to uplift remaining variables inzp[1]:11 [ greetnm ]
-Uplifting [] best 4296 combination zp[1]:11 [ greetnm ] 
-Attempting to uplift remaining variables inzp[1]:10 [ xpos ]
-Uplifting [] best 4296 combination zp[1]:10 [ xpos ] 
-Allocated (was zp[2]:6) zp[2]:2 [ memset::dst#2 memset::dst#1 ]
-Allocated (was zp[1]:8) zp[1]:4 [ sinpos ]
-Allocated (was zp[1]:9) zp[1]:5 [ zoomx ]
-Allocated (was zp[1]:10) zp[1]:6 [ xpos ]
-Allocated (was zp[1]:11) zp[1]:7 [ greetnm ]
+Uplifting [memset] best 5930 combination zp[2]:7 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [main] best 5630 combination reg byte x [ main::i1#2 main::i1#1 ] reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [irq1] best 5018 combination reg byte a [ irq1::raster#0 ] reg byte z [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ] zp[1]:4 [ irq1::l#2 irq1::l#1 ] reg byte x [ irq1::line#10 irq1::line#1 ] zp[1]:15 [ irq1::$7 ] zp[1]:17 [ irq1::$12 ] zp[1]:13 [ irq1::col#0 ] zp[1]:14 [ irq1::zoomval#0 ] 
+Limited combination testing to 100 combinations of 200000 possible.
+Uplifting [] best 5018 combination zp[1]:9 [ sinpos ] zp[1]:10 [ zoomx ] zp[1]:12 [ greetnm ] zp[1]:11 [ xpos ] 
+Uplifting [MOS6526_CIA] best 5018 combination 
+Uplifting [MOS6569_VICII] best 5018 combination 
+Uplifting [MOS6581_SID] best 5018 combination 
+Uplifting [MOS4569_VICIII] best 5018 combination 
+Uplifting [MEGA65_VICIV] best 5018 combination 
+Uplifting [__start] best 5018 combination 
+Attempting to uplift remaining variables inzp[1]:4 [ irq1::l#2 irq1::l#1 ]
+Uplifting [irq1] best 4898 combination reg byte x [ irq1::l#2 irq1::l#1 ] 
+Attempting to uplift remaining variables inzp[1]:15 [ irq1::$7 ]
+Uplifting [irq1] best 4838 combination reg byte a [ irq1::$7 ] 
+Attempting to uplift remaining variables inzp[1]:17 [ irq1::$12 ]
+Uplifting [irq1] best 4778 combination reg byte a [ irq1::$12 ] 
+Attempting to uplift remaining variables inzp[1]:13 [ irq1::col#0 ]
+Uplifting [irq1] best 4688 combination reg byte a [ irq1::col#0 ] 
+Attempting to uplift remaining variables inzp[1]:14 [ irq1::zoomval#0 ]
+Uplifting [irq1] best 4598 combination reg byte a [ irq1::zoomval#0 ] 
+Attempting to uplift remaining variables inzp[1]:9 [ sinpos ]
+Uplifting [] best 4598 combination zp[1]:9 [ sinpos ] 
+Attempting to uplift remaining variables inzp[1]:10 [ zoomx ]
+Uplifting [] best 4598 combination zp[1]:10 [ zoomx ] 
+Attempting to uplift remaining variables inzp[1]:12 [ greetnm ]
+Uplifting [] best 4598 combination zp[1]:12 [ greetnm ] 
+Attempting to uplift remaining variables inzp[1]:11 [ xpos ]
+Uplifting [] best 4598 combination zp[1]:11 [ xpos ] 
+Allocated (was zp[2]:7) zp[2]:2 [ memset::dst#2 memset::dst#1 ]
+Allocated (was zp[1]:9) zp[1]:4 [ sinpos ]
+Allocated (was zp[1]:10) zp[1]:5 [ zoomx ]
+Allocated (was zp[1]:11) zp[1]:6 [ xpos ]
+Allocated (was zp[1]:12) zp[1]:7 [ greetnm ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -2144,7 +2321,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PROCPORT_RAM_IO = 5
   // The number of greetings
   .const GREETCOUNT = $10
+  // The number of raster lines
+  .const NUMBERL = $e0
   .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
@@ -2250,102 +2431,143 @@ irq1: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     // [11] (volatile byte) sinpos ← ++ (volatile byte) sinpos -- vbuz1=_inc_vbuz1 
     inc.z sinpos
-    // [12] (byte) irq1::wobblepos#0 ← (volatile byte) sinpos -- vbuxx=vbuz1 
+    // [12] (byte) irq1::wobblepos#0 ← (volatile byte) sinpos -- vbuzz=vbuz1 
     // Generate Raster Bars and more
-    ldx.z sinpos
+    ldz sinpos
     // [13] phi from irq1 to irq1::@1 [phi:irq1->irq1::@1]
   __b1_from_irq1:
     // [13] phi (byte) irq1::wobblepos#10 = (byte) irq1::wobblepos#0 [phi:irq1->irq1::@1#0] -- register_copy 
-    // [13] phi (byte) irq1::line#10 = (byte) 0 [phi:irq1->irq1::@1#1] -- vbuzz=vbuc1 
-    ldz #0
+    // [13] phi (byte) irq1::line#10 = (byte) 0 [phi:irq1->irq1::@1#1] -- vbuxx=vbuc1 
+    ldx #0
     jmp __b1
     // irq1::@1
   __b1:
-    // [14] if((byte) irq1::line#10!=(byte) $e0) goto irq1::@2 -- vbuzz_neq_vbuc1_then_la1 
-    cpz #$e0
+    // [14] if((byte) irq1::line#10!=(const nomodify byte) NUMBERL) goto irq1::@2 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #NUMBERL
     bne __b2
     jmp __b3
     // irq1::@3
   __b3:
-    // [15] call *((const void()*) songPlay) 
+    // [15] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // [16] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    // [17] phi from irq1::@3 to irq1::@16 [phi:irq1::@3->irq1::@16]
+  __b16_from___b3:
+    // [17] phi (byte) irq1::l#2 = (byte) 0 [phi:irq1::@3->irq1::@16#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b16
+  // Set all raster bars to black
+    // irq1::@16
+  __b16:
+    // [18] if((byte) irq1::l#2!=(const nomodify byte) NUMBERL) goto irq1::@17 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #NUMBERL
+    bne __b17
+    jmp __b18
+    // irq1::@18
+  __b18:
+    // [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // [20] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    // [21] call *((const void()*) songPlay) 
     // play music
     jsr songPlay
+    // [22] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // [23] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     jmp __breturn
     // irq1::@return
   __breturn:
-    // [16] return  - exit interrupt(HARDWARE_STACK)
+    // [24] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
     pla
     tax
     pla
     rti
+    // irq1::@17
+  __b17:
+    // [25] *((const byte*) rasters + (byte) irq1::l#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #0
+    sta rasters,x
+    // [26] (byte) irq1::l#1 ← ++ (byte) irq1::l#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [17] phi from irq1::@17 to irq1::@16 [phi:irq1::@17->irq1::@16]
+  __b16_from___b17:
+    // [17] phi (byte) irq1::l#2 = (byte) irq1::l#1 [phi:irq1::@17->irq1::@16#0] -- register_copy 
+    jmp __b16
     // irq1::@2
   __b2:
-    // [17] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10) -- vbuaa=pbuc1_derefidx_vbuzz 
-    tza
-    tay
-    lda rasters,y
-    // [18] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
+    // [27] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda rasters,x
+    // [28] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
-    // [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
+    // [29] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
-    // [20] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4 -- vbuzz_lt_vbuc1_then_la1 
-    cpz #scrollypos
+    // [30] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #scrollypos
     bcc __b4
     jmp __b10
     // irq1::@10
   __b10:
-    // [21] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #scrollypos
+    // [31] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5 -- vbuxx_eq_vbuc1_then_la1 
+    cpx #scrollypos
     beq __b5
     jmp __b11
     // irq1::@11
   __b11:
-    // [22] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #scrollypos+blackbar
+    // [32] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6 -- vbuxx_eq_vbuc1_then_la1 
+    cpx #scrollypos+blackbar
     beq __b6
     jmp __b12
     // irq1::@12
   __b12:
-    // [23] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7 -- vbuzz_neq_vbuc1_then_la1 
-    cpz #scrollypos+blackbar+1
+    // [33] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #scrollypos+blackbar+1
     bne __b7_from___b12
     jmp __b13
     // irq1::@13
   __b13:
-    // [24] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [34] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx) -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > scrolly pos do zoom
     ldy.z zoomx
     lda SINUS,y
-    // [25] (volatile byte) zoomx ← ++ (volatile byte) zoomx -- vbuz1=_inc_vbuz1 
+    // [35] (volatile byte) zoomx ← ++ (volatile byte) zoomx -- vbuz1=_inc_vbuz1 
     inc.z zoomx
-    // [26] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0 -- _deref_pbuc1=vbuaa 
+    // [36] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0 -- _deref_pbuc1=vbuaa 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    // [27] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1 -- vbuaa=vbuaa_plus_1 
+    // [37] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1 -- vbuaa=vbuaa_plus_1 
     inc
-    // [28] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7 -- _deref_pbuc1=vbuaa 
+    // [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7 -- _deref_pbuc1=vbuaa 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [29] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 -- vbuz1_neq_0_then_la1 
+    // [39] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 -- vbuz1_neq_0_then_la1 
     lda.z zoomx
     cmp #0
     bne __b7_from___b13
     jmp __b14
     // irq1::@14
   __b14:
-    // [30] (volatile byte) greetnm ← ++ (volatile byte) greetnm -- vbuz1=_inc_vbuz1 
+    // [40] (volatile byte) greetnm ← ++ (volatile byte) greetnm -- vbuz1=_inc_vbuz1 
     inc.z greetnm
-    // [31] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [41] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #GREETCOUNT
     cmp.z greetnm
     bne __b7_from___b14
     jmp __b15
     // irq1::@15
   __b15:
-    // [32] (volatile byte) greetnm ← (byte) 0 -- vbuz1=vbuc1 
+    // [42] (volatile byte) greetnm ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z greetnm
-    // [33] phi from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6 to irq1::@7 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7]
+    // [43] phi from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6 to irq1::@7 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7]
   __b7_from___b12:
   __b7_from___b13:
   __b7_from___b14:
@@ -2353,24 +2575,24 @@ irq1: {
   __b7_from___b4:
   __b7_from___b5:
   __b7_from___b6:
-    // [33] phi (byte) irq1::wobblepos#7 = (byte) irq1::wobblepos#10 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7#0] -- register_copy 
+    // [43] phi (byte) irq1::wobblepos#7 = (byte) irq1::wobblepos#10 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7#0] -- register_copy 
     jmp __b7
     // irq1::@7
   __b7:
-    // [34] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // [44] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     jmp __b8
     // irq1::@8
   __b8:
-    // [35] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8 -- vbuaa_eq__deref_pbuc1_then_la1 
+    // [45] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8 -- vbuaa_eq__deref_pbuc1_then_la1 
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b8
     jmp __b9
     // irq1::@9
   __b9:
-    // [36] (byte) irq1::line#1 ← ++ (byte) irq1::line#10 -- vbuzz=_inc_vbuzz 
-    inz
+    // [46] (byte) irq1::line#1 ← ++ (byte) irq1::line#10 -- vbuxx=_inc_vbuxx 
+    inx
     // [13] phi from irq1::@9 to irq1::@1 [phi:irq1::@9->irq1::@1]
   __b1_from___b9:
     // [13] phi (byte) irq1::wobblepos#10 = (byte) irq1::wobblepos#7 [phi:irq1::@9->irq1::@1#0] -- register_copy 
@@ -2378,7 +2600,7 @@ irq1: {
     jmp __b1
     // irq1::@6
   __b6:
-    // [37] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
+    // [47] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
     // if raster position > scrolly pos do nozoom
     // default value
     lda #$50
@@ -2386,28 +2608,30 @@ irq1: {
     jmp __b7_from___b6
     // irq1::@5
   __b5:
-    // [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
+    // [48] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
     // if raster position = scrolly pos do scrolly
     // no wobbling from this point
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [39] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos -- _deref_pbuc1=vbuz1 
+    // [49] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos -- _deref_pbuc1=vbuz1 
     // set softscroll
     lda.z xpos
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     jmp __b7_from___b5
     // irq1::@4
   __b4:
-    // [40] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) -- vbuaa=vbuc1_plus_pbuc2_derefidx_vbuxx 
+    // [50] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) -- vbuaa=vbuc1_plus_pbuc2_derefidx_vbuzz 
+    tza
+    tay
     lda #$28
     clc
-    adc SINUS,x
-    // [41] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12 -- _deref_pbuc1=vbuaa 
+    adc SINUS,y
+    // [51] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12 -- _deref_pbuc1=vbuaa 
     // if raster position < scrolly pos do wobble Logo!
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // [42] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10 -- vbuxx=_inc_vbuxx 
-    inx
-    // [43] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 -- _deref_pbuc1=vbuc2 
+    // [52] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10 -- vbuzz=_inc_vbuzz 
+    inz
+    // [53] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 -- _deref_pbuc1=vbuc2 
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
@@ -2415,16 +2639,25 @@ irq1: {
 }
   // main
 main: {
-    // [44] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 -- _deref_pbuc1=vbuc2 
+    // [54] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [45] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 -- _deref_pbuc1=vbuc2 
+    // [55] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
-    // [46] call memset 
+    // [56] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (byte) $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // Enable 48MHz fast mode
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    // [57] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (byte) $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    // [58] call memset 
   // Clear screen 
-    // [70] phi from main to memset [phi:main->memset]
+    // [82] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
     jmp __b6
@@ -2433,42 +2666,42 @@ main: {
     // asm { lda#0  }
     // Initialize music
     lda #0
-    // [48] call *((const void()*) songInit) 
+    // [60] call *((const void()*) songInit) 
     jsr songInit
-    // [49] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+    // [61] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
   __b1_from___b6:
-    // [49] phi (byte) main::i1#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
+    // [61] phi (byte) main::i1#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
   // Put MEGA logo on screen
     // main::@1
   __b1:
-    // [50] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [62] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$bc*SIZEOF_BYTE
     bcc __b2
-    // [51] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+    // [63] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
   __b3_from___b1:
-    // [51] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuxx=vbuc1 
+    // [63] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b3
-    // [51] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+    // [63] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   __b3_from___b3:
-    // [51] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [63] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [52] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [64] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_RED,x
     sta PALETTE_RED,x
-    // [53] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [65] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_GREEN,x
     sta PALETTE_GREEN,x
-    // [54] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [66] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_BLUE,x
     sta PALETTE_BLUE,x
-    // [55] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [67] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [56] if((byte) main::i#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
+    // [68] if((byte) main::i#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b3_from___b3
     jmp __b4
@@ -2477,42 +2710,43 @@ main: {
     // asm { sei  }
     // Set up raster interrupts C64 style
     sei
-    // [58] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [70] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [59] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 -- _deref_pbuc1=vbuc2 
+    // [71] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 -- _deref_pbuc1=vbuc2 
     // Set raster line to 0x16
     lda #$16
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    // [60] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [72] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // [61] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [73] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
-    // [62] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() -- _deref_qprc1=pprc2 
+    // [74] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
     sta HARDWARE_IRQ+1
-    // [63] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [75] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
-    // [64] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [76] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // [65] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [77] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // asm { cli  }
+    // Enable IRQ
     cli
-    // [67] phi from main::@4 main::@5 to main::@5 [phi:main::@4/main::@5->main::@5]
+    // [79] phi from main::@4 main::@5 to main::@5 [phi:main::@4/main::@5->main::@5]
   __b5_from___b4:
   __b5_from___b5:
     jmp __b5
@@ -2521,14 +2755,14 @@ main: {
     jmp __b5_from___b5
     // main::@2
   __b2:
-    // [68] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [80] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MEGA_LOGO,x
     sta SCREEN+3*$28,x
-    // [69] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuxx=_inc_vbuxx 
+    // [81] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [49] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [61] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [49] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [61] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // memset
@@ -2539,9 +2773,9 @@ memset: {
     .label str = SCREEN
     .label end = str+num
     .label dst = 2
-    // [71] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [83] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [71] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [83] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -2549,7 +2783,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [72] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [84] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -2559,19 +2793,19 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [73] return 
+    // [85] return 
     rts
     // memset::@2
   __b2:
-    // [74] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [86] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [87] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [71] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [83] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [71] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [83] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -2599,6 +2833,8 @@ Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b3
+Removing instruction jmp __b16
+Removing instruction jmp __b18
 Removing instruction jmp __breturn
 Removing instruction jmp __b10
 Removing instruction jmp __b11
@@ -2618,6 +2854,9 @@ Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
+Removing instruction lda #1
+Removing instruction lda #1
+Removing instruction lda #2
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b7_from___b12 with __b7
 Replacing label __b7_from___b13 with __b7
@@ -2644,7 +2883,10 @@ Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b1_from_irq1:
 Removing instruction __b3:
+Removing instruction __b16_from___b3:
+Removing instruction __b18:
 Removing instruction __breturn:
+Removing instruction __b16_from___b17:
 Removing instruction __b10:
 Removing instruction __b11:
 Removing instruction __b12:
@@ -2665,6 +2907,7 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
+Replacing instruction ldx #0 with TAX
 
 FINAL SYMBOL TABLE
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
@@ -2957,7 +3200,10 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const nomodify byte) NUMBERL = (byte) $e0
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL = (byte) $5a
+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = (byte) $31
+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = (byte) $54
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_RASLINE0 = (byte) $6f
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = (byte) $5c
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO = (byte) $4c
@@ -3004,6 +3250,9 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (label) irq1::@13
 (label) irq1::@14
 (label) irq1::@15
+(label) irq1::@16
+(label) irq1::@17
+(label) irq1::@18
 (label) irq1::@2
 (label) irq1::@3
 (label) irq1::@4
@@ -3016,17 +3265,20 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (const nomodify byte) irq1::blackbar = (byte) $13
 (byte) irq1::col
 (byte) irq1::col#0 reg byte a 16.5
+(byte) irq1::l
+(byte) irq1::l#1 reg byte x 22.0
+(byte) irq1::l#2 reg byte x 14.666666666666666
 (byte) irq1::line
-(byte) irq1::line#1 reg byte z 22.0
-(byte) irq1::line#10 reg byte z 3.142857142857143
+(byte) irq1::line#1 reg byte x 22.0
+(byte) irq1::line#10 reg byte x 3.142857142857143
 (byte) irq1::raster
 (byte) irq1::raster#0 reg byte a 56.0
 (const nomodify byte) irq1::scrollypos = (byte) $66
 (byte) irq1::wobblepos
-(byte) irq1::wobblepos#0 reg byte x 4.0
-(byte) irq1::wobblepos#1 reg byte x 11.0
-(byte) irq1::wobblepos#10 reg byte x 4.391304347826087
-(byte) irq1::wobblepos#7 reg byte x 22.0
+(byte) irq1::wobblepos#0 reg byte z 4.0
+(byte) irq1::wobblepos#1 reg byte z 11.0
+(byte) irq1::wobblepos#10 reg byte z 4.391304347826087
+(byte) irq1::wobblepos#7 reg byte z 22.0
 (byte) irq1::zoomval
 (byte) irq1::zoomval#0 reg byte a 11.0
 (void()) main()
@@ -3065,8 +3317,9 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (volatile byte) xpos loadstore zp[1]:6 0.3823529411764706
 (volatile byte) zoomx loadstore zp[1]:5 1.3529411764705883
 
-reg byte z [ irq1::line#10 irq1::line#1 ]
-reg byte x [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
+reg byte x [ irq1::line#10 irq1::line#1 ]
+reg byte z [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
+reg byte x [ irq1::l#2 irq1::l#1 ]
 reg byte x [ main::i1#2 main::i1#1 ]
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:2 [ memset::dst#2 memset::dst#1 ]
@@ -3082,7 +3335,7 @@ reg byte a [ irq1::$12 ]
 
 
 FINAL ASSEMBLER
-Score: 3442
+Score: 3678
 
   // File Comments
 // Raster65 Demo Implementation in C 
@@ -3113,7 +3366,11 @@ Score: 3442
   .const PROCPORT_RAM_IO = 5
   // The number of greetings
   .const GREETCOUNT = $10
+  // The number of raster lines
+  .const NUMBERL = $e0
   .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
@@ -3219,118 +3476,160 @@ irq1: {
     // wobblepos = ++sinpos
     // [11] (volatile byte) sinpos ← ++ (volatile byte) sinpos -- vbuz1=_inc_vbuz1 
     inc.z sinpos
-    // [12] (byte) irq1::wobblepos#0 ← (volatile byte) sinpos -- vbuxx=vbuz1 
+    // [12] (byte) irq1::wobblepos#0 ← (volatile byte) sinpos -- vbuzz=vbuz1 
     // Generate Raster Bars and more
-    ldx.z sinpos
+    ldz sinpos
     // [13] phi from irq1 to irq1::@1 [phi:irq1->irq1::@1]
     // [13] phi (byte) irq1::wobblepos#10 = (byte) irq1::wobblepos#0 [phi:irq1->irq1::@1#0] -- register_copy 
-    // [13] phi (byte) irq1::line#10 = (byte) 0 [phi:irq1->irq1::@1#1] -- vbuzz=vbuc1 
-    ldz #0
+    // [13] phi (byte) irq1::line#10 = (byte) 0 [phi:irq1->irq1::@1#1] -- vbuxx=vbuc1 
+    tax
     // irq1::@1
   __b1:
-    // for(char line=0;line!=0xe0;line++)
-    // [14] if((byte) irq1::line#10!=(byte) $e0) goto irq1::@2 -- vbuzz_neq_vbuc1_then_la1 
-    cpz #$e0
+    // for(char line=0;line!=NUMBERL;line++)
+    // [14] if((byte) irq1::line#10!=(const nomodify byte) NUMBERL) goto irq1::@2 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #NUMBERL
     bne __b2
     // irq1::@3
+    // VICIII->BORDER_COLOR = 1
+    // [15] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // VICIII->BG_COLOR = 1
+    // [16] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    // [17] phi from irq1::@3 to irq1::@16 [phi:irq1::@3->irq1::@16]
+    // [17] phi (byte) irq1::l#2 = (byte) 0 [phi:irq1::@3->irq1::@16#0] -- vbuxx=vbuc1 
+    ldx #0
+  // Set all raster bars to black
+    // irq1::@16
+  __b16:
+    // for(char l=0;l!=NUMBERL;l++)
+    // [18] if((byte) irq1::l#2!=(const nomodify byte) NUMBERL) goto irq1::@17 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #NUMBERL
+    bne __b17
+    // irq1::@18
+    // VICIII->BORDER_COLOR = 1
+    // [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // VICIII->BG_COLOR = 1
+    // [20] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // (*songPlay)()
-    // [15] call *((const void()*) songPlay) 
+    // [21] call *((const void()*) songPlay) 
     // play music
     jsr songPlay
+    // VICIII->BORDER_COLOR = 2
+    // [22] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
+    // VICIII->BG_COLOR = 2
+    // [23] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) 2 -- _deref_pbuc1=vbuc2 
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // irq1::@return
     // }
-    // [16] return  - exit interrupt(HARDWARE_STACK)
+    // [24] return  - exit interrupt(HARDWARE_STACK)
     pla
     tay
     pla
     tax
     pla
     rti
+    // irq1::@17
+  __b17:
+    // rasters[l] = 0
+    // [25] *((const byte*) rasters + (byte) irq1::l#2) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #0
+    sta rasters,x
+    // for(char l=0;l!=NUMBERL;l++)
+    // [26] (byte) irq1::l#1 ← ++ (byte) irq1::l#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [17] phi from irq1::@17 to irq1::@16 [phi:irq1::@17->irq1::@16]
+    // [17] phi (byte) irq1::l#2 = (byte) irq1::l#1 [phi:irq1::@17->irq1::@16#0] -- register_copy 
+    jmp __b16
     // irq1::@2
   __b2:
     // col = rasters[line]
-    // [17] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10) -- vbuaa=pbuc1_derefidx_vbuzz 
-    tza
-    tay
-    lda rasters,y
+    // [27] (byte) irq1::col#0 ← *((const byte*) rasters + (byte) irq1::line#10) -- vbuaa=pbuc1_derefidx_vbuxx 
+    lda rasters,x
     // VICIII->BORDER_COLOR = col
-    // [18] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
+    // [28] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
     // VICIII->BG_COLOR = col
-    // [19] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
+    // [29] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR) ← (byte) irq1::col#0 -- _deref_pbuc1=vbuaa 
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < scrollypos)
-    // [20] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4 -- vbuzz_lt_vbuc1_then_la1 
-    cpz #scrollypos
+    // [30] if((byte) irq1::line#10<(const nomodify byte) irq1::scrollypos) goto irq1::@4 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #scrollypos
     bcc __b4
     // irq1::@10
     // if(line == scrollypos)
-    // [21] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #scrollypos
+    // [31] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos) goto irq1::@5 -- vbuxx_eq_vbuc1_then_la1 
+    cpx #scrollypos
     beq __b5
     // irq1::@11
     // if(line == scrollypos+blackbar)
-    // [22] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6 -- vbuzz_eq_vbuc1_then_la1 
-    cpz #scrollypos+blackbar
+    // [32] if((byte) irq1::line#10==(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar) goto irq1::@6 -- vbuxx_eq_vbuc1_then_la1 
+    cpx #scrollypos+blackbar
     beq __b6
     // irq1::@12
     // if(line == scrollypos+blackbar+1)
-    // [23] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7 -- vbuzz_neq_vbuc1_then_la1 
-    cpz #scrollypos+blackbar+1
+    // [33] if((byte) irq1::line#10!=(const nomodify byte) irq1::scrollypos+(const nomodify byte) irq1::blackbar+(byte) 1) goto irq1::@7 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #scrollypos+blackbar+1
     bne __b7
     // irq1::@13
     // zoomval = SINUS[zoomx++]
-    // [24] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [34] (byte) irq1::zoomval#0 ← *((const byte*) SINUS + (volatile byte) zoomx) -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > scrolly pos do zoom
     ldy.z zoomx
     lda SINUS,y
-    // [25] (volatile byte) zoomx ← ++ (volatile byte) zoomx -- vbuz1=_inc_vbuz1 
+    // [35] (volatile byte) zoomx ← ++ (volatile byte) zoomx -- vbuz1=_inc_vbuz1 
     inc.z zoomx
     // VICIV->CHRXSCL = zoomval
-    // [26] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0 -- _deref_pbuc1=vbuaa 
+    // [36] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) irq1::zoomval#0 -- _deref_pbuc1=vbuaa 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
     // zoomval+1
-    // [27] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1 -- vbuaa=vbuaa_plus_1 
+    // [37] (byte~) irq1::$7 ← (byte) irq1::zoomval#0 + (byte) 1 -- vbuaa=vbuaa_plus_1 
     inc
     // VICIV->TEXTXPOS_LO = zoomval+1
-    // [28] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7 -- _deref_pbuc1=vbuaa 
+    // [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$7 -- _deref_pbuc1=vbuaa 
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // if(zoomx==0)
-    // [29] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 -- vbuz1_neq_0_then_la1 
+    // [39] if((volatile byte) zoomx!=(byte) 0) goto irq1::@7 -- vbuz1_neq_0_then_la1 
     lda.z zoomx
     cmp #0
     bne __b7
     // irq1::@14
     // if(++greetnm==GREETCOUNT)
-    // [30] (volatile byte) greetnm ← ++ (volatile byte) greetnm -- vbuz1=_inc_vbuz1 
+    // [40] (volatile byte) greetnm ← ++ (volatile byte) greetnm -- vbuz1=_inc_vbuz1 
     inc.z greetnm
-    // [31] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
+    // [41] if((volatile byte) greetnm!=(const nomodify byte) GREETCOUNT) goto irq1::@7 -- vbuz1_neq_vbuc1_then_la1 
     lda #GREETCOUNT
     cmp.z greetnm
     bne __b7
     // irq1::@15
     // greetnm =0
-    // [32] (volatile byte) greetnm ← (byte) 0 -- vbuz1=vbuc1 
+    // [42] (volatile byte) greetnm ← (byte) 0 -- vbuz1=vbuc1 
     lda #0
     sta.z greetnm
-    // [33] phi from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6 to irq1::@7 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7]
-    // [33] phi (byte) irq1::wobblepos#7 = (byte) irq1::wobblepos#10 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7#0] -- register_copy 
+    // [43] phi from irq1::@12 irq1::@13 irq1::@14 irq1::@15 irq1::@4 irq1::@5 irq1::@6 to irq1::@7 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7]
+    // [43] phi (byte) irq1::wobblepos#7 = (byte) irq1::wobblepos#10 [phi:irq1::@12/irq1::@13/irq1::@14/irq1::@15/irq1::@4/irq1::@5/irq1::@6->irq1::@7#0] -- register_copy 
     // irq1::@7
   __b7:
     // raster = VICII->RASTER
-    // [34] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
+    // [44] (byte) irq1::raster#0 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- vbuaa=_deref_pbuc1 
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // irq1::@8
   __b8:
     // while(raster == VICII->RASTER)
-    // [35] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8 -- vbuaa_eq__deref_pbuc1_then_la1 
+    // [45] if((byte) irq1::raster#0==*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)) goto irq1::@8 -- vbuaa_eq__deref_pbuc1_then_la1 
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     beq __b8
     // irq1::@9
-    // for(char line=0;line!=0xe0;line++)
-    // [36] (byte) irq1::line#1 ← ++ (byte) irq1::line#10 -- vbuzz=_inc_vbuzz 
-    inz
+    // for(char line=0;line!=NUMBERL;line++)
+    // [46] (byte) irq1::line#1 ← ++ (byte) irq1::line#10 -- vbuxx=_inc_vbuxx 
+    inx
     // [13] phi from irq1::@9 to irq1::@1 [phi:irq1::@9->irq1::@1]
     // [13] phi (byte) irq1::wobblepos#10 = (byte) irq1::wobblepos#7 [phi:irq1::@9->irq1::@1#0] -- register_copy 
     // [13] phi (byte) irq1::line#10 = (byte) irq1::line#1 [phi:irq1::@9->irq1::@1#1] -- register_copy 
@@ -3338,7 +3637,7 @@ irq1: {
     // irq1::@6
   __b6:
     // VICIV->TEXTXPOS_LO = 0x50
-    // [37] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
+    // [47] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
     // if raster position > scrolly pos do nozoom
     // default value
     lda #$50
@@ -3346,13 +3645,13 @@ irq1: {
     jmp __b7
     // irq1::@5
   __b5:
-    // [38] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
+    // [48] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte) $50 -- _deref_pbuc1=vbuc2 
     // if raster position = scrolly pos do scrolly
     // no wobbling from this point
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // VICII->CONTROL2 = xpos
-    // [39] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos -- _deref_pbuc1=vbuz1 
+    // [49] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2) ← (volatile byte) xpos -- _deref_pbuc1=vbuz1 
     // set softscroll
     lda.z xpos
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
@@ -3360,19 +3659,21 @@ irq1: {
     // irq1::@4
   __b4:
     // 0x28 + SINUS[wobblepos++]
-    // [40] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) -- vbuaa=vbuc1_plus_pbuc2_derefidx_vbuxx 
+    // [50] (byte~) irq1::$12 ← (byte) $28 + *((const byte*) SINUS + (byte) irq1::wobblepos#10) -- vbuaa=vbuc1_plus_pbuc2_derefidx_vbuzz 
+    tza
+    tay
     lda #$28
     clc
-    adc SINUS,x
+    adc SINUS,y
     // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++]
-    // [41] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12 -- _deref_pbuc1=vbuaa 
+    // [51] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) ← (byte~) irq1::$12 -- _deref_pbuc1=vbuaa 
     // if raster position < scrolly pos do wobble Logo!
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
-    // [42] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10 -- vbuxx=_inc_vbuxx 
-    inx
+    // [52] (byte) irq1::wobblepos#1 ← ++ (byte) irq1::wobblepos#10 -- vbuzz=_inc_vbuzz 
+    inz
     // VICIV->CHRXSCL = 0x66
-    // [43] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 -- _deref_pbuc1=vbuc2 
+    // [53] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) ← (byte) $66 -- _deref_pbuc1=vbuc2 
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
@@ -3381,18 +3682,29 @@ irq1: {
   // main
 main: {
     // VICIII->KEY = 0x47
-    // [44] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 -- _deref_pbuc1=vbuc2 
+    // [54] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $47 -- _deref_pbuc1=vbuc2 
     // Enable MEGA65 features
     lda #$47
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
     // VICIII->KEY = 0x53
-    // [45] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 -- _deref_pbuc1=vbuc2 
+    // [55] *((byte*)(const nomodify struct MOS4569_VICIII*) VICIII+(const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY) ← (byte) $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    // VICIV->CONTROLB |= 0x40
+    // [56] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB) | (byte) $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // Enable 48MHz fast mode
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    // VICIV->CONTROLC |= 0x40
+    // [57] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) ← *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC) | (byte) $40 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     // memset(SCREEN, ' ', 40*25)
-    // [46] call memset 
+    // [58] call memset 
   // Clear screen 
-    // [70] phi from main to memset [phi:main->memset]
+    // [82] phi from main to memset [phi:main->memset]
     jsr memset
     // main::@6
     // asm
@@ -3400,41 +3712,41 @@ main: {
     // Initialize music
     lda #0
     // (*songInit)()
-    // [48] call *((const void()*) songInit) 
+    // [60] call *((const void()*) songInit) 
     jsr songInit
-    // [49] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-    // [49] phi (byte) main::i1#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
+    // [61] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+    // [61] phi (byte) main::i1#2 = (byte) 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
   // Put MEGA logo on screen
     // main::@1
   __b1:
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
-    // [50] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [62] if((byte) main::i1#2<(byte) $bc*(const byte) SIZEOF_BYTE) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$bc*SIZEOF_BYTE
     bcc __b2
-    // [51] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
-    // [51] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuxx=vbuc1 
+    // [63] phi from main::@1 to main::@3 [phi:main::@1->main::@3]
+    // [63] phi (byte) main::i#2 = (byte) 0 [phi:main::@1->main::@3#0] -- vbuxx=vbuc1 
     ldx #0
-    // [51] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-    // [51] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [63] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
+    // [63] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@3#0] -- register_copy 
     // main::@3
   __b3:
     // PALETTE_RED[i] = PAL_RED[i]
-    // [52] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [64] *((const nomodify byte*) PALETTE_RED + (byte) main::i#2) ← *((const byte*) PAL_RED + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_RED,x
     sta PALETTE_RED,x
     // PALETTE_GREEN[i] = PAL_GREEN[i]
-    // [53] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [65] *((const nomodify byte*) PALETTE_GREEN + (byte) main::i#2) ← *((const byte*) PAL_GREEN + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_GREEN,x
     sta PALETTE_GREEN,x
     // PALETTE_BLUE[i] = PAL_BLUE[i]
-    // [54] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [66] *((const nomodify byte*) PALETTE_BLUE + (byte) main::i#2) ← *((const byte*) PAL_BLUE + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda PAL_BLUE,x
     sta PALETTE_BLUE,x
     // while(++i!=0)
-    // [55] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [67] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [56] if((byte) main::i#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
+    // [68] if((byte) main::i#1!=(byte) 0) goto main::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b3
     // main::@4
@@ -3443,64 +3755,65 @@ main: {
     // Set up raster interrupts C64 style
     sei
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [58] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [70] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // VICII->RASTER = 0x16
-    // [59] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 -- _deref_pbuc1=vbuc2 
+    // [71] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) ← (byte) $16 -- _deref_pbuc1=vbuc2 
     // Set raster line to 0x16
     lda #$16
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
     // VICII->CONTROL1 &= 0x7f
-    // [60] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [72] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_ENABLE = IRQ_RASTER
-    // [61] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [73] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
     // *HARDWARE_IRQ = &irq1
-    // [62] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() -- _deref_qprc1=pprc2 
+    // [74] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(HARDWARE_STACK)(void()) irq1() -- _deref_qprc1=pprc2 
     // Set the IRQ routine
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
     sta HARDWARE_IRQ+1
     // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
-    // [63] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
+    // [75] *((const nomodify byte*) PROCPORT_DDR) ← (const nomodify byte) PROCPORT_DDR_MEMORY_MASK -- _deref_pbuc1=vbuc2 
     // no kernal or BASIC rom visible
     lda #PROCPORT_DDR_MEMORY_MASK
     sta PROCPORT_DDR
     // *PROCPORT = PROCPORT_RAM_IO
-    // [64] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
+    // [76] *((const nomodify byte*) PROCPORT) ← (const nomodify byte) PROCPORT_RAM_IO -- _deref_pbuc1=vbuc2 
     lda #PROCPORT_RAM_IO
     sta PROCPORT
     // VICIV->SIDBDRWD_LO = 1
-    // [65] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [77] *((byte*)(const nomodify struct MEGA65_VICIV*) VICIV+(const byte) OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO) ← (byte) 1 -- _deref_pbuc1=vbuc2 
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // asm
     // asm { cli  }
+    // Enable IRQ
     cli
-    // [67] phi from main::@4 main::@5 to main::@5 [phi:main::@4/main::@5->main::@5]
+    // [79] phi from main::@4 main::@5 to main::@5 [phi:main::@4/main::@5->main::@5]
     // main::@5
   __b5:
     jmp __b5
     // main::@2
   __b2:
     // (SCREEN+3*40)[i] = MEGA_LOGO[i]
-    // [68] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [80] *((const nomodify byte*) SCREEN+(byte)(number) 3*(number) $28 + (byte) main::i1#2) ← *((const byte*) MEGA_LOGO + (byte) main::i1#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MEGA_LOGO,x
     sta SCREEN+3*$28,x
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
-    // [69] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuxx=_inc_vbuxx 
+    // [81] (byte) main::i1#1 ← ++ (byte) main::i1#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [49] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [49] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [61] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [61] phi (byte) main::i1#2 = (byte) main::i1#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // memset
@@ -3511,8 +3824,8 @@ memset: {
     .label str = SCREEN
     .label end = str+num
     .label dst = 2
-    // [71] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [71] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [83] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [83] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -3520,7 +3833,7 @@ memset: {
     // memset::@1
   __b1:
     // for(char* dst = str; dst!=end; dst++)
-    // [72] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [84] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -3529,20 +3842,20 @@ memset: {
     bne __b2
     // memset::@return
     // }
-    // [73] return 
+    // [85] return 
     rts
     // memset::@2
   __b2:
     // *dst = c
-    // [74] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [86] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [75] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [87] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [71] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [71] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [83] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [83] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

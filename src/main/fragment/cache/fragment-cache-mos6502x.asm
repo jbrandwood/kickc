@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 17a3d463b0 17a3d47bef
+//KICKC FRAGMENT CACHE 17a386c46b 17a386dcb0
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -8551,6 +8551,11 @@ sty {z1}
 txa
 sta {z1}+1
 sty {z1}
+//FRAGMENT _deref_qbuc1=pbuc2
+lda #<{c2}
+sta {c1}
+lda #>{c2}
+sta {c1}+1
 //FRAGMENT _deref_pbsc1=vbsc2
 lda #{c2}
 sta {c1}
@@ -8941,11 +8946,6 @@ tax
 stx $ff
 cpy $ff
 bne {la1}
-//FRAGMENT _deref_qbuc1=pbuc2
-lda #<{c2}
-sta {c1}
-lda #>{c2}
-sta {c1}+1
 //FRAGMENT pwuz1_derefidx_vbuc1=vwuz2
 ldy #{c1}
 lda {z2}

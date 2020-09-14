@@ -135,24 +135,30 @@ interrupt(hardware_stack) void irq1() {
         while(raster == VICII->RASTER) ;
     }
 
-    VICIII->BORDER_COLOR = 1;
-    VICIII->BG_COLOR = 1;
-
     // Set all raster bars to black
     for(char l=0;l!=NUMBERL;l++) 
         rasters[l] = 0;
 
-    VICIII->BORDER_COLOR = 1;
-    VICIII->BG_COLOR = 1;
-
     // play music
     (*songPlay)();
 
-    VICIII->BORDER_COLOR = 2;
-    VICIII->BG_COLOR = 2;
+    // Big block of bars (16)
+    char barsin = sinpos;
+    for(char barcnt=0; barcnt<16; barcnt++) {
+        char idx = SINUS[barsin];
+        char barcol = barcnt*16;
+        for(char i=0;i<16;i++)
+            rasters[idx++] = barcol++;
+        for(char i=0;i<15;i++)
+            rasters[idx++] = --barcol;
+        barsin += 10;
+    }
+
+    // Produce dark area behind text
+    for(char i=0;i<19;i++)
+        rasters[scrollypos+i] = rasters[scrollypos+i] /2 & 7;
 
 }
-
 
 // A MEGA logo
 char MEGA_LOGO[] = {  

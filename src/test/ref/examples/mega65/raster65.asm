@@ -68,13 +68,13 @@
   // Pointer to the song play routine
   .label songPlay = SONG+3
   // Sinus Position
-  .label sinpos = 4
+  .label sinpos = 6
   // Zoom Position
-  .label zoomx = 5
+  .label zoomx = 7
   // soft scroll position of text scrolly (0-7)
-  .label xpos = 6
+  .label xpos = 8
   // The greeting currently being shown
-  .label greetnm = 7
+  .label greetnm = 9
 .segment Code
 __start: {
     // sinpos
@@ -97,6 +97,8 @@ irq1: {
     .const scrollypos = $66
     // size of raster behind scrolly
     .const blackbar = $13
+    .label barsin = 3
+    .label barcnt = 2
     pha
     txa
     pha
@@ -118,36 +120,38 @@ irq1: {
     // wobblepos = ++sinpos
     inc.z sinpos
     // Generate Raster Bars and more
-    ldz sinpos
-    tax
+    ldx.z sinpos
+    ldz #0
   __b1:
     // for(char line=0;line!=NUMBERL;line++)
-    cpx #NUMBERL
+    cpz #NUMBERL
     bne __b2
-    // VICIII->BORDER_COLOR = 1
-    lda #1
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
-    // VICIII->BG_COLOR = 1
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     ldx #0
   // Set all raster bars to black
-  __b16:
+  __b15:
     // for(char l=0;l!=NUMBERL;l++)
     cpx #NUMBERL
-    bne __b17
-    // VICIII->BORDER_COLOR = 1
-    lda #1
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
-    // VICIII->BG_COLOR = 1
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    bne __b16
     // (*songPlay)()
     // play music
     jsr songPlay
-    // VICIII->BORDER_COLOR = 2
-    lda #2
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
-    // VICIII->BG_COLOR = 2
-    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
+    // barsin = sinpos
+    // Big block of bars (16)
+    lda.z sinpos
+    sta.z barsin
+    lda #0
+    sta.z barcnt
+  __b18:
+    // for(char barcnt=0; barcnt<16; barcnt++)
+    lda.z barcnt
+    cmp #$10
+    bcc __b19
+    ldx #0
+  // Produce dark area behind text
+  __b25:
+    // for(char i=0;i<19;i++)
+    cpx #$13
+    bcc __b26
     // }
     pla
     tay
@@ -155,32 +159,95 @@ irq1: {
     tax
     pla
     rti
-  __b17:
+  __b26:
+    // rasters[scrollypos+i] /2
+    lda rasters+scrollypos,x
+    lsr
+    // rasters[scrollypos+i] /2 & 7
+    and #7
+    // rasters[scrollypos+i] = rasters[scrollypos+i] /2 & 7
+    sta rasters+scrollypos,x
+    // for(char i=0;i<19;i++)
+    inx
+    jmp __b25
+  __b19:
+    // idx = SINUS[barsin]
+    ldx.z barsin
+    ldy SINUS,x
+    // barcol = barcnt*16
+    lda.z barcnt
+    asl
+    asl
+    asl
+    asl
+    taz
+    ldx #0
+  __b20:
+    // for(char i=0;i<16;i++)
+    cpx #$10
+    bcc __b21
+    ldx #0
+  __b22:
+    // for(char i=0;i<15;i++)
+    cpx #$f
+    bcc __b23
+    // barsin += 10
+    lda #$a
+    clc
+    adc.z barsin
+    sta.z barsin
+    // for(char barcnt=0; barcnt<16; barcnt++)
+    inc.z barcnt
+    jmp __b18
+  __b23:
+    // rasters[idx++] = --barcol;
+    dez
+    // rasters[idx++] = --barcol
+    tza
+    sta rasters,y
+    // rasters[idx++] = --barcol;
+    iny
+    // for(char i=0;i<15;i++)
+    inx
+    jmp __b22
+  __b21:
+    // rasters[idx++] = barcol++
+    tza
+    sta rasters,y
+    // rasters[idx++] = barcol++;
+    iny
+    inz
+    // for(char i=0;i<16;i++)
+    inx
+    jmp __b20
+  __b16:
     // rasters[l] = 0
     lda #0
     sta rasters,x
     // for(char l=0;l!=NUMBERL;l++)
     inx
-    jmp __b16
+    jmp __b15
   __b2:
     // col = rasters[line]
-    lda rasters,x
+    tza
+    tay
+    lda rasters,y
     // VICIII->BORDER_COLOR = col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR
     // VICIII->BG_COLOR = col
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < scrollypos)
-    cpx #scrollypos
-    bcc __b4
+    cpz #scrollypos
+    bcc __b3
     // if(line == scrollypos)
-    cpx #scrollypos
-    beq __b5
+    cpz #scrollypos
+    beq __b4
     // if(line == scrollypos+blackbar)
-    cpx #scrollypos+blackbar
-    beq __b6
+    cpz #scrollypos+blackbar
+    beq __b5
     // if(line == scrollypos+blackbar+1)
-    cpx #scrollypos+blackbar+1
-    bne __b7
+    cpz #scrollypos+blackbar+1
+    bne __b6
     // zoomval = SINUS[zoomx++]
     // if raster position > scrolly pos do zoom
     ldy.z zoomx
@@ -195,34 +262,34 @@ irq1: {
     // if(zoomx==0)
     lda.z zoomx
     cmp #0
-    bne __b7
+    bne __b6
     // if(++greetnm==GREETCOUNT)
     inc.z greetnm
     lda #GREETCOUNT
     cmp.z greetnm
-    bne __b7
+    bne __b6
     // greetnm =0
     lda #0
     sta.z greetnm
-  __b7:
+  __b6:
     // raster = VICII->RASTER
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-  __b8:
+  __b7:
     // while(raster == VICII->RASTER)
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b8
+    beq __b7
     // for(char line=0;line!=NUMBERL;line++)
-    inx
+    inz
     jmp __b1
-  __b6:
+  __b5:
     // VICIV->TEXTXPOS_LO = 0x50
     // if raster position > scrolly pos do nozoom
     // default value
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    jmp __b7
-  __b5:
+    jmp __b6
+  __b4:
     // if raster position = scrolly pos do scrolly
     // no wobbling from this point
     lda #$50
@@ -231,24 +298,22 @@ irq1: {
     // set softscroll
     lda.z xpos
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    jmp __b7
-  __b4:
+    jmp __b6
+  __b3:
     // 0x28 + SINUS[wobblepos++]
-    tza
-    tay
     lda #$28
     clc
-    adc SINUS,y
+    adc SINUS,x
     // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++]
     // if raster position < scrolly pos do wobble Logo!
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
-    inz
+    inx
     // VICIV->CHRXSCL = 0x66
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    jmp __b7
+    jmp __b6
 }
 main: {
     // VICIII->KEY = 0x47
@@ -351,7 +416,7 @@ memset: {
     .const num = $28*$19
     .label str = SCREEN
     .label end = str+num
-    .label dst = 2
+    .label dst = 4
     lda #<str
     sta.z dst
     lda #>str

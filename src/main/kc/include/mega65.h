@@ -53,7 +53,11 @@ char * const PALETTE_GREEN = 0xd200;
 char * const PALETTE_BLUE = 0xd300;
 
 // Default address of screen character matrix
-char * const DEFAULT_SCREEN = 0x0800;
+#ifdef __MEGA65_C64__
+    char * const DEFAULT_SCREEN = 0x0400;
+#else
+    char * const DEFAULT_SCREEN = 0x0800;
+#endif
 
 // The CIA#1: keyboard matrix, joystick #1/#2
 struct MOS6526_CIA * const CIA1 = 0xdc00;

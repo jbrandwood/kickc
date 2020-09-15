@@ -1,5 +1,5 @@
 // Raster65 Demo Implementation in C 
-// Based on RASTER65 assembler demo
+// Based on RASTER65 assembler demo made by DEFT in 2015
 // https://mega.scryptos.com/sharefolder/MEGA/MEGA65+filehost
 // https://www.forum64.de/index.php?thread/104591-xemu-vic-iv-implementation-update/&postID=1560511#post1560511
 
@@ -9,24 +9,35 @@
 #include <string.h>
 
 // The screen address
-char * const SCREEN = 0x0400;
+char * const SCREEN = DEFAULT_SCREEN;
 
-// Logo y-position (char row on screen)
-char const LOGO_Y = 3;
-// Scroll y-position (char row on screen)
-char const SCROLL_Y = 13;
-// Greeting y-position (char row on screen)
-char const GREET_Y = 20;
-
-// Sinus Values 0-183
-char SINUS[256] = kickasm {{
-    .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
-}};
+// Logo start screen row 
+char const LOGO_ROW = 3;
+// Scroll screen row
+char const SCROLL_ROW = 13;
+// Greeting screen row
+char const GREET_ROW = 20;
+// y rasterline where IRQ starts
+const char IRQ_Y = 0x16;
+// y rasterline where scrolly starts
+const char SCROLL_Y = 0x66;
+// size of raster behind scrolly
+const char SCROLL_BLACKBARS = 19;
+// The number of raster lines
+const char RASTER_LINES = 0xd8;
 
 // Music at an absolute address
 __address(0x0fc0) char SONG[] = kickasm(resource "DiscoZak_2SID_patched.prg") {{
     .import c64 "DiscoZak_2SID_patched.prg"
 }};
+
+// Sinus Values 0-183
+__address(0x2c00) char SINUS[256] = kickasm {{
+    .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
+}};
+
+// Moving Raster Bars
+__address(0x2d00) char rasters[RASTER_LINES];
 
 // Pointer to the song init routine
 void()* songInit = (void()*) SONG;
@@ -47,12 +58,11 @@ void main() {
     memset(SCREEN, ' ', 40*25);
     // Put MEGA logo on screen
     for( char i=0; i<sizeof(MEGA_LOGO); i++) {
-        (SCREEN + LOGO_Y*40)[i] = MEGA_LOGO[i];
+        (SCREEN + LOGO_ROW*40)[i] = MEGA_LOGO[i];
     }
-    // Put dummy text up for scroll and greet
+    // Put '*' as default greeting
     for( char i=0;i<40;i++) {
-        (SCREEN + SCROLL_Y*40)[i] = 'a';
-        (SCREEN + GREET_Y*40)[i] = 'b';
+        (SCREEN + GREET_ROW*40)[i] = '*';
     }
     // Set up 256 color palette
     char i=0; 
@@ -66,12 +76,12 @@ void main() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to 0x16
-    VICII->RASTER = 0x16;
+    VICII->RASTER = IRQ_Y;
     VICII->CONTROL1 &= 0x7f;
     // Enable Raster Interrupt
     VICII->IRQ_ENABLE = IRQ_RASTER;
     // Set the IRQ routine
-    *HARDWARE_IRQ = &irq1;
+    *HARDWARE_IRQ = &irq;
     // no kernal or BASIC rom visible
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
@@ -83,23 +93,19 @@ void main() {
     for(;;) ;
 }
 
-// Sinus Position
-volatile char sinpos;
+// Sinus Position (used across effects)
+volatile char sin_idx;
+// scroll soft position of text scrolly (0-7)
+volatile char scroll_soft = 7;
+// scroll text pointer to next char
+char * volatile scroll_ptr = SCROLL_TEXT;
 // Zoom Position
-volatile char zoomx;
-// soft scroll position of text scrolly (0-7)
-volatile char xpos = 7;
+volatile char greet_zoomx;
 // The greeting currently being shown
-volatile char greetnm;
-// The number of greetings
-const char GREETCOUNT = 16;
-// The number of raster lines
-const char NUMBERL = 0xd8;
-// Moving Raster Bars
-char rasters[NUMBERL];
+volatile char greet_idx;
 
 // BIG INTERRUPT LOOP
-interrupt(hardware_stack) void irq1() {
+interrupt(hardware_stack) void irq() {
     // force NTSC every frame (hehe)
     VICIV->RASLINE0 |= 0x80;
     // Acknowledge the IRQ
@@ -107,41 +113,36 @@ interrupt(hardware_stack) void irq1() {
     // reset x scroll
     VICII->CONTROL2 = 0;
 
-    // y rasterline where scrolly starts
-    const char scrollypos = 0x66;
-    // size of raster behind scrolly
-    const char blackbar = 19;
-
     // Generate Raster Bars and more
-    char wobblepos = ++sinpos;
-    for(char line=0;line!=NUMBERL;line++) {
+    char wobble_idx = ++sin_idx;
+    for(char line=0;line!=RASTER_LINES;line++) {
         char col = rasters[line];
         VICIII->BORDER_COLOR = col;
         VICIII->BG_COLOR = col;
-        if(line < scrollypos) {
-            // if raster position < scrolly pos do wobble Logo!
-            VICIV->TEXTXPOS_LO =  SINUS[wobblepos++];
+        if(line < SCROLL_Y) {
+            // if raster position < SCROLL_Y pos do wobble Logo!
+            VICIV->TEXTXPOS_LO =  SINUS[wobble_idx++];
             // No zooming
             VICIV->CHRXSCL = 0x66;
-        } else if(line == scrollypos) {
-            // if raster position = scrolly pos do scrolly
+        } else if(line == SCROLL_Y) {
+            // if raster position = SCROLL_Y pos do scroll
             // no wobbling from this point
             VICIV->TEXTXPOS_LO = 0x50;
             // set softscroll
-            VICII->CONTROL2 = xpos;
-        } else if(line == scrollypos+blackbar) {
-            // if raster position > scrolly pos do nozoom
+            VICII->CONTROL2 = scroll_soft;
+        } else if(line == SCROLL_Y+SCROLL_BLACKBARS) {
+            // if raster position > SCROLL_Y pos do nozoom
             // default value
             VICIV->TEXTXPOS_LO = 0x50;
-        } else if(line == scrollypos+blackbar+1) {
-            // if raster position > scrolly pos do zoom
-            char zoomval = SINUS[zoomx++];
+        } else if(line == SCROLL_Y+SCROLL_BLACKBARS+1) {
+            // if raster position > SCROLL_Y pos do zoom
+            char zoomval = SINUS[greet_zoomx++];
             VICIV->CHRXSCL = zoomval;
             VICIV->TEXTXPOS_LO = zoomval+1;
-            if(zoomx==0) {
+            if(greet_zoomx==0) {
                 // Advance greetings
-                if(++greetnm==GREETCOUNT)
-                    greetnm =0;
+                if(++greet_idx == GREET_COUNT)
+                    greet_idx = 0;
             }
         }
         // Wait for the next raster line
@@ -149,53 +150,65 @@ interrupt(hardware_stack) void irq1() {
         while(raster == VICII->RASTER) ;
     }
 
-    // Show start of calculation
-    VICII->BORDER_COLOR = 0x88;
-    VICII->BG_COLOR = 0x88;
-
     // play music
     (*songPlay)();
 
     // Set up colors behind logo, scroll and greets
-    char colsin = sinpos;
+    char sin_col = sin_idx;
     for(char i=0;i<40;i++) {
         // Greeting colors
-        char col = SINUS[colsin]/4;
-        (COLORRAM + GREET_Y*40)[i] = col;
+        char col = SINUS[sin_col]/4;
+        (COLORRAM + GREET_ROW*40)[i] = col;
         // Logo colors
         col /= 2;
-        (COLORRAM + LOGO_Y*40 + 0*40 - 1)[i] = col;
-        (COLORRAM + LOGO_Y*40 + 1*40 - 2)[i] = col;
-        (COLORRAM + LOGO_Y*40 + 2*40 - 3)[i] = col;
-        (COLORRAM + LOGO_Y*40 + 3*40 - 4)[i] = col;
-        (COLORRAM + LOGO_Y*40 + 4*40 - 5)[i] = col;
-        (COLORRAM + LOGO_Y*40 + 5*40 - 6)[i] = col;
+        (COLORRAM + LOGO_ROW*40 + 0*40 - 1)[i] = col;
+        (COLORRAM + LOGO_ROW*40 + 1*40 - 2)[i] = col;
+        (COLORRAM + LOGO_ROW*40 + 2*40 - 3)[i] = col;
+        (COLORRAM + LOGO_ROW*40 + 3*40 - 4)[i] = col;
+        (COLORRAM + LOGO_ROW*40 + 4*40 - 5)[i] = col;
+        (COLORRAM + LOGO_ROW*40 + 5*40 - 6)[i] = col;
         // Scroll colors
-        (COLORRAM + SCROLL_Y*40)[i] = PAL_GREEN[colsin];
-        colsin++;
+        (COLORRAM + SCROLL_ROW*40)[i] = PAL_GREEN[sin_col];
+        sin_col++;
     }
 
     // Set all raster bars to black
-    for(char l=0;l!=NUMBERL;l++) 
+    for(char l=0;l!=RASTER_LINES;l++) 
         rasters[l] = 0;        
     // Big block of bars (16)
-    char barsin = sinpos;
+    char sin_bar = sin_idx;
     for(char barcnt=0; barcnt<16; barcnt++) {
-        char idx = SINUS[barsin];
+        char idx = SINUS[sin_bar];
         char barcol = barcnt*16;
         for(char i=0;i<16;i++)
             rasters[idx++] = barcol++;
         for(char i=0;i<15;i++)
             rasters[idx++] = --barcol;
-        barsin += 10;
+        sin_bar += 10;
     }
     // Produce dark area behind text
     for(char i=0;i<19;i++)
-        rasters[scrollypos+i] = rasters[scrollypos+i] /2 & 7;
+        rasters[SCROLL_Y+i] = rasters[SCROLL_Y+i] /2 & 7;
 
-    // Show end of calculation
-    VICII->BORDER_COLOR = 0;
-    VICII->BG_COLOR = 0;
+    // Set up greetings    
+    char greet_offset = greet_idx*16;
+    for(char i=0;i<16;i++)
+        (SCREEN + GREET_ROW*40 + 13)[i] = GREETING[greet_offset++] & 0xbf;
+
+    // Little smooth scroll
+    if(--scroll_soft == 0xff) {
+        scroll_soft = 7;
+        // Move scroll on screen
+        for(char i=0;i<39;i++) 
+            (SCREEN + SCROLL_ROW*40)[i] = (SCREEN + SCROLL_ROW*40 + 1)[i];
+        // Show next char
+        char nxt = *(scroll_ptr++);
+        if(nxt==0) {
+            scroll_ptr = SCROLL_TEXT;
+            nxt = *scroll_ptr;
+        }
+        *(SCREEN + SCROLL_ROW*40 + 39) = nxt & 0xbf;
+    }
 
 }
 
@@ -213,7 +226,7 @@ char MEGA_LOGO[] = {
     0xcf,0x20,0x20,0xcf,0x20,0x20,0x20,0xcf
 };
 
-char PAL_RED[] = {
+__address(0x2e00) char PAL_RED[] = {
     0x00,0xf3,0xd4,0xb5,0xa6,0x97,0x88,0x79,0x1a,0xfa,0xeb,0xec,0xbd,0xbe,0xaf,0xff, 
     0x16,0xc6,0xa7,0x88,0x49,0x5a,0x2b,0x1c,0xac,0xad,0x8e,0x8f,0xff,0xff,0xff,0xff,
     0xc6,0x77,0x48,0x29,0xe9,0xfa,0xcb,0xcc,0x5d,0x4e,0x2f,0xff,0xff,0xff,0xff,0xff,
@@ -232,7 +245,7 @@ char PAL_RED[] = {
     0x06,0xd6,0xa7,0x98,0x59,0x4a,0x2b,0x2c,0xbc,0xad,0x8e,0x8f,0xff,0xff,0xff,0xff
 };
 
-char PAL_GREEN[] = {
+__address(0x2f00) char PAL_GREEN[] = {
     0x00,0xe3,0xc4,0xb5,0x96,0x87,0x78,0x79,0x0a,0xfa,0xeb,0xdc,0xbd,0xae,0xaf,0xff, 
     0xe2,0xb3,0xa4,0x85,0x76,0x67,0x48,0x49,0xd9,0xda,0xbb,0xbc,0x8d,0x8e,0x7f,0xff,
     0x42,0x03,0x04,0xe4,0xd5,0xc6,0xb7,0xa8,0x39,0x3a,0x1b,0x2c,0xfc,0xfd,0xde,0xdf,
@@ -251,7 +264,7 @@ char PAL_GREEN[] = {
     0xe2,0xa3,0x94,0x85,0x76,0x67,0x38,0x49,0xd9,0xca,0xab,0xbc,0x7d,0x7e,0x6f,0xff
 };
 
-char PAL_BLUE[] = {
+__address(0x3000) char PAL_BLUE[] = {
     0x00,0xf3,0xd4,0xb5,0xa6,0x97,0x88,0x79,0x1a,0xfa,0xeb,0xec,0xbd,0xbe,0xaf,0xff, 
     0x00,0x00,0x00,0x00,0xc0,0xb1,0xa2,0xa3,0x34,0x35,0x26,0x27,0xf7,0xf8,0xf9,0xea,
     0x00,0x00,0x30,0x11,0x22,0x13,0x14,0x05,0xb5,0x96,0x97,0x98,0x79,0x6a,0x5b,0x4c,
@@ -269,3 +282,41 @@ char PAL_BLUE[] = {
     0x00,0x00,0x00,0x00,0x00,0x70,0x61,0x62,0xe2,0xe3,0xd4,0xd5,0xb6,0xa7,0xb8,0xa9,
     0x00,0x00,0x00,0x00,0xa0,0xb1,0xa2,0xa3,0x44,0x35,0x26,0x37,0xf7,0x19,0xf9,0xfa
 };
+
+// Greetings
+char GREETING[] = 
+    "   DOUBLEFLASH  "
+    "      ADTBM     "
+    "     SY2002     "
+    "     TAYGER     "
+    "    SERIOUSLY   "
+    "LIBI IN PARADIZE"
+    "       LGB      "
+    "    BLUEWAYSW   "
+    "     SAUSAGE    "
+    "   BIT SHIFTER  "
+    "   INDIOCOLIFA  "
+    "   GRUMPYNINJA  "
+    "    0-LIMITS    "
+    "     CHEVERON   "
+    "  DR. COMMODORE "
+;
+
+// The number of greetings
+const char GREET_COUNT = 15;
+
+// Scroll text
+char SCROLL_TEXT[] = 
+    "    THIS SMALL MEGA65 RASTER INTRO ... WAS MADE BY DEFT IN 2015 ... "
+    "AND BROUGHT BACK TO LIFE 5 YEARS LATER IN 2020 ... BECAUSE "
+    "THE MEGA65 HARDWARE CHANGED SO MUCH IN THE PAST 5 YEARS ... "
+    "UNFORTUNATELY MY ASSEMBLER SKILLS DID NOT SO THIS IS THE FIRST "
+    "APPROACH TO GET BETTER ... HOPEFULLY DR.MUTTI WILL HAVE TO SCOLD ME LESS ... "
+    "THE PAST 5 YEARS HAVE BEEN AN UNFORGETTABLE & UNIQUE RIDE ... "
+    "IF YOU DO WATCH THIS DEMO ON YOUR VERY OWN MEGA65 THERE "
+    "IS ENOUGH EVIDENCE OF WHAT WE ACTUALLY ACHIEVED ... "
+    "BELOW ARE THE GREETINGS TO DEAR AND VERY SPECIAL PEOPLE WHO HELPED "
+    "TO GET THERE ... THANK YOU SO MUCH FOR YOUR SUPPORT AND FOR NOT GIVING UP "
+    "... DUAL SID TUNE BY RAYDEN OF ALPHA FLIGHT ... THIS SCROLLY WILL NOW RESTART "
+    "          *WRAP*                    "
+;

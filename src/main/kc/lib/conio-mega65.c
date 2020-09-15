@@ -3,7 +3,12 @@
 #include <mega65.h>
 
 // The screen width
+#ifdef __MEGA65_C64__
+#define CONIO_WIDTH 40
+#else
 #define CONIO_WIDTH 80
+#endif
+
 // The screen height
 #define CONIO_HEIGHT 25
 // The text screen address

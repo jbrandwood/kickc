@@ -10,6 +10,13 @@
 
 char * const SCREEN = 0x0400;
 
+// Logo y-position (char row on screen)
+char const LOGO_Y = 3;
+// Scroll y-position (char row on screen)
+char const SCROLL_Y = 13;
+// Greeting y-position (char row on screen)
+char const GREET_Y = 20;
+
 // Sinus Values 0-183
 char SINUS[256] = kickasm {{
     .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
@@ -32,14 +39,20 @@ void main() {
     // Enable 48MHz fast mode
     VICIV->CONTROLB |= 0x40;
     VICIV->CONTROLC |= 0x40;
-    // Clear screen 
-    memset(SCREEN, ' ', 40*25);
     // Initialize music
     asm { lda #0 }
     (*songInit)();
+    // Clear screen 
+    memset(SCREEN, ' ', 40*25);
     // Put MEGA logo on screen
-    for( char i=0; i<sizeof(MEGA_LOGO); i++) 
-        (SCREEN+3*40)[i] = MEGA_LOGO[i];
+    for( char i=0; i<sizeof(MEGA_LOGO); i++) {
+        (SCREEN + LOGO_Y*40)[i] = MEGA_LOGO[i];
+    }
+    // Put dummy text up for scroll and greet
+    for( char i=0;i<40;i++) {
+        (SCREEN + SCROLL_Y*40)[i] = 'a';
+        (SCREEN + GREET_Y*40)[i] = 'b';
+    }
     // Set up 256 color palette
     char i=0; 
     do {
@@ -80,9 +93,9 @@ volatile char greetnm;
 // The number of greetings
 const char GREETCOUNT = 16;
 // The number of raster lines
-const char NUMBERL = 0xe0;
+const char NUMBERL = 0xd8;
 // Moving Raster Bars
-char rasters[256];
+char rasters[NUMBERL];
 
 // BIG INTERRUPT LOOP
 interrupt(hardware_stack) void irq1() {
@@ -106,7 +119,7 @@ interrupt(hardware_stack) void irq1() {
         VICIII->BG_COLOR = col;
         if(line < scrollypos) {
             // if raster position < scrolly pos do wobble Logo!
-            VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
+            VICIV->TEXTXPOS_LO =  SINUS[wobblepos++];
             // No zooming
             VICIV->CHRXSCL = 0x66;
         } else if(line == scrollypos) {
@@ -135,13 +148,35 @@ interrupt(hardware_stack) void irq1() {
         while(raster == VICII->RASTER) ;
     }
 
-    // Set all raster bars to black
-    for(char l=0;l!=NUMBERL;l++) 
-        rasters[l] = 0;
+    // Show start of calculation
+    VICII->BORDER_COLOR = 0x88;
+    VICII->BG_COLOR = 0x88;
 
     // play music
     (*songPlay)();
 
+    // Set up colors behind logo, scroll and greets
+    char colsin = sinpos;
+    for(char i=0;i<40;i++) {
+        // Greeting colors
+        char col = SINUS[colsin]/4;
+        (COLORRAM + GREET_Y*40)[i] = col;
+        // Logo colors
+        col /= 2;
+        (COLORRAM + LOGO_Y*40 + 0*40 - 1)[i] = col;
+        (COLORRAM + LOGO_Y*40 + 1*40 - 2)[i] = col;
+        (COLORRAM + LOGO_Y*40 + 2*40 - 3)[i] = col;
+        (COLORRAM + LOGO_Y*40 + 3*40 - 4)[i] = col;
+        (COLORRAM + LOGO_Y*40 + 4*40 - 5)[i] = col;
+        (COLORRAM + LOGO_Y*40 + 5*40 - 6)[i] = col;
+        // Scroll colors
+        (COLORRAM + SCROLL_Y*40)[i] = PAL_GREEN[colsin];
+        colsin++;
+    }
+
+    // Set all raster bars to black
+    for(char l=0;l!=NUMBERL;l++) 
+        rasters[l] = 0;        
     // Big block of bars (16)
     char barsin = sinpos;
     for(char barcnt=0; barcnt<16; barcnt++) {
@@ -153,10 +188,13 @@ interrupt(hardware_stack) void irq1() {
             rasters[idx++] = --barcol;
         barsin += 10;
     }
-
     // Produce dark area behind text
     for(char i=0;i<19;i++)
         rasters[scrollypos+i] = rasters[scrollypos+i] /2 & 7;
+
+    // Show end of calculation
+    VICII->BORDER_COLOR = 0;
+    VICII->BG_COLOR = 0;
 
 }
 

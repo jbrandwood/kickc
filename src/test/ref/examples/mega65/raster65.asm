@@ -22,10 +22,16 @@
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
+  // Logo y-position (char row on screen)
+  .const LOGO_Y = 3
+  // Scroll y-position (char row on screen)
+  .const SCROLL_Y = $d
+  // Greeting y-position (char row on screen)
+  .const GREET_Y = $14
   // The number of greetings
   .const GREETCOUNT = $10
   // The number of raster lines
-  .const NUMBERL = $e0
+  .const NUMBERL = $d8
   .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
   .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
   .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
@@ -39,6 +45,8 @@
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
   .const OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR = $21
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO = $4c
   .const OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL = $5a
   .const SIZEOF_BYTE = 1
@@ -52,6 +60,8 @@
   .label VICIII = $d000
   // The VIC IV
   .label VICIV = $d000
+  // Color Ram
+  .label COLORRAM = $d800
   // Palette RED
   .label PALETTE_RED = $d100
   // Palette GREEN
@@ -125,33 +135,55 @@ irq1: {
   __b1:
     // for(char line=0;line!=NUMBERL;line++)
     cpz #NUMBERL
-    bne __b2
-    ldx #0
-  // Set all raster bars to black
-  __b15:
-    // for(char l=0;l!=NUMBERL;l++)
-    cpx #NUMBERL
-    bne __b16
+    beq !__b2+
+    jmp __b2
+  !__b2:
+    // VICII->BORDER_COLOR = 0x88
+    // Show start of calculation
+    lda #$88
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR = 0x88
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // (*songPlay)()
     // play music
     jsr songPlay
+    // colsin = sinpos
+    // Set up colors behind logo, scroll and greets
+    ldy.z sinpos
+    ldx #0
+  __b16:
+    // for(char i=0;i<40;i++)
+    cpx #$28
+    bcc __b17
+    ldx #0
+  // Set all raster bars to black
+  __b18:
+    // for(char l=0;l!=NUMBERL;l++)
+    cpx #NUMBERL
+    bne __b19
     // barsin = sinpos
     // Big block of bars (16)
     lda.z sinpos
     sta.z barsin
     lda #0
     sta.z barcnt
-  __b18:
+  __b21:
     // for(char barcnt=0; barcnt<16; barcnt++)
     lda.z barcnt
     cmp #$10
-    bcc __b19
+    bcc __b22
     ldx #0
   // Produce dark area behind text
-  __b25:
+  __b28:
     // for(char i=0;i<19;i++)
     cpx #$13
-    bcc __b26
+    bcc __b29
+    // VICII->BORDER_COLOR = 0
+    // Show end of calculation
+    lda #0
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // VICII->BG_COLOR = 0
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
     // }
     pla
     tay
@@ -159,7 +191,7 @@ irq1: {
     tax
     pla
     rti
-  __b26:
+  __b29:
     // rasters[scrollypos+i] /2
     lda rasters+scrollypos,x
     lsr
@@ -169,8 +201,8 @@ irq1: {
     sta rasters+scrollypos,x
     // for(char i=0;i<19;i++)
     inx
-    jmp __b25
-  __b19:
+    jmp __b28
+  __b22:
     // idx = SINUS[barsin]
     ldx.z barsin
     ldy SINUS,x
@@ -182,15 +214,15 @@ irq1: {
     asl
     taz
     ldx #0
-  __b20:
+  __b23:
     // for(char i=0;i<16;i++)
     cpx #$10
-    bcc __b21
+    bcc __b24
     ldx #0
-  __b22:
+  __b25:
     // for(char i=0;i<15;i++)
     cpx #$f
-    bcc __b23
+    bcc __b26
     // barsin += 10
     lda #$a
     clc
@@ -198,8 +230,8 @@ irq1: {
     sta.z barsin
     // for(char barcnt=0; barcnt<16; barcnt++)
     inc.z barcnt
-    jmp __b18
-  __b23:
+    jmp __b21
+  __b26:
     // rasters[idx++] = --barcol;
     dez
     // rasters[idx++] = --barcol
@@ -209,8 +241,8 @@ irq1: {
     iny
     // for(char i=0;i<15;i++)
     inx
-    jmp __b22
-  __b21:
+    jmp __b25
+  __b24:
     // rasters[idx++] = barcol++
     tza
     sta rasters,y
@@ -219,14 +251,45 @@ irq1: {
     inz
     // for(char i=0;i<16;i++)
     inx
-    jmp __b20
-  __b16:
+    jmp __b23
+  __b19:
     // rasters[l] = 0
     lda #0
     sta rasters,x
     // for(char l=0;l!=NUMBERL;l++)
     inx
-    jmp __b15
+    jmp __b18
+  __b17:
+    // col = SINUS[colsin]/4
+    lda SINUS,y
+    lsr
+    lsr
+    // (COLORRAM + GREET_Y*40)[i] = col
+    sta COLORRAM+GREET_Y*$28,x
+    // col /= 2
+    // Logo colors
+    lsr
+    // (COLORRAM + LOGO_Y*40 + 0*40 - 1)[i] = col
+    sta COLORRAM+LOGO_Y*$28-1,x
+    // (COLORRAM + LOGO_Y*40 + 1*40 - 2)[i] = col
+    sta COLORRAM+LOGO_Y*$28+1*$28-2,x
+    // (COLORRAM + LOGO_Y*40 + 2*40 - 3)[i] = col
+    sta COLORRAM+LOGO_Y*$28+2*$28-3,x
+    // (COLORRAM + LOGO_Y*40 + 3*40 - 4)[i] = col
+    sta COLORRAM+LOGO_Y*$28+3*$28-4,x
+    // (COLORRAM + LOGO_Y*40 + 4*40 - 5)[i] = col
+    sta COLORRAM+LOGO_Y*$28+4*$28-5,x
+    // (COLORRAM + LOGO_Y*40 + 5*40 - 6)[i] = col
+    sta COLORRAM+LOGO_Y*$28+5*$28-6,x
+    // (COLORRAM + SCROLL_Y*40)[i] = PAL_GREEN[colsin]
+    // Scroll colors
+    lda PAL_GREEN,y
+    sta COLORRAM+SCROLL_Y*$28,x
+    // colsin++;
+    iny
+    // for(char i=0;i<40;i++)
+    inx
+    jmp __b16
   __b2:
     // col = rasters[line]
     tza
@@ -238,16 +301,16 @@ irq1: {
     sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_BG_COLOR
     // if(line < scrollypos)
     cpz #scrollypos
-    bcc __b3
+    bcc __b4
     // if(line == scrollypos)
     cpz #scrollypos
-    beq __b4
+    beq __b5
     // if(line == scrollypos+blackbar)
     cpz #scrollypos+blackbar
-    beq __b5
+    beq __b6
     // if(line == scrollypos+blackbar+1)
     cpz #scrollypos+blackbar+1
-    bne __b6
+    bne __b7
     // zoomval = SINUS[zoomx++]
     // if raster position > scrolly pos do zoom
     ldy.z zoomx
@@ -262,34 +325,34 @@ irq1: {
     // if(zoomx==0)
     lda.z zoomx
     cmp #0
-    bne __b6
+    bne __b7
     // if(++greetnm==GREETCOUNT)
     inc.z greetnm
     lda #GREETCOUNT
     cmp.z greetnm
-    bne __b6
+    bne __b7
     // greetnm =0
     lda #0
     sta.z greetnm
-  __b6:
+  __b7:
     // raster = VICII->RASTER
     // Wait for the next raster line
     lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-  __b7:
+  __b8:
     // while(raster == VICII->RASTER)
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b7
+    beq __b8
     // for(char line=0;line!=NUMBERL;line++)
     inz
     jmp __b1
-  __b5:
+  __b6:
     // VICIV->TEXTXPOS_LO = 0x50
     // if raster position > scrolly pos do nozoom
     // default value
     lda #$50
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    jmp __b6
-  __b4:
+    jmp __b7
+  __b5:
     // if raster position = scrolly pos do scrolly
     // no wobbling from this point
     lda #$50
@@ -298,22 +361,19 @@ irq1: {
     // set softscroll
     lda.z xpos
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
-    jmp __b6
-  __b3:
-    // 0x28 + SINUS[wobblepos++]
-    lda #$28
-    clc
-    adc SINUS,x
-    // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++]
+    jmp __b7
+  __b4:
+    // VICIV->TEXTXPOS_LO =  SINUS[wobblepos++]
     // if raster position < scrolly pos do wobble Logo!
+    lda SINUS,x
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // VICIV->TEXTXPOS_LO = 0x28 + SINUS[wobblepos++];
+    // VICIV->TEXTXPOS_LO =  SINUS[wobblepos++];
     inx
     // VICIV->CHRXSCL = 0x66
     // No zooming
     lda #$66
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
-    jmp __b6
+    jmp __b7
 }
 main: {
     // VICIII->KEY = 0x47
@@ -332,14 +392,14 @@ main: {
     lda #$40
     ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
-    // memset(SCREEN, ' ', 40*25)
-  // Clear screen 
-    jsr memset
     // asm
     // Initialize music
     lda #0
     // (*songInit)()
     jsr songInit
+    // memset(SCREEN, ' ', 40*25)
+  // Clear screen 
+    jsr memset
     ldx #0
   // Put MEGA logo on screen
   __b1:
@@ -347,7 +407,13 @@ main: {
     cpx #$bc*SIZEOF_BYTE
     bcc __b2
     ldx #0
+  // Put dummy text up for scroll and greet
   __b3:
+    // for( char i=0;i<40;i++)
+    cpx #$28
+    bcc __b4
+    ldx #0
+  __b5:
     // PALETTE_RED[i] = PAL_RED[i]
     lda PAL_RED,x
     sta PALETTE_RED,x
@@ -360,7 +426,7 @@ main: {
     // while(++i!=0)
     inx
     cpx #0
-    bne __b3
+    bne __b5
     // asm
     // Set up raster interrupts C64 style
     sei
@@ -400,12 +466,22 @@ main: {
     // asm
     // Enable IRQ
     cli
-  __b5:
-    jmp __b5
+  __b7:
+    jmp __b7
+  __b4:
+    // (SCREEN + SCROLL_Y*40)[i] = 'a'
+    lda #'a'
+    sta SCREEN+SCROLL_Y*$28,x
+    // (SCREEN + GREET_Y*40)[i] = 'b'
+    lda #'b'
+    sta SCREEN+GREET_Y*$28,x
+    // for( char i=0;i<40;i++)
+    inx
+    jmp __b3
   __b2:
-    // (SCREEN+3*40)[i] = MEGA_LOGO[i]
+    // (SCREEN + LOGO_Y*40)[i] = MEGA_LOGO[i]
     lda MEGA_LOGO,x
-    sta SCREEN+3*$28,x
+    sta SCREEN+LOGO_Y*$28,x
     // for( char i=0; i<sizeof(MEGA_LOGO); i++)
     inx
     jmp __b1
@@ -446,7 +522,7 @@ SINUS:
 .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
 
   // Moving Raster Bars
-  rasters: .fill $100, 0
+  rasters: .fill NUMBERL, 0
   // A MEGA logo
   MEGA_LOGO: .byte $20, $20, $20, $20, $20, $cf, $cf, $cf, $20, $cf, $cf, $20, $20, $cf, $cf, $cf, $20, $20, $cf, $cf, $cf, $20, $20, $20, $cf, $cf, $cf, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $cf, $cf, $20, $cf, $cf, $20, $cf, $20, $cf, $20, $20, $20, $cf, $cf, $20, $20, $20, $20, $cf, $cf, $20, $20, $20, $cf, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $cf, $cf, $20, $20, $cf, $20, $cf, $cf, $cf, $cf, $cf, $20, $cf, $cf, $20, $cf, $cf, $cf, $cf, $cf, $20, $20, $20, $cf, $cf, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $cf, $cf, $cf, $20, $20, $20, $cf, $cf, $cf, $20, $20, $20, $20, $cf, $20, $20, $20, $cf, $cf, $cf, $20, $cf, $cf, $cf, $cf, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $20, $cf, $20, $20, $20, $20, $cf, $cf, $20, $cf, $cf, $cf, $20, $20, $cf, $cf, $cf, $20, $20, $cf, $20, $20, $20, $cf
   PAL_RED: .byte 0, $f3, $d4, $b5, $a6, $97, $88, $79, $1a, $fa, $eb, $ec, $bd, $be, $af, $ff, $16, $c6, $a7, $88, $49, $5a, $2b, $1c, $ac, $ad, $8e, $8f, $ff, $ff, $ff, $ff, $c6, $77, $48, $29, $e9, $fa, $cb, $cc, $5d, $4e, $2f, $ff, $ff, $ff, $ff, $ff, $57, $18, $f8, $d9, $aa, $8b, $6c, $5d, $ed, $de, $cf, $ff, $ff, $ff, $ff, $ff, $26, $e6, $b7, $a8, $69, $5a, $3b, $3c, $dc, $cd, $ae, $9f, $ff, $ff, $ff, $ff, $65, $16, $17, $f7, $d8, $b9, $9a, $8b, $2c, $d, $fd, $ee, $cf, $ff, $ff, $ff, $64, $15, 6, $e6, $c7, $a8, $99, $8a, $1b, $c, $fc, $fd, $ee, $cf, $ff, $ff, $12, $d2, $d3, $b4, $95, $86, $77, $78, 9, $69, $ea, $fb, $dc, $ad, $ae, $af, $f0, $c1, $c2, $a3, $84, $85, $76, $67, 8, $f8, $e9, $da, $db, $bc, $bd, $ae, $40, $11, $12, $f2, $e3, $d4, $c5, $c6, $47, $38, $39, $2a, $1b, $c, $d, $ed, 0, 0, $f0, $d1, $c2, $b3, $a4, $95, $36, $27, $28, $29, $f9, $ea, $eb, $ec, $70, $41, $22, $23, $f3, $f4, $e5, $e6, $77, $78, $69, $7a, $3b, $3c, $3d, $3e, $a1, $82, $63, $54, $35, $26, 7, 8, $98, $99, $8a, $7b, $5c, $5d, $3e, $3f, $33, 4, $d4, $d5, $a6, $a7, $88, $89, $1a, $ab, $fb, $ec, $cd, $be, $af, $ff, $b4, $85, $56, $47, $18, 9, $f9, $ea, $7b, $7c, $5d, $5e, $2f, $ef, $ff, $ff, 6, $d6, $a7, $98, $59, $4a, $2b, $2c, $bc, $ad, $8e, $8f, $ff, $ff, $ff, $ff

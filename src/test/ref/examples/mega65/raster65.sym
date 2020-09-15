@@ -1,8 +1,11 @@
 (const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
 (const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
+(const nomodify byte*) COLORRAM = (byte*) 55296
 (const nomodify byte) GREETCOUNT = (byte) $10
+(const nomodify byte) GREET_Y = (byte) $14
 (const nomodify void()**) HARDWARE_IRQ = (void()**) 65534
 (const nomodify byte) IRQ_RASTER = (byte) 1
+(const nomodify byte) LOGO_Y = (byte) 3
 (byte) MEGA65_VICIV::ALPHADELAY
 (byte) MEGA65_VICIV::B0PIX
 (byte) MEGA65_VICIV::B0_ADDR
@@ -288,7 +291,7 @@
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
-(const nomodify byte) NUMBERL = (byte) $e0
+(const nomodify byte) NUMBERL = (byte) $d8
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL = (byte) $5a
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = (byte) $31
 (const byte) OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = (byte) $54
@@ -299,6 +302,8 @@
 (const byte) OFFSET_STRUCT_MOS4569_VICIII_BORDER_COLOR = (byte) $20
 (const byte) OFFSET_STRUCT_MOS4569_VICIII_KEY = (byte) $2f
 (const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = (byte) $21
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
 (const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = (byte) $11
 (const byte) OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = (byte) $16
 (const byte) OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = (byte) $1a
@@ -315,6 +320,7 @@
 (const nomodify byte) PROCPORT_DDR_MEMORY_MASK = (byte) 7
 (const nomodify byte) PROCPORT_RAM_IO = (byte) 5
 (const nomodify byte*) SCREEN = (byte*) 1024
+(const nomodify byte) SCROLL_Y = (byte) $d
 (const byte*) SINUS[(number) $100]  = kickasm {{ .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
  }}
 (const byte) SIZEOF_BYTE = (byte) 1
@@ -327,11 +333,10 @@
 (label) __start::@1
 (label) __start::@return
 (label) __start::__init1
-(volatile byte) greetnm loadstore zp[1]:9 1.3529411764705883
+(volatile byte) greetnm loadstore zp[1]:9 1.3939393939393938
 interrupt(HARDWARE_STACK)(void()) irq1()
-(byte~) irq1::$12 reg byte a 22.0
-(byte~) irq1::$22 reg byte a 22.0
 (byte~) irq1::$23 reg byte a 22.0
+(byte~) irq1::$24 reg byte a 22.0
 (byte~) irq1::$7 reg byte a 22.0
 (label) irq1::@1
 (label) irq1::@10
@@ -352,7 +357,11 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (label) irq1::@24
 (label) irq1::@25
 (label) irq1::@26
+(label) irq1::@27
+(label) irq1::@28
+(label) irq1::@29
 (label) irq1::@3
+(label) irq1::@30
 (label) irq1::@4
 (label) irq1::@5
 (label) irq1::@6
@@ -376,15 +385,25 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (const nomodify byte) irq1::blackbar = (byte) $13
 (byte) irq1::col
 (byte) irq1::col#0 reg byte a 16.5
+(byte) irq1::col1
+(byte) irq1::col1#0 reg byte a 16.5
+(byte) irq1::col1#1 reg byte a 12.833333333333334
+(byte) irq1::colsin
+(byte) irq1::colsin#0 reg byte y 4.0
+(byte) irq1::colsin#1 reg byte y 11.0
+(byte) irq1::colsin#2 reg byte y 3.833333333333333
 (byte) irq1::i
-(byte) irq1::i#1 reg byte x 202.0
-(byte) irq1::i#2 reg byte x 60.599999999999994
+(byte) irq1::i#1 reg byte x 22.0
+(byte) irq1::i#2 reg byte x 9.307692307692307
 (byte) irq1::i1
 (byte) irq1::i1#1 reg byte x 202.0
 (byte) irq1::i1#2 reg byte x 60.599999999999994
 (byte) irq1::i2
-(byte) irq1::i2#1 reg byte x 22.0
-(byte) irq1::i2#2 reg byte x 11.0
+(byte) irq1::i2#1 reg byte x 202.0
+(byte) irq1::i2#2 reg byte x 60.599999999999994
+(byte) irq1::i3
+(byte) irq1::i3#1 reg byte x 22.0
+(byte) irq1::i3#2 reg byte x 11.0
 (byte) irq1::idx
 (byte) irq1::idx#0 reg byte y 11.0
 (byte) irq1::idx#1 reg byte y 67.33333333333333
@@ -396,14 +415,14 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (byte) irq1::l#2 reg byte x 14.666666666666666
 (byte) irq1::line
 (byte) irq1::line#1 reg byte z 22.0
-(byte) irq1::line#10 reg byte z 3.142857142857143
+(byte) irq1::line#10 reg byte z 3.259259259259259
 (byte) irq1::raster
 (byte) irq1::raster#0 reg byte a 56.0
 (const nomodify byte) irq1::scrollypos = (byte) $66
 (byte) irq1::wobblepos
 (byte) irq1::wobblepos#0 reg byte x 4.0
 (byte) irq1::wobblepos#1 reg byte x 11.0
-(byte) irq1::wobblepos#10 reg byte x 4.391304347826087
+(byte) irq1::wobblepos#10 reg byte x 4.590909090909091
 (byte) irq1::wobblepos#7 reg byte x 22.0
 (byte) irq1::zoomval
 (byte) irq1::zoomval#0 reg byte a 11.0
@@ -414,12 +433,16 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (label) main::@4
 (label) main::@5
 (label) main::@6
+(label) main::@7
 (byte) main::i
 (byte) main::i#1 reg byte x 151.5
 (byte) main::i#2 reg byte x 202.0
 (byte) main::i1
 (byte) main::i1#1 reg byte x 202.0
 (byte) main::i1#2 reg byte x 168.33333333333331
+(byte) main::i2
+(byte) main::i2#1 reg byte x 202.0
+(byte) main::i2#2 reg byte x 126.25
 (void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
 (label) memset::@1
 (label) memset::@2
@@ -436,34 +459,38 @@ interrupt(HARDWARE_STACK)(void()) irq1()
 (void*) memset::return
 (void*) memset::str
 (const void*) memset::str#0 str = (void*)(const nomodify byte*) SCREEN
-(const byte*) rasters[(number) $100]  = { fill( $100, 0) }
-(volatile byte) sinpos loadstore zp[1]:6 0.2564102564102564
+(const byte*) rasters[(const nomodify byte) NUMBERL]  = { fill( NUMBERL, 0) }
+(volatile byte) sinpos loadstore zp[1]:6 0.2181818181818182
 (const void()*) songInit = (void()*)(const byte*) SONG
 (const void()*) songPlay = (void()*)(const byte*) SONG+(byte) 3
-(volatile byte) xpos loadstore zp[1]:8 0.3823529411764706
-(volatile byte) zoomx loadstore zp[1]:7 1.3529411764705883
+(volatile byte) xpos loadstore zp[1]:8 0.3939393939393939
+(volatile byte) zoomx loadstore zp[1]:7 1.3939393939393938
 
 reg byte z [ irq1::line#10 irq1::line#1 ]
 reg byte x [ irq1::wobblepos#10 irq1::wobblepos#0 irq1::wobblepos#7 irq1::wobblepos#1 ]
+reg byte x [ irq1::i#2 irq1::i#1 ]
+reg byte y [ irq1::colsin#2 irq1::colsin#1 irq1::colsin#0 ]
 reg byte x [ irq1::l#2 irq1::l#1 ]
 zp[1]:2 [ irq1::barcnt#2 irq1::barcnt#1 ]
 zp[1]:3 [ irq1::barsin#2 irq1::barsin#0 irq1::barsin#1 ]
-reg byte x [ irq1::i2#2 irq1::i2#1 ]
-reg byte x [ irq1::i#2 irq1::i#1 ]
+reg byte x [ irq1::i3#2 irq1::i3#1 ]
 reg byte x [ irq1::i1#2 irq1::i1#1 ]
+reg byte x [ irq1::i2#2 irq1::i2#1 ]
 reg byte z [ irq1::barcol#4 irq1::barcol#3 irq1::barcol#0 irq1::barcol#1 irq1::barcol#2 ]
 reg byte y [ irq1::idx#4 irq1::idx#3 irq1::idx#0 irq1::idx#1 irq1::idx#2 ]
 reg byte x [ main::i1#2 main::i1#1 ]
+reg byte x [ main::i2#2 main::i2#1 ]
 reg byte x [ main::i#2 main::i#1 ]
 zp[2]:4 [ memset::dst#2 memset::dst#1 ]
 zp[1]:6 [ sinpos ]
 zp[1]:7 [ zoomx ]
 zp[1]:8 [ xpos ]
 zp[1]:9 [ greetnm ]
-reg byte a [ irq1::$22 ]
 reg byte a [ irq1::$23 ]
+reg byte a [ irq1::$24 ]
+reg byte a [ irq1::col1#0 ]
+reg byte a [ irq1::col1#1 ]
 reg byte a [ irq1::col#0 ]
 reg byte a [ irq1::zoomval#0 ]
 reg byte a [ irq1::$7 ]
 reg byte a [ irq1::raster#0 ]
-reg byte a [ irq1::$12 ]

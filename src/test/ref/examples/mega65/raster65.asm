@@ -72,6 +72,7 @@
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+  // The screen address
   .label SCREEN = $400
   // Pointer to the song init routine
   .label songInit = SONG

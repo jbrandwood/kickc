@@ -8,6 +8,7 @@
 #include <mega65.h>
 #include <string.h>
 
+// The screen address
 char * const SCREEN = 0x0400;
 
 // Logo y-position (char row on screen)

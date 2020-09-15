@@ -1250,3 +1250,128 @@ inc
 //FRAGMENT vbuaa=vbuyy_plus_1
 tya
 inc
+//FRAGMENT vbuz1=pbuc1_derefidx_vbuz2_band_vbuc2
+lda #{c2}
+ldy {z2}
+and {c1},y
+sta {z1}
+//FRAGMENT vbuaa_neq_0_then_la1
+cmp #0
+bne {la1}
+//FRAGMENT vbuaa=pbuc1_derefidx_vbuz1_band_vbuc2
+lda #{c2}
+ldy {z1}
+and {c1},y
+//FRAGMENT vbuxx=pbuc1_derefidx_vbuz1_band_vbuc2
+lda #{c2}
+ldx {z1}
+and {c1},x
+tax
+//FRAGMENT vbuyy=pbuc1_derefidx_vbuz1_band_vbuc2
+lda #{c2}
+ldy {z1}
+and {c1},y
+tay
+//FRAGMENT vbuzz=pbuc1_derefidx_vbuz1_band_vbuc2
+lda #{c2}
+ldy {z1}
+and {c1},y
+taz
+//FRAGMENT vbuz1=pbuc1_derefidx_vbuaa_band_vbuc2
+tay
+lda #{c2}
+and {c1},y
+sta {z1}
+//FRAGMENT vbuaa=pbuc1_derefidx_vbuaa_band_vbuc2
+tay
+lda #{c2}
+and {c1},y
+//FRAGMENT vbuxx=pbuc1_derefidx_vbuaa_band_vbuc2
+tax
+lda #{c2}
+and {c1},x
+tax
+//FRAGMENT vbuyy=pbuc1_derefidx_vbuaa_band_vbuc2
+tay
+lda #{c2}
+and {c1},y
+tay
+//FRAGMENT vbuzz=pbuc1_derefidx_vbuaa_band_vbuc2
+tay
+lda #{c2}
+and {c1},y
+taz
+//FRAGMENT vbuz1=pbuc1_derefidx_vbuxx_band_vbuc2
+lda #{c2}
+and {c1},x
+sta {z1}
+//FRAGMENT vbuaa=pbuc1_derefidx_vbuxx_band_vbuc2
+lda #{c2}
+and {c1},x
+//FRAGMENT vbuxx=pbuc1_derefidx_vbuxx_band_vbuc2
+lda #{c2}
+and {c1},x
+tax
+//FRAGMENT vbuyy=pbuc1_derefidx_vbuxx_band_vbuc2
+lda #{c2}
+and {c1},x
+tay
+//FRAGMENT vbuzz=pbuc1_derefidx_vbuxx_band_vbuc2
+lda #{c2}
+and {c1},x
+taz
+//FRAGMENT vbuz1=pbuc1_derefidx_vbuyy_band_vbuc2
+lda #{c2}
+and {c1},y
+sta {z1}
+//FRAGMENT vbuaa=pbuc1_derefidx_vbuyy_band_vbuc2
+lda #{c2}
+and {c1},y
+//FRAGMENT vbuxx=pbuc1_derefidx_vbuyy_band_vbuc2
+lda #{c2}
+and {c1},y
+tax
+//FRAGMENT vbuyy=pbuc1_derefidx_vbuyy_band_vbuc2
+lda #{c2}
+and {c1},y
+tay
+//FRAGMENT vbuzz=pbuc1_derefidx_vbuyy_band_vbuc2
+lda #{c2}
+and {c1},y
+taz
+//FRAGMENT vbuz1=pbuc1_derefidx_vbuzz_band_vbuc2
+tza
+tay
+lda #{c2}
+and {c1},y
+sta {z1}
+//FRAGMENT vbuaa=pbuc1_derefidx_vbuzz_band_vbuc2
+tza
+tay
+lda #{c2}
+and {c1},y
+//FRAGMENT vbuxx=pbuc1_derefidx_vbuzz_band_vbuc2
+tza
+tax
+lda #{c2}
+and {c1},x
+tax
+//FRAGMENT vbuyy=pbuc1_derefidx_vbuzz_band_vbuc2
+tza
+tay
+lda #{c2}
+and {c1},y
+tay
+//FRAGMENT vbuzz=pbuc1_derefidx_vbuzz_band_vbuc2
+tza
+tay
+lda #{c2}
+and {c1},y
+taz
+//FRAGMENT vbuxx=vbuz1_plus_1
+ldx {z1}
+inx
+//FRAGMENT _deref_pbuc1=vbuxx
+stx {c1}
+//FRAGMENT _deref_pbuc1=vbuzz
+stz {c1}

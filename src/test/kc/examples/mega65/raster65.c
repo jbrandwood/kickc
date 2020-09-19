@@ -1,8 +1,7 @@
-// Raster65 Demo Implementation in C 
-// Based on RASTER65 assembler demo made by DEFT in 2015
+// Raster65 Demo re-implementation in C by Jesper Gravgaard
+// Based on RASTER65 assembler demo made in 2015 and updated in 2020 by DEFT 
 // https://mega.scryptos.com/sharefolder/MEGA/MEGA65+filehost
 // https://www.forum64.de/index.php?thread/104591-xemu-vic-iv-implementation-update/&postID=1560511#post1560511
-
 #pragma target(mega65_c64)
 #pragma emulator("/Users/jespergravgaard/c64/mega65/xemu-hernandp/build/bin/xmega65.native -prg")
 #include <mega65.h>
@@ -203,7 +202,7 @@ interrupt(hardware_stack) void irq() {
             (SCREEN + SCROLL_ROW*40)[i] = (SCREEN + SCROLL_ROW*40 + 1)[i];
         // Show next char
         char nxt = *(scroll_ptr++);
-        if(nxt==0) {
+        if(nxt == 0) {
             scroll_ptr = SCROLL_TEXT;
             nxt = *scroll_ptr;
         }

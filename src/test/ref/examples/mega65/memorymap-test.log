@@ -1,5 +1,6 @@
 Resolved forward reference MEMORYBLOCK_4000 to (const nomodify byte) MEMORYBLOCK_4000
 Resolved forward reference MEMORYBLOCK_8000 to (const nomodify byte) MEMORYBLOCK_8000
+Resolved forward reference MEMORYBLOCK_4000 to (const nomodify byte) MEMORYBLOCK_4000
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -22,34 +23,48 @@ main::@2: scope:[main]  from main::@1
   *((const byte*) main::block2 + (number) 3) ← (number) $aa
   (byte~) main::$2 ← (const nomodify byte) MEMORYBLOCK_4000 | (const nomodify byte) MEMORYBLOCK_8000
   (byte) memoryRemap::remapBlocks#0 ← (byte~) main::$2
-  (word) memoryRemap::lowerMemoryPageOffset#0 ← (number) $c0
-  (word) memoryRemap::upperMemoryPageOffset#0 ← (number) $80
+  (word) memoryRemap::lowerPageOffset#0 ← (number) $c0
+  (word) memoryRemap::upperPageOffset#0 ← (number) $80
   call memoryRemap 
   to:main::@3
 main::@3: scope:[main]  from main::@2
   *((const byte*) main::block2 + (number) 4) ← *((const byte*) main::block1 + (number) 2)
   *((const byte*) main::block1 + (number) 5) ← *((const byte*) main::block2 + (number) 1)
+  (byte) memoryRemap256M::remapBlocks#0 ← (const nomodify byte) MEMORYBLOCK_4000
+  (dword) memoryRemap256M::lowerPageOffset#0 ← (number) $ff800-(number) $40
+  (dword) memoryRemap256M::upperPageOffset#0 ← (number) 0
+  call memoryRemap256M 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  *((const byte*) main::block1 + (number) 0) ← (number) 0
+  *((const byte*) main::block1 + (number) 1) ← (number) 1
+  (byte) memoryRemap256M::remapBlocks#1 ← (number) 0
+  (dword) memoryRemap256M::lowerPageOffset#1 ← (number) 0
+  (dword) memoryRemap256M::upperPageOffset#1 ← (number) 0
+  call memoryRemap256M 
+  to:main::@5
+main::@5: scope:[main]  from main::@4
   to:main::@return
-main::@return: scope:[main]  from main::@3
+main::@return: scope:[main]  from main::@5
   return 
   to:@return
 
-(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from main::@2 memoryRemapBlock
-  (word) memoryRemap::upperMemoryPageOffset#2 ← phi( main::@2/(word) memoryRemap::upperMemoryPageOffset#0 memoryRemapBlock/(word) memoryRemap::upperMemoryPageOffset#1 )
+  (word) memoryRemap::upperPageOffset#2 ← phi( main::@2/(word) memoryRemap::upperPageOffset#0 memoryRemapBlock/(word) memoryRemap::upperPageOffset#1 )
   (byte) memoryRemap::remapBlocks#2 ← phi( main::@2/(byte) memoryRemap::remapBlocks#0 memoryRemapBlock/(byte) memoryRemap::remapBlocks#1 )
-  (word) memoryRemap::lowerMemoryPageOffset#2 ← phi( main::@2/(word) memoryRemap::lowerMemoryPageOffset#0 memoryRemapBlock/(word) memoryRemap::lowerMemoryPageOffset#1 )
-  (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2
+  (word) memoryRemap::lowerPageOffset#2 ← phi( main::@2/(word) memoryRemap::lowerPageOffset#0 memoryRemapBlock/(word) memoryRemap::lowerPageOffset#1 )
+  (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#2
   *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
   (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (number) 4
-  (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2
+  (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#2
   (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (number) $f
   (number~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (number~) memoryRemap::$3
   *((const byte*) memoryRemap::xVal) ← (number~) memoryRemap::$4
-  (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2
+  (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#2
   *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
   (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (number) $f0
-  (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2
+  (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#2
   (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (number) $f
   (number~) memoryRemap::$9 ← (number~) memoryRemap::$6 | (number~) memoryRemap::$8
   *((const byte*) memoryRemap::zVal) ← (number~) memoryRemap::$9
@@ -70,13 +85,48 @@ memoryRemapBlock: scope:[memoryRemapBlock]  from main main::@1
   (number~) memoryRemapBlock::$2 ← (number) 1 << (byte) memoryRemapBlock::block#0
   (byte) memoryRemapBlock::blockBits#0 ← (number~) memoryRemapBlock::$2
   (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0
-  (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
-  (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
   call memoryRemap 
   to:memoryRemapBlock::@1
 memoryRemapBlock::@1: scope:[memoryRemapBlock]  from memoryRemapBlock
   to:memoryRemapBlock::@return
 memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock::@1
+  return 
+  to:@return
+
+(void()) memoryRemap256M((byte) memoryRemap256M::remapBlocks , (dword) memoryRemap256M::lowerPageOffset , (dword) memoryRemap256M::upperPageOffset)
+memoryRemap256M: scope:[memoryRemap256M]  from main::@3 main::@4
+  (byte) memoryRemap256M::remapBlocks#2 ← phi( main::@3/(byte) memoryRemap256M::remapBlocks#0 main::@4/(byte) memoryRemap256M::remapBlocks#1 )
+  (dword) memoryRemap256M::upperPageOffset#2 ← phi( main::@3/(dword) memoryRemap256M::upperPageOffset#0 main::@4/(dword) memoryRemap256M::upperPageOffset#1 )
+  (dword) memoryRemap256M::lowerPageOffset#2 ← phi( main::@3/(dword) memoryRemap256M::lowerPageOffset#0 main::@4/(dword) memoryRemap256M::lowerPageOffset#1 )
+  (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (number) 4
+  (byte~) memoryRemap256M::$1 ← > (word)(dword~) memoryRemap256M::$0
+  *((const byte*) memoryRemap256M::lMb) ← (byte~) memoryRemap256M::$1
+  (dword~) memoryRemap256M::$2 ← (dword) memoryRemap256M::upperPageOffset#2 >> (number) 4
+  (byte~) memoryRemap256M::$3 ← > (word)(dword~) memoryRemap256M::$2
+  *((const byte*) memoryRemap256M::uMb) ← (byte~) memoryRemap256M::$3
+  (word~) memoryRemap256M::$4 ← < (dword) memoryRemap256M::lowerPageOffset#2
+  (byte~) memoryRemap256M::$5 ← < (word~) memoryRemap256M::$4
+  *((const byte*) memoryRemap256M::aVal) ← (byte~) memoryRemap256M::$5
+  (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (number) 4
+  (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2
+  (byte~) memoryRemap256M::$8 ← > (word~) memoryRemap256M::$7
+  (number~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (number) $f
+  (number~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (number~) memoryRemap256M::$9
+  *((const byte*) memoryRemap256M::xVal) ← (number~) memoryRemap256M::$10
+  (word~) memoryRemap256M::$11 ← < (dword) memoryRemap256M::upperPageOffset#2
+  (byte~) memoryRemap256M::$12 ← < (word~) memoryRemap256M::$11
+  *((const byte*) memoryRemap256M::yVal) ← (byte~) memoryRemap256M::$12
+  (number~) memoryRemap256M::$13 ← (byte) memoryRemap256M::remapBlocks#2 & (number) $f0
+  (word~) memoryRemap256M::$14 ← < (dword) memoryRemap256M::upperPageOffset#2
+  (byte~) memoryRemap256M::$15 ← > (word~) memoryRemap256M::$14
+  (number~) memoryRemap256M::$16 ← (byte~) memoryRemap256M::$15 & (number) $f
+  (number~) memoryRemap256M::$17 ← (number~) memoryRemap256M::$13 | (number~) memoryRemap256M::$16
+  *((const byte*) memoryRemap256M::zVal) ← (number~) memoryRemap256M::$17
+  asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap256M::@return
+memoryRemap256M::@return: scope:[memoryRemap256M]  from memoryRemap256M
   return 
   to:@return
 
@@ -385,10 +435,12 @@ SYMBOL TABLE SSA
 (label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@4
+(label) main::@5
 (label) main::@return
 (const byte*) main::block1 = (byte*)(number) $4000
 (const byte*) main::block2 = (byte*)(number) $8000
-(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
 (byte~) memoryRemap::$0
 (byte~) memoryRemap::$1
 (byte~) memoryRemap::$2
@@ -401,21 +453,59 @@ SYMBOL TABLE SSA
 (number~) memoryRemap::$9
 (label) memoryRemap::@return
 (const byte*) memoryRemap::aVal = (byte*)(number) $fc
-(word) memoryRemap::lowerMemoryPageOffset
-(word) memoryRemap::lowerMemoryPageOffset#0
-(word) memoryRemap::lowerMemoryPageOffset#1
-(word) memoryRemap::lowerMemoryPageOffset#2
+(word) memoryRemap::lowerPageOffset
+(word) memoryRemap::lowerPageOffset#0
+(word) memoryRemap::lowerPageOffset#1
+(word) memoryRemap::lowerPageOffset#2
 (byte) memoryRemap::remapBlocks
 (byte) memoryRemap::remapBlocks#0
 (byte) memoryRemap::remapBlocks#1
 (byte) memoryRemap::remapBlocks#2
-(word) memoryRemap::upperMemoryPageOffset
-(word) memoryRemap::upperMemoryPageOffset#0
-(word) memoryRemap::upperMemoryPageOffset#1
-(word) memoryRemap::upperMemoryPageOffset#2
+(word) memoryRemap::upperPageOffset
+(word) memoryRemap::upperPageOffset#0
+(word) memoryRemap::upperPageOffset#1
+(word) memoryRemap::upperPageOffset#2
 (const byte*) memoryRemap::xVal = (byte*)(number) $fd
 (const byte*) memoryRemap::yVal = (byte*)(number) $fe
 (const byte*) memoryRemap::zVal = (byte*)(number) $ff
+(void()) memoryRemap256M((byte) memoryRemap256M::remapBlocks , (dword) memoryRemap256M::lowerPageOffset , (dword) memoryRemap256M::upperPageOffset)
+(dword~) memoryRemap256M::$0
+(byte~) memoryRemap256M::$1
+(number~) memoryRemap256M::$10
+(word~) memoryRemap256M::$11
+(byte~) memoryRemap256M::$12
+(number~) memoryRemap256M::$13
+(word~) memoryRemap256M::$14
+(byte~) memoryRemap256M::$15
+(number~) memoryRemap256M::$16
+(number~) memoryRemap256M::$17
+(dword~) memoryRemap256M::$2
+(byte~) memoryRemap256M::$3
+(word~) memoryRemap256M::$4
+(byte~) memoryRemap256M::$5
+(byte~) memoryRemap256M::$6
+(word~) memoryRemap256M::$7
+(byte~) memoryRemap256M::$8
+(number~) memoryRemap256M::$9
+(label) memoryRemap256M::@return
+(const byte*) memoryRemap256M::aVal = (byte*)(number) $fc
+(const byte*) memoryRemap256M::lMb = (byte*)(number) $fa
+(dword) memoryRemap256M::lowerPageOffset
+(dword) memoryRemap256M::lowerPageOffset#0
+(dword) memoryRemap256M::lowerPageOffset#1
+(dword) memoryRemap256M::lowerPageOffset#2
+(byte) memoryRemap256M::remapBlocks
+(byte) memoryRemap256M::remapBlocks#0
+(byte) memoryRemap256M::remapBlocks#1
+(byte) memoryRemap256M::remapBlocks#2
+(const byte*) memoryRemap256M::uMb = (byte*)(number) $fb
+(dword) memoryRemap256M::upperPageOffset
+(dword) memoryRemap256M::upperPageOffset#0
+(dword) memoryRemap256M::upperPageOffset#1
+(dword) memoryRemap256M::upperPageOffset#2
+(const byte*) memoryRemap256M::xVal = (byte*)(number) $fd
+(const byte*) memoryRemap256M::yVal = (byte*)(number) $fe
+(const byte*) memoryRemap256M::zVal = (byte*)(number) $ff
 (void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
 (word~) memoryRemapBlock::$0
 (number~) memoryRemapBlock::$1
@@ -449,12 +539,21 @@ Adding number conversion cast (unumber) $55 in *((const byte*) main::block2 + (n
 Adding number conversion cast (unumber) 2 in *((const byte*) main::block2 + (number) 2) ← ((unumber)) (number) $55
 Adding number conversion cast (unumber) $aa in *((const byte*) main::block2 + (number) 3) ← (number) $aa
 Adding number conversion cast (unumber) 3 in *((const byte*) main::block2 + (number) 3) ← ((unumber)) (number) $aa
-Adding number conversion cast (unumber) $c0 in (word) memoryRemap::lowerMemoryPageOffset#0 ← (number) $c0
-Adding number conversion cast (unumber) $80 in (word) memoryRemap::upperMemoryPageOffset#0 ← (number) $80
+Adding number conversion cast (unumber) $c0 in (word) memoryRemap::lowerPageOffset#0 ← (number) $c0
+Adding number conversion cast (unumber) $80 in (word) memoryRemap::upperPageOffset#0 ← (number) $80
 Adding number conversion cast (unumber) 2 in *((const byte*) main::block2 + (number) 4) ← *((const byte*) main::block1 + (number) 2)
 Adding number conversion cast (unumber) 4 in *((const byte*) main::block2 + (number) 4) ← *((const byte*) main::block1 + (unumber)(number) 2)
 Adding number conversion cast (unumber) 1 in *((const byte*) main::block1 + (number) 5) ← *((const byte*) main::block2 + (number) 1)
 Adding number conversion cast (unumber) 5 in *((const byte*) main::block1 + (number) 5) ← *((const byte*) main::block2 + (unumber)(number) 1)
+Adding number conversion cast (unumber) $ff800-$40 in (dword) memoryRemap256M::lowerPageOffset#0 ← (number) $ff800-(number) $40
+Adding number conversion cast (unumber) 0 in (dword) memoryRemap256M::upperPageOffset#0 ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) main::block1 + (number) 0) ← (number) 0
+Adding number conversion cast (unumber) 0 in *((const byte*) main::block1 + (number) 0) ← ((unumber)) (number) 0
+Adding number conversion cast (unumber) 1 in *((const byte*) main::block1 + (number) 1) ← (number) 1
+Adding number conversion cast (unumber) 1 in *((const byte*) main::block1 + (number) 1) ← ((unumber)) (number) 1
+Adding number conversion cast (unumber) 0 in (byte) memoryRemap256M::remapBlocks#1 ← (number) 0
+Adding number conversion cast (unumber) 0 in (dword) memoryRemap256M::lowerPageOffset#1 ← (number) 0
+Adding number conversion cast (unumber) 0 in (dword) memoryRemap256M::upperPageOffset#1 ← (number) 0
 Adding number conversion cast (unumber) 4 in (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (number) 4
 Adding number conversion cast (unumber) $f in (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (number) $f
 Adding number conversion cast (unumber) memoryRemap::$3 in (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (unumber)(number) $f
@@ -468,6 +567,17 @@ Adding number conversion cast (unumber) $20 in (number~) memoryRemapBlock::$1 �
 Adding number conversion cast (unumber) memoryRemapBlock::$1 in (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (unumber)(number) $20
 Adding number conversion cast (unumber) 1 in (number~) memoryRemapBlock::$2 ← (number) 1 << (byte) memoryRemapBlock::block#0
 Adding number conversion cast (unumber) memoryRemapBlock::$2 in (number~) memoryRemapBlock::$2 ← (unumber)(number) 1 << (byte) memoryRemapBlock::block#0
+Adding number conversion cast (unumber) 4 in (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (number) 4
+Adding number conversion cast (unumber) 4 in (dword~) memoryRemap256M::$2 ← (dword) memoryRemap256M::upperPageOffset#2 >> (number) 4
+Adding number conversion cast (unumber) 4 in (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (number) 4
+Adding number conversion cast (unumber) $f in (number~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (number) $f
+Adding number conversion cast (unumber) memoryRemap256M::$9 in (number~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (unumber)(number) $f
+Adding number conversion cast (unumber) memoryRemap256M::$10 in (number~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (unumber~) memoryRemap256M::$9
+Adding number conversion cast (unumber) $f0 in (number~) memoryRemap256M::$13 ← (byte) memoryRemap256M::remapBlocks#2 & (number) $f0
+Adding number conversion cast (unumber) memoryRemap256M::$13 in (number~) memoryRemap256M::$13 ← (byte) memoryRemap256M::remapBlocks#2 & (unumber)(number) $f0
+Adding number conversion cast (unumber) $f in (number~) memoryRemap256M::$16 ← (byte~) memoryRemap256M::$15 & (number) $f
+Adding number conversion cast (unumber) memoryRemap256M::$16 in (number~) memoryRemap256M::$16 ← (byte~) memoryRemap256M::$15 & (unumber)(number) $f
+Adding number conversion cast (unumber) memoryRemap256M::$17 in (number~) memoryRemap256M::$17 ← (unumber~) memoryRemap256M::$13 | (unumber~) memoryRemap256M::$16
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast (byte) memoryRemapBlock::blockPage#0 ← (unumber)(number) $40
 Inlining cast (word) memoryRemapBlock::memoryPage#0 ← (unumber)(number) $100
@@ -477,11 +587,24 @@ Inlining cast (byte) memoryRemapBlock::blockPage#1 ← (unumber)(number) $80
 Inlining cast (word) memoryRemapBlock::memoryPage#1 ← (unumber)(number) $100
 Inlining cast *((const byte*) main::block2 + (unumber)(number) 2) ← (unumber)(number) $55
 Inlining cast *((const byte*) main::block2 + (unumber)(number) 3) ← (unumber)(number) $aa
-Inlining cast (word) memoryRemap::lowerMemoryPageOffset#0 ← (unumber)(number) $c0
-Inlining cast (word) memoryRemap::upperMemoryPageOffset#0 ← (unumber)(number) $80
+Inlining cast (word) memoryRemap::lowerPageOffset#0 ← (unumber)(number) $c0
+Inlining cast (word) memoryRemap::upperPageOffset#0 ← (unumber)(number) $80
+Inlining cast (dword) memoryRemap256M::lowerPageOffset#0 ← (unumber)(number) $ff800-(number) $40
+Inlining cast (dword) memoryRemap256M::upperPageOffset#0 ← (unumber)(number) 0
+Inlining cast *((const byte*) main::block1 + (unumber)(number) 0) ← (unumber)(number) 0
+Inlining cast *((const byte*) main::block1 + (unumber)(number) 1) ← (unumber)(number) 1
+Inlining cast (byte) memoryRemap256M::remapBlocks#1 ← (unumber)(number) 0
+Inlining cast (dword) memoryRemap256M::lowerPageOffset#1 ← (unumber)(number) 0
+Inlining cast (dword) memoryRemap256M::upperPageOffset#1 ← (unumber)(number) 0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 16384
 Simplifying constant pointer cast (byte*) 32768
+Simplifying constant pointer cast (byte*) 252
+Simplifying constant pointer cast (byte*) 253
+Simplifying constant pointer cast (byte*) 254
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (byte*) 250
+Simplifying constant pointer cast (byte*) 251
 Simplifying constant pointer cast (byte*) 252
 Simplifying constant pointer cast (byte*) 253
 Simplifying constant pointer cast (byte*) 254
@@ -504,12 +627,26 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 4
 Simplifying constant integer cast 1
 Simplifying constant integer cast 5
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast $f0
 Simplifying constant integer cast $f
 Simplifying constant integer cast $20
 Simplifying constant integer cast 1
+Simplifying constant integer cast 4
+Simplifying constant integer cast 4
+Simplifying constant integer cast 4
+Simplifying constant integer cast $f
+Simplifying constant integer cast $f0
+Simplifying constant integer cast $f
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $40
 Finalized unsigned number type (word) $100
@@ -529,12 +666,26 @@ Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 4
 Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) $f0
 Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) $20
 Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $f0
+Finalized unsigned number type (byte) $f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in (unumber~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
 Inferred type updated to byte in (unumber~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
@@ -543,44 +694,75 @@ Inferred type updated to byte in (unumber~) memoryRemap::$8 ← (byte~) memoryRe
 Inferred type updated to byte in (unumber~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
 Inferred type updated to byte in (unumber~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
 Inferred type updated to byte in (unumber~) memoryRemapBlock::$2 ← (byte) 1 << (byte) memoryRemapBlock::block#0
+Inferred type updated to byte in (unumber~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f
+Inferred type updated to byte in (unumber~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (byte~) memoryRemap256M::$9
+Inferred type updated to byte in (unumber~) memoryRemap256M::$13 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0
+Inferred type updated to byte in (unumber~) memoryRemap256M::$16 ← (byte~) memoryRemap256M::$15 & (byte) $f
+Inferred type updated to byte in (unumber~) memoryRemap256M::$17 ← (byte~) memoryRemap256M::$13 | (byte~) memoryRemap256M::$16
 Alias memoryRemap::remapBlocks#0 = main::$2 
 Alias memoryRemapBlock::pageOffset#0 = memoryRemapBlock::$0 
 Alias memoryRemapBlock::block#0 = memoryRemapBlock::$1 
 Alias memoryRemapBlock::blockBits#0 = memoryRemapBlock::$2 
 Successful SSA optimization Pass2AliasElimination
+Identified duplicate assignment right side [68] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2
+Identified duplicate assignment right side [77] (word~) memoryRemap256M::$14 ← < (dword) memoryRemap256M::upperPageOffset#2
+Successful SSA optimization Pass2DuplicateRValueIdentification
 Constant right-side identified [10] (byte) memoryRemap::remapBlocks#0 ← (const nomodify byte) MEMORYBLOCK_4000 | (const nomodify byte) MEMORYBLOCK_8000
+Constant right-side identified [17] (dword) memoryRemap256M::lowerPageOffset#0 ← (unumber)(number) $ff800-(number) $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant (const byte) memoryRemapBlock::blockPage#0 = $40
 Constant (const word) memoryRemapBlock::memoryPage#0 = $100
 Constant (const byte) memoryRemapBlock::blockPage#1 = $80
 Constant (const word) memoryRemapBlock::memoryPage#1 = $100
 Constant (const byte) memoryRemap::remapBlocks#0 = MEMORYBLOCK_4000|MEMORYBLOCK_8000
-Constant (const word) memoryRemap::lowerMemoryPageOffset#0 = $c0
-Constant (const word) memoryRemap::upperMemoryPageOffset#0 = $80
+Constant (const word) memoryRemap::lowerPageOffset#0 = $c0
+Constant (const word) memoryRemap::upperPageOffset#0 = $80
+Constant (const byte) memoryRemap256M::remapBlocks#0 = MEMORYBLOCK_4000
+Constant (const dword) memoryRemap256M::lowerPageOffset#0 = (unumber)$ff800-$40
+Constant (const dword) memoryRemap256M::upperPageOffset#0 = 0
+Constant (const byte) memoryRemap256M::remapBlocks#1 = 0
+Constant (const dword) memoryRemap256M::lowerPageOffset#1 = 0
+Constant (const dword) memoryRemap256M::upperPageOffset#1 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero main::block1 in [3] *((const byte*) main::block1 + (byte) 0) ← (byte) $55
+Simplifying expression containing zero main::block1 in [20] *((const byte*) main::block1 + (byte) 0) ← (byte) 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Rewriting division to use shift [29] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
+Alias memoryRemap256M::$7 = memoryRemap256M::$4 
+Alias memoryRemap256M::$14 = memoryRemap256M::$11 
+Successful SSA optimization Pass2AliasElimination
+Rewriting division to use shift [33] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings (const byte) memoryRemap::remapBlocks#0
-Inlining constant with var siblings (const word) memoryRemap::lowerMemoryPageOffset#0
-Inlining constant with var siblings (const word) memoryRemap::upperMemoryPageOffset#0
+Inlining constant with var siblings (const word) memoryRemap::lowerPageOffset#0
+Inlining constant with var siblings (const word) memoryRemap::upperPageOffset#0
 Inlining constant with var siblings (const byte) memoryRemapBlock::blockPage#0
 Inlining constant with var siblings (const word) memoryRemapBlock::memoryPage#0
 Inlining constant with var siblings (const byte) memoryRemapBlock::blockPage#1
 Inlining constant with var siblings (const word) memoryRemapBlock::memoryPage#1
-Constant inlined memoryRemap::upperMemoryPageOffset#0 = (byte) $80
+Inlining constant with var siblings (const byte) memoryRemap256M::remapBlocks#0
+Inlining constant with var siblings (const dword) memoryRemap256M::lowerPageOffset#0
+Inlining constant with var siblings (const dword) memoryRemap256M::upperPageOffset#0
+Inlining constant with var siblings (const byte) memoryRemap256M::remapBlocks#1
+Inlining constant with var siblings (const dword) memoryRemap256M::lowerPageOffset#1
+Inlining constant with var siblings (const dword) memoryRemap256M::upperPageOffset#1
 Constant inlined memoryRemapBlock::blockPage#1 = (byte) $80
 Constant inlined memoryRemap::remapBlocks#0 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000
 Constant inlined memoryRemapBlock::blockPage#0 = (byte) $40
-Constant inlined memoryRemap::lowerMemoryPageOffset#0 = (byte) $c0
 Constant inlined memoryRemapBlock::memoryPage#1 = (word) $100
 Constant inlined memoryRemapBlock::memoryPage#0 = (word) $100
+Constant inlined memoryRemap::upperPageOffset#0 = (byte) $80
+Constant inlined memoryRemap256M::upperPageOffset#1 = (byte) 0
+Constant inlined memoryRemap256M::upperPageOffset#0 = (byte) 0
+Constant inlined memoryRemap::lowerPageOffset#0 = (byte) $c0
+Constant inlined memoryRemap256M::lowerPageOffset#0 = (dword)(number) $ff800-(number) $40
+Constant inlined memoryRemap256M::lowerPageOffset#1 = (byte) 0
+Constant inlined memoryRemap256M::remapBlocks#1 = (byte) 0
+Constant inlined memoryRemap256M::remapBlocks#0 = (const nomodify byte) MEMORYBLOCK_4000
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::block1+1)
 Consolidated array index constant in *(main::block2+2)
@@ -589,20 +771,68 @@ Consolidated array index constant in *(main::block1+2)
 Consolidated array index constant in *(main::block2+4)
 Consolidated array index constant in *(main::block2+1)
 Consolidated array index constant in *(main::block1+5)
+Consolidated array index constant in *(main::block1+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
 Identical Phi Values (word) memoryRemapBlock::memoryPage#2 (word) $100
+Identical Phi Values (dword) memoryRemap256M::upperPageOffset#2 (byte) 0
 Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [44] (dword~) memoryRemap256M::$2 ← (byte) 0 >> (byte) 4
+Constant right-side identified [55] (word~) memoryRemap256M::$14 ← < (byte) 0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const dword) memoryRemap256M::$2 = 0>>4
+Constant (const word) memoryRemap256M::$14 = <0
+Successful SSA optimization Pass2ConstantIdentification
+Constant value identified (word)memoryRemap256M::$2 in [45] (byte~) memoryRemap256M::$3 ← > (word)(const dword) memoryRemap256M::$2
+Successful SSA optimization Pass2ConstantValues
+Simplifying constant evaluating to zero (byte) 0>>(byte) 4 in 
+Simplifying constant evaluating to zero <(byte) 0 in 
+Simplifying constant evaluating to zero (word)(const dword) memoryRemap256M::$2 in [45] (byte~) memoryRemap256M::$3 ← > (word)(const dword) memoryRemap256M::$2
+Successful SSA optimization PassNSimplifyConstantZero
+Eliminating unused constant (const dword) memoryRemap256M::$2
+Successful SSA optimization PassNEliminateUnusedVars
+Constant inlined memoryRemap256M::$14 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Constant right-side identified [44] (byte~) memoryRemap256M::$3 ← > (word) 0
+Constant right-side identified [54] (byte~) memoryRemap256M::$12 ← < (byte) 0
+Constant right-side identified [57] (byte~) memoryRemap256M::$15 ← > (byte) 0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) memoryRemap256M::$3 = >0
+Constant (const byte) memoryRemap256M::$12 = <0
+Constant (const byte) memoryRemap256M::$15 = >0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant evaluating to zero >(word) 0 in 
+Simplifying constant evaluating to zero <(byte) 0 in 
+Simplifying constant evaluating to zero >(byte) 0 in 
+Successful SSA optimization PassNSimplifyConstantZero
+Constant inlined memoryRemap256M::$15 = (byte) 0
+Constant inlined memoryRemap256M::$12 = (byte) 0
+Constant inlined memoryRemap256M::$3 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Constant right-side identified [55] (byte~) memoryRemap256M::$16 ← (byte) 0 & (byte) $f
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) memoryRemap256M::$16 = 0&$f
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant evaluating to zero (byte) 0&(byte) $f in 
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero memoryRemap256M::$13 in [56] (byte~) memoryRemap256M::$17 ← (byte~) memoryRemap256M::$13 | (const byte) memoryRemap256M::$16
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) memoryRemap256M::$16
+Successful SSA optimization PassNEliminateUnusedVars
+Alias memoryRemap256M::$17 = memoryRemap256M::$13 
+Successful SSA optimization Pass2AliasElimination
 Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of memoryRemapBlock::@1
 CALL GRAPH
-Calls in [main] to memoryRemapBlock:1 memoryRemapBlock:4 memoryRemap:7 
-Calls in [memoryRemapBlock] to memoryRemap:21 
+Calls in [main] to memoryRemapBlock:1 memoryRemapBlock:4 memoryRemap:7 memoryRemap256M:10 memoryRemap256M:13 
+Calls in [memoryRemapBlock] to memoryRemap:26 
 
-Created 4 initial phi equivalence classes
-Coalesced [18] memoryRemap::lowerMemoryPageOffset#3 ← memoryRemap::lowerMemoryPageOffset#1
-Coalesced [19] memoryRemap::remapBlocks#3 ← memoryRemap::remapBlocks#1
-Coalesced [20] memoryRemap::upperMemoryPageOffset#3 ← memoryRemap::upperMemoryPageOffset#1
-Coalesced down to 4 phi equivalence classes
+Created 6 initial phi equivalence classes
+Coalesced [23] memoryRemap::lowerPageOffset#3 ← memoryRemap::lowerPageOffset#1
+Coalesced [24] memoryRemap::remapBlocks#3 ← memoryRemap::remapBlocks#1
+Coalesced [25] memoryRemap::upperPageOffset#3 ← memoryRemap::upperPageOffset#1
+Coalesced down to 6 phi equivalence classes
+Culled Empty Block (label) main::@5
 Culled Empty Block (label) memoryRemapBlock::@1
 Adding NOP phi() at start of main
 
@@ -626,49 +856,80 @@ main::@2: scope:[main]  from main::@1
 main::@3: scope:[main]  from main::@2
   [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2)
   [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1)
+  [10] call memoryRemap256M 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  [11] *((const byte*) main::block1) ← (byte) 0
+  [12] *((const byte*) main::block1+(byte) 1) ← (byte) 1
+  [13] call memoryRemap256M 
   to:main::@return
-main::@return: scope:[main]  from main::@3
-  [10] return 
+main::@return: scope:[main]  from main::@4
+  [14] return 
   to:@return
 
 (void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
 memoryRemapBlock: scope:[memoryRemapBlock]  from main main::@1
-  [11] (byte) memoryRemapBlock::blockPage#2 ← phi( main/(byte) $40 main::@1/(byte) $80 )
-  [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2
-  [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5
-  [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0
-  [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0
-  [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
-  [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
-  [18] call memoryRemap 
+  [15] (byte) memoryRemapBlock::blockPage#2 ← phi( main/(byte) $40 main::@1/(byte) $80 )
+  [16] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2
+  [17] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5
+  [18] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0
+  [19] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0
+  [20] (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  [21] (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  [22] call memoryRemap 
   to:memoryRemapBlock::@return
 memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock
-  [19] return 
+  [23] return 
   to:@return
 
-(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
 memoryRemap: scope:[memoryRemap]  from main::@2 memoryRemapBlock
-  [20] (word) memoryRemap::upperMemoryPageOffset#2 ← phi( main::@2/(byte) $80 memoryRemapBlock/(word) memoryRemap::upperMemoryPageOffset#1 )
-  [20] (byte) memoryRemap::remapBlocks#2 ← phi( main::@2/(const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 memoryRemapBlock/(byte) memoryRemap::remapBlocks#1 )
-  [20] (word) memoryRemap::lowerMemoryPageOffset#2 ← phi( main::@2/(byte) $c0 memoryRemapBlock/(word) memoryRemap::lowerMemoryPageOffset#1 )
-  [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2
-  [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
-  [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4
-  [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2
-  [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
-  [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
-  [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4
-  [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2
-  [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
-  [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0
-  [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2
-  [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f
-  [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
-  [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9
+  [24] (word) memoryRemap::upperPageOffset#2 ← phi( main::@2/(byte) $80 memoryRemapBlock/(word) memoryRemap::upperPageOffset#1 )
+  [24] (byte) memoryRemap::remapBlocks#2 ← phi( main::@2/(const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 memoryRemapBlock/(byte) memoryRemap::remapBlocks#1 )
+  [24] (word) memoryRemap::lowerPageOffset#2 ← phi( main::@2/(byte) $c0 memoryRemapBlock/(word) memoryRemap::lowerPageOffset#1 )
+  [25] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#2
+  [26] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
+  [27] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4
+  [28] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#2
+  [29] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
+  [30] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
+  [31] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4
+  [32] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#2
+  [33] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
+  [34] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0
+  [35] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#2
+  [36] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f
+  [37] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
+  [38] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9
   asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
   to:memoryRemap::@return
 memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
-  [36] return 
+  [40] return 
+  to:@return
+
+(void()) memoryRemap256M((byte) memoryRemap256M::remapBlocks , (dword) memoryRemap256M::lowerPageOffset , (dword) memoryRemap256M::upperPageOffset)
+memoryRemap256M: scope:[memoryRemap256M]  from main::@3 main::@4
+  [41] (byte) memoryRemap256M::remapBlocks#2 ← phi( main::@3/(const nomodify byte) MEMORYBLOCK_4000 main::@4/(byte) 0 )
+  [41] (dword) memoryRemap256M::lowerPageOffset#2 ← phi( main::@3/(dword)(number) $ff800-(number) $40 main::@4/(byte) 0 )
+  [42] (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (byte) 4
+  [43] (byte~) memoryRemap256M::$1 ← > (word)(dword~) memoryRemap256M::$0
+  [44] *((const byte*) memoryRemap256M::lMb) ← (byte~) memoryRemap256M::$1
+  [45] *((const byte*) memoryRemap256M::uMb) ← (byte) 0
+  [46] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2
+  [47] (byte~) memoryRemap256M::$5 ← < (word~) memoryRemap256M::$7
+  [48] *((const byte*) memoryRemap256M::aVal) ← (byte~) memoryRemap256M::$5
+  [49] (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (byte) 4
+  [50] (byte~) memoryRemap256M::$8 ← > (word~) memoryRemap256M::$7
+  [51] (byte~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f
+  [52] (byte~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (byte~) memoryRemap256M::$9
+  [53] *((const byte*) memoryRemap256M::xVal) ← (byte~) memoryRemap256M::$10
+  [54] *((const byte*) memoryRemap256M::yVal) ← (byte) 0
+  [55] (byte~) memoryRemap256M::$17 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0
+  [56] *((const byte*) memoryRemap256M::zVal) ← (byte~) memoryRemap256M::$17
+  asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap256M::@return
+memoryRemap256M::@return: scope:[memoryRemap256M]  from memoryRemap256M
+  [58] return 
   to:@return
 
 
@@ -958,7 +1219,7 @@ VARIABLE REGISTER WEIGHTS
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
 (void()) main()
-(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
 (byte~) memoryRemap::$0 202.0
 (byte~) memoryRemap::$1 67.33333333333333
 (byte~) memoryRemap::$2 202.0
@@ -969,15 +1230,30 @@ VARIABLE REGISTER WEIGHTS
 (byte~) memoryRemap::$7 202.0
 (byte~) memoryRemap::$8 202.0
 (byte~) memoryRemap::$9 202.0
-(word) memoryRemap::lowerMemoryPageOffset
-(word) memoryRemap::lowerMemoryPageOffset#1 11.0
-(word) memoryRemap::lowerMemoryPageOffset#2 53.25
+(word) memoryRemap::lowerPageOffset
+(word) memoryRemap::lowerPageOffset#1 11.0
+(word) memoryRemap::lowerPageOffset#2 53.25
 (byte) memoryRemap::remapBlocks
 (byte) memoryRemap::remapBlocks#1 7.333333333333333
 (byte) memoryRemap::remapBlocks#2 21.299999999999997
-(word) memoryRemap::upperMemoryPageOffset
-(word) memoryRemap::upperMemoryPageOffset#1 22.0
-(word) memoryRemap::upperMemoryPageOffset#2 19.363636363636363
+(word) memoryRemap::upperPageOffset
+(word) memoryRemap::upperPageOffset#1 22.0
+(word) memoryRemap::upperPageOffset#2 19.363636363636363
+(void()) memoryRemap256M((byte) memoryRemap256M::remapBlocks , (dword) memoryRemap256M::lowerPageOffset , (dword) memoryRemap256M::upperPageOffset)
+(dword~) memoryRemap256M::$0 11.0
+(byte~) memoryRemap256M::$1 22.0
+(byte~) memoryRemap256M::$10 22.0
+(byte~) memoryRemap256M::$17 22.0
+(byte~) memoryRemap256M::$5 22.0
+(byte~) memoryRemap256M::$6 7.333333333333333
+(word~) memoryRemap256M::$7 8.25
+(byte~) memoryRemap256M::$8 22.0
+(byte~) memoryRemap256M::$9 22.0
+(dword) memoryRemap256M::lowerPageOffset
+(dword) memoryRemap256M::lowerPageOffset#2 4.4
+(byte) memoryRemap256M::remapBlocks
+(byte) memoryRemap256M::remapBlocks#2 1.5714285714285714
+(dword) memoryRemap256M::upperPageOffset
 (void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
 (byte) memoryRemapBlock::block
 (byte) memoryRemapBlock::block#0 22.0
@@ -991,9 +1267,11 @@ VARIABLE REGISTER WEIGHTS
 
 Initial phi equivalence classes
 [ memoryRemapBlock::blockPage#2 ]
-[ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ]
+[ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ]
 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
-[ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+[ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ]
+[ memoryRemap256M::lowerPageOffset#2 ]
+[ memoryRemap256M::remapBlocks#2 ]
 Added variable memoryRemapBlock::pageOffset#0 to live range equivalence class [ memoryRemapBlock::pageOffset#0 ]
 Added variable memoryRemapBlock::block#0 to live range equivalence class [ memoryRemapBlock::block#0 ]
 Added variable memoryRemapBlock::blockBits#0 to live range equivalence class [ memoryRemapBlock::blockBits#0 ]
@@ -1007,11 +1285,22 @@ Added variable memoryRemap::$6 to live range equivalence class [ memoryRemap::$6
 Added variable memoryRemap::$7 to live range equivalence class [ memoryRemap::$7 ]
 Added variable memoryRemap::$8 to live range equivalence class [ memoryRemap::$8 ]
 Added variable memoryRemap::$9 to live range equivalence class [ memoryRemap::$9 ]
+Added variable memoryRemap256M::$0 to live range equivalence class [ memoryRemap256M::$0 ]
+Added variable memoryRemap256M::$1 to live range equivalence class [ memoryRemap256M::$1 ]
+Added variable memoryRemap256M::$7 to live range equivalence class [ memoryRemap256M::$7 ]
+Added variable memoryRemap256M::$5 to live range equivalence class [ memoryRemap256M::$5 ]
+Added variable memoryRemap256M::$6 to live range equivalence class [ memoryRemap256M::$6 ]
+Added variable memoryRemap256M::$8 to live range equivalence class [ memoryRemap256M::$8 ]
+Added variable memoryRemap256M::$9 to live range equivalence class [ memoryRemap256M::$9 ]
+Added variable memoryRemap256M::$10 to live range equivalence class [ memoryRemap256M::$10 ]
+Added variable memoryRemap256M::$17 to live range equivalence class [ memoryRemap256M::$17 ]
 Complete equivalence classes
 [ memoryRemapBlock::blockPage#2 ]
-[ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ]
+[ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ]
 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
-[ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+[ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ]
+[ memoryRemap256M::lowerPageOffset#2 ]
+[ memoryRemap256M::remapBlocks#2 ]
 [ memoryRemapBlock::pageOffset#0 ]
 [ memoryRemapBlock::block#0 ]
 [ memoryRemapBlock::blockBits#0 ]
@@ -1025,28 +1314,50 @@ Complete equivalence classes
 [ memoryRemap::$7 ]
 [ memoryRemap::$8 ]
 [ memoryRemap::$9 ]
+[ memoryRemap256M::$0 ]
+[ memoryRemap256M::$1 ]
+[ memoryRemap256M::$7 ]
+[ memoryRemap256M::$5 ]
+[ memoryRemap256M::$6 ]
+[ memoryRemap256M::$8 ]
+[ memoryRemap256M::$9 ]
+[ memoryRemap256M::$10 ]
+[ memoryRemap256M::$17 ]
 Allocated zp[1]:2 [ memoryRemapBlock::blockPage#2 ]
-Allocated zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ]
+Allocated zp[2]:3 [ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ]
 Allocated zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
-Allocated zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
-Allocated zp[2]:8 [ memoryRemapBlock::pageOffset#0 ]
-Allocated zp[1]:10 [ memoryRemapBlock::block#0 ]
-Allocated zp[1]:11 [ memoryRemapBlock::blockBits#0 ]
-Allocated zp[1]:12 [ memoryRemap::$0 ]
-Allocated zp[1]:13 [ memoryRemap::$1 ]
-Allocated zp[1]:14 [ memoryRemap::$2 ]
-Allocated zp[1]:15 [ memoryRemap::$3 ]
-Allocated zp[1]:16 [ memoryRemap::$4 ]
-Allocated zp[1]:17 [ memoryRemap::$5 ]
-Allocated zp[1]:18 [ memoryRemap::$6 ]
-Allocated zp[1]:19 [ memoryRemap::$7 ]
-Allocated zp[1]:20 [ memoryRemap::$8 ]
-Allocated zp[1]:21 [ memoryRemap::$9 ]
+Allocated zp[2]:6 [ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ]
+Allocated zp[4]:8 [ memoryRemap256M::lowerPageOffset#2 ]
+Allocated zp[1]:12 [ memoryRemap256M::remapBlocks#2 ]
+Allocated zp[2]:13 [ memoryRemapBlock::pageOffset#0 ]
+Allocated zp[1]:15 [ memoryRemapBlock::block#0 ]
+Allocated zp[1]:16 [ memoryRemapBlock::blockBits#0 ]
+Allocated zp[1]:17 [ memoryRemap::$0 ]
+Allocated zp[1]:18 [ memoryRemap::$1 ]
+Allocated zp[1]:19 [ memoryRemap::$2 ]
+Allocated zp[1]:20 [ memoryRemap::$3 ]
+Allocated zp[1]:21 [ memoryRemap::$4 ]
+Allocated zp[1]:22 [ memoryRemap::$5 ]
+Allocated zp[1]:23 [ memoryRemap::$6 ]
+Allocated zp[1]:24 [ memoryRemap::$7 ]
+Allocated zp[1]:25 [ memoryRemap::$8 ]
+Allocated zp[1]:26 [ memoryRemap::$9 ]
+Allocated zp[4]:27 [ memoryRemap256M::$0 ]
+Allocated zp[1]:31 [ memoryRemap256M::$1 ]
+Allocated zp[2]:32 [ memoryRemap256M::$7 ]
+Allocated zp[1]:34 [ memoryRemap256M::$5 ]
+Allocated zp[1]:35 [ memoryRemap256M::$6 ]
+Allocated zp[1]:36 [ memoryRemap256M::$8 ]
+Allocated zp[1]:37 [ memoryRemap256M::$9 ]
+Allocated zp[1]:38 [ memoryRemap256M::$10 ]
+Allocated zp[1]:39 [ memoryRemap256M::$17 ]
 
 INITIAL ASM
 Target platform is mega65 / MEGA45GS02
   // File Comments
 // Test the MAP instruction for remapping memory
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
 // MEGA65 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
@@ -1075,9 +1386,9 @@ main: {
     .label block2 = $8000
     // [1] call memoryRemapBlock 
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
-    // [11] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+    // [15] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
   memoryRemapBlock_from_main:
-    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuz1=vbuc1 
+    // [15] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuz1=vbuc1 
     lda #$40
     sta.z memoryRemapBlock.blockPage
     jsr memoryRemapBlock
@@ -1093,9 +1404,9 @@ main: {
     sta block1+1
     // [4] call memoryRemapBlock 
   // Remap [$8000-$9fff] to point to [$10000-$11fff]
-    // [11] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
+    // [15] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
   memoryRemapBlock_from___b1:
-    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuz1=vbuc1 
+    // [15] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuz1=vbuc1 
     lda #$80
     sta.z memoryRemapBlock.blockPage
     jsr memoryRemapBlock
@@ -1111,21 +1422,21 @@ main: {
     sta block2+3
     // [7] call memoryRemap 
   // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
-    // [20] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
+    // [24] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
   memoryRemap_from___b2:
-    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
+    // [24] phi (word) memoryRemap::upperPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<$80
-    sta.z memoryRemap.upperMemoryPageOffset
+    sta.z memoryRemap.upperPageOffset
     lda #>$80
-    sta.z memoryRemap.upperMemoryPageOffset+1
-    // [20] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuz1=vbuc1 
+    sta.z memoryRemap.upperPageOffset+1
+    // [24] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuz1=vbuc1 
     lda #MEMORYBLOCK_4000|MEMORYBLOCK_8000
     sta.z memoryRemap.remapBlocks
-    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
+    // [24] phi (word) memoryRemap::lowerPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
     lda #<$c0
-    sta.z memoryRemap.lowerMemoryPageOffset
+    sta.z memoryRemap.lowerPageOffset
     lda #>$c0
-    sta.z memoryRemap.lowerMemoryPageOffset+1
+    sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     jmp __b3
     // main::@3
@@ -1137,10 +1448,52 @@ main: {
     // [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda block2+1
     sta block1+5
+    // [10] call memoryRemap256M 
+  // Remap [$4000-$5fff] to both point to [$ff80000-$ff81fff] COLORAM! (notice usage of page offsets)
+    // [41] phi from main::@3 to memoryRemap256M [phi:main::@3->memoryRemap256M]
+  memoryRemap256M_from___b3:
+    // [41] phi (byte) memoryRemap256M::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000 [phi:main::@3->memoryRemap256M#0] -- vbuz1=vbuc1 
+    lda #MEMORYBLOCK_4000
+    sta.z memoryRemap256M.remapBlocks
+    // [41] phi (dword) memoryRemap256M::lowerPageOffset#2 = (dword)(number) $ff800-(number) $40 [phi:main::@3->memoryRemap256M#1] -- vduz1=vduc1 
+    lda #<$ff800-$40
+    sta.z memoryRemap256M.lowerPageOffset
+    lda #>$ff800-$40
+    sta.z memoryRemap256M.lowerPageOffset+1
+    lda #<$ff800-$40>>$10
+    sta.z memoryRemap256M.lowerPageOffset+2
+    lda #>$ff800-$40>>$10
+    sta.z memoryRemap256M.lowerPageOffset+3
+    jsr memoryRemap256M
+    jmp __b4
+    // main::@4
+  __b4:
+    // [11] *((const byte*) main::block1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // Put colors in the upper left corner!
+    lda #0
+    sta block1
+    // [12] *((const byte*) main::block1+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta block1+1
+    // [13] call memoryRemap256M 
+  // Remap [$4000-$5fff] back to normal memory!
+    // [41] phi from main::@4 to memoryRemap256M [phi:main::@4->memoryRemap256M]
+  memoryRemap256M_from___b4:
+    // [41] phi (byte) memoryRemap256M::remapBlocks#2 = (byte) 0 [phi:main::@4->memoryRemap256M#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z memoryRemap256M.remapBlocks
+    // [41] phi (dword) memoryRemap256M::lowerPageOffset#2 = (byte) 0 [phi:main::@4->memoryRemap256M#1] -- vduz1=vbuc1 
+    lda #0
+    sta.z memoryRemap256M.lowerPageOffset
+    lda #0
+    sta.z memoryRemap256M.lowerPageOffset+1
+    sta.z memoryRemap256M.lowerPageOffset+2
+    sta.z memoryRemap256M.lowerPageOffset+3
+    jsr memoryRemap256M
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [14] return 
     rts
 }
   // memoryRemapBlock
@@ -1151,11 +1504,11 @@ main: {
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // memoryRemapBlock(byte zp(2) blockPage)
 memoryRemapBlock: {
-    .label pageOffset = 8
-    .label block = $a
-    .label blockBits = $b
+    .label pageOffset = $d
+    .label block = $f
+    .label blockBits = $10
     .label blockPage = 2
-    // [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuz2 
+    // [16] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuz2 
     sec
     lda #<$100
     sbc.z blockPage
@@ -1163,7 +1516,7 @@ memoryRemapBlock: {
     lda #>$100
     sbc #0
     sta.z pageOffset+1
-    // [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuz1=vbuz2_ror_5 
+    // [17] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuz1=vbuz2_ror_5 
     lda.z blockPage
     lsr
     lsr
@@ -1171,7 +1524,7 @@ memoryRemapBlock: {
     lsr
     lsr
     sta.z block
-    // [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuz1=vbuc1_rol_vbuz2 
+    // [18] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuz1=vbuc1_rol_vbuz2 
     lda #1
     ldy.z block
     cpy #0
@@ -1182,35 +1535,36 @@ memoryRemapBlock: {
     bne !-
   !e:
     sta.z blockBits
-    // [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuz1=vbuz2 
+    // [19] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuz1=vbuz2 
     lda.z blockBits
     sta.z memoryRemap.remapBlocks
-    // [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    // [20] (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
     lda.z pageOffset
-    sta.z memoryRemap.lowerMemoryPageOffset
+    sta.z memoryRemap.lowerPageOffset
     lda.z pageOffset+1
-    sta.z memoryRemap.lowerMemoryPageOffset+1
-    // [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    sta.z memoryRemap.lowerPageOffset+1
+    // [21] (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
     lda.z pageOffset
-    sta.z memoryRemap.upperMemoryPageOffset
+    sta.z memoryRemap.upperPageOffset
     lda.z pageOffset+1
-    sta.z memoryRemap.upperMemoryPageOffset+1
-    // [18] call memoryRemap 
-    // [20] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    sta.z memoryRemap.upperPageOffset+1
+    // [22] call memoryRemap 
+    // [24] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
   memoryRemap_from_memoryRemapBlock:
-    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (word) memoryRemap::upperMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
-    // [20] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
-    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (word) memoryRemap::lowerMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
+    // [24] phi (word) memoryRemap::upperPageOffset#2 = (word) memoryRemap::upperPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
+    // [24] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
+    // [24] phi (word) memoryRemap::lowerPageOffset#2 = (word) memoryRemap::lowerPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
     jsr memoryRemap
     jmp __breturn
     // memoryRemapBlock::@return
   __breturn:
-    // [19] return 
+    // [23] return 
     rts
 }
   // memoryRemap
 // Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
 // remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
 // - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
 // - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
@@ -1220,86 +1574,86 @@ memoryRemapBlock: {
 // - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
 // - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
 // - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
-// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
-// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
-// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
-// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
-// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
-// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
-// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
-// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
-// memoryRemap(byte zp(5) remapBlocks, word zp(3) lowerMemoryPageOffset, word zp(6) upperMemoryPageOffset)
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// memoryRemap(byte zp(5) remapBlocks, word zp(3) lowerPageOffset, word zp(6) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __0 = $c
-    .label __1 = $d
-    .label __2 = $e
-    .label __3 = $f
-    .label __4 = $10
-    .label __5 = $11
-    .label __6 = $12
-    .label __7 = $13
-    .label __8 = $14
-    .label __9 = $15
+    .label __0 = $11
+    .label __1 = $12
+    .label __2 = $13
+    .label __3 = $14
+    .label __4 = $15
+    .label __5 = $16
+    .label __6 = $17
+    .label __7 = $18
+    .label __8 = $19
+    .label __9 = $1a
     .label remapBlocks = 5
-    .label lowerMemoryPageOffset = 3
-    .label upperMemoryPageOffset = 6
-    // [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuz1=_lo_vwuz2 
-    lda.z lowerMemoryPageOffset
+    .label lowerPageOffset = 3
+    .label upperPageOffset = 6
+    // [25] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#2 -- vbuz1=_lo_vwuz2 
+    lda.z lowerPageOffset
     sta.z __0
-    // [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuz1 
+    // [26] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuz1 
     lda.z __0
     sta aVal
-    // [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    // [27] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuz2_rol_4 
     lda.z remapBlocks
     asl
     asl
     asl
     asl
     sta.z __1
-    // [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuz1=_hi_vwuz2 
-    lda.z lowerMemoryPageOffset+1
+    // [28] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#2 -- vbuz1=_hi_vwuz2 
+    lda.z lowerPageOffset+1
     sta.z __2
-    // [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [29] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z __2
     sta.z __3
-    // [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuz3 
+    // [30] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __1
     ora.z __3
     sta.z __4
-    // [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuz1 
+    // [31] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuz1 
     lda.z __4
     sta xVal
-    // [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2 -- vbuz1=_lo_vwuz2 
-    lda.z upperMemoryPageOffset
+    // [32] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#2 -- vbuz1=_lo_vwuz2 
+    lda.z upperPageOffset
     sta.z __5
-    // [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuz1 
+    // [33] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuz1 
     lda.z __5
     sta yVal
-    // [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuz2_band_vbuc1 
+    // [34] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuz2_band_vbuc1 
     lda #$f0
     and.z remapBlocks
     sta.z __6
-    // [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2 -- vbuz1=_hi_vwuz2 
-    lda.z upperMemoryPageOffset+1
+    // [35] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#2 -- vbuz1=_hi_vwuz2 
+    lda.z upperPageOffset+1
     sta.z __7
-    // [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    // [36] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
     lda #$f
     and.z __7
     sta.z __8
-    // [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuz3 
+    // [37] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuz3 
     lda.z __6
     ora.z __8
     sta.z __9
-    // [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuz1 
+    // [38] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuz1 
     lda.z __9
     sta zVal
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
@@ -1312,7 +1666,146 @@ memoryRemap: {
     jmp __breturn
     // memoryRemap::@return
   __breturn:
-    // [36] return 
+    // [40] return 
+    rts
+}
+  // memoryRemap256M
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the entire 256MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// memoryRemap256M(byte zp($c) remapBlocks, dword zp(8) lowerPageOffset)
+memoryRemap256M: {
+    .label lMb = $fa
+    .label uMb = $fb
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __0 = $1b
+    .label __1 = $1f
+    .label __5 = $22
+    .label __6 = $23
+    .label __7 = $20
+    .label __8 = $24
+    .label __9 = $25
+    .label __10 = $26
+    .label __17 = $27
+    .label lowerPageOffset = 8
+    .label remapBlocks = $c
+    // [42] (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (byte) 4 -- vduz1=vduz2_ror_4 
+    lda.z lowerPageOffset+3
+    lsr
+    sta.z __0+3
+    lda.z lowerPageOffset+2
+    ror
+    sta.z __0+2
+    lda.z lowerPageOffset+1
+    ror
+    sta.z __0+1
+    lda.z lowerPageOffset
+    ror
+    sta.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    // [43] (byte~) memoryRemap256M::$1 ← > (word)(dword~) memoryRemap256M::$0 -- vbuz1=_hi__word_vduz2 
+    lda.z __0+1
+    sta.z __1
+    // [44] *((const byte*) memoryRemap256M::lMb) ← (byte~) memoryRemap256M::$1 -- _deref_pbuc1=vbuz1 
+    lda.z __1
+    sta lMb
+    // [45] *((const byte*) memoryRemap256M::uMb) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta uMb
+    // [46] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2 -- vwuz1=_lo_vduz2 
+    lda.z lowerPageOffset
+    sta.z __7
+    lda.z lowerPageOffset+1
+    sta.z __7+1
+    // [47] (byte~) memoryRemap256M::$5 ← < (word~) memoryRemap256M::$7 -- vbuz1=_lo_vwuz2 
+    lda.z __7
+    sta.z __5
+    // [48] *((const byte*) memoryRemap256M::aVal) ← (byte~) memoryRemap256M::$5 -- _deref_pbuc1=vbuz1 
+    lda.z __5
+    sta aVal
+    // [49] (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    lda.z remapBlocks
+    asl
+    asl
+    asl
+    asl
+    sta.z __6
+    // [50] (byte~) memoryRemap256M::$8 ← > (word~) memoryRemap256M::$7 -- vbuz1=_hi_vwuz2 
+    lda.z __7+1
+    sta.z __8
+    // [51] (byte~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f
+    and.z __8
+    sta.z __9
+    // [52] (byte~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (byte~) memoryRemap256M::$9 -- vbuz1=vbuz2_bor_vbuz3 
+    lda.z __6
+    ora.z __9
+    sta.z __10
+    // [53] *((const byte*) memoryRemap256M::xVal) ← (byte~) memoryRemap256M::$10 -- _deref_pbuc1=vbuz1 
+    lda.z __10
+    sta xVal
+    // [54] *((const byte*) memoryRemap256M::yVal) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta yVal
+    // [55] (byte~) memoryRemap256M::$17 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f0
+    and.z remapBlocks
+    sta.z __17
+    // [56] *((const byte*) memoryRemap256M::zVal) ← (byte~) memoryRemap256M::$17 -- _deref_pbuc1=vbuz1 
+    lda.z __17
+    sta zVal
+    // asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda lMb
+    ldx #$f
+    ldy uMb
+    ldz #0
+    map
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap256M::@return
+  __breturn:
+    // [58] return 
     rts
 }
   // File Data
@@ -1324,57 +1817,91 @@ Statement [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 [ ] (  [ ] {
 Statement [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [11] *((const byte*) main::block1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const byte*) main::block1+(byte) 1) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ memoryRemapBlock::blockPage#2 ]
-Statement [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [17] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [18] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [20] (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
-Statement [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] ( memoryRemap:7 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:7 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:13 [ memoryRemap::$1 ]
-Statement [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] ( memoryRemap:7 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:7 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:18 [ memoryRemap::$6 ]
+Statement [21] (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 memoryRemap::upperPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 memoryRemap::upperPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 memoryRemap::upperPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [27] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] ( memoryRemap:7 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [29] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:7 [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:18 [ memoryRemap::$1 ]
+Statement [34] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] ( memoryRemap:7 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [36] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:7 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:23 [ memoryRemap::$6 ]
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [42] (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (byte) 4 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 memoryRemap256M::$0 ] ( memoryRemap256M:10 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 memoryRemap256M::$0 ] { }  memoryRemap256M:13 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 memoryRemap256M::$0 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:12 [ memoryRemap256M::remapBlocks#2 ]
+Statement [45] *((const byte*) memoryRemap256M::uMb) ← (byte) 0 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 ] ( memoryRemap256M:10 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 ] { }  memoryRemap256M:13 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 ] { }  ) always clobbers reg byte a 
+Statement [46] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 ] { }  ) always clobbers reg byte a 
+Statement [49] (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (byte) 4 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 memoryRemap256M::$6 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 memoryRemap256M::$6 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 memoryRemap256M::$6 ] { }  ) always clobbers reg byte a 
+Statement [51] (byte~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$6 memoryRemap256M::$9 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$6 memoryRemap256M::$9 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$6 memoryRemap256M::$9 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:35 [ memoryRemap256M::$6 ]
+Statement [54] *((const byte*) memoryRemap256M::yVal) ← (byte) 0 [ memoryRemap256M::remapBlocks#2 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 ] { }  ) always clobbers reg byte a 
+Statement [55] (byte~) memoryRemap256M::$17 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0 [ memoryRemap256M::$17 ] ( memoryRemap256M:10 [ memoryRemap256M::$17 ] { }  memoryRemap256M:13 [ memoryRemap256M::$17 ] { }  ) always clobbers reg byte a 
+Statement asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
 Statement [2] *((const byte*) main::block1) ← (byte) $55 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] ( memoryRemap:7 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:7 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] ( memoryRemap:7 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
-Statement [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:7 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [11] *((const byte*) main::block1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((const byte*) main::block1+(byte) 1) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [17] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [18] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [20] (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [21] (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 memoryRemap::upperPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 memoryRemap::upperPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemap::remapBlocks#1 memoryRemap::lowerPageOffset#1 memoryRemap::upperPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [27] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] ( memoryRemap:7 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::lowerPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [29] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:7 [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::remapBlocks#2 memoryRemap::upperPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [34] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] ( memoryRemap:7 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::upperPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [36] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:7 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:22 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:22 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperPageOffset#1 = memoryRemap::upperPageOffset#2 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
 Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [42] (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (byte) 4 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 memoryRemap256M::$0 ] ( memoryRemap256M:10 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 memoryRemap256M::$0 ] { }  memoryRemap256M:13 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 memoryRemap256M::$0 ] { }  ) always clobbers reg byte a 
+Statement [45] *((const byte*) memoryRemap256M::uMb) ← (byte) 0 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 ] ( memoryRemap256M:10 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 ] { }  memoryRemap256M:13 [ memoryRemap256M::lowerPageOffset#2 memoryRemap256M::remapBlocks#2 ] { }  ) always clobbers reg byte a 
+Statement [46] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 ] { }  ) always clobbers reg byte a 
+Statement [49] (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (byte) 4 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 memoryRemap256M::$6 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 memoryRemap256M::$6 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$7 memoryRemap256M::$6 ] { }  ) always clobbers reg byte a 
+Statement [51] (byte~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$6 memoryRemap256M::$9 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$6 memoryRemap256M::$9 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 memoryRemap256M::$6 memoryRemap256M::$9 ] { }  ) always clobbers reg byte a 
+Statement [54] *((const byte*) memoryRemap256M::yVal) ← (byte) 0 [ memoryRemap256M::remapBlocks#2 ] ( memoryRemap256M:10 [ memoryRemap256M::remapBlocks#2 ] { }  memoryRemap256M:13 [ memoryRemap256M::remapBlocks#2 ] { }  ) always clobbers reg byte a 
+Statement [55] (byte~) memoryRemap256M::$17 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0 [ memoryRemap256M::$17 ] ( memoryRemap256M:10 [ memoryRemap256M::$17 ] { }  memoryRemap256M:13 [ memoryRemap256M::$17 ] { }  ) always clobbers reg byte a 
+Statement asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
 Potential registers zp[1]:2 [ memoryRemapBlock::blockPage#2 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] : zp[2]:3 , 
+Potential registers zp[2]:3 [ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] : zp[1]:5 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ] : zp[2]:6 , 
-Potential registers zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] : zp[2]:8 , 
-Potential registers zp[1]:10 [ memoryRemapBlock::block#0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:11 [ memoryRemapBlock::blockBits#0 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:12 [ memoryRemap::$0 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:13 [ memoryRemap::$1 ] : zp[1]:13 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:14 [ memoryRemap::$2 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:15 [ memoryRemap::$3 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:16 [ memoryRemap::$4 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:17 [ memoryRemap::$5 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:18 [ memoryRemap::$6 ] : zp[1]:18 , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:19 [ memoryRemap::$7 ] : zp[1]:19 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:20 [ memoryRemap::$8 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , reg byte z , 
-Potential registers zp[1]:21 [ memoryRemap::$9 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:6 [ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ] : zp[2]:6 , 
+Potential registers zp[4]:8 [ memoryRemap256M::lowerPageOffset#2 ] : zp[4]:8 , 
+Potential registers zp[1]:12 [ memoryRemap256M::remapBlocks#2 ] : zp[1]:12 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:13 [ memoryRemapBlock::pageOffset#0 ] : zp[2]:13 , 
+Potential registers zp[1]:15 [ memoryRemapBlock::block#0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:16 [ memoryRemapBlock::blockBits#0 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:17 [ memoryRemap::$0 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:18 [ memoryRemap::$1 ] : zp[1]:18 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:19 [ memoryRemap::$2 ] : zp[1]:19 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:20 [ memoryRemap::$3 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:21 [ memoryRemap::$4 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:22 [ memoryRemap::$5 ] : zp[1]:22 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:23 [ memoryRemap::$6 ] : zp[1]:23 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:24 [ memoryRemap::$7 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:25 [ memoryRemap::$8 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:26 [ memoryRemap::$9 ] : zp[1]:26 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[4]:27 [ memoryRemap256M::$0 ] : zp[4]:27 , 
+Potential registers zp[1]:31 [ memoryRemap256M::$1 ] : zp[1]:31 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:32 [ memoryRemap256M::$7 ] : zp[2]:32 , 
+Potential registers zp[1]:34 [ memoryRemap256M::$5 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:35 [ memoryRemap256M::$6 ] : zp[1]:35 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:36 [ memoryRemap256M::$8 ] : zp[1]:36 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:37 [ memoryRemap256M::$9 ] : zp[1]:37 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:38 [ memoryRemap256M::$10 ] : zp[1]:38 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:39 [ memoryRemap256M::$17 ] : zp[1]:39 , reg byte a , reg byte x , reg byte y , reg byte z , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memoryRemap] 202: zp[1]:12 [ memoryRemap::$0 ] 202: zp[1]:14 [ memoryRemap::$2 ] 202: zp[1]:15 [ memoryRemap::$3 ] 202: zp[1]:16 [ memoryRemap::$4 ] 202: zp[1]:17 [ memoryRemap::$5 ] 202: zp[1]:19 [ memoryRemap::$7 ] 202: zp[1]:20 [ memoryRemap::$8 ] 202: zp[1]:21 [ memoryRemap::$9 ] 67.33: zp[1]:13 [ memoryRemap::$1 ] 67.33: zp[1]:18 [ memoryRemap::$6 ] 64.25: zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] 41.36: zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ] 28.63: zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
-Uplift Scope [memoryRemapBlock] 22: zp[1]:10 [ memoryRemapBlock::block#0 ] 22: zp[1]:11 [ memoryRemapBlock::blockBits#0 ] 11: zp[1]:2 [ memoryRemapBlock::blockPage#2 ] 6.6: zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] 
+Uplift Scope [memoryRemap] 202: zp[1]:17 [ memoryRemap::$0 ] 202: zp[1]:19 [ memoryRemap::$2 ] 202: zp[1]:20 [ memoryRemap::$3 ] 202: zp[1]:21 [ memoryRemap::$4 ] 202: zp[1]:22 [ memoryRemap::$5 ] 202: zp[1]:24 [ memoryRemap::$7 ] 202: zp[1]:25 [ memoryRemap::$8 ] 202: zp[1]:26 [ memoryRemap::$9 ] 67.33: zp[1]:18 [ memoryRemap::$1 ] 67.33: zp[1]:23 [ memoryRemap::$6 ] 64.25: zp[2]:3 [ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ] 41.36: zp[2]:6 [ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ] 28.63: zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
+Uplift Scope [memoryRemap256M] 22: zp[1]:31 [ memoryRemap256M::$1 ] 22: zp[1]:34 [ memoryRemap256M::$5 ] 22: zp[1]:36 [ memoryRemap256M::$8 ] 22: zp[1]:37 [ memoryRemap256M::$9 ] 22: zp[1]:38 [ memoryRemap256M::$10 ] 22: zp[1]:39 [ memoryRemap256M::$17 ] 11: zp[4]:27 [ memoryRemap256M::$0 ] 8.25: zp[2]:32 [ memoryRemap256M::$7 ] 7.33: zp[1]:35 [ memoryRemap256M::$6 ] 4.4: zp[4]:8 [ memoryRemap256M::lowerPageOffset#2 ] 1.57: zp[1]:12 [ memoryRemap256M::remapBlocks#2 ] 
+Uplift Scope [memoryRemapBlock] 22: zp[1]:15 [ memoryRemapBlock::block#0 ] 22: zp[1]:16 [ memoryRemapBlock::blockBits#0 ] 11: zp[1]:2 [ memoryRemapBlock::blockPage#2 ] 6.6: zp[2]:13 [ memoryRemapBlock::pageOffset#0 ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
@@ -1383,41 +1910,59 @@ Uplift Scope [MEGA65_VICIV]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [memoryRemap] best 326 combination reg byte a [ memoryRemap::$0 ] reg byte a [ memoryRemap::$2 ] reg byte a [ memoryRemap::$3 ] zp[1]:16 [ memoryRemap::$4 ] zp[1]:17 [ memoryRemap::$5 ] zp[1]:19 [ memoryRemap::$7 ] zp[1]:20 [ memoryRemap::$8 ] zp[1]:21 [ memoryRemap::$9 ] zp[1]:13 [ memoryRemap::$1 ] zp[1]:18 [ memoryRemap::$6 ] zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ] zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
+Uplifting [memoryRemap] best 642 combination reg byte a [ memoryRemap::$0 ] reg byte a [ memoryRemap::$2 ] reg byte a [ memoryRemap::$3 ] zp[1]:21 [ memoryRemap::$4 ] zp[1]:22 [ memoryRemap::$5 ] zp[1]:24 [ memoryRemap::$7 ] zp[1]:25 [ memoryRemap::$8 ] zp[1]:26 [ memoryRemap::$9 ] zp[1]:18 [ memoryRemap::$1 ] zp[1]:23 [ memoryRemap::$6 ] zp[2]:3 [ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ] zp[2]:6 [ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ] zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
 Limited combination testing to 100 combinations of 25000000 possible.
-Uplifting [memoryRemapBlock] best 312 combination reg byte a [ memoryRemapBlock::block#0 ] reg byte a [ memoryRemapBlock::blockBits#0 ] reg byte x [ memoryRemapBlock::blockPage#2 ] zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] 
-Uplifting [MOS6526_CIA] best 312 combination 
-Uplifting [MOS6569_VICII] best 312 combination 
-Uplifting [MOS6581_SID] best 312 combination 
-Uplifting [MOS4569_VICIII] best 312 combination 
-Uplifting [MEGA65_VICIV] best 312 combination 
-Uplifting [main] best 312 combination 
-Uplifting [] best 312 combination 
-Attempting to uplift remaining variables inzp[1]:16 [ memoryRemap::$4 ]
-Uplifting [memoryRemap] best 306 combination reg byte a [ memoryRemap::$4 ] 
-Attempting to uplift remaining variables inzp[1]:17 [ memoryRemap::$5 ]
-Uplifting [memoryRemap] best 300 combination reg byte a [ memoryRemap::$5 ] 
-Attempting to uplift remaining variables inzp[1]:19 [ memoryRemap::$7 ]
-Uplifting [memoryRemap] best 294 combination reg byte a [ memoryRemap::$7 ] 
-Attempting to uplift remaining variables inzp[1]:20 [ memoryRemap::$8 ]
-Uplifting [memoryRemap] best 288 combination reg byte a [ memoryRemap::$8 ] 
-Attempting to uplift remaining variables inzp[1]:21 [ memoryRemap::$9 ]
-Uplifting [memoryRemap] best 282 combination reg byte a [ memoryRemap::$9 ] 
-Attempting to uplift remaining variables inzp[1]:13 [ memoryRemap::$1 ]
-Uplifting [memoryRemap] best 282 combination zp[1]:13 [ memoryRemap::$1 ] 
-Attempting to uplift remaining variables inzp[1]:18 [ memoryRemap::$6 ]
-Uplifting [memoryRemap] best 282 combination zp[1]:18 [ memoryRemap::$6 ] 
+Uplifting [memoryRemap256M] best 624 combination reg byte a [ memoryRemap256M::$1 ] reg byte a [ memoryRemap256M::$5 ] reg byte a [ memoryRemap256M::$8 ] zp[1]:37 [ memoryRemap256M::$9 ] zp[1]:38 [ memoryRemap256M::$10 ] zp[1]:39 [ memoryRemap256M::$17 ] zp[4]:27 [ memoryRemap256M::$0 ] zp[2]:32 [ memoryRemap256M::$7 ] zp[1]:35 [ memoryRemap256M::$6 ] zp[4]:8 [ memoryRemap256M::lowerPageOffset#2 ] zp[1]:12 [ memoryRemap256M::remapBlocks#2 ] 
+Limited combination testing to 100 combinations of 250000 possible.
+Uplifting [memoryRemapBlock] best 610 combination reg byte a [ memoryRemapBlock::block#0 ] reg byte a [ memoryRemapBlock::blockBits#0 ] reg byte x [ memoryRemapBlock::blockPage#2 ] zp[2]:13 [ memoryRemapBlock::pageOffset#0 ] 
+Uplifting [MOS6526_CIA] best 610 combination 
+Uplifting [MOS6569_VICII] best 610 combination 
+Uplifting [MOS6581_SID] best 610 combination 
+Uplifting [MOS4569_VICIII] best 610 combination 
+Uplifting [MEGA65_VICIV] best 610 combination 
+Uplifting [main] best 610 combination 
+Uplifting [] best 610 combination 
+Attempting to uplift remaining variables inzp[1]:21 [ memoryRemap::$4 ]
+Uplifting [memoryRemap] best 604 combination reg byte a [ memoryRemap::$4 ] 
+Attempting to uplift remaining variables inzp[1]:22 [ memoryRemap::$5 ]
+Uplifting [memoryRemap] best 598 combination reg byte a [ memoryRemap::$5 ] 
+Attempting to uplift remaining variables inzp[1]:24 [ memoryRemap::$7 ]
+Uplifting [memoryRemap] best 592 combination reg byte a [ memoryRemap::$7 ] 
+Attempting to uplift remaining variables inzp[1]:25 [ memoryRemap::$8 ]
+Uplifting [memoryRemap] best 586 combination reg byte a [ memoryRemap::$8 ] 
+Attempting to uplift remaining variables inzp[1]:26 [ memoryRemap::$9 ]
+Uplifting [memoryRemap] best 580 combination reg byte a [ memoryRemap::$9 ] 
+Attempting to uplift remaining variables inzp[1]:18 [ memoryRemap::$1 ]
+Uplifting [memoryRemap] best 580 combination zp[1]:18 [ memoryRemap::$1 ] 
+Attempting to uplift remaining variables inzp[1]:23 [ memoryRemap::$6 ]
+Uplifting [memoryRemap] best 580 combination zp[1]:23 [ memoryRemap::$6 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
-Uplifting [memoryRemap] best 273 combination reg byte z [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
-Coalescing zero page register [ zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] ] with [ zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] ] - score: 1
-Allocated (was zp[2]:3) zp[2]:2 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 ]
-Allocated (was zp[2]:6) zp[2]:4 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
-Allocated (was zp[1]:13) zp[1]:6 [ memoryRemap::$1 ]
-Allocated (was zp[1]:18) zp[1]:7 [ memoryRemap::$6 ]
+Uplifting [memoryRemap] best 571 combination reg byte z [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
+Attempting to uplift remaining variables inzp[1]:37 [ memoryRemap256M::$9 ]
+Uplifting [memoryRemap256M] best 565 combination reg byte a [ memoryRemap256M::$9 ] 
+Attempting to uplift remaining variables inzp[1]:38 [ memoryRemap256M::$10 ]
+Uplifting [memoryRemap256M] best 559 combination reg byte a [ memoryRemap256M::$10 ] 
+Attempting to uplift remaining variables inzp[1]:39 [ memoryRemap256M::$17 ]
+Uplifting [memoryRemap256M] best 553 combination reg byte a [ memoryRemap256M::$17 ] 
+Attempting to uplift remaining variables inzp[1]:35 [ memoryRemap256M::$6 ]
+Uplifting [memoryRemap256M] best 553 combination zp[1]:35 [ memoryRemap256M::$6 ] 
+Attempting to uplift remaining variables inzp[1]:12 [ memoryRemap256M::remapBlocks#2 ]
+Uplifting [memoryRemap256M] best 543 combination reg byte z [ memoryRemap256M::remapBlocks#2 ] 
+Coalescing zero page register [ zp[2]:3 [ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 ] ] with [ zp[2]:13 [ memoryRemapBlock::pageOffset#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:32 [ memoryRemap256M::$7 ] ] with [ zp[2]:3 [ memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 ] ]
+Coalescing zero page register [ zp[1]:35 [ memoryRemap256M::$6 ] ] with [ zp[1]:18 [ memoryRemap::$1 ] ]
+Allocated (was zp[2]:6) zp[2]:2 [ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ]
+Allocated (was zp[4]:8) zp[4]:4 [ memoryRemap256M::lowerPageOffset#2 ]
+Allocated (was zp[1]:23) zp[1]:8 [ memoryRemap::$6 ]
+Allocated (was zp[4]:27) zp[4]:9 [ memoryRemap256M::$0 ]
+Allocated (was zp[2]:32) zp[2]:13 [ memoryRemap256M::$7 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 ]
+Allocated (was zp[1]:35) zp[1]:15 [ memoryRemap256M::$6 memoryRemap::$1 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test the MAP instruction for remapping memory
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
 // MEGA65 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
@@ -1446,9 +1991,9 @@ main: {
     .label block2 = $8000
     // [1] call memoryRemapBlock 
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
-    // [11] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+    // [15] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
   memoryRemapBlock_from_main:
-    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    // [15] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuxx=vbuc1 
     ldx #$40
     jsr memoryRemapBlock
     jmp __b1
@@ -1463,9 +2008,9 @@ main: {
     sta block1+1
     // [4] call memoryRemapBlock 
   // Remap [$8000-$9fff] to point to [$10000-$11fff]
-    // [11] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
+    // [15] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
   memoryRemapBlock_from___b1:
-    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    // [15] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuxx=vbuc1 
     ldx #$80
     jsr memoryRemapBlock
     jmp __b2
@@ -1480,20 +2025,20 @@ main: {
     sta block2+3
     // [7] call memoryRemap 
   // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
-    // [20] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
+    // [24] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
   memoryRemap_from___b2:
-    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
+    // [24] phi (word) memoryRemap::upperPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<$80
-    sta.z memoryRemap.upperMemoryPageOffset
+    sta.z memoryRemap.upperPageOffset
     lda #>$80
-    sta.z memoryRemap.upperMemoryPageOffset+1
-    // [20] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuzz=vbuc1 
+    sta.z memoryRemap.upperPageOffset+1
+    // [24] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #MEMORYBLOCK_4000|MEMORYBLOCK_8000
-    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
+    // [24] phi (word) memoryRemap::lowerPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
     lda #<$c0
-    sta.z memoryRemap.lowerMemoryPageOffset
+    sta.z memoryRemap.lowerPageOffset
     lda #>$c0
-    sta.z memoryRemap.lowerMemoryPageOffset+1
+    sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     jmp __b3
     // main::@3
@@ -1505,10 +2050,50 @@ main: {
     // [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda block2+1
     sta block1+5
+    // [10] call memoryRemap256M 
+  // Remap [$4000-$5fff] to both point to [$ff80000-$ff81fff] COLORAM! (notice usage of page offsets)
+    // [41] phi from main::@3 to memoryRemap256M [phi:main::@3->memoryRemap256M]
+  memoryRemap256M_from___b3:
+    // [41] phi (byte) memoryRemap256M::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000 [phi:main::@3->memoryRemap256M#0] -- vbuzz=vbuc1 
+    ldz #MEMORYBLOCK_4000
+    // [41] phi (dword) memoryRemap256M::lowerPageOffset#2 = (dword)(number) $ff800-(number) $40 [phi:main::@3->memoryRemap256M#1] -- vduz1=vduc1 
+    lda #<$ff800-$40
+    sta.z memoryRemap256M.lowerPageOffset
+    lda #>$ff800-$40
+    sta.z memoryRemap256M.lowerPageOffset+1
+    lda #<$ff800-$40>>$10
+    sta.z memoryRemap256M.lowerPageOffset+2
+    lda #>$ff800-$40>>$10
+    sta.z memoryRemap256M.lowerPageOffset+3
+    jsr memoryRemap256M
+    jmp __b4
+    // main::@4
+  __b4:
+    // [11] *((const byte*) main::block1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // Put colors in the upper left corner!
+    lda #0
+    sta block1
+    // [12] *((const byte*) main::block1+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta block1+1
+    // [13] call memoryRemap256M 
+  // Remap [$4000-$5fff] back to normal memory!
+    // [41] phi from main::@4 to memoryRemap256M [phi:main::@4->memoryRemap256M]
+  memoryRemap256M_from___b4:
+    // [41] phi (byte) memoryRemap256M::remapBlocks#2 = (byte) 0 [phi:main::@4->memoryRemap256M#0] -- vbuzz=vbuc1 
+    ldz #0
+    // [41] phi (dword) memoryRemap256M::lowerPageOffset#2 = (byte) 0 [phi:main::@4->memoryRemap256M#1] -- vduz1=vbuc1 
+    lda #0
+    sta.z memoryRemap256M.lowerPageOffset
+    lda #0
+    sta.z memoryRemap256M.lowerPageOffset+1
+    sta.z memoryRemap256M.lowerPageOffset+2
+    sta.z memoryRemap256M.lowerPageOffset+3
+    jsr memoryRemap256M
     jmp __breturn
     // main::@return
   __breturn:
-    // [10] return 
+    // [14] return 
     rts
 }
   // memoryRemapBlock
@@ -1519,8 +2104,8 @@ main: {
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // memoryRemapBlock(byte register(X) blockPage)
 memoryRemapBlock: {
-    .label pageOffset = 2
-    // [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
+    .label pageOffset = $d
+    // [16] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
     stx.z $ff
     lda #<$100
     sec
@@ -1529,14 +2114,14 @@ memoryRemapBlock: {
     lda #>$100
     sbc #0
     sta.z pageOffset+1
-    // [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuaa=vbuxx_ror_5 
+    // [17] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuaa=vbuxx_ror_5 
     txa
     lsr
     lsr
     lsr
     lsr
     lsr
-    // [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
+    // [18] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
     tay
     lda #1
     cpy #0
@@ -1546,30 +2131,31 @@ memoryRemapBlock: {
     dey
     bne !-
   !e:
-    // [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuzz=vbuaa 
+    // [19] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuzz=vbuaa 
     taz
-    // [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
-    // [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    // [20] (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+    // [21] (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
     lda.z pageOffset
-    sta.z memoryRemap.upperMemoryPageOffset
+    sta.z memoryRemap.upperPageOffset
     lda.z pageOffset+1
-    sta.z memoryRemap.upperMemoryPageOffset+1
-    // [18] call memoryRemap 
-    // [20] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    sta.z memoryRemap.upperPageOffset+1
+    // [22] call memoryRemap 
+    // [24] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
   memoryRemap_from_memoryRemapBlock:
-    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (word) memoryRemap::upperMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
-    // [20] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
-    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (word) memoryRemap::lowerMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
+    // [24] phi (word) memoryRemap::upperPageOffset#2 = (word) memoryRemap::upperPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
+    // [24] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
+    // [24] phi (word) memoryRemap::lowerPageOffset#2 = (word) memoryRemap::lowerPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
     jsr memoryRemap
     jmp __breturn
     // memoryRemapBlock::@return
   __breturn:
-    // [19] return 
+    // [23] return 
     rts
 }
   // memoryRemap
 // Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
 // remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
 // - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
 // - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
@@ -1579,62 +2165,62 @@ memoryRemapBlock: {
 // - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
 // - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
 // - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
-// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
-// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
-// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
-// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
-// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
-// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
-// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
-// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
-// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerMemoryPageOffset, word zp(4) upperMemoryPageOffset)
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// memoryRemap(byte register(Z) remapBlocks, word zp($d) lowerPageOffset, word zp(2) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __1 = 6
-    .label __6 = 7
-    .label lowerMemoryPageOffset = 2
-    .label upperMemoryPageOffset = 4
-    // [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
-    lda.z lowerMemoryPageOffset
-    // [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
+    .label __1 = $f
+    .label __6 = 8
+    .label lowerPageOffset = $d
+    .label upperPageOffset = 2
+    // [25] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z lowerPageOffset
+    // [26] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
     sta aVal
-    // [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    // [27] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
     tza
     asl
     asl
     asl
     asl
     sta.z __1
-    // [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
-    lda.z lowerMemoryPageOffset+1
-    // [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // [28] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z lowerPageOffset+1
+    // [29] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    // [30] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
-    // [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
+    // [31] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
     sta xVal
-    // [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
-    lda.z upperMemoryPageOffset
-    // [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
+    // [32] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z upperPageOffset
+    // [33] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
     sta yVal
-    // [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
+    // [34] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
     tza
     and #$f0
     sta.z __6
-    // [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
-    lda.z upperMemoryPageOffset+1
-    // [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // [35] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z upperPageOffset+1
+    // [36] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
+    // [37] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __6
-    // [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
+    // [38] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
     sta zVal
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
     lda aVal
@@ -1646,7 +2232,127 @@ memoryRemap: {
     jmp __breturn
     // memoryRemap::@return
   __breturn:
-    // [36] return 
+    // [40] return 
+    rts
+}
+  // memoryRemap256M
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the entire 256MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// memoryRemap256M(byte register(Z) remapBlocks, dword zp(4) lowerPageOffset)
+memoryRemap256M: {
+    .label lMb = $fa
+    .label uMb = $fb
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __0 = 9
+    .label __6 = $f
+    .label __7 = $d
+    .label lowerPageOffset = 4
+    // [42] (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (byte) 4 -- vduz1=vduz2_ror_4 
+    lda.z lowerPageOffset+3
+    lsr
+    sta.z __0+3
+    lda.z lowerPageOffset+2
+    ror
+    sta.z __0+2
+    lda.z lowerPageOffset+1
+    ror
+    sta.z __0+1
+    lda.z lowerPageOffset
+    ror
+    sta.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    // [43] (byte~) memoryRemap256M::$1 ← > (word)(dword~) memoryRemap256M::$0 -- vbuaa=_hi__word_vduz1 
+    lda.z __0+1
+    // [44] *((const byte*) memoryRemap256M::lMb) ← (byte~) memoryRemap256M::$1 -- _deref_pbuc1=vbuaa 
+    sta lMb
+    // [45] *((const byte*) memoryRemap256M::uMb) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta uMb
+    // [46] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2 -- vwuz1=_lo_vduz2 
+    lda.z lowerPageOffset
+    sta.z __7
+    lda.z lowerPageOffset+1
+    sta.z __7+1
+    // [47] (byte~) memoryRemap256M::$5 ← < (word~) memoryRemap256M::$7 -- vbuaa=_lo_vwuz1 
+    lda.z __7
+    // [48] *((const byte*) memoryRemap256M::aVal) ← (byte~) memoryRemap256M::$5 -- _deref_pbuc1=vbuaa 
+    sta aVal
+    // [49] (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    tza
+    asl
+    asl
+    asl
+    asl
+    sta.z __6
+    // [50] (byte~) memoryRemap256M::$8 ← > (word~) memoryRemap256M::$7 -- vbuaa=_hi_vwuz1 
+    lda.z __7+1
+    // [51] (byte~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [52] (byte~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (byte~) memoryRemap256M::$9 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __6
+    // [53] *((const byte*) memoryRemap256M::xVal) ← (byte~) memoryRemap256M::$10 -- _deref_pbuc1=vbuaa 
+    sta xVal
+    // [54] *((const byte*) memoryRemap256M::yVal) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta yVal
+    // [55] (byte~) memoryRemap256M::$17 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0 -- vbuaa=vbuzz_band_vbuc1 
+    tza
+    and #$f0
+    // [56] *((const byte*) memoryRemap256M::zVal) ← (byte~) memoryRemap256M::$17 -- _deref_pbuc1=vbuaa 
+    sta zVal
+    // asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda lMb
+    ldx #$f
+    ldy uMb
+    ldz #0
+    map
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap256M::@return
+  __breturn:
+    // [58] return 
     rts
 }
   // File Data
@@ -1655,18 +2361,26 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction memoryRemapBlock_from_main:
 Removing instruction __b1:
 Removing instruction memoryRemapBlock_from___b1:
 Removing instruction __b2:
 Removing instruction memoryRemap_from___b2:
 Removing instruction __b3:
+Removing instruction memoryRemap256M_from___b3:
+Removing instruction __b4:
+Removing instruction memoryRemap256M_from___b4:
 Removing instruction __breturn:
 Removing instruction memoryRemap_from_memoryRemapBlock:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1962,34 +2676,57 @@ FINAL SYMBOL TABLE
 (label) main::@1
 (label) main::@2
 (label) main::@3
+(label) main::@4
 (label) main::@return
 (const byte*) main::block1 = (byte*) 16384
 (const byte*) main::block2 = (byte*) 32768
-(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
 (byte~) memoryRemap::$0 reg byte a 202.0
-(byte~) memoryRemap::$1 zp[1]:6 67.33333333333333
+(byte~) memoryRemap::$1 zp[1]:15 67.33333333333333
 (byte~) memoryRemap::$2 reg byte a 202.0
 (byte~) memoryRemap::$3 reg byte a 202.0
 (byte~) memoryRemap::$4 reg byte a 202.0
 (byte~) memoryRemap::$5 reg byte a 202.0
-(byte~) memoryRemap::$6 zp[1]:7 67.33333333333333
+(byte~) memoryRemap::$6 zp[1]:8 67.33333333333333
 (byte~) memoryRemap::$7 reg byte a 202.0
 (byte~) memoryRemap::$8 reg byte a 202.0
 (byte~) memoryRemap::$9 reg byte a 202.0
 (label) memoryRemap::@return
 (const byte*) memoryRemap::aVal = (byte*) 252
-(word) memoryRemap::lowerMemoryPageOffset
-(word) memoryRemap::lowerMemoryPageOffset#1 lowerMemoryPageOffset zp[2]:2 11.0
-(word) memoryRemap::lowerMemoryPageOffset#2 lowerMemoryPageOffset zp[2]:2 53.25
+(word) memoryRemap::lowerPageOffset
+(word) memoryRemap::lowerPageOffset#1 lowerPageOffset zp[2]:13 11.0
+(word) memoryRemap::lowerPageOffset#2 lowerPageOffset zp[2]:13 53.25
 (byte) memoryRemap::remapBlocks
 (byte) memoryRemap::remapBlocks#1 reg byte z 7.333333333333333
 (byte) memoryRemap::remapBlocks#2 reg byte z 21.299999999999997
-(word) memoryRemap::upperMemoryPageOffset
-(word) memoryRemap::upperMemoryPageOffset#1 upperMemoryPageOffset zp[2]:4 22.0
-(word) memoryRemap::upperMemoryPageOffset#2 upperMemoryPageOffset zp[2]:4 19.363636363636363
+(word) memoryRemap::upperPageOffset
+(word) memoryRemap::upperPageOffset#1 upperPageOffset zp[2]:2 22.0
+(word) memoryRemap::upperPageOffset#2 upperPageOffset zp[2]:2 19.363636363636363
 (const byte*) memoryRemap::xVal = (byte*) 253
 (const byte*) memoryRemap::yVal = (byte*) 254
 (const byte*) memoryRemap::zVal = (byte*) 255
+(void()) memoryRemap256M((byte) memoryRemap256M::remapBlocks , (dword) memoryRemap256M::lowerPageOffset , (dword) memoryRemap256M::upperPageOffset)
+(dword~) memoryRemap256M::$0 zp[4]:9 11.0
+(byte~) memoryRemap256M::$1 reg byte a 22.0
+(byte~) memoryRemap256M::$10 reg byte a 22.0
+(byte~) memoryRemap256M::$17 reg byte a 22.0
+(byte~) memoryRemap256M::$5 reg byte a 22.0
+(byte~) memoryRemap256M::$6 zp[1]:15 7.333333333333333
+(word~) memoryRemap256M::$7 zp[2]:13 8.25
+(byte~) memoryRemap256M::$8 reg byte a 22.0
+(byte~) memoryRemap256M::$9 reg byte a 22.0
+(label) memoryRemap256M::@return
+(const byte*) memoryRemap256M::aVal = (byte*) 252
+(const byte*) memoryRemap256M::lMb = (byte*) 250
+(dword) memoryRemap256M::lowerPageOffset
+(dword) memoryRemap256M::lowerPageOffset#2 lowerPageOffset zp[4]:4 4.4
+(byte) memoryRemap256M::remapBlocks
+(byte) memoryRemap256M::remapBlocks#2 reg byte z 1.5714285714285714
+(const byte*) memoryRemap256M::uMb = (byte*) 251
+(dword) memoryRemap256M::upperPageOffset
+(const byte*) memoryRemap256M::xVal = (byte*) 253
+(const byte*) memoryRemap256M::yVal = (byte*) 254
+(const byte*) memoryRemap256M::zVal = (byte*) 255
 (void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
 (label) memoryRemapBlock::@return
 (byte) memoryRemapBlock::block
@@ -2000,31 +2737,42 @@ FINAL SYMBOL TABLE
 (byte) memoryRemapBlock::blockPage#2 reg byte x 11.0
 (word) memoryRemapBlock::memoryPage
 (word) memoryRemapBlock::pageOffset
-(word) memoryRemapBlock::pageOffset#0 pageOffset zp[2]:2 6.6000000000000005
+(word) memoryRemapBlock::pageOffset#0 pageOffset zp[2]:13 6.6000000000000005
 
 reg byte x [ memoryRemapBlock::blockPage#2 ]
-zp[2]:2 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 ]
 reg byte z [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
-zp[2]:4 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+zp[2]:2 [ memoryRemap::upperPageOffset#2 memoryRemap::upperPageOffset#1 ]
+zp[4]:4 [ memoryRemap256M::lowerPageOffset#2 ]
+reg byte z [ memoryRemap256M::remapBlocks#2 ]
 reg byte a [ memoryRemapBlock::block#0 ]
 reg byte a [ memoryRemapBlock::blockBits#0 ]
 reg byte a [ memoryRemap::$0 ]
-zp[1]:6 [ memoryRemap::$1 ]
 reg byte a [ memoryRemap::$2 ]
 reg byte a [ memoryRemap::$3 ]
 reg byte a [ memoryRemap::$4 ]
 reg byte a [ memoryRemap::$5 ]
-zp[1]:7 [ memoryRemap::$6 ]
+zp[1]:8 [ memoryRemap::$6 ]
 reg byte a [ memoryRemap::$7 ]
 reg byte a [ memoryRemap::$8 ]
 reg byte a [ memoryRemap::$9 ]
+zp[4]:9 [ memoryRemap256M::$0 ]
+reg byte a [ memoryRemap256M::$1 ]
+zp[2]:13 [ memoryRemap256M::$7 memoryRemap::lowerPageOffset#2 memoryRemap::lowerPageOffset#1 memoryRemapBlock::pageOffset#0 ]
+reg byte a [ memoryRemap256M::$5 ]
+zp[1]:15 [ memoryRemap256M::$6 memoryRemap::$1 ]
+reg byte a [ memoryRemap256M::$8 ]
+reg byte a [ memoryRemap256M::$9 ]
+reg byte a [ memoryRemap256M::$10 ]
+reg byte a [ memoryRemap256M::$17 ]
 
 
 FINAL ASSEMBLER
-Score: 243
+Score: 505
 
   // File Comments
 // Test the MAP instruction for remapping memory
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
 // MEGA65 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
@@ -2054,8 +2802,8 @@ main: {
     // memoryRemapBlock(0x40, 0x100)
     // [1] call memoryRemapBlock 
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
-    // [11] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
-    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    // [15] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+    // [15] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuxx=vbuc1 
     ldx #$40
     jsr memoryRemapBlock
     // main::@1
@@ -2071,8 +2819,8 @@ main: {
     // memoryRemapBlock(0x80, 0x100)
     // [4] call memoryRemapBlock 
   // Remap [$8000-$9fff] to point to [$10000-$11fff]
-    // [11] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
-    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    // [15] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
+    // [15] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuxx=vbuc1 
     ldx #$80
     jsr memoryRemapBlock
     // main::@2
@@ -2088,19 +2836,19 @@ main: {
     // memoryRemap(MEMORYBLOCK_4000|MEMORYBLOCK_8000, 0x0c0, 0x080)
     // [7] call memoryRemap 
   // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
-    // [20] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
-    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
+    // [24] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
+    // [24] phi (word) memoryRemap::upperPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
     lda #<$80
-    sta.z memoryRemap.upperMemoryPageOffset
+    sta.z memoryRemap.upperPageOffset
     lda #>$80
-    sta.z memoryRemap.upperMemoryPageOffset+1
-    // [20] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuzz=vbuc1 
+    sta.z memoryRemap.upperPageOffset+1
+    // [24] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuzz=vbuc1 
     ldz #MEMORYBLOCK_4000|MEMORYBLOCK_8000
-    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
+    // [24] phi (word) memoryRemap::lowerPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
     lda #<$c0
-    sta.z memoryRemap.lowerMemoryPageOffset
+    sta.z memoryRemap.lowerPageOffset
     lda #>$c0
-    sta.z memoryRemap.lowerMemoryPageOffset+1
+    sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
     // main::@3
     // block2[4] = block1[2]
@@ -2112,9 +2860,48 @@ main: {
     // [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
     lda block2+1
     sta block1+5
+    // memoryRemap256M(MEMORYBLOCK_4000, 0xff800-0x00040, 0)
+    // [10] call memoryRemap256M 
+  // Remap [$4000-$5fff] to both point to [$ff80000-$ff81fff] COLORAM! (notice usage of page offsets)
+    // [41] phi from main::@3 to memoryRemap256M [phi:main::@3->memoryRemap256M]
+    // [41] phi (byte) memoryRemap256M::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000 [phi:main::@3->memoryRemap256M#0] -- vbuzz=vbuc1 
+    ldz #MEMORYBLOCK_4000
+    // [41] phi (dword) memoryRemap256M::lowerPageOffset#2 = (dword)(number) $ff800-(number) $40 [phi:main::@3->memoryRemap256M#1] -- vduz1=vduc1 
+    lda #<$ff800-$40
+    sta.z memoryRemap256M.lowerPageOffset
+    lda #>$ff800-$40
+    sta.z memoryRemap256M.lowerPageOffset+1
+    lda #<$ff800-$40>>$10
+    sta.z memoryRemap256M.lowerPageOffset+2
+    lda #>$ff800-$40>>$10
+    sta.z memoryRemap256M.lowerPageOffset+3
+    jsr memoryRemap256M
+    // main::@4
+    // block1[0] = 0
+    // [11] *((const byte*) main::block1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // Put colors in the upper left corner!
+    lda #0
+    sta block1
+    // block1[1] = 1
+    // [12] *((const byte*) main::block1+(byte) 1) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta block1+1
+    // memoryRemap256M(0, 0, 0)
+    // [13] call memoryRemap256M 
+  // Remap [$4000-$5fff] back to normal memory!
+    // [41] phi from main::@4 to memoryRemap256M [phi:main::@4->memoryRemap256M]
+    // [41] phi (byte) memoryRemap256M::remapBlocks#2 = (byte) 0 [phi:main::@4->memoryRemap256M#0] -- vbuzz=vbuc1 
+    ldz #0
+    // [41] phi (dword) memoryRemap256M::lowerPageOffset#2 = (byte) 0 [phi:main::@4->memoryRemap256M#1] -- vduz1=vbuc1 
+    lda #0
+    sta.z memoryRemap256M.lowerPageOffset
+    sta.z memoryRemap256M.lowerPageOffset+1
+    sta.z memoryRemap256M.lowerPageOffset+2
+    sta.z memoryRemap256M.lowerPageOffset+3
+    jsr memoryRemap256M
     // main::@return
     // }
-    // [10] return 
+    // [14] return 
     rts
 }
   // memoryRemapBlock
@@ -2125,9 +2912,9 @@ main: {
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // memoryRemapBlock(byte register(X) blockPage)
 memoryRemapBlock: {
-    .label pageOffset = 2
+    .label pageOffset = $d
     // pageOffset = memoryPage-blockPage
-    // [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
+    // [16] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
     stx.z $ff
     lda #<$100
     sec
@@ -2137,7 +2924,7 @@ memoryRemapBlock: {
     sbc #0
     sta.z pageOffset+1
     // block = blockPage / $20
-    // [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuaa=vbuxx_ror_5 
+    // [17] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuaa=vbuxx_ror_5 
     txa
     lsr
     lsr
@@ -2145,7 +2932,7 @@ memoryRemapBlock: {
     lsr
     lsr
     // blockBits = 1<<block
-    // [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
+    // [18] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
     tay
     lda #1
     cpy #0
@@ -2156,28 +2943,29 @@ memoryRemapBlock: {
     bne !-
   !e:
     // memoryRemap(blockBits, pageOffset, pageOffset)
-    // [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuzz=vbuaa 
+    // [19] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuzz=vbuaa 
     taz
-    // [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
-    // [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    // [20] (word) memoryRemap::lowerPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+    // [21] (word) memoryRemap::upperPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
     lda.z pageOffset
-    sta.z memoryRemap.upperMemoryPageOffset
+    sta.z memoryRemap.upperPageOffset
     lda.z pageOffset+1
-    sta.z memoryRemap.upperMemoryPageOffset+1
-    // [18] call memoryRemap 
-    // [20] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
-    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (word) memoryRemap::upperMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
-    // [20] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
-    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (word) memoryRemap::lowerMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
+    sta.z memoryRemap.upperPageOffset+1
+    // [22] call memoryRemap 
+    // [24] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    // [24] phi (word) memoryRemap::upperPageOffset#2 = (word) memoryRemap::upperPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
+    // [24] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
+    // [24] phi (word) memoryRemap::lowerPageOffset#2 = (word) memoryRemap::lowerPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
     jsr memoryRemap
     // memoryRemapBlock::@return
     // }
-    // [19] return 
+    // [23] return 
     rts
 }
   // memoryRemap
 // Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
 // remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
 // - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
 // - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
@@ -2187,76 +2975,76 @@ memoryRemapBlock: {
 // - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
 // - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
 // - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
-// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
-// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
-// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
-// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
-// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
-// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
-// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
-// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
-// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerMemoryPageOffset, word zp(4) upperMemoryPageOffset)
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// memoryRemap(byte register(Z) remapBlocks, word zp($d) lowerPageOffset, word zp(2) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __1 = 6
-    .label __6 = 7
-    .label lowerMemoryPageOffset = 2
-    .label upperMemoryPageOffset = 4
-    // <lowerMemoryPageOffset
-    // [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
-    lda.z lowerMemoryPageOffset
-    // *aVal = <lowerMemoryPageOffset
-    // [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
+    .label __1 = $f
+    .label __6 = 8
+    .label lowerPageOffset = $d
+    .label upperPageOffset = 2
+    // <lowerPageOffset
+    // [25] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z lowerPageOffset
+    // *aVal = <lowerPageOffset
+    // [26] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
     sta aVal
     // remapBlocks << 4
-    // [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    // [27] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
     tza
     asl
     asl
     asl
     asl
     sta.z __1
-    // >lowerMemoryPageOffset
-    // [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
-    lda.z lowerMemoryPageOffset+1
-    // >lowerMemoryPageOffset & 0xf
-    // [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // >lowerPageOffset
+    // [28] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z lowerPageOffset+1
+    // >lowerPageOffset & 0xf
+    // [29] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // (remapBlocks << 4)   | (>lowerMemoryPageOffset & 0xf)
-    // [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    // (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // [30] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __1
-    // *xVal = (remapBlocks << 4)   | (>lowerMemoryPageOffset & 0xf)
-    // [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
+    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // [31] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
     sta xVal
-    // <upperMemoryPageOffset
-    // [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
-    lda.z upperMemoryPageOffset
-    // *yVal = <upperMemoryPageOffset
-    // [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
+    // <upperPageOffset
+    // [32] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z upperPageOffset
+    // *yVal = <upperPageOffset
+    // [33] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
     sta yVal
     // remapBlocks & 0xf0
-    // [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
+    // [34] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
     tza
     and #$f0
     sta.z __6
-    // >upperMemoryPageOffset
-    // [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
-    lda.z upperMemoryPageOffset+1
-    // >upperMemoryPageOffset & 0xf
-    // [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    // >upperPageOffset
+    // [35] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z upperPageOffset+1
+    // >upperPageOffset & 0xf
+    // [36] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
     and #$f
-    // (remapBlocks & 0xf0) | (>upperMemoryPageOffset & 0xf)
-    // [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
+    // (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // [37] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __6
-    // *zVal = (remapBlocks & 0xf0) | (>upperMemoryPageOffset & 0xf)
-    // [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
+    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // [38] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
     sta zVal
     // asm
     // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
@@ -2268,7 +3056,142 @@ memoryRemap: {
     eom
     // memoryRemap::@return
     // }
-    // [36] return 
+    // [40] return 
+    rts
+}
+  // memoryRemap256M
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the entire 256MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// memoryRemap256M(byte register(Z) remapBlocks, dword zp(4) lowerPageOffset)
+memoryRemap256M: {
+    .label lMb = $fa
+    .label uMb = $fb
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __0 = 9
+    .label __6 = $f
+    .label __7 = $d
+    .label lowerPageOffset = 4
+    // lowerPageOffset>>4
+    // [42] (dword~) memoryRemap256M::$0 ← (dword) memoryRemap256M::lowerPageOffset#2 >> (byte) 4 -- vduz1=vduz2_ror_4 
+    lda.z lowerPageOffset+3
+    lsr
+    sta.z __0+3
+    lda.z lowerPageOffset+2
+    ror
+    sta.z __0+2
+    lda.z lowerPageOffset+1
+    ror
+    sta.z __0+1
+    lda.z lowerPageOffset
+    ror
+    sta.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    lsr.z __0+3
+    ror.z __0+2
+    ror.z __0+1
+    ror.z __0
+    // >((unsigned int)(lowerPageOffset>>4))
+    // [43] (byte~) memoryRemap256M::$1 ← > (word)(dword~) memoryRemap256M::$0 -- vbuaa=_hi__word_vduz1 
+    lda.z __0+1
+    // *lMb = >((unsigned int)(lowerPageOffset>>4))
+    // [44] *((const byte*) memoryRemap256M::lMb) ← (byte~) memoryRemap256M::$1 -- _deref_pbuc1=vbuaa 
+    sta lMb
+    // *uMb = >((unsigned int)(upperPageOffset>>4))
+    // [45] *((const byte*) memoryRemap256M::uMb) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta uMb
+    // <lowerPageOffset
+    // [46] (word~) memoryRemap256M::$7 ← < (dword) memoryRemap256M::lowerPageOffset#2 -- vwuz1=_lo_vduz2 
+    lda.z lowerPageOffset
+    sta.z __7
+    lda.z lowerPageOffset+1
+    sta.z __7+1
+    // < <lowerPageOffset
+    // [47] (byte~) memoryRemap256M::$5 ← < (word~) memoryRemap256M::$7 -- vbuaa=_lo_vwuz1 
+    lda.z __7
+    // *aVal = < <lowerPageOffset
+    // [48] *((const byte*) memoryRemap256M::aVal) ← (byte~) memoryRemap256M::$5 -- _deref_pbuc1=vbuaa 
+    sta aVal
+    // remapBlocks << 4
+    // [49] (byte~) memoryRemap256M::$6 ← (byte) memoryRemap256M::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    tza
+    asl
+    asl
+    asl
+    asl
+    sta.z __6
+    // > <lowerPageOffset
+    // [50] (byte~) memoryRemap256M::$8 ← > (word~) memoryRemap256M::$7 -- vbuaa=_hi_vwuz1 
+    lda.z __7+1
+    // > <lowerPageOffset & 0xf
+    // [51] (byte~) memoryRemap256M::$9 ← (byte~) memoryRemap256M::$8 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
+    // [52] (byte~) memoryRemap256M::$10 ← (byte~) memoryRemap256M::$6 | (byte~) memoryRemap256M::$9 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __6
+    // *xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
+    // [53] *((const byte*) memoryRemap256M::xVal) ← (byte~) memoryRemap256M::$10 -- _deref_pbuc1=vbuaa 
+    sta xVal
+    // *yVal = < <upperPageOffset
+    // [54] *((const byte*) memoryRemap256M::yVal) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta yVal
+    // (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
+    // [55] (byte~) memoryRemap256M::$17 ← (byte) memoryRemap256M::remapBlocks#2 & (byte) $f0 -- vbuaa=vbuzz_band_vbuc1 
+    tza
+    and #$f0
+    // *zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
+    // [56] *((const byte*) memoryRemap256M::zVal) ← (byte~) memoryRemap256M::$17 -- _deref_pbuc1=vbuaa 
+    sta zVal
+    // asm
+    // asm { ldalMb ldx#$0f ldyuMb ldz#$00 map ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda lMb
+    ldx #$f
+    ldy uMb
+    ldz #0
+    map
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    // memoryRemap256M::@return
+    // }
+    // [58] return 
     rts
 }
   // File Data

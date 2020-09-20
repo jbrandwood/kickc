@@ -1,4 +1,7 @@
 // Hello World for MEGA 65 - putting chars directly to the screen
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
 .file [name="test-vic4.prg", type="prg", segments="Program"]

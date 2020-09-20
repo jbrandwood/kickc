@@ -1,91 +1,103 @@
 // Test the MAP instruction for remapping memory
 #pragma target(mega65)
-#pragma emulator("/Users/jespergravgaard/c64/mega65/xemu-hernandp/build/bin/xmega65.native -prg")
 #include <mega65.h>
 
 void main() {
-    /*
-    // Remap block at $4000 to point to $10000
-    // offset = $10000-$4000 = $c000
-    asm {
-        lda #$c0 // lower blocks offset page
-        ldx #$40 // lower blocks to map + lower blocks offset 
-        ldy #0
-        ldz #0
-        map
-        eom
-    }
-    // Put data into $4000
-    asm {
-        lda #$55
-        sta $4000
-    }
-     */
-
-
     char * block1 = 0x4000;
     char * block2 = 0x8000;
-    memoryBlockRemap((unsigned char)>block1, 0x100);
-    memoryBlockRemap((unsigned char)>block2, 0x120);
 
-    // TODO: The mapper can only map the lower 32K to one memory address and the upper 32K to another
-    // TODO: The mapper always remaps both - so it cannot be separated into two different calls (without some memory)!
-
+    // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    memoryRemapBlock(0x40, 0x100);
+    // Put 0x55, 0xaa into $10000
     block1[0] = 0x55;
     block1[1] = 0xaa;
-    block2[0] = 0x55;
-    block2[1] = 0xaa;
-    //block2[1] = 0xaa;
-    //block2[2] = block1[1];
 
+    // Remap [$8000-$9fff] to point to [$10000-$11fff]
+    memoryRemapBlock(0x80, 0x100);
+    // Put 0x55, 0xaainto $10002
+    block2[2] = 0x55;
+    block2[3] = 0xaa;
 
-
+    // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
+    memoryRemap(MEMORYBLOCK_4000|MEMORYBLOCK_8000, 0x0c0, 0x080);
+    // Put 0x55, 0xaa into $10004 in a convoluted way
+    block2[4] = block1[2];
+    block1[5] = block2[1];
 
 }
 
 
-// Remap one of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
-// After the remapping the CPU will access the mapped memory whenever it uses instructions that access the mapped block.
+// Bit representing 8K block #0 of the 64K addressable memory ($0000-$1fff)
+const unsigned char MEMORYBLOCK_0000 = 0b00000001;
+// Bit representing 8K block #1 of the 64K addressable memory ($2000-$3fff)
+const unsigned char MEMORYBLOCK_2000 = 0b00000010;
+// Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
+const unsigned char MEMORYBLOCK_4000 = 0b00000100;
+// Bit representing 8K block #3 of the 64K addressable memory ($6000-$7fff)
+const unsigned char MEMORYBLOCK_6000 = 0b00001000;
+// Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
+const unsigned char MEMORYBLOCK_8000 = 0b00010000;
+// Bit representing 8K block #5 of the 64K addressable memory ($a000-$bfff)
+const unsigned char MEMORYBLOCK_A000 = 0b00100000;
+// Bit representing 8K block #6 of the 64K addressable memory ($c000-$dfff)
+const unsigned char MEMORYBLOCK_C000 = 0b01000000;
+// Bit representing 8K block #7 of the 64K addressable memory ($e000-$ffff)
+const unsigned char MEMORYBLOCK_E000 = 0b10000000;
+
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
+// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
+void memoryRemap(unsigned char remapBlocks, unsigned int lowerMemoryPageOffset, unsigned int upperMemoryPageOffset) {
+    char * aVal = 0xfc;
+    char * xVal = 0xfd;
+    char * yVal = 0xfe;
+    char * zVal = 0xff;
+    *aVal = <lowerMemoryPageOffset;
+    *xVal = (remapBlocks << 4)   | (>lowerMemoryPageOffset & 0xf);
+    *yVal = <upperMemoryPageOffset;
+    *zVal = (remapBlocks & 0xf0) | (>upperMemoryPageOffset & 0xf);
+    asm {
+        lda aVal    // lower blocks offset page low
+        ldx xVal    // lower blocks to map + lower blocks offset high nibble
+        ldy yVal    // upper blocks offset page
+        ldz zVal    // upper blocks to map + upper blocks offset page high nibble
+        map
+        eom
+    }
+}
+
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
 // blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.) 
-// Legal block page addresses are: $00: block $0000-$1fff, $20: block $2000-$3fff, ..., $e0: block $e000-$ffff 
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65. 
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
-void memoryBlockRemap(unsigned char blockPage, unsigned int memoryPage) {
-    // Which block is being remapped? (0-7)
-    char block = blockPage / $20;
+void memoryRemapBlock(unsigned char blockPage, unsigned int memoryPage) {
     // Find the page offset (the number of pages to offset the block)
     unsigned int pageOffset = memoryPage-blockPage;
-    if(block&4) {
-        // High block (4-7)
-        char * yVal = 0xfe;
-        char * zVal = 0xff;
-        *yVal = <pageOffset;
-        *zVal = 1<<(block) | (>pageOffset & 0xf);
-        asm {
-            lda #0      // lower blocks offset page low
-            ldx #0      // lower blocks to map + lower blocks offset page high nibble
-            ldy yVal    // upper blocks offset page
-            ldz zVal    // upper blocks to map + upper blocks offset page high nibble
-            map
-            eom
-        }
-    } else {
-        // Low block (0-3)
-        char * aVal = 0xfe;
-        char * xVal = 0xff;
-        *aVal = <pageOffset;
-        *xVal = 1<<(4|block) | (>pageOffset & 0xf);
-        asm {
-            lda aVal    // lower blocks offset page low
-            ldx xVal    // lower blocks to map + lower blocks offset high nibble
-            ldy #0      // upper blocks offset page
-            ldz #0      // upper blocks to map + upper blocks offset page high nibble
-            map
-            eom
-        }
-
-    }
-
+    // Which block is being remapped? (0-7)
+    char block = blockPage / $20;
+    char blockBits = 1<<block;
+    memoryRemap(blockBits, pageOffset, pageOffset);
 }
 
 // Test corner case behaviors

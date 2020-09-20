@@ -1,0 +1,2275 @@
+Resolved forward reference MEMORYBLOCK_4000 to (const nomodify byte) MEMORYBLOCK_4000
+Resolved forward reference MEMORYBLOCK_8000 to (const nomodify byte) MEMORYBLOCK_8000
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  (byte) memoryRemapBlock::blockPage#0 ← (number) $40
+  (word) memoryRemapBlock::memoryPage#0 ← (number) $100
+  call memoryRemapBlock 
+  to:main::@1
+main::@1: scope:[main]  from main
+  *((const byte*) main::block1 + (number) 0) ← (number) $55
+  *((const byte*) main::block1 + (number) 1) ← (number) $aa
+  (byte) memoryRemapBlock::blockPage#1 ← (number) $80
+  (word) memoryRemapBlock::memoryPage#1 ← (number) $100
+  call memoryRemapBlock 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  *((const byte*) main::block2 + (number) 2) ← (number) $55
+  *((const byte*) main::block2 + (number) 3) ← (number) $aa
+  (byte~) main::$2 ← (const nomodify byte) MEMORYBLOCK_4000 | (const nomodify byte) MEMORYBLOCK_8000
+  (byte) memoryRemap::remapBlocks#0 ← (byte~) main::$2
+  (word) memoryRemap::lowerMemoryPageOffset#0 ← (number) $c0
+  (word) memoryRemap::upperMemoryPageOffset#0 ← (number) $80
+  call memoryRemap 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  *((const byte*) main::block2 + (number) 4) ← *((const byte*) main::block1 + (number) 2)
+  *((const byte*) main::block1 + (number) 5) ← *((const byte*) main::block2 + (number) 1)
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+memoryRemap: scope:[memoryRemap]  from main::@2 memoryRemapBlock
+  (word) memoryRemap::upperMemoryPageOffset#2 ← phi( main::@2/(word) memoryRemap::upperMemoryPageOffset#0 memoryRemapBlock/(word) memoryRemap::upperMemoryPageOffset#1 )
+  (byte) memoryRemap::remapBlocks#2 ← phi( main::@2/(byte) memoryRemap::remapBlocks#0 memoryRemapBlock/(byte) memoryRemap::remapBlocks#1 )
+  (word) memoryRemap::lowerMemoryPageOffset#2 ← phi( main::@2/(word) memoryRemap::lowerMemoryPageOffset#0 memoryRemapBlock/(word) memoryRemap::lowerMemoryPageOffset#1 )
+  (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2
+  *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
+  (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (number) 4
+  (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2
+  (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (number) $f
+  (number~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (number~) memoryRemap::$3
+  *((const byte*) memoryRemap::xVal) ← (number~) memoryRemap::$4
+  (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2
+  *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
+  (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (number) $f0
+  (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2
+  (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (number) $f
+  (number~) memoryRemap::$9 ← (number~) memoryRemap::$6 | (number~) memoryRemap::$8
+  *((const byte*) memoryRemap::zVal) ← (number~) memoryRemap::$9
+  asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap::@return
+memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
+  return 
+  to:@return
+
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+memoryRemapBlock: scope:[memoryRemapBlock]  from main main::@1
+  (byte) memoryRemapBlock::blockPage#2 ← phi( main/(byte) memoryRemapBlock::blockPage#0 main::@1/(byte) memoryRemapBlock::blockPage#1 )
+  (word) memoryRemapBlock::memoryPage#2 ← phi( main/(word) memoryRemapBlock::memoryPage#0 main::@1/(word) memoryRemapBlock::memoryPage#1 )
+  (word~) memoryRemapBlock::$0 ← (word) memoryRemapBlock::memoryPage#2 - (byte) memoryRemapBlock::blockPage#2
+  (word) memoryRemapBlock::pageOffset#0 ← (word~) memoryRemapBlock::$0
+  (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (number) $20
+  (byte) memoryRemapBlock::block#0 ← (number~) memoryRemapBlock::$1
+  (number~) memoryRemapBlock::$2 ← (number) 1 << (byte) memoryRemapBlock::block#0
+  (byte) memoryRemapBlock::blockBits#0 ← (number~) memoryRemapBlock::$2
+  (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0
+  (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  call memoryRemap 
+  to:memoryRemapBlock::@1
+memoryRemapBlock::@1: scope:[memoryRemapBlock]  from memoryRemapBlock
+  to:memoryRemapBlock::@return
+memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock::@1
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(byte) MEGA65_VICIV::ALPHADELAY
+(byte) MEGA65_VICIV::B0PIX
+(byte) MEGA65_VICIV::B0_ADDR
+(byte) MEGA65_VICIV::B1PIX
+(byte) MEGA65_VICIV::B1_ADDR
+(byte) MEGA65_VICIV::B2PIX
+(byte) MEGA65_VICIV::B2_ADDR
+(byte) MEGA65_VICIV::B3PIX
+(byte) MEGA65_VICIV::B3_ADDR
+(byte) MEGA65_VICIV::B4PIX
+(byte) MEGA65_VICIV::B4_ADDR
+(byte) MEGA65_VICIV::B5PIX
+(byte) MEGA65_VICIV::B5_ADDR
+(byte) MEGA65_VICIV::B6PIX
+(byte) MEGA65_VICIV::B6_ADDR
+(byte) MEGA65_VICIV::B7PIX
+(byte) MEGA65_VICIV::B7_ADDR
+(byte) MEGA65_VICIV::BBDRPOS_HI
+(byte) MEGA65_VICIV::BBDRPOS_LO
+(byte) MEGA65_VICIV::BG_COLOR
+(byte) MEGA65_VICIV::BG_COLOR1
+(byte) MEGA65_VICIV::BG_COLOR2
+(byte) MEGA65_VICIV::BG_COLOR3
+(byte) MEGA65_VICIV::BORDER_COLOR
+(byte) MEGA65_VICIV::BP16ENS
+(byte) MEGA65_VICIV::BPCOMP
+(byte) MEGA65_VICIV::BPX
+(byte) MEGA65_VICIV::BPY
+(byte) MEGA65_VICIV::CHARPTR_HILO
+(byte) MEGA65_VICIV::CHARPTR_LOHI
+(byte) MEGA65_VICIV::CHARPTR_LOLO
+(byte) MEGA65_VICIV::CHARSTEP_HI
+(byte) MEGA65_VICIV::CHARSTEP_LO
+(byte) MEGA65_VICIV::CHRCOUNT
+(byte) MEGA65_VICIV::CHRXSCL
+(byte) MEGA65_VICIV::CHRYSCL
+(byte) MEGA65_VICIV::COLPTR_HI
+(byte) MEGA65_VICIV::COLPTR_LO
+(byte) MEGA65_VICIV::CONTROL1
+(byte) MEGA65_VICIV::CONTROL2
+(byte) MEGA65_VICIV::CONTROLA
+(byte) MEGA65_VICIV::CONTROLB
+(byte) MEGA65_VICIV::CONTROLC
+(byte) MEGA65_VICIV::DEBUG1
+(byte) MEGA65_VICIV::DEBUGX
+(byte) MEGA65_VICIV::DEBUGXY
+(byte) MEGA65_VICIV::DEBUGY
+(byte) MEGA65_VICIV::FNRASTER_HI
+(byte) MEGA65_VICIV::FNRASTER_LO
+(byte) MEGA65_VICIV::HPOS
+(byte) MEGA65_VICIV::IRQ_ENABLE
+(byte) MEGA65_VICIV::IRQ_STATUS
+(byte) MEGA65_VICIV::KEY
+(byte) MEGA65_VICIV::LIGHTPEN_X
+(byte) MEGA65_VICIV::LIGHTPEN_Y
+(byte) MEGA65_VICIV::MEMORY
+(byte) MEGA65_VICIV::PALSEL
+(byte) MEGA65_VICIV::RASLINE0
+(byte) MEGA65_VICIV::RASTER
+(byte) MEGA65_VICIV::ROWCOUNT
+(byte) MEGA65_VICIV::RSTCMP
+(byte) MEGA65_VICIV::RSTCOMP
+(byte) MEGA65_VICIV::SBPDEBUG
+(byte) MEGA65_VICIV::SCRNPTR_HIHI
+(byte) MEGA65_VICIV::SCRNPTR_HILO
+(byte) MEGA65_VICIV::SCRNPTR_LOHI
+(byte) MEGA65_VICIV::SCRNPTR_LOLO
+(byte) MEGA65_VICIV::SIDBDRWD_HI
+(byte) MEGA65_VICIV::SIDBDRWD_LO
+(byte) MEGA65_VICIV::SPR16EN
+(byte) MEGA65_VICIV::SPRALPHAVAL
+(byte) MEGA65_VICIV::SPRENALPHA
+(byte) MEGA65_VICIV::SPRENV400
+(byte) MEGA65_VICIV::SPRHGHT
+(byte) MEGA65_VICIV::SPRHGTEN
+(byte) MEGA65_VICIV::SPRITE0_COLOR
+(byte) MEGA65_VICIV::SPRITE0_X
+(byte) MEGA65_VICIV::SPRITE0_Y
+(byte) MEGA65_VICIV::SPRITE1_COLOR
+(byte) MEGA65_VICIV::SPRITE1_X
+(byte) MEGA65_VICIV::SPRITE1_Y
+(byte) MEGA65_VICIV::SPRITE2_COLOR
+(byte) MEGA65_VICIV::SPRITE2_X
+(byte) MEGA65_VICIV::SPRITE2_Y
+(byte) MEGA65_VICIV::SPRITE3_COLOR
+(byte) MEGA65_VICIV::SPRITE3_X
+(byte) MEGA65_VICIV::SPRITE3_Y
+(byte) MEGA65_VICIV::SPRITE4_COLOR
+(byte) MEGA65_VICIV::SPRITE4_X
+(byte) MEGA65_VICIV::SPRITE4_Y
+(byte) MEGA65_VICIV::SPRITE5_COLOR
+(byte) MEGA65_VICIV::SPRITE5_X
+(byte) MEGA65_VICIV::SPRITE5_Y
+(byte) MEGA65_VICIV::SPRITE6_COLOR
+(byte) MEGA65_VICIV::SPRITE6_X
+(byte) MEGA65_VICIV::SPRITE6_Y
+(byte) MEGA65_VICIV::SPRITE7_COLOR
+(byte) MEGA65_VICIV::SPRITE7_X
+(byte) MEGA65_VICIV::SPRITE7_Y
+(byte) MEGA65_VICIV::SPRITES_BG_COLLISION
+(byte) MEGA65_VICIV::SPRITES_COLLISION
+(byte) MEGA65_VICIV::SPRITES_ENABLE
+(byte) MEGA65_VICIV::SPRITES_EXPAND_X
+(byte) MEGA65_VICIV::SPRITES_EXPAND_Y
+(byte) MEGA65_VICIV::SPRITES_MC
+(byte) MEGA65_VICIV::SPRITES_MCOLOR1
+(byte) MEGA65_VICIV::SPRITES_MCOLOR2
+(byte) MEGA65_VICIV::SPRITES_PRIORITY
+(byte) MEGA65_VICIV::SPRITES_XMSB
+(byte) MEGA65_VICIV::SPRPTRADR_HILO
+(byte) MEGA65_VICIV::SPRPTRADR_LOHI
+(byte) MEGA65_VICIV::SPRPTRADR_LOLO
+(byte) MEGA65_VICIV::SPRX64EN
+(byte) MEGA65_VICIV::SPRXSMSBS
+(byte) MEGA65_VICIV::SPRYSMSBSM
+(byte) MEGA65_VICIV::SRPYMSBS
+(byte) MEGA65_VICIV::SYNCPOL
+(byte) MEGA65_VICIV::TBDRPOS_HI
+(byte) MEGA65_VICIV::TBDRPOS_LO
+(byte) MEGA65_VICIV::TEXTXPOS_HI
+(byte) MEGA65_VICIV::TEXTXPOS_LO
+(byte) MEGA65_VICIV::TEXTYPOS_HI
+(byte) MEGA65_VICIV::TEXTYPOS_LO
+(byte) MEGA65_VICIV::UNUSED
+(byte) MEGA65_VICIV::VPOS
+(byte) MEGA65_VICIV::VSYNDEL
+(byte) MEGA65_VICIV::XPOS_HI
+(byte) MEGA65_VICIV::XPOS_LO
+(const nomodify byte) MEMORYBLOCK_4000 = (byte) 4
+(const nomodify byte) MEMORYBLOCK_8000 = (byte) $10
+(byte) MOS4569_VICIII::B0PIX
+(byte) MOS4569_VICIII::B0_ADDR
+(byte) MOS4569_VICIII::B1PIX
+(byte) MOS4569_VICIII::B1_ADDR
+(byte) MOS4569_VICIII::B2PIX
+(byte) MOS4569_VICIII::B2_ADDR
+(byte) MOS4569_VICIII::B3PIX
+(byte) MOS4569_VICIII::B3_ADDR
+(byte) MOS4569_VICIII::B4PIX
+(byte) MOS4569_VICIII::B4_ADDR
+(byte) MOS4569_VICIII::B5PIX
+(byte) MOS4569_VICIII::B5_ADDR
+(byte) MOS4569_VICIII::B6PIX
+(byte) MOS4569_VICIII::B6_ADDR
+(byte) MOS4569_VICIII::B7PIX
+(byte) MOS4569_VICIII::B7_ADDR
+(byte) MOS4569_VICIII::BG_COLOR
+(byte) MOS4569_VICIII::BG_COLOR1
+(byte) MOS4569_VICIII::BG_COLOR2
+(byte) MOS4569_VICIII::BG_COLOR3
+(byte) MOS4569_VICIII::BORDER_COLOR
+(byte) MOS4569_VICIII::BPCOMP
+(byte) MOS4569_VICIII::BPX
+(byte) MOS4569_VICIII::BPY
+(byte) MOS4569_VICIII::CONTROL1
+(byte) MOS4569_VICIII::CONTROL2
+(byte) MOS4569_VICIII::CONTROLA
+(byte) MOS4569_VICIII::CONTROLB
+(byte) MOS4569_VICIII::HPOS
+(byte) MOS4569_VICIII::IRQ_ENABLE
+(byte) MOS4569_VICIII::IRQ_STATUS
+(byte) MOS4569_VICIII::KEY
+(byte) MOS4569_VICIII::LIGHTPEN_X
+(byte) MOS4569_VICIII::LIGHTPEN_Y
+(byte) MOS4569_VICIII::MEMORY
+(byte) MOS4569_VICIII::RASTER
+(byte) MOS4569_VICIII::SPRITE0_COLOR
+(byte) MOS4569_VICIII::SPRITE0_X
+(byte) MOS4569_VICIII::SPRITE0_Y
+(byte) MOS4569_VICIII::SPRITE1_COLOR
+(byte) MOS4569_VICIII::SPRITE1_X
+(byte) MOS4569_VICIII::SPRITE1_Y
+(byte) MOS4569_VICIII::SPRITE2_COLOR
+(byte) MOS4569_VICIII::SPRITE2_X
+(byte) MOS4569_VICIII::SPRITE2_Y
+(byte) MOS4569_VICIII::SPRITE3_COLOR
+(byte) MOS4569_VICIII::SPRITE3_X
+(byte) MOS4569_VICIII::SPRITE3_Y
+(byte) MOS4569_VICIII::SPRITE4_COLOR
+(byte) MOS4569_VICIII::SPRITE4_X
+(byte) MOS4569_VICIII::SPRITE4_Y
+(byte) MOS4569_VICIII::SPRITE5_COLOR
+(byte) MOS4569_VICIII::SPRITE5_X
+(byte) MOS4569_VICIII::SPRITE5_Y
+(byte) MOS4569_VICIII::SPRITE6_COLOR
+(byte) MOS4569_VICIII::SPRITE6_X
+(byte) MOS4569_VICIII::SPRITE6_Y
+(byte) MOS4569_VICIII::SPRITE7_COLOR
+(byte) MOS4569_VICIII::SPRITE7_X
+(byte) MOS4569_VICIII::SPRITE7_Y
+(byte) MOS4569_VICIII::SPRITES_BG_COLLISION
+(byte) MOS4569_VICIII::SPRITES_COLLISION
+(byte) MOS4569_VICIII::SPRITES_ENABLE
+(byte) MOS4569_VICIII::SPRITES_EXPAND_X
+(byte) MOS4569_VICIII::SPRITES_EXPAND_Y
+(byte) MOS4569_VICIII::SPRITES_MC
+(byte) MOS4569_VICIII::SPRITES_MCOLOR1
+(byte) MOS4569_VICIII::SPRITES_MCOLOR2
+(byte) MOS4569_VICIII::SPRITES_PRIORITY
+(byte) MOS4569_VICIII::SPRITES_XMSB
+(byte) MOS4569_VICIII::UNUSED
+(byte) MOS4569_VICIII::VPOS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6569_VICII::BG_COLOR
+(byte) MOS6569_VICII::BG_COLOR1
+(byte) MOS6569_VICII::BG_COLOR2
+(byte) MOS6569_VICII::BG_COLOR3
+(byte) MOS6569_VICII::BORDER_COLOR
+(byte) MOS6569_VICII::CONTROL1
+(byte) MOS6569_VICII::CONTROL2
+(byte) MOS6569_VICII::IRQ_ENABLE
+(byte) MOS6569_VICII::IRQ_STATUS
+(byte) MOS6569_VICII::LIGHTPEN_X
+(byte) MOS6569_VICII::LIGHTPEN_Y
+(byte) MOS6569_VICII::MEMORY
+(byte) MOS6569_VICII::RASTER
+(byte) MOS6569_VICII::SPRITE0_COLOR
+(byte) MOS6569_VICII::SPRITE0_X
+(byte) MOS6569_VICII::SPRITE0_Y
+(byte) MOS6569_VICII::SPRITE1_COLOR
+(byte) MOS6569_VICII::SPRITE1_X
+(byte) MOS6569_VICII::SPRITE1_Y
+(byte) MOS6569_VICII::SPRITE2_COLOR
+(byte) MOS6569_VICII::SPRITE2_X
+(byte) MOS6569_VICII::SPRITE2_Y
+(byte) MOS6569_VICII::SPRITE3_COLOR
+(byte) MOS6569_VICII::SPRITE3_X
+(byte) MOS6569_VICII::SPRITE3_Y
+(byte) MOS6569_VICII::SPRITE4_COLOR
+(byte) MOS6569_VICII::SPRITE4_X
+(byte) MOS6569_VICII::SPRITE4_Y
+(byte) MOS6569_VICII::SPRITE5_COLOR
+(byte) MOS6569_VICII::SPRITE5_X
+(byte) MOS6569_VICII::SPRITE5_Y
+(byte) MOS6569_VICII::SPRITE6_COLOR
+(byte) MOS6569_VICII::SPRITE6_X
+(byte) MOS6569_VICII::SPRITE6_Y
+(byte) MOS6569_VICII::SPRITE7_COLOR
+(byte) MOS6569_VICII::SPRITE7_X
+(byte) MOS6569_VICII::SPRITE7_Y
+(byte) MOS6569_VICII::SPRITES_BG_COLLISION
+(byte) MOS6569_VICII::SPRITES_COLLISION
+(byte) MOS6569_VICII::SPRITES_ENABLE
+(byte) MOS6569_VICII::SPRITES_EXPAND_X
+(byte) MOS6569_VICII::SPRITES_EXPAND_Y
+(byte) MOS6569_VICII::SPRITES_MC
+(byte) MOS6569_VICII::SPRITES_MCOLOR1
+(byte) MOS6569_VICII::SPRITES_MCOLOR2
+(byte) MOS6569_VICII::SPRITES_PRIORITY
+(byte) MOS6569_VICII::SPRITES_XMSB
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(void()) main()
+(byte~) main::$2
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(const byte*) main::block1 = (byte*)(number) $4000
+(const byte*) main::block2 = (byte*)(number) $8000
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(byte~) memoryRemap::$0
+(byte~) memoryRemap::$1
+(byte~) memoryRemap::$2
+(number~) memoryRemap::$3
+(number~) memoryRemap::$4
+(byte~) memoryRemap::$5
+(number~) memoryRemap::$6
+(byte~) memoryRemap::$7
+(number~) memoryRemap::$8
+(number~) memoryRemap::$9
+(label) memoryRemap::@return
+(const byte*) memoryRemap::aVal = (byte*)(number) $fc
+(word) memoryRemap::lowerMemoryPageOffset
+(word) memoryRemap::lowerMemoryPageOffset#0
+(word) memoryRemap::lowerMemoryPageOffset#1
+(word) memoryRemap::lowerMemoryPageOffset#2
+(byte) memoryRemap::remapBlocks
+(byte) memoryRemap::remapBlocks#0
+(byte) memoryRemap::remapBlocks#1
+(byte) memoryRemap::remapBlocks#2
+(word) memoryRemap::upperMemoryPageOffset
+(word) memoryRemap::upperMemoryPageOffset#0
+(word) memoryRemap::upperMemoryPageOffset#1
+(word) memoryRemap::upperMemoryPageOffset#2
+(const byte*) memoryRemap::xVal = (byte*)(number) $fd
+(const byte*) memoryRemap::yVal = (byte*)(number) $fe
+(const byte*) memoryRemap::zVal = (byte*)(number) $ff
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+(word~) memoryRemapBlock::$0
+(number~) memoryRemapBlock::$1
+(number~) memoryRemapBlock::$2
+(label) memoryRemapBlock::@1
+(label) memoryRemapBlock::@return
+(byte) memoryRemapBlock::block
+(byte) memoryRemapBlock::block#0
+(byte) memoryRemapBlock::blockBits
+(byte) memoryRemapBlock::blockBits#0
+(byte) memoryRemapBlock::blockPage
+(byte) memoryRemapBlock::blockPage#0
+(byte) memoryRemapBlock::blockPage#1
+(byte) memoryRemapBlock::blockPage#2
+(word) memoryRemapBlock::memoryPage
+(word) memoryRemapBlock::memoryPage#0
+(word) memoryRemapBlock::memoryPage#1
+(word) memoryRemapBlock::memoryPage#2
+(word) memoryRemapBlock::pageOffset
+(word) memoryRemapBlock::pageOffset#0
+
+Adding number conversion cast (unumber) $40 in (byte) memoryRemapBlock::blockPage#0 ← (number) $40
+Adding number conversion cast (unumber) $100 in (word) memoryRemapBlock::memoryPage#0 ← (number) $100
+Adding number conversion cast (unumber) $55 in *((const byte*) main::block1 + (number) 0) ← (number) $55
+Adding number conversion cast (unumber) 0 in *((const byte*) main::block1 + (number) 0) ← ((unumber)) (number) $55
+Adding number conversion cast (unumber) $aa in *((const byte*) main::block1 + (number) 1) ← (number) $aa
+Adding number conversion cast (unumber) 1 in *((const byte*) main::block1 + (number) 1) ← ((unumber)) (number) $aa
+Adding number conversion cast (unumber) $80 in (byte) memoryRemapBlock::blockPage#1 ← (number) $80
+Adding number conversion cast (unumber) $100 in (word) memoryRemapBlock::memoryPage#1 ← (number) $100
+Adding number conversion cast (unumber) $55 in *((const byte*) main::block2 + (number) 2) ← (number) $55
+Adding number conversion cast (unumber) 2 in *((const byte*) main::block2 + (number) 2) ← ((unumber)) (number) $55
+Adding number conversion cast (unumber) $aa in *((const byte*) main::block2 + (number) 3) ← (number) $aa
+Adding number conversion cast (unumber) 3 in *((const byte*) main::block2 + (number) 3) ← ((unumber)) (number) $aa
+Adding number conversion cast (unumber) $c0 in (word) memoryRemap::lowerMemoryPageOffset#0 ← (number) $c0
+Adding number conversion cast (unumber) $80 in (word) memoryRemap::upperMemoryPageOffset#0 ← (number) $80
+Adding number conversion cast (unumber) 2 in *((const byte*) main::block2 + (number) 4) ← *((const byte*) main::block1 + (number) 2)
+Adding number conversion cast (unumber) 4 in *((const byte*) main::block2 + (number) 4) ← *((const byte*) main::block1 + (unumber)(number) 2)
+Adding number conversion cast (unumber) 1 in *((const byte*) main::block1 + (number) 5) ← *((const byte*) main::block2 + (number) 1)
+Adding number conversion cast (unumber) 5 in *((const byte*) main::block1 + (number) 5) ← *((const byte*) main::block2 + (unumber)(number) 1)
+Adding number conversion cast (unumber) 4 in (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (number) 4
+Adding number conversion cast (unumber) $f in (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (number) $f
+Adding number conversion cast (unumber) memoryRemap::$3 in (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (unumber)(number) $f
+Adding number conversion cast (unumber) memoryRemap::$4 in (number~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (unumber~) memoryRemap::$3
+Adding number conversion cast (unumber) $f0 in (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (number) $f0
+Adding number conversion cast (unumber) memoryRemap::$6 in (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (unumber)(number) $f0
+Adding number conversion cast (unumber) $f in (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (number) $f
+Adding number conversion cast (unumber) memoryRemap::$8 in (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (unumber)(number) $f
+Adding number conversion cast (unumber) memoryRemap::$9 in (number~) memoryRemap::$9 ← (unumber~) memoryRemap::$6 | (unumber~) memoryRemap::$8
+Adding number conversion cast (unumber) $20 in (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (number) $20
+Adding number conversion cast (unumber) memoryRemapBlock::$1 in (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (unumber)(number) $20
+Adding number conversion cast (unumber) 1 in (number~) memoryRemapBlock::$2 ← (number) 1 << (byte) memoryRemapBlock::block#0
+Adding number conversion cast (unumber) memoryRemapBlock::$2 in (number~) memoryRemapBlock::$2 ← (unumber)(number) 1 << (byte) memoryRemapBlock::block#0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) memoryRemapBlock::blockPage#0 ← (unumber)(number) $40
+Inlining cast (word) memoryRemapBlock::memoryPage#0 ← (unumber)(number) $100
+Inlining cast *((const byte*) main::block1 + (unumber)(number) 0) ← (unumber)(number) $55
+Inlining cast *((const byte*) main::block1 + (unumber)(number) 1) ← (unumber)(number) $aa
+Inlining cast (byte) memoryRemapBlock::blockPage#1 ← (unumber)(number) $80
+Inlining cast (word) memoryRemapBlock::memoryPage#1 ← (unumber)(number) $100
+Inlining cast *((const byte*) main::block2 + (unumber)(number) 2) ← (unumber)(number) $55
+Inlining cast *((const byte*) main::block2 + (unumber)(number) 3) ← (unumber)(number) $aa
+Inlining cast (word) memoryRemap::lowerMemoryPageOffset#0 ← (unumber)(number) $c0
+Inlining cast (word) memoryRemap::upperMemoryPageOffset#0 ← (unumber)(number) $80
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 16384
+Simplifying constant pointer cast (byte*) 32768
+Simplifying constant pointer cast (byte*) 252
+Simplifying constant pointer cast (byte*) 253
+Simplifying constant pointer cast (byte*) 254
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant integer cast $40
+Simplifying constant integer cast $100
+Simplifying constant integer cast $55
+Simplifying constant integer cast 0
+Simplifying constant integer cast $aa
+Simplifying constant integer cast 1
+Simplifying constant integer cast $80
+Simplifying constant integer cast $100
+Simplifying constant integer cast $55
+Simplifying constant integer cast 2
+Simplifying constant integer cast $aa
+Simplifying constant integer cast 3
+Simplifying constant integer cast $c0
+Simplifying constant integer cast $80
+Simplifying constant integer cast 2
+Simplifying constant integer cast 4
+Simplifying constant integer cast 1
+Simplifying constant integer cast 5
+Simplifying constant integer cast 4
+Simplifying constant integer cast $f
+Simplifying constant integer cast $f0
+Simplifying constant integer cast $f
+Simplifying constant integer cast $20
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) $55
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $aa
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) $55
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $aa
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $f0
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
+Inferred type updated to byte in (unumber~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
+Inferred type updated to byte in (unumber~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0
+Inferred type updated to byte in (unumber~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f
+Inferred type updated to byte in (unumber~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
+Inferred type updated to byte in (unumber~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
+Inferred type updated to byte in (unumber~) memoryRemapBlock::$2 ← (byte) 1 << (byte) memoryRemapBlock::block#0
+Alias memoryRemap::remapBlocks#0 = main::$2 
+Alias memoryRemapBlock::pageOffset#0 = memoryRemapBlock::$0 
+Alias memoryRemapBlock::block#0 = memoryRemapBlock::$1 
+Alias memoryRemapBlock::blockBits#0 = memoryRemapBlock::$2 
+Successful SSA optimization Pass2AliasElimination
+Constant right-side identified [10] (byte) memoryRemap::remapBlocks#0 ← (const nomodify byte) MEMORYBLOCK_4000 | (const nomodify byte) MEMORYBLOCK_8000
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) memoryRemapBlock::blockPage#0 = $40
+Constant (const word) memoryRemapBlock::memoryPage#0 = $100
+Constant (const byte) memoryRemapBlock::blockPage#1 = $80
+Constant (const word) memoryRemapBlock::memoryPage#1 = $100
+Constant (const byte) memoryRemap::remapBlocks#0 = MEMORYBLOCK_4000|MEMORYBLOCK_8000
+Constant (const word) memoryRemap::lowerMemoryPageOffset#0 = $c0
+Constant (const word) memoryRemap::upperMemoryPageOffset#0 = $80
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::block1 in [3] *((const byte*) main::block1 + (byte) 0) ← (byte) $55
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Rewriting division to use shift [29] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte) memoryRemap::remapBlocks#0
+Inlining constant with var siblings (const word) memoryRemap::lowerMemoryPageOffset#0
+Inlining constant with var siblings (const word) memoryRemap::upperMemoryPageOffset#0
+Inlining constant with var siblings (const byte) memoryRemapBlock::blockPage#0
+Inlining constant with var siblings (const word) memoryRemapBlock::memoryPage#0
+Inlining constant with var siblings (const byte) memoryRemapBlock::blockPage#1
+Inlining constant with var siblings (const word) memoryRemapBlock::memoryPage#1
+Constant inlined memoryRemap::upperMemoryPageOffset#0 = (byte) $80
+Constant inlined memoryRemapBlock::blockPage#1 = (byte) $80
+Constant inlined memoryRemap::remapBlocks#0 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000
+Constant inlined memoryRemapBlock::blockPage#0 = (byte) $40
+Constant inlined memoryRemap::lowerMemoryPageOffset#0 = (byte) $c0
+Constant inlined memoryRemapBlock::memoryPage#1 = (word) $100
+Constant inlined memoryRemapBlock::memoryPage#0 = (word) $100
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::block1+1)
+Consolidated array index constant in *(main::block2+2)
+Consolidated array index constant in *(main::block2+3)
+Consolidated array index constant in *(main::block1+2)
+Consolidated array index constant in *(main::block2+4)
+Consolidated array index constant in *(main::block2+1)
+Consolidated array index constant in *(main::block1+5)
+Successful SSA optimization Pass2ConstantAdditionElimination
+Identical Phi Values (word) memoryRemapBlock::memoryPage#2 (word) $100
+Successful SSA optimization Pass2IdenticalPhiElimination
+Adding NOP phi() at start of main
+Adding NOP phi() at start of memoryRemapBlock::@1
+CALL GRAPH
+Calls in [main] to memoryRemapBlock:1 memoryRemapBlock:4 memoryRemap:7 
+Calls in [memoryRemapBlock] to memoryRemap:21 
+
+Created 4 initial phi equivalence classes
+Coalesced [18] memoryRemap::lowerMemoryPageOffset#3 ← memoryRemap::lowerMemoryPageOffset#1
+Coalesced [19] memoryRemap::remapBlocks#3 ← memoryRemap::remapBlocks#1
+Coalesced [20] memoryRemap::upperMemoryPageOffset#3 ← memoryRemap::upperMemoryPageOffset#1
+Coalesced down to 4 phi equivalence classes
+Culled Empty Block (label) memoryRemapBlock::@1
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call memoryRemapBlock 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] *((const byte*) main::block1) ← (byte) $55
+  [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa
+  [4] call memoryRemapBlock 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55
+  [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa
+  [7] call memoryRemap 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2)
+  [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1)
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  [10] return 
+  to:@return
+
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+memoryRemapBlock: scope:[memoryRemapBlock]  from main main::@1
+  [11] (byte) memoryRemapBlock::blockPage#2 ← phi( main/(byte) $40 main::@1/(byte) $80 )
+  [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2
+  [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5
+  [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0
+  [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0
+  [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+  [18] call memoryRemap 
+  to:memoryRemapBlock::@return
+memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock
+  [19] return 
+  to:@return
+
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+memoryRemap: scope:[memoryRemap]  from main::@2 memoryRemapBlock
+  [20] (word) memoryRemap::upperMemoryPageOffset#2 ← phi( main::@2/(byte) $80 memoryRemapBlock/(word) memoryRemap::upperMemoryPageOffset#1 )
+  [20] (byte) memoryRemap::remapBlocks#2 ← phi( main::@2/(const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 memoryRemapBlock/(byte) memoryRemap::remapBlocks#1 )
+  [20] (word) memoryRemap::lowerMemoryPageOffset#2 ← phi( main::@2/(byte) $c0 memoryRemapBlock/(word) memoryRemap::lowerMemoryPageOffset#1 )
+  [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2
+  [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
+  [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4
+  [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2
+  [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
+  [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
+  [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4
+  [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2
+  [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
+  [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0
+  [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2
+  [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f
+  [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
+  [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9
+  asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap::@return
+memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
+  [36] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) MEGA65_VICIV::ALPHADELAY
+(byte) MEGA65_VICIV::B0PIX
+(byte) MEGA65_VICIV::B0_ADDR
+(byte) MEGA65_VICIV::B1PIX
+(byte) MEGA65_VICIV::B1_ADDR
+(byte) MEGA65_VICIV::B2PIX
+(byte) MEGA65_VICIV::B2_ADDR
+(byte) MEGA65_VICIV::B3PIX
+(byte) MEGA65_VICIV::B3_ADDR
+(byte) MEGA65_VICIV::B4PIX
+(byte) MEGA65_VICIV::B4_ADDR
+(byte) MEGA65_VICIV::B5PIX
+(byte) MEGA65_VICIV::B5_ADDR
+(byte) MEGA65_VICIV::B6PIX
+(byte) MEGA65_VICIV::B6_ADDR
+(byte) MEGA65_VICIV::B7PIX
+(byte) MEGA65_VICIV::B7_ADDR
+(byte) MEGA65_VICIV::BBDRPOS_HI
+(byte) MEGA65_VICIV::BBDRPOS_LO
+(byte) MEGA65_VICIV::BG_COLOR
+(byte) MEGA65_VICIV::BG_COLOR1
+(byte) MEGA65_VICIV::BG_COLOR2
+(byte) MEGA65_VICIV::BG_COLOR3
+(byte) MEGA65_VICIV::BORDER_COLOR
+(byte) MEGA65_VICIV::BP16ENS
+(byte) MEGA65_VICIV::BPCOMP
+(byte) MEGA65_VICIV::BPX
+(byte) MEGA65_VICIV::BPY
+(byte) MEGA65_VICIV::CHARPTR_HILO
+(byte) MEGA65_VICIV::CHARPTR_LOHI
+(byte) MEGA65_VICIV::CHARPTR_LOLO
+(byte) MEGA65_VICIV::CHARSTEP_HI
+(byte) MEGA65_VICIV::CHARSTEP_LO
+(byte) MEGA65_VICIV::CHRCOUNT
+(byte) MEGA65_VICIV::CHRXSCL
+(byte) MEGA65_VICIV::CHRYSCL
+(byte) MEGA65_VICIV::COLPTR_HI
+(byte) MEGA65_VICIV::COLPTR_LO
+(byte) MEGA65_VICIV::CONTROL1
+(byte) MEGA65_VICIV::CONTROL2
+(byte) MEGA65_VICIV::CONTROLA
+(byte) MEGA65_VICIV::CONTROLB
+(byte) MEGA65_VICIV::CONTROLC
+(byte) MEGA65_VICIV::DEBUG1
+(byte) MEGA65_VICIV::DEBUGX
+(byte) MEGA65_VICIV::DEBUGXY
+(byte) MEGA65_VICIV::DEBUGY
+(byte) MEGA65_VICIV::FNRASTER_HI
+(byte) MEGA65_VICIV::FNRASTER_LO
+(byte) MEGA65_VICIV::HPOS
+(byte) MEGA65_VICIV::IRQ_ENABLE
+(byte) MEGA65_VICIV::IRQ_STATUS
+(byte) MEGA65_VICIV::KEY
+(byte) MEGA65_VICIV::LIGHTPEN_X
+(byte) MEGA65_VICIV::LIGHTPEN_Y
+(byte) MEGA65_VICIV::MEMORY
+(byte) MEGA65_VICIV::PALSEL
+(byte) MEGA65_VICIV::RASLINE0
+(byte) MEGA65_VICIV::RASTER
+(byte) MEGA65_VICIV::ROWCOUNT
+(byte) MEGA65_VICIV::RSTCMP
+(byte) MEGA65_VICIV::RSTCOMP
+(byte) MEGA65_VICIV::SBPDEBUG
+(byte) MEGA65_VICIV::SCRNPTR_HIHI
+(byte) MEGA65_VICIV::SCRNPTR_HILO
+(byte) MEGA65_VICIV::SCRNPTR_LOHI
+(byte) MEGA65_VICIV::SCRNPTR_LOLO
+(byte) MEGA65_VICIV::SIDBDRWD_HI
+(byte) MEGA65_VICIV::SIDBDRWD_LO
+(byte) MEGA65_VICIV::SPR16EN
+(byte) MEGA65_VICIV::SPRALPHAVAL
+(byte) MEGA65_VICIV::SPRENALPHA
+(byte) MEGA65_VICIV::SPRENV400
+(byte) MEGA65_VICIV::SPRHGHT
+(byte) MEGA65_VICIV::SPRHGTEN
+(byte) MEGA65_VICIV::SPRITE0_COLOR
+(byte) MEGA65_VICIV::SPRITE0_X
+(byte) MEGA65_VICIV::SPRITE0_Y
+(byte) MEGA65_VICIV::SPRITE1_COLOR
+(byte) MEGA65_VICIV::SPRITE1_X
+(byte) MEGA65_VICIV::SPRITE1_Y
+(byte) MEGA65_VICIV::SPRITE2_COLOR
+(byte) MEGA65_VICIV::SPRITE2_X
+(byte) MEGA65_VICIV::SPRITE2_Y
+(byte) MEGA65_VICIV::SPRITE3_COLOR
+(byte) MEGA65_VICIV::SPRITE3_X
+(byte) MEGA65_VICIV::SPRITE3_Y
+(byte) MEGA65_VICIV::SPRITE4_COLOR
+(byte) MEGA65_VICIV::SPRITE4_X
+(byte) MEGA65_VICIV::SPRITE4_Y
+(byte) MEGA65_VICIV::SPRITE5_COLOR
+(byte) MEGA65_VICIV::SPRITE5_X
+(byte) MEGA65_VICIV::SPRITE5_Y
+(byte) MEGA65_VICIV::SPRITE6_COLOR
+(byte) MEGA65_VICIV::SPRITE6_X
+(byte) MEGA65_VICIV::SPRITE6_Y
+(byte) MEGA65_VICIV::SPRITE7_COLOR
+(byte) MEGA65_VICIV::SPRITE7_X
+(byte) MEGA65_VICIV::SPRITE7_Y
+(byte) MEGA65_VICIV::SPRITES_BG_COLLISION
+(byte) MEGA65_VICIV::SPRITES_COLLISION
+(byte) MEGA65_VICIV::SPRITES_ENABLE
+(byte) MEGA65_VICIV::SPRITES_EXPAND_X
+(byte) MEGA65_VICIV::SPRITES_EXPAND_Y
+(byte) MEGA65_VICIV::SPRITES_MC
+(byte) MEGA65_VICIV::SPRITES_MCOLOR1
+(byte) MEGA65_VICIV::SPRITES_MCOLOR2
+(byte) MEGA65_VICIV::SPRITES_PRIORITY
+(byte) MEGA65_VICIV::SPRITES_XMSB
+(byte) MEGA65_VICIV::SPRPTRADR_HILO
+(byte) MEGA65_VICIV::SPRPTRADR_LOHI
+(byte) MEGA65_VICIV::SPRPTRADR_LOLO
+(byte) MEGA65_VICIV::SPRX64EN
+(byte) MEGA65_VICIV::SPRXSMSBS
+(byte) MEGA65_VICIV::SPRYSMSBSM
+(byte) MEGA65_VICIV::SRPYMSBS
+(byte) MEGA65_VICIV::SYNCPOL
+(byte) MEGA65_VICIV::TBDRPOS_HI
+(byte) MEGA65_VICIV::TBDRPOS_LO
+(byte) MEGA65_VICIV::TEXTXPOS_HI
+(byte) MEGA65_VICIV::TEXTXPOS_LO
+(byte) MEGA65_VICIV::TEXTYPOS_HI
+(byte) MEGA65_VICIV::TEXTYPOS_LO
+(byte) MEGA65_VICIV::UNUSED
+(byte) MEGA65_VICIV::VPOS
+(byte) MEGA65_VICIV::VSYNDEL
+(byte) MEGA65_VICIV::XPOS_HI
+(byte) MEGA65_VICIV::XPOS_LO
+(byte) MOS4569_VICIII::B0PIX
+(byte) MOS4569_VICIII::B0_ADDR
+(byte) MOS4569_VICIII::B1PIX
+(byte) MOS4569_VICIII::B1_ADDR
+(byte) MOS4569_VICIII::B2PIX
+(byte) MOS4569_VICIII::B2_ADDR
+(byte) MOS4569_VICIII::B3PIX
+(byte) MOS4569_VICIII::B3_ADDR
+(byte) MOS4569_VICIII::B4PIX
+(byte) MOS4569_VICIII::B4_ADDR
+(byte) MOS4569_VICIII::B5PIX
+(byte) MOS4569_VICIII::B5_ADDR
+(byte) MOS4569_VICIII::B6PIX
+(byte) MOS4569_VICIII::B6_ADDR
+(byte) MOS4569_VICIII::B7PIX
+(byte) MOS4569_VICIII::B7_ADDR
+(byte) MOS4569_VICIII::BG_COLOR
+(byte) MOS4569_VICIII::BG_COLOR1
+(byte) MOS4569_VICIII::BG_COLOR2
+(byte) MOS4569_VICIII::BG_COLOR3
+(byte) MOS4569_VICIII::BORDER_COLOR
+(byte) MOS4569_VICIII::BPCOMP
+(byte) MOS4569_VICIII::BPX
+(byte) MOS4569_VICIII::BPY
+(byte) MOS4569_VICIII::CONTROL1
+(byte) MOS4569_VICIII::CONTROL2
+(byte) MOS4569_VICIII::CONTROLA
+(byte) MOS4569_VICIII::CONTROLB
+(byte) MOS4569_VICIII::HPOS
+(byte) MOS4569_VICIII::IRQ_ENABLE
+(byte) MOS4569_VICIII::IRQ_STATUS
+(byte) MOS4569_VICIII::KEY
+(byte) MOS4569_VICIII::LIGHTPEN_X
+(byte) MOS4569_VICIII::LIGHTPEN_Y
+(byte) MOS4569_VICIII::MEMORY
+(byte) MOS4569_VICIII::RASTER
+(byte) MOS4569_VICIII::SPRITE0_COLOR
+(byte) MOS4569_VICIII::SPRITE0_X
+(byte) MOS4569_VICIII::SPRITE0_Y
+(byte) MOS4569_VICIII::SPRITE1_COLOR
+(byte) MOS4569_VICIII::SPRITE1_X
+(byte) MOS4569_VICIII::SPRITE1_Y
+(byte) MOS4569_VICIII::SPRITE2_COLOR
+(byte) MOS4569_VICIII::SPRITE2_X
+(byte) MOS4569_VICIII::SPRITE2_Y
+(byte) MOS4569_VICIII::SPRITE3_COLOR
+(byte) MOS4569_VICIII::SPRITE3_X
+(byte) MOS4569_VICIII::SPRITE3_Y
+(byte) MOS4569_VICIII::SPRITE4_COLOR
+(byte) MOS4569_VICIII::SPRITE4_X
+(byte) MOS4569_VICIII::SPRITE4_Y
+(byte) MOS4569_VICIII::SPRITE5_COLOR
+(byte) MOS4569_VICIII::SPRITE5_X
+(byte) MOS4569_VICIII::SPRITE5_Y
+(byte) MOS4569_VICIII::SPRITE6_COLOR
+(byte) MOS4569_VICIII::SPRITE6_X
+(byte) MOS4569_VICIII::SPRITE6_Y
+(byte) MOS4569_VICIII::SPRITE7_COLOR
+(byte) MOS4569_VICIII::SPRITE7_X
+(byte) MOS4569_VICIII::SPRITE7_Y
+(byte) MOS4569_VICIII::SPRITES_BG_COLLISION
+(byte) MOS4569_VICIII::SPRITES_COLLISION
+(byte) MOS4569_VICIII::SPRITES_ENABLE
+(byte) MOS4569_VICIII::SPRITES_EXPAND_X
+(byte) MOS4569_VICIII::SPRITES_EXPAND_Y
+(byte) MOS4569_VICIII::SPRITES_MC
+(byte) MOS4569_VICIII::SPRITES_MCOLOR1
+(byte) MOS4569_VICIII::SPRITES_MCOLOR2
+(byte) MOS4569_VICIII::SPRITES_PRIORITY
+(byte) MOS4569_VICIII::SPRITES_XMSB
+(byte) MOS4569_VICIII::UNUSED
+(byte) MOS4569_VICIII::VPOS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6569_VICII::BG_COLOR
+(byte) MOS6569_VICII::BG_COLOR1
+(byte) MOS6569_VICII::BG_COLOR2
+(byte) MOS6569_VICII::BG_COLOR3
+(byte) MOS6569_VICII::BORDER_COLOR
+(byte) MOS6569_VICII::CONTROL1
+(byte) MOS6569_VICII::CONTROL2
+(byte) MOS6569_VICII::IRQ_ENABLE
+(byte) MOS6569_VICII::IRQ_STATUS
+(byte) MOS6569_VICII::LIGHTPEN_X
+(byte) MOS6569_VICII::LIGHTPEN_Y
+(byte) MOS6569_VICII::MEMORY
+(byte) MOS6569_VICII::RASTER
+(byte) MOS6569_VICII::SPRITE0_COLOR
+(byte) MOS6569_VICII::SPRITE0_X
+(byte) MOS6569_VICII::SPRITE0_Y
+(byte) MOS6569_VICII::SPRITE1_COLOR
+(byte) MOS6569_VICII::SPRITE1_X
+(byte) MOS6569_VICII::SPRITE1_Y
+(byte) MOS6569_VICII::SPRITE2_COLOR
+(byte) MOS6569_VICII::SPRITE2_X
+(byte) MOS6569_VICII::SPRITE2_Y
+(byte) MOS6569_VICII::SPRITE3_COLOR
+(byte) MOS6569_VICII::SPRITE3_X
+(byte) MOS6569_VICII::SPRITE3_Y
+(byte) MOS6569_VICII::SPRITE4_COLOR
+(byte) MOS6569_VICII::SPRITE4_X
+(byte) MOS6569_VICII::SPRITE4_Y
+(byte) MOS6569_VICII::SPRITE5_COLOR
+(byte) MOS6569_VICII::SPRITE5_X
+(byte) MOS6569_VICII::SPRITE5_Y
+(byte) MOS6569_VICII::SPRITE6_COLOR
+(byte) MOS6569_VICII::SPRITE6_X
+(byte) MOS6569_VICII::SPRITE6_Y
+(byte) MOS6569_VICII::SPRITE7_COLOR
+(byte) MOS6569_VICII::SPRITE7_X
+(byte) MOS6569_VICII::SPRITE7_Y
+(byte) MOS6569_VICII::SPRITES_BG_COLLISION
+(byte) MOS6569_VICII::SPRITES_COLLISION
+(byte) MOS6569_VICII::SPRITES_ENABLE
+(byte) MOS6569_VICII::SPRITES_EXPAND_X
+(byte) MOS6569_VICII::SPRITES_EXPAND_Y
+(byte) MOS6569_VICII::SPRITES_MC
+(byte) MOS6569_VICII::SPRITES_MCOLOR1
+(byte) MOS6569_VICII::SPRITES_MCOLOR2
+(byte) MOS6569_VICII::SPRITES_PRIORITY
+(byte) MOS6569_VICII::SPRITES_XMSB
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) main()
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(byte~) memoryRemap::$0 202.0
+(byte~) memoryRemap::$1 67.33333333333333
+(byte~) memoryRemap::$2 202.0
+(byte~) memoryRemap::$3 202.0
+(byte~) memoryRemap::$4 202.0
+(byte~) memoryRemap::$5 202.0
+(byte~) memoryRemap::$6 67.33333333333333
+(byte~) memoryRemap::$7 202.0
+(byte~) memoryRemap::$8 202.0
+(byte~) memoryRemap::$9 202.0
+(word) memoryRemap::lowerMemoryPageOffset
+(word) memoryRemap::lowerMemoryPageOffset#1 11.0
+(word) memoryRemap::lowerMemoryPageOffset#2 53.25
+(byte) memoryRemap::remapBlocks
+(byte) memoryRemap::remapBlocks#1 7.333333333333333
+(byte) memoryRemap::remapBlocks#2 21.299999999999997
+(word) memoryRemap::upperMemoryPageOffset
+(word) memoryRemap::upperMemoryPageOffset#1 22.0
+(word) memoryRemap::upperMemoryPageOffset#2 19.363636363636363
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+(byte) memoryRemapBlock::block
+(byte) memoryRemapBlock::block#0 22.0
+(byte) memoryRemapBlock::blockBits
+(byte) memoryRemapBlock::blockBits#0 22.0
+(byte) memoryRemapBlock::blockPage
+(byte) memoryRemapBlock::blockPage#2 11.0
+(word) memoryRemapBlock::memoryPage
+(word) memoryRemapBlock::pageOffset
+(word) memoryRemapBlock::pageOffset#0 6.6000000000000005
+
+Initial phi equivalence classes
+[ memoryRemapBlock::blockPage#2 ]
+[ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ]
+[ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
+[ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+Added variable memoryRemapBlock::pageOffset#0 to live range equivalence class [ memoryRemapBlock::pageOffset#0 ]
+Added variable memoryRemapBlock::block#0 to live range equivalence class [ memoryRemapBlock::block#0 ]
+Added variable memoryRemapBlock::blockBits#0 to live range equivalence class [ memoryRemapBlock::blockBits#0 ]
+Added variable memoryRemap::$0 to live range equivalence class [ memoryRemap::$0 ]
+Added variable memoryRemap::$1 to live range equivalence class [ memoryRemap::$1 ]
+Added variable memoryRemap::$2 to live range equivalence class [ memoryRemap::$2 ]
+Added variable memoryRemap::$3 to live range equivalence class [ memoryRemap::$3 ]
+Added variable memoryRemap::$4 to live range equivalence class [ memoryRemap::$4 ]
+Added variable memoryRemap::$5 to live range equivalence class [ memoryRemap::$5 ]
+Added variable memoryRemap::$6 to live range equivalence class [ memoryRemap::$6 ]
+Added variable memoryRemap::$7 to live range equivalence class [ memoryRemap::$7 ]
+Added variable memoryRemap::$8 to live range equivalence class [ memoryRemap::$8 ]
+Added variable memoryRemap::$9 to live range equivalence class [ memoryRemap::$9 ]
+Complete equivalence classes
+[ memoryRemapBlock::blockPage#2 ]
+[ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ]
+[ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
+[ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+[ memoryRemapBlock::pageOffset#0 ]
+[ memoryRemapBlock::block#0 ]
+[ memoryRemapBlock::blockBits#0 ]
+[ memoryRemap::$0 ]
+[ memoryRemap::$1 ]
+[ memoryRemap::$2 ]
+[ memoryRemap::$3 ]
+[ memoryRemap::$4 ]
+[ memoryRemap::$5 ]
+[ memoryRemap::$6 ]
+[ memoryRemap::$7 ]
+[ memoryRemap::$8 ]
+[ memoryRemap::$9 ]
+Allocated zp[1]:2 [ memoryRemapBlock::blockPage#2 ]
+Allocated zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ]
+Allocated zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
+Allocated zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+Allocated zp[2]:8 [ memoryRemapBlock::pageOffset#0 ]
+Allocated zp[1]:10 [ memoryRemapBlock::block#0 ]
+Allocated zp[1]:11 [ memoryRemapBlock::blockBits#0 ]
+Allocated zp[1]:12 [ memoryRemap::$0 ]
+Allocated zp[1]:13 [ memoryRemap::$1 ]
+Allocated zp[1]:14 [ memoryRemap::$2 ]
+Allocated zp[1]:15 [ memoryRemap::$3 ]
+Allocated zp[1]:16 [ memoryRemap::$4 ]
+Allocated zp[1]:17 [ memoryRemap::$5 ]
+Allocated zp[1]:18 [ memoryRemap::$6 ]
+Allocated zp[1]:19 [ memoryRemap::$7 ]
+Allocated zp[1]:20 [ memoryRemap::$8 ]
+Allocated zp[1]:21 [ memoryRemap::$9 ]
+
+INITIAL ASM
+Target platform is mega65 / MEGA45GS02
+  // File Comments
+// Test the MAP instruction for remapping memory
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+  // Upstart
+.cpu _45gs02
+  // MEGA65 platform PRG executable starting in MEGA65 mode.
+.file [name="memorymap-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(main)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  // Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
+  .const MEMORYBLOCK_4000 = 4
+  // Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
+  .const MEMORYBLOCK_8000 = $10
+.segment Code
+  // main
+main: {
+    .label block1 = $4000
+    .label block2 = $8000
+    // [1] call memoryRemapBlock 
+  // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    // [11] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+  memoryRemapBlock_from_main:
+    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuz1=vbuc1 
+    lda #$40
+    sta.z memoryRemapBlock.blockPage
+    jsr memoryRemapBlock
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] *((const byte*) main::block1) ← (byte) $55 -- _deref_pbuc1=vbuc2 
+    // Put 0x55, 0xaa into $10000
+    lda #$55
+    sta block1
+    // [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa -- _deref_pbuc1=vbuc2 
+    lda #$aa
+    sta block1+1
+    // [4] call memoryRemapBlock 
+  // Remap [$8000-$9fff] to point to [$10000-$11fff]
+    // [11] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
+  memoryRemapBlock_from___b1:
+    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuz1=vbuc1 
+    lda #$80
+    sta.z memoryRemapBlock.blockPage
+    jsr memoryRemapBlock
+    jmp __b2
+    // main::@2
+  __b2:
+    // [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 -- _deref_pbuc1=vbuc2 
+    // Put 0x55, 0xaainto $10002
+    lda #$55
+    sta block2+2
+    // [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa -- _deref_pbuc1=vbuc2 
+    lda #$aa
+    sta block2+3
+    // [7] call memoryRemap 
+  // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
+    // [20] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
+  memoryRemap_from___b2:
+    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<$80
+    sta.z memoryRemap.upperMemoryPageOffset
+    lda #>$80
+    sta.z memoryRemap.upperMemoryPageOffset+1
+    // [20] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuz1=vbuc1 
+    lda #MEMORYBLOCK_4000|MEMORYBLOCK_8000
+    sta.z memoryRemap.remapBlocks
+    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<$c0
+    sta.z memoryRemap.lowerMemoryPageOffset
+    lda #>$c0
+    sta.z memoryRemap.lowerMemoryPageOffset+1
+    jsr memoryRemap
+    jmp __b3
+    // main::@3
+  __b3:
+    // [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
+    // Put 0x55, 0xaa into $10004 in a convoluted way
+    lda block1+2
+    sta block2+4
+    // [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    lda block2+1
+    sta block1+5
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // memoryRemapBlock
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.) 
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65. 
+// Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+// memoryRemapBlock(byte zp(2) blockPage)
+memoryRemapBlock: {
+    .label pageOffset = 8
+    .label block = $a
+    .label blockBits = $b
+    .label blockPage = 2
+    // [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuz2 
+    sec
+    lda #<$100
+    sbc.z blockPage
+    sta.z pageOffset
+    lda #>$100
+    sbc #0
+    sta.z pageOffset+1
+    // [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuz1=vbuz2_ror_5 
+    lda.z blockPage
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    sta.z block
+    // [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuz1=vbuc1_rol_vbuz2 
+    lda #1
+    ldy.z block
+    cpy #0
+    beq !e+
+  !:
+    asl
+    dey
+    bne !-
+  !e:
+    sta.z blockBits
+    // [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuz1=vbuz2 
+    lda.z blockBits
+    sta.z memoryRemap.remapBlocks
+    // [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    lda.z pageOffset
+    sta.z memoryRemap.lowerMemoryPageOffset
+    lda.z pageOffset+1
+    sta.z memoryRemap.lowerMemoryPageOffset+1
+    // [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    lda.z pageOffset
+    sta.z memoryRemap.upperMemoryPageOffset
+    lda.z pageOffset+1
+    sta.z memoryRemap.upperMemoryPageOffset+1
+    // [18] call memoryRemap 
+    // [20] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+  memoryRemap_from_memoryRemapBlock:
+    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (word) memoryRemap::upperMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
+    // [20] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
+    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (word) memoryRemap::lowerMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
+    jsr memoryRemap
+    jmp __breturn
+    // memoryRemapBlock::@return
+  __breturn:
+    // [19] return 
+    rts
+}
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
+// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
+// memoryRemap(byte zp(5) remapBlocks, word zp(3) lowerMemoryPageOffset, word zp(6) upperMemoryPageOffset)
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __0 = $c
+    .label __1 = $d
+    .label __2 = $e
+    .label __3 = $f
+    .label __4 = $10
+    .label __5 = $11
+    .label __6 = $12
+    .label __7 = $13
+    .label __8 = $14
+    .label __9 = $15
+    .label remapBlocks = 5
+    .label lowerMemoryPageOffset = 3
+    .label upperMemoryPageOffset = 6
+    // [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuz1=_lo_vwuz2 
+    lda.z lowerMemoryPageOffset
+    sta.z __0
+    // [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuz1 
+    lda.z __0
+    sta aVal
+    // [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    lda.z remapBlocks
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuz1=_hi_vwuz2 
+    lda.z lowerMemoryPageOffset+1
+    sta.z __2
+    // [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f
+    and.z __2
+    sta.z __3
+    // [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuz3 
+    lda.z __1
+    ora.z __3
+    sta.z __4
+    // [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuz1 
+    lda.z __4
+    sta xVal
+    // [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2 -- vbuz1=_lo_vwuz2 
+    lda.z upperMemoryPageOffset
+    sta.z __5
+    // [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuz1 
+    lda.z __5
+    sta yVal
+    // [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f0
+    and.z remapBlocks
+    sta.z __6
+    // [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2 -- vbuz1=_hi_vwuz2 
+    lda.z upperMemoryPageOffset+1
+    sta.z __7
+    // [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f
+    and.z __7
+    sta.z __8
+    // [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuz3 
+    lda.z __6
+    ora.z __8
+    sta.z __9
+    // [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuz1 
+    lda.z __9
+    sta zVal
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap::@return
+  __breturn:
+    // [36] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] *((const byte*) main::block1) ← (byte) $55 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ memoryRemapBlock::blockPage#2 ]
+Statement [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
+Statement [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] ( memoryRemap:7 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:7 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:13 [ memoryRemap::$1 ]
+Statement [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] ( memoryRemap:7 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:7 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:18 [ memoryRemap::$6 ]
+Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [2] *((const byte*) main::block1) ← (byte) $55 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::blockPage#2 memoryRemapBlock::pageOffset#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::block#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemapBlock::blockBits#0 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemapBlock::pageOffset#0 memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] ( memoryRemapBlock:1 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4 [ memoryRemap::remapBlocks#1 memoryRemap::lowerMemoryPageOffset#1 memoryRemap::upperMemoryPageOffset#1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] ( memoryRemap:7 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:7 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::remapBlocks#2 memoryRemap::upperMemoryPageOffset#2 memoryRemap::$1 memoryRemap::$3 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] ( memoryRemap:7 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::$6 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:7 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  memoryRemapBlock:4::memoryRemap:18 [ memoryRemap::$6 memoryRemap::$8 ] { { memoryRemap::remapBlocks#1 = memoryRemap::remapBlocks#2 memoryRemapBlock::blockBits#0 } { memoryRemap::upperMemoryPageOffset#1 = memoryRemap::upperMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 } }  ) always clobbers reg byte a 
+Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Potential registers zp[1]:2 [ memoryRemapBlock::blockPage#2 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] : zp[2]:3 , 
+Potential registers zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] : zp[1]:5 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ memoryRemapBlock::block#0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:11 [ memoryRemapBlock::blockBits#0 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:12 [ memoryRemap::$0 ] : zp[1]:12 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:13 [ memoryRemap::$1 ] : zp[1]:13 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:14 [ memoryRemap::$2 ] : zp[1]:14 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:15 [ memoryRemap::$3 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:16 [ memoryRemap::$4 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:17 [ memoryRemap::$5 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:18 [ memoryRemap::$6 ] : zp[1]:18 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:19 [ memoryRemap::$7 ] : zp[1]:19 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:20 [ memoryRemap::$8 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:21 [ memoryRemap::$9 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , reg byte z , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [memoryRemap] 202: zp[1]:12 [ memoryRemap::$0 ] 202: zp[1]:14 [ memoryRemap::$2 ] 202: zp[1]:15 [ memoryRemap::$3 ] 202: zp[1]:16 [ memoryRemap::$4 ] 202: zp[1]:17 [ memoryRemap::$5 ] 202: zp[1]:19 [ memoryRemap::$7 ] 202: zp[1]:20 [ memoryRemap::$8 ] 202: zp[1]:21 [ memoryRemap::$9 ] 67.33: zp[1]:13 [ memoryRemap::$1 ] 67.33: zp[1]:18 [ memoryRemap::$6 ] 64.25: zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] 41.36: zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ] 28.63: zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
+Uplift Scope [memoryRemapBlock] 22: zp[1]:10 [ memoryRemapBlock::block#0 ] 22: zp[1]:11 [ memoryRemapBlock::blockBits#0 ] 11: zp[1]:2 [ memoryRemapBlock::blockPage#2 ] 6.6: zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] 
+Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6569_VICII] 
+Uplift Scope [MOS6581_SID] 
+Uplift Scope [MOS4569_VICIII] 
+Uplift Scope [MEGA65_VICIV] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [memoryRemap] best 326 combination reg byte a [ memoryRemap::$0 ] reg byte a [ memoryRemap::$2 ] reg byte a [ memoryRemap::$3 ] zp[1]:16 [ memoryRemap::$4 ] zp[1]:17 [ memoryRemap::$5 ] zp[1]:19 [ memoryRemap::$7 ] zp[1]:20 [ memoryRemap::$8 ] zp[1]:21 [ memoryRemap::$9 ] zp[1]:13 [ memoryRemap::$1 ] zp[1]:18 [ memoryRemap::$6 ] zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] zp[2]:6 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ] zp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
+Limited combination testing to 100 combinations of 25000000 possible.
+Uplifting [memoryRemapBlock] best 312 combination reg byte a [ memoryRemapBlock::block#0 ] reg byte a [ memoryRemapBlock::blockBits#0 ] reg byte x [ memoryRemapBlock::blockPage#2 ] zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] 
+Uplifting [MOS6526_CIA] best 312 combination 
+Uplifting [MOS6569_VICII] best 312 combination 
+Uplifting [MOS6581_SID] best 312 combination 
+Uplifting [MOS4569_VICIII] best 312 combination 
+Uplifting [MEGA65_VICIV] best 312 combination 
+Uplifting [main] best 312 combination 
+Uplifting [] best 312 combination 
+Attempting to uplift remaining variables inzp[1]:16 [ memoryRemap::$4 ]
+Uplifting [memoryRemap] best 306 combination reg byte a [ memoryRemap::$4 ] 
+Attempting to uplift remaining variables inzp[1]:17 [ memoryRemap::$5 ]
+Uplifting [memoryRemap] best 300 combination reg byte a [ memoryRemap::$5 ] 
+Attempting to uplift remaining variables inzp[1]:19 [ memoryRemap::$7 ]
+Uplifting [memoryRemap] best 294 combination reg byte a [ memoryRemap::$7 ] 
+Attempting to uplift remaining variables inzp[1]:20 [ memoryRemap::$8 ]
+Uplifting [memoryRemap] best 288 combination reg byte a [ memoryRemap::$8 ] 
+Attempting to uplift remaining variables inzp[1]:21 [ memoryRemap::$9 ]
+Uplifting [memoryRemap] best 282 combination reg byte a [ memoryRemap::$9 ] 
+Attempting to uplift remaining variables inzp[1]:13 [ memoryRemap::$1 ]
+Uplifting [memoryRemap] best 282 combination zp[1]:13 [ memoryRemap::$1 ] 
+Attempting to uplift remaining variables inzp[1]:18 [ memoryRemap::$6 ]
+Uplifting [memoryRemap] best 282 combination zp[1]:18 [ memoryRemap::$6 ] 
+Attempting to uplift remaining variables inzp[1]:5 [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
+Uplifting [memoryRemap] best 273 combination reg byte z [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ] 
+Coalescing zero page register [ zp[2]:3 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 ] ] with [ zp[2]:8 [ memoryRemapBlock::pageOffset#0 ] ] - score: 1
+Allocated (was zp[2]:3) zp[2]:2 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 ]
+Allocated (was zp[2]:6) zp[2]:4 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+Allocated (was zp[1]:13) zp[1]:6 [ memoryRemap::$1 ]
+Allocated (was zp[1]:18) zp[1]:7 [ memoryRemap::$6 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test the MAP instruction for remapping memory
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+  // Upstart
+.cpu _45gs02
+  // MEGA65 platform PRG executable starting in MEGA65 mode.
+.file [name="memorymap-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(main)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  // Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
+  .const MEMORYBLOCK_4000 = 4
+  // Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
+  .const MEMORYBLOCK_8000 = $10
+.segment Code
+  // main
+main: {
+    .label block1 = $4000
+    .label block2 = $8000
+    // [1] call memoryRemapBlock 
+  // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    // [11] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+  memoryRemapBlock_from_main:
+    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    ldx #$40
+    jsr memoryRemapBlock
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] *((const byte*) main::block1) ← (byte) $55 -- _deref_pbuc1=vbuc2 
+    // Put 0x55, 0xaa into $10000
+    lda #$55
+    sta block1
+    // [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa -- _deref_pbuc1=vbuc2 
+    lda #$aa
+    sta block1+1
+    // [4] call memoryRemapBlock 
+  // Remap [$8000-$9fff] to point to [$10000-$11fff]
+    // [11] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
+  memoryRemapBlock_from___b1:
+    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    ldx #$80
+    jsr memoryRemapBlock
+    jmp __b2
+    // main::@2
+  __b2:
+    // [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 -- _deref_pbuc1=vbuc2 
+    // Put 0x55, 0xaainto $10002
+    lda #$55
+    sta block2+2
+    // [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa -- _deref_pbuc1=vbuc2 
+    lda #$aa
+    sta block2+3
+    // [7] call memoryRemap 
+  // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
+    // [20] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
+  memoryRemap_from___b2:
+    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<$80
+    sta.z memoryRemap.upperMemoryPageOffset
+    lda #>$80
+    sta.z memoryRemap.upperMemoryPageOffset+1
+    // [20] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #MEMORYBLOCK_4000|MEMORYBLOCK_8000
+    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<$c0
+    sta.z memoryRemap.lowerMemoryPageOffset
+    lda #>$c0
+    sta.z memoryRemap.lowerMemoryPageOffset+1
+    jsr memoryRemap
+    jmp __b3
+    // main::@3
+  __b3:
+    // [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
+    // Put 0x55, 0xaa into $10004 in a convoluted way
+    lda block1+2
+    sta block2+4
+    // [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    lda block2+1
+    sta block1+5
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // memoryRemapBlock
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.) 
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65. 
+// Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+// memoryRemapBlock(byte register(X) blockPage)
+memoryRemapBlock: {
+    .label pageOffset = 2
+    // [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
+    stx.z $ff
+    lda #<$100
+    sec
+    sbc.z $ff
+    sta.z pageOffset
+    lda #>$100
+    sbc #0
+    sta.z pageOffset+1
+    // [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuaa=vbuxx_ror_5 
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    // [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
+    tay
+    lda #1
+    cpy #0
+    beq !e+
+  !:
+    asl
+    dey
+    bne !-
+  !e:
+    // [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuzz=vbuaa 
+    taz
+    // [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+    // [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    lda.z pageOffset
+    sta.z memoryRemap.upperMemoryPageOffset
+    lda.z pageOffset+1
+    sta.z memoryRemap.upperMemoryPageOffset+1
+    // [18] call memoryRemap 
+    // [20] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+  memoryRemap_from_memoryRemapBlock:
+    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (word) memoryRemap::upperMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
+    // [20] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
+    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (word) memoryRemap::lowerMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
+    jsr memoryRemap
+    jmp __breturn
+    // memoryRemapBlock::@return
+  __breturn:
+    // [19] return 
+    rts
+}
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
+// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
+// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerMemoryPageOffset, word zp(4) upperMemoryPageOffset)
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __1 = 6
+    .label __6 = 7
+    .label lowerMemoryPageOffset = 2
+    .label upperMemoryPageOffset = 4
+    // [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z lowerMemoryPageOffset
+    // [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
+    sta aVal
+    // [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    tza
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z lowerMemoryPageOffset+1
+    // [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __1
+    // [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
+    sta xVal
+    // [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z upperMemoryPageOffset
+    // [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
+    sta yVal
+    // [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
+    tza
+    and #$f0
+    sta.z __6
+    // [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z upperMemoryPageOffset+1
+    // [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __6
+    // [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
+    sta zVal
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap::@return
+  __breturn:
+    // [36] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction memoryRemapBlock_from_main:
+Removing instruction __b1:
+Removing instruction memoryRemapBlock_from___b1:
+Removing instruction __b2:
+Removing instruction memoryRemap_from___b2:
+Removing instruction __b3:
+Removing instruction __breturn:
+Removing instruction memoryRemap_from_memoryRemapBlock:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(byte) MEGA65_VICIV::ALPHADELAY
+(byte) MEGA65_VICIV::B0PIX
+(byte) MEGA65_VICIV::B0_ADDR
+(byte) MEGA65_VICIV::B1PIX
+(byte) MEGA65_VICIV::B1_ADDR
+(byte) MEGA65_VICIV::B2PIX
+(byte) MEGA65_VICIV::B2_ADDR
+(byte) MEGA65_VICIV::B3PIX
+(byte) MEGA65_VICIV::B3_ADDR
+(byte) MEGA65_VICIV::B4PIX
+(byte) MEGA65_VICIV::B4_ADDR
+(byte) MEGA65_VICIV::B5PIX
+(byte) MEGA65_VICIV::B5_ADDR
+(byte) MEGA65_VICIV::B6PIX
+(byte) MEGA65_VICIV::B6_ADDR
+(byte) MEGA65_VICIV::B7PIX
+(byte) MEGA65_VICIV::B7_ADDR
+(byte) MEGA65_VICIV::BBDRPOS_HI
+(byte) MEGA65_VICIV::BBDRPOS_LO
+(byte) MEGA65_VICIV::BG_COLOR
+(byte) MEGA65_VICIV::BG_COLOR1
+(byte) MEGA65_VICIV::BG_COLOR2
+(byte) MEGA65_VICIV::BG_COLOR3
+(byte) MEGA65_VICIV::BORDER_COLOR
+(byte) MEGA65_VICIV::BP16ENS
+(byte) MEGA65_VICIV::BPCOMP
+(byte) MEGA65_VICIV::BPX
+(byte) MEGA65_VICIV::BPY
+(byte) MEGA65_VICIV::CHARPTR_HILO
+(byte) MEGA65_VICIV::CHARPTR_LOHI
+(byte) MEGA65_VICIV::CHARPTR_LOLO
+(byte) MEGA65_VICIV::CHARSTEP_HI
+(byte) MEGA65_VICIV::CHARSTEP_LO
+(byte) MEGA65_VICIV::CHRCOUNT
+(byte) MEGA65_VICIV::CHRXSCL
+(byte) MEGA65_VICIV::CHRYSCL
+(byte) MEGA65_VICIV::COLPTR_HI
+(byte) MEGA65_VICIV::COLPTR_LO
+(byte) MEGA65_VICIV::CONTROL1
+(byte) MEGA65_VICIV::CONTROL2
+(byte) MEGA65_VICIV::CONTROLA
+(byte) MEGA65_VICIV::CONTROLB
+(byte) MEGA65_VICIV::CONTROLC
+(byte) MEGA65_VICIV::DEBUG1
+(byte) MEGA65_VICIV::DEBUGX
+(byte) MEGA65_VICIV::DEBUGXY
+(byte) MEGA65_VICIV::DEBUGY
+(byte) MEGA65_VICIV::FNRASTER_HI
+(byte) MEGA65_VICIV::FNRASTER_LO
+(byte) MEGA65_VICIV::HPOS
+(byte) MEGA65_VICIV::IRQ_ENABLE
+(byte) MEGA65_VICIV::IRQ_STATUS
+(byte) MEGA65_VICIV::KEY
+(byte) MEGA65_VICIV::LIGHTPEN_X
+(byte) MEGA65_VICIV::LIGHTPEN_Y
+(byte) MEGA65_VICIV::MEMORY
+(byte) MEGA65_VICIV::PALSEL
+(byte) MEGA65_VICIV::RASLINE0
+(byte) MEGA65_VICIV::RASTER
+(byte) MEGA65_VICIV::ROWCOUNT
+(byte) MEGA65_VICIV::RSTCMP
+(byte) MEGA65_VICIV::RSTCOMP
+(byte) MEGA65_VICIV::SBPDEBUG
+(byte) MEGA65_VICIV::SCRNPTR_HIHI
+(byte) MEGA65_VICIV::SCRNPTR_HILO
+(byte) MEGA65_VICIV::SCRNPTR_LOHI
+(byte) MEGA65_VICIV::SCRNPTR_LOLO
+(byte) MEGA65_VICIV::SIDBDRWD_HI
+(byte) MEGA65_VICIV::SIDBDRWD_LO
+(byte) MEGA65_VICIV::SPR16EN
+(byte) MEGA65_VICIV::SPRALPHAVAL
+(byte) MEGA65_VICIV::SPRENALPHA
+(byte) MEGA65_VICIV::SPRENV400
+(byte) MEGA65_VICIV::SPRHGHT
+(byte) MEGA65_VICIV::SPRHGTEN
+(byte) MEGA65_VICIV::SPRITE0_COLOR
+(byte) MEGA65_VICIV::SPRITE0_X
+(byte) MEGA65_VICIV::SPRITE0_Y
+(byte) MEGA65_VICIV::SPRITE1_COLOR
+(byte) MEGA65_VICIV::SPRITE1_X
+(byte) MEGA65_VICIV::SPRITE1_Y
+(byte) MEGA65_VICIV::SPRITE2_COLOR
+(byte) MEGA65_VICIV::SPRITE2_X
+(byte) MEGA65_VICIV::SPRITE2_Y
+(byte) MEGA65_VICIV::SPRITE3_COLOR
+(byte) MEGA65_VICIV::SPRITE3_X
+(byte) MEGA65_VICIV::SPRITE3_Y
+(byte) MEGA65_VICIV::SPRITE4_COLOR
+(byte) MEGA65_VICIV::SPRITE4_X
+(byte) MEGA65_VICIV::SPRITE4_Y
+(byte) MEGA65_VICIV::SPRITE5_COLOR
+(byte) MEGA65_VICIV::SPRITE5_X
+(byte) MEGA65_VICIV::SPRITE5_Y
+(byte) MEGA65_VICIV::SPRITE6_COLOR
+(byte) MEGA65_VICIV::SPRITE6_X
+(byte) MEGA65_VICIV::SPRITE6_Y
+(byte) MEGA65_VICIV::SPRITE7_COLOR
+(byte) MEGA65_VICIV::SPRITE7_X
+(byte) MEGA65_VICIV::SPRITE7_Y
+(byte) MEGA65_VICIV::SPRITES_BG_COLLISION
+(byte) MEGA65_VICIV::SPRITES_COLLISION
+(byte) MEGA65_VICIV::SPRITES_ENABLE
+(byte) MEGA65_VICIV::SPRITES_EXPAND_X
+(byte) MEGA65_VICIV::SPRITES_EXPAND_Y
+(byte) MEGA65_VICIV::SPRITES_MC
+(byte) MEGA65_VICIV::SPRITES_MCOLOR1
+(byte) MEGA65_VICIV::SPRITES_MCOLOR2
+(byte) MEGA65_VICIV::SPRITES_PRIORITY
+(byte) MEGA65_VICIV::SPRITES_XMSB
+(byte) MEGA65_VICIV::SPRPTRADR_HILO
+(byte) MEGA65_VICIV::SPRPTRADR_LOHI
+(byte) MEGA65_VICIV::SPRPTRADR_LOLO
+(byte) MEGA65_VICIV::SPRX64EN
+(byte) MEGA65_VICIV::SPRXSMSBS
+(byte) MEGA65_VICIV::SPRYSMSBSM
+(byte) MEGA65_VICIV::SRPYMSBS
+(byte) MEGA65_VICIV::SYNCPOL
+(byte) MEGA65_VICIV::TBDRPOS_HI
+(byte) MEGA65_VICIV::TBDRPOS_LO
+(byte) MEGA65_VICIV::TEXTXPOS_HI
+(byte) MEGA65_VICIV::TEXTXPOS_LO
+(byte) MEGA65_VICIV::TEXTYPOS_HI
+(byte) MEGA65_VICIV::TEXTYPOS_LO
+(byte) MEGA65_VICIV::UNUSED
+(byte) MEGA65_VICIV::VPOS
+(byte) MEGA65_VICIV::VSYNDEL
+(byte) MEGA65_VICIV::XPOS_HI
+(byte) MEGA65_VICIV::XPOS_LO
+(const nomodify byte) MEMORYBLOCK_4000 = (byte) 4
+(const nomodify byte) MEMORYBLOCK_8000 = (byte) $10
+(byte) MOS4569_VICIII::B0PIX
+(byte) MOS4569_VICIII::B0_ADDR
+(byte) MOS4569_VICIII::B1PIX
+(byte) MOS4569_VICIII::B1_ADDR
+(byte) MOS4569_VICIII::B2PIX
+(byte) MOS4569_VICIII::B2_ADDR
+(byte) MOS4569_VICIII::B3PIX
+(byte) MOS4569_VICIII::B3_ADDR
+(byte) MOS4569_VICIII::B4PIX
+(byte) MOS4569_VICIII::B4_ADDR
+(byte) MOS4569_VICIII::B5PIX
+(byte) MOS4569_VICIII::B5_ADDR
+(byte) MOS4569_VICIII::B6PIX
+(byte) MOS4569_VICIII::B6_ADDR
+(byte) MOS4569_VICIII::B7PIX
+(byte) MOS4569_VICIII::B7_ADDR
+(byte) MOS4569_VICIII::BG_COLOR
+(byte) MOS4569_VICIII::BG_COLOR1
+(byte) MOS4569_VICIII::BG_COLOR2
+(byte) MOS4569_VICIII::BG_COLOR3
+(byte) MOS4569_VICIII::BORDER_COLOR
+(byte) MOS4569_VICIII::BPCOMP
+(byte) MOS4569_VICIII::BPX
+(byte) MOS4569_VICIII::BPY
+(byte) MOS4569_VICIII::CONTROL1
+(byte) MOS4569_VICIII::CONTROL2
+(byte) MOS4569_VICIII::CONTROLA
+(byte) MOS4569_VICIII::CONTROLB
+(byte) MOS4569_VICIII::HPOS
+(byte) MOS4569_VICIII::IRQ_ENABLE
+(byte) MOS4569_VICIII::IRQ_STATUS
+(byte) MOS4569_VICIII::KEY
+(byte) MOS4569_VICIII::LIGHTPEN_X
+(byte) MOS4569_VICIII::LIGHTPEN_Y
+(byte) MOS4569_VICIII::MEMORY
+(byte) MOS4569_VICIII::RASTER
+(byte) MOS4569_VICIII::SPRITE0_COLOR
+(byte) MOS4569_VICIII::SPRITE0_X
+(byte) MOS4569_VICIII::SPRITE0_Y
+(byte) MOS4569_VICIII::SPRITE1_COLOR
+(byte) MOS4569_VICIII::SPRITE1_X
+(byte) MOS4569_VICIII::SPRITE1_Y
+(byte) MOS4569_VICIII::SPRITE2_COLOR
+(byte) MOS4569_VICIII::SPRITE2_X
+(byte) MOS4569_VICIII::SPRITE2_Y
+(byte) MOS4569_VICIII::SPRITE3_COLOR
+(byte) MOS4569_VICIII::SPRITE3_X
+(byte) MOS4569_VICIII::SPRITE3_Y
+(byte) MOS4569_VICIII::SPRITE4_COLOR
+(byte) MOS4569_VICIII::SPRITE4_X
+(byte) MOS4569_VICIII::SPRITE4_Y
+(byte) MOS4569_VICIII::SPRITE5_COLOR
+(byte) MOS4569_VICIII::SPRITE5_X
+(byte) MOS4569_VICIII::SPRITE5_Y
+(byte) MOS4569_VICIII::SPRITE6_COLOR
+(byte) MOS4569_VICIII::SPRITE6_X
+(byte) MOS4569_VICIII::SPRITE6_Y
+(byte) MOS4569_VICIII::SPRITE7_COLOR
+(byte) MOS4569_VICIII::SPRITE7_X
+(byte) MOS4569_VICIII::SPRITE7_Y
+(byte) MOS4569_VICIII::SPRITES_BG_COLLISION
+(byte) MOS4569_VICIII::SPRITES_COLLISION
+(byte) MOS4569_VICIII::SPRITES_ENABLE
+(byte) MOS4569_VICIII::SPRITES_EXPAND_X
+(byte) MOS4569_VICIII::SPRITES_EXPAND_Y
+(byte) MOS4569_VICIII::SPRITES_MC
+(byte) MOS4569_VICIII::SPRITES_MCOLOR1
+(byte) MOS4569_VICIII::SPRITES_MCOLOR2
+(byte) MOS4569_VICIII::SPRITES_PRIORITY
+(byte) MOS4569_VICIII::SPRITES_XMSB
+(byte) MOS4569_VICIII::UNUSED
+(byte) MOS4569_VICIII::VPOS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6569_VICII::BG_COLOR
+(byte) MOS6569_VICII::BG_COLOR1
+(byte) MOS6569_VICII::BG_COLOR2
+(byte) MOS6569_VICII::BG_COLOR3
+(byte) MOS6569_VICII::BORDER_COLOR
+(byte) MOS6569_VICII::CONTROL1
+(byte) MOS6569_VICII::CONTROL2
+(byte) MOS6569_VICII::IRQ_ENABLE
+(byte) MOS6569_VICII::IRQ_STATUS
+(byte) MOS6569_VICII::LIGHTPEN_X
+(byte) MOS6569_VICII::LIGHTPEN_Y
+(byte) MOS6569_VICII::MEMORY
+(byte) MOS6569_VICII::RASTER
+(byte) MOS6569_VICII::SPRITE0_COLOR
+(byte) MOS6569_VICII::SPRITE0_X
+(byte) MOS6569_VICII::SPRITE0_Y
+(byte) MOS6569_VICII::SPRITE1_COLOR
+(byte) MOS6569_VICII::SPRITE1_X
+(byte) MOS6569_VICII::SPRITE1_Y
+(byte) MOS6569_VICII::SPRITE2_COLOR
+(byte) MOS6569_VICII::SPRITE2_X
+(byte) MOS6569_VICII::SPRITE2_Y
+(byte) MOS6569_VICII::SPRITE3_COLOR
+(byte) MOS6569_VICII::SPRITE3_X
+(byte) MOS6569_VICII::SPRITE3_Y
+(byte) MOS6569_VICII::SPRITE4_COLOR
+(byte) MOS6569_VICII::SPRITE4_X
+(byte) MOS6569_VICII::SPRITE4_Y
+(byte) MOS6569_VICII::SPRITE5_COLOR
+(byte) MOS6569_VICII::SPRITE5_X
+(byte) MOS6569_VICII::SPRITE5_Y
+(byte) MOS6569_VICII::SPRITE6_COLOR
+(byte) MOS6569_VICII::SPRITE6_X
+(byte) MOS6569_VICII::SPRITE6_Y
+(byte) MOS6569_VICII::SPRITE7_COLOR
+(byte) MOS6569_VICII::SPRITE7_X
+(byte) MOS6569_VICII::SPRITE7_Y
+(byte) MOS6569_VICII::SPRITES_BG_COLLISION
+(byte) MOS6569_VICII::SPRITES_COLLISION
+(byte) MOS6569_VICII::SPRITES_ENABLE
+(byte) MOS6569_VICII::SPRITES_EXPAND_X
+(byte) MOS6569_VICII::SPRITES_EXPAND_Y
+(byte) MOS6569_VICII::SPRITES_MC
+(byte) MOS6569_VICII::SPRITES_MCOLOR1
+(byte) MOS6569_VICII::SPRITES_MCOLOR2
+(byte) MOS6569_VICII::SPRITES_PRIORITY
+(byte) MOS6569_VICII::SPRITES_XMSB
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) main()
+(label) main::@1
+(label) main::@2
+(label) main::@3
+(label) main::@return
+(const byte*) main::block1 = (byte*) 16384
+(const byte*) main::block2 = (byte*) 32768
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerMemoryPageOffset , (word) memoryRemap::upperMemoryPageOffset)
+(byte~) memoryRemap::$0 reg byte a 202.0
+(byte~) memoryRemap::$1 zp[1]:6 67.33333333333333
+(byte~) memoryRemap::$2 reg byte a 202.0
+(byte~) memoryRemap::$3 reg byte a 202.0
+(byte~) memoryRemap::$4 reg byte a 202.0
+(byte~) memoryRemap::$5 reg byte a 202.0
+(byte~) memoryRemap::$6 zp[1]:7 67.33333333333333
+(byte~) memoryRemap::$7 reg byte a 202.0
+(byte~) memoryRemap::$8 reg byte a 202.0
+(byte~) memoryRemap::$9 reg byte a 202.0
+(label) memoryRemap::@return
+(const byte*) memoryRemap::aVal = (byte*) 252
+(word) memoryRemap::lowerMemoryPageOffset
+(word) memoryRemap::lowerMemoryPageOffset#1 lowerMemoryPageOffset zp[2]:2 11.0
+(word) memoryRemap::lowerMemoryPageOffset#2 lowerMemoryPageOffset zp[2]:2 53.25
+(byte) memoryRemap::remapBlocks
+(byte) memoryRemap::remapBlocks#1 reg byte z 7.333333333333333
+(byte) memoryRemap::remapBlocks#2 reg byte z 21.299999999999997
+(word) memoryRemap::upperMemoryPageOffset
+(word) memoryRemap::upperMemoryPageOffset#1 upperMemoryPageOffset zp[2]:4 22.0
+(word) memoryRemap::upperMemoryPageOffset#2 upperMemoryPageOffset zp[2]:4 19.363636363636363
+(const byte*) memoryRemap::xVal = (byte*) 253
+(const byte*) memoryRemap::yVal = (byte*) 254
+(const byte*) memoryRemap::zVal = (byte*) 255
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+(label) memoryRemapBlock::@return
+(byte) memoryRemapBlock::block
+(byte) memoryRemapBlock::block#0 reg byte a 22.0
+(byte) memoryRemapBlock::blockBits
+(byte) memoryRemapBlock::blockBits#0 reg byte a 22.0
+(byte) memoryRemapBlock::blockPage
+(byte) memoryRemapBlock::blockPage#2 reg byte x 11.0
+(word) memoryRemapBlock::memoryPage
+(word) memoryRemapBlock::pageOffset
+(word) memoryRemapBlock::pageOffset#0 pageOffset zp[2]:2 6.6000000000000005
+
+reg byte x [ memoryRemapBlock::blockPage#2 ]
+zp[2]:2 [ memoryRemap::lowerMemoryPageOffset#2 memoryRemap::lowerMemoryPageOffset#1 memoryRemapBlock::pageOffset#0 ]
+reg byte z [ memoryRemap::remapBlocks#2 memoryRemap::remapBlocks#1 ]
+zp[2]:4 [ memoryRemap::upperMemoryPageOffset#2 memoryRemap::upperMemoryPageOffset#1 ]
+reg byte a [ memoryRemapBlock::block#0 ]
+reg byte a [ memoryRemapBlock::blockBits#0 ]
+reg byte a [ memoryRemap::$0 ]
+zp[1]:6 [ memoryRemap::$1 ]
+reg byte a [ memoryRemap::$2 ]
+reg byte a [ memoryRemap::$3 ]
+reg byte a [ memoryRemap::$4 ]
+reg byte a [ memoryRemap::$5 ]
+zp[1]:7 [ memoryRemap::$6 ]
+reg byte a [ memoryRemap::$7 ]
+reg byte a [ memoryRemap::$8 ]
+reg byte a [ memoryRemap::$9 ]
+
+
+FINAL ASSEMBLER
+Score: 243
+
+  // File Comments
+// Test the MAP instruction for remapping memory
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
+  // Upstart
+.cpu _45gs02
+  // MEGA65 platform PRG executable starting in MEGA65 mode.
+.file [name="memorymap-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(main)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  // Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
+  .const MEMORYBLOCK_4000 = 4
+  // Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
+  .const MEMORYBLOCK_8000 = $10
+.segment Code
+  // main
+main: {
+    .label block1 = $4000
+    .label block2 = $8000
+    // memoryRemapBlock(0x40, 0x100)
+    // [1] call memoryRemapBlock 
+  // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    // [11] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $40 [phi:main->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    ldx #$40
+    jsr memoryRemapBlock
+    // main::@1
+    // block1[0] = 0x55
+    // [2] *((const byte*) main::block1) ← (byte) $55 -- _deref_pbuc1=vbuc2 
+    // Put 0x55, 0xaa into $10000
+    lda #$55
+    sta block1
+    // block1[1] = 0xaa
+    // [3] *((const byte*) main::block1+(byte) 1) ← (byte) $aa -- _deref_pbuc1=vbuc2 
+    lda #$aa
+    sta block1+1
+    // memoryRemapBlock(0x80, 0x100)
+    // [4] call memoryRemapBlock 
+  // Remap [$8000-$9fff] to point to [$10000-$11fff]
+    // [11] phi from main::@1 to memoryRemapBlock [phi:main::@1->memoryRemapBlock]
+    // [11] phi (byte) memoryRemapBlock::blockPage#2 = (byte) $80 [phi:main::@1->memoryRemapBlock#0] -- vbuxx=vbuc1 
+    ldx #$80
+    jsr memoryRemapBlock
+    // main::@2
+    // block2[2] = 0x55
+    // [5] *((const byte*) main::block2+(byte) 2) ← (byte) $55 -- _deref_pbuc1=vbuc2 
+    // Put 0x55, 0xaainto $10002
+    lda #$55
+    sta block2+2
+    // block2[3] = 0xaa
+    // [6] *((const byte*) main::block2+(byte) 3) ← (byte) $aa -- _deref_pbuc1=vbuc2 
+    lda #$aa
+    sta block2+3
+    // memoryRemap(MEMORYBLOCK_4000|MEMORYBLOCK_8000, 0x0c0, 0x080)
+    // [7] call memoryRemap 
+  // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
+    // [20] phi from main::@2 to memoryRemap [phi:main::@2->memoryRemap]
+    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (byte) $80 [phi:main::@2->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<$80
+    sta.z memoryRemap.upperMemoryPageOffset
+    lda #>$80
+    sta.z memoryRemap.upperMemoryPageOffset+1
+    // [20] phi (byte) memoryRemap::remapBlocks#2 = (const nomodify byte) MEMORYBLOCK_4000|(const nomodify byte) MEMORYBLOCK_8000 [phi:main::@2->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #MEMORYBLOCK_4000|MEMORYBLOCK_8000
+    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (byte) $c0 [phi:main::@2->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<$c0
+    sta.z memoryRemap.lowerMemoryPageOffset
+    lda #>$c0
+    sta.z memoryRemap.lowerMemoryPageOffset+1
+    jsr memoryRemap
+    // main::@3
+    // block2[4] = block1[2]
+    // [8] *((const byte*) main::block2+(byte) 4) ← *((const byte*) main::block1+(byte) 2) -- _deref_pbuc1=_deref_pbuc2 
+    // Put 0x55, 0xaa into $10004 in a convoluted way
+    lda block1+2
+    sta block2+4
+    // block1[5] = block2[1]
+    // [9] *((const byte*) main::block1+(byte) 5) ← *((const byte*) main::block2+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    lda block2+1
+    sta block1+5
+    // main::@return
+    // }
+    // [10] return 
+    rts
+}
+  // memoryRemapBlock
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.) 
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65. 
+// Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+// memoryRemapBlock(byte register(X) blockPage)
+memoryRemapBlock: {
+    .label pageOffset = 2
+    // pageOffset = memoryPage-blockPage
+    // [12] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) memoryRemapBlock::blockPage#2 -- vwuz1=vwuc1_minus_vbuxx 
+    stx.z $ff
+    lda #<$100
+    sec
+    sbc.z $ff
+    sta.z pageOffset
+    lda #>$100
+    sbc #0
+    sta.z pageOffset+1
+    // block = blockPage / $20
+    // [13] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 >> (byte) 5 -- vbuaa=vbuxx_ror_5 
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    lsr
+    // blockBits = 1<<block
+    // [14] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (byte) memoryRemapBlock::block#0 -- vbuaa=vbuc1_rol_vbuaa 
+    tay
+    lda #1
+    cpy #0
+    beq !e+
+  !:
+    asl
+    dey
+    bne !-
+  !e:
+    // memoryRemap(blockBits, pageOffset, pageOffset)
+    // [15] (byte) memoryRemap::remapBlocks#1 ← (byte) memoryRemapBlock::blockBits#0 -- vbuzz=vbuaa 
+    taz
+    // [16] (word) memoryRemap::lowerMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0
+    // [17] (word) memoryRemap::upperMemoryPageOffset#1 ← (word) memoryRemapBlock::pageOffset#0 -- vwuz1=vwuz2 
+    lda.z pageOffset
+    sta.z memoryRemap.upperMemoryPageOffset
+    lda.z pageOffset+1
+    sta.z memoryRemap.upperMemoryPageOffset+1
+    // [18] call memoryRemap 
+    // [20] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    // [20] phi (word) memoryRemap::upperMemoryPageOffset#2 = (word) memoryRemap::upperMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#0] -- register_copy 
+    // [20] phi (byte) memoryRemap::remapBlocks#2 = (byte) memoryRemap::remapBlocks#1 [phi:memoryRemapBlock->memoryRemap#1] -- register_copy 
+    // [20] phi (word) memoryRemap::lowerMemoryPageOffset#2 = (word) memoryRemap::lowerMemoryPageOffset#1 [phi:memoryRemapBlock->memoryRemap#2] -- register_copy 
+    jsr memoryRemap
+    // memoryRemapBlock::@return
+    // }
+    // [19] return 
+    rts
+}
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
+// lowerMemoryPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerMemoryPageOffset*$100.  
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerMemoryPageOffset*$100 + $2000.  
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerMemoryPageOffset*$100 + $4000.  
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerMemoryPageOffset*$100 + $6000.  
+// upperMemoryPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperMemoryPageOffset*$100 + $8000  
+// - If block 5 ($a000-$bfff) is remapped it will point to upperMemoryPageOffset*$100 + $a000.  
+// - If block 6 ($c000-$dfff) is remapped it will point to upperMemoryPageOffset*$100 + $c000.  
+// - If block 7 ($e000-$ffff) is remapped it will point to upperMemoryPageOffset*$100 + $e000.  
+// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerMemoryPageOffset, word zp(4) upperMemoryPageOffset)
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __1 = 6
+    .label __6 = 7
+    .label lowerMemoryPageOffset = 2
+    .label upperMemoryPageOffset = 4
+    // <lowerMemoryPageOffset
+    // [21] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z lowerMemoryPageOffset
+    // *aVal = <lowerMemoryPageOffset
+    // [22] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
+    sta aVal
+    // remapBlocks << 4
+    // [23] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#2 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    tza
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // >lowerMemoryPageOffset
+    // [24] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z lowerMemoryPageOffset+1
+    // >lowerMemoryPageOffset & 0xf
+    // [25] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // (remapBlocks << 4)   | (>lowerMemoryPageOffset & 0xf)
+    // [26] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __1
+    // *xVal = (remapBlocks << 4)   | (>lowerMemoryPageOffset & 0xf)
+    // [27] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
+    sta xVal
+    // <upperMemoryPageOffset
+    // [28] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_lo_vwuz1 
+    lda.z upperMemoryPageOffset
+    // *yVal = <upperMemoryPageOffset
+    // [29] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
+    sta yVal
+    // remapBlocks & 0xf0
+    // [30] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#2 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
+    tza
+    and #$f0
+    sta.z __6
+    // >upperMemoryPageOffset
+    // [31] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperMemoryPageOffset#2 -- vbuaa=_hi_vwuz1 
+    lda.z upperMemoryPageOffset+1
+    // >upperMemoryPageOffset & 0xf
+    // [32] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // (remapBlocks & 0xf0) | (>upperMemoryPageOffset & 0xf)
+    // [33] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __6
+    // *zVal = (remapBlocks & 0xf0) | (>upperMemoryPageOffset & 0xf)
+    // [34] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
+    sta zVal
+    // asm
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    // memoryRemap::@return
+    // }
+    // [36] return 
+    rts
+}
+  // File Data
+

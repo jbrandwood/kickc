@@ -238,6 +238,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMega65MemoryMapTest() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/memorymap-test.c");
+   }
+
+   @Test
    public void testMega65Addressing32bit() throws IOException, URISyntaxException {
       compileAndCompare("examples/mega65/32bit-addressing-mega65.c");
    }

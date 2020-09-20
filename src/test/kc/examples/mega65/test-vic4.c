@@ -1,6 +1,5 @@
 // Hello World for MEGA 65 - putting chars directly to the screen
 #pragma target(mega65)
-#pragma emulator("/Users/jespergravgaard/c64/mega65/xemu-hmw/build/bin/xmega65.native -prg")
 #include <mega65.h>
 
 char * const SCREEN = 0x0800;

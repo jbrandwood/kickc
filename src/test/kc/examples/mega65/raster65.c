@@ -3,7 +3,6 @@
 // https://mega.scryptos.com/sharefolder/MEGA/MEGA65+filehost
 // https://www.forum64.de/index.php?thread/104591-xemu-vic-iv-implementation-update/&postID=1560511#post1560511
 #pragma target(mega65_c64)
-#pragma emulator("/Users/jespergravgaard/c64/mega65/xemu-hernandp/build/bin/xmega65.native -prg")
 #include <mega65.h>
 #include <string.h>
 

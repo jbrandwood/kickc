@@ -1,4 +1,4 @@
-// SID music located in another bank being played using memory mapping on MEGA65
+// SID music located in another bank being played in a raster IRQ using memory mapping on the MEGA65
 // Music is Cybernoid II by Jeroen Tel released in 1988 by Hewson https://csdb.dk/sid/?id=28140
 // SID relocated using http://www.linusakesson.net/software/sidreloc/index.php
 .cpu _45gs02
@@ -14,27 +14,154 @@
 .segment Basic
 .byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
-.text toIntString(main)                                   //         NNNN
+.text toIntString(__start)                                   //         NNNN
 .byte $00, $00, $00                                     // 
+  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
+  .const CIA_INTERRUPT_CLEAR = $7f
+  // Bits for the VICII IRQ Status/Enable Registers
+  .const IRQ_RASTER = 1
+  // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
+  .const PROCPORT_DDR_MEMORY_MASK = 7
+  // RAM in 0xA000, 0xE000 I/O in 0xD000
+  .const PROCPORT_RAM_IO = 5
+  .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
+  .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
+  .const OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO = $5c
+  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_CONTROL1 = $11
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
+  .const OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  // Processor port data direction register
+  .label PROCPORT_DDR = 0
+  // Processor Port Register controlling RAM/ROM configuration and the datasette
+  .label PROCPORT = 1
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
+  // The VIC III MOS 4567/4569
+  .label VICIII = $d000
+  // The VIC IV
+  .label VICIV = $d000
+  // Default address of screen character matrix
+  .label DEFAULT_SCREEN = $800
+  // The CIA#1: keyboard matrix, joystick #1/#2
+  .label CIA1 = $dc00
+  // The vector used when the HARDWARE serves IRQ interrupts
+  .label HARDWARE_IRQ = $fffe
   // Address after the end of the music
   .label MUSIC_END = $5200
   // Pointer to the music init routine
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
+  // Index used to destroy unmapped music memory (to demonstrate that mapping works)
+  .label mem_destroy_i = $a
 .segment Code
+__start: {
+    // mem_destroy_i = 0
+    lda #0
+    sta.z mem_destroy_i
+    jsr main
+    rts
+}
+// Raster IRQ routine
+irq: {
+    pha
+    txa
+    pha
+    tya
+    pha
+    // VICII->IRQ_STATUS = IRQ_RASTER
+    // Acknowledge the IRQ
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
+    // MUSIC[mem_destroy_i++]++;
+    ldx.z mem_destroy_i
+    inc MUSIC,x
+    inc.z mem_destroy_i
+  // Wait for the raster
+  __b1:
+    // while(VICII->RASTER!=0xff)
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b1
+    // (VICII->BORDER_COLOR)++;
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // memoryRemapBlock(0x40, 0x100)
+  // Remap memory to put music at $4000
+    jsr memoryRemapBlock
+    // (*musicPlay)()
+    // Play remapped SID
+    jsr musicPlay
+    // memoryRemap(0,0,0)
+  // Reset memory mapping
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    ldz #0
+    sta.z memoryRemap.lowerPageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+  // Wait for the raster
+  __b3:
+    // while(VICII->RASTER==0xff)
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq __b3
+    // (VICII->BORDER_COLOR)--;
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // }
+    pla
+    tay
+    pla
+    tax
+    pla
+    rti
+}
 main: {
     .label dst = 2
     .label src = 4
-    // Pointer to (unmapped) $4000 used for overwriting to demonstrate the mapping works
-    .label mem_destroy = 6
     // asm
     // Stop IRQ's
     sei
+    // memoryRemap(0,0,0)
+  // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    ldz #0
+    sta.z memoryRemap.lowerPageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    // VICIII->KEY = 0x47
+    // Enable MEGA65 features
+    lda #$47
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    // VICIII->KEY = 0x53
+    lda #$53
+    sta VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY
+    // VICIV->CONTROLB |= 0x40
+    // Enable 48MHz fast mode
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLB
+    // VICIV->CONTROLC |= 0x40
+    lda #$40
+    ora VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CONTROLC
+    // *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
+    // no kernal or BASIC rom visible
+    lda #PROCPORT_DDR_MEMORY_MASK
+    sta PROCPORT_DDR
+    // *PROCPORT = PROCPORT_RAM_IO
+    lda #PROCPORT_RAM_IO
+    sta PROCPORT
+    // VICIV->SIDBDRWD_LO = 1
+    // open sideborder
+    lda #1
+    sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
     // memoryRemapBlock(0x40, 0x100)
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
     jsr memoryRemapBlock
@@ -69,59 +196,44 @@ main: {
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
-    lda #<MUSIC
-    sta.z mem_destroy
-    lda #>MUSIC
-    sta.z mem_destroy+1
+    // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
+    // Set up raster interrupts C64 style
+    // Disable CIA 1 Timer IRQ
+    lda #CIA_INTERRUPT_CLEAR
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
+    // VICII->RASTER = 0xff
+    // Set raster line to 0xff
+    lda #$ff
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    // VICII->CONTROL1 &= 0x7f
+    lda #$7f
+    and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
+    // VICII->IRQ_ENABLE = IRQ_RASTER
+    // Enable Raster Interrupt
+    lda #IRQ_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE
+    // *HARDWARE_IRQ = &irq
+    // Set the IRQ routine
+    lda #<irq
+    sta HARDWARE_IRQ
+    lda #>irq
+    sta HARDWARE_IRQ+1
+    // asm
+    // Enable IRQ
+    cli
   __b4:
-    // *mem_destroy = 0
-    // Overwrite data in the unmapped memory where the music is mapped in (to demonstrate that mapping works)
-    lda #0
-    tay
-    sta (mem_destroy),y
-    // if(++mem_destroy==MUSIC_END)
-    inw.z mem_destroy
-    lda.z mem_destroy+1
-    cmp #>MUSIC_END
-    bne __b10
-    lda.z mem_destroy
-    cmp #<MUSIC_END
-    bne __b10
-    lda #<MUSIC
-    sta.z mem_destroy
-    lda #>MUSIC
-    sta.z mem_destroy+1
-  __b10:
-  // Wait for the raster
-    // while(VICII->RASTER!=0xff)
-    lda #$ff
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b10
-    // (VICII->BORDER_COLOR)++;
-    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // memoryRemapBlock(0x40, 0x100)
-  // Remap memory to put music at $4000
-    jsr memoryRemapBlock
-    // (*musicPlay)()
-    // Play remapped SID
-    jsr musicPlay
-    // memoryRemap(0,0,0)
-  // Reset memory mapping
-    lda #<0
-    sta.z memoryRemap.upperPageOffset
-    sta.z memoryRemap.upperPageOffset+1
-    ldz #0
-    sta.z memoryRemap.lowerPageOffset
-    sta.z memoryRemap.lowerPageOffset+1
-    jsr memoryRemap
-    // (VICII->BORDER_COLOR)--;
-    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-  // Wait for the raster
-  __b7:
-    // while(VICII->RASTER==0xff)
-    lda #$ff
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b7
+    // for(char i=0;i<240;i++)
+    cpx #$f0
+    bcc __b5
+    ldx #0
+    jmp __b4
+  __b5:
+    // DEFAULT_SCREEN[i] = MUSIC[i]
+    lda MUSIC,x
+    sta DEFAULT_SCREEN,x
+    // for(char i=0;i<240;i++)
+    inx
     jmp __b4
   __b2:
     // *dst++ = *src++
@@ -180,16 +292,16 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp(8) lowerPageOffset, word zp($a) upperPageOffset)
+// memoryRemap(byte register(Z) remapBlocks, word zp(6) lowerPageOffset, word zp(8) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __1 = $c
-    .label __6 = $d
-    .label lowerPageOffset = 8
-    .label upperPageOffset = $a
+    .label __1 = $b
+    .label __6 = $c
+    .label lowerPageOffset = 6
+    .label upperPageOffset = 8
     // <lowerPageOffset
     lda.z lowerPageOffset
     // *aVal = <lowerPageOffset

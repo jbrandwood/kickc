@@ -1,0 +1,2775 @@
+Loading link script "mega65_banked.ld"
+Resolved forward reference upperCodeData to (const byte*) upperCodeData
+Resolved forward reference MUSIC to (const byte*) MUSIC
+Resolved forward reference MUSIC_END to (const nomodify byte*) MUSIC_END
+Resolved forward reference musicInit to (void()*) musicInit
+Resolved forward reference MUSIC to (const byte*) MUSIC
+Resolved forward reference MUSIC_END to (const nomodify byte*) MUSIC_END
+Resolved forward reference MUSIC to (const byte*) MUSIC
+Resolved forward reference musicPlay to (void()*) musicPlay
+Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
+memoryRemap: scope:[memoryRemap]  from main::@11 main::@3 memoryRemapBlock
+  (word) memoryRemap::upperPageOffset#3 ← phi( main::@11/(word) memoryRemap::upperPageOffset#2 main::@3/(word) memoryRemap::upperPageOffset#1 memoryRemapBlock/(word) memoryRemap::upperPageOffset#0 )
+  (byte) memoryRemap::remapBlocks#3 ← phi( main::@11/(byte) memoryRemap::remapBlocks#2 main::@3/(byte) memoryRemap::remapBlocks#1 memoryRemapBlock/(byte) memoryRemap::remapBlocks#0 )
+  (word) memoryRemap::lowerPageOffset#3 ← phi( main::@11/(word) memoryRemap::lowerPageOffset#2 main::@3/(word) memoryRemap::lowerPageOffset#1 memoryRemapBlock/(word) memoryRemap::lowerPageOffset#0 )
+  (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#3
+  *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
+  (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (number) 4
+  (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#3
+  (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (number) $f
+  (number~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (number~) memoryRemap::$3
+  *((const byte*) memoryRemap::xVal) ← (number~) memoryRemap::$4
+  (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#3
+  *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
+  (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (number) $f0
+  (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#3
+  (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (number) $f
+  (number~) memoryRemap::$9 ← (number~) memoryRemap::$6 | (number~) memoryRemap::$8
+  *((const byte*) memoryRemap::zVal) ← (number~) memoryRemap::$9
+  asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap::@return
+memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
+  return 
+  to:@return
+
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+memoryRemapBlock: scope:[memoryRemapBlock]  from main main::@6
+  (byte) memoryRemapBlock::blockPage#2 ← phi( main/(byte) memoryRemapBlock::blockPage#0 main::@6/(byte) memoryRemapBlock::blockPage#1 )
+  (word) memoryRemapBlock::memoryPage#2 ← phi( main/(word) memoryRemapBlock::memoryPage#0 main::@6/(word) memoryRemapBlock::memoryPage#1 )
+  (word~) memoryRemapBlock::$0 ← (word) memoryRemapBlock::memoryPage#2 - (byte) memoryRemapBlock::blockPage#2
+  (word) memoryRemapBlock::pageOffset#0 ← (word~) memoryRemapBlock::$0
+  (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (number) $20
+  (byte) memoryRemapBlock::block#0 ← (number~) memoryRemapBlock::$1
+  (number~) memoryRemapBlock::$2 ← (number) 1 << (byte) memoryRemapBlock::block#0
+  (byte) memoryRemapBlock::blockBits#0 ← (number~) memoryRemapBlock::$2
+  (byte) memoryRemap::remapBlocks#0 ← (byte) memoryRemapBlock::blockBits#0
+  (word) memoryRemap::lowerPageOffset#0 ← (word) memoryRemapBlock::pageOffset#0
+  (word) memoryRemap::upperPageOffset#0 ← (word) memoryRemapBlock::pageOffset#0
+  call memoryRemap 
+  to:memoryRemapBlock::@1
+memoryRemapBlock::@1: scope:[memoryRemapBlock]  from memoryRemapBlock
+  to:memoryRemapBlock::@return
+memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock::@1
+  return 
+  to:@return
+
+(void()) main()
+main: scope:[main]  from __start::@1
+  asm { sei  }
+  (byte) memoryRemapBlock::blockPage#0 ← (number) $40
+  (word) memoryRemapBlock::memoryPage#0 ← (number) $100
+  call memoryRemapBlock 
+  to:main::@9
+main::@9: scope:[main]  from main
+  (byte*) main::src#0 ← (const byte*) upperCodeData
+  (byte*) main::dst#0 ← (const byte*) MUSIC
+  to:main::@1
+main::@1: scope:[main]  from main::@2 main::@9
+  (byte*) main::src#3 ← phi( main::@2/(byte*) main::src#1 main::@9/(byte*) main::src#0 )
+  (byte*) main::dst#2 ← phi( main::@2/(byte*) main::dst#1 main::@9/(byte*) main::dst#0 )
+  (bool~) main::$3 ← (byte*) main::dst#2 < (const nomodify byte*) MUSIC_END
+  if((bool~) main::$3) goto main::@2
+  to:main::@3
+main::@2: scope:[main]  from main::@1
+  (byte*) main::dst#3 ← phi( main::@1/(byte*) main::dst#2 )
+  (byte*) main::src#2 ← phi( main::@1/(byte*) main::src#3 )
+  *((byte*) main::dst#3) ← *((byte*) main::src#2)
+  (byte*) main::dst#1 ← ++ (byte*) main::dst#3
+  (byte*) main::src#1 ← ++ (byte*) main::src#2
+  to:main::@1
+main::@3: scope:[main]  from main::@1
+  call *((const void()*) musicInit) 
+  (byte) memoryRemap::remapBlocks#1 ← (number) 0
+  (word) memoryRemap::lowerPageOffset#1 ← (number) 0
+  (word) memoryRemap::upperPageOffset#1 ← (number) 0
+  call memoryRemap 
+  to:main::@10
+main::@10: scope:[main]  from main::@3
+  (byte*) main::mem_destroy#0 ← (const byte*) MUSIC
+  to:main::@4
+main::@4: scope:[main]  from main::@10 main::@7
+  (byte*) main::mem_destroy#3 ← phi( main::@10/(byte*) main::mem_destroy#0 main::@7/(byte*) main::mem_destroy#4 )
+  *((byte*) main::mem_destroy#3) ← (number) 0
+  (byte*) main::mem_destroy#1 ← ++ (byte*) main::mem_destroy#3
+  (bool~) main::$4 ← (byte*) main::mem_destroy#1 == (const nomodify byte*) MUSIC_END
+  (bool~) main::$5 ← ! (bool~) main::$4
+  if((bool~) main::$5) goto main::@5
+  to:main::@8
+main::@8: scope:[main]  from main::@4
+  (byte*) main::mem_destroy#2 ← (const byte*) MUSIC
+  to:main::@5
+main::@5: scope:[main]  from main::@4 main::@5 main::@8
+  (byte*) main::mem_destroy#8 ← phi( main::@4/(byte*) main::mem_destroy#1 main::@5/(byte*) main::mem_destroy#8 main::@8/(byte*) main::mem_destroy#2 )
+  (bool~) main::$6 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $ff
+  if((bool~) main::$6) goto main::@5
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  (byte*) main::mem_destroy#7 ← phi( main::@5/(byte*) main::mem_destroy#8 )
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  (byte) memoryRemapBlock::blockPage#1 ← (number) $40
+  (word) memoryRemapBlock::memoryPage#1 ← (number) $100
+  call memoryRemapBlock 
+  to:main::@11
+main::@11: scope:[main]  from main::@6
+  (byte*) main::mem_destroy#6 ← phi( main::@6/(byte*) main::mem_destroy#7 )
+  call *((const void()*) musicPlay) 
+  (byte) memoryRemap::remapBlocks#2 ← (number) 0
+  (word) memoryRemap::lowerPageOffset#2 ← (number) 0
+  (word) memoryRemap::upperPageOffset#2 ← (number) 0
+  call memoryRemap 
+  to:main::@12
+main::@12: scope:[main]  from main::@11
+  (byte*) main::mem_destroy#5 ← phi( main::@11/(byte*) main::mem_destroy#6 )
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  to:main::@7
+main::@7: scope:[main]  from main::@12 main::@7
+  (byte*) main::mem_destroy#4 ← phi( main::@12/(byte*) main::mem_destroy#5 main::@7/(byte*) main::mem_destroy#4 )
+  (bool~) main::$12 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) == (number) $ff
+  if((bool~) main::$12) goto main::@7
+  to:main::@4
+main::@return: scope:[main]  from
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(byte) MEGA65_VICIV::ALPHADELAY
+(byte) MEGA65_VICIV::B0PIX
+(byte) MEGA65_VICIV::B0_ADDR
+(byte) MEGA65_VICIV::B1PIX
+(byte) MEGA65_VICIV::B1_ADDR
+(byte) MEGA65_VICIV::B2PIX
+(byte) MEGA65_VICIV::B2_ADDR
+(byte) MEGA65_VICIV::B3PIX
+(byte) MEGA65_VICIV::B3_ADDR
+(byte) MEGA65_VICIV::B4PIX
+(byte) MEGA65_VICIV::B4_ADDR
+(byte) MEGA65_VICIV::B5PIX
+(byte) MEGA65_VICIV::B5_ADDR
+(byte) MEGA65_VICIV::B6PIX
+(byte) MEGA65_VICIV::B6_ADDR
+(byte) MEGA65_VICIV::B7PIX
+(byte) MEGA65_VICIV::B7_ADDR
+(byte) MEGA65_VICIV::BBDRPOS_HI
+(byte) MEGA65_VICIV::BBDRPOS_LO
+(byte) MEGA65_VICIV::BG_COLOR
+(byte) MEGA65_VICIV::BG_COLOR1
+(byte) MEGA65_VICIV::BG_COLOR2
+(byte) MEGA65_VICIV::BG_COLOR3
+(byte) MEGA65_VICIV::BORDER_COLOR
+(byte) MEGA65_VICIV::BP16ENS
+(byte) MEGA65_VICIV::BPCOMP
+(byte) MEGA65_VICIV::BPX
+(byte) MEGA65_VICIV::BPY
+(byte) MEGA65_VICIV::CHARPTR_HILO
+(byte) MEGA65_VICIV::CHARPTR_LOHI
+(byte) MEGA65_VICIV::CHARPTR_LOLO
+(byte) MEGA65_VICIV::CHARSTEP_HI
+(byte) MEGA65_VICIV::CHARSTEP_LO
+(byte) MEGA65_VICIV::CHRCOUNT
+(byte) MEGA65_VICIV::CHRXSCL
+(byte) MEGA65_VICIV::CHRYSCL
+(byte) MEGA65_VICIV::COLPTR_HI
+(byte) MEGA65_VICIV::COLPTR_LO
+(byte) MEGA65_VICIV::CONTROL1
+(byte) MEGA65_VICIV::CONTROL2
+(byte) MEGA65_VICIV::CONTROLA
+(byte) MEGA65_VICIV::CONTROLB
+(byte) MEGA65_VICIV::CONTROLC
+(byte) MEGA65_VICIV::DEBUG1
+(byte) MEGA65_VICIV::DEBUGX
+(byte) MEGA65_VICIV::DEBUGXY
+(byte) MEGA65_VICIV::DEBUGY
+(byte) MEGA65_VICIV::FNRASTER_HI
+(byte) MEGA65_VICIV::FNRASTER_LO
+(byte) MEGA65_VICIV::HPOS
+(byte) MEGA65_VICIV::IRQ_ENABLE
+(byte) MEGA65_VICIV::IRQ_STATUS
+(byte) MEGA65_VICIV::KEY
+(byte) MEGA65_VICIV::LIGHTPEN_X
+(byte) MEGA65_VICIV::LIGHTPEN_Y
+(byte) MEGA65_VICIV::MEMORY
+(byte) MEGA65_VICIV::PALSEL
+(byte) MEGA65_VICIV::RASLINE0
+(byte) MEGA65_VICIV::RASTER
+(byte) MEGA65_VICIV::ROWCOUNT
+(byte) MEGA65_VICIV::RSTCMP
+(byte) MEGA65_VICIV::RSTCOMP
+(byte) MEGA65_VICIV::SBPDEBUG
+(byte) MEGA65_VICIV::SCRNPTR_HIHI
+(byte) MEGA65_VICIV::SCRNPTR_HILO
+(byte) MEGA65_VICIV::SCRNPTR_LOHI
+(byte) MEGA65_VICIV::SCRNPTR_LOLO
+(byte) MEGA65_VICIV::SIDBDRWD_HI
+(byte) MEGA65_VICIV::SIDBDRWD_LO
+(byte) MEGA65_VICIV::SPR16EN
+(byte) MEGA65_VICIV::SPRALPHAVAL
+(byte) MEGA65_VICIV::SPRENALPHA
+(byte) MEGA65_VICIV::SPRENV400
+(byte) MEGA65_VICIV::SPRHGHT
+(byte) MEGA65_VICIV::SPRHGTEN
+(byte) MEGA65_VICIV::SPRITE0_COLOR
+(byte) MEGA65_VICIV::SPRITE0_X
+(byte) MEGA65_VICIV::SPRITE0_Y
+(byte) MEGA65_VICIV::SPRITE1_COLOR
+(byte) MEGA65_VICIV::SPRITE1_X
+(byte) MEGA65_VICIV::SPRITE1_Y
+(byte) MEGA65_VICIV::SPRITE2_COLOR
+(byte) MEGA65_VICIV::SPRITE2_X
+(byte) MEGA65_VICIV::SPRITE2_Y
+(byte) MEGA65_VICIV::SPRITE3_COLOR
+(byte) MEGA65_VICIV::SPRITE3_X
+(byte) MEGA65_VICIV::SPRITE3_Y
+(byte) MEGA65_VICIV::SPRITE4_COLOR
+(byte) MEGA65_VICIV::SPRITE4_X
+(byte) MEGA65_VICIV::SPRITE4_Y
+(byte) MEGA65_VICIV::SPRITE5_COLOR
+(byte) MEGA65_VICIV::SPRITE5_X
+(byte) MEGA65_VICIV::SPRITE5_Y
+(byte) MEGA65_VICIV::SPRITE6_COLOR
+(byte) MEGA65_VICIV::SPRITE6_X
+(byte) MEGA65_VICIV::SPRITE6_Y
+(byte) MEGA65_VICIV::SPRITE7_COLOR
+(byte) MEGA65_VICIV::SPRITE7_X
+(byte) MEGA65_VICIV::SPRITE7_Y
+(byte) MEGA65_VICIV::SPRITES_BG_COLLISION
+(byte) MEGA65_VICIV::SPRITES_COLLISION
+(byte) MEGA65_VICIV::SPRITES_ENABLE
+(byte) MEGA65_VICIV::SPRITES_EXPAND_X
+(byte) MEGA65_VICIV::SPRITES_EXPAND_Y
+(byte) MEGA65_VICIV::SPRITES_MC
+(byte) MEGA65_VICIV::SPRITES_MCOLOR1
+(byte) MEGA65_VICIV::SPRITES_MCOLOR2
+(byte) MEGA65_VICIV::SPRITES_PRIORITY
+(byte) MEGA65_VICIV::SPRITES_XMSB
+(byte) MEGA65_VICIV::SPRPTRADR_HILO
+(byte) MEGA65_VICIV::SPRPTRADR_LOHI
+(byte) MEGA65_VICIV::SPRPTRADR_LOLO
+(byte) MEGA65_VICIV::SPRX64EN
+(byte) MEGA65_VICIV::SPRXSMSBS
+(byte) MEGA65_VICIV::SPRYSMSBSM
+(byte) MEGA65_VICIV::SRPYMSBS
+(byte) MEGA65_VICIV::SYNCPOL
+(byte) MEGA65_VICIV::TBDRPOS_HI
+(byte) MEGA65_VICIV::TBDRPOS_LO
+(byte) MEGA65_VICIV::TEXTXPOS_HI
+(byte) MEGA65_VICIV::TEXTXPOS_LO
+(byte) MEGA65_VICIV::TEXTYPOS_HI
+(byte) MEGA65_VICIV::TEXTYPOS_LO
+(byte) MEGA65_VICIV::UNUSED
+(byte) MEGA65_VICIV::VPOS
+(byte) MEGA65_VICIV::VSYNDEL
+(byte) MEGA65_VICIV::XPOS_HI
+(byte) MEGA65_VICIV::XPOS_LO
+(byte) MOS4569_VICIII::B0PIX
+(byte) MOS4569_VICIII::B0_ADDR
+(byte) MOS4569_VICIII::B1PIX
+(byte) MOS4569_VICIII::B1_ADDR
+(byte) MOS4569_VICIII::B2PIX
+(byte) MOS4569_VICIII::B2_ADDR
+(byte) MOS4569_VICIII::B3PIX
+(byte) MOS4569_VICIII::B3_ADDR
+(byte) MOS4569_VICIII::B4PIX
+(byte) MOS4569_VICIII::B4_ADDR
+(byte) MOS4569_VICIII::B5PIX
+(byte) MOS4569_VICIII::B5_ADDR
+(byte) MOS4569_VICIII::B6PIX
+(byte) MOS4569_VICIII::B6_ADDR
+(byte) MOS4569_VICIII::B7PIX
+(byte) MOS4569_VICIII::B7_ADDR
+(byte) MOS4569_VICIII::BG_COLOR
+(byte) MOS4569_VICIII::BG_COLOR1
+(byte) MOS4569_VICIII::BG_COLOR2
+(byte) MOS4569_VICIII::BG_COLOR3
+(byte) MOS4569_VICIII::BORDER_COLOR
+(byte) MOS4569_VICIII::BPCOMP
+(byte) MOS4569_VICIII::BPX
+(byte) MOS4569_VICIII::BPY
+(byte) MOS4569_VICIII::CONTROL1
+(byte) MOS4569_VICIII::CONTROL2
+(byte) MOS4569_VICIII::CONTROLA
+(byte) MOS4569_VICIII::CONTROLB
+(byte) MOS4569_VICIII::HPOS
+(byte) MOS4569_VICIII::IRQ_ENABLE
+(byte) MOS4569_VICIII::IRQ_STATUS
+(byte) MOS4569_VICIII::KEY
+(byte) MOS4569_VICIII::LIGHTPEN_X
+(byte) MOS4569_VICIII::LIGHTPEN_Y
+(byte) MOS4569_VICIII::MEMORY
+(byte) MOS4569_VICIII::RASTER
+(byte) MOS4569_VICIII::SPRITE0_COLOR
+(byte) MOS4569_VICIII::SPRITE0_X
+(byte) MOS4569_VICIII::SPRITE0_Y
+(byte) MOS4569_VICIII::SPRITE1_COLOR
+(byte) MOS4569_VICIII::SPRITE1_X
+(byte) MOS4569_VICIII::SPRITE1_Y
+(byte) MOS4569_VICIII::SPRITE2_COLOR
+(byte) MOS4569_VICIII::SPRITE2_X
+(byte) MOS4569_VICIII::SPRITE2_Y
+(byte) MOS4569_VICIII::SPRITE3_COLOR
+(byte) MOS4569_VICIII::SPRITE3_X
+(byte) MOS4569_VICIII::SPRITE3_Y
+(byte) MOS4569_VICIII::SPRITE4_COLOR
+(byte) MOS4569_VICIII::SPRITE4_X
+(byte) MOS4569_VICIII::SPRITE4_Y
+(byte) MOS4569_VICIII::SPRITE5_COLOR
+(byte) MOS4569_VICIII::SPRITE5_X
+(byte) MOS4569_VICIII::SPRITE5_Y
+(byte) MOS4569_VICIII::SPRITE6_COLOR
+(byte) MOS4569_VICIII::SPRITE6_X
+(byte) MOS4569_VICIII::SPRITE6_Y
+(byte) MOS4569_VICIII::SPRITE7_COLOR
+(byte) MOS4569_VICIII::SPRITE7_X
+(byte) MOS4569_VICIII::SPRITE7_Y
+(byte) MOS4569_VICIII::SPRITES_BG_COLLISION
+(byte) MOS4569_VICIII::SPRITES_COLLISION
+(byte) MOS4569_VICIII::SPRITES_ENABLE
+(byte) MOS4569_VICIII::SPRITES_EXPAND_X
+(byte) MOS4569_VICIII::SPRITES_EXPAND_Y
+(byte) MOS4569_VICIII::SPRITES_MC
+(byte) MOS4569_VICIII::SPRITES_MCOLOR1
+(byte) MOS4569_VICIII::SPRITES_MCOLOR2
+(byte) MOS4569_VICIII::SPRITES_PRIORITY
+(byte) MOS4569_VICIII::SPRITES_XMSB
+(byte) MOS4569_VICIII::UNUSED
+(byte) MOS4569_VICIII::VPOS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6569_VICII::BG_COLOR
+(byte) MOS6569_VICII::BG_COLOR1
+(byte) MOS6569_VICII::BG_COLOR2
+(byte) MOS6569_VICII::BG_COLOR3
+(byte) MOS6569_VICII::BORDER_COLOR
+(byte) MOS6569_VICII::CONTROL1
+(byte) MOS6569_VICII::CONTROL2
+(byte) MOS6569_VICII::IRQ_ENABLE
+(byte) MOS6569_VICII::IRQ_STATUS
+(byte) MOS6569_VICII::LIGHTPEN_X
+(byte) MOS6569_VICII::LIGHTPEN_Y
+(byte) MOS6569_VICII::MEMORY
+(byte) MOS6569_VICII::RASTER
+(byte) MOS6569_VICII::SPRITE0_COLOR
+(byte) MOS6569_VICII::SPRITE0_X
+(byte) MOS6569_VICII::SPRITE0_Y
+(byte) MOS6569_VICII::SPRITE1_COLOR
+(byte) MOS6569_VICII::SPRITE1_X
+(byte) MOS6569_VICII::SPRITE1_Y
+(byte) MOS6569_VICII::SPRITE2_COLOR
+(byte) MOS6569_VICII::SPRITE2_X
+(byte) MOS6569_VICII::SPRITE2_Y
+(byte) MOS6569_VICII::SPRITE3_COLOR
+(byte) MOS6569_VICII::SPRITE3_X
+(byte) MOS6569_VICII::SPRITE3_Y
+(byte) MOS6569_VICII::SPRITE4_COLOR
+(byte) MOS6569_VICII::SPRITE4_X
+(byte) MOS6569_VICII::SPRITE4_Y
+(byte) MOS6569_VICII::SPRITE5_COLOR
+(byte) MOS6569_VICII::SPRITE5_X
+(byte) MOS6569_VICII::SPRITE5_Y
+(byte) MOS6569_VICII::SPRITE6_COLOR
+(byte) MOS6569_VICII::SPRITE6_X
+(byte) MOS6569_VICII::SPRITE6_Y
+(byte) MOS6569_VICII::SPRITE7_COLOR
+(byte) MOS6569_VICII::SPRITE7_X
+(byte) MOS6569_VICII::SPRITE7_Y
+(byte) MOS6569_VICII::SPRITES_BG_COLLISION
+(byte) MOS6569_VICII::SPRITES_COLLISION
+(byte) MOS6569_VICII::SPRITES_ENABLE
+(byte) MOS6569_VICII::SPRITES_EXPAND_X
+(byte) MOS6569_VICII::SPRITES_EXPAND_Y
+(byte) MOS6569_VICII::SPRITES_MC
+(byte) MOS6569_VICII::SPRITES_MCOLOR1
+(byte) MOS6569_VICII::SPRITES_MCOLOR2
+(byte) MOS6569_VICII::SPRITES_PRIORITY
+(byte) MOS6569_VICII::SPRITES_XMSB
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte*) MUSIC[]  = kickasm {{ .const music = LoadSid("Cybernoid_II_4000.sid")
+    .fill music.size, music.getData(i)
+ }}
+(const nomodify byte*) MUSIC_END = (byte*)(number) $5200
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
+(void()) __start()
+(label) __start::@1
+(label) __start::@2
+(label) __start::@return
+(label) __start::__init1
+(void()) main()
+(bool~) main::$12
+(bool~) main::$3
+(bool~) main::$4
+(bool~) main::$5
+(bool~) main::$6
+(label) main::@1
+(label) main::@10
+(label) main::@11
+(label) main::@12
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
+(label) main::@9
+(label) main::@return
+(byte*) main::dst
+(byte*) main::dst#0
+(byte*) main::dst#1
+(byte*) main::dst#2
+(byte*) main::dst#3
+(byte*) main::mem_destroy
+(byte*) main::mem_destroy#0
+(byte*) main::mem_destroy#1
+(byte*) main::mem_destroy#2
+(byte*) main::mem_destroy#3
+(byte*) main::mem_destroy#4
+(byte*) main::mem_destroy#5
+(byte*) main::mem_destroy#6
+(byte*) main::mem_destroy#7
+(byte*) main::mem_destroy#8
+(byte*) main::src
+(byte*) main::src#0
+(byte*) main::src#1
+(byte*) main::src#2
+(byte*) main::src#3
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
+(byte~) memoryRemap::$0
+(byte~) memoryRemap::$1
+(byte~) memoryRemap::$2
+(number~) memoryRemap::$3
+(number~) memoryRemap::$4
+(byte~) memoryRemap::$5
+(number~) memoryRemap::$6
+(byte~) memoryRemap::$7
+(number~) memoryRemap::$8
+(number~) memoryRemap::$9
+(label) memoryRemap::@return
+(const byte*) memoryRemap::aVal = (byte*)(number) $fc
+(word) memoryRemap::lowerPageOffset
+(word) memoryRemap::lowerPageOffset#0
+(word) memoryRemap::lowerPageOffset#1
+(word) memoryRemap::lowerPageOffset#2
+(word) memoryRemap::lowerPageOffset#3
+(byte) memoryRemap::remapBlocks
+(byte) memoryRemap::remapBlocks#0
+(byte) memoryRemap::remapBlocks#1
+(byte) memoryRemap::remapBlocks#2
+(byte) memoryRemap::remapBlocks#3
+(word) memoryRemap::upperPageOffset
+(word) memoryRemap::upperPageOffset#0
+(word) memoryRemap::upperPageOffset#1
+(word) memoryRemap::upperPageOffset#2
+(word) memoryRemap::upperPageOffset#3
+(const byte*) memoryRemap::xVal = (byte*)(number) $fd
+(const byte*) memoryRemap::yVal = (byte*)(number) $fe
+(const byte*) memoryRemap::zVal = (byte*)(number) $ff
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+(word~) memoryRemapBlock::$0
+(number~) memoryRemapBlock::$1
+(number~) memoryRemapBlock::$2
+(label) memoryRemapBlock::@1
+(label) memoryRemapBlock::@return
+(byte) memoryRemapBlock::block
+(byte) memoryRemapBlock::block#0
+(byte) memoryRemapBlock::blockBits
+(byte) memoryRemapBlock::blockBits#0
+(byte) memoryRemapBlock::blockPage
+(byte) memoryRemapBlock::blockPage#0
+(byte) memoryRemapBlock::blockPage#1
+(byte) memoryRemapBlock::blockPage#2
+(word) memoryRemapBlock::memoryPage
+(word) memoryRemapBlock::memoryPage#0
+(word) memoryRemapBlock::memoryPage#1
+(word) memoryRemapBlock::memoryPage#2
+(word) memoryRemapBlock::pageOffset
+(word) memoryRemapBlock::pageOffset#0
+(const void()*) musicInit = (void()*)(const byte*) MUSIC
+(const void()*) musicPlay = (void()*)(const byte*) MUSIC+(number) 3
+(const byte*) upperCodeData[]  = kickasm {{ .segmentout [segments="Banked"]
+ }}
+
+Adding number conversion cast (unumber) 3 in 
+Adding number conversion cast (unumber) 4 in (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (number) 4
+Adding number conversion cast (unumber) $f in (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (number) $f
+Adding number conversion cast (unumber) memoryRemap::$3 in (number~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (unumber)(number) $f
+Adding number conversion cast (unumber) memoryRemap::$4 in (number~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (unumber~) memoryRemap::$3
+Adding number conversion cast (unumber) $f0 in (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (number) $f0
+Adding number conversion cast (unumber) memoryRemap::$6 in (number~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (unumber)(number) $f0
+Adding number conversion cast (unumber) $f in (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (number) $f
+Adding number conversion cast (unumber) memoryRemap::$8 in (number~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (unumber)(number) $f
+Adding number conversion cast (unumber) memoryRemap::$9 in (number~) memoryRemap::$9 ← (unumber~) memoryRemap::$6 | (unumber~) memoryRemap::$8
+Adding number conversion cast (unumber) $20 in (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (number) $20
+Adding number conversion cast (unumber) memoryRemapBlock::$1 in (number~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (unumber)(number) $20
+Adding number conversion cast (unumber) 1 in (number~) memoryRemapBlock::$2 ← (number) 1 << (byte) memoryRemapBlock::block#0
+Adding number conversion cast (unumber) memoryRemapBlock::$2 in (number~) memoryRemapBlock::$2 ← (unumber)(number) 1 << (byte) memoryRemapBlock::block#0
+Adding number conversion cast (unumber) $40 in (byte) memoryRemapBlock::blockPage#0 ← (number) $40
+Adding number conversion cast (unumber) $100 in (word) memoryRemapBlock::memoryPage#0 ← (number) $100
+Adding number conversion cast (unumber) 0 in (byte) memoryRemap::remapBlocks#1 ← (number) 0
+Adding number conversion cast (unumber) 0 in (word) memoryRemap::lowerPageOffset#1 ← (number) 0
+Adding number conversion cast (unumber) 0 in (word) memoryRemap::upperPageOffset#1 ← (number) 0
+Adding number conversion cast (unumber) 0 in *((byte*) main::mem_destroy#3) ← (number) 0
+Adding number conversion cast (unumber) $ff in (bool~) main::$6 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) != (number) $ff
+Adding number conversion cast (unumber) $40 in (byte) memoryRemapBlock::blockPage#1 ← (number) $40
+Adding number conversion cast (unumber) $100 in (word) memoryRemapBlock::memoryPage#1 ← (number) $100
+Adding number conversion cast (unumber) 0 in (byte) memoryRemap::remapBlocks#2 ← (number) 0
+Adding number conversion cast (unumber) 0 in (word) memoryRemap::lowerPageOffset#2 ← (number) 0
+Adding number conversion cast (unumber) 0 in (word) memoryRemap::upperPageOffset#2 ← (number) 0
+Adding number conversion cast (unumber) $ff in (bool~) main::$12 ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) == (number) $ff
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast (byte) memoryRemapBlock::blockPage#0 ← (unumber)(number) $40
+Inlining cast (word) memoryRemapBlock::memoryPage#0 ← (unumber)(number) $100
+Inlining cast (byte) memoryRemap::remapBlocks#1 ← (unumber)(number) 0
+Inlining cast (word) memoryRemap::lowerPageOffset#1 ← (unumber)(number) 0
+Inlining cast (word) memoryRemap::upperPageOffset#1 ← (unumber)(number) 0
+Inlining cast *((byte*) main::mem_destroy#3) ← (unumber)(number) 0
+Inlining cast (byte) memoryRemapBlock::blockPage#1 ← (unumber)(number) $40
+Inlining cast (word) memoryRemapBlock::memoryPage#1 ← (unumber)(number) $100
+Inlining cast (byte) memoryRemap::remapBlocks#2 ← (unumber)(number) 0
+Inlining cast (word) memoryRemap::lowerPageOffset#2 ← (unumber)(number) 0
+Inlining cast (word) memoryRemap::upperPageOffset#2 ← (unumber)(number) 0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 252
+Simplifying constant pointer cast (byte*) 253
+Simplifying constant pointer cast (byte*) 254
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
+Simplifying constant pointer cast (byte*) 20992
+Simplifying constant integer cast 3
+Simplifying constant integer cast 4
+Simplifying constant integer cast $f
+Simplifying constant integer cast $f0
+Simplifying constant integer cast $f
+Simplifying constant integer cast $20
+Simplifying constant integer cast 1
+Simplifying constant integer cast $40
+Simplifying constant integer cast $100
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $ff
+Simplifying constant integer cast $40
+Simplifying constant integer cast $100
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $ff
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $f0
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $ff
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
+Inferred type updated to byte in (unumber~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
+Inferred type updated to byte in (unumber~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0
+Inferred type updated to byte in (unumber~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f
+Inferred type updated to byte in (unumber~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
+Inferred type updated to byte in (unumber~) memoryRemapBlock::$1 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
+Inferred type updated to byte in (unumber~) memoryRemapBlock::$2 ← (byte) 1 << (byte) memoryRemapBlock::block#0
+Inversing boolean not [52] (bool~) main::$5 ← (byte*) main::mem_destroy#1 != (const nomodify byte*) MUSIC_END from [51] (bool~) main::$4 ← (byte*) main::mem_destroy#1 == (const nomodify byte*) MUSIC_END
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias memoryRemapBlock::pageOffset#0 = memoryRemapBlock::$0 
+Alias memoryRemapBlock::block#0 = memoryRemapBlock::$1 
+Alias memoryRemapBlock::blockBits#0 = memoryRemapBlock::$2 
+Alias main::src#2 = main::src#3 
+Alias main::dst#2 = main::dst#3 
+Alias main::mem_destroy#5 = main::mem_destroy#7 main::mem_destroy#8 main::mem_destroy#6 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values (byte*) main::mem_destroy#4 (byte*) main::mem_destroy#5
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition (bool~) main::$3 [34] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2
+Simple Condition (bool~) main::$5 [48] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@5
+Simple Condition (bool~) main::$6 [52] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5
+Simple Condition (bool~) main::$12 [65] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) memoryRemapBlock::blockPage#0 = $40
+Constant (const word) memoryRemapBlock::memoryPage#0 = $100
+Constant (const byte*) main::src#0 = upperCodeData
+Constant (const byte*) main::dst#0 = MUSIC
+Constant (const byte) memoryRemap::remapBlocks#1 = 0
+Constant (const word) memoryRemap::lowerPageOffset#1 = 0
+Constant (const word) memoryRemap::upperPageOffset#1 = 0
+Constant (const byte*) main::mem_destroy#0 = MUSIC
+Constant (const byte*) main::mem_destroy#2 = MUSIC
+Constant (const byte) memoryRemapBlock::blockPage#1 = $40
+Constant (const word) memoryRemapBlock::memoryPage#1 = $100
+Constant (const byte) memoryRemap::remapBlocks#2 = 0
+Constant (const word) memoryRemap::lowerPageOffset#2 = 0
+Constant (const word) memoryRemap::upperPageOffset#2 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Rewriting division to use shift [19] (byte) memoryRemapBlock::block#0 ← (byte) memoryRemapBlock::blockPage#2 / (byte) $20
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings (const byte) memoryRemap::remapBlocks#1
+Inlining constant with var siblings (const word) memoryRemap::lowerPageOffset#1
+Inlining constant with var siblings (const word) memoryRemap::upperPageOffset#1
+Inlining constant with var siblings (const byte) memoryRemap::remapBlocks#2
+Inlining constant with var siblings (const word) memoryRemap::lowerPageOffset#2
+Inlining constant with var siblings (const word) memoryRemap::upperPageOffset#2
+Inlining constant with var siblings (const byte) memoryRemapBlock::blockPage#0
+Inlining constant with var siblings (const word) memoryRemapBlock::memoryPage#0
+Inlining constant with var siblings (const byte) memoryRemapBlock::blockPage#1
+Inlining constant with var siblings (const word) memoryRemapBlock::memoryPage#1
+Inlining constant with var siblings (const byte*) main::src#0
+Inlining constant with var siblings (const byte*) main::dst#0
+Inlining constant with var siblings (const byte*) main::mem_destroy#0
+Inlining constant with var siblings (const byte*) main::mem_destroy#2
+Constant inlined main::mem_destroy#2 = (const byte*) MUSIC
+Constant inlined memoryRemap::remapBlocks#1 = (byte) 0
+Constant inlined memoryRemapBlock::blockPage#1 = (byte) $40
+Constant inlined memoryRemapBlock::blockPage#0 = (byte) $40
+Constant inlined main::mem_destroy#0 = (const byte*) MUSIC
+Constant inlined main::src#0 = (const byte*) upperCodeData
+Constant inlined memoryRemap::remapBlocks#2 = (byte) 0
+Constant inlined memoryRemap::upperPageOffset#1 = (byte) 0
+Constant inlined memoryRemapBlock::memoryPage#1 = (word) $100
+Constant inlined memoryRemap::upperPageOffset#2 = (byte) 0
+Constant inlined memoryRemapBlock::memoryPage#0 = (word) $100
+Constant inlined memoryRemap::lowerPageOffset#2 = (byte) 0
+Constant inlined memoryRemap::lowerPageOffset#1 = (byte) 0
+Constant inlined main::dst#0 = (const byte*) MUSIC
+Successful SSA optimization Pass2ConstantInlining
+Identical Phi Values (word) memoryRemapBlock::memoryPage#2 (word) $100
+Identical Phi Values (byte) memoryRemapBlock::blockPage#2 (byte) $40
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [18] (word) memoryRemapBlock::pageOffset#0 ← (word) $100 - (byte) $40
+Constant right-side identified [19] (byte) memoryRemapBlock::block#0 ← (byte) $40 >> (byte) 5
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const word) memoryRemapBlock::pageOffset#0 = $100-$40
+Constant (const byte) memoryRemapBlock::block#0 = $40>>5
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const word) memoryRemap::lowerPageOffset#0 = memoryRemapBlock::pageOffset#0
+Constant (const word) memoryRemap::upperPageOffset#0 = memoryRemapBlock::pageOffset#0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings (const word) memoryRemap::lowerPageOffset#0
+Inlining constant with var siblings (const word) memoryRemap::upperPageOffset#0
+Constant inlined memoryRemap::lowerPageOffset#0 = (const word) memoryRemapBlock::pageOffset#0
+Constant inlined memoryRemap::upperPageOffset#0 = (const word) memoryRemapBlock::pageOffset#0
+Successful SSA optimization Pass2ConstantInlining
+Constant right-side identified [17] (byte) memoryRemapBlock::blockBits#0 ← (byte) 1 << (const byte) memoryRemapBlock::block#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) memoryRemapBlock::blockBits#0 = 1<<memoryRemapBlock::block#0
+Successful SSA optimization Pass2ConstantIdentification
+Constant (const byte) memoryRemap::remapBlocks#0 = memoryRemapBlock::blockBits#0
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with var siblings (const byte) memoryRemap::remapBlocks#0
+Constant inlined memoryRemap::remapBlocks#0 = (const byte) memoryRemapBlock::blockBits#0
+Successful SSA optimization Pass2ConstantInlining
+Added new block during phi lifting main::@13(between main::@7 and main::@4)
+Added new block during phi lifting main::@14(between main::@4 and main::@5)
+Added new block during phi lifting main::@15(between main::@5 and main::@5)
+Adding NOP phi() at start of main::@9
+Adding NOP phi() at start of main::@10
+Adding NOP phi() at start of main::@8
+Adding NOP phi() at start of memoryRemapBlock
+Adding NOP phi() at start of memoryRemapBlock::@1
+CALL GRAPH
+Calls in [main] to memoryRemapBlock:1 memoryRemap:6 memoryRemapBlock:16 memoryRemap:18 
+Calls in [memoryRemapBlock] to memoryRemap:30 
+
+Created 7 initial phi equivalence classes
+Coalesced [21] main::mem_destroy#9 ← main::mem_destroy#5
+Coalesced (already) [22] main::mem_destroy#11 ← main::mem_destroy#5
+Coalesced [23] main::mem_destroy#10 ← main::mem_destroy#1
+Coalesced [27] main::dst#4 ← main::dst#1
+Coalesced [28] main::src#4 ← main::src#1
+Coalesced down to 6 phi equivalence classes
+Culled Empty Block (label) main::@9
+Culled Empty Block (label) main::@10
+Culled Empty Block (label) main::@8
+Culled Empty Block (label) main::@13
+Culled Empty Block (label) main::@15
+Culled Empty Block (label) memoryRemapBlock::@1
+Renumbering block main::@11 to main::@8
+Renumbering block main::@12 to main::@9
+Renumbering block main::@14 to main::@10
+Adding NOP phi() at start of main::@10
+Adding NOP phi() at start of memoryRemapBlock
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  asm { sei  }
+  [1] call memoryRemapBlock 
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [2] (byte*) main::src#2 ← phi( main::@2/(byte*) main::src#1 main/(const byte*) upperCodeData )
+  [2] (byte*) main::dst#2 ← phi( main::@2/(byte*) main::dst#1 main/(const byte*) MUSIC )
+  [3] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2
+  to:main::@3
+main::@3: scope:[main]  from main::@1
+  [4] call *((const void()*) musicInit) 
+  [5] call memoryRemap 
+  to:main::@4
+main::@4: scope:[main]  from main::@3 main::@7
+  [6] (byte*) main::mem_destroy#3 ← phi( main::@3/(const byte*) MUSIC main::@7/(byte*) main::mem_destroy#5 )
+  [7] *((byte*) main::mem_destroy#3) ← (byte) 0
+  [8] (byte*) main::mem_destroy#1 ← ++ (byte*) main::mem_destroy#3
+  [9] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@10
+  to:main::@5
+main::@10: scope:[main]  from main::@4
+  [10] phi()
+  to:main::@5
+main::@5: scope:[main]  from main::@10 main::@4 main::@5
+  [11] (byte*) main::mem_destroy#5 ← phi( main::@10/(byte*) main::mem_destroy#1 main::@5/(byte*) main::mem_destroy#5 main::@4/(const byte*) MUSIC )
+  [12] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5
+  to:main::@6
+main::@6: scope:[main]  from main::@5
+  [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [14] call memoryRemapBlock 
+  to:main::@8
+main::@8: scope:[main]  from main::@6
+  [15] call *((const void()*) musicPlay) 
+  [16] call memoryRemap 
+  to:main::@9
+main::@9: scope:[main]  from main::@8
+  [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  to:main::@7
+main::@7: scope:[main]  from main::@7 main::@9
+  [18] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7
+  to:main::@4
+main::@2: scope:[main]  from main::@1
+  [19] *((byte*) main::dst#2) ← *((byte*) main::src#2)
+  [20] (byte*) main::dst#1 ← ++ (byte*) main::dst#2
+  [21] (byte*) main::src#1 ← ++ (byte*) main::src#2
+  to:main::@1
+
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+memoryRemapBlock: scope:[memoryRemapBlock]  from main main::@6
+  [22] phi()
+  [23] call memoryRemap 
+  to:memoryRemapBlock::@return
+memoryRemapBlock::@return: scope:[memoryRemapBlock]  from memoryRemapBlock
+  [24] return 
+  to:@return
+
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
+memoryRemap: scope:[memoryRemap]  from main::@3 main::@8 memoryRemapBlock
+  [25] (word) memoryRemap::upperPageOffset#3 ← phi( main::@8/(byte) 0 main::@3/(byte) 0 memoryRemapBlock/(const word) memoryRemapBlock::pageOffset#0 )
+  [25] (byte) memoryRemap::remapBlocks#3 ← phi( main::@8/(byte) 0 main::@3/(byte) 0 memoryRemapBlock/(const byte) memoryRemapBlock::blockBits#0 )
+  [25] (word) memoryRemap::lowerPageOffset#3 ← phi( main::@8/(byte) 0 main::@3/(byte) 0 memoryRemapBlock/(const word) memoryRemapBlock::pageOffset#0 )
+  [26] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#3
+  [27] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0
+  [28] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (byte) 4
+  [29] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#3
+  [30] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f
+  [31] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3
+  [32] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4
+  [33] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#3
+  [34] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5
+  [35] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0
+  [36] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#3
+  [37] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f
+  [38] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8
+  [39] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9
+  asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap::@return
+memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
+  [41] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) MEGA65_VICIV::ALPHADELAY
+(byte) MEGA65_VICIV::B0PIX
+(byte) MEGA65_VICIV::B0_ADDR
+(byte) MEGA65_VICIV::B1PIX
+(byte) MEGA65_VICIV::B1_ADDR
+(byte) MEGA65_VICIV::B2PIX
+(byte) MEGA65_VICIV::B2_ADDR
+(byte) MEGA65_VICIV::B3PIX
+(byte) MEGA65_VICIV::B3_ADDR
+(byte) MEGA65_VICIV::B4PIX
+(byte) MEGA65_VICIV::B4_ADDR
+(byte) MEGA65_VICIV::B5PIX
+(byte) MEGA65_VICIV::B5_ADDR
+(byte) MEGA65_VICIV::B6PIX
+(byte) MEGA65_VICIV::B6_ADDR
+(byte) MEGA65_VICIV::B7PIX
+(byte) MEGA65_VICIV::B7_ADDR
+(byte) MEGA65_VICIV::BBDRPOS_HI
+(byte) MEGA65_VICIV::BBDRPOS_LO
+(byte) MEGA65_VICIV::BG_COLOR
+(byte) MEGA65_VICIV::BG_COLOR1
+(byte) MEGA65_VICIV::BG_COLOR2
+(byte) MEGA65_VICIV::BG_COLOR3
+(byte) MEGA65_VICIV::BORDER_COLOR
+(byte) MEGA65_VICIV::BP16ENS
+(byte) MEGA65_VICIV::BPCOMP
+(byte) MEGA65_VICIV::BPX
+(byte) MEGA65_VICIV::BPY
+(byte) MEGA65_VICIV::CHARPTR_HILO
+(byte) MEGA65_VICIV::CHARPTR_LOHI
+(byte) MEGA65_VICIV::CHARPTR_LOLO
+(byte) MEGA65_VICIV::CHARSTEP_HI
+(byte) MEGA65_VICIV::CHARSTEP_LO
+(byte) MEGA65_VICIV::CHRCOUNT
+(byte) MEGA65_VICIV::CHRXSCL
+(byte) MEGA65_VICIV::CHRYSCL
+(byte) MEGA65_VICIV::COLPTR_HI
+(byte) MEGA65_VICIV::COLPTR_LO
+(byte) MEGA65_VICIV::CONTROL1
+(byte) MEGA65_VICIV::CONTROL2
+(byte) MEGA65_VICIV::CONTROLA
+(byte) MEGA65_VICIV::CONTROLB
+(byte) MEGA65_VICIV::CONTROLC
+(byte) MEGA65_VICIV::DEBUG1
+(byte) MEGA65_VICIV::DEBUGX
+(byte) MEGA65_VICIV::DEBUGXY
+(byte) MEGA65_VICIV::DEBUGY
+(byte) MEGA65_VICIV::FNRASTER_HI
+(byte) MEGA65_VICIV::FNRASTER_LO
+(byte) MEGA65_VICIV::HPOS
+(byte) MEGA65_VICIV::IRQ_ENABLE
+(byte) MEGA65_VICIV::IRQ_STATUS
+(byte) MEGA65_VICIV::KEY
+(byte) MEGA65_VICIV::LIGHTPEN_X
+(byte) MEGA65_VICIV::LIGHTPEN_Y
+(byte) MEGA65_VICIV::MEMORY
+(byte) MEGA65_VICIV::PALSEL
+(byte) MEGA65_VICIV::RASLINE0
+(byte) MEGA65_VICIV::RASTER
+(byte) MEGA65_VICIV::ROWCOUNT
+(byte) MEGA65_VICIV::RSTCMP
+(byte) MEGA65_VICIV::RSTCOMP
+(byte) MEGA65_VICIV::SBPDEBUG
+(byte) MEGA65_VICIV::SCRNPTR_HIHI
+(byte) MEGA65_VICIV::SCRNPTR_HILO
+(byte) MEGA65_VICIV::SCRNPTR_LOHI
+(byte) MEGA65_VICIV::SCRNPTR_LOLO
+(byte) MEGA65_VICIV::SIDBDRWD_HI
+(byte) MEGA65_VICIV::SIDBDRWD_LO
+(byte) MEGA65_VICIV::SPR16EN
+(byte) MEGA65_VICIV::SPRALPHAVAL
+(byte) MEGA65_VICIV::SPRENALPHA
+(byte) MEGA65_VICIV::SPRENV400
+(byte) MEGA65_VICIV::SPRHGHT
+(byte) MEGA65_VICIV::SPRHGTEN
+(byte) MEGA65_VICIV::SPRITE0_COLOR
+(byte) MEGA65_VICIV::SPRITE0_X
+(byte) MEGA65_VICIV::SPRITE0_Y
+(byte) MEGA65_VICIV::SPRITE1_COLOR
+(byte) MEGA65_VICIV::SPRITE1_X
+(byte) MEGA65_VICIV::SPRITE1_Y
+(byte) MEGA65_VICIV::SPRITE2_COLOR
+(byte) MEGA65_VICIV::SPRITE2_X
+(byte) MEGA65_VICIV::SPRITE2_Y
+(byte) MEGA65_VICIV::SPRITE3_COLOR
+(byte) MEGA65_VICIV::SPRITE3_X
+(byte) MEGA65_VICIV::SPRITE3_Y
+(byte) MEGA65_VICIV::SPRITE4_COLOR
+(byte) MEGA65_VICIV::SPRITE4_X
+(byte) MEGA65_VICIV::SPRITE4_Y
+(byte) MEGA65_VICIV::SPRITE5_COLOR
+(byte) MEGA65_VICIV::SPRITE5_X
+(byte) MEGA65_VICIV::SPRITE5_Y
+(byte) MEGA65_VICIV::SPRITE6_COLOR
+(byte) MEGA65_VICIV::SPRITE6_X
+(byte) MEGA65_VICIV::SPRITE6_Y
+(byte) MEGA65_VICIV::SPRITE7_COLOR
+(byte) MEGA65_VICIV::SPRITE7_X
+(byte) MEGA65_VICIV::SPRITE7_Y
+(byte) MEGA65_VICIV::SPRITES_BG_COLLISION
+(byte) MEGA65_VICIV::SPRITES_COLLISION
+(byte) MEGA65_VICIV::SPRITES_ENABLE
+(byte) MEGA65_VICIV::SPRITES_EXPAND_X
+(byte) MEGA65_VICIV::SPRITES_EXPAND_Y
+(byte) MEGA65_VICIV::SPRITES_MC
+(byte) MEGA65_VICIV::SPRITES_MCOLOR1
+(byte) MEGA65_VICIV::SPRITES_MCOLOR2
+(byte) MEGA65_VICIV::SPRITES_PRIORITY
+(byte) MEGA65_VICIV::SPRITES_XMSB
+(byte) MEGA65_VICIV::SPRPTRADR_HILO
+(byte) MEGA65_VICIV::SPRPTRADR_LOHI
+(byte) MEGA65_VICIV::SPRPTRADR_LOLO
+(byte) MEGA65_VICIV::SPRX64EN
+(byte) MEGA65_VICIV::SPRXSMSBS
+(byte) MEGA65_VICIV::SPRYSMSBSM
+(byte) MEGA65_VICIV::SRPYMSBS
+(byte) MEGA65_VICIV::SYNCPOL
+(byte) MEGA65_VICIV::TBDRPOS_HI
+(byte) MEGA65_VICIV::TBDRPOS_LO
+(byte) MEGA65_VICIV::TEXTXPOS_HI
+(byte) MEGA65_VICIV::TEXTXPOS_LO
+(byte) MEGA65_VICIV::TEXTYPOS_HI
+(byte) MEGA65_VICIV::TEXTYPOS_LO
+(byte) MEGA65_VICIV::UNUSED
+(byte) MEGA65_VICIV::VPOS
+(byte) MEGA65_VICIV::VSYNDEL
+(byte) MEGA65_VICIV::XPOS_HI
+(byte) MEGA65_VICIV::XPOS_LO
+(byte) MOS4569_VICIII::B0PIX
+(byte) MOS4569_VICIII::B0_ADDR
+(byte) MOS4569_VICIII::B1PIX
+(byte) MOS4569_VICIII::B1_ADDR
+(byte) MOS4569_VICIII::B2PIX
+(byte) MOS4569_VICIII::B2_ADDR
+(byte) MOS4569_VICIII::B3PIX
+(byte) MOS4569_VICIII::B3_ADDR
+(byte) MOS4569_VICIII::B4PIX
+(byte) MOS4569_VICIII::B4_ADDR
+(byte) MOS4569_VICIII::B5PIX
+(byte) MOS4569_VICIII::B5_ADDR
+(byte) MOS4569_VICIII::B6PIX
+(byte) MOS4569_VICIII::B6_ADDR
+(byte) MOS4569_VICIII::B7PIX
+(byte) MOS4569_VICIII::B7_ADDR
+(byte) MOS4569_VICIII::BG_COLOR
+(byte) MOS4569_VICIII::BG_COLOR1
+(byte) MOS4569_VICIII::BG_COLOR2
+(byte) MOS4569_VICIII::BG_COLOR3
+(byte) MOS4569_VICIII::BORDER_COLOR
+(byte) MOS4569_VICIII::BPCOMP
+(byte) MOS4569_VICIII::BPX
+(byte) MOS4569_VICIII::BPY
+(byte) MOS4569_VICIII::CONTROL1
+(byte) MOS4569_VICIII::CONTROL2
+(byte) MOS4569_VICIII::CONTROLA
+(byte) MOS4569_VICIII::CONTROLB
+(byte) MOS4569_VICIII::HPOS
+(byte) MOS4569_VICIII::IRQ_ENABLE
+(byte) MOS4569_VICIII::IRQ_STATUS
+(byte) MOS4569_VICIII::KEY
+(byte) MOS4569_VICIII::LIGHTPEN_X
+(byte) MOS4569_VICIII::LIGHTPEN_Y
+(byte) MOS4569_VICIII::MEMORY
+(byte) MOS4569_VICIII::RASTER
+(byte) MOS4569_VICIII::SPRITE0_COLOR
+(byte) MOS4569_VICIII::SPRITE0_X
+(byte) MOS4569_VICIII::SPRITE0_Y
+(byte) MOS4569_VICIII::SPRITE1_COLOR
+(byte) MOS4569_VICIII::SPRITE1_X
+(byte) MOS4569_VICIII::SPRITE1_Y
+(byte) MOS4569_VICIII::SPRITE2_COLOR
+(byte) MOS4569_VICIII::SPRITE2_X
+(byte) MOS4569_VICIII::SPRITE2_Y
+(byte) MOS4569_VICIII::SPRITE3_COLOR
+(byte) MOS4569_VICIII::SPRITE3_X
+(byte) MOS4569_VICIII::SPRITE3_Y
+(byte) MOS4569_VICIII::SPRITE4_COLOR
+(byte) MOS4569_VICIII::SPRITE4_X
+(byte) MOS4569_VICIII::SPRITE4_Y
+(byte) MOS4569_VICIII::SPRITE5_COLOR
+(byte) MOS4569_VICIII::SPRITE5_X
+(byte) MOS4569_VICIII::SPRITE5_Y
+(byte) MOS4569_VICIII::SPRITE6_COLOR
+(byte) MOS4569_VICIII::SPRITE6_X
+(byte) MOS4569_VICIII::SPRITE6_Y
+(byte) MOS4569_VICIII::SPRITE7_COLOR
+(byte) MOS4569_VICIII::SPRITE7_X
+(byte) MOS4569_VICIII::SPRITE7_Y
+(byte) MOS4569_VICIII::SPRITES_BG_COLLISION
+(byte) MOS4569_VICIII::SPRITES_COLLISION
+(byte) MOS4569_VICIII::SPRITES_ENABLE
+(byte) MOS4569_VICIII::SPRITES_EXPAND_X
+(byte) MOS4569_VICIII::SPRITES_EXPAND_Y
+(byte) MOS4569_VICIII::SPRITES_MC
+(byte) MOS4569_VICIII::SPRITES_MCOLOR1
+(byte) MOS4569_VICIII::SPRITES_MCOLOR2
+(byte) MOS4569_VICIII::SPRITES_PRIORITY
+(byte) MOS4569_VICIII::SPRITES_XMSB
+(byte) MOS4569_VICIII::UNUSED
+(byte) MOS4569_VICIII::VPOS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6569_VICII::BG_COLOR
+(byte) MOS6569_VICII::BG_COLOR1
+(byte) MOS6569_VICII::BG_COLOR2
+(byte) MOS6569_VICII::BG_COLOR3
+(byte) MOS6569_VICII::BORDER_COLOR
+(byte) MOS6569_VICII::CONTROL1
+(byte) MOS6569_VICII::CONTROL2
+(byte) MOS6569_VICII::IRQ_ENABLE
+(byte) MOS6569_VICII::IRQ_STATUS
+(byte) MOS6569_VICII::LIGHTPEN_X
+(byte) MOS6569_VICII::LIGHTPEN_Y
+(byte) MOS6569_VICII::MEMORY
+(byte) MOS6569_VICII::RASTER
+(byte) MOS6569_VICII::SPRITE0_COLOR
+(byte) MOS6569_VICII::SPRITE0_X
+(byte) MOS6569_VICII::SPRITE0_Y
+(byte) MOS6569_VICII::SPRITE1_COLOR
+(byte) MOS6569_VICII::SPRITE1_X
+(byte) MOS6569_VICII::SPRITE1_Y
+(byte) MOS6569_VICII::SPRITE2_COLOR
+(byte) MOS6569_VICII::SPRITE2_X
+(byte) MOS6569_VICII::SPRITE2_Y
+(byte) MOS6569_VICII::SPRITE3_COLOR
+(byte) MOS6569_VICII::SPRITE3_X
+(byte) MOS6569_VICII::SPRITE3_Y
+(byte) MOS6569_VICII::SPRITE4_COLOR
+(byte) MOS6569_VICII::SPRITE4_X
+(byte) MOS6569_VICII::SPRITE4_Y
+(byte) MOS6569_VICII::SPRITE5_COLOR
+(byte) MOS6569_VICII::SPRITE5_X
+(byte) MOS6569_VICII::SPRITE5_Y
+(byte) MOS6569_VICII::SPRITE6_COLOR
+(byte) MOS6569_VICII::SPRITE6_X
+(byte) MOS6569_VICII::SPRITE6_Y
+(byte) MOS6569_VICII::SPRITE7_COLOR
+(byte) MOS6569_VICII::SPRITE7_X
+(byte) MOS6569_VICII::SPRITE7_Y
+(byte) MOS6569_VICII::SPRITES_BG_COLLISION
+(byte) MOS6569_VICII::SPRITES_COLLISION
+(byte) MOS6569_VICII::SPRITES_ENABLE
+(byte) MOS6569_VICII::SPRITES_EXPAND_X
+(byte) MOS6569_VICII::SPRITES_EXPAND_Y
+(byte) MOS6569_VICII::SPRITES_MC
+(byte) MOS6569_VICII::SPRITES_MCOLOR1
+(byte) MOS6569_VICII::SPRITES_MCOLOR2
+(byte) MOS6569_VICII::SPRITES_PRIORITY
+(byte) MOS6569_VICII::SPRITES_XMSB
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(void()) main()
+(byte*) main::dst
+(byte*) main::dst#1 11.0
+(byte*) main::dst#2 14.666666666666666
+(byte*) main::mem_destroy
+(byte*) main::mem_destroy#1 11.0
+(byte*) main::mem_destroy#3 61.5
+(byte*) main::mem_destroy#5 39.25
+(byte*) main::src
+(byte*) main::src#1 22.0
+(byte*) main::src#2 8.25
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
+(byte~) memoryRemap::$0 2002.0
+(byte~) memoryRemap::$1 667.3333333333334
+(byte~) memoryRemap::$2 2002.0
+(byte~) memoryRemap::$3 2002.0
+(byte~) memoryRemap::$4 2002.0
+(byte~) memoryRemap::$5 2002.0
+(byte~) memoryRemap::$6 667.3333333333334
+(byte~) memoryRemap::$7 2002.0
+(byte~) memoryRemap::$8 2002.0
+(byte~) memoryRemap::$9 2002.0
+(word) memoryRemap::lowerPageOffset
+(word) memoryRemap::lowerPageOffset#3 500.5
+(byte) memoryRemap::remapBlocks
+(byte) memoryRemap::remapBlocks#3 200.2
+(word) memoryRemap::upperPageOffset
+(word) memoryRemap::upperPageOffset#3 182.0
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+(byte) memoryRemapBlock::block
+(byte) memoryRemapBlock::blockBits
+(byte) memoryRemapBlock::blockPage
+(word) memoryRemapBlock::memoryPage
+(word) memoryRemapBlock::pageOffset
+
+Initial phi equivalence classes
+[ main::dst#2 main::dst#1 ]
+[ main::src#2 main::src#1 ]
+[ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ]
+[ memoryRemap::lowerPageOffset#3 ]
+[ memoryRemap::remapBlocks#3 ]
+[ memoryRemap::upperPageOffset#3 ]
+Added variable memoryRemap::$0 to live range equivalence class [ memoryRemap::$0 ]
+Added variable memoryRemap::$1 to live range equivalence class [ memoryRemap::$1 ]
+Added variable memoryRemap::$2 to live range equivalence class [ memoryRemap::$2 ]
+Added variable memoryRemap::$3 to live range equivalence class [ memoryRemap::$3 ]
+Added variable memoryRemap::$4 to live range equivalence class [ memoryRemap::$4 ]
+Added variable memoryRemap::$5 to live range equivalence class [ memoryRemap::$5 ]
+Added variable memoryRemap::$6 to live range equivalence class [ memoryRemap::$6 ]
+Added variable memoryRemap::$7 to live range equivalence class [ memoryRemap::$7 ]
+Added variable memoryRemap::$8 to live range equivalence class [ memoryRemap::$8 ]
+Added variable memoryRemap::$9 to live range equivalence class [ memoryRemap::$9 ]
+Complete equivalence classes
+[ main::dst#2 main::dst#1 ]
+[ main::src#2 main::src#1 ]
+[ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ]
+[ memoryRemap::lowerPageOffset#3 ]
+[ memoryRemap::remapBlocks#3 ]
+[ memoryRemap::upperPageOffset#3 ]
+[ memoryRemap::$0 ]
+[ memoryRemap::$1 ]
+[ memoryRemap::$2 ]
+[ memoryRemap::$3 ]
+[ memoryRemap::$4 ]
+[ memoryRemap::$5 ]
+[ memoryRemap::$6 ]
+[ memoryRemap::$7 ]
+[ memoryRemap::$8 ]
+[ memoryRemap::$9 ]
+Allocated zp[2]:2 [ main::dst#2 main::dst#1 ]
+Allocated zp[2]:4 [ main::src#2 main::src#1 ]
+Allocated zp[2]:6 [ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ]
+Allocated zp[2]:8 [ memoryRemap::lowerPageOffset#3 ]
+Allocated zp[1]:10 [ memoryRemap::remapBlocks#3 ]
+Allocated zp[2]:11 [ memoryRemap::upperPageOffset#3 ]
+Allocated zp[1]:13 [ memoryRemap::$0 ]
+Allocated zp[1]:14 [ memoryRemap::$1 ]
+Allocated zp[1]:15 [ memoryRemap::$2 ]
+Allocated zp[1]:16 [ memoryRemap::$3 ]
+Allocated zp[1]:17 [ memoryRemap::$4 ]
+Allocated zp[1]:18 [ memoryRemap::$5 ]
+Allocated zp[1]:19 [ memoryRemap::$6 ]
+Allocated zp[1]:20 [ memoryRemap::$7 ]
+Allocated zp[1]:21 [ memoryRemap::$8 ]
+Allocated zp[1]:22 [ memoryRemap::$9 ]
+
+INITIAL ASM
+Target platform is mega65 / MEGA45GS02
+  // File Comments
+// SID music located in another bank being played using memory mapping on MEGA65
+// Music is Cybernoid II by Jeroen Tel released in 1988 by Hewson https://csdb.dk/sid/?id=28140
+// SID relocated using http://www.linusakesson.net/software/sidreloc/index.php
+  // Upstart
+.cpu _45gs02
+  // MEGA65 platform PRG executable with banked code and data starting in MEGA65 mode.
+.file [name="banked-music.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segmentdef Banked [segments="CodeBanked, DataBanked"]
+.segmentdef CodeBanked [start=$4000]
+.segmentdef DataBanked [startAfter="CodeBanked"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(main)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  // Address after the end of the music
+  .label MUSIC_END = $5200
+  // Pointer to the music init routine
+  .label musicInit = MUSIC
+  // Pointer to the music play routine
+  .label musicPlay = MUSIC+3
+.segment Code
+  // main
+main: {
+    .label dst = 2
+    .label src = 4
+    // Pointer to (unmapped) $4000 used for overwriting to demonstrate the mapping works
+    .label mem_destroy = 6
+    // asm { sei  }
+    // Stop IRQ's
+    sei
+    // [1] call memoryRemapBlock 
+  // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    // [22] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+  memoryRemapBlock_from_main:
+    jsr memoryRemapBlock
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [2] phi (byte*) main::src#2 = (const byte*) upperCodeData [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<upperCodeData
+    sta.z src
+    lda #>upperCodeData
+    sta.z src+1
+    // [2] phi (byte*) main::dst#2 = (const byte*) MUSIC [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z dst
+    lda #>MUSIC
+    sta.z dst+1
+    jmp __b1
+  // Transfer banked code/data to upper memory ($11000)
+    // main::@1
+  __b1:
+    // [3] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda.z dst+1
+    cmp #>MUSIC_END
+    bcc __b2
+    bne !+
+    lda.z dst
+    cmp #<MUSIC_END
+    bcc __b2
+  !:
+    jmp __b3
+    // main::@3
+  __b3:
+    // [4] call *((const void()*) musicInit) 
+    // Initialize SID memory is still remapped)
+    jsr musicInit
+    // [5] call memoryRemap 
+  // Reset memory mapping
+    // [25] phi from main::@3 to memoryRemap [phi:main::@3->memoryRemap]
+  memoryRemap_from___b3:
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (byte) 0 [phi:main::@3->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    lda #>0
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (byte) 0 [phi:main::@3->memoryRemap#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z memoryRemap.remapBlocks
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (byte) 0 [phi:main::@3->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.lowerPageOffset
+    lda #>0
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    // [6] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  __b4_from___b3:
+    // [6] phi (byte*) main::mem_destroy#3 = (const byte*) MUSIC [phi:main::@3->main::@4#0] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z mem_destroy
+    lda #>MUSIC
+    sta.z mem_destroy+1
+    jmp __b4
+    // main::@4
+  __b4:
+    // [7] *((byte*) main::mem_destroy#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // Overwrite data in the unmapped memory where the music is mapped in (to demonstrate that mapping works)
+    lda #0
+    ldy #0
+    sta (mem_destroy),y
+    // [8] (byte*) main::mem_destroy#1 ← ++ (byte*) main::mem_destroy#3 -- pbuz1=_inc_pbuz1 
+    inw.z mem_destroy
+    // [9] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@10 -- pbuz1_neq_pbuc1_then_la1 
+    lda.z mem_destroy+1
+    cmp #>MUSIC_END
+    bne __b10_from___b4
+    lda.z mem_destroy
+    cmp #<MUSIC_END
+    bne __b10_from___b4
+    // [11] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  __b5_from___b4:
+    // [11] phi (byte*) main::mem_destroy#5 = (const byte*) MUSIC [phi:main::@4->main::@5#0] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z mem_destroy
+    lda #>MUSIC
+    sta.z mem_destroy+1
+    jmp __b5
+    // [10] phi from main::@4 to main::@10 [phi:main::@4->main::@10]
+  __b10_from___b4:
+    jmp __b10
+    // main::@10
+  __b10:
+    // [11] phi from main::@10 main::@5 to main::@5 [phi:main::@10/main::@5->main::@5]
+  __b5_from___b10:
+  __b5_from___b5:
+    // [11] phi (byte*) main::mem_destroy#5 = (byte*) main::mem_destroy#1 [phi:main::@10/main::@5->main::@5#0] -- register_copy 
+    jmp __b5
+  // Wait for the raster
+    // main::@5
+  __b5:
+    // [12] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b5_from___b5
+    jmp __b6
+    // main::@6
+  __b6:
+    // [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [14] call memoryRemapBlock 
+  // Remap memory to put music at $4000
+    // [22] phi from main::@6 to memoryRemapBlock [phi:main::@6->memoryRemapBlock]
+  memoryRemapBlock_from___b6:
+    jsr memoryRemapBlock
+    jmp __b8
+    // main::@8
+  __b8:
+    // [15] call *((const void()*) musicPlay) 
+    // Play remapped SID
+    jsr musicPlay
+    // [16] call memoryRemap 
+  // Reset memory mapping
+    // [25] phi from main::@8 to memoryRemap [phi:main::@8->memoryRemap]
+  memoryRemap_from___b8:
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (byte) 0 [phi:main::@8->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    lda #>0
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (byte) 0 [phi:main::@8->memoryRemap#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z memoryRemap.remapBlocks
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (byte) 0 [phi:main::@8->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.lowerPageOffset
+    lda #>0
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    jmp __b9
+    // main::@9
+  __b9:
+    // [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __b7
+  // Wait for the raster
+    // main::@7
+  __b7:
+    // [18] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7 -- _deref_pbuc1_eq_vbuc2_then_la1 
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq __b7
+    // [6] phi from main::@7 to main::@4 [phi:main::@7->main::@4]
+  __b4_from___b7:
+    // [6] phi (byte*) main::mem_destroy#3 = (byte*) main::mem_destroy#5 [phi:main::@7->main::@4#0] -- register_copy 
+    jmp __b4
+    // main::@2
+  __b2:
+    // [19] *((byte*) main::dst#2) ← *((byte*) main::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (src),y
+    ldy #0
+    sta (dst),y
+    // [20] (byte*) main::dst#1 ← ++ (byte*) main::dst#2 -- pbuz1=_inc_pbuz1 
+    inw.z dst
+    // [21] (byte*) main::src#1 ← ++ (byte*) main::src#2 -- pbuz1=_inc_pbuz1 
+    inw.z src
+    // [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [2] phi (byte*) main::src#2 = (byte*) main::src#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [2] phi (byte*) main::dst#2 = (byte*) main::dst#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // memoryRemapBlock
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
+// Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+memoryRemapBlock: {
+    .const pageOffset = $100-$40
+    .const block = $40>>5
+    .const blockBits = 1<<block
+    // [23] call memoryRemap 
+    // [25] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+  memoryRemap_from_memoryRemapBlock:
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (const word) memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
+    lda #<pageOffset
+    sta.z memoryRemap.upperPageOffset
+    lda #>pageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (const byte) memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuz1=vbuc1 
+    lda #blockBits
+    sta.z memoryRemap.remapBlocks
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (const word) memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
+    lda #<pageOffset
+    sta.z memoryRemap.lowerPageOffset
+    lda #>pageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    jmp __breturn
+    // memoryRemapBlock::@return
+  __breturn:
+    // [24] return 
+    rts
+}
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// memoryRemap(byte zp($a) remapBlocks, word zp(8) lowerPageOffset, word zp($b) upperPageOffset)
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __0 = $d
+    .label __1 = $e
+    .label __2 = $f
+    .label __3 = $10
+    .label __4 = $11
+    .label __5 = $12
+    .label __6 = $13
+    .label __7 = $14
+    .label __8 = $15
+    .label __9 = $16
+    .label lowerPageOffset = 8
+    .label remapBlocks = $a
+    .label upperPageOffset = $b
+    // [26] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#3 -- vbuz1=_lo_vwuz2 
+    lda.z lowerPageOffset
+    sta.z __0
+    // [27] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuz1 
+    lda.z __0
+    sta aVal
+    // [28] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (byte) 4 -- vbuz1=vbuz2_rol_4 
+    lda.z remapBlocks
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // [29] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#3 -- vbuz1=_hi_vwuz2 
+    lda.z lowerPageOffset+1
+    sta.z __2
+    // [30] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f
+    and.z __2
+    sta.z __3
+    // [31] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuz1=vbuz2_bor_vbuz3 
+    lda.z __1
+    ora.z __3
+    sta.z __4
+    // [32] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuz1 
+    lda.z __4
+    sta xVal
+    // [33] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#3 -- vbuz1=_lo_vwuz2 
+    lda.z upperPageOffset
+    sta.z __5
+    // [34] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuz1 
+    lda.z __5
+    sta yVal
+    // [35] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0 -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f0
+    and.z remapBlocks
+    sta.z __6
+    // [36] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#3 -- vbuz1=_hi_vwuz2 
+    lda.z upperPageOffset+1
+    sta.z __7
+    // [37] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuz1=vbuz2_band_vbuc1 
+    lda #$f
+    and.z __7
+    sta.z __8
+    // [38] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuz1=vbuz2_bor_vbuz3 
+    lda.z __6
+    ora.z __8
+    sta.z __9
+    // [39] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuz1 
+    lda.z __9
+    sta zVal
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap::@return
+  __breturn:
+    // [41] return 
+    rts
+}
+  // File Data
+.segment Data
+// Array containing the banked upper memory code/data to be transferred to upper memory before execution
+upperCodeData:
+.segmentout [segments="Banked"]
+
+.segment DataBanked
+.pc = $4000 "MUSIC"
+// SID tune at an absolute address
+MUSIC:
+.const music = LoadSid("Cybernoid_II_4000.sid")
+    .fill music.size, music.getData(i)
+
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [3] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2 [ main::dst#2 main::src#2 ] (  [ main::dst#2 main::src#2 ] { }  ) always clobbers reg byte a 
+Statement [4] call *((const void()*) musicInit)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [7] *((byte*) main::mem_destroy#3) ← (byte) 0 [ main::mem_destroy#3 ] (  [ main::mem_destroy#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@10 [ main::mem_destroy#1 ] (  [ main::mem_destroy#1 ] { }  ) always clobbers reg byte a 
+Statement [12] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5 [ main::mem_destroy#5 ] (  [ main::mem_destroy#5 ] { }  ) always clobbers reg byte a 
+Statement [15] call *((const void()*) musicPlay)  [ main::mem_destroy#5 ] (  [ main::mem_destroy#5 ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [18] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7 [ main::mem_destroy#5 ] (  [ main::mem_destroy#5 ] { }  ) always clobbers reg byte a 
+Statement [19] *((byte*) main::dst#2) ← *((byte*) main::src#2) [ main::dst#2 main::src#2 ] (  [ main::dst#2 main::src#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [28] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (byte) 4 [ memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] ( memoryRemap:5 [ memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:10 [ memoryRemap::remapBlocks#3 ]
+Statement [30] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:5 [ memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:14 [ memoryRemap::$1 ]
+Statement [35] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0 [ memoryRemap::upperPageOffset#3 memoryRemap::$6 ] ( memoryRemap:5 [ memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:5 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:19 [ memoryRemap::$6 ]
+Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [3] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2 [ main::dst#2 main::src#2 ] (  [ main::dst#2 main::src#2 ] { }  ) always clobbers reg byte a 
+Statement [4] call *((const void()*) musicInit)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [7] *((byte*) main::mem_destroy#3) ← (byte) 0 [ main::mem_destroy#3 ] (  [ main::mem_destroy#3 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [9] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@10 [ main::mem_destroy#1 ] (  [ main::mem_destroy#1 ] { }  ) always clobbers reg byte a 
+Statement [12] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5 [ main::mem_destroy#5 ] (  [ main::mem_destroy#5 ] { }  ) always clobbers reg byte a 
+Statement [15] call *((const void()*) musicPlay)  [ main::mem_destroy#5 ] (  [ main::mem_destroy#5 ] { }  ) always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [18] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7 [ main::mem_destroy#5 ] (  [ main::mem_destroy#5 ] { }  ) always clobbers reg byte a 
+Statement [19] *((byte*) main::dst#2) ← *((byte*) main::src#2) [ main::dst#2 main::src#2 ] (  [ main::dst#2 main::src#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [28] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (byte) 4 [ memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] ( memoryRemap:5 [ memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::lowerPageOffset#3 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 ] { }  ) always clobbers reg byte a 
+Statement [30] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f [ memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] ( memoryRemap:5 [ memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::remapBlocks#3 memoryRemap::upperPageOffset#3 memoryRemap::$1 memoryRemap::$3 ] { }  ) always clobbers reg byte a 
+Statement [35] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0 [ memoryRemap::upperPageOffset#3 memoryRemap::$6 ] ( memoryRemap:5 [ memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::upperPageOffset#3 memoryRemap::$6 ] { }  ) always clobbers reg byte a 
+Statement [37] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f [ memoryRemap::$6 memoryRemap::$8 ] ( memoryRemap:5 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemap:16 [ main::mem_destroy#5 memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:1::memoryRemap:23 [ memoryRemap::$6 memoryRemap::$8 ] { }  memoryRemapBlock:14::memoryRemap:23 [ main::mem_destroy#5 memoryRemap::$6 memoryRemap::$8 ] { }  ) always clobbers reg byte a 
+Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Potential registers zp[2]:2 [ main::dst#2 main::dst#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::src#2 main::src#1 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ memoryRemap::lowerPageOffset#3 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ memoryRemap::remapBlocks#3 ] : zp[1]:10 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[2]:11 [ memoryRemap::upperPageOffset#3 ] : zp[2]:11 , 
+Potential registers zp[1]:13 [ memoryRemap::$0 ] : zp[1]:13 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:14 [ memoryRemap::$1 ] : zp[1]:14 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:15 [ memoryRemap::$2 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:16 [ memoryRemap::$3 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:17 [ memoryRemap::$4 ] : zp[1]:17 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:18 [ memoryRemap::$5 ] : zp[1]:18 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:19 [ memoryRemap::$6 ] : zp[1]:19 , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:20 [ memoryRemap::$7 ] : zp[1]:20 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:21 [ memoryRemap::$8 ] : zp[1]:21 , reg byte a , reg byte x , reg byte y , reg byte z , 
+Potential registers zp[1]:22 [ memoryRemap::$9 ] : zp[1]:22 , reg byte a , reg byte x , reg byte y , reg byte z , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [memoryRemap] 2,002: zp[1]:13 [ memoryRemap::$0 ] 2,002: zp[1]:15 [ memoryRemap::$2 ] 2,002: zp[1]:16 [ memoryRemap::$3 ] 2,002: zp[1]:17 [ memoryRemap::$4 ] 2,002: zp[1]:18 [ memoryRemap::$5 ] 2,002: zp[1]:20 [ memoryRemap::$7 ] 2,002: zp[1]:21 [ memoryRemap::$8 ] 2,002: zp[1]:22 [ memoryRemap::$9 ] 667.33: zp[1]:14 [ memoryRemap::$1 ] 667.33: zp[1]:19 [ memoryRemap::$6 ] 500.5: zp[2]:8 [ memoryRemap::lowerPageOffset#3 ] 200.2: zp[1]:10 [ memoryRemap::remapBlocks#3 ] 182: zp[2]:11 [ memoryRemap::upperPageOffset#3 ] 
+Uplift Scope [main] 111.75: zp[2]:6 [ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ] 30.25: zp[2]:4 [ main::src#2 main::src#1 ] 25.67: zp[2]:2 [ main::dst#2 main::dst#1 ] 
+Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6569_VICII] 
+Uplift Scope [MOS6581_SID] 
+Uplift Scope [MOS4569_VICIII] 
+Uplift Scope [MEGA65_VICIV] 
+Uplift Scope [memoryRemapBlock] 
+Uplift Scope [] 
+
+Uplifting [memoryRemap] best 5266 combination reg byte a [ memoryRemap::$0 ] reg byte a [ memoryRemap::$2 ] reg byte a [ memoryRemap::$3 ] zp[1]:17 [ memoryRemap::$4 ] zp[1]:18 [ memoryRemap::$5 ] zp[1]:20 [ memoryRemap::$7 ] zp[1]:21 [ memoryRemap::$8 ] zp[1]:22 [ memoryRemap::$9 ] zp[1]:14 [ memoryRemap::$1 ] zp[1]:19 [ memoryRemap::$6 ] zp[2]:8 [ memoryRemap::lowerPageOffset#3 ] zp[1]:10 [ memoryRemap::remapBlocks#3 ] zp[2]:11 [ memoryRemap::upperPageOffset#3 ] 
+Limited combination testing to 100 combinations of 25000000 possible.
+Uplifting [main] best 5266 combination zp[2]:6 [ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ] zp[2]:4 [ main::src#2 main::src#1 ] zp[2]:2 [ main::dst#2 main::dst#1 ] 
+Uplifting [MOS6526_CIA] best 5266 combination 
+Uplifting [MOS6569_VICII] best 5266 combination 
+Uplifting [MOS6581_SID] best 5266 combination 
+Uplifting [MOS4569_VICIII] best 5266 combination 
+Uplifting [MEGA65_VICIV] best 5266 combination 
+Uplifting [memoryRemapBlock] best 5266 combination 
+Uplifting [] best 5266 combination 
+Attempting to uplift remaining variables inzp[1]:17 [ memoryRemap::$4 ]
+Uplifting [memoryRemap] best 5260 combination reg byte a [ memoryRemap::$4 ] 
+Attempting to uplift remaining variables inzp[1]:18 [ memoryRemap::$5 ]
+Uplifting [memoryRemap] best 5254 combination reg byte a [ memoryRemap::$5 ] 
+Attempting to uplift remaining variables inzp[1]:20 [ memoryRemap::$7 ]
+Uplifting [memoryRemap] best 5248 combination reg byte a [ memoryRemap::$7 ] 
+Attempting to uplift remaining variables inzp[1]:21 [ memoryRemap::$8 ]
+Uplifting [memoryRemap] best 5242 combination reg byte a [ memoryRemap::$8 ] 
+Attempting to uplift remaining variables inzp[1]:22 [ memoryRemap::$9 ]
+Uplifting [memoryRemap] best 5236 combination reg byte a [ memoryRemap::$9 ] 
+Attempting to uplift remaining variables inzp[1]:14 [ memoryRemap::$1 ]
+Uplifting [memoryRemap] best 5236 combination zp[1]:14 [ memoryRemap::$1 ] 
+Attempting to uplift remaining variables inzp[1]:19 [ memoryRemap::$6 ]
+Uplifting [memoryRemap] best 5236 combination zp[1]:19 [ memoryRemap::$6 ] 
+Attempting to uplift remaining variables inzp[1]:10 [ memoryRemap::remapBlocks#3 ]
+Uplifting [memoryRemap] best 5223 combination reg byte z [ memoryRemap::remapBlocks#3 ] 
+Allocated (was zp[2]:11) zp[2]:10 [ memoryRemap::upperPageOffset#3 ]
+Allocated (was zp[1]:14) zp[1]:12 [ memoryRemap::$1 ]
+Allocated (was zp[1]:19) zp[1]:13 [ memoryRemap::$6 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// SID music located in another bank being played using memory mapping on MEGA65
+// Music is Cybernoid II by Jeroen Tel released in 1988 by Hewson https://csdb.dk/sid/?id=28140
+// SID relocated using http://www.linusakesson.net/software/sidreloc/index.php
+  // Upstart
+.cpu _45gs02
+  // MEGA65 platform PRG executable with banked code and data starting in MEGA65 mode.
+.file [name="banked-music.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segmentdef Banked [segments="CodeBanked, DataBanked"]
+.segmentdef CodeBanked [start=$4000]
+.segmentdef DataBanked [startAfter="CodeBanked"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(main)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  // Address after the end of the music
+  .label MUSIC_END = $5200
+  // Pointer to the music init routine
+  .label musicInit = MUSIC
+  // Pointer to the music play routine
+  .label musicPlay = MUSIC+3
+.segment Code
+  // main
+main: {
+    .label dst = 2
+    .label src = 4
+    // Pointer to (unmapped) $4000 used for overwriting to demonstrate the mapping works
+    .label mem_destroy = 6
+    // asm { sei  }
+    // Stop IRQ's
+    sei
+    // [1] call memoryRemapBlock 
+  // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    // [22] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+  memoryRemapBlock_from_main:
+    jsr memoryRemapBlock
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [2] phi (byte*) main::src#2 = (const byte*) upperCodeData [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<upperCodeData
+    sta.z src
+    lda #>upperCodeData
+    sta.z src+1
+    // [2] phi (byte*) main::dst#2 = (const byte*) MUSIC [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z dst
+    lda #>MUSIC
+    sta.z dst+1
+    jmp __b1
+  // Transfer banked code/data to upper memory ($11000)
+    // main::@1
+  __b1:
+    // [3] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda.z dst+1
+    cmp #>MUSIC_END
+    bcc __b2
+    bne !+
+    lda.z dst
+    cmp #<MUSIC_END
+    bcc __b2
+  !:
+    jmp __b3
+    // main::@3
+  __b3:
+    // [4] call *((const void()*) musicInit) 
+    // Initialize SID memory is still remapped)
+    jsr musicInit
+    // [5] call memoryRemap 
+  // Reset memory mapping
+    // [25] phi from main::@3 to memoryRemap [phi:main::@3->memoryRemap]
+  memoryRemap_from___b3:
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (byte) 0 [phi:main::@3->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    lda #>0
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (byte) 0 [phi:main::@3->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #0
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (byte) 0 [phi:main::@3->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.lowerPageOffset
+    lda #>0
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    // [6] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+  __b4_from___b3:
+    // [6] phi (byte*) main::mem_destroy#3 = (const byte*) MUSIC [phi:main::@3->main::@4#0] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z mem_destroy
+    lda #>MUSIC
+    sta.z mem_destroy+1
+    jmp __b4
+    // main::@4
+  __b4:
+    // [7] *((byte*) main::mem_destroy#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // Overwrite data in the unmapped memory where the music is mapped in (to demonstrate that mapping works)
+    lda #0
+    ldy #0
+    sta (mem_destroy),y
+    // [8] (byte*) main::mem_destroy#1 ← ++ (byte*) main::mem_destroy#3 -- pbuz1=_inc_pbuz1 
+    inw.z mem_destroy
+    // [9] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@10 -- pbuz1_neq_pbuc1_then_la1 
+    lda.z mem_destroy+1
+    cmp #>MUSIC_END
+    bne __b10_from___b4
+    lda.z mem_destroy
+    cmp #<MUSIC_END
+    bne __b10_from___b4
+    // [11] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+  __b5_from___b4:
+    // [11] phi (byte*) main::mem_destroy#5 = (const byte*) MUSIC [phi:main::@4->main::@5#0] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z mem_destroy
+    lda #>MUSIC
+    sta.z mem_destroy+1
+    jmp __b5
+    // [10] phi from main::@4 to main::@10 [phi:main::@4->main::@10]
+  __b10_from___b4:
+    jmp __b10
+    // main::@10
+  __b10:
+    // [11] phi from main::@10 main::@5 to main::@5 [phi:main::@10/main::@5->main::@5]
+  __b5_from___b10:
+  __b5_from___b5:
+    // [11] phi (byte*) main::mem_destroy#5 = (byte*) main::mem_destroy#1 [phi:main::@10/main::@5->main::@5#0] -- register_copy 
+    jmp __b5
+  // Wait for the raster
+    // main::@5
+  __b5:
+    // [12] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b5_from___b5
+    jmp __b6
+    // main::@6
+  __b6:
+    // [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // [14] call memoryRemapBlock 
+  // Remap memory to put music at $4000
+    // [22] phi from main::@6 to memoryRemapBlock [phi:main::@6->memoryRemapBlock]
+  memoryRemapBlock_from___b6:
+    jsr memoryRemapBlock
+    jmp __b8
+    // main::@8
+  __b8:
+    // [15] call *((const void()*) musicPlay) 
+    // Play remapped SID
+    jsr musicPlay
+    // [16] call memoryRemap 
+  // Reset memory mapping
+    // [25] phi from main::@8 to memoryRemap [phi:main::@8->memoryRemap]
+  memoryRemap_from___b8:
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (byte) 0 [phi:main::@8->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    lda #>0
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (byte) 0 [phi:main::@8->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #0
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (byte) 0 [phi:main::@8->memoryRemap#2] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.lowerPageOffset
+    lda #>0
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    jmp __b9
+    // main::@9
+  __b9:
+    // [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __b7
+  // Wait for the raster
+    // main::@7
+  __b7:
+    // [18] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7 -- _deref_pbuc1_eq_vbuc2_then_la1 
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq __b7
+    // [6] phi from main::@7 to main::@4 [phi:main::@7->main::@4]
+  __b4_from___b7:
+    // [6] phi (byte*) main::mem_destroy#3 = (byte*) main::mem_destroy#5 [phi:main::@7->main::@4#0] -- register_copy 
+    jmp __b4
+    // main::@2
+  __b2:
+    // [19] *((byte*) main::dst#2) ← *((byte*) main::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (src),y
+    ldy #0
+    sta (dst),y
+    // [20] (byte*) main::dst#1 ← ++ (byte*) main::dst#2 -- pbuz1=_inc_pbuz1 
+    inw.z dst
+    // [21] (byte*) main::src#1 ← ++ (byte*) main::src#2 -- pbuz1=_inc_pbuz1 
+    inw.z src
+    // [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [2] phi (byte*) main::src#2 = (byte*) main::src#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [2] phi (byte*) main::dst#2 = (byte*) main::dst#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // memoryRemapBlock
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
+// Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+memoryRemapBlock: {
+    .const pageOffset = $100-$40
+    .const block = $40>>5
+    .const blockBits = 1<<block
+    // [23] call memoryRemap 
+    // [25] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+  memoryRemap_from_memoryRemapBlock:
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (const word) memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
+    lda #<pageOffset
+    sta.z memoryRemap.upperPageOffset
+    lda #>pageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (const byte) memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #blockBits
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (const word) memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
+    lda #<pageOffset
+    sta.z memoryRemap.lowerPageOffset
+    lda #>pageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    jmp __breturn
+    // memoryRemapBlock::@return
+  __breturn:
+    // [24] return 
+    rts
+}
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// memoryRemap(byte register(Z) remapBlocks, word zp(8) lowerPageOffset, word zp($a) upperPageOffset)
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __1 = $c
+    .label __6 = $d
+    .label lowerPageOffset = 8
+    .label upperPageOffset = $a
+    // [26] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#3 -- vbuaa=_lo_vwuz1 
+    lda.z lowerPageOffset
+    // [27] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
+    sta aVal
+    // [28] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    tza
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // [29] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#3 -- vbuaa=_hi_vwuz1 
+    lda.z lowerPageOffset+1
+    // [30] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [31] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __1
+    // [32] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
+    sta xVal
+    // [33] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#3 -- vbuaa=_lo_vwuz1 
+    lda.z upperPageOffset
+    // [34] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
+    sta yVal
+    // [35] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
+    tza
+    and #$f0
+    sta.z __6
+    // [36] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#3 -- vbuaa=_hi_vwuz1 
+    lda.z upperPageOffset+1
+    // [37] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // [38] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __6
+    // [39] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
+    sta zVal
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap::@return
+  __breturn:
+    // [41] return 
+    rts
+}
+  // File Data
+.segment Data
+// Array containing the banked upper memory code/data to be transferred to upper memory before execution
+upperCodeData:
+.segmentout [segments="Banked"]
+
+.segment DataBanked
+.pc = $4000 "MUSIC"
+// SID tune at an absolute address
+MUSIC:
+.const music = LoadSid("Cybernoid_II_4000.sid")
+    .fill music.size, music.getData(i)
+
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __b10
+Removing instruction jmp __b5
+Removing instruction jmp __b6
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b7
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Removing instruction lda #<0
+Removing instruction lda #>0
+Replacing instruction ldy #0 with TAY
+Removing instruction lda #>0
+Removing instruction lda #<0
+Removing instruction lda #>0
+Removing instruction ldy #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label __b10_from___b4 with __b10
+Replacing label __b10_from___b4 with __b10
+Replacing label __b5_from___b5 with __b10
+Removing instruction __b10_from___b4:
+Removing instruction __b5_from___b10:
+Removing instruction __b5_from___b5:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction memoryRemapBlock_from_main:
+Removing instruction __b1_from_main:
+Removing instruction __b3:
+Removing instruction memoryRemap_from___b3:
+Removing instruction __b4_from___b3:
+Removing instruction __b5_from___b4:
+Removing instruction __b6:
+Removing instruction memoryRemapBlock_from___b6:
+Removing instruction __b8:
+Removing instruction memoryRemap_from___b8:
+Removing instruction __b9:
+Removing instruction __b4_from___b7:
+Removing instruction __b1_from___b2:
+Removing instruction memoryRemap_from_memoryRemapBlock:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Removing instruction jmp __b5
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b5:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(byte) MEGA65_VICIV::ALPHADELAY
+(byte) MEGA65_VICIV::B0PIX
+(byte) MEGA65_VICIV::B0_ADDR
+(byte) MEGA65_VICIV::B1PIX
+(byte) MEGA65_VICIV::B1_ADDR
+(byte) MEGA65_VICIV::B2PIX
+(byte) MEGA65_VICIV::B2_ADDR
+(byte) MEGA65_VICIV::B3PIX
+(byte) MEGA65_VICIV::B3_ADDR
+(byte) MEGA65_VICIV::B4PIX
+(byte) MEGA65_VICIV::B4_ADDR
+(byte) MEGA65_VICIV::B5PIX
+(byte) MEGA65_VICIV::B5_ADDR
+(byte) MEGA65_VICIV::B6PIX
+(byte) MEGA65_VICIV::B6_ADDR
+(byte) MEGA65_VICIV::B7PIX
+(byte) MEGA65_VICIV::B7_ADDR
+(byte) MEGA65_VICIV::BBDRPOS_HI
+(byte) MEGA65_VICIV::BBDRPOS_LO
+(byte) MEGA65_VICIV::BG_COLOR
+(byte) MEGA65_VICIV::BG_COLOR1
+(byte) MEGA65_VICIV::BG_COLOR2
+(byte) MEGA65_VICIV::BG_COLOR3
+(byte) MEGA65_VICIV::BORDER_COLOR
+(byte) MEGA65_VICIV::BP16ENS
+(byte) MEGA65_VICIV::BPCOMP
+(byte) MEGA65_VICIV::BPX
+(byte) MEGA65_VICIV::BPY
+(byte) MEGA65_VICIV::CHARPTR_HILO
+(byte) MEGA65_VICIV::CHARPTR_LOHI
+(byte) MEGA65_VICIV::CHARPTR_LOLO
+(byte) MEGA65_VICIV::CHARSTEP_HI
+(byte) MEGA65_VICIV::CHARSTEP_LO
+(byte) MEGA65_VICIV::CHRCOUNT
+(byte) MEGA65_VICIV::CHRXSCL
+(byte) MEGA65_VICIV::CHRYSCL
+(byte) MEGA65_VICIV::COLPTR_HI
+(byte) MEGA65_VICIV::COLPTR_LO
+(byte) MEGA65_VICIV::CONTROL1
+(byte) MEGA65_VICIV::CONTROL2
+(byte) MEGA65_VICIV::CONTROLA
+(byte) MEGA65_VICIV::CONTROLB
+(byte) MEGA65_VICIV::CONTROLC
+(byte) MEGA65_VICIV::DEBUG1
+(byte) MEGA65_VICIV::DEBUGX
+(byte) MEGA65_VICIV::DEBUGXY
+(byte) MEGA65_VICIV::DEBUGY
+(byte) MEGA65_VICIV::FNRASTER_HI
+(byte) MEGA65_VICIV::FNRASTER_LO
+(byte) MEGA65_VICIV::HPOS
+(byte) MEGA65_VICIV::IRQ_ENABLE
+(byte) MEGA65_VICIV::IRQ_STATUS
+(byte) MEGA65_VICIV::KEY
+(byte) MEGA65_VICIV::LIGHTPEN_X
+(byte) MEGA65_VICIV::LIGHTPEN_Y
+(byte) MEGA65_VICIV::MEMORY
+(byte) MEGA65_VICIV::PALSEL
+(byte) MEGA65_VICIV::RASLINE0
+(byte) MEGA65_VICIV::RASTER
+(byte) MEGA65_VICIV::ROWCOUNT
+(byte) MEGA65_VICIV::RSTCMP
+(byte) MEGA65_VICIV::RSTCOMP
+(byte) MEGA65_VICIV::SBPDEBUG
+(byte) MEGA65_VICIV::SCRNPTR_HIHI
+(byte) MEGA65_VICIV::SCRNPTR_HILO
+(byte) MEGA65_VICIV::SCRNPTR_LOHI
+(byte) MEGA65_VICIV::SCRNPTR_LOLO
+(byte) MEGA65_VICIV::SIDBDRWD_HI
+(byte) MEGA65_VICIV::SIDBDRWD_LO
+(byte) MEGA65_VICIV::SPR16EN
+(byte) MEGA65_VICIV::SPRALPHAVAL
+(byte) MEGA65_VICIV::SPRENALPHA
+(byte) MEGA65_VICIV::SPRENV400
+(byte) MEGA65_VICIV::SPRHGHT
+(byte) MEGA65_VICIV::SPRHGTEN
+(byte) MEGA65_VICIV::SPRITE0_COLOR
+(byte) MEGA65_VICIV::SPRITE0_X
+(byte) MEGA65_VICIV::SPRITE0_Y
+(byte) MEGA65_VICIV::SPRITE1_COLOR
+(byte) MEGA65_VICIV::SPRITE1_X
+(byte) MEGA65_VICIV::SPRITE1_Y
+(byte) MEGA65_VICIV::SPRITE2_COLOR
+(byte) MEGA65_VICIV::SPRITE2_X
+(byte) MEGA65_VICIV::SPRITE2_Y
+(byte) MEGA65_VICIV::SPRITE3_COLOR
+(byte) MEGA65_VICIV::SPRITE3_X
+(byte) MEGA65_VICIV::SPRITE3_Y
+(byte) MEGA65_VICIV::SPRITE4_COLOR
+(byte) MEGA65_VICIV::SPRITE4_X
+(byte) MEGA65_VICIV::SPRITE4_Y
+(byte) MEGA65_VICIV::SPRITE5_COLOR
+(byte) MEGA65_VICIV::SPRITE5_X
+(byte) MEGA65_VICIV::SPRITE5_Y
+(byte) MEGA65_VICIV::SPRITE6_COLOR
+(byte) MEGA65_VICIV::SPRITE6_X
+(byte) MEGA65_VICIV::SPRITE6_Y
+(byte) MEGA65_VICIV::SPRITE7_COLOR
+(byte) MEGA65_VICIV::SPRITE7_X
+(byte) MEGA65_VICIV::SPRITE7_Y
+(byte) MEGA65_VICIV::SPRITES_BG_COLLISION
+(byte) MEGA65_VICIV::SPRITES_COLLISION
+(byte) MEGA65_VICIV::SPRITES_ENABLE
+(byte) MEGA65_VICIV::SPRITES_EXPAND_X
+(byte) MEGA65_VICIV::SPRITES_EXPAND_Y
+(byte) MEGA65_VICIV::SPRITES_MC
+(byte) MEGA65_VICIV::SPRITES_MCOLOR1
+(byte) MEGA65_VICIV::SPRITES_MCOLOR2
+(byte) MEGA65_VICIV::SPRITES_PRIORITY
+(byte) MEGA65_VICIV::SPRITES_XMSB
+(byte) MEGA65_VICIV::SPRPTRADR_HILO
+(byte) MEGA65_VICIV::SPRPTRADR_LOHI
+(byte) MEGA65_VICIV::SPRPTRADR_LOLO
+(byte) MEGA65_VICIV::SPRX64EN
+(byte) MEGA65_VICIV::SPRXSMSBS
+(byte) MEGA65_VICIV::SPRYSMSBSM
+(byte) MEGA65_VICIV::SRPYMSBS
+(byte) MEGA65_VICIV::SYNCPOL
+(byte) MEGA65_VICIV::TBDRPOS_HI
+(byte) MEGA65_VICIV::TBDRPOS_LO
+(byte) MEGA65_VICIV::TEXTXPOS_HI
+(byte) MEGA65_VICIV::TEXTXPOS_LO
+(byte) MEGA65_VICIV::TEXTYPOS_HI
+(byte) MEGA65_VICIV::TEXTYPOS_LO
+(byte) MEGA65_VICIV::UNUSED
+(byte) MEGA65_VICIV::VPOS
+(byte) MEGA65_VICIV::VSYNDEL
+(byte) MEGA65_VICIV::XPOS_HI
+(byte) MEGA65_VICIV::XPOS_LO
+(byte) MOS4569_VICIII::B0PIX
+(byte) MOS4569_VICIII::B0_ADDR
+(byte) MOS4569_VICIII::B1PIX
+(byte) MOS4569_VICIII::B1_ADDR
+(byte) MOS4569_VICIII::B2PIX
+(byte) MOS4569_VICIII::B2_ADDR
+(byte) MOS4569_VICIII::B3PIX
+(byte) MOS4569_VICIII::B3_ADDR
+(byte) MOS4569_VICIII::B4PIX
+(byte) MOS4569_VICIII::B4_ADDR
+(byte) MOS4569_VICIII::B5PIX
+(byte) MOS4569_VICIII::B5_ADDR
+(byte) MOS4569_VICIII::B6PIX
+(byte) MOS4569_VICIII::B6_ADDR
+(byte) MOS4569_VICIII::B7PIX
+(byte) MOS4569_VICIII::B7_ADDR
+(byte) MOS4569_VICIII::BG_COLOR
+(byte) MOS4569_VICIII::BG_COLOR1
+(byte) MOS4569_VICIII::BG_COLOR2
+(byte) MOS4569_VICIII::BG_COLOR3
+(byte) MOS4569_VICIII::BORDER_COLOR
+(byte) MOS4569_VICIII::BPCOMP
+(byte) MOS4569_VICIII::BPX
+(byte) MOS4569_VICIII::BPY
+(byte) MOS4569_VICIII::CONTROL1
+(byte) MOS4569_VICIII::CONTROL2
+(byte) MOS4569_VICIII::CONTROLA
+(byte) MOS4569_VICIII::CONTROLB
+(byte) MOS4569_VICIII::HPOS
+(byte) MOS4569_VICIII::IRQ_ENABLE
+(byte) MOS4569_VICIII::IRQ_STATUS
+(byte) MOS4569_VICIII::KEY
+(byte) MOS4569_VICIII::LIGHTPEN_X
+(byte) MOS4569_VICIII::LIGHTPEN_Y
+(byte) MOS4569_VICIII::MEMORY
+(byte) MOS4569_VICIII::RASTER
+(byte) MOS4569_VICIII::SPRITE0_COLOR
+(byte) MOS4569_VICIII::SPRITE0_X
+(byte) MOS4569_VICIII::SPRITE0_Y
+(byte) MOS4569_VICIII::SPRITE1_COLOR
+(byte) MOS4569_VICIII::SPRITE1_X
+(byte) MOS4569_VICIII::SPRITE1_Y
+(byte) MOS4569_VICIII::SPRITE2_COLOR
+(byte) MOS4569_VICIII::SPRITE2_X
+(byte) MOS4569_VICIII::SPRITE2_Y
+(byte) MOS4569_VICIII::SPRITE3_COLOR
+(byte) MOS4569_VICIII::SPRITE3_X
+(byte) MOS4569_VICIII::SPRITE3_Y
+(byte) MOS4569_VICIII::SPRITE4_COLOR
+(byte) MOS4569_VICIII::SPRITE4_X
+(byte) MOS4569_VICIII::SPRITE4_Y
+(byte) MOS4569_VICIII::SPRITE5_COLOR
+(byte) MOS4569_VICIII::SPRITE5_X
+(byte) MOS4569_VICIII::SPRITE5_Y
+(byte) MOS4569_VICIII::SPRITE6_COLOR
+(byte) MOS4569_VICIII::SPRITE6_X
+(byte) MOS4569_VICIII::SPRITE6_Y
+(byte) MOS4569_VICIII::SPRITE7_COLOR
+(byte) MOS4569_VICIII::SPRITE7_X
+(byte) MOS4569_VICIII::SPRITE7_Y
+(byte) MOS4569_VICIII::SPRITES_BG_COLLISION
+(byte) MOS4569_VICIII::SPRITES_COLLISION
+(byte) MOS4569_VICIII::SPRITES_ENABLE
+(byte) MOS4569_VICIII::SPRITES_EXPAND_X
+(byte) MOS4569_VICIII::SPRITES_EXPAND_Y
+(byte) MOS4569_VICIII::SPRITES_MC
+(byte) MOS4569_VICIII::SPRITES_MCOLOR1
+(byte) MOS4569_VICIII::SPRITES_MCOLOR2
+(byte) MOS4569_VICIII::SPRITES_PRIORITY
+(byte) MOS4569_VICIII::SPRITES_XMSB
+(byte) MOS4569_VICIII::UNUSED
+(byte) MOS4569_VICIII::VPOS
+(byte) MOS6526_CIA::INTERRUPT
+(byte) MOS6526_CIA::PORT_A
+(byte) MOS6526_CIA::PORT_A_DDR
+(byte) MOS6526_CIA::PORT_B
+(byte) MOS6526_CIA::PORT_B_DDR
+(byte) MOS6526_CIA::SERIAL_DATA
+(word) MOS6526_CIA::TIMER_A
+(byte) MOS6526_CIA::TIMER_A_CONTROL
+(word) MOS6526_CIA::TIMER_B
+(byte) MOS6526_CIA::TIMER_B_CONTROL
+(byte) MOS6526_CIA::TOD_10THS
+(byte) MOS6526_CIA::TOD_HOURS
+(byte) MOS6526_CIA::TOD_MIN
+(byte) MOS6526_CIA::TOD_SEC
+(byte) MOS6569_VICII::BG_COLOR
+(byte) MOS6569_VICII::BG_COLOR1
+(byte) MOS6569_VICII::BG_COLOR2
+(byte) MOS6569_VICII::BG_COLOR3
+(byte) MOS6569_VICII::BORDER_COLOR
+(byte) MOS6569_VICII::CONTROL1
+(byte) MOS6569_VICII::CONTROL2
+(byte) MOS6569_VICII::IRQ_ENABLE
+(byte) MOS6569_VICII::IRQ_STATUS
+(byte) MOS6569_VICII::LIGHTPEN_X
+(byte) MOS6569_VICII::LIGHTPEN_Y
+(byte) MOS6569_VICII::MEMORY
+(byte) MOS6569_VICII::RASTER
+(byte) MOS6569_VICII::SPRITE0_COLOR
+(byte) MOS6569_VICII::SPRITE0_X
+(byte) MOS6569_VICII::SPRITE0_Y
+(byte) MOS6569_VICII::SPRITE1_COLOR
+(byte) MOS6569_VICII::SPRITE1_X
+(byte) MOS6569_VICII::SPRITE1_Y
+(byte) MOS6569_VICII::SPRITE2_COLOR
+(byte) MOS6569_VICII::SPRITE2_X
+(byte) MOS6569_VICII::SPRITE2_Y
+(byte) MOS6569_VICII::SPRITE3_COLOR
+(byte) MOS6569_VICII::SPRITE3_X
+(byte) MOS6569_VICII::SPRITE3_Y
+(byte) MOS6569_VICII::SPRITE4_COLOR
+(byte) MOS6569_VICII::SPRITE4_X
+(byte) MOS6569_VICII::SPRITE4_Y
+(byte) MOS6569_VICII::SPRITE5_COLOR
+(byte) MOS6569_VICII::SPRITE5_X
+(byte) MOS6569_VICII::SPRITE5_Y
+(byte) MOS6569_VICII::SPRITE6_COLOR
+(byte) MOS6569_VICII::SPRITE6_X
+(byte) MOS6569_VICII::SPRITE6_Y
+(byte) MOS6569_VICII::SPRITE7_COLOR
+(byte) MOS6569_VICII::SPRITE7_X
+(byte) MOS6569_VICII::SPRITE7_Y
+(byte) MOS6569_VICII::SPRITES_BG_COLLISION
+(byte) MOS6569_VICII::SPRITES_COLLISION
+(byte) MOS6569_VICII::SPRITES_ENABLE
+(byte) MOS6569_VICII::SPRITES_EXPAND_X
+(byte) MOS6569_VICII::SPRITES_EXPAND_Y
+(byte) MOS6569_VICII::SPRITES_MC
+(byte) MOS6569_VICII::SPRITES_MCOLOR1
+(byte) MOS6569_VICII::SPRITES_MCOLOR2
+(byte) MOS6569_VICII::SPRITES_PRIORITY
+(byte) MOS6569_VICII::SPRITES_XMSB
+(byte) MOS6581_SID::CH1_ATTACK_DECAY
+(byte) MOS6581_SID::CH1_CONTROL
+(word) MOS6581_SID::CH1_FREQ
+(word) MOS6581_SID::CH1_PULSE_WIDTH
+(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH2_ATTACK_DECAY
+(byte) MOS6581_SID::CH2_CONTROL
+(word) MOS6581_SID::CH2_FREQ
+(word) MOS6581_SID::CH2_PULSE_WIDTH
+(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
+(byte) MOS6581_SID::CH3_ATTACK_DECAY
+(byte) MOS6581_SID::CH3_CONTROL
+(byte) MOS6581_SID::CH3_ENV
+(word) MOS6581_SID::CH3_FREQ
+(byte) MOS6581_SID::CH3_OSC
+(word) MOS6581_SID::CH3_PULSE_WIDTH
+(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
+(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
+(byte) MOS6581_SID::FILTER_CUTOFF_LOW
+(byte) MOS6581_SID::FILTER_SETUP
+(byte) MOS6581_SID::POT_X
+(byte) MOS6581_SID::POT_Y
+(byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte*) MUSIC[]  = kickasm {{ .const music = LoadSid("Cybernoid_II_4000.sid")
+    .fill music.size, music.getData(i)
+ }}
+(const nomodify byte*) MUSIC_END = (byte*) 20992
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
+(void()) main()
+(label) main::@1
+(label) main::@10
+(label) main::@2
+(label) main::@3
+(label) main::@4
+(label) main::@5
+(label) main::@6
+(label) main::@7
+(label) main::@8
+(label) main::@9
+(byte*) main::dst
+(byte*) main::dst#1 dst zp[2]:2 11.0
+(byte*) main::dst#2 dst zp[2]:2 14.666666666666666
+(byte*) main::mem_destroy
+(byte*) main::mem_destroy#1 mem_destroy zp[2]:6 11.0
+(byte*) main::mem_destroy#3 mem_destroy zp[2]:6 61.5
+(byte*) main::mem_destroy#5 mem_destroy zp[2]:6 39.25
+(byte*) main::src
+(byte*) main::src#1 src zp[2]:4 22.0
+(byte*) main::src#2 src zp[2]:4 8.25
+(void()) memoryRemap((byte) memoryRemap::remapBlocks , (word) memoryRemap::lowerPageOffset , (word) memoryRemap::upperPageOffset)
+(byte~) memoryRemap::$0 reg byte a 2002.0
+(byte~) memoryRemap::$1 zp[1]:12 667.3333333333334
+(byte~) memoryRemap::$2 reg byte a 2002.0
+(byte~) memoryRemap::$3 reg byte a 2002.0
+(byte~) memoryRemap::$4 reg byte a 2002.0
+(byte~) memoryRemap::$5 reg byte a 2002.0
+(byte~) memoryRemap::$6 zp[1]:13 667.3333333333334
+(byte~) memoryRemap::$7 reg byte a 2002.0
+(byte~) memoryRemap::$8 reg byte a 2002.0
+(byte~) memoryRemap::$9 reg byte a 2002.0
+(label) memoryRemap::@return
+(const byte*) memoryRemap::aVal = (byte*) 252
+(word) memoryRemap::lowerPageOffset
+(word) memoryRemap::lowerPageOffset#3 lowerPageOffset zp[2]:8 500.5
+(byte) memoryRemap::remapBlocks
+(byte) memoryRemap::remapBlocks#3 reg byte z 200.2
+(word) memoryRemap::upperPageOffset
+(word) memoryRemap::upperPageOffset#3 upperPageOffset zp[2]:10 182.0
+(const byte*) memoryRemap::xVal = (byte*) 253
+(const byte*) memoryRemap::yVal = (byte*) 254
+(const byte*) memoryRemap::zVal = (byte*) 255
+(void()) memoryRemapBlock((byte) memoryRemapBlock::blockPage , (word) memoryRemapBlock::memoryPage)
+(label) memoryRemapBlock::@return
+(byte) memoryRemapBlock::block
+(const byte) memoryRemapBlock::block#0 block = (byte) $40>>(byte) 5
+(byte) memoryRemapBlock::blockBits
+(const byte) memoryRemapBlock::blockBits#0 blockBits = (byte) 1<<(const byte) memoryRemapBlock::block#0
+(byte) memoryRemapBlock::blockPage
+(word) memoryRemapBlock::memoryPage
+(word) memoryRemapBlock::pageOffset
+(const word) memoryRemapBlock::pageOffset#0 pageOffset = (word) $100-(byte) $40
+(const void()*) musicInit = (void()*)(const byte*) MUSIC
+(const void()*) musicPlay = (void()*)(const byte*) MUSIC+(byte) 3
+(const byte*) upperCodeData[]  = kickasm {{ .segmentout [segments="Banked"]
+ }}
+
+zp[2]:2 [ main::dst#2 main::dst#1 ]
+zp[2]:4 [ main::src#2 main::src#1 ]
+zp[2]:6 [ main::mem_destroy#3 main::mem_destroy#5 main::mem_destroy#1 ]
+zp[2]:8 [ memoryRemap::lowerPageOffset#3 ]
+reg byte z [ memoryRemap::remapBlocks#3 ]
+zp[2]:10 [ memoryRemap::upperPageOffset#3 ]
+reg byte a [ memoryRemap::$0 ]
+zp[1]:12 [ memoryRemap::$1 ]
+reg byte a [ memoryRemap::$2 ]
+reg byte a [ memoryRemap::$3 ]
+reg byte a [ memoryRemap::$4 ]
+reg byte a [ memoryRemap::$5 ]
+zp[1]:13 [ memoryRemap::$6 ]
+reg byte a [ memoryRemap::$7 ]
+reg byte a [ memoryRemap::$8 ]
+reg byte a [ memoryRemap::$9 ]
+
+
+FINAL ASSEMBLER
+Score: 4129
+
+  // File Comments
+// SID music located in another bank being played using memory mapping on MEGA65
+// Music is Cybernoid II by Jeroen Tel released in 1988 by Hewson https://csdb.dk/sid/?id=28140
+// SID relocated using http://www.linusakesson.net/software/sidreloc/index.php
+  // Upstart
+.cpu _45gs02
+  // MEGA65 platform PRG executable with banked code and data starting in MEGA65 mode.
+.file [name="banked-music.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$2001]
+.segmentdef Code [start=$2017]
+.segmentdef Data [startAfter="Code"]
+.segmentdef Banked [segments="CodeBanked, DataBanked"]
+.segmentdef CodeBanked [start=$4000]
+.segmentdef DataBanked [startAfter="CodeBanked"]
+.segment Basic
+.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
+.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
+.text toIntString(main)                                   //         NNNN
+.byte $00, $00, $00                                     // 
+  // Global Constants & labels
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  // Address after the end of the music
+  .label MUSIC_END = $5200
+  // Pointer to the music init routine
+  .label musicInit = MUSIC
+  // Pointer to the music play routine
+  .label musicPlay = MUSIC+3
+.segment Code
+  // main
+main: {
+    .label dst = 2
+    .label src = 4
+    // Pointer to (unmapped) $4000 used for overwriting to demonstrate the mapping works
+    .label mem_destroy = 6
+    // asm
+    // asm { sei  }
+    // Stop IRQ's
+    sei
+    // memoryRemapBlock(0x40, 0x100)
+    // [1] call memoryRemapBlock 
+  // Remap [$4000-$5fff] to point to [$10000-$11fff]
+    // [22] phi from main to memoryRemapBlock [phi:main->memoryRemapBlock]
+    jsr memoryRemapBlock
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi (byte*) main::src#2 = (const byte*) upperCodeData [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<upperCodeData
+    sta.z src
+    lda #>upperCodeData
+    sta.z src+1
+    // [2] phi (byte*) main::dst#2 = (const byte*) MUSIC [phi:main->main::@1#1] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z dst
+    lda #>MUSIC
+    sta.z dst+1
+  // Transfer banked code/data to upper memory ($11000)
+    // main::@1
+  __b1:
+    // for( char *src=upperCodeData, *dst=MUSIC; dst<MUSIC_END; )
+    // [3] if((byte*) main::dst#2<(const nomodify byte*) MUSIC_END) goto main::@2 -- pbuz1_lt_pbuc1_then_la1 
+    lda.z dst+1
+    cmp #>MUSIC_END
+    bcc __b2
+    bne !+
+    lda.z dst
+    cmp #<MUSIC_END
+    bcc __b2
+  !:
+    // main::@3
+    // (*musicInit)()
+    // [4] call *((const void()*) musicInit) 
+    // Initialize SID memory is still remapped)
+    jsr musicInit
+    // memoryRemap(0,0,0)
+    // [5] call memoryRemap 
+  // Reset memory mapping
+    // [25] phi from main::@3 to memoryRemap [phi:main::@3->memoryRemap]
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (byte) 0 [phi:main::@3->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (byte) 0 [phi:main::@3->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #0
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (byte) 0 [phi:main::@3->memoryRemap#2] -- vwuz1=vbuc1 
+    sta.z memoryRemap.lowerPageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    // [6] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [6] phi (byte*) main::mem_destroy#3 = (const byte*) MUSIC [phi:main::@3->main::@4#0] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z mem_destroy
+    lda #>MUSIC
+    sta.z mem_destroy+1
+    // main::@4
+  __b4:
+    // *mem_destroy = 0
+    // [7] *((byte*) main::mem_destroy#3) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // Overwrite data in the unmapped memory where the music is mapped in (to demonstrate that mapping works)
+    lda #0
+    tay
+    sta (mem_destroy),y
+    // if(++mem_destroy==MUSIC_END)
+    // [8] (byte*) main::mem_destroy#1 ← ++ (byte*) main::mem_destroy#3 -- pbuz1=_inc_pbuz1 
+    inw.z mem_destroy
+    // [9] if((byte*) main::mem_destroy#1!=(const nomodify byte*) MUSIC_END) goto main::@10 -- pbuz1_neq_pbuc1_then_la1 
+    lda.z mem_destroy+1
+    cmp #>MUSIC_END
+    bne __b10
+    lda.z mem_destroy
+    cmp #<MUSIC_END
+    bne __b10
+    // [11] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+    // [11] phi (byte*) main::mem_destroy#5 = (const byte*) MUSIC [phi:main::@4->main::@5#0] -- pbuz1=pbuc1 
+    lda #<MUSIC
+    sta.z mem_destroy
+    lda #>MUSIC
+    sta.z mem_destroy+1
+    // [10] phi from main::@4 to main::@10 [phi:main::@4->main::@10]
+    // main::@10
+  __b10:
+    // [11] phi from main::@10 main::@5 to main::@5 [phi:main::@10/main::@5->main::@5]
+    // [11] phi (byte*) main::mem_destroy#5 = (byte*) main::mem_destroy#1 [phi:main::@10/main::@5->main::@5#0] -- register_copy 
+  // Wait for the raster
+    // main::@5
+    // while(VICII->RASTER!=0xff)
+    // [12] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)!=(byte) $ff) goto main::@5 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    bne __b10
+    // main::@6
+    // (VICII->BORDER_COLOR)++;
+    // [13] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // memoryRemapBlock(0x40, 0x100)
+    // [14] call memoryRemapBlock 
+  // Remap memory to put music at $4000
+    // [22] phi from main::@6 to memoryRemapBlock [phi:main::@6->memoryRemapBlock]
+    jsr memoryRemapBlock
+    // main::@8
+    // (*musicPlay)()
+    // [15] call *((const void()*) musicPlay) 
+    // Play remapped SID
+    jsr musicPlay
+    // memoryRemap(0,0,0)
+    // [16] call memoryRemap 
+  // Reset memory mapping
+    // [25] phi from main::@8 to memoryRemap [phi:main::@8->memoryRemap]
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (byte) 0 [phi:main::@8->memoryRemap#0] -- vwuz1=vbuc1 
+    lda #<0
+    sta.z memoryRemap.upperPageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (byte) 0 [phi:main::@8->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #0
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (byte) 0 [phi:main::@8->memoryRemap#2] -- vwuz1=vbuc1 
+    sta.z memoryRemap.lowerPageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    // main::@9
+    // (VICII->BORDER_COLOR)--;
+    // [17] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+  // Wait for the raster
+    // main::@7
+  __b7:
+    // while(VICII->RASTER==0xff)
+    // [18] if(*((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)==(byte) $ff) goto main::@7 -- _deref_pbuc1_eq_vbuc2_then_la1 
+    lda #$ff
+    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    beq __b7
+    // [6] phi from main::@7 to main::@4 [phi:main::@7->main::@4]
+    // [6] phi (byte*) main::mem_destroy#3 = (byte*) main::mem_destroy#5 [phi:main::@7->main::@4#0] -- register_copy 
+    jmp __b4
+    // main::@2
+  __b2:
+    // *dst++ = *src++
+    // [19] *((byte*) main::dst#2) ← *((byte*) main::src#2) -- _deref_pbuz1=_deref_pbuz2 
+    ldy #0
+    lda (src),y
+    sta (dst),y
+    // *dst++ = *src++;
+    // [20] (byte*) main::dst#1 ← ++ (byte*) main::dst#2 -- pbuz1=_inc_pbuz1 
+    inw.z dst
+    // [21] (byte*) main::src#1 ← ++ (byte*) main::src#2 -- pbuz1=_inc_pbuz1 
+    inw.z src
+    // [2] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [2] phi (byte*) main::src#2 = (byte*) main::src#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [2] phi (byte*) main::dst#2 = (byte*) main::dst#1 [phi:main::@2->main::@1#1] -- register_copy 
+    jmp __b1
+}
+  // memoryRemapBlock
+// Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
+// Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
+memoryRemapBlock: {
+    .const pageOffset = $100-$40
+    .const block = $40>>5
+    .const blockBits = 1<<block
+    // memoryRemap(blockBits, pageOffset, pageOffset)
+    // [23] call memoryRemap 
+    // [25] phi from memoryRemapBlock to memoryRemap [phi:memoryRemapBlock->memoryRemap]
+    // [25] phi (word) memoryRemap::upperPageOffset#3 = (const word) memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#0] -- vwuz1=vwuc1 
+    lda #<pageOffset
+    sta.z memoryRemap.upperPageOffset
+    lda #>pageOffset
+    sta.z memoryRemap.upperPageOffset+1
+    // [25] phi (byte) memoryRemap::remapBlocks#3 = (const byte) memoryRemapBlock::blockBits#0 [phi:memoryRemapBlock->memoryRemap#1] -- vbuzz=vbuc1 
+    ldz #blockBits
+    // [25] phi (word) memoryRemap::lowerPageOffset#3 = (const word) memoryRemapBlock::pageOffset#0 [phi:memoryRemapBlock->memoryRemap#2] -- vwuz1=vwuc1 
+    lda #<pageOffset
+    sta.z memoryRemap.lowerPageOffset
+    lda #>pageOffset
+    sta.z memoryRemap.lowerPageOffset+1
+    jsr memoryRemap
+    // memoryRemapBlock::@return
+    // }
+    // [24] return 
+    rts
+}
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+// memoryRemap(byte register(Z) remapBlocks, word zp(8) lowerPageOffset, word zp($a) upperPageOffset)
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    .label __1 = $c
+    .label __6 = $d
+    .label lowerPageOffset = 8
+    .label upperPageOffset = $a
+    // <lowerPageOffset
+    // [26] (byte~) memoryRemap::$0 ← < (word) memoryRemap::lowerPageOffset#3 -- vbuaa=_lo_vwuz1 
+    lda.z lowerPageOffset
+    // *aVal = <lowerPageOffset
+    // [27] *((const byte*) memoryRemap::aVal) ← (byte~) memoryRemap::$0 -- _deref_pbuc1=vbuaa 
+    sta aVal
+    // remapBlocks << 4
+    // [28] (byte~) memoryRemap::$1 ← (byte) memoryRemap::remapBlocks#3 << (byte) 4 -- vbuz1=vbuzz_rol_4 
+    tza
+    asl
+    asl
+    asl
+    asl
+    sta.z __1
+    // >lowerPageOffset
+    // [29] (byte~) memoryRemap::$2 ← > (word) memoryRemap::lowerPageOffset#3 -- vbuaa=_hi_vwuz1 
+    lda.z lowerPageOffset+1
+    // >lowerPageOffset & 0xf
+    // [30] (byte~) memoryRemap::$3 ← (byte~) memoryRemap::$2 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // [31] (byte~) memoryRemap::$4 ← (byte~) memoryRemap::$1 | (byte~) memoryRemap::$3 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __1
+    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // [32] *((const byte*) memoryRemap::xVal) ← (byte~) memoryRemap::$4 -- _deref_pbuc1=vbuaa 
+    sta xVal
+    // <upperPageOffset
+    // [33] (byte~) memoryRemap::$5 ← < (word) memoryRemap::upperPageOffset#3 -- vbuaa=_lo_vwuz1 
+    lda.z upperPageOffset
+    // *yVal = <upperPageOffset
+    // [34] *((const byte*) memoryRemap::yVal) ← (byte~) memoryRemap::$5 -- _deref_pbuc1=vbuaa 
+    sta yVal
+    // remapBlocks & 0xf0
+    // [35] (byte~) memoryRemap::$6 ← (byte) memoryRemap::remapBlocks#3 & (byte) $f0 -- vbuz1=vbuzz_band_vbuc1 
+    tza
+    and #$f0
+    sta.z __6
+    // >upperPageOffset
+    // [36] (byte~) memoryRemap::$7 ← > (word) memoryRemap::upperPageOffset#3 -- vbuaa=_hi_vwuz1 
+    lda.z upperPageOffset+1
+    // >upperPageOffset & 0xf
+    // [37] (byte~) memoryRemap::$8 ← (byte~) memoryRemap::$7 & (byte) $f -- vbuaa=vbuaa_band_vbuc1 
+    and #$f
+    // (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // [38] (byte~) memoryRemap::$9 ← (byte~) memoryRemap::$6 | (byte~) memoryRemap::$8 -- vbuaa=vbuz1_bor_vbuaa 
+    ora.z __6
+    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // [39] *((const byte*) memoryRemap::zVal) ← (byte~) memoryRemap::$9 -- _deref_pbuc1=vbuaa 
+    sta zVal
+    // asm
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    // memoryRemap::@return
+    // }
+    // [41] return 
+    rts
+}
+  // File Data
+.segment Data
+// Array containing the banked upper memory code/data to be transferred to upper memory before execution
+upperCodeData:
+.segmentout [segments="Banked"]
+
+.segment DataBanked
+.pc = $4000 "MUSIC"
+// SID tune at an absolute address
+MUSIC:
+.const music = LoadSid("Cybernoid_II_4000.sid")
+    .fill music.size, music.getData(i)
+
+

@@ -2237,3 +2237,20 @@ tax
 tay
 //FRAGMENT vbuzz=vbuaa
 taz
+//FRAGMENT _deref_pbuc1_neq_vbuc2_then_la1
+lda #{c2}
+cmp {c1}
+bne {la1}
+//FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
+inc {c1}
+//FRAGMENT _deref_pbuc1=_dec__deref_pbuc1
+dec {c1}
+//FRAGMENT _deref_pbuc1_eq_vbuc2_then_la1
+lda #{c2}
+cmp {c1}
+beq {la1}
+//FRAGMENT vwuz1=vwuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1

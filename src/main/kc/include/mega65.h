@@ -7,6 +7,7 @@
 #include <mos6581.h>
 #include <mos4569.h>
 #include <mega65-viciv.h>
+#include <mega65-memorymapper.h>
 
 // I/O Personality selection
 volatile char * const IO_KEY = 0xd02f;

@@ -1,6 +1,6 @@
 // Test the MAP instruction for remapping memory
 // See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
-// See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
+// See Appendix G in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf for a description of the CPU memory remapper of the MEGA65.
 // MEGA65 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
@@ -20,32 +20,34 @@
   .const MEMORYBLOCK_4000 = 4
   // Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
   .const MEMORYBLOCK_8000 = $10
+  // Default address of screen character matrix
+  .label DEFAULT_SCREEN = $800
 .segment Code
 main: {
-    .label block1 = $4000
-    .label block2 = $8000
+    .label BLOCK_4000 = $4000
+    .label BLOCK_8000 = $8000
     // memoryRemapBlock(0x40, 0x100)
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
     ldx #$40
     jsr memoryRemapBlock
-    // block1[0] = 0x55
-    // Put 0x55, 0xaa into $10000
-    lda #$55
-    sta block1
-    // block1[1] = 0xaa
-    lda #$aa
-    sta block1+1
+    // BLOCK_4000[0] = '-'
+    // Put '-', '*' into $10000
+    lda #'-'
+    sta BLOCK_4000
+    // BLOCK_4000[1] = '*'
+    lda #'*'
+    sta BLOCK_4000+1
     // memoryRemapBlock(0x80, 0x100)
   // Remap [$8000-$9fff] to point to [$10000-$11fff]
     ldx #$80
     jsr memoryRemapBlock
-    // block2[2] = 0x55
-    // Put 0x55, 0xaainto $10002
-    lda #$55
-    sta block2+2
-    // block2[3] = 0xaa
-    lda #$aa
-    sta block2+3
+    // BLOCK_8000[2] = '-'
+    // Put '-', '*' into $10002
+    lda #'-'
+    sta BLOCK_8000+2
+    // BLOCK_8000[3] = '*'
+    lda #'*'
+    sta BLOCK_8000+3
     // memoryRemap(MEMORYBLOCK_4000|MEMORYBLOCK_8000, 0x0c0, 0x080)
   // Remap [$4000-$5fff] and [$8000-$9fff] to both point to [$10000-$11fff] (notice usage of page offsets)
     lda #<$80
@@ -58,13 +60,19 @@ main: {
     lda #>$c0
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
-    // block2[4] = block1[2]
-    // Put 0x55, 0xaa into $10004 in a convoluted way
-    lda block1+2
-    sta block2+4
-    // block1[5] = block2[1]
-    lda block2+1
-    sta block1+5
+    // BLOCK_8000[4] = BLOCK_4000[2]
+    // Put '-', '*' into $10004 in a convoluted way
+    lda BLOCK_4000+2
+    sta BLOCK_8000+4
+    // BLOCK_4000[5] = BLOCK_8000[1]
+    lda BLOCK_8000+1
+    sta BLOCK_4000+5
+    ldx #0
+  // copy the resulting values onto the screen
+  __b1:
+    // for(char i=0;i<6;i++)
+    cpx #6
+    bcc __b2
     // memoryRemap256M(MEMORYBLOCK_4000, 0xff800-0x00040, 0)
   // Remap [$4000-$5fff] to both point to [$ff80000-$ff81fff] COLORAM! (notice usage of page offsets)
     ldz #MEMORYBLOCK_4000
@@ -77,13 +85,12 @@ main: {
     lda #>$ff800-$40>>$10
     sta.z memoryRemap256M.lowerPageOffset+3
     jsr memoryRemap256M
-    // block1[0] = 0
-    // Put colors in the upper left corner!
-    lda #0
-    sta block1
-    // block1[1] = 1
-    lda #1
-    sta block1+1
+    ldx #0
+  // Put colors in the upper screen line
+  __b4:
+    // for( char i=0; i<16; i++)
+    cpx #$10
+    bcc __b5
     // memoryRemap256M(0, 0, 0)
   // Remap [$4000-$5fff] back to normal memory!
     ldz #0
@@ -95,11 +102,28 @@ main: {
     jsr memoryRemap256M
     // }
     rts
+  __b5:
+    // 0x40+i
+    txa
+    clc
+    adc #$40
+    // BLOCK_4000[i] = 0x40+i
+    sta BLOCK_4000,x
+    // for( char i=0; i<16; i++)
+    inx
+    jmp __b4
+  __b2:
+    // (DEFAULT_SCREEN+80-6)[i] = BLOCK_4000[i]
+    lda BLOCK_4000,x
+    sta DEFAULT_SCREEN+$50-6,x
+    // for(char i=0;i<6;i++)
+    inx
+    jmp __b1
 }
 // Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
-// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.) 
-// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65. 
+// blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
+// memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // memoryRemapBlock(byte register(X) blockPage)
 memoryRemapBlock: {
@@ -144,26 +168,26 @@ memoryRemapBlock: {
 // After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
 // See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
 // remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
-// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
-// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
-// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
-// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
-// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
-// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
-// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
-// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
-// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
-// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
-// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
-// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
-// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
-// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
-// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
-// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
-// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 // memoryRemap(byte register(Z) remapBlocks, word zp($d) lowerPageOffset, word zp(2) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
@@ -224,26 +248,26 @@ memoryRemap: {
 // See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
 // See Appendix G in file:///Users/jespergravgaard/Downloads/MEGA65-Book_draft%20(5).pdf for a description of the CPU memory remapper of the MEGA65.
 // remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
-// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000. 
-// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000. 
-// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000. 
-// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000. 
-// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000. 
-// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000. 
-// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000. 
-// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000. 
-// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3). 
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
-// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.  
-// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.  
-// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.  
-// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.  
-// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7). 
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
 // The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 20bits of the passed value is used.
-// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000  
-// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.  
-// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.  
-// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.  
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 // memoryRemap256M(byte register(Z) remapBlocks, dword zp(4) lowerPageOffset)
 memoryRemap256M: {
     .label lMb = $fa

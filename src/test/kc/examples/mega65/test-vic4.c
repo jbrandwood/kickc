@@ -1,4 +1,4 @@
-// Hello World for MEGA 65 - putting chars directly to the screen
+// Test a few VIC 3/4 features
 #pragma target(mega65)
 #include <mega65.h>
 
@@ -35,22 +35,8 @@ void main() {
     for( char *col = COLORS; col<COLORS+2000; col++)
         *col = <col;
 
-
-
-    /*
-    // Set Border-color
-    VICII->BORDER_COLOR = 0xff;
-    VICII->BG_COLOR = 0x0b;
-    for(;;) {
-        while(VICII->RASTER!=0xfe) ;
-        while(VICII->RASTER!=0xff) ;
-        (*TBDRPOS)++;
-    }
-    */
-
-   // Loop forever
-    //for(;;) {
-    //    VICII->BORDER_COLOR = VICII->RASTER;
-    //}
+    // Loop forever
+    for(;;)
+        VICII->BORDER_COLOR = VICII->RASTER;
 
 }

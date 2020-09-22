@@ -1,4 +1,4 @@
-// Hello World for MEGA 65 - putting chars directly to the screen
+// Test a few VIC 3/4 features
 // MEGA65 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
@@ -16,10 +16,14 @@
 .byte $00, $00, $00                                     // 
   // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // I/O Personality selection
   .label IO_KEY = $d02f
   // C65 Banking Register
   .label IO_BANK = $d030
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label SCREEN = $800
   .label COLORS = $d800
 .segment Code
@@ -77,8 +81,11 @@ main: {
     cmp #<COLORS+$7d0
     bcc __b4
   !:
-    // }
-    rts
+  __b5:
+    // VICII->BORDER_COLOR = VICII->RASTER
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __b5
   __b4:
     // <col
     lda.z col

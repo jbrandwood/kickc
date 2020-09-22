@@ -26,7 +26,7 @@ void main() {
         *mem_destroy = 0;
         if(++mem_destroy==MUSIC_END) mem_destroy = MUSIC;
         // Wait for the raster
-        while(VICII->RASTER!=0xff) ;        
+        while(VICII->RASTER!=0xff) ;            
         // Color border
         (VICII->BORDER_COLOR)++;
         // Remap memory to put music at $4000

@@ -24,7 +24,7 @@ void main() {
 
     // Remap [$4000-$5fff] to point to [$10000-$11fff]
     memoryRemapBlock(0x40, 0x100);
-    // Transfer banked code/data to upper memory ($11000)
+    // Transfer banked code/data to upper memory ($10000)
     for( char *src=upperCodeData, *dst=MUSIC; dst<MUSIC_END; )
         *dst++ = *src++;
     // Initialize SID memory is still remapped)
@@ -46,24 +46,22 @@ void main() {
     // Enable IRQ
     asm { cli }
     
-    // Loop forever - while copying unmapped MUSIC memory to screen (to demonstrate that mapping works)
-    for(;;)
+    // Loop forever - while destroying and showing unmapped MUSIC memory to screen (to demonstrate that mapping works)
+    char mem_destroy_i = 0;
+    for(;;) {
+        // Overwrite unmapped MUSIC memory
+        MUSIC[mem_destroy_i++]++;
+        // Show unmapped MUSIC memory
         for(char i=0;i<240;i++)
             DEFAULT_SCREEN[i] = MUSIC[i];
+    }
 
 }
-
-// Index used to destroy unmapped music memory (to demonstrate that mapping works)
-volatile char mem_destroy_i = 0;
 
 // Raster IRQ routine
 interrupt(hardware_stack) void irq() {
     // Acknowledge the IRQ
     VICII->IRQ_STATUS = IRQ_RASTER;
-    // Overwrite data in the unmapped memory where the music is mapped in (to demonstrate that mapping works)
-    MUSIC[mem_destroy_i++]++;
-    // Wait for the raster
-    while(VICII->RASTER!=0xff) ;            
     // Color border
     (VICII->BORDER_COLOR)++;
     // Remap memory to put music at $4000
@@ -72,8 +70,9 @@ interrupt(hardware_stack) void irq() {
     (*musicPlay)();
     // Reset memory mapping
     memoryRemap(0,0,0);
-    // Wait for the raster
-    while(VICII->RASTER==0xff) ;    
+    // Wait for the next raster line
+    char raster = VICII->RASTER;
+    while(VICII->RASTER==raster) ;    
     // Color border
     (VICII->BORDER_COLOR)--;        
 }

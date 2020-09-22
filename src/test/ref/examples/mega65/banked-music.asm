@@ -14,7 +14,7 @@
 .segment Basic
 .byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
 .byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
-.text toIntString(__start)                                   //         NNNN
+.text toIntString(main)                                   //         NNNN
 .byte $00, $00, $00                                     // 
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -56,16 +56,7 @@
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
-  // Index used to destroy unmapped music memory (to demonstrate that mapping works)
-  .label mem_destroy_i = $a
 .segment Code
-__start: {
-    // mem_destroy_i = 0
-    lda #0
-    sta.z mem_destroy_i
-    jsr main
-    rts
-}
 // Raster IRQ routine
 irq: {
     pha
@@ -77,16 +68,6 @@ irq: {
     // Acknowledge the IRQ
     lda #IRQ_RASTER
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS
-    // MUSIC[mem_destroy_i++]++;
-    ldx.z mem_destroy_i
-    inc MUSIC,x
-    inc.z mem_destroy_i
-  // Wait for the raster
-  __b1:
-    // while(VICII->RASTER!=0xff)
-    lda #$ff
-    cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    bne __b1
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // memoryRemapBlock(0x40, 0x100)
@@ -104,12 +85,13 @@ irq: {
     sta.z memoryRemap.lowerPageOffset
     sta.z memoryRemap.lowerPageOffset+1
     jsr memoryRemap
-  // Wait for the raster
-  __b3:
-    // while(VICII->RASTER==0xff)
-    lda #$ff
+    // raster = VICII->RASTER
+    // Wait for the next raster line
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+  __b1:
+    // while(VICII->RASTER==raster)
     cmp VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
-    beq __b3
+    beq __b1
     // (VICII->BORDER_COLOR)--;
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
@@ -173,7 +155,7 @@ main: {
     sta.z dst
     lda #>MUSIC
     sta.z dst+1
-  // Transfer banked code/data to upper memory ($11000)
+  // Transfer banked code/data to upper memory ($10000)
   __b1:
     // for( char *src=upperCodeData, *dst=MUSIC; dst<MUSIC_END; )
     lda.z dst+1
@@ -222,19 +204,25 @@ main: {
     // asm
     // Enable IRQ
     cli
-  __b4:
-    // for(char i=0;i<240;i++)
-    cpx #$f0
-    bcc __b5
     ldx #0
-    jmp __b4
-  __b5:
-    // DEFAULT_SCREEN[i] = MUSIC[i]
-    lda MUSIC,x
-    sta DEFAULT_SCREEN,x
-    // for(char i=0;i<240;i++)
+  __b4:
+    // MUSIC[mem_destroy_i++]++;
+    inc MUSIC,x
     inx
+    ldy #0
+  // Show unmapped MUSIC memory
+  __b5:
+    // for(char i=0;i<240;i++)
+    cpy #$f0
+    bcc __b6
     jmp __b4
+  __b6:
+    // DEFAULT_SCREEN[i] = MUSIC[i]
+    lda MUSIC,y
+    sta DEFAULT_SCREEN,y
+    // for(char i=0;i<240;i++)
+    iny
+    jmp __b5
   __b2:
     // *dst++ = *src++
     ldy #0
@@ -298,8 +286,8 @@ memoryRemap: {
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __1 = $b
-    .label __6 = $c
+    .label __1 = $a
+    .label __6 = $b
     .label lowerPageOffset = 6
     .label upperPageOffset = 8
     // <lowerPageOffset

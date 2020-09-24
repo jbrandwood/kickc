@@ -1,8 +1,27 @@
-// Tests the MEGA65 DMA
-
+// MEGA65 DMA test
 // Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
-// C65 Manual http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt
-// DMA lists https://raw.githubusercontent.com/MEGA65/c65-specifications/master/c65manualupdated.txt
-// DMA lists https://c65gs.blogspot.com/2019/03/auto-detecting-required-revision-of.html
-// DMA list options https://c65gs.blogspot.com/2018/01/improving-dmagic-controller-interface.html
-// DMAgic VHDL source https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/gs4510.vhdl#L4364
+#pragma target(mega65)
+#include <mega65.h>
+
+void main() {
+    // Enable enable F018B mode
+    DMA->EN018B = 1;
+    // Set address of DMA list
+    DMA->ADDRMB = 0;
+    DMA->ADDRBANK = 0;
+    DMA-> ADDRMSB = >&DMA_SCREEN_UP;
+    // Trigger the DMA (without option lists)
+    DMA-> ADDRLSBTRIG = <&DMA_SCREEN_UP;
+}
+
+// DMA list entry that scrolls the default screen up
+struct DMA_LIST_F018B DMA_SCREEN_UP = {
+    DMA_COMMAND_COPY,   // command
+    24*80,              // count
+    DEFAULT_SCREEN+80,  // source
+    0,                  // source bank
+    DEFAULT_SCREEN,     // destination
+    0,                  // destination bank
+    0,                  // sub-command
+    0                   // modulo-value
+};

@@ -8,6 +8,7 @@
 #include <mos4569.h>
 #include <mega65-viciv.h>
 #include <mega65-memorymapper.h>
+#include <mega65-dma.h>
 
 // I/O Personality selection
 volatile char * const IO_KEY = 0xd02f;
@@ -33,25 +34,26 @@ const char PROCPORT_KERNEL_IO       = 0b00000110;
 // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
 const char PROCPORT_BASIC_KERNEL_IO = 0b00000111;
 
-// The address of the CHARGEN character set
-char * const CHARGEN = 0xd000;
-// The SID MOS 6581/8580
-struct MOS6581_SID * const SID = 0xd400;
 // The VIC-II MOS 6567/6569
 struct MOS6569_VICII* const VICII = 0xd000;
 // The VIC III MOS 4567/4569
 struct MOS4569_VICIII* const VICIII = 0xd000;
 // The VIC IV
 struct MEGA65_VICIV* const VICIV = 0xd000;
-
-// Color Ram
-char * const COLORRAM = 0xd800;
+// The address of the CHARGEN character set
+char * const CHARGEN = 0xd000;
 // Palette RED
 char * const PALETTE_RED = 0xd100;
 // Palette GREEN
 char * const PALETTE_GREEN = 0xd200;
 // Palette BLUE
 char * const PALETTE_BLUE = 0xd300;
+// The SID MOS 6581/8580
+struct MOS6581_SID * const SID = 0xd400;
+// DMAgic F018 Controller
+struct F018_DMAGIC * const DMA = 0xd700;
+// Color Ram
+char * const COLORRAM = 0xd800;
 
 // Default address of screen character matrix
 #ifdef __MEGA65_C64__

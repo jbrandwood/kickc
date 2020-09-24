@@ -67,14 +67,14 @@
   .label VICIII = $d000
   // The VIC IV
   .label VICIV = $d000
-  // Color Ram
-  .label COLORRAM = $d800
   // Palette RED
   .label PALETTE_RED = $d100
   // Palette GREEN
   .label PALETTE_GREEN = $d200
   // Palette BLUE
   .label PALETTE_BLUE = $d300
+  // Color Ram
+  .label COLORRAM = $d800
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
   // The CIA#1: keyboard matrix, joystick #1/#2

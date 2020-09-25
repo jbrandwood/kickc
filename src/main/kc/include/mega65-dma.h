@@ -7,7 +7,6 @@
 // DMAgic VHDL source https://github.com/MEGA65/mega65-core/blob/master/src/vhdl/gs4510.vhdl#L4364
 // Xemu emulator source https://github.com/lgblgblgb/xemu/blob/master/xemu/f018_core.c
 
-
 // Registers of the MEGA65 enchanced F018 DMAgic Controller
 struct F018_DMAGIC {
     // $D700 ADDRLSBTRIG DMAgic DMA list address LSB, and trigger DMA (when written).
@@ -38,7 +37,6 @@ struct F018_DMAGIC {
     // $D710.2 - MISC:VDCSEN Enable VDC interface simulation
     char MISC;
 };
-
 
 // F018A DMA list entry
 struct DMA_LIST_F018A {

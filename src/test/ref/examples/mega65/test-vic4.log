@@ -1,3 +1,6 @@
+Fixing struct type size struct F018_DMAGIC to 17
+Fixing struct type SIZE_OF struct F018_DMAGIC to 17
+Fixing struct type SIZE_OF struct F018_DMAGIC to 17
 Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -27,14 +30,17 @@ main::@4: scope:[main]  from main::@3 main::@5
   (byte*) main::col#2 ← phi( main::@3/(byte*) main::col#0 main::@5/(byte*) main::col#1 )
   (bool~) main::$1 ← (byte*) main::col#2 < (const nomodify byte*) COLORS+(number) $7d0
   if((bool~) main::$1) goto main::@5
-  to:main::@return
+  to:main::@6
 main::@5: scope:[main]  from main::@4
   (byte*) main::col#3 ← phi( main::@4/(byte*) main::col#2 )
   (byte~) main::$2 ← < (byte*) main::col#3
   *((byte*) main::col#3) ← (byte~) main::$2
   (byte*) main::col#1 ← ++ (byte*) main::col#3
   to:main::@4
-main::@return: scope:[main]  from main::@4
+main::@6: scope:[main]  from main::@4 main::@6
+  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  to:main::@6
+main::@return: scope:[main]  from
   return 
   to:@return
 
@@ -51,6 +57,31 @@ __start::@return: scope:[__start]  from __start::@1
 SYMBOL TABLE SSA
 (const nomodify byte*) COLORS = (byte*)(number) $d800
 (const nomodify byte) CRAM2K = (byte) 1
+(byte) DMA_LIST_F018A::command
+(word) DMA_LIST_F018A::count
+(byte*) DMA_LIST_F018A::dest
+(byte) DMA_LIST_F018A::dest_bank
+(word) DMA_LIST_F018A::modulo
+(byte*) DMA_LIST_F018A::src
+(byte) DMA_LIST_F018A::src_bank
+(byte) DMA_LIST_F018B::command
+(word) DMA_LIST_F018B::count
+(byte*) DMA_LIST_F018B::dest
+(byte) DMA_LIST_F018B::dest_bank
+(word) DMA_LIST_F018B::modulo
+(byte*) DMA_LIST_F018B::src
+(byte) DMA_LIST_F018B::src_bank
+(byte) DMA_LIST_F018B::sub_command
+(byte) F018_DMAGIC::ADDRBANK
+(byte) F018_DMAGIC::ADDRLSB
+(byte) F018_DMAGIC::ADDRLSBTRIG
+(byte) F018_DMAGIC::ADDRMB
+(byte) F018_DMAGIC::ADDRMSB
+(byte) F018_DMAGIC::EN018B
+(byte) F018_DMAGIC::ETRIG
+(byte) F018_DMAGIC::MISC
+(const byte*) F018_DMAGIC::UNUSED1[(number) 8]  = { fill( 8, 0) }
+(byte) F018_DMAGIC::UNUSED2
 (const nomodify to_volatile byte*) IO_BANK = (byte*)(number) $d030
 (const nomodify to_volatile byte*) IO_KEY = (byte*)(number) $d02f
 (byte) MEGA65_VICIV::ALPHADELAY
@@ -337,7 +368,10 @@ SYMBOL TABLE SSA
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
 (const nomodify byte*) SCREEN = (byte*)(number) $800
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
 (void()) __start()
 (label) __start::@1
 (label) __start::@return
@@ -350,6 +384,7 @@ SYMBOL TABLE SSA
 (label) main::@3
 (label) main::@4
 (label) main::@5
+(label) main::@6
 (label) main::@return
 (byte*) main::col
 (byte*) main::col#0
@@ -372,6 +407,7 @@ Inlining cast *((const nomodify to_volatile byte*) IO_KEY) ← (unumber)(number)
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53295
 Simplifying constant pointer cast (byte*) 53296
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 2048
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast $47
@@ -393,6 +429,8 @@ Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant (const byte*) main::sc#0 = SCREEN
 Constant (const byte*) main::col#0 = COLORS
 Successful SSA optimization Pass2ConstantIdentification
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
@@ -413,6 +451,7 @@ Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) main::@3
 Renumbering block main::@4 to main::@3
 Renumbering block main::@5 to main::@4
+Renumbering block main::@6 to main::@5
 
 FINAL CONTROL FLOW GRAPH
 
@@ -430,10 +469,10 @@ main::@1: scope:[main]  from main main::@2
 main::@3: scope:[main]  from main::@1 main::@4
   [6] (byte*) main::col#2 ← phi( main::@1/(const nomodify byte*) COLORS main::@4/(byte*) main::col#1 )
   [7] if((byte*) main::col#2<(const nomodify byte*) COLORS+(word) $7d0) goto main::@4
-  to:main::@return
-main::@return: scope:[main]  from main::@3
-  [8] return 
-  to:@return
+  to:main::@5
+main::@5: scope:[main]  from main::@3 main::@5
+  [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER)
+  to:main::@5
 main::@4: scope:[main]  from main::@3
   [9] (byte~) main::$2 ← < (byte*) main::col#2
   [10] *((byte*) main::col#2) ← (byte~) main::$2
@@ -446,6 +485,30 @@ main::@2: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
+(byte) DMA_LIST_F018A::command
+(word) DMA_LIST_F018A::count
+(byte*) DMA_LIST_F018A::dest
+(byte) DMA_LIST_F018A::dest_bank
+(word) DMA_LIST_F018A::modulo
+(byte*) DMA_LIST_F018A::src
+(byte) DMA_LIST_F018A::src_bank
+(byte) DMA_LIST_F018B::command
+(word) DMA_LIST_F018B::count
+(byte*) DMA_LIST_F018B::dest
+(byte) DMA_LIST_F018B::dest_bank
+(word) DMA_LIST_F018B::modulo
+(byte*) DMA_LIST_F018B::src
+(byte) DMA_LIST_F018B::src_bank
+(byte) DMA_LIST_F018B::sub_command
+(byte) F018_DMAGIC::ADDRBANK
+(byte) F018_DMAGIC::ADDRLSB
+(byte) F018_DMAGIC::ADDRLSBTRIG
+(byte) F018_DMAGIC::ADDRMB
+(byte) F018_DMAGIC::ADDRMSB
+(byte) F018_DMAGIC::EN018B
+(byte) F018_DMAGIC::ETRIG
+(byte) F018_DMAGIC::MISC
+(byte) F018_DMAGIC::UNUSED2
 (byte) MEGA65_VICIV::ALPHADELAY
 (byte) MEGA65_VICIV::B0PIX
 (byte) MEGA65_VICIV::B0_ADDR
@@ -754,7 +817,10 @@ Allocated zp[1]:6 [ main::$2 ]
 INITIAL ASM
 Target platform is mega65 / MEGA45GS02
   // File Comments
-// Hello World for MEGA 65 - putting chars directly to the screen
+// Test a few VIC 3/4 features
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
@@ -771,10 +837,14 @@ Target platform is mega65 / MEGA45GS02
   // Global Constants & labels
   // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // I/O Personality selection
   .label IO_KEY = $d02f
   // C65 Banking Register
   .label IO_BANK = $d030
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label SCREEN = $800
   .label COLORS = $d800
 .segment Code
@@ -844,11 +914,13 @@ main: {
     cmp #<COLORS+$7d0
     bcc __b4
   !:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
+    jmp __b5
+    // main::@5
+  __b5:
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __b5
     // main::@4
   __b4:
     // [9] (byte~) main::$2 ← < (byte*) main::col#2 -- vbuz1=_lo_pbuz2 
@@ -886,6 +958,7 @@ Statement [2] *((const nomodify to_volatile byte*) IO_KEY) ← (byte) $53 [ ] ( 
 Statement [3] *((const nomodify to_volatile byte*) IO_BANK) ← *((const nomodify to_volatile byte*) IO_BANK) | (const nomodify byte) CRAM2K [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] if((byte*) main::sc#2<(const nomodify byte*) SCREEN+(word) $7d0) goto main::@2 [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a 
 Statement [7] if((byte*) main::col#2<(const nomodify byte*) COLORS+(word) $7d0) goto main::@4 [ main::col#2 ] (  [ main::col#2 ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *((byte*) main::col#2) ← (byte~) main::$2 [ main::col#2 ] (  [ main::col#2 ] { }  ) always clobbers reg byte y 
 Statement [12] *((byte*) main::sc#2) ← (byte) '*' [ main::sc#2 ] (  [ main::sc#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::sc#2 main::sc#1 ] : zp[2]:2 , 
@@ -899,19 +972,28 @@ Uplift Scope [MOS6569_VICII]
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [MOS4569_VICIII] 
 Uplift Scope [MEGA65_VICIV] 
+Uplift Scope [F018_DMAGIC] 
+Uplift Scope [DMA_LIST_F018A] 
+Uplift Scope [DMA_LIST_F018B] 
 Uplift Scope [] 
 
-Uplifting [main] best 1050 combination zp[2]:2 [ main::sc#2 main::sc#1 ] zp[2]:4 [ main::col#2 main::col#1 ] reg byte a [ main::$2 ] 
-Uplifting [MOS6526_CIA] best 1050 combination 
-Uplifting [MOS6569_VICII] best 1050 combination 
-Uplifting [MOS6581_SID] best 1050 combination 
-Uplifting [MOS4569_VICIII] best 1050 combination 
-Uplifting [MEGA65_VICIV] best 1050 combination 
-Uplifting [] best 1050 combination 
+Uplifting [main] best 1154 combination zp[2]:2 [ main::sc#2 main::sc#1 ] zp[2]:4 [ main::col#2 main::col#1 ] reg byte a [ main::$2 ] 
+Uplifting [MOS6526_CIA] best 1154 combination 
+Uplifting [MOS6569_VICII] best 1154 combination 
+Uplifting [MOS6581_SID] best 1154 combination 
+Uplifting [MOS4569_VICIII] best 1154 combination 
+Uplifting [MEGA65_VICIV] best 1154 combination 
+Uplifting [F018_DMAGIC] best 1154 combination 
+Uplifting [DMA_LIST_F018A] best 1154 combination 
+Uplifting [DMA_LIST_F018B] best 1154 combination 
+Uplifting [] best 1154 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
-// Hello World for MEGA 65 - putting chars directly to the screen
+// Test a few VIC 3/4 features
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
@@ -928,10 +1010,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // I/O Personality selection
   .label IO_KEY = $d02f
   // C65 Banking Register
   .label IO_BANK = $d030
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label SCREEN = $800
   .label COLORS = $d800
 .segment Code
@@ -1000,11 +1086,13 @@ main: {
     cmp #<COLORS+$7d0
     bcc __b4
   !:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
+    jmp __b5
+    // main::@5
+  __b5:
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __b5
     // main::@4
   __b4:
     // [9] (byte~) main::$2 ← < (byte*) main::col#2 -- vbuaa=_lo_pbuz1 
@@ -1036,11 +1124,10 @@ main: {
 ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __b1
 Removing instruction jmp __b3
-Removing instruction jmp __breturn
+Removing instruction jmp __b5
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1_from_main:
 Removing instruction __b3_from___b1:
-Removing instruction __breturn:
 Removing instruction __b3_from___b4:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1048,6 +1135,31 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 (const nomodify byte*) COLORS = (byte*) 55296
 (const nomodify byte) CRAM2K = (byte) 1
+(byte) DMA_LIST_F018A::command
+(word) DMA_LIST_F018A::count
+(byte*) DMA_LIST_F018A::dest
+(byte) DMA_LIST_F018A::dest_bank
+(word) DMA_LIST_F018A::modulo
+(byte*) DMA_LIST_F018A::src
+(byte) DMA_LIST_F018A::src_bank
+(byte) DMA_LIST_F018B::command
+(word) DMA_LIST_F018B::count
+(byte*) DMA_LIST_F018B::dest
+(byte) DMA_LIST_F018B::dest_bank
+(word) DMA_LIST_F018B::modulo
+(byte*) DMA_LIST_F018B::src
+(byte) DMA_LIST_F018B::src_bank
+(byte) DMA_LIST_F018B::sub_command
+(byte) F018_DMAGIC::ADDRBANK
+(byte) F018_DMAGIC::ADDRLSB
+(byte) F018_DMAGIC::ADDRLSBTRIG
+(byte) F018_DMAGIC::ADDRMB
+(byte) F018_DMAGIC::ADDRMSB
+(byte) F018_DMAGIC::EN018B
+(byte) F018_DMAGIC::ETRIG
+(byte) F018_DMAGIC::MISC
+(const byte*) F018_DMAGIC::UNUSED1[(number) 8]  = { fill( 8, 0) }
+(byte) F018_DMAGIC::UNUSED2
 (const nomodify to_volatile byte*) IO_BANK = (byte*) 53296
 (const nomodify to_volatile byte*) IO_KEY = (byte*) 53295
 (byte) MEGA65_VICIV::ALPHADELAY
@@ -1334,14 +1446,17 @@ FINAL SYMBOL TABLE
 (byte) MOS6581_SID::POT_X
 (byte) MOS6581_SID::POT_Y
 (byte) MOS6581_SID::VOLUME_FILTER_MODE
+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER = (byte) $12
 (const nomodify byte*) SCREEN = (byte*) 2048
+(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
 (void()) main()
 (byte~) main::$2 reg byte a 22.0
 (label) main::@1
 (label) main::@2
 (label) main::@3
 (label) main::@4
-(label) main::@return
+(label) main::@5
 (byte*) main::col
 (byte*) main::col#1 col zp[2]:4 22.0
 (byte*) main::col#2 col zp[2]:4 13.75
@@ -1355,10 +1470,13 @@ reg byte a [ main::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 960
+Score: 1064
 
   // File Comments
-// Hello World for MEGA 65 - putting chars directly to the screen
+// Test a few VIC 3/4 features
+// MEGA65 Registers and Constants
+// The MOS 6526 Complex Interface Adapter (CIA)
+// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
@@ -1375,10 +1493,14 @@ Score: 960
   // Global Constants & labels
   // Map 2nd KB of colour RAM $DC00-$DFFF (hiding CIA's)
   .const CRAM2K = 1
+  .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // I/O Personality selection
   .label IO_KEY = $d02f
   // C65 Banking Register
   .label IO_BANK = $d030
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
   .label SCREEN = $800
   .label COLORS = $d800
 .segment Code
@@ -1449,10 +1571,13 @@ main: {
     cmp #<COLORS+$7d0
     bcc __b4
   !:
-    // main::@return
-    // }
-    // [8] return 
-    rts
+    // main::@5
+  __b5:
+    // VICII->BORDER_COLOR = VICII->RASTER
+    // [8] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    lda VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __b5
     // main::@4
   __b4:
     // <col

@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.model.symbols;
 
+import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClass;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;
@@ -58,11 +59,15 @@ public class ProgramScope extends Scope {
    }
 
    public Variable getVar(SymbolVariableRef variableRef) {
-      return (Variable) getSymbol(variableRef);
+      final Symbol symbol = getSymbol(variableRef);
+      if(symbol!=null && !(symbol instanceof Variable)) return null;
+      return (Variable) symbol;
    }
 
    public Variable getVariable(SymbolVariableRef variableRef) {
-      return (Variable) getSymbol(variableRef);
+      final Symbol symbol = getSymbol(variableRef);
+      if(symbol!=null && !(symbol instanceof Variable)) return null;
+      return (Variable) symbol;
    }
 
    public Variable getConstant(ConstantRef constantRef) {
@@ -70,15 +75,21 @@ public class ProgramScope extends Scope {
    }
 
    public Label getLabel(LabelRef labelRef) {
-      return (Label) getSymbol(labelRef);
+      final Symbol symbol = getSymbol(labelRef);
+      if(symbol!=null && !(symbol instanceof Label)) return null;
+      return (Label) symbol;
    }
 
    public Procedure getLocalProcedure(String name) {
-      return (Procedure) getLocalSymbol(name);
+      final Symbol symbol = getLocalSymbol(name);
+      if(symbol!=null && !(symbol instanceof Procedure)) return null;
+      return (Procedure) symbol;
    }
 
    public Procedure getProcedure(ProcedureRef procedureRef) {
-      return (Procedure) getSymbol(procedureRef);
+      final Symbol symbol = getSymbol(procedureRef);
+      if(symbol!=null && !(symbol instanceof Procedure)) return null;
+      return (Procedure) symbol;
    }
 
    public Scope getScope(ScopeRef scopeRef) {
@@ -86,7 +97,9 @@ public class ProgramScope extends Scope {
          // Special case for the outer program scope
          return this;
       }
-      return (Scope) getSymbol(scopeRef);
+      final Symbol symbol = getSymbol(scopeRef);
+      if(symbol!=null && !(symbol instanceof Scope)) return null;
+      return (Scope) symbol;
    }
 
    @Override

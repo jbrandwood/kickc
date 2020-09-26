@@ -222,6 +222,11 @@ public class TestPrograms {
       compileAndCompare("minus-precedence-problem.c");
    }
 
+   //@Test
+   //public void testNesBalls() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/nes-balls/kickballs.c");
+   //}
+
    @Test
    public void testNesDxycp() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes-dxycp/nes-dxycp.c");
@@ -236,6 +241,11 @@ public class TestPrograms {
    public void testNesDemo() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes-demo/nes-demo.c");
    }
+
+   //@Test
+   //public void testMega65Wator() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/m65wator/main.c");
+   //}
 
    @Test
    public void testMega65BankedMusic() throws IOException, URISyntaxException {

@@ -514,6 +514,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)", lvalZM1+"|"+rvalAa+"|"+ twoZM1, "lda {m1}", "$1aa$2", null, mapZM1));
       // Replace two M1s with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*)", lvalZM1+"|"+rvalAa+"|"+ threeZM1, "lda {m1}", "$1aa$2aa$3", null, mapZM1));
+      // Replace three M1s with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*vb.)m1(.*)", lvalZM1+"|"+rvalAa+"|"+ fourZM1, "lda {m1}", "$1aa$2aa$3aa$4", null, mapZM1));
       // Replace first (not second) M1 with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)m1(.*)", lvalZM1+"|"+rvalAa, "lda {m1}", "$1aa$2m1$3", null, null));
       // Replace second (not first) M1 with AA
@@ -529,6 +531,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*)", lvalZM2+"|"+rvalAa+"|"+twoZM2, "lda {m2}", "$1aa$2", null, mapZM2));
       // Replace two M2s with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*vb.)m2(.*)", lvalZM2+"|"+rvalAa+"|"+threeZM2, "lda {m2}", "$1aa$2aa$3", null, mapZM2));
+      // Replace three M2s with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*vb.)m2(.*vb.)m2(.*)", lvalZM2+"|"+rvalAa+"|"+fourZM2, "lda {m2}", "$1aa$2aa$3aa$4", null, mapZM2));
       // Replace first (of 2) M2 with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*)m2(.*)", lvalZM2+"|"+rvalAa, "lda {m2}", "$1aa$2m2$3", null, null));
       // Replace second (of 2) M2 with AA
@@ -538,6 +542,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*)", lvalZM3+"|"+rvalAa+"|"+twoZM3, "lda {m3}", "$1aa$2", null, mapZM3));
       // Replace two M3s with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*vb.)m3(.*)", lvalZM3+"|"+rvalAa+"|"+threeZM3, "lda {m3}", "$1aa$2aa$3", null, mapZM3));
+      // Replace three M3s with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*vb.)m3(.*vb.)m3(.*)", lvalZM3+"|"+rvalAa+"|"+fourZM3, "lda {m3}", "$1aa$2aa$3aa$4", null, mapZM3));
       // Replace first (of 2) M3 with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*)m3(.*)", lvalZM3+"|"+rvalAa, "lda {m3}", "$1aa$2m3$3", null, null));
       // Replace second (of 2) M3 with AA
@@ -547,6 +553,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*)", lvalZM4+"|"+rvalAa+"|"+twoZM4, "lda {m4}", "$1aa$2", null, mapZM4));
       // Replace two M4s with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalAa+"|"+threeZM4, "lda {m4}", "$1aa$2aa$3", null, mapZM4));
+      // Replace three M4s with AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*vb.)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalAa+"|"+fourZM4, "lda {m4}", "$1aa$2aa$3aa$4", null, mapZM4));
       // Replace first (of 2) M4 with AA
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*)m4(.*)", lvalZM4+"|"+rvalAa, "lda {m4}", "$1aa$2m4$3", null, null));
       // Replace second (of 2) M4 with AA
@@ -556,6 +564,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)", lvalZM1+"|"+rvalYy+"|"+ twoZM1, "ldy {m1}", "$1yy$2", null, mapZM1));
       // Replace two M1s with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*)", lvalZM1+"|"+rvalYy+"|"+ threeZM1, "ldy {m1}", "$1yy$2yy$3", null, mapZM1));
+      // Replace three M1s with YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*vb.)m1(.*)", lvalZM1+"|"+rvalYy+"|"+ fourZM1, "ldy {m1}", "$1yy$2yy$3yy$4", null, mapZM1));
       // Replace first (not second) M1 with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)m1(.*)", lvalZM1+"|"+rvalYy, "ldy {m1}", "$1yy$2m1$3", null, null));
       // Replace second (not first) M1 with YY
@@ -571,6 +581,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*)", lvalZM2+"|"+rvalYy+"|"+twoZM2, "ldy {m2}", "$1yy$2", null, mapZM2));
       // Replace two M2s with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*vb.)m2(.*)", lvalZM2+"|"+rvalYy+"|"+threeZM2, "ldy {m2}", "$1yy$2yy$3", null, mapZM2));
+      // Replace three M2s with YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*vb.)m2(.*vb.)m2(.*)", lvalZM2+"|"+rvalYy+"|"+fourZM2, "ldy {m2}", "$1yy$2yy$3yy$4", null, mapZM2));
       // Replace first (of 2) M2 with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*)m2(.*)", lvalZM2+"|"+rvalYy, "ldy {m2}", "$1yy$2m2$3", null, null));
       // Replace second (of 2) M2 with YY
@@ -580,6 +592,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*)", lvalZM3+"|"+rvalYy+"|"+twoZM3, "ldy {m3}", "$1yy$2", null, mapZM3));
       // Replace two M3s with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*vb.)m3(.*)", lvalZM3+"|"+rvalYy+"|"+threeZM3, "ldy {m3}", "$1yy$2yy$3", null, mapZM3));
+      // Replace three M3s with YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*vb.)m3(.*vb.)m3(.*)", lvalZM3+"|"+rvalYy+"|"+fourZM3, "ldy {m3}", "$1yy$2yy$3yy$4", null, mapZM3));
       // Replace first (of 2) M3 with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*)m3(.*)", lvalZM3+"|"+rvalYy, "ldy {m3}", "$1yy$2m3$3", null, null));
       // Replace second (of 2) M3 with YY
@@ -589,6 +603,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*)", lvalZM4+"|"+rvalYy+"|"+twoZM4, "ldy {m4}", "$1yy$2", null, mapZM4));
       // Replace two M4s with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalYy+"|"+threeZM4, "ldy {m4}", "$1yy$2yy$3", null, mapZM4));
+      // Replace three M4s with YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*vb.)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalYy+"|"+fourZM4, "ldy {m4}", "$1yy$2yy$3yy$4", null, mapZM4));
       // Replace first (of 2) M4 with YY
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*)m4(.*)", lvalZM4+"|"+rvalYy, "ldy {m4}", "$1yy$2m4$3", null, null));
       // Replace second (of 2) M4 with YY
@@ -598,6 +614,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)", lvalZM1+"|"+rvalXx+"|"+ twoZM1, "ldx {m1}", "$1xx$2", null, mapZM1));
       // Replace two M1s with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*)", lvalZM1+"|"+rvalXx+"|"+ threeZM1, "ldx {m1}", "$1xx$2xx$3", null, mapZM1));
+      // Replace three M1s with XX
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*vb.)m1(.*vb.)m1(.*)", lvalZM1+"|"+rvalXx+"|"+ fourZM1, "ldx {m1}", "$1xx$2xx$3xx$4", null, mapZM1));
       // Replace first (not second) M1 with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m1(.*)m1(.*)", lvalZM1+"|"+rvalXx, "ldx {m1}", "$1xx$2m1$3", null, null));
       // Replace second (not first) M1 with XX
@@ -613,6 +631,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*)", lvalZM2+"|"+rvalXx+"|"+twoZM2, "ldx {m2}", "$1xx$2", null, mapZM2));
       // Replace two M2s with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*vb.)m2(.*)", lvalZM2+"|"+rvalXx+"|"+threeZM2, "ldx {m2}", "$1xx$2xx$3", null, mapZM2));
+      // Replace three M2s with XX
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*vb.)m2(.*vb.)m2(.*)", lvalZM2+"|"+rvalXx+"|"+fourZM2, "ldx {m2}", "$1xx$2xx$3xx$4", null, mapZM2));
       // Replace first (of 2) M2 with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m2(.*)m2(.*)", lvalZM2+"|"+rvalXx, "ldx {m2}", "$1xx$2m2$3", null, null));
       // Replace second (of 2) M2 with XX
@@ -622,6 +642,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*)", lvalZM3+"|"+rvalXx+"|"+twoZM3, "ldx {m3}", "$1xx$2", null, mapZM3));
       // Replace two M3s with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*vb.)m3(.*)", lvalZM3+"|"+rvalXx+"|"+threeZM3, "ldx {m3}", "$1xx$2xx$3", null, mapZM3));
+      // Replace three M3s with XX
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*vb.)m3(.*vb.)m3(.*)", lvalZM3+"|"+rvalXx+"|"+fourZM3, "ldx {m3}", "$1xx$2xx$3xx$4", null, mapZM3));
       // Replace first (of 2) M3 with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m3(.*)m3(.*)", lvalZM3+"|"+rvalXx, "ldx {m3}", "$1xx$2m3$3", null, null));
       // Replace second (of 2) M3 with XX
@@ -631,6 +653,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*)", lvalZM4+"|"+rvalXx+"|"+twoZM4, "ldx {m4}", "$1xx$2", null, mapZM4));
       // Replace two M4s with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalXx+"|"+threeZM4, "ldx {m4}", "$1xx$2xx$3", null, mapZM4));
+      // Replace three M4s with XX
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*vb.)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalXx+"|"+fourZM4, "ldx {m4}", "$1xx$2xx$3xx$4", null, mapZM4));
       // Replace first (of 2) M4 with XX
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*vb.)m4(.*)m4(.*)", lvalZM4+"|"+rvalXx, "ldx {m4}", "$1xx$2m4$3", null, null));
       // Replace second (of 2) M4 with XX

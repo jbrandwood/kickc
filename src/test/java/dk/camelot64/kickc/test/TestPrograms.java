@@ -238,8 +238,13 @@ public class TestPrograms {
    }
 
    @Test
-   public void testMega65BankedMusic() throws IOException, URISyntaxException {
-      compileAndCompare("examples/mega65/banked-music.c");
+   public void testMega65DmaTest2() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/dma-test2.c");
+   }
+
+   @Test
+   public void testMega65DmaTest() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/dma-test.c");
    }
 
    @Test

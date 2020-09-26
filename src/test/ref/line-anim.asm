@@ -298,11 +298,11 @@ point_init: {
     asl
     tax
     lda x_start,x
+    asl
     sta.z __5
     lda x_start+1,x
+    rol
     sta.z __5+1
-    asl.z __5
-    rol.z __5+1
     asl.z __5
     rol.z __5+1
     asl.z __5

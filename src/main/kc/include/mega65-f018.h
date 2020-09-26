@@ -55,7 +55,7 @@ struct DMA_LIST_F018A {
         //    6 src direction
         //    5 src modulo
         //    4 src hold
-        //  0-3 address bank
+        //  0-3 address bank (which 64k bank is the address in)
         char src_bank;
         // Destination address
         char* dest;
@@ -65,7 +65,7 @@ struct DMA_LIST_F018A {
         //    6 dest direction
         //    5 dest modulo
         //    4 dest hold
-        //  0-3 address bank
+        //  0-3 address bank (which 64k bank is the address in)
         char dest_bank;
         // Modulo value (unused)
         unsigned int modulo;
@@ -88,14 +88,14 @@ struct DMA_LIST_F018B {
         // Source address bank
         // bits
         //    7 src I/O
-        //  0-6 dest address bank
+        //  0-6 dest address bank (which 64k bank is the address in)
         char src_bank;
         // Destination address
         char* dest;
         // Destination address bank
         // bits
         //    7 dest I/O
-        //  0-6 dest address bank
+        //  0-6 dest address bank (which 64k bank is the address in)
         char dest_bank;
         // Sub-command
         // bits
@@ -119,17 +119,30 @@ const char DMA_COMMAND_SRC_DIR = 0x10;
 // DMA command destination direction
 const char DMA_COMMAND_DEST_DIR = 0x20;
 
-
 // Extended DMA Option Prefixes
+
 // $00 = End of options
+const char DMA_OPTION_END = 0x00;
 // $06 = Use $86 $xx transparency value (don't write source bytes to destination, if byte value matches $xx)
+const char DMA_OPTION_TRANSPARENCY_ENABLE = 0x06;
 // $07 = Disable $86 $xx transparency value.
+const char DMA_OPTION_TRANSPARENCY_DISABLE = 0x07;
 // $0A = Use F018A list format
+const char DMA_OPTION_FORMAT_F018A = 0x0a;
 // $0B = Use F018B list format
+const char DMA_OPTION_FORMAT_F018B = 0x0a;
 // $80 $xx = Set MB of source address
+const char DMA_OPTION_SRC_MB = 0x80;
 // $81 $xx = Set MB of destination address
+const char DMA_OPTION_DEST_MB = 0x81;
 // $82 $xx = Set source skip rate (/256ths of bytes)
+const char DMA_OPTION_SRC_SKIPRATE_256TH = 0x82;
 // $83 $xx = Set source skip rate (whole bytes)
+const char DMA_OPTION_SRC_SKIPRATE = 0x83;
 // $84 $xx = Set destination skip rate (/256ths of bytes)
+const char DMA_OPTION_DEST_SKIPRATE_256TH = 0x84;
 // $85 $xx = Set destination skip rate (whole bytes)
+const char DMA_OPTION_DEST_SKIPRATE = 0x85;
 // $86 $xx = Don't write to destination if byte value = $xx, and option $06 enabled
+const char DMA_OPTION_TRANSPARENCY_VALUE = 0x86;
+

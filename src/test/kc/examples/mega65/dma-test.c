@@ -1,4 +1,4 @@
-// MEGA65 DMA test
+// MEGA65 DMA test using F018 directly
 // Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
 #pragma target(mega65)
 #include <mega65.h>

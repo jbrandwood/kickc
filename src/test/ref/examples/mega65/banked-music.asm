@@ -20,10 +20,21 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
+  // DMA command copy
+  .const DMA_COMMAND_COPY = 0
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
   .const PROCPORT_RAM_IO = 5
+  .const OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
+  .const OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
+  .const OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
+  .const OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
+  .const OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
+  .const OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
+  .const OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
+  .const OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK = 5
+  .const OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK = 8
   .const OFFSET_STRUCT_MOS4569_VICIII_KEY = $2f
   .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLB = $31
   .const OFFSET_STRUCT_MEGA65_VICIV_CONTROLC = $54
@@ -44,6 +55,8 @@
   .label VICIII = $d000
   // The VIC IV
   .label VICIV = $d000
+  // DMAgic F018 Controller
+  .label DMA = $d700
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $800
   // The CIA#1: keyboard matrix, joystick #1/#2
@@ -103,8 +116,6 @@ irq: {
     rti
 }
 main: {
-    .label dst = 2
-    .label src = 4
     // asm
     // Stop IRQ's
     sei
@@ -144,30 +155,16 @@ main: {
     // open sideborder
     lda #1
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_SIDBDRWD_LO
+    // memcpy_dma4(1, 0x0000, 0, upperCodeData, MUSIC_END-MUSIC)
+    // Transfer banked code/data to upper memory ($10000)
+    jsr memcpy_dma4
     // memoryRemapBlock(0x40, 0x100)
   // Remap [$4000-$5fff] to point to [$10000-$11fff]
     jsr memoryRemapBlock
-    lda #<upperCodeData
-    sta.z src
-    lda #>upperCodeData
-    sta.z src+1
-    lda #<MUSIC
-    sta.z dst
-    lda #>MUSIC
-    sta.z dst+1
-  // Transfer banked code/data to upper memory ($10000)
-  __b1:
-    // for( char *src=upperCodeData, *dst=MUSIC; dst<MUSIC_END; )
-    lda.z dst+1
-    cmp #>MUSIC_END
-    bcc __b2
-    bne !+
-    lda.z dst
-    cmp #<MUSIC_END
-    bcc __b2
-  !:
+    // asm
+    // Initialize SID 
+    lda #0
     // (*musicInit)()
-    // Initialize SID memory is still remapped)
     jsr musicInit
     // memoryRemap(0,0,0)
   // Reset memory mapping
@@ -205,33 +202,24 @@ main: {
     // Enable IRQ
     cli
     ldx #0
-  __b4:
+  __b1:
     // MUSIC[mem_destroy_i++]++;
     inc MUSIC,x
     inx
     ldy #0
   // Show unmapped MUSIC memory
-  __b5:
+  __b2:
     // for(char i=0;i<240;i++)
     cpy #$f0
-    bcc __b6
-    jmp __b4
-  __b6:
+    bcc __b3
+    jmp __b1
+  __b3:
     // DEFAULT_SCREEN[i] = MUSIC[i]
     lda MUSIC,y
     sta DEFAULT_SCREEN,y
     // for(char i=0;i<240;i++)
     iny
-    jmp __b5
-  __b2:
-    // *dst++ = *src++
-    ldy #0
-    lda (src),y
-    sta (dst),y
-    // *dst++ = *src++;
-    inw.z dst
-    inw.z src
-    jmp __b1
+    jmp __b2
 }
 // Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
@@ -280,16 +268,16 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp(6) lowerPageOffset, word zp(8) upperPageOffset)
+// memoryRemap(byte register(Z) remapBlocks, word zp(2) lowerPageOffset, word zp(4) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __1 = $a
-    .label __6 = $b
-    .label lowerPageOffset = 6
-    .label upperPageOffset = 8
+    .label __1 = 6
+    .label __6 = 7
+    .label lowerPageOffset = 2
+    .label upperPageOffset = 4
     // <lowerPageOffset
     lda.z lowerPageOffset
     // *aVal = <lowerPageOffset
@@ -335,11 +323,79 @@ memoryRemap: {
     // }
     rts
 }
+// Copy a memory block anywhere in first 4MB memory space using MEGA65 DMagic DMA
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// - dest_bank The 64KB bank for the destination (0-63)
+// - dest The destination address (within the MB and bank)
+// - src_bank The 64KB bank for the source (0-63)
+// - src The source address (within the MB and bank)
+// - num The number of bytes to copy
+memcpy_dma4: {
+    .const num = MUSIC_END-MUSIC
+    .const dest_bank = 1
+    .const src_bank = 0
+    .label dest = 0
+    .label src = upperCodeData
+    // dmaMode = DMA->EN018B
+    // Remember current F018 A/B mode
+    ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // memcpy_dma_command4.count = num
+    // Set up command
+    lda #<num
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
+    lda #>num
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
+    // memcpy_dma_command4.src_bank = src_bank
+    lda #src_bank
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
+    // memcpy_dma_command4.src = src
+    lda #<src
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
+    lda #>src
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
+    // memcpy_dma_command4.dest_bank = dest_bank
+    lda #dest_bank
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
+    // memcpy_dma_command4.dest = dest
+    lda #<dest
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
+    lda #>dest
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
+    // DMA->EN018B = 1
+    // Set F018B mode
+    lda #1
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // DMA->ADDRMB = 0
+    // Set address of DMA list
+    lda #0
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    // DMA->ADDRBANK = 0
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    // DMA-> ADDRMSB = >&memcpy_dma_command4
+    lda #>memcpy_dma_command4
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    // DMA-> ADDRLSBTRIG = <&memcpy_dma_command4
+    // Trigger the DMA (without option lists)
+    lda #<memcpy_dma_command4
+    sta DMA
+    // DMA->EN018B = dmaMode
+    // Re-enable F018A mode
+    stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // }
+    rts
+}
 .segment Data
-// Array containing the banked upper memory code/data to be transferred to upper memory before execution
+  // Array containing the banked upper memory code/data to be transferred to upper memory before execution
 upperCodeData:
 .segmentout [segments="Banked"]
 
+  // DMA list entry for copying data in the 1MB memory space
+  memcpy_dma_command4: .byte DMA_COMMAND_COPY
+  .word 0, 0
+  .byte 0
+  .word 0
+  .byte 0, 0
+  .word 0
 .segment DataBanked
 .pc = $4000 "MUSIC"
 // SID tune at an absolute address

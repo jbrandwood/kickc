@@ -1,4 +1,4 @@
-// MEGA65 DMA test
+// MEGA65 DMA test using memcpy version
 // Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
 // Functions for using the F018 DMA for very fast copying or filling of memory
 // MEGA65 Registers and Constants
@@ -89,10 +89,10 @@ memoryRemap: {
     rts
 }
 // Copy a memory block within the first 64K memory space using MEGA65 DMagic DMA
-// Copies the values of num bytes from the location pointed to by source directly
-// to the memory block pointed to by destination.
-// The underlying type of the objects pointed to by both the source and destination pointers
-// are irrelevant for this function; The result is a binary copy of the data.
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// - dest The destination address (within the MB and bank)
+// - src The source address (within the MB and bank)
+// - num The number of bytes to copy
 memcpy_dma: {
     .const num = $18*$50
     .label dest = DEFAULT_SCREEN

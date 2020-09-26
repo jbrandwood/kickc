@@ -2247,3 +2247,44 @@ lda #<{c2}
 sta {c1}
 lda #>{c2}
 sta {c1}+1
+//FRAGMENT _deref_pbuc1=_inc__deref_pbuc1
+inc {c1}
+//FRAGMENT _deref_pbuc1_eq_vbuz1_then_la1
+lda {c1}
+cmp {z1}
+beq {la1}
+//FRAGMENT _deref_pbuc1=_dec__deref_pbuc1
+dec {c1}
+//FRAGMENT pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1
+ldx {z1}
+inc {c1},x
+//FRAGMENT vwuz1=vwuc1
+lda #<{c1}
+sta {z1}
+lda #>{c1}
+sta {z1}+1
+//FRAGMENT _deref_pbuc1_eq_vbuaa_then_la1
+cmp {c1}
+beq {la1}
+//FRAGMENT pbuc1_derefidx_vbuaa=_inc_pbuc1_derefidx_vbuaa
+tax
+inc {c1},x
+//FRAGMENT pbuc1_derefidx_vbuxx=_inc_pbuc1_derefidx_vbuxx
+inc {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=_inc_pbuc1_derefidx_vbuyy
+lda {c1},y
+inc
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuzz=_inc_pbuc1_derefidx_vbuzz
+tza
+tax
+inc {c1},x
+//FRAGMENT _deref_pbuc1_eq_vbuxx_then_la1
+cpx {c1}
+beq {la1}
+//FRAGMENT _deref_pbuc1_eq_vbuyy_then_la1
+cpy {c1}
+beq {la1}
+//FRAGMENT _deref_pbuc1_eq_vbuzz_then_la1
+cpz {c1}
+beq {la1}

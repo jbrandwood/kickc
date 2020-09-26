@@ -4,6 +4,7 @@
 #pragma target(mega65)
 #pragma link("mega65_banked.ld")
 #include <mega65.h>
+#include <mega65-dma.h>
 
 void main() {
     // Stop IRQ's
@@ -22,12 +23,13 @@ void main() {
     // open sideborder
     VICIV->SIDBDRWD_LO = 1;    
 
+    // Transfer banked code/data to upper memory ($10000)
+    memcpy_dma4(1, 0x0000, 0, upperCodeData, MUSIC_END-MUSIC);
+
     // Remap [$4000-$5fff] to point to [$10000-$11fff]
     memoryRemapBlock(0x40, 0x100);
-    // Transfer banked code/data to upper memory ($10000)
-    for( char *src=upperCodeData, *dst=MUSIC; dst<MUSIC_END; )
-        *dst++ = *src++;
-    // Initialize SID memory is still remapped)
+    // Initialize SID 
+    asm { lda #0 }
     (*musicInit)();
     // Reset memory mapping
     memoryRemap(0,0,0);

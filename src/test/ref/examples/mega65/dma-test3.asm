@@ -1,11 +1,12 @@
-// MEGA65 DMA test using F018 directly
+// MEGA65 DMA test using 4MB version
 // Appendix J in https://mega.scryptos.com/sharefolder-link/MEGA/MEGA65+filehost/Docs/MEGA65-Book_draft.pdf
+// Functions for using the F018 DMA for very fast copying or filling of memory
 // MEGA65 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.
-.file [name="dma-test.prg", type="prg", segments="Program"]
+.file [name="dma-test3.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$2001]
 .segmentdef Code [start=$2017]
@@ -18,9 +19,14 @@
   // DMA command copy
   .const DMA_COMMAND_COPY = 0
   .const OFFSET_STRUCT_F018_DMAGIC_EN018B = 3
+  .const OFFSET_STRUCT_DMA_LIST_F018B_COUNT = 1
+  .const OFFSET_STRUCT_DMA_LIST_F018B_SRC = 3
+  .const OFFSET_STRUCT_DMA_LIST_F018B_DEST = 6
   .const OFFSET_STRUCT_F018_DMAGIC_ADDRMB = 4
   .const OFFSET_STRUCT_F018_DMAGIC_ADDRBANK = 2
   .const OFFSET_STRUCT_F018_DMAGIC_ADDRMSB = 1
+  .const OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK = 5
+  .const OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK = 8
   // DMAgic F018 Controller
   .label DMA = $d700
   // Default address of screen character matrix
@@ -30,27 +36,9 @@ main: {
     // memoryRemap(0,0,0)
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
     jsr memoryRemap
-    // DMA->EN018B = 1
-    // Enable enable F018B mode
-    lda #1
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
-    // DMA->ADDRMB = 0
-    // Set address of DMA list
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
-    // DMA->ADDRBANK = 0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
-    // DMA-> ADDRMSB = >&DMA_SCREEN_UP
-    lda #>DMA_SCREEN_UP
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
-    // DMA-> ADDRLSBTRIG = <&DMA_SCREEN_UP
-    // Trigger the DMA (without option lists)
-    lda #<DMA_SCREEN_UP
-    sta DMA
-    // DMA->EN018B = 0
-    // Re-enable F018A mode
-    lda #0
-    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // memcpy_dma4(0, DEFAULT_SCREEN, 0, DEFAULT_SCREEN+80, 24*80)
+    // Move screen up using DMA
+    jsr memcpy_dma4
     // }
     rts
 }
@@ -102,11 +90,72 @@ memoryRemap: {
     // }
     rts
 }
+// Copy a memory block anywhere in first 4MB memory space using MEGA65 DMagic DMA
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
+// - dest_bank The 64KB bank for the destination (0-63)
+// - dest The destination address (within the MB and bank)
+// - src_bank The 64KB bank for the source (0-63)
+// - src The source address (within the MB and bank)
+// - num The number of bytes to copy
+memcpy_dma4: {
+    .const dest_bank = 0
+    .const src_bank = 0
+    .const num = $18*$50
+    .label dest = DEFAULT_SCREEN
+    .label src = DEFAULT_SCREEN+$50
+    // dmaMode = DMA->EN018B
+    // Remember current F018 A/B mode
+    ldx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // memcpy_dma_command4.count = num
+    // Set up command
+    lda #<num
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT
+    lda #>num
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_COUNT+1
+    // memcpy_dma_command4.src_bank = src_bank
+    lda #src_bank
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC_BANK
+    // memcpy_dma_command4.src = src
+    lda #<src
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC
+    lda #>src
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_SRC+1
+    // memcpy_dma_command4.dest_bank = dest_bank
+    lda #dest_bank
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST_BANK
+    // memcpy_dma_command4.dest = dest
+    lda #<dest
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST
+    lda #>dest
+    sta memcpy_dma_command4+OFFSET_STRUCT_DMA_LIST_F018B_DEST+1
+    // DMA->EN018B = 1
+    // Set F018B mode
+    lda #1
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // DMA->ADDRMB = 0
+    // Set address of DMA list
+    lda #0
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMB
+    // DMA->ADDRBANK = 0
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRBANK
+    // DMA-> ADDRMSB = >&memcpy_dma_command4
+    lda #>memcpy_dma_command4
+    sta DMA+OFFSET_STRUCT_F018_DMAGIC_ADDRMSB
+    // DMA-> ADDRLSBTRIG = <&memcpy_dma_command4
+    // Trigger the DMA (without option lists)
+    lda #<memcpy_dma_command4
+    sta DMA
+    // DMA->EN018B = dmaMode
+    // Re-enable F018A mode
+    stx DMA+OFFSET_STRUCT_F018_DMAGIC_EN018B
+    // }
+    rts
+}
 .segment Data
-  // DMA list entry that scrolls the default screen up
-  DMA_SCREEN_UP: .byte DMA_COMMAND_COPY
-  .word $18*$50, DEFAULT_SCREEN+$50
+  // DMA list entry for copying data in the 1MB memory space
+  memcpy_dma_command4: .byte DMA_COMMAND_COPY
+  .word 0, 0
   .byte 0
-  .word DEFAULT_SCREEN
+  .word 0
   .byte 0, 0
   .word 0

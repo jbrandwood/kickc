@@ -6,22 +6,6 @@
 // http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt
 // http://anyplatform.net/media/guides/cpus/65xx%20Processor%20Data.txt
 
-// Bit representing 8K block #0 of the 64K addressable memory ($0000-$1fff)
-const unsigned char MEMORYBLOCK_0000 = 0b00000001;
-// Bit representing 8K block #1 of the 64K addressable memory ($2000-$3fff)
-const unsigned char MEMORYBLOCK_2000 = 0b00000010;
-// Bit representing 8K block #2 of the 64K addressable memory ($4000-$5fff)
-const unsigned char MEMORYBLOCK_4000 = 0b00000100;
-// Bit representing 8K block #3 of the 64K addressable memory ($6000-$7fff)
-const unsigned char MEMORYBLOCK_6000 = 0b00001000;
-// Bit representing 8K block #4 of the 64K addressable memory ($8000-$9fff)
-const unsigned char MEMORYBLOCK_8000 = 0b00010000;
-// Bit representing 8K block #5 of the 64K addressable memory ($a000-$bfff)
-const unsigned char MEMORYBLOCK_A000 = 0b00100000;
-// Bit representing 8K block #6 of the 64K addressable memory ($c000-$dfff)
-const unsigned char MEMORYBLOCK_C000 = 0b01000000;
-// Bit representing 8K block #7 of the 64K addressable memory ($e000-$ffff)
-const unsigned char MEMORYBLOCK_E000 = 0b10000000;
 
 // Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
@@ -47,14 +31,38 @@ const unsigned char MEMORYBLOCK_E000 = 0b10000000;
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-void memoryRemap(unsigned char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset);
+void memoryRemap(unsigned char remapBlocks, unsigned int lowerPageOffset, unsigned int upperPageOffset) {
+    char * aVal = 0xfc;
+    char * xVal = 0xfd;
+    char * yVal = 0xfe;
+    char * zVal = 0xff;
+    *aVal = <lowerPageOffset;
+    *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf);
+    *yVal = <upperPageOffset;
+    *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf);
+    asm {
+        lda aVal    // lower blocks offset page low
+        ldx xVal    // lower blocks to map + lower blocks offset high nibble
+        ldy yVal    // upper blocks offset page
+        ldz zVal    // upper blocks to map + upper blocks offset page high nibble
+        map
+        eom
+    }
+}
 
 // Remap a single 8K memory block in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
 // All the other 8K memory blocks will not be mapped and will point to their own address in the lowest 64K of the MEGA65 memory.
 // blockPage: Page address of the 8K memory block to remap (ie. the block that is remapped is $100 * the passed page address.)
 // memoryPage: Page address of the memory that the block should point to in the 1MB memory space of the MEGA65.
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
-void memoryRemapBlock(unsigned char blockPage, unsigned int memoryPage);
+void memoryRemapBlock(unsigned char blockPage, unsigned int memoryPage) {
+    // Find the page offset (the number of pages to offset the block)
+    unsigned int pageOffset = memoryPage-blockPage;
+    // Which block is being remapped? (0-7)
+    char block = blockPage / $20;
+    char blockBits = 1<<block;
+    memoryRemap(blockBits, pageOffset, pageOffset);
+}
 
 // Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the entire 256MB memory space of the MEGA65.
 // After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
@@ -81,4 +89,30 @@ void memoryRemapBlock(unsigned char blockPage, unsigned int memoryPage);
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-void memoryRemap256M(unsigned char remapBlocks, unsigned long lowerPageOffset, unsigned long upperPageOffset);
+void memoryRemap256M(unsigned char remapBlocks, unsigned long lowerPageOffset, unsigned long upperPageOffset) {
+    char * lMb = 0xfa;
+    char * uMb = 0xfb;
+    char * aVal = 0xfc;
+    char * xVal = 0xfd;
+    char * yVal = 0xfe;
+    char * zVal = 0xff;
+    *lMb = >((unsigned int)(lowerPageOffset>>4));
+    *uMb = >((unsigned int)(upperPageOffset>>4));
+    *aVal = < <lowerPageOffset;
+    *xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf);
+    *yVal = < <upperPageOffset;
+    *zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf);
+    asm {
+        lda lMb     // lower blocks offset megabytes
+        ldx #$0f    // lower signal for MB offset
+        ldy uMb     // upper blocks offset megabytes
+        ldz #$00    // upper signal for MB offset
+        map
+        lda aVal    // lower blocks offset page low
+        ldx xVal    // lower blocks to map + lower blocks offset high nibble
+        ldy yVal    // upper blocks offset page
+        ldz zVal    // upper blocks to map + upper blocks offset page high nibble
+        map
+        eom
+    }
+}

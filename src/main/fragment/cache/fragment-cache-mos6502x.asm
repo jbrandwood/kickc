@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 148111253e 1481113e09
+//KICKC FRAGMENT CACHE 13bb8fa634 13bb8fbf63
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -17829,6 +17829,11 @@ tax
 //FRAGMENT vbuyy=_byte_pwuc1_derefidx_vbuyy
 lda {c1},y
 tay
+//FRAGMENT pprz1=_deref_qprc1
+lda {c1}
+sta {z1}
+lda {c1}+1
+sta {z1}+1
 //FRAGMENT vbuaa_le_vbuyy_then_la1
 sta $ff
 cpy $ff
@@ -17904,8 +17909,3 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
-//FRAGMENT pprz1=_deref_qprc1
-lda {c1}
-sta {z1}
-lda {c1}+1
-sta {z1}+1

@@ -1479,6 +1479,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testInnerIndexProblem() throws IOException, URISyntaxException {
+      compileAndCompare("inner-index-problem.c");
+   }
+
+   @Test
    public void testInnerIncrementProblem() throws IOException, URISyntaxException {
       compileAndCompare("inner-increment-problem.c");
    }

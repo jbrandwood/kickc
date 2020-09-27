@@ -2214,6 +2214,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          lValue = new LvalueIntermediate((VariableRef) lValue);
       }
       RValue rValue = (RValue) this.visit(ctx.expr(1));
+      if(rValue instanceof LValue) {
+         rValue = copyLValue((LValue) rValue);
+      }
       // Binary Operator
       String op = ((TerminalNode) ctx.getChild(1)).getSymbol().getText();
       Operator operator = Operators.getBinaryCompound(op);

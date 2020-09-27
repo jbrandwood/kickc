@@ -17904,3 +17904,8 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT pprz1=_deref_qprc1
+lda {c1}
+sta {z1}
+lda {c1}+1
+sta {z1}+1

@@ -59,9 +59,8 @@ void main() {
         (SCREEN + LOGO_ROW*40)[i] = MEGA_LOGO[i];
     }
     // Put '*' as default greeting
-    for( char i=0;i<40;i++) {
+    for( char i=0;i<40;i++)
         (SCREEN + GREET_ROW*40)[i] = '*';
-    }
     // Set up 256 color palette
     char i=0; 
     do {

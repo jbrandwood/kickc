@@ -275,7 +275,6 @@ public class CPreprocessor implements TokenSource {
       skipWhitespace(cTokenSource);
       String macroName = nextToken(cTokenSource, KickCLexer.NAME).getText();
       // Examine whether the macro has parameters
-      skipWhitespace(cTokenSource);
       List<String> macroParameters = new ArrayList<>();
       if(cTokenSource.peekToken().getType() == KickCLexer.PAR_BEGIN) {
          // Read past the '('
@@ -720,7 +719,7 @@ public class CPreprocessor implements TokenSource {
    private Token nextToken(CTokenSource cTokenSource, int tokenType) {
       final Token token = cTokenSource.nextToken();
       if(token.getType() != tokenType)
-         throw new CompileError("Unexpected token. Was expecting " + tokenType, token);
+         throw new CompileError("Unexpected token. Was expecting " + KickCLexer.VOCABULARY.getDisplayName(tokenType), token);
       return token;
    }
 

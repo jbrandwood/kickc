@@ -1,0 +1,247 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  *((const nomodify byte*) main::SCREEN + (number) 0) ← (number) 2*(number) 1
+  *((const nomodify byte*) main::SCREEN + (number) 1) ← (number) 2*(number) 2
+  (number~) main::$0 ← (number) 2 * (const byte) main::x
+  (number~) main::$1 ← (const byte) main::x + (number~) main::$0
+  *((const nomodify byte*) main::SCREEN + (number) 2) ← (number~) main::$1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(void()) main()
+(number~) main::$0
+(number~) main::$1
+(label) main::@return
+(const nomodify byte*) main::SCREEN = (byte*)(number) $400
+(const byte) main::x = (byte) 7
+
+Adding number conversion cast (unumber) 2*1 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (number) 2*(number) 1
+Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← ((unumber)) (number) 2*(number) 1
+Adding number conversion cast (unumber) 2*2 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (number) 2*(number) 2
+Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← ((unumber)) (number) 2*(number) 2
+Adding number conversion cast (unumber) 2 in (number~) main::$0 ← (number) 2 * (const byte) main::x
+Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 2 * (const byte) main::x
+Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (const byte) main::x + (unumber~) main::$0
+Adding number conversion cast (unumber) 2 in *((const nomodify byte*) main::SCREEN + (number) 2) ← (unumber~) main::$1
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((const nomodify byte*) main::SCREEN + (unumber)(number) 0) ← (unumber)(number) 2*(number) 1
+Inlining cast *((const nomodify byte*) main::SCREEN + (unumber)(number) 1) ← (unumber)(number) 2*(number) 2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in (unumber~) main::$0 ← (byte) 2 * (const byte) main::x
+Inferred type updated to byte in (unumber~) main::$1 ← (const byte) main::x + (byte~) main::$0
+Constant right-side identified [0] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (unumber)(number) 2*(number) 1
+Constant right-side identified [1] *((const nomodify byte*) main::SCREEN + (byte) 1) ← (unumber)(number) 2*(number) 2
+Constant right-side identified [2] (byte~) main::$0 ← (byte) 2 * (const byte) main::x
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::$0 = 2*main::x
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero main::SCREEN in [0] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (unumber)(number) 2*(number) 1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [2] (byte~) main::$1 ← (const byte) main::x + (const byte) main::$0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant (const byte) main::$1 = main::x+main::$0
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::$1 = (const byte) main::x+(byte) 2*(const byte) main::x
+Constant inlined main::$0 = (byte) 2*(const byte) main::x
+Successful SSA optimization Pass2ConstantInlining
+Consolidated array index constant in *(main::SCREEN+1)
+Consolidated array index constant in *(main::SCREEN+2)
+Successful SSA optimization Pass2ConstantAdditionElimination
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] *((const nomodify byte*) main::SCREEN) ← (byte)(number) 2*(number) 1
+  [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte)(number) 2*(number) 2
+  [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::x+(byte) 2*(const byte) main::x
+  to:main::@return
+main::@return: scope:[main]  from main
+  [3] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+(void()) main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test the preprocessor
+// No whitespace allowed between macro name and parenthesis when defining function-like macro
+// http://www-tcad.stanford.edu/local/DOC/cpp_11.html
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+// Define FOO to take an argument and expand into double the argument
+// Define BAR to take no argument and always expand into (x) + 2 * (x).
+main: {
+    .const x = 7
+    .label SCREEN = $400
+    // [0] *((const nomodify byte*) main::SCREEN) ← (byte)(number) 2*(number) 1 -- _deref_pbuc1=vbuc2 
+    // Call without spaces
+    lda #2*1
+    sta SCREEN
+    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte)(number) 2*(number) 2 -- _deref_pbuc1=vbuc2 
+    // Call with spaces
+    lda #2*2
+    sta SCREEN+1
+    // [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::x+(byte) 2*(const byte) main::x -- _deref_pbuc1=vbuc2 
+    // Call macro without parameters
+    lda #x+2*x
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // File Data
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((const nomodify byte*) main::SCREEN) ← (byte)(number) 2*(number) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte)(number) 2*(number) 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::x+(byte) 2*(const byte) main::x [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 27 combination 
+Uplifting [] best 27 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test the preprocessor
+// No whitespace allowed between macro name and parenthesis when defining function-like macro
+// http://www-tcad.stanford.edu/local/DOC/cpp_11.html
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+// Define FOO to take an argument and expand into double the argument
+// Define BAR to take no argument and always expand into (x) + 2 * (x).
+main: {
+    .const x = 7
+    .label SCREEN = $400
+    // [0] *((const nomodify byte*) main::SCREEN) ← (byte)(number) 2*(number) 1 -- _deref_pbuc1=vbuc2 
+    // Call without spaces
+    lda #2*1
+    sta SCREEN
+    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte)(number) 2*(number) 2 -- _deref_pbuc1=vbuc2 
+    // Call with spaces
+    lda #2*2
+    sta SCREEN+1
+    // [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::x+(byte) 2*(const byte) main::x -- _deref_pbuc1=vbuc2 
+    // Call macro without parameters
+    lda #x+2*x
+    sta SCREEN+2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(void()) main()
+(label) main::@return
+(const nomodify byte*) main::SCREEN = (byte*) 1024
+(const byte) main::x = (byte) 7
+
+
+
+FINAL ASSEMBLER
+Score: 24
+
+  // File Comments
+// Test the preprocessor
+// No whitespace allowed between macro name and parenthesis when defining function-like macro
+// http://www-tcad.stanford.edu/local/DOC/cpp_11.html
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+// Define FOO to take an argument and expand into double the argument
+// Define BAR to take no argument and always expand into (x) + 2 * (x).
+main: {
+    .const x = 7
+    .label SCREEN = $400
+    // SCREEN[0] = FOO
+    // [0] *((const nomodify byte*) main::SCREEN) ← (byte)(number) 2*(number) 1 -- _deref_pbuc1=vbuc2 
+    // Call without spaces
+    lda #2*1
+    sta SCREEN
+    // SCREEN[1] = FOO
+    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte)(number) 2*(number) 2 -- _deref_pbuc1=vbuc2 
+    // Call with spaces
+    lda #2*2
+    sta SCREEN+1
+    // SCREEN[2] = BAR
+    // [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::x+(byte) 2*(const byte) main::x -- _deref_pbuc1=vbuc2 
+    // Call macro without parameters
+    lda #x+2*x
+    sta SCREEN+2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+}
+  // File Data
+

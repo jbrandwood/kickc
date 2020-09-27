@@ -196,6 +196,19 @@ public class TestPreprocessor {
       assertEquals("+(+(+(name:x,name:y),name:z),name:w);", parse("#define A(a,b) a+b\nA(A(x,y),A(z,w));"));
    }
 
+   /**
+    * Test define with/without whitespace
+    */
+   @Test
+   public void testDefineWhitespace() {
+      // A simple define with one parameter
+      assertEquals("(name:b);", parse("#define A(a) (a) \nA(b);"));
+      // A simple define without a parameter - but where the body starts with a parenthesis
+      assertEquals("call(call((name:a),name:a),name:b);", parse("#define A (a) (a) \nA(b);"));
+      // A real-life define without a parameter - but where the body starts with a parenthesis
+      assertEquals("(&(call(name:PEEK,+(name:VIC_BASE,num:0x31)),num:128));", parse("#define IS_H640 (PEEK(VIC_BASE + 0x31) & 128)\nIS_H640;"));
+   }
+
    private void assertError(String program, String expectError, boolean expectLineNumber) {
       try {
          parse(program);
@@ -285,5 +298,17 @@ public class TestPreprocessor {
          return null;
       }
 
+      @Override
+      public Object visitExprCall(KickCParser.ExprCallContext ctx) {
+         out.append("call(");
+         this.visit(ctx.expr());
+         boolean isFirst = true;
+         for(KickCParser.ExprContext paramCtx : ctx.parameterList().expr()) {
+            out.append(",");
+            this.visit(paramCtx);
+         }
+         out.append(")");
+         return null;
+      }
    }
 }

@@ -225,6 +225,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testbubbles64() throws IOException, URISyntaxException {
+      compileAndCompare("complex/bubbles64/bubbles64.c");
+   }
+
+   @Test
    public void testNesBalls() throws IOException, URISyntaxException {
       compileAndCompare("complex/nes-balls/kickballs-2.c");
    }

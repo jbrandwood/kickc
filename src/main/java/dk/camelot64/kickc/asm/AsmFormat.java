@@ -199,7 +199,7 @@ public class AsmFormat {
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_AND, new ConstantInteger((long) 0xffff)), outerPrecedence, codeScope);
          } else {
-            throw new CompileError("Unhandled type " + operand);
+            throw new CompileError("Operator _lo_ cannot handle " + operand.toString(program));
          }
       } else if(Operators.HIBYTE.equals(operator)) {
          SymbolType operandType = SymbolTypeInference.inferType(program.getScope(), operand);
@@ -210,7 +210,7 @@ public class AsmFormat {
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.SHIFT_RIGHT, new ConstantInteger((long) 16)), outerPrecedence, codeScope);
          } else {
-            throw new CompileError("Unhandled type " + operand);
+            throw new CompileError("Operator _hi_ cannot handle " + operand.toString(program));
          }
       } else if(Operators.INCREMENT.equals(operator)) {
          return getAsmConstant(program, new ConstantBinary(operand, Operators.PLUS, new ConstantInteger((long) 1)), outerPrecedence, codeScope);
@@ -225,7 +225,7 @@ public class AsmFormat {
          } else if(SymbolType.DWORD.equals(operandType) || SymbolType.SDWORD.equals(operandType)) {
             return getAsmConstant(program, new ConstantBinary(operand, Operators.BOOL_XOR, new ConstantInteger((long) 0xffffffff)), outerPrecedence, codeScope);
          } else {
-            throw new CompileError("Unhandled type " + operand);
+            throw new CompileError("Operator _bnot_ cannot handle " + operand.toString(program));
          }
       } else if(Operators.POS.equals(operator)) {
          return getAsmConstant(program, operand, outerPrecedence, codeScope);

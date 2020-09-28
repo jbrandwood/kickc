@@ -32,11 +32,9 @@ main: {
   __b1:
     // while (i < SQRT_COUNT)
     lda.z i+1
-    cmp #>SQRT_COUNT
-    bcc __b2
     bne !+
     lda.z i
-    cmp #<SQRT_COUNT
+    cmp #SQRT_COUNT
     bcc __b2
   !:
     lda #<print_screen

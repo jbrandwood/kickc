@@ -113,13 +113,9 @@ main: {
   __b1:
     // while (i < SQRT_COUNT)
     lda.z i+1
-    cmp #>SQRT_COUNT
-    bcs !__b2+
-    jmp __b2
-  !__b2:
     bne !+
     lda.z i
-    cmp #<SQRT_COUNT
+    cmp #SQRT_COUNT
     bcs !__b2+
     jmp __b2
   !__b2:

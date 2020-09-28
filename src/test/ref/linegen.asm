@@ -284,11 +284,9 @@ lin16u_gen: {
   __b1:
     // for(word i=0; i<length; i++)
     lda.z i+1
-    cmp #>$14
-    bcc __b2
     bne !+
     lda.z i
-    cmp #<$14
+    cmp #$14
     bcc __b2
   !:
     // }
@@ -463,11 +461,9 @@ divr16u: {
     rol.z quotient+1
     // if(rem>=divisor)
     lda.z rem+1
-    cmp #>$14-1
-    bcc __b3
     bne !+
     lda.z rem
-    cmp #<$14-1
+    cmp #$14-1
     bcc __b3
   !:
     // quotient++;

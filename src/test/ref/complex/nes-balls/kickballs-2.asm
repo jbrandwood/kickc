@@ -544,11 +544,9 @@ ppuDataTransfer: {
   __b1:
     // for(unsigned int i=0;i<size;i++)
     lda.z i+1
-    cmp #>$20*SIZEOF_BYTE
-    bcc __b2
     bne !+
     lda.z i
-    cmp #<$20*SIZEOF_BYTE
+    cmp #$20*SIZEOF_BYTE
     bcc __b2
   !:
     // }

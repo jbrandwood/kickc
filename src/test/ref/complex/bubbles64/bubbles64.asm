@@ -208,11 +208,9 @@ main: {
   !:
     // if (c>=14)
     lda.z c_2+1
-    cmp #>$e
-    bcc __b36
     bne !+
     lda.z c_2
-    cmp #<$e
+    cmp #$e
     bcc __b36
   !:
     // if (0==stopIt && objects<maxDrawObjects)
@@ -245,11 +243,9 @@ main: {
   __b34:
     // if (oCount>2 && objects>0)
     lda.z oCount+1
-    cmp #>2+1
-    bcc __b35
     bne !+
     lda.z oCount
-    cmp #<2+1
+    cmp #2+1
     bcc __b35
   !:
     lda.z objects

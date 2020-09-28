@@ -36,11 +36,9 @@ main: {
   __b1:
     // for(i=0;i<6;i++)
     lda.z i+1
-    cmp #>6
-    bcc __b2
     bne !+
     lda.z i
-    cmp #<6
+    cmp #6
     bcc __b2
   !:
     // end()

@@ -1,9 +1,9 @@
 #pragma target(nes)
-#pragma emulator("java -jar /Applications/Nintaco_bin_2020-05-01/Nintaco.jar")
+//#pragma emulator("java -jar /Applications/Nintaco_bin_2020-05-01/Nintaco.jar")
 #include <nes.h>
 #include <stdio.h>
 
-#define MAX_BALLS 50
+#define MAX_BALLS 32
 #define WEIGHT 0x0010
 #define RELEASE_TIMER 0x09
 
@@ -66,7 +66,7 @@ int main(void)
     // Enable vertical blank interrupt, select sprite pattern table 1
     PPU->PPUCTRL = 0b10001000;
 
-	unsigned int i;
+	unsigned char i;
 	unsigned char active_balls = 0;
 	unsigned char timer = 0;
 	unsigned char timer_2 = 0;

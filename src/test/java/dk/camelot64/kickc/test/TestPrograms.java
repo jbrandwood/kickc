@@ -24,6 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -662,6 +664,11 @@ public class TestPrograms {
    @Test
    public void testCStyleDeclFunction() throws IOException, URISyntaxException {
       compileAndCompare("cstyle-decl-function.c");
+   }
+
+   @Test
+   public void testPreprocessor14() throws IOException, URISyntaxException {
+      compileAndCompare("preprocessor-14.c");
    }
 
    @Test
@@ -4759,7 +4766,11 @@ public class TestPrograms {
       final TargetPlatform targetPlatform = CTargetPlatformParser.parseTargetPlatformFile(TargetPlatform.DEFAULT_NAME, platformFile, filePath, program.getTargetPlatformPaths());
       program.setTargetPlatform(targetPlatform);
       program.addReservedZps(program.getTargetPlatform().getReservedZps());
-      compiler.compile(files, program.getTargetPlatform().getDefines());
+
+      final Map<String, String> defines = new HashMap<>();
+      defines.put("__KICKC__", "1");
+      defines.putAll(program.getTargetPlatform().getDefines());
+      compiler.compile(files, defines);
       compileAsm(fileName, program);
       boolean success = true;
       ReferenceHelper helper = new ReferenceHelperFolder(refPath);

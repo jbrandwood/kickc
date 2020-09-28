@@ -352,6 +352,7 @@ public class KickC implements Callable<Integer> {
          cFiles.stream().forEach(path -> CFileNames.append(path.toString()).append(" "));
 
          Map<String, String> effectiveDefines = new LinkedHashMap<>();
+         effectiveDefines.put("__KICKC__", "1");
          if(defines != null)
             effectiveDefines.putAll(defines);
          if(program.getTargetPlatform().getDefines() != null)

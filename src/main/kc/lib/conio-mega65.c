@@ -44,6 +44,11 @@ void conio_mega65_init() {
     *IO_KEY = 0x53;
     // Enable 2K Color RAM
     *IO_BANK |= CRAM2K;
+    // Position cursor at current line
+    char * const BASIC_CURSOR_LINE = 0xeb;
+    char line = *BASIC_CURSOR_LINE+1;
+    if(line>24) line=24;
+    gotoxy(0, line);
 }
 
 // Return true if there's a key waiting, return false if not

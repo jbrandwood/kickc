@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIndexSizeofReuse() throws IOException, URISyntaxException {
+      compileAndCompare("index-sizeof-reuse.c");
+   }
+
+   @Test
    public void testPragmaNoParenthesis() throws IOException, URISyntaxException {
       compileAndCompare("pragma-noparenthesis.c");
    }

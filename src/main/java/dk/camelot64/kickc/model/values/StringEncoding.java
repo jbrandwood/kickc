@@ -14,7 +14,7 @@ public enum StringEncoding {
    SCREENCODE_MIXED("screencode_mixed", "screencode_mixed", "sm", CharToPetsciiConverter.charToScreenCode_mixed),
    SCREENCODE_UPPER("screencode_upper", "screencode_upper", "su", CharToPetsciiConverter.charToScreenCode_upper),
    ASCII("ascii", "ascii", "as", CharToPetsciiConverter.charToAscii),
-   ATASCII("atascii", "ascii", "at", CharToAtasciiConverter.charToAtascii),
+   ATASCII("atascii", null, "at", CharToAtasciiConverter.charToAtascii),
    SCREENCODE_ATARI("screencode_atari", null, "sa", CharToAtasciiConverter.charToScreenCodeAtari)
    ;
 

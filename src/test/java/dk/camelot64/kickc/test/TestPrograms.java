@@ -1396,6 +1396,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testEncodingAtascii() throws IOException, URISyntaxException {
+      compileAndCompare("encoding-atascii.c");
+   }
+
+   @Test
    public void testEncodingLiteralChar() throws IOException, URISyntaxException {
       compileAndCompare("encoding-literal-char.c");
    }

@@ -7,4 +7,5 @@ char * SCREEN = 0x0400;
 
 void main() {
     SCREEN[0] = TEXT[13];
+    SCREEN[1] = '\n';
 }

@@ -7,9 +7,12 @@ main: {
     // SCREEN[0] = TEXT[13]
     lda TEXT+$d
     sta SCREEN
+    // SCREEN[1] = '\n'
+  .encoding "ascii"
+    lda #'\$9b'
+    sta SCREEN+1
     // }
     rts
 }
-.encoding "ascii"
   TEXT: .text @"hello, world!\$9b"
   .byte 0

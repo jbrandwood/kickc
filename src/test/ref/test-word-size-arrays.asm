@@ -3,8 +3,7 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
-    .label __2 = 6
-    .label __4 = 8
+    .label __4 = 6
     .label __6 = 4
     .label line = 2
     .label __7 = 8
@@ -74,24 +73,16 @@ main: {
     txa
     clc
     adc.z line
-    sta.z __2
-    lda #0
-    adc.z line+1
-    sta.z __2+1
-    // line+c+40
-    txa
-    clc
-    adc.z line
     sta.z __4
     lda #0
     adc.z line+1
     sta.z __4+1
     // screen[line+c] = screen[line+c+40]
+    lda.z __4
     clc
-    lda.z __7
     adc #<screen+$28
     sta.z __7
-    lda.z __7+1
+    lda.z __4+1
     adc #>screen+$28
     sta.z __7+1
     clc

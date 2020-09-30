@@ -14,8 +14,7 @@ main: {
     rts
 }
 scrollup1: {
-    .label __2 = 5
-    .label __4 = 7
+    .label __4 = 5
     .label line = 9
     .label __5 = 7
     .label __6 = 5
@@ -54,24 +53,16 @@ scrollup1: {
     txa
     clc
     adc.z line
-    sta.z __2
-    lda #0
-    adc.z line+1
-    sta.z __2+1
-    // line+c+40
-    txa
-    clc
-    adc.z line
     sta.z __4
     lda #0
     adc.z line+1
     sta.z __4+1
     // screen[line+c] = screen[line+c+40]
+    lda.z __4
     clc
-    lda.z __5
     adc #<screen+$28
     sta.z __5
-    lda.z __5+1
+    lda.z __4+1
     adc #>screen+$28
     sta.z __5+1
     clc

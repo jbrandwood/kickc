@@ -302,6 +302,7 @@ bitmap_clear: {
 }
 // show_letter(byte zp(2) angle)
 show_letter: {
+    .label __17 = $18
     .label angle = 2
     .label to_x = 8
     .label to_y = $a
@@ -318,7 +319,6 @@ show_letter: {
     .label current_y = 6
     .label current_x_1 = $19
     .label current_y_1 = $1b
-    .label __21 = $18
     lda #<0
     sta.z current_y
     sta.z current_y+1
@@ -331,17 +331,17 @@ show_letter: {
     asl
     asl
     asl
-    sta.z __21
     clc
     adc.z i
-    tax
-    lda letter_c+OFFSET_STRUCT_SEGMENT_TO,x
+    sta.z __17
+    tay
+    lda letter_c+OFFSET_STRUCT_SEGMENT_TO,y
     sta.z to_x
-    lda letter_c+OFFSET_STRUCT_SEGMENT_TO+1,x
+    lda letter_c+OFFSET_STRUCT_SEGMENT_TO+1,y
     sta.z to_x+1
-    lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y,y
     sta.z to_y
-    lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    lda letter_c+OFFSET_STRUCT_SEGMENT_TO+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,y
     sta.z to_y+1
     // to = { to.x - 50, to.y - 150}
     lda.z to_x
@@ -379,17 +379,14 @@ show_letter: {
     adc #>$64
     sta.z current_y_1+1
     // via = letter_c[i].via
-    lda.z __21
-    clc
-    adc.z i
-    tax
-    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA,x
+    ldy.z __17
+    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA,y
     sta.z via_x
-    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+1,x
+    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+1,y
     sta.z via_x+1
-    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+OFFSET_STRUCT_SPLINEVECTOR16_Y,y
     sta.z via_y
-    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    lda letter_c+OFFSET_STRUCT_SEGMENT_VIA+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,y
     sta.z via_y+1
     // via = { via.x - 50, via.y - 150}
     lda.z via_x
@@ -427,10 +424,7 @@ show_letter: {
     adc #>$64
     sta.z segment_via_y+1
     // segment = { letter_c[i].type, to, via}
-    lda.z __21
-    clc
-    adc.z i
-    tay
+    ldy.z __17
     lda letter_c,y
     // if(segment.type==MOVE_TO)
     cmp #MOVE_TO

@@ -55,11 +55,11 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
                            duplicate |= deduplicateRValue(otherRValue, thisRValue);
                         } else if(thisDominators.contains(otherRValue.block.getLabel())) {
                            // The other assignment is guaranteed to be executed before this assignment
-                           if(scopeMatch(thisRValue.rValue1, thisRValue.block) && scopeMatch(thisRValue.rValue2, thisRValue.block))
+                           if(scopeMatch(thisRValue, otherRValue))
                               duplicate |= deduplicateRValue(otherRValue, thisRValue);
                         } else if(otherDominators.contains(thisRValue.block.getLabel())) {
                            // This assignment is guaranteed to be executed before the other assignment
-                           if(scopeMatch(thisRValue.rValue1, thisRValue.block) && scopeMatch(thisRValue.rValue2, thisRValue.block))
+                           if(scopeMatch(thisRValue, otherRValue))
                               duplicate |= deduplicateRValue(thisRValue, otherRValue);
                         }
                      }
@@ -77,26 +77,44 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
    }
 
    /**
+    * Check that the scopes match for all involved variables.
+    *
+    * @param thisRValue This RValue
+    * @param otherRValue This duplicate RValue
+    * @return true if all scopes match
+    */
+   private boolean scopeMatch(AssignmentWithRValue thisRValue, AssignmentWithRValue otherRValue) {
+      if(!thisRValue.block.getScope().equals(otherRValue.block.getScope()))
+         return false;
+      ScopeRef scope = thisRValue.block.getScope();
+      return
+            scopeMatch(thisRValue.assignment.getlValue(), scope) &&
+                  scopeMatch(otherRValue.assignment.getlValue(), scope) &&
+                  scopeMatch(thisRValue.rValue1, scope) &&
+                  scopeMatch(thisRValue.rValue2, scope);
+   }
+
+   /**
     * Check that the scope of the values inside an RValue matches the scope of a block.
     * We only know that a specific variable version has the same value if it is from the same scope as the block.
     * Otherwise it might be modified inside some called function.
     *
-    * @param rValue The RValue to examine (may be null)
+    * @param value The RValue to examine (may be null)
     * @param block The block to examine
     * @return true if the scope match
     */
-   private boolean scopeMatch(RValue rValue, ControlFlowBlock block) {
-      if(rValue == null)
+   private boolean scopeMatch(Value value, ScopeRef scopeRef) {
+      if(value == null)
          return true;
       List<SymbolVariableRef> varRefs = new ArrayList<>();
-      ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue),
+      ProgramValueIterator.execute(new ProgramValue.GenericValue(value),
             (programValue, currentStmt, stmtIt, currentBlock) -> {
                if(programValue.get() instanceof SymbolVariableRef) varRefs.add((SymbolVariableRef) programValue.get());
             }
             , null, null, null);
       for(SymbolVariableRef varRef : varRefs) {
          Variable var = getScope().getVariable(varRef);
-         if(!var.getScope().getRef().equals(block.getScope()))
+         if(!var.getScope().getRef().equals(scopeRef))
             return false;
       }
       return true;
@@ -186,8 +204,6 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
       private boolean isTrivial() {
          if(operator == null) return true;
          if(operator instanceof OperatorCast) return true;
-         if(operator.equals(Operators.PLUS)) return true;
-         if(operator.equals(Operators.MINUS)) return true;
          if(operator.equals(Operators.LE)) return true;
          if(operator.equals(Operators.LT)) return true;
          if(operator.equals(Operators.GE)) return true;
@@ -199,6 +215,8 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.LOGIC_OR)) return true;
          if(operator.equals(Operators.HIBYTE)) return true;
          if(operator.equals(Operators.LOWBYTE)) return true;
+         if(operator.equals(Operators.PLUS) && rValue2 instanceof ConstantValue) return true;
+         if(operator.equals(Operators.PLUS) && rValue1 instanceof ConstantValue) return true;
          return false;
       }
 

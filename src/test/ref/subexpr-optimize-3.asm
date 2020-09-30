@@ -3,7 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
-    .label __3 = 4
+    .label __4 = 4
     .label screen = 2
     lda #<$400
     sta.z screen
@@ -14,14 +14,15 @@ main: {
     // i*2
     txa
     asl
-    sta.z __3
     // i*2+i
-    txa
+    stx.z $ff
     clc
-    adc.z __3
+    adc.z $ff
+    sta.z __4
     // i*2+i+3
+    lda #3
     clc
-    adc #3
+    adc.z __4
     // *screen++ = i*2+i+3
     ldy #0
     sta (screen),y
@@ -30,13 +31,10 @@ main: {
     bne !+
     inc.z screen+1
   !:
-    // i*2+i
-    txa
-    clc
-    adc.z __3
     // i*2+i+3
+    lda #3
     clc
-    adc #3
+    adc.z __4
     // *screen++ = i*2+i+3
     ldy #0
     sta (screen),y

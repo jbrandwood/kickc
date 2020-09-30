@@ -4,7 +4,6 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
-    .label e = 3
     .label a = 2
     ldx #0
     txa
@@ -16,14 +15,8 @@ main: {
     tya
     clc
     adc.z a
-    sta.z e
-    // f = d+a
-    tya
-    clc
-    adc.z a
     // g = e+f
-    clc
-    adc.z e
+    asl
     // SCREEN[idx++] = g
     sta SCREEN,x
     // SCREEN[idx++] = g;

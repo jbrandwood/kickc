@@ -18504,3 +18504,90 @@ sta {c1}+1,y
 ldy {z1}
 dey
 dey
+//FRAGMENT _deref_(_deref_qbuc1)=pbuc2_derefidx_vbuz1
+ldy {z1}
+lda {c2},y
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT _deref_(_deref_qbuc1)=pbuc2_derefidx_vbuaa
+tay
+lda {c2},y
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT _deref_(_deref_qbuc1)=pbuc2_derefidx_vbuxx
+lda {c2},x
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT _deref_(_deref_qbuc1)=pbuc2_derefidx_vbuyy
+lda {c2},y
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT vbuz1=_deref_pbuc1_ror_1
+lda {c1}
+lsr
+sta {z1}
+//FRAGMENT vwuz1_ge_pwuc1_derefidx_vbuz2_then_la1
+ldy {z2}
+lda {c1}+1,y
+cmp {z1}+1
+bne !+
+lda {c1},y
+cmp {z1}
+beq {la1}
+!:
+bcc {la1}
+//FRAGMENT vbuaa=_deref_pbuc1_ror_1
+lda {c1}
+lsr
+//FRAGMENT vbuxx=_deref_pbuc1_ror_1
+lda {c1}
+lsr
+tax
+//FRAGMENT vbuyy=_deref_pbuc1_ror_1
+lda {c1}
+lsr
+tay
+//FRAGMENT vwuz1_ge_pwuc1_derefidx_vbuaa_then_la1
+tay
+lda {c1}+1,y
+cmp {z1}+1
+bne !+
+lda {c1},y
+cmp {z1}
+beq {la1}
+!:
+bcc {la1}
+//FRAGMENT vwuz1_ge_pwuc1_derefidx_vbuxx_then_la1
+lda {c1}+1,x
+cmp {z1}+1
+bne !+
+lda {c1},x
+cmp {z1}
+beq {la1}
+!:
+bcc {la1}
+//FRAGMENT vwuz1_ge_pwuc1_derefidx_vbuyy_then_la1
+lda {c1}+1,y
+cmp {z1}+1
+bne !+
+lda {c1},y
+cmp {z1}
+beq {la1}
+!:
+bcc {la1}

@@ -444,6 +444,7 @@ font_2x2: {
     sta (next_2x2_left_1),y
     // l2+1
     iny
+    // >glyph_bits_2x2
     // next_2x2_left[l2+1] = >glyph_bits_2x2
     sta (next_2x2_left_1),y
     // <glyph_bits_2x2
@@ -453,6 +454,7 @@ font_2x2: {
     sta (next_2x2_right),y
     // l2+1
     iny
+    // <glyph_bits_2x2
     // next_2x2_right[l2+1] = <glyph_bits_2x2
     sta (next_2x2_right),y
     // l2 += 2

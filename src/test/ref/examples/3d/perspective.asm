@@ -82,13 +82,7 @@ mulf_init: {
     // mulf_sqr2[1-i] = val
     lda.z val
     sta mulf_sqr2,x
-    // 1-i
-    tya
-    eor #$ff
-    tax
-    axs #-1-1
     // (mulf_sqr2+$100)[1-i] = val
-    lda.z val
     sta mulf_sqr2+$100,x
     // sqr += add
     lda.z sqr

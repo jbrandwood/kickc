@@ -127,7 +127,7 @@ main: {
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // memoryRemapBlock(byte register(X) blockPage)
 memoryRemapBlock: {
-    .label pageOffset = $d
+    .label pageOffset = $b
     // pageOffset = memoryPage-blockPage
     stx.z $ff
     lda #<$100
@@ -188,16 +188,16 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp($d) lowerPageOffset, word zp(2) upperPageOffset)
+// memoryRemap(byte register(Z) remapBlocks, word zp($b) lowerPageOffset, word zp($e) upperPageOffset)
 memoryRemap: {
     .label aVal = $fc
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __1 = $f
-    .label __6 = 8
-    .label lowerPageOffset = $d
-    .label upperPageOffset = 2
+    .label __1 = $d
+    .label __6 = 6
+    .label lowerPageOffset = $b
+    .label upperPageOffset = $e
     // <lowerPageOffset
     lda.z lowerPageOffset
     // *aVal = <lowerPageOffset
@@ -268,7 +268,7 @@ memoryRemap: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap256M(byte register(Z) remapBlocks, dword zp(4) lowerPageOffset)
+// memoryRemap256M(byte register(Z) remapBlocks, dword zp(2) lowerPageOffset)
 memoryRemap256M: {
     .label lMb = $fa
     .label uMb = $fb
@@ -276,10 +276,11 @@ memoryRemap256M: {
     .label xVal = $fd
     .label yVal = $fe
     .label zVal = $ff
-    .label __0 = 9
-    .label __6 = $f
-    .label __7 = $d
-    .label lowerPageOffset = 4
+    .label __0 = 7
+    .label __4 = $b
+    .label __6 = $d
+    .label __7 = $e
+    .label lowerPageOffset = 2
     // lowerPageOffset>>4
     lda.z lowerPageOffset+3
     lsr
@@ -314,11 +315,11 @@ memoryRemap256M: {
     sta uMb
     // <lowerPageOffset
     lda.z lowerPageOffset
-    sta.z __7
+    sta.z __4
     lda.z lowerPageOffset+1
-    sta.z __7+1
+    sta.z __4+1
     // < <lowerPageOffset
-    lda.z __7
+    lda.z __4
     // *aVal = < <lowerPageOffset
     sta aVal
     // remapBlocks << 4
@@ -328,8 +329,12 @@ memoryRemap256M: {
     asl
     asl
     sta.z __6
+    // <lowerPageOffset
+    lda.z lowerPageOffset
+    sta.z __7
+    lda.z lowerPageOffset+1
+    sta.z __7+1
     // > <lowerPageOffset
-    lda.z __7+1
     // > <lowerPageOffset & 0xf
     and #$f
     // (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)

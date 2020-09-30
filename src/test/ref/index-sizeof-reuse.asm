@@ -13,7 +13,6 @@ main: {
     // Move the entities
     .label line = 4
     .label i1 = 3
-    .label __25 = 6
     // asm
     sei
     lda #-1
@@ -22,9 +21,7 @@ main: {
   __b1:
     // for(char i=0;i<NUM_ENTITIES;i++)
     cpx #$19
-    bcs !__b2+
-    jmp __b2
-  !__b2:
+    bcc __b2
   // Wait for raster refresh
   __b3:
     // while(*VIC_RASTER!=0xff)
@@ -53,7 +50,6 @@ main: {
     // line[entities[i].x_pos] = ' '
     lda.z i1
     asl
-    sta.z __25
     clc
     adc.z i1
     tax
@@ -80,10 +76,6 @@ main: {
     bmi __b8
   __b9:
     // -entities[i].x_vel
-    lda.z __25
-    clc
-    adc.z i1
-    tax
     lda entities+OFFSET_STRUCT_ENTITY_X_VEL,x
     eor #$ff
     clc
@@ -97,11 +89,7 @@ main: {
     sta entities,x
   __b8:
     // line[entities[i].x_pos] = entities[i].symbol
-    lda.z __25
-    clc
-    adc.z i1
     // Draw symbol
-    tax
     lda entities+OFFSET_STRUCT_ENTITY_SYMBOL,x
     ldy entities,x
     sta (line),y

@@ -245,6 +245,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testNesBalls3() throws IOException, URISyntaxException {
+      compileAndCompare("complex/nes-balls/kickballs-3.c");
+   }
+
+   @Test
    public void testNesDxycp() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes/nes-dxycp.c");
    }

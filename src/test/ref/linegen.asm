@@ -9,10 +9,11 @@
   .const SIZEOF_WORD = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
-  .label rem16u = $17
+  .label rem16u = $18
   .label print_char_cursor = $f
   .label print_line_cursor = $b
 main: {
+    .label __28 = $11
     .label i = 2
     // lin16u_gen(557, 29793, lintab1, 20)
     lda #<lintab1
@@ -171,6 +172,7 @@ main: {
     // print_uint(lintab1[i])
     lda.z i
     asl
+    sta.z __28
     tay
     lda lintab1,y
     sta.z print_uint.w
@@ -184,9 +186,7 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_uint(lintab2[i])
-    lda.z i
-    asl
-    tay
+    ldy.z __28
     lda lintab2,y
     sta.z print_uint.w
     lda lintab2+1,y
@@ -199,9 +199,7 @@ main: {
     sta.z print_str.str+1
     jsr print_str
     // print_uint(lintab3[i])
-    lda.z i
-    asl
-    tay
+    ldy.z __28
     lda lintab3,y
     sta.z print_uint.w
     lda lintab3+1,y
@@ -225,11 +223,11 @@ main: {
 // length - the number of points in a total sinus wavelength (the size of the table)
 // lin16u_gen(word zp(9) min, word zp(7) max, word* zp($d) lintab)
 lin16u_gen: {
-    .label __6 = $17
+    .label __6 = $18
     .label ampl = 7
-    .label stepi = $11
+    .label stepi = $12
     .label stepf = $f
-    .label step = $13
+    .label step = $14
     .label val = 3
     .label lintab = $d
     .label i = $b
@@ -427,9 +425,9 @@ print_uchar: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp(7) dividend, word zp($17) rem)
+// divr16u(word zp(7) dividend, word zp($18) rem)
 divr16u: {
-    .label rem = $17
+    .label rem = $18
     .label dividend = 7
     .label quotient = $f
     .label return = $f

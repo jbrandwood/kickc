@@ -75,17 +75,17 @@ main: {
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 mulf_init: {
     // x/2
-    .label c = $18
+    .label c = 3
     // Counter used for determining x%2==0
-    .label sqr1_hi = 3
+    .label sqr1_hi = 4
     // Fill mulf_sqr1 = f(x) = int(x*x/4): If f(x) = x*x/4 then f(x+1) = f(x) + x/2 + 1/4
-    .label sqr = $b
-    .label sqr1_lo = 7
+    .label sqr = $c
+    .label sqr1_lo = 8
     // Decrease or increase x_255 - initially we decrease
-    .label sqr2_hi = 9
-    .label sqr2_lo = 5
+    .label sqr2_hi = $a
+    .label sqr2_lo = 6
     //Start with g(0)=f(255)
-    .label dir = $f
+    .label dir = $18
     ldx #0
     lda #<mulf_sqr1_hi+1
     sta.z sqr1_hi
@@ -214,7 +214,7 @@ mulf_init: {
 // Initialize bitmap plotting tables
 bitmap_init: {
     .label __7 = $18
-    .label yoffs = 7
+    .label yoffs = 8
     ldx #0
     lda #$80
   __b1:
@@ -303,21 +303,22 @@ bitmap_clear: {
 // show_letter(byte zp(2) angle)
 show_letter: {
     .label angle = 2
-    .label to_x = 7
-    .label to_y = 9
-    .label to_x_1 = $b
-    .label to_y_1 = $d
-    .label via_x = 7
-    .label via_y = 9
-    .label via_x_1 = $b
-    .label via_y_1 = $d
-    .label segment_via_x = $b
-    .label segment_via_y = $d
-    .label i = $18
-    .label current_x = 3
-    .label current_y = 5
+    .label to_x = 8
+    .label to_y = $a
+    .label to_x_1 = $c
+    .label to_y_1 = $e
+    .label via_x = 8
+    .label via_y = $a
+    .label via_x_1 = $c
+    .label via_y_1 = $e
+    .label segment_via_x = $c
+    .label segment_via_y = $e
+    .label i = 3
+    .label current_x = 4
+    .label current_y = 6
     .label current_x_1 = $19
     .label current_y_1 = $1b
+    .label __21 = $18
     lda #<0
     sta.z current_y
     sta.z current_y+1
@@ -330,6 +331,7 @@ show_letter: {
     asl
     asl
     asl
+    sta.z __21
     clc
     adc.z i
     tax
@@ -377,10 +379,7 @@ show_letter: {
     adc #>$64
     sta.z current_y_1+1
     // via = letter_c[i].via
-    lda.z i
-    asl
-    asl
-    asl
+    lda.z __21
     clc
     adc.z i
     tax
@@ -428,10 +427,7 @@ show_letter: {
     adc #>$64
     sta.z segment_via_y+1
     // segment = { letter_c[i].type, to, via}
-    lda.z i
-    asl
-    asl
-    asl
+    lda.z __21
     clc
     adc.z i
     tay
@@ -478,12 +474,12 @@ show_letter: {
     jmp __b3
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($b) str, byte register(X) c, word zp(9) num)
+// memset(void* zp($c) str, byte register(X) c, word zp($a) num)
 memset: {
-    .label end = 9
-    .label dst = $b
-    .label num = 9
-    .label str = $b
+    .label end = $a
+    .label dst = $c
+    .label num = $a
+    .label str = $c
     // if(num>0)
     lda.z num
     bne !+
@@ -522,7 +518,7 @@ memset: {
     jmp __b2
 }
 // 2D-rotate a vector by an angle
-// rotate(signed word zp(7) vector_x, signed word zp(9) vector_y, byte register(Y) angle)
+// rotate(signed word zp(8) vector_x, signed word zp($a) vector_y, byte register(Y) angle)
 rotate: {
     .label __0 = $14
     .label __2 = $14
@@ -531,16 +527,16 @@ rotate: {
     .label __6 = $14
     .label __7 = $21
     .label __10 = $1d
-    .label __11 = $2b
+    .label __11 = $2c
     .label __12 = $1f
     .label __13 = $21
-    .label vector_x = 7
-    .label vector_y = 9
-    .label return_x = $b
-    .label return_y = $d
+    .label vector_x = 8
+    .label vector_y = $a
+    .label return_x = $c
+    .label return_y = $e
     .label cos_a = $10
     .label xr = $1d
-    .label yr = $2b
+    .label yr = $2c
     .label sin_a = $10
     // cos_a = (signed int) COS[angle]
     lda COS,y
@@ -657,20 +653,20 @@ rotate: {
     rts
 }
 // Draw a line on the bitmap using bresenhams algorithm
-// bitmap_line(word zp(3) x1, word zp(5) y1, word zp($b) x2, word zp($d) y2)
+// bitmap_line(word zp(4) x1, word zp(6) y1, word zp($c) x2, word zp($e) y2)
 bitmap_line: {
-    .label x = 3
-    .label y = 5
+    .label x = 4
+    .label y = 6
     .label dx = $21
     .label dy = $1d
     .label sx = $23
     .label sy = $1f
     .label e1 = $12
     .label e = $10
-    .label x1 = 3
-    .label y1 = 5
-    .label x2 = $b
-    .label y2 = $d
+    .label x1 = 4
+    .label y1 = 6
+    .label x2 = $c
+    .label y2 = $e
     // abs_u16(x2-x1)
     lda.z x2
     sec
@@ -882,38 +878,38 @@ bitmap_line: {
 // Point values must be within [-200 ; 1ff] for the calculation to not overflow.
 // A quadratic spline is a curve defined by 3 points: P0, P1 and P2.
 // The curve connects P0 to P2 through a smooth curve that moves towards P1, but does usually not touch it.
-// spline_8segB(signed word zp(3) p0_x, signed word zp(5) p0_y, signed word zp($b) p1_x, signed word zp($d) p1_y, signed word zp($19) p2_x, signed word zp($1b) p2_y)
+// spline_8segB(signed word zp(4) p0_x, signed word zp(6) p0_y, signed word zp($c) p1_x, signed word zp($e) p1_y, signed word zp($19) p2_x, signed word zp($1b) p2_y)
 spline_8segB: {
     .label __0 = $23
     .label __1 = $23
-    .label __3 = $29
-    .label __4 = $29
-    .label __6 = $b
-    .label __8 = $d
-    .label __10 = $b
-    .label __12 = $d
-    .label __18 = 3
-    .label __19 = 3
-    .label __20 = 5
-    .label __21 = 5
-    .label __22 = $25
-    .label __23 = $25
-    .label __24 = $27
-    .label __25 = $27
+    .label __3 = $2a
+    .label __4 = $2a
+    .label __6 = $c
+    .label __8 = $e
+    .label __10 = $c
+    .label __12 = $e
+    .label __18 = 4
+    .label __19 = 4
+    .label __20 = 6
+    .label __21 = 6
+    .label __22 = $26
+    .label __23 = $26
+    .label __24 = $28
+    .label __25 = $28
     .label a_x = $23
-    .label a_y = $29
-    .label b_x = $b
-    .label b_y = $d
-    .label i_x = $b
-    .label i_y = $d
+    .label a_y = $2a
+    .label b_x = $c
+    .label b_y = $e
+    .label i_x = $c
+    .label i_y = $e
     .label j_x = $23
-    .label j_y = $29
-    .label p_x = 3
-    .label p_y = 5
-    .label p0_x = 3
-    .label p0_y = 5
-    .label p1_x = $b
-    .label p1_y = $d
+    .label j_y = $2a
+    .label p_x = 4
+    .label p_y = 6
+    .label p0_x = 4
+    .label p0_y = 6
+    .label p1_x = $c
+    .label p1_y = $e
     .label p2_x = $19
     .label p2_y = $1b
     // p1.x*2
@@ -1209,9 +1205,10 @@ spline_8segB: {
 }
 // Plot the spline in the SPLINE_8SEG array
 bitmap_plot_spline_8seg: {
-    .label current_x = 3
-    .label current_y = 5
-    .label n = $f
+    .label __4 = $25
+    .label current_x = 4
+    .label current_y = 6
+    .label n = $18
     // current = SPLINE_8SEG[0]
     lda SPLINE_8SEG
     sta.z current_x
@@ -1228,29 +1225,27 @@ bitmap_plot_spline_8seg: {
     lda.z n
     asl
     asl
-    tax
-    lda SPLINE_8SEG,x
+    sta.z __4
+    tay
+    lda SPLINE_8SEG,y
     sta.z bitmap_line.x2
-    lda SPLINE_8SEG+1,x
+    lda SPLINE_8SEG+1,y
     sta.z bitmap_line.x2+1
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,y
     sta.z bitmap_line.y2
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,y
     sta.z bitmap_line.y2+1
     // bitmap_line((unsigned int)current.x, (unsigned int)current.y, (unsigned int)SPLINE_8SEG[n].x, (unsigned int)SPLINE_8SEG[n].y)
     jsr bitmap_line
     // current = SPLINE_8SEG[n]
-    lda.z n
-    asl
-    asl
-    tax
-    lda SPLINE_8SEG,x
+    ldy.z __4
+    lda SPLINE_8SEG,y
     sta.z current_x
-    lda SPLINE_8SEG+1,x
+    lda SPLINE_8SEG+1,y
     sta.z current_x+1
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,x
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y,y
     sta.z current_y
-    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,x
+    lda SPLINE_8SEG+OFFSET_STRUCT_SPLINEVECTOR16_Y+1,y
     sta.z current_y+1
     // for(char n:1..8)
     inc.z n
@@ -1264,10 +1259,10 @@ bitmap_plot_spline_8seg: {
 // Fixes offsets introduced by using unsigned multiplication
 // mulf16s(signed word zp($10) a, signed word zp($12) b)
 mulf16s: {
-    .label __6 = $27
-    .label __9 = $29
-    .label __11 = $27
-    .label __12 = $29
+    .label __6 = $28
+    .label __9 = $2a
+    .label __11 = $28
+    .label __12 = $2a
     .label m = $14
     .label return = $14
     .label a = $10
@@ -1356,9 +1351,9 @@ abs_u16: {
 }
 // Get the sign of a 16-bit unsigned number treated as a signed number.
 // Returns unsigned -1 if the number is
-// sgn_u16(word zp($2b) w)
+// sgn_u16(word zp($2c) w)
 sgn_u16: {
-    .label w = $2b
+    .label w = $2c
     .label return = $1f
     // >w
     lda.z w+1
@@ -1380,11 +1375,11 @@ sgn_u16: {
     rts
 }
 // Plot a single dot in the bitmap
-// bitmap_plot(word zp(3) x, byte register(A) y)
+// bitmap_plot(word zp(4) x, byte register(A) y)
 bitmap_plot: {
-    .label __0 = $2b
-    .label plotter = $29
-    .label x = 3
+    .label __0 = $2c
+    .label plotter = $2a
+    .label x = 4
     // plotter = (char*) { bitmap_plot_yhi[y], bitmap_plot_ylo[y] }
     tay
     lda bitmap_plot_yhi,y
@@ -1418,14 +1413,14 @@ bitmap_plot: {
 }
 // Fast multiply two unsigned ints to a double unsigned int result
 // Done in assembler to utilize fast addition A+X
-// mulf16u(word zp($29) a, word zp($25) b)
+// mulf16u(word zp($2a) a, word zp($26) b)
 mulf16u: {
     .label memA = $f8
     .label memB = $fa
     .label memR = $fc
     .label return = $14
-    .label a = $29
-    .label b = $25
+    .label a = $2a
+    .label b = $26
     // *memA = a
     lda.z a
     sta memA

@@ -3,6 +3,7 @@
 :BasicUpstart(main)
 .pc = $80d "Program"
 main: {
+    .label __6 = 4
     .label screen = 2
     lda #<$400
     sta.z screen
@@ -11,10 +12,11 @@ main: {
     ldx #0
   __b1:
     // i&1
-    txa
-    and #1
+    lda #1
+    sax.z __6
     // (i&1)?i+3:i*4
-    cmp #0
+    lda #0
+    cmp.z __6
     bne __b2
     txa
     asl
@@ -28,11 +30,9 @@ main: {
     bne !+
     inc.z screen+1
   !:
-    // i&1
-    txa
-    and #1
     // (i&1)?i+3:i*4
-    cmp #0
+    lda #0
+    cmp.z __6
     bne __b5
     txa
     asl

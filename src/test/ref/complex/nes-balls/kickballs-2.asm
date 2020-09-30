@@ -124,7 +124,6 @@ main: {
     .label __9 = $19
     .label __10 = $19
     .label __11 = $19
-    .label __12 = $1b
     .label __20 = $c
     .label __23 = $e
     .label __25 = $10
@@ -369,11 +368,6 @@ main: {
     bcs __b9
   !:
     // balls[i].x_velocity ^= 0xFFFF
-    lda.z i
-    asl
-    asl
-    asl
-    tay
     lda balls+4,y
     eor #<$ffff
     sta balls+4,y
@@ -382,11 +376,6 @@ main: {
     sta balls+4+1,y
   __b9:
     // balls[i].y_position >> 8
-    lda.z i
-    asl
-    asl
-    asl
-    tay
     lda #0
     sta.z __23+1
     lda balls+2+1,y
@@ -413,11 +402,6 @@ main: {
     bcs __b10
   !:
     // balls[i].y_velocity ^= 0xFFFF
-    lda.z i
-    asl
-    asl
-    asl
-    tay
     lda balls+6,y
     eor #<$ffff
     sta balls+6,y
@@ -442,11 +426,6 @@ main: {
     sta balls+2+1,y
   __b10:
     // balls[i].y_position >> 8
-    lda.z i
-    asl
-    asl
-    asl
-    tay
     lda #0
     sta.z __32+1
     lda balls+2+1,y
@@ -506,14 +485,7 @@ main: {
     // rand() & 0x0FF
     lda #$ff
     and.z __11
-    sta.z __12
     // balls[i].y_velocity = rand() & 0x0FF
-    txa
-    asl
-    asl
-    asl
-    tay
-    lda.z __12
     sta balls+6,y
     lda #0
     sta balls+6+1,y
@@ -618,9 +590,9 @@ ppuDataFill: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $1c
-    .label __1 = $1e
-    .label __2 = $20
+    .label __0 = $1b
+    .label __1 = $1d
+    .label __2 = $1f
     .label return = $19
     // rand_state << 7
     lda.z rand_state+1

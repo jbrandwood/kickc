@@ -289,13 +289,14 @@ main: {
 }
 // Process any chars in the PROCESSING array
 processChars: {
-    .label __12 = $1a
-    .label __21 = $18
-    .label processing = $15
-    .label bitmask = $17
+    .label __12 = $1b
+    .label __13 = $15
+    .label __21 = $19
+    .label processing = $16
+    .label bitmask = $18
     .label i = 7
-    .label xpos = $18
-    .label ypos = $1c
+    .label xpos = $19
+    .label ypos = $1d
     .label numActive = 8
     lda #0
     sta.z numActive
@@ -304,6 +305,7 @@ processChars: {
     // PROCESSING+i
     lda.z i
     asl
+    sta.z __13
     clc
     adc.z i
     asl
@@ -413,13 +415,10 @@ processChars: {
     and SPRITES_XMSB
     sta SPRITES_XMSB
   __b5:
-    // i*2
-    lda.z i
-    asl
-    tax
     // SPRITES_XPOS[i*2] = (char)xpos
+    ldy.z __13
     lda.z xpos
-    sta SPRITES_XPOS,x
+    sta SPRITES_XPOS,y
     // processing->y>>4
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_Y
     lda (processing),y
@@ -439,7 +438,8 @@ processChars: {
     lda.z __12
     sta.z ypos
     // SPRITES_YPOS[i*2] = ypos
-    sta SPRITES_YPOS,x
+    ldy.z __13
+    sta SPRITES_YPOS,y
     // if(processing->x < XPOS_LEFTMOST || processing->x > XPOS_RIGHTMOST || processing->y < YPOS_TOPMOST|| processing->y > YPOS_BOTTOMMOST  )
     // Move sprite
     ldy #1
@@ -606,16 +606,16 @@ processChars: {
 // Utilizes symmetry around the  center
 // init_angle_screen(byte* zp($12) screen)
 init_angle_screen: {
-    .label __7 = $1e
+    .label __7 = $1f
     .label screen = $12
     .label screen_topline = $a
     .label screen_bottomline = $12
-    .label xw = $24
-    .label yw = $27
-    .label angle_w = $1e
-    .label ang_w = $1d
-    .label x = $26
-    .label xb = $2b
+    .label xw = $25
+    .label yw = $28
+    .label angle_w = $1f
+    .label ang_w = $1e
+    .label x = $27
+    .label xb = $2c
     .label y = $14
     // screen_topline = screen+40*12
     lda.z screen
@@ -817,19 +817,19 @@ setupRasterIrq: {
 // Find the non-space char closest to the center of the screen
 // If no non-space char is found the distance will be 0xffff
 getCharToProcess: {
-    .label __8 = $29
-    .label __9 = $29
-    .label __11 = $29
+    .label __8 = $2a
+    .label __9 = $2a
+    .label __11 = $2a
     .label screen_line = $12
     .label dist_line = $a
     .label y = $14
-    .label return_x = $2b
+    .label return_x = $2c
     .label return_y = 9
-    .label closest_dist = $26
-    .label closest_x = $2b
+    .label closest_dist = $27
+    .label closest_x = $2c
     .label closest_y = 9
-    .label __12 = $1e
-    .label __13 = $29
+    .label __12 = $1f
+    .label __13 = $2a
     // screen_line = SCREEN_COPY
     lda.z SCREEN_COPY
     sta.z screen_line
@@ -949,36 +949,36 @@ getCharToProcess: {
     jmp __b3
 }
 // Start processing a char - by inserting it into the PROCESSING array
-// startProcessing(byte zp($1d) center_x, byte zp($14) center_y)
+// startProcessing(byte zp($1e) center_x, byte zp($14) center_y)
 startProcessing: {
-    .label __0 = $20
+    .label __0 = $21
     .label __4 = $c
     .label __6 = $a
-    .label __8 = $27
-    .label __9 = $27
-    .label __11 = $29
-    .label __12 = $29
-    .label __23 = $20
+    .label __8 = $28
+    .label __9 = $28
+    .label __11 = $2a
+    .label __12 = $2a
+    .label __23 = $21
     .label __24 = $c
     .label __25 = $a
-    .label __26 = $27
-    .label __27 = $29
-    .label center_x = $1d
+    .label __26 = $28
+    .label __27 = $2a
+    .label center_x = $1e
     .label center_y = $14
     .label i = 9
-    .label offset = $20
-    .label colPtr = $24
-    .label spriteCol = $26
-    .label screenPtr = $20
+    .label offset = $21
+    .label colPtr = $25
+    .label spriteCol = $27
+    .label screenPtr = $21
     .label spriteData = $c
     .label chargenData = $a
-    .label spriteX = $27
-    .label spriteY = $29
-    .label spritePtr = $2b
+    .label spriteX = $28
+    .label spriteY = $2a
+    .label spritePtr = $2c
     // Busy-wait while finding an empty slot in the PROCESSING array
     .label freeIdx = 9
-    .label __33 = $22
-    .label __34 = $20
+    .label __33 = $23
+    .label __34 = $21
     ldx #$ff
   __b1:
     lda #0
@@ -1262,18 +1262,18 @@ startProcessing: {
 // Find the atan2(x, y) - which is the angle of the line from (0,0) to (x,y)
 // Finding the angle requires a binary search using CORDIC_ITERATIONS_16
 // Returns the angle in hex-degrees (0=0, 0x8000=PI, 0x10000=2*PI)
-// atan2_16(signed word zp($24) x, signed word zp($27) y)
+// atan2_16(signed word zp($25) x, signed word zp($28) y)
 atan2_16: {
     .label __2 = $c
-    .label __7 = $29
+    .label __7 = $2a
     .label yi = $c
-    .label xi = $29
-    .label angle = $1e
-    .label xd = $22
-    .label yd = $20
-    .label return = $1e
-    .label x = $24
-    .label y = $27
+    .label xi = $2a
+    .label angle = $1f
+    .label xd = $23
+    .label yd = $21
+    .label return = $1f
+    .label x = $25
+    .label y = $28
     // (y>=0)?y:-y
     lda.z y+1
     bmi !__b1+

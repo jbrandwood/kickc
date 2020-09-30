@@ -370,6 +370,7 @@ public class Compiler {
          program.clearVariableReferenceInfos();
          program.clearControlFlowBlockSuccessorClosure();
          program.clearStatementInfos();
+         program.clearDominators();
          return false;
       });
       optimizations.add(new PassNStatementIndices(program));

@@ -79,7 +79,7 @@ main: {
 }
 // Initialize bitmap plotting tables
 bitmap_init: {
-    .label __7 = $14
+    .label __7 = $16
     .label yoffs = 8
     ldx #0
     lda #$80
@@ -175,8 +175,8 @@ sin16s_gen2: {
     .const max = $140
     .label ampl = max-min
     .label __6 = $e
-    .label __8 = $19
-    .label step = $15
+    .label __8 = $1b
+    .label step = $17
     .label sintab = 6
     // u[4.28]
     // Iterate over the table
@@ -269,9 +269,8 @@ sin16s_gen2: {
 }
 render_sine: {
     .label __1 = $12
-    .label __4 = $12
-    .label __10 = $12
-    .label __11 = $12
+    .label __4 = $21
+    .label __11 = $21
     .label sin_val = $12
     .label sin2_val = $12
     .label xpos = 8
@@ -297,15 +296,15 @@ render_sine: {
     // sin+sin_idx
     lda.z sin_idx
     asl
-    sta.z __10
+    sta.z __11
     lda.z sin_idx+1
     rol
-    sta.z __10+1
+    sta.z __11+1
+    lda.z __11
     clc
-    lda.z __1
     adc #<sin
     sta.z __1
-    lda.z __1+1
+    lda.z __11+1
     adc #>sin
     sta.z __1+1
     // sin_val = *(sin+sin_idx)
@@ -325,12 +324,6 @@ render_sine: {
     // bitmap_plot(xpos,ypos)
     jsr bitmap_plot
     // sin2+sin_idx
-    lda.z sin_idx
-    asl
-    sta.z __11
-    lda.z sin_idx+1
-    rol
-    sta.z __11+1
     clc
     lda.z __4
     adc #<sin2
@@ -340,13 +333,11 @@ render_sine: {
     sta.z __4+1
     // sin2_val = *(sin2+sin_idx)
     ldy #0
-    lda (sin2_val),y
-    pha
-    iny
-    lda (sin2_val),y
-    sta.z sin2_val+1
-    pla
+    lda (__4),y
     sta.z sin2_val
+    iny
+    lda (__4),y
+    sta.z sin2_val+1
     // wrap_y(sin2_val+10)
     lda.z wrap_y.y
     clc
@@ -431,9 +422,9 @@ memset: {
 // Divide unsigned 32-bit unsigned long dividend with a 16-bit unsigned int divisor
 // The 16-bit unsigned int remainder can be found in rem16u after the division
 div32u16u: {
-    .label quotient_hi = $1f
-    .label quotient_lo = $25
-    .label return = $15
+    .label quotient_hi = $21
+    .label quotient_lo = $14
+    .label return = $17
     // divr16u(>dividend, divisor, 0)
     lda #<PI2_u4f28>>$10
     sta.z divr16u.dividend
@@ -474,17 +465,17 @@ div32u16u: {
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp($a) x)
 sin16s: {
-    .label __4 = $1b
+    .label __4 = $1d
     .label x = $a
     .label return = $12
-    .label x1 = $1f
-    .label x2 = $23
-    .label x3 = $23
-    .label x3_6 = $21
+    .label x1 = $21
+    .label x2 = $25
+    .label x3 = $25
+    .label x3_6 = $23
     .label usinx = $12
-    .label x4 = $23
-    .label x5 = $21
-    .label x5_128 = $21
+    .label x4 = $25
+    .label x5 = $23
+    .label x5_128 = $23
     .label sinx = $12
     // if(x >= PI_u4f28 )
     lda.z x+3
@@ -809,12 +800,12 @@ bitmap_plot: {
 // Returns the quotient dividend/divisor.
 // The final remainder will be set into the global variable rem16u
 // Implemented using simple binary division
-// divr16u(word zp($23) dividend, word zp($12) rem)
+// divr16u(word zp($25) dividend, word zp($12) rem)
 divr16u: {
     .label rem = $12
-    .label dividend = $23
-    .label quotient = $25
-    .label return = $25
+    .label dividend = $25
+    .label quotient = $14
+    .label return = $14
     ldx #0
     txa
     sta.z quotient
@@ -874,14 +865,14 @@ divr16u: {
 }
 // Calculate val*val for two unsigned int values - the result is 16 selected bits of the 32-bit result.
 // The select parameter indicates how many of the highest bits of the 32-bit result to skip
-// mulu16_sel(word zp($23) v1, word zp($25) v2, byte register(X) select)
+// mulu16_sel(word zp($25) v1, word zp($14) v2, byte register(X) select)
 mulu16_sel: {
     .label __0 = $e
     .label __1 = $e
-    .label v1 = $23
-    .label v2 = $25
-    .label return = $21
-    .label return_1 = $23
+    .label v1 = $25
+    .label v2 = $14
+    .label return = $23
+    .label return_1 = $25
     // mul16u(v1, v2)
     lda.z v1
     sta.z mul16u.a
@@ -909,13 +900,13 @@ mulu16_sel: {
     rts
 }
 // Perform binary multiplication of two unsigned 16-bit unsigned ints into a 32-bit unsigned long
-// mul16u(word zp($19) a, word zp($25) b)
+// mul16u(word zp($1b) a, word zp($14) b)
 mul16u: {
-    .label mb = $1b
-    .label a = $19
+    .label mb = $1d
+    .label a = $1b
     .label res = $e
     .label return = $e
-    .label b = $25
+    .label b = $14
     // mb = b
     lda.z b
     sta.z mb

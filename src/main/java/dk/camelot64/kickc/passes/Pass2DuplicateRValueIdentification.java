@@ -1,6 +1,8 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.ControlFlowBlock;
+import dk.camelot64.kickc.model.DominatorsBlock;
+import dk.camelot64.kickc.model.DominatorsGraph;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValue;
 import dk.camelot64.kickc.model.iterator.ProgramValueHandler;
@@ -13,9 +15,7 @@ import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.values.*;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -31,27 +31,44 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
    public boolean step() {
       boolean modified = false;
 
+      // Dominators are used for determining if one statement is guaranteed to be executed before another statement
+      DominatorsGraph dominators = getProgram().getDominators();
+
+      // All RValues in the program
+      Set<AssignmentWithRValue> rValues = new HashSet<>();
+
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         Set<AssignmentRValue> rValues = new HashSet<>();
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementAssignment) {
-               StatementAssignment assignment = (StatementAssignment) statement;
-               AssignmentRValue assignmentRValue = new AssignmentRValue(assignment, block);
-               if(!assignmentRValue.isConstant() && !assignmentRValue.isTrivial() && !assignmentRValue.isVolatile()&& !assignmentRValue.isLoadStore()) {
-                  if(rValues.contains(assignmentRValue)) {
-                     AssignmentRValue firstAssignment = rValues.stream().filter(assignmentRValue1 -> assignmentRValue1.equals(assignmentRValue)).findFirst().get();
-                     if(firstAssignment.assignment.getlValue() instanceof VariableRef) {
-                        getLog().append("Identified duplicate assignment right side " + assignment.toString(getProgram(), false));
-                        assignment.setrValue1(null);
-                        assignment.setOperator(null);
-                        assignment.setrValue2(firstAssignment.assignment.getlValue());
-                        modified = true;
-                     } else {
-                        throw new InternalError("Complex lValue for duplicate rvalue " + firstAssignment.assignment.toString(getProgram(), false));
+               StatementAssignment thisAssignment = (StatementAssignment) statement;
+               AssignmentWithRValue thisRValue = new AssignmentWithRValue(thisAssignment, block);
+               if(!thisRValue.isConstant() && !thisRValue.isTrivial() && !thisRValue.isVolatile() && !thisRValue.isLoadStore()) {
+                  boolean duplicate = false;
+                  for(AssignmentWithRValue otherRValue : rValues) {
+                     if(otherRValue.isSameRValue(thisRValue)) {
+                        // Check if any of the statements is guaranteed to be executed before the other statement
+                        DominatorsBlock thisDominators = dominators.getDominators(thisRValue.block.getLabel());
+                        DominatorsBlock otherDominators = dominators.getDominators(otherRValue.block.getLabel());
+                        if(otherRValue.block.getLabel().equals(thisRValue.block.getLabel())) {
+                           // The two assignments are in the same block
+                           // Since we are visiting statements sequentially the other  other assignment is guaranteed to be executed before this assignment
+                           duplicate |= deduplicateRValue(otherRValue, thisRValue);
+                        } else if(thisDominators.contains(otherRValue.block.getLabel())) {
+                           // The other assignment is guaranteed to be executed before this assignment
+                           if(scopeMatch(thisRValue.rValue1, thisRValue.block) && scopeMatch(thisRValue.rValue2, thisRValue.block))
+                              duplicate |= deduplicateRValue(otherRValue, thisRValue);
+                        } else if(otherDominators.contains(thisRValue.block.getLabel())) {
+                           // This assignment is guaranteed to be executed before the other assignment
+                           if(scopeMatch(thisRValue.rValue1, thisRValue.block) && scopeMatch(thisRValue.rValue2, thisRValue.block))
+                              duplicate |= deduplicateRValue(thisRValue, otherRValue);
+                        }
                      }
-                  } else {
-                     rValues.add(assignmentRValue);
                   }
+                  // If not a duplicate itself - add it to the candidate pool
+                  if(!duplicate)
+                     rValues.add(thisRValue);
+                  // Determine if anything is modified
+                  modified |= duplicate;
                }
             }
          }
@@ -59,19 +76,65 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
       return modified;
    }
 
+   /**
+    * Check that the scope of the values inside an RValue matches the scope of a block.
+    * We only know that a specific variable version has the same value if it is from the same scope as the block.
+    * Otherwise it might be modified inside some called function.
+    *
+    * @param rValue The RValue to examine (may be null)
+    * @param block The block to examine
+    * @return true if the scope match
+    */
+   private boolean scopeMatch(RValue rValue, ControlFlowBlock block) {
+      if(rValue == null)
+         return true;
+      List<SymbolVariableRef> varRefs = new ArrayList<>();
+      ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue),
+            (programValue, currentStmt, stmtIt, currentBlock) -> {
+               if(programValue.get() instanceof SymbolVariableRef) varRefs.add((SymbolVariableRef) programValue.get());
+            }
+            , null, null, null);
+      for(SymbolVariableRef varRef : varRefs) {
+         Variable var = getScope().getVariable(varRef);
+         if(!var.getScope().getRef().equals(block.getScope()))
+            return false;
+      }
+      return true;
+   }
+
+   /**
+    * De-duplicates the RValues of two assignments, where the first one is guaranteed to be called before the second one.
+    * Modifies the second assignment to reference the result of the first.
+    *
+    * @param firstRValue The first assignment with the RValue - guaranteed to be called before the second assignment.
+    * @param secondRValue A second assignment with a duplicated RValue.
+    * @return true if the deduplication was successful.
+    */
+   private boolean deduplicateRValue(AssignmentWithRValue firstRValue, AssignmentWithRValue secondRValue) {
+      if(firstRValue.assignment.getlValue() instanceof VariableRef) {
+         StatementAssignment secondAssignment = secondRValue.assignment;
+         getLog().append("Identified duplicate assignment right side " + secondAssignment.toString(getProgram(), false));
+         secondAssignment.setrValue1(null);
+         secondAssignment.setOperator(null);
+         secondAssignment.setrValue2(firstRValue.assignment.getlValue());
+         return true;
+      } else {
+         throw new InternalError("Complex lValue for duplicate rvalue " + firstRValue.assignment.toString(getProgram(), false));
+      }
+   }
+
 
    /**
     * Represents an RValue of an assignment.
-    * Implements equals() and hashcode() to allow identification of duplicate RValues
     */
-   private class AssignmentRValue {
+   private class AssignmentWithRValue {
       private ControlFlowBlock block;
       private StatementAssignment assignment;
       private RValue rValue1;
       private Operator operator;
       private RValue rValue2;
 
-      public AssignmentRValue(StatementAssignment assignment, ControlFlowBlock block) {
+      public AssignmentWithRValue(StatementAssignment assignment, ControlFlowBlock block) {
          this.block = block;
          this.assignment = assignment;
          this.rValue1 = assignment.getrValue1();
@@ -97,8 +160,8 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
                   isLoadStore.set(true);
             }
          };
-         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue1), loadStoreIdentificator,  assignment, null, block);
-         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue2), loadStoreIdentificator,  assignment, null, block);
+         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue1), loadStoreIdentificator, assignment, null, block);
+         ProgramValueIterator.execute(new ProgramValue.GenericValue(rValue2), loadStoreIdentificator, assignment, null, block);
          return isLoadStore.get();
       }
 
@@ -134,24 +197,39 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.LOGIC_NOT)) return true;
          if(operator.equals(Operators.LOGIC_AND)) return true;
          if(operator.equals(Operators.LOGIC_OR)) return true;
+         if(operator.equals(Operators.HIBYTE)) return true;
+         if(operator.equals(Operators.LOWBYTE)) return true;
          return false;
       }
 
 
-      @Override
-      public boolean equals(Object o) {
-         if(this == o) return true;
-         if(o == null || getClass() != o.getClass()) return false;
-         AssignmentRValue that = (AssignmentRValue) o;
+      /**
+       * Determines if two assignment RValues are duplicates.
+       *
+       * @param that The other assignment
+       * @return true if the RValues are duplicates
+       */
+      public boolean isSameRValue(AssignmentWithRValue that) {
          return Objects.equals(rValue1, that.rValue1) &&
                Objects.equals(operator, that.operator) &&
                Objects.equals(rValue2, that.rValue2);
       }
 
       @Override
-      public int hashCode() {
-         return Objects.hash(rValue1, operator, rValue2);
+      public boolean equals(Object o) {
+         if(this == o) return true;
+         if(o == null || getClass() != o.getClass()) return false;
+         AssignmentWithRValue that = (AssignmentWithRValue) o;
+         return block.equals(that.block) &&
+               assignment.equals(that.assignment) &&
+               Objects.equals(rValue1, that.rValue1) &&
+               Objects.equals(operator, that.operator) &&
+               Objects.equals(rValue2, that.rValue2);
       }
 
+      @Override
+      public int hashCode() {
+         return Objects.hash(block, assignment, rValue1, operator, rValue2);
+      }
    }
 }

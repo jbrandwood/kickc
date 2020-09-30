@@ -35,39 +35,36 @@ scan_for_lowest: {
     sta.z height
     lda #>$258
     sta.z height+1
-    ldx #0
+    ldy #0
   __b1:
     // for (char i=0;i<8;i++)
-    cpx #8
+    cpy #8
     bcc __b2
     // }
     rts
   __b2:
     // ball_y[i]<height
-    txa
+    tya
     asl
+    tax
     // if (ball_y[i]<height)
-    tay
-    lda ball_y,y
+    lda ball_y,x
     cmp.z height
-    lda ball_y+1,y
+    lda ball_y+1,x
     sbc.z height+1
     bvc !+
     eor #$80
   !:
     bpl __b3
     // height=ball_y[i]
-    txa
-    asl
-    tay
-    lda ball_y,y
+    lda ball_y,x
     sta.z height
-    lda ball_y+1,y
+    lda ball_y+1,x
     sta.z height+1
-    stx.z lowest
+    sty.z lowest
   __b3:
     // for (char i=0;i<8;i++)
-    inx
+    iny
     jmp __b1
 }
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79

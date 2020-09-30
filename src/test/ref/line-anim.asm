@@ -225,6 +225,7 @@ screen_fill: {
 point_init: {
     .label __5 = $c
     .label __6 = $e
+    .label __13 = 9
     .label __17 = $10
     .label __18 = $a
     .label __19 = $e
@@ -237,6 +238,7 @@ point_init: {
     // ((signed word)x_end[point_idx])-((signed word)x_start[point_idx])
     lda.z point_idx
     asl
+    sta.z __13
     tay
     sec
     lda x_end,y
@@ -294,13 +296,11 @@ point_init: {
   !:
   __b2:
     // x_start[point_idx]*$10
-    lda.z point_idx
-    asl
-    tax
-    lda x_start,x
+    ldy.z __13
+    lda x_start,y
     asl
     sta.z __5
-    lda x_start+1,x
+    lda x_start+1,y
     rol
     sta.z __5+1
     asl.z __5
@@ -311,9 +311,9 @@ point_init: {
     rol.z __5+1
     // x_cur[point_idx] = x_start[point_idx]*$10
     lda.z __5
-    sta x_cur,x
+    sta x_cur,y
     lda.z __5+1
-    sta x_cur+1,x
+    sta x_cur+1,y
     // ((word)y_start[point_idx])*$10
     ldy.z point_idx
     lda y_start,y
@@ -329,12 +329,14 @@ point_init: {
     asl.z __6
     rol.z __6+1
     // y_cur[point_idx] = ((word)y_start[point_idx])*$10
+    ldy.z __13
     lda.z __6
-    sta y_cur,x
+    sta y_cur,y
     lda.z __6+1
-    sta y_cur+1,x
+    sta y_cur+1,y
     // delay[point_idx] = DELAY
     lda #DELAY
+    ldy.z point_idx
     sta delay,y
     // }
     rts

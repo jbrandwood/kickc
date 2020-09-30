@@ -60,23 +60,17 @@ main: {
     bcc __b6
   !:
     // entities[i] =0
-    lda.z i
-    asl
-    tay
     lda #0
-    sta entities,y
-    sta entities+1,y
+    sta entities,x
+    sta entities+1,x
   __b6:
     // line[entities[i]] = '*'
-    lda.z i
-    asl
-    tay
     clc
     lda.z line
-    adc entities,y
+    adc entities,x
     sta.z __11
     lda.z line+1
-    adc entities+1,y
+    adc entities+1,x
     sta.z __11+1
     // Draw symbol
     lda #'*'

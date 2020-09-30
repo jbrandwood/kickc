@@ -2,10 +2,7 @@ package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.values.LabelRef;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Dominators for a specific block.
@@ -43,7 +40,6 @@ public class DominatorsBlock {
       for(LabelRef dominator : dominators) {
          add(dominator);
       }
-
    }
 
    /**
@@ -53,13 +49,7 @@ public class DominatorsBlock {
     * @param other The dominator set to intersect with
     */
    public void intersect(DominatorsBlock other) {
-      Iterator<LabelRef> iterator = dominators.iterator();
-      while(iterator.hasNext()) {
-         LabelRef dominator = iterator.next();
-         if(!other.contains(dominator)) {
-            iterator.remove();
-         }
-      }
+      dominators.removeIf(dominator -> !other.contains(dominator));
    }
 
    /**
@@ -80,15 +70,13 @@ public class DominatorsBlock {
    public boolean equals(Object o) {
       if(this == o) return true;
       if(o == null || getClass() != o.getClass()) return false;
-
       DominatorsBlock that = (DominatorsBlock) o;
-
-      return dominators != null ? dominators.equals(that.dominators) : that.dominators == null;
+      return Objects.equals(dominators, that.dominators);
    }
 
    @Override
    public int hashCode() {
-      return dominators != null ? dominators.hashCode() : 0;
+      return Objects.hash(dominators);
    }
 
    @Override

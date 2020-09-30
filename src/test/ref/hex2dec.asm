@@ -208,8 +208,8 @@ utoa10w: {
     // value>=UTOA10_SUB[i]
     txa
     asl
-    // while(value>=UTOA10_SUB[i])
     tay
+    // while(value>=UTOA10_SUB[i])
     lda UTOA10_SUB+1,y
     cmp.z value+1
     bne !+
@@ -270,9 +270,6 @@ utoa10w: {
     adc.z digit
     sta.z digit
     // value -= UTOA10_SUB[i]
-    txa
-    asl
-    tay
     sec
     lda.z value
     sbc UTOA10_SUB,y

@@ -13,6 +13,7 @@ main: {
     // Move the entities
     .label line = 4
     .label i1 = 3
+    .label __25 = 6
     // asm
     sei
     lda #-1
@@ -52,6 +53,7 @@ main: {
     // line[entities[i].x_pos] = ' '
     lda.z i1
     asl
+    sta.z __25
     clc
     adc.z i1
     tax
@@ -78,8 +80,7 @@ main: {
     bmi __b8
   __b9:
     // -entities[i].x_vel
-    lda.z i1
-    asl
+    lda.z __25
     clc
     adc.z i1
     tax
@@ -96,8 +97,7 @@ main: {
     sta entities,x
   __b8:
     // line[entities[i].x_pos] = entities[i].symbol
-    lda.z i1
-    asl
+    lda.z __25
     clc
     adc.z i1
     // Draw symbol

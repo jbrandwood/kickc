@@ -197,14 +197,19 @@ Inlining constant with var siblings (const byte) main::i#0
 Constant inlined main::line#0 = (const nomodify byte*) SCREEN
 Constant inlined main::i#0 = (byte) 0
 Successful SSA optimization Pass2ConstantInlining
+Identified duplicate assignment right side [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
+Identified duplicate assignment right side [16] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1
+Successful SSA optimization Pass2DuplicateRValueIdentification
 Eliminating unused constant (const byte) SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Alias main::$7 = main::$5 main::$8 
+Successful SSA optimization Pass2AliasElimination
 Adding NOP phi() at start of main::@1
 CALL GRAPH
 
 Created 2 initial phi equivalence classes
-Coalesced [19] main::i#6 ← main::i#1
-Coalesced [20] main::line#6 ← main::line#1
+Coalesced [17] main::i#6 ← main::i#1
+Coalesced [18] main::line#6 ← main::line#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block (label) main::@1
 Renumbering block main::@2 to main::@1
@@ -236,62 +241,52 @@ main::@5: scope:[main]  from main::@3
   [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f
   to:main::@1
 main::@4: scope:[main]  from main::@3
-  [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1
-  [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$5)
+  [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
+  [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7)
   [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' '
-  [9] *((const word*) entities + (byte~) main::$5) ← *((const word*) entities + (byte~) main::$5) + (byte) 1
-  [10] if(*((const word*) entities + (byte~) main::$5)<(byte) $27+(byte) 1) goto main::@6
+  [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1
+  [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6
   to:main::@7
 main::@7: scope:[main]  from main::@4
-  [11] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1
-  [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0
+  [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0
   to:main::@6
 main::@6: scope:[main]  from main::@4 main::@7
-  [13] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
-  [14] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7)
-  [15] *((byte*~) main::$11) ← (byte) '*'
-  [16] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28
-  [17] (byte) main::i#1 ← ++ (byte) main::i#2
+  [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7)
+  [13] *((byte*~) main::$11) ← (byte) '*'
+  [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28
+  [15] (byte) main::i#1 ← ++ (byte) main::i#2
   to:main::@3
 
 
 VARIABLE REGISTER WEIGHTS
 (void()) main()
 (byte*~) main::$11 202.0
-(byte~) main::$5 101.0
-(byte~) main::$7 202.0
-(byte~) main::$8 202.0
+(byte~) main::$7 100.99999999999999
 (byte~) main::$9 202.0
 (byte) main::i
 (byte) main::i#1 202.0
-(byte) main::i#2 46.61538461538461
+(byte) main::i#2 36.72727272727273
 (byte*) main::line
 (byte*) main::line#1 101.0
-(byte*) main::line#2 33.666666666666664
+(byte*) main::line#2 40.4
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::line#2 main::line#1 ]
-Added variable main::$5 to live range equivalence class [ main::$5 ]
-Added variable main::$9 to live range equivalence class [ main::$9 ]
-Added variable main::$8 to live range equivalence class [ main::$8 ]
 Added variable main::$7 to live range equivalence class [ main::$7 ]
+Added variable main::$9 to live range equivalence class [ main::$9 ]
 Added variable main::$11 to live range equivalence class [ main::$11 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 [ main::line#2 main::line#1 ]
-[ main::$5 ]
-[ main::$9 ]
-[ main::$8 ]
 [ main::$7 ]
+[ main::$9 ]
 [ main::$11 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:3 [ main::line#2 main::line#1 ]
-Allocated zp[1]:5 [ main::$5 ]
+Allocated zp[1]:5 [ main::$7 ]
 Allocated zp[1]:6 [ main::$9 ]
-Allocated zp[1]:7 [ main::$8 ]
-Allocated zp[1]:8 [ main::$7 ]
-Allocated zp[2]:9 [ main::$11 ]
+Allocated zp[2]:7 [ main::$11 ]
 
 INITIAL ASM
 Target platform is c64basic / MOS6502X
@@ -307,14 +302,12 @@ Target platform is c64basic / MOS6502X
   .label SCREEN = $400
   // main
 main: {
-    .label __5 = 5
-    .label __7 = 8
-    .label __8 = 7
+    .label __7 = 5
     .label __9 = 6
     // Move the entities
     .label line = 3
     .label i = 2
-    .label __11 = 9
+    .label __11 = 7
     // asm { sei  }
     sei
     jmp __b1
@@ -357,12 +350,12 @@ main: {
     jmp __b1
     // main::@4
   __b4:
-    // [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    // [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
     lda.z i
     asl
-    sta.z __5
-    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$5) -- vbuz1=_byte_pwuc1_derefidx_vbuz2 
-    ldy.z __5
+    sta.z __7
+    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) -- vbuz1=_byte_pwuc1_derefidx_vbuz2 
+    ldy.z __7
     lda entities,y
     sta.z __9
     // [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
@@ -370,15 +363,15 @@ main: {
     lda #' '
     ldy.z __9
     sta (line),y
-    // [9] *((const word*) entities + (byte~) main::$5) ← *((const word*) entities + (byte~) main::$5) + (byte) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_plus_1 
+    // [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_plus_1 
     // Move by velocity
-    ldx.z __5
+    ldx.z __7
     inc entities,x
     bne !+
     inc entities+1,x
   !:
-    // [10] if(*((const word*) entities + (byte~) main::$5)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuz1_lt_vbuc2_then_la1 
-    ldy.z __5
+    // [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuz1_lt_vbuc2_then_la1 
+    ldy.z __7
     lda entities+1,y
     bne !+
     lda entities,y
@@ -388,24 +381,16 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [11] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z i
-    asl
-    sta.z __8
-    // [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
+    // [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
     lda #0
-    ldy.z __8
+    ldy.z __7
     sta entities,y
     lda #0
     sta entities+1,y
     jmp __b6
     // main::@6
   __b6:
-    // [13] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z i
-    asl
-    sta.z __7
-    // [14] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuz3 
+    // [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuz3 
     ldy.z __7
     clc
     lda.z line
@@ -414,12 +399,12 @@ main: {
     lda.z line+1
     adc entities+1,y
     sta.z __11+1
-    // [15] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    // [13] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
     // Draw symbol
     lda #'*'
     ldy #0
     sta (__11),y
-    // [16] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     // Next line
     lda #$28
     clc
@@ -428,7 +413,7 @@ main: {
     bcc !+
     inc.z line+1
   !:
-    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [3] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   __b3_from___b6:
@@ -443,52 +428,43 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$5 ] (  [ main::i#2 main::line#2 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$5) [ main::i#2 main::line#2 main::$5 main::$9 ] (  [ main::i#2 main::line#2 main::$5 main::$9 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::$5 ]
-Statement [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' [ main::i#2 main::line#2 main::$5 ] (  [ main::i#2 main::line#2 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [10] if(*((const word*) entities + (byte~) main::$5)<(byte) $27+(byte) 1) goto main::@6 [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a 
-Statement [11] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$8 ] (  [ main::i#2 main::line#2 main::$8 ] { }  ) always clobbers reg byte a 
-Statement [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*~) main::$11) ← (byte) '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$7 main::$9 ] (  [ main::i#2 main::line#2 main::$7 main::$9 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::$7 ]
+Statement [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
+Statement [13] *((byte*~) main::$11) ← (byte) '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [16] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
+Statement [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
 Statement [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$5 ] (  [ main::i#2 main::line#2 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$5) [ main::i#2 main::line#2 main::$5 main::$9 ] (  [ main::i#2 main::line#2 main::$5 main::$9 ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' [ main::i#2 main::line#2 main::$5 ] (  [ main::i#2 main::line#2 main::$5 ] { }  ) always clobbers reg byte a 
-Statement [10] if(*((const word*) entities + (byte~) main::$5)<(byte) $27+(byte) 1) goto main::@6 [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a 
-Statement [11] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$8 ] (  [ main::i#2 main::line#2 main::$8 ] { }  ) always clobbers reg byte a 
-Statement [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [14] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*~) main::$11) ← (byte) '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [16] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$7 main::$9 ] (  [ main::i#2 main::line#2 main::$7 main::$9 ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
+Statement [13] *((byte*~) main::$11) ← (byte) '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ main::line#2 main::line#1 ] : zp[2]:3 , 
-Potential registers zp[1]:5 [ main::$5 ] : zp[1]:5 , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$7 ] : zp[1]:5 , reg byte x , reg byte y , 
 Potential registers zp[1]:6 [ main::$9 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:7 [ main::$8 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:8 [ main::$7 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:9 [ main::$11 ] : zp[2]:9 , 
+Potential registers zp[2]:7 [ main::$11 ] : zp[2]:7 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [main] 248.62: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:6 [ main::$9 ] 202: zp[1]:7 [ main::$8 ] 202: zp[1]:8 [ main::$7 ] 202: zp[2]:9 [ main::$11 ] 134.67: zp[2]:3 [ main::line#2 main::line#1 ] 101: zp[1]:5 [ main::$5 ] 
+Uplift Scope [main] 238.73: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:6 [ main::$9 ] 202: zp[2]:7 [ main::$11 ] 141.4: zp[2]:3 [ main::line#2 main::line#1 ] 101: zp[1]:5 [ main::$7 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 19805 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$9 ] reg byte a [ main::$8 ] reg byte a [ main::$7 ] zp[2]:9 [ main::$11 ] zp[2]:3 [ main::line#2 main::line#1 ] zp[1]:5 [ main::$5 ] 
-Limited combination testing to 100 combinations of 384 possible.
-Uplifting [] best 19805 combination 
+Uplifting [main] best 17405 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$9 ] zp[2]:7 [ main::$11 ] zp[2]:3 [ main::line#2 main::line#1 ] reg byte x [ main::$7 ] 
+Uplifting [] best 17405 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 19805 combination zp[1]:2 [ main::i#2 main::i#1 ] 
-Attempting to uplift remaining variables inzp[1]:5 [ main::$5 ]
-Uplifting [main] best 18805 combination reg byte x [ main::$5 ] 
-Allocated (was zp[2]:9) zp[2]:5 [ main::$11 ]
+Uplifting [main] best 17405 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Allocated (was zp[2]:7) zp[2]:5 [ main::$11 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -549,24 +525,24 @@ main: {
     jmp __b1
     // main::@4
   __b4:
-    // [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
+    // [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
     asl
     tax
-    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$5) -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
+    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
     lda entities,x
     // [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' -- pbuz1_derefidx_vbuaa=vbuc1 
     // Delete old symbol
     tay
     lda #' '
     sta (line),y
-    // [9] *((const word*) entities + (byte~) main::$5) ← *((const word*) entities + (byte~) main::$5) + (byte) 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
+    // [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
     // Move by velocity
     inc entities,x
     bne !+
     inc entities+1,x
   !:
-    // [10] if(*((const word*) entities + (byte~) main::$5)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
+    // [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
     lda entities+1,x
     bne !+
     lda entities,x
@@ -576,36 +552,28 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [11] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z i
-    asl
-    // [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 -- pwuc1_derefidx_vbuaa=vbuc2 
-    tay
+    // [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 -- pwuc1_derefidx_vbuxx=vbuc2 
     lda #0
-    sta entities,y
+    sta entities,x
     lda #0
-    sta entities+1,y
+    sta entities+1,x
     jmp __b6
     // main::@6
   __b6:
-    // [13] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z i
-    asl
-    // [14] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuaa 
-    tay
+    // [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx 
     clc
     lda.z line
-    adc entities,y
+    adc entities,x
     sta.z __11
     lda.z line+1
-    adc entities+1,y
+    adc entities+1,x
     sta.z __11+1
-    // [15] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    // [13] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
     // Draw symbol
     lda #'*'
     ldy #0
     sta (__11),y
-    // [16] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     // Next line
     lda #$28
     clc
@@ -614,7 +582,7 @@ main: {
     bcc !+
     inc.z line+1
   !:
-    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [3] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   __b3_from___b6:
@@ -649,9 +617,7 @@ FINAL SYMBOL TABLE
 (const word*) entities[(number) $19]  = { fill( $19, 0) }
 (void()) main()
 (byte*~) main::$11 zp[2]:5 202.0
-(byte~) main::$5 reg byte x 101.0
-(byte~) main::$7 reg byte a 202.0
-(byte~) main::$8 reg byte a 202.0
+(byte~) main::$7 reg byte x 100.99999999999999
 (byte~) main::$9 reg byte a 202.0
 (label) main::@1
 (label) main::@2
@@ -662,22 +628,20 @@ FINAL SYMBOL TABLE
 (label) main::@7
 (byte) main::i
 (byte) main::i#1 i zp[1]:2 202.0
-(byte) main::i#2 i zp[1]:2 46.61538461538461
+(byte) main::i#2 i zp[1]:2 36.72727272727273
 (byte*) main::line
 (byte*) main::line#1 line zp[2]:3 101.0
-(byte*) main::line#2 line zp[2]:3 33.666666666666664
+(byte*) main::line#2 line zp[2]:3 40.4
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[2]:3 [ main::line#2 main::line#1 ]
-reg byte x [ main::$5 ]
+reg byte x [ main::$7 ]
 reg byte a [ main::$9 ]
-reg byte a [ main::$8 ]
-reg byte a [ main::$7 ]
 zp[2]:5 [ main::$11 ]
 
 
 FINAL ASSEMBLER
-Score: 17102
+Score: 15702
 
   // File Comments
 // Test that the multiplication of a idx*sizeof(element) is reused inside loops
@@ -736,11 +700,11 @@ main: {
     // main::@4
   __b4:
     // line[(char)entities[i]] = ' '
-    // [6] (byte~) main::$5 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
+    // [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
     asl
     tax
-    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$5) -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
+    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
     lda entities,x
     // [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' -- pbuz1_derefidx_vbuaa=vbuc1 
     // Delete old symbol
@@ -748,14 +712,14 @@ main: {
     lda #' '
     sta (line),y
     // entities[i] += 1
-    // [9] *((const word*) entities + (byte~) main::$5) ← *((const word*) entities + (byte~) main::$5) + (byte) 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
+    // [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
     // Move by velocity
     inc entities,x
     bne !+
     inc entities+1,x
   !:
     // if(entities[i]>39)
-    // [10] if(*((const word*) entities + (byte~) main::$5)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
+    // [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
     lda entities+1,x
     bne !+
     lda entities,x
@@ -764,36 +728,28 @@ main: {
   !:
     // main::@7
     // entities[i] =0
-    // [11] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z i
-    asl
-    // [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 -- pwuc1_derefidx_vbuaa=vbuc2 
-    tay
+    // [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 -- pwuc1_derefidx_vbuxx=vbuc2 
     lda #0
-    sta entities,y
-    sta entities+1,y
+    sta entities,x
+    sta entities+1,x
     // main::@6
   __b6:
     // line[entities[i]] = '*'
-    // [13] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z i
-    asl
-    // [14] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuaa 
-    tay
+    // [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx 
     clc
     lda.z line
-    adc entities,y
+    adc entities,x
     sta.z __11
     lda.z line+1
-    adc entities+1,y
+    adc entities+1,x
     sta.z __11+1
-    // [15] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    // [13] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
     // Draw symbol
     lda #'*'
     ldy #0
     sta (__11),y
     // line +=40
-    // [16] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
     // Next line
     lda #$28
     clc
@@ -803,7 +759,7 @@ main: {
     inc.z line+1
   !:
     // for(char i=0;i<NUM_ENTITIES;i++)
-    // [17] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [3] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
     // [3] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@6->main::@3#0] -- register_copy 

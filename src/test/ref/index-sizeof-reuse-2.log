@@ -393,11 +393,11 @@ main: {
     asl
     sta.z __8
     // [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda.z __8
-    ldx #0
-    tay
-    txa
+    lda #0
+    ldy.z __8
     sta entities,y
+    lda #0
+    sta entities+1,y
     jmp __b6
     // main::@6
   __b6:
@@ -481,13 +481,13 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 248.62: zp[1]:2 [ main::i#2 main::i#1 ] 202: zp[1]:6 [ main::$9 ] 202: zp[1]:7 [ main::$8 ] 202: zp[1]:8 [ main::$7 ] 202: zp[2]:9 [ main::$11 ] 134.67: zp[2]:3 [ main::line#2 main::line#1 ] 101: zp[1]:5 [ main::$5 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 19305 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$9 ] reg byte a [ main::$8 ] reg byte a [ main::$7 ] zp[2]:9 [ main::$11 ] zp[2]:3 [ main::line#2 main::line#1 ] zp[1]:5 [ main::$5 ] 
+Uplifting [main] best 19805 combination zp[1]:2 [ main::i#2 main::i#1 ] reg byte a [ main::$9 ] reg byte a [ main::$8 ] reg byte a [ main::$7 ] zp[2]:9 [ main::$11 ] zp[2]:3 [ main::line#2 main::line#1 ] zp[1]:5 [ main::$5 ] 
 Limited combination testing to 100 combinations of 384 possible.
-Uplifting [] best 19305 combination 
+Uplifting [] best 19805 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ main::i#2 main::i#1 ]
-Uplifting [main] best 19305 combination zp[1]:2 [ main::i#2 main::i#1 ] 
+Uplifting [main] best 19805 combination zp[1]:2 [ main::i#2 main::i#1 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ main::$5 ]
-Uplifting [main] best 18305 combination reg byte x [ main::$5 ] 
+Uplifting [main] best 18805 combination reg byte x [ main::$5 ] 
 Allocated (was zp[2]:9) zp[2]:5 [ main::$11 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
@@ -580,10 +580,11 @@ main: {
     lda.z i
     asl
     // [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 -- pwuc1_derefidx_vbuaa=vbuc2 
-    ldx #0
     tay
-    txa
+    lda #0
     sta entities,y
+    lda #0
+    sta entities+1,y
     jmp __b6
     // main::@6
   __b6:
@@ -632,6 +633,8 @@ Removing instruction jmp __b5
 Removing instruction jmp __b7
 Removing instruction jmp __b6
 Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b2:
 Removing instruction __b3_from___b2:
 Removing instruction __b5:
@@ -674,7 +677,7 @@ zp[2]:5 [ main::$11 ]
 
 
 FINAL ASSEMBLER
-Score: 16802
+Score: 17102
 
   // File Comments
 // Test that the multiplication of a idx*sizeof(element) is reused inside loops
@@ -765,10 +768,10 @@ main: {
     lda.z i
     asl
     // [12] *((const word*) entities + (byte~) main::$8) ← (byte) 0 -- pwuc1_derefidx_vbuaa=vbuc2 
-    ldx #0
     tay
-    txa
+    lda #0
     sta entities,y
+    sta entities+1,y
     // main::@6
   __b6:
     // line[entities[i]] = '*'

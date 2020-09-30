@@ -4,23 +4,25 @@
 .pc = $80d "Program"
 main: {
     .label screen = $400
-    .label b = 2
-    lda #0
-    sta.z b
+    .label __0 = 2
+    ldy #0
   __b1:
     // -0x30+b
-    lax.z b
-    axs #-[-$30]
+    tya
+    clc
+    adc #-$30
+    sta.z __0
     // screen[b] = -0x30+b
-    lda.z b
+    tya
     asl
-    tay
-    txa
-    sta screen,y
+    tax
+    lda.z __0
+    sta screen,x
+    lda #0
+    sta screen+1,x
     // for( byte b: 0..20)
-    inc.z b
-    lda #$15
-    cmp.z b
+    iny
+    cpy #$15
     bne __b1
     // }
     rts

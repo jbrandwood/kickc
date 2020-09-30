@@ -62,10 +62,10 @@ main: {
     // entities[i] =0
     lda.z i
     asl
-    ldx #0
     tay
-    txa
+    lda #0
     sta entities,y
+    sta entities+1,y
   __b6:
     // line[entities[i]] = '*'
     lda.z i

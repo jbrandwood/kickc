@@ -76,10 +76,10 @@
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
-  .label scroll_y = $a
-  .label vblank_hit = $b
+  .label scroll_y = 9
+  .label vblank_hit = $a
   // The random state variable
-  .label rand_state = 8
+  .label rand_state = 7
 .segment Code
 __start: {
     // scroll_y = 0
@@ -121,24 +121,24 @@ vblank: {
     rti
 }
 main: {
-    .label __9 = $1a
-    .label __10 = $1a
-    .label __11 = $1a
-    .label __20 = $d
-    .label __23 = $f
-    .label __25 = $11
-    .label __26 = $13
-    .label __31 = $14
-    .label __32 = $16
-    .label __33 = $18
-    .label __56 = $14
-    .label i = 2
-    .label timer_2 = 3
-    .label h_bar = $c
-    .label active_balls = 4
-    .label sprite_idx = 7
-    .label i_1 = 6
-    .label timer = 5
+    .label __9 = $19
+    .label __10 = $19
+    .label __11 = $19
+    .label __12 = $1b
+    .label __20 = $c
+    .label __23 = $e
+    .label __25 = $10
+    .label __26 = $12
+    .label __31 = $13
+    .label __32 = $15
+    .label __33 = $17
+    .label __56 = $13
+    .label timer_2 = 2
+    .label h_bar = $b
+    .label active_balls = 3
+    .label sprite_idx = 6
+    .label i = 5
+    .label timer = 4
     // asm
     cld
     ldx #$ff
@@ -250,11 +250,10 @@ main: {
     sta.z rand_state
     lda #>1
     sta.z rand_state+1
-    sta.z i
+    tax
   __b1:
     // for (i = 0; i < MAX_BALLS; i++)
-    lda.z i
-    cmp #$20
+    cpx #$20
     bcs !__b2+
     jmp __b2
   !__b2:
@@ -306,10 +305,10 @@ main: {
   __b5:
     lda #0
     sta.z sprite_idx
-    sta.z i_1
+    sta.z i
   __b6:
     // for (i = 0; i < active_balls; i++)
-    lda.z i_1
+    lda.z i
     cmp.z active_balls
     bcc __b7
     // poke(0x2001) = 0x98
@@ -329,7 +328,7 @@ main: {
     jmp __b4
   __b7:
     // balls[i].x_position += balls[i].x_velocity
-    lda.z i_1
+    lda.z i
     asl
     asl
     asl
@@ -370,7 +369,7 @@ main: {
     bcs __b9
   !:
     // balls[i].x_velocity ^= 0xFFFF
-    lda.z i_1
+    lda.z i
     asl
     asl
     asl
@@ -383,7 +382,7 @@ main: {
     sta balls+4+1,y
   __b9:
     // balls[i].y_position >> 8
-    lda.z i_1
+    lda.z i
     asl
     asl
     asl
@@ -414,7 +413,7 @@ main: {
     bcs __b10
   !:
     // balls[i].y_velocity ^= 0xFFFF
-    lda.z i_1
+    lda.z i
     asl
     asl
     asl
@@ -443,7 +442,7 @@ main: {
     sta balls+2+1,y
   __b10:
     // balls[i].y_position >> 8
-    lda.z i_1
+    lda.z i
     asl
     asl
     asl
@@ -475,7 +474,7 @@ main: {
     // sprite_idx++;
     inc.z sprite_idx
     // for (i = 0; i < active_balls; i++)
-    inc.z i_1
+    inc.z i
     jmp __b6
   __b25:
     stx.z timer
@@ -492,7 +491,7 @@ main: {
     and #>$3ff
     sta.z __10+1
     // balls[i].x_velocity = rand() & 0x3FF
-    lda.z i
+    txa
     asl
     asl
     asl
@@ -507,29 +506,31 @@ main: {
     // rand() & 0x0FF
     lda #$ff
     and.z __11
-    tax
+    sta.z __12
     // balls[i].y_velocity = rand() & 0x0FF
-    lda.z i
+    txa
     asl
     asl
     asl
     tay
-    txa
+    lda.z __12
     sta balls+6,y
+    lda #0
+    sta balls+6+1,y
     // for (i = 0; i < MAX_BALLS; i++)
-    inc.z i
+    inx
     jmp __b1
 }
 // Transfer a number of bytes from the CPU memory to the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
-// ppuDataTransfer(void* zp($f) cpuData)
+// ppuDataTransfer(void* zp($e) cpuData)
 ppuDataTransfer: {
-    .label ppuDataPrepare1_ppuData = $d
-    .label cpuSrc = $f
-    .label i = $11
-    .label cpuData = $f
+    .label ppuDataPrepare1_ppuData = $c
+    .label cpuSrc = $e
+    .label i = $10
+    .label cpuData = $e
     // >ppuData
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = >ppuData
@@ -572,11 +573,11 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// ppuDataFill(word zp($f) size)
+// ppuDataFill(word zp($e) size)
 ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = $d
-    .label i = $11
-    .label size = $f
+    .label ppuDataPrepare1_ppuData = $c
+    .label i = $10
+    .label size = $e
     // >ppuData
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = >ppuData
@@ -620,7 +621,7 @@ rand: {
     .label __0 = $1c
     .label __1 = $1e
     .label __2 = $20
-    .label return = $1a
+    .label return = $19
     // rand_state << 7
     lda.z rand_state+1
     lsr

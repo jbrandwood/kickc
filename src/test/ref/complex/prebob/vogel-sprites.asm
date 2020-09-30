@@ -101,6 +101,8 @@ init: {
     tay
     txa
     sta PLEX_XPOS,y
+    lda #0
+    sta PLEX_XPOS+1,y
     // i*8
     lda.z i
     asl
@@ -199,6 +201,8 @@ loop: {
     tay
     txa
     sta PLEX_XPOS,y
+    lda #0
+    sta PLEX_XPOS+1,y
     // mulf8s(r, SIN[a])
     lda.z r
     ldy.z a

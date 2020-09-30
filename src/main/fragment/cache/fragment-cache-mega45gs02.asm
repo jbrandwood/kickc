@@ -1,67 +1,19 @@
-//KICKC FRAGMENT CACHE 12beec37ea 12beec5182
-//FRAGMENT _deref_pbuc1=vbuc2
-lda #{c2}
-sta {c1}
-//FRAGMENT _deref_pbuc1=_deref_pbuc1_bor_vbuc2
-lda #{c2}
-ora {c1}
-sta {c1}
+//KICKC FRAGMENT CACHE 11e0585d5e 11e05876ff
+//FRAGMENT vbuz1=vbuc1
+lda #{c1}
+sta {z1}
 //FRAGMENT pbuz1=pbuc1
 lda #<{c1}
 sta {z1}
 lda #>{c1}
 sta {z1}+1
-//FRAGMENT pbuz1_lt_pbuc1_then_la1
-lda {z1}+1
-cmp #>{c1}
-bcc {la1}
-bne !+
-lda {z1}
-cmp #<{c1}
-bcc {la1}
-!:
-//FRAGMENT _deref_pbuc1=_deref_pbuc2
-lda {c2}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_bor_vbuc2
+lda #{c2}
+ora {c1}
 sta {c1}
-//FRAGMENT vbuz1=_lo_pbuz2
-lda {z2}
-sta {z1}
-//FRAGMENT _deref_pbuz1=vbuz2
-lda {z2}
-ldy #0
-sta ({z1}),y
-//FRAGMENT pbuz1=_inc_pbuz1
-inw {z1}
-//FRAGMENT _deref_pbuz1=vbuc1
-lda #{c1}
-ldy #0
-sta ({z1}),y
-//FRAGMENT vbuaa=_lo_pbuz1
-lda {z1}
-//FRAGMENT vbuxx=_lo_pbuz1
-ldx {z1}
-//FRAGMENT _deref_pbuz1=vbuaa
-ldy #0
-sta ({z1}),y
-//FRAGMENT _deref_pbuz1=vbuxx
-txa
-ldy #0
-sta ({z1}),y
-//FRAGMENT _deref_pbuz1=vbuyy
-tya
-ldy #0
-sta ({z1}),y
-//FRAGMENT _deref_pbuz1=vbuzz
-tza
-ldy #0
-sta ({z1}),y
-//FRAGMENT vbuyy=_lo_pbuz1
-ldy {z1}
-//FRAGMENT vbuzz=_lo_pbuz1
-ldz {z1}
-//FRAGMENT vbuz1=vbuc1
-lda #{c1}
-sta {z1}
+//FRAGMENT _deref_pbuc1=vbuc2
+lda #{c2}
+sta {c1}
 //FRAGMENT vbuz1=_inc_vbuz1
 inc {z1}
 //FRAGMENT vbuz1=vbuz2
@@ -88,6 +40,8 @@ dec {z1}
 ldy #0
 lda ({z2}),y
 sta {z1}
+//FRAGMENT pbuz1=_inc_pbuz1
+inw {z1}
 //FRAGMENT vbuz1_neq_0_then_la1
 lda {z1}
 cmp #0
@@ -180,6 +134,10 @@ bne {la1}
 lda {z1}
 cmp #<{c1}
 bne {la1}
+//FRAGMENT _deref_pbuz1=vbuc1
+lda #{c1}
+ldy #0
+sta ({z1}),y
 //FRAGMENT vbuaa=vbuz1
 lda {z1}
 //FRAGMENT vbuxx=vbuz1
@@ -1290,6 +1248,10 @@ sta {z1}
 lda #0
 adc {z2}+1
 sta {z1}+1
+//FRAGMENT _deref_pbuz1=vbuz2
+lda {z2}
+ldy #0
+sta ({z1}),y
 //FRAGMENT vbuaa=_deref_pbuc1_plus_1
 lda {c1}
 inc
@@ -1325,6 +1287,18 @@ sta ({z1}),y
 txa
 ldz {z2}
 sta ({z1}),z
+//FRAGMENT _deref_pbuz1=vbuxx
+txa
+ldy #0
+sta ({z1}),y
+//FRAGMENT _deref_pbuz1=vbuyy
+tya
+ldy #0
+sta ({z1}),y
+//FRAGMENT _deref_pbuz1=vbuzz
+tza
+ldy #0
+sta ({z1}),y
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuyy
 tya
 ldy {z2}
@@ -1536,6 +1510,9 @@ tay
 tza
 sty $ff
 ora $ff
+//FRAGMENT _deref_pbuc1=_deref_pbuc2
+lda {c2}
+sta {c1}
 //FRAGMENT vduz1=vduc1
 lda #<{c1}
 sta {z1}

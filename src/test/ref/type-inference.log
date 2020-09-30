@@ -163,11 +163,11 @@ main: {
     asl
     sta.z __2
     // [4] *((const nomodify word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuz1=vbuz2 
-    lda.z __2
-    ldx.z __0
-    tay
-    txa
+    lda.z __0
+    ldy.z __2
     sta screen,y
+    lda #0
+    sta screen+1,y
     // [5] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
     inc.z b
     // [6] if((byte) main::b#1!=(byte) $15) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
@@ -198,10 +198,11 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 27.5: zp[1]:2 [ main::b#2 main::b#1 ] 22: zp[1]:4 [ main::$2 ] 11: zp[1]:3 [ main::$0 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 461 combination zp[1]:2 [ main::b#2 main::b#1 ] reg byte a [ main::$2 ] reg byte x [ main::$0 ] 
-Uplifting [] best 461 combination 
-Attempting to uplift remaining variables inzp[1]:2 [ main::b#2 main::b#1 ]
-Uplifting [main] best 461 combination zp[1]:2 [ main::b#2 main::b#1 ] 
+Uplifting [main] best 481 combination reg byte y [ main::b#2 main::b#1 ] reg byte x [ main::$2 ] zp[1]:3 [ main::$0 ] 
+Uplifting [] best 481 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ main::$0 ]
+Uplifting [main] best 481 combination zp[1]:3 [ main::$0 ] 
+Allocated (was zp[1]:3) zp[1]:2 [ main::$0 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -214,12 +215,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    .label b = 2
+    .label __0 = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z b
+    // [1] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     jmp __b1
     // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
@@ -227,21 +227,24 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] (byte~) main::$0 ← (byte) -$30 + (byte) main::b#2 -- vbuxx=vbuc1_plus_vbuz1 
-    lax.z b
-    axs #-[-$30]
-    // [3] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z b
+    // [2] (byte~) main::$0 ← (byte) -$30 + (byte) main::b#2 -- vbuz1=vbuc1_plus_vbuyy 
+    tya
+    clc
+    adc #-$30
+    sta.z __0
+    // [3] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
+    tya
     asl
-    // [4] *((const nomodify word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuaa=vbuxx 
-    tay
-    txa
-    sta screen,y
-    // [5] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
-    inc.z b
-    // [6] if((byte) main::b#1!=(byte) $15) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$15
-    cmp.z b
+    tax
+    // [4] *((const nomodify word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuxx=vbuz1 
+    lda.z __0
+    sta screen,x
+    lda #0
+    sta screen+1,x
+    // [5] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [6] if((byte) main::b#1!=(byte) $15) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$15
     bne __b1_from___b1
     jmp __breturn
     // main::@return
@@ -266,22 +269,22 @@ Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
 (void()) main()
-(byte~) main::$0 reg byte x 11.0
-(byte~) main::$2 reg byte a 22.0
+(byte~) main::$0 zp[1]:2 11.0
+(byte~) main::$2 reg byte x 22.0
 (label) main::@1
 (label) main::@return
 (byte) main::b
-(byte) main::b#1 b zp[1]:2 16.5
-(byte) main::b#2 b zp[1]:2 11.0
+(byte) main::b#1 reg byte y 16.5
+(byte) main::b#2 reg byte y 11.0
 (const nomodify word*) main::screen = (word*) 1024
 
-zp[1]:2 [ main::b#2 main::b#1 ]
-reg byte x [ main::$0 ]
-reg byte a [ main::$2 ]
+reg byte y [ main::b#2 main::b#1 ]
+zp[1]:2 [ main::$0 ]
+reg byte x [ main::$2 ]
 
 
 FINAL ASSEMBLER
-Score: 371
+Score: 391
 
   // File Comments
 // Test inference of integer types in expressions
@@ -293,33 +296,35 @@ Score: 371
   // main
 main: {
     .label screen = $400
-    .label b = 2
+    .label __0 = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z b
+    // [1] phi (byte) main::b#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
     // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
     // [1] phi (byte) main::b#2 = (byte) main::b#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // -0x30+b
-    // [2] (byte~) main::$0 ← (byte) -$30 + (byte) main::b#2 -- vbuxx=vbuc1_plus_vbuz1 
-    lax.z b
-    axs #-[-$30]
+    // [2] (byte~) main::$0 ← (byte) -$30 + (byte) main::b#2 -- vbuz1=vbuc1_plus_vbuyy 
+    tya
+    clc
+    adc #-$30
+    sta.z __0
     // screen[b] = -0x30+b
-    // [3] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 -- vbuaa=vbuz1_rol_1 
-    lda.z b
+    // [3] (byte~) main::$2 ← (byte) main::b#2 << (byte) 1 -- vbuxx=vbuyy_rol_1 
+    tya
     asl
-    // [4] *((const nomodify word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuaa=vbuxx 
-    tay
-    txa
-    sta screen,y
+    tax
+    // [4] *((const nomodify word*) main::screen + (byte~) main::$2) ← (byte~) main::$0 -- pwuc1_derefidx_vbuxx=vbuz1 
+    lda.z __0
+    sta screen,x
+    lda #0
+    sta screen+1,x
     // for( byte b: 0..20)
-    // [5] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuz1=_inc_vbuz1 
-    inc.z b
-    // [6] if((byte) main::b#1!=(byte) $15) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$15
-    cmp.z b
+    // [5] (byte) main::b#1 ← ++ (byte) main::b#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [6] if((byte) main::b#1!=(byte) $15) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    cpy #$15
     bne __b1
     // main::@return
     // }

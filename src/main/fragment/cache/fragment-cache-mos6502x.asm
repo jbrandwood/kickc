@@ -18617,3 +18617,48 @@ stx {z1}
 ldy {z1}
 dey
 dey
+//FRAGMENT _deref_pwuz1=_deref_pwuz2_plus__deref_pwuz3
+ldy #0
+lda ({z2}),y
+clc
+adc ({z3}),y
+sta ({z1}),y
+iny
+lda ({z2}),y
+adc ({z3}),y
+sta ({z1}),y
+//FRAGMENT _deref_pwuz1=_deref_pwuz2_plus_vbuc1
+NO_SYNTHESIS
+//FRAGMENT _deref_pwuz1=_deref_pwuz2_plus_vbsc1
+NO_SYNTHESIS
+//FRAGMENT _deref_pwuz1=_deref_pwuz2_plus_vwuc1
+ldy #0
+lda ({z2}),y
+clc
+adc #<{c1}
+sta ({z1}),y
+iny
+lda ({z2}),y
+adc #>{c1}
+sta ({z1}),y
+//FRAGMENT vwuz1=_deref_pwuz2_ror_8
+ldy #1
+lda ({z2}),y
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT _deref_pwuz1=_deref_pwuz2_bxor_vwuc1
+ldy #0
+lda #<{c1}
+eor ({z2}),y
+sta ({z1}),y
+iny
+lda #>{c1}
+eor ({z2}),y
+sta ({z1}),y
+//FRAGMENT vwuz1=_deref_pwuz1_ror_8
+ldy #1
+lda ({z1}),y
+sta {z1}
+dey
+sty {z1}+1

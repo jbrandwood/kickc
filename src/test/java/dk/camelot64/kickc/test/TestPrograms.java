@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testProblemBoolCompare() throws IOException, URISyntaxException {
+      compileAndCompare("problem-bool-compare.c");
+   }
+
+   @Test
    public void testIndexSizeofReuse() throws IOException, URISyntaxException {
       compileAndCompare("index-sizeof-reuse.c");
    }

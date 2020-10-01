@@ -7,7 +7,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 /**
  * SSA form constant integer value
  */
-public class ConstantBool implements ConstantLiteral<Boolean> {
+public class ConstantBool implements ConstantEnumerable<Boolean> {
 
    private Boolean value;
 
@@ -18,6 +18,19 @@ public class ConstantBool implements ConstantLiteral<Boolean> {
    @Override
    public SymbolType getType(ProgramScope scope) {
       return SymbolType.BOOLEAN;
+   }
+
+   @Override
+   public Long getInteger() {
+      if(value)
+         return 1l;
+      else
+         return 0l;
+   }
+
+   @Override
+   public ConstantLiteral calculateLiteral(ProgramScope scope) {
+      return new ConstantBool(value);
    }
 
    @Override

@@ -1,5 +1,5 @@
 #pragma target(nes)
-//#pragma emulator("java -jar /Applications/Nintaco_bin_2020-05-01/Nintaco.jar")
+#pragma emulator("java -jar /Applications/Nintaco_bin_2020-05-01/Nintaco.jar")
 #include <nes.h>
 #include <stdio.h>
 
@@ -67,7 +67,7 @@ int main(void)
     PPU->PPUCTRL = 0b10001000;
 
 	unsigned short i;
-	unsigned char active_balls = 0;
+	unsigned short active_balls = 0;
 	unsigned char timer = 0;
 	unsigned char timer_2 = 0;
 	unsigned char h_bar = 0x80;

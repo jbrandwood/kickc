@@ -124,20 +124,15 @@ main: {
     .label __9 = $36
     .label __10 = $36
     .label __11 = $36
-    .label __20 = $f
+    .label __20 = $21
     .label __23 = $27
-    .label __25 = $25
-    .label __26 = $29
+    .label __25 = $29
+    .label __26 = $2b
     .label __31 = $30
     .label __32 = $34
-    .label __33 = $32
-    .label __35 = $38
-    .label __36 = $3a
-    .label __40 = $f
-    .label __44 = $25
-    .label __45 = $21
-    .label __50 = $32
-    .label __53 = $2a
+    .label __33 = $f
+    .label __36 = $38
+    .label __44 = $f
     .label __56 = $30
     .label i = 2
     .label timer_2 = 4
@@ -146,8 +141,8 @@ main: {
     .label sprite_idx = 9
     .label i_1 = 7
     .label timer = 6
-    .label __59 = $38
-    .label __60 = $3a
+    .label __59 = $3a
+    .label __60 = $38
     .label __61 = $11
     .label __62 = $13
     .label __63 = $15
@@ -156,16 +151,16 @@ main: {
     .label __66 = $1b
     .label __67 = $1d
     .label __68 = $1f
-    .label __69 = $f
+    .label __69 = $21
     .label __70 = $27
-    .label __71 = $25
+    .label __71 = $29
     .label __72 = $23
-    .label __73 = $21
+    .label __73 = $25
     .label __74 = $34
-    .label __75 = $32
+    .label __75 = $f
     .label __76 = $2c
     .label __77 = $2e
-    .label __78 = $2a
+    .label __78 = $32
     // asm
     cld
     ldx #$ff
@@ -366,33 +361,33 @@ main: {
     // balls[i].x_position += balls[i].x_velocity
     lda.z i_1
     asl
-    sta.z __40
+    sta.z __44
     lda.z i_1+1
     rol
-    sta.z __40+1
-    asl.z __40
-    rol.z __40+1
-    asl.z __40
-    rol.z __40+1
-    lda.z __40
+    sta.z __44+1
+    asl.z __44
+    rol.z __44+1
+    asl.z __44
+    rol.z __44+1
+    lda.z __44
     clc
     adc #<balls
     sta.z __61
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls
     sta.z __61+1
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls+4
     sta.z __62
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls+4
     sta.z __62+1
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls
     sta.z __63
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls
     sta.z __63+1
     ldy #0
@@ -405,18 +400,18 @@ main: {
     adc (__62),y
     sta (__63),y
     // balls[i].y_velocity += WEIGHT
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls+6
     sta.z __64
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls+6
     sta.z __64+1
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls+6
     sta.z __65
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls+6
     sta.z __65+1
     ldy #0
@@ -429,25 +424,25 @@ main: {
     adc #>$10
     sta (__65),y
     // balls[i].y_position += (balls[i].y_velocity += WEIGHT)
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls+2
     sta.z __66
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls+2
     sta.z __66+1
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls+6
     sta.z __67
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls+6
     sta.z __67+1
-    lda.z __40
+    lda.z __44
     clc
     adc #<balls+2
     sta.z __68
-    lda.z __40+1
+    lda.z __44+1
     adc #>balls+2
     sta.z __68+1
     ldy #0
@@ -460,11 +455,11 @@ main: {
     adc (__67),y
     sta (__68),y
     // balls[i].x_position >> 8
+    lda.z __44
     clc
-    lda.z __69
     adc #<balls
     sta.z __69
-    lda.z __69+1
+    lda.z __44+1
     adc #>balls
     sta.z __69+1
     ldy #1
@@ -480,28 +475,18 @@ main: {
     bcs __b9
   !:
     // balls[i].x_velocity ^= 0xFFFF
-    lda.z i_1
-    asl
-    sta.z __45
-    lda.z i_1+1
-    rol
-    sta.z __45+1
-    asl.z __45
-    rol.z __45+1
-    asl.z __45
-    rol.z __45+1
-    lda.z __45
+    lda.z __44
     clc
     adc #<balls+4
     sta.z __72
-    lda.z __45+1
+    lda.z __44+1
     adc #>balls+4
     sta.z __72+1
+    lda.z __44
     clc
-    lda.z __73
     adc #<balls+4
     sta.z __73
-    lda.z __73+1
+    lda.z __44+1
     adc #>balls+4
     sta.z __73+1
     ldy #0
@@ -514,16 +499,6 @@ main: {
     sta (__73),y
   __b9:
     // balls[i].y_position >> 8
-    lda.z i_1
-    asl
-    sta.z __44
-    lda.z i_1+1
-    rol
-    sta.z __44+1
-    asl.z __44
-    rol.z __44+1
-    asl.z __44
-    rol.z __44+1
     lda.z __44
     clc
     adc #<balls+2
@@ -536,11 +511,11 @@ main: {
     sta.z __23
     dey
     sty.z __23+1
+    lda.z __44
     clc
-    lda.z __71
     adc #<balls+2
     sta.z __71
-    lda.z __71+1
+    lda.z __44+1
     adc #>balls+2
     sta.z __71+1
     ldy #1
@@ -566,28 +541,18 @@ main: {
     bcs __b10
   !:
     // balls[i].y_velocity ^= 0xFFFF
-    lda.z i_1
-    asl
-    sta.z __53
-    lda.z i_1+1
-    rol
-    sta.z __53+1
-    asl.z __53
-    rol.z __53+1
-    asl.z __53
-    rol.z __53+1
-    lda.z __53
+    lda.z __44
     clc
     adc #<balls+6
     sta.z __76
-    lda.z __53+1
+    lda.z __44+1
     adc #>balls+6
     sta.z __76+1
-    lda.z __53
+    lda.z __44
     clc
     adc #<balls+6
     sta.z __77
-    lda.z __53+1
+    lda.z __44+1
     adc #>balls+6
     sta.z __77+1
     ldy #0
@@ -611,11 +576,11 @@ main: {
     lda #0
     sta.z __31
     // balls[i].y_position = ((unsigned short)(h_bar - 2) << 8)
+    lda.z __44
     clc
-    lda.z __78
     adc #<balls+2
     sta.z __78
-    lda.z __78+1
+    lda.z __44+1
     adc #>balls+2
     sta.z __78+1
     ldy #0
@@ -626,21 +591,11 @@ main: {
     sta (__78),y
   __b10:
     // balls[i].y_position >> 8
-    lda.z i_1
-    asl
-    sta.z __50
-    lda.z i_1+1
-    rol
-    sta.z __50+1
-    asl.z __50
-    rol.z __50+1
-    asl.z __50
-    rol.z __50+1
-    lda.z __50
+    lda.z __44
     clc
     adc #<balls+2
     sta.z __74
-    lda.z __50+1
+    lda.z __44+1
     adc #>balls+2
     sta.z __74+1
     ldy #1
@@ -701,19 +656,19 @@ main: {
     // balls[i].x_velocity = rand() & 0x3FF
     lda.z i
     asl
-    sta.z __35
+    sta.z __36
     lda.z i+1
     rol
-    sta.z __35+1
-    asl.z __35
-    rol.z __35+1
-    asl.z __35
-    rol.z __35+1
+    sta.z __36+1
+    asl.z __36
+    rol.z __36+1
+    asl.z __36
+    rol.z __36+1
+    lda.z __36
     clc
-    lda.z __59
     adc #<balls+4
     sta.z __59
-    lda.z __59+1
+    lda.z __36+1
     adc #>balls+4
     sta.z __59+1
     ldy #0
@@ -730,16 +685,6 @@ main: {
     and.z __11
     tax
     // balls[i].y_velocity = rand() & 0x0FF
-    lda.z i
-    asl
-    sta.z __36
-    lda.z i+1
-    rol
-    sta.z __36+1
-    asl.z __36
-    rol.z __36+1
-    asl.z __36
-    rol.z __36+1
     clc
     lda.z __60
     adc #<balls+6

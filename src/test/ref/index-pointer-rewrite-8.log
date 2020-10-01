@@ -1,0 +1,407 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  (byte) main::i#0 ← (byte) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  (bool~) main::$0 ← (byte) main::i#2 < (number) $19
+  if((bool~) main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
+  (byte~) main::$1 ← (byte) main::i#3 * (const byte) SIZEOF_STRUCT_BALL
+  *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (byte~) main::$1) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (byte~) main::$1) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$1)
+  (byte~) main::$2 ← (byte) main::i#3 * (const byte) SIZEOF_STRUCT_BALL
+  *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (number) $a
+  (byte~) main::$3 ← (byte) main::i#3 * (const byte) SIZEOF_STRUCT_BALL
+  *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$3) ← (byte) '*'
+  (byte) main::i#1 ← ++ (byte) main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(byte) Ball::pos
+(byte) Ball::sym
+(byte) Ball::vel
+(const byte) OFFSET_STRUCT_BALL_POS = (byte) 0
+(const byte) OFFSET_STRUCT_BALL_SYM = (byte) 2
+(const byte) OFFSET_STRUCT_BALL_VEL = (byte) 1
+(const byte) SIZEOF_STRUCT_BALL = (byte) 3
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(const struct Ball*) balls[(number) $19]  = { fill( $19, 0) }
+(void()) main()
+(bool~) main::$0
+(byte~) main::$1
+(byte~) main::$2
+(byte~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::i
+(byte) main::i#0
+(byte) main::i#1
+(byte) main::i#2
+(byte) main::i#3
+
+Adding number conversion cast (unumber) $19 in (bool~) main::$0 ← (byte) main::i#2 < (number) $19
+Adding number conversion cast (unumber) $a in *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (number) $a
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $19
+Simplifying constant integer cast $a
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Identified duplicate assignment right side [7] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_BALL
+Identified duplicate assignment right side [9] (byte~) main::$3 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_BALL
+Successful SSA optimization Pass2DuplicateRValueIdentification
+Simple Condition (bool~) main::$0 [3] if((byte) main::i#2<(byte) $19) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const byte) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero (byte*)balls in [5] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (byte~) main::$1) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (byte~) main::$1) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$1)
+Simplifying expression containing zero (byte*)balls in [5] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (byte~) main::$1) ← *((byte*)(const struct Ball*) balls + (byte~) main::$1) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$1)
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) OFFSET_STRUCT_BALL_POS
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias main::$2 = main::$1 main::$3 
+Successful SSA optimization Pass2AliasElimination
+Rewriting multiplication to use shift and addition[2] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_STRUCT_BALL
+Inlining constant with var siblings (const byte) main::i#0
+Constant inlined main::i#0 = (byte) 0
+Successful SSA optimization Pass2ConstantInlining
+Alias main::$2 = main::$5 
+Successful SSA optimization Pass2AliasElimination
+Eliminating unused constant (const byte) SIZEOF_STRUCT_BALL
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [10] main::i#4 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  [2] if((byte) main::i#2<(byte) $19) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1
+  [5] (byte~) main::$2 ← (byte~) main::$4 + (byte) main::i#2
+  [6] *((byte*)(const struct Ball*) balls + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls + (byte~) main::$2) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2)
+  [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (byte) $a
+  [8] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$2) ← (byte) '*'
+  [9] (byte) main::i#1 ← ++ (byte) main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) Ball::pos
+(byte) Ball::sym
+(byte) Ball::vel
+(void()) main()
+(byte~) main::$2 25.666666666666668
+(byte~) main::$4 22.0
+(byte) main::i
+(byte) main::i#1 22.0
+(byte) main::i#2 7.857142857142857
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$4 ]
+[ main::$2 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[1]:3 [ main::$4 ]
+Allocated zp[1]:4 [ main::$2 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test array index pointer rewriting
+// struct array with 8bit index
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_BALL_VEL = 1
+  .const OFFSET_STRUCT_BALL_SYM = 2
+  // main
+main: {
+    .label __2 = 4
+    .label i = 2
+    .label __4 = 3
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    lda #0
+    sta.z i
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((byte) main::i#2<(byte) $19) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z i
+    cmp #$19
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
+    lda.z i
+    asl
+    sta.z __4
+    // [5] (byte~) main::$2 ← (byte~) main::$4 + (byte) main::i#2 -- vbuz1=vbuz2_plus_vbuz3 
+    lda.z __4
+    clc
+    adc.z i
+    sta.z __2
+    // [6] *((byte*)(const struct Ball*) balls + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls + (byte~) main::$2) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) -- pbuc1_derefidx_vbuz1=pbuc1_derefidx_vbuz1_plus_pbuc2_derefidx_vbuz1 
+    ldy.z __2
+    lda balls,y
+    clc
+    adc balls+OFFSET_STRUCT_BALL_VEL,y
+    sta balls,y
+    // [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (byte) $a -- pbuc1_derefidx_vbuz1=pbuc1_derefidx_vbuz1_plus_vbuc2 
+    lda #$a
+    ldy.z __2
+    clc
+    adc balls+OFFSET_STRUCT_BALL_VEL,y
+    sta balls+OFFSET_STRUCT_BALL_VEL,y
+    // [8] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
+    lda #'*'
+    ldy.z __2
+    sta balls+OFFSET_STRUCT_BALL_SYM,y
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    inc.z i
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  balls: .fill 3*$19, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$4 ] (  [ main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [5] (byte~) main::$2 ← (byte~) main::$4 + (byte) main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const struct Ball*) balls + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls + (byte~) main::$2) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::$2 ]
+Statement [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (byte) $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$2) ← (byte) '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$4 ] (  [ main::i#2 main::$4 ] { }  ) always clobbers reg byte a 
+Statement [5] (byte~) main::$2 ← (byte~) main::$4 + (byte) main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] *((byte*)(const struct Ball*) balls + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls + (byte~) main::$2) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (byte) $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$2) ← (byte) '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::$4 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$2 ] : zp[1]:4 , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 29.86: zp[1]:2 [ main::i#2 main::i#1 ] 25.67: zp[1]:4 [ main::$2 ] 22: zp[1]:3 [ main::$4 ] 
+Uplift Scope [Ball] 
+Uplift Scope [] 
+
+Uplifting [main] best 686 combination reg byte y [ main::i#2 main::i#1 ] reg byte x [ main::$2 ] reg byte a [ main::$4 ] 
+Uplifting [Ball] best 686 combination 
+Uplifting [] best 686 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test array index pointer rewriting
+// struct array with 8bit index
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_BALL_VEL = 1
+  .const OFFSET_STRUCT_BALL_SYM = 2
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((byte) main::i#2<(byte) $19) goto main::@2 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #$19
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuyy_rol_1 
+    tya
+    asl
+    // [5] (byte~) main::$2 ← (byte~) main::$4 + (byte) main::i#2 -- vbuxx=vbuaa_plus_vbuyy 
+    sty.z $ff
+    clc
+    adc.z $ff
+    tax
+    // [6] *((byte*)(const struct Ball*) balls + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls + (byte~) main::$2) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+    lda balls,x
+    clc
+    adc balls+OFFSET_STRUCT_BALL_VEL,x
+    sta balls,x
+    // [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (byte) $a -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuc2 
+    lda #$a
+    clc
+    adc balls+OFFSET_STRUCT_BALL_VEL,x
+    sta balls+OFFSET_STRUCT_BALL_VEL,x
+    // [8] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #'*'
+    sta balls+OFFSET_STRUCT_BALL_SYM,x
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  balls: .fill 3*$19, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(byte) Ball::pos
+(byte) Ball::sym
+(byte) Ball::vel
+(const byte) OFFSET_STRUCT_BALL_SYM = (byte) 2
+(const byte) OFFSET_STRUCT_BALL_VEL = (byte) 1
+(const struct Ball*) balls[(number) $19]  = { fill( $19, 0) }
+(void()) main()
+(byte~) main::$2 reg byte x 25.666666666666668
+(byte~) main::$4 reg byte a 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(byte) main::i
+(byte) main::i#1 reg byte y 22.0
+(byte) main::i#2 reg byte y 7.857142857142857
+
+reg byte y [ main::i#2 main::i#1 ]
+reg byte a [ main::$4 ]
+reg byte x [ main::$2 ]
+
+
+FINAL ASSEMBLER
+Score: 626
+
+  // File Comments
+// Test array index pointer rewriting
+// struct array with 8bit index
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_BALL_VEL = 1
+  .const OFFSET_STRUCT_BALL_SYM = 2
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    ldy #0
+    // main::@1
+  __b1:
+    // for(char i=0;i<NUM_BALLS;i++)
+    // [2] if((byte) main::i#2<(byte) $19) goto main::@2 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #$19
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // balls[i].pos += balls[i].vel
+    // [4] (byte~) main::$4 ← (byte) main::i#2 << (byte) 1 -- vbuaa=vbuyy_rol_1 
+    tya
+    asl
+    // [5] (byte~) main::$2 ← (byte~) main::$4 + (byte) main::i#2 -- vbuxx=vbuaa_plus_vbuyy 
+    sty.z $ff
+    clc
+    adc.z $ff
+    tax
+    // [6] *((byte*)(const struct Ball*) balls + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls + (byte~) main::$2) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_pbuc2_derefidx_vbuxx 
+    lda balls,x
+    clc
+    adc balls+OFFSET_STRUCT_BALL_VEL,x
+    sta balls,x
+    // balls[i].vel += 10
+    // [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (byte~) main::$2) + (byte) $a -- pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_vbuc2 
+    lda #$a
+    clc
+    adc balls+OFFSET_STRUCT_BALL_VEL,x
+    sta balls+OFFSET_STRUCT_BALL_VEL,x
+    // balls[i].sym ='*'
+    // [8] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (byte~) main::$2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    lda #'*'
+    sta balls+OFFSET_STRUCT_BALL_SYM,x
+    // for(char i=0;i<NUM_BALLS;i++)
+    // [9] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  balls: .fill 3*$19, 0
+

@@ -1,0 +1,699 @@
+
+CONTROL FLOW GRAPH SSA
+
+(void()) main()
+main: scope:[main]  from __start
+  (word) main::i#0 ← (word) 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  (word) main::i#2 ← phi( main/(word) main::i#0 main::@2/(word) main::i#1 )
+  (bool~) main::$0 ← (word) main::i#2 < (number) $19
+  if((bool~) main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  (word) main::i#3 ← phi( main::@1/(word) main::i#2 )
+  (word~) main::$1 ← (word) main::i#3 * (const byte) SIZEOF_STRUCT_BALL
+  *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$1)
+  (word~) main::$2 ← (word) main::i#3 * (const byte) SIZEOF_STRUCT_BALL
+  *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) + (number) $a
+  (word~) main::$3 ← (word) main::i#3 * (const byte) SIZEOF_STRUCT_BALL
+  *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$3) ← (byte) '*'
+  (word) main::i#1 ← ++ (word) main::i#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+(void()) __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+(byte) Ball::pos
+(byte) Ball::sym
+(byte) Ball::vel
+(const byte) OFFSET_STRUCT_BALL_POS = (byte) 0
+(const byte) OFFSET_STRUCT_BALL_SYM = (byte) 2
+(const byte) OFFSET_STRUCT_BALL_VEL = (byte) 1
+(const byte) SIZEOF_STRUCT_BALL = (byte) 3
+(void()) __start()
+(label) __start::@1
+(label) __start::@return
+(const struct Ball*) balls[(number) $19]  = { fill( $19, 0) }
+(void()) main()
+(bool~) main::$0
+(word~) main::$1
+(word~) main::$2
+(word~) main::$3
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(word) main::i
+(word) main::i#0
+(word) main::i#1
+(word) main::i#2
+(word) main::i#3
+
+Adding number conversion cast (unumber) $19 in (bool~) main::$0 ← (word) main::i#2 < (number) $19
+Adding number conversion cast (unumber) $a in *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) + (number) $a
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast $19
+Simplifying constant integer cast $a
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $a
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::i#2 = main::i#3 
+Successful SSA optimization Pass2AliasElimination
+Identified duplicate assignment right side [7] (word~) main::$2 ← (word) main::i#2 * (const byte) SIZEOF_STRUCT_BALL
+Identified duplicate assignment right side [9] (word~) main::$3 ← (word) main::i#2 * (const byte) SIZEOF_STRUCT_BALL
+Successful SSA optimization Pass2DuplicateRValueIdentification
+Simple Condition (bool~) main::$0 [3] if((word) main::i#2<(byte) $19) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant (const word) main::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+De-inlining pointer[w] to *(pointer+w)   [5] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$1)
+De-inlining pointer[w] to *(pointer+w)   [5] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1) ← *((byte*~) main::$4) + *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$1)
+De-inlining pointer[w] to *(pointer+w)   [5] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1) ← *((byte*~) main::$4) + *((byte*~) main::$5)
+De-inlining pointer[w] to *(pointer+w)   [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) ← *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) + (byte) $a
+De-inlining pointer[w] to *(pointer+w)   [7] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2) ← *((byte*~) main::$7) + (byte) $a
+De-inlining pointer[w] to *(pointer+w)   [9] *((byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$3) ← (byte) '*'
+Successful SSA optimization Pass2DeInlineWordDerefIdx
+Simplifying expression containing zero (byte*)balls in (byte*~) main::$4 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1
+Simplifying expression containing zero (byte*)balls in (byte*~) main::$6 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_POS + (word~) main::$1
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant (const byte) OFFSET_STRUCT_BALL_POS
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias main::$2 = main::$1 main::$3 
+Successful SSA optimization Pass2AliasElimination
+Rewriting multiplication to use shift and addition[2] (word~) main::$2 ← (word) main::i#2 * (const byte) SIZEOF_STRUCT_BALL
+Inlining constant with var siblings (const word) main::i#0
+Constant inlined main::i#0 = (word) 0
+Successful SSA optimization Pass2ConstantInlining
+Alias main::$2 = main::$11 
+Successful SSA optimization Pass2AliasElimination
+Eliminating unused constant (const byte) SIZEOF_STRUCT_BALL
+Successful SSA optimization PassNEliminateUnusedVars
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [16] main::i#4 ← main::i#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+(void()) main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] (word) main::i#2 ← phi( main/(word) 0 main::@2/(word) main::i#1 )
+  [2] if((word) main::i#2<(byte) $19) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] (word~) main::$10 ← (word) main::i#2 << (byte) 1
+  [5] (word~) main::$2 ← (word~) main::$10 + (word) main::i#2
+  [6] (byte*~) main::$4 ← (byte*)(const struct Ball*) balls + (word~) main::$2
+  [7] (byte*~) main::$5 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2
+  [8] (byte*~) main::$6 ← (byte*)(const struct Ball*) balls + (word~) main::$2
+  [9] *((byte*~) main::$6) ← *((byte*~) main::$4) + *((byte*~) main::$5)
+  [10] (byte*~) main::$7 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2
+  [11] (byte*~) main::$8 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2
+  [12] *((byte*~) main::$8) ← *((byte*~) main::$7) + (byte) $a
+  [13] (byte*~) main::$9 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$2
+  [14] *((byte*~) main::$9) ← (byte) '*'
+  [15] (word) main::i#1 ← ++ (word) main::i#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+(byte) Ball::pos
+(byte) Ball::sym
+(byte) Ball::vel
+(void()) main()
+(word~) main::$10 22.0
+(word~) main::$2 9.625
+(byte*~) main::$4 7.333333333333333
+(byte*~) main::$5 11.0
+(byte*~) main::$6 22.0
+(byte*~) main::$7 11.0
+(byte*~) main::$8 22.0
+(byte*~) main::$9 22.0
+(word) main::i
+(word) main::i#1 22.0
+(word) main::i#2 4.230769230769231
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+Added variable main::$10 to live range equivalence class [ main::$10 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::$4 to live range equivalence class [ main::$4 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
+Added variable main::$6 to live range equivalence class [ main::$6 ]
+Added variable main::$7 to live range equivalence class [ main::$7 ]
+Added variable main::$8 to live range equivalence class [ main::$8 ]
+Added variable main::$9 to live range equivalence class [ main::$9 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::$10 ]
+[ main::$2 ]
+[ main::$4 ]
+[ main::$5 ]
+[ main::$6 ]
+[ main::$7 ]
+[ main::$8 ]
+[ main::$9 ]
+Allocated zp[2]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:4 [ main::$10 ]
+Allocated zp[2]:6 [ main::$2 ]
+Allocated zp[2]:8 [ main::$4 ]
+Allocated zp[2]:10 [ main::$5 ]
+Allocated zp[2]:12 [ main::$6 ]
+Allocated zp[2]:14 [ main::$7 ]
+Allocated zp[2]:16 [ main::$8 ]
+Allocated zp[2]:18 [ main::$9 ]
+
+INITIAL ASM
+Target platform is c64basic / MOS6502X
+  // File Comments
+// Test array index pointer rewriting
+// struct array with 16bit index
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_BALL_VEL = 1
+  .const OFFSET_STRUCT_BALL_SYM = 2
+  // main
+main: {
+    .label __2 = 6
+    .label i = 2
+    .label __4 = 8
+    .label __5 = $a
+    .label __6 = $c
+    .label __7 = $e
+    .label __8 = $10
+    .label __9 = $12
+    .label __10 = 4
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    lda #<0
+    sta.z i
+    lda #>0
+    sta.z i+1
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((word) main::i#2<(byte) $19) goto main::@2 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i+1
+    bne !+
+    lda.z i
+    cmp #$19
+    bcc __b2
+  !:
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] (word~) main::$10 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i
+    asl
+    sta.z __10
+    lda.z i+1
+    rol
+    sta.z __10+1
+    // [5] (word~) main::$2 ← (word~) main::$10 + (word) main::i#2 -- vwuz1=vwuz2_plus_vwuz3 
+    lda.z __10
+    clc
+    adc.z i
+    sta.z __2
+    lda.z __10+1
+    adc.z i+1
+    sta.z __2+1
+    // [6] (byte*~) main::$4 ← (byte*)(const struct Ball*) balls + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls
+    sta.z __4
+    lda.z __2+1
+    adc #>balls
+    sta.z __4+1
+    // [7] (byte*~) main::$5 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __5
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __5+1
+    // [8] (byte*~) main::$6 ← (byte*)(const struct Ball*) balls + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls
+    sta.z __6
+    lda.z __2+1
+    adc #>balls
+    sta.z __6+1
+    // [9] *((byte*~) main::$6) ← *((byte*~) main::$4) + *((byte*~) main::$5) -- _deref_pbuz1=_deref_pbuz2_plus__deref_pbuz3 
+    ldy #0
+    lda (__4),y
+    clc
+    ldy #0
+    adc (__5),y
+    ldy #0
+    sta (__6),y
+    // [10] (byte*~) main::$7 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __7
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __7+1
+    // [11] (byte*~) main::$8 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __8
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __8+1
+    // [12] *((byte*~) main::$8) ← *((byte*~) main::$7) + (byte) $a -- _deref_pbuz1=_deref_pbuz2_plus_vbuc1 
+    lda #$a
+    clc
+    ldy #0
+    adc (__7),y
+    ldy #0
+    sta (__8),y
+    // [13] (byte*~) main::$9 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_SYM
+    sta.z __9
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_SYM
+    sta.z __9+1
+    // [14] *((byte*~) main::$9) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    lda #'*'
+    ldy #0
+    sta (__9),y
+    // [15] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi (word) main::i#2 = (word) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  balls: .fill 3*$19, 0
+
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] if((word) main::i#2<(byte) $19) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] (word~) main::$10 ← (word) main::i#2 << (byte) 1 [ main::i#2 main::$10 ] (  [ main::i#2 main::$10 ] { }  ) always clobbers reg byte a 
+Statement [5] (word~) main::$2 ← (word~) main::$10 + (word) main::i#2 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] (byte*~) main::$4 ← (byte*)(const struct Ball*) balls + (word~) main::$2 [ main::i#2 main::$2 main::$4 ] (  [ main::i#2 main::$2 main::$4 ] { }  ) always clobbers reg byte a 
+Statement [7] (byte*~) main::$5 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 [ main::i#2 main::$2 main::$4 main::$5 ] (  [ main::i#2 main::$2 main::$4 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [8] (byte*~) main::$6 ← (byte*)(const struct Ball*) balls + (word~) main::$2 [ main::i#2 main::$2 main::$4 main::$5 main::$6 ] (  [ main::i#2 main::$2 main::$4 main::$5 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [9] *((byte*~) main::$6) ← *((byte*~) main::$4) + *((byte*~) main::$5) [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [10] (byte*~) main::$7 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 [ main::i#2 main::$2 main::$7 ] (  [ main::i#2 main::$2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] (byte*~) main::$8 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 [ main::i#2 main::$2 main::$7 main::$8 ] (  [ main::i#2 main::$2 main::$7 main::$8 ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*~) main::$8) ← *((byte*~) main::$7) + (byte) $a [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [13] (byte*~) main::$9 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$2 [ main::i#2 main::$9 ] (  [ main::i#2 main::$9 ] { }  ) always clobbers reg byte a 
+Statement [14] *((byte*~) main::$9) ← (byte) '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ main::$10 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::$2 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::$4 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ main::$5 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ main::$6 ] : zp[2]:12 , 
+Potential registers zp[2]:14 [ main::$7 ] : zp[2]:14 , 
+Potential registers zp[2]:16 [ main::$8 ] : zp[2]:16 , 
+Potential registers zp[2]:18 [ main::$9 ] : zp[2]:18 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 26.23: zp[2]:2 [ main::i#2 main::i#1 ] 22: zp[2]:4 [ main::$10 ] 22: zp[2]:12 [ main::$6 ] 22: zp[2]:16 [ main::$8 ] 22: zp[2]:18 [ main::$9 ] 11: zp[2]:10 [ main::$5 ] 11: zp[2]:14 [ main::$7 ] 9.62: zp[2]:6 [ main::$2 ] 7.33: zp[2]:8 [ main::$4 ] 
+Uplift Scope [Ball] 
+Uplift Scope [] 
+
+Uplifting [main] best 2436 combination zp[2]:2 [ main::i#2 main::i#1 ] zp[2]:4 [ main::$10 ] zp[2]:12 [ main::$6 ] zp[2]:16 [ main::$8 ] zp[2]:18 [ main::$9 ] zp[2]:10 [ main::$5 ] zp[2]:14 [ main::$7 ] zp[2]:6 [ main::$2 ] zp[2]:8 [ main::$4 ] 
+Uplifting [Ball] best 2436 combination 
+Uplifting [] best 2436 combination 
+Coalescing zero page register [ zp[2]:4 [ main::$10 ] ] with [ zp[2]:6 [ main::$2 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ main::$10 main::$2 ] ] with [ zp[2]:18 [ main::$9 ] ] - score: 1
+Allocated (was zp[2]:8) zp[2]:6 [ main::$4 ]
+Allocated (was zp[2]:10) zp[2]:8 [ main::$5 ]
+Allocated (was zp[2]:12) zp[2]:10 [ main::$6 ]
+Allocated (was zp[2]:14) zp[2]:12 [ main::$7 ]
+Allocated (was zp[2]:16) zp[2]:14 [ main::$8 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test array index pointer rewriting
+// struct array with 16bit index
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_BALL_VEL = 1
+  .const OFFSET_STRUCT_BALL_SYM = 2
+  // main
+main: {
+    .label __2 = 4
+    .label i = 2
+    .label __4 = 6
+    .label __5 = 8
+    .label __6 = $a
+    .label __7 = $c
+    .label __8 = $e
+    .label __9 = 4
+    .label __10 = 4
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    lda #<0
+    sta.z i
+    lda #>0
+    sta.z i+1
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if((word) main::i#2<(byte) $19) goto main::@2 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i+1
+    bne !+
+    lda.z i
+    cmp #$19
+    bcc __b2
+  !:
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] (word~) main::$10 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i
+    asl
+    sta.z __10
+    lda.z i+1
+    rol
+    sta.z __10+1
+    // [5] (word~) main::$2 ← (word~) main::$10 + (word) main::i#2 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc.z i
+    sta.z __2
+    lda.z __2+1
+    adc.z i+1
+    sta.z __2+1
+    // [6] (byte*~) main::$4 ← (byte*)(const struct Ball*) balls + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls
+    sta.z __4
+    lda.z __2+1
+    adc #>balls
+    sta.z __4+1
+    // [7] (byte*~) main::$5 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __5
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __5+1
+    // [8] (byte*~) main::$6 ← (byte*)(const struct Ball*) balls + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls
+    sta.z __6
+    lda.z __2+1
+    adc #>balls
+    sta.z __6+1
+    // [9] *((byte*~) main::$6) ← *((byte*~) main::$4) + *((byte*~) main::$5) -- _deref_pbuz1=_deref_pbuz2_plus__deref_pbuz3 
+    ldy #0
+    lda (__4),y
+    clc
+    ldy #0
+    adc (__5),y
+    ldy #0
+    sta (__6),y
+    // [10] (byte*~) main::$7 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __7
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __7+1
+    // [11] (byte*~) main::$8 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __8
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __8+1
+    // [12] *((byte*~) main::$8) ← *((byte*~) main::$7) + (byte) $a -- _deref_pbuz1=_deref_pbuz2_plus_vbuc1 
+    lda #$a
+    clc
+    ldy #0
+    adc (__7),y
+    ldy #0
+    sta (__8),y
+    // [13] (byte*~) main::$9 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda.z __9
+    adc #<balls+OFFSET_STRUCT_BALL_SYM
+    sta.z __9
+    lda.z __9+1
+    adc #>balls+OFFSET_STRUCT_BALL_SYM
+    sta.z __9+1
+    // [14] *((byte*~) main::$9) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    lda #'*'
+    ldy #0
+    sta (__9),y
+    // [15] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi (word) main::i#2 = (word) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  balls: .fill 3*$19, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Removing instruction ldy #0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+(byte) Ball::pos
+(byte) Ball::sym
+(byte) Ball::vel
+(const byte) OFFSET_STRUCT_BALL_SYM = (byte) 2
+(const byte) OFFSET_STRUCT_BALL_VEL = (byte) 1
+(const struct Ball*) balls[(number) $19]  = { fill( $19, 0) }
+(void()) main()
+(word~) main::$10 zp[2]:4 22.0
+(word~) main::$2 zp[2]:4 9.625
+(byte*~) main::$4 zp[2]:6 7.333333333333333
+(byte*~) main::$5 zp[2]:8 11.0
+(byte*~) main::$6 zp[2]:10 22.0
+(byte*~) main::$7 zp[2]:12 11.0
+(byte*~) main::$8 zp[2]:14 22.0
+(byte*~) main::$9 zp[2]:4 22.0
+(label) main::@1
+(label) main::@2
+(label) main::@return
+(word) main::i
+(word) main::i#1 i zp[2]:2 22.0
+(word) main::i#2 i zp[2]:2 4.230769230769231
+
+zp[2]:2 [ main::i#2 main::i#1 ]
+zp[2]:4 [ main::$10 main::$2 main::$9 ]
+zp[2]:6 [ main::$4 ]
+zp[2]:8 [ main::$5 ]
+zp[2]:10 [ main::$6 ]
+zp[2]:12 [ main::$7 ]
+zp[2]:14 [ main::$8 ]
+
+
+FINAL ASSEMBLER
+Score: 2256
+
+  // File Comments
+// Test array index pointer rewriting
+// struct array with 16bit index
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const OFFSET_STRUCT_BALL_VEL = 1
+  .const OFFSET_STRUCT_BALL_SYM = 2
+  // main
+main: {
+    .label __2 = 4
+    .label i = 2
+    .label __4 = 6
+    .label __5 = 8
+    .label __6 = $a
+    .label __7 = $c
+    .label __8 = $e
+    .label __9 = 4
+    .label __10 = 4
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi (word) main::i#2 = (word) 0 [phi:main->main::@1#0] -- vwuz1=vwuc1 
+    lda #<0
+    sta.z i
+    sta.z i+1
+    // main::@1
+  __b1:
+    // for(unsigned short i=0;i<NUM_BALLS;i++)
+    // [2] if((word) main::i#2<(byte) $19) goto main::@2 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i+1
+    bne !+
+    lda.z i
+    cmp #$19
+    bcc __b2
+  !:
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // balls[i].pos += balls[i].vel
+    // [4] (word~) main::$10 ← (word) main::i#2 << (byte) 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i
+    asl
+    sta.z __10
+    lda.z i+1
+    rol
+    sta.z __10+1
+    // [5] (word~) main::$2 ← (word~) main::$10 + (word) main::i#2 -- vwuz1=vwuz1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc.z i
+    sta.z __2
+    lda.z __2+1
+    adc.z i+1
+    sta.z __2+1
+    // [6] (byte*~) main::$4 ← (byte*)(const struct Ball*) balls + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls
+    sta.z __4
+    lda.z __2+1
+    adc #>balls
+    sta.z __4+1
+    // [7] (byte*~) main::$5 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __5
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __5+1
+    // [8] (byte*~) main::$6 ← (byte*)(const struct Ball*) balls + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls
+    sta.z __6
+    lda.z __2+1
+    adc #>balls
+    sta.z __6+1
+    // [9] *((byte*~) main::$6) ← *((byte*~) main::$4) + *((byte*~) main::$5) -- _deref_pbuz1=_deref_pbuz2_plus__deref_pbuz3 
+    ldy #0
+    lda (__4),y
+    clc
+    adc (__5),y
+    sta (__6),y
+    // balls[i].vel += 10
+    // [10] (byte*~) main::$7 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __7
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __7+1
+    // [11] (byte*~) main::$8 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_VEL + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz2 
+    lda.z __2
+    clc
+    adc #<balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __8
+    lda.z __2+1
+    adc #>balls+OFFSET_STRUCT_BALL_VEL
+    sta.z __8+1
+    // [12] *((byte*~) main::$8) ← *((byte*~) main::$7) + (byte) $a -- _deref_pbuz1=_deref_pbuz2_plus_vbuc1 
+    lda #$a
+    clc
+    adc (__7),y
+    sta (__8),y
+    // balls[i].sym ='*'
+    // [13] (byte*~) main::$9 ← (byte*)(const struct Ball*) balls+(const byte) OFFSET_STRUCT_BALL_SYM + (word~) main::$2 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda.z __9
+    adc #<balls+OFFSET_STRUCT_BALL_SYM
+    sta.z __9
+    lda.z __9+1
+    adc #>balls+OFFSET_STRUCT_BALL_SYM
+    sta.z __9+1
+    // [14] *((byte*~) main::$9) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    lda #'*'
+    sta (__9),y
+    // for(unsigned short i=0;i<NUM_BALLS;i++)
+    // [15] (word) main::i#1 ← ++ (word) main::i#2 -- vwuz1=_inc_vwuz1 
+    inc.z i
+    bne !+
+    inc.z i+1
+  !:
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi (word) main::i#2 = (word) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+  balls: .fill 3*$19, 0
+

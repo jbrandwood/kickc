@@ -65,6 +65,56 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIndexPointerRewrite0() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-0.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite1() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-1.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite2() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-2.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite3() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-3.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite4() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-4.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite5() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-5.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite6() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-6.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite7() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-7.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite8() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-8.c");
+   }
+
+   @Test
+   public void testIndexPointerRewrite9() throws IOException, URISyntaxException {
+      compileAndCompare("index-pointer-rewrite-9.c");
+   }
+
+   @Test
    public void testPragmaNoParenthesis() throws IOException, URISyntaxException {
       compileAndCompare("pragma-noparenthesis.c");
    }

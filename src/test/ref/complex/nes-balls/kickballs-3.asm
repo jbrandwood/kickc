@@ -1,13 +1,3 @@
-//#pragma emulator("java -jar /Applications/Nintaco_bin_2020-05-01/Nintaco.jar")
-// Nintendo Entertainment System (NES
-// https://en.wikipedia.org/wiki/Nintendo_Entertainment_System_(Model_NES-101)
-// https://github.com/gregkrsak/first_nes
-// Ricoh 2C02 - NES Picture Processing Unit (PPU)
-// Ricoh RP2C02 (NTSC version) / RP2C07 (PAL version),
-// https://en.wikipedia.org/wiki/Picture_Processing_Unit
-// https://wiki.nesdev.com/w/index.php/PPU_registers
-// http://nesdev.com/2C02%20technical%20reference.TXT
-// Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
   // Nintendo Entertainment System (NES) ROM (Mapper 0 NROM, Vertical Mirroring)
 // https://sadistech.com/nesromtool/romdoc.html
 // https://forums.nesdev.com/viewtopic.php?f=2&t=9896
@@ -76,10 +66,10 @@
   .label PPU = $2000
   // NES CPU and audion processing unit (APU)
   .label APU = $4000
-  .label scroll_y = $c
-  .label vblank_hit = $d
+  .label scroll_y = $d
+  .label vblank_hit = $e
   // The random state variable
-  .label rand_state = $a
+  .label rand_state = $b
 .segment Code
 __start: {
     // scroll_y = 0
@@ -121,46 +111,49 @@ vblank: {
     rti
 }
 main: {
-    .label __9 = $36
-    .label __10 = $36
-    .label __11 = $36
-    .label __20 = $21
-    .label __23 = $27
-    .label __25 = $29
-    .label __26 = $2b
-    .label __31 = $30
-    .label __32 = $34
-    .label __33 = $f
-    .label __36 = $38
-    .label __44 = $f
-    .label __56 = $30
+    .label __9 = $3b
+    .label __10 = $3b
+    .label __11 = $3b
+    .label __20 = $26
+    .label __23 = $2c
+    .label __25 = $2e
+    .label __26 = $30
+    .label __31 = $35
+    .label __32 = $39
+    .label __33 = $14
+    .label __36 = $3d
+    .label __38 = $10
+    .label __44 = $14
+    .label __56 = $35
     .label i = 2
     .label timer_2 = 4
-    .label h_bar = $e
+    .label h_bar = $f
     .label active_balls = 5
-    .label sprite_idx = 9
-    .label i_1 = 7
-    .label timer = 6
-    .label __59 = $3a
-    .label __60 = $38
-    .label __61 = $11
-    .label __62 = $13
-    .label __63 = $15
-    .label __64 = $17
-    .label __65 = $19
-    .label __66 = $1b
-    .label __67 = $1d
-    .label __68 = $1f
-    .label __69 = $21
-    .label __70 = $27
-    .label __71 = $29
-    .label __72 = $23
-    .label __73 = $25
-    .label __74 = $34
-    .label __75 = $f
-    .label __76 = $2c
-    .label __77 = $2e
-    .label __78 = $32
+    .label sprite_idx = $a
+    .label i_1 = 8
+    .label timer = 7
+    .label __59 = $3f
+    .label __60 = $3d
+    .label __61 = $12
+    .label __62 = $10
+    .label __63 = $16
+    .label __64 = $18
+    .label __65 = $1a
+    .label __66 = $1c
+    .label __67 = $1e
+    .label __68 = $20
+    .label __69 = $22
+    .label __70 = $24
+    .label __71 = $26
+    .label __72 = $2c
+    .label __73 = $2e
+    .label __74 = $28
+    .label __75 = $2a
+    .label __76 = $39
+    .label __77 = $14
+    .label __78 = $31
+    .label __79 = $33
+    .label __80 = $37
     // asm
     cld
     ldx #$ff
@@ -287,6 +280,7 @@ main: {
     lda #0
     sta.z timer
     sta.z active_balls
+    sta.z active_balls+1
     sta.z timer_2
   __b4:
     // timer_2++;
@@ -303,9 +297,12 @@ main: {
     // scroll_y = h_bar ^ 0xFF
     sta.z scroll_y
     // if (active_balls < MAX_BALLS)
+    lda.z active_balls+1
+    bne __b5
     lda.z active_balls
     cmp #$32
     bcs __b5
+  !:
     // if (timer++ == RELEASE_TIMER)
     ldx.z timer
     inx
@@ -316,18 +313,47 @@ main: {
   !__b25:
     // active_balls++;
     inc.z active_balls
+    bne !+
+    inc.z active_balls+1
+  !:
     // balls[active_balls].x_position = 0
     lda.z active_balls
     asl
-    asl
-    asl
-    tax
+    sta.z __38
+    lda.z active_balls+1
+    rol
+    sta.z __38+1
+    asl.z __38
+    rol.z __38+1
+    asl.z __38
+    rol.z __38+1
+    lda.z __38
+    clc
+    adc #<balls
+    sta.z __61
+    lda.z __38+1
+    adc #>balls
+    sta.z __61+1
     lda #0
-    sta balls,x
-    sta balls+1,x
+    tay
+    sta (__61),y
+    tya
+    iny
+    sta (__61),y
     // balls[active_balls].y_position = 0
-    sta balls+2,x
-    sta balls+2+1,x
+    clc
+    lda.z __62
+    adc #<balls+2
+    sta.z __62
+    lda.z __62+1
+    adc #>balls+2
+    sta.z __62+1
+    lda #0
+    tay
+    sta (__62),y
+    tya
+    iny
+    sta (__62),y
     sta.z timer
   __b5:
     lda #0
@@ -337,6 +363,8 @@ main: {
   __b6:
     // for (i = 0; i < active_balls; i++)
     lda.z i_1+1
+    cmp.z active_balls+1
+    bcc __b7
     bne !+
     lda.z i_1
     cmp.z active_balls
@@ -372,64 +400,40 @@ main: {
     lda.z __44
     clc
     adc #<balls
-    sta.z __61
-    lda.z __44+1
-    adc #>balls
-    sta.z __61+1
-    lda.z __44
-    clc
-    adc #<balls+4
-    sta.z __62
-    lda.z __44+1
-    adc #>balls+4
-    sta.z __62+1
-    lda.z __44
-    clc
-    adc #<balls
     sta.z __63
     lda.z __44+1
     adc #>balls
     sta.z __63+1
-    ldy #0
-    lda (__61),y
+    lda.z __44
     clc
-    adc (__62),y
-    sta (__63),y
+    adc #<balls+4
+    sta.z __64
+    lda.z __44+1
+    adc #>balls+4
+    sta.z __64+1
+    lda.z __44
+    clc
+    adc #<balls
+    sta.z __65
+    lda.z __44+1
+    adc #>balls
+    sta.z __65+1
+    ldy #0
+    lda (__63),y
+    clc
+    adc (__64),y
+    sta (__65),y
     iny
-    lda (__61),y
-    adc (__62),y
-    sta (__63),y
+    lda (__63),y
+    adc (__64),y
+    sta (__65),y
     // balls[i].y_velocity += WEIGHT
     lda.z __44
     clc
     adc #<balls+6
-    sta.z __64
-    lda.z __44+1
-    adc #>balls+6
-    sta.z __64+1
-    lda.z __44
-    clc
-    adc #<balls+6
-    sta.z __65
-    lda.z __44+1
-    adc #>balls+6
-    sta.z __65+1
-    ldy #0
-    lda (__64),y
-    clc
-    adc #<$10
-    sta (__65),y
-    iny
-    lda (__64),y
-    adc #>$10
-    sta (__65),y
-    // balls[i].y_position += (balls[i].y_velocity += WEIGHT)
-    lda.z __44
-    clc
-    adc #<balls+2
     sta.z __66
     lda.z __44+1
-    adc #>balls+2
+    adc #>balls+6
     sta.z __66+1
     lda.z __44
     clc
@@ -438,6 +442,16 @@ main: {
     lda.z __44+1
     adc #>balls+6
     sta.z __67+1
+    ldy #0
+    lda (__66),y
+    clc
+    adc #<$10
+    sta (__67),y
+    iny
+    lda (__66),y
+    adc #>$10
+    sta (__67),y
+    // balls[i].y_position += (balls[i].y_velocity += WEIGHT)
     lda.z __44
     clc
     adc #<balls+2
@@ -445,23 +459,37 @@ main: {
     lda.z __44+1
     adc #>balls+2
     sta.z __68+1
-    ldy #0
-    lda (__66),y
+    lda.z __44
     clc
-    adc (__67),y
-    sta (__68),y
+    adc #<balls+6
+    sta.z __69
+    lda.z __44+1
+    adc #>balls+6
+    sta.z __69+1
+    lda.z __44
+    clc
+    adc #<balls+2
+    sta.z __70
+    lda.z __44+1
+    adc #>balls+2
+    sta.z __70+1
+    ldy #0
+    lda (__68),y
+    clc
+    adc (__69),y
+    sta (__70),y
     iny
-    lda (__66),y
-    adc (__67),y
-    sta (__68),y
+    lda (__68),y
+    adc (__69),y
+    sta (__70),y
     // balls[i].x_position >> 8
     lda.z __44
     clc
     adc #<balls
-    sta.z __69
+    sta.z __71
     lda.z __44+1
     adc #>balls
-    sta.z __69+1
+    sta.z __71+1
     ldy #1
     lda (__20),y
     sta.z __20
@@ -478,34 +506,34 @@ main: {
     lda.z __44
     clc
     adc #<balls+4
-    sta.z __72
+    sta.z __74
     lda.z __44+1
     adc #>balls+4
-    sta.z __72+1
+    sta.z __74+1
     lda.z __44
     clc
     adc #<balls+4
-    sta.z __73
+    sta.z __75
     lda.z __44+1
     adc #>balls+4
-    sta.z __73+1
+    sta.z __75+1
     ldy #0
     lda #<$ffff
-    eor (__72),y
-    sta (__73),y
+    eor (__74),y
+    sta (__75),y
     iny
     lda #>$ffff
-    eor (__72),y
-    sta (__73),y
+    eor (__74),y
+    sta (__75),y
   __b9:
     // balls[i].y_position >> 8
     lda.z __44
     clc
     adc #<balls+2
-    sta.z __70
+    sta.z __72
     lda.z __44+1
     adc #>balls+2
-    sta.z __70+1
+    sta.z __72+1
     ldy #1
     lda (__23),y
     sta.z __23
@@ -514,10 +542,10 @@ main: {
     lda.z __44
     clc
     adc #<balls+2
-    sta.z __71
+    sta.z __73
     lda.z __44+1
     adc #>balls+2
-    sta.z __71+1
+    sta.z __73+1
     ldy #1
     lda (__25),y
     sta.z __25
@@ -544,25 +572,25 @@ main: {
     lda.z __44
     clc
     adc #<balls+6
-    sta.z __76
+    sta.z __78
     lda.z __44+1
     adc #>balls+6
-    sta.z __76+1
+    sta.z __78+1
     lda.z __44
     clc
     adc #<balls+6
-    sta.z __77
+    sta.z __79
     lda.z __44+1
     adc #>balls+6
-    sta.z __77+1
+    sta.z __79+1
     ldy #0
     lda #<$ffff
-    eor (__76),y
-    sta (__77),y
+    eor (__78),y
+    sta (__79),y
     iny
     lda #>$ffff
-    eor (__76),y
-    sta (__77),y
+    eor (__78),y
+    sta (__79),y
     // h_bar - 2
     lda.z h_bar
     sec
@@ -579,25 +607,25 @@ main: {
     lda.z __44
     clc
     adc #<balls+2
-    sta.z __78
+    sta.z __80
     lda.z __44+1
     adc #>balls+2
-    sta.z __78+1
+    sta.z __80+1
     ldy #0
     lda.z __31
-    sta (__78),y
+    sta (__80),y
     iny
     lda.z __31+1
-    sta (__78),y
+    sta (__80),y
   __b10:
     // balls[i].y_position >> 8
     lda.z __44
     clc
     adc #<balls+2
-    sta.z __74
+    sta.z __76
     lda.z __44+1
     adc #>balls+2
-    sta.z __74+1
+    sta.z __76+1
     ldy #1
     lda (__32),y
     sta.z __32
@@ -618,12 +646,12 @@ main: {
     sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES,x
     // balls[i].x_position >> 8
     clc
-    lda.z __75
+    lda.z __77
     adc #<balls
-    sta.z __75
-    lda.z __75+1
+    sta.z __77
+    lda.z __77+1
     adc #>balls
-    sta.z __75+1
+    sta.z __77+1
     ldy #1
     lda (__33),y
     sta.z __33
@@ -709,12 +737,12 @@ main: {
 // - ppuData : Pointer in the PPU memory
 // - cpuData : Pointer to the CPU memory (RAM of ROM)
 // - size : The number of bytes to transfer
-// ppuDataTransfer(void* zp($11) cpuData)
+// ppuDataTransfer(void* zp($12) cpuData)
 ppuDataTransfer: {
-    .label ppuDataPrepare1_ppuData = $f
-    .label cpuSrc = $11
-    .label i = $13
-    .label cpuData = $11
+    .label ppuDataPrepare1_ppuData = $10
+    .label cpuSrc = $12
+    .label i = $14
+    .label cpuData = $12
     // >ppuData
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = >ppuData
@@ -757,11 +785,11 @@ ppuDataTransfer: {
 // Fill a number of bytes in the PPU memory
 // - ppuData : Pointer in the PPU memory
 // - size : The number of bytes to transfer
-// ppuDataFill(word zp($11) size)
+// ppuDataFill(word zp($12) size)
 ppuDataFill: {
-    .label ppuDataPrepare1_ppuData = $f
-    .label i = $13
-    .label size = $11
+    .label ppuDataPrepare1_ppuData = $10
+    .label i = $14
+    .label size = $12
     // >ppuData
     lda.z ppuDataPrepare1_ppuData+1
     // PPU->PPUADDR = >ppuData
@@ -802,10 +830,10 @@ ppuDataFill: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $3c
-    .label __1 = $3e
-    .label __2 = $40
-    .label return = $36
+    .label __0 = $41
+    .label __1 = $43
+    .label __2 = $45
+    .label return = $3b
     // rand_state << 7
     lda.z rand_state+1
     lsr

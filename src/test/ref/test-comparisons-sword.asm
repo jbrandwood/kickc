@@ -208,7 +208,6 @@ compare: {
     eor #$80
   !:
     bmi __b10
-  !e:
     lda #TT
     sta.z r
     jmp __b21
@@ -253,7 +252,6 @@ compare: {
     eor #$80
   !:
     bmi __b12
-  !e:
     lda #TT
     sta.z r
     jmp __b23

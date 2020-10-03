@@ -661,6 +661,8 @@ class AsmFragmentTemplateSynthesisRule {
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m4(.*vb.)m4(.*)", lvalZM4+"|"+rvalXx, "ldx {m4}", "$1m4$2xx$3", null, null));
 
       // Correct wrong ordered Z2/Z1
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)z2(.*)z1(.*)", twoZM1+"|"+twoZM2, null, "$1z1$2z2$3", null, mapZM2Swap, false));
+      // Correct wrong ordered Z2/Z1
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m2(.*)m1(.*)", twoZM1+"|"+twoZM2, null, "$1m1$2m2$3", null, mapZM2Swap, false));
       // Correct wrong ordered Z3/Z2
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)m3(.*)m2(.*)", twoZM2+"|"+twoZM3, null, "$1m2$2m3$3", null, mapZM3Swap, false));

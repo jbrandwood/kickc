@@ -218,4 +218,17 @@ public class StatementSource implements Serializable {
          return "";
       }
    }
+
+   public String toStringShort() {
+      if(getFileName() != null) {
+         String fileName = getFileName();
+         final int slashIdx = fileName.lastIndexOf("/");
+         if(slashIdx>0)
+            fileName = fileName.substring(slashIdx+1);
+         return "File " + fileName + "\nLine " + getLineNumber() + "\n" + getCode();
+      } else {
+         return "";
+      }
+   }
+
 }

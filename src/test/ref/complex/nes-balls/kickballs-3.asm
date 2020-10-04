@@ -395,7 +395,15 @@ main: {
     adc (__63),y
     sta (__63),y
     // balls[i].y_velocity += WEIGHT
-    .assert "Missing ASM fragment Fragment not found pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vbuc2. Attempted variations pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vbuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vbsc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vwuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vwsc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vduc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vdsc2 ", 0, 1
+    lda #$10
+    ldy #6
+    clc
+    adc (__63),y
+    sta (__63),y
+    iny
+    lda #0
+    adc (__63),y
+    sta (__63),y
     // balls[i].y_position += (balls[i].y_velocity += WEIGHT)
     ldy #6
     clc
@@ -429,7 +437,14 @@ main: {
     lda.z __44+1
     adc #>balls
     sta.z __71+1
-    .assert "Missing ASM fragment Fragment not found pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2. Attempted variations pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vduc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vdsc2 ", 0, 1
+    ldy #4
+    lda #<$ffff
+    eor (__71),y
+    sta (__71),y
+    iny
+    lda #>$ffff
+    eor (__71),y
+    sta (__71),y
   __b9:
     // balls[i].y_position >> 8
     lda.z __44
@@ -439,8 +454,18 @@ main: {
     lda.z __44+1
     adc #>balls
     sta.z __69+1
-    .assert "Missing ASM fragment Fragment not found vwuz1=pwuz2_derefidx_vbuc1_ror_8. Attempted variations vwuz1=pwuz2_derefidx_vbuc1_ror_8 vwuz1=pwuz2_derefidx_vbsc1_ror_8 vwuz1=pwuz2_derefidx_vwuc1_ror_8 vwuz1=pwuz2_derefidx_vwsc1_ror_8 vwuz1=pwuz2_derefidx_vduc1_ror_8 vwuz1=pwuz2_derefidx_vdsc1_ror_8 ", 0, 1
-    .assert "Missing ASM fragment Fragment not found vwuz1=pwuz1_derefidx_vbuc1_ror_8. Attempted variations vwuz1=pwuz1_derefidx_vbuc1_ror_8 vwuz1=pwuz1_derefidx_vbsc1_ror_8 vwuz1=pwuz1_derefidx_vwuc1_ror_8 vwuz1=pwuz1_derefidx_vwsc1_ror_8 vwuz1=pwuz1_derefidx_vduc1_ror_8 vwuz1=pwuz1_derefidx_vdsc1_ror_8 ", 0, 1
+    ldy #2
+    lda #0
+    sta.z __23+1
+    iny
+    lda (__69),y
+    sta.z __23
+    ldy #2
+    iny
+    lda (__25),y
+    sta.z __25
+    lda #0
+    sta.z __25+1
     // h_bar + 8
     lax.z h_bar
     axs #-[8]
@@ -466,7 +491,14 @@ main: {
     lda.z __44+1
     adc #>balls
     sta.z __76+1
-    .assert "Missing ASM fragment Fragment not found pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2. Attempted variations pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vduc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vdsc2 ", 0, 1
+    ldy #6
+    lda #<$ffff
+    eor (__76),y
+    sta (__76),y
+    iny
+    lda #>$ffff
+    eor (__76),y
+    sta (__76),y
     // h_bar - 2
     lda.z h_bar
     sec
@@ -494,7 +526,12 @@ main: {
     lda.z __73+1
     adc #>balls
     sta.z __73+1
-    .assert "Missing ASM fragment Fragment not found vwuz1=pwuz2_derefidx_vbuc1_ror_8. Attempted variations vwuz1=pwuz2_derefidx_vbuc1_ror_8 vwuz1=pwuz2_derefidx_vbsc1_ror_8 vwuz1=pwuz2_derefidx_vwuc1_ror_8 vwuz1=pwuz2_derefidx_vwsc1_ror_8 vwuz1=pwuz2_derefidx_vduc1_ror_8 vwuz1=pwuz2_derefidx_vdsc1_ror_8 ", 0, 1
+    ldy #2
+    lda #0
+    sta.z __32+1
+    iny
+    lda (__73),y
+    sta.z __32
     // SPRITE_BUFFER[sprite_idx].y = (unsigned char) (balls[i].y_position >> 8)
     lda.z sprite_idx
     asl

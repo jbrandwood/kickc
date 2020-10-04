@@ -111,20 +111,28 @@ vblank: {
     rti
 }
 main: {
-    .label __9 = $3b
-    .label __10 = $3b
-    .label __11 = $3b
-    .label __20 = $26
-    .label __23 = $2c
-    .label __25 = $2e
-    .label __26 = $30
-    .label __31 = $35
-    .label __32 = $39
-    .label __33 = $14
-    .label __36 = $3d
+    .label __9 = $23
+    .label __10 = $23
+    .label __11 = $23
+    .label __20 = $14
+    .label __23 = $1a
+    .label __25 = $18
+    .label __26 = $1c
+    .label __31 = $1f
+    .label __32 = $21
+    .label __33 = $12
+    .label __36 = $25
     .label __38 = $10
-    .label __44 = $14
-    .label __56 = $35
+    .label __44 = $12
+    .label __55 = $27
+    .label __56 = $25
+    .label __58 = $10
+    .label __63 = $14
+    .label __69 = $18
+    .label __71 = $16
+    .label __73 = $12
+    .label __76 = $1d
+    .label __78 = $1f
     .label i = 2
     .label timer_2 = 4
     .label h_bar = $f
@@ -132,28 +140,6 @@ main: {
     .label sprite_idx = $a
     .label i_1 = 8
     .label timer = 7
-    .label __59 = $3f
-    .label __60 = $3d
-    .label __61 = $12
-    .label __62 = $10
-    .label __63 = $16
-    .label __64 = $18
-    .label __65 = $1a
-    .label __66 = $1c
-    .label __67 = $1e
-    .label __68 = $20
-    .label __69 = $22
-    .label __70 = $24
-    .label __71 = $26
-    .label __72 = $2c
-    .label __73 = $2e
-    .label __74 = $28
-    .label __75 = $2a
-    .label __76 = $39
-    .label __77 = $14
-    .label __78 = $31
-    .label __79 = $33
-    .label __80 = $37
     // asm
     cld
     ldx #$ff
@@ -327,33 +313,24 @@ main: {
     rol.z __38+1
     asl.z __38
     rol.z __38+1
-    lda.z __38
     clc
+    lda.z __58
     adc #<balls
-    sta.z __61
-    lda.z __38+1
+    sta.z __58
+    lda.z __58+1
     adc #>balls
-    sta.z __61+1
+    sta.z __58+1
     lda #0
     tay
-    sta (__61),y
+    sta (__58),y
     tya
     iny
-    sta (__61),y
+    sta (__58),y
     // balls[active_balls].y_position = 0
-    clc
-    lda.z __62
-    adc #<balls+2
-    sta.z __62
-    lda.z __62+1
-    adc #>balls+2
-    sta.z __62+1
-    lda #0
-    tay
-    sta (__62),y
-    tya
+    ldy #2
+    sta (__58),y
     iny
-    sta (__62),y
+    sta (__58),y
     sta.z timer
   __b5:
     lda #0
@@ -404,92 +381,34 @@ main: {
     lda.z __44+1
     adc #>balls
     sta.z __63+1
-    lda.z __44
+    ldy #4
+    sty.z $ff
     clc
-    adc #<balls+4
-    sta.z __64
-    lda.z __44+1
-    adc #>balls+4
-    sta.z __64+1
-    lda.z __44
-    clc
-    adc #<balls
-    sta.z __65
-    lda.z __44+1
-    adc #>balls
-    sta.z __65+1
-    ldy #0
     lda (__63),y
-    clc
-    adc (__64),y
-    sta (__65),y
+    ldy #0
+    adc (__63),y
+    sta (__63),y
+    ldy.z $ff
     iny
     lda (__63),y
-    adc (__64),y
-    sta (__65),y
+    ldy #1
+    adc (__63),y
+    sta (__63),y
     // balls[i].y_velocity += WEIGHT
-    lda.z __44
-    clc
-    adc #<balls+6
-    sta.z __66
-    lda.z __44+1
-    adc #>balls+6
-    sta.z __66+1
-    lda.z __44
-    clc
-    adc #<balls+6
-    sta.z __67
-    lda.z __44+1
-    adc #>balls+6
-    sta.z __67+1
-    ldy #0
-    lda (__66),y
-    clc
-    adc #<$10
-    sta (__67),y
-    iny
-    lda (__66),y
-    adc #>$10
-    sta (__67),y
+    .assert "Missing ASM fragment Fragment not found pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vbuc2. Attempted variations pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vbuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vbsc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vwuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vwsc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vduc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_plus_vdsc2 ", 0, 1
     // balls[i].y_position += (balls[i].y_velocity += WEIGHT)
-    lda.z __44
+    ldy #6
     clc
-    adc #<balls+2
-    sta.z __68
-    lda.z __44+1
-    adc #>balls+2
-    sta.z __68+1
-    lda.z __44
-    clc
-    adc #<balls+6
-    sta.z __69
-    lda.z __44+1
-    adc #>balls+6
-    sta.z __69+1
-    lda.z __44
-    clc
-    adc #<balls+2
-    sta.z __70
-    lda.z __44+1
-    adc #>balls+2
-    sta.z __70+1
-    ldy #0
-    lda (__68),y
-    clc
-    adc (__69),y
-    sta (__70),y
-    iny
-    lda (__68),y
-    adc (__69),y
-    sta (__70),y
+    lda (__63),y
+    ldy #2
+    adc (__63),y
+    sta (__63),y
+    ldy #6+1
+    lda (__63),y
+    ldy #2+1
+    adc (__63),y
+    sta (__63),y
     // balls[i].x_position >> 8
-    lda.z __44
-    clc
-    adc #<balls
-    sta.z __71
-    lda.z __44+1
-    adc #>balls
-    sta.z __71+1
     ldy #1
     lda (__20),y
     sta.z __20
@@ -505,52 +424,23 @@ main: {
     // balls[i].x_velocity ^= 0xFFFF
     lda.z __44
     clc
-    adc #<balls+4
-    sta.z __74
+    adc #<balls
+    sta.z __71
     lda.z __44+1
-    adc #>balls+4
-    sta.z __74+1
-    lda.z __44
-    clc
-    adc #<balls+4
-    sta.z __75
-    lda.z __44+1
-    adc #>balls+4
-    sta.z __75+1
-    ldy #0
-    lda #<$ffff
-    eor (__74),y
-    sta (__75),y
-    iny
-    lda #>$ffff
-    eor (__74),y
-    sta (__75),y
+    adc #>balls
+    sta.z __71+1
+    .assert "Missing ASM fragment Fragment not found pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2. Attempted variations pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vduc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vdsc2 ", 0, 1
   __b9:
     // balls[i].y_position >> 8
     lda.z __44
     clc
-    adc #<balls+2
-    sta.z __72
+    adc #<balls
+    sta.z __69
     lda.z __44+1
-    adc #>balls+2
-    sta.z __72+1
-    ldy #1
-    lda (__23),y
-    sta.z __23
-    dey
-    sty.z __23+1
-    lda.z __44
-    clc
-    adc #<balls+2
-    sta.z __73
-    lda.z __44+1
-    adc #>balls+2
-    sta.z __73+1
-    ldy #1
-    lda (__25),y
-    sta.z __25
-    dey
-    sty.z __25+1
+    adc #>balls
+    sta.z __69+1
+    .assert "Missing ASM fragment Fragment not found vwuz1=pwuz2_derefidx_vbuc1_ror_8. Attempted variations vwuz1=pwuz2_derefidx_vbuc1_ror_8 vwuz1=pwuz2_derefidx_vbsc1_ror_8 vwuz1=pwuz2_derefidx_vwuc1_ror_8 vwuz1=pwuz2_derefidx_vwsc1_ror_8 vwuz1=pwuz2_derefidx_vduc1_ror_8 vwuz1=pwuz2_derefidx_vdsc1_ror_8 ", 0, 1
+    .assert "Missing ASM fragment Fragment not found vwuz1=pwuz1_derefidx_vbuc1_ror_8. Attempted variations vwuz1=pwuz1_derefidx_vbuc1_ror_8 vwuz1=pwuz1_derefidx_vbsc1_ror_8 vwuz1=pwuz1_derefidx_vwuc1_ror_8 vwuz1=pwuz1_derefidx_vwsc1_ror_8 vwuz1=pwuz1_derefidx_vduc1_ror_8 vwuz1=pwuz1_derefidx_vdsc1_ror_8 ", 0, 1
     // h_bar + 8
     lax.z h_bar
     axs #-[8]
@@ -571,66 +461,40 @@ main: {
     // balls[i].y_velocity ^= 0xFFFF
     lda.z __44
     clc
-    adc #<balls+6
-    sta.z __78
+    adc #<balls
+    sta.z __76
     lda.z __44+1
-    adc #>balls+6
-    sta.z __78+1
-    lda.z __44
-    clc
-    adc #<balls+6
-    sta.z __79
-    lda.z __44+1
-    adc #>balls+6
-    sta.z __79+1
-    ldy #0
-    lda #<$ffff
-    eor (__78),y
-    sta (__79),y
-    iny
-    lda #>$ffff
-    eor (__78),y
-    sta (__79),y
+    adc #>balls
+    sta.z __76+1
+    .assert "Missing ASM fragment Fragment not found pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2. Attempted variations pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vwuc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vduc2 pwuz1_derefidx_vbuc1=pwuz1_derefidx_vbuc1_bxor_vdsc2 ", 0, 1
     // h_bar - 2
     lda.z h_bar
     sec
     sbc #2
     // (unsigned short)(h_bar - 2) << 8
-    sta.z __56
+    sta.z __78
     lda #0
-    sta.z __56+1
+    sta.z __78+1
     lda.z __31
     sta.z __31+1
     lda #0
     sta.z __31
     // balls[i].y_position = ((unsigned short)(h_bar - 2) << 8)
-    lda.z __44
-    clc
-    adc #<balls+2
-    sta.z __80
-    lda.z __44+1
-    adc #>balls+2
-    sta.z __80+1
-    ldy #0
-    lda.z __31
-    sta (__80),y
+    ldy #2
+    sta (__76),y
     iny
     lda.z __31+1
-    sta (__80),y
+    sta (__76),y
   __b10:
     // balls[i].y_position >> 8
-    lda.z __44
     clc
-    adc #<balls+2
-    sta.z __76
-    lda.z __44+1
-    adc #>balls+2
-    sta.z __76+1
-    ldy #1
-    lda (__32),y
-    sta.z __32
-    dey
-    sty.z __32+1
+    lda.z __73
+    adc #<balls
+    sta.z __73
+    lda.z __73+1
+    adc #>balls
+    sta.z __73+1
+    .assert "Missing ASM fragment Fragment not found vwuz1=pwuz2_derefidx_vbuc1_ror_8. Attempted variations vwuz1=pwuz2_derefidx_vbuc1_ror_8 vwuz1=pwuz2_derefidx_vbsc1_ror_8 vwuz1=pwuz2_derefidx_vwuc1_ror_8 vwuz1=pwuz2_derefidx_vwsc1_ror_8 vwuz1=pwuz2_derefidx_vduc1_ror_8 vwuz1=pwuz2_derefidx_vdsc1_ror_8 ", 0, 1
     // SPRITE_BUFFER[sprite_idx].y = (unsigned char) (balls[i].y_position >> 8)
     lda.z sprite_idx
     asl
@@ -645,13 +509,6 @@ main: {
     lda #3
     sta SPRITE_BUFFER+OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES,x
     // balls[i].x_position >> 8
-    clc
-    lda.z __77
-    adc #<balls
-    sta.z __77
-    lda.z __77+1
-    adc #>balls
-    sta.z __77+1
     ldy #1
     lda (__33),y
     sta.z __33
@@ -694,17 +551,17 @@ main: {
     rol.z __36+1
     lda.z __36
     clc
-    adc #<balls+4
-    sta.z __59
+    adc #<balls
+    sta.z __55
     lda.z __36+1
-    adc #>balls+4
-    sta.z __59+1
-    ldy #0
+    adc #>balls
+    sta.z __55+1
+    ldy #4
     lda.z __10
-    sta (__59),y
+    sta (__55),y
     iny
     lda.z __10+1
-    sta (__59),y
+    sta (__55),y
     // rand()
     jsr rand
     // rand()
@@ -714,18 +571,18 @@ main: {
     tax
     // balls[i].y_velocity = rand() & 0x0FF
     clc
-    lda.z __60
-    adc #<balls+6
-    sta.z __60
-    lda.z __60+1
-    adc #>balls+6
-    sta.z __60+1
+    lda.z __56
+    adc #<balls
+    sta.z __56
+    lda.z __56+1
+    adc #>balls
+    sta.z __56+1
     txa
-    ldy #0
-    sta (__60),y
-    tya
+    ldy #6
+    sta (__56),y
+    lda #0
     iny
-    sta (__60),y
+    sta (__56),y
     // for (i = 0; i < MAX_BALLS; i++)
     inc.z i
     bne !+
@@ -830,10 +687,10 @@ ppuDataFill: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $41
-    .label __1 = $43
-    .label __2 = $45
-    .label return = $3b
+    .label __0 = $29
+    .label __1 = $2b
+    .label __2 = $2d
+    .label return = $23
     // rand_state << 7
     lda.z rand_state+1
     lsr

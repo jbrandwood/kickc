@@ -112,16 +112,19 @@ init: {
 }
 // draw_block(byte register(Y) tileno, byte register(X) x, byte zp(3) y)
 draw_block: {
+    .label __6 = $a
+    .label __8 = $e
+    .label __10 = $14
     .label y = 3
     .label x1 = $14
     .label z = 4
     .label z_1 = $14
     .label __11 = 6
     .label __12 = 8
-    .label __13 = $a
-    .label __14 = $c
-    .label __15 = $e
-    .label __16 = $10
+    .label __13 = $c
+    .label __14 = $a
+    .label __15 = $10
+    .label __16 = $e
     .label __17 = $12
     .label __18 = $14
     // tileno = tileno << 2
@@ -175,63 +178,88 @@ draw_block: {
     sta.z __12+1
     lda #YELLOW
     sta (__12),y
-    // screen[z+1] = 1
+    // z+1
     lda.z z_1
     clc
-    adc #<screen+1
-    sta.z __13
+    adc #1
+    sta.z __6
     lda.z z_1+1
-    adc #>screen+1
+    adc #0
+    sta.z __6+1
+    // screen[z+1] = 1
+    lda.z __6
+    clc
+    adc #<screen
+    sta.z __13
+    lda.z __6+1
+    adc #>screen
     sta.z __13+1
     lda #1
     sta (__13),y
     // colors[z+1] = YELLOW
-    lda.z z_1
     clc
-    adc #<colors+1
+    lda.z __14
+    adc #<colors
     sta.z __14
-    lda.z z_1+1
-    adc #>colors+1
+    lda.z __14+1
+    adc #>colors
     sta.z __14+1
     lda #YELLOW
     sta (__14),y
-    // screen[z+40] = 2
-    lda.z z_1
+    // z+40
+    lda #$28
     clc
-    adc #<screen+$28
+    adc.z z_1
+    sta.z __8
+    tya
+    adc.z z_1+1
+    sta.z __8+1
+    // screen[z+40] = 2
+    lda.z __8
+    clc
+    adc #<screen
     sta.z __15
-    lda.z z_1+1
-    adc #>screen+$28
+    lda.z __8+1
+    adc #>screen
     sta.z __15+1
     lda #2
     sta (__15),y
     // colors[z+40] = YELLOW
-    lda.z z_1
     clc
-    adc #<colors+$28
+    lda.z __16
+    adc #<colors
     sta.z __16
-    lda.z z_1+1
-    adc #>colors+$28
+    lda.z __16+1
+    adc #>colors
     sta.z __16+1
     lda #YELLOW
     sta (__16),y
-    // screen[z+41] = 3
-    lda.z z_1
+    // z+41
+    lda #$29
     clc
-    adc #<screen+$29
+    adc.z __10
+    sta.z __10
+    bcc !+
+    inc.z __10+1
+  !:
+    // screen[z+41] = 3
+    lda.z __10
+    clc
+    adc #<screen
     sta.z __17
-    lda.z z_1+1
-    adc #>screen+$29
+    lda.z __10+1
+    adc #>screen
     sta.z __17+1
     lda #3
+    ldy #0
     sta (__17),y
     // colors[z+41] = YELLOW
     clc
     lda.z __18
-    adc #<colors+$29
+    adc #<colors
     sta.z __18
     lda.z __18+1
-    adc #>colors+$29
+    adc #>colors
     sta.z __18+1
     lda #YELLOW
     sta (__18),y

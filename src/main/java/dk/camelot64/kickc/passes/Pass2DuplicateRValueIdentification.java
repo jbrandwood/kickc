@@ -13,6 +13,8 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
+import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.values.*;
 
 import java.util.*;
@@ -215,8 +217,14 @@ public class Pass2DuplicateRValueIdentification extends Pass2SsaOptimization {
          if(operator.equals(Operators.LOGIC_OR)) return true;
          if(operator.equals(Operators.HIBYTE)) return true;
          if(operator.equals(Operators.LOWBYTE)) return true;
-         if(operator.equals(Operators.PLUS) && rValue2 instanceof ConstantValue) return true;
-         if(operator.equals(Operators.PLUS) && rValue1 instanceof ConstantValue) return true;
+         if(operator.equals(Operators.PLUS) && rValue2 instanceof ConstantValue) {
+            final SymbolType type1 = SymbolTypeInference.inferType(getScope(), rValue1);
+            return type1.getSizeBytes() == 1;
+         }
+         if(operator.equals(Operators.PLUS) && rValue1 instanceof ConstantValue) {
+            final SymbolType type2 = SymbolTypeInference.inferType(getScope(), rValue2);
+            return type2.getSizeBytes() == 1;
+         }
          return false;
       }
 

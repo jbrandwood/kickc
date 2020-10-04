@@ -267,6 +267,11 @@ public class Compiler {
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("CONTROL FLOW GRAPH AFTER UNWIND");
+         getLog().append(program.getGraph().toString(program));
+      }
+
       new PassNDeInlineCastValues(program, true).execute();
       new PassNAddBooleanCasts(program, true).execute();
       new PassNAddTypeConversionAssignment(program, true).execute();

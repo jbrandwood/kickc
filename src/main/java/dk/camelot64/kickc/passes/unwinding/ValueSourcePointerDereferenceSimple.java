@@ -76,7 +76,7 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
             ConstantCastValue structTypedPointer = new ConstantCastValue(pointerToElementType, (ConstantValue) structPointer);
             // Calculate member address  (elmtype*)&struct + OFFSET_MEMBER
             ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
-            // Unwind to *((type*)&struct + OFFSET_MEMBER)
+            // Unwind to (type*)&struct + OFFSET_MEMBER
             return new ValueSourceConstant(pointerToElementType, null, memberPointer);
          }  else {
             // Pointer to member type
@@ -99,7 +99,7 @@ public class ValueSourcePointerDereferenceSimple extends ValueSourceBase {
             stmtIt.previous();
             stmtIt.add(new StatementAssignment((LValue) memberAddress.getRef(), elementTypedPointer, Operators.PLUS, memberOffsetConstant, true, currentStmt.getSource(), currentStmt.getComments()));
             stmtIt.next();
-            // Unwind to *((elmType*)ptr_struct+OFFSET_MEMBER)
+            // Unwind to (elmType*)ptr_struct+OFFSET_MEMBER
             return new ValueSourceVariable(memberAddress);
          }  else {
             Scope scope = programScope.getScope(currentBlock.getScope());

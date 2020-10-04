@@ -8,6 +8,7 @@ import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.*;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeInference;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 import dk.camelot64.kickc.model.values.*;
@@ -76,7 +77,7 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
       // Simple member value - unwind to value of member *((type*)&struct + OFFSET_MEMBER)
       final RValue structPointer = pointerDereferenceIndexed.getPointer();
       if(structPointer instanceof ConstantValue) {
-         if(memberArraySpec!=null) {
+         if(memberArraySpec != null) {
             final SymbolType elementType = ((SymbolTypePointer) memberType).getElementType();
             // Pointer to element type
             ConstantCastValue elementTypedPointer = new ConstantCastValue(new SymbolTypePointer(elementType), (ConstantValue) structPointer);
@@ -84,9 +85,11 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
             ConstantBinary memberPointer = new ConstantBinary(elementTypedPointer, Operators.PLUS, memberOffsetConstant);
             // Calculate member address  (elmType*)&struct + OFFSET_MEMBER
             if(pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
+               // Unwind to (elmType*)&struct + OFFSET_MEMBER + idx
                ConstantBinary elmPointer = new ConstantBinary(memberPointer, Operators.PLUS, (ConstantValue) pointerDereferenceIndexed.getIndex());
                return new ValueSourceConstant(new SymbolTypePointer(elementType), null, elmPointer);
-            }  else {
+            } else {
+               // Unwind to (elmType*)&struct + OFFSET_MEMBER + idx
                Scope scope = programScope.getScope(currentBlock.getScope());
                Variable elementAddress = scope.addVariableIntermediate();
                elementAddress.setType(new SymbolTypePointer(elementType));
@@ -95,17 +98,36 @@ public class ValueSourcePointerDereferenceIndexed extends ValueSourceBase {
                stmtIt.next();
                return new ValueSourceVariable(elementAddress);
             }
-         }  else {
+         } else {
             // Pointer to member type
             ConstantCastValue structTypedPointer = new ConstantCastValue(new SymbolTypePointer(memberType), (ConstantValue) structPointer);
-            // Calculate member address  (type*)&struct + OFFSET_MEMBER
-            ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
-            // Unwind to *((type*)&struct + OFFSET_MEMBER)
-            PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberPointer, pointerDereferenceIndexed.getIndex());
-            return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, null);
+            final SymbolType indexType = SymbolTypeInference.inferType(programScope, this.pointerDereferenceIndexed.getIndex());
+            if(indexType.getSizeBytes() == 1) {
+               // Calculate member address  (type*)&struct + OFFSET_MEMBER
+               ConstantBinary memberPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, memberOffsetConstant);
+               // Unwind to ((type*)&struct + OFFSET_MEMBER)[idx]
+               PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(memberPointer, pointerDereferenceIndexed.getIndex());
+               return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, null);
+            } else {
+               if(pointerDereferenceIndexed.getIndex() instanceof ConstantValue) {
+                  // Unwind to ((type*)&struct + idx)[OFFSET_MEMBER]
+                  ConstantBinary idxPointer = new ConstantBinary(structTypedPointer, Operators.PLUS, (ConstantValue) pointerDereferenceIndexed.getIndex());
+                  PointerDereferenceIndexed memberDeref = new PointerDereferenceIndexed(idxPointer, memberOffsetConstant);
+                  return new ValueSourcePointerDereferenceIndexed(memberDeref, memberType, null);
+               } else {
+                  // Unwind to ((type*)&struct + idx)[OFFSET_MEMBER]
+                  Scope scope = programScope.getScope(currentBlock.getScope());
+                  Variable idxAddress = scope.addVariableIntermediate();
+                  idxAddress.setType(new SymbolTypePointer(memberType));
+                  stmtIt.previous();
+                  stmtIt.add(new StatementAssignment((LValue) idxAddress.getRef(), structTypedPointer, Operators.PLUS, pointerDereferenceIndexed.getIndex(), true, currentStmt.getSource(), currentStmt.getComments()));
+                  stmtIt.next();
+                  return new ValueSourcePointerDereferenceIndexed(new PointerDereferenceIndexed(idxAddress.getRef(), memberOffsetConstant), memberType, null);
+               }
+            }
          }
       } else {
-         if(memberArraySpec!=null)
+         if(memberArraySpec != null)
             throw new InternalError("Not implemented!");
          Scope scope = programScope.getScope(currentBlock.getScope());
          Variable memberAddress = scope.addVariableIntermediate();

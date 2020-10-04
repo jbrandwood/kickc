@@ -7,13 +7,12 @@
 main: {
     .label SCREEN = $400
     .label __2 = 6
-    .label __3 = $a
+    .label __3 = 8
+    .label __5 = 6
     .label i = 2
     .label i1 = 4
-    .label __4 = 8
-    .label __5 = 6
-    .label __6 = $c
-    .label __7 = $a
+    .label __6 = $a
+    .label __7 = 8
     lda #<0
     sta.z i
     sta.z i+1
@@ -25,23 +24,17 @@ main: {
     lda.z i+1
     rol
     sta.z __2+1
-    lda.z __2
-    clc
-    adc #<points
-    sta.z __4
-    lda.z __2+1
-    adc #>points
-    sta.z __4+1
-    lda #2
-    ldy #0
-    sta (__4),y
     clc
     lda.z __5
-    adc #<points+OFFSET_STRUCT_POINT_Y
+    adc #<points
     sta.z __5
     lda.z __5+1
-    adc #>points+OFFSET_STRUCT_POINT_Y
+    adc #>points
     sta.z __5+1
+    lda #2
+    ldy #0
+    sta (__5),y
+    ldy #OFFSET_STRUCT_POINT_Y
     lda.z i
     sta (__5),y
     // for( word i: 0..499)

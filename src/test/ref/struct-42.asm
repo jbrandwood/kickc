@@ -31,7 +31,7 @@ main: {
     lda points+2*SIZEOF_STRUCT_POINT
     sta SCREEN
     // SCREEN[1] = points[2].y
-    lda points+OFFSET_STRUCT_POINT_Y+2*SIZEOF_STRUCT_POINT
+    lda points+2*SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
     sta SCREEN+1
     // }
     rts

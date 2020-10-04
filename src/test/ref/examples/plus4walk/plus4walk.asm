@@ -32,10 +32,9 @@
 .segment Code
 main: {
     .label __3 = 5
-    .label __5 = 9
-    .label __6 = $b
+    .label __6 = 9
     .label __8 = 5
-    .label __10 = $d
+    .label __10 = $b
     .label __24 = 5
     .label offset = 5
     .label y = 2
@@ -113,25 +112,16 @@ main: {
     lda.z offset
     clc
     adc #<VISITS
-    sta.z __5
-    lda.z offset+1
-    adc #>VISITS
-    sta.z __5+1
-    // cnt = ++*(VISITS+offset)
-    ldy #0
-    lda (__5),y
-    clc
-    adc #1
-    sta (__5),y
-    // VISITS+offset
-    lda.z offset
-    clc
-    adc #<VISITS
     sta.z __6
     lda.z offset+1
     adc #>VISITS
     sta.z __6+1
     // cnt = ++*(VISITS+offset)
+    ldy #0
+    lda (__6),y
+    clc
+    adc #1
+    sta (__6),y
     lda (__6),y
     tay
     // DEFAULT_COLORRAM+offset
@@ -216,7 +206,7 @@ main: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(3) str, byte register(X) c)
 memset: {
-    .label end = $f
+    .label end = $d
     .label dst = 3
     .label str = 3
     // end = (char*)str + num
@@ -254,10 +244,10 @@ memset: {
 // Information https://en.wikipedia.org/wiki/Xorshift
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 rand: {
-    .label __0 = $f
-    .label __1 = $11
-    .label __2 = $13
-    .label return = $d
+    .label __0 = $d
+    .label __1 = $f
+    .label __2 = $11
+    .label return = $b
     // rand_state << 7
     lda.z rand_state+1
     lsr

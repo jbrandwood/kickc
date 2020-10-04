@@ -274,7 +274,6 @@ init_dist_screen: {
 init_angle_screen: {
     .label __7 = $11
     .label screen = 4
-    .label screen_topline = 2
     .label screen_bottomline = 4
     .label xw = $16
     .label yw = $18
@@ -282,16 +281,9 @@ init_angle_screen: {
     .label ang_w = $13
     .label x = $14
     .label xb = $15
+    .label screen_topline = 2
     .label y = 6
     // screen_topline = screen+40*12
-    lda.z screen
-    clc
-    adc #<$28*$c
-    sta.z screen_topline
-    lda.z screen+1
-    adc #>$28*$c
-    sta.z screen_topline+1
-    // screen_bottomline = screen+40*12
     clc
     lda.z screen_bottomline
     adc #<$28*$c
@@ -299,6 +291,10 @@ init_angle_screen: {
     lda.z screen_bottomline+1
     adc #>$28*$c
     sta.z screen_bottomline+1
+    lda.z screen_bottomline
+    sta.z screen_topline
+    lda.z screen_bottomline+1
+    sta.z screen_topline+1
     lda #0
     sta.z y
   __b1:

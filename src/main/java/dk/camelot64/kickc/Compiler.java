@@ -379,6 +379,17 @@ public class Compiler {
          return false;
       });
       optimizations.add(new PassNStatementIndices(program));
+      optimizations.add(new Pass2LoopInvariantHoisting(program));
+      optimizations.add(() -> {
+         program.clearStatementIndices();
+         program.clearVariableReferenceInfos();
+         program.clearControlFlowBlockSuccessorClosure();
+         program.clearStatementInfos();
+         program.clearDominators();
+         program.clearLoopSet();
+         return false;
+      });
+      optimizations.add(new PassNStatementIndices(program));
       optimizations.add(new Pass2ConditionalJumpSimplification(program));
       optimizations.add(new Pass2ConditionalAndOrRewriting(program));
       optimizations.add(new PassNAddBooleanCasts(program, false));

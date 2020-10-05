@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model.symbols;
 
-import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClass;
 import dk.camelot64.kickc.model.LiveRangeEquivalenceClassSet;
 import dk.camelot64.kickc.model.Program;

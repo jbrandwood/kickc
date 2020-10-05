@@ -364,8 +364,11 @@ public abstract class Scope implements Symbol, Serializable {
       for(String name : sortedNames) {
          Symbol symbol = symbols.get(name);
          if(symbol instanceof Scope) {
-            // Always output scopes
-            res.append(((Scope) symbol).toString(program, onlyVars));
+            // Do not output struct definitions
+            if(symbol instanceof StructDefinition )
+               continue;
+            if(!onlyVars || symbol instanceof Procedure ||  symbol instanceof BlockScope||  symbol instanceof ProgramScope)
+               res.append(((Scope) symbol).toString(program, onlyVars));
          } else if(symbol instanceof Variable) {
             Variable symVar = (Variable) symbol;
             if(!onlyVars || symVar.isVariable()) {
@@ -406,6 +409,9 @@ public abstract class Scope implements Symbol, Serializable {
                res.append("\n");
             }
          } else if(!onlyVars) {
+            // Do not output labels
+            if(symbol instanceof Label)
+               continue;
             // Only output if not instructed to only output variables
             res.append(symbol.toString(program));
             res.append("\n");

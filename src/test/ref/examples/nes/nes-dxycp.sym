@@ -20,38 +20,6 @@ const nomodify byte* PPU_ATTRIBUTE_TABLE_0 = (byte*) 9152
 const nomodify byte* PPU_NAME_TABLE_0 = (byte*) 8192
 const nomodify byte* PPU_PALETTE = (byte*) 16128
 const nomodify to_volatile byte* PPU_PPUSTATUS = (byte*) 8194
-byte RICOH_2A03::DMC_FREQ
-byte RICOH_2A03::DMC_LEN
-byte RICOH_2A03::DMC_RAW
-byte RICOH_2A03::DMC_START
-byte RICOH_2A03::JOY1
-byte RICOH_2A03::JOY2
-byte RICOH_2A03::NOISE_HI
-byte RICOH_2A03::NOISE_LO
-byte RICOH_2A03::NOISE_VOL
-byte RICOH_2A03::OAMDMA
-byte RICOH_2A03::SND_CHN
-byte RICOH_2A03::SQ1_HI
-byte RICOH_2A03::SQ1_LO
-byte RICOH_2A03::SQ1_SWEEP
-byte RICOH_2A03::SQ1_VOL
-byte RICOH_2A03::SQ2_HI
-byte RICOH_2A03::SQ2_LO
-byte RICOH_2A03::SQ2_SWEEP
-byte RICOH_2A03::SQ2_VOL
-byte RICOH_2A03::TRI_HI
-byte RICOH_2A03::TRI_LINEAR
-byte RICOH_2A03::TRI_LO
-byte RICOH_2A03::UNUSED1
-byte RICOH_2A03::UNUSED2
-byte RICOH_2C02::OAMADDR
-byte RICOH_2C02::OAMDATA
-byte RICOH_2C02::PPUADDR
-byte RICOH_2C02::PPUCTRL
-byte RICOH_2C02::PPUDATA
-byte RICOH_2C02::PPUMASK
-byte RICOH_2C02::PPUSCROLL
-volatile byte RICOH_2C02::PPUSTATUS loadstore
 const to_nomodify byte* SINTABLE_184[$ef]  = kickasm {{ .fill 239, round(71.5+71.5*sin(2*PI*i/239))
  }}
 const to_nomodify byte* SINTABLE_240[$100]  = kickasm {{ .fill $100, round(115.5+107.5*sin(2*PI*i/256))
@@ -60,10 +28,6 @@ const to_nomodify byte* SINTABLE_64[$59]  = kickasm {{ .fill 89, round(52.5+52.5
  }}
 const byte SIZEOF_BYTE = 1
 const struct SpriteData* SPRITE_BUFFER[$100]  = { fill( $100, 0) }
-byte SpriteData::attributes
-byte SpriteData::tile
-byte SpriteData::x
-byte SpriteData::y
 const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.901225-01.bin")
      .for(var c=0; c<256; c++) {
         // Plane 0
@@ -74,60 +38,31 @@ const byte* TILES[]  = kickasm {{ .var filechargen = LoadBinary("characters.9012
  }}
 const to_nomodify void()** VECTORS[]  = { &vblank, &main, (void()*) 0 }
 void __start()
-label __start::@1
-label __start::@return
-label __start::__init1
 void main()
 byte~ main::$7 reg byte y 126.25
-label main::@1
-label main::@2
-label main::@3
-label main::@4
-label main::@5
-label main::@6
-label main::enableVideoOutput1
-label main::initNES1
-label main::initNES1_@1
-label main::initNES1_@7
-label main::initNES1_clearVBlankFlag1
-label main::initNES1_disableAudioOutput1
-label main::initNES1_disableVideoOutput1
 byte main::initNES1_i
 byte main::initNES1_i#1 reg byte x 151.5
 byte main::initNES1_i#2 reg byte x 112.22222222222223
-label main::initNES1_waitForVBlank1
 byte~ main::initNES1_waitForVBlank1_$0 reg byte a 202.0
-label main::initNES1_waitForVBlank1_@1
-label main::initNES1_waitForVBlank2
 byte~ main::initNES1_waitForVBlank2_$0 reg byte a 202.0
-label main::initNES1_waitForVBlank2_@1
 byte main::s
 byte main::s#1 reg byte x 202.0
 byte main::s#2 reg byte x 72.14285714285714
 void ppuDataFill(nomodify void* ppuDataFill::ppuData , byte ppuDataFill::val , word ppuDataFill::size)
-label ppuDataFill::@1
-label ppuDataFill::@2
-label ppuDataFill::@return
 word ppuDataFill::i
 word ppuDataFill::i#1 i zp[2]:10 2002.0
 word ppuDataFill::i#2 i zp[2]:10 1001.0
 nomodify void* ppuDataFill::ppuData
-label ppuDataFill::ppuDataPrepare1
 byte~ ppuDataFill::ppuDataPrepare1_$0 reg byte a 202.0
 byte~ ppuDataFill::ppuDataPrepare1_$1 reg byte a 202.0
 nomodify void* ppuDataFill::ppuDataPrepare1_ppuData
 nomodify void* ppuDataFill::ppuDataPrepare1_ppuData#0 ppuDataPrepare1_ppuData zp[2]:6 67.33333333333333
-label ppuDataFill::ppuDataPut1
 byte ppuDataFill::ppuDataPut1_val
 word ppuDataFill::size
 word ppuDataFill::size#3 size zp[2]:8 111.22222222222223
 byte ppuDataFill::val
 byte ppuDataFill::val#4 reg byte x 111.22222222222223
 void ppuDataTransfer(nomodify void* ppuDataTransfer::ppuData , nomodify void* ppuDataTransfer::cpuData , word ppuDataTransfer::size)
-label ppuDataTransfer::@1
-label ppuDataTransfer::@2
-label ppuDataTransfer::@3
-label ppuDataTransfer::@return
 nomodify void* ppuDataTransfer::cpuData
 const nomodify void* ppuDataTransfer::cpuData#0 cpuData = (void*)PALETTE
 byte* ppuDataTransfer::cpuSrc
@@ -138,9 +73,7 @@ word ppuDataTransfer::i#1 i zp[2]:6 2002.0
 word ppuDataTransfer::i#2 i zp[2]:6 600.5999999999999
 nomodify void* ppuDataTransfer::ppuData
 const nomodify void* ppuDataTransfer::ppuData#0 ppuData = (void*)PPU_PALETTE
-label ppuDataTransfer::ppuDataPrepare1
 nomodify void* ppuDataTransfer::ppuDataPrepare1_ppuData
-label ppuDataTransfer::ppuDataPut1
 byte ppuDataTransfer::ppuDataPut1_val
 byte ppuDataTransfer::ppuDataPut1_val#0 reg byte a 2002.0
 word ppuDataTransfer::size
@@ -148,9 +81,6 @@ const word ppuDataTransfer::size#0 size = $20*SIZEOF_BYTE
 byte readJoy1()
 byte~ readJoy1::$1 zp[1]:16 101.0
 byte~ readJoy1::$2 reg byte a 202.0
-label readJoy1::@1
-label readJoy1::@2
-label readJoy1::@return
 byte readJoy1::i
 byte readJoy1::i#1 reg byte x 202.0
 byte readJoy1::i#2 reg byte x 60.599999999999994
@@ -170,25 +100,8 @@ byte~ vblank::$25 zp[1]:5 22.0
 byte~ vblank::$28 zp[1]:15 8.25
 byte~ vblank::$5 reg byte x 4.0
 byte~ vblank::$7 reg byte x 4.0
-label vblank::@1
-label vblank::@10
-label vblank::@11
-label vblank::@12
-label vblank::@13
-label vblank::@14
-label vblank::@15
-label vblank::@2
-label vblank::@3
-label vblank::@4
-label vblank::@5
-label vblank::@6
-label vblank::@7
-label vblank::@8
-label vblank::@9
-label vblank::@return
 byte vblank::joy
 byte vblank::joy#0 reg byte a 4.0
-label vblank::ppuSpriteBufferDmaTransfer1
 struct SpriteData* vblank::ppuSpriteBufferDmaTransfer1_spriteBuffer
 byte vblank::s
 byte vblank::s#1 s zp[1]:2 22.0

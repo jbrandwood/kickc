@@ -28,7 +28,10 @@ public class PointerDereferenceSimple implements PointerDereference {
 
    @Override
    public String toString(Program program) {
-      return "*(" + pointer.toString(program) + ')';
+      String pointerString = pointer.toString(program);
+      if(!pointerString.matches("[a-zA-Z0-9:#$_]*"))
+         pointerString = "(" + pointerString + ")";
+      return "*" + pointerString;
    }
 
    @Override

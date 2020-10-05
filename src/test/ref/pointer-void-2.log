@@ -1,116 +1,116 @@
-Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call print &(byte) main::b 
-Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call print &(word) main::w 
-Setting inferred volatile on symbol affected by address-of (void~) main::$2 ← call print &(dword) main::d 
+Setting inferred volatile on symbol affected by address-of main::$0 = call print &main::b 
+Setting inferred volatile on symbol affected by address-of main::$1 = call print &main::w 
+Setting inferred volatile on symbol affected by address-of main::$2 = call print &main::d 
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) idx#17 ← phi( __start::@1/(byte) idx#18 )
-  (volatile dword) main::d ← (dword) $12345678
-  (volatile word) main::w ← (word) $1234
-  (volatile byte) main::b ← (byte) $12
-  (void*) print::ptr#0 ← (void*)&(volatile byte) main::b
+  idx#17 = phi( __start::@1/idx#18 )
+  main::d = $12345678
+  main::w = $1234
+  main::b = $12
+  print::ptr#0 = (void*)&main::b
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) idx#9 ← phi( main/(byte) idx#5 )
-  (byte) idx#0 ← (byte) idx#9
-  (void*) print::ptr#1 ← (void*)&(volatile word) main::w
+  idx#9 = phi( main/idx#5 )
+  idx#0 = idx#9
+  print::ptr#1 = (void*)&main::w
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) idx#10 ← phi( main::@1/(byte) idx#5 )
-  (byte) idx#1 ← (byte) idx#10
-  (void*) print::ptr#2 ← (void*)&(volatile dword) main::d
+  idx#10 = phi( main::@1/idx#5 )
+  idx#1 = idx#10
+  print::ptr#2 = (void*)&main::d
   call print 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  (byte) idx#11 ← phi( main::@2/(byte) idx#5 )
-  (byte) idx#2 ← (byte) idx#11
+  idx#11 = phi( main::@2/idx#5 )
+  idx#2 = idx#11
   to:main::@return
 main::@return: scope:[main]  from main::@3
-  (byte) idx#12 ← phi( main::@3/(byte) idx#2 )
-  (byte) idx#3 ← (byte) idx#12
+  idx#12 = phi( main::@3/idx#2 )
+  idx#3 = idx#12
   return 
   to:@return
 
-(void()) print((void*) print::ptr)
+void print(void* print::ptr)
 print: scope:[print]  from main main::@1 main::@2
-  (byte) idx#13 ← phi( main/(byte) idx#17 main::@1/(byte) idx#0 main::@2/(byte) idx#1 )
-  (void*) print::ptr#3 ← phi( main/(void*) print::ptr#0 main::@1/(void*) print::ptr#1 main::@2/(void*) print::ptr#2 )
-  *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3)
-  (byte) idx#4 ← ++ (byte) idx#13
+  idx#13 = phi( main/idx#17, main::@1/idx#0, main::@2/idx#1 )
+  print::ptr#3 = phi( main/print::ptr#0, main::@1/print::ptr#1, main::@2/print::ptr#2 )
+  SCREEN[idx#13] = *((byte*)print::ptr#3)
+  idx#4 = ++ idx#13
   to:print::@return
 print::@return: scope:[print]  from print
-  (byte) idx#14 ← phi( print/(byte) idx#4 )
-  (byte) idx#5 ← (byte) idx#14
+  idx#14 = phi( print/idx#4 )
+  idx#5 = idx#14
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte) idx#6 ← (byte) 0
+  idx#6 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  (byte) idx#18 ← phi( __start::__init1/(byte) idx#6 )
+  idx#18 = phi( __start::__init1/idx#6 )
   call main 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
-  (byte) idx#15 ← phi( __start::@1/(byte) idx#3 )
-  (byte) idx#7 ← (byte) idx#15
+  idx#15 = phi( __start::@1/idx#3 )
+  idx#7 = idx#15
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@2
-  (byte) idx#16 ← phi( __start::@2/(byte) idx#7 )
-  (byte) idx#8 ← (byte) idx#16
+  idx#16 = phi( __start::@2/idx#7 )
+  idx#8 = idx#16
   return 
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(byte) idx
-(byte) idx#0
-(byte) idx#1
-(byte) idx#10
-(byte) idx#11
-(byte) idx#12
-(byte) idx#13
-(byte) idx#14
-(byte) idx#15
-(byte) idx#16
-(byte) idx#17
-(byte) idx#18
-(byte) idx#2
-(byte) idx#3
-(byte) idx#4
-(byte) idx#5
-(byte) idx#6
-(byte) idx#7
-(byte) idx#8
-(byte) idx#9
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(volatile byte) main::b loadstore
-(volatile dword) main::d loadstore
-(volatile word) main::w loadstore
-(void()) print((void*) print::ptr)
-(label) print::@return
-(void*) print::ptr
-(void*) print::ptr#0
-(void*) print::ptr#1
-(void*) print::ptr#2
-(void*) print::ptr#3
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+byte idx
+byte idx#0
+byte idx#1
+byte idx#10
+byte idx#11
+byte idx#12
+byte idx#13
+byte idx#14
+byte idx#15
+byte idx#16
+byte idx#17
+byte idx#18
+byte idx#2
+byte idx#3
+byte idx#4
+byte idx#5
+byte idx#6
+byte idx#7
+byte idx#8
+byte idx#9
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+volatile byte main::b loadstore
+volatile dword main::d loadstore
+volatile word main::w loadstore
+void print(void* print::ptr)
+label print::@return
+void* print::ptr
+void* print::ptr#0
+void* print::ptr#1
+void* print::ptr#2
+void* print::ptr#3
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -121,16 +121,16 @@ Alias idx#14 = idx#4 idx#5
 Alias idx#18 = idx#6 
 Alias idx#15 = idx#7 idx#16 idx#8 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) idx#17 (byte) idx#18
-Identical Phi Values (byte) idx#0 (byte) idx#14
-Identical Phi Values (byte) idx#1 (byte) idx#14
-Identical Phi Values (byte) idx#11 (byte) idx#14
-Identical Phi Values (byte) idx#15 (byte) idx#11
+Identical Phi Values idx#17 idx#18
+Identical Phi Values idx#0 idx#14
+Identical Phi Values idx#1 idx#14
+Identical Phi Values idx#11 idx#14
+Identical Phi Values idx#15 idx#11
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const void*) print::ptr#0 = (void*)&main::b
-Constant (const void*) print::ptr#1 = (void*)&main::w
-Constant (const void*) print::ptr#2 = (void*)&main::d
-Constant (const byte) idx#18 = 0
+Constant print::ptr#0 = (void*)&main::b
+Constant print::ptr#1 = (void*)&main::w
+Constant print::ptr#2 = (void*)&main::d
+Constant idx#18 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -139,34 +139,34 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const void*) print::ptr#0
-Inlining constant with var siblings (const void*) print::ptr#1
-Inlining constant with var siblings (const void*) print::ptr#2
-Inlining constant with var siblings (const byte) idx#18
-Constant inlined idx#18 = (byte) 0
-Constant inlined print::ptr#2 = (void*)&(volatile dword) main::d
-Constant inlined print::ptr#0 = (void*)&(volatile byte) main::b
-Constant inlined print::ptr#1 = (void*)&(volatile word) main::w
+Inlining constant with var siblings print::ptr#0
+Inlining constant with var siblings print::ptr#1
+Inlining constant with var siblings print::ptr#2
+Inlining constant with var siblings idx#18
+Constant inlined idx#18 = 0
+Constant inlined print::ptr#2 = (void*)&main::d
+Constant inlined print::ptr#0 = (void*)&main::b
+Constant inlined print::ptr#1 = (void*)&main::w
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main::@3
 CALL GRAPH
 Calls in [main] to print:3 print:5 print:7 
 
 Created 2 initial phi equivalence classes
-Coalesced [4] idx#19 ← idx#14
-Coalesced (already) [6] idx#20 ← idx#14
+Coalesced [4] idx#19 = idx#14
+Coalesced (already) [6] idx#20 = idx#14
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) main::@3
+Culled Empty Block label main::@3
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile dword) main::d ← (dword) $12345678
-  [1] (volatile word) main::w ← (word) $1234
-  [2] (volatile byte) main::b ← (byte) $12
+  [0] main::d = $12345678
+  [1] main::w = $1234
+  [2] main::b = $12
   [3] call print 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -181,12 +181,12 @@ main::@return: scope:[main]  from main::@2
   [8] return 
   to:@return
 
-(void()) print((void*) print::ptr)
+void print(void* print::ptr)
 print: scope:[print]  from main main::@1 main::@2
-  [9] (byte) idx#13 ← phi( main/(byte) 0 main::@1/(byte) idx#14 main::@2/(byte) idx#14 )
-  [9] (void*) print::ptr#3 ← phi( main/(void*)&(volatile byte) main::b main::@1/(void*)&(volatile word) main::w main::@2/(void*)&(volatile dword) main::d )
-  [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3)
-  [11] (byte) idx#14 ← ++ (byte) idx#13
+  [9] idx#13 = phi( main/0, main::@1/idx#14, main::@2/idx#14 )
+  [9] print::ptr#3 = phi( main/(void*)&main::b, main::@1/(void*)&main::w, main::@2/(void*)&main::d )
+  [10] SCREEN[idx#13] = *((byte*)print::ptr#3)
+  [11] idx#14 = ++ idx#13
   to:print::@return
 print::@return: scope:[print]  from print
   [12] return 
@@ -194,16 +194,16 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx
-(byte) idx#13 13.0
-(byte) idx#14 2.5
-(void()) main()
-(volatile byte) main::b loadstore 20.0
-(volatile dword) main::d loadstore 20.0
-(volatile word) main::w loadstore 20.0
-(void()) print((void*) print::ptr)
-(void*) print::ptr
-(void*) print::ptr#3
+byte idx
+byte idx#13 13.0
+byte idx#14 2.5
+void main()
+volatile byte main::b loadstore 20.0
+volatile dword main::d loadstore 20.0
+volatile word main::w loadstore 20.0
+void print(void* print::ptr)
+void* print::ptr
+void* print::ptr#3
 
 Initial phi equivalence classes
 [ print::ptr#3 ]
@@ -222,118 +222,17 @@ Allocated zp[1]:4 [ idx#13 idx#14 ]
 Allocated zp[4]:5 [ main::d ]
 Allocated zp[2]:9 [ main::w ]
 Allocated zp[1]:11 [ main::b ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test simple void pointer - void pointer function
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label idx = 4
-  // main
-main: {
-    .label d = 5
-    .label w = 9
-    .label b = $b
-    // [0] (volatile dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
-    lda #<$12345678
-    sta.z d
-    lda #>$12345678
-    sta.z d+1
-    lda #<$12345678>>$10
-    sta.z d+2
-    lda #>$12345678>>$10
-    sta.z d+3
-    // [1] (volatile word) main::w ← (word) $1234 -- vwuz1=vwuc1 
-    lda #<$1234
-    sta.z w
-    lda #>$1234
-    sta.z w+1
-    // [2] (volatile byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
-    lda #$12
-    sta.z b
-    // [3] call print 
-    // [9] phi from main to print [phi:main->print]
-  print_from_main:
-    // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z idx
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile byte) main::b [phi:main->print#1] -- pvoz1=pvoc1 
-    lda #<b
-    sta.z print.ptr
-    lda #>b
-    sta.z print.ptr+1
-    jsr print
-    // [4] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [5] call print 
-    // [9] phi from main::@1 to print [phi:main::@1->print]
-  print_from___b1:
-    // [9] phi (byte) idx#13 = (byte) idx#14 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile word) main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
-    lda #<w
-    sta.z print.ptr
-    lda #>w
-    sta.z print.ptr+1
-    jsr print
-    // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  __b2_from___b1:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [7] call print 
-    // [9] phi from main::@2 to print [phi:main::@2->print]
-  print_from___b2:
-    // [9] phi (byte) idx#13 = (byte) idx#14 [phi:main::@2->print#0] -- register_copy 
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile dword) main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
-    lda #<d
-    sta.z print.ptr
-    lda #>d
-    sta.z print.ptr+1
-    jsr print
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // print
-// print(void* zp(2) ptr)
-print: {
-    .label ptr = 2
-    // [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuz1=_deref_pbuz2 
-    ldy #0
-    lda (ptr),y
-    ldy.z idx
-    sta SCREEN,y
-    // [11] (byte) idx#14 ← ++ (byte) idx#13 -- vbuz1=_inc_vbuz1 
-    inc.z idx
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [12] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile dword) main::d ← (dword) $12345678 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] (volatile word) main::w ← (word) $1234 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] (volatile byte) main::b ← (byte) $12 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
+Statement [0] main::d = $12345678 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] main::w = $1234 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] main::b = $12 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] SCREEN[idx#13] = *((byte*)print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ idx#13 idx#14 ]
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ idx#13 idx#14 ]
-Statement [0] (volatile dword) main::d ← (dword) $12345678 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] (volatile word) main::w ← (word) $1234 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] (volatile byte) main::b ← (byte) $12 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
+Statement [0] main::d = $12345678 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] main::w = $1234 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] main::b = $12 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [10] SCREEN[idx#13] = *((byte*)print::ptr#3) [ idx#13 ] ( print:3 [ idx#13 ] { }  print:5 [ idx#13 ] { { idx#13 = idx#14 } }  print:7 [ idx#13 ] { { idx#13 = idx#14 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ print::ptr#3 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ idx#13 idx#14 ] : zp[1]:4 , reg byte x , 
 Potential registers zp[4]:5 [ main::d ] : zp[4]:5 , 
@@ -368,7 +267,7 @@ main: {
     .label d = 4
     .label w = 8
     .label b = $a
-    // [0] (volatile dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
+    // [0] main::d = $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -377,20 +276,20 @@ main: {
     sta.z d+2
     lda #>$12345678>>$10
     sta.z d+3
-    // [1] (volatile word) main::w ← (word) $1234 -- vwuz1=vwuc1 
+    // [1] main::w = $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
-    // [2] (volatile byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
+    // [2] main::b = $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // [3] call print 
     // [9] phi from main to print [phi:main->print]
   print_from_main:
-    // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+    // [9] phi idx#13 = 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile byte) main::b [phi:main->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void*)&main::b [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta.z print.ptr
     lda #>b
@@ -404,8 +303,8 @@ main: {
     // [5] call print 
     // [9] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
-    // [9] phi (byte) idx#13 = (byte) idx#14 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile word) main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
+    // [9] phi idx#13 = idx#14 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi print::ptr#3 = (void*)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta.z print.ptr
     lda #>w
@@ -419,8 +318,8 @@ main: {
     // [7] call print 
     // [9] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
-    // [9] phi (byte) idx#13 = (byte) idx#14 [phi:main::@2->print#0] -- register_copy 
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile dword) main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
+    // [9] phi idx#13 = idx#14 [phi:main::@2->print#0] -- register_copy 
+    // [9] phi print::ptr#3 = (void*)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta.z print.ptr
     lda #>d
@@ -436,11 +335,11 @@ main: {
 // print(void* zp(2) ptr)
 print: {
     .label ptr = 2
-    // [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [10] SCREEN[idx#13] = *((byte*)print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x
-    // [11] (byte) idx#14 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuxx 
+    // [11] idx#14 = ++ idx#13 -- vbuxx=_inc_vbuxx 
     inx
     jmp __breturn
     // print::@return
@@ -469,21 +368,21 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(byte) idx
-(byte) idx#13 reg byte x 13.0
-(byte) idx#14 reg byte x 2.5
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(volatile byte) main::b loadstore zp[1]:10 20.0
-(volatile dword) main::d loadstore zp[4]:4 20.0
-(volatile word) main::w loadstore zp[2]:8 20.0
-(void()) print((void*) print::ptr)
-(label) print::@return
-(void*) print::ptr
-(void*) print::ptr#3 ptr zp[2]:2
+const nomodify byte* SCREEN = (byte*) 1024
+byte idx
+byte idx#13 reg byte x 13.0
+byte idx#14 reg byte x 2.5
+void main()
+label main::@1
+label main::@2
+label main::@return
+volatile byte main::b loadstore zp[1]:10 20.0
+volatile dword main::d loadstore zp[4]:4 20.0
+volatile word main::w loadstore zp[2]:8 20.0
+void print(void* print::ptr)
+label print::@return
+void* print::ptr
+void* print::ptr#3 ptr zp[2]:2
 
 zp[2]:2 [ print::ptr#3 ]
 reg byte x [ idx#13 idx#14 ]
@@ -509,7 +408,7 @@ main: {
     .label w = 8
     .label b = $a
     // d = 0x12345678
-    // [0] (volatile dword) main::d ← (dword) $12345678 -- vduz1=vduc1 
+    // [0] main::d = $12345678 -- vduz1=vduc1 
     lda #<$12345678
     sta.z d
     lda #>$12345678
@@ -519,21 +418,21 @@ main: {
     lda #>$12345678>>$10
     sta.z d+3
     // w = 0x1234
-    // [1] (volatile word) main::w ← (word) $1234 -- vwuz1=vwuc1 
+    // [1] main::w = $1234 -- vwuz1=vwuc1 
     lda #<$1234
     sta.z w
     lda #>$1234
     sta.z w+1
     // b = 0x12
-    // [2] (volatile byte) main::b ← (byte) $12 -- vbuz1=vbuc1 
+    // [2] main::b = $12 -- vbuz1=vbuc1 
     lda #$12
     sta.z b
     // print(&b)
     // [3] call print 
     // [9] phi from main to print [phi:main->print]
-    // [9] phi (byte) idx#13 = (byte) 0 [phi:main->print#0] -- vbuxx=vbuc1 
+    // [9] phi idx#13 = 0 [phi:main->print#0] -- vbuxx=vbuc1 
     ldx #0
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile byte) main::b [phi:main->print#1] -- pvoz1=pvoc1 
+    // [9] phi print::ptr#3 = (void*)&main::b [phi:main->print#1] -- pvoz1=pvoc1 
     lda #<b
     sta.z print.ptr
     lda #>b
@@ -544,8 +443,8 @@ main: {
     // print(&w)
     // [5] call print 
     // [9] phi from main::@1 to print [phi:main::@1->print]
-    // [9] phi (byte) idx#13 = (byte) idx#14 [phi:main::@1->print#0] -- register_copy 
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile word) main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
+    // [9] phi idx#13 = idx#14 [phi:main::@1->print#0] -- register_copy 
+    // [9] phi print::ptr#3 = (void*)&main::w [phi:main::@1->print#1] -- pvoz1=pvoc1 
     lda #<w
     sta.z print.ptr
     lda #>w
@@ -556,8 +455,8 @@ main: {
     // print(&d)
     // [7] call print 
     // [9] phi from main::@2 to print [phi:main::@2->print]
-    // [9] phi (byte) idx#13 = (byte) idx#14 [phi:main::@2->print#0] -- register_copy 
-    // [9] phi (void*) print::ptr#3 = (void*)&(volatile dword) main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
+    // [9] phi idx#13 = idx#14 [phi:main::@2->print#0] -- register_copy 
+    // [9] phi print::ptr#3 = (void*)&main::d [phi:main::@2->print#1] -- pvoz1=pvoc1 
     lda #<d
     sta.z print.ptr
     lda #>d
@@ -573,12 +472,12 @@ main: {
 print: {
     .label ptr = 2
     // SCREEN[idx++] = *((byte*)ptr)
-    // [10] *((const nomodify byte*) SCREEN + (byte) idx#13) ← *((byte*)(void*) print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
+    // [10] SCREEN[idx#13] = *((byte*)print::ptr#3) -- pbuc1_derefidx_vbuxx=_deref_pbuz1 
     ldy #0
     lda (ptr),y
     sta SCREEN,x
     // SCREEN[idx++] = *((byte*)ptr);
-    // [11] (byte) idx#14 ← ++ (byte) idx#13 -- vbuxx=_inc_vbuxx 
+    // [11] idx#14 = ++ idx#13 -- vbuxx=_inc_vbuxx 
     inx
     // print::@return
     // }

@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
@@ -9,7 +9,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,13 +20,13 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte*) table[]  = (byte*) "cml!"z
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte* table[]  = "cml!"z
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -42,7 +42,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
@@ -52,40 +52,10 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates how inline assembler can reference data from the outside program without the data being optimized away as unused
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    // asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
-    ldx #0
-  !:
-    lda table,x
-    sta SCREEN+1,x
-    inx
-    cpx #4
-    bne !-
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-  table: .text "cml!"
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  } always clobbers reg byte a reg byte x 
 
@@ -131,10 +101,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(const byte*) table[]  = (byte*) "cml!"z
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+const byte* table[]  = "cml!"z
 
 
 

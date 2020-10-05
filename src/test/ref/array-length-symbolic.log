@@ -1,40 +1,40 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte*) main::cur_item#0 ← (const byte*) items
-  (byte) main::item#0 ← (byte) 0
+  main::cur_item#0 = items
+  main::item#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte*) main::cur_item#4 ← phi( main/(byte*) main::cur_item#0 main::@3/(byte*) main::cur_item#1 )
-  (byte) main::item#4 ← phi( main/(byte) main::item#0 main::@3/(byte) main::item#1 )
-  (byte) main::sub#0 ← (byte) 0
+  main::cur_item#4 = phi( main/main::cur_item#0, main::@3/main::cur_item#1 )
+  main::item#4 = phi( main/main::item#0, main::@3/main::item#1 )
+  main::sub#0 = 0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  (byte*) main::cur_item#2 ← phi( main::@1/(byte*) main::cur_item#4 main::@2/(byte*) main::cur_item#2 )
-  (byte) main::sub#2 ← phi( main::@1/(byte) main::sub#0 main::@2/(byte) main::sub#1 )
-  (byte) main::item#2 ← phi( main::@1/(byte) main::item#4 main::@2/(byte) main::item#2 )
-  (number~) main::$0 ← (byte) main::item#2 * (number) $10
-  (number~) main::$1 ← (number~) main::$0 | (byte) main::sub#2
-  *((byte*) main::cur_item#2 + (byte) main::sub#2) ← (number~) main::$1
-  (byte) main::sub#1 ← (byte) main::sub#2 + rangenext(0,ITEM_SIZE-1)
-  (bool~) main::$2 ← (byte) main::sub#1 != rangelast(0,ITEM_SIZE-1)
-  if((bool~) main::$2) goto main::@2
+  main::cur_item#2 = phi( main::@1/main::cur_item#4, main::@2/main::cur_item#2 )
+  main::sub#2 = phi( main::@1/main::sub#0, main::@2/main::sub#1 )
+  main::item#2 = phi( main::@1/main::item#4, main::@2/main::item#2 )
+  main::$0 = main::item#2 * $10
+  main::$1 = main::$0 | main::sub#2
+  main::cur_item#2[main::sub#2] = main::$1
+  main::sub#1 = main::sub#2 + rangenext(0,ITEM_SIZE-1)
+  main::$2 = main::sub#1 != rangelast(0,ITEM_SIZE-1)
+  if(main::$2) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  (byte) main::item#3 ← phi( main::@2/(byte) main::item#2 )
-  (byte*) main::cur_item#3 ← phi( main::@2/(byte*) main::cur_item#2 )
-  (byte*) main::cur_item#1 ← (byte*) main::cur_item#3 + (const nomodify byte) ITEM_SIZE
-  (byte) main::item#1 ← (byte) main::item#3 + rangenext(0,ITEM_COUNT-1)
-  (bool~) main::$3 ← (byte) main::item#1 != rangelast(0,ITEM_COUNT-1)
-  if((bool~) main::$3) goto main::@1
+  main::item#3 = phi( main::@2/main::item#2 )
+  main::cur_item#3 = phi( main::@2/main::cur_item#2 )
+  main::cur_item#1 = main::cur_item#3 + ITEM_SIZE
+  main::item#1 = main::item#3 + rangenext(0,ITEM_COUNT-1)
+  main::$3 = main::item#1 != rangelast(0,ITEM_COUNT-1)
+  if(main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -45,97 +45,97 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte) ITEM_COUNT = (byte) 3
-(const nomodify byte) ITEM_SIZE = (byte) 5
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(const byte*) items[(const nomodify byte) ITEM_COUNT*(const nomodify byte) ITEM_SIZE]  = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
-(void()) main()
-(number~) main::$0
-(number~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(byte*) main::cur_item
-(byte*) main::cur_item#0
-(byte*) main::cur_item#1
-(byte*) main::cur_item#2
-(byte*) main::cur_item#3
-(byte*) main::cur_item#4
-(byte) main::item
-(byte) main::item#0
-(byte) main::item#1
-(byte) main::item#2
-(byte) main::item#3
-(byte) main::item#4
-(byte) main::sub
-(byte) main::sub#0
-(byte) main::sub#1
-(byte) main::sub#2
+const nomodify byte ITEM_COUNT = 3
+const nomodify byte ITEM_SIZE = 5
+void __start()
+label __start::@1
+label __start::@return
+const byte* items[ITEM_COUNT*ITEM_SIZE]  = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+void main()
+number~ main::$0
+number~ main::$1
+bool~ main::$2
+bool~ main::$3
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+byte* main::cur_item
+byte* main::cur_item#0
+byte* main::cur_item#1
+byte* main::cur_item#2
+byte* main::cur_item#3
+byte* main::cur_item#4
+byte main::item
+byte main::item#0
+byte main::item#1
+byte main::item#2
+byte main::item#3
+byte main::item#4
+byte main::sub
+byte main::sub#0
+byte main::sub#1
+byte main::sub#2
 
-Adding number conversion cast (unumber) $10 in (number~) main::$0 ← (byte) main::item#2 * (number) $10
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::item#2 * (unumber)(number) $10
-Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (unumber~) main::$0 | (byte) main::sub#2
-Adding number conversion cast (unumber) 1 in (byte) main::sub#1 ← (byte) main::sub#2 + rangenext(0,ITEM_SIZE-1)
-Adding number conversion cast (unumber) 1 in (byte) main::item#1 ← (byte) main::item#3 + rangenext(0,ITEM_COUNT-1)
+Adding number conversion cast (unumber) $10 in main::$0 = main::item#2 * $10
+Adding number conversion cast (unumber) main::$0 in main::$0 = main::item#2 * (unumber)$10
+Adding number conversion cast (unumber) main::$1 in main::$1 = main::$0 | main::sub#2
+Adding number conversion cast (unumber) 1 in main::sub#1 = main::sub#2 + rangenext(0,ITEM_SIZE-1)
+Adding number conversion cast (unumber) 1 in main::item#1 = main::item#3 + rangenext(0,ITEM_COUNT-1)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $10
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type $10
+Finalized unsigned number type 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::item#2 * (byte) $10
-Inferred type updated to byte in (unumber~) main::$1 ← (byte~) main::$0 | (byte) main::sub#2
+Inferred type updated to byte in main::$0 = main::item#2 * $10
+Inferred type updated to byte in main::$1 = main::$0 | main::sub#2
 Alias main::cur_item#2 = main::cur_item#3 
 Alias main::item#2 = main::item#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) main::item#2 (byte) main::item#4
-Identical Phi Values (byte*) main::cur_item#2 (byte*) main::cur_item#4
+Identical Phi Values main::item#2 main::item#4
+Identical Phi Values main::cur_item#2 main::cur_item#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$2 [10] if((byte) main::sub#1!=rangelast(0,ITEM_SIZE-1)) goto main::@2
-Simple Condition (bool~) main::$3 [14] if((byte) main::item#1!=rangelast(0,ITEM_COUNT-1)) goto main::@1
+Simple Condition main::$2 [10] if(main::sub#1!=rangelast(0,ITEM_SIZE-1)) goto main::@2
+Simple Condition main::$3 [14] if(main::item#1!=rangelast(0,ITEM_COUNT-1)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::cur_item#0 = items
-Constant (const byte) main::item#0 = 0
-Constant (const byte) main::sub#0 = 0
+Constant main::cur_item#0 = items
+Constant main::item#0 = 0
+Constant main::sub#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [8] main::sub#1 ← ++ main::sub#2 to ++
-Resolved ranged comparison value [10] if(main::sub#1!=rangelast(0,ITEM_SIZE-1)) goto main::@2 to (const nomodify byte) ITEM_SIZE-(byte) 1+(number) 1
-Resolved ranged next value [12] main::item#1 ← ++ main::item#4 to ++
-Resolved ranged comparison value [14] if(main::item#1!=rangelast(0,ITEM_COUNT-1)) goto main::@1 to (const nomodify byte) ITEM_COUNT-(byte) 1+(number) 1
+Resolved ranged next value [8] main::sub#1 = ++ main::sub#2 to ++
+Resolved ranged comparison value [10] if(main::sub#1!=rangelast(0,ITEM_SIZE-1)) goto main::@2 to ITEM_SIZE-1+1
+Resolved ranged next value [12] main::item#1 = ++ main::item#4 to ++
+Resolved ranged comparison value [14] if(main::item#1!=rangelast(0,ITEM_COUNT-1)) goto main::@1 to ITEM_COUNT-1+1
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) ITEM_SIZE-1+1 in [6] if((byte) main::sub#1!=(const nomodify byte) ITEM_SIZE-(byte) 1+(number) 1) goto main::@2
-Adding number conversion cast (unumber) 1 in [6] if((byte) main::sub#1!=(unumber)(const nomodify byte) ITEM_SIZE-(byte) 1+(number) 1) goto main::@2
-Adding number conversion cast (unumber) ITEM_COUNT-1+1 in [9] if((byte) main::item#1!=(const nomodify byte) ITEM_COUNT-(byte) 1+(number) 1) goto main::@1
-Adding number conversion cast (unumber) 1 in [9] if((byte) main::item#1!=(unumber)(const nomodify byte) ITEM_COUNT-(byte) 1+(number) 1) goto main::@1
+Adding number conversion cast (unumber) ITEM_SIZE-1+1 in [6] if(main::sub#1!=ITEM_SIZE-1+1) goto main::@2
+Adding number conversion cast (unumber) 1 in [6] if(main::sub#1!=(unumber)ITEM_SIZE-1+1) goto main::@2
+Adding number conversion cast (unumber) ITEM_COUNT-1+1 in [9] if(main::item#1!=ITEM_COUNT-1+1) goto main::@1
+Adding number conversion cast (unumber) 1 in [9] if(main::item#1!=(unumber)ITEM_COUNT-1+1) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast (const nomodify byte) ITEM_SIZE-(byte) 1+(unumber)(number) 1
+Simplifying constant integer cast ITEM_SIZE-1+(unumber)1
 Simplifying constant integer cast 1
-Simplifying constant integer cast (const nomodify byte) ITEM_COUNT-(byte) 1+(unumber)(number) 1
+Simplifying constant integer cast ITEM_COUNT-1+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting multiplication to use shift [2] (byte~) main::$0 ← (byte) main::item#4 * (byte) $10
+Rewriting multiplication to use shift [2] main::$0 = main::item#4 * $10
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte*) main::cur_item#0
-Inlining constant with var siblings (const byte) main::item#0
-Inlining constant with var siblings (const byte) main::sub#0
-Constant inlined main::sub#0 = (byte) 0
-Constant inlined main::cur_item#0 = (const byte*) items
-Constant inlined main::item#0 = (byte) 0
+Inlining constant with var siblings main::cur_item#0
+Inlining constant with var siblings main::item#0
+Inlining constant with var siblings main::sub#0
+Constant inlined main::sub#0 = 0
+Constant inlined main::cur_item#0 = items
+Constant inlined main::item#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@4(between main::@3 and main::@1)
 Added new block during phi lifting main::@5(between main::@2 and main::@2)
@@ -143,36 +143,36 @@ Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 3 initial phi equivalence classes
-Coalesced [12] main::item#5 ← main::item#1
-Coalesced [13] main::cur_item#5 ← main::cur_item#1
-Coalesced [14] main::sub#3 ← main::sub#1
+Coalesced [12] main::item#5 = main::item#1
+Coalesced [13] main::cur_item#5 = main::cur_item#1
+Coalesced [14] main::sub#3 = main::sub#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@5
+Culled Empty Block label main::@4
+Culled Empty Block label main::@5
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [1] (byte*) main::cur_item#4 ← phi( main/(const byte*) items main::@3/(byte*) main::cur_item#1 )
-  [1] (byte) main::item#4 ← phi( main/(byte) 0 main::@3/(byte) main::item#1 )
+  [1] main::cur_item#4 = phi( main/items, main::@3/main::cur_item#1 )
+  [1] main::item#4 = phi( main/0, main::@3/main::item#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [2] (byte) main::sub#2 ← phi( main::@1/(byte) 0 main::@2/(byte) main::sub#1 )
-  [3] (byte~) main::$0 ← (byte) main::item#4 << (byte) 4
-  [4] (byte~) main::$1 ← (byte~) main::$0 | (byte) main::sub#2
-  [5] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$1
-  [6] (byte) main::sub#1 ← ++ (byte) main::sub#2
-  [7] if((byte) main::sub#1!=(const nomodify byte) ITEM_SIZE-(byte) 1+(byte) 1) goto main::@2
+  [2] main::sub#2 = phi( main::@1/0, main::@2/main::sub#1 )
+  [3] main::$0 = main::item#4 << 4
+  [4] main::$1 = main::$0 | main::sub#2
+  [5] main::cur_item#4[main::sub#2] = main::$1
+  [6] main::sub#1 = ++ main::sub#2
+  [7] if(main::sub#1!=ITEM_SIZE-1+1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [8] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const nomodify byte) ITEM_SIZE
-  [9] (byte) main::item#1 ← ++ (byte) main::item#4
-  [10] if((byte) main::item#1!=(const nomodify byte) ITEM_COUNT-(byte) 1+(byte) 1) goto main::@1
+  [8] main::cur_item#1 = main::cur_item#4 + ITEM_SIZE
+  [9] main::item#1 = ++ main::item#4
+  [10] if(main::item#1!=ITEM_COUNT-1+1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [11] return 
@@ -180,18 +180,18 @@ main::@return: scope:[main]  from main::@3
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$0 202.0
-(byte~) main::$1 202.0
-(byte*) main::cur_item
-(byte*) main::cur_item#1 7.333333333333333
-(byte*) main::cur_item#4 17.571428571428573
-(byte) main::item
-(byte) main::item#1 16.5
-(byte) main::item#4 15.375
-(byte) main::sub
-(byte) main::sub#1 151.5
-(byte) main::sub#2 101.0
+void main()
+byte~ main::$0 202.0
+byte~ main::$1 202.0
+byte* main::cur_item
+byte* main::cur_item#1 7.333333333333333
+byte* main::cur_item#4 17.571428571428573
+byte main::item
+byte main::item#1 16.5
+byte main::item#4 15.375
+byte main::sub
+byte main::sub#1 151.5
+byte main::sub#2 101.0
 
 Initial phi equivalence classes
 [ main::item#4 main::item#1 ]
@@ -210,110 +210,13 @@ Allocated zp[2]:3 [ main::cur_item#4 main::cur_item#1 ]
 Allocated zp[1]:5 [ main::sub#2 main::sub#1 ]
 Allocated zp[1]:6 [ main::$0 ]
 Allocated zp[1]:7 [ main::$1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates symbolic array lengths
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const ITEM_COUNT = 3
-  .const ITEM_SIZE = 5
-  // main
-// Fills the array item by item with $is, where i is the item# and s is the sub#
-main: {
-    .label __0 = 6
-    .label __1 = 7
-    .label sub = 5
-    .label cur_item = 3
-    .label item = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte*) main::cur_item#4 = (const byte*) items [phi:main->main::@1#0] -- pbuz1=pbuc1 
-    lda #<items
-    sta.z cur_item
-    lda #>items
-    sta.z cur_item+1
-    // [1] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z item
-    jmp __b1
-    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  __b1_from___b3:
-    // [1] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
-    // [1] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  __b2_from___b1:
-    // [2] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z sub
-    jmp __b2
-    // [2] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-  __b2_from___b2:
-    // [2] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
-    jmp __b2
-    // main::@2
-  __b2:
-    // [3] (byte~) main::$0 ← (byte) main::item#4 << (byte) 4 -- vbuz1=vbuz2_rol_4 
-    lda.z item
-    asl
-    asl
-    asl
-    asl
-    sta.z __0
-    // [4] (byte~) main::$1 ← (byte~) main::$0 | (byte) main::sub#2 -- vbuz1=vbuz2_bor_vbuz3 
-    lda.z __0
-    ora.z sub
-    sta.z __1
-    // [5] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$1 -- pbuz1_derefidx_vbuz2=vbuz3 
-    lda.z __1
-    ldy.z sub
-    sta (cur_item),y
-    // [6] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuz1=_inc_vbuz1 
-    inc.z sub
-    // [7] if((byte) main::sub#1!=(const nomodify byte) ITEM_SIZE-(byte) 1+(byte) 1) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
-    lda #ITEM_SIZE-1+1
-    cmp.z sub
-    bne __b2_from___b2
-    jmp __b3
-    // main::@3
-  __b3:
-    // [8] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const nomodify byte) ITEM_SIZE -- pbuz1=pbuz1_plus_vbuc1 
-    lda #ITEM_SIZE
-    clc
-    adc.z cur_item
-    sta.z cur_item
-    bcc !+
-    inc.z cur_item+1
-  !:
-    // [9] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuz1=_inc_vbuz1 
-    inc.z item
-    // [10] if((byte) main::item#1!=(const nomodify byte) ITEM_COUNT-(byte) 1+(byte) 1) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #ITEM_COUNT-1+1
-    cmp.z item
-    bne __b1_from___b3
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [11] return 
-    rts
-}
-  // File Data
-  items: .byte 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] (byte~) main::$0 ← (byte) main::item#4 << (byte) 4 [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] (  [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$0 = main::item#4 << 4 [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] (  [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::item#4 main::item#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::sub#2 main::sub#1 ]
-Statement [8] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const nomodify byte) ITEM_SIZE [ main::item#4 main::cur_item#1 ] (  [ main::item#4 main::cur_item#1 ] { }  ) always clobbers reg byte a 
-Statement [3] (byte~) main::$0 ← (byte) main::item#4 << (byte) 4 [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] (  [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const nomodify byte) ITEM_SIZE [ main::item#4 main::cur_item#1 ] (  [ main::item#4 main::cur_item#1 ] { }  ) always clobbers reg byte a 
+Statement [8] main::cur_item#1 = main::cur_item#4 + ITEM_SIZE [ main::item#4 main::cur_item#1 ] (  [ main::item#4 main::cur_item#1 ] { }  ) always clobbers reg byte a 
+Statement [3] main::$0 = main::item#4 << 4 [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] (  [ main::item#4 main::cur_item#4 main::sub#2 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [8] main::cur_item#1 = main::cur_item#4 + ITEM_SIZE [ main::item#4 main::cur_item#1 ] (  [ main::item#4 main::cur_item#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::item#4 main::item#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::cur_item#4 main::cur_item#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::sub#2 main::sub#1 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -345,52 +248,52 @@ main: {
     .label cur_item = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte*) main::cur_item#4 = (const byte*) items [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::cur_item#4 = items [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta.z cur_item
     lda #>items
     sta.z cur_item+1
-    // [1] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [1] phi main::item#4 = 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [1] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
-    // [1] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi main::cur_item#4 = main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi main::item#4 = main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
     // [2] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [2] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    // [2] phi main::sub#2 = 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
     jmp __b2
     // [2] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
   __b2_from___b2:
-    // [2] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [2] phi main::sub#2 = main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
     jmp __b2
     // main::@2
   __b2:
-    // [3] (byte~) main::$0 ← (byte) main::item#4 << (byte) 4 -- vbuaa=vbuxx_rol_4 
+    // [3] main::$0 = main::item#4 << 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
     asl
     asl
     asl
-    // [4] (byte~) main::$1 ← (byte~) main::$0 | (byte) main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
+    // [4] main::$1 = main::$0 | main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
     sty.z $ff
     ora.z $ff
-    // [5] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$1 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // [5] main::cur_item#4[main::sub#2] = main::$1 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (cur_item),y
-    // [6] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuyy=_inc_vbuyy 
+    // [6] main::sub#1 = ++ main::sub#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [7] if((byte) main::sub#1!=(const nomodify byte) ITEM_SIZE-(byte) 1+(byte) 1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+    // [7] if(main::sub#1!=ITEM_SIZE-1+1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #ITEM_SIZE-1+1
     bne __b2_from___b2
     jmp __b3
     // main::@3
   __b3:
-    // [8] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const nomodify byte) ITEM_SIZE -- pbuz1=pbuz1_plus_vbuc1 
+    // [8] main::cur_item#1 = main::cur_item#4 + ITEM_SIZE -- pbuz1=pbuz1_plus_vbuc1 
     lda #ITEM_SIZE
     clc
     adc.z cur_item
@@ -398,9 +301,9 @@ main: {
     bcc !+
     inc.z cur_item+1
   !:
-    // [9] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuxx=_inc_vbuxx 
+    // [9] main::item#1 = ++ main::item#4 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] if((byte) main::item#1!=(const nomodify byte) ITEM_COUNT-(byte) 1+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [10] if(main::item#1!=ITEM_COUNT-1+1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #ITEM_COUNT-1+1
     bne __b1_from___b3
     jmp __breturn
@@ -433,25 +336,25 @@ Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte) ITEM_COUNT = (byte) 3
-(const nomodify byte) ITEM_SIZE = (byte) 5
-(const byte*) items[(const nomodify byte) ITEM_COUNT*(const nomodify byte) ITEM_SIZE]  = { (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0, (byte) 0 }
-(void()) main()
-(byte~) main::$0 reg byte a 202.0
-(byte~) main::$1 reg byte a 202.0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(byte*) main::cur_item
-(byte*) main::cur_item#1 cur_item zp[2]:2 7.333333333333333
-(byte*) main::cur_item#4 cur_item zp[2]:2 17.571428571428573
-(byte) main::item
-(byte) main::item#1 reg byte x 16.5
-(byte) main::item#4 reg byte x 15.375
-(byte) main::sub
-(byte) main::sub#1 reg byte y 151.5
-(byte) main::sub#2 reg byte y 101.0
+const nomodify byte ITEM_COUNT = 3
+const nomodify byte ITEM_SIZE = 5
+const byte* items[ITEM_COUNT*ITEM_SIZE]  = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+void main()
+byte~ main::$0 reg byte a 202.0
+byte~ main::$1 reg byte a 202.0
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+byte* main::cur_item
+byte* main::cur_item#1 cur_item zp[2]:2 7.333333333333333
+byte* main::cur_item#4 cur_item zp[2]:2 17.571428571428573
+byte main::item
+byte main::item#1 reg byte x 16.5
+byte main::item#4 reg byte x 15.375
+byte main::sub
+byte main::sub#1 reg byte y 151.5
+byte main::sub#2 reg byte y 101.0
 
 reg byte x [ main::item#4 main::item#1 ]
 zp[2]:2 [ main::cur_item#4 main::cur_item#1 ]
@@ -477,48 +380,48 @@ Score: 3416
 main: {
     .label cur_item = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte*) main::cur_item#4 = (const byte*) items [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::cur_item#4 = items [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<items
     sta.z cur_item
     lda #>items
     sta.z cur_item+1
-    // [1] phi (byte) main::item#4 = (byte) 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
+    // [1] phi main::item#4 = 0 [phi:main->main::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [1] phi (byte*) main::cur_item#4 = (byte*) main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
-    // [1] phi (byte) main::item#4 = (byte) main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi main::cur_item#4 = main::cur_item#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi main::item#4 = main::item#1 [phi:main::@3->main::@1#1] -- register_copy 
     // main::@1
   __b1:
     // [2] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // [2] phi (byte) main::sub#2 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
+    // [2] phi main::sub#2 = 0 [phi:main::@1->main::@2#0] -- vbuyy=vbuc1 
     ldy #0
     // [2] phi from main::@2 to main::@2 [phi:main::@2->main::@2]
-    // [2] phi (byte) main::sub#2 = (byte) main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
+    // [2] phi main::sub#2 = main::sub#1 [phi:main::@2->main::@2#0] -- register_copy 
     // main::@2
   __b2:
     // item*$10
-    // [3] (byte~) main::$0 ← (byte) main::item#4 << (byte) 4 -- vbuaa=vbuxx_rol_4 
+    // [3] main::$0 = main::item#4 << 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
     asl
     asl
     asl
     // item*$10|sub
-    // [4] (byte~) main::$1 ← (byte~) main::$0 | (byte) main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
+    // [4] main::$1 = main::$0 | main::sub#2 -- vbuaa=vbuaa_bor_vbuyy 
     sty.z $ff
     ora.z $ff
     // cur_item[sub] = item*$10|sub
-    // [5] *((byte*) main::cur_item#4 + (byte) main::sub#2) ← (byte~) main::$1 -- pbuz1_derefidx_vbuyy=vbuaa 
+    // [5] main::cur_item#4[main::sub#2] = main::$1 -- pbuz1_derefidx_vbuyy=vbuaa 
     sta (cur_item),y
     // for( byte sub: 0..ITEM_SIZE-1)
-    // [6] (byte) main::sub#1 ← ++ (byte) main::sub#2 -- vbuyy=_inc_vbuyy 
+    // [6] main::sub#1 = ++ main::sub#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [7] if((byte) main::sub#1!=(const nomodify byte) ITEM_SIZE-(byte) 1+(byte) 1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
+    // [7] if(main::sub#1!=ITEM_SIZE-1+1) goto main::@2 -- vbuyy_neq_vbuc1_then_la1 
     cpy #ITEM_SIZE-1+1
     bne __b2
     // main::@3
     // cur_item += ITEM_SIZE
-    // [8] (byte*) main::cur_item#1 ← (byte*) main::cur_item#4 + (const nomodify byte) ITEM_SIZE -- pbuz1=pbuz1_plus_vbuc1 
+    // [8] main::cur_item#1 = main::cur_item#4 + ITEM_SIZE -- pbuz1=pbuz1_plus_vbuc1 
     lda #ITEM_SIZE
     clc
     adc.z cur_item
@@ -527,9 +430,9 @@ main: {
     inc.z cur_item+1
   !:
     // for( byte item: 0..ITEM_COUNT-1)
-    // [9] (byte) main::item#1 ← ++ (byte) main::item#4 -- vbuxx=_inc_vbuxx 
+    // [9] main::item#1 = ++ main::item#4 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] if((byte) main::item#1!=(const nomodify byte) ITEM_COUNT-(byte) 1+(byte) 1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [10] if(main::item#1!=ITEM_COUNT-1+1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #ITEM_COUNT-1+1
     bne __b1
     // main::@return

@@ -2,26 +2,26 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← (number) 0 != *((const byte*) MSG + (byte) main::i#2)
-  if((bool~) main::$0) goto main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = 0 != MSG[main::i#2]
+  if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) SCREEN + (byte) main::i#3) ← *((const byte*) MSG + (byte) main::i#3)
-  *((const byte*) COLORS + (byte) main::i#3) ← (byte) main::i#3
-  (byte) main::i#1 ← ++ (byte) main::i#3
+  main::i#3 = phi( main::@1/main::i#2 )
+  SCREEN[main::i#3] = MSG[main::i#3]
+  COLORS[main::i#3] = main::i#3
+  main::i#1 = ++ main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -36,38 +36,38 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) COLORS = (byte*)(number) $d800
-(const byte*) MSG[]  = (byte*) "hello world!"
-(const byte*) SCREEN = (byte*)(number) $800
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
+const byte* COLORS = (byte*)$d800
+const byte* MSG[]  = "hello world!"
+const byte* SCREEN = (byte*)$800
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+bool~ main::$0
+label main::@1
+label main::@2
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (number) 0 != *((const byte*) MSG + (byte) main::i#2)
+Adding number conversion cast (unumber) 0 in main::$0 = 0 != MSG[main::i#2]
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 2048
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [3] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2
+Simple Condition main::$0 [3] if(0!=MSG[main::i#2]) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -76,121 +76,56 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [7] main::i#4 ← main::i#1
+Coalesced [7] main::i#4 = main::i#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [2] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [2] if(0!=MSG[main::i#2]) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [4] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte) main::i#2)
-  [5] *((const byte*) COLORS + (byte) main::i#2) ← (byte) main::i#2
-  [6] (byte) main::i#1 ← ++ (byte) main::i#2
+  [4] SCREEN[main::i#2] = MSG[main::i#2]
+  [5] COLORS[main::i#2] = main::i#2
+  [6] main::i#1 = ++ main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::i
-(byte) main::i#1 22.0
-(byte) main::i#2 19.25
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 19.25
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-
-INITIAL ASM
-Target platform is mega65 / MEGA45GS02
-  // File Comments
-// Hello World for MEGA 65 - putting chars directly to the screen
-  // Upstart
-.cpu _45gs02
-  // MEGA65 platform PRG executable starting in MEGA65 mode.
-.file [name="hello-mega65.prg", type="prg", segments="Program"]
-.segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$2001]
-.segmentdef Code [start=$2017]
-.segmentdef Data [startAfter="Code"]
-.segment Basic
-.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
-.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
-.text toIntString(main)                                   //         NNNN
-.byte $00, $00, $00                                     // 
-  // Global Constants & labels
-  .label SCREEN = $800
-  .label COLORS = $d800
-.segment Code
-  // main
-main: {
-    .label i = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
-    lda #0
-    ldy.z i
-    cmp MSG,y
-    bne __b2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-    // main::@2
-  __b2:
-    // [4] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte) main::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy.z i
-    lda MSG,y
-    sta SCREEN,y
-    // [5] *((const byte*) COLORS + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy.z i
-    tya
-    sta COLORS,y
-    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
-}
-  // File Data
-.segment Data
-  MSG: .text "hello world!"
-  .byte 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] if(0!=MSG[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [4] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte) main::i#2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) COLORS + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [2] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [4] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte) main::i#2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) COLORS + (byte) main::i#2) ← (byte) main::i#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] SCREEN[main::i#2] = MSG[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [5] COLORS[main::i#2] = main::i#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] if(0!=MSG[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] SCREEN[main::i#2] = MSG[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [5] COLORS[main::i#2] = main::i#2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , reg byte z , 
 
 REGISTER UPLIFT SCOPES
@@ -224,12 +159,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [2] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=MSG[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MSG,x
     cmp #0
     bne __b2
@@ -240,17 +175,17 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [4] SCREEN[main::i#2] = MSG[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MSG,x
     sta SCREEN,x
-    // [5] *((const byte*) COLORS + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [5] COLORS[main::i#2] = main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta COLORS,x
-    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -268,16 +203,16 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) COLORS = (byte*) 55296
-(const byte*) MSG[]  = (byte*) "hello world!"
-(const byte*) SCREEN = (byte*) 2048
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte x 22.0
-(byte) main::i#2 reg byte x 19.25
+const byte* COLORS = (byte*) 55296
+const byte* MSG[]  = "hello world!"
+const byte* SCREEN = (byte*) 2048
+void main()
+label main::@1
+label main::@2
+label main::@return
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 19.25
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -307,12 +242,12 @@ Score: 331
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // for(char i=0;MSG[i];i++)
-    // [2] if((byte) 0!=*((const byte*) MSG + (byte) main::i#2)) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=MSG[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
     lda MSG,x
     cmp #0
     bne __b2
@@ -323,18 +258,18 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i] = MSG[i]
-    // [4] *((const byte*) SCREEN + (byte) main::i#2) ← *((const byte*) MSG + (byte) main::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [4] SCREEN[main::i#2] = MSG[main::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MSG,x
     sta SCREEN,x
     // COLORS[i] = i
-    // [5] *((const byte*) COLORS + (byte) main::i#2) ← (byte) main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [5] COLORS[main::i#2] = main::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta COLORS,x
     // for(char i=0;MSG[i];i++)
-    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [6] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

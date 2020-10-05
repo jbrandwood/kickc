@@ -1,34 +1,34 @@
-Resolved forward reference SINTABLE to (const to_nomodify byte*) SINTABLE
+Resolved forward reference SINTABLE to SINTABLE
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main main::@5
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::c1a ← (byte) c1A
-  (byte) main::i ← (byte) 0
+  main::c1a = c1A
+  main::i = 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  (bool~) main::$0 ← (byte) main::i < (number) $28
-  if((bool~) main::$0) goto main::@4
+  main::$0 = main::i < $28
+  if(main::$0) goto main::@4
   to:main::@5
 main::@4: scope:[main]  from main::@3
-  *((const nomodify byte*) SCREEN + (byte) main::i) ← *((const to_nomodify byte*) SINTABLE + (byte) main::c1a)
-  (byte) main::c1a ← (byte) main::c1a + (number) 4
-  (byte) main::i ← ++ (byte) main::i
+  SCREEN[main::i] = SINTABLE[main::c1a]
+  main::c1a = main::c1a + 4
+  main::i = ++ main::i
   to:main::@3
 main::@5: scope:[main]  from main::@3
-  (byte) c1A ← (byte) c1A + (number) 3
+  c1A = c1A + 3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -39,39 +39,39 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
+const nomodify byte* SCREEN = (byte*)$400
+const to_nomodify byte* SINTABLE[$100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(byte) c1A loadstore = (byte) 0
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
-(byte) main::c1a loadstore
-(byte) main::i loadstore
+void __start()
+label __start::@1
+label __start::@return
+byte c1A loadstore = 0
+void main()
+bool~ main::$0
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@return
+byte main::c1a loadstore
+byte main::i loadstore
 
-Adding number conversion cast (unumber) $28 in (bool~) main::$0 ← (byte) main::i < (number) $28
-Adding number conversion cast (unumber) 4 in (byte) main::c1a ← (byte) main::c1a + (number) 4
-Adding number conversion cast (unumber) 3 in (byte) c1A ← (byte) c1A + (number) 3
+Adding number conversion cast (unumber) $28 in main::$0 = main::i < $28
+Adding number conversion cast (unumber) 4 in main::c1a = main::c1a + 4
+Adding number conversion cast (unumber) 3 in c1A = c1A + 3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
 Simplifying constant integer cast 4
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type $28
+Finalized unsigned number type 4
+Finalized unsigned number type 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [4] if((byte) main::i<(byte) $28) goto main::@4
+Simple Condition main::$0 [4] if(main::i<$28) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [0] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -88,7 +88,7 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
@@ -97,32 +97,32 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@4
-  [1] (byte) main::c1a ← (byte) c1A
-  [2] (byte) main::i ← (byte) 0
+  [1] main::c1a = c1A
+  [2] main::i = 0
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@3
-  [3] if((byte) main::i<(byte) $28) goto main::@3
+  [3] if(main::i<$28) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [4] (byte) c1A ← (byte) c1A + (byte) 3
+  [4] c1A = c1A + 3
   to:main::@1
 main::@3: scope:[main]  from main::@2
-  [5] *((const nomodify byte*) SCREEN + (byte) main::i) ← *((const to_nomodify byte*) SINTABLE + (byte) main::c1a)
-  [6] (byte) main::c1a ← (byte) main::c1a + (byte) 4
-  [7] (byte) main::i ← ++ (byte) main::i
+  [5] SCREEN[main::i] = SINTABLE[main::c1a]
+  [6] main::c1a = main::c1a + 4
+  [7] main::i = ++ main::i
   to:main::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) c1A loadstore 4.125 = (byte) 0
-(void()) main()
-(byte) main::c1a loadstore 52.33333333333333
-(byte) main::i loadstore 83.0
+byte c1A loadstore 4.125 = 0
+void main()
+byte main::c1a loadstore 52.33333333333333
+byte main::i loadstore 83.0
 
 Initial phi equivalence classes
 Added variable main::c1a to live range equivalence class [ main::c1a ]
@@ -135,77 +135,13 @@ Complete equivalence classes
 Allocated mem[1] [ main::c1a ]
 Allocated mem[1] [ main::i ]
 Allocated mem[1] [ c1A ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates problem with __ma coalescing
-// c1a is erroneously zp-coalesced with c1A
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] (byte) main::c1a ← (byte) c1A -- vbum1=vbum2 
-    lda c1A
-    sta c1a
-    // [2] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
-    lda #0
-    sta i
-    jmp __b2
-    // main::@2
-  __b2:
-    // [3] if((byte) main::i<(byte) $28) goto main::@3 -- vbum1_lt_vbuc1_then_la1 
-    lda i
-    cmp #$28
-    bcc __b3
-    jmp __b4
-    // main::@4
-  __b4:
-    // [4] (byte) c1A ← (byte) c1A + (byte) 3 -- vbum1=vbum1_plus_vbuc1 
-    lax c1A
-    axs #-[3]
-    stx c1A
-    jmp __b1
-    // main::@3
-  __b3:
-    // [5] *((const nomodify byte*) SCREEN + (byte) main::i) ← *((const to_nomodify byte*) SINTABLE + (byte) main::c1a) -- pbuc1_derefidx_vbum1=pbuc2_derefidx_vbum2 
-    ldy c1a
-    lda SINTABLE,y
-    ldy i
-    sta SCREEN,y
-    // [6] (byte) main::c1a ← (byte) main::c1a + (byte) 4 -- vbum1=vbum1_plus_vbuc1 
-    lax c1a
-    axs #-[4]
-    stx c1a
-    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
-    inc i
-    jmp __b2
-    c1a: .byte 0
-    i: .byte 0
-}
-  // File Data
-  .align $100
-SINTABLE:
-.for(var i=0;i<$100;i++)
-        .byte round(127.5+127.5*sin(2*PI*i/256))
-
-  // Plasma state variables
-  c1A: .byte 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte) main::c1a ← (byte) c1A [ main::c1a c1A ] (  [ main::c1a c1A ] { }  ) always clobbers reg byte a 
-Statement [2] (byte) main::i ← (byte) 0 [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a 
-Statement [3] if((byte) main::i<(byte) $28) goto main::@3 [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a 
-Statement [4] (byte) c1A ← (byte) c1A + (byte) 3 [ c1A ] (  [ c1A ] { }  ) always clobbers reg byte a reg byte x 
-Statement [5] *((const nomodify byte*) SCREEN + (byte) main::i) ← *((const to_nomodify byte*) SINTABLE + (byte) main::c1a) [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a reg byte y 
-Statement [6] (byte) main::c1a ← (byte) main::c1a + (byte) 4 [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a reg byte x 
+Statement [1] main::c1a = c1A [ main::c1a c1A ] (  [ main::c1a c1A ] { }  ) always clobbers reg byte a 
+Statement [2] main::i = 0 [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a 
+Statement [3] if(main::i<$28) goto main::@3 [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a 
+Statement [4] c1A = c1A + 3 [ c1A ] (  [ c1A ] { }  ) always clobbers reg byte a reg byte x 
+Statement [5] SCREEN[main::i] = SINTABLE[main::c1a] [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a reg byte y 
+Statement [6] main::c1a = main::c1a + 4 [ main::c1a c1A main::i ] (  [ main::c1a c1A main::i ] { }  ) always clobbers reg byte a reg byte x 
 Potential registers mem[1] [ main::c1a ] : mem[1] , 
 Potential registers mem[1] [ main::i ] : mem[1] , 
 Potential registers mem[1] [ c1A ] : mem[1] , 
@@ -238,39 +174,39 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] (byte) main::c1a ← (byte) c1A -- vbum1=vbum2 
+    // [1] main::c1a = c1A -- vbum1=vbum2 
     lda c1A
     sta c1a
-    // [2] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [2] main::i = 0 -- vbum1=vbuc1 
     lda #0
     sta i
     jmp __b2
     // main::@2
   __b2:
-    // [3] if((byte) main::i<(byte) $28) goto main::@3 -- vbum1_lt_vbuc1_then_la1 
+    // [3] if(main::i<$28) goto main::@3 -- vbum1_lt_vbuc1_then_la1 
     lda i
     cmp #$28
     bcc __b3
     jmp __b4
     // main::@4
   __b4:
-    // [4] (byte) c1A ← (byte) c1A + (byte) 3 -- vbum1=vbum1_plus_vbuc1 
+    // [4] c1A = c1A + 3 -- vbum1=vbum1_plus_vbuc1 
     lax c1A
     axs #-[3]
     stx c1A
     jmp __b1
     // main::@3
   __b3:
-    // [5] *((const nomodify byte*) SCREEN + (byte) main::i) ← *((const to_nomodify byte*) SINTABLE + (byte) main::c1a) -- pbuc1_derefidx_vbum1=pbuc2_derefidx_vbum2 
+    // [5] SCREEN[main::i] = SINTABLE[main::c1a] -- pbuc1_derefidx_vbum1=pbuc2_derefidx_vbum2 
     ldy c1a
     lda SINTABLE,y
     ldy i
     sta SCREEN,y
-    // [6] (byte) main::c1a ← (byte) main::c1a + (byte) 4 -- vbum1=vbum1_plus_vbuc1 
+    // [6] main::c1a = main::c1a + 4 -- vbum1=vbum1_plus_vbuc1 
     lax c1a
     axs #-[4]
     stx c1a
-    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [7] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
     jmp __b2
     c1a: .byte 0
@@ -294,18 +230,18 @@ Removing instruction __b4:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const to_nomodify byte*) SINTABLE[(number) $100]  = kickasm {{ .for(var i=0;i<$100;i++)
+const nomodify byte* SCREEN = (byte*) 1024
+const to_nomodify byte* SINTABLE[$100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
  }}
-(byte) c1A loadstore mem[1] 4.125 = (byte) 0
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(byte) main::c1a loadstore mem[1] 52.33333333333333
-(byte) main::i loadstore mem[1] 83.0
+byte c1A loadstore mem[1] 4.125 = 0
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+byte main::c1a loadstore mem[1] 52.33333333333333
+byte main::i loadstore mem[1] 83.0
 
 mem[1] [ main::c1a ]
 mem[1] [ main::i ]
@@ -329,23 +265,23 @@ main: {
     // main::@1
   __b1:
     // c1a = c1A
-    // [1] (byte) main::c1a ← (byte) c1A -- vbum1=vbum2 
+    // [1] main::c1a = c1A -- vbum1=vbum2 
     lda c1A
     sta c1a
     // i = 0
-    // [2] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [2] main::i = 0 -- vbum1=vbuc1 
     lda #0
     sta i
     // main::@2
   __b2:
     // for (char i = 0; i < 40; ++i)
-    // [3] if((byte) main::i<(byte) $28) goto main::@3 -- vbum1_lt_vbuc1_then_la1 
+    // [3] if(main::i<$28) goto main::@3 -- vbum1_lt_vbuc1_then_la1 
     lda i
     cmp #$28
     bcc __b3
     // main::@4
     // c1A += 3
-    // [4] (byte) c1A ← (byte) c1A + (byte) 3 -- vbum1=vbum1_plus_vbuc1 
+    // [4] c1A = c1A + 3 -- vbum1=vbum1_plus_vbuc1 
     lax c1A
     axs #-[3]
     stx c1A
@@ -353,18 +289,18 @@ main: {
     // main::@3
   __b3:
     // SCREEN[i] = SINTABLE[c1a]
-    // [5] *((const nomodify byte*) SCREEN + (byte) main::i) ← *((const to_nomodify byte*) SINTABLE + (byte) main::c1a) -- pbuc1_derefidx_vbum1=pbuc2_derefidx_vbum2 
+    // [5] SCREEN[main::i] = SINTABLE[main::c1a] -- pbuc1_derefidx_vbum1=pbuc2_derefidx_vbum2 
     ldy c1a
     lda SINTABLE,y
     ldy i
     sta SCREEN,y
     // c1a += 4
-    // [6] (byte) main::c1a ← (byte) main::c1a + (byte) 4 -- vbum1=vbum1_plus_vbuc1 
+    // [6] main::c1a = main::c1a + 4 -- vbum1=vbum1_plus_vbuc1 
     lax c1a
     axs #-[4]
     stx c1a
     // for (char i = 0; i < 40; ++i)
-    // [7] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [7] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
     jmp __b2
     c1a: .byte 0

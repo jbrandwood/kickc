@@ -1,59 +1,59 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#1 )
-  (number~) main::$0 ← (byte) main::i#2 & (number) 1
-  (bool~) main::$1 ← (number~) main::$0 == (number) 0
-  (byte) isSet::i#0 ← (byte) main::i#2
-  (bool) isSet::b#0 ← (bool~) main::$1
+  main::i#2 = phi( main/main::i#0, main::@3/main::i#1 )
+  main::$0 = main::i#2 & 1
+  main::$1 = main::$0 == 0
+  isSet::i#0 = main::i#2
+  isSet::b#0 = main::$1
   call isSet 
-  (bool) isSet::return#0 ← (bool) isSet::return#2
+  isSet::return#0 = isSet::return#2
   to:main::@5
 main::@5: scope:[main]  from main::@1
-  (byte) main::i#6 ← phi( main::@1/(byte) main::i#2 )
-  (bool) isSet::return#3 ← phi( main::@1/(bool) isSet::return#0 )
-  (bool~) main::$2 ← (bool) isSet::return#3
-  if((bool~) main::$2) goto main::@2
+  main::i#6 = phi( main::@1/main::i#2 )
+  isSet::return#3 = phi( main::@1/isSet::return#0 )
+  main::$2 = isSet::return#3
+  if(main::$2) goto main::@2
   to:main::@4
 main::@2: scope:[main]  from main::@5
-  (byte) main::i#3 ← phi( main::@5/(byte) main::i#6 )
-  *((const byte*) main::screen + (byte) main::i#3) ← (byte) '*'
+  main::i#3 = phi( main::@5/main::i#6 )
+  main::screen[main::i#3] = '*'
   to:main::@3
 main::@4: scope:[main]  from main::@5
-  (byte) main::i#4 ← phi( main::@5/(byte) main::i#6 )
-  *((const byte*) main::screen + (byte) main::i#4) ← (byte) ' '
+  main::i#4 = phi( main::@5/main::i#6 )
+  main::screen[main::i#4] = ' '
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  (byte) main::i#5 ← phi( main::@2/(byte) main::i#3 main::@4/(byte) main::i#4 )
-  (byte) main::i#1 ← (byte) main::i#5 + rangenext(0,$64)
-  (bool~) main::$3 ← (byte) main::i#1 != rangelast(0,$64)
-  if((bool~) main::$3) goto main::@1
+  main::i#5 = phi( main::@2/main::i#3, main::@4/main::i#4 )
+  main::i#1 = main::i#5 + rangenext(0,$64)
+  main::$3 = main::i#1 != rangelast(0,$64)
+  if(main::$3) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-(bool()) isSet((byte) isSet::i , (bool) isSet::b)
+bool isSet(byte isSet::i , bool isSet::b)
 isSet: scope:[isSet]  from main::@1
-  (bool) isSet::b#1 ← phi( main::@1/(bool) isSet::b#0 )
-  (byte) isSet::i#1 ← phi( main::@1/(byte) isSet::i#0 )
-  (number~) isSet::$0 ← (byte) isSet::i#1 & (number) 8
-  (bool~) isSet::$1 ← (number~) isSet::$0 != (number) 0
-  (bool~) isSet::$2 ← (bool) isSet::b#1 || (bool~) isSet::$1
-  (bool) isSet::return#1 ← (bool~) isSet::$2
+  isSet::b#1 = phi( main::@1/isSet::b#0 )
+  isSet::i#1 = phi( main::@1/isSet::i#0 )
+  isSet::$0 = isSet::i#1 & 8
+  isSet::$1 = isSet::$0 != 0
+  isSet::$2 = isSet::b#1 || isSet::$1
+  isSet::return#1 = isSet::$2
   to:isSet::@return
 isSet::@return: scope:[isSet]  from isSet
-  (bool) isSet::return#4 ← phi( isSet/(bool) isSet::return#1 )
-  (bool) isSet::return#2 ← (bool) isSet::return#4
+  isSet::return#4 = phi( isSet/isSet::return#1 )
+  isSet::return#2 = isSet::return#4
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -64,53 +64,53 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(bool()) isSet((byte) isSet::i , (bool) isSet::b)
-(number~) isSet::$0
-(bool~) isSet::$1
-(bool~) isSet::$2
-(label) isSet::@return
-(bool) isSet::b
-(bool) isSet::b#0
-(bool) isSet::b#1
-(byte) isSet::i
-(byte) isSet::i#0
-(byte) isSet::i#1
-(bool) isSet::return
-(bool) isSet::return#0
-(bool) isSet::return#1
-(bool) isSet::return#2
-(bool) isSet::return#3
-(bool) isSet::return#4
-(void()) main()
-(number~) main::$0
-(bool~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
-(byte) main::i#4
-(byte) main::i#5
-(byte) main::i#6
-(const byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+bool isSet(byte isSet::i , bool isSet::b)
+number~ isSet::$0
+bool~ isSet::$1
+bool~ isSet::$2
+label isSet::@return
+bool isSet::b
+bool isSet::b#0
+bool isSet::b#1
+byte isSet::i
+byte isSet::i#0
+byte isSet::i#1
+bool isSet::return
+bool isSet::return#0
+bool isSet::return#1
+bool isSet::return#2
+bool isSet::return#3
+bool isSet::return#4
+void main()
+number~ main::$0
+bool~ main::$1
+bool~ main::$2
+bool~ main::$3
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte main::i#5
+byte main::i#6
+const byte* main::screen = (byte*)$400
 
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#2 & (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#2 & (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (unumber~) main::$0 == (number) 0
-Adding number conversion cast (unumber) 8 in (number~) isSet::$0 ← (byte) isSet::i#1 & (number) 8
-Adding number conversion cast (unumber) isSet::$0 in (number~) isSet::$0 ← (byte) isSet::i#1 & (unumber)(number) 8
-Adding number conversion cast (unumber) 0 in (bool~) isSet::$1 ← (unumber~) isSet::$0 != (number) 0
+Adding number conversion cast (unumber) 1 in main::$0 = main::i#2 & 1
+Adding number conversion cast (unumber) main::$0 in main::$0 = main::i#2 & (unumber)1
+Adding number conversion cast (unumber) 0 in main::$1 = main::$0 == 0
+Adding number conversion cast (unumber) 8 in isSet::$0 = isSet::i#1 & 8
+Adding number conversion cast (unumber) isSet::$0 in isSet::$0 = isSet::i#1 & (unumber)8
+Adding number conversion cast (unumber) 0 in isSet::$1 = isSet::$0 != 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -118,13 +118,13 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
+Finalized unsigned number type 8
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#2 & (byte) 1
-Inferred type updated to byte in (unumber~) isSet::$0 ← (byte) isSet::i#1 & (byte) 8
+Inferred type updated to byte in main::$0 = main::i#2 & 1
+Inferred type updated to byte in isSet::$0 = isSet::i#1 & 8
 Alias isSet::b#0 = main::$1 
 Alias isSet::return#0 = isSet::return#3 
 Alias main::i#2 = main::i#6 main::i#3 main::i#4 
@@ -132,28 +132,28 @@ Alias isSet::return#1 = isSet::$2 isSet::return#4 isSet::return#2
 Successful SSA optimization Pass2AliasElimination
 Alias main::i#2 = main::i#5 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) isSet::i#1 (byte) isSet::i#0
-Identical Phi Values (bool) isSet::b#1 (bool) isSet::b#0
+Identical Phi Values isSet::i#1 isSet::i#0
+Identical Phi Values isSet::b#1 isSet::b#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [13] if((byte) main::i#1!=rangelast(0,$64)) goto main::@1
+Simple Condition main::$3 [13] if(main::i#1!=rangelast(0,$64)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [11] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$64)) goto main::@1 to (number) $65
+Resolved ranged next value [11] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [13] if(main::i#1!=rangelast(0,$64)) goto main::@1 to $65
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) $65 in [11] if((byte) main::i#1!=(number) $65) goto main::@1
+Adding number conversion cast (unumber) $65 in [11] if(main::i#1!=$65) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $65
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $65
+Finalized unsigned number type $65
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@3 and main::@1)
 Adding NOP phi() at start of main
@@ -161,48 +161,48 @@ CALL GRAPH
 Calls in [main] to isSet:5 
 
 Created 1 initial phi equivalence classes
-Coalesced [13] main::i#7 ← main::i#1
+Coalesced [13] main::i#7 = main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@6
+Culled Empty Block label main::@6
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
-  [2] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1
-  [3] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0
-  [4] (byte) isSet::i#0 ← (byte) main::i#2
+  [1] main::i#2 = phi( main/0, main::@3/main::i#1 )
+  [2] main::$0 = main::i#2 & 1
+  [3] isSet::b#0 = main::$0 == 0
+  [4] isSet::i#0 = main::i#2
   [5] call isSet 
-  [6] (bool) isSet::return#0 ← (bool) isSet::return#1
+  [6] isSet::return#0 = isSet::return#1
   to:main::@5
 main::@5: scope:[main]  from main::@1
-  [7] (bool~) main::$2 ← (bool) isSet::return#0
-  [8] if((bool~) main::$2) goto main::@2
+  [7] main::$2 = isSet::return#0
+  [8] if(main::$2) goto main::@2
   to:main::@4
 main::@4: scope:[main]  from main::@5
-  [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' '
+  [9] main::screen[main::i#2] = ' '
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  [10] (byte) main::i#1 ← ++ (byte) main::i#2
-  [11] if((byte) main::i#1!=(byte) $65) goto main::@1
+  [10] main::i#1 = ++ main::i#2
+  [11] if(main::i#1!=$65) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@3
   [12] return 
   to:@return
 main::@2: scope:[main]  from main::@5
-  [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*'
+  [13] main::screen[main::i#2] = '*'
   to:main::@3
 
-(bool()) isSet((byte) isSet::i , (bool) isSet::b)
+bool isSet(byte isSet::i , bool isSet::b)
 isSet: scope:[isSet]  from main::@1
-  [14] (byte~) isSet::$0 ← (byte) isSet::i#0 & (byte) 8
-  [15] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0
-  [16] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1
+  [14] isSet::$0 = isSet::i#0 & 8
+  [15] isSet::$1 = isSet::$0 != 0
+  [16] isSet::return#1 = isSet::b#0 || isSet::$1
   to:isSet::@return
 isSet::@return: scope:[isSet]  from isSet
   [17] return 
@@ -210,22 +210,22 @@ isSet::@return: scope:[isSet]  from isSet
 
 
 VARIABLE REGISTER WEIGHTS
-(bool()) isSet((byte) isSet::i , (bool) isSet::b)
-(byte~) isSet::$0 202.0
-(bool~) isSet::$1 202.0
-(bool) isSet::b
-(bool) isSet::b#0 28.0
-(byte) isSet::i
-(byte) isSet::i#0 112.0
-(bool) isSet::return
-(bool) isSet::return#0 22.0
-(bool) isSet::return#1 37.33333333333333
-(void()) main()
-(byte~) main::$0 22.0
-(bool~) main::$2 22.0
-(byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 6.6
+bool isSet(byte isSet::i , bool isSet::b)
+byte~ isSet::$0 202.0
+bool~ isSet::$1 202.0
+bool isSet::b
+bool isSet::b#0 28.0
+byte isSet::i
+byte isSet::i#0 112.0
+bool isSet::return
+bool isSet::return#0 22.0
+bool isSet::return#1 37.33333333333333
+void main()
+byte~ main::$0 22.0
+bool~ main::$2 22.0
+byte main::i
+byte main::i#1 16.5
+byte main::i#2 6.6
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -256,141 +256,20 @@ Allocated zp[1]:7 [ main::$2 ]
 Allocated zp[1]:8 [ isSet::$0 ]
 Allocated zp[1]:9 [ isSet::$1 ]
 Allocated zp[1]:10 [ isSet::return#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test a function taking boolean parameter and returning boolean result
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    .label __0 = 3
-    .label __2 = 7
-    .label i = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  __b1_from___b3:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
-    lda #1
-    and.z i
-    sta.z __0
-    // [3] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 -- vboz1=vbuz2_eq_vbuc1 
-    lda.z __0
-    eor #0
-    beq !+
-    lda #1
-  !:
-    eor #1
-    sta.z isSet.b
-    // [4] (byte) isSet::i#0 ← (byte) main::i#2 -- vbuz1=vbuz2 
-    lda.z i
-    sta.z isSet.i
-    // [5] call isSet 
-    jsr isSet
-    // [6] (bool) isSet::return#0 ← (bool) isSet::return#1 -- vboz1=vboz2 
-    lda.z isSet.return_1
-    sta.z isSet.return
-    jmp __b5
-    // main::@5
-  __b5:
-    // [7] (bool~) main::$2 ← (bool) isSet::return#0 -- vboz1=vboz2 
-    lda.z isSet.return
-    sta.z __2
-    // [8] if((bool~) main::$2) goto main::@2 -- vboz1_then_la1 
-    lda.z __2
-    cmp #0
-    bne __b2
-    jmp __b4
-    // main::@4
-  __b4:
-    // [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #' '
-    ldy.z i
-    sta screen,y
-    jmp __b3
-    // main::@3
-  __b3:
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [11] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$65
-    cmp.z i
-    bne __b1_from___b3
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [12] return 
-    rts
-    // main::@2
-  __b2:
-    // [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #'*'
-    ldy.z i
-    sta screen,y
-    jmp __b3
-}
-  // isSet
-// Determine whether to set a char to '*.
-// Returns true if i&8!=0 or b=true
-// isSet(byte zp(5) i, bool zp(4) b)
-isSet: {
-    .label __0 = 8
-    .label __1 = 9
-    .label i = 5
-    .label b = 4
-    .label return = 6
-    .label return_1 = $a
-    // [14] (byte~) isSet::$0 ← (byte) isSet::i#0 & (byte) 8 -- vbuz1=vbuz2_band_vbuc1 
-    lda #8
-    and.z i
-    sta.z __0
-    // [15] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 -- vboz1=vbuz2_neq_vbuc1 
-    lda.z __0
-    eor #0
-    beq !+
-    lda #1
-  !:
-    sta.z __1
-    // [16] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboz1=vboz2_or_vboz3 
-    lda.z b
-    ora.z __1
-    sta.z return_1
-    jmp __breturn
-    // isSet::@return
-  __breturn:
-    // [17] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 [ main::i#2 isSet::b#0 ] (  [ main::i#2 isSet::b#0 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [3] isSet::b#0 = main::$0 == 0 [ main::i#2 isSet::b#0 ] (  [ main::i#2 isSet::b#0 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [15] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 [ isSet::b#0 isSet::$1 ] ( isSet:5 [ main::i#2 isSet::b#0 isSet::$1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [9] main::screen[main::i#2] = ' ' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [13] main::screen[main::i#2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [15] isSet::$1 = isSet::$0 != 0 [ isSet::b#0 isSet::$1 ] ( isSet:5 [ main::i#2 isSet::b#0 isSet::$1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ isSet::b#0 ]
-Statement [16] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 [ isSet::return#1 ] ( isSet:5 [ main::i#2 isSet::return#1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
-Statement [2] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
-Statement [3] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 [ main::i#2 isSet::b#0 ] (  [ main::i#2 isSet::b#0 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
-Statement [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [15] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 [ isSet::b#0 isSet::$1 ] ( isSet:5 [ main::i#2 isSet::b#0 isSet::$1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
-Statement [16] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 [ isSet::return#1 ] ( isSet:5 [ main::i#2 isSet::return#1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [16] isSet::return#1 = isSet::b#0 || isSet::$1 [ isSet::return#1 ] ( isSet:5 [ main::i#2 isSet::return#1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [2] main::$0 = main::i#2 & 1 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [3] isSet::b#0 = main::$0 == 0 [ main::i#2 isSet::b#0 ] (  [ main::i#2 isSet::b#0 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [9] main::screen[main::i#2] = ' ' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [13] main::screen[main::i#2] = '*' [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [15] isSet::$1 = isSet::$0 != 0 [ isSet::b#0 isSet::$1 ] ( isSet:5 [ main::i#2 isSet::b#0 isSet::$1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
+Statement [16] isSet::return#1 = isSet::b#0 || isSet::$1 [ isSet::return#1 ] ( isSet:5 [ main::i#2 isSet::return#1 ] { { isSet::i#0 = main::i#2 } { isSet::return#0 = isSet::return#1 } }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ isSet::b#0 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -428,49 +307,49 @@ main: {
     .label screen = $400
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [2] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [2] main::$0 = main::i#2 & 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [3] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 -- vboyy=vbuaa_eq_vbuc1 
+    // [3] isSet::b#0 = main::$0 == 0 -- vboyy=vbuaa_eq_vbuc1 
     eor #0
     beq !+
     lda #1
   !:
     eor #1
     tay
-    // [4] (byte) isSet::i#0 ← (byte) main::i#2 -- vbuaa=vbuxx 
+    // [4] isSet::i#0 = main::i#2 -- vbuaa=vbuxx 
     txa
     // [5] call isSet 
     jsr isSet
-    // [6] (bool) isSet::return#0 ← (bool) isSet::return#1
+    // [6] isSet::return#0 = isSet::return#1
     jmp __b5
     // main::@5
   __b5:
-    // [7] (bool~) main::$2 ← (bool) isSet::return#0
-    // [8] if((bool~) main::$2) goto main::@2 -- vboaa_then_la1 
+    // [7] main::$2 = isSet::return#0
+    // [8] if(main::$2) goto main::@2 -- vboaa_then_la1 
     cmp #0
     bne __b2
     jmp __b4
     // main::@4
   __b4:
-    // [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [9] main::screen[main::i#2] = ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     jmp __b3
     // main::@3
   __b3:
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [10] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [11] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [11] if(main::i#1!=$65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne __b1_from___b3
     jmp __breturn
@@ -480,7 +359,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [13] main::screen[main::i#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp __b3
@@ -490,14 +369,14 @@ main: {
 // Returns true if i&8!=0 or b=true
 // isSet(byte register(A) i, bool register(Y) b)
 isSet: {
-    // [14] (byte~) isSet::$0 ← (byte) isSet::i#0 & (byte) 8 -- vbuaa=vbuaa_band_vbuc1 
+    // [14] isSet::$0 = isSet::i#0 & 8 -- vbuaa=vbuaa_band_vbuc1 
     and #8
-    // [15] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 -- vboaa=vbuaa_neq_vbuc1 
+    // [15] isSet::$1 = isSet::$0 != 0 -- vboaa=vbuaa_neq_vbuc1 
     eor #0
     beq !+
     lda #1
   !:
-    // [16] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboaa=vboyy_or_vboaa 
+    // [16] isSet::return#1 = isSet::b#0 || isSet::$1 -- vboaa=vboyy_or_vboaa 
     sty.z $ff
     ora.z $ff
     jmp __breturn
@@ -529,30 +408,30 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(bool()) isSet((byte) isSet::i , (bool) isSet::b)
-(byte~) isSet::$0 reg byte a 202.0
-(bool~) isSet::$1 reg byte a 202.0
-(label) isSet::@return
-(bool) isSet::b
-(bool) isSet::b#0 reg byte y 28.0
-(byte) isSet::i
-(byte) isSet::i#0 reg byte a 112.0
-(bool) isSet::return
-(bool) isSet::return#0 reg byte a 22.0
-(bool) isSet::return#1 reg byte a 37.33333333333333
-(void()) main()
-(byte~) main::$0 reg byte a 22.0
-(bool~) main::$2 reg byte a 22.0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#2 reg byte x 6.6
-(const byte*) main::screen = (byte*) 1024
+bool isSet(byte isSet::i , bool isSet::b)
+byte~ isSet::$0 reg byte a 202.0
+bool~ isSet::$1 reg byte a 202.0
+label isSet::@return
+bool isSet::b
+bool isSet::b#0 reg byte y 28.0
+byte isSet::i
+byte isSet::i#0 reg byte a 112.0
+bool isSet::return
+bool isSet::return#0 reg byte a 22.0
+bool isSet::return#1 reg byte a 37.33333333333333
+void main()
+byte~ main::$0 reg byte a 22.0
+bool~ main::$2 reg byte a 22.0
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@return
+byte main::i
+byte main::i#1 reg byte x 16.5
+byte main::i#2 reg byte x 6.6
+const byte* main::screen = (byte*) 1024
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte a [ main::$0 ]
@@ -579,46 +458,46 @@ Score: 551
 main: {
     .label screen = $400
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // i&1
-    // [2] (byte~) main::$0 ← (byte) main::i#2 & (byte) 1 -- vbuaa=vbuxx_band_vbuc1 
+    // [2] main::$0 = main::i#2 & 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
     // isSet(i, (i&1)==0)
-    // [3] (bool) isSet::b#0 ← (byte~) main::$0 == (byte) 0 -- vboyy=vbuaa_eq_vbuc1 
+    // [3] isSet::b#0 = main::$0 == 0 -- vboyy=vbuaa_eq_vbuc1 
     eor #0
     beq !+
     lda #1
   !:
     eor #1
     tay
-    // [4] (byte) isSet::i#0 ← (byte) main::i#2 -- vbuaa=vbuxx 
+    // [4] isSet::i#0 = main::i#2 -- vbuaa=vbuxx 
     txa
     // [5] call isSet 
     jsr isSet
-    // [6] (bool) isSet::return#0 ← (bool) isSet::return#1
+    // [6] isSet::return#0 = isSet::return#1
     // main::@5
-    // [7] (bool~) main::$2 ← (bool) isSet::return#0
+    // [7] main::$2 = isSet::return#0
     // if( isSet(i, (i&1)==0))
-    // [8] if((bool~) main::$2) goto main::@2 -- vboaa_then_la1 
+    // [8] if(main::$2) goto main::@2 -- vboaa_then_la1 
     cmp #0
     bne __b2
     // main::@4
     // screen[i] = ' '
-    // [9] *((const byte*) main::screen + (byte) main::i#2) ← (byte) ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [9] main::screen[main::i#2] = ' ' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #' '
     sta screen,x
     // main::@3
   __b3:
     // for(byte i: 0..100)
-    // [10] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [10] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [11] if((byte) main::i#1!=(byte) $65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [11] if(main::i#1!=$65) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$65
     bne __b1
     // main::@return
@@ -628,7 +507,7 @@ main: {
     // main::@2
   __b2:
     // screen[i] = '*'
-    // [13] *((const byte*) main::screen + (byte) main::i#2) ← (byte) '*' -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [13] main::screen[main::i#2] = '*' -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #'*'
     sta screen,x
     jmp __b3
@@ -639,16 +518,16 @@ main: {
 // isSet(byte register(A) i, bool register(Y) b)
 isSet: {
     // i&8
-    // [14] (byte~) isSet::$0 ← (byte) isSet::i#0 & (byte) 8 -- vbuaa=vbuaa_band_vbuc1 
+    // [14] isSet::$0 = isSet::i#0 & 8 -- vbuaa=vbuaa_band_vbuc1 
     and #8
     // (i&8)!=0
-    // [15] (bool~) isSet::$1 ← (byte~) isSet::$0 != (byte) 0 -- vboaa=vbuaa_neq_vbuc1 
+    // [15] isSet::$1 = isSet::$0 != 0 -- vboaa=vbuaa_neq_vbuc1 
     eor #0
     beq !+
     lda #1
   !:
     // b || ((i&8)!=0)
-    // [16] (bool) isSet::return#1 ← (bool) isSet::b#0 || (bool~) isSet::$1 -- vboaa=vboyy_or_vboaa 
+    // [16] isSet::return#1 = isSet::b#0 || isSet::$1 -- vboaa=vboyy_or_vboaa 
     sty.z $ff
     ora.z $ff
     // isSet::@return

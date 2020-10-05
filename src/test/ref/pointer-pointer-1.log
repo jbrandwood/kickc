@@ -1,19 +1,19 @@
-Setting inferred volatile on symbol affected by address-of (byte*) main::pb ← &(byte) main::b
-Setting inferred volatile on symbol affected by address-of (byte**) main::ppb ← &(byte*) main::pb
+Setting inferred volatile on symbol affected by address-of main::pb = &main::b
+Setting inferred volatile on symbol affected by address-of main::ppb = &main::pb
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (volatile byte) main::b ← (byte) 'a'
-  (volatile byte*) main::pb ← &(volatile byte) main::b
-  *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
+  main::b = 'a'
+  main::pb = &main::b
+  *main::SCREEN = *(*main::ppb)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -24,15 +24,15 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(volatile byte) main::b loadstore
-(volatile byte*) main::pb loadstore
-(const byte**) main::ppb = &(volatile byte*) main::pb
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+volatile byte main::b loadstore
+volatile byte* main::pb loadstore
+const byte** main::ppb = &main::pb
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -48,11 +48,11 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile byte) main::b ← (byte) 'a'
-  [1] (volatile byte*) main::pb ← &(volatile byte) main::b
-  [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb))
+  [0] main::b = 'a'
+  [1] main::pb = &main::b
+  [2] *main::SCREEN = *(*main::ppb)
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -60,9 +60,9 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(volatile byte) main::b loadstore 2.0
-(volatile byte*) main::pb loadstore 20.0
+void main()
+volatile byte main::b loadstore 2.0
+volatile byte* main::pb loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::b to live range equivalence class [ main::b ]
@@ -72,50 +72,10 @@ Complete equivalence classes
 [ main::pb ]
 Allocated zp[1]:2 [ main::b ]
 Allocated zp[2]:3 [ main::pb ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests a simple pointer to a pointer
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    .label ppb = pb
-    .label b = 2
-    .label pb = 3
-    // [0] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
-    lda #'a'
-    sta.z b
-    // [1] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
-    lda #<b
-    sta.z pb
-    lda #>b
-    sta.z pb+1
-    // [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_qbuc2) 
-    ldy.z ppb
-    sty.z $fe
-    ldy.z ppb+1
-    sty.z $ff
-    ldy #0
-    lda ($fe),y
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile byte) main::b ← (byte) 'a' [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a 
-Statement [1] (volatile byte*) main::pb ← &(volatile byte) main::b [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] main::b = 'a' [ main::b ] (  [ main::b ] { }  ) always clobbers reg byte a 
+Statement [1] main::pb = &main::b [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *main::SCREEN = *(*main::ppb) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::b ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ main::pb ] : zp[2]:3 , 
 
@@ -142,15 +102,15 @@ main: {
     .label ppb = pb
     .label b = 2
     .label pb = 3
-    // [0] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [0] main::b = 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
-    // [1] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
+    // [1] main::pb = &main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
-    // [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_qbuc2) 
+    // [2] *main::SCREEN = *(*main::ppb) -- _deref_pbuc1=_deref_(_deref_qbuc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1
@@ -173,12 +133,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(volatile byte) main::b loadstore zp[1]:2 2.0
-(volatile byte*) main::pb loadstore zp[2]:3 20.0
-(const byte**) main::ppb = &(volatile byte*) main::pb
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+volatile byte main::b loadstore zp[1]:2 2.0
+volatile byte* main::pb loadstore zp[2]:3 20.0
+const byte** main::ppb = &main::pb
 
 zp[1]:2 [ main::b ]
 zp[2]:3 [ main::pb ]
@@ -201,17 +161,17 @@ main: {
     .label b = 2
     .label pb = 3
     // b = 'a'
-    // [0] (volatile byte) main::b ← (byte) 'a' -- vbuz1=vbuc1 
+    // [0] main::b = 'a' -- vbuz1=vbuc1 
     lda #'a'
     sta.z b
     // pb = &b
-    // [1] (volatile byte*) main::pb ← &(volatile byte) main::b -- pbuz1=pbuc1 
+    // [1] main::pb = &main::b -- pbuz1=pbuc1 
     lda #<b
     sta.z pb
     lda #>b
     sta.z pb+1
     // *SCREEN = **ppb
-    // [2] *((const nomodify byte*) main::SCREEN) ← *(*((const byte**) main::ppb)) -- _deref_pbuc1=_deref_(_deref_qbuc2) 
+    // [2] *main::SCREEN = *(*main::ppb) -- _deref_pbuc1=_deref_(_deref_qbuc2) 
     ldy.z ppb
     sty.z $fe
     ldy.z ppb+1

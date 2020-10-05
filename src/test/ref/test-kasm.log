@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main main::@2
@@ -15,7 +15,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -26,15 +26,15 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) A[]  = kickasm {{ .byte 1, 2, 3
+const byte* A[]  = kickasm {{ .byte 1, 2, 3
  }}
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
 
 if() condition always true - replacing block destination [0] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -51,13 +51,13 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
@@ -68,37 +68,10 @@ main::@1: scope:[main]  from main main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test inline KickAssembler code
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    jmp __b1
-    // main::@1
-  __b1:
-    // kickasm() {{ inc $d020          }}
-    // KickAsm inline code
-    inc $d020
-        
-    jmp __b1
-}
-  // File Data
-// KickAsm data initializer
-A:
-.byte 1, 2, 3
-
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
@@ -138,10 +111,10 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const byte*) A[]  = kickasm {{ .byte 1, 2, 3
+const byte* A[]  = kickasm {{ .byte 1, 2, 3
  }}
-(void()) main()
-(label) main::@1
+void main()
+label main::@1
 
 
 

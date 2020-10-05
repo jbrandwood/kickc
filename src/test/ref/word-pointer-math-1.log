@@ -1,18 +1,18 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (word~) main::$1 ← (const word*) main::w2 - (const word*) main::w1
-  (word~) main::$0 ← (word~) main::$1 / (const byte) SIZEOF_WORD
-  (word) main::wd#0 ← (word~) main::$0
-  *((const nomodify word*) main::SCREEN) ← (word) main::wd#0
+  main::$1 = main::w2 - main::w1
+  main::$0 = main::$1 / SIZEOF_WORD
+  main::wd#0 = main::$0
+  *main::SCREEN = main::wd#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -23,19 +23,19 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) SIZEOF_WORD = (byte) 2
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(word~) main::$0
-(word~) main::$1
-(label) main::@return
-(const nomodify word*) main::SCREEN = (word*)(number) $400
-(const word*) main::w1 = (word*)(number) $1000
-(const word*) main::w2 = (word*)(number) $1140
-(word) main::wd
-(word) main::wd#0
+const byte SIZEOF_WORD = 2
+void __start()
+label __start::@1
+label __start::@return
+void main()
+word~ main::$0
+word~ main::$1
+label main::@return
+const nomodify word* main::SCREEN = (word*)$400
+const word* main::w1 = (word*)$1000
+const word* main::w2 = (word*)$1140
+word main::wd
+word main::wd#0
 
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant pointer cast (word*) 4096
@@ -43,20 +43,20 @@ Simplifying constant pointer cast (word*) 4416
 Successful SSA optimization PassNCastSimplification
 Alias main::wd#0 = main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (word~) main::$1 ← (const word*) main::w2 - (const word*) main::w1
+Constant right-side identified [0] main::$1 = main::w2 - main::w1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::$1 = main::w2-main::w1
+Constant main::$1 = main::w2-main::w1
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] (word) main::wd#0 ← (const word) main::$1 / (const byte) SIZEOF_WORD
+Constant right-side identified [0] main::wd#0 = main::$1 / SIZEOF_WORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::wd#0 = main::$1/SIZEOF_WORD
+Constant main::wd#0 = main::$1/SIZEOF_WORD
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$1 = (const word*) main::w2-(const word*) main::w1
+Constant inlined main::$1 = main::w2-main::w1
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -65,9 +65,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify word*) main::SCREEN) ← (const word) main::wd#0
+  [0] *main::SCREEN = main::wd#0
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -75,43 +75,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(word) main::wd
+void main()
+word main::wd
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests word pointer math - subtracting two word pointers
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const SIZEOF_WORD = 2
-  // main
-main: {
-    .const wd = (w2-w1)/SIZEOF_WORD
-    .label SCREEN = $400
-    .label w1 = $1000
-    .label w2 = $1140
-    // [0] *((const nomodify word*) main::SCREEN) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
-    lda #<wd
-    sta SCREEN
-    lda #>wd
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify word*) main::SCREEN) ← (const word) main::wd#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = main::wd#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -135,7 +105,7 @@ main: {
     .label SCREEN = $400
     .label w1 = $1000
     .label w2 = $1140
-    // [0] *((const nomodify word*) main::SCREEN) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
+    // [0] *main::SCREEN = main::wd#0 -- _deref_pwuc1=vwuc2 
     lda #<wd
     sta SCREEN
     lda #>wd
@@ -155,14 +125,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) SIZEOF_WORD = (byte) 2
-(void()) main()
-(label) main::@return
-(const nomodify word*) main::SCREEN = (word*) 1024
-(const word*) main::w1 = (word*) 4096
-(const word*) main::w2 = (word*) 4416
-(word) main::wd
-(const word) main::wd#0 wd = (const word*) main::w2-(const word*) main::w1/(const byte) SIZEOF_WORD
+const byte SIZEOF_WORD = 2
+void main()
+label main::@return
+const nomodify word* main::SCREEN = (word*) 1024
+const word* main::w1 = (word*) 4096
+const word* main::w2 = (word*) 4416
+word main::wd
+const word main::wd#0 wd = main::w2-main::w1/SIZEOF_WORD
 
 
 
@@ -184,7 +154,7 @@ main: {
     .label w1 = $1000
     .label w2 = $1140
     // *SCREEN = wd
-    // [0] *((const nomodify word*) main::SCREEN) ← (const word) main::wd#0 -- _deref_pwuc1=vwuc2 
+    // [0] *main::SCREEN = main::wd#0 -- _deref_pwuc1=vwuc2 
     lda #<wd
     sta SCREEN
     lda #>wd

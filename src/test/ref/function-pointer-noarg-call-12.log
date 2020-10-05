@@ -1,40 +1,40 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) myFunc()
+void myFunc()
 myFunc: scope:[myFunc]  from
-  *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR)
+  *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR
   to:myFunc::@return
 myFunc::@return: scope:[myFunc]  from myFunc
   return 
   to:@return
 
-(void()) myFunc2()
+void myFunc2()
 myFunc2: scope:[myFunc2]  from
-  *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR)
+  *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR
   to:myFunc2::@return
 myFunc2::@return: scope:[myFunc2]  from myFunc2
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_POINTER
-  *((const void()**) addrtable + (number~) main::$2) ← &(void()) myFunc()
-  (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_POINTER
-  *((const void()**) addrtable + (number~) main::$3) ← &(void()) myFunc2()
-  (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_POINTER
-  (void()*) main::fn#0 ← *((const void()**) addrtable + (number~) main::$4)
-  call *((void()*) main::fn#0) 
-  (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_POINTER
-  (void()*) main::fn#1 ← *((const void()**) addrtable + (number~) main::$5)
-  call *((void()*) main::fn#1) 
+  main::$2 = 0 * SIZEOF_POINTER
+  addrtable[main::$2] = &myFunc
+  main::$3 = 1 * SIZEOF_POINTER
+  addrtable[main::$3] = &myFunc2
+  main::$4 = 0 * SIZEOF_POINTER
+  main::fn#0 = addrtable[main::$4]
+  call *main::fn#0 
+  main::$5 = 1 * SIZEOF_POINTER
+  main::fn#1 = addrtable[main::$5]
+  call *main::fn#1 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -45,35 +45,35 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) SIZEOF_POINTER = (byte) 2
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(const void()**) addrtable[(number) $100]  = { fill( $100, 0) }
-(void()) main()
-(number~) main::$2
-(number~) main::$3
-(number~) main::$4
-(number~) main::$5
-(label) main::@return
-(void()*) main::fn
-(void()*) main::fn#0
-(void()*) main::fn#1
-(void()) myFunc()
-(label) myFunc::@return
-(const nomodify byte*) myFunc::BORDER_COLOR = (byte*)(number) $d020
-(void()) myFunc2()
-(label) myFunc2::@return
-(const nomodify byte*) myFunc2::BG_COLOR = (byte*)(number) $d021
+const byte SIZEOF_POINTER = 2
+void __start()
+label __start::@1
+label __start::@return
+const void()** addrtable[$100]  = { fill( $100, 0) }
+void main()
+number~ main::$2
+number~ main::$3
+number~ main::$4
+number~ main::$5
+label main::@return
+void()* main::fn
+void()* main::fn#0
+void()* main::fn#1
+void myFunc()
+label myFunc::@return
+const nomodify byte* myFunc::BORDER_COLOR = (byte*)$d020
+void myFunc2()
+label myFunc2::@return
+const nomodify byte* myFunc2::BG_COLOR = (byte*)$d021
 
-Adding number conversion cast (unumber) 0 in (number~) main::$2 ← (number) 0 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber)(number) 0 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) 1 in (number~) main::$3 ← (number) 1 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (unumber)(number) 1 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) 0 in (number~) main::$4 ← (number) 0 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber)(number) 0 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) 1 in (number~) main::$5 ← (number) 1 * (const byte) SIZEOF_POINTER
-Adding number conversion cast (unumber) main::$5 in (number~) main::$5 ← (unumber)(number) 1 * (const byte) SIZEOF_POINTER
+Adding number conversion cast (unumber) 0 in main::$2 = 0 * SIZEOF_POINTER
+Adding number conversion cast (unumber) main::$2 in main::$2 = (unumber)0 * SIZEOF_POINTER
+Adding number conversion cast (unumber) 1 in main::$3 = 1 * SIZEOF_POINTER
+Adding number conversion cast (unumber) main::$3 in main::$3 = (unumber)1 * SIZEOF_POINTER
+Adding number conversion cast (unumber) 0 in main::$4 = 0 * SIZEOF_POINTER
+Adding number conversion cast (unumber) main::$4 in main::$4 = (unumber)0 * SIZEOF_POINTER
+Adding number conversion cast (unumber) 1 in main::$5 = 1 * SIZEOF_POINTER
+Adding number conversion cast (unumber) main::$5 in main::$5 = (unumber)1 * SIZEOF_POINTER
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
@@ -82,41 +82,41 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$2 ← (byte) 0 * (const byte) SIZEOF_POINTER
-Inferred type updated to byte in (unumber~) main::$3 ← (byte) 1 * (const byte) SIZEOF_POINTER
-Inferred type updated to byte in (unumber~) main::$4 ← (byte) 0 * (const byte) SIZEOF_POINTER
-Inferred type updated to byte in (unumber~) main::$5 ← (byte) 1 * (const byte) SIZEOF_POINTER
-Constant right-side identified [4] (byte~) main::$2 ← (byte) 0 * (const byte) SIZEOF_POINTER
-Constant right-side identified [6] (byte~) main::$3 ← (byte) 1 * (const byte) SIZEOF_POINTER
-Constant right-side identified [8] (byte~) main::$4 ← (byte) 0 * (const byte) SIZEOF_POINTER
-Constant right-side identified [11] (byte~) main::$5 ← (byte) 1 * (const byte) SIZEOF_POINTER
+Inferred type updated to byte in main::$2 = 0 * SIZEOF_POINTER
+Inferred type updated to byte in main::$3 = 1 * SIZEOF_POINTER
+Inferred type updated to byte in main::$4 = 0 * SIZEOF_POINTER
+Inferred type updated to byte in main::$5 = 1 * SIZEOF_POINTER
+Constant right-side identified [4] main::$2 = 0 * SIZEOF_POINTER
+Constant right-side identified [6] main::$3 = 1 * SIZEOF_POINTER
+Constant right-side identified [8] main::$4 = 0 * SIZEOF_POINTER
+Constant right-side identified [11] main::$5 = 1 * SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = 0*SIZEOF_POINTER
-Constant (const byte) main::$3 = 1*SIZEOF_POINTER
-Constant (const byte) main::$4 = 0*SIZEOF_POINTER
-Constant (const byte) main::$5 = 1*SIZEOF_POINTER
+Constant main::$2 = 0*SIZEOF_POINTER
+Constant main::$3 = 1*SIZEOF_POINTER
+Constant main::$4 = 0*SIZEOF_POINTER
+Constant main::$5 = 1*SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_POINTER in 
-Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_POINTER in 
+Simplifying constant evaluating to zero 0*SIZEOF_POINTER in 
+Simplifying constant evaluating to zero 0*SIZEOF_POINTER in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero addrtable in [5] *((const void()**) addrtable + (const byte) main::$2) ← &(void()) myFunc()
-Simplifying expression containing zero addrtable in [9] (void()*) main::fn#0 ← *((const void()**) addrtable + (const byte) main::$4)
+Simplifying expression containing zero addrtable in [5] addrtable[main::$2] = &myFunc
+Simplifying expression containing zero addrtable in [9] main::fn#0 = addrtable[main::$4]
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) main::$2
-Eliminating unused constant (const byte) main::$4
+Eliminating unused constant main::$2
+Eliminating unused constant main::$4
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::$5 = (byte) 1*(const byte) SIZEOF_POINTER
-Constant inlined main::$3 = (byte) 1*(const byte) SIZEOF_POINTER
+Constant inlined main::$5 = 1*SIZEOF_POINTER
+Constant inlined main::$3 = 1*SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(addrtable+1*SIZEOF_POINTER)
 Consolidated array index constant in *(addrtable+1*SIZEOF_POINTER)
@@ -128,30 +128,30 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const void()**) addrtable) ← &(void()) myFunc()
-  [1] *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) ← &(void()) myFunc2()
-  [2] (void()*) main::fn#0 ← *((const void()**) addrtable)
-  [3] call *((void()*) main::fn#0) 
-  [4] (void()*) main::fn#1 ← *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER)
-  [5] call *((void()*) main::fn#1) 
+  [0] *addrtable = &myFunc
+  [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2
+  [2] main::fn#0 = *addrtable
+  [3] call *main::fn#0 
+  [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER)
+  [5] call *main::fn#1 
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
   to:@return
 
-(void()) myFunc2()
+void myFunc2()
 myFunc2: scope:[myFunc2]  from
-  [7] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR)
+  [7] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR
   to:myFunc2::@return
 myFunc2::@return: scope:[myFunc2]  from myFunc2
   [8] return 
   to:@return
 
-(void()) myFunc()
+void myFunc()
 myFunc: scope:[myFunc]  from
-  [9] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR)
+  [9] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR
   to:myFunc::@return
 myFunc::@return: scope:[myFunc]  from myFunc
   [10] return 
@@ -159,12 +159,12 @@ myFunc::@return: scope:[myFunc]  from myFunc
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(void()*) main::fn
-(void()*) main::fn#0 2.0
-(void()*) main::fn#1 2.0
-(void()) myFunc()
-(void()) myFunc2()
+void main()
+void()* main::fn
+void()* main::fn#0 2.0
+void()* main::fn#1 2.0
+void myFunc()
+void myFunc2()
 
 Initial phi equivalence classes
 Added variable main::fn#0 to live range equivalence class [ main::fn#0 ]
@@ -174,87 +174,13 @@ Complete equivalence classes
 [ main::fn#1 ]
 Allocated zp[2]:2 [ main::fn#0 ]
 Allocated zp[2]:4 [ main::fn#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests calling through pointers to non-args no-return functions
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const SIZEOF_POINTER = 2
-  // main
-main: {
-    .label fn = 2
-    .label fn_1 = 4
-    // [0] *((const void()**) addrtable) ← &(void()) myFunc() -- _deref_qprc1=pprc2 
-    lda #<myFunc
-    sta addrtable
-    lda #>myFunc
-    sta addrtable+1
-    // [1] *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) ← &(void()) myFunc2() -- _deref_qprc1=pprc2 
-    lda #<myFunc2
-    sta addrtable+1*SIZEOF_POINTER
-    lda #>myFunc2
-    sta addrtable+1*SIZEOF_POINTER+1
-    // [2] (void()*) main::fn#0 ← *((const void()**) addrtable) -- pprz1=_deref_qprc1 
-    lda addrtable
-    sta.z fn
-    lda addrtable+1
-    sta.z fn+1
-    // [3] call *((void()*) main::fn#0) 
-    jsr bi_fn
-    // [4] (void()*) main::fn#1 ← *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) -- pprz1=_deref_qprc1 
-    lda addrtable+1*SIZEOF_POINTER
-    sta.z fn_1
-    lda addrtable+1*SIZEOF_POINTER+1
-    sta.z fn_1+1
-    // [5] call *((void()*) main::fn#1) 
-    jsr bi_fn_1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [6] return 
-    rts
-  bi_fn:
-    jmp (fn)
-  bi_fn_1:
-    jmp (fn_1)
-}
-  // myFunc2
-myFunc2: {
-    .label BG_COLOR = $d021
-    // [7] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // myFunc2::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // myFunc
-myFunc: {
-    .label BORDER_COLOR = $d020
-    // [9] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // myFunc::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // File Data
-  addrtable: .fill 2*$100, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const void()**) addrtable) ← &(void()) myFunc() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) ← &(void()) myFunc2() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] (void()*) main::fn#0 ← *((const void()**) addrtable) [ main::fn#0 ] (  [ main::fn#0 ] { }  ) always clobbers reg byte a 
-Statement [3] call *((void()*) main::fn#0)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [4] (void()*) main::fn#1 ← *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) [ main::fn#1 ] (  [ main::fn#1 ] { }  ) always clobbers reg byte a 
-Statement [5] call *((void()*) main::fn#1)  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [0] *addrtable = &myFunc [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] main::fn#0 = *addrtable [ main::fn#0 ] (  [ main::fn#0 ] { }  ) always clobbers reg byte a 
+Statement [3] call *main::fn#0  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) [ main::fn#1 ] (  [ main::fn#1 ] { }  ) always clobbers reg byte a 
+Statement [5] call *main::fn#1  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[2]:2 [ main::fn#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::fn#1 ] : zp[2]:4 , 
 
@@ -282,29 +208,29 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label fn = 2
     .label fn_1 = 4
-    // [0] *((const void()**) addrtable) ← &(void()) myFunc() -- _deref_qprc1=pprc2 
+    // [0] *addrtable = &myFunc -- _deref_qprc1=pprc2 
     lda #<myFunc
     sta addrtable
     lda #>myFunc
     sta addrtable+1
-    // [1] *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) ← &(void()) myFunc2() -- _deref_qprc1=pprc2 
+    // [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2 -- _deref_qprc1=pprc2 
     lda #<myFunc2
     sta addrtable+1*SIZEOF_POINTER
     lda #>myFunc2
     sta addrtable+1*SIZEOF_POINTER+1
-    // [2] (void()*) main::fn#0 ← *((const void()**) addrtable) -- pprz1=_deref_qprc1 
+    // [2] main::fn#0 = *addrtable -- pprz1=_deref_qprc1 
     lda addrtable
     sta.z fn
     lda addrtable+1
     sta.z fn+1
-    // [3] call *((void()*) main::fn#0) 
+    // [3] call *main::fn#0 
     jsr bi_fn
-    // [4] (void()*) main::fn#1 ← *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) -- pprz1=_deref_qprc1 
+    // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
     lda addrtable+1*SIZEOF_POINTER
     sta.z fn_1
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
-    // [5] call *((void()*) main::fn#1) 
+    // [5] call *main::fn#1 
     jsr bi_fn_1
     jmp __breturn
     // main::@return
@@ -319,7 +245,7 @@ main: {
   // myFunc2
 myFunc2: {
     .label BG_COLOR = $d021
-    // [7] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // myFunc2::@return
@@ -330,7 +256,7 @@ myFunc2: {
   // myFunc
 myFunc: {
     .label BORDER_COLOR = $d020
-    // [9] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __breturn
     // myFunc::@return
@@ -352,19 +278,19 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) SIZEOF_POINTER = (byte) 2
-(const void()**) addrtable[(number) $100]  = { fill( $100, 0) }
-(void()) main()
-(label) main::@return
-(void()*) main::fn
-(void()*) main::fn#0 fn zp[2]:2 2.0
-(void()*) main::fn#1 fn_1 zp[2]:4 2.0
-(void()) myFunc()
-(label) myFunc::@return
-(const nomodify byte*) myFunc::BORDER_COLOR = (byte*) 53280
-(void()) myFunc2()
-(label) myFunc2::@return
-(const nomodify byte*) myFunc2::BG_COLOR = (byte*) 53281
+const byte SIZEOF_POINTER = 2
+const void()** addrtable[$100]  = { fill( $100, 0) }
+void main()
+label main::@return
+void()* main::fn
+void()* main::fn#0 fn zp[2]:2 2.0
+void()* main::fn#1 fn_1 zp[2]:4 2.0
+void myFunc()
+label myFunc::@return
+const nomodify byte* myFunc::BORDER_COLOR = (byte*) 53280
+void myFunc2()
+label myFunc2::@return
+const nomodify byte* myFunc2::BG_COLOR = (byte*) 53281
 
 zp[2]:2 [ main::fn#0 ]
 zp[2]:4 [ main::fn#1 ]
@@ -386,34 +312,34 @@ main: {
     .label fn = 2
     .label fn_1 = 4
     // addrtable[0] = &myFunc
-    // [0] *((const void()**) addrtable) ← &(void()) myFunc() -- _deref_qprc1=pprc2 
+    // [0] *addrtable = &myFunc -- _deref_qprc1=pprc2 
     lda #<myFunc
     sta addrtable
     lda #>myFunc
     sta addrtable+1
     // addrtable[1] = &myFunc2
-    // [1] *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) ← &(void()) myFunc2() -- _deref_qprc1=pprc2 
+    // [1] *(addrtable+1*SIZEOF_POINTER) = &myFunc2 -- _deref_qprc1=pprc2 
     lda #<myFunc2
     sta addrtable+1*SIZEOF_POINTER
     lda #>myFunc2
     sta addrtable+1*SIZEOF_POINTER+1
     // fn = addrtable[0]
-    // [2] (void()*) main::fn#0 ← *((const void()**) addrtable) -- pprz1=_deref_qprc1 
+    // [2] main::fn#0 = *addrtable -- pprz1=_deref_qprc1 
     lda addrtable
     sta.z fn
     lda addrtable+1
     sta.z fn+1
     // (*fn)()
-    // [3] call *((void()*) main::fn#0) 
+    // [3] call *main::fn#0 
     jsr bi_fn
     // fn = addrtable[1]
-    // [4] (void()*) main::fn#1 ← *((const void()**) addrtable+(byte) 1*(const byte) SIZEOF_POINTER) -- pprz1=_deref_qprc1 
+    // [4] main::fn#1 = *(addrtable+1*SIZEOF_POINTER) -- pprz1=_deref_qprc1 
     lda addrtable+1*SIZEOF_POINTER
     sta.z fn_1
     lda addrtable+1*SIZEOF_POINTER+1
     sta.z fn_1+1
     // (*fn)()
-    // [5] call *((void()*) main::fn#1) 
+    // [5] call *main::fn#1 
     jsr bi_fn_1
     // main::@return
     // }
@@ -428,7 +354,7 @@ main: {
 myFunc2: {
     .label BG_COLOR = $d021
     // (*BG_COLOR)++;
-    // [7] *((const nomodify byte*) myFunc2::BG_COLOR) ← ++ *((const nomodify byte*) myFunc2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *myFunc2::BG_COLOR = ++ *myFunc2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // myFunc2::@return
     // }
@@ -439,7 +365,7 @@ myFunc2: {
 myFunc: {
     .label BORDER_COLOR = $d020
     // (*BORDER_COLOR)++;
-    // [9] *((const nomodify byte*) myFunc::BORDER_COLOR) ← ++ *((const nomodify byte*) myFunc::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *myFunc::BORDER_COLOR = ++ *myFunc::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // myFunc::@return
     // }

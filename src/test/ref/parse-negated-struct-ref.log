@@ -1,27 +1,27 @@
-Setting struct to load/store in variable affected by address-of (struct A*) main::a ← &(struct A) aa
+Setting struct to load/store in variable affected by address-of main::a = &aa
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte*~) main::$3 ← (byte*)(const struct A*) main::a
-  (byte*~) main::$2 ← (byte*~) main::$3 + (const byte) OFFSET_STRUCT_A_B
-  (bool~) main::$4 ← (number) 0 != *((byte*~) main::$2)
-  (bool~) main::$0 ← ! (bool~) main::$4
-  (bool~) main::$1 ← ! (bool~) main::$0
-  if((bool~) main::$1) goto main::@1
+  main::$3 = (byte*)main::a
+  main::$2 = main::$3 + OFFSET_STRUCT_A_B
+  main::$4 = 0 != *main::$2
+  main::$0 = ! main::$4
+  main::$1 = ! main::$0
+  if(main::$1) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main main::@2
   asm { jmp!a+ !a:  }
   to:main::@return
 main::@2: scope:[main]  from main
-  *((const nomodify byte*) main::SCREEN) ← (byte) 'a'
+  *main::SCREEN = 'a'
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -32,54 +32,54 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(byte) A::b
-(const byte) OFFSET_STRUCT_A_B = (byte) 0
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(struct A) aa loadstore = { b: (byte) 1 }
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(byte*~) main::$2
-(byte*~) main::$3
-(bool~) main::$4
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const struct A*) main::a = &(struct A) aa
+byte A::b
+const byte OFFSET_STRUCT_A_B = 0
+void __start()
+label __start::@1
+label __start::@return
+struct A aa loadstore = { b: 1 }
+void main()
+bool~ main::$0
+bool~ main::$1
+byte*~ main::$2
+byte*~ main::$3
+bool~ main::$4
+label main::@1
+label main::@2
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const struct A* main::a = &aa
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$4 ← (number) 0 != *((byte*~) main::$2)
+Adding number conversion cast (unumber) 0 in main::$4 = 0 != *main::$2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [3] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2) from [2] (bool~) main::$4 ← (byte) 0 != *((byte*~) main::$2)
-Inversing boolean not [4] (bool~) main::$1 ← (byte) 0 != *((byte*~) main::$2) from [3] (bool~) main::$0 ← (byte) 0 == *((byte*~) main::$2)
+Inversing boolean not [3] main::$0 = 0 == *main::$2 from [2] main::$4 = 0 != *main::$2
+Inversing boolean not [4] main::$1 = 0 != *main::$2 from [3] main::$0 = 0 == *main::$2
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$1 [3] if((byte) 0!=*((byte*~) main::$2)) goto main::@1
+Simple Condition main::$1 [3] if(0!=*main::$2) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [0] (byte*~) main::$3 ← (byte*)(const struct A*) main::a
+Constant right-side identified [0] main::$3 = (byte*)main::a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$3 = (byte*)main::a
+Constant main::$3 = (byte*)main::a
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [3] if((byte) 0!=*((byte*~) main::$2)) goto main::@1  -- *(main::$3 + OFFSET_STRUCT_A_B)
+Converting *(pointer+n) to pointer[n] [3] if(0!=*main::$2) goto main::@1  -- main::$3[OFFSET_STRUCT_A_B]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero main::$3 in [1] (byte*~) main::$2 ← (const byte*) main::$3 + (const byte) OFFSET_STRUCT_A_B
-Simplifying expression containing zero main::$3 in [3] if((byte) 0!=*((const byte*) main::$3 + (const byte) OFFSET_STRUCT_A_B)) goto main::@1
+Simplifying expression containing zero main::$3 in [1] main::$2 = main::$3 + OFFSET_STRUCT_A_B
+Simplifying expression containing zero main::$3 in [3] if(0!=main::$3[OFFSET_STRUCT_A_B]) goto main::@1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*~) main::$2 and assignment [0] (byte*~) main::$2 ← (const byte*) main::$3
-Eliminating unused constant (const byte) OFFSET_STRUCT_A_B
+Eliminating unused variable main::$2 and assignment [0] main::$2 = main::$3
+Eliminating unused constant OFFSET_STRUCT_A_B
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::$3 = (byte*)(const struct A*) main::a
+Constant inlined main::$3 = (byte*)main::a
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -88,12 +88,12 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1
+  [0] if(0!=*((byte*)main::a)) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main
-  [1] *((const nomodify byte*) main::SCREEN) ← (byte) 'a'
+  [1] *main::SCREEN = 'a'
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   asm { jmp!a+ !a:  }
@@ -104,59 +104,18 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) A::b
-(struct A) aa loadstore = { b: (byte) 1 }
-(void()) main()
+byte A::b
+struct A aa loadstore = { b: 1 }
+void main()
 
 Initial phi equivalence classes
 Added variable aa to live range equivalence class [ aa ]
 Complete equivalence classes
 [ aa ]
 Allocated mem[1] [ aa ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test parsing a negated struct reference - which causes problems with the ASMREL labels !a++
-// https://gitlab.com/camelot/kickc/issues/266
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    .label a = aa
-    // [0] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
-    lda #0
-    cmp a
-    bne __b1
-    jmp __b2
-    // main::@2
-  __b2:
-    // [1] *((const nomodify byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta SCREEN
-    jmp __b1
-    // main::@1
-  __b1:
-    // asm { jmp!a+ !a:  }
-    // ASMREL labels
-    jmp !a+
-  !a:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-  aa: .byte 1
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) main::SCREEN) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] if(0!=*((byte*)main::a)) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *main::SCREEN = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[1] [ aa ] : mem[1] , 
 
 REGISTER UPLIFT SCOPES
@@ -183,14 +142,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label SCREEN = $400
     .label a = aa
-    // [0] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
+    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
     cmp a
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [1] *((const nomodify byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [1] *main::SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __b1
@@ -223,14 +182,14 @@ Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(byte) A::b
-(struct A) aa loadstore mem[1] = { b: (byte) 1 }
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(const struct A*) main::a = &(struct A) aa
+byte A::b
+struct A aa loadstore mem[1] = { b: 1 }
+void main()
+label main::@1
+label main::@2
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+const struct A* main::a = &aa
 
 mem[1] [ aa ]
 
@@ -251,13 +210,13 @@ main: {
     .label SCREEN = $400
     .label a = aa
     // if(!a->b)
-    // [0] if((byte) 0!=*((byte*)(const struct A*) main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
+    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
     lda #0
     cmp a
     bne !a+
     // main::@2
     // *SCREEN = 'a'
-    // [1] *((const nomodify byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [1] *main::SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@1

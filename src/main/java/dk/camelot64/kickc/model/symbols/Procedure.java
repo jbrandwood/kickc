@@ -254,15 +254,15 @@ public class Procedure extends Scope {
          res.append(getCallingConvention().getName()).append(" ");
       }
       if(interruptType != null) {
-         res.append("interrupt(").append(interruptType).append(")");
+         res.append("interrupt(").append(interruptType).append(") ");
       }
-      res.append(getType().getTypeName()).append(" ").append(getFullName()).append("(");
+      res.append(returnType.getTypeName()).append(" ").append(getFullName()).append("(");
       boolean first = true;
       if(parameterNames != null) {
          for(Variable parameter : getParameters()) {
             if(!first) res.append(" , ");
             first = false;
-            res.append(parameter.toString(program));
+            res.append(parameter.typeString()+" "+parameter.toString(program));
          }
       }
       if(isVariableLengthParameterList()) {

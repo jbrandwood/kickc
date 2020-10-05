@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) BG_COLOR) ← (const byte) main::i
-  *((const nomodify byte*) BG_COLOR) ← (const byte) main::i1
+  *BG_COLOR = main::i
+  *BG_COLOR = main::i1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,14 +21,14 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte) main::i = (byte) 0
-(const byte) main::i1 = (byte) 1
+const nomodify byte* BG_COLOR = (byte*)$d021
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte main::i = 0
+const byte main::i1 = 1
 
 Simplifying constant pointer cast (byte*) 53281
 Successful SSA optimization PassNCastSimplification
@@ -44,10 +44,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i
-  [1] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i1
+  [0] *BG_COLOR = main::i
+  [1] *BG_COLOR = main::i1
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -55,42 +55,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests anonymous scopes inside functions
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label BG_COLOR = $d021
-  // main
-main: {
-    .const i = 0
-    .const i1 = 1
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i -- _deref_pbuc1=vbuc2 
-    lda #i
-    sta BG_COLOR
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i1 -- _deref_pbuc1=vbuc2 
-    lda #i1
-    sta BG_COLOR
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *BG_COLOR = main::i [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *BG_COLOR = main::i1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -112,10 +83,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const i = 0
     .const i1 = 1
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = main::i -- _deref_pbuc1=vbuc2 
     lda #i
     sta BG_COLOR
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i1 -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = main::i1 -- _deref_pbuc1=vbuc2 
     lda #i1
     sta BG_COLOR
     jmp __breturn
@@ -133,11 +104,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53281
-(void()) main()
-(label) main::@return
-(const byte) main::i = (byte) 0
-(const byte) main::i1 = (byte) 1
+const nomodify byte* BG_COLOR = (byte*) 53281
+void main()
+label main::@return
+const byte main::i = 0
+const byte main::i1 = 1
 
 
 
@@ -157,10 +128,10 @@ main: {
     .const i = 0
     .const i1 = 1
     // *BG_COLOR = i
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = main::i -- _deref_pbuc1=vbuc2 
     lda #i
     sta BG_COLOR
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const byte) main::i1 -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = main::i1 -- _deref_pbuc1=vbuc2 
     lda #i1
     sta BG_COLOR
     // main::@return

@@ -1,9 +1,9 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::SCREEN+(number) $3e8) ← (number) 0
+  *(main::SCREEN+$3e8) = 0
   kickasm() {{ lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
@@ -14,7 +14,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -25,24 +25,24 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN+(number) $3e8) ← (number) 0
-Adding number conversion cast (unumber) $3e8 in *((const nomodify byte*) main::SCREEN+(number) $3e8) ← ((unumber)) (number) 0
+Adding number conversion cast (unumber) 0 in *(main::SCREEN+$3e8) = 0
+Adding number conversion cast (unumber) $3e8 in *(main::SCREEN+$3e8) = ((unumber)) 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) main::SCREEN+(unumber)(number) $3e8) ← (unumber)(number) 0
+Inlining cast *(main::SCREEN+(unumber)$3e8) = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $3e8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $3e8
+Finalized unsigned number type 0
+Finalized unsigned number type $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -56,9 +56,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0
+  [0] *(main::SCREEN+$3e8) = 0
   kickasm() {{ lda #0
         .for (var i = 0; i < 1000; i++) {
             sta SCREEN+i
@@ -71,42 +71,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Example of inline kickasm in a function
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SCREEN+$3e8
-    // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
-    lda #0
-        .for (var i = 0; i < 1000; i++) {
-            sta SCREEN+i
-        }
-    
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(main::SCREEN+$3e8) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -126,7 +96,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *(main::SCREEN+$3e8) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm() {{ lda #0         .for (var i = 0; i < 1000; i++) {             sta SCREEN+i         }      }}
@@ -150,9 +120,9 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
 
 
 
@@ -170,7 +140,7 @@ Score: 268
 main: {
     .label SCREEN = $400
     // *(SCREEN+1000) = 0
-    // [0] *((const nomodify byte*) main::SCREEN+(word) $3e8) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *(main::SCREEN+$3e8) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+$3e8
     // kickasm

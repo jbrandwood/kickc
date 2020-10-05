@@ -1,23 +1,23 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::b#0 ← (byte) 0
-  if((const byte) main::v64==(number) 0) goto main::@1
+  main::b#0 = 0
+  if(main::v64==0) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main
-  (byte) main::b#1 ← (number) 1
+  main::b#1 = 1
   to:main::@2
 main::@2: scope:[main]  from main main::@1
-  (byte) main::b#2 ← phi( main/(byte) main::b#0 main::@1/(byte) main::b#1 )
-  *((const byte*) main::SCREEN + (number) 0) ← (byte) main::b#2
+  main::b#2 = phi( main/main::b#0, main::@1/main::b#1 )
+  main::SCREEN[0] = main::b#2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -28,54 +28,54 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::b
-(byte) main::b#0
-(byte) main::b#1
-(byte) main::b#2
-(const byte) main::v64 = (byte) 0
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
+const byte* main::SCREEN = (byte*)$400
+byte main::b
+byte main::b#0
+byte main::b#1
+byte main::b#2
+const byte main::v64 = 0
 
-Adding number conversion cast (unumber) 0 in if((const byte) main::v64==(number) 0) goto main::@1
-Adding number conversion cast (unumber) 1 in (byte) main::b#1 ← (number) 1
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) main::b#2
+Adding number conversion cast (unumber) 0 in if(main::v64==0) goto main::@1
+Adding number conversion cast (unumber) 1 in main::b#1 = 1
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::b#2
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte) main::b#1 ← (unumber)(number) 1
+Inlining cast main::b#1 = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Negating conditional jump and destination [1] if((const byte) main::v64!=(byte) 0) goto main::@2
+Negating conditional jump and destination [1] if(main::v64!=0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSequenceImprovement
-Constant (const byte) main::b#0 = 0
-Constant (const byte) main::b#1 = 1
+Constant main::b#0 = 0
+Constant main::b#1 = 1
 Successful SSA optimization Pass2ConstantIdentification
 Removing PHI-reference to removed block (main) in block main::@2
-if() condition always false - eliminating [1] if((const byte) main::v64!=(byte) 0) goto main::@2
+if() condition always false - eliminating [1] if(main::v64!=0) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte) main::b#2
+Simplifying expression containing zero main::SCREEN in [4] main::SCREEN[0] = main::b#2
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) main::v64
-Eliminating unused constant (const byte) main::b#0
+Eliminating unused constant main::v64
+Eliminating unused constant main::b#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Identical Phi Values (byte) main::b#2 (const byte) main::b#1
+Identical Phi Values main::b#2 main::b#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -83,18 +83,18 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [1] *((const byte*) main::SCREEN) ← (const byte) main::b#1
+  [1] *main::SCREEN = main::b#1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [2] return 
@@ -102,41 +102,13 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::b
+void main()
+byte main::b
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests simple switch()-statement - not inside a loop
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const b = 1
-    .label SCREEN = $400
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const byte*) main::SCREEN) ← (const byte) main::b#1 -- _deref_pbuc1=vbuc2 
-    lda #b
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] *((const byte*) main::SCREEN) ← (const byte) main::b#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *main::SCREEN = main::b#1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -160,7 +132,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const byte*) main::SCREEN) ← (const byte) main::b#1 -- _deref_pbuc1=vbuc2 
+    // [1] *main::SCREEN = main::b#1 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     jmp __breturn
@@ -180,12 +152,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
-(byte) main::b
-(const byte) main::b#1 b = (byte) 1
+void main()
+label main::@1
+label main::@return
+const byte* main::SCREEN = (byte*) 1024
+byte main::b
+const byte main::b#1 b = 1
 
 
 
@@ -205,7 +177,7 @@ main: {
     .label SCREEN = $400
     // main::@1
     // SCREEN[0] = b
-    // [1] *((const byte*) main::SCREEN) ← (const byte) main::b#1 -- _deref_pbuc1=vbuc2 
+    // [1] *main::SCREEN = main::b#1 -- _deref_pbuc1=vbuc2 
     lda #b
     sta SCREEN
     // main::@return

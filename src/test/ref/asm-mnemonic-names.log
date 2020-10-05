@@ -1,10 +1,10 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) lda) ← (const byte) main::jmp
-  (byte) bne::jsr#0 ← (const byte) main::jmp
+  *lda = main::jmp
+  bne::jsr#0 = main::jmp
   call bne 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -14,16 +14,16 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) bne((byte) bne::jsr)
+void bne(byte bne::jsr)
 bne: scope:[bne]  from main
-  (byte) bne::jsr#1 ← phi( main/(byte) bne::jsr#0 )
-  *((const nomodify byte*) lda + (number) 1) ← (byte) bne::jsr#1
+  bne::jsr#1 = phi( main/bne::jsr#0 )
+  lda[1] = bne::jsr#1
   to:bne::@return
 bne::@return: scope:[bne]  from bne
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -34,37 +34,37 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) bne((byte) bne::jsr)
-(label) bne::@return
-(byte) bne::jsr
-(byte) bne::jsr#0
-(byte) bne::jsr#1
-(const nomodify byte*) lda = (byte*)(number) $400
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte) main::jmp = (byte) 1
+void __start()
+label __start::@1
+label __start::@return
+void bne(byte bne::jsr)
+label bne::@return
+byte bne::jsr
+byte bne::jsr#0
+byte bne::jsr#1
+const nomodify byte* lda = (byte*)$400
+void main()
+label main::@1
+label main::@return
+const byte main::jmp = 1
 
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) lda + (number) 1) ← (byte) bne::jsr#1
+Adding number conversion cast (unumber) 1 in lda[1] = bne::jsr#1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Identical Phi Values (byte) bne::jsr#1 (byte) bne::jsr#0
+Identical Phi Values bne::jsr#1 bne::jsr#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte) bne::jsr#0 = main::jmp
+Constant bne::jsr#0 = main::jmp
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined bne::jsr#0 = (const byte) main::jmp
+Constant inlined bne::jsr#0 = main::jmp
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(lda+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -76,9 +76,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) lda) ← (const byte) main::jmp
+  [0] *lda = main::jmp
   [1] call bne 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -88,9 +88,9 @@ main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 
-(void()) bne((byte) bne::jsr)
+void bne(byte bne::jsr)
 bne: scope:[bne]  from main
-  [4] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp
+  [4] *(lda+1) = main::jmp
   to:bne::@return
 bne::@return: scope:[bne]  from bne
   [5] return 
@@ -98,64 +98,16 @@ bne::@return: scope:[bne]  from bne
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) bne((byte) bne::jsr)
-(byte) bne::jsr
-(void()) main()
+void bne(byte bne::jsr)
+byte bne::jsr
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test using an ASM mnemonic as a C symbol names
-// Works if the C-lexer and the ASM-lexer are separated properly
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label lda = $400
-  // main
-main: {
-    .label jmp = 1
-    // [0] *((const nomodify byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
-    lda #jmp
-    sta lda
-    // [1] call bne 
-    jsr bne
-    jmp __b1
-    // main::@1
-  __b1:
-    // asm { ldaa jmpa bnea a:  }
-    // Inline asm using the mnemonics
-    lda a
-    jmp a
-    bne a
-  a:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // bne
-bne: {
-    // [4] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
-    lda #main.jmp
-    sta lda+1
-    jmp __breturn
-    // bne::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) lda) ← (const byte) main::jmp [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *lda = main::jmp [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaa jmpa bnea a:  } always clobbers reg byte a 
-Statement [4] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp [ ] ( bne:1 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *(lda+1) = main::jmp [ ] ( bne:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -179,7 +131,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label jmp = 1
-    // [0] *((const nomodify byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [0] *lda = main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // [1] call bne 
@@ -201,7 +153,7 @@ main: {
 }
   // bne
 bne: {
-    // [4] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [4] *(lda+1) = main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     jmp __breturn
@@ -227,14 +179,14 @@ Replacing jump to rts with rts in jmp a
 Succesful ASM optimization Pass5DoubleJumpElimination
 
 FINAL SYMBOL TABLE
-(void()) bne((byte) bne::jsr)
-(label) bne::@return
-(byte) bne::jsr
-(const nomodify byte*) lda = (byte*) 1024
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte) main::jmp = (byte) 1
+void bne(byte bne::jsr)
+label bne::@return
+byte bne::jsr
+const nomodify byte* lda = (byte*) 1024
+void main()
+label main::@1
+label main::@return
+const byte main::jmp = 1
 
 
 
@@ -254,7 +206,7 @@ Score: 40
 main: {
     .label jmp = 1
     // *lda = jmp
-    // [0] *((const nomodify byte*) lda) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [0] *lda = main::jmp -- _deref_pbuc1=vbuc2 
     lda #jmp
     sta lda
     // bne(jmp)
@@ -275,7 +227,7 @@ main: {
   // bne
 bne: {
     // lda[1] = jsr
-    // [4] *((const nomodify byte*) lda+(byte) 1) ← (const byte) main::jmp -- _deref_pbuc1=vbuc2 
+    // [4] *(lda+1) = main::jmp -- _deref_pbuc1=vbuc2 
     lda #main.jmp
     sta lda+1
     // bne::@return

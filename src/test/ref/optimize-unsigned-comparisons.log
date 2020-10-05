@@ -1,43 +1,43 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::temp#0 ← (byte) 0
-  (byte) main::i#0 ← (byte) 0
+  main::temp#0 = 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$2 ← *((const byte*) ball_active + (byte) main::i#2) < (number) 0
-  (bool~) main::$3 ← ! (bool~) main::$2
-  if((bool~) main::$3) goto main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$2 = ball_active[main::i#2] < 0
+  main::$3 = ! main::$2
+  if(main::$3) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1 main::@3
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 main::@3/(byte) main::i#4 )
-  (byte) main::temp#1 ← *((const byte*) ball_active + (byte) main::i#3)
-  (byte) main::i#1 ← (byte) main::i#3 + rangenext(0,7)
-  (bool~) main::$4 ← (byte) main::i#1 != rangelast(0,7)
-  if((bool~) main::$4) goto main::@1
+  main::i#3 = phi( main::@1/main::i#2, main::@3/main::i#4 )
+  main::temp#1 = ball_active[main::i#3]
+  main::i#1 = main::i#3 + rangenext(0,7)
+  main::$4 = main::i#1 != rangelast(0,7)
+  if(main::$4) goto main::@1
   to:main::@4
 main::@3: scope:[main]  from main::@1
-  (byte) main::i#4 ← phi( main::@1/(byte) main::i#2 )
-  *((const nomodify byte*) main::screen + (byte) main::i#4) ← (byte) '-'
+  main::i#4 = phi( main::@1/main::i#2 )
+  main::screen[main::i#4] = '-'
   to:main::@2
 main::@4: scope:[main]  from main::@2
-  (byte) main::temp#2 ← phi( main::@2/(byte) main::temp#1 )
-  (bool~) main::$0 ← (byte) main::temp#2 < (number) 0
-  (bool~) main::$1 ← ! (bool~) main::$0
-  if((bool~) main::$1) goto main::@return
+  main::temp#2 = phi( main::@2/main::temp#1 )
+  main::$0 = main::temp#2 < 0
+  main::$1 = ! main::$0
+  if(main::$1) goto main::@return
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  (byte) main::temp#3 ← phi( main::@4/(byte) main::temp#2 )
-  *((const nomodify byte*) main::screen + (number) $28) ← (byte) main::temp#3
+  main::temp#3 = phi( main::@4/main::temp#2 )
+  main::screen[$28] = main::temp#3
   to:main::@return
 main::@return: scope:[main]  from main::@4 main::@5
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -48,69 +48,69 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(const byte*) ball_active[(number) 8]  = { (byte) 0, (byte) 1, (byte) 0, (byte) 1, (byte) 0, (byte) 1, (byte) 1, (byte) 1 }
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(bool~) main::$4
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
-(byte) main::i#4
-(const nomodify byte*) main::screen = (byte*)(number) $400
-(byte) main::temp
-(byte) main::temp#0
-(byte) main::temp#1
-(byte) main::temp#2
-(byte) main::temp#3
+void __start()
+label __start::@1
+label __start::@return
+const byte* ball_active[8]  = { 0, 1, 0, 1, 0, 1, 1, 1 }
+void main()
+bool~ main::$0
+bool~ main::$1
+bool~ main::$2
+bool~ main::$3
+bool~ main::$4
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+const nomodify byte* main::screen = (byte*)$400
+byte main::temp
+byte main::temp#0
+byte main::temp#1
+byte main::temp#2
+byte main::temp#3
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$2 ← *((const byte*) ball_active + (byte) main::i#2) < (number) 0
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (byte) main::temp#2 < (number) 0
-Adding number conversion cast (unumber) $28 in *((const nomodify byte*) main::screen + (number) $28) ← (byte) main::temp#3
+Adding number conversion cast (unumber) 0 in main::$2 = ball_active[main::i#2] < 0
+Adding number conversion cast (unumber) 0 in main::$0 = main::temp#2 < 0
+Adding number conversion cast (unumber) $28 in main::screen[$28] = main::temp#3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [4] (bool~) main::$3 ← *((const byte*) ball_active + (byte) main::i#2) >= (byte) 0 from [3] (bool~) main::$2 ← *((const byte*) ball_active + (byte) main::i#2) < (byte) 0
-Inversing boolean not [15] (bool~) main::$1 ← (byte) main::temp#2 >= (byte) 0 from [14] (bool~) main::$0 ← (byte) main::temp#2 < (byte) 0
+Inversing boolean not [4] main::$3 = ball_active[main::i#2] >= 0 from [3] main::$2 = ball_active[main::i#2] < 0
+Inversing boolean not [15] main::$1 = main::temp#2 >= 0 from [14] main::$0 = main::temp#2 < 0
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::i#2 = main::i#4 
 Alias main::temp#1 = main::temp#2 main::temp#3 
 Successful SSA optimization Pass2AliasElimination
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$3 [4] if(*((const byte*) ball_active + (byte) main::i#2)>=(byte) 0) goto main::@2
-Simple Condition (bool~) main::$4 [8] if((byte) main::i#1!=rangelast(0,7)) goto main::@1
-Simple Condition (bool~) main::$1 [11] if((byte) main::temp#1>=(byte) 0) goto main::@return
+Simple Condition main::$3 [4] if(ball_active[main::i#2]>=0) goto main::@2
+Simple Condition main::$4 [8] if(main::i#1!=rangelast(0,7)) goto main::@1
+Simple Condition main::$1 [11] if(main::temp#1>=0) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::temp#0 = 0
-Constant (const byte) main::i#0 = 0
+Constant main::temp#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [4] if(*((const byte*) ball_active + (byte) main::i#2)>=(byte) 0) goto main::@2
-if() condition always true - replacing block destination [11] if((byte) main::temp#1>=(byte) 0) goto main::@return
+if() condition always true - replacing block destination [4] if(ball_active[main::i#2]>=0) goto main::@2
+if() condition always true - replacing block destination [11] if(main::temp#1>=0) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,7)) goto main::@1 to (number) 8
-Eliminating unused constant (const byte) main::temp#0
+Resolved ranged next value [6] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast(0,7)) goto main::@1 to 8
+Eliminating unused constant main::temp#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@3
 Removing unused block main::@5
@@ -120,19 +120,19 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 8 in [3] if((byte) main::i#1!=(number) 8) goto main::@1
+Adding number conversion cast (unumber) 8 in [3] if(main::i#1!=8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 8
+Finalized unsigned number type 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Eliminating unused variable (byte) main::temp#1 and assignment [1] (byte) main::temp#1 ← *((const byte*) ball_active + (byte) main::i#2)
-Eliminating unused constant (const nomodify byte*) main::screen
+Eliminating unused variable main::temp#1 and assignment [1] main::temp#1 = ball_active[main::i#2]
+Eliminating unused constant main::screen
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const byte*) ball_active
+Eliminating unused constant ball_active
 Successful SSA optimization PassNEliminateUnusedVars
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@6(between main::@2 and main::@1)
 Adding NOP phi() at start of main
@@ -140,24 +140,24 @@ Adding NOP phi() at start of main::@4
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [6] main::i#5 ← main::i#1
+Coalesced [6] main::i#5 = main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) main::@6
+Culled Empty Block label main::@4
+Culled Empty Block label main::@6
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [2] (byte) main::i#1 ← ++ (byte) main::i#2
-  [3] if((byte) main::i#1!=(byte) 8) goto main::@1
+  [2] main::i#1 = ++ main::i#2
+  [3] if(main::i#1!=8) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [4] return 
@@ -165,60 +165,17 @@ main::@return: scope:[main]  from main::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 22.0
-(byte) main::temp
+void main()
+byte main::i
+byte main::i#1 16.5
+byte main::i#2 22.0
+byte main::temp
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Examples of unsigned comparisons to values outside the range of unsigned
-// These should be optimized to constants
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label i = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [2] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [3] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #8
-    cmp.z i
-    bne __b1_from___b2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
@@ -242,21 +199,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
     jmp __b2
     // main::@2
   __b2:
-    // [2] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [2] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [3] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [3] if(main::i#1!=8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne __b1_from___b2
     jmp __breturn
@@ -284,14 +241,14 @@ Removing instruction jmp __b2
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#2 reg byte x 22.0
-(byte) main::temp
+void main()
+label main::@1
+label main::@2
+label main::@return
+byte main::i
+byte main::i#1 reg byte x 16.5
+byte main::i#2 reg byte x 22.0
+byte main::temp
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -310,17 +267,17 @@ Score: 91
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     // main::@1
     // main::@2
   __b2:
     // for( char i: 0..7)
-    // [2] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [2] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [3] if((byte) main::i#1!=(byte) 8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [3] if(main::i#1!=8) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #8
     bne __b2
     // main::@return

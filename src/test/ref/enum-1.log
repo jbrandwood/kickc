@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::SCREEN) ← (const byte) main::state
+  *main::SCREEN = main::state
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,17 +20,17 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) BROKEN = (byte) 9
-(const byte) State::BROKEN = (byte) 9
-(const byte) State::OFF = (byte) 0
-(const byte) State::ON = (number) 8
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte) main::state = (const byte) BROKEN
+const byte BROKEN = 9
+const byte State::BROKEN = 9
+const byte State::OFF = 0
+const byte State::ON = 8
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte main::state = BROKEN
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -39,7 +39,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::state = (const byte) BROKEN
+Constant inlined main::state = BROKEN
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -48,9 +48,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← (const byte) BROKEN
+  [0] *main::SCREEN = BROKEN
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -58,37 +58,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test of simple enum - three-value enum with specified integer values and increment
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const BROKEN = 9
-  // main
-main: {
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) BROKEN -- _deref_pbuc1=vbuc2 
-    lda #BROKEN
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← (const byte) BROKEN [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = BROKEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [State] 
@@ -111,7 +86,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) BROKEN -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = BROKEN -- _deref_pbuc1=vbuc2 
     lda #BROKEN
     sta SCREEN
     jmp __breturn
@@ -129,13 +104,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) BROKEN = (byte) 9
-(const byte) State::BROKEN = (byte) 9
-(const byte) State::OFF = (byte) 0
-(const byte) State::ON = (number) 8
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
+const byte BROKEN = 9
+const byte State::BROKEN = 9
+const byte State::OFF = 0
+const byte State::ON = 8
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
 
 
 
@@ -154,7 +129,7 @@ Score: 12
 main: {
     .label SCREEN = $400
     // *SCREEN = state
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) BROKEN -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = BROKEN -- _deref_pbuc1=vbuc2 
     lda #BROKEN
     sta SCREEN
     // main::@return

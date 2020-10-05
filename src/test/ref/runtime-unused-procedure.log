@@ -2,12 +2,12 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const byte*) screen + (number) 0) ← (byte) 'a'
-  (bool~) main::$0 ← (const byte) call != (number) 0
-  (bool~) main::$1 ← ! (bool~) main::$0
-  if((bool~) main::$1) goto main::@return
+  screen[0] = 'a'
+  main::$0 = call != 0
+  main::$1 = ! main::$0
+  if(main::$1) goto main::@return
   to:main::@1
 main::@1: scope:[main]  from main
   call proc 
@@ -18,21 +18,21 @@ main::@return: scope:[main]  from main main::@2
   return 
   to:@return
 
-(void()) proc()
+void proc()
 proc: scope:[proc]  from main::@1
-  *((const byte*) screen + (number) 1) ← (byte) 'a'
-  (bool~) proc::$0 ← *((const byte*) screen + (number) 1) != (number) 0
-  (bool~) proc::$1 ← ! (bool~) proc::$0
-  if((bool~) proc::$1) goto proc::@return
+  screen[1] = 'a'
+  proc::$0 = screen[1] != 0
+  proc::$1 = ! proc::$0
+  if(proc::$1) goto proc::@return
   to:proc::@1
 proc::@1: scope:[proc]  from proc
-  *((const byte*) screen + (number) 2) ← (byte) 'a'
+  screen[2] = 'a'
   to:proc::@return
 proc::@return: scope:[proc]  from proc proc::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -47,31 +47,31 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(const byte) call = (byte) 0
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(void()) proc()
-(bool~) proc::$0
-(bool~) proc::$1
-(label) proc::@1
-(label) proc::@return
-(const byte*) screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+const byte call = 0
+void main()
+bool~ main::$0
+bool~ main::$1
+label main::@1
+label main::@2
+label main::@return
+void proc()
+bool~ proc::$0
+bool~ proc::$1
+label proc::@1
+label proc::@return
+const byte* screen = (byte*)$400
 
-Adding number conversion cast (unumber) 0 in *((const byte*) screen + (number) 0) ← (byte) 'a'
-Adding number conversion cast (unumber) 0 in (bool~) main::$0 ← (const byte) call != (number) 0
-Adding number conversion cast (unumber) 1 in *((const byte*) screen + (number) 1) ← (byte) 'a'
-Adding number conversion cast (unumber) 0 in (bool~) proc::$0 ← *((const byte*) screen + (number) 1) != (number) 0
-Adding number conversion cast (unumber) 1 in (bool~) proc::$0 ← *((const byte*) screen + (number) 1) != (unumber)(number) 0
-Adding number conversion cast (unumber) 2 in *((const byte*) screen + (number) 2) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in screen[0] = 'a'
+Adding number conversion cast (unumber) 0 in main::$0 = call != 0
+Adding number conversion cast (unumber) 1 in screen[1] = 'a'
+Adding number conversion cast (unumber) 0 in proc::$0 = screen[1] != 0
+Adding number conversion cast (unumber) 1 in proc::$0 = screen[1] != (unumber)0
+Adding number conversion cast (unumber) 2 in screen[2] = 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -81,24 +81,24 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 1
+Finalized unsigned number type 0
+Finalized unsigned number type 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [2] (bool~) main::$1 ← (const byte) call == (byte) 0 from [1] (bool~) main::$0 ← (const byte) call != (byte) 0
-Inversing boolean not [8] (bool~) proc::$1 ← *((const byte*) screen + (byte) 1) == (byte) 0 from [7] (bool~) proc::$0 ← *((const byte*) screen + (byte) 1) != (byte) 0
+Inversing boolean not [2] main::$1 = call == 0 from [1] main::$0 = call != 0
+Inversing boolean not [8] proc::$1 = screen[1] == 0 from [7] proc::$0 = screen[1] != 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$1 [2] if((const byte) call==(byte) 0) goto main::@return
-Simple Condition (bool~) proc::$1 [7] if(*((const byte*) screen + (byte) 1)==(byte) 0) goto proc::@return
+Simple Condition main::$1 [2] if(call==0) goto main::@return
+Simple Condition proc::$1 [7] if(screen[1]==0) goto proc::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-if() condition always true - replacing block destination [2] if((const byte) call==(byte) 0) goto main::@return
+if() condition always true - replacing block destination [2] if(call==0) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero screen in [0] *((const byte*) screen + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero screen in [0] screen[0] = 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) call
+Eliminating unused constant call
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@1
 Removing unused block main::@2
@@ -121,9 +121,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) screen) ← (byte) 'a'
+  [0] *screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -131,36 +131,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that a procedure that is never called, but requires static analysis is correctly eliminated
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label screen = $400
-  // main
-main: {
-    // [0] *((const byte*) screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta screen
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) screen) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *screen = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -180,7 +156,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label screen = $400
   // main
 main: {
-    // [0] *((const byte*) screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *screen = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp __breturn
@@ -198,9 +174,9 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const byte*) screen = (byte*) 1024
+void main()
+label main::@return
+const byte* screen = (byte*) 1024
 
 
 
@@ -218,7 +194,7 @@ Score: 12
   // main
 main: {
     // screen[0] = 'a'
-    // [0] *((const byte*) screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *screen = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     // main::@return

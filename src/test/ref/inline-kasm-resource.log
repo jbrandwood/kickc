@@ -1,18 +1,18 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN+(number) $3f8) ← (byte)(word)(const byte*) SPRITE/(number) $40
-  *((const nomodify byte*) SPRITES_ENABLE) ← (number) 1
-  *((const nomodify byte*) SPRITES_XPOS) ← (number) $64
-  *((const nomodify byte*) SPRITES_YPOS) ← (number) $64
+  *(SCREEN+$3f8) = (byte)(word)SPRITE/$40
+  *SPRITES_ENABLE = 1
+  *SPRITES_XPOS = $64
+  *SPRITES_YPOS = $64
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -23,30 +23,30 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const byte*) SPRITE[]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+const nomodify byte* SCREEN = (byte*)$400
+const byte* SPRITE[]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-(const nomodify byte*) SPRITES_ENABLE = (byte*)(number) $d015
-(const nomodify byte*) SPRITES_XPOS = (byte*)(number) $d000
-(const nomodify byte*) SPRITES_YPOS = (byte*)(number) $d001
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* SPRITES_ENABLE = (byte*)$d015
+const nomodify byte* SPRITES_XPOS = (byte*)$d000
+const nomodify byte* SPRITES_YPOS = (byte*)$d001
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) $40 in *((const nomodify byte*) SCREEN+(number) $3f8) ← (byte)(word)(const byte*) SPRITE/(number) $40
-Adding number conversion cast (unumber) $3f8 in *((const nomodify byte*) SCREEN+(number) $3f8) ← (byte)(word)(const byte*) SPRITE/(unumber)(number) $40
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SPRITES_ENABLE) ← (number) 1
-Adding number conversion cast (unumber) $64 in *((const nomodify byte*) SPRITES_XPOS) ← (number) $64
-Adding number conversion cast (unumber) $64 in *((const nomodify byte*) SPRITES_YPOS) ← (number) $64
+Adding number conversion cast (unumber) $40 in *(SCREEN+$3f8) = (byte)(word)SPRITE/$40
+Adding number conversion cast (unumber) $3f8 in *(SCREEN+$3f8) = (byte)(word)SPRITE/(unumber)$40
+Adding number conversion cast (unumber) 1 in *SPRITES_ENABLE = 1
+Adding number conversion cast (unumber) $64 in *SPRITES_XPOS = $64
+Adding number conversion cast (unumber) $64 in *SPRITES_YPOS = $64
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) SPRITES_ENABLE) ← (unumber)(number) 1
-Inlining cast *((const nomodify byte*) SPRITES_XPOS) ← (unumber)(number) $64
-Inlining cast *((const nomodify byte*) SPRITES_YPOS) ← (unumber)(number) $64
+Inlining cast *SPRITES_ENABLE = (unumber)1
+Inlining cast *SPRITES_XPOS = (unumber)$64
+Inlining cast *SPRITES_YPOS = (unumber)$64
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53269
@@ -58,11 +58,11 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast $64
 Simplifying constant integer cast $64
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $3f8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $64
-Finalized unsigned number type (byte) $64
+Finalized unsigned number type $40
+Finalized unsigned number type $3f8
+Finalized unsigned number type 1
+Finalized unsigned number type $64
+Finalized unsigned number type $64
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -76,12 +76,12 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN+(word) $3f8) ← (byte)(word)(const byte*) SPRITE/(byte) $40
-  [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1
-  [2] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64
-  [3] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64
+  [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40
+  [1] *SPRITES_ENABLE = 1
+  [2] *SPRITES_XPOS = $64
+  [3] *SPRITES_YPOS = $64
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
@@ -89,58 +89,15 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Example of inline kickasm resource data
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label SPRITES_ENABLE = $d015
-  .label SPRITES_XPOS = $d000
-  .label SPRITES_YPOS = $d001
-  // main
-main: {
-    // [0] *((const nomodify byte*) SCREEN+(word) $3f8) ← (byte)(word)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
-    lda #$ff&SPRITE/$40
-    sta SCREEN+$3f8
-    // [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta SPRITES_ENABLE
-    // [2] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
-    lda #$64
-    sta SPRITES_XPOS
-    // [3] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
-    lda #$64
-    sta SPRITES_YPOS
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-.pc = $c00 "SPRITE"
-SPRITE:
-.var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
-    .for (var y=0; y<21; y++)
-        .for (var x=0;x<3; x++)
-            .byte pic.getSinglecolorByte(x,y)
-
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN+(word) $3f8) ← (byte)(word)(const byte*) SPRITE/(byte) $40 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *SPRITES_ENABLE = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *SPRITES_XPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *SPRITES_YPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -163,16 +120,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_YPOS = $d001
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN+(word) $3f8) ← (byte)(word)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+$3f8
-    // [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *SPRITES_ENABLE = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
-    // [2] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [2] *SPRITES_XPOS = $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [3] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [3] *SPRITES_YPOS = $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_YPOS
     jmp __breturn
@@ -199,17 +156,17 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const byte*) SPRITE[]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
+const nomodify byte* SCREEN = (byte*) 1024
+const byte* SPRITE[]  = kickasm {{ .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
  }}
-(const nomodify byte*) SPRITES_ENABLE = (byte*) 53269
-(const nomodify byte*) SPRITES_XPOS = (byte*) 53248
-(const nomodify byte*) SPRITES_YPOS = (byte*) 53249
-(void()) main()
-(label) main::@return
+const nomodify byte* SPRITES_ENABLE = (byte*) 53269
+const nomodify byte* SPRITES_XPOS = (byte*) 53248
+const nomodify byte* SPRITES_YPOS = (byte*) 53249
+void main()
+label main::@return
 
 
 
@@ -230,19 +187,19 @@ Score: 28
   // main
 main: {
     // *(SCREEN+0x3f8) = (char)((unsigned int)SPRITE/$40)
-    // [0] *((const nomodify byte*) SCREEN+(word) $3f8) ← (byte)(word)(const byte*) SPRITE/(byte) $40 -- _deref_pbuc1=vbuc2 
+    // [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
     sta SCREEN+$3f8
     // *SPRITES_ENABLE = 1
-    // [1] *((const nomodify byte*) SPRITES_ENABLE) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [1] *SPRITES_ENABLE = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta SPRITES_ENABLE
     // *SPRITES_XPOS = 100
-    // [2] *((const nomodify byte*) SPRITES_XPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [2] *SPRITES_XPOS = $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
     // *SPRITES_YPOS = 100
-    // [3] *((const nomodify byte*) SPRITES_YPOS) ← (byte) $64 -- _deref_pbuc1=vbuc2 
+    // [3] *SPRITES_YPOS = $64 -- _deref_pbuc1=vbuc2 
     sta SPRITES_YPOS
     // main::@return
     // }

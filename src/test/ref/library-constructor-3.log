@@ -2,23 +2,23 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) init_1()
+void init_1()
 init_1: scope:[init_1]  from __start::__init1
-  (volatile byte) sym ← (byte) '*'
+  sym = '*'
   to:init_1::@return
 init_1::@return: scope:[init_1]  from init_1
   return 
   to:@return
 
-(void()) init_2()
+void init_2()
 init_2: scope:[init_2]  from __start::@2
-  (volatile byte*) SCREEN ← ((byte*)) (number) $400
+  SCREEN = ((byte*)) $400
   to:init_2::@return
 init_2::@return: scope:[init_2]  from init_2
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   call print 
   to:main::@1
@@ -28,20 +28,20 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) print()
+void print()
 print: scope:[print]  from main
-  *((volatile byte*) SCREEN) ← (volatile byte) sym
+  *SCREEN = sym
   to:print::@return
 print::@return: scope:[print]  from print
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) sym ← (byte) 0
-  (volatile byte*) SCREEN ← (byte*) 0
+  sym = 0
+  SCREEN = (byte*) 0
   call init_1 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::__init1
@@ -59,26 +59,26 @@ __start::@return: scope:[__start]  from __start::@4
   to:@return
 
 SYMBOL TABLE SSA
-(volatile byte*) SCREEN loadstore
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@3
-(label) __start::@4
-(label) __start::@return
-(label) __start::__init1
-(void()) init_1()
-(label) init_1::@return
-(void()) init_2()
-(label) init_2::@return
-(void()) main()
-(label) main::@1
-(label) main::@return
-(void()) print()
-(label) print::@return
-(volatile byte) sym loadstore
+volatile byte* SCREEN loadstore
+void __start()
+label __start::@1
+label __start::@2
+label __start::@3
+label __start::@4
+label __start::@return
+label __start::__init1
+void init_1()
+label init_1::@return
+void init_2()
+label init_2::@return
+void main()
+label main::@1
+label main::@return
+void print()
+label print::@return
+volatile byte sym loadstore
 
-Inlining cast (volatile byte*) SCREEN ← (byte*)(number) $400
+Inlining cast SCREEN = (byte*)$400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -95,9 +95,9 @@ Calls in [main] to print:16
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@3
-Culled Empty Block (label) __start::@4
-Culled Empty Block (label) main::@1
+Culled Empty Block label __start::@3
+Culled Empty Block label __start::@4
+Culled Empty Block label main::@1
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@2
 Adding NOP phi() at start of __start::@1
@@ -105,13 +105,13 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) sym ← (byte) 0
-  [2] (volatile byte*) SCREEN ← (byte*) 0
+  [1] sym = 0
+  [2] SCREEN = (byte*) 0
   [3] call init_1 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::__init1
@@ -126,23 +126,23 @@ __start::@return: scope:[__start]  from __start::@1
   [8] return 
   to:@return
 
-(void()) init_2()
+void init_2()
 init_2: scope:[init_2]  from __start::@2
-  [9] (volatile byte*) SCREEN ← (byte*) 1024
+  [9] SCREEN = (byte*) 1024
   to:init_2::@return
 init_2::@return: scope:[init_2]  from init_2
   [10] return 
   to:@return
 
-(void()) init_1()
+void init_1()
 init_1: scope:[init_1]  from __start::__init1
-  [11] (volatile byte) sym ← (byte) '*'
+  [11] sym = '*'
   to:init_1::@return
 init_1::@return: scope:[init_1]  from init_1
   [12] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   [13] phi()
   [14] call print 
@@ -151,9 +151,9 @@ main::@return: scope:[main]  from main
   [15] return 
   to:@return
 
-(void()) print()
+void print()
 print: scope:[print]  from main
-  [16] *((volatile byte*) SCREEN) ← (volatile byte) sym
+  [16] *SCREEN = sym
   to:print::@return
 print::@return: scope:[print]  from print
   [17] return 
@@ -161,13 +161,13 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(volatile byte*) SCREEN loadstore 22.8
-(void()) __start()
-(void()) init_1()
-(void()) init_2()
-(void()) main()
-(void()) print()
-(volatile byte) sym loadstore 16.285714285714285
+volatile byte* SCREEN loadstore 22.8
+void __start()
+void init_1()
+void init_2()
+void main()
+void print()
+volatile byte sym loadstore 16.285714285714285
 
 Initial phi equivalence classes
 Added variable sym to live range equivalence class [ sym ]
@@ -177,110 +177,12 @@ Complete equivalence classes
 [ SCREEN ]
 Allocated zp[1]:2 [ sym ]
 Allocated zp[2]:3 [ SCREEN ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates Library Constructor Functionality
-// Multiple #pragma constructor_for() constructors
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label sym = 2
-  .label SCREEN = 3
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) sym ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z sym
-    // [2] (volatile byte*) SCREEN ← (byte*) 0 -- pbuz1=pbuc1 
-    lda #<0
-    sta.z SCREEN
-    lda #>0
-    sta.z SCREEN+1
-    // [3] call init_1 
-    jsr init_1
-    // [4] phi from __start::__init1 to __start::@2 [phi:__start::__init1->__start::@2]
-  __b2_from___init1:
-    jmp __b2
-    // __start::@2
-  __b2:
-    // [5] call init_2 
-    jsr init_2
-    // [6] phi from __start::@2 to __start::@1 [phi:__start::@2->__start::@1]
-  __b1_from___b2:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [7] call main 
-    // [13] phi from __start::@1 to main [phi:__start::@1->main]
-  main_from___b1:
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // init_2
-init_2: {
-    // [9] (volatile byte*) SCREEN ← (byte*) 1024 -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z SCREEN
-    lda #>$400
-    sta.z SCREEN+1
-    jmp __breturn
-    // init_2::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // init_1
-init_1: {
-    // [11] (volatile byte) sym ← (byte) '*' -- vbuz1=vbuc1 
-    lda #'*'
-    sta.z sym
-    jmp __breturn
-    // init_1::@return
-  __breturn:
-    // [12] return 
-    rts
-}
-  // main
-main: {
-    // [14] call print 
-    jsr print
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [15] return 
-    rts
-}
-  // print
-print: {
-    // [16] *((volatile byte*) SCREEN) ← (volatile byte) sym -- _deref_pbuz1=vbuz2 
-    lda.z sym
-    ldy #0
-    sta (SCREEN),y
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [17] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) sym ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] (volatile byte*) SCREEN ← (byte*) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [9] (volatile byte*) SCREEN ← (byte*) 1024 [ SCREEN ] (  [ SCREEN ] { }  init_2:5 [ sym SCREEN ] { }  ) always clobbers reg byte a 
-Statement [11] (volatile byte) sym ← (byte) '*' [ sym ] (  [ sym ] { }  init_1:3 [ sym ] { }  ) always clobbers reg byte a 
-Statement [16] *((volatile byte*) SCREEN) ← (volatile byte) sym [ ] ( main:7::print:14 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] sym = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] SCREEN = (byte*) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [9] SCREEN = (byte*) 1024 [ SCREEN ] (  [ SCREEN ] { }  init_2:5 [ sym SCREEN ] { }  ) always clobbers reg byte a 
+Statement [11] sym = '*' [ sym ] (  [ sym ] { }  init_1:3 [ sym ] { }  ) always clobbers reg byte a 
+Statement [16] *SCREEN = sym [ ] ( main:7::print:14 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ sym ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ SCREEN ] : zp[2]:3 , 
 
@@ -317,10 +219,10 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) sym ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] sym = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z sym
-    // [2] (volatile byte*) SCREEN ← (byte*) 0 -- pbuz1=pbuc1 
+    // [2] SCREEN = (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z SCREEN
     lda #>0
@@ -351,7 +253,7 @@ __start: {
 }
   // init_2
 init_2: {
-    // [9] (volatile byte*) SCREEN ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [9] SCREEN = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z SCREEN
     lda #>$400
@@ -364,7 +266,7 @@ init_2: {
 }
   // init_1
 init_1: {
-    // [11] (volatile byte) sym ← (byte) '*' -- vbuz1=vbuc1 
+    // [11] sym = '*' -- vbuz1=vbuc1 
     lda #'*'
     sta.z sym
     jmp __breturn
@@ -385,7 +287,7 @@ main: {
 }
   // print
 print: {
-    // [16] *((volatile byte*) SCREEN) ← (volatile byte) sym -- _deref_pbuz1=vbuz2 
+    // [16] *SCREEN = sym -- _deref_pbuz1=vbuz2 
     lda.z sym
     ldy #0
     sta (SCREEN),y
@@ -425,21 +327,21 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(volatile byte*) SCREEN loadstore zp[2]:3 22.8
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) init_1()
-(label) init_1::@return
-(void()) init_2()
-(label) init_2::@return
-(void()) main()
-(label) main::@return
-(void()) print()
-(label) print::@return
-(volatile byte) sym loadstore zp[1]:2 16.285714285714285
+volatile byte* SCREEN loadstore zp[2]:3 22.8
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void init_1()
+label init_1::@return
+void init_2()
+label init_2::@return
+void main()
+label main::@return
+void print()
+label print::@return
+volatile byte sym loadstore zp[1]:2 16.285714285714285
 
 zp[1]:2 [ sym ]
 zp[2]:3 [ SCREEN ]
@@ -462,11 +364,11 @@ Score: 91
 __start: {
     // __start::__init1
     // sym
-    // [1] (volatile byte) sym ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] sym = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z sym
     // SCREEN
-    // [2] (volatile byte*) SCREEN ← (byte*) 0 -- pbuz1=pbuc1 
+    // [2] SCREEN = (byte*) 0 -- pbuz1=pbuc1 
     sta.z SCREEN
     sta.z SCREEN+1
     // #pragma constructor_for(init_1, print)
@@ -489,7 +391,7 @@ __start: {
   // init_2
 init_2: {
     // SCREEN = 0x0400
-    // [9] (volatile byte*) SCREEN ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [9] SCREEN = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z SCREEN
     lda #>$400
@@ -502,7 +404,7 @@ init_2: {
   // init_1
 init_1: {
     // sym = '*'
-    // [11] (volatile byte) sym ← (byte) '*' -- vbuz1=vbuc1 
+    // [11] sym = '*' -- vbuz1=vbuc1 
     lda #'*'
     sta.z sym
     // init_1::@return
@@ -523,7 +425,7 @@ main: {
   // print
 print: {
     // *SCREEN = sym
-    // [16] *((volatile byte*) SCREEN) ← (volatile byte) sym -- _deref_pbuz1=vbuz2 
+    // [16] *SCREEN = sym -- _deref_pbuz1=vbuz2 
     lda.z sym
     ldy #0
     sta (SCREEN),y

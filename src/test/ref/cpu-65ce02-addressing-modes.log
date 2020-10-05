@@ -1,8 +1,8 @@
-Resolved forward reference far to (const byte*) far
+Resolved forward reference far to far
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x)  }
   to:main::@return
@@ -10,7 +10,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,12 +21,12 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(const byte*) far[]  = { (byte) $60 }
-(void()) main()
-(label) main::@return
+void __start()
+label __start::@1
+label __start::@return
+const byte* far[]  = { $60 }
+void main()
+label main::@return
 
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -40,7 +40,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x)  }
   to:main::@return
@@ -50,54 +50,10 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / CSG65CE02
-  // File Comments
-// Tests the different ASM addressing modes
-  // Upstart
-.cpu _65ce02
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x)  }
-    inx
-    lda #$12
-    phw #$1234
-    lda.z $12
-    lda.z $12,x
-    ldx.z $12,y
-    lda ($12,x)
-    lda ($12),y
-    ora.z ($12),z
-    lda.z ($12,sp),y
-    lda $1234
-    lda $1234,x
-    lda $1234,y
-    beq lbl1
-    lbeq far
-    bbr0 $12,lbl2
-  lbl1:
-    jmp ($1234)
-  lbl2:
-    jmp ($1234,x)
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-.pc = $2000 "far"
-  far: .byte $60
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { inx lda#$12 phw#$1234 lda$12 lda$12,x ldx$12,y lda($12,x) lda($12),y ora($12),z lda($12,sp),y lda$1234 lda$1234,x lda$1234,y beqlbl1 lbeqfar bbr0$12,lbl2 lbl1: jmp($1234) lbl2: jmp($1234,x)  } always clobbers reg byte a reg byte x 
 
@@ -159,9 +115,9 @@ Removing unreachable instruction rts
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(const byte*) far[]  = { (byte) $60 }
-(void()) main()
-(label) main::@return
+const byte* far[]  = { $60 }
+void main()
+label main::@return
 
 
 

@@ -1,69 +1,69 @@
-Resolved forward reference fn1 to (void()) fn1()
-Resolved forward reference fn2 to (void()) fn2()
+Resolved forward reference fn1 to void fn1()
+Resolved forward reference fn2 to void fn2()
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@3/(byte) main::i#4 )
+  main::i#3 = phi( main/main::i#0, main::@3/main::i#4 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (byte) getfn::b#0 ← (byte) main::i#1
+  main::i#2 = phi( main::@1/main::i#3 )
+  main::i#1 = ++ main::i#2
+  getfn::b#0 = main::i#1
   call getfn 
-  (void()*) getfn::return#0 ← (void()*) getfn::return#3
+  getfn::return#0 = getfn::return#3
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  (byte) main::i#4 ← phi( main::@2/(byte) main::i#1 )
-  (void()*) getfn::return#4 ← phi( main::@2/(void()*) getfn::return#0 )
-  (void()*~) main::$1 ← (void()*) getfn::return#4
-  call *((void()*~) main::$1) 
+  main::i#4 = phi( main::@2/main::i#1 )
+  getfn::return#4 = phi( main::@2/getfn::return#0 )
+  main::$1 = getfn::return#4
+  call *main::$1 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()*()) getfn((byte) getfn::b)
+void()* getfn(byte getfn::b)
 getfn: scope:[getfn]  from main::@2
-  (byte) getfn::b#1 ← phi( main::@2/(byte) getfn::b#0 )
-  (number~) getfn::$0 ← (byte) getfn::b#1 & (number) 1
-  (bool~) getfn::$1 ← (number~) getfn::$0 == (number) 0
-  if((bool~) getfn::$1) goto getfn::@1
+  getfn::b#1 = phi( main::@2/getfn::b#0 )
+  getfn::$0 = getfn::b#1 & 1
+  getfn::$1 = getfn::$0 == 0
+  if(getfn::$1) goto getfn::@1
   to:getfn::@2
 getfn::@1: scope:[getfn]  from getfn
-  (void()*) getfn::return#1 ← &(void()) fn1()
+  getfn::return#1 = &fn1
   to:getfn::@return
 getfn::@2: scope:[getfn]  from getfn
-  (void()*) getfn::return#2 ← &(void()) fn2()
+  getfn::return#2 = &fn2
   to:getfn::@return
 getfn::@return: scope:[getfn]  from getfn::@1 getfn::@2
-  (void()*) getfn::return#5 ← phi( getfn::@1/(void()*) getfn::return#1 getfn::@2/(void()*) getfn::return#2 )
-  (void()*) getfn::return#3 ← (void()*) getfn::return#5
+  getfn::return#5 = phi( getfn::@1/getfn::return#1, getfn::@2/getfn::return#2 )
+  getfn::return#3 = getfn::return#5
   return 
   to:@return
 
-(void()) fn1()
+void fn1()
 fn1: scope:[fn1]  from
-  *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 
-(void()) fn2()
+void fn2()
 fn2: scope:[fn2]  from
-  *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
+  *fn2::BG_COLOR = ++ *fn2::BG_COLOR
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -74,69 +74,69 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) fn1()
-(label) fn1::@return
-(const nomodify byte*) fn1::BORDER_COLOR = (byte*)(number) $d020
-(void()) fn2()
-(label) fn2::@return
-(const nomodify byte*) fn2::BG_COLOR = (byte*)(number) $d021
-(void()*()) getfn((byte) getfn::b)
-(number~) getfn::$0
-(bool~) getfn::$1
-(label) getfn::@1
-(label) getfn::@2
-(label) getfn::@return
-(byte) getfn::b
-(byte) getfn::b#0
-(byte) getfn::b#1
-(void()*) getfn::return
-(void()*) getfn::return#0
-(void()*) getfn::return#1
-(void()*) getfn::return#2
-(void()*) getfn::return#3
-(void()*) getfn::return#4
-(void()*) getfn::return#5
-(void()) main()
-(void()*~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
-(byte) main::i#4
+void __start()
+label __start::@1
+label __start::@return
+void fn1()
+label fn1::@return
+const nomodify byte* fn1::BORDER_COLOR = (byte*)$d020
+void fn2()
+label fn2::@return
+const nomodify byte* fn2::BG_COLOR = (byte*)$d021
+void()* getfn(byte getfn::b)
+number~ getfn::$0
+bool~ getfn::$1
+label getfn::@1
+label getfn::@2
+label getfn::@return
+byte getfn::b
+byte getfn::b#0
+byte getfn::b#1
+void()* getfn::return
+void()* getfn::return#0
+void()* getfn::return#1
+void()* getfn::return#2
+void()* getfn::return#3
+void()* getfn::return#4
+void()* getfn::return#5
+void main()
+void()*~ main::$1
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
 
-Adding number conversion cast (unumber) 1 in (number~) getfn::$0 ← (byte) getfn::b#1 & (number) 1
-Adding number conversion cast (unumber) getfn::$0 in (number~) getfn::$0 ← (byte) getfn::b#1 & (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in (bool~) getfn::$1 ← (unumber~) getfn::$0 == (number) 0
+Adding number conversion cast (unumber) 1 in getfn::$0 = getfn::b#1 & 1
+Adding number conversion cast (unumber) getfn::$0 in getfn::$0 = getfn::b#1 & (unumber)1
+Adding number conversion cast (unumber) 0 in getfn::$1 = getfn::$0 == 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) getfn::$0 ← (byte) getfn::b#1 & (byte) 1
+Inferred type updated to byte in getfn::$0 = getfn::b#1 & 1
 Alias main::i#2 = main::i#3 
 Alias getfn::return#0 = getfn::return#4 
 Alias main::i#1 = main::i#4 
 Alias getfn::return#3 = getfn::return#5 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) getfn::b#1 (byte) getfn::b#0
+Identical Phi Values getfn::b#1 getfn::b#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) getfn::$1 [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1
+Simple Condition getfn::$1 [13] if(getfn::$0==0) goto getfn::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
-Constant (const void()*) getfn::return#1 = &fn1
-Constant (const void()*) getfn::return#2 = &fn2
+Constant main::i#0 = 0
+Constant getfn::return#1 = &fn1
+Constant getfn::return#2 = &fn2
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [2] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -147,12 +147,12 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const byte) main::i#0
-Inlining constant with var siblings (const void()*) getfn::return#1
-Inlining constant with var siblings (const void()*) getfn::return#2
-Constant inlined getfn::return#1 = &(void()) fn1()
-Constant inlined main::i#0 = (byte) 0
-Constant inlined getfn::return#2 = &(void()) fn2()
+Inlining constant with var siblings main::i#0
+Inlining constant with var siblings getfn::return#1
+Inlining constant with var siblings getfn::return#2
+Constant inlined getfn::return#1 = &fn1
+Constant inlined main::i#0 = 0
+Constant inlined getfn::return#2 = &fn2
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of getfn::@2
@@ -161,77 +161,77 @@ CALL GRAPH
 Calls in [main] to getfn:8 
 
 Created 2 initial phi equivalence classes
-Coalesced [12] main::i#5 ← main::i#1
+Coalesced [12] main::i#5 = main::i#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) getfn::@2
+Culled Empty Block label getfn::@2
 Adding NOP phi() at start of main
 Adding NOP phi() at start of getfn::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) fn2()
+void fn2()
 fn2: scope:[fn2]  from
-  [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
+  [0] *fn2::BG_COLOR = ++ *fn2::BG_COLOR
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   [1] return 
   to:@return
 
-(void()) fn1()
+void fn1()
 fn1: scope:[fn1]  from
-  [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  [2] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [3] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [4] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [5] (byte) main::i#2 ← phi( main/(byte) 0 main::@3/(byte) main::i#1 )
+  [5] main::i#2 = phi( main/0, main::@3/main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [6] (byte) main::i#1 ← ++ (byte) main::i#2
-  [7] (byte) getfn::b#0 ← (byte) main::i#1
+  [6] main::i#1 = ++ main::i#2
+  [7] getfn::b#0 = main::i#1
   [8] call getfn 
-  [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
+  [9] getfn::return#0 = getfn::return#3
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [10] (void()*~) main::$1 ← (void()*) getfn::return#0
-  [11] call *((void()*~) main::$1) 
+  [10] main::$1 = getfn::return#0
+  [11] call *main::$1 
   to:main::@1
 
-(void()*()) getfn((byte) getfn::b)
+void()* getfn(byte getfn::b)
 getfn: scope:[getfn]  from main::@2
-  [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1
-  [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1
+  [12] getfn::$0 = getfn::b#0 & 1
+  [13] if(getfn::$0==0) goto getfn::@1
   to:getfn::@return
 getfn::@1: scope:[getfn]  from getfn
   [14] phi()
   to:getfn::@return
 getfn::@return: scope:[getfn]  from getfn getfn::@1
-  [15] (void()*) getfn::return#3 ← phi( getfn::@1/&(void()) fn1() getfn/&(void()) fn2() )
+  [15] getfn::return#3 = phi( getfn::@1/&fn1, getfn/&fn2 )
   [16] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) fn1()
-(void()) fn2()
-(void()*()) getfn((byte) getfn::b)
-(byte~) getfn::$0 202.0
-(byte) getfn::b
-(byte) getfn::b#0 112.0
-(void()*) getfn::return
-(void()*) getfn::return#0 22.0
-(void()*) getfn::return#3 3.6666666666666665
-(void()) main()
-(void()*~) main::$1 11.0
-(byte) main::i
-(byte) main::i#1 5.5
-(byte) main::i#2 22.0
+void fn1()
+void fn2()
+void()* getfn(byte getfn::b)
+byte~ getfn::$0 202.0
+byte getfn::b
+byte getfn::b#0 112.0
+void()* getfn::return
+void()* getfn::return#0 22.0
+void()* getfn::return#3 3.6666666666666665
+void main()
+void()*~ main::$1 11.0
+byte main::i
+byte main::i#1 5.5
+byte main::i#2 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -253,135 +253,16 @@ Allocated zp[1]:5 [ getfn::b#0 ]
 Allocated zp[2]:6 [ getfn::return#0 ]
 Allocated zp[2]:8 [ main::$1 ]
 Allocated zp[1]:10 [ getfn::$0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests creating, assigning returning and calling pointers to non-args no-return functions
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // fn2::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // main
-main: {
-    .label __1 = 8
-    .label i = 2
-    // [5] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // main::@1
-  __b1:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuz1=vbuz2 
-    lda.z i
-    sta.z getfn.b
-    // [8] call getfn 
-    jsr getfn
-    // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 -- pprz1=pprz2 
-    lda.z getfn.return_1
-    sta.z getfn.return
-    lda.z getfn.return_1+1
-    sta.z getfn.return+1
-    jmp __b3
-    // main::@3
-  __b3:
-    // [10] (void()*~) main::$1 ← (void()*) getfn::return#0 -- pprz1=pprz2 
-    lda.z getfn.return
-    sta.z __1
-    lda.z getfn.return+1
-    sta.z __1+1
-    // [11] call *((void()*~) main::$1) 
-    jsr bi___1
-    // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  __b1_from___b3:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
-    jmp __b1
-  bi___1:
-    jmp (__1)
-}
-  // getfn
-// getfn(byte zp(5) b)
-getfn: {
-    .label __0 = $a
-    .label b = 5
-    .label return = 6
-    .label return_1 = 3
-    // [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
-    lda #1
-    and.z b
-    sta.z __0
-    // [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuz1_eq_0_then_la1 
-    lda.z __0
-    cmp #0
-    beq __b1_from_getfn
-    // [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
-  __breturn_from_getfn:
-    // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
-    lda #<fn2
-    sta.z return_1
-    lda #>fn2
-    sta.z return_1+1
-    jmp __breturn
-    // [14] phi from getfn to getfn::@1 [phi:getfn->getfn::@1]
-  __b1_from_getfn:
-    jmp __b1
-    // getfn::@1
-  __b1:
-    // [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
-  __breturn_from___b1:
-    // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
-    lda #<fn1
-    sta.z return_1
-    lda #>fn1
-    sta.z return_1+1
-    jmp __breturn
-    // getfn::@return
-  __breturn:
-    // [16] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] (  [ main::i#1 getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
+Statement [9] getfn::return#0 = getfn::return#3 [ main::i#1 getfn::return#0 ] (  [ main::i#1 getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] (  [ main::i#1 main::$1 ] { }  ) always clobbers reg byte a 
-Statement [11] call *((void()*~) main::$1)  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [10] main::$1 = getfn::return#0 [ main::i#1 main::$1 ] (  [ main::i#1 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [11] call *main::$1  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3 [ main::i#1 getfn::return#0 ] (  [ main::i#1 getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
-Statement [10] (void()*~) main::$1 ← (void()*) getfn::return#0 [ main::i#1 main::$1 ] (  [ main::i#1 main::$1 ] { }  ) always clobbers reg byte a 
-Statement [11] call *((void()*~) main::$1)  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [9] getfn::return#0 = getfn::return#3 [ main::i#1 getfn::return#0 ] (  [ main::i#1 getfn::return#0 ] { { getfn::b#0 = main::i#1 } { getfn::return#0 = getfn::return#3 } }  ) always clobbers reg byte a 
+Statement [10] main::$1 = getfn::return#0 [ main::i#1 main::$1 ] (  [ main::i#1 main::$1 ] { }  ) always clobbers reg byte a 
+Statement [11] call *main::$1  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[2]:3 [ getfn::return#3 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ getfn::b#0 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -417,7 +298,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // fn2
 fn2: {
     .label BG_COLOR = $d021
-    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *fn2::BG_COLOR = ++ *fn2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // fn2::@return
@@ -428,7 +309,7 @@ fn2: {
   // fn1
 fn1: {
     .label BORDER_COLOR = $d020
-    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [2] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __breturn
     // fn1::@return
@@ -442,7 +323,7 @@ main: {
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
@@ -451,22 +332,22 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [6] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
+    // [7] getfn::b#0 = main::i#1 -- vbuaa=vbuz1 
     lda.z i
     // [8] call getfn 
     jsr getfn
-    // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
+    // [9] getfn::return#0 = getfn::return#3
     jmp __b3
     // main::@3
   __b3:
-    // [10] (void()*~) main::$1 ← (void()*) getfn::return#0
-    // [11] call *((void()*~) main::$1) 
+    // [10] main::$1 = getfn::return#0
+    // [11] call *main::$1 
     jsr bi___1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b1
   bi___1:
     jmp (__1)
@@ -475,14 +356,14 @@ main: {
 // getfn(byte register(A) b)
 getfn: {
     .label return = 3
-    // [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuaa=vbuaa_band_vbuc1 
+    // [12] getfn::$0 = getfn::b#0 & 1 -- vbuaa=vbuaa_band_vbuc1 
     and #1
-    // [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuaa_eq_0_then_la1 
+    // [13] if(getfn::$0==0) goto getfn::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b1_from_getfn
     // [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
   __breturn_from_getfn:
-    // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
+    // [15] phi getfn::return#3 = &fn2 [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z return
     lda #>fn2
@@ -495,7 +376,7 @@ getfn: {
   __b1:
     // [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
   __breturn_from___b1:
-    // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
+    // [15] phi getfn::return#3 = &fn1 [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z return
     lda #>fn1
@@ -536,29 +417,29 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) fn1()
-(label) fn1::@return
-(const nomodify byte*) fn1::BORDER_COLOR = (byte*) 53280
-(void()) fn2()
-(label) fn2::@return
-(const nomodify byte*) fn2::BG_COLOR = (byte*) 53281
-(void()*()) getfn((byte) getfn::b)
-(byte~) getfn::$0 reg byte a 202.0
-(label) getfn::@1
-(label) getfn::@return
-(byte) getfn::b
-(byte) getfn::b#0 reg byte a 112.0
-(void()*) getfn::return
-(void()*) getfn::return#0 return zp[2]:3 22.0
-(void()*) getfn::return#3 return zp[2]:3 3.6666666666666665
-(void()) main()
-(void()*~) main::$1 zp[2]:3 11.0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(byte) main::i
-(byte) main::i#1 i zp[1]:2 5.5
-(byte) main::i#2 i zp[1]:2 22.0
+void fn1()
+label fn1::@return
+const nomodify byte* fn1::BORDER_COLOR = (byte*) 53280
+void fn2()
+label fn2::@return
+const nomodify byte* fn2::BG_COLOR = (byte*) 53281
+void()* getfn(byte getfn::b)
+byte~ getfn::$0 reg byte a 202.0
+label getfn::@1
+label getfn::@return
+byte getfn::b
+byte getfn::b#0 reg byte a 112.0
+void()* getfn::return
+void()* getfn::return#0 return zp[2]:3 22.0
+void()* getfn::return#3 return zp[2]:3 3.6666666666666665
+void main()
+void()*~ main::$1 zp[2]:3 11.0
+label main::@1
+label main::@2
+label main::@3
+byte main::i
+byte main::i#1 i zp[1]:2 5.5
+byte main::i#2 i zp[1]:2 22.0
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[2]:3 [ getfn::return#3 getfn::return#0 main::$1 ]
@@ -580,7 +461,7 @@ Score: 392
 fn2: {
     .label BG_COLOR = $d021
     // (*BG_COLOR)++;
-    // [0] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *fn2::BG_COLOR = ++ *fn2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // fn2::@return
     // }
@@ -591,7 +472,7 @@ fn2: {
 fn1: {
     .label BORDER_COLOR = $d020
     // (*BORDER_COLOR)++;
-    // [2] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [2] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // fn1::@return
     // }
@@ -603,28 +484,28 @@ main: {
     .label __1 = 3
     .label i = 2
     // [5] phi from main to main::@1 [phi:main->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [5] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // main::@1
     // main::@2
   __b2:
     // (*getfn(++i))();
-    // [6] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [6] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // getfn(++i)
-    // [7] (byte) getfn::b#0 ← (byte) main::i#1 -- vbuaa=vbuz1 
+    // [7] getfn::b#0 = main::i#1 -- vbuaa=vbuz1 
     lda.z i
     // [8] call getfn 
     jsr getfn
-    // [9] (void()*) getfn::return#0 ← (void()*) getfn::return#3
+    // [9] getfn::return#0 = getfn::return#3
     // main::@3
-    // [10] (void()*~) main::$1 ← (void()*) getfn::return#0
+    // [10] main::$1 = getfn::return#0
     // (*getfn(++i))()
-    // [11] call *((void()*~) main::$1) 
+    // [11] call *main::$1 
     jsr bi___1
     // [5] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [5] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
+    // [5] phi main::i#2 = main::i#1 [phi:main::@3->main::@1#0] -- register_copy 
     jmp __b2
   bi___1:
     jmp (__1)
@@ -634,14 +515,14 @@ main: {
 getfn: {
     .label return = 3
     // b&1
-    // [12] (byte~) getfn::$0 ← (byte) getfn::b#0 & (byte) 1 -- vbuaa=vbuaa_band_vbuc1 
+    // [12] getfn::$0 = getfn::b#0 & 1 -- vbuaa=vbuaa_band_vbuc1 
     and #1
     // if((b&1)==0)
-    // [13] if((byte~) getfn::$0==(byte) 0) goto getfn::@1 -- vbuaa_eq_0_then_la1 
+    // [13] if(getfn::$0==0) goto getfn::@1 -- vbuaa_eq_0_then_la1 
     cmp #0
     beq __b1
     // [15] phi from getfn to getfn::@return [phi:getfn->getfn::@return]
-    // [15] phi (void()*) getfn::return#3 = &(void()) fn2() [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
+    // [15] phi getfn::return#3 = &fn2 [phi:getfn->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn2
     sta.z return
     lda #>fn2
@@ -651,7 +532,7 @@ getfn: {
     // getfn::@1
   __b1:
     // [15] phi from getfn::@1 to getfn::@return [phi:getfn::@1->getfn::@return]
-    // [15] phi (void()*) getfn::return#3 = &(void()) fn1() [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
+    // [15] phi getfn::return#3 = &fn1 [phi:getfn::@1->getfn::@return#0] -- pprz1=pprc1 
     lda #<fn1
     sta.z return
     lda #>fn1

@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::SCREEN) ← (const byte) main::state
+  *main::SCREEN = main::state
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,16 +20,16 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) ON = (byte) 1
-(const byte) State::OFF = (byte) 0
-(const byte) State::ON = (byte) 1
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte) main::state = (const byte) ON
+const byte ON = 1
+const byte State::OFF = 0
+const byte State::ON = 1
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte main::state = ON
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -38,7 +38,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::state = (const byte) ON
+Constant inlined main::state = ON
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -47,9 +47,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← (const byte) ON
+  [0] *main::SCREEN = ON
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -57,37 +57,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test of simple enum - two-value enum
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const ON = 1
-  // main
-main: {
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) ON -- _deref_pbuc1=vbuc2 
-    lda #ON
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← (const byte) ON [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = ON [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [State] 
@@ -110,7 +85,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) ON -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     jmp __breturn
@@ -128,12 +103,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) ON = (byte) 1
-(const byte) State::OFF = (byte) 0
-(const byte) State::ON = (byte) 1
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
+const byte ON = 1
+const byte State::OFF = 0
+const byte State::ON = 1
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
 
 
 
@@ -152,7 +127,7 @@ Score: 12
 main: {
     .label SCREEN = $400
     // *SCREEN = state
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) ON -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // main::@return

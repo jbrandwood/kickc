@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const byte*) main::screen + (number) 0) ← (number) 1
+  main::screen[0] = 1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,26 +20,26 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte* main::screen = (byte*)$400
 
-Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 0) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← ((unumber)) (number) 1
+Adding number conversion cast (unumber) 1 in main::screen[0] = 1
+Adding number conversion cast (unumber) 0 in main::screen[0] = ((unumber)) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) main::screen + (unumber)(number) 0) ← (unumber)(number) 1
+Inlining cast main::screen[(unumber)0] = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::screen in [0] *((const byte*) main::screen + (byte) 0) ← (byte) 1
+Simplifying expression containing zero main::screen in [0] main::screen[0] = 1
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -53,9 +53,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) main::screen) ← (byte) 1
+  [0] *main::screen = 1
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -63,35 +63,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    // [0] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta screen
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) main::screen) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::screen = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -110,7 +87,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     jmp __breturn
@@ -128,9 +105,9 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const byte*) main::screen = (byte*) 1024
+void main()
+label main::@return
+const byte* main::screen = (byte*) 1024
 
 
 
@@ -147,7 +124,7 @@ Score: 12
 main: {
     .label screen = $400
     // screen[0] = 1
-    // [0] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     // main::@return

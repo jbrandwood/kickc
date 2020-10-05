@@ -1,26 +1,26 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (bool~) main::$0 ← ! false!=false
-  if((bool~) main::$0) goto main::@1
+  main::$0 = ! false!=false
+  if(main::$0) goto main::@1
   to:main::@2
 main::@1: scope:[main]  from main main::@2
-  (bool~) main::$1 ← ! true!=false
-  if((bool~) main::$1) goto main::@return
+  main::$1 = ! true!=false
+  if(main::$1) goto main::@return
   to:main::@3
 main::@2: scope:[main]  from main
-  *((const byte*) main::SCREEN + (number) 0) ← (byte) '*'
+  main::SCREEN[0] = '*'
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  *((const byte*) main::SCREEN + (number) 1) ← (byte) '*'
+  main::SCREEN[1] = '*'
   to:main::@return
 main::@return: scope:[main]  from main::@1 main::@3
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -31,35 +31,35 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+bool~ main::$1
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+const byte* main::SCREEN = (byte*)$400
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::SCREEN + (number) 0) ← (byte) '*'
-Adding number conversion cast (unumber) 1 in *((const byte*) main::SCREEN + (number) 1) ← (byte) '*'
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = '*'
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = '*'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting ! if()-condition to reversed if() [0] (bool~) main::$0 ← ! false!=false
-Rewriting ! if()-condition to reversed if() [2] (bool~) main::$1 ← ! true!=false
+Rewriting ! if()-condition to reversed if() [0] main::$0 = ! false!=false
+Rewriting ! if()-condition to reversed if() [2] main::$1 = ! true!=false
 Successful SSA optimization Pass2ConditionalAndOrRewriting
 if() condition always false - eliminating [1] if(false!=false) goto main::@2
 if() condition always true - replacing block destination [3] if(true!=false) goto main::@3
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN in [4] *((const byte*) main::SCREEN + (byte) 0) ← (byte) '*'
+Simplifying expression containing zero main::SCREEN in [4] main::SCREEN[0] = '*'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused block main::@2
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -76,18 +76,18 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@3 to main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [1] *((const byte*) main::SCREEN+(byte) 1) ← (byte) '*'
+  [1] *(main::SCREEN+1) = '*'
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [2] return 
@@ -95,40 +95,12 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test boolean comparison false!=false
-// https://atariage.com/forums/topic/311788-kickc-optimizing-c-compiler-now-supports-atari-8bit-xlxe/?tab=comments#comment-4644101
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const byte*) main::SCREEN+(byte) 1) ← (byte) '*' -- _deref_pbuc1=vbuc2 
-    lda #'*'
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] *((const byte*) main::SCREEN+(byte) 1) ← (byte) '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -152,7 +124,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const byte*) main::SCREEN+(byte) 1) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta SCREEN+1
     jmp __breturn
@@ -172,10 +144,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
+void main()
+label main::@1
+label main::@return
+const byte* main::SCREEN = (byte*) 1024
 
 
 
@@ -195,7 +167,7 @@ main: {
     .label SCREEN = $400
     // main::@1
     // SCREEN[1] = '*'
-    // [1] *((const byte*) main::SCREEN+(byte) 1) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta SCREEN+1
     // main::@return

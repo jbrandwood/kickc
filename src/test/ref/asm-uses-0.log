@@ -1,8 +1,8 @@
-Resolved forward reference init to (void()) init()
+Resolved forward reference init to void init()
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { jsrinit  }
   to:main::@return
@@ -10,15 +10,15 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) init()
+void init()
 init: scope:[init]  from
-  *((const nomodify byte*) BG_COLOR) ← (number) 0
+  *BG_COLOR = 0
   to:init::@return
 init::@return: scope:[init]  from init
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -29,23 +29,23 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d020
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) init()
-(label) init::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)$d020
+void __start()
+label __start::@1
+label __start::@return
+void init()
+label init::@return
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) BG_COLOR) ← (number) 0
+Adding number conversion cast (unumber) 0 in *BG_COLOR = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) BG_COLOR) ← (unumber)(number) 0
+Inlining cast *BG_COLOR = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -59,15 +59,15 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) init()
+void init()
 init: scope:[init]  from
-  [0] *((const nomodify byte*) BG_COLOR) ← (byte) 0
+  [0] *BG_COLOR = 0
   to:init::@return
 init::@return: scope:[init]  from init
   [1] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { jsrinit  }
   to:main::@return
@@ -77,48 +77,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) init()
-(void()) main()
+void init()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that inline asm uses clause makes the compiler not cull a procedure referenced
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label BG_COLOR = $d020
-  // init
-// Function only used inside the inline asm
-init: {
-    // [0] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta BG_COLOR
-    jmp __breturn
-    // init::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // main
-main: {
-    // asm { jsrinit  }
-    jsr init
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { jsrinit  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -142,7 +107,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // init
 // Function only used inside the inline asm
 init: {
-    // [0] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BG_COLOR
     jmp __breturn
@@ -172,11 +137,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53280
-(void()) init()
-(label) init::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*) 53280
+void init()
+label init::@return
+void main()
+label main::@return
 
 
 
@@ -195,7 +160,7 @@ Score: 24
 // Function only used inside the inline asm
 init: {
     // *BG_COLOR = 0
-    // [0] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BG_COLOR
     // init::@return

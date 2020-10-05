@@ -1,27 +1,27 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (bool*) main::bscreen#0 ← (bool*)(number) $400
-  *((bool*) main::bscreen#0 + (number) 0) ← true
-  *((bool*) main::bscreen#0 + (number) 1) ← false
-  (bool*~) main::$0 ← (bool*) main::bscreen#0 + (number) 2
-  (bool*) main::bscreen#1 ← (bool*~) main::$0
-  *((bool*) main::bscreen#1) ← true
-  (bool~) main::$1 ← ! *((bool*) main::bscreen#1)
-  if((bool~) main::$1) goto main::@return
+  main::bscreen#0 = (bool*)$400
+  main::bscreen#0[0] = true
+  main::bscreen#0[1] = false
+  main::$0 = main::bscreen#0 + 2
+  main::bscreen#1 = main::$0
+  *main::bscreen#1 = true
+  main::$1 = ! *main::bscreen#1
+  if(main::$1) goto main::@return
   to:main::@1
 main::@1: scope:[main]  from main
-  (bool*) main::bscreen#3 ← phi( main/(bool*) main::bscreen#1 )
-  (bool*) main::bscreen#2 ← ++ (bool*) main::bscreen#3
-  *((bool*) main::bscreen#2) ← true
+  main::bscreen#3 = phi( main/main::bscreen#1 )
+  main::bscreen#2 = ++ main::bscreen#3
+  *main::bscreen#2 = true
   to:main::@return
 main::@return: scope:[main]  from main main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -32,60 +32,60 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool*~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@return
-(bool*) main::bscreen
-(bool*) main::bscreen#0
-(bool*) main::bscreen#1
-(bool*) main::bscreen#2
-(bool*) main::bscreen#3
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool*~ main::$0
+bool~ main::$1
+label main::@1
+label main::@return
+bool* main::bscreen
+bool* main::bscreen#0
+bool* main::bscreen#1
+bool* main::bscreen#2
+bool* main::bscreen#3
 
-Adding number conversion cast (unumber) 0 in *((bool*) main::bscreen#0 + (number) 0) ← true
-Adding number conversion cast (unumber) 1 in *((bool*) main::bscreen#0 + (number) 1) ← false
-Adding number conversion cast (unumber) 2 in (bool*~) main::$0 ← (bool*) main::bscreen#0 + (number) 2
+Adding number conversion cast (unumber) 0 in main::bscreen#0[0] = true
+Adding number conversion cast (unumber) 1 in main::bscreen#0[1] = false
+Adding number conversion cast (unumber) 2 in main::$0 = main::bscreen#0 + 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (bool*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::bscreen#1 = main::$0 main::bscreen#3 
 Successful SSA optimization Pass2AliasElimination
-Rewriting ! if()-condition to reversed if() [5] (bool~) main::$1 ← ! *((bool*) main::bscreen#1)
+Rewriting ! if()-condition to reversed if() [5] main::$1 = ! *main::bscreen#1
 Successful SSA optimization Pass2ConditionalAndOrRewriting
-Constant (const bool*) main::bscreen#0 = (bool*) 1024
+Constant main::bscreen#0 = (bool*) 1024
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::bscreen#0 in [1] *((const bool*) main::bscreen#0 + (byte) 0) ← true
+Simplifying expression containing zero main::bscreen#0 in [1] main::bscreen#0[0] = true
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [2] (bool*) main::bscreen#1 ← (const bool*) main::bscreen#0 + (byte) 2
+Constant right-side identified [2] main::bscreen#1 = main::bscreen#0 + 2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const bool*) main::bscreen#1 = main::bscreen#0+2
+Constant main::bscreen#1 = main::bscreen#0+2
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [4] (bool*) main::bscreen#2 ← ++ (const bool*) main::bscreen#1
+Constant right-side identified [4] main::bscreen#2 = ++ main::bscreen#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const bool*) main::bscreen#2 = ++main::bscreen#1
+Constant main::bscreen#2 = ++main::bscreen#1
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with different constant siblings (const bool*) main::bscreen#0
-Inlining constant with different constant siblings (const bool*) main::bscreen#1
-Inlining constant with different constant siblings (const bool*) main::bscreen#2
-Constant inlined main::bscreen#2 = ++(bool*) 1024+(byte) 2
+Inlining constant with different constant siblings main::bscreen#0
+Inlining constant with different constant siblings main::bscreen#1
+Inlining constant with different constant siblings main::bscreen#2
+Constant inlined main::bscreen#2 = ++(bool*) 1024+2
 Constant inlined main::bscreen#0 = (bool*) 1024
-Constant inlined main::bscreen#1 = (bool*) 1024+(byte) 2
+Constant inlined main::bscreen#1 = (bool*) 1024+2
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *((bool*) 1024+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -98,15 +98,15 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((bool*) 1024) ← true
-  [1] *((bool*) 1024+(byte) 1) ← false
-  [2] *((bool*) 1024+(byte) 2) ← true
-  [3] if(*((bool*) 1024+(byte) 2)) goto main::@1
+  [0] *((bool*) 1024) = true
+  [1] *((bool*) 1024+1) = false
+  [2] *((bool*) 1024+2) = true
+  [3] if(*((bool*) 1024+2)) goto main::@1
   to:main::@return
 main::@1: scope:[main]  from main
-  [4] *((bool*) 1024+(byte) 3) ← true
+  [4] *((bool*) 1024+3) = true
   to:main::@return
 main::@return: scope:[main]  from main main::@1
   [5] return 
@@ -114,56 +114,17 @@ main::@return: scope:[main]  from main main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(bool*) main::bscreen
+void main()
+bool* main::bscreen
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests a pointer to a boolean
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // [0] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
-    lda #1
-    sta $400
-    // [1] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
-    lda #0
-    sta $400+1
-    // [2] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
-    lda #1
-    sta $400+2
-    // [3] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
-    lda $400+2
-    cmp #0
-    bne __b1
-    jmp __breturn
-    // main::@1
-  __b1:
-    // [4] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
-    lda #1
-    sta $400+3
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((bool*) 1024) ← true [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((bool*) 1024+(byte) 1) ← false [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((bool*) 1024+(byte) 2) ← true [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] if(*((bool*) 1024+(byte) 2)) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] *((bool*) 1024+(byte) 3) ← true [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((bool*) 1024) = true [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((bool*) 1024+1) = false [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *((bool*) 1024+2) = true [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] if(*((bool*) 1024+2)) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *((bool*) 1024+3) = true [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -182,23 +143,23 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   // main
 main: {
-    // [0] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
+    // [0] *((bool*) 1024) = true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
-    // [1] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
+    // [1] *((bool*) 1024+1) = false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
-    // [2] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
+    // [2] *((bool*) 1024+2) = true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
-    // [3] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+    // [3] if(*((bool*) 1024+2)) goto main::@1 -- _deref_pboc1_then_la1 
     lda $400+2
     cmp #0
     bne __b1
     jmp __breturn
     // main::@1
   __b1:
-    // [4] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
+    // [4] *((bool*) 1024+3) = true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+3
     jmp __breturn
@@ -220,10 +181,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@return
-(bool*) main::bscreen
+void main()
+label main::@1
+label main::@return
+bool* main::bscreen
 
 
 
@@ -240,26 +201,26 @@ Score: 40
   // main
 main: {
     // bscreen[0] = true
-    // [0] *((bool*) 1024) ← true -- _deref_pboc1=vboc2 
+    // [0] *((bool*) 1024) = true -- _deref_pboc1=vboc2 
     lda #1
     sta $400
     // bscreen[1] = false
-    // [1] *((bool*) 1024+(byte) 1) ← false -- _deref_pboc1=vboc2 
+    // [1] *((bool*) 1024+1) = false -- _deref_pboc1=vboc2 
     lda #0
     sta $400+1
     // *bscreen = true
-    // [2] *((bool*) 1024+(byte) 2) ← true -- _deref_pboc1=vboc2 
+    // [2] *((bool*) 1024+2) = true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+2
     // if(*bscreen)
-    // [3] if(*((bool*) 1024+(byte) 2)) goto main::@1 -- _deref_pboc1_then_la1 
+    // [3] if(*((bool*) 1024+2)) goto main::@1 -- _deref_pboc1_then_la1 
     cmp #0
     bne __b1
     rts
     // main::@1
   __b1:
     // *(++bscreen)= true
-    // [4] *((bool*) 1024+(byte) 3) ← true -- _deref_pboc1=vboc2 
+    // [4] *((bool*) 1024+3) = true -- _deref_pboc1=vboc2 
     lda #1
     sta $400+3
     // main::@return

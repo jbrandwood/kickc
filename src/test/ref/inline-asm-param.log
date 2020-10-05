@@ -2,22 +2,22 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
+  main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
   asm { lda#'a' staSCREEN  }
-  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,3)
-  (bool~) main::$0 ← (byte) main::i#1 != rangelast(0,3)
-  if((bool~) main::$0) goto main::@1
+  main::i#1 = main::i#2 + rangenext(0,3)
+  main::$0 = main::i#1 != rangelast(0,3)
+  if(main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -32,29 +32,29 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
+const byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+bool~ main::$0
+label main::@1
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [5] if((byte) main::i#1!=rangelast(0,3)) goto main::@1
+Simple Condition main::$0 [5] if(main::i#1!=rangelast(0,3)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [3] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [5] if(main::i#1!=rangelast(0,3)) goto main::@1 to (number) 4
+Resolved ranged next value [3] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [5] if(main::i#1!=rangelast(0,3)) goto main::@1 to 4
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::__init1
@@ -62,36 +62,36 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 4 in [3] if((byte) main::i#1!=(number) 4) goto main::@1
+Adding number conversion cast (unumber) 4 in [3] if(main::i#1!=4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [6] main::i#3 ← main::i#1
+Coalesced [6] main::i#3 = main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@2
+Culled Empty Block label main::@2
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
+  [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
   asm { lda#'a' staSCREEN  }
-  [3] (byte) main::i#1 ← ++ (byte) main::i#2
-  [4] if((byte) main::i#1!=(byte) 4) goto main::@1
+  [3] main::i#1 = ++ main::i#2
+  [4] if(main::i#1!=4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [5] return 
@@ -99,58 +99,16 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 11.0
+void main()
+byte main::i
+byte main::i#1 16.5
+byte main::i#2 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .label i = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // asm { lda#'a' staSCREEN  }
-    lda #'a'
-    sta SCREEN
-    // [3] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [4] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #4
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { lda#'a' staSCREEN  } always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
@@ -176,21 +134,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
     // asm { lda#'a' staSCREEN  }
     lda #'a'
     sta SCREEN
-    // [3] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [3] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [4] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [4] if(main::i#1!=4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
     bne __b1_from___b1
     jmp __breturn
@@ -215,13 +173,13 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@1
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#2 reg byte x 11.0
+const byte* SCREEN = (byte*) 1024
+void main()
+label main::@1
+label main::@return
+byte main::i
+byte main::i#1 reg byte x 16.5
+byte main::i#2 reg byte x 11.0
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -239,10 +197,10 @@ Score: 151
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // asm
@@ -250,9 +208,9 @@ main: {
     lda #'a'
     sta SCREEN
     // for( byte i:0..3)
-    // [3] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [3] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [4] if((byte) main::i#1!=(byte) 4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [4] if(main::i#1!=4) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #4
     bne __b1
     // main::@return

@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN) ← (byte) 'a'
+  *SCREEN = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,12 +20,12 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -41,9 +41,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (byte) 'a'
+  [0] *SCREEN = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -51,37 +51,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that single-line comments are only included once in the output
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-// The program entry point
-main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -102,7 +77,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 // The program entry point
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __breturn
@@ -120,9 +95,9 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
 
 
 
@@ -141,7 +116,7 @@ Score: 12
 // The program entry point
 main: {
     // *SCREEN = 'a'
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@return

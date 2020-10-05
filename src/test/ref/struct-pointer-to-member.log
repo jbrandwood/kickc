@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BORDER) ← (number) 0
-  *((const nomodify byte*) BG_COLOR) ← (number) 6
+  *((byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BORDER) = 0
+  *BG_COLOR = 6
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,38 +21,38 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BG0
-(const nomodify struct SCREEN_COLORS*) COLORS = (struct SCREEN_COLORS*)(number) $d020
-(const byte) OFFSET_STRUCT_SCREEN_COLORS_BG0 = (byte) 1
-(const byte) OFFSET_STRUCT_SCREEN_COLORS_BORDER = (byte) 0
-(byte) SCREEN_COLORS::BG0
-(byte) SCREEN_COLORS::BG1
-(byte) SCREEN_COLORS::BG2
-(byte) SCREEN_COLORS::BG3
-(byte) SCREEN_COLORS::BORDER
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)(byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
+const nomodify struct SCREEN_COLORS* COLORS = (struct SCREEN_COLORS*)$d020
+const byte OFFSET_STRUCT_SCREEN_COLORS_BG0 = 1
+const byte OFFSET_STRUCT_SCREEN_COLORS_BORDER = 0
+byte SCREEN_COLORS::BG0
+byte SCREEN_COLORS::BG1
+byte SCREEN_COLORS::BG2
+byte SCREEN_COLORS::BG3
+byte SCREEN_COLORS::BORDER
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) 0 in *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BORDER) ← (number) 0
-Adding number conversion cast (unumber) 6 in *((const nomodify byte*) BG_COLOR) ← (number) 6
+Adding number conversion cast (unumber) 0 in *((byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BORDER) = 0
+Adding number conversion cast (unumber) 6 in *BG_COLOR = 6
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BORDER) ← (unumber)(number) 0
-Inlining cast *((const nomodify byte*) BG_COLOR) ← (unumber)(number) 6
+Inlining cast *((byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BORDER) = (unumber)0
+Inlining cast *BG_COLOR = (unumber)6
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (struct SCREEN_COLORS*) 53280
-Simplifying constant integer cast (byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BG0
+Simplifying constant integer cast (byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 6
+Finalized unsigned number type 0
+Finalized unsigned number type 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)COLORS in [0] *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BORDER) ← (byte) 0
+Simplifying expression containing zero (byte*)COLORS in [0] *((byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BORDER) = 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) OFFSET_STRUCT_SCREEN_COLORS_BORDER
+Eliminating unused constant OFFSET_STRUCT_SCREEN_COLORS_BORDER
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -66,10 +66,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS) ← (byte) 0
-  [1] *((const nomodify byte*) BG_COLOR) ← (byte) 6
+  [0] *((byte*)COLORS) = 0
+  [1] *BG_COLOR = 6
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -77,49 +77,18 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) SCREEN_COLORS::BG0
-(byte) SCREEN_COLORS::BG1
-(byte) SCREEN_COLORS::BG2
-(byte) SCREEN_COLORS::BG3
-(byte) SCREEN_COLORS::BORDER
-(void()) main()
+byte SCREEN_COLORS::BG0
+byte SCREEN_COLORS::BG1
+byte SCREEN_COLORS::BG2
+byte SCREEN_COLORS::BG3
+byte SCREEN_COLORS::BORDER
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Support for pointer to struct member
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const OFFSET_STRUCT_SCREEN_COLORS_BG0 = 1
-  // Commodore 64 processor port
-  .label COLORS = $d020
-  // The background color
-  .label BG_COLOR = COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
-  // main
-main: {
-    // [0] *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta COLORS
-    // [1] *((const nomodify byte*) BG_COLOR) ← (byte) 6 -- _deref_pbuc1=vbuc2 
-    lda #6
-    sta BG_COLOR
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) BG_COLOR) ← (byte) 6 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *((byte*)COLORS) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *BG_COLOR = 6 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [SCREEN_COLORS] 
@@ -145,10 +114,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BG_COLOR = COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
   // main
 main: {
-    // [0] *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)COLORS) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta COLORS
-    // [1] *((const nomodify byte*) BG_COLOR) ← (byte) 6 -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = 6 -- _deref_pbuc1=vbuc2 
     lda #6
     sta BG_COLOR
     jmp __breturn
@@ -166,16 +135,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*)(const nomodify struct SCREEN_COLORS*) COLORS+(const byte) OFFSET_STRUCT_SCREEN_COLORS_BG0
-(const nomodify struct SCREEN_COLORS*) COLORS = (struct SCREEN_COLORS*) 53280
-(const byte) OFFSET_STRUCT_SCREEN_COLORS_BG0 = (byte) 1
-(byte) SCREEN_COLORS::BG0
-(byte) SCREEN_COLORS::BG1
-(byte) SCREEN_COLORS::BG2
-(byte) SCREEN_COLORS::BG3
-(byte) SCREEN_COLORS::BORDER
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)COLORS+OFFSET_STRUCT_SCREEN_COLORS_BG0
+const nomodify struct SCREEN_COLORS* COLORS = (struct SCREEN_COLORS*) 53280
+const byte OFFSET_STRUCT_SCREEN_COLORS_BG0 = 1
+byte SCREEN_COLORS::BG0
+byte SCREEN_COLORS::BG1
+byte SCREEN_COLORS::BG2
+byte SCREEN_COLORS::BG3
+byte SCREEN_COLORS::BORDER
+void main()
+label main::@return
 
 
 
@@ -197,11 +166,11 @@ Score: 18
   // main
 main: {
     // COLORS->BORDER = 0
-    // [0] *((byte*)(const nomodify struct SCREEN_COLORS*) COLORS) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*)COLORS) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta COLORS
     // *BG_COLOR = 6
-    // [1] *((const nomodify byte*) BG_COLOR) ← (byte) 6 -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = 6 -- _deref_pbuc1=vbuc2 
     lda #6
     sta BG_COLOR
     // main::@return

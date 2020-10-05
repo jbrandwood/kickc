@@ -1,17 +1,17 @@
-Setting inferred volatile on symbol affected by address-of (byte*) main::c ← (byte*)&(dword) main::t
+Setting inferred volatile on symbol affected by address-of main::c = (byte*)&main::t
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (volatile dword) main::t ← (dword) 0
-  *((byte*)(number) $400) ← *((const byte*) main::c + (number) 0)
+  main::t = 0
+  *((byte*)$400) = main::c[0]
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -22,22 +22,22 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte*) main::c = (byte*)&(volatile dword) main::t
-(volatile dword) main::t loadstore
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte* main::c = (byte*)&main::t
+volatile dword main::t loadstore
 
-Adding number conversion cast (unumber) 0 in *((byte*)(number) $400) ← *((const byte*) main::c + (number) 0)
+Adding number conversion cast (unumber) 0 in *((byte*)$400) = main::c[0]
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::c in [1] *((byte*) 1024) ← *((const byte*) main::c + (byte) 0)
+Simplifying expression containing zero main::c in [1] *((byte*) 1024) = main::c[0]
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -51,10 +51,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile dword) main::t ← (dword) 0
-  [1] *((byte*) 1024) ← *((const byte*) main::c)
+  [0] main::t = 0
+  [1] *((byte*) 1024) = *main::c
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -62,52 +62,17 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(volatile dword) main::t loadstore 20.0
+void main()
+volatile dword main::t loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::t to live range equivalence class [ main::t ]
 Complete equivalence classes
 [ main::t ]
 Allocated zp[4]:2 [ main::t ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates a problem where absolute addressing is used for zeropage-access
-// This is caused by the compiler believing the pointer is into memory" (not knowing the upper part is 0x00 )
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label c = t
-    .label t = 2
-    // [0] (volatile dword) main::t ← (dword) 0 -- vduz1=vduc1 
-    lda #<0
-    sta.z t
-    lda #>0
-    sta.z t+1
-    lda #<0>>$10
-    sta.z t+2
-    lda #>0>>$10
-    sta.z t+3
-    // [1] *((byte*) 1024) ← *((const byte*) main::c) -- _deref_pbuc1=_deref_pbuc2 
-    lda.z c
-    sta $400
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile dword) main::t ← (dword) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((byte*) 1024) ← *((const byte*) main::c) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] main::t = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*) 1024) = *main::c [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ main::t ] : zp[4]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -130,7 +95,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label c = t
     .label t = 2
-    // [0] (volatile dword) main::t ← (dword) 0 -- vduz1=vduc1 
+    // [0] main::t = 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     lda #>0
@@ -139,7 +104,7 @@ main: {
     sta.z t+2
     lda #>0>>$10
     sta.z t+3
-    // [1] *((byte*) 1024) ← *((const byte*) main::c) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((byte*) 1024) = *main::c -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     jmp __breturn
@@ -159,10 +124,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const byte*) main::c = (byte*)&(volatile dword) main::t
-(volatile dword) main::t loadstore zp[4]:2 20.0
+void main()
+label main::@return
+const byte* main::c = (byte*)&main::t
+volatile dword main::t loadstore zp[4]:2 20.0
 
 zp[4]:2 [ main::t ]
 
@@ -183,7 +148,7 @@ main: {
     .label c = t
     .label t = 2
     // t
-    // [0] (volatile dword) main::t ← (dword) 0 -- vduz1=vduc1 
+    // [0] main::t = 0 -- vduz1=vduc1 
     lda #<0
     sta.z t
     sta.z t+1
@@ -192,7 +157,7 @@ main: {
     lda #>0>>$10
     sta.z t+3
     // *(unsigned char *)0x0400 = c[0]
-    // [1] *((byte*) 1024) ← *((const byte*) main::c) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *((byte*) 1024) = *main::c -- _deref_pbuc1=_deref_pbuc2 
     lda.z c
     sta $400
     // main::@return

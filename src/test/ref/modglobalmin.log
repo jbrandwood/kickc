@@ -2,104 +2,104 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) cnt#17 ← phi( __start::@1/(byte) cnt#18 )
+  cnt#17 = phi( __start::@1/cnt#18 )
   call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) cnt#10 ← phi( main/(byte) cnt#6 )
-  (byte) cnt#0 ← (byte) cnt#10
-  *((const byte*) SCREEN + (number) 0) ← (byte) cnt#0
-  (byte) cnt#1 ← ++ (byte) cnt#0
+  cnt#10 = phi( main/cnt#6 )
+  cnt#0 = cnt#10
+  SCREEN[0] = cnt#0
+  cnt#1 = ++ cnt#0
   call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) cnt#11 ← phi( main::@1/(byte) cnt#6 )
-  (byte) cnt#2 ← (byte) cnt#11
-  (byte) cnt#3 ← ++ (byte) cnt#2
-  *((const byte*) SCREEN + (number) 1) ← (byte) cnt#3
+  cnt#11 = phi( main::@1/cnt#6 )
+  cnt#2 = cnt#11
+  cnt#3 = ++ cnt#2
+  SCREEN[1] = cnt#3
   to:main::@return
 main::@return: scope:[main]  from main::@2
-  (byte) cnt#12 ← phi( main::@2/(byte) cnt#3 )
-  (byte) cnt#4 ← (byte) cnt#12
+  cnt#12 = phi( main::@2/cnt#3 )
+  cnt#4 = cnt#12
   return 
   to:@return
 
-(void()) inccnt()
+void inccnt()
 inccnt: scope:[inccnt]  from main main::@1
-  (byte) cnt#13 ← phi( main/(byte) cnt#17 main::@1/(byte) cnt#1 )
-  (byte) cnt#5 ← ++ (byte) cnt#13
+  cnt#13 = phi( main/cnt#17, main::@1/cnt#1 )
+  cnt#5 = ++ cnt#13
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
-  (byte) cnt#14 ← phi( inccnt/(byte) cnt#5 )
-  (byte) cnt#6 ← (byte) cnt#14
+  cnt#14 = phi( inccnt/cnt#5 )
+  cnt#6 = cnt#14
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte) cnt#7 ← (byte) 0
+  cnt#7 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  (byte) cnt#18 ← phi( __start::__init1/(byte) cnt#7 )
+  cnt#18 = phi( __start::__init1/cnt#7 )
   call main 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
-  (byte) cnt#15 ← phi( __start::@1/(byte) cnt#4 )
-  (byte) cnt#8 ← (byte) cnt#15
+  cnt#15 = phi( __start::@1/cnt#4 )
+  cnt#8 = cnt#15
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@2
-  (byte) cnt#16 ← phi( __start::@2/(byte) cnt#8 )
-  (byte) cnt#9 ← (byte) cnt#16
+  cnt#16 = phi( __start::@2/cnt#8 )
+  cnt#9 = cnt#16
   return 
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN[(number) $100]  = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(byte) cnt
-(byte) cnt#0
-(byte) cnt#1
-(byte) cnt#10
-(byte) cnt#11
-(byte) cnt#12
-(byte) cnt#13
-(byte) cnt#14
-(byte) cnt#15
-(byte) cnt#16
-(byte) cnt#17
-(byte) cnt#18
-(byte) cnt#2
-(byte) cnt#3
-(byte) cnt#4
-(byte) cnt#5
-(byte) cnt#6
-(byte) cnt#7
-(byte) cnt#8
-(byte) cnt#9
-(void()) inccnt()
-(label) inccnt::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
+const byte* SCREEN[$100]  = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+byte cnt
+byte cnt#0
+byte cnt#1
+byte cnt#10
+byte cnt#11
+byte cnt#12
+byte cnt#13
+byte cnt#14
+byte cnt#15
+byte cnt#16
+byte cnt#17
+byte cnt#18
+byte cnt#2
+byte cnt#3
+byte cnt#4
+byte cnt#5
+byte cnt#6
+byte cnt#7
+byte cnt#8
+byte cnt#9
+void inccnt()
+label inccnt::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← (byte) cnt#0
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) cnt#3
+Adding number conversion cast (unumber) 0 in SCREEN[0] = cnt#0
+Adding number conversion cast (unumber) 1 in SCREEN[1] = cnt#3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias cnt#0 = cnt#10 
 Alias cnt#11 = cnt#2 
@@ -108,14 +108,14 @@ Alias cnt#14 = cnt#5 cnt#6
 Alias cnt#18 = cnt#7 
 Alias cnt#15 = cnt#8 cnt#16 cnt#9 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) cnt#17 (byte) cnt#18
-Identical Phi Values (byte) cnt#0 (byte) cnt#14
-Identical Phi Values (byte) cnt#11 (byte) cnt#14
-Identical Phi Values (byte) cnt#15 (byte) cnt#12
+Identical Phi Values cnt#17 cnt#18
+Identical Phi Values cnt#0 cnt#14
+Identical Phi Values cnt#11 cnt#14
+Identical Phi Values cnt#15 cnt#12
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte) cnt#18 = 0
+Constant cnt#18 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [3] *((const byte*) SCREEN + (byte) 0) ← (byte) cnt#14
+Simplifying expression containing zero SCREEN in [3] SCREEN[0] = cnt#14
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -124,8 +124,8 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const byte) cnt#18
-Constant inlined cnt#18 = (byte) 0
+Inlining constant with var siblings cnt#18
+Constant inlined cnt#18 = 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -134,34 +134,34 @@ CALL GRAPH
 Calls in [main] to inccnt:1 inccnt:5 
 
 Created 1 initial phi equivalence classes
-Coalesced [4] cnt#19 ← cnt#1
+Coalesced [4] cnt#19 = cnt#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call inccnt 
   to:main::@1
 main::@1: scope:[main]  from main
-  [2] *((const byte*) SCREEN) ← (byte) cnt#14
-  [3] (byte) cnt#1 ← ++ (byte) cnt#14
+  [2] *SCREEN = cnt#14
+  [3] cnt#1 = ++ cnt#14
   [4] call inccnt 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [5] (byte) cnt#12 ← ++ (byte) cnt#14
-  [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12
+  [5] cnt#12 = ++ cnt#14
+  [6] *(SCREEN+1) = cnt#12
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [7] return 
   to:@return
 
-(void()) inccnt()
+void inccnt()
 inccnt: scope:[inccnt]  from main main::@1
-  [8] (byte) cnt#13 ← phi( main/(byte) 0 main::@1/(byte) cnt#1 )
-  [9] (byte) cnt#14 ← ++ (byte) cnt#13
+  [8] cnt#13 = phi( main/0, main::@1/cnt#1 )
+  [9] cnt#14 = ++ cnt#13
   to:inccnt::@return
 inccnt::@return: scope:[inccnt]  from inccnt
   [10] return 
@@ -169,13 +169,13 @@ inccnt::@return: scope:[inccnt]  from inccnt
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) cnt
-(byte) cnt#1 4.0
-(byte) cnt#12 4.0
-(byte) cnt#13 13.0
-(byte) cnt#14 3.4000000000000004
-(void()) inccnt()
-(void()) main()
+byte cnt
+byte cnt#1 4.0
+byte cnt#12 4.0
+byte cnt#13 13.0
+byte cnt#14 3.4000000000000004
+void inccnt()
+void main()
 
 Initial phi equivalence classes
 [ cnt#13 cnt#1 ]
@@ -188,73 +188,6 @@ Complete equivalence classes
 Allocated zp[1]:2 [ cnt#13 cnt#1 ]
 Allocated zp[1]:3 [ cnt#12 ]
 Allocated zp[1]:4 [ cnt#14 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label cnt = 2
-  .label cnt_1 = 3
-  .label cnt_2 = 4
-  // main
-main: {
-    // [1] call inccnt 
-    // [8] phi from main to inccnt [phi:main->inccnt]
-  inccnt_from_main:
-    // [8] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z cnt
-    jsr inccnt
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] *((const byte*) SCREEN) ← (byte) cnt#14 -- _deref_pbuc1=vbuz1 
-    lda.z cnt_2
-    sta SCREEN
-    // [3] (byte) cnt#1 ← ++ (byte) cnt#14 -- vbuz1=_inc_vbuz2 
-    ldy.z cnt_2
-    iny
-    sty.z cnt
-    // [4] call inccnt 
-    // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-  inccnt_from___b1:
-    // [8] phi (byte) cnt#13 = (byte) cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
-    jsr inccnt
-    jmp __b2
-    // main::@2
-  __b2:
-    // [5] (byte) cnt#12 ← ++ (byte) cnt#14 -- vbuz1=_inc_vbuz2 
-    ldy.z cnt_2
-    iny
-    sty.z cnt_1
-    // [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12 -- _deref_pbuc1=vbuz1 
-    lda.z cnt_1
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // inccnt
-inccnt: {
-    // [9] (byte) cnt#14 ← ++ (byte) cnt#13 -- vbuz1=_inc_vbuz2 
-    ldy.z cnt
-    iny
-    sty.z cnt_2
-    jmp __breturn
-    // inccnt::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp[1]:2 [ cnt#13 cnt#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ cnt#12 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
@@ -282,27 +215,27 @@ main: {
     // [1] call inccnt 
     // [8] phi from main to inccnt [phi:main->inccnt]
   inccnt_from_main:
-    // [8] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+    // [8] phi cnt#13 = 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
     jmp __b1
     // main::@1
   __b1:
-    // [2] *((const byte*) SCREEN) ← (byte) cnt#14 -- _deref_pbuc1=vbuxx 
+    // [2] *SCREEN = cnt#14 -- _deref_pbuc1=vbuxx 
     stx SCREEN
-    // [3] (byte) cnt#1 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
+    // [3] cnt#1 = ++ cnt#14 -- vbuxx=_inc_vbuxx 
     inx
     // [4] call inccnt 
     // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
   inccnt_from___b1:
-    // [8] phi (byte) cnt#13 = (byte) cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
+    // [8] phi cnt#13 = cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
     jmp __b2
     // main::@2
   __b2:
-    // [5] (byte) cnt#12 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
+    // [5] cnt#12 = ++ cnt#14 -- vbuxx=_inc_vbuxx 
     inx
-    // [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12 -- _deref_pbuc1=vbuxx 
+    // [6] *(SCREEN+1) = cnt#12 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     jmp __breturn
     // main::@return
@@ -312,7 +245,7 @@ main: {
 }
   // inccnt
 inccnt: {
-    // [9] (byte) cnt#14 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
+    // [9] cnt#14 = ++ cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     jmp __breturn
     // inccnt::@return
@@ -337,18 +270,18 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN[(number) $100]  = (byte*) 1024
-(byte) cnt
-(byte) cnt#1 reg byte x 4.0
-(byte) cnt#12 reg byte x 4.0
-(byte) cnt#13 reg byte x 13.0
-(byte) cnt#14 reg byte x 3.4000000000000004
-(void()) inccnt()
-(label) inccnt::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
+const byte* SCREEN[$100]  = (byte*) 1024
+byte cnt
+byte cnt#1 reg byte x 4.0
+byte cnt#12 reg byte x 4.0
+byte cnt#13 reg byte x 13.0
+byte cnt#14 reg byte x 3.4000000000000004
+void inccnt()
+label inccnt::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
 
 reg byte x [ cnt#13 cnt#1 ]
 reg byte x [ cnt#12 ]
@@ -370,27 +303,27 @@ main: {
     // inccnt()
     // [1] call inccnt 
     // [8] phi from main to inccnt [phi:main->inccnt]
-    // [8] phi (byte) cnt#13 = (byte) 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
+    // [8] phi cnt#13 = 0 [phi:main->inccnt#0] -- vbuxx=vbuc1 
     ldx #0
     jsr inccnt
     // main::@1
     // SCREEN[0]=cnt++
-    // [2] *((const byte*) SCREEN) ← (byte) cnt#14 -- _deref_pbuc1=vbuxx 
+    // [2] *SCREEN = cnt#14 -- _deref_pbuc1=vbuxx 
     stx SCREEN
     // SCREEN[0]=cnt++;
-    // [3] (byte) cnt#1 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
+    // [3] cnt#1 = ++ cnt#14 -- vbuxx=_inc_vbuxx 
     inx
     // inccnt()
     // [4] call inccnt 
     // [8] phi from main::@1 to inccnt [phi:main::@1->inccnt]
-    // [8] phi (byte) cnt#13 = (byte) cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
+    // [8] phi cnt#13 = cnt#1 [phi:main::@1->inccnt#0] -- register_copy 
     jsr inccnt
     // main::@2
     // SCREEN[1]=++cnt;
-    // [5] (byte) cnt#12 ← ++ (byte) cnt#14 -- vbuxx=_inc_vbuxx 
+    // [5] cnt#12 = ++ cnt#14 -- vbuxx=_inc_vbuxx 
     inx
     // SCREEN[1]=++cnt
-    // [6] *((const byte*) SCREEN+(byte) 1) ← (byte) cnt#12 -- _deref_pbuc1=vbuxx 
+    // [6] *(SCREEN+1) = cnt#12 -- _deref_pbuc1=vbuxx 
     stx SCREEN+1
     // main::@return
     // }
@@ -400,7 +333,7 @@ main: {
   // inccnt
 inccnt: {
     // ++cnt;
-    // [9] (byte) cnt#14 ← ++ (byte) cnt#13 -- vbuxx=_inc_vbuxx 
+    // [9] cnt#14 = ++ cnt#13 -- vbuxx=_inc_vbuxx 
     inx
     // inccnt::@return
     // }

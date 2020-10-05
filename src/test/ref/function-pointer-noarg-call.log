@@ -1,23 +1,23 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) fn1()
+void fn1()
 fn1: scope:[fn1]  from
-  *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  call *((const void()*) main::f) 
+  call *main::f 
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -28,21 +28,21 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) fn1()
-(label) fn1::@return
-(const nomodify byte*) fn1::BORDER_COLOR = (byte*)(number) $d020
-(void()) main()
-(label) main::@return
-(const void()*) main::f = &(void()) fn1()
+void __start()
+label __start::@1
+label __start::@return
+void fn1()
+label fn1::@return
+const nomodify byte* fn1::BORDER_COLOR = (byte*)$d020
+void main()
+label main::@return
+const void()* main::f = &fn1
 
 Simplifying constant pointer cast (byte*) 53280
 Successful SSA optimization PassNCastSimplification
 Replacing constant pointer function [2] call fn1 
 Successful SSA optimization Pass2ConstantCallPointerIdentification
-Eliminating unused constant (const void()*) main::f
+Eliminating unused constant main::f
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -59,7 +59,7 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call fn1 
@@ -68,9 +68,9 @@ main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-__stackcall (void()) fn1()
+__stackcall void fn1()
 fn1: scope:[fn1]  from main
-  [3] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  [3] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [4] return 
@@ -78,44 +78,11 @@ fn1::@return: scope:[fn1]  from fn1
 
 
 VARIABLE REGISTER WEIGHTS
-__stackcall (void()) fn1()
-(void()) main()
+__stackcall void fn1()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests creating, assigning and calling pointers to non-args no-return functions
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // [1] call fn1 
-    jsr fn1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [3] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
@@ -148,7 +115,7 @@ main: {
   // fn1
 fn1: {
     .label BORDER_COLOR = $d020
-    // [3] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [3] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __breturn
     // fn1::@return
@@ -167,11 +134,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-__stackcall (void()) fn1()
-(label) fn1::@return
-(const nomodify byte*) fn1::BORDER_COLOR = (byte*) 53280
-(void()) main()
-(label) main::@return
+__stackcall void fn1()
+label fn1::@return
+const nomodify byte* fn1::BORDER_COLOR = (byte*) 53280
+void main()
+label main::@return
 
 
 
@@ -199,7 +166,7 @@ main: {
 fn1: {
     .label BORDER_COLOR = $d020
     // (*BORDER_COLOR)++;
-    // [3] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [3] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // fn1::@return
     // }

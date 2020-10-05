@@ -2,19 +2,19 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
-  *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
+  *BG_COLOR = ++ *BG_COLOR
+  *BG_COLOR = -- *BG_COLOR
   if(true) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -29,15 +29,15 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) BG_COLOR = (byte*)(number) $d020
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@1
-(label) main::@return
+const byte* BG_COLOR = (byte*)$d020
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@1
+label main::@return
 
 Simplifying constant pointer cast (byte*) 53280
 Successful SSA optimization PassNCastSimplification
@@ -61,46 +61,21 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
-  [2] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
+  [1] *BG_COLOR = ++ *BG_COLOR
+  [2] *BG_COLOR = -- *BG_COLOR
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Incrementing / decrementing pointer content should result in code modifying the memory location - eg. inc $d020.
-// Currently it does not but instead leads to just reading the value a few times.
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label BG_COLOR = $d020
-  // main
-main: {
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // [2] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BG_COLOR
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
@@ -125,9 +100,9 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
-    // [2] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [2] *BG_COLOR = -- *BG_COLOR -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BG_COLOR
     jmp __b1
 }
@@ -138,9 +113,9 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const byte*) BG_COLOR = (byte*) 53280
-(void()) main()
-(label) main::@1
+const byte* BG_COLOR = (byte*) 53280
+void main()
+label main::@1
 
 
 
@@ -161,10 +136,10 @@ main: {
     // main::@1
   __b1:
     // ++*BG_COLOR;
-    // [1] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // (*BG_COLOR)--;
-    // [2] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [2] *BG_COLOR = -- *BG_COLOR -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BG_COLOR
     jmp __b1
 }

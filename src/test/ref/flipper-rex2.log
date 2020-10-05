@@ -2,30 +2,30 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   call prepare 
   to:main::@6
 main::@6: scope:[main]  from main
   to:main::@1
 main::@1: scope:[main]  from main::@6 main::@8
-  (byte) main::c#0 ← (byte) $19
+  main::c#0 = $19
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2 main::@4
-  (byte) main::c#4 ← phi( main::@1/(byte) main::c#0 main::@2/(byte) main::c#4 main::@4/(byte) main::c#1 )
-  (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
-  if((bool~) main::$1) goto main::@2
+  main::c#4 = phi( main::@1/main::c#0, main::@2/main::c#4, main::@4/main::c#1 )
+  main::$1 = *RASTER != $fe
+  if(main::$1) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
-  (byte) main::c#3 ← phi( main::@2/(byte) main::c#4 main::@3/(byte) main::c#3 )
-  (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
-  if((bool~) main::$2) goto main::@3
+  main::c#3 = phi( main::@2/main::c#4, main::@3/main::c#3 )
+  main::$2 = *RASTER != $ff
+  if(main::$2) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  (byte) main::c#2 ← phi( main::@3/(byte) main::c#3 )
-  (byte) main::c#1 ← (byte) main::c#2 + rangenext($19,1)
-  (bool~) main::$3 ← (byte) main::c#1 != rangelast($19,1)
-  if((bool~) main::$3) goto main::@2
+  main::c#2 = phi( main::@3/main::c#3 )
+  main::c#1 = main::c#2 + rangenext($19,1)
+  main::$3 = main::c#1 != rangelast($19,1)
+  if(main::$3) goto main::@2
   to:main::@5
 main::@5: scope:[main]  from main::@4
   call flip 
@@ -40,115 +40,115 @@ main::@return: scope:[main]  from main::@8
   return 
   to:@return
 
-(void()) prepare()
+void prepare()
 prepare: scope:[prepare]  from main
-  (byte) prepare::i#0 ← (byte) 0
+  prepare::i#0 = 0
   to:prepare::@1
 prepare::@1: scope:[prepare]  from prepare prepare::@1
-  (byte) prepare::i#2 ← phi( prepare/(byte) prepare::i#0 prepare::@1/(byte) prepare::i#1 )
-  *((const byte*) buffer1 + (byte) prepare::i#2) ← (byte) prepare::i#2
-  (byte) prepare::i#1 ← (byte) prepare::i#2 + rangenext(0,$ff)
-  (bool~) prepare::$0 ← (byte) prepare::i#1 != rangelast(0,$ff)
-  if((bool~) prepare::$0) goto prepare::@1
+  prepare::i#2 = phi( prepare/prepare::i#0, prepare::@1/prepare::i#1 )
+  buffer1[prepare::i#2] = prepare::i#2
+  prepare::i#1 = prepare::i#2 + rangenext(0,$ff)
+  prepare::$0 = prepare::i#1 != rangelast(0,$ff)
+  if(prepare::$0) goto prepare::@1
   to:prepare::@return
 prepare::@return: scope:[prepare]  from prepare::@1
   return 
   to:@return
 
-(void()) flip()
+void flip()
 flip: scope:[flip]  from main::@5
-  (byte) flip::srcIdx#0 ← (byte) 0
-  (byte) flip::dstIdx#0 ← (byte) $f
-  (byte) flip::r#0 ← (byte) $10
+  flip::srcIdx#0 = 0
+  flip::dstIdx#0 = $f
+  flip::r#0 = $10
   to:flip::@1
 flip::@1: scope:[flip]  from flip flip::@3
-  (byte) flip::r#4 ← phi( flip/(byte) flip::r#0 flip::@3/(byte) flip::r#1 )
-  (byte) flip::dstIdx#5 ← phi( flip/(byte) flip::dstIdx#0 flip::@3/(byte) flip::dstIdx#2 )
-  (byte) flip::srcIdx#3 ← phi( flip/(byte) flip::srcIdx#0 flip::@3/(byte) flip::srcIdx#4 )
-  (byte) flip::c#0 ← (byte) $10
+  flip::r#4 = phi( flip/flip::r#0, flip::@3/flip::r#1 )
+  flip::dstIdx#5 = phi( flip/flip::dstIdx#0, flip::@3/flip::dstIdx#2 )
+  flip::srcIdx#3 = phi( flip/flip::srcIdx#0, flip::@3/flip::srcIdx#4 )
+  flip::c#0 = $10
   to:flip::@2
 flip::@2: scope:[flip]  from flip::@1 flip::@2
-  (byte) flip::r#3 ← phi( flip::@1/(byte) flip::r#4 flip::@2/(byte) flip::r#3 )
-  (byte) flip::c#2 ← phi( flip::@1/(byte) flip::c#0 flip::@2/(byte) flip::c#1 )
-  (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
-  (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2)
-  (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
-  (number~) flip::$0 ← (byte) flip::dstIdx#3 + (number) $10
-  (byte) flip::dstIdx#1 ← (number~) flip::$0
-  (byte) flip::c#1 ← (byte) flip::c#2 + rangenext($10,1)
-  (bool~) flip::$1 ← (byte) flip::c#1 != rangelast($10,1)
-  if((bool~) flip::$1) goto flip::@2
+  flip::r#3 = phi( flip::@1/flip::r#4, flip::@2/flip::r#3 )
+  flip::c#2 = phi( flip::@1/flip::c#0, flip::@2/flip::c#1 )
+  flip::dstIdx#3 = phi( flip::@1/flip::dstIdx#5, flip::@2/flip::dstIdx#1 )
+  flip::srcIdx#2 = phi( flip::@1/flip::srcIdx#3, flip::@2/flip::srcIdx#1 )
+  buffer2[flip::dstIdx#3] = buffer1[flip::srcIdx#2]
+  flip::srcIdx#1 = ++ flip::srcIdx#2
+  flip::$0 = flip::dstIdx#3 + $10
+  flip::dstIdx#1 = flip::$0
+  flip::c#1 = flip::c#2 + rangenext($10,1)
+  flip::$1 = flip::c#1 != rangelast($10,1)
+  if(flip::$1) goto flip::@2
   to:flip::@3
 flip::@3: scope:[flip]  from flip::@2
-  (byte) flip::srcIdx#4 ← phi( flip::@2/(byte) flip::srcIdx#1 )
-  (byte) flip::r#2 ← phi( flip::@2/(byte) flip::r#3 )
-  (byte) flip::dstIdx#4 ← phi( flip::@2/(byte) flip::dstIdx#1 )
-  (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#4
-  (byte) flip::r#1 ← (byte) flip::r#2 + rangenext($10,1)
-  (bool~) flip::$2 ← (byte) flip::r#1 != rangelast($10,1)
-  if((bool~) flip::$2) goto flip::@1
+  flip::srcIdx#4 = phi( flip::@2/flip::srcIdx#1 )
+  flip::r#2 = phi( flip::@2/flip::r#3 )
+  flip::dstIdx#4 = phi( flip::@2/flip::dstIdx#1 )
+  flip::dstIdx#2 = -- flip::dstIdx#4
+  flip::r#1 = flip::r#2 + rangenext($10,1)
+  flip::$2 = flip::r#1 != rangelast($10,1)
+  if(flip::$2) goto flip::@1
   to:flip::@4
 flip::@4: scope:[flip]  from flip::@3
-  (byte) flip::i#0 ← (byte) 0
+  flip::i#0 = 0
   to:flip::@5
 flip::@5: scope:[flip]  from flip::@4 flip::@5
-  (byte) flip::i#2 ← phi( flip::@4/(byte) flip::i#0 flip::@5/(byte) flip::i#1 )
-  *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2)
-  (byte) flip::i#1 ← (byte) flip::i#2 + rangenext(0,$ff)
-  (bool~) flip::$3 ← (byte) flip::i#1 != rangelast(0,$ff)
-  if((bool~) flip::$3) goto flip::@5
+  flip::i#2 = phi( flip::@4/flip::i#0, flip::@5/flip::i#1 )
+  buffer1[flip::i#2] = buffer2[flip::i#2]
+  flip::i#1 = flip::i#2 + rangenext(0,$ff)
+  flip::$3 = flip::i#1 != rangelast(0,$ff)
+  if(flip::$3) goto flip::@5
   to:flip::@return
 flip::@return: scope:[flip]  from flip::@5
   return 
   to:@return
 
-(void()) plot()
+void plot()
 plot: scope:[plot]  from main::@7
-  (byte*~) plot::$0 ← (const byte*) SCREEN + (number) 5*(number) $28
-  (byte*~) plot::$1 ← (byte*~) plot::$0 + (number) $c
-  (byte*) plot::line#0 ← (byte*~) plot::$1
-  (byte) plot::i#0 ← (byte) 0
-  (byte) plot::y#0 ← (byte) $10
+  plot::$0 = SCREEN + 5*$28
+  plot::$1 = plot::$0 + $c
+  plot::line#0 = plot::$1
+  plot::i#0 = 0
+  plot::y#0 = $10
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@4
-  (byte) plot::y#4 ← phi( plot/(byte) plot::y#0 plot::@4/(byte) plot::y#1 )
-  (byte*) plot::line#5 ← phi( plot/(byte*) plot::line#0 plot::@4/(byte*) plot::line#1 )
-  (byte) plot::i#4 ← phi( plot/(byte) plot::i#0 plot::@4/(byte) plot::i#5 )
-  (byte) plot::x#0 ← (byte) 0
+  plot::y#4 = phi( plot/plot::y#0, plot::@4/plot::y#1 )
+  plot::line#5 = phi( plot/plot::line#0, plot::@4/plot::line#1 )
+  plot::i#4 = phi( plot/plot::i#0, plot::@4/plot::i#5 )
+  plot::x#0 = 0
   to:plot::@2
 plot::@2: scope:[plot]  from plot::@1 plot::@3
-  (byte) plot::y#3 ← phi( plot::@1/(byte) plot::y#4 plot::@3/(byte) plot::y#5 )
-  (byte*) plot::line#4 ← phi( plot::@1/(byte*) plot::line#5 plot::@3/(byte*) plot::line#2 )
-  (byte) plot::i#3 ← phi( plot::@1/(byte) plot::i#4 plot::@3/(byte) plot::i#1 )
-  (byte) plot::x#2 ← phi( plot::@1/(byte) plot::x#0 plot::@3/(byte) plot::x#1 )
-  (bool~) plot::$2 ← (byte) plot::x#2 < (number) $10
-  if((bool~) plot::$2) goto plot::@3
+  plot::y#3 = phi( plot::@1/plot::y#4, plot::@3/plot::y#5 )
+  plot::line#4 = phi( plot::@1/plot::line#5, plot::@3/plot::line#2 )
+  plot::i#3 = phi( plot::@1/plot::i#4, plot::@3/plot::i#1 )
+  plot::x#2 = phi( plot::@1/plot::x#0, plot::@3/plot::x#1 )
+  plot::$2 = plot::x#2 < $10
+  if(plot::$2) goto plot::@3
   to:plot::@4
 plot::@3: scope:[plot]  from plot::@2
-  (byte) plot::y#5 ← phi( plot::@2/(byte) plot::y#3 )
-  (byte) plot::x#3 ← phi( plot::@2/(byte) plot::x#2 )
-  (byte*) plot::line#2 ← phi( plot::@2/(byte*) plot::line#4 )
-  (byte) plot::i#2 ← phi( plot::@2/(byte) plot::i#3 )
-  *((byte*) plot::line#2 + (byte) plot::x#3) ← *((const byte*) buffer1 + (byte) plot::i#2)
-  (byte) plot::i#1 ← ++ (byte) plot::i#2
-  (byte) plot::x#1 ← ++ (byte) plot::x#3
+  plot::y#5 = phi( plot::@2/plot::y#3 )
+  plot::x#3 = phi( plot::@2/plot::x#2 )
+  plot::line#2 = phi( plot::@2/plot::line#4 )
+  plot::i#2 = phi( plot::@2/plot::i#3 )
+  plot::line#2[plot::x#3] = buffer1[plot::i#2]
+  plot::i#1 = ++ plot::i#2
+  plot::x#1 = ++ plot::x#3
   to:plot::@2
 plot::@4: scope:[plot]  from plot::@2
-  (byte) plot::i#5 ← phi( plot::@2/(byte) plot::i#3 )
-  (byte) plot::y#2 ← phi( plot::@2/(byte) plot::y#3 )
-  (byte*) plot::line#3 ← phi( plot::@2/(byte*) plot::line#4 )
-  (byte*~) plot::$3 ← (byte*) plot::line#3 + (number) $28
-  (byte*) plot::line#1 ← (byte*~) plot::$3
-  (byte) plot::y#1 ← (byte) plot::y#2 + rangenext($10,1)
-  (bool~) plot::$4 ← (byte) plot::y#1 != rangelast($10,1)
-  if((bool~) plot::$4) goto plot::@1
+  plot::i#5 = phi( plot::@2/plot::i#3 )
+  plot::y#2 = phi( plot::@2/plot::y#3 )
+  plot::line#3 = phi( plot::@2/plot::line#4 )
+  plot::$3 = plot::line#3 + $28
+  plot::line#1 = plot::$3
+  plot::y#1 = plot::y#2 + rangenext($10,1)
+  plot::$4 = plot::y#1 != rangelast($10,1)
+  if(plot::$4) goto plot::@1
   to:plot::@return
 plot::@return: scope:[plot]  from plot::@4
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -163,126 +163,126 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) RASTER = (byte*)(number) $d012
-(const byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(const byte*) buffer1[(number) $10*(number) $10]  = { fill( $10*$10, 0) }
-(const byte*) buffer2[(number) $10*(number) $10]  = { fill( $10*$10, 0) }
-(void()) flip()
-(number~) flip::$0
-(bool~) flip::$1
-(bool~) flip::$2
-(bool~) flip::$3
-(label) flip::@1
-(label) flip::@2
-(label) flip::@3
-(label) flip::@4
-(label) flip::@5
-(label) flip::@return
-(byte) flip::c
-(byte) flip::c#0
-(byte) flip::c#1
-(byte) flip::c#2
-(byte) flip::dstIdx
-(byte) flip::dstIdx#0
-(byte) flip::dstIdx#1
-(byte) flip::dstIdx#2
-(byte) flip::dstIdx#3
-(byte) flip::dstIdx#4
-(byte) flip::dstIdx#5
-(byte) flip::i
-(byte) flip::i#0
-(byte) flip::i#1
-(byte) flip::i#2
-(byte) flip::r
-(byte) flip::r#0
-(byte) flip::r#1
-(byte) flip::r#2
-(byte) flip::r#3
-(byte) flip::r#4
-(byte) flip::srcIdx
-(byte) flip::srcIdx#0
-(byte) flip::srcIdx#1
-(byte) flip::srcIdx#2
-(byte) flip::srcIdx#3
-(byte) flip::srcIdx#4
-(void()) main()
-(bool~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(label) main::@8
-(label) main::@return
-(byte) main::c
-(byte) main::c#0
-(byte) main::c#1
-(byte) main::c#2
-(byte) main::c#3
-(byte) main::c#4
-(void()) plot()
-(byte*~) plot::$0
-(byte*~) plot::$1
-(bool~) plot::$2
-(byte*~) plot::$3
-(bool~) plot::$4
-(label) plot::@1
-(label) plot::@2
-(label) plot::@3
-(label) plot::@4
-(label) plot::@return
-(byte) plot::i
-(byte) plot::i#0
-(byte) plot::i#1
-(byte) plot::i#2
-(byte) plot::i#3
-(byte) plot::i#4
-(byte) plot::i#5
-(byte*) plot::line
-(byte*) plot::line#0
-(byte*) plot::line#1
-(byte*) plot::line#2
-(byte*) plot::line#3
-(byte*) plot::line#4
-(byte*) plot::line#5
-(byte) plot::x
-(byte) plot::x#0
-(byte) plot::x#1
-(byte) plot::x#2
-(byte) plot::x#3
-(byte) plot::y
-(byte) plot::y#0
-(byte) plot::y#1
-(byte) plot::y#2
-(byte) plot::y#3
-(byte) plot::y#4
-(byte) plot::y#5
-(void()) prepare()
-(bool~) prepare::$0
-(label) prepare::@1
-(label) prepare::@return
-(byte) prepare::i
-(byte) prepare::i#0
-(byte) prepare::i#1
-(byte) prepare::i#2
+const byte* RASTER = (byte*)$d012
+const byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+const byte* buffer1[$10*$10]  = { fill( $10*$10, 0) }
+const byte* buffer2[$10*$10]  = { fill( $10*$10, 0) }
+void flip()
+number~ flip::$0
+bool~ flip::$1
+bool~ flip::$2
+bool~ flip::$3
+label flip::@1
+label flip::@2
+label flip::@3
+label flip::@4
+label flip::@5
+label flip::@return
+byte flip::c
+byte flip::c#0
+byte flip::c#1
+byte flip::c#2
+byte flip::dstIdx
+byte flip::dstIdx#0
+byte flip::dstIdx#1
+byte flip::dstIdx#2
+byte flip::dstIdx#3
+byte flip::dstIdx#4
+byte flip::dstIdx#5
+byte flip::i
+byte flip::i#0
+byte flip::i#1
+byte flip::i#2
+byte flip::r
+byte flip::r#0
+byte flip::r#1
+byte flip::r#2
+byte flip::r#3
+byte flip::r#4
+byte flip::srcIdx
+byte flip::srcIdx#0
+byte flip::srcIdx#1
+byte flip::srcIdx#2
+byte flip::srcIdx#3
+byte flip::srcIdx#4
+void main()
+bool~ main::$1
+bool~ main::$2
+bool~ main::$3
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+label main::@7
+label main::@8
+label main::@return
+byte main::c
+byte main::c#0
+byte main::c#1
+byte main::c#2
+byte main::c#3
+byte main::c#4
+void plot()
+byte*~ plot::$0
+byte*~ plot::$1
+bool~ plot::$2
+byte*~ plot::$3
+bool~ plot::$4
+label plot::@1
+label plot::@2
+label plot::@3
+label plot::@4
+label plot::@return
+byte plot::i
+byte plot::i#0
+byte plot::i#1
+byte plot::i#2
+byte plot::i#3
+byte plot::i#4
+byte plot::i#5
+byte* plot::line
+byte* plot::line#0
+byte* plot::line#1
+byte* plot::line#2
+byte* plot::line#3
+byte* plot::line#4
+byte* plot::line#5
+byte plot::x
+byte plot::x#0
+byte plot::x#1
+byte plot::x#2
+byte plot::x#3
+byte plot::y
+byte plot::y#0
+byte plot::y#1
+byte plot::y#2
+byte plot::y#3
+byte plot::y#4
+byte plot::y#5
+void prepare()
+bool~ prepare::$0
+label prepare::@1
+label prepare::@return
+byte prepare::i
+byte prepare::i#0
+byte prepare::i#1
+byte prepare::i#2
 
-Adding number conversion cast (unumber) $fe in (bool~) main::$1 ← *((const byte*) RASTER) != (number) $fe
-Adding number conversion cast (unumber) $ff in (bool~) main::$2 ← *((const byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) $10 in (number~) flip::$0 ← (byte) flip::dstIdx#3 + (number) $10
-Adding number conversion cast (unumber) flip::$0 in (number~) flip::$0 ← (byte) flip::dstIdx#3 + (unumber)(number) $10
-Adding number conversion cast (unumber) 5*$28 in (byte*~) plot::$0 ← (const byte*) SCREEN + (number) 5*(number) $28
-Adding number conversion cast (unumber) $c in (byte*~) plot::$1 ← (byte*~) plot::$0 + (number) $c
-Adding number conversion cast (unumber) $10 in (bool~) plot::$2 ← (byte) plot::x#2 < (number) $10
-Adding number conversion cast (unumber) $28 in (byte*~) plot::$3 ← (byte*) plot::line#3 + (number) $28
+Adding number conversion cast (unumber) $fe in main::$1 = *RASTER != $fe
+Adding number conversion cast (unumber) $ff in main::$2 = *RASTER != $ff
+Adding number conversion cast (unumber) $10 in flip::$0 = flip::dstIdx#3 + $10
+Adding number conversion cast (unumber) flip::$0 in flip::$0 = flip::dstIdx#3 + (unumber)$10
+Adding number conversion cast (unumber) 5*$28 in plot::$0 = SCREEN + 5*$28
+Adding number conversion cast (unumber) $c in plot::$1 = plot::$0 + $c
+Adding number conversion cast (unumber) $10 in plot::$2 = plot::x#2 < $10
+Adding number conversion cast (unumber) $28 in plot::$3 = plot::line#3 + $28
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 1024
@@ -293,14 +293,14 @@ Simplifying constant integer cast $c
 Simplifying constant integer cast $10
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $fe
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) $c
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type $fe
+Finalized unsigned number type $ff
+Finalized unsigned number type $10
+Finalized unsigned number type $c
+Finalized unsigned number type $10
+Finalized unsigned number type $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) flip::$0 ← (byte) flip::dstIdx#3 + (byte) $10
+Inferred type updated to byte in flip::$0 = flip::dstIdx#3 + $10
 Alias main::c#2 = main::c#3 
 Alias flip::dstIdx#1 = flip::$0 flip::dstIdx#4 
 Alias flip::r#2 = flip::r#3 
@@ -312,49 +312,49 @@ Alias plot::x#2 = plot::x#3
 Alias plot::y#2 = plot::y#5 plot::y#3 
 Alias plot::line#1 = plot::$3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) main::c#2 (byte) main::c#4
-Identical Phi Values (byte) flip::r#2 (byte) flip::r#4
-Identical Phi Values (byte*) plot::line#2 (byte*) plot::line#5
-Identical Phi Values (byte) plot::y#2 (byte) plot::y#4
+Identical Phi Values main::c#2 main::c#4
+Identical Phi Values flip::r#2 flip::r#4
+Identical Phi Values plot::line#2 plot::line#5
+Identical Phi Values plot::y#2 plot::y#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [4] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@2
-Simple Condition (bool~) main::$2 [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@3
-Simple Condition (bool~) main::$3 [10] if((byte) main::c#1!=rangelast($19,1)) goto main::@2
-Simple Condition (bool~) prepare::$0 [20] if((byte) prepare::i#1!=rangelast(0,$ff)) goto prepare::@1
-Simple Condition (bool~) flip::$1 [33] if((byte) flip::c#1!=rangelast($10,1)) goto flip::@2
-Simple Condition (bool~) flip::$2 [37] if((byte) flip::r#1!=rangelast($10,1)) goto flip::@1
-Simple Condition (bool~) flip::$3 [43] if((byte) flip::i#1!=rangelast(0,$ff)) goto flip::@5
-Simple Condition (bool~) plot::$2 [53] if((byte) plot::x#2<(byte) $10) goto plot::@3
-Simple Condition (bool~) plot::$4 [60] if((byte) plot::y#1!=rangelast($10,1)) goto plot::@1
+Simple Condition main::$1 [4] if(*RASTER!=$fe) goto main::@2
+Simple Condition main::$2 [7] if(*RASTER!=$ff) goto main::@3
+Simple Condition main::$3 [10] if(main::c#1!=rangelast($19,1)) goto main::@2
+Simple Condition prepare::$0 [20] if(prepare::i#1!=rangelast(0,$ff)) goto prepare::@1
+Simple Condition flip::$1 [33] if(flip::c#1!=rangelast($10,1)) goto flip::@2
+Simple Condition flip::$2 [37] if(flip::r#1!=rangelast($10,1)) goto flip::@1
+Simple Condition flip::$3 [43] if(flip::i#1!=rangelast(0,$ff)) goto flip::@5
+Simple Condition plot::$2 [53] if(plot::x#2<$10) goto plot::@3
+Simple Condition plot::$4 [60] if(plot::y#1!=rangelast($10,1)) goto plot::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [45] (byte*~) plot::$0 ← (const byte*) SCREEN + (byte)(number) 5*(number) $28
+Constant right-side identified [45] plot::$0 = SCREEN + (byte)5*$28
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::c#0 = $19
-Constant (const byte) prepare::i#0 = 0
-Constant (const byte) flip::srcIdx#0 = 0
-Constant (const byte) flip::dstIdx#0 = $f
-Constant (const byte) flip::r#0 = $10
-Constant (const byte) flip::c#0 = $10
-Constant (const byte) flip::i#0 = 0
-Constant (const byte*) plot::$0 = SCREEN+(byte)5*$28
-Constant (const byte) plot::i#0 = 0
-Constant (const byte) plot::y#0 = $10
-Constant (const byte) plot::x#0 = 0
+Constant main::c#0 = $19
+Constant prepare::i#0 = 0
+Constant flip::srcIdx#0 = 0
+Constant flip::dstIdx#0 = $f
+Constant flip::r#0 = $10
+Constant flip::c#0 = $10
+Constant flip::i#0 = 0
+Constant plot::$0 = SCREEN+(byte)5*$28
+Constant plot::i#0 = 0
+Constant plot::y#0 = $10
+Constant plot::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [13] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [8] main::c#1 ← -- main::c#4 to --
-Resolved ranged comparison value [10] if(main::c#1!=rangelast($19,1)) goto main::@2 to (number) 0
-Resolved ranged next value [18] prepare::i#1 ← ++ prepare::i#2 to ++
-Resolved ranged comparison value [20] if(prepare::i#1!=rangelast(0,$ff)) goto prepare::@1 to (number) 0
-Resolved ranged next value [31] flip::c#1 ← -- flip::c#2 to --
-Resolved ranged comparison value [33] if(flip::c#1!=rangelast($10,1)) goto flip::@2 to (number) 0
-Resolved ranged next value [35] flip::r#1 ← -- flip::r#4 to --
-Resolved ranged comparison value [37] if(flip::r#1!=rangelast($10,1)) goto flip::@1 to (number) 0
-Resolved ranged next value [41] flip::i#1 ← ++ flip::i#2 to ++
-Resolved ranged comparison value [43] if(flip::i#1!=rangelast(0,$ff)) goto flip::@5 to (number) 0
-Resolved ranged next value [58] plot::y#1 ← -- plot::y#4 to --
-Resolved ranged comparison value [60] if(plot::y#1!=rangelast($10,1)) goto plot::@1 to (number) 0
+Resolved ranged next value [8] main::c#1 = -- main::c#4 to --
+Resolved ranged comparison value [10] if(main::c#1!=rangelast($19,1)) goto main::@2 to 0
+Resolved ranged next value [18] prepare::i#1 = ++ prepare::i#2 to ++
+Resolved ranged comparison value [20] if(prepare::i#1!=rangelast(0,$ff)) goto prepare::@1 to 0
+Resolved ranged next value [31] flip::c#1 = -- flip::c#2 to --
+Resolved ranged comparison value [33] if(flip::c#1!=rangelast($10,1)) goto flip::@2 to 0
+Resolved ranged next value [35] flip::r#1 = -- flip::r#4 to --
+Resolved ranged comparison value [37] if(flip::r#1!=rangelast($10,1)) goto flip::@1 to 0
+Resolved ranged next value [41] flip::i#1 = ++ flip::i#2 to ++
+Resolved ranged comparison value [43] if(flip::i#1!=rangelast(0,$ff)) goto flip::@5 to 0
+Resolved ranged next value [58] plot::y#1 = -- plot::y#4 to --
+Resolved ranged comparison value [60] if(plot::y#1!=rangelast($10,1)) goto plot::@1 to 0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Removing unused procedure __start
@@ -364,12 +364,12 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 0 in [5] if((byte) main::c#1!=(number) 0) goto main::@2
-Adding number conversion cast (unumber) 0 in [11] if((byte) prepare::i#1!=(number) 0) goto prepare::@1
-Adding number conversion cast (unumber) 0 in [19] if((byte) flip::c#1!=(number) 0) goto flip::@2
-Adding number conversion cast (unumber) 0 in [22] if((byte) flip::r#1!=(number) 0) goto flip::@1
-Adding number conversion cast (unumber) 0 in [26] if((byte) flip::i#1!=(number) 0) goto flip::@5
-Adding number conversion cast (unumber) 0 in [37] if((byte) plot::y#1!=(number) 0) goto plot::@1
+Adding number conversion cast (unumber) 0 in [5] if(main::c#1!=0) goto main::@2
+Adding number conversion cast (unumber) 0 in [11] if(prepare::i#1!=0) goto prepare::@1
+Adding number conversion cast (unumber) 0 in [19] if(flip::c#1!=0) goto flip::@2
+Adding number conversion cast (unumber) 0 in [22] if(flip::r#1!=0) goto flip::@1
+Adding number conversion cast (unumber) 0 in [26] if(flip::i#1!=0) goto flip::@5
+Adding number conversion cast (unumber) 0 in [37] if(plot::y#1!=0) goto plot::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -378,40 +378,40 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [28] (byte*) plot::line#0 ← (const byte*) plot::$0 + (byte) $c
+Constant right-side identified [28] plot::line#0 = plot::$0 + $c
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) plot::line#0 = plot::$0+$c
+Constant plot::line#0 = plot::$0+$c
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) main::c#0
-Inlining constant with var siblings (const byte) prepare::i#0
-Inlining constant with var siblings (const byte) flip::srcIdx#0
-Inlining constant with var siblings (const byte) flip::dstIdx#0
-Inlining constant with var siblings (const byte) flip::r#0
-Inlining constant with var siblings (const byte) flip::c#0
-Inlining constant with var siblings (const byte) flip::i#0
-Inlining constant with var siblings (const byte) plot::i#0
-Inlining constant with var siblings (const byte) plot::y#0
-Inlining constant with var siblings (const byte) plot::x#0
-Inlining constant with var siblings (const byte*) plot::line#0
-Constant inlined plot::line#0 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c
-Constant inlined plot::$0 = (const byte*) SCREEN+(byte)(number) 5*(number) $28
-Constant inlined main::c#0 = (byte) $19
-Constant inlined flip::i#0 = (byte) 0
-Constant inlined flip::srcIdx#0 = (byte) 0
-Constant inlined prepare::i#0 = (byte) 0
-Constant inlined plot::x#0 = (byte) 0
-Constant inlined plot::i#0 = (byte) 0
-Constant inlined plot::y#0 = (byte) $10
-Constant inlined flip::c#0 = (byte) $10
-Constant inlined flip::dstIdx#0 = (byte) $f
-Constant inlined flip::r#0 = (byte) $10
+Inlining constant with var siblings main::c#0
+Inlining constant with var siblings prepare::i#0
+Inlining constant with var siblings flip::srcIdx#0
+Inlining constant with var siblings flip::dstIdx#0
+Inlining constant with var siblings flip::r#0
+Inlining constant with var siblings flip::c#0
+Inlining constant with var siblings flip::i#0
+Inlining constant with var siblings plot::i#0
+Inlining constant with var siblings plot::y#0
+Inlining constant with var siblings plot::x#0
+Inlining constant with var siblings plot::line#0
+Constant inlined plot::line#0 = SCREEN+(byte)5*$28+$c
+Constant inlined plot::$0 = SCREEN+(byte)5*$28
+Constant inlined main::c#0 = $19
+Constant inlined flip::i#0 = 0
+Constant inlined flip::srcIdx#0 = 0
+Constant inlined prepare::i#0 = 0
+Constant inlined plot::x#0 = 0
+Constant inlined plot::i#0 = 0
+Constant inlined plot::y#0 = $10
+Constant inlined flip::c#0 = $10
+Constant inlined flip::dstIdx#0 = $f
+Constant inlined flip::r#0 = $10
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@9(between main::@2 and main::@2)
 Added new block during phi lifting main::@10(between main::@4 and main::@2)
@@ -434,36 +434,36 @@ CALL GRAPH
 Calls in [main] to prepare:1 flip:10 plot:12 
 
 Created 14 initial phi equivalence classes
-Coalesced [14] main::c#6 ← main::c#1
-Coalesced (already) [15] main::c#5 ← main::c#4
-Coalesced [22] prepare::i#3 ← prepare::i#1
-Coalesced [25] flip::srcIdx#6 ← flip::srcIdx#3
-Coalesced [26] flip::dstIdx#7 ← flip::dstIdx#5
-Coalesced [42] flip::i#3 ← flip::i#1
-Coalesced [43] flip::srcIdx#5 ← flip::srcIdx#1
-Coalesced [44] flip::dstIdx#6 ← flip::dstIdx#2
-Coalesced [45] flip::r#5 ← flip::r#1
-Coalesced (already) [46] flip::srcIdx#7 ← flip::srcIdx#1
-Coalesced [47] flip::dstIdx#8 ← flip::dstIdx#1
-Coalesced [48] flip::c#3 ← flip::c#1
-Coalesced [51] plot::i#7 ← plot::i#4
-Coalesced (already) [58] plot::i#6 ← plot::i#2
-Coalesced [59] plot::line#6 ← plot::line#1
-Coalesced [60] plot::y#6 ← plot::y#1
-Coalesced [64] plot::x#4 ← plot::x#1
-Coalesced [65] plot::i#8 ← plot::i#1
+Coalesced [14] main::c#6 = main::c#1
+Coalesced (already) [15] main::c#5 = main::c#4
+Coalesced [22] prepare::i#3 = prepare::i#1
+Coalesced [25] flip::srcIdx#6 = flip::srcIdx#3
+Coalesced [26] flip::dstIdx#7 = flip::dstIdx#5
+Coalesced [42] flip::i#3 = flip::i#1
+Coalesced [43] flip::srcIdx#5 = flip::srcIdx#1
+Coalesced [44] flip::dstIdx#6 = flip::dstIdx#2
+Coalesced [45] flip::r#5 = flip::r#1
+Coalesced (already) [46] flip::srcIdx#7 = flip::srcIdx#1
+Coalesced [47] flip::dstIdx#8 = flip::dstIdx#1
+Coalesced [48] flip::c#3 = flip::c#1
+Coalesced [51] plot::i#7 = plot::i#4
+Coalesced (already) [58] plot::i#6 = plot::i#2
+Coalesced [59] plot::line#6 = plot::line#1
+Coalesced [60] plot::y#6 = plot::y#1
+Coalesced [64] plot::x#4 = plot::x#1
+Coalesced [65] plot::i#8 = plot::i#1
 Coalesced down to 11 phi equivalence classes
-Culled Empty Block (label) main::@6
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@8
-Culled Empty Block (label) main::@10
-Culled Empty Block (label) main::@9
-Culled Empty Block (label) prepare::@2
-Culled Empty Block (label) flip::@4
-Culled Empty Block (label) flip::@8
-Culled Empty Block (label) flip::@6
-Culled Empty Block (label) flip::@7
-Culled Empty Block (label) plot::@5
+Culled Empty Block label main::@6
+Culled Empty Block label main::@1
+Culled Empty Block label main::@8
+Culled Empty Block label main::@10
+Culled Empty Block label main::@9
+Culled Empty Block label prepare::@2
+Culled Empty Block label flip::@4
+Culled Empty Block label flip::@8
+Culled Empty Block label flip::@6
+Culled Empty Block label flip::@7
+Culled Empty Block label plot::@5
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
@@ -479,21 +479,21 @@ Adding NOP phi() at start of plot
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call prepare 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@3 main::@5
-  [2] (byte) main::c#4 ← phi( main/(byte) $19 main::@1/(byte) main::c#4 main::@3/(byte) main::c#1 main::@5/(byte) $19 )
-  [3] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1
+  [2] main::c#4 = phi( main/$19, main::@1/main::c#4, main::@3/main::c#1, main::@5/$19 )
+  [3] if(*RASTER!=$fe) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@2
-  [4] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2
+  [4] if(*RASTER!=$ff) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [5] (byte) main::c#1 ← -- (byte) main::c#4
-  [6] if((byte) main::c#1!=(byte) 0) goto main::@1
+  [5] main::c#1 = -- main::c#4
+  [6] if(main::c#1!=0) goto main::@1
   to:main::@4
 main::@4: scope:[main]  from main::@3
   [7] phi()
@@ -504,125 +504,125 @@ main::@5: scope:[main]  from main::@4
   [10] call plot 
   to:main::@1
 
-(void()) prepare()
+void prepare()
 prepare: scope:[prepare]  from main
   [11] phi()
   to:prepare::@1
 prepare::@1: scope:[prepare]  from prepare prepare::@1
-  [12] (byte) prepare::i#2 ← phi( prepare/(byte) 0 prepare::@1/(byte) prepare::i#1 )
-  [13] *((const byte*) buffer1 + (byte) prepare::i#2) ← (byte) prepare::i#2
-  [14] (byte) prepare::i#1 ← ++ (byte) prepare::i#2
-  [15] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1
+  [12] prepare::i#2 = phi( prepare/0, prepare::@1/prepare::i#1 )
+  [13] buffer1[prepare::i#2] = prepare::i#2
+  [14] prepare::i#1 = ++ prepare::i#2
+  [15] if(prepare::i#1!=0) goto prepare::@1
   to:prepare::@return
 prepare::@return: scope:[prepare]  from prepare::@1
   [16] return 
   to:@return
 
-(void()) flip()
+void flip()
 flip: scope:[flip]  from main::@4
   [17] phi()
   to:flip::@1
 flip::@1: scope:[flip]  from flip flip::@3
-  [18] (byte) flip::r#4 ← phi( flip/(byte) $10 flip::@3/(byte) flip::r#1 )
-  [18] (byte) flip::dstIdx#5 ← phi( flip/(byte) $f flip::@3/(byte) flip::dstIdx#2 )
-  [18] (byte) flip::srcIdx#3 ← phi( flip/(byte) 0 flip::@3/(byte) flip::srcIdx#1 )
+  [18] flip::r#4 = phi( flip/$10, flip::@3/flip::r#1 )
+  [18] flip::dstIdx#5 = phi( flip/$f, flip::@3/flip::dstIdx#2 )
+  [18] flip::srcIdx#3 = phi( flip/0, flip::@3/flip::srcIdx#1 )
   to:flip::@2
 flip::@2: scope:[flip]  from flip::@1 flip::@2
-  [19] (byte) flip::c#2 ← phi( flip::@1/(byte) $10 flip::@2/(byte) flip::c#1 )
-  [19] (byte) flip::dstIdx#3 ← phi( flip::@1/(byte) flip::dstIdx#5 flip::@2/(byte) flip::dstIdx#1 )
-  [19] (byte) flip::srcIdx#2 ← phi( flip::@1/(byte) flip::srcIdx#3 flip::@2/(byte) flip::srcIdx#1 )
-  [20] *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2)
-  [21] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2
-  [22] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10
-  [23] (byte) flip::c#1 ← -- (byte) flip::c#2
-  [24] if((byte) flip::c#1!=(byte) 0) goto flip::@2
+  [19] flip::c#2 = phi( flip::@1/$10, flip::@2/flip::c#1 )
+  [19] flip::dstIdx#3 = phi( flip::@1/flip::dstIdx#5, flip::@2/flip::dstIdx#1 )
+  [19] flip::srcIdx#2 = phi( flip::@1/flip::srcIdx#3, flip::@2/flip::srcIdx#1 )
+  [20] buffer2[flip::dstIdx#3] = buffer1[flip::srcIdx#2]
+  [21] flip::srcIdx#1 = ++ flip::srcIdx#2
+  [22] flip::dstIdx#1 = flip::dstIdx#3 + $10
+  [23] flip::c#1 = -- flip::c#2
+  [24] if(flip::c#1!=0) goto flip::@2
   to:flip::@3
 flip::@3: scope:[flip]  from flip::@2
-  [25] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1
-  [26] (byte) flip::r#1 ← -- (byte) flip::r#4
-  [27] if((byte) flip::r#1!=(byte) 0) goto flip::@1
+  [25] flip::dstIdx#2 = -- flip::dstIdx#1
+  [26] flip::r#1 = -- flip::r#4
+  [27] if(flip::r#1!=0) goto flip::@1
   to:flip::@4
 flip::@4: scope:[flip]  from flip::@3 flip::@4
-  [28] (byte) flip::i#2 ← phi( flip::@3/(byte) 0 flip::@4/(byte) flip::i#1 )
-  [29] *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2)
-  [30] (byte) flip::i#1 ← ++ (byte) flip::i#2
-  [31] if((byte) flip::i#1!=(byte) 0) goto flip::@4
+  [28] flip::i#2 = phi( flip::@3/0, flip::@4/flip::i#1 )
+  [29] buffer1[flip::i#2] = buffer2[flip::i#2]
+  [30] flip::i#1 = ++ flip::i#2
+  [31] if(flip::i#1!=0) goto flip::@4
   to:flip::@return
 flip::@return: scope:[flip]  from flip::@4
   [32] return 
   to:@return
 
-(void()) plot()
+void plot()
 plot: scope:[plot]  from main::@5
   [33] phi()
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@4
-  [34] (byte) plot::y#4 ← phi( plot/(byte) $10 plot::@4/(byte) plot::y#1 )
-  [34] (byte*) plot::line#5 ← phi( plot/(const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c plot::@4/(byte*) plot::line#1 )
-  [34] (byte) plot::i#4 ← phi( plot/(byte) 0 plot::@4/(byte) plot::i#2 )
+  [34] plot::y#4 = phi( plot/$10, plot::@4/plot::y#1 )
+  [34] plot::line#5 = phi( plot/SCREEN+(byte)5*$28+$c, plot::@4/plot::line#1 )
+  [34] plot::i#4 = phi( plot/0, plot::@4/plot::i#2 )
   to:plot::@2
 plot::@2: scope:[plot]  from plot::@1 plot::@3
-  [35] (byte) plot::i#2 ← phi( plot::@1/(byte) plot::i#4 plot::@3/(byte) plot::i#1 )
-  [35] (byte) plot::x#2 ← phi( plot::@1/(byte) 0 plot::@3/(byte) plot::x#1 )
-  [36] if((byte) plot::x#2<(byte) $10) goto plot::@3
+  [35] plot::i#2 = phi( plot::@1/plot::i#4, plot::@3/plot::i#1 )
+  [35] plot::x#2 = phi( plot::@1/0, plot::@3/plot::x#1 )
+  [36] if(plot::x#2<$10) goto plot::@3
   to:plot::@4
 plot::@4: scope:[plot]  from plot::@2
-  [37] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28
-  [38] (byte) plot::y#1 ← -- (byte) plot::y#4
-  [39] if((byte) plot::y#1!=(byte) 0) goto plot::@1
+  [37] plot::line#1 = plot::line#5 + $28
+  [38] plot::y#1 = -- plot::y#4
+  [39] if(plot::y#1!=0) goto plot::@1
   to:plot::@return
 plot::@return: scope:[plot]  from plot::@4
   [40] return 
   to:@return
 plot::@3: scope:[plot]  from plot::@2
-  [41] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte*) buffer1 + (byte) plot::i#2)
-  [42] (byte) plot::i#1 ← ++ (byte) plot::i#2
-  [43] (byte) plot::x#1 ← ++ (byte) plot::x#2
+  [41] plot::line#5[plot::x#2] = buffer1[plot::i#2]
+  [42] plot::i#1 = ++ plot::i#2
+  [43] plot::x#1 = ++ plot::x#2
   to:plot::@2
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) flip()
-(byte) flip::c
-(byte) flip::c#1 150001.5
-(byte) flip::c#2 50000.5
-(byte) flip::dstIdx
-(byte) flip::dstIdx#1 70001.0
-(byte) flip::dstIdx#2 6667.333333333333
-(byte) flip::dstIdx#3 103334.66666666666
-(byte) flip::dstIdx#5 20002.0
-(byte) flip::i
-(byte) flip::i#1 15001.5
-(byte) flip::i#2 20002.0
-(byte) flip::r
-(byte) flip::r#1 15001.5
-(byte) flip::r#4 2500.25
-(byte) flip::srcIdx
-(byte) flip::srcIdx#1 30000.428571428572
-(byte) flip::srcIdx#2 155002.0
-(byte) flip::srcIdx#3 20002.0
-(void()) main()
-(byte) main::c
-(byte) main::c#1 151.5
-(byte) main::c#4 734.6666666666666
-(void()) plot()
-(byte) plot::i
-(byte) plot::i#1 100001.0
-(byte) plot::i#2 53334.16666666666
-(byte) plot::i#4 20002.0
-(byte*) plot::line
-(byte*) plot::line#1 6667.333333333333
-(byte*) plot::line#5 20000.5
-(byte) plot::x
-(byte) plot::x#1 200002.0
-(byte) plot::x#2 100001.0
-(byte) plot::y
-(byte) plot::y#1 15001.5
-(byte) plot::y#4 2857.4285714285716
-(void()) prepare()
-(byte) prepare::i
-(byte) prepare::i#1 151.5
-(byte) prepare::i#2 202.0
+void flip()
+byte flip::c
+byte flip::c#1 150001.5
+byte flip::c#2 50000.5
+byte flip::dstIdx
+byte flip::dstIdx#1 70001.0
+byte flip::dstIdx#2 6667.333333333333
+byte flip::dstIdx#3 103334.66666666666
+byte flip::dstIdx#5 20002.0
+byte flip::i
+byte flip::i#1 15001.5
+byte flip::i#2 20002.0
+byte flip::r
+byte flip::r#1 15001.5
+byte flip::r#4 2500.25
+byte flip::srcIdx
+byte flip::srcIdx#1 30000.428571428572
+byte flip::srcIdx#2 155002.0
+byte flip::srcIdx#3 20002.0
+void main()
+byte main::c
+byte main::c#1 151.5
+byte main::c#4 734.6666666666666
+void plot()
+byte plot::i
+byte plot::i#1 100001.0
+byte plot::i#2 53334.16666666666
+byte plot::i#4 20002.0
+byte* plot::line
+byte* plot::line#1 6667.333333333333
+byte* plot::line#5 20000.5
+byte plot::x
+byte plot::x#1 200002.0
+byte plot::x#2 100001.0
+byte plot::y
+byte plot::y#1 15001.5
+byte plot::y#4 2857.4285714285716
+void prepare()
+byte prepare::i
+byte prepare::i#1 151.5
+byte prepare::i#2 202.0
 
 Initial phi equivalence classes
 [ main::c#4 main::c#1 ]
@@ -659,319 +659,30 @@ Allocated zp[1]:9 [ plot::i#4 plot::i#2 plot::i#1 ]
 Allocated zp[2]:10 [ plot::line#5 plot::line#1 ]
 Allocated zp[1]:12 [ plot::y#4 plot::y#1 ]
 Allocated zp[1]:13 [ plot::x#2 plot::x#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label RASTER = $d012
-  .label SCREEN = $400
-  // main
-main: {
-    .label c = 2
-    // [1] call prepare 
-    // [11] phi from main to prepare [phi:main->prepare]
-  prepare_from_main:
-    jsr prepare
-    // [2] phi from main main::@5 to main::@1 [phi:main/main::@5->main::@1]
-  __b1_from_main:
-  __b1_from___b5:
-    // [2] phi (byte) main::c#4 = (byte) $19 [phi:main/main::@5->main::@1#0] -- vbuz1=vbuc1 
-    lda #$19
-    sta.z c
-    jmp __b1
-    // [2] phi from main::@1 main::@3 to main::@1 [phi:main::@1/main::@3->main::@1]
-  __b1_from___b1:
-  __b1_from___b3:
-    // [2] phi (byte) main::c#4 = (byte) main::c#4 [phi:main::@1/main::@3->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [3] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda #$fe
-    cmp RASTER
-    bne __b1_from___b1
-    jmp __b2
-    // main::@2
-  __b2:
-    // [4] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda #$ff
-    cmp RASTER
-    bne __b2
-    jmp __b3
-    // main::@3
-  __b3:
-    // [5] (byte) main::c#1 ← -- (byte) main::c#4 -- vbuz1=_dec_vbuz1 
-    dec.z c
-    // [6] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuz1_neq_0_then_la1 
-    lda.z c
-    cmp #0
-    bne __b1_from___b3
-    // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
-  __b4_from___b3:
-    jmp __b4
-    // main::@4
-  __b4:
-    // [8] call flip 
-    // [17] phi from main::@4 to flip [phi:main::@4->flip]
-  flip_from___b4:
-    jsr flip
-    // [9] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
-  __b5_from___b4:
-    jmp __b5
-    // main::@5
-  __b5:
-    // [10] call plot 
-    // [33] phi from main::@5 to plot [phi:main::@5->plot]
-  plot_from___b5:
-    jsr plot
-    jmp __b1_from___b5
-}
-  // prepare
-// Prepare buffer
-prepare: {
-    .label i = 3
-    // [12] phi from prepare to prepare::@1 [phi:prepare->prepare::@1]
-  __b1_from_prepare:
-    // [12] phi (byte) prepare::i#2 = (byte) 0 [phi:prepare->prepare::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [12] phi from prepare::@1 to prepare::@1 [phi:prepare::@1->prepare::@1]
-  __b1_from___b1:
-    // [12] phi (byte) prepare::i#2 = (byte) prepare::i#1 [phi:prepare::@1->prepare::@1#0] -- register_copy 
-    jmp __b1
-    // prepare::@1
-  __b1:
-    // [13] *((const byte*) buffer1 + (byte) prepare::i#2) ← (byte) prepare::i#2 -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy.z i
-    tya
-    sta buffer1,y
-    // [14] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [15] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 -- vbuz1_neq_0_then_la1 
-    lda.z i
-    cmp #0
-    bne __b1_from___b1
-    jmp __breturn
-    // prepare::@return
-  __breturn:
-    // [16] return 
-    rts
-}
-  // flip
-// Flip buffer
-flip: {
-    .label srcIdx = 5
-    .label dstIdx = 6
-    .label c = 7
-    .label r = 4
-    .label i = 8
-    // [18] phi from flip to flip::@1 [phi:flip->flip::@1]
-  __b1_from_flip:
-    // [18] phi (byte) flip::r#4 = (byte) $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
-    lda #$10
-    sta.z r
-    // [18] phi (byte) flip::dstIdx#5 = (byte) $f [phi:flip->flip::@1#1] -- vbuz1=vbuc1 
-    lda #$f
-    sta.z dstIdx
-    // [18] phi (byte) flip::srcIdx#3 = (byte) 0 [phi:flip->flip::@1#2] -- vbuz1=vbuc1 
-    lda #0
-    sta.z srcIdx
-    jmp __b1
-    // [18] phi from flip::@3 to flip::@1 [phi:flip::@3->flip::@1]
-  __b1_from___b3:
-    // [18] phi (byte) flip::r#4 = (byte) flip::r#1 [phi:flip::@3->flip::@1#0] -- register_copy 
-    // [18] phi (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2 [phi:flip::@3->flip::@1#1] -- register_copy 
-    // [18] phi (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1 [phi:flip::@3->flip::@1#2] -- register_copy 
-    jmp __b1
-    // flip::@1
-  __b1:
-    // [19] phi from flip::@1 to flip::@2 [phi:flip::@1->flip::@2]
-  __b2_from___b1:
-    // [19] phi (byte) flip::c#2 = (byte) $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
-    lda #$10
-    sta.z c
-    // [19] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
-    // [19] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
-    jmp __b2
-    // [19] phi from flip::@2 to flip::@2 [phi:flip::@2->flip::@2]
-  __b2_from___b2:
-    // [19] phi (byte) flip::c#2 = (byte) flip::c#1 [phi:flip::@2->flip::@2#0] -- register_copy 
-    // [19] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1 [phi:flip::@2->flip::@2#1] -- register_copy 
-    // [19] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1 [phi:flip::@2->flip::@2#2] -- register_copy 
-    jmp __b2
-    // flip::@2
-  __b2:
-    // [20] *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz2 
-    ldy.z srcIdx
-    lda buffer1,y
-    ldy.z dstIdx
-    sta buffer2,y
-    // [21] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 -- vbuz1=_inc_vbuz1 
-    inc.z srcIdx
-    // [22] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 -- vbuz1=vbuz1_plus_vbuc1 
-    lax.z dstIdx
-    axs #-[$10]
-    stx.z dstIdx
-    // [23] (byte) flip::c#1 ← -- (byte) flip::c#2 -- vbuz1=_dec_vbuz1 
-    dec.z c
-    // [24] if((byte) flip::c#1!=(byte) 0) goto flip::@2 -- vbuz1_neq_0_then_la1 
-    lda.z c
-    cmp #0
-    bne __b2_from___b2
-    jmp __b3
-    // flip::@3
-  __b3:
-    // [25] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 -- vbuz1=_dec_vbuz1 
-    dec.z dstIdx
-    // [26] (byte) flip::r#1 ← -- (byte) flip::r#4 -- vbuz1=_dec_vbuz1 
-    dec.z r
-    // [27] if((byte) flip::r#1!=(byte) 0) goto flip::@1 -- vbuz1_neq_0_then_la1 
-    lda.z r
-    cmp #0
-    bne __b1_from___b3
-    // [28] phi from flip::@3 to flip::@4 [phi:flip::@3->flip::@4]
-  __b4_from___b3:
-    // [28] phi (byte) flip::i#2 = (byte) 0 [phi:flip::@3->flip::@4#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b4
-    // [28] phi from flip::@4 to flip::@4 [phi:flip::@4->flip::@4]
-  __b4_from___b4:
-    // [28] phi (byte) flip::i#2 = (byte) flip::i#1 [phi:flip::@4->flip::@4#0] -- register_copy 
-    jmp __b4
-    // flip::@4
-  __b4:
-    // [29] *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy.z i
-    lda buffer2,y
-    sta buffer1,y
-    // [30] (byte) flip::i#1 ← ++ (byte) flip::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [31] if((byte) flip::i#1!=(byte) 0) goto flip::@4 -- vbuz1_neq_0_then_la1 
-    lda.z i
-    cmp #0
-    bne __b4_from___b4
-    jmp __breturn
-    // flip::@return
-  __breturn:
-    // [32] return 
-    rts
-}
-  // plot
-// Plot buffer on screen
-plot: {
-    .label i = 9
-    .label x = $d
-    .label line = $a
-    .label y = $c
-    // [34] phi from plot to plot::@1 [phi:plot->plot::@1]
-  __b1_from_plot:
-    // [34] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
-    lda #$10
-    sta.z y
-    // [34] phi (byte*) plot::line#5 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
-    lda #<SCREEN+5*$28+$c
-    sta.z line
-    lda #>SCREEN+5*$28+$c
-    sta.z line+1
-    // [34] phi (byte) plot::i#4 = (byte) 0 [phi:plot->plot::@1#2] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [34] phi from plot::@4 to plot::@1 [phi:plot::@4->plot::@1]
-  __b1_from___b4:
-    // [34] phi (byte) plot::y#4 = (byte) plot::y#1 [phi:plot::@4->plot::@1#0] -- register_copy 
-    // [34] phi (byte*) plot::line#5 = (byte*) plot::line#1 [phi:plot::@4->plot::@1#1] -- register_copy 
-    // [34] phi (byte) plot::i#4 = (byte) plot::i#2 [phi:plot::@4->plot::@1#2] -- register_copy 
-    jmp __b1
-    // plot::@1
-  __b1:
-    // [35] phi from plot::@1 to plot::@2 [phi:plot::@1->plot::@2]
-  __b2_from___b1:
-    // [35] phi (byte) plot::i#2 = (byte) plot::i#4 [phi:plot::@1->plot::@2#0] -- register_copy 
-    // [35] phi (byte) plot::x#2 = (byte) 0 [phi:plot::@1->plot::@2#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z x
-    jmp __b2
-    // plot::@2
-  __b2:
-    // [36] if((byte) plot::x#2<(byte) $10) goto plot::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z x
-    cmp #$10
-    bcc __b3
-    jmp __b4
-    // plot::@4
-  __b4:
-    // [37] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
-    lda #$28
-    clc
-    adc.z line
-    sta.z line
-    bcc !+
-    inc.z line+1
-  !:
-    // [38] (byte) plot::y#1 ← -- (byte) plot::y#4 -- vbuz1=_dec_vbuz1 
-    dec.z y
-    // [39] if((byte) plot::y#1!=(byte) 0) goto plot::@1 -- vbuz1_neq_0_then_la1 
-    lda.z y
-    cmp #0
-    bne __b1_from___b4
-    jmp __breturn
-    // plot::@return
-  __breturn:
-    // [40] return 
-    rts
-    // plot::@3
-  __b3:
-    // [41] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte*) buffer1 + (byte) plot::i#2) -- pbuz1_derefidx_vbuz2=pbuc1_derefidx_vbuz3 
-    ldy.z i
-    lda buffer1,y
-    ldy.z x
-    sta (line),y
-    // [42] (byte) plot::i#1 ← ++ (byte) plot::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [43] (byte) plot::x#1 ← ++ (byte) plot::x#2 -- vbuz1=_inc_vbuz1 
-    inc.z x
-    // [35] phi from plot::@3 to plot::@2 [phi:plot::@3->plot::@2]
-  __b2_from___b3:
-    // [35] phi (byte) plot::i#2 = (byte) plot::i#1 [phi:plot::@3->plot::@2#0] -- register_copy 
-    // [35] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:plot::@3->plot::@2#1] -- register_copy 
-    jmp __b2
-}
-  // File Data
-  buffer1: .fill $10*$10, 0
-  buffer2: .fill $10*$10, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
+Statement [3] if(*RASTER!=$fe) goto main::@1 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#4 main::c#1 ]
-Statement [4] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
-Statement [20] *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( flip:8 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] { }  ) always clobbers reg byte a 
+Statement [4] if(*RASTER!=$ff) goto main::@2 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
+Statement [20] buffer2[flip::dstIdx#3] = buffer1[flip::srcIdx#2] [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( flip:8 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ flip::r#4 flip::r#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ flip::srcIdx#2 flip::srcIdx#3 flip::srcIdx#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ flip::dstIdx#3 flip::dstIdx#5 flip::dstIdx#2 flip::dstIdx#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ flip::c#2 flip::c#1 ]
-Statement [22] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( flip:8 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] { }  ) always clobbers reg byte a 
-Statement [29] *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2) [ flip::i#2 ] ( flip:8 [ flip::i#2 ] { }  ) always clobbers reg byte a 
+Statement [22] flip::dstIdx#1 = flip::dstIdx#3 + $10 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( flip:8 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] { }  ) always clobbers reg byte a 
+Statement [29] buffer1[flip::i#2] = buffer2[flip::i#2] [ flip::i#2 ] ( flip:8 [ flip::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ flip::i#2 flip::i#1 ]
-Statement [37] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 [ plot::y#4 plot::i#2 plot::line#1 ] ( plot:10 [ plot::y#4 plot::i#2 plot::line#1 ] { }  ) always clobbers reg byte a 
+Statement [37] plot::line#1 = plot::line#5 + $28 [ plot::y#4 plot::i#2 plot::line#1 ] ( plot:10 [ plot::y#4 plot::i#2 plot::line#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:12 [ plot::y#4 plot::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ plot::i#4 plot::i#2 plot::i#1 ]
-Statement [41] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte*) buffer1 + (byte) plot::i#2) [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] ( plot:10 [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] { }  ) always clobbers reg byte a 
+Statement [41] plot::line#5[plot::x#2] = buffer1[plot::i#2] [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] ( plot:10 [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:13 [ plot::x#2 plot::x#1 ]
-Statement [3] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
-Statement [4] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
-Statement [20] *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2) [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( flip:8 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] { }  ) always clobbers reg byte a 
-Statement [22] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( flip:8 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] { }  ) always clobbers reg byte a 
-Statement [29] *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2) [ flip::i#2 ] ( flip:8 [ flip::i#2 ] { }  ) always clobbers reg byte a 
-Statement [37] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 [ plot::y#4 plot::i#2 plot::line#1 ] ( plot:10 [ plot::y#4 plot::i#2 plot::line#1 ] { }  ) always clobbers reg byte a 
-Statement [41] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte*) buffer1 + (byte) plot::i#2) [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] ( plot:10 [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] { }  ) always clobbers reg byte a 
+Statement [3] if(*RASTER!=$fe) goto main::@1 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
+Statement [4] if(*RASTER!=$ff) goto main::@2 [ main::c#4 ] (  [ main::c#4 ] { }  ) always clobbers reg byte a 
+Statement [20] buffer2[flip::dstIdx#3] = buffer1[flip::srcIdx#2] [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] ( flip:8 [ flip::r#4 flip::srcIdx#2 flip::dstIdx#3 flip::c#2 ] { }  ) always clobbers reg byte a 
+Statement [22] flip::dstIdx#1 = flip::dstIdx#3 + $10 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] ( flip:8 [ flip::r#4 flip::srcIdx#1 flip::c#2 flip::dstIdx#1 ] { }  ) always clobbers reg byte a 
+Statement [29] buffer1[flip::i#2] = buffer2[flip::i#2] [ flip::i#2 ] ( flip:8 [ flip::i#2 ] { }  ) always clobbers reg byte a 
+Statement [37] plot::line#1 = plot::line#5 + $28 [ plot::y#4 plot::i#2 plot::line#1 ] ( plot:10 [ plot::y#4 plot::i#2 plot::line#1 ] { }  ) always clobbers reg byte a 
+Statement [41] plot::line#5[plot::x#2] = buffer1[plot::i#2] [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] ( plot:10 [ plot::line#5 plot::y#4 plot::i#2 plot::x#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::c#4 main::c#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ prepare::i#2 prepare::i#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ flip::r#4 flip::r#1 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -1026,33 +737,33 @@ main: {
     // [2] phi from main main::@5 to main::@1 [phi:main/main::@5->main::@1]
   __b1_from_main:
   __b1_from___b5:
-    // [2] phi (byte) main::c#4 = (byte) $19 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
+    // [2] phi main::c#4 = $19 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
     ldx #$19
     jmp __b1
     // [2] phi from main::@1 main::@3 to main::@1 [phi:main::@1/main::@3->main::@1]
   __b1_from___b1:
   __b1_from___b3:
-    // [2] phi (byte) main::c#4 = (byte) main::c#4 [phi:main::@1/main::@3->main::@1#0] -- register_copy 
+    // [2] phi main::c#4 = main::c#4 [phi:main::@1/main::@3->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [3] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*RASTER!=$fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne __b1_from___b1
     jmp __b2
     // main::@2
   __b2:
-    // [4] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [4] if(*RASTER!=$ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b2
     jmp __b3
     // main::@3
   __b3:
-    // [5] (byte) main::c#1 ← -- (byte) main::c#4 -- vbuxx=_dec_vbuxx 
+    // [5] main::c#1 = -- main::c#4 -- vbuxx=_dec_vbuxx 
     dex
-    // [6] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [6] if(main::c#1!=0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1_from___b3
     // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
@@ -1080,21 +791,21 @@ main: {
 prepare: {
     // [12] phi from prepare to prepare::@1 [phi:prepare->prepare::@1]
   __b1_from_prepare:
-    // [12] phi (byte) prepare::i#2 = (byte) 0 [phi:prepare->prepare::@1#0] -- vbuxx=vbuc1 
+    // [12] phi prepare::i#2 = 0 [phi:prepare->prepare::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [12] phi from prepare::@1 to prepare::@1 [phi:prepare::@1->prepare::@1]
   __b1_from___b1:
-    // [12] phi (byte) prepare::i#2 = (byte) prepare::i#1 [phi:prepare::@1->prepare::@1#0] -- register_copy 
+    // [12] phi prepare::i#2 = prepare::i#1 [phi:prepare::@1->prepare::@1#0] -- register_copy 
     jmp __b1
     // prepare::@1
   __b1:
-    // [13] *((const byte*) buffer1 + (byte) prepare::i#2) ← (byte) prepare::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [13] buffer1[prepare::i#2] = prepare::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta buffer1,x
-    // [14] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 -- vbuxx=_inc_vbuxx 
+    // [14] prepare::i#1 = ++ prepare::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [15] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 -- vbuxx_neq_0_then_la1 
+    // [15] if(prepare::i#1!=0) goto prepare::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1_from___b1
     jmp __breturn
@@ -1110,80 +821,80 @@ flip: {
     .label r = 5
     // [18] phi from flip to flip::@1 [phi:flip->flip::@1]
   __b1_from_flip:
-    // [18] phi (byte) flip::r#4 = (byte) $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
+    // [18] phi flip::r#4 = $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z r
-    // [18] phi (byte) flip::dstIdx#5 = (byte) $f [phi:flip->flip::@1#1] -- vbuxx=vbuc1 
+    // [18] phi flip::dstIdx#5 = $f [phi:flip->flip::@1#1] -- vbuxx=vbuc1 
     ldx #$f
-    // [18] phi (byte) flip::srcIdx#3 = (byte) 0 [phi:flip->flip::@1#2] -- vbuyy=vbuc1 
+    // [18] phi flip::srcIdx#3 = 0 [phi:flip->flip::@1#2] -- vbuyy=vbuc1 
     ldy #0
     jmp __b1
     // [18] phi from flip::@3 to flip::@1 [phi:flip::@3->flip::@1]
   __b1_from___b3:
-    // [18] phi (byte) flip::r#4 = (byte) flip::r#1 [phi:flip::@3->flip::@1#0] -- register_copy 
-    // [18] phi (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2 [phi:flip::@3->flip::@1#1] -- register_copy 
-    // [18] phi (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1 [phi:flip::@3->flip::@1#2] -- register_copy 
+    // [18] phi flip::r#4 = flip::r#1 [phi:flip::@3->flip::@1#0] -- register_copy 
+    // [18] phi flip::dstIdx#5 = flip::dstIdx#2 [phi:flip::@3->flip::@1#1] -- register_copy 
+    // [18] phi flip::srcIdx#3 = flip::srcIdx#1 [phi:flip::@3->flip::@1#2] -- register_copy 
     jmp __b1
     // flip::@1
   __b1:
     // [19] phi from flip::@1 to flip::@2 [phi:flip::@1->flip::@2]
   __b2_from___b1:
-    // [19] phi (byte) flip::c#2 = (byte) $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
+    // [19] phi flip::c#2 = $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z c
-    // [19] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
-    // [19] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
+    // [19] phi flip::dstIdx#3 = flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
+    // [19] phi flip::srcIdx#2 = flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
     jmp __b2
     // [19] phi from flip::@2 to flip::@2 [phi:flip::@2->flip::@2]
   __b2_from___b2:
-    // [19] phi (byte) flip::c#2 = (byte) flip::c#1 [phi:flip::@2->flip::@2#0] -- register_copy 
-    // [19] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1 [phi:flip::@2->flip::@2#1] -- register_copy 
-    // [19] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1 [phi:flip::@2->flip::@2#2] -- register_copy 
+    // [19] phi flip::c#2 = flip::c#1 [phi:flip::@2->flip::@2#0] -- register_copy 
+    // [19] phi flip::dstIdx#3 = flip::dstIdx#1 [phi:flip::@2->flip::@2#1] -- register_copy 
+    // [19] phi flip::srcIdx#2 = flip::srcIdx#1 [phi:flip::@2->flip::@2#2] -- register_copy 
     jmp __b2
     // flip::@2
   __b2:
-    // [20] *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+    // [20] buffer2[flip::dstIdx#3] = buffer1[flip::srcIdx#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda buffer1,y
     sta buffer2,x
-    // [21] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 -- vbuyy=_inc_vbuyy 
+    // [21] flip::srcIdx#1 = ++ flip::srcIdx#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [22] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 -- vbuxx=vbuxx_plus_vbuc1 
+    // [22] flip::dstIdx#1 = flip::dstIdx#3 + $10 -- vbuxx=vbuxx_plus_vbuc1 
     txa
     axs #-[$10]
-    // [23] (byte) flip::c#1 ← -- (byte) flip::c#2 -- vbuz1=_dec_vbuz1 
+    // [23] flip::c#1 = -- flip::c#2 -- vbuz1=_dec_vbuz1 
     dec.z c
-    // [24] if((byte) flip::c#1!=(byte) 0) goto flip::@2 -- vbuz1_neq_0_then_la1 
+    // [24] if(flip::c#1!=0) goto flip::@2 -- vbuz1_neq_0_then_la1 
     lda.z c
     cmp #0
     bne __b2_from___b2
     jmp __b3
     // flip::@3
   __b3:
-    // [25] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 -- vbuxx=_dec_vbuxx 
+    // [25] flip::dstIdx#2 = -- flip::dstIdx#1 -- vbuxx=_dec_vbuxx 
     dex
-    // [26] (byte) flip::r#1 ← -- (byte) flip::r#4 -- vbuz1=_dec_vbuz1 
+    // [26] flip::r#1 = -- flip::r#4 -- vbuz1=_dec_vbuz1 
     dec.z r
-    // [27] if((byte) flip::r#1!=(byte) 0) goto flip::@1 -- vbuz1_neq_0_then_la1 
+    // [27] if(flip::r#1!=0) goto flip::@1 -- vbuz1_neq_0_then_la1 
     lda.z r
     cmp #0
     bne __b1_from___b3
     // [28] phi from flip::@3 to flip::@4 [phi:flip::@3->flip::@4]
   __b4_from___b3:
-    // [28] phi (byte) flip::i#2 = (byte) 0 [phi:flip::@3->flip::@4#0] -- vbuxx=vbuc1 
+    // [28] phi flip::i#2 = 0 [phi:flip::@3->flip::@4#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b4
     // [28] phi from flip::@4 to flip::@4 [phi:flip::@4->flip::@4]
   __b4_from___b4:
-    // [28] phi (byte) flip::i#2 = (byte) flip::i#1 [phi:flip::@4->flip::@4#0] -- register_copy 
+    // [28] phi flip::i#2 = flip::i#1 [phi:flip::@4->flip::@4#0] -- register_copy 
     jmp __b4
     // flip::@4
   __b4:
-    // [29] *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [29] buffer1[flip::i#2] = buffer2[flip::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda buffer2,x
     sta buffer1,x
-    // [30] (byte) flip::i#1 ← ++ (byte) flip::i#2 -- vbuxx=_inc_vbuxx 
+    // [30] flip::i#1 = ++ flip::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [31] if((byte) flip::i#1!=(byte) 0) goto flip::@4 -- vbuxx_neq_0_then_la1 
+    // [31] if(flip::i#1!=0) goto flip::@4 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b4_from___b4
     jmp __breturn
@@ -1199,40 +910,40 @@ plot: {
     .label y = 5
     // [34] phi from plot to plot::@1 [phi:plot->plot::@1]
   __b1_from_plot:
-    // [34] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
+    // [34] phi plot::y#4 = $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [34] phi (byte*) plot::line#5 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [34] phi plot::line#5 = SCREEN+(byte)5*$28+$c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c
     sta.z line+1
-    // [34] phi (byte) plot::i#4 = (byte) 0 [phi:plot->plot::@1#2] -- vbuxx=vbuc1 
+    // [34] phi plot::i#4 = 0 [phi:plot->plot::@1#2] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [34] phi from plot::@4 to plot::@1 [phi:plot::@4->plot::@1]
   __b1_from___b4:
-    // [34] phi (byte) plot::y#4 = (byte) plot::y#1 [phi:plot::@4->plot::@1#0] -- register_copy 
-    // [34] phi (byte*) plot::line#5 = (byte*) plot::line#1 [phi:plot::@4->plot::@1#1] -- register_copy 
-    // [34] phi (byte) plot::i#4 = (byte) plot::i#2 [phi:plot::@4->plot::@1#2] -- register_copy 
+    // [34] phi plot::y#4 = plot::y#1 [phi:plot::@4->plot::@1#0] -- register_copy 
+    // [34] phi plot::line#5 = plot::line#1 [phi:plot::@4->plot::@1#1] -- register_copy 
+    // [34] phi plot::i#4 = plot::i#2 [phi:plot::@4->plot::@1#2] -- register_copy 
     jmp __b1
     // plot::@1
   __b1:
     // [35] phi from plot::@1 to plot::@2 [phi:plot::@1->plot::@2]
   __b2_from___b1:
-    // [35] phi (byte) plot::i#2 = (byte) plot::i#4 [phi:plot::@1->plot::@2#0] -- register_copy 
-    // [35] phi (byte) plot::x#2 = (byte) 0 [phi:plot::@1->plot::@2#1] -- vbuyy=vbuc1 
+    // [35] phi plot::i#2 = plot::i#4 [phi:plot::@1->plot::@2#0] -- register_copy 
+    // [35] phi plot::x#2 = 0 [phi:plot::@1->plot::@2#1] -- vbuyy=vbuc1 
     ldy #0
     jmp __b2
     // plot::@2
   __b2:
-    // [36] if((byte) plot::x#2<(byte) $10) goto plot::@3 -- vbuyy_lt_vbuc1_then_la1 
+    // [36] if(plot::x#2<$10) goto plot::@3 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$10
     bcc __b3
     jmp __b4
     // plot::@4
   __b4:
-    // [37] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [37] plot::line#1 = plot::line#5 + $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -1240,9 +951,9 @@ plot: {
     bcc !+
     inc.z line+1
   !:
-    // [38] (byte) plot::y#1 ← -- (byte) plot::y#4 -- vbuz1=_dec_vbuz1 
+    // [38] plot::y#1 = -- plot::y#4 -- vbuz1=_dec_vbuz1 
     dec.z y
-    // [39] if((byte) plot::y#1!=(byte) 0) goto plot::@1 -- vbuz1_neq_0_then_la1 
+    // [39] if(plot::y#1!=0) goto plot::@1 -- vbuz1_neq_0_then_la1 
     lda.z y
     cmp #0
     bne __b1_from___b4
@@ -1253,17 +964,17 @@ plot: {
     rts
     // plot::@3
   __b3:
-    // [41] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte*) buffer1 + (byte) plot::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+    // [41] plot::line#5[plot::x#2] = buffer1[plot::i#2] -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda buffer1,x
     sta (line),y
-    // [42] (byte) plot::i#1 ← ++ (byte) plot::i#2 -- vbuxx=_inc_vbuxx 
+    // [42] plot::i#1 = ++ plot::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [43] (byte) plot::x#1 ← ++ (byte) plot::x#2 -- vbuyy=_inc_vbuyy 
+    // [43] plot::x#1 = ++ plot::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [35] phi from plot::@3 to plot::@2 [phi:plot::@3->plot::@2]
   __b2_from___b3:
-    // [35] phi (byte) plot::i#2 = (byte) plot::i#1 [phi:plot::@3->plot::@2#0] -- register_copy 
-    // [35] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:plot::@3->plot::@2#1] -- register_copy 
+    // [35] phi plot::i#2 = plot::i#1 [phi:plot::@3->plot::@2#0] -- register_copy 
+    // [35] phi plot::x#2 = plot::x#1 [phi:plot::@3->plot::@2#1] -- register_copy 
     jmp __b2
 }
   // File Data
@@ -1336,68 +1047,68 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const byte*) RASTER = (byte*) 53266
-(const byte*) SCREEN = (byte*) 1024
-(const byte*) buffer1[(number) $10*(number) $10]  = { fill( $10*$10, 0) }
-(const byte*) buffer2[(number) $10*(number) $10]  = { fill( $10*$10, 0) }
-(void()) flip()
-(label) flip::@1
-(label) flip::@2
-(label) flip::@3
-(label) flip::@4
-(label) flip::@return
-(byte) flip::c
-(byte) flip::c#1 c zp[1]:2 150001.5
-(byte) flip::c#2 c zp[1]:2 50000.5
-(byte) flip::dstIdx
-(byte) flip::dstIdx#1 reg byte x 70001.0
-(byte) flip::dstIdx#2 reg byte x 6667.333333333333
-(byte) flip::dstIdx#3 reg byte x 103334.66666666666
-(byte) flip::dstIdx#5 reg byte x 20002.0
-(byte) flip::i
-(byte) flip::i#1 reg byte x 15001.5
-(byte) flip::i#2 reg byte x 20002.0
-(byte) flip::r
-(byte) flip::r#1 r zp[1]:5 15001.5
-(byte) flip::r#4 r zp[1]:5 2500.25
-(byte) flip::srcIdx
-(byte) flip::srcIdx#1 reg byte y 30000.428571428572
-(byte) flip::srcIdx#2 reg byte y 155002.0
-(byte) flip::srcIdx#3 reg byte y 20002.0
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(byte) main::c
-(byte) main::c#1 reg byte x 151.5
-(byte) main::c#4 reg byte x 734.6666666666666
-(void()) plot()
-(label) plot::@1
-(label) plot::@2
-(label) plot::@3
-(label) plot::@4
-(label) plot::@return
-(byte) plot::i
-(byte) plot::i#1 reg byte x 100001.0
-(byte) plot::i#2 reg byte x 53334.16666666666
-(byte) plot::i#4 reg byte x 20002.0
-(byte*) plot::line
-(byte*) plot::line#1 line zp[2]:3 6667.333333333333
-(byte*) plot::line#5 line zp[2]:3 20000.5
-(byte) plot::x
-(byte) plot::x#1 reg byte y 200002.0
-(byte) plot::x#2 reg byte y 100001.0
-(byte) plot::y
-(byte) plot::y#1 y zp[1]:5 15001.5
-(byte) plot::y#4 y zp[1]:5 2857.4285714285716
-(void()) prepare()
-(label) prepare::@1
-(label) prepare::@return
-(byte) prepare::i
-(byte) prepare::i#1 reg byte x 151.5
-(byte) prepare::i#2 reg byte x 202.0
+const byte* RASTER = (byte*) 53266
+const byte* SCREEN = (byte*) 1024
+const byte* buffer1[$10*$10]  = { fill( $10*$10, 0) }
+const byte* buffer2[$10*$10]  = { fill( $10*$10, 0) }
+void flip()
+label flip::@1
+label flip::@2
+label flip::@3
+label flip::@4
+label flip::@return
+byte flip::c
+byte flip::c#1 c zp[1]:2 150001.5
+byte flip::c#2 c zp[1]:2 50000.5
+byte flip::dstIdx
+byte flip::dstIdx#1 reg byte x 70001.0
+byte flip::dstIdx#2 reg byte x 6667.333333333333
+byte flip::dstIdx#3 reg byte x 103334.66666666666
+byte flip::dstIdx#5 reg byte x 20002.0
+byte flip::i
+byte flip::i#1 reg byte x 15001.5
+byte flip::i#2 reg byte x 20002.0
+byte flip::r
+byte flip::r#1 r zp[1]:5 15001.5
+byte flip::r#4 r zp[1]:5 2500.25
+byte flip::srcIdx
+byte flip::srcIdx#1 reg byte y 30000.428571428572
+byte flip::srcIdx#2 reg byte y 155002.0
+byte flip::srcIdx#3 reg byte y 20002.0
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+byte main::c
+byte main::c#1 reg byte x 151.5
+byte main::c#4 reg byte x 734.6666666666666
+void plot()
+label plot::@1
+label plot::@2
+label plot::@3
+label plot::@4
+label plot::@return
+byte plot::i
+byte plot::i#1 reg byte x 100001.0
+byte plot::i#2 reg byte x 53334.16666666666
+byte plot::i#4 reg byte x 20002.0
+byte* plot::line
+byte* plot::line#1 line zp[2]:3 6667.333333333333
+byte* plot::line#5 line zp[2]:3 20000.5
+byte plot::x
+byte plot::x#1 reg byte y 200002.0
+byte plot::x#2 reg byte y 100001.0
+byte plot::y
+byte plot::y#1 y zp[1]:5 15001.5
+byte plot::y#4 y zp[1]:5 2857.4285714285716
+void prepare()
+label prepare::@1
+label prepare::@return
+byte prepare::i
+byte prepare::i#1 reg byte x 151.5
+byte prepare::i#2 reg byte x 202.0
 
 reg byte x [ main::c#4 main::c#1 ]
 reg byte x [ prepare::i#2 prepare::i#1 ]
@@ -1430,29 +1141,29 @@ main: {
     jsr prepare
     // [2] phi from main main::@5 to main::@1 [phi:main/main::@5->main::@1]
   __b3:
-    // [2] phi (byte) main::c#4 = (byte) $19 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
+    // [2] phi main::c#4 = $19 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
     ldx #$19
     // [2] phi from main::@1 main::@3 to main::@1 [phi:main::@1/main::@3->main::@1]
-    // [2] phi (byte) main::c#4 = (byte) main::c#4 [phi:main::@1/main::@3->main::@1#0] -- register_copy 
+    // [2] phi main::c#4 = main::c#4 [phi:main::@1/main::@3->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // while(*RASTER!=254)
-    // [3] if(*((const byte*) RASTER)!=(byte) $fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [3] if(*RASTER!=$fe) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$fe
     cmp RASTER
     bne __b1
     // main::@2
   __b2:
     // while(*RASTER!=255)
-    // [4] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [4] if(*RASTER!=$ff) goto main::@2 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b2
     // main::@3
     // for( byte c : 25..1)
-    // [5] (byte) main::c#1 ← -- (byte) main::c#4 -- vbuxx=_dec_vbuxx 
+    // [5] main::c#1 = -- main::c#4 -- vbuxx=_dec_vbuxx 
     dex
-    // [6] if((byte) main::c#1!=(byte) 0) goto main::@1 -- vbuxx_neq_0_then_la1 
+    // [6] if(main::c#1!=0) goto main::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1
     // [7] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
@@ -1473,20 +1184,20 @@ main: {
 // Prepare buffer
 prepare: {
     // [12] phi from prepare to prepare::@1 [phi:prepare->prepare::@1]
-    // [12] phi (byte) prepare::i#2 = (byte) 0 [phi:prepare->prepare::@1#0] -- vbuxx=vbuc1 
+    // [12] phi prepare::i#2 = 0 [phi:prepare->prepare::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [12] phi from prepare::@1 to prepare::@1 [phi:prepare::@1->prepare::@1]
-    // [12] phi (byte) prepare::i#2 = (byte) prepare::i#1 [phi:prepare::@1->prepare::@1#0] -- register_copy 
+    // [12] phi prepare::i#2 = prepare::i#1 [phi:prepare::@1->prepare::@1#0] -- register_copy 
     // prepare::@1
   __b1:
     // buffer1[i] = i
-    // [13] *((const byte*) buffer1 + (byte) prepare::i#2) ← (byte) prepare::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
+    // [13] buffer1[prepare::i#2] = prepare::i#2 -- pbuc1_derefidx_vbuxx=vbuxx 
     txa
     sta buffer1,x
     // for( byte i : 0..255)
-    // [14] (byte) prepare::i#1 ← ++ (byte) prepare::i#2 -- vbuxx=_inc_vbuxx 
+    // [14] prepare::i#1 = ++ prepare::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [15] if((byte) prepare::i#1!=(byte) 0) goto prepare::@1 -- vbuxx_neq_0_then_la1 
+    // [15] if(prepare::i#1!=0) goto prepare::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1
     // prepare::@return
@@ -1500,75 +1211,75 @@ flip: {
     .label c = 2
     .label r = 5
     // [18] phi from flip to flip::@1 [phi:flip->flip::@1]
-    // [18] phi (byte) flip::r#4 = (byte) $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
+    // [18] phi flip::r#4 = $10 [phi:flip->flip::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z r
-    // [18] phi (byte) flip::dstIdx#5 = (byte) $f [phi:flip->flip::@1#1] -- vbuxx=vbuc1 
+    // [18] phi flip::dstIdx#5 = $f [phi:flip->flip::@1#1] -- vbuxx=vbuc1 
     ldx #$f
-    // [18] phi (byte) flip::srcIdx#3 = (byte) 0 [phi:flip->flip::@1#2] -- vbuyy=vbuc1 
+    // [18] phi flip::srcIdx#3 = 0 [phi:flip->flip::@1#2] -- vbuyy=vbuc1 
     ldy #0
     // [18] phi from flip::@3 to flip::@1 [phi:flip::@3->flip::@1]
-    // [18] phi (byte) flip::r#4 = (byte) flip::r#1 [phi:flip::@3->flip::@1#0] -- register_copy 
-    // [18] phi (byte) flip::dstIdx#5 = (byte) flip::dstIdx#2 [phi:flip::@3->flip::@1#1] -- register_copy 
-    // [18] phi (byte) flip::srcIdx#3 = (byte) flip::srcIdx#1 [phi:flip::@3->flip::@1#2] -- register_copy 
+    // [18] phi flip::r#4 = flip::r#1 [phi:flip::@3->flip::@1#0] -- register_copy 
+    // [18] phi flip::dstIdx#5 = flip::dstIdx#2 [phi:flip::@3->flip::@1#1] -- register_copy 
+    // [18] phi flip::srcIdx#3 = flip::srcIdx#1 [phi:flip::@3->flip::@1#2] -- register_copy 
     // flip::@1
   __b1:
     // [19] phi from flip::@1 to flip::@2 [phi:flip::@1->flip::@2]
-    // [19] phi (byte) flip::c#2 = (byte) $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
+    // [19] phi flip::c#2 = $10 [phi:flip::@1->flip::@2#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z c
-    // [19] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
-    // [19] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
+    // [19] phi flip::dstIdx#3 = flip::dstIdx#5 [phi:flip::@1->flip::@2#1] -- register_copy 
+    // [19] phi flip::srcIdx#2 = flip::srcIdx#3 [phi:flip::@1->flip::@2#2] -- register_copy 
     // [19] phi from flip::@2 to flip::@2 [phi:flip::@2->flip::@2]
-    // [19] phi (byte) flip::c#2 = (byte) flip::c#1 [phi:flip::@2->flip::@2#0] -- register_copy 
-    // [19] phi (byte) flip::dstIdx#3 = (byte) flip::dstIdx#1 [phi:flip::@2->flip::@2#1] -- register_copy 
-    // [19] phi (byte) flip::srcIdx#2 = (byte) flip::srcIdx#1 [phi:flip::@2->flip::@2#2] -- register_copy 
+    // [19] phi flip::c#2 = flip::c#1 [phi:flip::@2->flip::@2#0] -- register_copy 
+    // [19] phi flip::dstIdx#3 = flip::dstIdx#1 [phi:flip::@2->flip::@2#1] -- register_copy 
+    // [19] phi flip::srcIdx#2 = flip::srcIdx#1 [phi:flip::@2->flip::@2#2] -- register_copy 
     // flip::@2
   __b2:
     // buffer2[dstIdx] = buffer1[srcIdx++]
-    // [20] *((const byte*) buffer2 + (byte) flip::dstIdx#3) ← *((const byte*) buffer1 + (byte) flip::srcIdx#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
+    // [20] buffer2[flip::dstIdx#3] = buffer1[flip::srcIdx#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuyy 
     lda buffer1,y
     sta buffer2,x
     // buffer2[dstIdx] = buffer1[srcIdx++];
-    // [21] (byte) flip::srcIdx#1 ← ++ (byte) flip::srcIdx#2 -- vbuyy=_inc_vbuyy 
+    // [21] flip::srcIdx#1 = ++ flip::srcIdx#2 -- vbuyy=_inc_vbuyy 
     iny
     // dstIdx = dstIdx+16
-    // [22] (byte) flip::dstIdx#1 ← (byte) flip::dstIdx#3 + (byte) $10 -- vbuxx=vbuxx_plus_vbuc1 
+    // [22] flip::dstIdx#1 = flip::dstIdx#3 + $10 -- vbuxx=vbuxx_plus_vbuc1 
     txa
     axs #-[$10]
     // for( byte c : 16..1)
-    // [23] (byte) flip::c#1 ← -- (byte) flip::c#2 -- vbuz1=_dec_vbuz1 
+    // [23] flip::c#1 = -- flip::c#2 -- vbuz1=_dec_vbuz1 
     dec.z c
-    // [24] if((byte) flip::c#1!=(byte) 0) goto flip::@2 -- vbuz1_neq_0_then_la1 
+    // [24] if(flip::c#1!=0) goto flip::@2 -- vbuz1_neq_0_then_la1 
     lda.z c
     cmp #0
     bne __b2
     // flip::@3
     // dstIdx--;
-    // [25] (byte) flip::dstIdx#2 ← -- (byte) flip::dstIdx#1 -- vbuxx=_dec_vbuxx 
+    // [25] flip::dstIdx#2 = -- flip::dstIdx#1 -- vbuxx=_dec_vbuxx 
     dex
     // for( byte r : 16..1)
-    // [26] (byte) flip::r#1 ← -- (byte) flip::r#4 -- vbuz1=_dec_vbuz1 
+    // [26] flip::r#1 = -- flip::r#4 -- vbuz1=_dec_vbuz1 
     dec.z r
-    // [27] if((byte) flip::r#1!=(byte) 0) goto flip::@1 -- vbuz1_neq_0_then_la1 
+    // [27] if(flip::r#1!=0) goto flip::@1 -- vbuz1_neq_0_then_la1 
     lda.z r
     cmp #0
     bne __b1
     // [28] phi from flip::@3 to flip::@4 [phi:flip::@3->flip::@4]
-    // [28] phi (byte) flip::i#2 = (byte) 0 [phi:flip::@3->flip::@4#0] -- vbuxx=vbuc1 
+    // [28] phi flip::i#2 = 0 [phi:flip::@3->flip::@4#0] -- vbuxx=vbuc1 
     ldx #0
     // [28] phi from flip::@4 to flip::@4 [phi:flip::@4->flip::@4]
-    // [28] phi (byte) flip::i#2 = (byte) flip::i#1 [phi:flip::@4->flip::@4#0] -- register_copy 
+    // [28] phi flip::i#2 = flip::i#1 [phi:flip::@4->flip::@4#0] -- register_copy 
     // flip::@4
   __b4:
     // buffer1[i] = buffer2[i]
-    // [29] *((const byte*) buffer1 + (byte) flip::i#2) ← *((const byte*) buffer2 + (byte) flip::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [29] buffer1[flip::i#2] = buffer2[flip::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda buffer2,x
     sta buffer1,x
     // for(byte i : 0..255)
-    // [30] (byte) flip::i#1 ← ++ (byte) flip::i#2 -- vbuxx=_inc_vbuxx 
+    // [30] flip::i#1 = ++ flip::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [31] if((byte) flip::i#1!=(byte) 0) goto flip::@4 -- vbuxx_neq_0_then_la1 
+    // [31] if(flip::i#1!=0) goto flip::@4 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b4
     // flip::@return
@@ -1582,35 +1293,35 @@ plot: {
     .label line = 3
     .label y = 5
     // [34] phi from plot to plot::@1 [phi:plot->plot::@1]
-    // [34] phi (byte) plot::y#4 = (byte) $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
+    // [34] phi plot::y#4 = $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [34] phi (byte*) plot::line#5 = (const byte*) SCREEN+(byte)(number) 5*(number) $28+(byte) $c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [34] phi plot::line#5 = SCREEN+(byte)5*$28+$c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c
     sta.z line+1
-    // [34] phi (byte) plot::i#4 = (byte) 0 [phi:plot->plot::@1#2] -- vbuxx=vbuc1 
+    // [34] phi plot::i#4 = 0 [phi:plot->plot::@1#2] -- vbuxx=vbuc1 
     ldx #0
     // [34] phi from plot::@4 to plot::@1 [phi:plot::@4->plot::@1]
-    // [34] phi (byte) plot::y#4 = (byte) plot::y#1 [phi:plot::@4->plot::@1#0] -- register_copy 
-    // [34] phi (byte*) plot::line#5 = (byte*) plot::line#1 [phi:plot::@4->plot::@1#1] -- register_copy 
-    // [34] phi (byte) plot::i#4 = (byte) plot::i#2 [phi:plot::@4->plot::@1#2] -- register_copy 
+    // [34] phi plot::y#4 = plot::y#1 [phi:plot::@4->plot::@1#0] -- register_copy 
+    // [34] phi plot::line#5 = plot::line#1 [phi:plot::@4->plot::@1#1] -- register_copy 
+    // [34] phi plot::i#4 = plot::i#2 [phi:plot::@4->plot::@1#2] -- register_copy 
     // plot::@1
   __b1:
     // [35] phi from plot::@1 to plot::@2 [phi:plot::@1->plot::@2]
-    // [35] phi (byte) plot::i#2 = (byte) plot::i#4 [phi:plot::@1->plot::@2#0] -- register_copy 
-    // [35] phi (byte) plot::x#2 = (byte) 0 [phi:plot::@1->plot::@2#1] -- vbuyy=vbuc1 
+    // [35] phi plot::i#2 = plot::i#4 [phi:plot::@1->plot::@2#0] -- register_copy 
+    // [35] phi plot::x#2 = 0 [phi:plot::@1->plot::@2#1] -- vbuyy=vbuc1 
     ldy #0
     // plot::@2
   __b2:
     // for(byte x=0; x<16; x++ )
-    // [36] if((byte) plot::x#2<(byte) $10) goto plot::@3 -- vbuyy_lt_vbuc1_then_la1 
+    // [36] if(plot::x#2<$10) goto plot::@3 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$10
     bcc __b3
     // plot::@4
     // line = line+40
-    // [37] (byte*) plot::line#1 ← (byte*) plot::line#5 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [37] plot::line#1 = plot::line#5 + $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z line
@@ -1619,9 +1330,9 @@ plot: {
     inc.z line+1
   !:
     // for(byte y : 16..1)
-    // [38] (byte) plot::y#1 ← -- (byte) plot::y#4 -- vbuz1=_dec_vbuz1 
+    // [38] plot::y#1 = -- plot::y#4 -- vbuz1=_dec_vbuz1 
     dec.z y
-    // [39] if((byte) plot::y#1!=(byte) 0) goto plot::@1 -- vbuz1_neq_0_then_la1 
+    // [39] if(plot::y#1!=0) goto plot::@1 -- vbuz1_neq_0_then_la1 
     lda.z y
     cmp #0
     bne __b1
@@ -1632,18 +1343,18 @@ plot: {
     // plot::@3
   __b3:
     // line[x] = buffer1[i++]
-    // [41] *((byte*) plot::line#5 + (byte) plot::x#2) ← *((const byte*) buffer1 + (byte) plot::i#2) -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
+    // [41] plot::line#5[plot::x#2] = buffer1[plot::i#2] -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuxx 
     lda buffer1,x
     sta (line),y
     // line[x] = buffer1[i++];
-    // [42] (byte) plot::i#1 ← ++ (byte) plot::i#2 -- vbuxx=_inc_vbuxx 
+    // [42] plot::i#1 = ++ plot::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // for(byte x=0; x<16; x++ )
-    // [43] (byte) plot::x#1 ← ++ (byte) plot::x#2 -- vbuyy=_inc_vbuyy 
+    // [43] plot::x#1 = ++ plot::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [35] phi from plot::@3 to plot::@2 [phi:plot::@3->plot::@2]
-    // [35] phi (byte) plot::i#2 = (byte) plot::i#1 [phi:plot::@3->plot::@2#0] -- register_copy 
-    // [35] phi (byte) plot::x#2 = (byte) plot::x#1 [phi:plot::@3->plot::@2#1] -- register_copy 
+    // [35] phi plot::i#2 = plot::i#1 [phi:plot::@3->plot::@2#0] -- register_copy 
+    // [35] phi plot::x#2 = plot::x#1 [phi:plot::@3->plot::@2#1] -- register_copy 
     jmp __b2
 }
   // File Data

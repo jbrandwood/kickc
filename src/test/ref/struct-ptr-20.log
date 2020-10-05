@@ -1,54 +1,54 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::idx#0 ← (byte) 0
-  (byte~) main::$0 ← sizeof  (const to_nomodify struct Setting*) settings
-  (byte~) main::$1 ← (byte~) main::$0 / (const byte) SIZEOF_STRUCT_SETTING
-  (byte) main::len#0 ← (byte~) main::$1
-  (struct Setting*) main::setting#0 ← (const to_nomodify struct Setting*) settings
+  main::idx#0 = 0
+  main::$0 = sizeof  settings
+  main::$1 = main::$0 / SIZEOF_STRUCT_SETTING
+  main::len#0 = main::$1
+  main::setting#0 = settings
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  (byte) main::idx#4 ← phi( main/(byte) main::idx#0 main::@3/(byte) main::idx#5 )
-  (struct Setting*) main::setting#2 ← phi( main/(struct Setting*) main::setting#0 main::@3/(struct Setting*) main::setting#1 )
-  (byte) main::len#1 ← phi( main/(byte) main::len#0 main::@3/(byte) main::len#2 )
-  (byte~) main::$6 ← (byte) main::len#1 * (const byte) SIZEOF_STRUCT_SETTING
-  (struct Setting*~) main::$2 ← (const to_nomodify struct Setting*) settings + (byte~) main::$6
-  (bool~) main::$3 ← (struct Setting*) main::setting#2 < (struct Setting*~) main::$2
-  if((bool~) main::$3) goto main::@2
+  main::idx#4 = phi( main/main::idx#0, main::@3/main::idx#5 )
+  main::setting#2 = phi( main/main::setting#0, main::@3/main::setting#1 )
+  main::len#1 = phi( main/main::len#0, main::@3/main::len#2 )
+  main::$6 = main::len#1 * SIZEOF_STRUCT_SETTING
+  main::$2 = settings + main::$6
+  main::$3 = main::setting#2 < main::$2
+  if(main::$3) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::len#3 ← phi( main::@1/(byte) main::len#1 )
-  (byte) main::idx#3 ← phi( main::@1/(byte) main::idx#4 )
-  (struct Setting*) main::setting#3 ← phi( main::@1/(struct Setting*) main::setting#2 )
-  (byte*~) main::$9 ← (byte*)(struct Setting*) main::setting#3
-  (byte*~) main::$7 ← (byte*~) main::$9 + (const byte) OFFSET_STRUCT_SETTING_OFF
-  (bool~) main::$11 ← (number) 0 != *((byte*~) main::$7)
-  (bool~) main::$4 ← ! (bool~) main::$11
-  (bool~) main::$5 ← ! (bool~) main::$4
-  if((bool~) main::$5) goto main::@3
+  main::len#3 = phi( main::@1/main::len#1 )
+  main::idx#3 = phi( main::@1/main::idx#4 )
+  main::setting#3 = phi( main::@1/main::setting#2 )
+  main::$9 = (byte*)main::setting#3
+  main::$7 = main::$9 + OFFSET_STRUCT_SETTING_OFF
+  main::$11 = 0 != *main::$7
+  main::$4 = ! main::$11
+  main::$5 = ! main::$4
+  if(main::$5) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main::@2 main::@4
-  (byte) main::idx#5 ← phi( main::@2/(byte) main::idx#3 main::@4/(byte) main::idx#1 )
-  (byte) main::len#2 ← phi( main::@2/(byte) main::len#3 main::@4/(byte) main::len#4 )
-  (struct Setting*) main::setting#4 ← phi( main::@2/(struct Setting*) main::setting#3 main::@4/(struct Setting*) main::setting#5 )
-  (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#4 + (const byte) SIZEOF_STRUCT_SETTING
+  main::idx#5 = phi( main::@2/main::idx#3, main::@4/main::idx#1 )
+  main::len#2 = phi( main::@2/main::len#3, main::@4/main::len#4 )
+  main::setting#4 = phi( main::@2/main::setting#3, main::@4/main::setting#5 )
+  main::setting#1 = main::setting#4 + SIZEOF_STRUCT_SETTING
   to:main::@1
 main::@4: scope:[main]  from main::@2
-  (byte) main::len#4 ← phi( main::@2/(byte) main::len#3 )
-  (byte) main::idx#2 ← phi( main::@2/(byte) main::idx#3 )
-  (struct Setting*) main::setting#5 ← phi( main::@2/(struct Setting*) main::setting#3 )
-  (byte*~) main::$10 ← (byte*)(struct Setting*) main::setting#5
-  (byte*~) main::$8 ← (byte*~) main::$10 + (const byte) OFFSET_STRUCT_SETTING_ID
-  *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*~) main::$8)
-  (byte) main::idx#1 ← ++ (byte) main::idx#2
+  main::len#4 = phi( main::@2/main::len#3 )
+  main::idx#2 = phi( main::@2/main::idx#3 )
+  main::setting#5 = phi( main::@2/main::setting#3 )
+  main::$10 = (byte*)main::setting#5
+  main::$8 = main::$10 + OFFSET_STRUCT_SETTING_ID
+  SCREEN[main::idx#2] = *main::$8
+  main::idx#1 = ++ main::idx#2
   to:main::@3
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -59,64 +59,64 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) OFFSET_STRUCT_SETTING_ID = (byte) 1
-(const byte) OFFSET_STRUCT_SETTING_OFF = (byte) 0
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const byte) SIZEOF_STRUCT_SETTING = (byte) 2
-(byte) Setting::id
-(byte) Setting::off
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(byte*~) main::$10
-(bool~) main::$11
-(struct Setting*~) main::$2
-(bool~) main::$3
-(bool~) main::$4
-(bool~) main::$5
-(byte~) main::$6
-(byte*~) main::$7
-(byte*~) main::$8
-(byte*~) main::$9
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::idx
-(byte) main::idx#0
-(byte) main::idx#1
-(byte) main::idx#2
-(byte) main::idx#3
-(byte) main::idx#4
-(byte) main::idx#5
-(byte) main::len
-(byte) main::len#0
-(byte) main::len#1
-(byte) main::len#2
-(byte) main::len#3
-(byte) main::len#4
-(struct Setting*) main::setting
-(struct Setting*) main::setting#0
-(struct Setting*) main::setting#1
-(struct Setting*) main::setting#2
-(struct Setting*) main::setting#3
-(struct Setting*) main::setting#4
-(struct Setting*) main::setting#5
-(const to_nomodify struct Setting*) settings[]  = { { off: (byte) 0, id: (byte) 'a' }, { off: (byte) 1, id: (byte) 'b' }, { off: (byte) 0, id: (byte) 'c' } }
+const byte OFFSET_STRUCT_SETTING_ID = 1
+const byte OFFSET_STRUCT_SETTING_OFF = 0
+const nomodify byte* SCREEN = (byte*)$400
+const byte SIZEOF_STRUCT_SETTING = 2
+byte Setting::id
+byte Setting::off
+void __start()
+label __start::@1
+label __start::@return
+void main()
+byte~ main::$0
+byte~ main::$1
+byte*~ main::$10
+bool~ main::$11
+struct Setting*~ main::$2
+bool~ main::$3
+bool~ main::$4
+bool~ main::$5
+byte~ main::$6
+byte*~ main::$7
+byte*~ main::$8
+byte*~ main::$9
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@return
+byte main::idx
+byte main::idx#0
+byte main::idx#1
+byte main::idx#2
+byte main::idx#3
+byte main::idx#4
+byte main::idx#5
+byte main::len
+byte main::len#0
+byte main::len#1
+byte main::len#2
+byte main::len#3
+byte main::len#4
+struct Setting* main::setting
+struct Setting* main::setting#0
+struct Setting* main::setting#1
+struct Setting* main::setting#2
+struct Setting* main::setting#3
+struct Setting* main::setting#4
+struct Setting* main::setting#5
+const to_nomodify struct Setting* settings[]  = { { off: 0, id: 'a' }, { off: 1, id: 'b' }, { off: 0, id: 'c' } }
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$11 ← (number) 0 != *((byte*~) main::$7)
+Adding number conversion cast (unumber) 0 in main::$11 = 0 != *main::$7
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [14] (bool~) main::$4 ← (byte) 0 == *((byte*~) main::$7) from [13] (bool~) main::$11 ← (byte) 0 != *((byte*~) main::$7)
-Inversing boolean not [15] (bool~) main::$5 ← (byte) 0 != *((byte*~) main::$7) from [14] (bool~) main::$4 ← (byte) 0 == *((byte*~) main::$7)
+Inversing boolean not [14] main::$4 = 0 == *main::$7 from [13] main::$11 = 0 != *main::$7
+Inversing boolean not [15] main::$5 = 0 != *main::$7 from [14] main::$4 = 0 == *main::$7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::len#0 = main::$1 
 Alias main::setting#2 = main::setting#3 main::setting#5 
@@ -126,115 +126,115 @@ Successful SSA optimization Pass2AliasElimination
 Alias main::setting#2 = main::setting#4 
 Alias main::len#1 = main::len#2 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) main::len#1 (byte) main::len#0
+Identical Phi Values main::len#1 main::len#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$3 [8] if((struct Setting*) main::setting#2<(struct Setting*~) main::$2) goto main::@2
-Simple Condition (bool~) main::$5 [12] if((byte) 0!=*((byte*~) main::$7)) goto main::@3
+Simple Condition main::$3 [8] if(main::setting#2<main::$2) goto main::@2
+Simple Condition main::$5 [12] if(0!=*main::$7) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [1] (byte~) main::$0 ← sizeof  (const to_nomodify struct Setting*) settings
+Constant right-side identified [1] main::$0 = sizeof  settings
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#0 = 0
-Constant (const byte) main::$0 = sizeof settings
-Constant (const struct Setting*) main::setting#0 = settings
+Constant main::idx#0 = 0
+Constant main::$0 = sizeof settings
+Constant main::setting#0 = settings
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [12] if((byte) 0!=*((byte*~) main::$7)) goto main::@3  -- *(main::$9 + OFFSET_STRUCT_SETTING_OFF)
-Converting *(pointer+n) to pointer[n] [17] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*~) main::$8)  -- *(main::$10 + OFFSET_STRUCT_SETTING_ID)
+Converting *(pointer+n) to pointer[n] [12] if(0!=*main::$7) goto main::@3  -- main::$9[OFFSET_STRUCT_SETTING_OFF]
+Converting *(pointer+n) to pointer[n] [17] SCREEN[main::idx#2] = *main::$8  -- main::$10[OFFSET_STRUCT_SETTING_ID]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero main::$9 in [10] (byte*~) main::$7 ← (byte*~) main::$9 + (const byte) OFFSET_STRUCT_SETTING_OFF
-Simplifying expression containing zero main::$9 in [12] if((byte) 0!=*((byte*~) main::$9 + (const byte) OFFSET_STRUCT_SETTING_OFF)) goto main::@3
+Simplifying expression containing zero main::$9 in [10] main::$7 = main::$9 + OFFSET_STRUCT_SETTING_OFF
+Simplifying expression containing zero main::$9 in [12] if(0!=main::$9[OFFSET_STRUCT_SETTING_OFF]) goto main::@3
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*~) main::$7 and assignment [6] (byte*~) main::$7 ← (byte*~) main::$9
-Eliminating unused variable (byte*~) main::$8 and assignment [11] (byte*~) main::$8 ← (byte*~) main::$10 + (const byte) OFFSET_STRUCT_SETTING_ID
-Eliminating unused constant (const byte) OFFSET_STRUCT_SETTING_OFF
+Eliminating unused variable main::$7 and assignment [6] main::$7 = main::$9
+Eliminating unused variable main::$8 and assignment [11] main::$8 = main::$10 + OFFSET_STRUCT_SETTING_ID
+Eliminating unused constant OFFSET_STRUCT_SETTING_OFF
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Resolving array sizeof() sizeof (const to_nomodify struct Setting*) settings
+Resolving array sizeof() sizeof settings
 Successful SSA optimization PassNSizeOfSimplification
-Constant right-side identified [0] (byte) main::len#0 ← (const byte) main::$0 / (const byte) SIZEOF_STRUCT_SETTING
+Constant right-side identified [0] main::len#0 = main::$0 / SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::len#0 = main::$0/SIZEOF_STRUCT_SETTING
+Constant main::len#0 = main::$0/SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantIdentification
 Adding number conversion cast (unumber) 3 in 
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 3
+Finalized unsigned number type 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [1] (byte~) main::$6 ← (const byte) main::len#0 * (const byte) SIZEOF_STRUCT_SETTING
+Constant right-side identified [1] main::$6 = main::len#0 * SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$6 = main::len#0*SIZEOF_STRUCT_SETTING
+Constant main::$6 = main::len#0*SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [1] (struct Setting*~) main::$2 ← (const to_nomodify struct Setting*) settings + (const byte) main::$6
+Constant right-side identified [1] main::$2 = settings + main::$6
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const struct Setting*) main::$2 = settings+main::$6
+Constant main::$2 = settings+main::$6
 Successful SSA optimization Pass2ConstantIdentification
-Inlining Noop Cast [2] (byte*~) main::$9 ← (byte*)(struct Setting*) main::setting#2 keeping main::setting#2
-Inlining Noop Cast [6] (byte*~) main::$10 ← (byte*)(struct Setting*) main::setting#2 keeping main::setting#2
+Inlining Noop Cast [2] main::$9 = (byte*)main::setting#2 keeping main::setting#2
+Inlining Noop Cast [6] main::$10 = (byte*)main::setting#2 keeping main::setting#2
 Successful SSA optimization Pass2NopCastInlining
-Inlining constant with var siblings (const byte) main::idx#0
-Inlining constant with var siblings (const struct Setting*) main::setting#0
-Constant inlined main::$6 = (const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING
-Constant inlined main::idx#0 = (byte) 0
-Constant inlined main::setting#0 = (const to_nomodify struct Setting*) settings
-Constant inlined main::$2 = (const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING
-Constant inlined main::$0 = (byte) 3*(const byte) SIZEOF_STRUCT_SETTING
+Inlining constant with var siblings main::idx#0
+Inlining constant with var siblings main::setting#0
+Constant inlined main::$6 = main::len#0*SIZEOF_STRUCT_SETTING
+Constant inlined main::idx#0 = 0
+Constant inlined main::setting#0 = settings
+Constant inlined main::$2 = settings+main::len#0*SIZEOF_STRUCT_SETTING
+Constant inlined main::$0 = 3*SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@5(between main::@2 and main::@3)
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 3 initial phi equivalence classes
-Coalesced [7] main::idx#8 ← main::idx#1
-Coalesced [10] main::setting#6 ← main::setting#1
-Coalesced [11] main::idx#6 ← main::idx#5
-Coalesced (already) [12] main::idx#7 ← main::idx#2
+Coalesced [7] main::idx#8 = main::idx#1
+Coalesced [10] main::setting#6 = main::setting#1
+Coalesced [11] main::idx#6 = main::idx#5
+Coalesced (already) [12] main::idx#7 = main::idx#2
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) main::@5
+Culled Empty Block label main::@5
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@3
-  [1] (byte) main::idx#2 ← phi( main/(byte) 0 main::@3/(byte) main::idx#5 )
-  [1] (struct Setting*) main::setting#2 ← phi( main/(const to_nomodify struct Setting*) settings main::@3/(struct Setting*) main::setting#1 )
-  [2] if((struct Setting*) main::setting#2<(const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2
+  [1] main::idx#2 = phi( main/0, main::@3/main::idx#5 )
+  [1] main::setting#2 = phi( main/settings, main::@3/main::setting#1 )
+  [2] if(main::setting#2<settings+main::len#0*SIZEOF_STRUCT_SETTING) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [4] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3
+  [4] if(0!=*((byte*)main::setting#2)) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [5] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID)
-  [6] (byte) main::idx#1 ← ++ (byte) main::idx#2
+  [5] SCREEN[main::idx#2] = ((byte*)main::setting#2)[OFFSET_STRUCT_SETTING_ID]
+  [6] main::idx#1 = ++ main::idx#2
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@4
-  [7] (byte) main::idx#5 ← phi( main::@2/(byte) main::idx#2 main::@4/(byte) main::idx#1 )
-  [8] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING
+  [7] main::idx#5 = phi( main::@2/main::idx#2, main::@4/main::idx#1 )
+  [8] main::setting#1 = main::setting#2 + SIZEOF_STRUCT_SETTING
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Setting::id
-(byte) Setting::off
-(void()) main()
-(byte) main::idx
-(byte) main::idx#1 22.0
-(byte) main::idx#2 11.0
-(byte) main::idx#5 16.5
-(byte) main::len
-(struct Setting*) main::setting
-(struct Setting*) main::setting#1 22.0
-(struct Setting*) main::setting#2 5.5
+byte Setting::id
+byte Setting::off
+void main()
+byte main::idx
+byte main::idx#1 22.0
+byte main::idx#2 11.0
+byte main::idx#5 16.5
+byte main::len
+struct Setting* main::setting
+struct Setting* main::setting#1 22.0
+struct Setting* main::setting#2 5.5
 
 Initial phi equivalence classes
 [ main::setting#2 main::setting#1 ]
@@ -244,103 +244,17 @@ Complete equivalence classes
 [ main::idx#2 main::idx#5 main::idx#1 ]
 Allocated zp[2]:2 [ main::setting#2 main::setting#1 ]
 Allocated zp[1]:4 [ main::idx#2 main::idx#5 main::idx#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates problem with conditions using negated struct references
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const SIZEOF_STRUCT_SETTING = 2
-  .const OFFSET_STRUCT_SETTING_ID = 1
-  .label SCREEN = $400
-  // main
-main: {
-    .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
-    .label setting = 2
-    .label idx = 4
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z idx
-    // [1] phi (struct Setting*) main::setting#2 = (const to_nomodify struct Setting*) settings [phi:main->main::@1#1] -- pssz1=pssc1 
-    lda #<settings
-    sta.z setting
-    lda #>settings
-    sta.z setting+1
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] if((struct Setting*) main::setting#2<(const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
-    lda.z setting+1
-    cmp #>settings+len*SIZEOF_STRUCT_SETTING
-    bcc __b2
-    bne !+
-    lda.z setting
-    cmp #<settings+len*SIZEOF_STRUCT_SETTING
-    bcc __b2
-  !:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-    // main::@2
-  __b2:
-    // [4] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (setting),y
-    cmp #0
-    bne __b3_from___b2
-    jmp __b4
-    // main::@4
-  __b4:
-    // [5] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) -- pbuc1_derefidx_vbuz1=pbuz2_derefidx_vbuc2 
-    ldx.z idx
-    ldy #OFFSET_STRUCT_SETTING_ID
-    lda (setting),y
-    sta SCREEN,x
-    // [6] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuz1=_inc_vbuz1 
-    inc.z idx
-    // [7] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
-  __b3_from___b2:
-  __b3_from___b4:
-    // [7] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
-    jmp __b3
-    // main::@3
-  __b3:
-    // [8] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
-    lda #SIZEOF_STRUCT_SETTING
-    clc
-    adc.z setting
-    sta.z setting
-    bcc !+
-    inc.z setting+1
-  !:
-    // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-  __b1_from___b3:
-    // [1] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
-    // [1] phi (struct Setting*) main::setting#2 = (struct Setting*) main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
-    jmp __b1
-}
-  // File Data
-  settings: .byte 0, 'a', 1, 'b', 0, 'c'
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] if((struct Setting*) main::setting#2<(const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [2] if(main::setting#2<settings+main::len#0*SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::idx#2 main::idx#5 main::idx#1 ]
-Statement [4] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] if(0!=*((byte*)main::setting#2)) goto main::@3 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ main::idx#2 main::idx#5 main::idx#1 ]
-Statement [5] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING [ main::setting#1 main::idx#5 ] (  [ main::setting#1 main::idx#5 ] { }  ) always clobbers reg byte a 
-Statement [2] if((struct Setting*) main::setting#2<(const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a 
-Statement [4] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [5] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [8] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING [ main::setting#1 main::idx#5 ] (  [ main::setting#1 main::idx#5 ] { }  ) always clobbers reg byte a 
+Statement [5] SCREEN[main::idx#2] = ((byte*)main::setting#2)[OFFSET_STRUCT_SETTING_ID] [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] main::setting#1 = main::setting#2 + SIZEOF_STRUCT_SETTING [ main::setting#1 main::idx#5 ] (  [ main::setting#1 main::idx#5 ] { }  ) always clobbers reg byte a 
+Statement [2] if(main::setting#2<settings+main::len#0*SIZEOF_STRUCT_SETTING) goto main::@2 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a 
+Statement [4] if(0!=*((byte*)main::setting#2)) goto main::@3 [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] SCREEN[main::idx#2] = ((byte*)main::setting#2)[OFFSET_STRUCT_SETTING_ID] [ main::setting#2 main::idx#2 ] (  [ main::setting#2 main::idx#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] main::setting#1 = main::setting#2 + SIZEOF_STRUCT_SETTING [ main::setting#1 main::idx#5 ] (  [ main::setting#1 main::idx#5 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::setting#2 main::setting#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::idx#2 main::idx#5 main::idx#1 ] : zp[1]:4 , reg byte x , 
 
@@ -370,9 +284,9 @@ main: {
     .label setting = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::idx#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [1] phi (struct Setting*) main::setting#2 = (const to_nomodify struct Setting*) settings [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [1] phi main::setting#2 = settings [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<settings
     sta.z setting
     lda #>settings
@@ -380,7 +294,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if((struct Setting*) main::setting#2<(const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
+    // [2] if(main::setting#2<settings+main::len#0*SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
     bcc __b2
@@ -396,7 +310,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [4] if(0!=*((byte*)main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
@@ -404,20 +318,20 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [5] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [5] SCREEN[main::idx#2] = ((byte*)main::setting#2)[OFFSET_STRUCT_SETTING_ID] -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_SETTING_ID
     lda (setting),y
     sta SCREEN,x
-    // [6] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+    // [6] main::idx#1 = ++ main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
     // [7] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
   __b3_from___b2:
   __b3_from___b4:
-    // [7] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
+    // [7] phi main::idx#5 = main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [8] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
+    // [8] main::setting#1 = main::setting#2 + SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_SETTING
     clc
     adc.z setting
@@ -427,8 +341,8 @@ main: {
   !:
     // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
   __b1_from___b3:
-    // [1] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
-    // [1] phi (struct Setting*) main::setting#2 = (struct Setting*) main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi main::idx#2 = main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi main::setting#2 = main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -451,27 +365,27 @@ Removing instruction __b1_from___b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) OFFSET_STRUCT_SETTING_ID = (byte) 1
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const byte) SIZEOF_STRUCT_SETTING = (byte) 2
-(byte) Setting::id
-(byte) Setting::off
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(byte) main::idx
-(byte) main::idx#1 reg byte x 22.0
-(byte) main::idx#2 reg byte x 11.0
-(byte) main::idx#5 reg byte x 16.5
-(byte) main::len
-(const byte) main::len#0 len = (byte) 3*(const byte) SIZEOF_STRUCT_SETTING/(const byte) SIZEOF_STRUCT_SETTING
-(struct Setting*) main::setting
-(struct Setting*) main::setting#1 setting zp[2]:2 22.0
-(struct Setting*) main::setting#2 setting zp[2]:2 5.5
-(const to_nomodify struct Setting*) settings[]  = { { off: (byte) 0, id: (byte) 'a' }, { off: (byte) 1, id: (byte) 'b' }, { off: (byte) 0, id: (byte) 'c' } }
+const byte OFFSET_STRUCT_SETTING_ID = 1
+const nomodify byte* SCREEN = (byte*) 1024
+const byte SIZEOF_STRUCT_SETTING = 2
+byte Setting::id
+byte Setting::off
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@return
+byte main::idx
+byte main::idx#1 reg byte x 22.0
+byte main::idx#2 reg byte x 11.0
+byte main::idx#5 reg byte x 16.5
+byte main::len
+const byte main::len#0 len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
+struct Setting* main::setting
+struct Setting* main::setting#1 setting zp[2]:2 22.0
+struct Setting* main::setting#2 setting zp[2]:2 5.5
+const to_nomodify struct Setting* settings[]  = { { off: 0, id: 'a' }, { off: 1, id: 'b' }, { off: 0, id: 'c' } }
 
 zp[2]:2 [ main::setting#2 main::setting#1 ]
 reg byte x [ main::idx#2 main::idx#5 main::idx#1 ]
@@ -495,9 +409,9 @@ main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
     .label setting = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::idx#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::idx#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [1] phi (struct Setting*) main::setting#2 = (const to_nomodify struct Setting*) settings [phi:main->main::@1#1] -- pssz1=pssc1 
+    // [1] phi main::setting#2 = settings [phi:main->main::@1#1] -- pssz1=pssc1 
     lda #<settings
     sta.z setting
     lda #>settings
@@ -505,7 +419,7 @@ main: {
     // main::@1
   __b1:
     // for(struct Setting* setting = settings; setting<settings+len; setting++)
-    // [2] if((struct Setting*) main::setting#2<(const to_nomodify struct Setting*) settings+(const byte) main::len#0*(const byte) SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
+    // [2] if(main::setting#2<settings+main::len#0*SIZEOF_STRUCT_SETTING) goto main::@2 -- pssz1_lt_pssc1_then_la1 
     lda.z setting+1
     cmp #>settings+len*SIZEOF_STRUCT_SETTING
     bcc __b2
@@ -521,26 +435,26 @@ main: {
     // main::@2
   __b2:
     // if (! setting->off)
-    // [4] if((byte) 0!=*((byte*)(struct Setting*) main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [4] if(0!=*((byte*)main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
     bne __b3
     // main::@4
     // SCREEN[idx++] = setting->id
-    // [5] *((const nomodify byte*) SCREEN + (byte) main::idx#2) ← *((byte*)(struct Setting*) main::setting#2 + (const byte) OFFSET_STRUCT_SETTING_ID) -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
+    // [5] SCREEN[main::idx#2] = ((byte*)main::setting#2)[OFFSET_STRUCT_SETTING_ID] -- pbuc1_derefidx_vbuxx=pbuz1_derefidx_vbuc2 
     ldy #OFFSET_STRUCT_SETTING_ID
     lda (setting),y
     sta SCREEN,x
     // SCREEN[idx++] = setting->id;
-    // [6] (byte) main::idx#1 ← ++ (byte) main::idx#2 -- vbuxx=_inc_vbuxx 
+    // [6] main::idx#1 = ++ main::idx#2 -- vbuxx=_inc_vbuxx 
     inx
     // [7] phi from main::@2 main::@4 to main::@3 [phi:main::@2/main::@4->main::@3]
-    // [7] phi (byte) main::idx#5 = (byte) main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
+    // [7] phi main::idx#5 = main::idx#2 [phi:main::@2/main::@4->main::@3#0] -- register_copy 
     // main::@3
   __b3:
     // for(struct Setting* setting = settings; setting<settings+len; setting++)
-    // [8] (struct Setting*) main::setting#1 ← (struct Setting*) main::setting#2 + (const byte) SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
+    // [8] main::setting#1 = main::setting#2 + SIZEOF_STRUCT_SETTING -- pssz1=pssz1_plus_vbuc1 
     lda #SIZEOF_STRUCT_SETTING
     clc
     adc.z setting
@@ -549,8 +463,8 @@ main: {
     inc.z setting+1
   !:
     // [1] phi from main::@3 to main::@1 [phi:main::@3->main::@1]
-    // [1] phi (byte) main::idx#2 = (byte) main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
-    // [1] phi (struct Setting*) main::setting#2 = (struct Setting*) main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
+    // [1] phi main::idx#2 = main::idx#5 [phi:main::@3->main::@1#0] -- register_copy 
+    // [1] phi main::setting#2 = main::setting#1 [phi:main::@3->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

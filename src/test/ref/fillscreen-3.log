@@ -2,26 +2,26 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte*) main::dst#0 ← (const byte*) SCREEN
+  main::dst#0 = SCREEN
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte*) main::dst#2 ← phi( main/(byte*) main::dst#0 main::@2/(byte*) main::dst#1 )
-  (byte*~) main::$0 ← (const byte*) SCREEN + (number) $3e8
-  (bool~) main::$1 ← (byte*) main::dst#2 != (byte*~) main::$0
-  if((bool~) main::$1) goto main::@2
+  main::dst#2 = phi( main/main::dst#0, main::@2/main::dst#1 )
+  main::$0 = SCREEN + $3e8
+  main::$1 = main::dst#2 != main::$0
+  if(main::$1) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) main::dst#3 ← phi( main::@1/(byte*) main::dst#2 )
-  *((byte*) main::dst#3) ← (byte) ' '
-  (byte*) main::dst#1 ← ++ (byte*) main::dst#3
+  main::dst#3 = phi( main::@1/main::dst#2 )
+  *main::dst#3 = ' '
+  main::dst#1 = ++ main::dst#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -36,39 +36,39 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(byte*~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::dst
-(byte*) main::dst#0
-(byte*) main::dst#1
-(byte*) main::dst#2
-(byte*) main::dst#3
+const byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+byte*~ main::$0
+bool~ main::$1
+label main::@1
+label main::@2
+label main::@return
+byte* main::dst
+byte* main::dst#0
+byte* main::dst#1
+byte* main::dst#2
+byte* main::dst#3
 
-Adding number conversion cast (unumber) $3e8 in (byte*~) main::$0 ← (const byte*) SCREEN + (number) $3e8
+Adding number conversion cast (unumber) $3e8 in main::$0 = SCREEN + $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3e8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3e8
+Finalized unsigned number type $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::dst#2 = main::dst#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$1 [4] if((byte*) main::dst#2!=(byte*~) main::$0) goto main::@2
+Simple Condition main::$1 [4] if(main::dst#2!=main::$0) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte*~) main::$0 ← (const byte*) SCREEN + (word) $3e8
+Constant right-side identified [2] main::$0 = SCREEN + $3e8
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::dst#0 = SCREEN
-Constant (const byte*) main::$0 = SCREEN+$3e8
+Constant main::dst#0 = SCREEN
+Constant main::$0 = SCREEN+$3e8
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -77,105 +77,51 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const byte*) main::dst#0
-Constant inlined main::dst#0 = (const byte*) SCREEN
-Constant inlined main::$0 = (const byte*) SCREEN+(word) $3e8
+Inlining constant with var siblings main::dst#0
+Constant inlined main::dst#0 = SCREEN
+Constant inlined main::$0 = SCREEN+$3e8
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [6] main::dst#4 ← main::dst#1
+Coalesced [6] main::dst#4 = main::dst#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] (byte*) main::dst#2 ← phi( main/(const byte*) SCREEN main::@2/(byte*) main::dst#1 )
-  [2] if((byte*) main::dst#2!=(const byte*) SCREEN+(word) $3e8) goto main::@2
+  [1] main::dst#2 = phi( main/SCREEN, main::@2/main::dst#1 )
+  [2] if(main::dst#2!=SCREEN+$3e8) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [4] *((byte*) main::dst#2) ← (byte) ' '
-  [5] (byte*) main::dst#1 ← ++ (byte*) main::dst#2
+  [4] *main::dst#2 = ' '
+  [5] main::dst#1 = ++ main::dst#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte*) main::dst
-(byte*) main::dst#1 22.0
-(byte*) main::dst#2 14.666666666666666
+void main()
+byte* main::dst
+byte* main::dst#1 22.0
+byte* main::dst#2 14.666666666666666
 
 Initial phi equivalence classes
 [ main::dst#2 main::dst#1 ]
 Complete equivalence classes
 [ main::dst#2 main::dst#1 ]
 Allocated zp[2]:2 [ main::dst#2 main::dst#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Fill screen using a pointer
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .label dst = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte*) main::dst#2 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
-    lda #<SCREEN
-    sta.z dst
-    lda #>SCREEN
-    sta.z dst+1
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] if((byte*) main::dst#2!=(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z dst+1
-    cmp #>SCREEN+$3e8
-    bne __b2
-    lda.z dst
-    cmp #<SCREEN+$3e8
-    bne __b2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-    // main::@2
-  __b2:
-    // [4] *((byte*) main::dst#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
-    lda #' '
-    ldy #0
-    sta (dst),y
-    // [5] (byte*) main::dst#1 ← ++ (byte*) main::dst#2 -- pbuz1=_inc_pbuz1 
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi (byte*) main::dst#2 = (byte*) main::dst#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] if((byte*) main::dst#2!=(const byte*) SCREEN+(word) $3e8) goto main::@2 [ main::dst#2 ] (  [ main::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [4] *((byte*) main::dst#2) ← (byte) ' ' [ main::dst#2 ] (  [ main::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] if(main::dst#2!=SCREEN+$3e8) goto main::@2 [ main::dst#2 ] (  [ main::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [4] *main::dst#2 = ' ' [ main::dst#2 ] (  [ main::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::dst#2 main::dst#1 ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -199,7 +145,7 @@ main: {
     .label dst = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte*) main::dst#2 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::dst#2 = SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z dst
     lda #>SCREEN
@@ -207,7 +153,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if((byte*) main::dst#2!=(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [2] if(main::dst#2!=SCREEN+$3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -221,18 +167,18 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] *((byte*) main::dst#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [4] *main::dst#2 = ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (dst),y
-    // [5] (byte*) main::dst#1 ← ++ (byte*) main::dst#2 -- pbuz1=_inc_pbuz1 
+    // [5] main::dst#1 = ++ main::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [1] phi (byte*) main::dst#2 = (byte*) main::dst#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::dst#2 = main::dst#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -247,14 +193,14 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte*) main::dst
-(byte*) main::dst#1 dst zp[2]:2 22.0
-(byte*) main::dst#2 dst zp[2]:2 14.666666666666666
+const byte* SCREEN = (byte*) 1024
+void main()
+label main::@1
+label main::@2
+label main::@return
+byte* main::dst
+byte* main::dst#1 dst zp[2]:2 22.0
+byte* main::dst#2 dst zp[2]:2 14.666666666666666
 
 zp[2]:2 [ main::dst#2 main::dst#1 ]
 
@@ -274,7 +220,7 @@ Score: 511
 main: {
     .label dst = 2
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte*) main::dst#2 = (const byte*) SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    // [1] phi main::dst#2 = SCREEN [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z dst
     lda #>SCREEN
@@ -282,7 +228,7 @@ main: {
     // main::@1
   __b1:
     // for(char* dst = SCREEN; dst!=SCREEN + 1000; dst++)
-    // [2] if((byte*) main::dst#2!=(const byte*) SCREEN+(word) $3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [2] if(main::dst#2!=SCREEN+$3e8) goto main::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>SCREEN+$3e8
     bne __b2
@@ -296,18 +242,18 @@ main: {
     // main::@2
   __b2:
     // *dst = ' '
-    // [4] *((byte*) main::dst#2) ← (byte) ' ' -- _deref_pbuz1=vbuc1 
+    // [4] *main::dst#2 = ' ' -- _deref_pbuz1=vbuc1 
     lda #' '
     ldy #0
     sta (dst),y
     // for(char* dst = SCREEN; dst!=SCREEN + 1000; dst++)
-    // [5] (byte*) main::dst#1 ← ++ (byte*) main::dst#2 -- pbuz1=_inc_pbuz1 
+    // [5] main::dst#1 = ++ main::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi (byte*) main::dst#2 = (byte*) main::dst#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::dst#2 = main::dst#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

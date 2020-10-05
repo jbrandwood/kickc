@@ -1,64 +1,64 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@6
-  (bool~) main::$10 ← (number) 0 != (number) 1
-  if((bool~) main::$10) goto main::@2
+  main::$10 = 0 != 1
+  if(main::$10) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1 main::@2
-  (bool~) main::$0 ← *((const nomodify byte*) VIC_RASTER) != (number) $ff
-  if((bool~) main::$0) goto main::@2
+  main::$0 = *VIC_RASTER != $ff
+  if(main::$0) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  *((const nomodify byte*) VIC_BG_COLOR) ← (number) 0
-  (byte*) main::line#0 ← (const nomodify byte*) SCREEN
-  (byte) main::i#0 ← (byte) 0
+  *VIC_BG_COLOR = 0
+  main::line#0 = SCREEN
+  main::i#0 = 0
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@7
-  (byte*) main::line#4 ← phi( main::@3/(byte*) main::line#0 main::@7/(byte*) main::line#1 )
-  (byte) main::i#2 ← phi( main::@3/(byte) main::i#0 main::@7/(byte) main::i#1 )
-  (bool~) main::$1 ← (byte) main::i#2 < (number) $19
-  if((bool~) main::$1) goto main::@5
+  main::line#4 = phi( main::@3/main::line#0, main::@7/main::line#1 )
+  main::i#2 = phi( main::@3/main::i#0, main::@7/main::i#1 )
+  main::$1 = main::i#2 < $19
+  if(main::$1) goto main::@5
   to:main::@6
 main::@5: scope:[main]  from main::@4
-  (byte*) main::line#2 ← phi( main::@4/(byte*) main::line#4 )
-  (byte) main::i#3 ← phi( main::@4/(byte) main::i#2 )
-  (byte~) main::$4 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$4)
-  *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' '
-  (byte~) main::$5 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  *((const word*) entities + (byte~) main::$5) ← *((const word*) entities + (byte~) main::$5) + (number) 1
-  (byte~) main::$6 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  (bool~) main::$2 ← *((const word*) entities + (byte~) main::$6) > (number) $27
-  (bool~) main::$3 ← ! (bool~) main::$2
-  if((bool~) main::$3) goto main::@7
+  main::line#2 = phi( main::@4/main::line#4 )
+  main::i#3 = phi( main::@4/main::i#2 )
+  main::$4 = main::i#3 * SIZEOF_WORD
+  main::$9 = (byte)entities[main::$4]
+  main::line#2[main::$9] = ' '
+  main::$5 = main::i#3 * SIZEOF_WORD
+  entities[main::$5] = entities[main::$5] + 1
+  main::$6 = main::i#3 * SIZEOF_WORD
+  main::$2 = entities[main::$6] > $27
+  main::$3 = ! main::$2
+  if(main::$3) goto main::@7
   to:main::@8
 main::@6: scope:[main]  from main::@4
-  *((const nomodify byte*) VIC_BG_COLOR) ← (number) $f
+  *VIC_BG_COLOR = $f
   to:main::@1
 main::@7: scope:[main]  from main::@5 main::@8
-  (byte*) main::line#3 ← phi( main::@5/(byte*) main::line#2 main::@8/(byte*) main::line#5 )
-  (byte) main::i#4 ← phi( main::@5/(byte) main::i#3 main::@8/(byte) main::i#5 )
-  (byte~) main::$7 ← (byte) main::i#4 * (const byte) SIZEOF_WORD
-  *((byte*) main::line#3 + *((const word*) entities + (byte~) main::$7)) ← (byte) '*'
-  (byte*) main::line#1 ← (byte*) main::line#3 + (number) $28
-  (byte) main::i#1 ← ++ (byte) main::i#4
+  main::line#3 = phi( main::@5/main::line#2, main::@8/main::line#5 )
+  main::i#4 = phi( main::@5/main::i#3, main::@8/main::i#5 )
+  main::$7 = main::i#4 * SIZEOF_WORD
+  main::line#3[entities[main::$7]] = '*'
+  main::line#1 = main::line#3 + $28
+  main::i#1 = ++ main::i#4
   to:main::@4
 main::@8: scope:[main]  from main::@5
-  (byte*) main::line#5 ← phi( main::@5/(byte*) main::line#2 )
-  (byte) main::i#5 ← phi( main::@5/(byte) main::i#3 )
-  (byte~) main::$8 ← (byte) main::i#5 * (const byte) SIZEOF_WORD
-  *((const word*) entities + (byte~) main::$8) ← (number) 0
+  main::line#5 = phi( main::@5/main::line#2 )
+  main::i#5 = phi( main::@5/main::i#3 )
+  main::$8 = main::i#5 * SIZEOF_WORD
+  entities[main::$8] = 0
   to:main::@7
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -69,62 +69,62 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const byte) SIZEOF_WORD = (byte) 2
-(const nomodify byte*) VIC_BG_COLOR = (byte*)(number) $d020
-(const nomodify byte*) VIC_RASTER = (byte*)(number) $d012
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(const word*) entities[(number) $19]  = { fill( $19, 0) }
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(bool~) main::$10
-(bool~) main::$2
-(bool~) main::$3
-(byte~) main::$4
-(byte~) main::$5
-(byte~) main::$6
-(byte~) main::$7
-(byte~) main::$8
-(byte~) main::$9
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(label) main::@8
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
-(byte) main::i#4
-(byte) main::i#5
-(byte*) main::line
-(byte*) main::line#0
-(byte*) main::line#1
-(byte*) main::line#2
-(byte*) main::line#3
-(byte*) main::line#4
-(byte*) main::line#5
+const nomodify byte* SCREEN = (byte*)$400
+const byte SIZEOF_WORD = 2
+const nomodify byte* VIC_BG_COLOR = (byte*)$d020
+const nomodify byte* VIC_RASTER = (byte*)$d012
+void __start()
+label __start::@1
+label __start::@return
+const word* entities[$19]  = { fill( $19, 0) }
+void main()
+bool~ main::$0
+bool~ main::$1
+bool~ main::$10
+bool~ main::$2
+bool~ main::$3
+byte~ main::$4
+byte~ main::$5
+byte~ main::$6
+byte~ main::$7
+byte~ main::$8
+byte~ main::$9
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+label main::@7
+label main::@8
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte main::i#5
+byte* main::line
+byte* main::line#0
+byte* main::line#1
+byte* main::line#2
+byte* main::line#3
+byte* main::line#4
+byte* main::line#5
 
-Adding number conversion cast (unumber) $ff in (bool~) main::$0 ← *((const nomodify byte*) VIC_RASTER) != (number) $ff
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) VIC_BG_COLOR) ← (number) 0
-Adding number conversion cast (unumber) $19 in (bool~) main::$1 ← (byte) main::i#2 < (number) $19
-Adding number conversion cast (unumber) 1 in *((const word*) entities + (byte~) main::$5) ← *((const word*) entities + (byte~) main::$5) + (number) 1
-Adding number conversion cast (unumber) $27 in (bool~) main::$2 ← *((const word*) entities + (byte~) main::$6) > (number) $27
-Adding number conversion cast (unumber) $f in *((const nomodify byte*) VIC_BG_COLOR) ← (number) $f
-Adding number conversion cast (unumber) $28 in (byte*) main::line#1 ← (byte*) main::line#3 + (number) $28
-Adding number conversion cast (unumber) 0 in *((const word*) entities + (byte~) main::$8) ← (number) 0
+Adding number conversion cast (unumber) $ff in main::$0 = *VIC_RASTER != $ff
+Adding number conversion cast (unumber) 0 in *VIC_BG_COLOR = 0
+Adding number conversion cast (unumber) $19 in main::$1 = main::i#2 < $19
+Adding number conversion cast (unumber) 1 in entities[main::$5] = entities[main::$5] + 1
+Adding number conversion cast (unumber) $27 in main::$2 = entities[main::$6] > $27
+Adding number conversion cast (unumber) $f in *VIC_BG_COLOR = $f
+Adding number conversion cast (unumber) $28 in main::line#1 = main::line#3 + $28
+Adding number conversion cast (unumber) 0 in entities[main::$8] = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) VIC_BG_COLOR) ← (unumber)(number) 0
-Inlining cast *((const nomodify byte*) VIC_BG_COLOR) ← (unumber)(number) $f
-Inlining cast *((const word*) entities + (byte~) main::$8) ← (unumber)(number) 0
+Inlining cast *VIC_BG_COLOR = (unumber)0
+Inlining cast *VIC_BG_COLOR = (unumber)$f
+Inlining cast entities[main::$8] = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53280
@@ -138,16 +138,16 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast $28
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $19
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $27
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type $ff
+Finalized unsigned number type 0
+Finalized unsigned number type $19
+Finalized unsigned number type 1
+Finalized unsigned number type $27
+Finalized unsigned number type $f
+Finalized unsigned number type $28
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [19] (bool~) main::$3 ← *((const word*) entities + (byte~) main::$6) <= (byte) $27 from [18] (bool~) main::$2 ← *((const word*) entities + (byte~) main::$6) > (byte) $27
+Inversing boolean not [19] main::$3 = entities[main::$6] <= $27 from [18] main::$2 = entities[main::$6] > $27
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::i#2 = main::i#3 main::i#5 
 Alias main::line#2 = main::line#4 main::line#5 
@@ -155,21 +155,21 @@ Successful SSA optimization Pass2AliasElimination
 Alias main::i#2 = main::i#4 
 Alias main::line#2 = main::line#3 
 Successful SSA optimization Pass2AliasElimination
-Identified duplicate assignment right side [15] (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-Identified duplicate assignment right side [17] (byte~) main::$6 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [15] main::$5 = main::i#2 * SIZEOF_WORD
+Identified duplicate assignment right side [17] main::$6 = main::i#2 * SIZEOF_WORD
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$10 [2] if((number) 0!=(number) 1) goto main::@2
-Simple Condition (bool~) main::$0 [4] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@2
-Simple Condition (bool~) main::$1 [10] if((byte) main::i#2<(byte) $19) goto main::@5
-Simple Condition (bool~) main::$3 [18] if(*((const word*) entities + (byte~) main::$6)<=(byte) $27) goto main::@7
+Simple Condition main::$10 [2] if(0!=1) goto main::@2
+Simple Condition main::$0 [4] if(*VIC_RASTER!=$ff) goto main::@2
+Simple Condition main::$1 [10] if(main::i#2<$19) goto main::@5
+Simple Condition main::$3 [18] if(entities[main::$6]<=$27) goto main::@7
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte*) main::line#0 = SCREEN
-Constant (const byte) main::i#0 = 0
+Constant main::line#0 = SCREEN
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [2] if((number) 0!=(number) 1) goto main::@2
+if() condition always true - replacing block destination [2] if(0!=1) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [18] if(*((const word*) entities + (byte~) main::$6)<=(byte) $27) goto main::@7
-De-inlining pointer[w] to *(pointer+w)   [21] *((byte*) main::line#2 + *((const word*) entities + (byte~) main::$7)) ← (byte) '*'
+Rewriting conditional comparison [18] if(entities[main::$6]<=$27) goto main::@7
+De-inlining pointer[w] to *(pointer+w)   [21] main::line#2[entities[main::$7]] = '*'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -178,29 +178,29 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) $27+1 in [11] if(*((const word*) entities + (byte~) main::$6)<(byte) $27+(number) 1) goto main::@7
-Adding number conversion cast (unumber) 1 in [11] if(*((const word*) entities + (byte~) main::$6)<(unumber)(byte) $27+(number) 1) goto main::@7
+Adding number conversion cast (unumber) $27+1 in [11] if(entities[main::$6]<$27+1) goto main::@7
+Adding number conversion cast (unumber) 1 in [11] if(entities[main::$6]<(unumber)$27+1) goto main::@7
 Successful SSA optimization PassNAddNumberTypeConversions
-Simplifying constant integer cast (byte) $27+(unumber)(number) 1
+Simplifying constant integer cast $27+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::$5 = main::$4 main::$6 
 Successful SSA optimization Pass2AliasElimination
-Rewriting multiplication to use shift [5] (byte~) main::$5 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [11] (byte~) main::$7 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
-Rewriting multiplication to use shift [16] (byte~) main::$8 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [5] main::$5 = main::i#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [11] main::$7 = main::i#2 * SIZEOF_WORD
+Rewriting multiplication to use shift [16] main::$8 = main::i#2 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte*) main::line#0
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::line#0 = (const nomodify byte*) SCREEN
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::line#0
+Inlining constant with var siblings main::i#0
+Constant inlined main::line#0 = SCREEN
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Identified duplicate assignment right side [11] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
-Identified duplicate assignment right side [16] (byte~) main::$8 ← (byte) main::i#2 << (byte) 1
+Identified duplicate assignment right side [11] main::$7 = main::i#2 << 1
+Identified duplicate assignment right side [16] main::$8 = main::i#2 << 1
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Eliminating unused constant (const byte) SIZEOF_WORD
+Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
 Alias main::$7 = main::$5 main::$8 
 Successful SSA optimization Pass2AliasElimination
@@ -208,10 +208,10 @@ Adding NOP phi() at start of main::@1
 CALL GRAPH
 
 Created 2 initial phi equivalence classes
-Coalesced [17] main::i#6 ← main::i#1
-Coalesced [18] main::line#6 ← main::line#1
+Coalesced [17] main::i#6 = main::i#1
+Coalesced [18] main::line#6 = main::line#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
@@ -222,53 +222,53 @@ Renumbering block main::@8 to main::@7
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@5
-  [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1
+  [1] if(*VIC_RASTER!=$ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0
+  [2] *VIC_BG_COLOR = 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@6
-  [3] (byte*) main::line#2 ← phi( main::@2/(const nomodify byte*) SCREEN main::@6/(byte*) main::line#1 )
-  [3] (byte) main::i#2 ← phi( main::@2/(byte) 0 main::@6/(byte) main::i#1 )
-  [4] if((byte) main::i#2<(byte) $19) goto main::@4
+  [3] main::line#2 = phi( main::@2/SCREEN, main::@6/main::line#1 )
+  [3] main::i#2 = phi( main::@2/0, main::@6/main::i#1 )
+  [4] if(main::i#2<$19) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@3
-  [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f
+  [5] *VIC_BG_COLOR = $f
   to:main::@1
 main::@4: scope:[main]  from main::@3
-  [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1
-  [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7)
-  [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' '
-  [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1
-  [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6
+  [6] main::$7 = main::i#2 << 1
+  [7] main::$9 = (byte)entities[main::$7]
+  [8] main::line#2[main::$9] = ' '
+  [9] entities[main::$7] = entities[main::$7] + 1
+  [10] if(entities[main::$7]<$27+1) goto main::@6
   to:main::@7
 main::@7: scope:[main]  from main::@4
-  [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0
+  [11] entities[main::$7] = 0
   to:main::@6
 main::@6: scope:[main]  from main::@4 main::@7
-  [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7)
-  [13] *((byte*~) main::$11) ← (byte) '*'
-  [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28
-  [15] (byte) main::i#1 ← ++ (byte) main::i#2
+  [12] main::$11 = main::line#2 + entities[main::$7]
+  [13] *main::$11 = '*'
+  [14] main::line#1 = main::line#2 + $28
+  [15] main::i#1 = ++ main::i#2
   to:main::@3
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte*~) main::$11 202.0
-(byte~) main::$7 100.99999999999999
-(byte~) main::$9 202.0
-(byte) main::i
-(byte) main::i#1 202.0
-(byte) main::i#2 36.72727272727273
-(byte*) main::line
-(byte*) main::line#1 101.0
-(byte*) main::line#2 40.4
+void main()
+byte*~ main::$11 202.0
+byte~ main::$7 100.99999999999999
+byte~ main::$9 202.0
+byte main::i
+byte main::i#1 202.0
+byte main::i#2 36.72727272727273
+byte* main::line
+byte* main::line#1 101.0
+byte* main::line#2 40.4
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -287,169 +287,32 @@ Allocated zp[2]:3 [ main::line#2 main::line#1 ]
 Allocated zp[1]:5 [ main::$7 ]
 Allocated zp[1]:6 [ main::$9 ]
 Allocated zp[2]:7 [ main::$11 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test that the multiplication of a idx*sizeof(element) is reused inside loops
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label VIC_RASTER = $d012
-  .label VIC_BG_COLOR = $d020
-  .label SCREEN = $400
-  // main
-main: {
-    .label __7 = 5
-    .label __9 = 6
-    // Move the entities
-    .label line = 3
-    .label i = 2
-    .label __11 = 7
-    // asm { sei  }
-    sei
-    jmp __b1
-  // Wait for raster refresh
-    // main::@1
-  __b1:
-    // [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda #$ff
-    cmp VIC_RASTER
-    bne __b1
-    jmp __b2
-    // main::@2
-  __b2:
-    // [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta VIC_BG_COLOR
-    // [3] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  __b3_from___b2:
-    // [3] phi (byte*) main::line#2 = (const nomodify byte*) SCREEN [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
-    lda #<SCREEN
-    sta.z line
-    lda #>SCREEN
-    sta.z line+1
-    // [3] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b3
-    // main::@3
-  __b3:
-    // [4] if((byte) main::i#2<(byte) $19) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #$19
-    bcc __b4
-    jmp __b5
-    // main::@5
-  __b5:
-    // [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f -- _deref_pbuc1=vbuc2 
-    lda #$f
-    sta VIC_BG_COLOR
-    jmp __b1
-    // main::@4
-  __b4:
-    // [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z i
-    asl
-    sta.z __7
-    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) -- vbuz1=_byte_pwuc1_derefidx_vbuz2 
-    ldy.z __7
-    lda entities,y
-    sta.z __9
-    // [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' -- pbuz1_derefidx_vbuz2=vbuc1 
-    // Delete old symbol
-    lda #' '
-    ldy.z __9
-    sta (line),y
-    // [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_plus_1 
-    // Move by velocity
-    ldx.z __7
-    inc entities,x
-    bne !+
-    inc entities+1,x
-  !:
-    // [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuz1_lt_vbuc2_then_la1 
-    ldy.z __7
-    lda entities+1,y
-    bne !+
-    lda entities,y
-    cmp #$27+1
-    bcc __b6
-  !:
-    jmp __b7
-    // main::@7
-  __b7:
-    // [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 -- pwuc1_derefidx_vbuz1=vbuc2 
-    lda #0
-    ldy.z __7
-    sta entities,y
-    lda #0
-    sta entities+1,y
-    jmp __b6
-    // main::@6
-  __b6:
-    // [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuz3 
-    ldy.z __7
-    clc
-    lda.z line
-    adc entities,y
-    sta.z __11
-    lda.z line+1
-    adc entities+1,y
-    sta.z __11+1
-    // [13] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
-    // Draw symbol
-    lda #'*'
-    ldy #0
-    sta (__11),y
-    // [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
-    // Next line
-    lda #$28
-    clc
-    adc.z line
-    sta.z line
-    bcc !+
-    inc.z line+1
-  !:
-    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [3] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
-  __b3_from___b6:
-    // [3] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@6->main::@3#0] -- register_copy 
-    // [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@3#1] -- register_copy 
-    jmp __b3
-}
-  // File Data
-  entities: .fill 2*$19, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [1] if(*VIC_RASTER!=$ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *VIC_BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *VIC_BG_COLOR = $f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] main::$7 = main::i#2 << 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$7 main::$9 ] (  [ main::i#2 main::line#2 main::$7 main::$9 ] { }  ) always clobbers reg byte a 
+Statement [7] main::$9 = (byte)entities[main::$7] [ main::i#2 main::line#2 main::$7 main::$9 ] (  [ main::i#2 main::line#2 main::$7 main::$9 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::$7 ]
-Statement [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte*~) main::$11) ← (byte) '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [8] main::line#2[main::$9] = ' ' [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [10] if(entities[main::$7]<$27+1) goto main::@6 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] entities[main::$7] = 0 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [12] main::$11 = main::line#2 + entities[main::$7] [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
+Statement [13] *main::$11 = '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
-Statement [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$7 main::$9 ] (  [ main::i#2 main::line#2 main::$7 main::$9 ] { }  ) always clobbers reg byte a 
-Statement [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
-Statement [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
-Statement [13] *((byte*~) main::$11) ← (byte) '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
+Statement [14] main::line#1 = main::line#2 + $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
+Statement [1] if(*VIC_RASTER!=$ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *VIC_BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *VIC_BG_COLOR = $f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] main::$7 = main::i#2 << 1 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [7] main::$9 = (byte)entities[main::$7] [ main::i#2 main::line#2 main::$7 main::$9 ] (  [ main::i#2 main::line#2 main::$7 main::$9 ] { }  ) always clobbers reg byte a 
+Statement [8] main::line#2[main::$9] = ' ' [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [10] if(entities[main::$7]<$27+1) goto main::@6 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [11] entities[main::$7] = 0 [ main::i#2 main::line#2 main::$7 ] (  [ main::i#2 main::line#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [12] main::$11 = main::line#2 + entities[main::$7] [ main::i#2 main::line#2 main::$11 ] (  [ main::i#2 main::line#2 main::$11 ] { }  ) always clobbers reg byte a 
+Statement [13] *main::$11 = '*' [ main::i#2 main::line#2 ] (  [ main::i#2 main::line#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [14] main::line#1 = main::line#2 + $28 [ main::i#2 main::line#1 ] (  [ main::i#2 main::line#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , 
 Potential registers zp[2]:3 [ main::line#2 main::line#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::$7 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -489,60 +352,60 @@ main: {
   // Wait for raster refresh
     // main::@1
   __b1:
-    // [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [1] if(*VIC_RASTER!=$ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp VIC_RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [2] *VIC_BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta VIC_BG_COLOR
     // [3] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [3] phi (byte*) main::line#2 = (const nomodify byte*) SCREEN [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
+    // [3] phi main::line#2 = SCREEN [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z line
     lda #>SCREEN
     sta.z line+1
-    // [3] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
+    // [3] phi main::i#2 = 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b3
     // main::@3
   __b3:
-    // [4] if((byte) main::i#2<(byte) $19) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+    // [4] if(main::i#2<$19) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$19
     bcc __b4
     jmp __b5
     // main::@5
   __b5:
-    // [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [5] *VIC_BG_COLOR = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta VIC_BG_COLOR
     jmp __b1
     // main::@4
   __b4:
-    // [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
+    // [6] main::$7 = main::i#2 << 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
     asl
     tax
-    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
+    // [7] main::$9 = (byte)entities[main::$7] -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
     lda entities,x
-    // [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' -- pbuz1_derefidx_vbuaa=vbuc1 
+    // [8] main::line#2[main::$9] = ' ' -- pbuz1_derefidx_vbuaa=vbuc1 
     // Delete old symbol
     tay
     lda #' '
     sta (line),y
-    // [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
+    // [9] entities[main::$7] = entities[main::$7] + 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
     // Move by velocity
     inc entities,x
     bne !+
     inc entities+1,x
   !:
-    // [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
+    // [10] if(entities[main::$7]<$27+1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
     lda entities+1,x
     bne !+
     lda entities,x
@@ -552,7 +415,7 @@ main: {
     jmp __b7
     // main::@7
   __b7:
-    // [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 -- pwuc1_derefidx_vbuxx=vbuc2 
+    // [11] entities[main::$7] = 0 -- pwuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta entities,x
     lda #0
@@ -560,7 +423,7 @@ main: {
     jmp __b6
     // main::@6
   __b6:
-    // [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx 
+    // [12] main::$11 = main::line#2 + entities[main::$7] -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx 
     clc
     lda.z line
     adc entities,x
@@ -568,12 +431,12 @@ main: {
     lda.z line+1
     adc entities+1,x
     sta.z __11+1
-    // [13] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    // [13] *main::$11 = '*' -- _deref_pbuz1=vbuc1 
     // Draw symbol
     lda #'*'
     ldy #0
     sta (__11),y
-    // [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] main::line#1 = main::line#2 + $28 -- pbuz1=pbuz1_plus_vbuc1 
     // Next line
     lda #$28
     clc
@@ -582,12 +445,12 @@ main: {
     bcc !+
     inc.z line+1
   !:
-    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [3] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   __b3_from___b6:
-    // [3] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@6->main::@3#0] -- register_copy 
-    // [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@3#1] -- register_copy 
+    // [3] phi main::line#2 = main::line#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [3] phi main::i#2 = main::i#1 [phi:main::@6->main::@3#1] -- register_copy 
     jmp __b3
 }
   // File Data
@@ -611,27 +474,27 @@ Removing instruction __b3_from___b6:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const nomodify byte*) VIC_BG_COLOR = (byte*) 53280
-(const nomodify byte*) VIC_RASTER = (byte*) 53266
-(const word*) entities[(number) $19]  = { fill( $19, 0) }
-(void()) main()
-(byte*~) main::$11 zp[2]:5 202.0
-(byte~) main::$7 reg byte x 100.99999999999999
-(byte~) main::$9 reg byte a 202.0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(byte) main::i
-(byte) main::i#1 i zp[1]:2 202.0
-(byte) main::i#2 i zp[1]:2 36.72727272727273
-(byte*) main::line
-(byte*) main::line#1 line zp[2]:3 101.0
-(byte*) main::line#2 line zp[2]:3 40.4
+const nomodify byte* SCREEN = (byte*) 1024
+const nomodify byte* VIC_BG_COLOR = (byte*) 53280
+const nomodify byte* VIC_RASTER = (byte*) 53266
+const word* entities[$19]  = { fill( $19, 0) }
+void main()
+byte*~ main::$11 zp[2]:5 202.0
+byte~ main::$7 reg byte x 100.99999999999999
+byte~ main::$9 reg byte a 202.0
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+label main::@7
+byte main::i
+byte main::i#1 i zp[1]:2 202.0
+byte main::i#2 i zp[1]:2 36.72727272727273
+byte* main::line
+byte* main::line#1 line zp[2]:3 101.0
+byte* main::line#2 line zp[2]:3 40.4
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 zp[2]:3 [ main::line#2 main::line#1 ]
@@ -666,60 +529,60 @@ main: {
     // main::@1
   __b1:
     // while(*VIC_RASTER!=0xff)
-    // [1] if(*((const nomodify byte*) VIC_RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [1] if(*VIC_RASTER!=$ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp VIC_RASTER
     bne __b1
     // main::@2
     // *VIC_BG_COLOR = 0
-    // [2] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [2] *VIC_BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta VIC_BG_COLOR
     // [3] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // [3] phi (byte*) main::line#2 = (const nomodify byte*) SCREEN [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
+    // [3] phi main::line#2 = SCREEN [phi:main::@2->main::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z line
     lda #>SCREEN
     sta.z line+1
-    // [3] phi (byte) main::i#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
+    // [3] phi main::i#2 = 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // main::@3
   __b3:
     // for(char i=0;i<NUM_ENTITIES;i++)
-    // [4] if((byte) main::i#2<(byte) $19) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
+    // [4] if(main::i#2<$19) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #$19
     bcc __b4
     // main::@5
     // *VIC_BG_COLOR = 15
-    // [5] *((const nomodify byte*) VIC_BG_COLOR) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [5] *VIC_BG_COLOR = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta VIC_BG_COLOR
     jmp __b1
     // main::@4
   __b4:
     // line[(char)entities[i]] = ' '
-    // [6] (byte~) main::$7 ← (byte) main::i#2 << (byte) 1 -- vbuxx=vbuz1_rol_1 
+    // [6] main::$7 = main::i#2 << 1 -- vbuxx=vbuz1_rol_1 
     lda.z i
     asl
     tax
-    // [7] (byte~) main::$9 ← (byte)*((const word*) entities + (byte~) main::$7) -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
+    // [7] main::$9 = (byte)entities[main::$7] -- vbuaa=_byte_pwuc1_derefidx_vbuxx 
     lda entities,x
-    // [8] *((byte*) main::line#2 + (byte~) main::$9) ← (byte) ' ' -- pbuz1_derefidx_vbuaa=vbuc1 
+    // [8] main::line#2[main::$9] = ' ' -- pbuz1_derefidx_vbuaa=vbuc1 
     // Delete old symbol
     tay
     lda #' '
     sta (line),y
     // entities[i] += 1
-    // [9] *((const word*) entities + (byte~) main::$7) ← *((const word*) entities + (byte~) main::$7) + (byte) 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
+    // [9] entities[main::$7] = entities[main::$7] + 1 -- pwuc1_derefidx_vbuxx=pwuc1_derefidx_vbuxx_plus_1 
     // Move by velocity
     inc entities,x
     bne !+
     inc entities+1,x
   !:
     // if(entities[i]>39)
-    // [10] if(*((const word*) entities + (byte~) main::$7)<(byte) $27+(byte) 1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
+    // [10] if(entities[main::$7]<$27+1) goto main::@6 -- pwuc1_derefidx_vbuxx_lt_vbuc2_then_la1 
     lda entities+1,x
     bne !+
     lda entities,x
@@ -728,14 +591,14 @@ main: {
   !:
     // main::@7
     // entities[i] =0
-    // [11] *((const word*) entities + (byte~) main::$7) ← (byte) 0 -- pwuc1_derefidx_vbuxx=vbuc2 
+    // [11] entities[main::$7] = 0 -- pwuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta entities,x
     sta entities+1,x
     // main::@6
   __b6:
     // line[entities[i]] = '*'
-    // [12] (byte*~) main::$11 ← (byte*) main::line#2 + *((const word*) entities + (byte~) main::$7) -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx 
+    // [12] main::$11 = main::line#2 + entities[main::$7] -- pbuz1=pbuz2_plus_pwuc1_derefidx_vbuxx 
     clc
     lda.z line
     adc entities,x
@@ -743,13 +606,13 @@ main: {
     lda.z line+1
     adc entities+1,x
     sta.z __11+1
-    // [13] *((byte*~) main::$11) ← (byte) '*' -- _deref_pbuz1=vbuc1 
+    // [13] *main::$11 = '*' -- _deref_pbuz1=vbuc1 
     // Draw symbol
     lda #'*'
     ldy #0
     sta (__11),y
     // line +=40
-    // [14] (byte*) main::line#1 ← (byte*) main::line#2 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [14] main::line#1 = main::line#2 + $28 -- pbuz1=pbuz1_plus_vbuc1 
     // Next line
     lda #$28
     clc
@@ -759,11 +622,11 @@ main: {
     inc.z line+1
   !:
     // for(char i=0;i<NUM_ENTITIES;i++)
-    // [15] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [15] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // [3] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
-    // [3] phi (byte*) main::line#2 = (byte*) main::line#1 [phi:main::@6->main::@3#0] -- register_copy 
-    // [3] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@6->main::@3#1] -- register_copy 
+    // [3] phi main::line#2 = main::line#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [3] phi main::i#2 = main::i#1 [phi:main::@6->main::@3#1] -- register_copy 
     jmp __b3
 }
   // File Data

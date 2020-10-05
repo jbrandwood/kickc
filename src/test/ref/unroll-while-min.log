@@ -1,25 +1,25 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← (byte) main::i#2 < (number) 2
-  unroll if((bool~) main::$0) goto main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < 2
+  unroll if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  *((const byte*) main::SCREEN + (byte) main::i#3) ← (byte) 'a'
-  (byte) main::i#1 ← ++ (byte) main::i#3
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::SCREEN[main::i#3] = 'a'
+  main::i#1 = ++ main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -30,33 +30,33 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+label main::@1
+label main::@2
+label main::@return
+const byte* main::SCREEN = (byte*)$400
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
 
-Adding number conversion cast (unumber) 2 in (bool~) main::$0 ← (byte) main::i#2 < (number) 2
+Adding number conversion cast (unumber) 2 in main::$0 = main::i#2 < 2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) main::$0 [3] unroll if((byte) main::i#2<(byte) 2) goto main::@2
+Simple Condition main::$0 [3] unroll if(main::i#2<2) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -65,51 +65,51 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Unrolling loop Loop head: main::@1 tails: main::@2 blocks: main::@2 main::@1 
 Successful SSA optimization Pass2LoopUnroll
-Identical Phi Values (byte) main::i#2 (const byte) main::i#0
+Identical Phi Values main::i#2 main::i#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [3] (byte) main::i#1 ← ++ (const byte) main::i#0
+Constant right-side identified [3] main::i#1 = ++ main::i#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#1 = ++main::i#0
+Constant main::i#1 = ++main::i#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [1] if((const byte) main::i#0<(byte) 2) goto main::@2
+if() condition always true - replacing block destination [1] if(main::i#0<2) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Simplifying expression containing zero main::SCREEN in [2] *((const byte*) main::SCREEN + (const byte) main::i#0) ← (byte) 'a'
+Simplifying expression containing zero main::SCREEN in [2] main::SCREEN[main::i#0] = 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Unrolling loop Loop head: main::@1_1 tails: main::@2_1 blocks: main::@2_1 main::@1_1 
 Successful SSA optimization Pass2LoopUnroll
-Identical Phi Values (byte) main::i#4 (const byte) main::i#1
+Identical Phi Values main::i#4 main::i#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [5] (byte) main::i#5 ← ++ (const byte) main::i#1
+Constant right-side identified [5] main::i#5 = ++ main::i#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#5 = ++main::i#1
+Constant main::i#5 = ++main::i#1
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [2] if((const byte) main::i#1<(byte) 2) goto main::@2_1
+if() condition always true - replacing block destination [2] if(main::i#1<2) goto main::@2_1
 Successful SSA optimization Pass2ConstantIfs
 Unrolling loop Loop head: main::@1_2 tails: main::@2_2 blocks: main::@2_2 main::@1_2 
 Successful SSA optimization Pass2LoopUnroll
-Identical Phi Values (byte) main::i#6 (const byte) main::i#5
+Identical Phi Values main::i#6 main::i#5
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [6] (byte) main::i#7 ← ++ (const byte) main::i#5
+Constant right-side identified [6] main::i#7 = ++ main::i#5
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#7 = ++main::i#5
+Constant main::i#7 = ++main::i#5
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [3] if((const byte) main::i#5<(byte) 2) goto main::@2_2
+if() condition always false - eliminating [3] if(main::i#5<2) goto main::@2_2
 Successful SSA optimization Pass2ConstantIfs
-Eliminating variable (byte) main::i#8 from unused block main::@1_3
-Eliminating variable (byte) main::i#9 from unused block main::@2_3
+Eliminating variable main::i#8 from unused block main::@1_3
+Eliminating variable main::i#9 from unused block main::@2_3
 Removing PHI-reference to removed block (main::@2_2) in block main::@1_3
 Removing unused block main::@2_2
 Removing unused block main::@1_3
 Removing unused block main::@2_3
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Eliminating unused constant (const byte) main::i#7
+Eliminating unused constant main::i#7
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const byte) main::i#5
+Eliminating unused constant main::i#5
 Successful SSA optimization PassNEliminateUnusedVars
-Inlining constant with different constant siblings (const byte) main::i#0
-Inlining constant with different constant siblings (const byte) main::i#1
-Constant inlined main::i#0 = (byte) 0
-Constant inlined main::i#1 = ++(byte) 0
+Inlining constant with different constant siblings main::i#0
+Inlining constant with different constant siblings main::i#1
+Constant inlined main::i#0 = 0
+Constant inlined main::i#1 = ++0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+++0)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -123,23 +123,23 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@1_1
-Culled Empty Block (label) main::@1_2
+Culled Empty Block label main::@1
+Culled Empty Block label main::@1_1
+Culled Empty Block label main::@1_2
 Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [1] *((const byte*) main::SCREEN) ← (byte) 'a'
+  [1] *main::SCREEN = 'a'
   to:main::@2_1
 main::@2_1: scope:[main]  from main::@1
-  [2] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'a'
+  [2] *(main::SCREEN+1) = 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@2_1
   [3] return 
@@ -147,47 +147,14 @@ main::@return: scope:[main]  from main::@2_1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::i
+void main()
+byte main::i
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Minimal unrolled while() loop
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta SCREEN
-    jmp __b2_1
-    // main::@2_1
-  __b2_1:
-    // [2] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] *((const byte*) main::SCREEN) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *main::SCREEN = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(main::SCREEN+1) = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -210,13 +177,13 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [1] *main::SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __b2_1
     // main::@2_1
   __b2_1:
-    // [2] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [2] *(main::SCREEN+1) = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN+1
     jmp __breturn
@@ -240,12 +207,12 @@ Removing instruction lda #'a'
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@2_1
-(label) main::@return
-(const byte*) main::SCREEN = (byte*) 1024
-(byte) main::i
+void main()
+label main::@1
+label main::@2_1
+label main::@return
+const byte* main::SCREEN = (byte*) 1024
+byte main::i
 
 
 
@@ -264,11 +231,11 @@ main: {
     .label SCREEN = $400
     // main::@1
     // SCREEN[i++] = 'a'
-    // [1] *((const byte*) main::SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [1] *main::SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@2_1
-    // [2] *((const byte*) main::SCREEN+(byte) 1) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [2] *(main::SCREEN+1) = 'a' -- _deref_pbuc1=vbuc2 
     sta SCREEN+1
     // main::@return
     // }

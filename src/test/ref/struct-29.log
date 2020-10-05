@@ -4,17 +4,17 @@ Fixing struct type SIZE_OF struct Point to 3
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
-  *((const nomodify byte*) SCREEN + (number) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 0)
-  *((const nomodify byte*) SCREEN + (number) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 1)
+  SCREEN[0] = *((byte*)&point1+OFFSET_STRUCT_POINT_X)
+  SCREEN[1] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[0]
+  SCREEN[2] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[1]
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -25,23 +25,23 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) OFFSET_STRUCT_POINT_INITIALS = (byte) 1
-(const byte) OFFSET_STRUCT_POINT_X = (byte) 0
-(const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
-(byte) Point::x
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(struct Point) point1 loadstore = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
+const byte OFFSET_STRUCT_POINT_INITIALS = 1
+const byte OFFSET_STRUCT_POINT_X = 0
+const byte* Point::initials[2]  = { fill( 2, 0) }
+byte Point::x
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+struct Point point1 loadstore = { x: 2, initials: { 'j', 'g' } }
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 0)
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (unumber)(number) 0)
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (number) 1)
-Adding number conversion cast (unumber) 2 in *((const nomodify byte*) SCREEN + (number) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (unumber)(number) 1)
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((byte*)&point1+OFFSET_STRUCT_POINT_X)
+Adding number conversion cast (unumber) 0 in SCREEN[1] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[0]
+Adding number conversion cast (unumber) 1 in SCREEN[1] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[(unumber)0]
+Adding number conversion cast (unumber) 1 in SCREEN[2] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[1]
+Adding number conversion cast (unumber) 2 in SCREEN[2] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[(unumber)1]
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -50,17 +50,17 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 1
+Finalized unsigned number type 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)&point1 in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_X)
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*)&(struct Point) point1)
-Simplifying expression containing zero (byte*)&point1+OFFSET_STRUCT_POINT_INITIALS in [1] *((const nomodify byte*) SCREEN + (byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS + (byte) 0)
+Simplifying expression containing zero (byte*)&point1 in [0] SCREEN[0] = *((byte*)&point1+OFFSET_STRUCT_POINT_X)
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = *((byte*)&point1)
+Simplifying expression containing zero (byte*)&point1+OFFSET_STRUCT_POINT_INITIALS in [1] SCREEN[1] = ((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)[0]
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) OFFSET_STRUCT_POINT_X
+Eliminating unused constant OFFSET_STRUCT_POINT_X
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -78,11 +78,11 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) point1)
-  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS)
-  [2] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1)
+  [0] *SCREEN = *((byte*)&point1)
+  [1] *(SCREEN+1) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS)
+  [2] *(SCREEN+2) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS+1)
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -90,51 +90,19 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(void()) main()
-(struct Point) point1 loadstore = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
+byte Point::x
+void main()
+struct Point point1 loadstore = { x: 2, initials: { 'j', 'g' } }
 
 Initial phi equivalence classes
 Added variable point1 to live range equivalence class [ point1 ]
 Complete equivalence classes
 [ point1 ]
 Allocated mem[3] [ point1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Minimal struct with C-Standard behavior - global main-mem struct should be initialized in data, not code
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const OFFSET_STRUCT_POINT_INITIALS = 1
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) point1) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1
-    sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1+OFFSET_STRUCT_POINT_INITIALS
-    sta SCREEN+1
-    // [2] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
-    lda point1+OFFSET_STRUCT_POINT_INITIALS+1
-    sta SCREEN+2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-  point1: .byte 2, 'j', 'g'
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) point1) [ point1 ] (  [ point1 ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) [ point1 ] (  [ point1 ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = *((byte*)&point1) [ point1 ] (  [ point1 ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS) [ point1 ] (  [ point1 ] { }  ) always clobbers reg byte a 
+Statement [2] *(SCREEN+2) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS+1) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[3] [ point1 ] : mem[3] , 
 
 REGISTER UPLIFT SCOPES
@@ -158,13 +126,13 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *((byte*)&point1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1
     sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *(SCREEN+1) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
-    // [2] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *(SCREEN+2) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS+1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     jmp __breturn
@@ -183,13 +151,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) OFFSET_STRUCT_POINT_INITIALS = (byte) 1
-(const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
-(byte) Point::x
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(struct Point) point1 loadstore mem[3] = { x: (byte) 2, initials: { (byte) 'j', (byte) 'g' } }
+const byte OFFSET_STRUCT_POINT_INITIALS = 1
+const byte* Point::initials[2]  = { fill( 2, 0) }
+byte Point::x
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+struct Point point1 loadstore mem[3] = { x: 2, initials: { 'j', 'g' } }
 
 mem[3] [ point1 ]
 
@@ -209,15 +177,15 @@ Score: 30
   // main
 main: {
     // SCREEN[0] = point1.x
-    // [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(struct Point) point1) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *((byte*)&point1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1
     sta SCREEN
     // SCREEN[1] = point1.initials[0]
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *(SCREEN+1) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS
     sta SCREEN+1
     // SCREEN[2] = point1.initials[1]
-    // [2] *((const nomodify byte*) SCREEN+(byte) 2) ← *((byte*)&(struct Point) point1+(const byte) OFFSET_STRUCT_POINT_INITIALS+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [2] *(SCREEN+2) = *((byte*)&point1+OFFSET_STRUCT_POINT_INITIALS+1) -- _deref_pbuc1=_deref_pbuc2 
     lda point1+OFFSET_STRUCT_POINT_INITIALS+1
     sta SCREEN+2
     // main::@return

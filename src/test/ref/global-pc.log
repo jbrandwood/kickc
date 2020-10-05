@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { sei  }
   to:main::@1
@@ -9,14 +9,14 @@ main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::col#0 ← *((const nomodify byte*) RASTER)
-  *((const nomodify byte*) BG_COLOR) ← (byte) main::col#0
+  main::col#0 = *RASTER
+  *BG_COLOR = main::col#0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -27,17 +27,17 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
-(const nomodify byte*) RASTER = (byte*)(number) $d012
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::col
-(byte) main::col#0
+const nomodify byte* BG_COLOR = (byte*)$d021
+const nomodify byte* RASTER = (byte*)$d012
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
+byte main::col
+byte main::col#0
 
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53266
@@ -56,61 +56,31 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] (byte) main::col#0 ← *((const nomodify byte*) RASTER)
-  [2] *((const nomodify byte*) BG_COLOR) ← (byte) main::col#0
+  [1] main::col#0 = *RASTER
+  [2] *BG_COLOR = main::col#0
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::col
-(byte) main::col#0 22.0
+void main()
+byte main::col
+byte main::col#0 22.0
 
 Initial phi equivalence classes
 Added variable main::col#0 to live range equivalence class [ main::col#0 ]
 Complete equivalence classes
 [ main::col#0 ]
 Allocated zp[1]:2 [ main::col#0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test setting the program PC through a #pc directive
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $1000 "Program"
-  // Global Constants & labels
-  .label BG_COLOR = $d021
-  .label RASTER = $d012
-  // main
-main: {
-    .label col = 2
-    // asm { sei  }
-    sei
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] (byte) main::col#0 ← *((const nomodify byte*) RASTER) -- vbuz1=_deref_pbuc1 
-    lda RASTER
-    sta.z col
-    // [2] *((const nomodify byte*) BG_COLOR) ← (byte) main::col#0 -- _deref_pbuc1=vbuz1 
-    lda.z col
-    sta BG_COLOR
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Potential registers zp[1]:2 [ main::col#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
@@ -138,9 +108,9 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] (byte) main::col#0 ← *((const nomodify byte*) RASTER) -- vbuaa=_deref_pbuc1 
+    // [1] main::col#0 = *RASTER -- vbuaa=_deref_pbuc1 
     lda RASTER
-    // [2] *((const nomodify byte*) BG_COLOR) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    // [2] *BG_COLOR = main::col#0 -- _deref_pbuc1=vbuaa 
     sta BG_COLOR
     jmp __b1
 }
@@ -151,12 +121,12 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53281
-(const nomodify byte*) RASTER = (byte*) 53266
-(void()) main()
-(label) main::@1
-(byte) main::col
-(byte) main::col#0 reg byte a 22.0
+const nomodify byte* BG_COLOR = (byte*) 53281
+const nomodify byte* RASTER = (byte*) 53266
+void main()
+label main::@1
+byte main::col
+byte main::col#0 reg byte a 22.0
 
 reg byte a [ main::col#0 ]
 
@@ -181,10 +151,10 @@ main: {
     // main::@1
   __b1:
     // col = *RASTER
-    // [1] (byte) main::col#0 ← *((const nomodify byte*) RASTER) -- vbuaa=_deref_pbuc1 
+    // [1] main::col#0 = *RASTER -- vbuaa=_deref_pbuc1 
     lda RASTER
     // *BG_COLOR = col
-    // [2] *((const nomodify byte*) BG_COLOR) ← (byte) main::col#0 -- _deref_pbuc1=vbuaa 
+    // [2] *BG_COLOR = main::col#0 -- _deref_pbuc1=vbuaa 
     sta BG_COLOR
     jmp __b1
 }

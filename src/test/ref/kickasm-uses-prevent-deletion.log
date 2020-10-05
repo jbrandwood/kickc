@@ -1,8 +1,8 @@
-Resolved forward reference irq to interrupt(KERNEL_KEYBOARD)(void()) irq()
+Resolved forward reference irq to interrupt(KERNEL_KEYBOARD) void irq()
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   kickasm( uses irq uses KERNEL_IRQ) {{ sei
         lda #<irq;
@@ -16,16 +16,16 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_KEYBOARD)(void()) irq()
+interrupt(KERNEL_KEYBOARD) void irq()
 irq: scope:[irq]  from
-  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
-  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  *BG_COLOR = WHITE
+  *BG_COLOR = BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -36,17 +36,17 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
-(const nomodify byte) BLACK = (byte) 0
-(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
-(const nomodify byte) WHITE = (byte) 1
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-interrupt(KERNEL_KEYBOARD)(void()) irq()
-(label) irq::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)$d021
+const nomodify byte BLACK = 0
+const nomodify void()** KERNEL_IRQ = (void()**)$314
+const nomodify byte WHITE = 1
+void __start()
+label __start::@1
+label __start::@return
+interrupt(KERNEL_KEYBOARD) void irq()
+label irq::@return
+void main()
+label main::@return
 
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53281
@@ -63,16 +63,16 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_KEYBOARD)(void()) irq()
+interrupt(KERNEL_KEYBOARD) void irq()
 irq: scope:[irq]  from
-  [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE
-  [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  [0] *BG_COLOR = WHITE
+  [1] *BG_COLOR = BLACK
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [2] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from
   kickasm( uses irq uses KERNEL_IRQ) {{ sei
         lda #<irq;
@@ -88,63 +88,14 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_KEYBOARD)(void()) irq()
-(void()) main()
+interrupt(KERNEL_KEYBOARD) void irq()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Ensure that an inline kickasm uses-clause is anough to prevent a function from being deleted
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const BLACK = 0
-  .const WHITE = 1
-  // The vector used when the KERNAL serves IRQ interrupts
-  .label KERNEL_IRQ = $314
-  .label BG_COLOR = $d021
-  // irq
-// The Interrupt Handler
-irq: {
-    // entry interrupt(KERNEL_KEYBOARD)
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
-    lda #WHITE
-    sta BG_COLOR
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [2] return  - exit interrupt(KERNEL_KEYBOARD)
-    jmp $ea31
-}
-  // main
-main: {
-    // kickasm( uses irq uses KERNEL_IRQ) {{ sei         lda #<irq;         sta KERNEL_IRQ         lda #>irq;         sta KERNEL_IRQ+1         cli      }}
-    sei
-        lda #<irq;
-        sta KERNEL_IRQ
-        lda #>irq;
-        sta KERNEL_IRQ+1
-        cli
-    
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *BG_COLOR = WHITE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *BG_COLOR = BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -172,10 +123,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The Interrupt Handler
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BG_COLOR
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BG_COLOR
     jmp __breturn
@@ -211,14 +162,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53281
-(const nomodify byte) BLACK = (byte) 0
-(const nomodify void()**) KERNEL_IRQ = (void()**) 788
-(const nomodify byte) WHITE = (byte) 1
-interrupt(KERNEL_KEYBOARD)(void()) irq()
-(label) irq::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*) 53281
+const nomodify byte BLACK = 0
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+const nomodify byte WHITE = 1
+interrupt(KERNEL_KEYBOARD) void irq()
+label irq::@return
+void main()
+label main::@return
 
 
 
@@ -242,11 +193,11 @@ Score: 277
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
     // *BG_COLOR = WHITE
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) WHITE -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BG_COLOR
     // *BG_COLOR = BLACK
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BG_COLOR
     // irq::@return

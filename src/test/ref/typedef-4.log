@@ -2,20 +2,20 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const nomodify byte*) SCREEN + (number) 0) ← (const nomodify byte) c
-  *((const nomodify byte*) SCREEN + (number) 1) ← (volatile byte) v
+  SCREEN[0] = c
+  SCREEN[1] = v
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) v ← (byte) 'v'
+  v = 'v'
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -27,28 +27,28 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(const nomodify byte) c = (byte) 'c'
-(void()) main()
-(label) main::@return
-(volatile byte) v loadstore
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+const nomodify byte c = 'c'
+void main()
+label main::@return
+volatile byte v loadstore
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (const nomodify byte) c
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (volatile byte) v
+Adding number conversion cast (unumber) 0 in SCREEN[0] = c
+Adding number conversion cast (unumber) 1 in SCREEN[1] = v
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (const nomodify byte) c
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = c
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -60,18 +60,18 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) v ← (byte) 'v'
+  [1] v = 'v'
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -81,10 +81,10 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [5] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c
-  [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v
+  [5] *SCREEN = c
+  [6] *(SCREEN+1) = v
   to:main::@return
 main::@return: scope:[main]  from main
   [7] return 
@@ -92,69 +92,19 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(void()) main()
-(volatile byte) v loadstore 4.333333333333333
+void __start()
+void main()
+volatile byte v loadstore 4.333333333333333
 
 Initial phi equivalence classes
 Added variable v to live range equivalence class [ v ]
 Complete equivalence classes
 [ v ]
 Allocated zp[1]:2 [ v ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Typedef const/volatile type
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const c = 'c'
-  .label SCREEN = $400
-  .label v = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) v ← (byte) 'v' -- vbuz1=vbuc1 
-    lda #'v'
-    sta.z v
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    // [5] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c -- _deref_pbuc1=vbuc2 
-    lda #c
-    sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
-    lda.z v
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) v ← (byte) 'v' [ v ] (  [ v ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c [ v ] ( main:3 [ v ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [1] v = 'v' [ v ] (  [ v ] { }  ) always clobbers reg byte a 
+Statement [5] *SCREEN = c [ v ] ( main:3 [ v ] { }  ) always clobbers reg byte a 
+Statement [6] *(SCREEN+1) = v [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ v ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -184,7 +134,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) v ← (byte) 'v' -- vbuz1=vbuc1 
+    // [1] v = 'v' -- vbuz1=vbuc1 
     lda #'v'
     sta.z v
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -202,10 +152,10 @@ __start: {
 }
   // main
 main: {
-    // [5] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c -- _deref_pbuc1=vbuc2 
+    // [5] *SCREEN = c -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
+    // [6] *(SCREEN+1) = v -- _deref_pbuc1=vbuz1 
     lda.z v
     sta SCREEN+1
     jmp __breturn
@@ -231,15 +181,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(const nomodify byte) c = (byte) 'c'
-(void()) main()
-(label) main::@return
-(volatile byte) v loadstore zp[1]:2 4.333333333333333
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+const nomodify byte c = 'c'
+void main()
+label main::@return
+volatile byte v loadstore zp[1]:2 4.333333333333333
 
 zp[1]:2 [ v ]
 
@@ -261,7 +211,7 @@ Score: 36
 __start: {
     // __start::__init1
     // v = 'v'
-    // [1] (volatile byte) v ← (byte) 'v' -- vbuz1=vbuc1 
+    // [1] v = 'v' -- vbuz1=vbuc1 
     lda #'v'
     sta.z v
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -275,11 +225,11 @@ __start: {
   // main
 main: {
     // SCREEN[0] = c
-    // [5] *((const nomodify byte*) SCREEN) ← (const nomodify byte) c -- _deref_pbuc1=vbuc2 
+    // [5] *SCREEN = c -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
     // SCREEN[1] = v
-    // [6] *((const nomodify byte*) SCREEN+(byte) 1) ← (volatile byte) v -- _deref_pbuc1=vbuz1 
+    // [6] *(SCREEN+1) = v -- _deref_pbuc1=vbuz1 
     lda.z v
     sta SCREEN+1
     // main::@return

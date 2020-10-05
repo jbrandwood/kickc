@@ -1,43 +1,43 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) fn1()
+void fn1()
 fn1: scope:[fn1]  from
-  *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 
-(void()) fn2()
+void fn2()
 fn2: scope:[fn2]  from
-  *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
+  *fn2::BG_COLOR = ++ *fn2::BG_COLOR
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#3 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
+  main::i#3 = phi( main/main::i#0, main::@2/main::i#1 )
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::i#2 ← phi( main::@1/(byte) main::i#3 )
-  (byte) main::i#1 ← ++ (byte) main::i#2
-  (number~) main::$0 ← (byte) main::i#1 & (number) 1
-  (number~) main::$2 ← (number~) main::$0 * (const byte) SIZEOF_POINTER
-  (void()*) main::f#0 ← *((const void()**) fns + (number~) main::$2)
-  call *((void()*) main::f#0) 
+  main::i#2 = phi( main::@1/main::i#3 )
+  main::i#1 = ++ main::i#2
+  main::$0 = main::i#1 & 1
+  main::$2 = main::$0 * SIZEOF_POINTER
+  main::f#0 = fns[main::$2]
+  call *main::f#0 
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -48,46 +48,46 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) SIZEOF_POINTER = (byte) 2
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) fn1()
-(label) fn1::@return
-(const nomodify byte*) fn1::BORDER_COLOR = (byte*)(number) $d020
-(void()) fn2()
-(label) fn2::@return
-(const nomodify byte*) fn2::BG_COLOR = (byte*)(number) $d021
-(const void()**) fns[(number) 2]  = { &(void()) fn1(), &(void()) fn2() }
-(void()) main()
-(number~) main::$0
-(number~) main::$2
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(void()*) main::f
-(void()*) main::f#0
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
+const byte SIZEOF_POINTER = 2
+void __start()
+label __start::@1
+label __start::@return
+void fn1()
+label fn1::@return
+const nomodify byte* fn1::BORDER_COLOR = (byte*)$d020
+void fn2()
+label fn2::@return
+const nomodify byte* fn2::BG_COLOR = (byte*)$d021
+const void()** fns[2]  = { &fn1, &fn2 }
+void main()
+number~ main::$0
+number~ main::$2
+label main::@1
+label main::@2
+label main::@return
+void()* main::f
+void()* main::f#0
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
 
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (byte) main::i#1 & (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (byte) main::i#1 & (unumber)(number) 1
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber~) main::$0 * (const byte) SIZEOF_POINTER
+Adding number conversion cast (unumber) 1 in main::$0 = main::i#1 & 1
+Adding number conversion cast (unumber) main::$0 in main::$0 = main::i#1 & (unumber)1
+Adding number conversion cast (unumber) main::$2 in main::$2 = main::$0 * SIZEOF_POINTER
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) main::i#1 & (byte) 1
-Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
+Inferred type updated to byte in main::$0 = main::i#1 & 1
+Inferred type updated to byte in main::$2 = main::$0 * SIZEOF_POINTER
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [6] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -98,49 +98,49 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Rewriting multiplication to use shift [7] (byte~) main::$2 ← (byte~) main::$0 * (const byte) SIZEOF_POINTER
+Rewriting multiplication to use shift [7] main::$2 = main::$0 * SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant (const byte) SIZEOF_POINTER
+Eliminating unused constant SIZEOF_POINTER
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [7] main::i#4 ← main::i#1
+Coalesced [7] main::i#4 = main::i#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [2] (byte) main::i#1 ← ++ (byte) main::i#2
-  [3] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1
-  [4] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1
-  [5] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2)
-  [6] call *((void()*) main::f#0) 
+  [2] main::i#1 = ++ main::i#2
+  [3] main::$0 = main::i#1 & 1
+  [4] main::$2 = main::$0 << 1
+  [5] main::f#0 = fns[main::$2]
+  [6] call *main::f#0 
   to:main::@1
 
-(void()) fn2()
+void fn2()
 fn2: scope:[fn2]  from
-  [7] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR)
+  [7] *fn2::BG_COLOR = ++ *fn2::BG_COLOR
   to:fn2::@return
 fn2::@return: scope:[fn2]  from fn2
   [8] return 
   to:@return
 
-(void()) fn1()
+void fn1()
 fn1: scope:[fn1]  from
-  [9] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR)
+  [9] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR
   to:fn1::@return
 fn1::@return: scope:[fn1]  from fn1
   [10] return 
@@ -148,16 +148,16 @@ fn1::@return: scope:[fn1]  from fn1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) fn1()
-(void()) fn2()
-(void()) main()
-(byte~) main::$0 22.0
-(byte~) main::$2 22.0
-(void()*) main::f
-(void()*) main::f#0 11.0
-(byte) main::i
-(byte) main::i#1 6.6000000000000005
-(byte) main::i#2 22.0
+void fn1()
+void fn2()
+void main()
+byte~ main::$0 22.0
+byte~ main::$2 22.0
+void()* main::f
+void()* main::f#0 11.0
+byte main::i
+byte main::i#1 6.6000000000000005
+byte main::i#2 22.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -173,94 +173,17 @@ Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ main::$0 ]
 Allocated zp[1]:4 [ main::$2 ]
 Allocated zp[2]:5 [ main::f#0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests calling into arrays of pointers to non-args no-return functions
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label __0 = 3
-    .label __2 = 4
-    .label i = 2
-    .label f = 5
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // main::@1
-  __b1:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [2] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [3] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuz1=vbuz2_band_vbuc1 
-    lda #1
-    and.z i
-    sta.z __0
-    // [4] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z __0
-    asl
-    sta.z __2
-    // [5] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) -- pprz1=qprc1_derefidx_vbuz2 
-    ldy.z __2
-    lda fns,y
-    sta.z f
-    lda fns+1,y
-    sta.z f+1
-    // [6] call *((void()*) main::f#0) 
-    jsr bi_f
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
-  bi_f:
-    jmp (f)
-}
-  // fn2
-fn2: {
-    .label BG_COLOR = $d021
-    // [7] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // fn2::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // fn1
-fn1: {
-    .label BORDER_COLOR = $d020
-    // [9] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BORDER_COLOR
-    jmp __breturn
-    // fn1::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // File Data
-  fns: .word fn1, fn2
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] (  [ main::i#1 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::$0 << 1 [ main::i#1 main::$2 ] (  [ main::i#1 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [5] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] (  [ main::i#1 main::f#0 ] { }  ) always clobbers reg byte a 
-Statement [6] call *((void()*) main::f#0)  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [5] main::f#0 = fns[main::$2] [ main::i#1 main::f#0 ] (  [ main::i#1 main::f#0 ] { }  ) always clobbers reg byte a 
+Statement [6] call *main::f#0  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Removing always clobbered register reg byte x as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [3] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [4] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 [ main::i#1 main::$2 ] (  [ main::i#1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [5] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) [ main::i#1 main::f#0 ] (  [ main::i#1 main::f#0 ] { }  ) always clobbers reg byte a 
-Statement [6] call *((void()*) main::f#0)  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
+Statement [3] main::$0 = main::i#1 & 1 [ main::i#1 main::$0 ] (  [ main::i#1 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::$0 << 1 [ main::i#1 main::$2 ] (  [ main::i#1 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::f#0 = fns[main::$2] [ main::i#1 main::f#0 ] (  [ main::i#1 main::f#0 ] { }  ) always clobbers reg byte a 
+Statement [6] call *main::f#0  [ main::i#1 ] (  [ main::i#1 ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::$2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -294,7 +217,7 @@ main: {
     .label f = 3
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     jmp __b1
@@ -303,24 +226,24 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [2] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [2] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
-    // [3] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
+    // [3] main::$0 = main::i#1 & 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and.z i
-    // [4] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [4] main::$2 = main::$0 << 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [5] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) -- pprz1=qprc1_derefidx_vbuaa 
+    // [5] main::f#0 = fns[main::$2] -- pprz1=qprc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta.z f
     lda fns+1,y
     sta.z f+1
-    // [6] call *((void()*) main::f#0) 
+    // [6] call *main::f#0 
     jsr bi_f
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
   bi_f:
     jmp (f)
@@ -328,7 +251,7 @@ main: {
   // fn2
 fn2: {
     .label BG_COLOR = $d021
-    // [7] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *fn2::BG_COLOR = ++ *fn2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // fn2::@return
@@ -339,7 +262,7 @@ fn2: {
   // fn1
 fn1: {
     .label BORDER_COLOR = $d020
-    // [9] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     jmp __breturn
     // fn1::@return
@@ -366,23 +289,23 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) fn1()
-(label) fn1::@return
-(const nomodify byte*) fn1::BORDER_COLOR = (byte*) 53280
-(void()) fn2()
-(label) fn2::@return
-(const nomodify byte*) fn2::BG_COLOR = (byte*) 53281
-(const void()**) fns[(number) 2]  = { &(void()) fn1(), &(void()) fn2() }
-(void()) main()
-(byte~) main::$0 reg byte a 22.0
-(byte~) main::$2 reg byte a 22.0
-(label) main::@1
-(label) main::@2
-(void()*) main::f
-(void()*) main::f#0 f zp[2]:3 11.0
-(byte) main::i
-(byte) main::i#1 i zp[1]:2 6.6000000000000005
-(byte) main::i#2 i zp[1]:2 22.0
+void fn1()
+label fn1::@return
+const nomodify byte* fn1::BORDER_COLOR = (byte*) 53280
+void fn2()
+label fn2::@return
+const nomodify byte* fn2::BG_COLOR = (byte*) 53281
+const void()** fns[2]  = { &fn1, &fn2 }
+void main()
+byte~ main::$0 reg byte a 22.0
+byte~ main::$2 reg byte a 22.0
+label main::@1
+label main::@2
+void()* main::f
+void()* main::f#0 f zp[2]:3 11.0
+byte main::i
+byte main::i#1 i zp[1]:2 6.6000000000000005
+byte main::i#2 i zp[1]:2 22.0
 
 zp[1]:2 [ main::i#2 main::i#1 ]
 reg byte a [ main::$0 ]
@@ -405,33 +328,33 @@ main: {
     .label i = 2
     .label f = 3
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
     lda #0
     sta.z i
     // main::@1
     // main::@2
   __b2:
     // f = fns[++i&1]
-    // [2] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
+    // [2] main::i#1 = ++ main::i#2 -- vbuz1=_inc_vbuz1 
     inc.z i
     // ++i&1
-    // [3] (byte~) main::$0 ← (byte) main::i#1 & (byte) 1 -- vbuaa=vbuz1_band_vbuc1 
+    // [3] main::$0 = main::i#1 & 1 -- vbuaa=vbuz1_band_vbuc1 
     lda #1
     and.z i
     // f = fns[++i&1]
-    // [4] (byte~) main::$2 ← (byte~) main::$0 << (byte) 1 -- vbuaa=vbuaa_rol_1 
+    // [4] main::$2 = main::$0 << 1 -- vbuaa=vbuaa_rol_1 
     asl
-    // [5] (void()*) main::f#0 ← *((const void()**) fns + (byte~) main::$2) -- pprz1=qprc1_derefidx_vbuaa 
+    // [5] main::f#0 = fns[main::$2] -- pprz1=qprc1_derefidx_vbuaa 
     tay
     lda fns,y
     sta.z f
     lda fns+1,y
     sta.z f+1
     // (*f)()
-    // [6] call *((void()*) main::f#0) 
+    // [6] call *main::f#0 
     jsr bi_f
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b2
   bi_f:
     jmp (f)
@@ -440,7 +363,7 @@ main: {
 fn2: {
     .label BG_COLOR = $d021
     // (*BG_COLOR)++;
-    // [7] *((const nomodify byte*) fn2::BG_COLOR) ← ++ *((const nomodify byte*) fn2::BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [7] *fn2::BG_COLOR = ++ *fn2::BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // fn2::@return
     // }
@@ -451,7 +374,7 @@ fn2: {
 fn1: {
     .label BORDER_COLOR = $d020
     // (*BORDER_COLOR)++;
-    // [9] *((const nomodify byte*) fn1::BORDER_COLOR) ← ++ *((const nomodify byte*) fn1::BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [9] *fn1::BORDER_COLOR = ++ *fn1::BORDER_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BORDER_COLOR
     // fn1::@return
     // }

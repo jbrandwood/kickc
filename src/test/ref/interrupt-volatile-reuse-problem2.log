@@ -1,70 +1,70 @@
-Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
+Resolved forward reference irq to interrupt(KERNEL_MIN) void irq()
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  *KERNEL_IRQ = &irq
   to:main::@1
 main::@1: scope:[main]  from main main::@7
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::x#0 ← (byte) 0
+  main::x#0 = 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@7
-  (byte) main::x#6 ← phi( main::@2/(byte) main::x#0 main::@7/(byte) main::x#1 )
-  (byte) main::y#0 ← (byte) 0
+  main::x#6 = phi( main::@2/main::x#0, main::@7/main::x#1 )
+  main::y#0 = 0
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@6
-  (byte) main::x#4 ← phi( main::@3/(byte) main::x#6 main::@6/(byte) main::x#5 )
-  (byte) main::y#4 ← phi( main::@3/(byte) main::y#0 main::@6/(byte) main::y#1 )
-  (byte) main::a#0 ← (byte) 0
+  main::x#4 = phi( main::@3/main::x#6, main::@6/main::x#5 )
+  main::y#4 = phi( main::@3/main::y#0, main::@6/main::y#1 )
+  main::a#0 = 0
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@5
-  (byte) main::x#2 ← phi( main::@4/(byte) main::x#4 main::@5/(byte) main::x#2 )
-  (byte) main::y#2 ← phi( main::@4/(byte) main::y#4 main::@5/(byte) main::y#2 )
-  (byte) main::a#2 ← phi( main::@4/(byte) main::a#0 main::@5/(byte) main::a#1 )
-  (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#2
-  *((const nomodify byte*) SCREEN + (byte) main::x#2) ← (byte~) main::$0
-  (byte) main::a#1 ← (byte) main::a#2 + rangenext(0,$a)
-  (bool~) main::$1 ← (byte) main::a#1 != rangelast(0,$a)
-  if((bool~) main::$1) goto main::@5
+  main::x#2 = phi( main::@4/main::x#4, main::@5/main::x#2 )
+  main::y#2 = phi( main::@4/main::y#4, main::@5/main::y#2 )
+  main::a#2 = phi( main::@4/main::a#0, main::@5/main::a#1 )
+  main::$0 = main::a#2 + main::y#2
+  SCREEN[main::x#2] = main::$0
+  main::a#1 = main::a#2 + rangenext(0,$a)
+  main::$1 = main::a#1 != rangelast(0,$a)
+  if(main::$1) goto main::@5
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  (byte) main::x#5 ← phi( main::@5/(byte) main::x#2 )
-  (byte) main::y#3 ← phi( main::@5/(byte) main::y#2 )
-  (byte) main::y#1 ← (byte) main::y#3 + rangenext(0,$a)
-  (bool~) main::$2 ← (byte) main::y#1 != rangelast(0,$a)
-  if((bool~) main::$2) goto main::@4
+  main::x#5 = phi( main::@5/main::x#2 )
+  main::y#3 = phi( main::@5/main::y#2 )
+  main::y#1 = main::y#3 + rangenext(0,$a)
+  main::$2 = main::y#1 != rangelast(0,$a)
+  if(main::$2) goto main::@4
   to:main::@7
 main::@7: scope:[main]  from main::@6
-  (byte) main::x#3 ← phi( main::@6/(byte) main::x#5 )
-  (byte) main::x#1 ← (byte) main::x#3 + rangenext(0,$a)
-  (bool~) main::$3 ← (byte) main::x#1 != rangelast(0,$a)
-  if((bool~) main::$3) goto main::@3
+  main::x#3 = phi( main::@6/main::x#5 )
+  main::x#1 = main::x#3 + rangenext(0,$a)
+  main::$3 = main::x#1 != rangelast(0,$a)
+  if(main::$3) goto main::@3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) irq()
+interrupt(KERNEL_MIN) void irq()
 irq: scope:[irq]  from
-  *((const nomodify byte*) IRQ_STATUS) ← (number) 1
+  *IRQ_STATUS = 1
   asm { lda$dc0d  }
-  *((const nomodify byte*) SCREEN + (number) $28) ← (volatile byte) col1
-  (volatile byte) col1 ← ++ (volatile byte) col1
+  SCREEN[$28] = col1
+  col1 = ++ col1
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) col1 ← (byte) 0
+  col1 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -76,53 +76,53 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
-(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(volatile byte) col1 loadstore
-interrupt(KERNEL_MIN)(void()) irq()
-(label) irq::@return
-(void()) main()
-(byte~) main::$0
-(bool~) main::$1
-(bool~) main::$2
-(bool~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(label) main::@return
-(byte) main::a
-(byte) main::a#0
-(byte) main::a#1
-(byte) main::a#2
-(byte) main::x
-(byte) main::x#0
-(byte) main::x#1
-(byte) main::x#2
-(byte) main::x#3
-(byte) main::x#4
-(byte) main::x#5
-(byte) main::x#6
-(byte) main::y
-(byte) main::y#0
-(byte) main::y#1
-(byte) main::y#2
-(byte) main::y#3
-(byte) main::y#4
+const nomodify byte* IRQ_STATUS = (byte*)$d019
+const nomodify void()** KERNEL_IRQ = (void()**)$314
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+volatile byte col1 loadstore
+interrupt(KERNEL_MIN) void irq()
+label irq::@return
+void main()
+byte~ main::$0
+bool~ main::$1
+bool~ main::$2
+bool~ main::$3
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+label main::@7
+label main::@return
+byte main::a
+byte main::a#0
+byte main::a#1
+byte main::a#2
+byte main::x
+byte main::x#0
+byte main::x#1
+byte main::x#2
+byte main::x#3
+byte main::x#4
+byte main::x#5
+byte main::x#6
+byte main::y
+byte main::y#0
+byte main::y#1
+byte main::y#2
+byte main::y#3
+byte main::y#4
 
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) IRQ_STATUS) ← (number) 1
-Adding number conversion cast (unumber) $28 in *((const nomodify byte*) SCREEN + (number) $28) ← (volatile byte) col1
+Adding number conversion cast (unumber) 1 in *IRQ_STATUS = 1
+Adding number conversion cast (unumber) $28 in SCREEN[$28] = col1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) IRQ_STATUS) ← (unumber)(number) 1
+Inlining cast *IRQ_STATUS = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53273
@@ -130,53 +130,53 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type 1
+Finalized unsigned number type $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::y#2 = main::y#3 
 Alias main::x#2 = main::x#5 main::x#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) main::y#2 (byte) main::y#4
-Identical Phi Values (byte) main::x#2 (byte) main::x#4
+Identical Phi Values main::y#2 main::y#4
+Identical Phi Values main::x#2 main::x#4
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values (byte) main::x#4 (byte) main::x#6
+Identical Phi Values main::x#4 main::x#6
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$1 [12] if((byte) main::a#1!=rangelast(0,$a)) goto main::@5
-Simple Condition (bool~) main::$2 [15] if((byte) main::y#1!=rangelast(0,$a)) goto main::@4
-Simple Condition (bool~) main::$3 [18] if((byte) main::x#1!=rangelast(0,$a)) goto main::@3
+Simple Condition main::$1 [12] if(main::a#1!=rangelast(0,$a)) goto main::@5
+Simple Condition main::$2 [15] if(main::y#1!=rangelast(0,$a)) goto main::@4
+Simple Condition main::$3 [18] if(main::x#1!=rangelast(0,$a)) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::x#0 = 0
-Constant (const byte) main::y#0 = 0
-Constant (const byte) main::a#0 = 0
+Constant main::x#0 = 0
+Constant main::y#0 = 0
+Constant main::a#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [10] main::a#1 ← ++ main::a#2 to ++
-Resolved ranged comparison value [12] if(main::a#1!=rangelast(0,$a)) goto main::@5 to (number) $b
-Resolved ranged next value [13] main::y#1 ← ++ main::y#4 to ++
-Resolved ranged comparison value [15] if(main::y#1!=rangelast(0,$a)) goto main::@4 to (number) $b
-Resolved ranged next value [16] main::x#1 ← ++ main::x#6 to ++
-Resolved ranged comparison value [18] if(main::x#1!=rangelast(0,$a)) goto main::@3 to (number) $b
+Resolved ranged next value [10] main::a#1 = ++ main::a#2 to ++
+Resolved ranged comparison value [12] if(main::a#1!=rangelast(0,$a)) goto main::@5 to $b
+Resolved ranged next value [13] main::y#1 = ++ main::y#4 to ++
+Resolved ranged comparison value [15] if(main::y#1!=rangelast(0,$a)) goto main::@4 to $b
+Resolved ranged next value [16] main::x#1 = ++ main::x#6 to ++
+Resolved ranged comparison value [18] if(main::x#1!=rangelast(0,$a)) goto main::@3 to $b
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
-Adding number conversion cast (unumber) $b in if((byte) main::a#1!=(number) $b) goto main::@5
-Adding number conversion cast (unumber) $b in if((byte) main::y#1!=(number) $b) goto main::@4
-Adding number conversion cast (unumber) $b in if((byte) main::x#1!=(number) $b) goto main::@3
+Adding number conversion cast (unumber) $b in if(main::a#1!=$b) goto main::@5
+Adding number conversion cast (unumber) $b in if(main::y#1!=$b) goto main::@4
+Adding number conversion cast (unumber) $b in if(main::x#1!=$b) goto main::@3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Simplifying constant integer cast $b
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $b
-Finalized unsigned number type (byte) $b
-Finalized unsigned number type (byte) $b
+Finalized unsigned number type $b
+Finalized unsigned number type $b
+Finalized unsigned number type $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) main::x#0
-Inlining constant with var siblings (const byte) main::y#0
-Inlining constant with var siblings (const byte) main::a#0
-Constant inlined main::a#0 = (byte) 0
-Constant inlined main::x#0 = (byte) 0
-Constant inlined main::y#0 = (byte) 0
+Inlining constant with var siblings main::x#0
+Inlining constant with var siblings main::y#0
+Inlining constant with var siblings main::a#0
+Constant inlined main::a#0 = 0
+Constant inlined main::x#0 = 0
+Constant inlined main::y#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+$28)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -192,15 +192,15 @@ CALL GRAPH
 Calls in [__start] to main:3 
 
 Created 3 initial phi equivalence classes
-Coalesced [25] main::x#7 ← main::x#1
-Coalesced [26] main::y#5 ← main::y#1
-Coalesced [27] main::a#3 ← main::a#1
+Coalesced [25] main::x#7 = main::x#1
+Coalesced [26] main::y#5 = main::y#1
+Coalesced [27] main::a#3 = main::a#1
 Coalesced down to 3 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) main::@9
-Culled Empty Block (label) main::@10
+Culled Empty Block label __start::@2
+Culled Empty Block label main::@1
+Culled Empty Block label main::@2
+Culled Empty Block label main::@9
+Culled Empty Block label main::@10
 Renumbering block main::@3 to main::@1
 Renumbering block main::@4 to main::@2
 Renumbering block main::@5 to main::@3
@@ -213,12 +213,12 @@ Adding NOP phi() at start of main::@6
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) col1 ← (byte) 0
+  [1] col1 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -228,41 +228,41 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) irq()
+interrupt(KERNEL_MIN) void irq()
 irq: scope:[irq]  from
-  [5] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1
+  [5] *IRQ_STATUS = 1
   asm { lda$dc0d  }
-  [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1
-  [8] (volatile byte) col1 ← ++ (volatile byte) col1
+  [7] *(SCREEN+$28) = col1
+  [8] col1 = ++ col1
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [9] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [10] *KERNEL_IRQ = &irq
   to:main::@1
 main::@1: scope:[main]  from main main::@5 main::@6
-  [11] (byte) main::x#6 ← phi( main/(byte) 0 main::@6/(byte) main::x#1 main::@5/(byte) 0 )
+  [11] main::x#6 = phi( main/0, main::@6/main::x#1, main::@5/0 )
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@4
-  [12] (byte) main::y#4 ← phi( main::@1/(byte) 0 main::@4/(byte) main::y#1 )
+  [12] main::y#4 = phi( main::@1/0, main::@4/main::y#1 )
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
-  [13] (byte) main::a#2 ← phi( main::@2/(byte) 0 main::@3/(byte) main::a#1 )
-  [14] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4
-  [15] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0
-  [16] (byte) main::a#1 ← ++ (byte) main::a#2
-  [17] if((byte) main::a#1!=(byte) $b) goto main::@3
+  [13] main::a#2 = phi( main::@2/0, main::@3/main::a#1 )
+  [14] main::$0 = main::a#2 + main::y#4
+  [15] SCREEN[main::x#6] = main::$0
+  [16] main::a#1 = ++ main::a#2
+  [17] if(main::a#1!=$b) goto main::@3
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  [18] (byte) main::y#1 ← ++ (byte) main::y#4
-  [19] if((byte) main::y#1!=(byte) $b) goto main::@2
+  [18] main::y#1 = ++ main::y#4
+  [19] if(main::y#1!=$b) goto main::@2
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  [20] (byte) main::x#1 ← ++ (byte) main::x#6
-  [21] if((byte) main::x#1!=(byte) $b) goto main::@6
+  [20] main::x#1 = ++ main::x#6
+  [21] if(main::x#1!=$b) goto main::@6
   to:main::@1
 main::@6: scope:[main]  from main::@5
   [22] phi()
@@ -270,20 +270,20 @@ main::@6: scope:[main]  from main::@5
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(volatile byte) col1 loadstore 2.6666666666666665
-interrupt(KERNEL_MIN)(void()) irq()
-(void()) main()
-(byte~) main::$0 200002.0
-(byte) main::a
-(byte) main::a#1 150001.5
-(byte) main::a#2 100001.0
-(byte) main::x
-(byte) main::x#1 701.0
-(byte) main::x#6 11233.666666666668
-(byte) main::y
-(byte) main::y#1 15001.5
-(byte) main::y#4 20000.499999999996
+void __start()
+volatile byte col1 loadstore 2.6666666666666665
+interrupt(KERNEL_MIN) void irq()
+void main()
+byte~ main::$0 200002.0
+byte main::a
+byte main::a#1 150001.5
+byte main::a#2 100001.0
+byte main::x
+byte main::x#1 701.0
+byte main::x#6 11233.666666666668
+byte main::y
+byte main::y#1 15001.5
+byte main::y#4 20000.499999999996
 
 Initial phi equivalence classes
 [ main::x#6 main::x#1 ]
@@ -302,167 +302,22 @@ Allocated zp[1]:3 [ main::y#4 main::y#1 ]
 Allocated zp[1]:4 [ main::a#2 main::a#1 ]
 Allocated zp[1]:5 [ col1 ]
 Allocated zp[1]:6 [ main::$0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates problem where volatiles reuse ZP addresses of other variables
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label KERNEL_IRQ = $314
-  .label IRQ_STATUS = $d019
-  .label SCREEN = $400
-  .label col1 = 5
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z col1
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // [5] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    // Acknowledge the IRQ
-    lda #1
-    sta IRQ_STATUS
-    // asm { lda$dc0d  }
-    lda $dc0d
-    // [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
-    lda.z col1
-    sta SCREEN+$28
-    // [8] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
-    inc.z col1
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [9] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-}
-  // main
-main: {
-    .label __0 = 6
-    .label a = 4
-    .label y = 3
-    .label x = 2
-    // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_qprc1=pprc2 
-    lda #<irq
-    sta KERNEL_IRQ
-    lda #>irq
-    sta KERNEL_IRQ+1
-    // [11] phi from main main::@5 to main::@1 [phi:main/main::@5->main::@1]
-  __b1_from_main:
-  __b1_from___b5:
-    // [11] phi (byte) main::x#6 = (byte) 0 [phi:main/main::@5->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z x
-    jmp __b1
-    // main::@1
-  __b1:
-    // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  __b2_from___b1:
-    // [12] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z y
-    jmp __b2
-    // [12] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-  __b2_from___b4:
-    // [12] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
-    jmp __b2
-    // main::@2
-  __b2:
-    // [13] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  __b3_from___b2:
-    // [13] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z a
-    jmp __b3
-    // [13] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-  __b3_from___b3:
-    // [13] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@3->main::@3#0] -- register_copy 
-    jmp __b3
-    // main::@3
-  __b3:
-    // [14] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 -- vbuz1=vbuz2_plus_vbuz3 
-    lda.z a
-    clc
-    adc.z y
-    sta.z __0
-    // [15] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z __0
-    ldy.z x
-    sta SCREEN,y
-    // [16] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuz1=_inc_vbuz1 
-    inc.z a
-    // [17] if((byte) main::a#1!=(byte) $b) goto main::@3 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$b
-    cmp.z a
-    bne __b3_from___b3
-    jmp __b4
-    // main::@4
-  __b4:
-    // [18] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
-    inc.z y
-    // [19] if((byte) main::y#1!=(byte) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$b
-    cmp.z y
-    bne __b2_from___b4
-    jmp __b5
-    // main::@5
-  __b5:
-    // [20] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuz1=_inc_vbuz1 
-    inc.z x
-    // [21] if((byte) main::x#1!=(byte) $b) goto main::@6 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$b
-    cmp.z x
-    bne __b6_from___b5
-    jmp __b1_from___b5
-    // [22] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
-  __b6_from___b5:
-    jmp __b6
-    // main::@6
-  __b6:
-    // [11] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-  __b1_from___b6:
-    // [11] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@6->main::@1#0] -- register_copy 
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [1] col1 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *IRQ_STATUS = 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [14] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:3 [ main::x#6 main::y#4 main::a#2 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [7] *(SCREEN+$28) = col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [10] *KERNEL_IRQ = &irq [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [14] main::$0 = main::a#2 + main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:3 [ main::x#6 main::y#4 main::a#2 main::$0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::x#6 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::y#4 main::y#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ main::a#2 main::a#1 ]
-Statement [1] (volatile byte) col1 ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [1] col1 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *IRQ_STATUS = 1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
-Statement [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [14] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:3 [ main::x#6 main::y#4 main::a#2 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [7] *(SCREEN+$28) = col1 [ col1 ] (  [ col1 ] { }  ) always clobbers reg byte a 
+Statement [10] *KERNEL_IRQ = &irq [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [14] main::$0 = main::a#2 + main::y#4 [ main::x#6 main::y#4 main::a#2 main::$0 ] ( main:3 [ main::x#6 main::y#4 main::a#2 main::$0 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::x#6 main::x#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::y#4 main::y#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ main::a#2 main::a#1 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -504,7 +359,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] col1 = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col1
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -523,16 +378,16 @@ __start: {
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [5] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [5] *IRQ_STATUS = 1 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
     // asm { lda$dc0d  }
     lda $dc0d
-    // [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
+    // [7] *(SCREEN+$28) = col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
-    // [8] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
+    // [8] col1 = ++ col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     jmp __breturn
     // irq::@return
@@ -543,7 +398,7 @@ irq: {
   // main
 main: {
     .label y = 2
-    // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_qprc1=pprc2 
+    // [10] *KERNEL_IRQ = &irq -- _deref_qprc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -551,60 +406,60 @@ main: {
     // [11] phi from main main::@5 to main::@1 [phi:main/main::@5->main::@1]
   __b1_from_main:
   __b1_from___b5:
-    // [11] phi (byte) main::x#6 = (byte) 0 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
+    // [11] phi main::x#6 = 0 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
-    // [12] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    // [12] phi main::y#4 = 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     jmp __b2
     // [12] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
   __b2_from___b4:
-    // [12] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    // [12] phi main::y#4 = main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
     jmp __b2
     // main::@2
   __b2:
     // [13] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [13] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
+    // [13] phi main::a#2 = 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
     ldy #0
     jmp __b3
     // [13] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
   __b3_from___b3:
-    // [13] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [13] phi main::a#2 = main::a#1 [phi:main::@3->main::@3#0] -- register_copy 
     jmp __b3
     // main::@3
   __b3:
-    // [14] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
+    // [14] main::$0 = main::a#2 + main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
     adc.z y
-    // [15] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [15] SCREEN[main::x#6] = main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
-    // [16] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
+    // [16] main::a#1 = ++ main::a#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [17] if((byte) main::a#1!=(byte) $b) goto main::@3 -- vbuyy_neq_vbuc1_then_la1 
+    // [17] if(main::a#1!=$b) goto main::@3 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne __b3_from___b3
     jmp __b4
     // main::@4
   __b4:
-    // [18] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
+    // [18] main::y#1 = ++ main::y#4 -- vbuz1=_inc_vbuz1 
     inc.z y
-    // [19] if((byte) main::y#1!=(byte) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [19] if(main::y#1!=$b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z y
     bne __b2_from___b4
     jmp __b5
     // main::@5
   __b5:
-    // [20] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuxx=_inc_vbuxx 
+    // [20] main::x#1 = ++ main::x#6 -- vbuxx=_inc_vbuxx 
     inx
-    // [21] if((byte) main::x#1!=(byte) $b) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
+    // [21] if(main::x#1!=$b) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne __b6_from___b5
     jmp __b1_from___b5
@@ -615,7 +470,7 @@ main: {
   __b6:
     // [11] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
   __b1_from___b6:
-    // [11] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@6->main::@1#0] -- register_copy 
+    // [11] phi main::x#6 = main::x#1 [phi:main::@6->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -664,33 +519,33 @@ Removing unreachable instruction jmp __b1
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) IRQ_STATUS = (byte*) 53273
-(const nomodify void()**) KERNEL_IRQ = (void()**) 788
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(volatile byte) col1 loadstore zp[1]:3 2.6666666666666665
-interrupt(KERNEL_MIN)(void()) irq()
-(label) irq::@return
-(void()) main()
-(byte~) main::$0 reg byte a 200002.0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(byte) main::a
-(byte) main::a#1 reg byte y 150001.5
-(byte) main::a#2 reg byte y 100001.0
-(byte) main::x
-(byte) main::x#1 reg byte x 701.0
-(byte) main::x#6 reg byte x 11233.666666666668
-(byte) main::y
-(byte) main::y#1 y zp[1]:2 15001.5
-(byte) main::y#4 y zp[1]:2 20000.499999999996
+const nomodify byte* IRQ_STATUS = (byte*) 53273
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+volatile byte col1 loadstore zp[1]:3 2.6666666666666665
+interrupt(KERNEL_MIN) void irq()
+label irq::@return
+void main()
+byte~ main::$0 reg byte a 200002.0
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+byte main::a
+byte main::a#1 reg byte y 150001.5
+byte main::a#2 reg byte y 100001.0
+byte main::x
+byte main::x#1 reg byte x 701.0
+byte main::x#6 reg byte x 11233.666666666668
+byte main::y
+byte main::y#1 y zp[1]:2 15001.5
+byte main::y#4 y zp[1]:2 20000.499999999996
 
 reg byte x [ main::x#6 main::x#1 ]
 zp[1]:2 [ main::y#4 main::y#1 ]
@@ -717,7 +572,7 @@ Score: 223704
 __start: {
     // __start::__init1
     // col1 = 0
-    // [1] (volatile byte) col1 ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] col1 = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z col1
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -732,7 +587,7 @@ __start: {
 irq: {
     // entry interrupt(KERNEL_MIN)
     // *IRQ_STATUS = 1
-    // [5] *((const nomodify byte*) IRQ_STATUS) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [5] *IRQ_STATUS = 1 -- _deref_pbuc1=vbuc2 
     // Acknowledge the IRQ
     lda #1
     sta IRQ_STATUS
@@ -740,11 +595,11 @@ irq: {
     // asm { lda$dc0d  }
     lda $dc0d
     // SCREEN[40] = col1++
-    // [7] *((const nomodify byte*) SCREEN+(byte) $28) ← (volatile byte) col1 -- _deref_pbuc1=vbuz1 
+    // [7] *(SCREEN+$28) = col1 -- _deref_pbuc1=vbuz1 
     lda.z col1
     sta SCREEN+$28
     // SCREEN[40] = col1++;
-    // [8] (volatile byte) col1 ← ++ (volatile byte) col1 -- vbuz1=_inc_vbuz1 
+    // [8] col1 = ++ col1 -- vbuz1=_inc_vbuz1 
     inc.z col1
     // irq::@return
     // }
@@ -755,66 +610,66 @@ irq: {
 main: {
     .label y = 2
     // *KERNEL_IRQ = &irq
-    // [10] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_qprc1=pprc2 
+    // [10] *KERNEL_IRQ = &irq -- _deref_qprc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
     sta KERNEL_IRQ+1
     // [11] phi from main main::@5 to main::@1 [phi:main/main::@5->main::@1]
   __b4:
-    // [11] phi (byte) main::x#6 = (byte) 0 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
+    // [11] phi main::x#6 = 0 [phi:main/main::@5->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // [12] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-    // [12] phi (byte) main::y#4 = (byte) 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
+    // [12] phi main::y#4 = 0 [phi:main::@1->main::@2#0] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     // [12] phi from main::@4 to main::@2 [phi:main::@4->main::@2]
-    // [12] phi (byte) main::y#4 = (byte) main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
+    // [12] phi main::y#4 = main::y#1 [phi:main::@4->main::@2#0] -- register_copy 
     // main::@2
   __b2:
     // [13] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // [13] phi (byte) main::a#2 = (byte) 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
+    // [13] phi main::a#2 = 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
     ldy #0
     // [13] phi from main::@3 to main::@3 [phi:main::@3->main::@3]
-    // [13] phi (byte) main::a#2 = (byte) main::a#1 [phi:main::@3->main::@3#0] -- register_copy 
+    // [13] phi main::a#2 = main::a#1 [phi:main::@3->main::@3#0] -- register_copy 
     // main::@3
   __b3:
     // a+y
-    // [14] (byte~) main::$0 ← (byte) main::a#2 + (byte) main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
+    // [14] main::$0 = main::a#2 + main::y#4 -- vbuaa=vbuyy_plus_vbuz1 
     tya
     clc
     adc.z y
     // SCREEN[x] = a+y
-    // [15] *((const nomodify byte*) SCREEN + (byte) main::x#6) ← (byte~) main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [15] SCREEN[main::x#6] = main::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN,x
     // for (byte a:0..10)
-    // [16] (byte) main::a#1 ← ++ (byte) main::a#2 -- vbuyy=_inc_vbuyy 
+    // [16] main::a#1 = ++ main::a#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [17] if((byte) main::a#1!=(byte) $b) goto main::@3 -- vbuyy_neq_vbuc1_then_la1 
+    // [17] if(main::a#1!=$b) goto main::@3 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$b
     bne __b3
     // main::@4
     // for(byte y: 0..10)
-    // [18] (byte) main::y#1 ← ++ (byte) main::y#4 -- vbuz1=_inc_vbuz1 
+    // [18] main::y#1 = ++ main::y#4 -- vbuz1=_inc_vbuz1 
     inc.z y
-    // [19] if((byte) main::y#1!=(byte) $b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
+    // [19] if(main::y#1!=$b) goto main::@2 -- vbuz1_neq_vbuc1_then_la1 
     lda #$b
     cmp.z y
     bne __b2
     // main::@5
     // for(byte x: 0..10)
-    // [20] (byte) main::x#1 ← ++ (byte) main::x#6 -- vbuxx=_inc_vbuxx 
+    // [20] main::x#1 = ++ main::x#6 -- vbuxx=_inc_vbuxx 
     inx
-    // [21] if((byte) main::x#1!=(byte) $b) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
+    // [21] if(main::x#1!=$b) goto main::@6 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$b
     bne __b1
     jmp __b4
     // [22] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
     // main::@6
     // [11] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
-    // [11] phi (byte) main::x#6 = (byte) main::x#1 [phi:main::@6->main::@1#0] -- register_copy 
+    // [11] phi main::x#6 = main::x#1 [phi:main::@6->main::@1#0] -- register_copy 
 }
   // File Data
 

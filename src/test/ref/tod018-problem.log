@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::D018) ← (const byte) main::d018val
+  *main::D018 = main::d018val
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,14 +20,14 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::D018 = (byte*)(number) $d018
-(const byte) main::d018val = (byte)>(const nomodify byte*) main::screen&(number) $3fff
-(const nomodify byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::D018 = (byte*)$d018
+const byte main::d018val = (byte)>main::screen&$3fff
+const nomodify byte* main::screen = (byte*)$400
 
 Adding number conversion cast (unumber) $3fff in 
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -35,14 +35,14 @@ Simplifying constant pointer cast (byte*) 53272
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $3fff
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3fff
+Finalized unsigned number type $3fff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Simplifying constant integer cast >(const nomodify byte*) main::screen&(word) $3fff
+Simplifying constant integer cast >main::screen&$3fff
 Successful SSA optimization PassNCastSimplification
 CALL GRAPH
 
@@ -51,9 +51,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::D018) ← (const byte) main::d018val
+  [0] *main::D018 = main::d018val
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -61,38 +61,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests a problem with tod018 not calculating types correctly
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const d018val = >screen&$3fff
-    .label D018 = $d018
-    .label screen = $400
-    // [0] *((const nomodify byte*) main::D018) ← (const byte) main::d018val -- _deref_pbuc1=vbuc2 
-    lda #d018val
-    sta D018
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::D018) ← (const byte) main::d018val [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::D018 = main::d018val [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -114,7 +88,7 @@ main: {
     .const d018val = >screen&$3fff
     .label D018 = $d018
     .label screen = $400
-    // [0] *((const nomodify byte*) main::D018) ← (const byte) main::d018val -- _deref_pbuc1=vbuc2 
+    // [0] *main::D018 = main::d018val -- _deref_pbuc1=vbuc2 
     lda #d018val
     sta D018
     jmp __breturn
@@ -132,11 +106,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::D018 = (byte*) 53272
-(const byte) main::d018val = >(const nomodify byte*) main::screen&(word) $3fff
-(const nomodify byte*) main::screen = (byte*) 1024
+void main()
+label main::@return
+const nomodify byte* main::D018 = (byte*) 53272
+const byte main::d018val = >main::screen&$3fff
+const nomodify byte* main::screen = (byte*) 1024
 
 
 
@@ -156,7 +130,7 @@ main: {
     .label D018 = $d018
     .label screen = $400
     // *D018 = d018val
-    // [0] *((const nomodify byte*) main::D018) ← (const byte) main::d018val -- _deref_pbuc1=vbuc2 
+    // [0] *main::D018 = main::d018val -- _deref_pbuc1=vbuc2 
     lda #d018val
     sta D018
     // main::@return

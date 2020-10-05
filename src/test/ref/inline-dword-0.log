@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_DWORD
-  *((const dword*) main::screen + (number~) main::$0) ← (const dword) main::w
+  main::$0 = 0 * SIZEOF_DWORD
+  main::screen[main::$0] = main::w
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,35 +21,35 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) SIZEOF_DWORD = (byte) 4
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(number~) main::$0
-(label) main::@return
-(const dword*) main::screen = (dword*)(number) $400
-(const dword) main::w = (word) $1234*(dword) $10000+(word) $5678
+const byte SIZEOF_DWORD = 4
+void __start()
+label __start::@1
+label __start::@return
+void main()
+number~ main::$0
+label main::@return
+const dword* main::screen = (dword*)$400
+const dword main::w = $1234*$10000+$5678
 
-Adding number conversion cast (unumber) 0 in (number~) main::$0 ← (number) 0 * (const byte) SIZEOF_DWORD
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 0 * (const byte) SIZEOF_DWORD
+Adding number conversion cast (unumber) 0 in main::$0 = 0 * SIZEOF_DWORD
+Adding number conversion cast (unumber) main::$0 in main::$0 = (unumber)0 * SIZEOF_DWORD
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (dword*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) 0 * (const byte) SIZEOF_DWORD
-Constant right-side identified [0] (byte~) main::$0 ← (byte) 0 * (const byte) SIZEOF_DWORD
+Inferred type updated to byte in main::$0 = 0 * SIZEOF_DWORD
+Constant right-side identified [0] main::$0 = 0 * SIZEOF_DWORD
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$0 = 0*SIZEOF_DWORD
+Constant main::$0 = 0*SIZEOF_DWORD
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero (byte) 0*(const byte) SIZEOF_DWORD in 
+Simplifying constant evaluating to zero 0*SIZEOF_DWORD in 
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero main::screen in [1] *((const dword*) main::screen + (const byte) main::$0) ← (const dword) main::w
+Simplifying expression containing zero main::screen in [1] main::screen[main::$0] = main::w
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) main::$0
-Eliminating unused constant (const byte) SIZEOF_DWORD
+Eliminating unused constant main::$0
+Eliminating unused constant SIZEOF_DWORD
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -63,9 +63,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const dword*) main::screen) ← (const dword) main::w
+  [0] *main::screen = main::w
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -73,43 +73,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests minimal inline dword
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const w = $1234*$10000+$5678
-    .label screen = $400
-    // [0] *((const dword*) main::screen) ← (const dword) main::w -- _deref_pduc1=vduc2 
-    lda #<w
-    sta screen
-    lda #>w
-    sta screen+1
-    lda #<w>>$10
-    sta screen+2
-    lda #>w>>$10
-    sta screen+3
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const dword*) main::screen) ← (const dword) main::w [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::screen = main::w [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -130,7 +99,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const w = $1234*$10000+$5678
     .label screen = $400
-    // [0] *((const dword*) main::screen) ← (const dword) main::w -- _deref_pduc1=vduc2 
+    // [0] *main::screen = main::w -- _deref_pduc1=vduc2 
     lda #<w
     sta screen
     lda #>w
@@ -154,10 +123,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const dword*) main::screen = (dword*) 1024
-(const dword) main::w = (word) $1234*(dword) $10000+(word) $5678
+void main()
+label main::@return
+const dword* main::screen = (dword*) 1024
+const dword main::w = $1234*$10000+$5678
 
 
 
@@ -176,7 +145,7 @@ main: {
     .const w = $1234*$10000+$5678
     .label screen = $400
     // screen[0] = w
-    // [0] *((const dword*) main::screen) ← (const dword) main::w -- _deref_pduc1=vduc2 
+    // [0] *main::screen = main::w -- _deref_pduc1=vduc2 
     lda #<w
     sta screen
     lda #>w

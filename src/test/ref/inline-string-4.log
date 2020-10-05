@@ -1,9 +1,9 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (dword) output::dw#0 ← (const dword) main::dw
+  output::dw#0 = main::dw
   call output 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -12,16 +12,16 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) output((dword) output::dw)
+void output(dword output::dw)
 output: scope:[output]  from main
-  (dword) output::dw#1 ← phi( main/(dword) output::dw#0 )
-  *((const nomodify dword*) screen) ← (dword) output::dw#1
+  output::dw#1 = phi( main/output::dw#0 )
+  *screen = output::dw#1
   to:output::@return
 output::@return: scope:[output]  from output
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -32,33 +32,33 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const dword) main::dw = (dword)(const to_nomodify byte*) main::msg
-(const to_nomodify byte*) main::msg[]  = (byte*) "camelot"
-(void()) output((dword) output::dw)
-(label) output::@return
-(dword) output::dw
-(dword) output::dw#0
-(dword) output::dw#1
-(const nomodify dword*) screen = (dword*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@return
+const dword main::dw = (dword)main::msg
+const to_nomodify byte* main::msg[]  = "camelot"
+void output(dword output::dw)
+label output::@return
+dword output::dw
+dword output::dw#0
+dword output::dw#1
+const nomodify dword* screen = (dword*)$400
 
 Simplifying constant pointer cast (dword*) 1024
 Successful SSA optimization PassNCastSimplification
-Identical Phi Values (dword) output::dw#1 (dword) output::dw#0
+Identical Phi Values output::dw#1 output::dw#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const dword) output::dw#0 = main::dw
+Constant output::dw#0 = main::dw
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined output::dw#0 = (const dword) main::dw
+Constant inlined output::dw#0 = main::dw
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -67,12 +67,12 @@ Calls in [main] to output:1
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call output 
@@ -81,9 +81,9 @@ main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-(void()) output((dword) output::dw)
+void output(dword output::dw)
 output: scope:[output]  from main
-  [3] *((const nomodify dword*) screen) ← (const dword) main::dw
+  [3] *screen = main::dw
   to:output::@return
 output::@return: scope:[output]  from output
   [4] return 
@@ -91,57 +91,14 @@ output::@return: scope:[output]  from output
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(void()) output((dword) output::dw)
-(dword) output::dw
+void main()
+void output(dword output::dw)
+dword output::dw
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test casting the address of an inline string to a dword.
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label screen = $400
-  // main
-main: {
-    .label dw = msg
-    // [1] call output 
-    jsr output
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-    msg: .text "camelot"
-    .byte 0
-}
-  // output
-output: {
-    // [3] *((const nomodify dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
-    lda #<main.dw
-    sta screen
-    lda #>main.dw
-    sta screen+1
-    lda #<main.dw>>$10
-    sta screen+2
-    lda #>main.dw>>$10
-    sta screen+3
-    jmp __breturn
-    // output::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] *((const nomodify dword*) screen) ← (const dword) main::dw [ ] ( output:1 [ ] { }  ) always clobbers reg byte a 
+Statement [3] *screen = main::dw [ ] ( output:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -176,7 +133,7 @@ main: {
 }
   // output
 output: {
-    // [3] *((const nomodify dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
+    // [3] *screen = main::dw -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw
@@ -202,14 +159,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const dword) main::dw = (dword)(const to_nomodify byte*) main::msg
-(const to_nomodify byte*) main::msg[]  = (byte*) "camelot"
-(void()) output((dword) output::dw)
-(label) output::@return
-(dword) output::dw
-(const nomodify dword*) screen = (dword*) 1024
+void main()
+label main::@return
+const dword main::dw = (dword)main::msg
+const to_nomodify byte* main::msg[]  = "camelot"
+void output(dword output::dw)
+label output::@return
+dword output::dw
+const nomodify dword* screen = (dword*) 1024
 
 
 
@@ -240,7 +197,7 @@ main: {
   // output
 output: {
     // *screen = dw
-    // [3] *((const nomodify dword*) screen) ← (const dword) main::dw -- _deref_pduc1=vduc2 
+    // [3] *screen = main::dw -- _deref_pduc1=vduc2 
     lda #<main.dw
     sta screen
     lda #>main.dw

@@ -2,15 +2,15 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) my_init()
+void my_init()
 my_init: scope:[my_init]  from __start::__init1
-  (volatile byte) my_value ← (byte) '*'
+  my_value = '*'
   to:my_init::@return
 my_init::@return: scope:[my_init]  from my_init
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   call print 
   to:main::@1
@@ -20,19 +20,19 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) print()
+void print()
 print: scope:[print]  from main
-  *((const nomodify byte*) SCREEN) ← (volatile byte) my_value
+  *SCREEN = my_value
   to:print::@return
 print::@return: scope:[print]  from print
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) my_value ← (byte) 0
+  my_value = 0
   call my_init 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::__init1
@@ -47,21 +47,21 @@ __start::@return: scope:[__start]  from __start::@3
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@3
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@1
-(label) main::@return
-(void()) my_init()
-(label) my_init::@return
-(volatile byte) my_value loadstore
-(void()) print()
-(label) print::@return
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@3
+label __start::@return
+label __start::__init1
+void main()
+label main::@1
+label main::@return
+void my_init()
+label my_init::@return
+volatile byte my_value loadstore
+void print()
+label print::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -77,21 +77,21 @@ Calls in [main] to print:11
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) __start::@3
-Culled Empty Block (label) main::@1
+Culled Empty Block label __start::@2
+Culled Empty Block label __start::@3
+Culled Empty Block label main::@1
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) my_value ← (byte) 0
+  [1] my_value = 0
   [2] call my_init 
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
@@ -102,15 +102,15 @@ __start::@return: scope:[__start]  from __start::@1
   [5] return 
   to:@return
 
-(void()) my_init()
+void my_init()
 my_init: scope:[my_init]  from __start::__init1
-  [6] (volatile byte) my_value ← (byte) '*'
+  [6] my_value = '*'
   to:my_init::@return
 my_init::@return: scope:[my_init]  from my_init
   [7] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   [8] phi()
   [9] call print 
@@ -119,9 +119,9 @@ main::@return: scope:[main]  from main
   [10] return 
   to:@return
 
-(void()) print()
+void print()
 print: scope:[print]  from main
-  [11] *((const nomodify byte*) SCREEN) ← (volatile byte) my_value
+  [11] *SCREEN = my_value
   to:print::@return
 print::@return: scope:[print]  from print
   [12] return 
@@ -129,93 +129,21 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(void()) main()
-(void()) my_init()
-(volatile byte) my_value loadstore 22.8
-(void()) print()
+void __start()
+void main()
+void my_init()
+volatile byte my_value loadstore 22.8
+void print()
 
 Initial phi equivalence classes
 Added variable my_value to live range equivalence class [ my_value ]
 Complete equivalence classes
 [ my_value ]
 Allocated zp[1]:2 [ my_value ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates Library Constructor Functionality
-// #pragma constructor_for() declares named constructors for other symbols
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label my_value = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) my_value ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z my_value
-    // [2] call my_init 
-    jsr my_init
-    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [4] call main 
-    // [8] phi from __start::@1 to main [phi:__start::@1->main]
-  main_from___b1:
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // my_init
-my_init: {
-    // [6] (volatile byte) my_value ← (byte) '*' -- vbuz1=vbuc1 
-    lda #'*'
-    sta.z my_value
-    jmp __breturn
-    // my_init::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // main
-main: {
-    // [9] call print 
-    jsr print
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // print
-print: {
-    // [11] *((const nomodify byte*) SCREEN) ← (volatile byte) my_value -- _deref_pbuc1=vbuz1 
-    lda.z my_value
-    sta SCREEN
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [12] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) my_value ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (volatile byte) my_value ← (byte) '*' [ my_value ] (  [ my_value ] { }  my_init:2 [ my_value ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) SCREEN) ← (volatile byte) my_value [ ] ( main:4::print:9 [ ] { }  ) always clobbers reg byte a 
+Statement [1] my_value = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] my_value = '*' [ my_value ] (  [ my_value ] { }  my_init:2 [ my_value ] { }  ) always clobbers reg byte a 
+Statement [11] *SCREEN = my_value [ ] ( main:4::print:9 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ my_value ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -249,7 +177,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) my_value ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] my_value = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z my_value
     // [2] call my_init 
@@ -271,7 +199,7 @@ __start: {
 }
   // my_init
 my_init: {
-    // [6] (volatile byte) my_value ← (byte) '*' -- vbuz1=vbuc1 
+    // [6] my_value = '*' -- vbuz1=vbuc1 
     lda #'*'
     sta.z my_value
     jmp __breturn
@@ -292,7 +220,7 @@ main: {
 }
   // print
 print: {
-    // [11] *((const nomodify byte*) SCREEN) ← (volatile byte) my_value -- _deref_pbuc1=vbuz1 
+    // [11] *SCREEN = my_value -- _deref_pbuc1=vbuz1 
     lda.z my_value
     sta SCREEN
     jmp __breturn
@@ -323,18 +251,18 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-(void()) my_init()
-(label) my_init::@return
-(volatile byte) my_value loadstore zp[1]:2 22.8
-(void()) print()
-(label) print::@return
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+void my_init()
+label my_init::@return
+volatile byte my_value loadstore zp[1]:2 22.8
+void print()
+label print::@return
 
 zp[1]:2 [ my_value ]
 
@@ -356,7 +284,7 @@ Score: 59
 __start: {
     // __start::__init1
     // my_value
-    // [1] (volatile byte) my_value ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] my_value = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z my_value
     // #pragma constructor_for(my_init, print)
@@ -374,7 +302,7 @@ __start: {
   // my_init
 my_init: {
     // my_value = '*'
-    // [6] (volatile byte) my_value ← (byte) '*' -- vbuz1=vbuc1 
+    // [6] my_value = '*' -- vbuz1=vbuc1 
     lda #'*'
     sta.z my_value
     // my_init::@return
@@ -395,7 +323,7 @@ main: {
   // print
 print: {
     // *SCREEN = my_value
-    // [11] *((const nomodify byte*) SCREEN) ← (volatile byte) my_value -- _deref_pbuc1=vbuz1 
+    // [11] *SCREEN = my_value -- _deref_pbuc1=vbuz1 
     lda.z my_value
     sta SCREEN
     // print::@return

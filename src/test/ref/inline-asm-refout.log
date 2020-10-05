@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::SCREEN+(number) $28) ← *((const byte*) table + (number) 0)
+  *(main::SCREEN+$28) = table[0]
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,25 +21,25 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte*) table[]  = (byte*) "cml!"z
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte* table[]  = "cml!"z
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN+(number) $28) ← *((const byte*) table + (number) 0)
-Adding number conversion cast (unumber) $28 in *((const nomodify byte*) main::SCREEN+(number) $28) ← *((const byte*) table + (unumber)(number) 0)
+Adding number conversion cast (unumber) 0 in *(main::SCREEN+$28) = table[0]
+Adding number conversion cast (unumber) $28 in *(main::SCREEN+$28) = table[(unumber)0]
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $28
+Finalized unsigned number type 0
+Finalized unsigned number type $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero table in [0] *((const nomodify byte*) main::SCREEN+(byte) $28) ← *((const byte*) table + (byte) 0)
+Simplifying expression containing zero table in [0] *(main::SCREEN+$28) = table[0]
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -53,9 +53,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN+(byte) $28) ← *((const byte*) table)
+  [0] *(main::SCREEN+$28) = *table
   asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -64,45 +64,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates how inline assembler can reference data from the outside program
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) -- _deref_pbuc1=_deref_pbuc2 
-    lda table
-    sta SCREEN+$28
-    // asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
-    ldx #0
-  !:
-    lda table,x
-    sta SCREEN+1,x
-    inx
-    cpx #4
-    bne !-
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-  table: .text "cml!"
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(main::SCREEN+$28) = *table [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  } always clobbers reg byte a reg byte x 
 
 REGISTER UPLIFT SCOPES
@@ -123,7 +90,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *(main::SCREEN+$28) = *table -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
     // asm { ldx#0 !: ldatable,x staSCREEN+1,x inx cpx#4 bne!-  }
@@ -150,10 +117,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(const byte*) table[]  = (byte*) "cml!"z
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+const byte* table[]  = "cml!"z
 
 
 
@@ -171,7 +138,7 @@ Score: 32
 main: {
     .label SCREEN = $400
     // *(SCREEN+40) = table[0]
-    // [0] *((const nomodify byte*) main::SCREEN+(byte) $28) ← *((const byte*) table) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *(main::SCREEN+$28) = *table -- _deref_pbuc1=_deref_pbuc2 
     lda table
     sta SCREEN+$28
     // asm

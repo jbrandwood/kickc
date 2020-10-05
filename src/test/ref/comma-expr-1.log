@@ -1,17 +1,17 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (number~) main::$0 ← (const byte) main::b + (number) 1
-  (byte) main::c#0 ← (number~) main::$0
-  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte) main::c#0
+  main::$0 = main::b + 1
+  main::c#0 = main::$0
+  main::SCREEN[0] = main::c#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -22,36 +22,36 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(number~) main::$0
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte) main::b = (byte) 3
-(byte) main::c
-(byte) main::c#0
+void __start()
+label __start::@1
+label __start::@return
+void main()
+number~ main::$0
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte main::b = 3
+byte main::c
+byte main::c#0
 
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (const byte) main::b + (number) 1
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (const byte) main::b + (unumber)(number) 1
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte) main::c#0
+Adding number conversion cast (unumber) 1 in main::$0 = main::b + 1
+Adding number conversion cast (unumber) main::$0 in main::$0 = main::b + (unumber)1
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::c#0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (const byte) main::b + (byte) 1
+Inferred type updated to byte in main::$0 = main::b + 1
 Alias main::c#0 = main::$0 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (byte) main::c#0 ← (const byte) main::b + (byte) 1
+Constant right-side identified [0] main::c#0 = main::b + 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::c#0 = main::b+1
+Constant main::c#0 = main::b+1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [1] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (const byte) main::c#0
+Simplifying expression containing zero main::SCREEN in [1] main::SCREEN[0] = main::c#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -65,9 +65,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::c#0
+  [0] *main::SCREEN = main::c#0
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -75,39 +75,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::c
+void main()
+byte main::c
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests simple comma-expression (in parenthesis)
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const b = 3
-    .const c = b+1
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
-    lda #c
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::c#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = main::c#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -129,7 +103,7 @@ main: {
     .const b = 3
     .const c = b+1
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = main::c#0 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
     jmp __breturn
@@ -147,12 +121,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(const byte) main::b = (byte) 3
-(byte) main::c
-(const byte) main::c#0 c = (const byte) main::b+(byte) 1
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+const byte main::b = 3
+byte main::c
+const byte main::c#0 c = main::b+1
 
 
 
@@ -172,7 +146,7 @@ main: {
     .const c = b+1
     .label SCREEN = $400
     // SCREEN[1,0] = c
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::c#0 -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = main::c#0 -- _deref_pbuc1=vbuc2 
     lda #c
     sta SCREEN
     // main::@return

@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← (const nomodify byte) main::dy-(number) 1/(number) $10
-  *((const nomodify byte*) SCREEN + (number) 1) ← (const nomodify byte) main::dy-(number) 1>>(number) 4
+  SCREEN[0] = main::dy-1/$10
+  SCREEN[1] = main::dy-1>>4
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,45 +21,45 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte) main::dy = (byte) $80
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte main::dy = $80
 
-Adding number conversion cast (unumber) main::dy-1/$10 in *((const nomodify byte*) SCREEN + (number) 0) ← (const nomodify byte) main::dy-(number) 1/(number) $10
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 0) ← ((unumber)) (const nomodify byte) main::dy-(number) 1/(number) $10
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← ((unumber)) (const nomodify byte) main::dy-(unumber)(number) 1/(number) $10
-Adding number conversion cast (unumber) main::dy-1>>4 in *((const nomodify byte*) SCREEN + (number) 1) ← (const nomodify byte) main::dy-(number) 1>>(number) 4
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← ((unumber)) (const nomodify byte) main::dy-(number) 1>>(number) 4
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← ((unumber)) (const nomodify byte) main::dy-(unumber)(number) 1>>(number) 4
+Adding number conversion cast (unumber) main::dy-1/$10 in SCREEN[0] = main::dy-1/$10
+Adding number conversion cast (unumber) 1 in SCREEN[0] = ((unumber)) main::dy-1/$10
+Adding number conversion cast (unumber) 0 in SCREEN[0] = ((unumber)) main::dy-(unumber)1/$10
+Adding number conversion cast (unumber) main::dy-1>>4 in SCREEN[1] = main::dy-1>>4
+Adding number conversion cast (unumber) 1 in SCREEN[1] = ((unumber)) main::dy-1>>4
+Adding number conversion cast (unumber) 1 in SCREEN[1] = ((unumber)) main::dy-(unumber)1>>4
 Successful SSA optimization PassNAddNumberTypeConversions
-Adding number conversion cast (unumber) $10 in *((const nomodify byte*) SCREEN + (unumber)(number) 0) ← ((unumber)) (const nomodify byte) main::dy-(unumber)(number) 1/(number) $10
-Adding number conversion cast (unumber) 4 in *((const nomodify byte*) SCREEN + (unumber)(number) 1) ← ((unumber)) (const nomodify byte) main::dy-(unumber)(number) 1>>(number) 4
+Adding number conversion cast (unumber) $10 in SCREEN[(unumber)0] = ((unumber)) main::dy-(unumber)1/$10
+Adding number conversion cast (unumber) 4 in SCREEN[(unumber)1] = ((unumber)) main::dy-(unumber)1>>4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) SCREEN + (unumber)(number) 0) ← (unumber)(const nomodify byte) main::dy-(unumber)(number) 1/(unumber)(number) $10
-Inlining cast *((const nomodify byte*) SCREEN + (unumber)(number) 1) ← (unumber)(const nomodify byte) main::dy-(unumber)(number) 1>>(unumber)(number) 4
+Inlining cast SCREEN[(unumber)0] = (unumber)main::dy-(unumber)1/(unumber)$10
+Inlining cast SCREEN[(unumber)1] = (unumber)main::dy-(unumber)1>>(unumber)4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast (const nomodify byte) main::dy-(unumber)(number) 1/(unumber)(number) $10
+Simplifying constant integer cast main::dy-(unumber)1/(unumber)$10
 Simplifying constant integer cast 1
 Simplifying constant integer cast $10
 Simplifying constant integer cast 0
-Simplifying constant integer cast (const nomodify byte) main::dy-(unumber)(number) 1>>(unumber)(number) 4
+Simplifying constant integer cast main::dy-(unumber)1>>(unumber)4
 Simplifying constant integer cast 1
 Simplifying constant integer cast 4
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $10
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
+Finalized unsigned number type $10
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 4
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (const nomodify byte) main::dy-(byte) 1/(byte) $10
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = main::dy-1/$10
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -75,10 +75,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) main::dy-(byte) 1/(byte) $10
-  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const nomodify byte) main::dy-(byte) 1>>(byte) 4
+  [0] *SCREEN = main::dy-1/$10
+  [1] *(SCREEN+1) = main::dy-1>>4
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -86,44 +86,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test parenthesising of constants
-// See https://gitlab.com/camelot/kickc/-/issues/470#note_356486132
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .const dy = $80
-    // [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) main::dy-(byte) 1/(byte) $10 -- _deref_pbuc1=vbuc2 
-    // A parenthesis should be added in the ASM to ensure operator precedence 
-    lda #(dy-1)/$10
-    sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const nomodify byte) main::dy-(byte) 1>>(byte) 4 -- _deref_pbuc1=vbuc2 
-    // No parenthesis should be added in the ASM because minus (-) has higher precedence than shift (>>)
-    lda #dy-1>>4
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) main::dy-(byte) 1/(byte) $10 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const nomodify byte) main::dy-(byte) 1>>(byte) 4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = main::dy-1/$10 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = main::dy-1>>4 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -145,11 +114,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .const dy = $80
-    // [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) main::dy-(byte) 1/(byte) $10 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = main::dy-1/$10 -- _deref_pbuc1=vbuc2 
     // A parenthesis should be added in the ASM to ensure operator precedence 
     lda #(dy-1)/$10
     sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const nomodify byte) main::dy-(byte) 1>>(byte) 4 -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = main::dy-1>>4 -- _deref_pbuc1=vbuc2 
     // No parenthesis should be added in the ASM because minus (-) has higher precedence than shift (>>)
     lda #dy-1>>4
     sta SCREEN+1
@@ -168,10 +137,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(const nomodify byte) main::dy = (byte) $80
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+const nomodify byte main::dy = $80
 
 
 
@@ -191,12 +160,12 @@ Score: 18
 main: {
     .const dy = $80
     // SCREEN[0] = (dy-1)/16
-    // [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) main::dy-(byte) 1/(byte) $10 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = main::dy-1/$10 -- _deref_pbuc1=vbuc2 
     // A parenthesis should be added in the ASM to ensure operator precedence 
     lda #(dy-1)/$10
     sta SCREEN
     // SCREEN[1] = (dy-1)>>4
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const nomodify byte) main::dy-(byte) 1>>(byte) 4 -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = main::dy-1>>4 -- _deref_pbuc1=vbuc2 
     // No parenthesis should be added in the ASM because minus (-) has higher precedence than shift (>>)
     lda #dy-1>>4
     sta SCREEN+1

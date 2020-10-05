@@ -1,20 +1,20 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (bool~) main::$1 ← (number) 0 != (const byte) main::b
-  (bool~) main::$0 ← ! (bool~) main::$1
-  if((bool~) main::$0) goto main::@return
+  main::$1 = 0 != main::b
+  main::$0 = ! main::$1
+  if(main::$0) goto main::@return
   to:main::@1
 main::@1: scope:[main]  from main
-  *((const byte*) main::screen) ← (byte) 'a'
+  *main::screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -25,31 +25,31 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@return
-(const byte) main::b = (byte) $c
-(const byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+bool~ main::$1
+label main::@1
+label main::@return
+const byte main::b = $c
+const byte* main::screen = (byte*)$400
 
-Adding number conversion cast (unumber) 0 in (bool~) main::$1 ← (number) 0 != (const byte) main::b
+Adding number conversion cast (unumber) 0 in main::$1 = 0 != main::b
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [1] (bool~) main::$0 ← (byte) 0 == (const byte) main::b from [0] (bool~) main::$1 ← (byte) 0 != (const byte) main::b
+Inversing boolean not [1] main::$0 = 0 == main::b from [0] main::$1 = 0 != main::b
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) main::$0 [1] if((byte) 0==(const byte) main::b) goto main::@return
+Simple Condition main::$0 [1] if(0==main::b) goto main::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
-if() condition always false - eliminating [1] if((byte) 0==(const byte) main::b) goto main::@return
+if() condition always false - eliminating [1] if(0==main::b) goto main::@return
 Successful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const byte) main::b
+Eliminating unused constant main::b
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -65,12 +65,12 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main
-  [1] *((const byte*) main::screen) ← (byte) 'a'
+  [1] *main::screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [2] return 
@@ -78,39 +78,12 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests a condition type mismatch (not boolean)
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const byte*) main::screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta screen
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] *((const byte*) main::screen) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *main::screen = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -133,7 +106,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const byte*) main::screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [1] *main::screen = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp __breturn
@@ -153,10 +126,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte*) main::screen = (byte*) 1024
+void main()
+label main::@1
+label main::@return
+const byte* main::screen = (byte*) 1024
 
 
 
@@ -175,7 +148,7 @@ main: {
     .label screen = $400
     // main::@1
     // *screen = 'a'
-    // [1] *((const byte*) main::screen) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [1] *main::screen = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     // main::@return

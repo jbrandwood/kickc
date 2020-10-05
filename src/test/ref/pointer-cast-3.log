@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify signed byte*) main::sb_screen) ← (const signed byte) main::sb
+  *main::sb_screen = main::sb
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,13 +20,13 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const signed byte) main::sb = (signed byte)(number) $ff
-(const nomodify signed byte*) main::sb_screen = (signed byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const signed byte main::sb = (signed byte)$ff
+const nomodify signed byte* main::sb_screen = (signed byte*)$400
 
 Simplifying constant pointer cast (signed byte*) 1024
 Simplifying constant integer cast $ff
@@ -43,9 +43,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify signed byte*) main::sb_screen) ← (const signed byte) main::sb
+  [0] *main::sb_screen = main::sb
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -53,37 +53,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests casting pointer types to other pointer types
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const sb = $ff
-    .label sb_screen = $400
-    // [0] *((const nomodify signed byte*) main::sb_screen) ← (const signed byte) main::sb -- _deref_pbsc1=vbsc2 
-    lda #sb
-    sta sb_screen
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify signed byte*) main::sb_screen) ← (const signed byte) main::sb [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::sb_screen = main::sb [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -104,7 +79,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const sb = $ff
     .label sb_screen = $400
-    // [0] *((const nomodify signed byte*) main::sb_screen) ← (const signed byte) main::sb -- _deref_pbsc1=vbsc2 
+    // [0] *main::sb_screen = main::sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     jmp __breturn
@@ -122,10 +97,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const signed byte) main::sb = (signed byte) $ff
-(const nomodify signed byte*) main::sb_screen = (signed byte*) 1024
+void main()
+label main::@return
+const signed byte main::sb = $ff
+const nomodify signed byte* main::sb_screen = (signed byte*) 1024
 
 
 
@@ -144,7 +119,7 @@ main: {
     .const sb = $ff
     .label sb_screen = $400
     // *sb_screen = sb
-    // [0] *((const nomodify signed byte*) main::sb_screen) ← (const signed byte) main::sb -- _deref_pbsc1=vbsc2 
+    // [0] *main::sb_screen = main::sb -- _deref_pbsc1=vbsc2 
     lda #sb
     sta sb_screen
     // main::@return

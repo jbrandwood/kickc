@@ -1,72 +1,72 @@
-Setting inferred volatile on symbol affected by address-of (byte*) main::ptr ← &(byte) val
+Setting inferred volatile on symbol affected by address-of main::ptr = &val
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) main::idx#0 ← (byte) 0
-  *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#0) ← (volatile byte) val
-  *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#0) ← (byte) '.'
-  (byte) main::idx#1 ← ++ (byte) main::idx#0
-  (volatile byte) val ← (number) 1
-  *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#1) ← (volatile byte) val
-  *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#1) ← (byte) '.'
-  (byte) main::idx#2 ← ++ (byte) main::idx#1
-  (volatile byte) val ← (number) 2
-  *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#2) ← (volatile byte) val
-  *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#2) ← *((const byte*) main::ptr)
-  (byte) main::idx#3 ← ++ (byte) main::idx#2
-  *((const byte*) main::ptr) ← (number) 3
-  *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#3) ← (volatile byte) val
-  *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#3) ← *((const byte*) main::ptr)
-  (byte) main::idx#4 ← ++ (byte) main::idx#3
-  (byte) setv::v#0 ← (number) 4
+  main::idx#0 = 0
+  main::SCREEN1[main::idx#0] = val
+  main::SCREEN2[main::idx#0] = '.'
+  main::idx#1 = ++ main::idx#0
+  val = 1
+  main::SCREEN1[main::idx#1] = val
+  main::SCREEN2[main::idx#1] = '.'
+  main::idx#2 = ++ main::idx#1
+  val = 2
+  main::SCREEN1[main::idx#2] = val
+  main::SCREEN2[main::idx#2] = *main::ptr
+  main::idx#3 = ++ main::idx#2
+  *main::ptr = 3
+  main::SCREEN1[main::idx#3] = val
+  main::SCREEN2[main::idx#3] = *main::ptr
+  main::idx#4 = ++ main::idx#3
+  setv::v#0 = 4
   call setv 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) main::idx#7 ← phi( main/(byte) main::idx#4 )
-  *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#7) ← (volatile byte) val
-  *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#7) ← *((const byte*) main::ptr)
-  (byte) main::idx#5 ← ++ (byte) main::idx#7
-  (byte*) setp::p#0 ← (const byte*) main::ptr
-  (byte) setp::v#0 ← (number) 5
+  main::idx#7 = phi( main/main::idx#4 )
+  main::SCREEN1[main::idx#7] = val
+  main::SCREEN2[main::idx#7] = *main::ptr
+  main::idx#5 = ++ main::idx#7
+  setp::p#0 = main::ptr
+  setp::v#0 = 5
   call setp 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) main::idx#8 ← phi( main::@1/(byte) main::idx#5 )
-  *((const nomodify byte*) main::SCREEN1 + (byte) main::idx#8) ← (volatile byte) val
-  *((const nomodify byte*) main::SCREEN2 + (byte) main::idx#8) ← *((const byte*) main::ptr)
-  (byte) main::idx#6 ← ++ (byte) main::idx#8
+  main::idx#8 = phi( main::@1/main::idx#5 )
+  main::SCREEN1[main::idx#8] = val
+  main::SCREEN2[main::idx#8] = *main::ptr
+  main::idx#6 = ++ main::idx#8
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-(void()) setv((byte) setv::v)
+void setv(byte setv::v)
 setv: scope:[setv]  from main
-  (byte) setv::v#1 ← phi( main/(byte) setv::v#0 )
-  (volatile byte) val ← (byte) setv::v#1
+  setv::v#1 = phi( main/setv::v#0 )
+  val = setv::v#1
   to:setv::@return
 setv::@return: scope:[setv]  from setv
   return 
   to:@return
 
-(void()) setp((byte*) setp::p , (byte) setp::v)
+void setp(byte* setp::p , byte setp::v)
 setp: scope:[setp]  from main::@1
-  (byte*) setp::p#1 ← phi( main::@1/(byte*) setp::p#0 )
-  (byte) setp::v#1 ← phi( main::@1/(byte) setp::v#0 )
-  *((byte*) setp::p#1) ← (byte) setp::v#1
+  setp::p#1 = phi( main::@1/setp::p#0 )
+  setp::v#1 = phi( main::@1/setp::v#0 )
+  *setp::p#1 = setp::v#1
   to:setp::@return
 setp::@return: scope:[setp]  from setp
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) val ← (byte) 0
+  val = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -78,55 +78,55 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const nomodify byte*) main::SCREEN1 = (byte*)(number) $400
-(const nomodify byte*) main::SCREEN2 = (const nomodify byte*) main::SCREEN1+(number) $28
-(byte) main::idx
-(byte) main::idx#0
-(byte) main::idx#1
-(byte) main::idx#2
-(byte) main::idx#3
-(byte) main::idx#4
-(byte) main::idx#5
-(byte) main::idx#6
-(byte) main::idx#7
-(byte) main::idx#8
-(const byte*) main::ptr = &(volatile byte) val
-(void()) setp((byte*) setp::p , (byte) setp::v)
-(label) setp::@return
-(byte*) setp::p
-(byte*) setp::p#0
-(byte*) setp::p#1
-(byte) setp::v
-(byte) setp::v#0
-(byte) setp::v#1
-(void()) setv((byte) setv::v)
-(label) setv::@return
-(byte) setv::v
-(byte) setv::v#0
-(byte) setv::v#1
-(volatile byte) val loadstore
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@1
+label main::@2
+label main::@return
+const nomodify byte* main::SCREEN1 = (byte*)$400
+const nomodify byte* main::SCREEN2 = main::SCREEN1+$28
+byte main::idx
+byte main::idx#0
+byte main::idx#1
+byte main::idx#2
+byte main::idx#3
+byte main::idx#4
+byte main::idx#5
+byte main::idx#6
+byte main::idx#7
+byte main::idx#8
+const byte* main::ptr = &val
+void setp(byte* setp::p , byte setp::v)
+label setp::@return
+byte* setp::p
+byte* setp::p#0
+byte* setp::p#1
+byte setp::v
+byte setp::v#0
+byte setp::v#1
+void setv(byte setv::v)
+label setv::@return
+byte setv::v
+byte setv::v#0
+byte setv::v#1
+volatile byte val loadstore
 
 Adding number conversion cast (unumber) $28 in 
-Adding number conversion cast (unumber) 1 in (volatile byte) val ← (number) 1
-Adding number conversion cast (unumber) 2 in (volatile byte) val ← (number) 2
-Adding number conversion cast (unumber) 3 in *((const byte*) main::ptr) ← (number) 3
-Adding number conversion cast (unumber) 4 in (byte) setv::v#0 ← (number) 4
-Adding number conversion cast (unumber) 5 in (byte) setp::v#0 ← (number) 5
+Adding number conversion cast (unumber) 1 in val = 1
+Adding number conversion cast (unumber) 2 in val = 2
+Adding number conversion cast (unumber) 3 in *main::ptr = 3
+Adding number conversion cast (unumber) 4 in setv::v#0 = 4
+Adding number conversion cast (unumber) 5 in setp::v#0 = 5
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (volatile byte) val ← (unumber)(number) 1
-Inlining cast (volatile byte) val ← (unumber)(number) 2
-Inlining cast *((const byte*) main::ptr) ← (unumber)(number) 3
-Inlining cast (byte) setv::v#0 ← (unumber)(number) 4
-Inlining cast (byte) setp::v#0 ← (unumber)(number) 5
+Inlining cast val = (unumber)1
+Inlining cast val = (unumber)2
+Inlining cast *main::ptr = (unumber)3
+Inlining cast setv::v#0 = (unumber)4
+Inlining cast setp::v#0 = (unumber)5
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $28
@@ -136,63 +136,63 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (byte) 5
+Finalized unsigned number type $28
+Finalized unsigned number type 1
+Finalized unsigned number type 2
+Finalized unsigned number type 3
+Finalized unsigned number type 4
+Finalized unsigned number type 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::idx#4 = main::idx#7 
 Alias main::idx#5 = main::idx#8 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) setv::v#1 (byte) setv::v#0
-Identical Phi Values (byte) setp::v#1 (byte) setp::v#0
-Identical Phi Values (byte*) setp::p#1 (byte*) setp::p#0
+Identical Phi Values setv::v#1 setv::v#0
+Identical Phi Values setp::v#1 setp::v#0
+Identical Phi Values setp::p#1 setp::p#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte) main::idx#0 = 0
-Constant (const byte) setv::v#0 = 4
-Constant (const byte*) setp::p#0 = main::ptr
-Constant (const byte) setp::v#0 = 5
+Constant main::idx#0 = 0
+Constant setv::v#0 = 4
+Constant setp::p#0 = main::ptr
+Constant setp::v#0 = 5
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN1 in [1] *((const nomodify byte*) main::SCREEN1 + (const byte) main::idx#0) ← (volatile byte) val
-Simplifying expression containing zero main::SCREEN2 in [2] *((const nomodify byte*) main::SCREEN2 + (const byte) main::idx#0) ← (byte) '.'
+Simplifying expression containing zero main::SCREEN1 in [1] main::SCREEN1[main::idx#0] = val
+Simplifying expression containing zero main::SCREEN2 in [2] main::SCREEN2[main::idx#0] = '.'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::idx#6 and assignment [22] (byte) main::idx#6 ← ++ (byte) main::idx#5
+Eliminating unused variable main::idx#6 and assignment [22] main::idx#6 = ++ main::idx#5
 Successful SSA optimization PassNEliminateUnusedVars
-Constant right-side identified [2] (byte) main::idx#1 ← ++ (const byte) main::idx#0
+Constant right-side identified [2] main::idx#1 = ++ main::idx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#1 = ++main::idx#0
+Constant main::idx#1 = ++main::idx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [5] (byte) main::idx#2 ← ++ (const byte) main::idx#1
+Constant right-side identified [5] main::idx#2 = ++ main::idx#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#2 = ++main::idx#1
+Constant main::idx#2 = ++main::idx#1
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [8] (byte) main::idx#3 ← ++ (const byte) main::idx#2
+Constant right-side identified [8] main::idx#3 = ++ main::idx#2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#3 = ++main::idx#2
+Constant main::idx#3 = ++main::idx#2
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [11] (byte) main::idx#4 ← ++ (const byte) main::idx#3
+Constant right-side identified [11] main::idx#4 = ++ main::idx#3
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#4 = ++main::idx#3
+Constant main::idx#4 = ++main::idx#3
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [14] (byte) main::idx#5 ← ++ (const byte) main::idx#4
+Constant right-side identified [14] main::idx#5 = ++ main::idx#4
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#5 = ++main::idx#4
+Constant main::idx#5 = ++main::idx#4
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with different constant siblings (const byte) main::idx#0
-Inlining constant with different constant siblings (const byte) main::idx#1
-Inlining constant with different constant siblings (const byte) main::idx#2
-Inlining constant with different constant siblings (const byte) main::idx#3
-Inlining constant with different constant siblings (const byte) main::idx#4
-Inlining constant with different constant siblings (const byte) main::idx#5
-Constant inlined main::idx#0 = (byte) 0
-Constant inlined main::idx#1 = ++(byte) 0
-Constant inlined main::idx#2 = ++++(byte) 0
-Constant inlined main::idx#3 = ++++++(byte) 0
-Constant inlined main::idx#4 = ++++++++(byte) 0
-Constant inlined main::idx#5 = ++++++++++(byte) 0
-Constant inlined setp::p#0 = (const byte*) main::ptr
+Inlining constant with different constant siblings main::idx#0
+Inlining constant with different constant siblings main::idx#1
+Inlining constant with different constant siblings main::idx#2
+Inlining constant with different constant siblings main::idx#3
+Inlining constant with different constant siblings main::idx#4
+Inlining constant with different constant siblings main::idx#5
+Constant inlined main::idx#0 = 0
+Constant inlined main::idx#1 = ++0
+Constant inlined main::idx#2 = ++++0
+Constant inlined main::idx#3 = ++++++0
+Constant inlined main::idx#4 = ++++++++0
+Constant inlined main::idx#5 = ++++++++++0
+Constant inlined setp::p#0 = main::ptr
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN1+++0)
 Consolidated array index constant in *(main::SCREEN2+++0)
@@ -230,18 +230,18 @@ Calls in [main] to setv:17 setp:20
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) val ← (byte) 0
+  [1] val = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -251,45 +251,45 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [5] *((const nomodify byte*) main::SCREEN1) ← (volatile byte) val
-  [6] *((const nomodify byte*) main::SCREEN2) ← (byte) '.'
-  [7] (volatile byte) val ← (byte) 1
-  [8] *((const nomodify byte*) main::SCREEN1+(byte) 1) ← (volatile byte) val
-  [9] *((const nomodify byte*) main::SCREEN2+(byte) 1) ← (byte) '.'
-  [10] (volatile byte) val ← (byte) 2
-  [11] *((const nomodify byte*) main::SCREEN1+(byte) 2) ← (volatile byte) val
-  [12] *((const nomodify byte*) main::SCREEN2+(byte) 2) ← *((const byte*) main::ptr)
-  [13] *((const byte*) main::ptr) ← (byte) 3
-  [14] *((const nomodify byte*) main::SCREEN1+(byte) 3) ← (volatile byte) val
-  [15] *((const nomodify byte*) main::SCREEN2+(byte) 3) ← *((const byte*) main::ptr)
+  [5] *main::SCREEN1 = val
+  [6] *main::SCREEN2 = '.'
+  [7] val = 1
+  [8] *(main::SCREEN1+1) = val
+  [9] *(main::SCREEN2+1) = '.'
+  [10] val = 2
+  [11] *(main::SCREEN1+2) = val
+  [12] *(main::SCREEN2+2) = *main::ptr
+  [13] *main::ptr = 3
+  [14] *(main::SCREEN1+3) = val
+  [15] *(main::SCREEN2+3) = *main::ptr
   [16] call setv 
   to:main::@1
 main::@1: scope:[main]  from main
-  [17] *((const nomodify byte*) main::SCREEN1+(byte) 4) ← (volatile byte) val
-  [18] *((const nomodify byte*) main::SCREEN2+(byte) 4) ← *((const byte*) main::ptr)
+  [17] *(main::SCREEN1+4) = val
+  [18] *(main::SCREEN2+4) = *main::ptr
   [19] call setp 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [20] *((const nomodify byte*) main::SCREEN1+(byte) 5) ← (volatile byte) val
-  [21] *((const nomodify byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr)
+  [20] *(main::SCREEN1+5) = val
+  [21] *(main::SCREEN2+5) = *main::ptr
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [22] return 
   to:@return
 
-(void()) setv((byte) setv::v)
+void setv(byte setv::v)
 setv: scope:[setv]  from main
-  [23] (volatile byte) val ← (const byte) setv::v#0
+  [23] val = setv::v#0
   to:setv::@return
 setv::@return: scope:[setv]  from setv
   [24] return 
   to:@return
 
-(void()) setp((byte*) setp::p , (byte) setp::v)
+void setp(byte* setp::p , byte setp::v)
 setp: scope:[setp]  from main::@1
-  [25] *((const byte*) main::ptr) ← (const byte) setp::v#0
+  [25] *main::ptr = setp::v#0
   to:setp::@return
 setp::@return: scope:[setp]  from setp
   [26] return 
@@ -297,170 +297,40 @@ setp::@return: scope:[setp]  from setp
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(void()) main()
-(byte) main::idx
-(void()) setp((byte*) setp::p , (byte) setp::v)
-(byte*) setp::p
-(byte) setp::v
-(void()) setv((byte) setv::v)
-(byte) setv::v
-(volatile byte) val loadstore 14.692307692307692
+void __start()
+void main()
+byte main::idx
+void setp(byte* setp::p , byte setp::v)
+byte* setp::p
+byte setp::v
+void setv(byte setv::v)
+byte setv::v
+volatile byte val loadstore 14.692307692307692
 
 Initial phi equivalence classes
 Added variable val to live range equivalence class [ val ]
 Complete equivalence classes
 [ val ]
 Allocated zp[1]:2 [ val ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test address-of by assigning the affected variable in multiple ways
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label val = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) val ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z val
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    .label SCREEN1 = $400
-    .label SCREEN2 = SCREEN1+$28
-    // Use address-of - hereafter all versions of val must be in the same memory
-    .label ptr = val
-    // [5] *((const nomodify byte*) main::SCREEN1) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN1
-    // [6] *((const nomodify byte*) main::SCREEN2) ← (byte) '.' -- _deref_pbuc1=vbuc2 
-    lda #'.'
-    sta SCREEN2
-    // [7] (volatile byte) val ← (byte) 1 -- vbuz1=vbuc1 
-    // Here we have not yet used address-of - so val can be versioned freely
-    lda #1
-    sta.z val
-    // [8] *((const nomodify byte*) main::SCREEN1+(byte) 1) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN1+1
-    // [9] *((const nomodify byte*) main::SCREEN2+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
-    lda #'.'
-    sta SCREEN2+1
-    // [10] (volatile byte) val ← (byte) 2 -- vbuz1=vbuc1 
-    // Set value directly
-    lda #2
-    sta.z val
-    // [11] *((const nomodify byte*) main::SCREEN1+(byte) 2) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN1+2
-    // [12] *((const nomodify byte*) main::SCREEN2+(byte) 2) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
-    lda.z ptr
-    sta SCREEN2+2
-    // [13] *((const byte*) main::ptr) ← (byte) 3 -- _deref_pbuc1=vbuc2 
-    // Set value through pointer
-    lda #3
-    sta.z ptr
-    // [14] *((const nomodify byte*) main::SCREEN1+(byte) 3) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN1+3
-    // [15] *((const nomodify byte*) main::SCREEN2+(byte) 3) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
-    lda.z ptr
-    sta SCREEN2+3
-    // [16] call setv 
-    // Set value directly in a call
-    jsr setv
-    jmp __b1
-    // main::@1
-  __b1:
-    // [17] *((const nomodify byte*) main::SCREEN1+(byte) 4) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN1+4
-    // [18] *((const nomodify byte*) main::SCREEN2+(byte) 4) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
-    lda.z ptr
-    sta SCREEN2+4
-    // [19] call setp 
-    // Set value through pointer in a call
-    jsr setp
-    jmp __b2
-    // main::@2
-  __b2:
-    // [20] *((const nomodify byte*) main::SCREEN1+(byte) 5) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta SCREEN1+5
-    // [21] *((const nomodify byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
-    lda.z ptr
-    sta SCREEN2+5
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [22] return 
-    rts
-}
-  // setv
-setv: {
-    .const v = 4
-    // [23] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
-    lda #v
-    sta.z val
-    jmp __breturn
-    // setv::@return
-  __breturn:
-    // [24] return 
-    rts
-}
-  // setp
-setp: {
-    .const v = 5
-    // [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
-    lda #v
-    sta.z main.ptr
-    jmp __breturn
-    // setp::@return
-  __breturn:
-    // [26] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) val ← (byte) 0 [ val ] (  [ val ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) main::SCREEN1) ← (volatile byte) val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const nomodify byte*) main::SCREEN2) ← (byte) '.' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [7] (volatile byte) val ← (byte) 1 [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) main::SCREEN1+(byte) 1) ← (volatile byte) val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [9] *((const nomodify byte*) main::SCREEN2+(byte) 1) ← (byte) '.' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [10] (volatile byte) val ← (byte) 2 [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [11] *((const nomodify byte*) main::SCREEN1+(byte) 2) ← (volatile byte) val [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [12] *((const nomodify byte*) main::SCREEN2+(byte) 2) ← *((const byte*) main::ptr) [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [13] *((const byte*) main::ptr) ← (byte) 3 [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [14] *((const nomodify byte*) main::SCREEN1+(byte) 3) ← (volatile byte) val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [15] *((const nomodify byte*) main::SCREEN2+(byte) 3) ← *((const byte*) main::ptr) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [17] *((const nomodify byte*) main::SCREEN1+(byte) 4) ← (volatile byte) val [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [18] *((const nomodify byte*) main::SCREEN2+(byte) 4) ← *((const byte*) main::ptr) [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify byte*) main::SCREEN1+(byte) 5) ← (volatile byte) val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr) [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [23] (volatile byte) val ← (const byte) setv::v#0 [ val ] ( main:3::setv:16 [ val ] { }  ) always clobbers reg byte a 
-Statement [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 [ ] ( main:3::setp:19 [ val ] { }  ) always clobbers reg byte a 
+Statement [1] val = 0 [ val ] (  [ val ] { }  ) always clobbers reg byte a 
+Statement [5] *main::SCREEN1 = val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *main::SCREEN2 = '.' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [7] val = 1 [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [8] *(main::SCREEN1+1) = val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [9] *(main::SCREEN2+1) = '.' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [10] val = 2 [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [11] *(main::SCREEN1+2) = val [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [12] *(main::SCREEN2+2) = *main::ptr [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [13] *main::ptr = 3 [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [14] *(main::SCREEN1+3) = val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [15] *(main::SCREEN2+3) = *main::ptr [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [17] *(main::SCREEN1+4) = val [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [18] *(main::SCREEN2+4) = *main::ptr [ val ] ( main:3 [ val ] { }  ) always clobbers reg byte a 
+Statement [20] *(main::SCREEN1+5) = val [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [21] *(main::SCREEN2+5) = *main::ptr [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [23] val = setv::v#0 [ val ] ( main:3::setv:16 [ val ] { }  ) always clobbers reg byte a 
+Statement [25] *main::ptr = setp::v#0 [ ] ( main:3::setp:19 [ val ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ val ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -492,7 +362,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) val ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] val = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z val
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -514,40 +384,40 @@ main: {
     .label SCREEN2 = SCREEN1+$28
     // Use address-of - hereafter all versions of val must be in the same memory
     .label ptr = val
-    // [5] *((const nomodify byte*) main::SCREEN1) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [5] *main::SCREEN1 = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1
-    // [6] *((const nomodify byte*) main::SCREEN2) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [6] *main::SCREEN2 = '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2
-    // [7] (volatile byte) val ← (byte) 1 -- vbuz1=vbuc1 
+    // [7] val = 1 -- vbuz1=vbuc1 
     // Here we have not yet used address-of - so val can be versioned freely
     lda #1
     sta.z val
-    // [8] *((const nomodify byte*) main::SCREEN1+(byte) 1) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [8] *(main::SCREEN1+1) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+1
-    // [9] *((const nomodify byte*) main::SCREEN2+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [9] *(main::SCREEN2+1) = '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2+1
-    // [10] (volatile byte) val ← (byte) 2 -- vbuz1=vbuc1 
+    // [10] val = 2 -- vbuz1=vbuc1 
     // Set value directly
     lda #2
     sta.z val
-    // [11] *((const nomodify byte*) main::SCREEN1+(byte) 2) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [11] *(main::SCREEN1+2) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+2
-    // [12] *((const nomodify byte*) main::SCREEN2+(byte) 2) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [12] *(main::SCREEN2+2) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+2
-    // [13] *((const byte*) main::ptr) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [13] *main::ptr = 3 -- _deref_pbuc1=vbuc2 
     // Set value through pointer
     lda #3
     sta.z ptr
-    // [14] *((const nomodify byte*) main::SCREEN1+(byte) 3) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [14] *(main::SCREEN1+3) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+3
-    // [15] *((const nomodify byte*) main::SCREEN2+(byte) 3) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [15] *(main::SCREEN2+3) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+3
     // [16] call setv 
@@ -556,10 +426,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [17] *((const nomodify byte*) main::SCREEN1+(byte) 4) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [17] *(main::SCREEN1+4) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+4
-    // [18] *((const nomodify byte*) main::SCREEN2+(byte) 4) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [18] *(main::SCREEN2+4) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+4
     // [19] call setp 
@@ -568,10 +438,10 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [20] *((const nomodify byte*) main::SCREEN1+(byte) 5) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [20] *(main::SCREEN1+5) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+5
-    // [21] *((const nomodify byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [21] *(main::SCREEN2+5) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+5
     jmp __breturn
@@ -583,7 +453,7 @@ main: {
   // setv
 setv: {
     .const v = 4
-    // [23] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [23] val = setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
     jmp __breturn
@@ -595,7 +465,7 @@ setv: {
   // setp
 setp: {
     .const v = 5
-    // [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    // [25] *main::ptr = setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta.z main.ptr
     jmp __breturn
@@ -632,28 +502,28 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const nomodify byte*) main::SCREEN1 = (byte*) 1024
-(const nomodify byte*) main::SCREEN2 = (const nomodify byte*) main::SCREEN1+(byte) $28
-(byte) main::idx
-(const byte*) main::ptr = &(volatile byte) val
-(void()) setp((byte*) setp::p , (byte) setp::v)
-(label) setp::@return
-(byte*) setp::p
-(byte) setp::v
-(const byte) setp::v#0 v = (byte) 5
-(void()) setv((byte) setv::v)
-(label) setv::@return
-(byte) setv::v
-(const byte) setv::v#0 v = (byte) 4
-(volatile byte) val loadstore zp[1]:2 14.692307692307692
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+void main()
+label main::@1
+label main::@2
+label main::@return
+const nomodify byte* main::SCREEN1 = (byte*) 1024
+const nomodify byte* main::SCREEN2 = main::SCREEN1+$28
+byte main::idx
+const byte* main::ptr = &val
+void setp(byte* setp::p , byte setp::v)
+label setp::@return
+byte* setp::p
+byte setp::v
+const byte setp::v#0 v = 5
+void setv(byte setv::v)
+label setv::@return
+byte setv::v
+const byte setv::v#0 v = 4
+volatile byte val loadstore zp[1]:2 14.692307692307692
 
 zp[1]:2 [ val ]
 
@@ -673,7 +543,7 @@ Score: 148
 __start: {
     // __start::__init1
     // val = 0
-    // [1] (volatile byte) val ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] val = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z val
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -691,48 +561,48 @@ main: {
     // Use address-of - hereafter all versions of val must be in the same memory
     .label ptr = val
     // SCREEN1[idx] = val
-    // [5] *((const nomodify byte*) main::SCREEN1) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [5] *main::SCREEN1 = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1
     // SCREEN2[idx++] = '.'
-    // [6] *((const nomodify byte*) main::SCREEN2) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [6] *main::SCREEN2 = '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2
     // val = 1
-    // [7] (volatile byte) val ← (byte) 1 -- vbuz1=vbuc1 
+    // [7] val = 1 -- vbuz1=vbuc1 
     // Here we have not yet used address-of - so val can be versioned freely
     lda #1
     sta.z val
     // SCREEN1[idx] = val
-    // [8] *((const nomodify byte*) main::SCREEN1+(byte) 1) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [8] *(main::SCREEN1+1) = val -- _deref_pbuc1=vbuz1 
     sta SCREEN1+1
     // SCREEN2[idx++] = '.'
-    // [9] *((const nomodify byte*) main::SCREEN2+(byte) 1) ← (byte) '.' -- _deref_pbuc1=vbuc2 
+    // [9] *(main::SCREEN2+1) = '.' -- _deref_pbuc1=vbuc2 
     lda #'.'
     sta SCREEN2+1
     // val = 2
-    // [10] (volatile byte) val ← (byte) 2 -- vbuz1=vbuc1 
+    // [10] val = 2 -- vbuz1=vbuc1 
     // Set value directly
     lda #2
     sta.z val
     // SCREEN1[idx] = val
-    // [11] *((const nomodify byte*) main::SCREEN1+(byte) 2) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [11] *(main::SCREEN1+2) = val -- _deref_pbuc1=vbuz1 
     sta SCREEN1+2
     // SCREEN2[idx++] = *ptr
-    // [12] *((const nomodify byte*) main::SCREEN2+(byte) 2) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [12] *(main::SCREEN2+2) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+2
     // *ptr = 3
-    // [13] *((const byte*) main::ptr) ← (byte) 3 -- _deref_pbuc1=vbuc2 
+    // [13] *main::ptr = 3 -- _deref_pbuc1=vbuc2 
     // Set value through pointer
     lda #3
     sta.z ptr
     // SCREEN1[idx] = val
-    // [14] *((const nomodify byte*) main::SCREEN1+(byte) 3) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [14] *(main::SCREEN1+3) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+3
     // SCREEN2[idx++] = *ptr
-    // [15] *((const nomodify byte*) main::SCREEN2+(byte) 3) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [15] *(main::SCREEN2+3) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+3
     // setv(4)
@@ -741,11 +611,11 @@ main: {
     jsr setv
     // main::@1
     // SCREEN1[idx] = val
-    // [17] *((const nomodify byte*) main::SCREEN1+(byte) 4) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [17] *(main::SCREEN1+4) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+4
     // SCREEN2[idx++] = *ptr
-    // [18] *((const nomodify byte*) main::SCREEN2+(byte) 4) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [18] *(main::SCREEN2+4) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+4
     // setp(ptr, 5)
@@ -754,11 +624,11 @@ main: {
     jsr setp
     // main::@2
     // SCREEN1[idx] = val
-    // [20] *((const nomodify byte*) main::SCREEN1+(byte) 5) ← (volatile byte) val -- _deref_pbuc1=vbuz1 
+    // [20] *(main::SCREEN1+5) = val -- _deref_pbuc1=vbuz1 
     lda.z val
     sta SCREEN1+5
     // SCREEN2[idx++] = *ptr
-    // [21] *((const nomodify byte*) main::SCREEN2+(byte) 5) ← *((const byte*) main::ptr) -- _deref_pbuc1=_deref_pbuc2 
+    // [21] *(main::SCREEN2+5) = *main::ptr -- _deref_pbuc1=_deref_pbuc2 
     lda.z ptr
     sta SCREEN2+5
     // main::@return
@@ -770,7 +640,7 @@ main: {
 setv: {
     .const v = 4
     // val = v
-    // [23] (volatile byte) val ← (const byte) setv::v#0 -- vbuz1=vbuc1 
+    // [23] val = setv::v#0 -- vbuz1=vbuc1 
     lda #v
     sta.z val
     // setv::@return
@@ -782,7 +652,7 @@ setv: {
 setp: {
     .const v = 5
     // *p = v
-    // [25] *((const byte*) main::ptr) ← (const byte) setp::v#0 -- _deref_pbuc1=vbuc2 
+    // [25] *main::ptr = setp::v#0 -- _deref_pbuc1=vbuc2 
     lda #v
     sta.z main.ptr
     // setp::@return

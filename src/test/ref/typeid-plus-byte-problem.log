@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte~) main::$0 ← (const byte) main::ubc1 + (const byte) main::ubc2
-  *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$0
+  main::$0 = main::ubc1 + main::ubc2
+  SCREEN[0] = main::$0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,35 +21,35 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(byte~) main::$0
-(label) main::@return
-(const byte) main::ubc1 = (byte)(number) $c+(number) $d+(number) $e
-(const byte) main::ubc2 = (byte) $fa
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+byte~ main::$0
+label main::@return
+const byte main::ubc1 = (byte)$c+$d+$e
+const byte main::ubc2 = $fa
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$0
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant right-side identified [0] (byte~) main::$0 ← (const byte) main::ubc1 + (const byte) main::ubc2
+Constant right-side identified [0] main::$0 = main::ubc1 + main::ubc2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$0 = main::ubc1+main::ubc2
+Constant main::$0 = main::ubc1+main::ubc2
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) main::$0
+Simplifying expression containing zero SCREEN in [1] SCREEN[0] = main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::$0 = (const byte) main::ubc1+(const byte) main::ubc2
+Constant inlined main::$0 = main::ubc1+main::ubc2
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -58,9 +58,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (const byte) main::ubc1+(const byte) main::ubc2
+  [0] *SCREEN = main::ubc1+main::ubc2
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -68,38 +68,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test that byte+byte creates a byte - even when there is a value overflow
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .const ubc1 = $c+$d+$e
-    .const ubc2 = $fa
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) main::ubc1+(const byte) main::ubc2 -- _deref_pbuc1=vbuc2 
-    lda #ubc1+ubc2
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (const byte) main::ubc1+(const byte) main::ubc2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = main::ubc1+main::ubc2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -121,7 +95,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const ubc1 = $c+$d+$e
     .const ubc2 = $fa
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) main::ubc1+(const byte) main::ubc2 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = main::ubc1+main::ubc2 -- _deref_pbuc1=vbuc2 
     lda #ubc1+ubc2
     sta SCREEN
     jmp __breturn
@@ -139,11 +113,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(const byte) main::ubc1 = (byte)(number) $c+(number) $d+(number) $e
-(const byte) main::ubc2 = (byte) $fa
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+const byte main::ubc1 = (byte)$c+$d+$e
+const byte main::ubc2 = $fa
 
 
 
@@ -163,7 +137,7 @@ main: {
     .const ubc1 = $c+$d+$e
     .const ubc2 = $fa
     // SCREEN[0] = ubc1+ubc2
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) main::ubc1+(const byte) main::ubc2 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = main::ubc1+main::ubc2 -- _deref_pbuc1=vbuc2 
     lda #ubc1+ubc2
     sta SCREEN
     // main::@return

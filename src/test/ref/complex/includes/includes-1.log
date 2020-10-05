@@ -2,49 +2,49 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(word()) strlen((byte*) strlen::str)
+word strlen(byte* strlen::str)
 strlen: scope:[strlen]  from main
-  (byte*) strlen::str#4 ← phi( main/(byte*) strlen::str#1 )
-  (word) strlen::len#0 ← (word) 0
+  strlen::str#4 = phi( main/strlen::str#1 )
+  strlen::len#0 = 0
   to:strlen::@1
 strlen::@1: scope:[strlen]  from strlen strlen::@2
-  (word) strlen::len#4 ← phi( strlen/(word) strlen::len#0 strlen::@2/(word) strlen::len#1 )
-  (byte*) strlen::str#2 ← phi( strlen/(byte*) strlen::str#4 strlen::@2/(byte*) strlen::str#0 )
-  (bool~) strlen::$0 ← (number) 0 != *((byte*) strlen::str#2)
-  if((bool~) strlen::$0) goto strlen::@2
+  strlen::len#4 = phi( strlen/strlen::len#0, strlen::@2/strlen::len#1 )
+  strlen::str#2 = phi( strlen/strlen::str#4, strlen::@2/strlen::str#0 )
+  strlen::$0 = 0 != *strlen::str#2
+  if(strlen::$0) goto strlen::@2
   to:strlen::@3
 strlen::@2: scope:[strlen]  from strlen::@1
-  (byte*) strlen::str#3 ← phi( strlen::@1/(byte*) strlen::str#2 )
-  (word) strlen::len#2 ← phi( strlen::@1/(word) strlen::len#4 )
-  (word) strlen::len#1 ← ++ (word) strlen::len#2
-  (byte*) strlen::str#0 ← ++ (byte*) strlen::str#3
+  strlen::str#3 = phi( strlen::@1/strlen::str#2 )
+  strlen::len#2 = phi( strlen::@1/strlen::len#4 )
+  strlen::len#1 = ++ strlen::len#2
+  strlen::str#0 = ++ strlen::str#3
   to:strlen::@1
 strlen::@3: scope:[strlen]  from strlen::@1
-  (word) strlen::len#3 ← phi( strlen::@1/(word) strlen::len#4 )
-  (word) strlen::return#0 ← (word) strlen::len#3
+  strlen::len#3 = phi( strlen::@1/strlen::len#4 )
+  strlen::return#0 = strlen::len#3
   to:strlen::@return
 strlen::@return: scope:[strlen]  from strlen::@3
-  (word) strlen::return#3 ← phi( strlen::@3/(word) strlen::return#0 )
-  (word) strlen::return#1 ← (word) strlen::return#3
+  strlen::return#3 = phi( strlen::@3/strlen::return#0 )
+  strlen::return#1 = strlen::return#3
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte*) strlen::str#1 ← (const byte*) STR
+  strlen::str#1 = STR
   call strlen 
-  (word) strlen::return#2 ← (word) strlen::return#1
+  strlen::return#2 = strlen::return#1
   to:main::@1
 main::@1: scope:[main]  from main
-  (word) strlen::return#4 ← phi( main/(word) strlen::return#2 )
-  (word~) main::$0 ← (word) strlen::return#4
-  *((const nomodify byte*) SCREEN + (number) 0) ← (byte)(word~) main::$0
+  strlen::return#4 = phi( main/strlen::return#2 )
+  main::$0 = strlen::return#4
+  SCREEN[0] = (byte)main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -59,64 +59,64 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const byte*) STR = (byte*) "camelot!"
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(word~) main::$0
-(label) main::@1
-(label) main::@return
-(word()) strlen((byte*) strlen::str)
-(bool~) strlen::$0
-(label) strlen::@1
-(label) strlen::@2
-(label) strlen::@3
-(label) strlen::@return
-(word) strlen::len
-(word) strlen::len#0
-(word) strlen::len#1
-(word) strlen::len#2
-(word) strlen::len#3
-(word) strlen::len#4
-(word) strlen::return
-(word) strlen::return#0
-(word) strlen::return#1
-(word) strlen::return#2
-(word) strlen::return#3
-(word) strlen::return#4
-(byte*) strlen::str
-(byte*) strlen::str#0
-(byte*) strlen::str#1
-(byte*) strlen::str#2
-(byte*) strlen::str#3
-(byte*) strlen::str#4
+const nomodify byte* SCREEN = (byte*)$400
+const byte* STR = "camelot!"
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+word~ main::$0
+label main::@1
+label main::@return
+word strlen(byte* strlen::str)
+bool~ strlen::$0
+label strlen::@1
+label strlen::@2
+label strlen::@3
+label strlen::@return
+word strlen::len
+word strlen::len#0
+word strlen::len#1
+word strlen::len#2
+word strlen::len#3
+word strlen::len#4
+word strlen::return
+word strlen::return#0
+word strlen::return#1
+word strlen::return#2
+word strlen::return#3
+word strlen::return#4
+byte* strlen::str
+byte* strlen::str#0
+byte* strlen::str#1
+byte* strlen::str#2
+byte* strlen::str#3
+byte* strlen::str#4
 
-Adding number conversion cast (unumber) 0 in (bool~) strlen::$0 ← (number) 0 != *((byte*) strlen::str#2)
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte)(word~) main::$0
+Adding number conversion cast (unumber) 0 in strlen::$0 = 0 != *strlen::str#2
+Adding number conversion cast (unumber) 0 in SCREEN[0] = (byte)main::$0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
 Alias strlen::str#2 = strlen::str#3 
 Alias strlen::return#2 = strlen::return#4 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) strlen::str#4 (byte*) strlen::str#1
+Identical Phi Values strlen::str#4 strlen::str#1
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) strlen::$0 [4] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2
+Simple Condition strlen::$0 [4] if(0!=*strlen::str#2) goto strlen::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const word) strlen::len#0 = 0
-Constant (const byte*) strlen::str#1 = STR
+Constant strlen::len#0 = 0
+Constant strlen::str#1 = STR
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [12] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte)(word~) main::$0
+Simplifying expression containing zero SCREEN in [12] SCREEN[0] = (byte)main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -125,10 +125,10 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const word) strlen::len#0
-Inlining constant with var siblings (const byte*) strlen::str#1
-Constant inlined strlen::len#0 = (word) 0
-Constant inlined strlen::str#1 = (const byte*) STR
+Inlining constant with var siblings strlen::len#0
+Inlining constant with var siblings strlen::str#1
+Constant inlined strlen::len#0 = 0
+Constant inlined strlen::str#1 = STR
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of strlen
@@ -137,59 +137,59 @@ CALL GRAPH
 Calls in [main] to strlen:1 
 
 Created 2 initial phi equivalence classes
-Coalesced [13] strlen::str#5 ← strlen::str#0
-Coalesced [14] strlen::len#5 ← strlen::len#1
+Coalesced [13] strlen::str#5 = strlen::str#0
+Coalesced [14] strlen::len#5 = strlen::len#1
 Coalesced down to 2 phi equivalence classes
-Culled Empty Block (label) strlen::@3
+Culled Empty Block label strlen::@3
 Adding NOP phi() at start of main
 Adding NOP phi() at start of strlen
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call strlen 
-  [2] (word) strlen::return#2 ← (word) strlen::len#2
+  [2] strlen::return#2 = strlen::len#2
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] (word~) main::$0 ← (word) strlen::return#2
-  [4] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0
+  [3] main::$0 = strlen::return#2
+  [4] *SCREEN = (byte)main::$0
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [5] return 
   to:@return
 
-(word()) strlen((byte*) strlen::str)
+word strlen(byte* strlen::str)
 strlen: scope:[strlen]  from main
   [6] phi()
   to:strlen::@1
 strlen::@1: scope:[strlen]  from strlen strlen::@2
-  [7] (word) strlen::len#2 ← phi( strlen/(word) 0 strlen::@2/(word) strlen::len#1 )
-  [7] (byte*) strlen::str#2 ← phi( strlen/(const byte*) STR strlen::@2/(byte*) strlen::str#0 )
-  [8] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2
+  [7] strlen::len#2 = phi( strlen/0, strlen::@2/strlen::len#1 )
+  [7] strlen::str#2 = phi( strlen/STR, strlen::@2/strlen::str#0 )
+  [8] if(0!=*strlen::str#2) goto strlen::@2
   to:strlen::@return
 strlen::@return: scope:[strlen]  from strlen::@1
   [9] return 
   to:@return
 strlen::@2: scope:[strlen]  from strlen::@1
-  [10] (word) strlen::len#1 ← ++ (word) strlen::len#2
-  [11] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2
+  [10] strlen::len#1 = ++ strlen::len#2
+  [11] strlen::str#0 = ++ strlen::str#2
   to:strlen::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(word~) main::$0 2.0
-(word()) strlen((byte*) strlen::str)
-(word) strlen::len
-(word) strlen::len#1 101.0
-(word) strlen::len#2 51.0
-(word) strlen::return
-(word) strlen::return#2 4.0
-(byte*) strlen::str
-(byte*) strlen::str#0 202.0
-(byte*) strlen::str#2 101.0
+void main()
+word~ main::$0 2.0
+word strlen(byte* strlen::str)
+word strlen::len
+word strlen::len#1 101.0
+word strlen::len#2 51.0
+word strlen::return
+word strlen::return#2 4.0
+byte* strlen::str
+byte* strlen::str#0 202.0
+byte* strlen::str#2 101.0
 
 Initial phi equivalence classes
 [ strlen::str#2 strlen::str#0 ]
@@ -205,105 +205,11 @@ Allocated zp[2]:2 [ strlen::str#2 strlen::str#0 ]
 Allocated zp[2]:4 [ strlen::len#2 strlen::len#1 ]
 Allocated zp[2]:6 [ strlen::return#2 ]
 Allocated zp[2]:8 [ main::$0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Includes a system library - ignores the local file with the same name
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .label __0 = 8
-    // [1] call strlen 
-    // [6] phi from main to strlen [phi:main->strlen]
-  strlen_from_main:
-    jsr strlen
-    // [2] (word) strlen::return#2 ← (word) strlen::len#2 -- vwuz1=vwuz2 
-    lda.z strlen.len
-    sta.z strlen.return
-    lda.z strlen.len+1
-    sta.z strlen.return+1
-    jmp __b1
-    // main::@1
-  __b1:
-    // [3] (word~) main::$0 ← (word) strlen::return#2 -- vwuz1=vwuz2 
-    lda.z strlen.return
-    sta.z __0
-    lda.z strlen.return+1
-    sta.z __0+1
-    // [4] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 -- _deref_pbuc1=_byte_vwuz1 
-    lda.z __0
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // strlen
-// Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp(2) str)
-strlen: {
-    .label len = 4
-    .label str = 2
-    .label return = 6
-    // [7] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
-  __b1_from_strlen:
-    // [7] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
-    lda #<0
-    sta.z len
-    lda #>0
-    sta.z len+1
-    // [7] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
-    lda #<STR
-    sta.z str
-    lda #>STR
-    sta.z str+1
-    jmp __b1
-    // strlen::@1
-  __b1:
-    // [8] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
-    ldy #0
-    lda (str),y
-    cmp #0
-    bne __b2
-    jmp __breturn
-    // strlen::@return
-  __breturn:
-    // [9] return 
-    rts
-    // strlen::@2
-  __b2:
-    // [10] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
-    inc.z len
-    bne !+
-    inc.z len+1
-  !:
-    // [11] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
-    inc.z str
-    bne !+
-    inc.z str+1
-  !:
-    // [7] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
-  __b1_from___b2:
-    // [7] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [7] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
-    jmp __b1
-}
-  // File Data
-  STR: .text "camelot!"
-  .byte 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] (word) strlen::return#2 ← (word) strlen::len#2 [ strlen::return#2 ] (  [ strlen::return#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
-Statement [3] (word~) main::$0 ← (word) strlen::return#2 [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
-Statement [4] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [8] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( strlen:1 [ strlen::len#2 strlen::str#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [2] strlen::return#2 = strlen::len#2 [ strlen::return#2 ] (  [ strlen::return#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
+Statement [3] main::$0 = strlen::return#2 [ main::$0 ] (  [ main::$0 ] { }  ) always clobbers reg byte a 
+Statement [4] *SCREEN = (byte)main::$0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] if(0!=*strlen::str#2) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( strlen:1 [ strlen::len#2 strlen::str#2 ] { { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ strlen::str#2 strlen::str#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ strlen::len#2 strlen::len#1 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ strlen::return#2 ] : zp[2]:6 , 
@@ -336,12 +242,12 @@ main: {
     // [6] phi from main to strlen [phi:main->strlen]
   strlen_from_main:
     jsr strlen
-    // [2] (word) strlen::return#2 ← (word) strlen::len#2
+    // [2] strlen::return#2 = strlen::len#2
     jmp __b1
     // main::@1
   __b1:
-    // [3] (word~) main::$0 ← (word) strlen::return#2
-    // [4] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 -- _deref_pbuc1=_byte_vwuz1 
+    // [3] main::$0 = strlen::return#2
+    // [4] *SCREEN = (byte)main::$0 -- _deref_pbuc1=_byte_vwuz1 
     lda.z __0
     sta SCREEN
     jmp __breturn
@@ -359,12 +265,12 @@ strlen: {
     .label return = 4
     // [7] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
   __b1_from_strlen:
-    // [7] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [7] phi strlen::len#2 = 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     lda #>0
     sta.z len+1
-    // [7] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [7] phi strlen::str#2 = STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<STR
     sta.z str
     lda #>STR
@@ -372,7 +278,7 @@ strlen: {
     jmp __b1
     // strlen::@1
   __b1:
-    // [8] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if(0!=*strlen::str#2) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -384,20 +290,20 @@ strlen: {
     rts
     // strlen::@2
   __b2:
-    // [10] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [10] strlen::len#1 = ++ strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
-    // [11] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [11] strlen::str#0 = ++ strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
     // [7] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
   __b1_from___b2:
-    // [7] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [7] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [7] phi strlen::len#2 = strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [7] phi strlen::str#2 = strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -421,24 +327,24 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const byte*) STR = (byte*) "camelot!"
-(void()) main()
-(word~) main::$0 zp[2]:4 2.0
-(label) main::@1
-(label) main::@return
-(word()) strlen((byte*) strlen::str)
-(label) strlen::@1
-(label) strlen::@2
-(label) strlen::@return
-(word) strlen::len
-(word) strlen::len#1 len zp[2]:4 101.0
-(word) strlen::len#2 len zp[2]:4 51.0
-(word) strlen::return
-(word) strlen::return#2 return zp[2]:4 4.0
-(byte*) strlen::str
-(byte*) strlen::str#0 str zp[2]:2 202.0
-(byte*) strlen::str#2 str zp[2]:2 101.0
+const nomodify byte* SCREEN = (byte*) 1024
+const byte* STR = "camelot!"
+void main()
+word~ main::$0 zp[2]:4 2.0
+label main::@1
+label main::@return
+word strlen(byte* strlen::str)
+label strlen::@1
+label strlen::@2
+label strlen::@return
+word strlen::len
+word strlen::len#1 len zp[2]:4 101.0
+word strlen::len#2 len zp[2]:4 51.0
+word strlen::return
+word strlen::return#2 return zp[2]:4 4.0
+byte* strlen::str
+byte* strlen::str#0 str zp[2]:2 202.0
+byte* strlen::str#2 str zp[2]:2 101.0
 
 zp[2]:2 [ strlen::str#2 strlen::str#0 ]
 zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 main::$0 ]
@@ -463,11 +369,11 @@ main: {
     // [6] phi from main to strlen [phi:main->strlen]
     jsr strlen
     // strlen(STR)
-    // [2] (word) strlen::return#2 ← (word) strlen::len#2
+    // [2] strlen::return#2 = strlen::len#2
     // main::@1
-    // [3] (word~) main::$0 ← (word) strlen::return#2
+    // [3] main::$0 = strlen::return#2
     // SCREEN [0] = (char) strlen(STR)
-    // [4] *((const nomodify byte*) SCREEN) ← (byte)(word~) main::$0 -- _deref_pbuc1=_byte_vwuz1 
+    // [4] *SCREEN = (byte)main::$0 -- _deref_pbuc1=_byte_vwuz1 
     lda.z __0
     sta SCREEN
     // main::@return
@@ -483,11 +389,11 @@ strlen: {
     .label str = 2
     .label return = 4
     // [7] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
-    // [7] phi (word) strlen::len#2 = (word) 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [7] phi strlen::len#2 = 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     sta.z len+1
-    // [7] phi (byte*) strlen::str#2 = (const byte*) STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
+    // [7] phi strlen::str#2 = STR [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
     lda #<STR
     sta.z str
     lda #>STR
@@ -495,7 +401,7 @@ strlen: {
     // strlen::@1
   __b1:
     // while(*str)
-    // [8] if((byte) 0!=*((byte*) strlen::str#2)) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if(0!=*strlen::str#2) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -507,20 +413,20 @@ strlen: {
     // strlen::@2
   __b2:
     // len++;
-    // [10] (word) strlen::len#1 ← ++ (word) strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [10] strlen::len#1 = ++ strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
     // str++;
-    // [11] (byte*) strlen::str#0 ← ++ (byte*) strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [11] strlen::str#0 = ++ strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
     // [7] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
-    // [7] phi (word) strlen::len#2 = (word) strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [7] phi (byte*) strlen::str#2 = (byte*) strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [7] phi strlen::len#2 = strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [7] phi strlen::str#2 = strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

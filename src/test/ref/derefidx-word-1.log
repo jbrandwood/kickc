@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
+  main::screen[$28*$a] = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,29 +20,29 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::screen = (byte*)$400
 
-Adding number conversion cast (unumber) $28*$a in *((const nomodify byte*) main::screen + (number) $28*(number) $a) ← (byte) 'a'
+Adding number conversion cast (unumber) $28*$a in main::screen[$28*$a] = 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-De-inlining pointer[w] to *(pointer+w)   [0] *((const nomodify byte*) main::screen + (word)(number) $28*(number) $a) ← (byte) 'a'
+De-inlining pointer[w] to *(pointer+w)   [0] main::screen[(word)$28*$a] = 'a'
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] (byte*~) main::$0 ← (const nomodify byte*) main::screen + (word)(number) $28*(number) $a
+Constant right-side identified [0] main::$0 = main::screen + (word)$28*$a
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::$0 = main::screen+(word)$28*$a
+Constant main::$0 = main::screen+(word)$28*$a
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$0 = (const nomodify byte*) main::screen+(word)(number) $28*(number) $a
+Constant inlined main::$0 = main::screen+(word)$28*$a
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -51,9 +51,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a'
+  [0] *(main::screen+(word)$28*$a) = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -61,36 +61,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that array-indexing by a constant word is turned into a constant pointer
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    // [0] *((const nomodify byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta screen+$28*$a
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(main::screen+(word)$28*$a) = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -110,7 +86,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *((const nomodify byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *(main::screen+(word)$28*$a) = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     jmp __breturn
@@ -128,9 +104,9 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::screen = (byte*) 1024
+void main()
+label main::@return
+const nomodify byte* main::screen = (byte*) 1024
 
 
 
@@ -148,7 +124,7 @@ Score: 12
 main: {
     .label screen = $400
     // screen[40*10] = 'a'
-    // [0] *((const nomodify byte*) main::screen+(word)(number) $28*(number) $a) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *(main::screen+(word)$28*$a) = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen+$28*$a
     // main::@return

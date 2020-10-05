@@ -1,28 +1,28 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@2/(byte) main::i#1 )
-  (bool~) main::$0 ← (byte) main::i#2 < (number) 5
-  if((bool~) main::$0) goto main::@2
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < 5
+  if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte) main::i#3 ← phi( main::@1/(byte) main::i#2 )
-  (byte~) main::$1 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  *((const word*) v + (byte~) main::$1) ← *((const word*) v + (byte~) main::$1) + (number) 5
-  (byte~) main::$2 ← (byte) main::i#3 * (const byte) SIZEOF_WORD
-  *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2)
-  (byte) main::i#1 ← ++ (byte) main::i#3
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::$1 = main::i#3 * SIZEOF_WORD
+  v[main::$1] = v[main::$1] + 5
+  main::$2 = main::i#3 * SIZEOF_WORD
+  x[main::$2] = x[main::$2] + v[main::$2]
+  main::i#1 = ++ main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -33,41 +33,41 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) SIZEOF_WORD = (byte) 2
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(byte~) main::$1
-(byte~) main::$2
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(byte) main::i#3
-(const word*) v[(number) 5]  = { fill( 5, 0) }
-(const word*) x[(number) 5]  = { fill( 5, 0) }
+const byte SIZEOF_WORD = 2
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+byte~ main::$1
+byte~ main::$2
+label main::@1
+label main::@2
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+const word* v[5]  = { fill( 5, 0) }
+const word* x[5]  = { fill( 5, 0) }
 
-Adding number conversion cast (unumber) 5 in (bool~) main::$0 ← (byte) main::i#2 < (number) 5
-Adding number conversion cast (unumber) 5 in *((const word*) v + (byte~) main::$1) ← *((const word*) v + (byte~) main::$1) + (number) 5
+Adding number conversion cast (unumber) 5 in main::$0 = main::i#2 < 5
+Adding number conversion cast (unumber) 5 in v[main::$1] = v[main::$1] + 5
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 5
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 5
-Finalized unsigned number type (byte) 5
+Finalized unsigned number type 5
+Finalized unsigned number type 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
-Identified duplicate assignment right side [7] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
+Identified duplicate assignment right side [7] main::$2 = main::i#2 * SIZEOF_WORD
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$0 [3] if((byte) main::i#2<(byte) 5) goto main::@2
+Simple Condition main::$0 [3] if(main::i#2<5) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -76,48 +76,48 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Alias main::$2 = main::$1 
 Successful SSA optimization Pass2AliasElimination
-Rewriting multiplication to use shift [2] (byte~) main::$2 ← (byte) main::i#2 * (const byte) SIZEOF_WORD
+Rewriting multiplication to use shift [2] main::$2 = main::i#2 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
-Eliminating unused constant (const byte) SIZEOF_WORD
+Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [8] main::i#4 ← main::i#1
+Coalesced [8] main::i#4 = main::i#1
 Coalesced down to 1 phi equivalence classes
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@2/(byte) main::i#1 )
-  [2] if((byte) main::i#2<(byte) 5) goto main::@2
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [2] if(main::i#2<5) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [4] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1
-  [5] *((const word*) v + (byte~) main::$2) ← *((const word*) v + (byte~) main::$2) + (byte) 5
-  [6] *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2)
-  [7] (byte) main::i#1 ← ++ (byte) main::i#2
+  [4] main::$2 = main::i#2 << 1
+  [5] v[main::$2] = v[main::$2] + 5
+  [6] x[main::$2] = x[main::$2] + v[main::$2]
+  [7] main::i#1 = ++ main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$2 33.0
-(byte) main::i
-(byte) main::i#1 22.0
-(byte) main::i#2 8.8
+void main()
+byte~ main::$2 33.0
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 8.8
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -127,81 +127,15 @@ Complete equivalence classes
 [ main::$2 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ main::$2 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates a problem with inner indexes into arrays where the elemt size>1
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label __2 = 3
-    .label i = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] if((byte) main::i#2<(byte) 5) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #5
-    bcc __b2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-    // main::@2
-  __b2:
-    // [4] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuz1=vbuz2_rol_1 
-    lda.z i
-    asl
-    sta.z __2
-    // [5] *((const word*) v + (byte~) main::$2) ← *((const word*) v + (byte~) main::$2) + (byte) 5 -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_plus_vbuc2 
-    ldy.z __2
-    clc
-    lda v,y
-    adc #5
-    sta v,y
-    lda v+1,y
-    adc #0
-    sta v+1,y
-    // [6] *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2) -- pwuc1_derefidx_vbuz1=pwuc1_derefidx_vbuz1_plus_pwuc2_derefidx_vbuz1 
-    ldy.z __2
-    clc
-    lda x,y
-    adc v,y
-    sta x,y
-    lda x+1,y
-    adc v+1,y
-    sta x+1,y
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
-    jmp __b1
-}
-  // File Data
-  v: .fill 2*5, 0
-  x: .fill 2*5, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::i#2 << 1 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [5] *((const word*) v + (byte~) main::$2) ← *((const word*) v + (byte~) main::$2) + (byte) 5 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] v[main::$2] = v[main::$2] + 5 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::$2 ]
-Statement [6] *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [4] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [5] *((const word*) v + (byte~) main::$2) ← *((const word*) v + (byte~) main::$2) + (byte) 5 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [6] *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2) [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] x[main::$2] = x[main::$2] + v[main::$2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = main::i#2 << 1 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] v[main::$2] = v[main::$2] + 5 [ main::i#2 main::$2 ] (  [ main::i#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] x[main::$2] = x[main::$2] + v[main::$2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$2 ] : zp[1]:3 , reg byte x , reg byte y , 
 
@@ -224,12 +158,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // main::@1
   __b1:
-    // [2] if((byte) main::i#2<(byte) 5) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [2] if(main::i#2<5) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #5
     bcc __b2
     jmp __breturn
@@ -239,11 +173,11 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuyy=vbuxx_rol_1 
+    // [4] main::$2 = main::i#2 << 1 -- vbuyy=vbuxx_rol_1 
     txa
     asl
     tay
-    // [5] *((const word*) v + (byte~) main::$2) ← *((const word*) v + (byte~) main::$2) + (byte) 5 -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_vbuc2 
+    // [5] v[main::$2] = v[main::$2] + 5 -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_vbuc2 
     clc
     lda v,y
     adc #5
@@ -251,7 +185,7 @@ main: {
     lda v+1,y
     adc #0
     sta v+1,y
-    // [6] *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2) -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_pwuc2_derefidx_vbuyy 
+    // [6] x[main::$2] = x[main::$2] + v[main::$2] -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_pwuc2_derefidx_vbuyy 
     clc
     lda x,y
     adc v,y
@@ -259,11 +193,11 @@ main: {
     lda x+1,y
     adc v+1,y
     sta x+1,y
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -280,16 +214,16 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(byte~) main::$2 reg byte y 33.0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte x 22.0
-(byte) main::i#2 reg byte x 8.8
-(const word*) v[(number) 5]  = { fill( 5, 0) }
-(const word*) x[(number) 5]  = { fill( 5, 0) }
+void main()
+byte~ main::$2 reg byte y 33.0
+label main::@1
+label main::@2
+label main::@return
+byte main::i
+byte main::i#1 reg byte x 22.0
+byte main::i#2 reg byte x 8.8
+const word* v[5]  = { fill( 5, 0) }
+const word* x[5]  = { fill( 5, 0) }
 
 reg byte x [ main::i#2 main::i#1 ]
 reg byte y [ main::$2 ]
@@ -308,12 +242,12 @@ Score: 731
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // main::@1
   __b1:
     // for(char i=0;i<5;i++)
-    // [2] if((byte) main::i#2<(byte) 5) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [2] if(main::i#2<5) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #5
     bcc __b2
     // main::@return
@@ -323,12 +257,12 @@ main: {
     // main::@2
   __b2:
     // x[i] += ( v[i] += 5 )
-    // [4] (byte~) main::$2 ← (byte) main::i#2 << (byte) 1 -- vbuyy=vbuxx_rol_1 
+    // [4] main::$2 = main::i#2 << 1 -- vbuyy=vbuxx_rol_1 
     txa
     asl
     tay
     // v[i] += 5
-    // [5] *((const word*) v + (byte~) main::$2) ← *((const word*) v + (byte~) main::$2) + (byte) 5 -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_vbuc2 
+    // [5] v[main::$2] = v[main::$2] + 5 -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_vbuc2 
     clc
     lda v,y
     adc #5
@@ -337,7 +271,7 @@ main: {
     adc #0
     sta v+1,y
     // x[i] += ( v[i] += 5 )
-    // [6] *((const word*) x + (byte~) main::$2) ← *((const word*) x + (byte~) main::$2) + *((const word*) v + (byte~) main::$2) -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_pwuc2_derefidx_vbuyy 
+    // [6] x[main::$2] = x[main::$2] + v[main::$2] -- pwuc1_derefidx_vbuyy=pwuc1_derefidx_vbuyy_plus_pwuc2_derefidx_vbuyy 
     clc
     lda x,y
     adc v,y
@@ -346,10 +280,10 @@ main: {
     adc v+1,y
     sta x+1,y
     // for(char i=0;i<5;i++)
-    // [7] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

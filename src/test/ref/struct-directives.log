@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(volatile struct $0) y+(const byte) OFFSET_STRUCT_$0_X)
-  *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(volatile struct $0) y+(const byte) OFFSET_STRUCT_$0_Z)
+  SCREEN[0] = *((byte*)&y+OFFSET_STRUCT_$0_X)
+  SCREEN[0] = *((byte*)&y+OFFSET_STRUCT_$0_Z)
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,40 +21,40 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(nomodify byte) $0::x
-(byte) $0::z
-(const byte) OFFSET_STRUCT_$0_X = (byte) 0
-(const byte) OFFSET_STRUCT_$0_Z = (byte) 1
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(volatile struct $0) y loadstore = { x: (byte) 1, z: (byte) 2 }
+nomodify byte $0::x
+byte $0::z
+const byte OFFSET_STRUCT_$0_X = 0
+const byte OFFSET_STRUCT_$0_Z = 1
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+volatile struct $0 y loadstore = { x: 1, z: 2 }
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(volatile struct $0) y+(const byte) OFFSET_STRUCT_$0_X)
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← *((byte*)&(volatile struct $0) y+(const byte) OFFSET_STRUCT_$0_Z)
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((byte*)&y+OFFSET_STRUCT_$0_X)
+Adding number conversion cast (unumber) 0 in SCREEN[0] = *((byte*)&y+OFFSET_STRUCT_$0_Z)
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero (byte*)&y in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*)&(volatile struct $0) y+(const byte) OFFSET_STRUCT_$0_X)
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*)&(volatile struct $0) y)
-Simplifying expression containing zero SCREEN in [1] *((const nomodify byte*) SCREEN + (byte) 0) ← *((byte*)&(volatile struct $0) y+(const byte) OFFSET_STRUCT_$0_Z)
+Simplifying expression containing zero (byte*)&y in [0] SCREEN[0] = *((byte*)&y+OFFSET_STRUCT_$0_X)
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = *((byte*)&y)
+Simplifying expression containing zero SCREEN in [1] SCREEN[0] = *((byte*)&y+OFFSET_STRUCT_$0_Z)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) OFFSET_STRUCT_$0_X
+Eliminating unused constant OFFSET_STRUCT_$0_X
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined OFFSET_STRUCT_$0_Z = (byte) 1
+Constant inlined OFFSET_STRUCT_$0_Z = 1
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -63,10 +63,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y)
-  [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y+(byte) 1)
+  [0] *SCREEN = *((byte*)&y)
+  [1] *SCREEN = *((byte*)&y+1)
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -74,47 +74,19 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(nomodify byte) $0::x
-(byte) $0::z
-(void()) main()
-(volatile struct $0) y loadstore = { x: (byte) 1, z: (byte) 2 }
+nomodify byte $0::x
+byte $0::z
+void main()
+volatile struct $0 y loadstore = { x: 1, z: 2 }
 
 Initial phi equivalence classes
 Added variable y to live range equivalence class [ y ]
 Complete equivalence classes
 [ y ]
 Allocated mem[2] [ y ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test that struct variable and members can both have type directives
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y) -- _deref_pbuc1=_deref_pbuc2 
-    lda y
-    sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
-    lda y+1
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-  y: .byte 1, 2
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y) [ y ] (  [ y ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y+(byte) 1) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = *((byte*)&y) [ y ] (  [ y ] { }  ) always clobbers reg byte a 
+Statement [1] *SCREEN = *((byte*)&y+1) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[2] [ y ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
@@ -137,10 +109,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *((byte*)&y) -- _deref_pbuc1=_deref_pbuc2 
     lda y
     sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *SCREEN = *((byte*)&y+1) -- _deref_pbuc1=_deref_pbuc2 
     lda y+1
     sta SCREEN
     jmp __breturn
@@ -159,12 +131,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(nomodify byte) $0::x
-(byte) $0::z
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(volatile struct $0) y loadstore mem[2] = { x: (byte) 1, z: (byte) 2 }
+nomodify byte $0::x
+byte $0::z
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+volatile struct $0 y loadstore mem[2] = { x: 1, z: 2 }
 
 mem[2] [ y ]
 
@@ -183,11 +155,11 @@ Score: 22
   // main
 main: {
     // SCREEN[0] = y.x
-    // [0] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *((byte*)&y) -- _deref_pbuc1=_deref_pbuc2 
     lda y
     sta SCREEN
     // SCREEN[0] = y.z
-    // [1] *((const nomodify byte*) SCREEN) ← *((byte*)&(volatile struct $0) y+(byte) 1) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *SCREEN = *((byte*)&y+1) -- _deref_pbuc1=_deref_pbuc2 
     lda y+1
     sta SCREEN
     // main::@return

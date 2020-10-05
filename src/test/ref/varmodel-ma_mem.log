@@ -1,23 +1,23 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte*) main::screen ← (byte*)(number) $400
-  (byte) main::i ← (byte) 0
+  main::screen = (byte*)$400
+  main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  *((byte*) main::screen) ← (byte) 'a'
-  (byte*) main::screen ← ++ (byte*) main::screen
-  (byte) main::i ← (byte) main::i + rangenext(0,5)
-  (bool~) main::$0 ← (byte) main::i != rangelast(0,5)
-  if((bool~) main::$0) goto main::@1
+  *main::screen = 'a'
+  main::screen = ++ main::screen
+  main::i = main::i + rangenext(0,5)
+  main::$0 = main::i != rangelast(0,5)
+  if(main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -28,32 +28,32 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@return
-(byte) main::i loadstore
-(byte*) main::screen loadstore
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+label main::@1
+label main::@return
+byte main::i loadstore
+byte* main::screen loadstore
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$0 [6] if((byte) main::i!=rangelast(0,5)) goto main::@1
+Simple Condition main::$0 [6] if(main::i!=rangelast(0,5)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Resolved ranged next value [4] main::i ← ++ main::i to ++
-Resolved ranged comparison value [6] if(main::i!=rangelast(0,5)) goto main::@1 to (number) 6
+Resolved ranged next value [4] main::i = ++ main::i to ++
+Resolved ranged comparison value [6] if(main::i!=rangelast(0,5)) goto main::@1 to 6
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 6 in [5] if((byte) main::i!=(number) 6) goto main::@1
+Adding number conversion cast (unumber) 6 in [5] if(main::i!=6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 6
+Finalized unsigned number type 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
@@ -62,16 +62,16 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (byte*) main::screen ← (byte*) 1024
-  [1] (byte) main::i ← (byte) 0
+  [0] main::screen = (byte*) 1024
+  [1] main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [2] *((byte*) main::screen) ← (byte) 'a'
-  [3] (byte*) main::screen ← ++ (byte*) main::screen
-  [4] (byte) main::i ← ++ (byte) main::i
-  [5] if((byte) main::i!=(byte) 6) goto main::@1
+  [2] *main::screen = 'a'
+  [3] main::screen = ++ main::screen
+  [4] main::i = ++ main::i
+  [5] if(main::i!=6) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -79,9 +79,9 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::i loadstore 7.000000000000001
-(byte*) main::screen loadstore 5.833333333333333
+void main()
+byte main::i loadstore 7.000000000000001
+byte* main::screen loadstore 5.833333333333333
 
 Initial phi equivalence classes
 Added variable main::screen to live range equivalence class [ main::screen ]
@@ -91,65 +91,11 @@ Complete equivalence classes
 [ main::i ]
 Allocated mem[2] [ main::screen ]
 Allocated mem[1] [ main::i ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test memory model multiple-assignment/main memory for all variables (here  local variables)
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // [0] (byte*) main::screen ← (byte*) 1024 -- pbum1=pbuc1 
-    // A local pointer 
-    lda #<$400
-    sta screen
-    lda #>$400
-    sta screen+1
-    // [1] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
-    lda #0
-    sta i
-    jmp __b1
-  // A local counter
-    // main::@1
-  __b1:
-    // [2] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
-    lda #'a'
-    ldy screen
-    sty.z $fe
-    ldy screen+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // [3] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
-    inc screen
-    bne !+
-    inc screen+1
-  !:
-    // [4] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
-    inc i
-    // [5] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
-    lda #6
-    cmp i
-    bne __b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [6] return 
-    rts
-    screen: .word 0
-    i: .byte 0
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte*) main::screen ← (byte*) 1024 [ main::screen ] (  [ main::screen ] { }  ) always clobbers reg byte a 
-Statement [1] (byte) main::i ← (byte) 0 [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a 
-Statement [2] *((byte*) main::screen) ← (byte) 'a' [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a reg byte y 
-Statement [5] if((byte) main::i!=(byte) 6) goto main::@1 [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a 
+Statement [0] main::screen = (byte*) 1024 [ main::screen ] (  [ main::screen ] { }  ) always clobbers reg byte a 
+Statement [1] main::i = 0 [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a 
+Statement [2] *main::screen = 'a' [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a reg byte y 
+Statement [5] if(main::i!=6) goto main::@1 [ main::screen main::i ] (  [ main::screen main::i ] { }  ) always clobbers reg byte a 
 Potential registers mem[2] [ main::screen ] : mem[2] , 
 Potential registers mem[1] [ main::i ] : mem[1] , 
 
@@ -172,20 +118,20 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   // main
 main: {
-    // [0] (byte*) main::screen ← (byte*) 1024 -- pbum1=pbuc1 
+    // [0] main::screen = (byte*) 1024 -- pbum1=pbuc1 
     // A local pointer 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
-    // [1] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [1] main::i = 0 -- vbum1=vbuc1 
     lda #0
     sta i
     jmp __b1
   // A local counter
     // main::@1
   __b1:
-    // [2] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    // [2] *main::screen = 'a' -- _deref_pbum1=vbuc1 
     lda #'a'
     ldy screen
     sty.z $fe
@@ -193,14 +139,14 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [3] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
+    // [3] main::screen = ++ main::screen -- pbum1=_inc_pbum1 
     inc screen
     bne !+
     inc screen+1
   !:
-    // [4] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [4] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
-    // [5] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
+    // [5] if(main::i!=6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
     lda #6
     cmp i
     bne __b1
@@ -222,11 +168,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@return
-(byte) main::i loadstore mem[1] 7.000000000000001
-(byte*) main::screen loadstore mem[2] 5.833333333333333
+void main()
+label main::@1
+label main::@return
+byte main::i loadstore mem[1] 7.000000000000001
+byte* main::screen loadstore mem[2] 5.833333333333333
 
 mem[2] [ main::screen ]
 mem[1] [ main::i ]
@@ -245,21 +191,21 @@ Score: 554
   // main
 main: {
     // screen = 0x0400
-    // [0] (byte*) main::screen ← (byte*) 1024 -- pbum1=pbuc1 
+    // [0] main::screen = (byte*) 1024 -- pbum1=pbuc1 
     // A local pointer 
     lda #<$400
     sta screen
     lda #>$400
     sta screen+1
     // for( char i: 0..5 )
-    // [1] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [1] main::i = 0 -- vbum1=vbuc1 
     lda #0
     sta i
   // A local counter
     // main::@1
   __b1:
     // *(screen++) = 'a'
-    // [2] *((byte*) main::screen) ← (byte) 'a' -- _deref_pbum1=vbuc1 
+    // [2] *main::screen = 'a' -- _deref_pbum1=vbuc1 
     lda #'a'
     ldy screen
     sty.z $fe
@@ -268,15 +214,15 @@ main: {
     ldy #0
     sta ($fe),y
     // *(screen++) = 'a';
-    // [3] (byte*) main::screen ← ++ (byte*) main::screen -- pbum1=_inc_pbum1 
+    // [3] main::screen = ++ main::screen -- pbum1=_inc_pbum1 
     inc screen
     bne !+
     inc screen+1
   !:
     // for( char i: 0..5 )
-    // [4] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [4] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
-    // [5] if((byte) main::i!=(byte) 6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
+    // [5] if(main::i!=6) goto main::@1 -- vbum1_neq_vbuc1_then_la1 
     lda #6
     cmp i
     bne __b1

@@ -1,30 +1,30 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@3
 main::@2: scope:[main]  from main::@1
-  *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN)
+  *main::SCREEN = ++ *main::SCREEN
   to:main::@1
 main::@3: scope:[main]  from main::@1
-  (byte) main::line#0 ← (byte) 0
+  main::line#0 = 0
   to:main::@4
 main::@4: scope:[main]  from main::@3 main::@4
-  (byte) main::line#2 ← phi( main::@3/(byte) main::line#0 main::@4/(byte) main::line#1 )
-  *((const byte*) main::SCREEN + (byte) main::line#2) ← (byte) main::line#2
-  (byte) main::line#1 ← (byte) main::line#2 + rangenext(0,$18)
-  (bool~) main::$1 ← (byte) main::line#1 != rangelast(0,$18)
-  if((bool~) main::$1) goto main::@4
+  main::line#2 = phi( main::@3/main::line#0, main::@4/main::line#1 )
+  main::SCREEN[main::line#2] = main::line#2
+  main::line#1 = main::line#2 + rangenext(0,$18)
+  main::$1 = main::line#1 != rangelast(0,$18)
+  if(main::$1) goto main::@4
   to:main::@return
 main::@return: scope:[main]  from main::@4
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -35,34 +35,34 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@return
-(const byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::line
-(byte) main::line#0
-(byte) main::line#1
-(byte) main::line#2
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$1
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@return
+const byte* main::SCREEN = (byte*)$400
+byte main::line
+byte main::line#0
+byte main::line#1
+byte main::line#2
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) main::$1 [7] if((byte) main::line#1!=rangelast(0,$18)) goto main::@4
+Simple Condition main::$1 [7] if(main::line#1!=rangelast(0,$18)) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::line#0 = 0
+Constant main::line#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [0] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [5] main::line#1 ← ++ main::line#2 to ++
-Resolved ranged comparison value [7] if(main::line#1!=rangelast(0,$18)) goto main::@4 to (number) $19
-Eliminating variable (byte) main::line#2 from unused block main::@4
-Eliminating variable (byte) main::line#1 from unused block main::@4
+Resolved ranged next value [5] main::line#1 = ++ main::line#2 to ++
+Resolved ranged comparison value [7] if(main::line#1!=rangelast(0,$18)) goto main::@4 to $19
+Eliminating variable main::line#2 from unused block main::@4
+Eliminating variable main::line#1 from unused block main::@4
 Removing PHI-reference to removed block (main::@3) in block main::@4
 Removing unused block main::@3
 Removing unused block main::@4
@@ -73,7 +73,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Eliminating unused constant (const byte) main::line#0
+Eliminating unused constant main::line#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -81,49 +81,27 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN)
+  [1] *main::SCREEN = ++ *main::SCREEN
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::line
+void main()
+byte main::line
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Problem with eliminating unused blocks/vars after the infinite loop (symbol line#2 not removed from symbol table)
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc SCREEN
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
@@ -147,7 +125,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *main::SCREEN = ++ *main::SCREEN -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1
 }
@@ -158,10 +136,10 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(const byte*) main::SCREEN = (byte*) 1024
-(byte) main::line
+void main()
+label main::@1
+const byte* main::SCREEN = (byte*) 1024
+byte main::line
 
 
 
@@ -181,7 +159,7 @@ main: {
     // main::@1
   __b1:
     // (*SCREEN)++;
-    // [1] *((const byte*) main::SCREEN) ← ++ *((const byte*) main::SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *main::SCREEN = ++ *main::SCREEN -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1
 }

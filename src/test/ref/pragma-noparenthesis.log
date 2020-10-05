@@ -2,23 +2,23 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const nomodify byte*) SCREEN + (number) 1) ← (byte) 'b'
+  SCREEN[1] = 'b'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) init()
+void init()
 init: scope:[init]  from __start::__init1
-  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'a'
+  SCREEN[0] = 'a'
   to:init::@return
 init::@return: scope:[init]  from init
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -36,29 +36,29 @@ __start::@return: scope:[__start]  from __start::@3
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@3
-(label) __start::@return
-(label) __start::__init1
-(void()) init()
-(label) init::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@3
+label __start::@return
+label __start::__init1
+void init()
+label init::@return
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (byte) 'b'
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 1 in SCREEN[1] = 'b'
+Adding number conversion cast (unumber) 0 in SCREEN[0] = 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [2] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero SCREEN in [2] SCREEN[0] = 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Consolidated array index constant in *(SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -72,15 +72,15 @@ Calls in [__start] to init:2 main:5
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) __start::@3
+Culled Empty Block label __start::@2
+Culled Empty Block label __start::@3
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::__init1
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
@@ -96,17 +96,17 @@ __start::@return: scope:[__start]  from __start::@1
   [5] return 
   to:@return
 
-(void()) init()
+void init()
 init: scope:[init]  from __start::__init1
-  [6] *((const nomodify byte*) SCREEN) ← (byte) 'a'
+  [6] *SCREEN = 'a'
   to:init::@return
 init::@return: scope:[init]  from init
   [7] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [8] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'b'
+  [8] *(SCREEN+1) = 'b'
   to:main::@return
 main::@return: scope:[main]  from main
   [9] return 
@@ -114,81 +114,15 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(void()) init()
-(void()) main()
+void __start()
+void init()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is vic20 / MOS6502X
-  // File Comments
-// Test #pragma without parenthesis
-  // Upstart
-  // Commodore VIC 20 executable PRG file
-.file [name="pragma-noparenthesis.prg", type="prg", segments="Program"]
-.segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$1001]
-.segmentdef Code [start=$100e]
-.segmentdef Data [startAfter="Code"]
-.segment Basic
-:BasicUpstart(__start)
-.segment Code
-
-
-  // Global Constants & labels
-  .label SCREEN = $400
-.segment Code
-  // __start
-__start: {
-    // [1] phi from __start to __start::__init1 [phi:__start->__start::__init1]
-  __init1_from___start:
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [2] call init 
-    jsr init
-    // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [4] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // init
-init: {
-    // [6] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta SCREEN
-    jmp __breturn
-    // init::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // main
-main: {
-    // [8] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
-    lda #'b'
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [9] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [6] *((const nomodify byte*) SCREEN) ← (byte) 'a' [ ] (  [ ] { }  init:2 [ ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'b' [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [6] *SCREEN = 'a' [ ] (  [ ] { }  init:2 [ ] { }  ) always clobbers reg byte a 
+Statement [8] *(SCREEN+1) = 'b' [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -243,7 +177,7 @@ __start: {
 }
   // init
 init: {
-    // [6] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [6] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __breturn
@@ -254,7 +188,7 @@ init: {
 }
   // main
 main: {
-    // [8] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [8] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     jmp __breturn
@@ -283,15 +217,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(void()) init()
-(label) init::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+void init()
+label init::@return
+void main()
+label main::@return
 
 
 
@@ -332,7 +266,7 @@ __start: {
   // init
 init: {
     // SCREEN[0] = 'a'
-    // [6] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [6] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // init::@return
@@ -343,7 +277,7 @@ init: {
   // main
 main: {
     // SCREEN[1] = 'b'
-    // [8] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [8] *(SCREEN+1) = 'b' -- _deref_pbuc1=vbuc2 
     lda #'b'
     sta SCREEN+1
     // main::@return

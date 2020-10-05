@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::SCREEN) ← (const byte) main::letter
+  *main::SCREEN = main::letter
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,17 +20,17 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) B = (byte) 'b'
-(const byte) Letter::A = (byte) 'a'
-(const byte) Letter::B = (byte) 'b'
-(const byte) Letter::C = (byte) 'b'+(byte) 1
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte) main::letter = (const byte) B
+const byte B = 'b'
+const byte Letter::A = 'a'
+const byte Letter::B = 'b'
+const byte Letter::C = 'b'+1
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte main::letter = B
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -39,7 +39,7 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::letter = (const byte) B
+Constant inlined main::letter = B
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
 
@@ -48,9 +48,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← (const byte) B
+  [0] *main::SCREEN = B
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -58,37 +58,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test of simple enum - char values with increment
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const B = 'b'
-  // main
-main: {
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
-    lda #B
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← (const byte) B [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = B [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Letter] 
@@ -111,7 +86,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN
     jmp __breturn
@@ -129,13 +104,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) B = (byte) 'b'
-(const byte) Letter::A = (byte) 'a'
-(const byte) Letter::B = (byte) 'b'
-(const byte) Letter::C = (byte) 'b'+(byte) 1
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
+const byte B = 'b'
+const byte Letter::A = 'a'
+const byte Letter::B = 'b'
+const byte Letter::C = 'b'+1
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
 
 
 
@@ -154,7 +129,7 @@ Score: 12
 main: {
     .label SCREEN = $400
     // *SCREEN = letter
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) B -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = B -- _deref_pbuc1=vbuc2 
     lda #B
     sta SCREEN
     // main::@return

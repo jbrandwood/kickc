@@ -2,21 +2,21 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((byte*) screen) ← (byte) 'a'
-  (byte*) screen ← ++ (byte*) screen
-  *((byte*) screen) ← (byte) 'a'
+  *screen = 'a'
+  screen = ++ screen
+  *screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte*) screen ← (byte*)(number) $400
+  screen = (byte*)$400
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -28,14 +28,14 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-(byte*) screen loadstore
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+byte* screen loadstore
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -47,18 +47,18 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (byte*) screen ← (byte*) 1024
+  [1] screen = (byte*) 1024
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -68,11 +68,11 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [5] *((byte*) screen) ← (byte) 'a'
-  [6] (byte*) screen ← ++ (byte*) screen
-  [7] *((byte*) screen) ← (byte) 'a'
+  [5] *screen = 'a'
+  [6] screen = ++ screen
+  [7] *screen = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [8] return 
@@ -80,80 +80,19 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(void()) main()
-(byte*) screen loadstore 11.5
+void __start()
+void main()
+byte* screen loadstore 11.5
 
 Initial phi equivalence classes
 Added variable screen to live range equivalence class [ screen ]
 Complete equivalence classes
 [ screen ]
 Allocated zp[2]:2 [ screen ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that global variables with initializer gets their comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // The screen (should become a var-comment in ASM)
-  .label screen = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-// The program entry point
-main: {
-    // [5] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
-    // Put 'a' in screen
-    lda #'a'
-    ldy #0
-    sta (screen),y
-    // [6] (byte*) screen ← ++ (byte*) screen -- pbuz1=_inc_pbuz1 
-    inc.z screen
-    bne !+
-    inc.z screen+1
-  !:
-    // [7] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
-    // Put another 'a' in screen
-    lda #'a'
-    ldy #0
-    sta (screen),y
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte*) screen ← (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
-Statement [5] *((byte*) screen) ← (byte) 'a' [ screen ] ( main:3 [ screen ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] *((byte*) screen) ← (byte) 'a' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] screen = (byte*) 1024 [ screen ] (  [ screen ] { }  ) always clobbers reg byte a 
+Statement [5] *screen = 'a' [ screen ] ( main:3 [ screen ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] *screen = 'a' [ ] ( main:3 [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ screen ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -180,7 +119,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [1] screen = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -201,17 +140,17 @@ __start: {
   // main
 // The program entry point
 main: {
-    // [5] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [5] *screen = 'a' -- _deref_pbuz1=vbuc1 
     // Put 'a' in screen
     lda #'a'
     ldy #0
     sta (screen),y
-    // [6] (byte*) screen ← ++ (byte*) screen -- pbuz1=_inc_pbuz1 
+    // [6] screen = ++ screen -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+
     inc.z screen+1
   !:
-    // [7] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *screen = 'a' -- _deref_pbuz1=vbuc1 
     // Put another 'a' in screen
     lda #'a'
     ldy #0
@@ -239,13 +178,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-(byte*) screen loadstore zp[2]:2 11.5
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+byte* screen loadstore zp[2]:2 11.5
 
 zp[2]:2 [ screen ]
 
@@ -266,7 +205,7 @@ Score: 60
 __start: {
     // __start::__init1
     // screen = 0x0400
-    // [1] (byte*) screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [1] screen = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -283,19 +222,19 @@ __start: {
 // The program entry point
 main: {
     // *screen = 'a'
-    // [5] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [5] *screen = 'a' -- _deref_pbuz1=vbuc1 
     // Put 'a' in screen
     lda #'a'
     ldy #0
     sta (screen),y
     // screen++;
-    // [6] (byte*) screen ← ++ (byte*) screen -- pbuz1=_inc_pbuz1 
+    // [6] screen = ++ screen -- pbuz1=_inc_pbuz1 
     inc.z screen
     bne !+
     inc.z screen+1
   !:
     // *screen = 'a'
-    // [7] *((byte*) screen) ← (byte) 'a' -- _deref_pbuz1=vbuc1 
+    // [7] *screen = 'a' -- _deref_pbuz1=vbuc1 
     // Put another 'a' in screen
     lda #'a'
     ldy #0

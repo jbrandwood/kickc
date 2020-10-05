@@ -1,17 +1,17 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  *((const nomodify byte*) SCREEN) ← ++ *((const nomodify byte*) SCREEN)
+  *SCREEN = ++ *SCREEN
   to:main::@1
 main::@return: scope:[main]  from
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -22,13 +22,13 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -48,42 +48,20 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] *((const nomodify byte*) SCREEN) ← ++ *((const nomodify byte*) SCREEN)
+  [1] *SCREEN = ++ *SCREEN
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test a for() loop that runs forever
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const nomodify byte*) SCREEN) ← ++ *((const nomodify byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc SCREEN
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 
 REGISTER UPLIFT SCOPES
@@ -107,7 +85,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const nomodify byte*) SCREEN) ← ++ *((const nomodify byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *SCREEN = ++ *SCREEN -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1
 }
@@ -118,9 +96,9 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@1
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@1
 
 
 
@@ -140,7 +118,7 @@ main: {
     // main::@1
   __b1:
     // (*SCREEN)++;
-    // [1] *((const nomodify byte*) SCREEN) ← ++ *((const nomodify byte*) SCREEN) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [1] *SCREEN = ++ *SCREEN -- _deref_pbuc1=_inc__deref_pbuc1 
     inc SCREEN
     jmp __b1
 }

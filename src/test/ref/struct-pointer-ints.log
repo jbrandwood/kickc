@@ -1,42 +1,42 @@
-Setting struct to load/store in variable affected by address-of (void~) main::$0 ← call update &(struct myStruct) main::s (number) $3e8 
+Setting struct to load/store in variable affected by address-of main::$0 = call update &main::s $3e8 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) update((struct myStruct*) update::s , (word) update::size)
+void update(struct myStruct* update::s , word update::size)
 update: scope:[update]  from main
-  (word) update::size#1 ← phi( main/(word) update::size#0 )
-  (struct myStruct*) update::s#1 ← phi( main/(struct myStruct*) update::s#0 )
-  (word*~) update::$2 ← (word*)(struct myStruct*) update::s#1
-  (word*~) update::$0 ← (word*~) update::$2 + (const byte) OFFSET_STRUCT_MYSTRUCT_A
-  (word*~) update::$3 ← (word*)(struct myStruct*) update::s#1
-  (word*~) update::$1 ← (word*~) update::$3 + (const byte) OFFSET_STRUCT_MYSTRUCT_A
-  *((word*~) update::$1) ← *((word*~) update::$0) + (word) update::size#1
+  update::size#1 = phi( main/update::size#0 )
+  update::s#1 = phi( main/update::s#0 )
+  update::$2 = (word*)update::s#1
+  update::$0 = update::$2 + OFFSET_STRUCT_MYSTRUCT_A
+  update::$3 = (word*)update::s#1
+  update::$1 = update::$3 + OFFSET_STRUCT_MYSTRUCT_A
+  *update::$1 = *update::$0 + update::size#1
   to:update::@return
 update::@return: scope:[update]  from update
   return 
   to:@return
 
-(signed word()) main()
+signed word main()
 main: scope:[main]  from __start
-  *(&(struct myStruct) main::s) ← memset(struct myStruct, (const byte) SIZEOF_STRUCT_MYSTRUCT)
-  (struct myStruct) main::s ← struct-unwound {*(&(struct myStruct) main::s)}
-  (struct myStruct*) update::s#0 ← &(struct myStruct) main::s
-  (word) update::size#0 ← (number) $3e8
+  *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT)
+  main::s = struct-unwound {*(&main::s)}
+  update::s#0 = &main::s
+  update::size#0 = $3e8
   call update 
   to:main::@1
 main::@1: scope:[main]  from main
-  (signed word) main::return#0 ← (number) 0
+  main::return#0 = 0
   to:main::@return
 main::@return: scope:[main]  from main::@1
-  (signed word) main::return#3 ← phi( main::@1/(signed word) main::return#0 )
-  (signed word) main::return#1 ← (signed word) main::return#3
+  main::return#3 = phi( main::@1/main::return#0 )
+  main::return#1 = main::return#3
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
-  (signed word) main::return#2 ← (signed word) main::return#1
+  main::return#2 = main::return#1
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -45,83 +45,83 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) OFFSET_STRUCT_MYSTRUCT_A = (byte) 0
-(const byte) SIZEOF_STRUCT_MYSTRUCT = (byte) 4
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(signed word()) main()
-(label) main::@1
-(label) main::@return
-(signed word) main::return
-(signed word) main::return#0
-(signed word) main::return#1
-(signed word) main::return#2
-(signed word) main::return#3
-(struct myStruct) main::s loadstore
-(word) myStruct::a
-(word) myStruct::b
-(void()) update((struct myStruct*) update::s , (word) update::size)
-(word*~) update::$0
-(word*~) update::$1
-(word*~) update::$2
-(word*~) update::$3
-(label) update::@return
-(struct myStruct*) update::s
-(struct myStruct*) update::s#0
-(struct myStruct*) update::s#1
-(word) update::size
-(word) update::size#0
-(word) update::size#1
+const byte OFFSET_STRUCT_MYSTRUCT_A = 0
+const byte SIZEOF_STRUCT_MYSTRUCT = 4
+void __start()
+label __start::@1
+label __start::@return
+signed word main()
+label main::@1
+label main::@return
+signed word main::return
+signed word main::return#0
+signed word main::return#1
+signed word main::return#2
+signed word main::return#3
+struct myStruct main::s loadstore
+word myStruct::a
+word myStruct::b
+void update(struct myStruct* update::s , word update::size)
+word*~ update::$0
+word*~ update::$1
+word*~ update::$2
+word*~ update::$3
+label update::@return
+struct myStruct* update::s
+struct myStruct* update::s#0
+struct myStruct* update::s#1
+word update::size
+word update::size#0
+word update::size#1
 
-Adding number conversion cast (unumber) $3e8 in (word) update::size#0 ← (number) $3e8
-Adding number conversion cast (snumber) 0 in (signed word) main::return#0 ← (number) 0
+Adding number conversion cast (unumber) $3e8 in update::size#0 = $3e8
+Adding number conversion cast (snumber) 0 in main::return#0 = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (word) update::size#0 ← (unumber)(number) $3e8
-Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
+Inlining cast update::size#0 = (unumber)$3e8
+Inlining cast main::return#0 = (snumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $3e8
-Finalized signed number type (signed byte) 0
+Finalized unsigned number type $3e8
+Finalized signed number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::return#0 = main::return#3 main::return#1 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (struct myStruct*) update::s#1 (struct myStruct*) update::s#0
-Identical Phi Values (word) update::size#1 (word) update::size#0
+Identical Phi Values update::s#1 update::s#0
+Identical Phi Values update::size#1 update::size#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Removing C-classic struct-unwound assignment [8] (struct myStruct) main::s ← struct-unwound {*(&(struct myStruct) main::s)}
-Constant (const struct myStruct*) update::s#0 = &main::s
-Constant (const word) update::size#0 = $3e8
-Constant (const signed word) main::return#0 = 0
+Removing C-classic struct-unwound assignment [8] main::s = struct-unwound {*(&main::s)}
+Constant update::s#0 = &main::s
+Constant update::size#0 = $3e8
+Constant main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const word*) update::$2 = (word*)update::s#0
-Constant (const word*) update::$3 = (word*)update::s#0
-Constant (const signed word) main::return#2 = main::return#0
+Constant update::$2 = (word*)update::s#0
+Constant update::$3 = (word*)update::s#0
+Constant main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [5] *((word*~) update::$1) ← *((word*~) update::$0) + (const word) update::size#0  -- *(update::$2 + OFFSET_STRUCT_MYSTRUCT_A)
-Converting *(pointer+n) to pointer[n] [5] *((word*~) update::$1) ← *((const word*) update::$2 + (const byte) OFFSET_STRUCT_MYSTRUCT_A) + (const word) update::size#0  -- *(update::$3 + OFFSET_STRUCT_MYSTRUCT_A)
+Converting *(pointer+n) to pointer[n] [5] *update::$1 = *update::$0 + update::size#0  -- update::$2[OFFSET_STRUCT_MYSTRUCT_A]
+Converting *(pointer+n) to pointer[n] [5] *update::$1 = update::$2[OFFSET_STRUCT_MYSTRUCT_A] + update::size#0  -- update::$3[OFFSET_STRUCT_MYSTRUCT_A]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero update::$2 in [2] (word*~) update::$0 ← (const word*) update::$2 + (const byte) OFFSET_STRUCT_MYSTRUCT_A
-Simplifying expression containing zero update::$3 in [4] (word*~) update::$1 ← (const word*) update::$3 + (const byte) OFFSET_STRUCT_MYSTRUCT_A
-Simplifying expression containing zero update::$2 in [5] *((const word*) update::$3 + (const byte) OFFSET_STRUCT_MYSTRUCT_A) ← *((const word*) update::$2 + (const byte) OFFSET_STRUCT_MYSTRUCT_A) + (const word) update::size#0
-Simplifying expression containing zero update::$3 in [5] *((const word*) update::$3 + (const byte) OFFSET_STRUCT_MYSTRUCT_A) ← *((const word*) update::$2) + (const word) update::size#0
+Simplifying expression containing zero update::$2 in [2] update::$0 = update::$2 + OFFSET_STRUCT_MYSTRUCT_A
+Simplifying expression containing zero update::$3 in [4] update::$1 = update::$3 + OFFSET_STRUCT_MYSTRUCT_A
+Simplifying expression containing zero update::$2 in [5] update::$3[OFFSET_STRUCT_MYSTRUCT_A] = update::$2[OFFSET_STRUCT_MYSTRUCT_A] + update::size#0
+Simplifying expression containing zero update::$3 in [5] update::$3[OFFSET_STRUCT_MYSTRUCT_A] = *update::$2 + update::size#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (word*~) update::$0 and assignment [0] (word*~) update::$0 ← (const word*) update::$2
-Eliminating unused variable (word*~) update::$1 and assignment [1] (word*~) update::$1 ← (const word*) update::$3
-Eliminating unused constant (const signed word) main::return#2
-Eliminating unused constant (const byte) OFFSET_STRUCT_MYSTRUCT_A
+Eliminating unused variable update::$0 and assignment [0] update::$0 = update::$2
+Eliminating unused variable update::$1 and assignment [1] update::$1 = update::$3
+Eliminating unused constant main::return#2
+Eliminating unused constant OFFSET_STRUCT_MYSTRUCT_A
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const signed word) main::return#0
+Eliminating unused constant main::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined update::$2 = (word*)(const struct myStruct*) update::s#0
-Constant inlined update::$3 = (word*)(const struct myStruct*) update::s#0
+Constant inlined update::$2 = (word*)update::s#0
+Constant inlined update::$3 = (word*)update::s#0
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -129,22 +129,22 @@ Calls in [main] to update:1
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(signed word()) main()
+signed word main()
 main: scope:[main]  from
-  [0] *(&(struct myStruct) main::s) ← memset(struct myStruct, (const byte) SIZEOF_STRUCT_MYSTRUCT)
+  [0] *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT)
   [1] call update 
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-(void()) update((struct myStruct*) update::s , (word) update::size)
+void update(struct myStruct* update::s , word update::size)
 update: scope:[update]  from main
-  [3] *((word*)(const struct myStruct*) update::s#0) ← *((word*)(const struct myStruct*) update::s#0) + (const word) update::size#0
+  [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0
   to:update::@return
 update::@return: scope:[update]  from update
   [4] return 
@@ -152,73 +152,23 @@ update::@return: scope:[update]  from update
 
 
 VARIABLE REGISTER WEIGHTS
-(signed word()) main()
-(signed word) main::return
-(struct myStruct) main::s loadstore
-(word) myStruct::a
-(word) myStruct::b
-(void()) update((struct myStruct*) update::s , (word) update::size)
-(struct myStruct*) update::s
-(word) update::size
+signed word main()
+signed word main::return
+struct myStruct main::s loadstore
+word myStruct::a
+word myStruct::b
+void update(struct myStruct* update::s , word update::size)
+struct myStruct* update::s
+word update::size
 
 Initial phi equivalence classes
 Added variable main::s to live range equivalence class [ main::s ]
 Complete equivalence classes
 [ main::s ]
 Allocated zp[4]:2 [ main::s ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates missing fragment _deref_pwuc1=_deref_pwuc1_plus_vwuc2
-// https://gitlab.com/camelot/kickc/-/issues/435 reported by G.B.
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const SIZEOF_STRUCT_MYSTRUCT = 4
-  // main
-main: {
-    .label s = 2
-    // [0] *(&(struct myStruct) main::s) ← memset(struct myStruct, (const byte) SIZEOF_STRUCT_MYSTRUCT) -- _deref_pssc1=_memset_vbuc2 
-    ldy #SIZEOF_STRUCT_MYSTRUCT
-    lda #0
-  !:
-    dey
-    sta s,y
-    bne !-
-    // [1] call update 
-    jsr update
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // update
-update: {
-    .const size = $3e8
-    .label s = main.s
-    // [3] *((word*)(const struct myStruct*) update::s#0) ← *((word*)(const struct myStruct*) update::s#0) + (const word) update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
-    lda #<size
-    clc
-    adc.z s
-    sta.z s
-    lda #>size
-    adc.z s+1
-    sta.z s+1
-    jmp __breturn
-    // update::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *(&(struct myStruct) main::s) ← memset(struct myStruct, (const byte) SIZEOF_STRUCT_MYSTRUCT) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [3] *((word*)(const struct myStruct*) update::s#0) ← *((word*)(const struct myStruct*) update::s#0) + (const word) update::size#0 [ ] ( update:1 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0 [ ] ( update:1 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[4]:2 [ main::s ] : zp[4]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -245,7 +195,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label s = 2
-    // [0] *(&(struct myStruct) main::s) ← memset(struct myStruct, (const byte) SIZEOF_STRUCT_MYSTRUCT) -- _deref_pssc1=_memset_vbuc2 
+    // [0] *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT) -- _deref_pssc1=_memset_vbuc2 
     ldy #SIZEOF_STRUCT_MYSTRUCT
     lda #0
   !:
@@ -264,7 +214,7 @@ main: {
 update: {
     .const size = $3e8
     .label s = main.s
-    // [3] *((word*)(const struct myStruct*) update::s#0) ← *((word*)(const struct myStruct*) update::s#0) + (const word) update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    // [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
     lda #<size
     clc
     adc.z s
@@ -289,19 +239,19 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) SIZEOF_STRUCT_MYSTRUCT = (byte) 4
-(signed word()) main()
-(label) main::@return
-(signed word) main::return
-(struct myStruct) main::s loadstore zp[4]:2
-(word) myStruct::a
-(word) myStruct::b
-(void()) update((struct myStruct*) update::s , (word) update::size)
-(label) update::@return
-(struct myStruct*) update::s
-(const struct myStruct*) update::s#0 s = &(struct myStruct) main::s
-(word) update::size
-(const word) update::size#0 size = (word) $3e8
+const byte SIZEOF_STRUCT_MYSTRUCT = 4
+signed word main()
+label main::@return
+signed word main::return
+struct myStruct main::s loadstore zp[4]:2
+word myStruct::a
+word myStruct::b
+void update(struct myStruct* update::s , word update::size)
+label update::@return
+struct myStruct* update::s
+const struct myStruct* update::s#0 s = &main::s
+word update::size
+const word update::size#0 size = $3e8
 
 zp[4]:2 [ main::s ]
 
@@ -322,7 +272,7 @@ Score: 49
 main: {
     .label s = 2
     // s
-    // [0] *(&(struct myStruct) main::s) ← memset(struct myStruct, (const byte) SIZEOF_STRUCT_MYSTRUCT) -- _deref_pssc1=_memset_vbuc2 
+    // [0] *(&main::s) = memset(struct myStruct, SIZEOF_STRUCT_MYSTRUCT) -- _deref_pssc1=_memset_vbuc2 
     ldy #SIZEOF_STRUCT_MYSTRUCT
     lda #0
   !:
@@ -342,7 +292,7 @@ update: {
     .const size = $3e8
     .label s = main.s
     // s->a += size
-    // [3] *((word*)(const struct myStruct*) update::s#0) ← *((word*)(const struct myStruct*) update::s#0) + (const word) update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    // [3] *((word*)update::s#0) = *((word*)update::s#0) + update::size#0 -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
     lda #<size
     clc
     adc.z s

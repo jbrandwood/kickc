@@ -1,32 +1,32 @@
-Resolved forward reference irq2 to interrupt(KERNEL_MIN)(void()) irq2()
+Resolved forward reference irq2 to interrupt(KERNEL_MIN) void irq2()
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN) ← (byte) 'x'
+  *SCREEN = 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) irq1()
+interrupt(KERNEL_MIN) void irq1()
 irq1: scope:[irq1]  from
-  *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
+  *HARDWARE_IRQ = &irq2
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) irq2()
+interrupt(KERNEL_MIN) void irq2()
 irq2: scope:[irq2]  from
-  *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
+  *HARDWARE_IRQ = &irq1
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -37,17 +37,17 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify void()**) HARDWARE_IRQ = (void()**)(number) $fffe
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-interrupt(KERNEL_MIN)(void()) irq1()
-(label) irq1::@return
-interrupt(KERNEL_MIN)(void()) irq2()
-(label) irq2::@return
-(void()) main()
-(label) main::@return
+const nomodify void()** HARDWARE_IRQ = (void()**)$fffe
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+interrupt(KERNEL_MIN) void irq1()
+label irq1::@return
+interrupt(KERNEL_MIN) void irq2()
+label irq2::@return
+void main()
+label main::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (void()**) 65534
@@ -64,25 +64,25 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_MIN)(void()) irq2()
+interrupt(KERNEL_MIN) void irq2()
 irq2: scope:[irq2]  from
-  [0] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1()
+  [0] *HARDWARE_IRQ = &irq1
   to:irq2::@return
 irq2::@return: scope:[irq2]  from irq2
   [1] return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) irq1()
+interrupt(KERNEL_MIN) void irq1()
 irq1: scope:[irq1]  from
-  [2] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2()
+  [2] *HARDWARE_IRQ = &irq2
   to:irq1::@return
 irq1::@return: scope:[irq1]  from irq1
   [3] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [4] *((const nomodify byte*) SCREEN) ← (byte) 'x'
+  [4] *SCREEN = 'x'
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -90,71 +90,16 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_MIN)(void()) irq1()
-interrupt(KERNEL_MIN)(void()) irq2()
-(void()) main()
+interrupt(KERNEL_MIN) void irq1()
+interrupt(KERNEL_MIN) void irq2()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Unused interrupts pointing to each other but never used from main loop - should be optimized away
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label HARDWARE_IRQ = $fffe
-  // irq2
-// Unused Interrupt Routine
-irq2: {
-    // entry interrupt(KERNEL_MIN)
-    // [0] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_qprc1=pprc2 
-    lda #<irq1
-    sta HARDWARE_IRQ
-    lda #>irq1
-    sta HARDWARE_IRQ+1
-    jmp __breturn
-    // irq2::@return
-  __breturn:
-    // [1] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-}
-  // irq1
-// Unused Interrupt Routine
-irq1: {
-    // entry interrupt(KERNEL_MIN)
-    // [2] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_qprc1=pprc2 
-    lda #<irq2
-    sta HARDWARE_IRQ
-    lda #>irq2
-    sta HARDWARE_IRQ+1
-    jmp __breturn
-    // irq1::@return
-  __breturn:
-    // [3] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-}
-  // main
-main: {
-    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
-    lda #'x'
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *HARDWARE_IRQ = &irq1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *HARDWARE_IRQ = &irq2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *SCREEN = 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -181,7 +126,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Unused Interrupt Routine
 irq2: {
     // entry interrupt(KERNEL_MIN)
-    // [0] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_qprc1=pprc2 
+    // [0] *HARDWARE_IRQ = &irq1 -- _deref_qprc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -196,7 +141,7 @@ irq2: {
 // Unused Interrupt Routine
 irq1: {
     // entry interrupt(KERNEL_MIN)
-    // [2] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_qprc1=pprc2 
+    // [2] *HARDWARE_IRQ = &irq2 -- _deref_qprc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2
@@ -209,7 +154,7 @@ irq1: {
 }
   // main
 main: {
-    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *SCREEN = 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     jmp __breturn
@@ -231,14 +176,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify void()**) HARDWARE_IRQ = (void()**) 65534
-(const nomodify byte*) SCREEN = (byte*) 1024
-interrupt(KERNEL_MIN)(void()) irq1()
-(label) irq1::@return
-interrupt(KERNEL_MIN)(void()) irq2()
-(label) irq2::@return
-(void()) main()
-(label) main::@return
+const nomodify void()** HARDWARE_IRQ = (void()**) 65534
+const nomodify byte* SCREEN = (byte*) 1024
+interrupt(KERNEL_MIN) void irq1()
+label irq1::@return
+interrupt(KERNEL_MIN) void irq2()
+label irq2::@return
+void main()
+label main::@return
 
 
 
@@ -259,7 +204,7 @@ Score: 42
 irq2: {
     // entry interrupt(KERNEL_MIN)
     // *HARDWARE_IRQ = &irq1
-    // [0] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq1() -- _deref_qprc1=pprc2 
+    // [0] *HARDWARE_IRQ = &irq1 -- _deref_qprc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
     lda #>irq1
@@ -274,7 +219,7 @@ irq2: {
 irq1: {
     // entry interrupt(KERNEL_MIN)
     // *HARDWARE_IRQ = &irq2
-    // [2] *((const nomodify void()**) HARDWARE_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq2() -- _deref_qprc1=pprc2 
+    // [2] *HARDWARE_IRQ = &irq2 -- _deref_qprc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
     lda #>irq2
@@ -287,7 +232,7 @@ irq1: {
   // main
 main: {
     // *SCREEN = 'x'
-    // [4] *((const nomodify byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [4] *SCREEN = 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     // main::@return

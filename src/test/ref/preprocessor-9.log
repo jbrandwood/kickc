@@ -2,21 +2,21 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) main::idx#0 ← (byte) 0
-  *((const byte*) SCREEN + (byte) main::idx#0) ← (byte) '0'+(number) 4
-  (byte) main::idx#1 ← ++ (byte) main::idx#0
-  *((const byte*) SCREEN + (byte) main::idx#1) ← (byte) 'b'+(byte) 'b'
-  (byte) main::idx#2 ← ++ (byte) main::idx#1
-  *((const byte*) SCREEN + (byte) main::idx#2) ← (byte) 'c'*(byte) 'c'
-  (byte) main::idx#3 ← ++ (byte) main::idx#2
+  main::idx#0 = 0
+  SCREEN[main::idx#0] = '0'+4
+  main::idx#1 = ++ main::idx#0
+  SCREEN[main::idx#1] = 'b'+'b'
+  main::idx#2 = ++ main::idx#1
+  SCREEN[main::idx#2] = 'c'*'c'
+  main::idx#3 = ++ main::idx#2
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -31,36 +31,36 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-(byte) main::idx
-(byte) main::idx#0
-(byte) main::idx#1
-(byte) main::idx#2
-(byte) main::idx#3
+const byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+byte main::idx
+byte main::idx#0
+byte main::idx#1
+byte main::idx#2
+byte main::idx#3
 
-Adding number conversion cast (unumber) '0'+4 in *((const byte*) SCREEN + (byte) main::idx#0) ← (byte) '0'+(number) 4
-Adding number conversion cast (unumber) 4 in *((const byte*) SCREEN + (byte) main::idx#0) ← ((unumber)) (byte) '0'+(number) 4
+Adding number conversion cast (unumber) '0'+4 in SCREEN[main::idx#0] = '0'+4
+Adding number conversion cast (unumber) 4 in SCREEN[main::idx#0] = ((unumber)) '0'+4
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) SCREEN + (byte) main::idx#0) ← (unumber)(byte) '0'+(unumber)(number) 4
+Inlining cast SCREEN[main::idx#0] = (unumber)'0'+(unumber)4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant integer cast (byte) '0'+(unumber)(number) 4
+Simplifying constant integer cast '0'+(unumber)4
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte) main::idx#0 = 0
+Constant main::idx#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [1] *((const byte*) SCREEN + (const byte) main::idx#0) ← (byte) '0'+(byte) 4
+Simplifying expression containing zero SCREEN in [1] SCREEN[main::idx#0] = '0'+4
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::idx#3 and assignment [5] (byte) main::idx#3 ← ++ (byte) main::idx#2
+Eliminating unused variable main::idx#3 and assignment [5] main::idx#3 = ++ main::idx#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -69,20 +69,20 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [1] (byte) main::idx#1 ← ++ (const byte) main::idx#0
+Constant right-side identified [1] main::idx#1 = ++ main::idx#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#1 = ++main::idx#0
+Constant main::idx#1 = ++main::idx#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [2] (byte) main::idx#2 ← ++ (const byte) main::idx#1
+Constant right-side identified [2] main::idx#2 = ++ main::idx#1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::idx#2 = ++main::idx#1
+Constant main::idx#2 = ++main::idx#1
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with different constant siblings (const byte) main::idx#0
-Inlining constant with different constant siblings (const byte) main::idx#1
-Inlining constant with different constant siblings (const byte) main::idx#2
-Constant inlined main::idx#0 = (byte) 0
-Constant inlined main::idx#1 = ++(byte) 0
-Constant inlined main::idx#2 = ++++(byte) 0
+Inlining constant with different constant siblings main::idx#0
+Inlining constant with different constant siblings main::idx#1
+Inlining constant with different constant siblings main::idx#2
+Constant inlined main::idx#0 = 0
+Constant inlined main::idx#1 = ++0
+Constant inlined main::idx#2 = ++++0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+++0)
 Consolidated array index constant in *(SCREEN+++++0)
@@ -99,11 +99,11 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4
-  [1] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b'
-  [2] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c'
+  [0] *SCREEN = '0'+4
+  [1] *(SCREEN+1) = 'b'+'b'
+  [2] *(SCREEN+2) = 'c'*'c'
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -111,46 +111,15 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::idx
+void main()
+byte main::idx
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test the preprocessor
-// Macro with parameters
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 -- _deref_pbuc1=vbuc2 
-    lda #'0'+4
-    sta SCREEN
-    // [1] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' -- _deref_pbuc1=vbuc2 
-    lda #'b'+'b'
-    sta SCREEN+1
-    // [2] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' -- _deref_pbuc1=vbuc2 
-    lda #'c'*'c'
-    sta SCREEN+2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = '0'+4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = 'b'+'b' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(SCREEN+2) = 'c'*'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -171,13 +140,13 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = '0'+4 -- _deref_pbuc1=vbuc2 
     lda #'0'+4
     sta SCREEN
-    // [1] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = 'b'+'b' -- _deref_pbuc1=vbuc2 
     lda #'b'+'b'
     sta SCREEN+1
-    // [2] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [2] *(SCREEN+2) = 'c'*'c' -- _deref_pbuc1=vbuc2 
     lda #'c'*'c'
     sta SCREEN+2
     jmp __breturn
@@ -195,10 +164,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(byte) main::idx
+const byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+byte main::idx
 
 
 
@@ -217,15 +186,15 @@ Score: 24
   // main
 main: {
     // SCREEN[idx++] = SUM
-    // [0] *((const byte*) SCREEN) ← (byte) '0'+(byte) 4 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = '0'+4 -- _deref_pbuc1=vbuc2 
     lda #'0'+4
     sta SCREEN
     // SCREEN[idx++] = DOUBLE
-    // [1] *((const byte*) SCREEN+(byte) 1) ← (byte) 'b'+(byte) 'b' -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = 'b'+'b' -- _deref_pbuc1=vbuc2 
     lda #'b'+'b'
     sta SCREEN+1
     // SCREEN[idx++] = SQUARE
-    // [2] *((const byte*) SCREEN+(byte) 2) ← (byte) 'c'*(byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [2] *(SCREEN+2) = 'c'*'c' -- _deref_pbuc1=vbuc2 
     lda #'c'*'c'
     sta SCREEN+2
     // main::@return

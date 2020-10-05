@@ -2,30 +2,30 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
 test: scope:[test]  from main
-  (byte*) test::other#1 ← phi( main/(byte*) test::other#0 )
-  (byte*) test::videoMem#1 ← phi( main/(byte*) test::videoMem#0 )
-  (byte*) test::colorMem#1 ← phi( main/(byte*) test::colorMem#0 )
-  (byte*) test::diff#0 ← (byte*) 0
-  (byte*) test::dst ← (byte*) 0
-  (word~) test::$0 ← (byte*) test::colorMem#1 - (byte*) test::videoMem#1
-  (byte*) test::diff#1 ← ((byte*)) (word~) test::$0
-  (word~) test::$2 ← (word)(byte*) test::diff#1
-  (byte*~) test::$1 ← (byte*) test::other#1 + (word~) test::$2
-  (byte*) test::dst ← (byte*~) test::$1
-  *((byte*) test::dst + (number) 0) ← (number) 1
+  test::other#1 = phi( main/test::other#0 )
+  test::videoMem#1 = phi( main/test::videoMem#0 )
+  test::colorMem#1 = phi( main/test::colorMem#0 )
+  test::diff#0 = (byte*) 0
+  test::dst = (byte*) 0
+  test::$0 = test::colorMem#1 - test::videoMem#1
+  test::diff#1 = ((byte*)) test::$0
+  test::$2 = (word)test::diff#1
+  test::$1 = test::other#1 + test::$2
+  test::dst = test::$1
+  test::dst[0] = 1
   asm { ldy#0 lda#1 sta(dst),y  }
   to:test::@return
 test::@return: scope:[test]  from test
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte*) test::videoMem#0 ← (volatile byte*) h1
-  (byte*) test::colorMem#0 ← (byte*)(number) $d800
-  (byte*) test::other#0 ← (byte*)(number) $c000
+  test::videoMem#0 = h1
+  test::colorMem#0 = (byte*)$d800
+  test::other#0 = (byte*)$c000
   call test 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -34,11 +34,11 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte*) h1 ← (byte*) 0
+  h1 = (byte*) 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -50,65 +50,65 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(volatile byte*) h1 loadstore
-(void()) main()
-(label) main::@1
-(label) main::@return
-(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
-(word~) test::$0
-(byte*~) test::$1
-(word~) test::$2
-(label) test::@return
-(byte*) test::colorMem
-(byte*) test::colorMem#0
-(byte*) test::colorMem#1
-(byte*) test::diff
-(byte*) test::diff#0
-(byte*) test::diff#1
-(byte*) test::dst loadstore
-(byte*) test::other
-(byte*) test::other#0
-(byte*) test::other#1
-(byte*) test::videoMem
-(byte*) test::videoMem#0
-(byte*) test::videoMem#1
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+volatile byte* h1 loadstore
+void main()
+label main::@1
+label main::@return
+void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
+word~ test::$0
+byte*~ test::$1
+word~ test::$2
+label test::@return
+byte* test::colorMem
+byte* test::colorMem#0
+byte* test::colorMem#1
+byte* test::diff
+byte* test::diff#0
+byte* test::diff#1
+byte* test::dst loadstore
+byte* test::other
+byte* test::other#0
+byte* test::other#1
+byte* test::videoMem
+byte* test::videoMem#0
+byte* test::videoMem#1
 
-Adding number conversion cast (unumber) 1 in *((byte*) test::dst + (number) 0) ← (number) 1
-Adding number conversion cast (unumber) 0 in *((byte*) test::dst + (number) 0) ← ((unumber)) (number) 1
+Adding number conversion cast (unumber) 1 in test::dst[0] = 1
+Adding number conversion cast (unumber) 0 in test::dst[0] = ((unumber)) 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) test::diff#1 ← (byte*)(word~) test::$0
-Inlining cast *((byte*) test::dst + (unumber)(number) 0) ← (unumber)(number) 1
+Inlining cast test::diff#1 = (byte*)test::$0
+Inlining cast test::dst[(unumber)0] = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 49152
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)test::dst = test::$1 
-Identical Phi Values (byte*) test::colorMem#1 (byte*) test::colorMem#0
-Identical Phi Values (byte*) test::videoMem#1 (byte*) test::videoMem#0
-Identical Phi Values (byte*) test::other#1 (byte*) test::other#0
+Identical Phi Values test::colorMem#1 test::colorMem#0
+Identical Phi Values test::videoMem#1 test::videoMem#0
+Identical Phi Values test::other#1 test::other#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) test::diff#0 = (byte*) 0
-Constant (const byte*) test::colorMem#0 = (byte*) 55296
-Constant (const byte*) test::other#0 = (byte*) 49152
+Constant test::diff#0 = (byte*) 0
+Constant test::colorMem#0 = (byte*) 55296
+Constant test::other#0 = (byte*) 49152
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero test::dst in [8] *((byte*) test::dst + (byte) 0) ← (byte) 1
+Simplifying expression containing zero test::dst in [8] test::dst[0] = 1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte*) test::diff#0
+Eliminating unused constant test::diff#0
 Successful SSA optimization PassNEliminateUnusedVars
 Alias candidate removed (volatile)test::dst = test::$1 
-Inlining Noop Cast [2] (byte*) test::diff#1 ← (byte*)(word~) test::$0 keeping test::diff#1
+Inlining Noop Cast [2] test::diff#1 = (byte*)test::$0 keeping test::diff#1
 Successful SSA optimization Pass2NopCastInlining
-Inlining Noop Cast [3] (word~) test::$2 ← (word)(byte*)(word) test::diff#1 keeping (byte*)test::diff#1
+Inlining Noop Cast [3] test::$2 = (word)(byte*)test::diff#1 keeping (byte*)test::diff#1
 Successful SSA optimization Pass2NopCastInlining
 Alias candidate removed (volatile)test::dst = test::$1 
 Alias candidate removed (volatile)test::dst = test::$1 
@@ -122,19 +122,19 @@ Calls in [main] to test:7
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) main::@1
+Culled Empty Block label __start::@2
+Culled Empty Block label main::@1
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte*) h1 ← (byte*) 0
+  [1] h1 = (byte*) 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -144,22 +144,22 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [5] (byte*) test::videoMem#0 ← (volatile byte*) h1
+  [5] test::videoMem#0 = h1
   [6] call test 
   to:main::@return
 main::@return: scope:[main]  from main
   [7] return 
   to:@return
 
-(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
+void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
 test: scope:[test]  from main
-  [8] (byte*) test::dst ← (byte*) 0
-  [9] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0
-  [10] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1
-  [11] (byte*) test::dst ← (byte*~) test::$1
-  [12] *((byte*) test::dst) ← (byte) 1
+  [8] test::dst = (byte*) 0
+  [9] test::diff#1 = test::colorMem#0 - test::videoMem#0
+  [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1
+  [11] test::dst = test::$1
+  [12] *test::dst = 1
   asm { ldy#0 lda#1 sta(dst),y  }
   to:test::@return
 test::@return: scope:[test]  from test
@@ -168,18 +168,18 @@ test::@return: scope:[test]  from test
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(volatile byte*) h1 loadstore 6.5
-(void()) main()
-(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
-(byte*~) test::$1 202.0
-(byte*) test::colorMem
-(byte*) test::diff
-(word) test::diff#1 101.0
-(byte*) test::dst loadstore 151.5
-(byte*) test::other
-(byte*) test::videoMem
-(byte*) test::videoMem#0 56.0
+void __start()
+volatile byte* h1 loadstore 6.5
+void main()
+void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
+byte*~ test::$1 202.0
+byte* test::colorMem
+byte* test::diff
+word test::diff#1 101.0
+byte* test::dst loadstore 151.5
+byte* test::other
+byte* test::videoMem
+byte* test::videoMem#0 56.0
 
 Initial phi equivalence classes
 Added variable h1 to live range equivalence class [ h1 ]
@@ -198,115 +198,14 @@ Allocated zp[2]:4 [ test::videoMem#0 ]
 Allocated zp[2]:6 [ test::dst ]
 Allocated zp[2]:8 [ test::diff#1 ]
 Allocated zp[2]:10 [ test::$1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Demonstrates that a local __ma variable overwrites a parameter§
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label h1 = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte*) h1 ← (byte*) 0 -- pbuz1=pbuc1 
-    lda #<0
-    sta.z h1
-    lda #>0
-    sta.z h1+1
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    // [5] (byte*) test::videoMem#0 ← (volatile byte*) h1 -- pbuz1=pbuz2 
-    lda.z h1
-    sta.z test.videoMem
-    lda.z h1+1
-    sta.z test.videoMem+1
-    // [6] call test 
-    jsr test
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // test
-// This must be volatile because is used in an interrupt routine...
-// test(byte* zp(4) videoMem)
-test: {
-    .label colorMem = $d800
-    .label other = $c000
-    .label dst = 6
-    .label __1 = $a
-    .label diff = 8
-    .label videoMem = 4
-    // [8] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
-    lda #<0
-    sta.z dst
-    lda #>0
-    sta.z dst+1
-    // [9] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz2 
-    sec
-    lda #<colorMem
-    sbc.z videoMem
-    sta.z diff
-    lda #>colorMem
-    sbc.z videoMem+1
-    sta.z diff+1
-    // [10] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
-    lda.z diff
-    clc
-    adc #<other
-    sta.z __1
-    lda.z diff+1
-    adc #>other
-    sta.z __1+1
-    // [11] (byte*) test::dst ← (byte*~) test::$1 -- pbuz1=pbuz2 
-    lda.z __1
-    sta.z dst
-    lda.z __1+1
-    sta.z dst+1
-    // [12] *((byte*) test::dst) ← (byte) 1 -- _deref_pbuz1=vbuc1 
-    lda #1
-    ldy #0
-    sta (dst),y
-    // asm { ldy#0 lda#1 sta(dst),y  }
-    ldy #0
-    lda #1
-    sta (dst),y
-    jmp __breturn
-    // test::@return
-  __breturn:
-    // [14] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte*) h1 ← (byte*) 0 [ h1 ] (  [ h1 ] { }  ) always clobbers reg byte a 
-Statement [5] (byte*) test::videoMem#0 ← (volatile byte*) h1 [ test::videoMem#0 ] ( main:3 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
-Statement [8] (byte*) test::dst ← (byte*) 0 [ test::videoMem#0 ] ( main:3::test:6 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
-Statement [9] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 [ test::diff#1 ] ( main:3::test:6 [ test::diff#1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
-Statement [10] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 [ test::$1 ] ( main:3::test:6 [ test::$1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
-Statement [11] (byte*) test::dst ← (byte*~) test::$1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
-Statement [12] *((byte*) test::dst) ← (byte) 1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a reg byte y 
+Statement [1] h1 = (byte*) 0 [ h1 ] (  [ h1 ] { }  ) always clobbers reg byte a 
+Statement [5] test::videoMem#0 = h1 [ test::videoMem#0 ] ( main:3 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [8] test::dst = (byte*) 0 [ test::videoMem#0 ] ( main:3::test:6 [ test::videoMem#0 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [9] test::diff#1 = test::colorMem#0 - test::videoMem#0 [ test::diff#1 ] ( main:3::test:6 [ test::diff#1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 [ test::$1 ] ( main:3::test:6 [ test::$1 ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [11] test::dst = test::$1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a 
+Statement [12] *test::dst = 1 [ test::dst ] ( main:3::test:6 [ test::dst ] { { test::videoMem#0 = h1 } }  ) always clobbers reg byte a reg byte y 
 Statement asm { ldy#0 lda#1 sta(dst),y  } always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ h1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ test::videoMem#0 ] : zp[2]:4 , 
@@ -341,7 +240,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte*) h1 ← (byte*) 0 -- pbuz1=pbuc1 
+    // [1] h1 = (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z h1
     lda #>0
@@ -361,7 +260,7 @@ __start: {
 }
   // main
 main: {
-    // [5] (byte*) test::videoMem#0 ← (volatile byte*) h1 -- pbuz1=pbuz2 
+    // [5] test::videoMem#0 = h1 -- pbuz1=pbuz2 
     lda.z h1
     sta.z test.videoMem
     lda.z h1+1
@@ -384,12 +283,12 @@ test: {
     .label __1 = 6
     .label diff = 4
     .label videoMem = 4
-    // [8] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
+    // [8] test::dst = (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z dst
     lda #>0
     sta.z dst+1
-    // [9] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz1 
+    // [9] test::diff#1 = test::colorMem#0 - test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz1 
     sec
     lda #<colorMem
     sbc.z diff
@@ -397,7 +296,7 @@ test: {
     lda #>colorMem
     sbc.z diff+1
     sta.z diff+1
-    // [10] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z diff
     clc
     adc #<other
@@ -405,8 +304,8 @@ test: {
     lda.z diff+1
     adc #>other
     sta.z __1+1
-    // [11] (byte*) test::dst ← (byte*~) test::$1
-    // [12] *((byte*) test::dst) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    // [11] test::dst = test::$1
+    // [12] *test::dst = 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
     sta (dst),y
@@ -444,25 +343,25 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(volatile byte*) h1 loadstore zp[2]:2 6.5
-(void()) main()
-(label) main::@return
-(void()) test((byte*) test::videoMem , (byte*) test::colorMem , (byte*) test::other)
-(byte*~) test::$1 zp[2]:6 202.0
-(label) test::@return
-(byte*) test::colorMem
-(const byte*) test::colorMem#0 colorMem = (byte*) 55296
-(byte*) test::diff
-(word) test::diff#1 diff zp[2]:4 101.0
-(byte*) test::dst loadstore zp[2]:6 151.5
-(byte*) test::other
-(const byte*) test::other#0 other = (byte*) 49152
-(byte*) test::videoMem
-(byte*) test::videoMem#0 videoMem zp[2]:4 56.0
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+volatile byte* h1 loadstore zp[2]:2 6.5
+void main()
+label main::@return
+void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
+byte*~ test::$1 zp[2]:6 202.0
+label test::@return
+byte* test::colorMem
+const byte* test::colorMem#0 colorMem = (byte*) 55296
+byte* test::diff
+word test::diff#1 diff zp[2]:4 101.0
+byte* test::dst loadstore zp[2]:6 151.5
+byte* test::other
+const byte* test::other#0 other = (byte*) 49152
+byte* test::videoMem
+byte* test::videoMem#0 videoMem zp[2]:4 56.0
 
 zp[2]:2 [ h1 ]
 zp[2]:4 [ test::videoMem#0 test::diff#1 ]
@@ -484,7 +383,7 @@ Score: 110
 __start: {
     // __start::__init1
     // h1
-    // [1] (volatile byte*) h1 ← (byte*) 0 -- pbuz1=pbuc1 
+    // [1] h1 = (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z h1
     sta.z h1+1
@@ -499,7 +398,7 @@ __start: {
   // main
 main: {
     // test(h1, 0xD800, 0xC000)
-    // [5] (byte*) test::videoMem#0 ← (volatile byte*) h1 -- pbuz1=pbuz2 
+    // [5] test::videoMem#0 = h1 -- pbuz1=pbuz2 
     lda.z h1
     sta.z test.videoMem
     lda.z h1+1
@@ -522,12 +421,12 @@ test: {
     .label diff = 4
     .label videoMem = 4
     // dst
-    // [8] (byte*) test::dst ← (byte*) 0 -- pbuz1=pbuc1 
+    // [8] test::dst = (byte*) 0 -- pbuz1=pbuc1 
     lda #<0
     sta.z dst
     sta.z dst+1
     // colorMem - videoMem
-    // [9] (word) test::diff#1 ← (const byte*) test::colorMem#0 - (byte*) test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz1 
+    // [9] test::diff#1 = test::colorMem#0 - test::videoMem#0 -- vwuz1=pbuc1_minus_pbuz1 
     sec
     lda #<colorMem
     sbc.z diff
@@ -536,7 +435,7 @@ test: {
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
-    // [10] (byte*~) test::$1 ← (const byte*) test::other#0 + (word)(byte*)(word) test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
     lda.z diff
     clc
     adc #<other
@@ -545,9 +444,9 @@ test: {
     adc #>other
     sta.z __1+1
     // dst = other + ((unsigned int)diff)
-    // [11] (byte*) test::dst ← (byte*~) test::$1
+    // [11] test::dst = test::$1
     // dst[0] = 1
-    // [12] *((byte*) test::dst) ← (byte) 1 -- _deref_pbuz1=vbuc1 
+    // [12] *test::dst = 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
     sta (dst),y

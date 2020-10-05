@@ -1,31 +1,31 @@
-Resolved forward reference irq to interrupt(KERNEL_MIN)(void()) irq()
+Resolved forward reference irq to interrupt(KERNEL_MIN) void irq()
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  *KERNEL_IRQ = &irq
   to:main::@1
 main::@1: scope:[main]  from main main::@2
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL)
+  *FGCOL = ++ *FGCOL
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) irq()
+interrupt(KERNEL_MIN) void irq()
 irq: scope:[irq]  from
-  *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  *BG_COLOR = ++ *BG_COLOR
   asm { lda$dc0d  }
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -36,18 +36,18 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d020
-(const nomodify byte*) FGCOL = (byte*)(number) $d021
-(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-interrupt(KERNEL_MIN)(void()) irq()
-(label) irq::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)$d020
+const nomodify byte* FGCOL = (byte*)$d021
+const nomodify void()** KERNEL_IRQ = (void()**)$314
+void __start()
+label __start::@1
+label __start::@return
+interrupt(KERNEL_MIN) void irq()
+label irq::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
 
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant pointer cast (byte*) 53280
@@ -67,79 +67,38 @@ CALL GRAPH
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Renumbering block main::@2 to main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_MIN)(void()) irq()
+interrupt(KERNEL_MIN) void irq()
 irq: scope:[irq]  from
-  [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  [0] *BG_COLOR = ++ *BG_COLOR
   asm { lda$dc0d  }
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [2] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [3] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq()
+  [3] *KERNEL_IRQ = &irq
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [4] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL)
+  [4] *FGCOL = ++ *FGCOL
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_MIN)(void()) irq()
-(void()) main()
+interrupt(KERNEL_MIN) void irq()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label KERNEL_IRQ = $314
-  .label BG_COLOR = $d020
-  .label FGCOL = $d021
-  // irq
-irq: {
-    // entry interrupt(KERNEL_MIN)
-    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // asm { lda$dc0d  }
-    lda $dc0d
-    jmp __breturn
-    // irq::@return
-  __breturn:
-    // [2] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-}
-  // main
-main: {
-    // [3] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_qprc1=pprc2 
-    lda #<irq
-    sta KERNEL_IRQ
-    lda #>irq
-    sta KERNEL_IRQ+1
-    jmp __b1
-    // main::@1
-  __b1:
-    // [4] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc FGCOL
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { lda$dc0d  } always clobbers reg byte a 
-Statement [3] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -163,7 +122,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // irq
 irq: {
     // entry interrupt(KERNEL_MIN)
-    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // asm { lda$dc0d  }
     lda $dc0d
@@ -175,7 +134,7 @@ irq: {
 }
   // main
 main: {
-    // [3] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_qprc1=pprc2 
+    // [3] *KERNEL_IRQ = &irq -- _deref_qprc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -183,7 +142,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [4] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [4] *FGCOL = ++ *FGCOL -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp __b1
 }
@@ -197,13 +156,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53280
-(const nomodify byte*) FGCOL = (byte*) 53281
-(const nomodify void()**) KERNEL_IRQ = (void()**) 788
-interrupt(KERNEL_MIN)(void()) irq()
-(label) irq::@return
-(void()) main()
-(label) main::@1
+const nomodify byte* BG_COLOR = (byte*) 53280
+const nomodify byte* FGCOL = (byte*) 53281
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+interrupt(KERNEL_MIN) void irq()
+label irq::@return
+void main()
+label main::@1
 
 
 
@@ -223,7 +182,7 @@ Score: 115
 irq: {
     // entry interrupt(KERNEL_MIN)
     // (*BG_COLOR)++;
-    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // asm
     // asm { lda$dc0d  }
@@ -236,7 +195,7 @@ irq: {
   // main
 main: {
     // *KERNEL_IRQ = &irq
-    // [3] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) irq() -- _deref_qprc1=pprc2 
+    // [3] *KERNEL_IRQ = &irq -- _deref_qprc1=pprc2 
     lda #<irq
     sta KERNEL_IRQ
     lda #>irq
@@ -244,7 +203,7 @@ main: {
     // main::@1
   __b1:
     // (*FGCOL)++;
-    // [4] *((const nomodify byte*) FGCOL) ← ++ *((const nomodify byte*) FGCOL) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [4] *FGCOL = ++ *FGCOL -- _deref_pbuc1=_inc__deref_pbuc1 
     inc FGCOL
     jmp __b1
 }

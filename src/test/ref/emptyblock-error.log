@@ -2,7 +2,7 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@3
@@ -17,7 +17,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) menu()
+void menu()
 menu: scope:[menu]  from main::@2
   to:menu::@1
 menu::@1: scope:[menu]  from menu
@@ -32,16 +32,16 @@ menu::@return: scope:[menu]  from menu::@1 menu::@3
   return 
   to:@return
 
-(void()) mode()
+void mode()
 mode: scope:[mode]  from menu::@2
   to:mode::@1
 mode::@1: scope:[mode]  from mode mode::@2 mode::@3
   if(true) goto mode::@2
   to:mode::@return
 mode::@2: scope:[mode]  from mode::@1
-  (bool~) mode::$0 ← *((const byte*) B) == (number) 0
-  (bool~) mode::$1 ← ! (bool~) mode::$0
-  if((bool~) mode::$1) goto mode::@1
+  mode::$0 = *B == 0
+  mode::$1 = ! mode::$0
+  if(mode::$1) goto mode::@1
   to:mode::@3
 mode::@3: scope:[mode]  from mode::@2
   to:mode::@1
@@ -49,7 +49,7 @@ mode::@return: scope:[mode]  from mode::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -64,40 +64,40 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) B = (byte*)(number) $1000
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(void()) menu()
-(label) menu::@1
-(label) menu::@2
-(label) menu::@3
-(label) menu::@return
-(void()) mode()
-(bool~) mode::$0
-(bool~) mode::$1
-(label) mode::@1
-(label) mode::@2
-(label) mode::@3
-(label) mode::@return
+const byte* B = (byte*)$1000
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+void menu()
+label menu::@1
+label menu::@2
+label menu::@3
+label menu::@return
+void mode()
+bool~ mode::$0
+bool~ mode::$1
+label mode::@1
+label mode::@2
+label mode::@3
+label mode::@return
 
-Adding number conversion cast (unumber) 0 in (bool~) mode::$0 ← *((const byte*) B) == (number) 0
+Adding number conversion cast (unumber) 0 in mode::$0 = *B == 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 4096
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [8] (bool~) mode::$1 ← *((const byte*) B) != (byte) 0 from [7] (bool~) mode::$0 ← *((const byte*) B) == (byte) 0
+Inversing boolean not [8] mode::$1 = *B != 0 from [7] mode::$0 = *B == 0
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) mode::$1 [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1
+Simple Condition mode::$1 [8] if(*B!=0) goto mode::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [0] if(true) goto main::@2
 if() condition always true - replacing block destination [3] if(true) goto menu::@2
@@ -130,11 +130,11 @@ Calls in [menu] to mode:8
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@3
-Culled Empty Block (label) menu::@1
-Culled Empty Block (label) menu::@3
-Culled Empty Block (label) mode::@1
+Culled Empty Block label main::@1
+Culled Empty Block label main::@3
+Culled Empty Block label menu::@1
+Culled Empty Block label menu::@3
+Culled Empty Block label mode::@1
 Renumbering block main::@2 to main::@1
 Renumbering block menu::@2 to menu::@1
 Renumbering block mode::@2 to mode::@1
@@ -148,7 +148,7 @@ Adding NOP phi() at start of mode::@2
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
@@ -157,7 +157,7 @@ main::@1: scope:[main]  from main main::@1
   [2] call menu 
   to:main::@1
 
-(void()) menu()
+void menu()
 menu: scope:[menu]  from main::@1
   [3] phi()
   to:menu::@1
@@ -169,12 +169,12 @@ menu::@return: scope:[menu]  from menu::@1
   [6] return 
   to:@return
 
-(void()) mode()
+void mode()
 mode: scope:[mode]  from menu::@1
   [7] phi()
   to:mode::@1
 mode::@1: scope:[mode]  from mode mode::@1 mode::@2
-  [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1
+  [8] if(*B!=0) goto mode::@1
   to:mode::@2
 mode::@2: scope:[mode]  from mode::@1
   [9] phi()
@@ -182,74 +182,14 @@ mode::@2: scope:[mode]  from mode::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(void()) menu()
-(void()) mode()
+void main()
+void menu()
+void mode()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Error cleaning up unused blocks
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label B = $1000
-  // main
-main: {
-    // [1] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
-  __b1_from_main:
-  __b1_from___b1:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] call menu 
-    // [3] phi from main::@1 to menu [phi:main::@1->menu]
-  menu_from___b1:
-    jsr menu
-    jmp __b1_from___b1
-}
-  // menu
-menu: {
-    // [4] phi from menu to menu::@1 [phi:menu->menu::@1]
-  __b1_from_menu:
-    jmp __b1
-    // menu::@1
-  __b1:
-    // [5] call mode 
-    // [7] phi from menu::@1 to mode [phi:menu::@1->mode]
-  mode_from___b1:
-    jsr mode
-    jmp __breturn
-    // menu::@return
-  __breturn:
-    // [6] return 
-    rts
-}
-  // mode
-mode: {
-    jmp __b1
-    // mode::@1
-  __b1:
-    // [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
-    lda B
-    cmp #0
-    bne __b1
-    // [9] phi from mode::@1 to mode::@2 [phi:mode::@1->mode::@2]
-  __b2_from___b1:
-    jmp __b2
-    // mode::@2
-  __b2:
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 [ ] ( menu:2::mode:5 [ ] { }  ) always clobbers reg byte a 
+Statement [8] if(*B!=0) goto mode::@1 [ ] ( menu:2::mode:5 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -307,7 +247,7 @@ mode: {
     jmp __b1
     // mode::@1
   __b1:
-    // [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [8] if(*B!=0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne __b1
@@ -341,15 +281,15 @@ Removing instruction __b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) B = (byte*) 4096
-(void()) main()
-(label) main::@1
-(void()) menu()
-(label) menu::@1
-(label) menu::@return
-(void()) mode()
-(label) mode::@1
-(label) mode::@2
+const byte* B = (byte*) 4096
+void main()
+label main::@1
+void menu()
+label menu::@1
+label menu::@return
+void mode()
+label mode::@1
+label mode::@2
 
 
 
@@ -393,7 +333,7 @@ mode: {
     // mode::@1
   __b1:
     // if(*B == 0)
-    // [8] if(*((const byte*) B)!=(byte) 0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
+    // [8] if(*B!=0) goto mode::@1 -- _deref_pbuc1_neq_0_then_la1 
     lda B
     cmp #0
     bne __b1

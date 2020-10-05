@@ -1,27 +1,27 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (word~) main::$0 ← < (const dword) main::dw
-  (word) main::w1#0 ← (word~) main::$0
-  (number~) main::$1 ← (const dword) main::dw + (number) 1
-  (number~) main::$2 ← < (number~) main::$1
-  (word) main::w2#0 ← (number~) main::$2
-  (byte~) main::$3 ← < (word) main::w1#0
-  *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$3
-  (byte~) main::$4 ← > (word) main::w1#0
-  *((const nomodify byte*) SCREEN + (number) 1) ← (byte~) main::$4
-  (byte~) main::$5 ← < (word) main::w2#0
-  *((const nomodify byte*) SCREEN + (number) 3) ← (byte~) main::$5
-  (byte~) main::$6 ← > (word) main::w2#0
-  *((const nomodify byte*) SCREEN + (number) 4) ← (byte~) main::$6
+  main::$0 = < main::dw
+  main::w1#0 = main::$0
+  main::$1 = main::dw + 1
+  main::$2 = < main::$1
+  main::w2#0 = main::$2
+  main::$3 = < main::w1#0
+  SCREEN[0] = main::$3
+  main::$4 = > main::w1#0
+  SCREEN[1] = main::$4
+  main::$5 = < main::w2#0
+  SCREEN[3] = main::$5
+  main::$6 = > main::w2#0
+  SCREEN[4] = main::$6
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -32,32 +32,32 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(word~) main::$0
-(number~) main::$1
-(number~) main::$2
-(byte~) main::$3
-(byte~) main::$4
-(byte~) main::$5
-(byte~) main::$6
-(label) main::@return
-(const dword) main::dw = (dword) $2000
-(word) main::w1
-(word) main::w1#0
-(word) main::w2
-(word) main::w2#0
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+word~ main::$0
+number~ main::$1
+number~ main::$2
+byte~ main::$3
+byte~ main::$4
+byte~ main::$5
+byte~ main::$6
+label main::@return
+const dword main::dw = $2000
+word main::w1
+word main::w1#0
+word main::w2
+word main::w2#0
 
-Adding number conversion cast (unumber) 1 in (number~) main::$1 ← (const dword) main::dw + (number) 1
-Adding number conversion cast (unumber) main::$1 in (number~) main::$1 ← (const dword) main::dw + (unumber)(number) 1
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← < (unumber~) main::$1
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte~) main::$3
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (byte~) main::$4
-Adding number conversion cast (unumber) 3 in *((const nomodify byte*) SCREEN + (number) 3) ← (byte~) main::$5
-Adding number conversion cast (unumber) 4 in *((const nomodify byte*) SCREEN + (number) 4) ← (byte~) main::$6
+Adding number conversion cast (unumber) 1 in main::$1 = main::dw + 1
+Adding number conversion cast (unumber) main::$1 in main::$1 = main::dw + (unumber)1
+Adding number conversion cast (unumber) main::$2 in main::$2 = < main::$1
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::$3
+Adding number conversion cast (unumber) 1 in SCREEN[1] = main::$4
+Adding number conversion cast (unumber) 3 in SCREEN[3] = main::$5
+Adding number conversion cast (unumber) 4 in SCREEN[4] = main::$6
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
@@ -66,51 +66,51 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 3
+Finalized unsigned number type 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to dword in (unumber~) main::$1 ← (const dword) main::dw + (byte) 1
-Inferred type updated to word in (unumber~) main::$2 ← < (dword~) main::$1
+Inferred type updated to dword in main::$1 = main::dw + 1
+Inferred type updated to word in main::$2 = < main::$1
 Alias main::w1#0 = main::$0 
 Alias main::w2#0 = main::$2 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [0] (word) main::w1#0 ← < (const dword) main::dw
-Constant right-side identified [1] (dword~) main::$1 ← (const dword) main::dw + (byte) 1
+Constant right-side identified [0] main::w1#0 = < main::dw
+Constant right-side identified [1] main::$1 = main::dw + 1
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::w1#0 = <main::dw
-Constant (const dword) main::$1 = main::dw+1
+Constant main::w1#0 = <main::dw
+Constant main::$1 = main::dw+1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [4] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte~) main::$3
+Simplifying expression containing zero SCREEN in [4] SCREEN[0] = main::$3
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] (word) main::w2#0 ← < (const dword) main::$1
-Constant right-side identified [1] (byte~) main::$3 ← < (const word) main::w1#0
-Constant right-side identified [3] (byte~) main::$4 ← > (const word) main::w1#0
+Constant right-side identified [0] main::w2#0 = < main::$1
+Constant right-side identified [1] main::$3 = < main::w1#0
+Constant right-side identified [3] main::$4 = > main::w1#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const word) main::w2#0 = <main::$1
-Constant (const byte) main::$3 = <main::w1#0
-Constant (const byte) main::$4 = >main::w1#0
+Constant main::w2#0 = <main::$1
+Constant main::$3 = <main::w1#0
+Constant main::$4 = >main::w1#0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying constant evaluating to zero <(const word) main::w1#0 in 
+Simplifying constant evaluating to zero <main::w1#0 in 
 Successful SSA optimization PassNSimplifyConstantZero
-Constant right-side identified [2] (byte~) main::$5 ← < (const word) main::w2#0
-Constant right-side identified [4] (byte~) main::$6 ← > (const word) main::w2#0
+Constant right-side identified [2] main::$5 = < main::w2#0
+Constant right-side identified [4] main::$6 = > main::w2#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$5 = <main::w2#0
-Constant (const byte) main::$6 = >main::w2#0
+Constant main::$5 = <main::w2#0
+Constant main::$6 = >main::w2#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant inlined main::$5 = <(const word) main::w2#0
-Constant inlined main::$6 = >(const word) main::w2#0
-Constant inlined main::$3 = (byte) 0
-Constant inlined main::$4 = >(const word) main::w1#0
-Constant inlined main::$1 = (const dword) main::dw+(byte) 1
+Constant inlined main::$5 = <main::w2#0
+Constant inlined main::$6 = >main::w2#0
+Constant inlined main::$3 = 0
+Constant inlined main::$4 = >main::w1#0
+Constant inlined main::$1 = main::dw+1
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1)
 Consolidated array index constant in *(SCREEN+3)
@@ -123,12 +123,12 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (byte) 0
-  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0
-  [2] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0
-  [3] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0
+  [0] *SCREEN = 0
+  [1] *(SCREEN+1) = >main::w1#0
+  [2] *(SCREEN+3) = <main::w2#0
+  [3] *(SCREEN+4) = >main::w2#0
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
@@ -136,57 +136,17 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(word) main::w1
-(word) main::w2
+void main()
+word main::w1
+word main::w2
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates problem with constant evaluation of lo/hi-operator
-// $20000 /$400 results in a byte value - confusing the lo/hi-evaluation
-// which currently relies on getting the type from the literal value.
-// A fix could be adding support for "declared" types for constant literal values
-// - enabling the lo/hi to know that their operand is a word (from the cast).
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .const dw = $2000
-    .const w1 = dw&$ffff
-    .const w2 = dw+1&$ffff
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
-    lda #>w1
-    sta SCREEN+1
-    // [2] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
-    lda #<w2
-    sta SCREEN+3
-    // [3] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
-    lda #>w2
-    sta SCREEN+4
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = >main::w1#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(SCREEN+3) = <main::w2#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *(SCREEN+4) = >main::w2#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -213,16 +173,16 @@ main: {
     .const dw = $2000
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = >main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
     sta SCREEN+1
-    // [2] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [2] *(SCREEN+3) = <main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #<w2
     sta SCREEN+3
-    // [3] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [3] *(SCREEN+4) = >main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #>w2
     sta SCREEN+4
     jmp __breturn
@@ -240,14 +200,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(const dword) main::dw = (dword) $2000
-(word) main::w1
-(const word) main::w1#0 w1 = <(const dword) main::dw
-(word) main::w2
-(const word) main::w2#0 w2 = <(const dword) main::dw+(byte) 1
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+const dword main::dw = $2000
+word main::w1
+const word main::w1#0 w1 = <main::dw
+word main::w2
+const word main::w2#0 w2 = <main::dw+1
 
 
 
@@ -272,19 +232,19 @@ main: {
     .const w1 = dw&$ffff
     .const w2 = dw+1&$ffff
     // SCREEN[0] = <w1
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN
     // SCREEN[1] = >w1
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← >(const word) main::w1#0 -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = >main::w1#0 -- _deref_pbuc1=vbuc2 
     lda #>w1
     sta SCREEN+1
     // SCREEN[3] = <w2
-    // [2] *((const nomodify byte*) SCREEN+(byte) 3) ← <(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [2] *(SCREEN+3) = <main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #<w2
     sta SCREEN+3
     // SCREEN[4] = >w2
-    // [3] *((const nomodify byte*) SCREEN+(byte) 4) ← >(const word) main::w2#0 -- _deref_pbuc1=vbuc2 
+    // [3] *(SCREEN+4) = >main::w2#0 -- _deref_pbuc1=vbuc2 
     lda #>w2
     sta SCREEN+4
     // main::@return

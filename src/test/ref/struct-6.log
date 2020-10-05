@@ -1,19 +1,19 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::c_center_x#0 ← (const byte) main::p_x
-  (byte) main::c_center_y#0 ← (const byte) main::p_y
-  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#0
-  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#0
-  *((const nomodify byte*) main::SCREEN + (number) 2) ← (const byte) main::c_radius
+  main::c_center_x#0 = main::p_x
+  main::c_center_y#0 = main::p_y
+  main::SCREEN[0] = main::c_center_x#0
+  main::SCREEN[1] = main::c_center_y#0
+  main::SCREEN[2] = main::c_radius
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -24,50 +24,50 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(struct Point) Circle::center
-(byte) Circle::radius
-(byte) Point::x
-(byte) Point::y
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(struct Point) main::c_center
-(byte) main::c_center_x
-(byte) main::c_center_x#0
-(byte) main::c_center_y
-(byte) main::c_center_y#0
-(const byte) main::c_radius = (byte) 5
-(const byte) main::p_x = (byte) $a
-(const byte) main::p_y = (byte) $a
+struct Point Circle::center
+byte Circle::radius
+byte Point::x
+byte Point::y
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+struct Point main::c_center
+byte main::c_center_x
+byte main::c_center_x#0
+byte main::c_center_y
+byte main::c_center_y#0
+const byte main::c_radius = 5
+const byte main::p_x = $a
+const byte main::p_y = $a
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte) main::c_center_x#0
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte) main::c_center_y#0
-Adding number conversion cast (unumber) 2 in *((const nomodify byte*) main::SCREEN + (number) 2) ← (const byte) main::c_radius
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::c_center_x#0
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = main::c_center_y#0
+Adding number conversion cast (unumber) 2 in main::SCREEN[2] = main::c_radius
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant (const byte) main::c_center_x#0 = main::p_x
-Constant (const byte) main::c_center_y#0 = main::p_y
+Constant main::c_center_x#0 = main::p_x
+Constant main::c_center_y#0 = main::p_y
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (const byte) main::c_center_x#0
+Simplifying expression containing zero main::SCREEN in [2] main::SCREEN[0] = main::c_center_x#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::c_center_x#0 = (const byte) main::p_x
-Constant inlined main::c_center_y#0 = (const byte) main::p_y
+Constant inlined main::c_center_x#0 = main::p_x
+Constant inlined main::c_center_y#0 = main::p_y
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Consolidated array index constant in *(main::SCREEN+2)
@@ -79,11 +79,11 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::p_x
-  [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y
-  [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius
+  [0] *main::SCREEN = main::p_x
+  [1] *(main::SCREEN+1) = main::p_y
+  [2] *(main::SCREEN+2) = main::c_radius
   to:main::@return
 main::@return: scope:[main]  from main
   [3] return 
@@ -91,54 +91,21 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(struct Point) Circle::center
-(byte) Circle::radius
-(byte) Point::x
-(byte) Point::y
-(void()) main()
-(struct Point) main::c_center
-(byte) main::c_center_x
-(byte) main::c_center_y
+struct Point Circle::center
+byte Circle::radius
+byte Point::x
+byte Point::y
+void main()
+struct Point main::c_center
+byte main::c_center_x
+byte main::c_center_y
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Minimal struct - nesting structs
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const p_x = $a
-    .const p_y = $a
-    .const c_radius = 5
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
-    lda #p_x
-    sta SCREEN
-    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y -- _deref_pbuc1=vbuc2 
-    lda #p_y
-    sta SCREEN+1
-    // [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius -- _deref_pbuc1=vbuc2 
-    lda #c_radius
-    sta SCREEN+2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::p_x [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = main::p_x [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = main::p_y [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(main::SCREEN+2) = main::c_radius [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
@@ -165,13 +132,13 @@ main: {
     .const p_y = $a
     .const c_radius = 5
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
-    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+1
-    // [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius -- _deref_pbuc1=vbuc2 
+    // [2] *(main::SCREEN+2) = main::c_radius -- _deref_pbuc1=vbuc2 
     lda #c_radius
     sta SCREEN+2
     jmp __breturn
@@ -189,19 +156,19 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(struct Point) Circle::center
-(byte) Circle::radius
-(byte) Point::x
-(byte) Point::y
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(struct Point) main::c_center
-(byte) main::c_center_x
-(byte) main::c_center_y
-(const byte) main::c_radius = (byte) 5
-(const byte) main::p_x = (byte) $a
-(const byte) main::p_y = (byte) $a
+struct Point Circle::center
+byte Circle::radius
+byte Point::x
+byte Point::y
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+struct Point main::c_center
+byte main::c_center_x
+byte main::c_center_y
+const byte main::c_radius = 5
+const byte main::p_x = $a
+const byte main::p_y = $a
 
 
 
@@ -222,15 +189,15 @@ main: {
     .const c_radius = 5
     .label SCREEN = $400
     // SCREEN[0] = c.center.x
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::p_x -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = main::p_x -- _deref_pbuc1=vbuc2 
     lda #p_x
     sta SCREEN
     // SCREEN[1] = c.center.y
-    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (const byte) main::p_y -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = main::p_y -- _deref_pbuc1=vbuc2 
     lda #p_y
     sta SCREEN+1
     // SCREEN[2] = c.radius
-    // [2] *((const nomodify byte*) main::SCREEN+(byte) 2) ← (const byte) main::c_radius -- _deref_pbuc1=vbuc2 
+    // [2] *(main::SCREEN+2) = main::c_radius -- _deref_pbuc1=vbuc2 
     lda #c_radius
     sta SCREEN+2
     // main::@return

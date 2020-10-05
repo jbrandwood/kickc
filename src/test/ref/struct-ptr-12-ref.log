@@ -1,20 +1,20 @@
-Setting inferred volatile on symbol affected by address-of (word*) main::q ← &(word) main::p
+Setting inferred volatile on symbol affected by address-of main::q = &main::p
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
-  (byte~) main::$0 ← < *((const word*) main::q)
-  *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
-  (byte~) main::$1 ← > *((const word*) main::q)
-  *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+  main::p = 2*$100+3
+  main::$0 = < *main::q
+  main::SCREEN[0] = main::$0
+  main::$1 = > *main::q
+  main::SCREEN[1] = main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -25,28 +25,28 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(volatile word) main::p loadstore
-(const word*) main::q = &(volatile word) main::p
+void __start()
+label __start::@1
+label __start::@return
+void main()
+byte~ main::$0
+byte~ main::$1
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+volatile word main::p loadstore
+const word* main::q = &main::p
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← (byte~) main::$0
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← (byte~) main::$1
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = main::$0
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = main::$1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero main::SCREEN in [2] *((const nomodify byte*) main::SCREEN + (byte) 0) ← (byte~) main::$0
+Simplifying expression containing zero main::SCREEN in [2] main::SCREEN[0] = main::$0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -62,13 +62,13 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3
-  [1] (byte~) main::$0 ← < *((const word*) main::q)
-  [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0
-  [3] (byte~) main::$1 ← > *((const word*) main::q)
-  [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1
+  [0] main::p = 2*$100+3
+  [1] main::$0 = < *main::q
+  [2] *main::SCREEN = main::$0
+  [3] main::$1 = > *main::q
+  [4] *(main::SCREEN+1) = main::$1
   to:main::@return
 main::@return: scope:[main]  from main
   [5] return 
@@ -76,10 +76,10 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$0 4.0
-(byte~) main::$1 4.0
-(volatile word) main::p loadstore 20.0
+void main()
+byte~ main::$0 4.0
+byte~ main::$1 4.0
+volatile word main::p loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::p to live range equivalence class [ main::p ]
@@ -92,50 +92,8 @@ Complete equivalence classes
 Allocated zp[2]:2 [ main::p ]
 Allocated zp[1]:4 [ main::$0 ]
 Allocated zp[1]:5 [ main::$1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Reference file for Minimal struct -  using address-of
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    .label q = p
-    .label p = 2
-    .label __0 = 4
-    .label __1 = 5
-    // [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
-    lda #<2*$100+3
-    sta.z p
-    lda #>2*$100+3
-    sta.z p+1
-    // [1] (byte~) main::$0 ← < *((const word*) main::q) -- vbuz1=_lo__deref_pwuc1 
-    lda.z q
-    sta.z __0
-    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuz1 
-    lda.z __0
-    sta SCREEN
-    // [3] (byte~) main::$1 ← > *((const word*) main::q) -- vbuz1=_hi__deref_pwuc1 
-    lda.z q+1
-    sta.z __1
-    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuz1 
-    lda.z __1
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [5] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] main::p = 2*$100+3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::p ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ main::$0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ main::$1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -160,18 +118,18 @@ main: {
     .label SCREEN = $400
     .label q = p
     .label p = 2
-    // [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [0] main::p = 2*$100+3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
     sta.z p+1
-    // [1] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
+    // [1] main::$0 = < *main::q -- vbuaa=_lo__deref_pwuc1 
     lda.z q
-    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [2] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
-    // [3] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
+    // [3] main::$1 = > *main::q -- vbuaa=_hi__deref_pwuc1 
     lda.z q+1
-    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [4] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     jmp __breturn
     // main::@return
@@ -188,13 +146,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(byte~) main::$0 reg byte a 4.0
-(byte~) main::$1 reg byte a 4.0
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(volatile word) main::p loadstore zp[2]:2 20.0
-(const word*) main::q = &(volatile word) main::p
+void main()
+byte~ main::$0 reg byte a 4.0
+byte~ main::$1 reg byte a 4.0
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+volatile word main::p loadstore zp[2]:2 20.0
+const word* main::q = &main::p
 
 zp[2]:2 [ main::p ]
 reg byte a [ main::$0 ]
@@ -217,22 +175,22 @@ main: {
     .label q = p
     .label p = 2
     // p = { 2, 3 }
-    // [0] (volatile word) main::p ← (byte) 2*(word) $100+(byte) 3 -- vwuz1=vwuc1 
+    // [0] main::p = 2*$100+3 -- vwuz1=vwuc1 
     lda #<2*$100+3
     sta.z p
     lda #>2*$100+3
     sta.z p+1
     // <*q
-    // [1] (byte~) main::$0 ← < *((const word*) main::q) -- vbuaa=_lo__deref_pwuc1 
+    // [1] main::$0 = < *main::q -- vbuaa=_lo__deref_pwuc1 
     lda.z q
     // SCREEN[0] = <*q
-    // [2] *((const nomodify byte*) main::SCREEN) ← (byte~) main::$0 -- _deref_pbuc1=vbuaa 
+    // [2] *main::SCREEN = main::$0 -- _deref_pbuc1=vbuaa 
     sta SCREEN
     // >*q
-    // [3] (byte~) main::$1 ← > *((const word*) main::q) -- vbuaa=_hi__deref_pwuc1 
+    // [3] main::$1 = > *main::q -- vbuaa=_hi__deref_pwuc1 
     lda.z q+1
     // SCREEN[1] = >*q
-    // [4] *((const nomodify byte*) main::SCREEN+(byte) 1) ← (byte~) main::$1 -- _deref_pbuc1=vbuaa 
+    // [4] *(main::SCREEN+1) = main::$1 -- _deref_pbuc1=vbuaa 
     sta SCREEN+1
     // main::@return
     // }

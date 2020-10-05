@@ -2,18 +2,18 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const byte*) BG_COLOR) ← (number) 0
-  *((const byte*) FGCOL) ← (number) 0
-  (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
-  (byte~) main::$1 ← (byte~) main::$0 | (const byte) RSEL
-  (number~) main::$2 ← (byte~) main::$1 | (number) 3
-  *((const byte*) D011) ← (number~) main::$2
-  (word~) main::$11 ← (word)(const byte*) SCREEN
-  (number~) main::$3 ← (word~) main::$11 / (number) $40
-  (number~) main::$4 ← (number~) main::$3 | (word)(const nomodify byte*) BITMAP/(number) $400
-  *((const byte*) D018) ← (byte)(number~) main::$4
+  *BG_COLOR = 0
+  *FGCOL = 0
+  main::$0 = BMM | DEN
+  main::$1 = main::$0 | RSEL
+  main::$2 = main::$1 | 3
+  *D011 = main::$2
+  main::$11 = (word)SCREEN
+  main::$3 = main::$11 / $40
+  main::$4 = main::$3 | (word)BITMAP/$400
+  *D018 = (byte)main::$4
   call init_screen 
   to:main::@3
 main::@3: scope:[main]  from main
@@ -22,164 +22,164 @@ main::@3: scope:[main]  from main
 main::@4: scope:[main]  from main::@3
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@4 main::@5
-  (bool~) main::$7 ← *((const byte*) RASTER) != (number) $ff
-  if((bool~) main::$7) goto main::@1
+  main::$7 = *RASTER != $ff
+  if(main::$7) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
+  *BG_COLOR = ++ *BG_COLOR
   call plots 
   to:main::@5
 main::@5: scope:[main]  from main::@2
-  *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
+  *BG_COLOR = -- *BG_COLOR
   if(true) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@5
   return 
   to:@return
 
-(void()) plots()
+void plots()
 plots: scope:[plots]  from main::@2
-  (byte) plots::i#0 ← (byte) 0
+  plots::i#0 = 0
   to:plots::@1
 plots::@1: scope:[plots]  from plots plots::@3
-  (byte) plots::i#2 ← phi( plots/(byte) plots::i#0 plots::@3/(byte) plots::i#1 )
-  (bool~) plots::$0 ← (byte) plots::i#2 < (const byte) plots_cnt
-  if((bool~) plots::$0) goto plots::@2
+  plots::i#2 = phi( plots/plots::i#0, plots::@3/plots::i#1 )
+  plots::$0 = plots::i#2 < plots_cnt
+  if(plots::$0) goto plots::@2
   to:plots::@return
 plots::@2: scope:[plots]  from plots::@1
-  (byte) plots::i#3 ← phi( plots::@1/(byte) plots::i#2 )
-  (byte) plot::x#0 ← *((const byte*) plots_x + (byte) plots::i#3)
-  (byte) plot::y#0 ← *((const byte*) plots_y + (byte) plots::i#3)
+  plots::i#3 = phi( plots::@1/plots::i#2 )
+  plot::x#0 = plots_x[plots::i#3]
+  plot::y#0 = plots_y[plots::i#3]
   call plot 
   to:plots::@3
 plots::@3: scope:[plots]  from plots::@2
-  (byte) plots::i#4 ← phi( plots::@2/(byte) plots::i#3 )
-  (byte) plots::i#1 ← ++ (byte) plots::i#4
+  plots::i#4 = phi( plots::@2/plots::i#3 )
+  plots::i#1 = ++ plots::i#4
   to:plots::@1
 plots::@return: scope:[plots]  from plots::@1
   return 
   to:@return
 
-(void()) plot((byte) plot::x , (byte) plot::y)
+void plot(byte plot::x , byte plot::y)
 plot: scope:[plot]  from plots::@2
-  (byte) plot::y#1 ← phi( plots::@2/(byte) plot::y#0 )
-  (byte) plot::x#1 ← phi( plots::@2/(byte) plot::x#0 )
-  (byte*) plot::plotter_x#0 ← (byte*)(number) 0
-  (word) plot::plotter_y#0 ← (word) 0
-  (byte~) plot::$6 ← *((const to_nomodify byte*) plot_xhi + (byte) plot::x#1)
-  (byte*) plot::plotter_x#1 ← (byte*) plot::plotter_x#0 hi= (byte~) plot::$6
-  (byte~) plot::$7 ← *((const to_nomodify byte*) plot_xlo + (byte) plot::x#1)
-  (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7
-  (byte~) plot::$8 ← *((const to_nomodify byte*) plot_yhi + (byte) plot::y#1)
-  (word) plot::plotter_y#1 ← (word) plot::plotter_y#0 hi= (byte~) plot::$8
-  (byte~) plot::$9 ← *((const to_nomodify byte*) plot_ylo + (byte) plot::y#1)
-  (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9
-  (byte*~) plot::$4 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2
-  (byte*) plot::plotter#0 ← (byte*~) plot::$4
-  (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#1)
-  *((byte*) plot::plotter#0) ← (byte~) plot::$5
+  plot::y#1 = phi( plots::@2/plot::y#0 )
+  plot::x#1 = phi( plots::@2/plot::x#0 )
+  plot::plotter_x#0 = (byte*)0
+  plot::plotter_y#0 = 0
+  plot::$6 = plot_xhi[plot::x#1]
+  plot::plotter_x#1 = plot::plotter_x#0 hi= plot::$6
+  plot::$7 = plot_xlo[plot::x#1]
+  plot::plotter_x#2 = plot::plotter_x#1 lo= plot::$7
+  plot::$8 = plot_yhi[plot::y#1]
+  plot::plotter_y#1 = plot::plotter_y#0 hi= plot::$8
+  plot::$9 = plot_ylo[plot::y#1]
+  plot::plotter_y#2 = plot::plotter_y#1 lo= plot::$9
+  plot::$4 = plot::plotter_x#2 + plot::plotter_y#2
+  plot::plotter#0 = plot::$4
+  plot::$5 = *plot::plotter#0 | plot_bit[plot::x#1]
+  *plot::plotter#0 = plot::$5
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   return 
   to:@return
 
-(void()) init_plot_tables()
+void init_plot_tables()
 init_plot_tables: scope:[init_plot_tables]  from main::@3
-  (byte) init_plot_tables::bits#0 ← (byte) $80
-  (byte) init_plot_tables::x#0 ← (byte) 0
+  init_plot_tables::bits#0 = $80
+  init_plot_tables::x#0 = 0
   to:init_plot_tables::@1
 init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_tables::@2
-  (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) init_plot_tables::bits#0 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
-  (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) init_plot_tables::x#0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
-  (number~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (number) $f8
-  *((const to_nomodify byte*) plot_xlo + (byte) init_plot_tables::x#2) ← (number~) init_plot_tables::$0
-  *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP
-  *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
-  (number~) init_plot_tables::$1 ← (byte) init_plot_tables::bits#3 / (number) 2
-  (byte) init_plot_tables::bits#1 ← (number~) init_plot_tables::$1
-  (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (number) 0
-  (bool~) init_plot_tables::$3 ← ! (bool~) init_plot_tables::$2
-  if((bool~) init_plot_tables::$3) goto init_plot_tables::@2
+  init_plot_tables::bits#3 = phi( init_plot_tables/init_plot_tables::bits#0, init_plot_tables::@2/init_plot_tables::bits#4 )
+  init_plot_tables::x#2 = phi( init_plot_tables/init_plot_tables::x#0, init_plot_tables::@2/init_plot_tables::x#1 )
+  init_plot_tables::$0 = init_plot_tables::x#2 & $f8
+  plot_xlo[init_plot_tables::x#2] = init_plot_tables::$0
+  plot_xhi[init_plot_tables::x#2] = >BITMAP
+  plot_bit[init_plot_tables::x#2] = init_plot_tables::bits#3
+  init_plot_tables::$1 = init_plot_tables::bits#3 / 2
+  init_plot_tables::bits#1 = init_plot_tables::$1
+  init_plot_tables::$2 = init_plot_tables::bits#1 == 0
+  init_plot_tables::$3 = ! init_plot_tables::$2
+  if(init_plot_tables::$3) goto init_plot_tables::@2
   to:init_plot_tables::@3
 init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_plot_tables::@3
-  (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::bits#1 init_plot_tables::@3/(byte) init_plot_tables::bits#2 )
-  (byte) init_plot_tables::x#3 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 init_plot_tables::@3/(byte) init_plot_tables::x#4 )
-  (byte) init_plot_tables::x#1 ← (byte) init_plot_tables::x#3 + rangenext(0,$ff)
-  (bool~) init_plot_tables::$4 ← (byte) init_plot_tables::x#1 != rangelast(0,$ff)
-  if((bool~) init_plot_tables::$4) goto init_plot_tables::@1
+  init_plot_tables::bits#4 = phi( init_plot_tables::@1/init_plot_tables::bits#1, init_plot_tables::@3/init_plot_tables::bits#2 )
+  init_plot_tables::x#3 = phi( init_plot_tables::@1/init_plot_tables::x#2, init_plot_tables::@3/init_plot_tables::x#4 )
+  init_plot_tables::x#1 = init_plot_tables::x#3 + rangenext(0,$ff)
+  init_plot_tables::$4 = init_plot_tables::x#1 != rangelast(0,$ff)
+  if(init_plot_tables::$4) goto init_plot_tables::@1
   to:init_plot_tables::@4
 init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@1
-  (byte) init_plot_tables::x#4 ← phi( init_plot_tables::@1/(byte) init_plot_tables::x#2 )
-  (byte) init_plot_tables::bits#2 ← (number) $80
+  init_plot_tables::x#4 = phi( init_plot_tables::@1/init_plot_tables::x#2 )
+  init_plot_tables::bits#2 = $80
   to:init_plot_tables::@2
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@2
-  (byte*) init_plot_tables::yoffs#0 ← (byte*)(number) 0
-  (byte) init_plot_tables::y#0 ← (byte) 0
+  init_plot_tables::yoffs#0 = (byte*)0
+  init_plot_tables::y#0 = 0
   to:init_plot_tables::@5
 init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@4 init_plot_tables::@6
-  (byte*) init_plot_tables::yoffs#2 ← phi( init_plot_tables::@4/(byte*) init_plot_tables::yoffs#0 init_plot_tables::@6/(byte*) init_plot_tables::yoffs#4 )
-  (byte) init_plot_tables::y#2 ← phi( init_plot_tables::@4/(byte) init_plot_tables::y#0 init_plot_tables::@6/(byte) init_plot_tables::y#1 )
-  (number~) init_plot_tables::$5 ← (byte) init_plot_tables::y#2 & (number) 7
-  (byte~) init_plot_tables::$6 ← < (byte*) init_plot_tables::yoffs#2
-  (number~) init_plot_tables::$7 ← (number~) init_plot_tables::$5 | (byte~) init_plot_tables::$6
-  *((const to_nomodify byte*) plot_ylo + (byte) init_plot_tables::y#2) ← (number~) init_plot_tables::$7
-  (byte~) init_plot_tables::$8 ← > (byte*) init_plot_tables::yoffs#2
-  *((const to_nomodify byte*) plot_yhi + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8
-  (number~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (number) 7
-  (bool~) init_plot_tables::$10 ← (number~) init_plot_tables::$9 == (number) 7
-  (bool~) init_plot_tables::$11 ← ! (bool~) init_plot_tables::$10
-  if((bool~) init_plot_tables::$11) goto init_plot_tables::@6
+  init_plot_tables::yoffs#2 = phi( init_plot_tables::@4/init_plot_tables::yoffs#0, init_plot_tables::@6/init_plot_tables::yoffs#4 )
+  init_plot_tables::y#2 = phi( init_plot_tables::@4/init_plot_tables::y#0, init_plot_tables::@6/init_plot_tables::y#1 )
+  init_plot_tables::$5 = init_plot_tables::y#2 & 7
+  init_plot_tables::$6 = < init_plot_tables::yoffs#2
+  init_plot_tables::$7 = init_plot_tables::$5 | init_plot_tables::$6
+  plot_ylo[init_plot_tables::y#2] = init_plot_tables::$7
+  init_plot_tables::$8 = > init_plot_tables::yoffs#2
+  plot_yhi[init_plot_tables::y#2] = init_plot_tables::$8
+  init_plot_tables::$9 = init_plot_tables::y#2 & 7
+  init_plot_tables::$10 = init_plot_tables::$9 == 7
+  init_plot_tables::$11 = ! init_plot_tables::$10
+  if(init_plot_tables::$11) goto init_plot_tables::@6
   to:init_plot_tables::@7
 init_plot_tables::@6: scope:[init_plot_tables]  from init_plot_tables::@5 init_plot_tables::@7
-  (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@5/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@7/(byte*) init_plot_tables::yoffs#1 )
-  (byte) init_plot_tables::y#3 ← phi( init_plot_tables::@5/(byte) init_plot_tables::y#2 init_plot_tables::@7/(byte) init_plot_tables::y#4 )
-  (byte) init_plot_tables::y#1 ← (byte) init_plot_tables::y#3 + rangenext(0,$ff)
-  (bool~) init_plot_tables::$13 ← (byte) init_plot_tables::y#1 != rangelast(0,$ff)
-  if((bool~) init_plot_tables::$13) goto init_plot_tables::@5
+  init_plot_tables::yoffs#4 = phi( init_plot_tables::@5/init_plot_tables::yoffs#2, init_plot_tables::@7/init_plot_tables::yoffs#1 )
+  init_plot_tables::y#3 = phi( init_plot_tables::@5/init_plot_tables::y#2, init_plot_tables::@7/init_plot_tables::y#4 )
+  init_plot_tables::y#1 = init_plot_tables::y#3 + rangenext(0,$ff)
+  init_plot_tables::$13 = init_plot_tables::y#1 != rangelast(0,$ff)
+  if(init_plot_tables::$13) goto init_plot_tables::@5
   to:init_plot_tables::@return
 init_plot_tables::@7: scope:[init_plot_tables]  from init_plot_tables::@5
-  (byte) init_plot_tables::y#4 ← phi( init_plot_tables::@5/(byte) init_plot_tables::y#2 )
-  (byte*) init_plot_tables::yoffs#3 ← phi( init_plot_tables::@5/(byte*) init_plot_tables::yoffs#2 )
-  (byte*~) init_plot_tables::$12 ← (byte*) init_plot_tables::yoffs#3 + (number) $28*(number) 8
-  (byte*) init_plot_tables::yoffs#1 ← (byte*~) init_plot_tables::$12
+  init_plot_tables::y#4 = phi( init_plot_tables::@5/init_plot_tables::y#2 )
+  init_plot_tables::yoffs#3 = phi( init_plot_tables::@5/init_plot_tables::yoffs#2 )
+  init_plot_tables::$12 = init_plot_tables::yoffs#3 + $28*8
+  init_plot_tables::yoffs#1 = init_plot_tables::$12
   to:init_plot_tables::@6
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@6
   return 
   to:@return
 
-(void()) init_screen()
+void init_screen()
 init_screen: scope:[init_screen]  from main
-  (byte*) init_screen::b#0 ← (const nomodify byte*) BITMAP
+  init_screen::b#0 = BITMAP
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@2
-  (byte*) init_screen::b#2 ← phi( init_screen/(byte*) init_screen::b#0 init_screen::@2/(byte*) init_screen::b#1 )
-  (bool~) init_screen::$0 ← (byte*) init_screen::b#2 != (const nomodify byte*) BITMAP+(number) $2000
-  if((bool~) init_screen::$0) goto init_screen::@2
+  init_screen::b#2 = phi( init_screen/init_screen::b#0, init_screen::@2/init_screen::b#1 )
+  init_screen::$0 = init_screen::b#2 != BITMAP+$2000
+  if(init_screen::$0) goto init_screen::@2
   to:init_screen::@3
 init_screen::@2: scope:[init_screen]  from init_screen::@1
-  (byte*) init_screen::b#3 ← phi( init_screen::@1/(byte*) init_screen::b#2 )
-  *((byte*) init_screen::b#3) ← (number) 0
-  (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#3
+  init_screen::b#3 = phi( init_screen::@1/init_screen::b#2 )
+  *init_screen::b#3 = 0
+  init_screen::b#1 = ++ init_screen::b#3
   to:init_screen::@1
 init_screen::@3: scope:[init_screen]  from init_screen::@1
-  (byte*) init_screen::c#0 ← (const byte*) SCREEN
+  init_screen::c#0 = SCREEN
   to:init_screen::@4
 init_screen::@4: scope:[init_screen]  from init_screen::@3 init_screen::@5
-  (byte*) init_screen::c#2 ← phi( init_screen::@3/(byte*) init_screen::c#0 init_screen::@5/(byte*) init_screen::c#1 )
-  (byte*~) init_screen::$1 ← (const byte*) SCREEN + (number) $400
-  (bool~) init_screen::$2 ← (byte*) init_screen::c#2 != (byte*~) init_screen::$1
-  if((bool~) init_screen::$2) goto init_screen::@5
+  init_screen::c#2 = phi( init_screen::@3/init_screen::c#0, init_screen::@5/init_screen::c#1 )
+  init_screen::$1 = SCREEN + $400
+  init_screen::$2 = init_screen::c#2 != init_screen::$1
+  if(init_screen::$2) goto init_screen::@5
   to:init_screen::@return
 init_screen::@5: scope:[init_screen]  from init_screen::@4
-  (byte*) init_screen::c#3 ← phi( init_screen::@4/(byte*) init_screen::c#2 )
-  *((byte*) init_screen::c#3) ← (number) $14
-  (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#3
+  init_screen::c#3 = phi( init_screen::@4/init_screen::c#2 )
+  *init_screen::c#3 = $14
+  init_screen::c#1 = ++ init_screen::c#3
   to:init_screen::@4
 init_screen::@return: scope:[init_screen]  from init_screen::@4
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -194,180 +194,180 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) BG_COLOR = (byte*)(number) $d020
-(const nomodify byte*) BITMAP = (byte*)(number) $2000
-(const byte) BMM = (byte) $20
-(const byte*) D011 = (byte*)(number) $d011
-(const byte*) D018 = (byte*)(number) $d018
-(const byte) DEN = (byte) $10
-(const byte*) FGCOL = (byte*)(number) $d021
-(const byte*) RASTER = (byte*)(number) $d012
-(const byte) RSEL = (byte) 8
-(const byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) init_plot_tables()
-(number~) init_plot_tables::$0
-(number~) init_plot_tables::$1
-(bool~) init_plot_tables::$10
-(bool~) init_plot_tables::$11
-(byte*~) init_plot_tables::$12
-(bool~) init_plot_tables::$13
-(bool~) init_plot_tables::$2
-(bool~) init_plot_tables::$3
-(bool~) init_plot_tables::$4
-(number~) init_plot_tables::$5
-(byte~) init_plot_tables::$6
-(number~) init_plot_tables::$7
-(byte~) init_plot_tables::$8
-(number~) init_plot_tables::$9
-(label) init_plot_tables::@1
-(label) init_plot_tables::@2
-(label) init_plot_tables::@3
-(label) init_plot_tables::@4
-(label) init_plot_tables::@5
-(label) init_plot_tables::@6
-(label) init_plot_tables::@7
-(label) init_plot_tables::@return
-(byte) init_plot_tables::bits
-(byte) init_plot_tables::bits#0
-(byte) init_plot_tables::bits#1
-(byte) init_plot_tables::bits#2
-(byte) init_plot_tables::bits#3
-(byte) init_plot_tables::bits#4
-(byte) init_plot_tables::x
-(byte) init_plot_tables::x#0
-(byte) init_plot_tables::x#1
-(byte) init_plot_tables::x#2
-(byte) init_plot_tables::x#3
-(byte) init_plot_tables::x#4
-(byte) init_plot_tables::y
-(byte) init_plot_tables::y#0
-(byte) init_plot_tables::y#1
-(byte) init_plot_tables::y#2
-(byte) init_plot_tables::y#3
-(byte) init_plot_tables::y#4
-(byte*) init_plot_tables::yoffs
-(byte*) init_plot_tables::yoffs#0
-(byte*) init_plot_tables::yoffs#1
-(byte*) init_plot_tables::yoffs#2
-(byte*) init_plot_tables::yoffs#3
-(byte*) init_plot_tables::yoffs#4
-(void()) init_screen()
-(bool~) init_screen::$0
-(byte*~) init_screen::$1
-(bool~) init_screen::$2
-(label) init_screen::@1
-(label) init_screen::@2
-(label) init_screen::@3
-(label) init_screen::@4
-(label) init_screen::@5
-(label) init_screen::@return
-(byte*) init_screen::b
-(byte*) init_screen::b#0
-(byte*) init_screen::b#1
-(byte*) init_screen::b#2
-(byte*) init_screen::b#3
-(byte*) init_screen::c
-(byte*) init_screen::c#0
-(byte*) init_screen::c#1
-(byte*) init_screen::c#2
-(byte*) init_screen::c#3
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(word~) main::$11
-(number~) main::$2
-(number~) main::$3
-(number~) main::$4
-(bool~) main::$7
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
-(void()) plot((byte) plot::x , (byte) plot::y)
-(byte*~) plot::$4
-(byte~) plot::$5
-(byte~) plot::$6
-(byte~) plot::$7
-(byte~) plot::$8
-(byte~) plot::$9
-(label) plot::@return
-(byte*) plot::plotter
-(byte*) plot::plotter#0
-(byte*) plot::plotter_x
-(byte*) plot::plotter_x#0
-(byte*) plot::plotter_x#1
-(byte*) plot::plotter_x#2
-(word) plot::plotter_y
-(word) plot::plotter_y#0
-(word) plot::plotter_y#1
-(word) plot::plotter_y#2
-(byte) plot::x
-(byte) plot::x#0
-(byte) plot::x#1
-(byte) plot::y
-(byte) plot::y#0
-(byte) plot::y#1
-(const to_nomodify byte*) plot_bit[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_xhi[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_xlo[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_yhi[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_ylo[(number) $100]  = { fill( $100, 0) }
-(void()) plots()
-(bool~) plots::$0
-(label) plots::@1
-(label) plots::@2
-(label) plots::@3
-(label) plots::@return
-(byte) plots::i
-(byte) plots::i#0
-(byte) plots::i#1
-(byte) plots::i#2
-(byte) plots::i#3
-(byte) plots::i#4
-(const byte) plots_cnt = (byte) 8
-(const byte*) plots_x[]  = { (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28, (byte) $a, (byte) $28 }
-(const byte*) plots_y[]  = { (byte) $a, (byte) $28, (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28 }
+const byte* BG_COLOR = (byte*)$d020
+const nomodify byte* BITMAP = (byte*)$2000
+const byte BMM = $20
+const byte* D011 = (byte*)$d011
+const byte* D018 = (byte*)$d018
+const byte DEN = $10
+const byte* FGCOL = (byte*)$d021
+const byte* RASTER = (byte*)$d012
+const byte RSEL = 8
+const byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void init_plot_tables()
+number~ init_plot_tables::$0
+number~ init_plot_tables::$1
+bool~ init_plot_tables::$10
+bool~ init_plot_tables::$11
+byte*~ init_plot_tables::$12
+bool~ init_plot_tables::$13
+bool~ init_plot_tables::$2
+bool~ init_plot_tables::$3
+bool~ init_plot_tables::$4
+number~ init_plot_tables::$5
+byte~ init_plot_tables::$6
+number~ init_plot_tables::$7
+byte~ init_plot_tables::$8
+number~ init_plot_tables::$9
+label init_plot_tables::@1
+label init_plot_tables::@2
+label init_plot_tables::@3
+label init_plot_tables::@4
+label init_plot_tables::@5
+label init_plot_tables::@6
+label init_plot_tables::@7
+label init_plot_tables::@return
+byte init_plot_tables::bits
+byte init_plot_tables::bits#0
+byte init_plot_tables::bits#1
+byte init_plot_tables::bits#2
+byte init_plot_tables::bits#3
+byte init_plot_tables::bits#4
+byte init_plot_tables::x
+byte init_plot_tables::x#0
+byte init_plot_tables::x#1
+byte init_plot_tables::x#2
+byte init_plot_tables::x#3
+byte init_plot_tables::x#4
+byte init_plot_tables::y
+byte init_plot_tables::y#0
+byte init_plot_tables::y#1
+byte init_plot_tables::y#2
+byte init_plot_tables::y#3
+byte init_plot_tables::y#4
+byte* init_plot_tables::yoffs
+byte* init_plot_tables::yoffs#0
+byte* init_plot_tables::yoffs#1
+byte* init_plot_tables::yoffs#2
+byte* init_plot_tables::yoffs#3
+byte* init_plot_tables::yoffs#4
+void init_screen()
+bool~ init_screen::$0
+byte*~ init_screen::$1
+bool~ init_screen::$2
+label init_screen::@1
+label init_screen::@2
+label init_screen::@3
+label init_screen::@4
+label init_screen::@5
+label init_screen::@return
+byte* init_screen::b
+byte* init_screen::b#0
+byte* init_screen::b#1
+byte* init_screen::b#2
+byte* init_screen::b#3
+byte* init_screen::c
+byte* init_screen::c#0
+byte* init_screen::c#1
+byte* init_screen::c#2
+byte* init_screen::c#3
+void main()
+byte~ main::$0
+byte~ main::$1
+word~ main::$11
+number~ main::$2
+number~ main::$3
+number~ main::$4
+bool~ main::$7
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@return
+void plot(byte plot::x , byte plot::y)
+byte*~ plot::$4
+byte~ plot::$5
+byte~ plot::$6
+byte~ plot::$7
+byte~ plot::$8
+byte~ plot::$9
+label plot::@return
+byte* plot::plotter
+byte* plot::plotter#0
+byte* plot::plotter_x
+byte* plot::plotter_x#0
+byte* plot::plotter_x#1
+byte* plot::plotter_x#2
+word plot::plotter_y
+word plot::plotter_y#0
+word plot::plotter_y#1
+word plot::plotter_y#2
+byte plot::x
+byte plot::x#0
+byte plot::x#1
+byte plot::y
+byte plot::y#0
+byte plot::y#1
+const to_nomodify byte* plot_bit[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_xhi[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_xlo[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_yhi[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_ylo[$100]  = { fill( $100, 0) }
+void plots()
+bool~ plots::$0
+label plots::@1
+label plots::@2
+label plots::@3
+label plots::@return
+byte plots::i
+byte plots::i#0
+byte plots::i#1
+byte plots::i#2
+byte plots::i#3
+byte plots::i#4
+const byte plots_cnt = 8
+const byte* plots_x[]  = { $3c, $50, $6e, $50, $3c, $28, $a, $28 }
+const byte* plots_y[]  = { $a, $28, $3c, $50, $6e, $50, $3c, $28 }
 
-Adding number conversion cast (unumber) 0 in *((const byte*) BG_COLOR) ← (number) 0
-Adding number conversion cast (unumber) 0 in *((const byte*) FGCOL) ← (number) 0
-Adding number conversion cast (unumber) 3 in (number~) main::$2 ← (byte~) main::$1 | (number) 3
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (byte~) main::$1 | (unumber)(number) 3
-Adding number conversion cast (unumber) $40 in (number~) main::$3 ← (word~) main::$11 / (number) $40
-Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (word~) main::$11 / (unumber)(number) $40
-Adding number conversion cast (unumber) (word)BITMAP/$400 in (number~) main::$4 ← (unumber~) main::$3 | (word)(const nomodify byte*) BITMAP/(number) $400
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← (unumber~) main::$3 | (unumber)(word)(const nomodify byte*) BITMAP/(number) $400
-Adding number conversion cast (unumber) $400 in (unumber~) main::$4 ← (unumber~) main::$3 | (unumber)(word)(const nomodify byte*) BITMAP/(number) $400
-Adding number conversion cast (unumber) $ff in (bool~) main::$7 ← *((const byte*) RASTER) != (number) $ff
-Adding number conversion cast (unumber) $f8 in (number~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (number) $f8
-Adding number conversion cast (unumber) init_plot_tables::$0 in (number~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (unumber)(number) $f8
-Adding number conversion cast (unumber) 2 in (number~) init_plot_tables::$1 ← (byte) init_plot_tables::bits#3 / (number) 2
-Adding number conversion cast (unumber) init_plot_tables::$1 in (number~) init_plot_tables::$1 ← (byte) init_plot_tables::bits#3 / (unumber)(number) 2
-Adding number conversion cast (unumber) 0 in (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (number) 0
-Adding number conversion cast (unumber) $80 in (byte) init_plot_tables::bits#2 ← (number) $80
-Adding number conversion cast (unumber) 7 in (number~) init_plot_tables::$5 ← (byte) init_plot_tables::y#2 & (number) 7
-Adding number conversion cast (unumber) init_plot_tables::$5 in (number~) init_plot_tables::$5 ← (byte) init_plot_tables::y#2 & (unumber)(number) 7
-Adding number conversion cast (unumber) init_plot_tables::$7 in (number~) init_plot_tables::$7 ← (unumber~) init_plot_tables::$5 | (byte~) init_plot_tables::$6
-Adding number conversion cast (unumber) 7 in (number~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (number) 7
-Adding number conversion cast (unumber) init_plot_tables::$9 in (number~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (unumber)(number) 7
-Adding number conversion cast (unumber) 7 in (bool~) init_plot_tables::$10 ← (unumber~) init_plot_tables::$9 == (number) 7
-Adding number conversion cast (unumber) $28*8 in (byte*~) init_plot_tables::$12 ← (byte*) init_plot_tables::yoffs#3 + (number) $28*(number) 8
-Adding number conversion cast (unumber) $2000 in (bool~) init_screen::$0 ← (byte*) init_screen::b#2 != (const nomodify byte*) BITMAP+(number) $2000
-Adding number conversion cast (unumber) 0 in *((byte*) init_screen::b#3) ← (number) 0
-Adding number conversion cast (unumber) $400 in (byte*~) init_screen::$1 ← (const byte*) SCREEN + (number) $400
-Adding number conversion cast (unumber) $14 in *((byte*) init_screen::c#3) ← (number) $14
+Adding number conversion cast (unumber) 0 in *BG_COLOR = 0
+Adding number conversion cast (unumber) 0 in *FGCOL = 0
+Adding number conversion cast (unumber) 3 in main::$2 = main::$1 | 3
+Adding number conversion cast (unumber) main::$2 in main::$2 = main::$1 | (unumber)3
+Adding number conversion cast (unumber) $40 in main::$3 = main::$11 / $40
+Adding number conversion cast (unumber) main::$3 in main::$3 = main::$11 / (unumber)$40
+Adding number conversion cast (unumber) (word)BITMAP/$400 in main::$4 = main::$3 | (word)BITMAP/$400
+Adding number conversion cast (unumber) main::$4 in main::$4 = main::$3 | (unumber)(word)BITMAP/$400
+Adding number conversion cast (unumber) $400 in main::$4 = main::$3 | (unumber)(word)BITMAP/$400
+Adding number conversion cast (unumber) $ff in main::$7 = *RASTER != $ff
+Adding number conversion cast (unumber) $f8 in init_plot_tables::$0 = init_plot_tables::x#2 & $f8
+Adding number conversion cast (unumber) init_plot_tables::$0 in init_plot_tables::$0 = init_plot_tables::x#2 & (unumber)$f8
+Adding number conversion cast (unumber) 2 in init_plot_tables::$1 = init_plot_tables::bits#3 / 2
+Adding number conversion cast (unumber) init_plot_tables::$1 in init_plot_tables::$1 = init_plot_tables::bits#3 / (unumber)2
+Adding number conversion cast (unumber) 0 in init_plot_tables::$2 = init_plot_tables::bits#1 == 0
+Adding number conversion cast (unumber) $80 in init_plot_tables::bits#2 = $80
+Adding number conversion cast (unumber) 7 in init_plot_tables::$5 = init_plot_tables::y#2 & 7
+Adding number conversion cast (unumber) init_plot_tables::$5 in init_plot_tables::$5 = init_plot_tables::y#2 & (unumber)7
+Adding number conversion cast (unumber) init_plot_tables::$7 in init_plot_tables::$7 = init_plot_tables::$5 | init_plot_tables::$6
+Adding number conversion cast (unumber) 7 in init_plot_tables::$9 = init_plot_tables::y#2 & 7
+Adding number conversion cast (unumber) init_plot_tables::$9 in init_plot_tables::$9 = init_plot_tables::y#2 & (unumber)7
+Adding number conversion cast (unumber) 7 in init_plot_tables::$10 = init_plot_tables::$9 == 7
+Adding number conversion cast (unumber) $28*8 in init_plot_tables::$12 = init_plot_tables::yoffs#3 + $28*8
+Adding number conversion cast (unumber) $2000 in init_screen::$0 = init_screen::b#2 != BITMAP+$2000
+Adding number conversion cast (unumber) 0 in *init_screen::b#3 = 0
+Adding number conversion cast (unumber) $400 in init_screen::$1 = SCREEN + $400
+Adding number conversion cast (unumber) $14 in *init_screen::c#3 = $14
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) BG_COLOR) ← (unumber)(number) 0
-Inlining cast *((const byte*) FGCOL) ← (unumber)(number) 0
-Inlining cast (byte) init_plot_tables::bits#2 ← (unumber)(number) $80
-Inlining cast *((byte*) init_screen::b#3) ← (unumber)(number) 0
-Inlining cast *((byte*) init_screen::c#3) ← (unumber)(number) $14
+Inlining cast *BG_COLOR = (unumber)0
+Inlining cast *FGCOL = (unumber)0
+Inlining cast init_plot_tables::bits#2 = (unumber)$80
+Inlining cast *init_screen::b#3 = (unumber)0
+Inlining cast *init_screen::c#3 = (unumber)$14
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 8192
 Simplifying constant pointer cast (byte*) 53265
@@ -380,7 +380,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 3
 Simplifying constant integer cast $40
-Simplifying constant integer cast (word)(const nomodify byte*) BITMAP/(unumber)(number) $400
+Simplifying constant integer cast (word)BITMAP/(unumber)$400
 Simplifying constant integer cast $400
 Simplifying constant integer cast $ff
 Simplifying constant pointer cast (byte*) 0
@@ -397,34 +397,34 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $400
 Simplifying constant integer cast $14
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) $40
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) $f8
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (byte) 7
-Finalized unsigned number type (word) $2000
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (byte) $14
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 3
+Finalized unsigned number type $40
+Finalized unsigned number type $400
+Finalized unsigned number type $ff
+Finalized unsigned number type $f8
+Finalized unsigned number type 2
+Finalized unsigned number type 0
+Finalized unsigned number type $80
+Finalized unsigned number type 7
+Finalized unsigned number type 7
+Finalized unsigned number type 7
+Finalized unsigned number type $2000
+Finalized unsigned number type 0
+Finalized unsigned number type $400
+Finalized unsigned number type $14
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$2 ← (byte~) main::$1 | (byte) 3
-Inferred type updated to word in (unumber~) main::$3 ← (word~) main::$11 / (byte) $40
-Inferred type updated to word in (unumber~) main::$4 ← (word~) main::$3 | (word)(const nomodify byte*) BITMAP/(word) $400
-Inferred type updated to byte in (unumber~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8
-Inferred type updated to byte in (unumber~) init_plot_tables::$1 ← (byte) init_plot_tables::bits#3 / (byte) 2
-Inferred type updated to byte in (unumber~) init_plot_tables::$5 ← (byte) init_plot_tables::y#2 & (byte) 7
-Inferred type updated to byte in (unumber~) init_plot_tables::$7 ← (byte~) init_plot_tables::$5 | (byte~) init_plot_tables::$6
-Inferred type updated to byte in (unumber~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
-Inversing boolean not [56] (bool~) init_plot_tables::$3 ← (byte) init_plot_tables::bits#1 != (byte) 0 from [55] (bool~) init_plot_tables::$2 ← (byte) init_plot_tables::bits#1 == (byte) 0
-Inversing boolean not [75] (bool~) init_plot_tables::$11 ← (byte~) init_plot_tables::$9 != (byte) 7 from [74] (bool~) init_plot_tables::$10 ← (byte~) init_plot_tables::$9 == (byte) 7
+Inferred type updated to byte in main::$2 = main::$1 | 3
+Inferred type updated to word in main::$3 = main::$11 / $40
+Inferred type updated to word in main::$4 = main::$3 | (word)BITMAP/$400
+Inferred type updated to byte in init_plot_tables::$0 = init_plot_tables::x#2 & $f8
+Inferred type updated to byte in init_plot_tables::$1 = init_plot_tables::bits#3 / 2
+Inferred type updated to byte in init_plot_tables::$5 = init_plot_tables::y#2 & 7
+Inferred type updated to byte in init_plot_tables::$7 = init_plot_tables::$5 | init_plot_tables::$6
+Inferred type updated to byte in init_plot_tables::$9 = init_plot_tables::y#2 & 7
+Inversing boolean not [56] init_plot_tables::$3 = init_plot_tables::bits#1 != 0 from [55] init_plot_tables::$2 = init_plot_tables::bits#1 == 0
+Inversing boolean not [75] init_plot_tables::$11 = init_plot_tables::$9 != 7 from [74] init_plot_tables::$10 = init_plot_tables::$9 == 7
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias plots::i#2 = plots::i#3 plots::i#4 
 Alias plot::plotter#0 = plot::$4 
@@ -439,44 +439,44 @@ Successful SSA optimization Pass2AliasElimination
 Alias init_plot_tables::x#2 = init_plot_tables::x#3 
 Alias init_plot_tables::y#2 = init_plot_tables::y#3 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) plot::x#1 (byte) plot::x#0
-Identical Phi Values (byte) plot::y#1 (byte) plot::y#0
+Identical Phi Values plot::x#1 plot::x#0
+Identical Phi Values plot::y#1 plot::y#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identified duplicate assignment right side [73] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
+Identified duplicate assignment right side [73] init_plot_tables::$9 = init_plot_tables::y#2 & 7
 Successful SSA optimization Pass2DuplicateRValueIdentification
-Simple Condition (bool~) main::$7 [13] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
-Simple Condition (bool~) plots::$0 [22] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
-Simple Condition (bool~) init_plot_tables::$3 [52] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@2
-Simple Condition (bool~) init_plot_tables::$4 [56] if((byte) init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
-Simple Condition (bool~) init_plot_tables::$11 [69] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@6
-Simple Condition (bool~) init_plot_tables::$13 [73] if((byte) init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
-Simple Condition (bool~) init_screen::$0 [79] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2
-Simple Condition (bool~) init_screen::$2 [86] if((byte*) init_screen::c#2!=(byte*~) init_screen::$1) goto init_screen::@5
+Simple Condition main::$7 [13] if(*RASTER!=$ff) goto main::@1
+Simple Condition plots::$0 [22] if(plots::i#2<plots_cnt) goto plots::@2
+Simple Condition init_plot_tables::$3 [52] if(init_plot_tables::bits#1!=0) goto init_plot_tables::@2
+Simple Condition init_plot_tables::$4 [56] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1
+Simple Condition init_plot_tables::$11 [69] if(init_plot_tables::$9!=7) goto init_plot_tables::@6
+Simple Condition init_plot_tables::$13 [73] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5
+Simple Condition init_screen::$0 [79] if(init_screen::b#2!=BITMAP+$2000) goto init_screen::@2
+Simple Condition init_screen::$2 [86] if(init_screen::c#2!=init_screen::$1) goto init_screen::@5
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [2] (byte~) main::$0 ← (const byte) BMM | (const byte) DEN
-Constant right-side identified [6] (word~) main::$11 ← (word)(const byte*) SCREEN
-Constant right-side identified [84] (byte*~) init_screen::$1 ← (const byte*) SCREEN + (word) $400
+Constant right-side identified [2] main::$0 = BMM | DEN
+Constant right-side identified [6] main::$11 = (word)SCREEN
+Constant right-side identified [84] init_screen::$1 = SCREEN + $400
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$0 = BMM|DEN
-Constant (const word) main::$11 = (word)SCREEN
-Constant (const byte) plots::i#0 = 0
-Constant (const byte*) plot::plotter_x#0 = (byte*) 0
-Constant (const word) plot::plotter_y#0 = 0
-Constant (const byte) init_plot_tables::bits#0 = $80
-Constant (const byte) init_plot_tables::x#0 = 0
-Constant (const byte) init_plot_tables::bits#2 = $80
-Constant (const byte*) init_plot_tables::yoffs#0 = (byte*) 0
-Constant (const byte) init_plot_tables::y#0 = 0
-Constant (const byte*) init_screen::b#0 = BITMAP
-Constant (const byte*) init_screen::c#0 = SCREEN
-Constant (const byte*) init_screen::$1 = SCREEN+$400
+Constant main::$0 = BMM|DEN
+Constant main::$11 = (word)SCREEN
+Constant plots::i#0 = 0
+Constant plot::plotter_x#0 = (byte*) 0
+Constant plot::plotter_y#0 = 0
+Constant init_plot_tables::bits#0 = $80
+Constant init_plot_tables::x#0 = 0
+Constant init_plot_tables::bits#2 = $80
+Constant init_plot_tables::yoffs#0 = (byte*) 0
+Constant init_plot_tables::y#0 = 0
+Constant init_screen::b#0 = BITMAP
+Constant init_screen::c#0 = SCREEN
+Constant init_screen::$1 = SCREEN+$400
 Successful SSA optimization Pass2ConstantIdentification
 if() condition always true - replacing block destination [17] if(true) goto main::@1
 Successful SSA optimization Pass2ConstantIfs
-Resolved ranged next value [54] init_plot_tables::x#1 ← ++ init_plot_tables::x#2 to ++
-Resolved ranged comparison value [56] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to (number) 0
-Resolved ranged next value [71] init_plot_tables::y#1 ← ++ init_plot_tables::y#2 to ++
-Resolved ranged comparison value [73] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5 to (number) 0
+Resolved ranged next value [54] init_plot_tables::x#1 = ++ init_plot_tables::x#2 to ++
+Resolved ranged comparison value [56] if(init_plot_tables::x#1!=rangelast(0,$ff)) goto init_plot_tables::@1 to 0
+Resolved ranged next value [71] init_plot_tables::y#1 = ++ init_plot_tables::y#2 to ++
+Resolved ranged comparison value [73] if(init_plot_tables::y#1!=rangelast(0,$ff)) goto init_plot_tables::@5 to 0
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Removing unused procedure __start
@@ -486,60 +486,60 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) 0 in [42] if((byte) init_plot_tables::x#1!=(number) 0) goto init_plot_tables::@1
-Adding number conversion cast (unumber) 0 in [54] if((byte) init_plot_tables::y#1!=(number) 0) goto init_plot_tables::@5
+Adding number conversion cast (unumber) 0 in [42] if(init_plot_tables::x#1!=0) goto init_plot_tables::@1
+Adding number conversion cast (unumber) 0 in [54] if(init_plot_tables::y#1!=0) goto init_plot_tables::@5
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias init_plot_tables::$9 = init_plot_tables::$5 
 Successful SSA optimization Pass2AliasElimination
-Constant right-side identified [2] (byte~) main::$1 ← (const byte) main::$0 | (const byte) RSEL
-Constant right-side identified [5] (word~) main::$3 ← (const word) main::$11 / (byte) $40
+Constant right-side identified [2] main::$1 = main::$0 | RSEL
+Constant right-side identified [5] main::$3 = main::$11 / $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$1 = main::$0|RSEL
-Constant (const word) main::$3 = main::$11/$40
+Constant main::$1 = main::$0|RSEL
+Constant main::$3 = main::$11/$40
 Successful SSA optimization Pass2ConstantIdentification
-Constant right-side identified [2] (byte~) main::$2 ← (const byte) main::$1 | (byte) 3
-Constant right-side identified [4] (word~) main::$4 ← (const word) main::$3 | (word)(const nomodify byte*) BITMAP/(word) $400
+Constant right-side identified [2] main::$2 = main::$1 | 3
+Constant right-side identified [4] main::$4 = main::$3 | (word)BITMAP/$400
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$2 = main::$1|3
-Constant (const word) main::$4 = main::$3|(word)BITMAP/$400
+Constant main::$2 = main::$1|3
+Constant main::$4 = main::$3|(word)BITMAP/$400
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)main::$4 in [5] *((const byte*) D018) ← (byte)(const word) main::$4
+Constant value identified (byte)main::$4 in [5] *D018 = (byte)main::$4
 Successful SSA optimization Pass2ConstantValues
-Rewriting division to use shift [34] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 / (byte) 2
+Rewriting division to use shift [34] init_plot_tables::bits#1 = init_plot_tables::bits#3 / 2
 Successful SSA optimization Pass2MultiplyToShiftRewriting
-Inlining constant with var siblings (const byte) plots::i#0
-Inlining constant with var siblings (const byte*) plot::plotter_x#0
-Inlining constant with var siblings (const word) plot::plotter_y#0
-Inlining constant with var siblings (const byte) init_plot_tables::bits#0
-Inlining constant with var siblings (const byte) init_plot_tables::x#0
-Inlining constant with var siblings (const byte) init_plot_tables::bits#2
-Inlining constant with var siblings (const byte*) init_plot_tables::yoffs#0
-Inlining constant with var siblings (const byte) init_plot_tables::y#0
-Inlining constant with var siblings (const byte*) init_screen::b#0
-Inlining constant with var siblings (const byte*) init_screen::c#0
-Constant inlined plots::i#0 = (byte) 0
-Constant inlined init_plot_tables::bits#2 = (byte) $80
-Constant inlined init_plot_tables::bits#0 = (byte) $80
-Constant inlined plot::plotter_y#0 = (word) 0
-Constant inlined main::$11 = (word)(const byte*) SCREEN
+Inlining constant with var siblings plots::i#0
+Inlining constant with var siblings plot::plotter_x#0
+Inlining constant with var siblings plot::plotter_y#0
+Inlining constant with var siblings init_plot_tables::bits#0
+Inlining constant with var siblings init_plot_tables::x#0
+Inlining constant with var siblings init_plot_tables::bits#2
+Inlining constant with var siblings init_plot_tables::yoffs#0
+Inlining constant with var siblings init_plot_tables::y#0
+Inlining constant with var siblings init_screen::b#0
+Inlining constant with var siblings init_screen::c#0
+Constant inlined plots::i#0 = 0
+Constant inlined init_plot_tables::bits#2 = $80
+Constant inlined init_plot_tables::bits#0 = $80
+Constant inlined plot::plotter_y#0 = 0
+Constant inlined main::$11 = (word)SCREEN
 Constant inlined plot::plotter_x#0 = (byte*) 0
-Constant inlined init_screen::$1 = (const byte*) SCREEN+(word) $400
-Constant inlined main::$1 = (const byte) BMM|(const byte) DEN|(const byte) RSEL
-Constant inlined main::$2 = (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3
-Constant inlined main::$0 = (const byte) BMM|(const byte) DEN
-Constant inlined init_plot_tables::y#0 = (byte) 0
+Constant inlined init_screen::$1 = SCREEN+$400
+Constant inlined main::$1 = BMM|DEN|RSEL
+Constant inlined main::$2 = BMM|DEN|RSEL|3
+Constant inlined main::$0 = BMM|DEN
+Constant inlined init_plot_tables::y#0 = 0
 Constant inlined init_plot_tables::yoffs#0 = (byte*) 0
-Constant inlined main::$3 = (word)(const byte*) SCREEN/(byte) $40
-Constant inlined main::$4 = (word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400
-Constant inlined init_plot_tables::x#0 = (byte) 0
-Constant inlined init_screen::c#0 = (const byte*) SCREEN
-Constant inlined init_screen::b#0 = (const nomodify byte*) BITMAP
+Constant inlined main::$3 = (word)SCREEN/$40
+Constant inlined main::$4 = (word)SCREEN/$40|(word)BITMAP/$400
+Constant inlined init_plot_tables::x#0 = 0
+Constant inlined init_screen::c#0 = SCREEN
+Constant inlined init_screen::b#0 = BITMAP
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting init_plot_tables::@8(between init_plot_tables::@2 and init_plot_tables::@1)
 Added new block during phi lifting init_plot_tables::@9(between init_plot_tables::@1 and init_plot_tables::@2)
@@ -558,24 +558,24 @@ Calls in [main] to init_screen:4 init_plot_tables:6 plots:10
 Calls in [plots] to plot:64 
 
 Created 9 initial phi equivalence classes
-Coalesced [21] init_screen::c#4 ← init_screen::c#1
-Coalesced [24] init_screen::b#4 ← init_screen::b#1
-Coalesced [47] init_plot_tables::yoffs#7 ← init_plot_tables::yoffs#1
-Coalesced [52] init_plot_tables::y#5 ← init_plot_tables::y#1
-Coalesced [53] init_plot_tables::yoffs#5 ← init_plot_tables::yoffs#4
-Coalesced (already) [54] init_plot_tables::yoffs#6 ← init_plot_tables::yoffs#2
-Coalesced [55] init_plot_tables::x#5 ← init_plot_tables::x#1
-Coalesced [56] init_plot_tables::bits#5 ← init_plot_tables::bits#4
-Coalesced [57] init_plot_tables::bits#6 ← init_plot_tables::bits#1
-Coalesced [66] plots::i#5 ← plots::i#1
+Coalesced [21] init_screen::c#4 = init_screen::c#1
+Coalesced [24] init_screen::b#4 = init_screen::b#1
+Coalesced [47] init_plot_tables::yoffs#7 = init_plot_tables::yoffs#1
+Coalesced [52] init_plot_tables::y#5 = init_plot_tables::y#1
+Coalesced [53] init_plot_tables::yoffs#5 = init_plot_tables::yoffs#4
+Coalesced (already) [54] init_plot_tables::yoffs#6 = init_plot_tables::yoffs#2
+Coalesced [55] init_plot_tables::x#5 = init_plot_tables::x#1
+Coalesced [56] init_plot_tables::bits#5 = init_plot_tables::bits#4
+Coalesced [57] init_plot_tables::bits#6 = init_plot_tables::bits#1
+Coalesced [66] plots::i#5 = plots::i#1
 Coalesced down to 7 phi equivalence classes
-Culled Empty Block (label) main::@4
-Culled Empty Block (label) init_screen::@3
-Culled Empty Block (label) init_plot_tables::@3
-Culled Empty Block (label) init_plot_tables::@4
-Culled Empty Block (label) init_plot_tables::@10
-Culled Empty Block (label) init_plot_tables::@11
-Culled Empty Block (label) init_plot_tables::@8
+Culled Empty Block label main::@4
+Culled Empty Block label init_screen::@3
+Culled Empty Block label init_plot_tables::@3
+Culled Empty Block label init_plot_tables::@4
+Culled Empty Block label init_plot_tables::@10
+Culled Empty Block label init_plot_tables::@11
+Culled Empty Block label init_plot_tables::@8
 Renumbering block main::@5 to main::@4
 Renumbering block init_plot_tables::@5 to init_plot_tables::@3
 Renumbering block init_plot_tables::@6 to init_plot_tables::@4
@@ -591,12 +591,12 @@ Adding NOP phi() at start of plots
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) BG_COLOR) ← (byte) 0
-  [1] *((const byte*) FGCOL) ← (byte) 0
-  [2] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3
-  [3] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400
+  [0] *BG_COLOR = 0
+  [1] *FGCOL = 0
+  [2] *D011 = BMM|DEN|RSEL|3
+  [3] *D018 = (byte)(word)SCREEN/$40|(word)BITMAP/$400
   [4] call init_screen 
   to:main::@3
 main::@3: scope:[main]  from main
@@ -604,118 +604,118 @@ main::@3: scope:[main]  from main
   [6] call init_plot_tables 
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@3 main::@4
-  [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1
+  [7] if(*RASTER!=$ff) goto main::@1
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR)
+  [8] *BG_COLOR = ++ *BG_COLOR
   [9] call plots 
   to:main::@4
 main::@4: scope:[main]  from main::@2
-  [10] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR)
+  [10] *BG_COLOR = -- *BG_COLOR
   to:main::@1
 
-(void()) init_screen()
+void init_screen()
 init_screen: scope:[init_screen]  from main
   [11] phi()
   to:init_screen::@1
 init_screen::@1: scope:[init_screen]  from init_screen init_screen::@2
-  [12] (byte*) init_screen::b#2 ← phi( init_screen/(const nomodify byte*) BITMAP init_screen::@2/(byte*) init_screen::b#1 )
-  [13] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2
+  [12] init_screen::b#2 = phi( init_screen/BITMAP, init_screen::@2/init_screen::b#1 )
+  [13] if(init_screen::b#2!=BITMAP+$2000) goto init_screen::@2
   to:init_screen::@3
 init_screen::@3: scope:[init_screen]  from init_screen::@1 init_screen::@4
-  [14] (byte*) init_screen::c#2 ← phi( init_screen::@1/(const byte*) SCREEN init_screen::@4/(byte*) init_screen::c#1 )
-  [15] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4
+  [14] init_screen::c#2 = phi( init_screen::@1/SCREEN, init_screen::@4/init_screen::c#1 )
+  [15] if(init_screen::c#2!=SCREEN+$400) goto init_screen::@4
   to:init_screen::@return
 init_screen::@return: scope:[init_screen]  from init_screen::@3
   [16] return 
   to:@return
 init_screen::@4: scope:[init_screen]  from init_screen::@3
-  [17] *((byte*) init_screen::c#2) ← (byte) $14
-  [18] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2
+  [17] *init_screen::c#2 = $14
+  [18] init_screen::c#1 = ++ init_screen::c#2
   to:init_screen::@3
 init_screen::@2: scope:[init_screen]  from init_screen::@1
-  [19] *((byte*) init_screen::b#2) ← (byte) 0
-  [20] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2
+  [19] *init_screen::b#2 = 0
+  [20] init_screen::b#1 = ++ init_screen::b#2
   to:init_screen::@1
 
-(void()) init_plot_tables()
+void init_plot_tables()
 init_plot_tables: scope:[init_plot_tables]  from main::@3
   [21] phi()
   to:init_plot_tables::@1
 init_plot_tables::@1: scope:[init_plot_tables]  from init_plot_tables init_plot_tables::@2
-  [22] (byte) init_plot_tables::bits#3 ← phi( init_plot_tables/(byte) $80 init_plot_tables::@2/(byte) init_plot_tables::bits#4 )
-  [22] (byte) init_plot_tables::x#2 ← phi( init_plot_tables/(byte) 0 init_plot_tables::@2/(byte) init_plot_tables::x#1 )
-  [23] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8
-  [24] *((const to_nomodify byte*) plot_xlo + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0
-  [25] *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP
-  [26] *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3
-  [27] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte) 1
-  [28] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@6
+  [22] init_plot_tables::bits#3 = phi( init_plot_tables/$80, init_plot_tables::@2/init_plot_tables::bits#4 )
+  [22] init_plot_tables::x#2 = phi( init_plot_tables/0, init_plot_tables::@2/init_plot_tables::x#1 )
+  [23] init_plot_tables::$0 = init_plot_tables::x#2 & $f8
+  [24] plot_xlo[init_plot_tables::x#2] = init_plot_tables::$0
+  [25] plot_xhi[init_plot_tables::x#2] = >BITMAP
+  [26] plot_bit[init_plot_tables::x#2] = init_plot_tables::bits#3
+  [27] init_plot_tables::bits#1 = init_plot_tables::bits#3 >> 1
+  [28] if(init_plot_tables::bits#1!=0) goto init_plot_tables::@6
   to:init_plot_tables::@2
 init_plot_tables::@6: scope:[init_plot_tables]  from init_plot_tables::@1
   [29] phi()
   to:init_plot_tables::@2
 init_plot_tables::@2: scope:[init_plot_tables]  from init_plot_tables::@1 init_plot_tables::@6
-  [30] (byte) init_plot_tables::bits#4 ← phi( init_plot_tables::@6/(byte) init_plot_tables::bits#1 init_plot_tables::@1/(byte) $80 )
-  [31] (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#2
-  [32] if((byte) init_plot_tables::x#1!=(byte) 0) goto init_plot_tables::@1
+  [30] init_plot_tables::bits#4 = phi( init_plot_tables::@6/init_plot_tables::bits#1, init_plot_tables::@1/$80 )
+  [31] init_plot_tables::x#1 = ++ init_plot_tables::x#2
+  [32] if(init_plot_tables::x#1!=0) goto init_plot_tables::@1
   to:init_plot_tables::@3
 init_plot_tables::@3: scope:[init_plot_tables]  from init_plot_tables::@2 init_plot_tables::@4
-  [33] (byte*) init_plot_tables::yoffs#2 ← phi( init_plot_tables::@2/(byte*) 0 init_plot_tables::@4/(byte*) init_plot_tables::yoffs#4 )
-  [33] (byte) init_plot_tables::y#2 ← phi( init_plot_tables::@2/(byte) 0 init_plot_tables::@4/(byte) init_plot_tables::y#1 )
-  [34] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7
-  [35] (byte~) init_plot_tables::$6 ← < (byte*) init_plot_tables::yoffs#2
-  [36] (byte~) init_plot_tables::$7 ← (byte~) init_plot_tables::$9 | (byte~) init_plot_tables::$6
-  [37] *((const to_nomodify byte*) plot_ylo + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$7
-  [38] (byte~) init_plot_tables::$8 ← > (byte*) init_plot_tables::yoffs#2
-  [39] *((const to_nomodify byte*) plot_yhi + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8
-  [40] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@4
+  [33] init_plot_tables::yoffs#2 = phi( init_plot_tables::@2/(byte*) 0, init_plot_tables::@4/init_plot_tables::yoffs#4 )
+  [33] init_plot_tables::y#2 = phi( init_plot_tables::@2/0, init_plot_tables::@4/init_plot_tables::y#1 )
+  [34] init_plot_tables::$9 = init_plot_tables::y#2 & 7
+  [35] init_plot_tables::$6 = < init_plot_tables::yoffs#2
+  [36] init_plot_tables::$7 = init_plot_tables::$9 | init_plot_tables::$6
+  [37] plot_ylo[init_plot_tables::y#2] = init_plot_tables::$7
+  [38] init_plot_tables::$8 = > init_plot_tables::yoffs#2
+  [39] plot_yhi[init_plot_tables::y#2] = init_plot_tables::$8
+  [40] if(init_plot_tables::$9!=7) goto init_plot_tables::@4
   to:init_plot_tables::@5
 init_plot_tables::@5: scope:[init_plot_tables]  from init_plot_tables::@3
-  [41] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8
+  [41] init_plot_tables::yoffs#1 = init_plot_tables::yoffs#2 + (word)$28*8
   to:init_plot_tables::@4
 init_plot_tables::@4: scope:[init_plot_tables]  from init_plot_tables::@3 init_plot_tables::@5
-  [42] (byte*) init_plot_tables::yoffs#4 ← phi( init_plot_tables::@3/(byte*) init_plot_tables::yoffs#2 init_plot_tables::@5/(byte*) init_plot_tables::yoffs#1 )
-  [43] (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2
-  [44] if((byte) init_plot_tables::y#1!=(byte) 0) goto init_plot_tables::@3
+  [42] init_plot_tables::yoffs#4 = phi( init_plot_tables::@3/init_plot_tables::yoffs#2, init_plot_tables::@5/init_plot_tables::yoffs#1 )
+  [43] init_plot_tables::y#1 = ++ init_plot_tables::y#2
+  [44] if(init_plot_tables::y#1!=0) goto init_plot_tables::@3
   to:init_plot_tables::@return
 init_plot_tables::@return: scope:[init_plot_tables]  from init_plot_tables::@4
   [45] return 
   to:@return
 
-(void()) plots()
+void plots()
 plots: scope:[plots]  from main::@2
   [46] phi()
   to:plots::@1
 plots::@1: scope:[plots]  from plots plots::@3
-  [47] (byte) plots::i#2 ← phi( plots/(byte) 0 plots::@3/(byte) plots::i#1 )
-  [48] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2
+  [47] plots::i#2 = phi( plots/0, plots::@3/plots::i#1 )
+  [48] if(plots::i#2<plots_cnt) goto plots::@2
   to:plots::@return
 plots::@return: scope:[plots]  from plots::@1
   [49] return 
   to:@return
 plots::@2: scope:[plots]  from plots::@1
-  [50] (byte) plot::x#0 ← *((const byte*) plots_x + (byte) plots::i#2)
-  [51] (byte) plot::y#0 ← *((const byte*) plots_y + (byte) plots::i#2)
+  [50] plot::x#0 = plots_x[plots::i#2]
+  [51] plot::y#0 = plots_y[plots::i#2]
   [52] call plot 
   to:plots::@3
 plots::@3: scope:[plots]  from plots::@2
-  [53] (byte) plots::i#1 ← ++ (byte) plots::i#2
+  [53] plots::i#1 = ++ plots::i#2
   to:plots::@1
 
-(void()) plot((byte) plot::x , (byte) plot::y)
+void plot(byte plot::x , byte plot::y)
 plot: scope:[plot]  from plots::@2
-  [54] (byte~) plot::$6 ← *((const to_nomodify byte*) plot_xhi + (byte) plot::x#0)
-  [55] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6
-  [56] (byte~) plot::$7 ← *((const to_nomodify byte*) plot_xlo + (byte) plot::x#0)
-  [57] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7
-  [58] (byte~) plot::$8 ← *((const to_nomodify byte*) plot_yhi + (byte) plot::y#0)
-  [59] (word) plot::plotter_y#1 ← (word) 0 hi= (byte~) plot::$8
-  [60] (byte~) plot::$9 ← *((const to_nomodify byte*) plot_ylo + (byte) plot::y#0)
-  [61] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9
-  [62] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2
-  [63] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#0)
-  [64] *((byte*) plot::plotter#0) ← (byte~) plot::$5
+  [54] plot::$6 = plot_xhi[plot::x#0]
+  [55] plot::plotter_x#1 = (byte*) 0 hi= plot::$6
+  [56] plot::$7 = plot_xlo[plot::x#0]
+  [57] plot::plotter_x#2 = plot::plotter_x#1 lo= plot::$7
+  [58] plot::$8 = plot_yhi[plot::y#0]
+  [59] plot::plotter_y#1 = 0 hi= plot::$8
+  [60] plot::$9 = plot_ylo[plot::y#0]
+  [61] plot::plotter_y#2 = plot::plotter_y#1 lo= plot::$9
+  [62] plot::plotter#0 = plot::plotter_x#2 + plot::plotter_y#2
+  [63] plot::$5 = *plot::plotter#0 | plot_bit[plot::x#0]
+  [64] *plot::plotter#0 = plot::$5
   to:plot::@return
 plot::@return: scope:[plot]  from plot
   [65] return 
@@ -723,56 +723,56 @@ plot::@return: scope:[plot]  from plot
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) init_plot_tables()
-(byte~) init_plot_tables::$0 202.0
-(byte~) init_plot_tables::$6 202.0
-(byte~) init_plot_tables::$7 202.0
-(byte~) init_plot_tables::$8 202.0
-(byte~) init_plot_tables::$9 50.5
-(byte) init_plot_tables::bits
-(byte) init_plot_tables::bits#1 101.0
-(byte) init_plot_tables::bits#3 60.599999999999994
-(byte) init_plot_tables::bits#4 67.33333333333333
-(byte) init_plot_tables::x
-(byte) init_plot_tables::x#1 151.5
-(byte) init_plot_tables::x#2 67.33333333333333
-(byte) init_plot_tables::y
-(byte) init_plot_tables::y#1 151.5
-(byte) init_plot_tables::y#2 50.5
-(byte*) init_plot_tables::yoffs
-(byte*) init_plot_tables::yoffs#1 202.0
-(byte*) init_plot_tables::yoffs#2 63.125
-(byte*) init_plot_tables::yoffs#4 101.0
-(void()) init_screen()
-(byte*) init_screen::b
-(byte*) init_screen::b#1 202.0
-(byte*) init_screen::b#2 134.66666666666666
-(byte*) init_screen::c
-(byte*) init_screen::c#1 202.0
-(byte*) init_screen::c#2 134.66666666666666
-(void()) main()
-(void()) plot((byte) plot::x , (byte) plot::y)
-(byte~) plot::$5 200002.0
-(byte~) plot::$6 200002.0
-(byte~) plot::$7 200002.0
-(byte~) plot::$8 200002.0
-(byte~) plot::$9 200002.0
-(byte*) plot::plotter
-(byte*) plot::plotter#0 150001.5
-(byte*) plot::plotter_x
-(byte*) plot::plotter_x#1 100001.0
-(byte*) plot::plotter_x#2 40000.4
-(word) plot::plotter_y
-(word) plot::plotter_y#1 100001.0
-(word) plot::plotter_y#2 200002.0
-(byte) plot::x
-(byte) plot::x#0 28182.181818181816
-(byte) plot::y
-(byte) plot::y#0 30000.428571428572
-(void()) plots()
-(byte) plots::i
-(byte) plots::i#1 20002.0
-(byte) plots::i#2 10001.0
+void init_plot_tables()
+byte~ init_plot_tables::$0 202.0
+byte~ init_plot_tables::$6 202.0
+byte~ init_plot_tables::$7 202.0
+byte~ init_plot_tables::$8 202.0
+byte~ init_plot_tables::$9 50.5
+byte init_plot_tables::bits
+byte init_plot_tables::bits#1 101.0
+byte init_plot_tables::bits#3 60.599999999999994
+byte init_plot_tables::bits#4 67.33333333333333
+byte init_plot_tables::x
+byte init_plot_tables::x#1 151.5
+byte init_plot_tables::x#2 67.33333333333333
+byte init_plot_tables::y
+byte init_plot_tables::y#1 151.5
+byte init_plot_tables::y#2 50.5
+byte* init_plot_tables::yoffs
+byte* init_plot_tables::yoffs#1 202.0
+byte* init_plot_tables::yoffs#2 63.125
+byte* init_plot_tables::yoffs#4 101.0
+void init_screen()
+byte* init_screen::b
+byte* init_screen::b#1 202.0
+byte* init_screen::b#2 134.66666666666666
+byte* init_screen::c
+byte* init_screen::c#1 202.0
+byte* init_screen::c#2 134.66666666666666
+void main()
+void plot(byte plot::x , byte plot::y)
+byte~ plot::$5 200002.0
+byte~ plot::$6 200002.0
+byte~ plot::$7 200002.0
+byte~ plot::$8 200002.0
+byte~ plot::$9 200002.0
+byte* plot::plotter
+byte* plot::plotter#0 150001.5
+byte* plot::plotter_x
+byte* plot::plotter_x#1 100001.0
+byte* plot::plotter_x#2 40000.4
+word plot::plotter_y
+word plot::plotter_y#1 100001.0
+word plot::plotter_y#2 200002.0
+byte plot::x
+byte plot::x#0 28182.181818181816
+byte plot::y
+byte plot::y#0 30000.428571428572
+void plots()
+byte plots::i
+byte plots::i#1 20002.0
+byte plots::i#2 10001.0
 
 Initial phi equivalence classes
 [ init_screen::b#2 init_screen::b#1 ]
@@ -848,467 +848,51 @@ Allocated zp[1]:28 [ plot::$9 ]
 Allocated zp[2]:29 [ plot::plotter_y#2 ]
 Allocated zp[2]:31 [ plot::plotter#0 ]
 Allocated zp[1]:33 [ plot::$5 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const BMM = $20
-  .const DEN = $10
-  .const RSEL = 8
-  .const plots_cnt = 8
-  .label BITMAP = $2000
-  .label D011 = $d011
-  .label RASTER = $d012
-  .label D018 = $d018
-  .label BG_COLOR = $d020
-  .label FGCOL = $d021
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta BG_COLOR
-    // [1] *((const byte*) FGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta FGCOL
-    // [2] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 -- _deref_pbuc1=vbuc2 
-    lda #BMM|DEN|RSEL|3
-    sta D011
-    // [3] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 -- _deref_pbuc1=vbuc2 
-    lda #SCREEN/$40|BITMAP/$400
-    sta D018
-    // [4] call init_screen 
-    // [11] phi from main to init_screen [phi:main->init_screen]
-  init_screen_from_main:
-    jsr init_screen
-    // [5] phi from main to main::@3 [phi:main->main::@3]
-  __b3_from_main:
-    jmp __b3
-    // main::@3
-  __b3:
-    // [6] call init_plot_tables 
-    // [21] phi from main::@3 to init_plot_tables [phi:main::@3->init_plot_tables]
-  init_plot_tables_from___b3:
-    jsr init_plot_tables
-    jmp __b1
-    // main::@1
-  __b1:
-    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
-    lda #$ff
-    cmp RASTER
-    bne __b1
-    jmp __b2
-    // main::@2
-  __b2:
-    // [8] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    // [9] call plots 
-    // [46] phi from main::@2 to plots [phi:main::@2->plots]
-  plots_from___b2:
-    jsr plots
-    jmp __b4
-    // main::@4
-  __b4:
-    // [10] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec BG_COLOR
-    jmp __b1
-}
-  // init_screen
-init_screen: {
-    .label b = 2
-    .label c = 4
-    // [12] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
-  __b1_from_init_screen:
-    // [12] phi (byte*) init_screen::b#2 = (const nomodify byte*) BITMAP [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
-    lda #<BITMAP
-    sta.z b
-    lda #>BITMAP
-    sta.z b+1
-    jmp __b1
-    // init_screen::@1
-  __b1:
-    // [13] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z b+1
-    cmp #>BITMAP+$2000
-    bne __b2
-    lda.z b
-    cmp #<BITMAP+$2000
-    bne __b2
-    // [14] phi from init_screen::@1 to init_screen::@3 [phi:init_screen::@1->init_screen::@3]
-  __b3_from___b1:
-    // [14] phi (byte*) init_screen::c#2 = (const byte*) SCREEN [phi:init_screen::@1->init_screen::@3#0] -- pbuz1=pbuc1 
-    lda #<SCREEN
-    sta.z c
-    lda #>SCREEN
-    sta.z c+1
-    jmp __b3
-    // init_screen::@3
-  __b3:
-    // [15] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z c+1
-    cmp #>SCREEN+$400
-    bne __b4
-    lda.z c
-    cmp #<SCREEN+$400
-    bne __b4
-    jmp __breturn
-    // init_screen::@return
-  __breturn:
-    // [16] return 
-    rts
-    // init_screen::@4
-  __b4:
-    // [17] *((byte*) init_screen::c#2) ← (byte) $14 -- _deref_pbuz1=vbuc1 
-    lda #$14
-    ldy #0
-    sta (c),y
-    // [18] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2 -- pbuz1=_inc_pbuz1 
-    inc.z c
-    bne !+
-    inc.z c+1
-  !:
-    // [14] phi from init_screen::@4 to init_screen::@3 [phi:init_screen::@4->init_screen::@3]
-  __b3_from___b4:
-    // [14] phi (byte*) init_screen::c#2 = (byte*) init_screen::c#1 [phi:init_screen::@4->init_screen::@3#0] -- register_copy 
-    jmp __b3
-    // init_screen::@2
-  __b2:
-    // [19] *((byte*) init_screen::b#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
-    lda #0
-    ldy #0
-    sta (b),y
-    // [20] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2 -- pbuz1=_inc_pbuz1 
-    inc.z b
-    bne !+
-    inc.z b+1
-  !:
-    // [12] phi from init_screen::@2 to init_screen::@1 [phi:init_screen::@2->init_screen::@1]
-  __b1_from___b2:
-    // [12] phi (byte*) init_screen::b#2 = (byte*) init_screen::b#1 [phi:init_screen::@2->init_screen::@1#0] -- register_copy 
-    jmp __b1
-}
-  // init_plot_tables
-init_plot_tables: {
-    .label __0 = $c
-    .label __6 = $e
-    .label __7 = $f
-    .label __8 = $10
-    .label __9 = $d
-    .label bits = 7
-    .label x = 6
-    .label y = 8
-    .label yoffs = 9
-    // [22] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
-  __b1_from_init_plot_tables:
-    // [22] phi (byte) init_plot_tables::bits#3 = (byte) $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuz1=vbuc1 
-    lda #$80
-    sta.z bits
-    // [22] phi (byte) init_plot_tables::x#2 = (byte) 0 [phi:init_plot_tables->init_plot_tables::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z x
-    jmp __b1
-    // [22] phi from init_plot_tables::@2 to init_plot_tables::@1 [phi:init_plot_tables::@2->init_plot_tables::@1]
-  __b1_from___b2:
-    // [22] phi (byte) init_plot_tables::bits#3 = (byte) init_plot_tables::bits#4 [phi:init_plot_tables::@2->init_plot_tables::@1#0] -- register_copy 
-    // [22] phi (byte) init_plot_tables::x#2 = (byte) init_plot_tables::x#1 [phi:init_plot_tables::@2->init_plot_tables::@1#1] -- register_copy 
-    jmp __b1
-    // init_plot_tables::@1
-  __b1:
-    // [23] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8 -- vbuz1=vbuz2_band_vbuc1 
-    lda #$f8
-    and.z x
-    sta.z __0
-    // [24] *((const to_nomodify byte*) plot_xlo + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z __0
-    ldy.z x
-    sta plot_xlo,y
-    // [25] *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #>BITMAP
-    ldy.z x
-    sta plot_xhi,y
-    // [26] *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z bits
-    ldy.z x
-    sta plot_bit,y
-    // [27] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte) 1 -- vbuz1=vbuz1_ror_1 
-    lsr.z bits
-    // [28] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@6 -- vbuz1_neq_0_then_la1 
-    lda.z bits
-    cmp #0
-    bne __b6_from___b1
-    // [30] phi from init_plot_tables::@1 to init_plot_tables::@2 [phi:init_plot_tables::@1->init_plot_tables::@2]
-  __b2_from___b1:
-    // [30] phi (byte) init_plot_tables::bits#4 = (byte) $80 [phi:init_plot_tables::@1->init_plot_tables::@2#0] -- vbuz1=vbuc1 
-    lda #$80
-    sta.z bits
-    jmp __b2
-    // [29] phi from init_plot_tables::@1 to init_plot_tables::@6 [phi:init_plot_tables::@1->init_plot_tables::@6]
-  __b6_from___b1:
-    jmp __b6
-    // init_plot_tables::@6
-  __b6:
-    // [30] phi from init_plot_tables::@6 to init_plot_tables::@2 [phi:init_plot_tables::@6->init_plot_tables::@2]
-  __b2_from___b6:
-    // [30] phi (byte) init_plot_tables::bits#4 = (byte) init_plot_tables::bits#1 [phi:init_plot_tables::@6->init_plot_tables::@2#0] -- register_copy 
-    jmp __b2
-    // init_plot_tables::@2
-  __b2:
-    // [31] (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#2 -- vbuz1=_inc_vbuz1 
-    inc.z x
-    // [32] if((byte) init_plot_tables::x#1!=(byte) 0) goto init_plot_tables::@1 -- vbuz1_neq_0_then_la1 
-    lda.z x
-    cmp #0
-    bne __b1_from___b2
-    // [33] phi from init_plot_tables::@2 to init_plot_tables::@3 [phi:init_plot_tables::@2->init_plot_tables::@3]
-  __b3_from___b2:
-    // [33] phi (byte*) init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
-    lda #<0
-    sta.z yoffs
-    lda #>0
-    sta.z yoffs+1
-    // [33] phi (byte) init_plot_tables::y#2 = (byte) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z y
-    jmp __b3
-    // [33] phi from init_plot_tables::@4 to init_plot_tables::@3 [phi:init_plot_tables::@4->init_plot_tables::@3]
-  __b3_from___b4:
-    // [33] phi (byte*) init_plot_tables::yoffs#2 = (byte*) init_plot_tables::yoffs#4 [phi:init_plot_tables::@4->init_plot_tables::@3#0] -- register_copy 
-    // [33] phi (byte) init_plot_tables::y#2 = (byte) init_plot_tables::y#1 [phi:init_plot_tables::@4->init_plot_tables::@3#1] -- register_copy 
-    jmp __b3
-    // init_plot_tables::@3
-  __b3:
-    // [34] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7 -- vbuz1=vbuz2_band_vbuc1 
-    lda #7
-    and.z y
-    sta.z __9
-    // [35] (byte~) init_plot_tables::$6 ← < (byte*) init_plot_tables::yoffs#2 -- vbuz1=_lo_pbuz2 
-    lda.z yoffs
-    sta.z __6
-    // [36] (byte~) init_plot_tables::$7 ← (byte~) init_plot_tables::$9 | (byte~) init_plot_tables::$6 -- vbuz1=vbuz2_bor_vbuz3 
-    lda.z __9
-    ora.z __6
-    sta.z __7
-    // [37] *((const to_nomodify byte*) plot_ylo + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$7 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z __7
-    ldy.z y
-    sta plot_ylo,y
-    // [38] (byte~) init_plot_tables::$8 ← > (byte*) init_plot_tables::yoffs#2 -- vbuz1=_hi_pbuz2 
-    lda.z yoffs+1
-    sta.z __8
-    // [39] *((const to_nomodify byte*) plot_yhi + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z __8
-    ldy.z y
-    sta plot_yhi,y
-    // [40] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
-    lda #7
-    cmp.z __9
-    bne __b4_from___b3
-    jmp __b5
-    // init_plot_tables::@5
-  __b5:
-    // [41] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
-    clc
-    lda.z yoffs
-    adc #<$28*8
-    sta.z yoffs
-    lda.z yoffs+1
-    adc #>$28*8
-    sta.z yoffs+1
-    // [42] phi from init_plot_tables::@3 init_plot_tables::@5 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4]
-  __b4_from___b3:
-  __b4_from___b5:
-    // [42] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4#0] -- register_copy 
-    jmp __b4
-    // init_plot_tables::@4
-  __b4:
-    // [43] (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2 -- vbuz1=_inc_vbuz1 
-    inc.z y
-    // [44] if((byte) init_plot_tables::y#1!=(byte) 0) goto init_plot_tables::@3 -- vbuz1_neq_0_then_la1 
-    lda.z y
-    cmp #0
-    bne __b3_from___b4
-    jmp __breturn
-    // init_plot_tables::@return
-  __breturn:
-    // [45] return 
-    rts
-}
-  // plots
-plots: {
-    .label i = $b
-    // [47] phi from plots to plots::@1 [phi:plots->plots::@1]
-  __b1_from_plots:
-    // [47] phi (byte) plots::i#2 = (byte) 0 [phi:plots->plots::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // plots::@1
-  __b1:
-    // [48] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #plots_cnt
-    bcc __b2
-    jmp __breturn
-    // plots::@return
-  __breturn:
-    // [49] return 
-    rts
-    // plots::@2
-  __b2:
-    // [50] (byte) plot::x#0 ← *((const byte*) plots_x + (byte) plots::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z i
-    lda plots_x,y
-    sta.z plot.x
-    // [51] (byte) plot::y#0 ← *((const byte*) plots_y + (byte) plots::i#2) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z i
-    lda plots_y,y
-    sta.z plot.y
-    // [52] call plot 
-    jsr plot
-    jmp __b3
-    // plots::@3
-  __b3:
-    // [53] (byte) plots::i#1 ← ++ (byte) plots::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [47] phi from plots::@3 to plots::@1 [phi:plots::@3->plots::@1]
-  __b1_from___b3:
-    // [47] phi (byte) plots::i#2 = (byte) plots::i#1 [phi:plots::@3->plots::@1#0] -- register_copy 
-    jmp __b1
-}
-  // plot
-// plot(byte zp($11) x, byte zp($12) y)
-plot: {
-    .label __5 = $21
-    .label __6 = $13
-    .label __7 = $16
-    .label __8 = $19
-    .label __9 = $1c
-    .label x = $11
-    .label y = $12
-    .label plotter_x = $14
-    .label plotter_x_1 = $17
-    .label plotter_y = $1a
-    .label plotter_y_1 = $1d
-    .label plotter = $1f
-    // [54] (byte~) plot::$6 ← *((const to_nomodify byte*) plot_xhi + (byte) plot::x#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z x
-    lda plot_xhi,y
-    sta.z __6
-    // [55] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6 -- pbuz1=pbuc1_sethi_vbuz2 
-    lda.z __6
-    sta.z plotter_x+1
-    lda #<0
-    sta.z plotter_x
-    // [56] (byte~) plot::$7 ← *((const to_nomodify byte*) plot_xlo + (byte) plot::x#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z x
-    lda plot_xlo,y
-    sta.z __7
-    // [57] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 -- pbuz1=pbuz2_setlo_vbuz3 
-    lda.z __7
-    sta.z plotter_x_1
-    lda.z plotter_x+1
-    sta.z plotter_x_1+1
-    // [58] (byte~) plot::$8 ← *((const to_nomodify byte*) plot_yhi + (byte) plot::y#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z y
-    lda plot_yhi,y
-    sta.z __8
-    // [59] (word) plot::plotter_y#1 ← (word) 0 hi= (byte~) plot::$8 -- vwuz1=vwuc1_sethi_vbuz2 
-    lda.z __8
-    sta.z plotter_y+1
-    lda #<0
-    sta.z plotter_y
-    // [60] (byte~) plot::$9 ← *((const to_nomodify byte*) plot_ylo + (byte) plot::y#0) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z y
-    lda plot_ylo,y
-    sta.z __9
-    // [61] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 -- vwuz1=vwuz2_setlo_vbuz3 
-    lda.z __9
-    sta.z plotter_y_1
-    lda.z plotter_y+1
-    sta.z plotter_y_1+1
-    // [62] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 -- pbuz1=pbuz2_plus_vwuz3 
-    lda.z plotter_x_1
-    clc
-    adc.z plotter_y_1
-    sta.z plotter
-    lda.z plotter_x_1+1
-    adc.z plotter_y_1+1
-    sta.z plotter+1
-    // [63] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#0) -- vbuz1=_deref_pbuz2_bor_pbuc1_derefidx_vbuz3 
-    ldy #0
-    lda (plotter),y
-    ldy.z x
-    ora plot_bit,y
-    sta.z __5
-    // [64] *((byte*) plot::plotter#0) ← (byte~) plot::$5 -- _deref_pbuz1=vbuz2 
-    lda.z __5
-    ldy #0
-    sta (plotter),y
-    jmp __breturn
-    // plot::@return
-  __breturn:
-    // [65] return 
-    rts
-}
-  // File Data
-  plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28
-  plots_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28
-  plot_xlo: .fill $100, 0
-  plot_xhi: .fill $100, 0
-  plot_ylo: .fill $100, 0
-  plot_yhi: .fill $100, 0
-  plot_bit: .fill $100, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Equivalence Class zp[1]:14 [ init_plot_tables::$6 ] has ALU potential.
-Statement [0] *((const byte*) BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) FGCOL) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [13] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a 
-Statement [15] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a 
-Statement [17] *((byte*) init_screen::c#2) ← (byte) $14 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] *((byte*) init_screen::b#2) ← (byte) 0 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [25] *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
+Statement [0] *BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *FGCOL = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *D011 = BMM|DEN|RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *D018 = (byte)(word)SCREEN/$40|(word)BITMAP/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] if(*RASTER!=$ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] if(init_screen::b#2!=BITMAP+$2000) goto init_screen::@2 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a 
+Statement [15] if(init_screen::c#2!=SCREEN+$400) goto init_screen::@4 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a 
+Statement [17] *init_screen::c#2 = $14 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] *init_screen::b#2 = 0 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [25] plot_xhi[init_plot_tables::x#2] = >BITMAP [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ init_plot_tables::x#2 init_plot_tables::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ init_plot_tables::bits#3 init_plot_tables::bits#4 init_plot_tables::bits#1 ]
-Statement [26] *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
-Statement [41] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( init_plot_tables:6 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] { }  ) always clobbers reg byte a 
+Statement [26] plot_bit[init_plot_tables::x#2] = init_plot_tables::bits#3 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
+Statement [41] init_plot_tables::yoffs#1 = init_plot_tables::yoffs#2 + (word)$28*8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( init_plot_tables:6 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ init_plot_tables::y#2 init_plot_tables::y#1 ]
-Statement [57] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] { }  ) always clobbers reg byte a 
+Statement [57] plot::plotter_x#2 = plot::plotter_x#1 lo= plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:11 [ plots::i#2 plots::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:17 [ plot::x#0 ]
 Removing always clobbered register reg byte a as potential for zp[1]:18 [ plot::y#0 ]
-Statement [61] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] { }  ) always clobbers reg byte a 
-Statement [62] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 [ plot::x#0 plot::plotter#0 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter#0 ] { }  ) always clobbers reg byte a 
-Statement [63] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( plots:9::plot:52 [ plots::i#2 plot::plotter#0 plot::$5 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [61] plot::plotter_y#2 = plot::plotter_y#1 lo= plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] { }  ) always clobbers reg byte a 
+Statement [62] plot::plotter#0 = plot::plotter_x#2 + plot::plotter_y#2 [ plot::x#0 plot::plotter#0 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter#0 ] { }  ) always clobbers reg byte a 
+Statement [63] plot::$5 = *plot::plotter#0 | plot_bit[plot::x#0] [ plot::plotter#0 plot::$5 ] ( plots:9::plot:52 [ plots::i#2 plot::plotter#0 plot::$5 ] { }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:11 [ plots::i#2 plots::i#1 ]
-Statement [64] *((byte*) plot::plotter#0) ← (byte~) plot::$5 [ ] ( plots:9::plot:52 [ plots::i#2 ] { }  ) always clobbers reg byte y 
-Statement [0] *((const byte*) BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) FGCOL) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [13] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a 
-Statement [15] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a 
-Statement [17] *((byte*) init_screen::c#2) ← (byte) $14 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] *((byte*) init_screen::b#2) ← (byte) 0 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [23] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8 [ init_plot_tables::x#2 init_plot_tables::bits#3 init_plot_tables::$0 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 init_plot_tables::$0 ] { }  ) always clobbers reg byte a 
-Statement [25] *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
-Statement [26] *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
-Statement [34] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ( init_plot_tables:6 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] { }  ) always clobbers reg byte a 
-Statement [41] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( init_plot_tables:6 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] { }  ) always clobbers reg byte a 
-Statement [57] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] { }  ) always clobbers reg byte a 
-Statement [61] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] { }  ) always clobbers reg byte a 
-Statement [62] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 [ plot::x#0 plot::plotter#0 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter#0 ] { }  ) always clobbers reg byte a 
-Statement [63] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#0) [ plot::plotter#0 plot::$5 ] ( plots:9::plot:52 [ plots::i#2 plot::plotter#0 plot::$5 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [64] *((byte*) plot::plotter#0) ← (byte~) plot::$5 [ ] ( plots:9::plot:52 [ plots::i#2 ] { }  ) always clobbers reg byte y 
+Statement [64] *plot::plotter#0 = plot::$5 [ ] ( plots:9::plot:52 [ plots::i#2 ] { }  ) always clobbers reg byte y 
+Statement [0] *BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *FGCOL = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *D011 = BMM|DEN|RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *D018 = (byte)(word)SCREEN/$40|(word)BITMAP/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] if(*RASTER!=$ff) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] if(init_screen::b#2!=BITMAP+$2000) goto init_screen::@2 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a 
+Statement [15] if(init_screen::c#2!=SCREEN+$400) goto init_screen::@4 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a 
+Statement [17] *init_screen::c#2 = $14 [ init_screen::c#2 ] ( init_screen:4 [ init_screen::c#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [19] *init_screen::b#2 = 0 [ init_screen::b#2 ] ( init_screen:4 [ init_screen::b#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [23] init_plot_tables::$0 = init_plot_tables::x#2 & $f8 [ init_plot_tables::x#2 init_plot_tables::bits#3 init_plot_tables::$0 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 init_plot_tables::$0 ] { }  ) always clobbers reg byte a 
+Statement [25] plot_xhi[init_plot_tables::x#2] = >BITMAP [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
+Statement [26] plot_bit[init_plot_tables::x#2] = init_plot_tables::bits#3 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] ( init_plot_tables:6 [ init_plot_tables::x#2 init_plot_tables::bits#3 ] { }  ) always clobbers reg byte a 
+Statement [34] init_plot_tables::$9 = init_plot_tables::y#2 & 7 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] ( init_plot_tables:6 [ init_plot_tables::y#2 init_plot_tables::yoffs#2 init_plot_tables::$9 ] { }  ) always clobbers reg byte a 
+Statement [41] init_plot_tables::yoffs#1 = init_plot_tables::yoffs#2 + (word)$28*8 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] ( init_plot_tables:6 [ init_plot_tables::y#2 init_plot_tables::yoffs#1 ] { }  ) always clobbers reg byte a 
+Statement [57] plot::plotter_x#2 = plot::plotter_x#1 lo= plot::$7 [ plot::x#0 plot::y#0 plot::plotter_x#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::y#0 plot::plotter_x#2 ] { }  ) always clobbers reg byte a 
+Statement [61] plot::plotter_y#2 = plot::plotter_y#1 lo= plot::$9 [ plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter_x#2 plot::plotter_y#2 ] { }  ) always clobbers reg byte a 
+Statement [62] plot::plotter#0 = plot::plotter_x#2 + plot::plotter_y#2 [ plot::x#0 plot::plotter#0 ] ( plots:9::plot:52 [ plots::i#2 plot::x#0 plot::plotter#0 ] { }  ) always clobbers reg byte a 
+Statement [63] plot::$5 = *plot::plotter#0 | plot_bit[plot::x#0] [ plot::plotter#0 plot::$5 ] ( plots:9::plot:52 [ plots::i#2 plot::plotter#0 plot::$5 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [64] *plot::plotter#0 = plot::$5 [ ] ( plots:9::plot:52 [ plots::i#2 ] { }  ) always clobbers reg byte y 
 Potential registers zp[2]:2 [ init_screen::b#2 init_screen::b#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ init_screen::c#2 init_screen::c#1 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ init_plot_tables::x#2 init_plot_tables::x#1 ] : zp[1]:6 , reg byte x , reg byte y , 
@@ -1396,16 +980,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BG_COLOR
-    // [1] *((const byte*) FGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [1] *FGCOL = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta FGCOL
-    // [2] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 -- _deref_pbuc1=vbuc2 
+    // [2] *D011 = BMM|DEN|RSEL|3 -- _deref_pbuc1=vbuc2 
     lda #BMM|DEN|RSEL|3
     sta D011
-    // [3] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 -- _deref_pbuc1=vbuc2 
+    // [3] *D018 = (byte)(word)SCREEN/$40|(word)BITMAP/$400 -- _deref_pbuc1=vbuc2 
     lda #SCREEN/$40|BITMAP/$400
     sta D018
     // [4] call init_screen 
@@ -1424,14 +1008,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*RASTER!=$ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b1
     jmp __b2
     // main::@2
   __b2:
-    // [8] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // [9] call plots 
     // [46] phi from main::@2 to plots [phi:main::@2->plots]
@@ -1440,7 +1024,7 @@ main: {
     jmp __b4
     // main::@4
   __b4:
-    // [10] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *BG_COLOR = -- *BG_COLOR -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BG_COLOR
     jmp __b1
 }
@@ -1450,7 +1034,7 @@ init_screen: {
     .label c = 4
     // [12] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
   __b1_from_init_screen:
-    // [12] phi (byte*) init_screen::b#2 = (const nomodify byte*) BITMAP [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
+    // [12] phi init_screen::b#2 = BITMAP [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z b
     lda #>BITMAP
@@ -1458,7 +1042,7 @@ init_screen: {
     jmp __b1
     // init_screen::@1
   __b1:
-    // [13] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [13] if(init_screen::b#2!=BITMAP+$2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z b+1
     cmp #>BITMAP+$2000
     bne __b2
@@ -1467,7 +1051,7 @@ init_screen: {
     bne __b2
     // [14] phi from init_screen::@1 to init_screen::@3 [phi:init_screen::@1->init_screen::@3]
   __b3_from___b1:
-    // [14] phi (byte*) init_screen::c#2 = (const byte*) SCREEN [phi:init_screen::@1->init_screen::@3#0] -- pbuz1=pbuc1 
+    // [14] phi init_screen::c#2 = SCREEN [phi:init_screen::@1->init_screen::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z c
     lda #>SCREEN
@@ -1475,7 +1059,7 @@ init_screen: {
     jmp __b3
     // init_screen::@3
   __b3:
-    // [15] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
+    // [15] if(init_screen::c#2!=SCREEN+$400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
     lda.z c+1
     cmp #>SCREEN+$400
     bne __b4
@@ -1489,33 +1073,33 @@ init_screen: {
     rts
     // init_screen::@4
   __b4:
-    // [17] *((byte*) init_screen::c#2) ← (byte) $14 -- _deref_pbuz1=vbuc1 
+    // [17] *init_screen::c#2 = $14 -- _deref_pbuz1=vbuc1 
     lda #$14
     ldy #0
     sta (c),y
-    // [18] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2 -- pbuz1=_inc_pbuz1 
+    // [18] init_screen::c#1 = ++ init_screen::c#2 -- pbuz1=_inc_pbuz1 
     inc.z c
     bne !+
     inc.z c+1
   !:
     // [14] phi from init_screen::@4 to init_screen::@3 [phi:init_screen::@4->init_screen::@3]
   __b3_from___b4:
-    // [14] phi (byte*) init_screen::c#2 = (byte*) init_screen::c#1 [phi:init_screen::@4->init_screen::@3#0] -- register_copy 
+    // [14] phi init_screen::c#2 = init_screen::c#1 [phi:init_screen::@4->init_screen::@3#0] -- register_copy 
     jmp __b3
     // init_screen::@2
   __b2:
-    // [19] *((byte*) init_screen::b#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [19] *init_screen::b#2 = 0 -- _deref_pbuz1=vbuc1 
     lda #0
     ldy #0
     sta (b),y
-    // [20] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2 -- pbuz1=_inc_pbuz1 
+    // [20] init_screen::b#1 = ++ init_screen::b#2 -- pbuz1=_inc_pbuz1 
     inc.z b
     bne !+
     inc.z b+1
   !:
     // [12] phi from init_screen::@2 to init_screen::@1 [phi:init_screen::@2->init_screen::@1]
   __b1_from___b2:
-    // [12] phi (byte*) init_screen::b#2 = (byte*) init_screen::b#1 [phi:init_screen::@2->init_screen::@1#0] -- register_copy 
+    // [12] phi init_screen::b#2 = init_screen::b#1 [phi:init_screen::@2->init_screen::@1#0] -- register_copy 
     jmp __b1
 }
   // init_plot_tables
@@ -1524,39 +1108,39 @@ init_plot_tables: {
     .label yoffs = 6
     // [22] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
   __b1_from_init_plot_tables:
-    // [22] phi (byte) init_plot_tables::bits#3 = (byte) $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
+    // [22] phi init_plot_tables::bits#3 = $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
     ldy #$80
-    // [22] phi (byte) init_plot_tables::x#2 = (byte) 0 [phi:init_plot_tables->init_plot_tables::@1#1] -- vbuxx=vbuc1 
+    // [22] phi init_plot_tables::x#2 = 0 [phi:init_plot_tables->init_plot_tables::@1#1] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [22] phi from init_plot_tables::@2 to init_plot_tables::@1 [phi:init_plot_tables::@2->init_plot_tables::@1]
   __b1_from___b2:
-    // [22] phi (byte) init_plot_tables::bits#3 = (byte) init_plot_tables::bits#4 [phi:init_plot_tables::@2->init_plot_tables::@1#0] -- register_copy 
-    // [22] phi (byte) init_plot_tables::x#2 = (byte) init_plot_tables::x#1 [phi:init_plot_tables::@2->init_plot_tables::@1#1] -- register_copy 
+    // [22] phi init_plot_tables::bits#3 = init_plot_tables::bits#4 [phi:init_plot_tables::@2->init_plot_tables::@1#0] -- register_copy 
+    // [22] phi init_plot_tables::x#2 = init_plot_tables::x#1 [phi:init_plot_tables::@2->init_plot_tables::@1#1] -- register_copy 
     jmp __b1
     // init_plot_tables::@1
   __b1:
-    // [23] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8 -- vbuaa=vbuxx_band_vbuc1 
+    // [23] init_plot_tables::$0 = init_plot_tables::x#2 & $f8 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f8
-    // [24] *((const to_nomodify byte*) plot_xlo + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [24] plot_xlo[init_plot_tables::x#2] = init_plot_tables::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_xlo,x
-    // [25] *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [25] plot_xhi[init_plot_tables::x#2] = >BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #>BITMAP
     sta plot_xhi,x
-    // [26] *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [26] plot_bit[init_plot_tables::x#2] = init_plot_tables::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta plot_bit,x
-    // [27] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte) 1 -- vbuyy=vbuyy_ror_1 
+    // [27] init_plot_tables::bits#1 = init_plot_tables::bits#3 >> 1 -- vbuyy=vbuyy_ror_1 
     tya
     lsr
     tay
-    // [28] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@6 -- vbuyy_neq_0_then_la1 
+    // [28] if(init_plot_tables::bits#1!=0) goto init_plot_tables::@6 -- vbuyy_neq_0_then_la1 
     cpy #0
     bne __b6_from___b1
     // [30] phi from init_plot_tables::@1 to init_plot_tables::@2 [phi:init_plot_tables::@1->init_plot_tables::@2]
   __b2_from___b1:
-    // [30] phi (byte) init_plot_tables::bits#4 = (byte) $80 [phi:init_plot_tables::@1->init_plot_tables::@2#0] -- vbuyy=vbuc1 
+    // [30] phi init_plot_tables::bits#4 = $80 [phi:init_plot_tables::@1->init_plot_tables::@2#0] -- vbuyy=vbuc1 
     ldy #$80
     jmp __b2
     // [29] phi from init_plot_tables::@1 to init_plot_tables::@6 [phi:init_plot_tables::@1->init_plot_tables::@6]
@@ -1566,53 +1150,53 @@ init_plot_tables: {
   __b6:
     // [30] phi from init_plot_tables::@6 to init_plot_tables::@2 [phi:init_plot_tables::@6->init_plot_tables::@2]
   __b2_from___b6:
-    // [30] phi (byte) init_plot_tables::bits#4 = (byte) init_plot_tables::bits#1 [phi:init_plot_tables::@6->init_plot_tables::@2#0] -- register_copy 
+    // [30] phi init_plot_tables::bits#4 = init_plot_tables::bits#1 [phi:init_plot_tables::@6->init_plot_tables::@2#0] -- register_copy 
     jmp __b2
     // init_plot_tables::@2
   __b2:
-    // [31] (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#2 -- vbuxx=_inc_vbuxx 
+    // [31] init_plot_tables::x#1 = ++ init_plot_tables::x#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [32] if((byte) init_plot_tables::x#1!=(byte) 0) goto init_plot_tables::@1 -- vbuxx_neq_0_then_la1 
+    // [32] if(init_plot_tables::x#1!=0) goto init_plot_tables::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1_from___b2
     // [33] phi from init_plot_tables::@2 to init_plot_tables::@3 [phi:init_plot_tables::@2->init_plot_tables::@3]
   __b3_from___b2:
-    // [33] phi (byte*) init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
+    // [33] phi init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
     lda #<0
     sta.z yoffs
     lda #>0
     sta.z yoffs+1
-    // [33] phi (byte) init_plot_tables::y#2 = (byte) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuxx=vbuc1 
+    // [33] phi init_plot_tables::y#2 = 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuxx=vbuc1 
     ldx #0
     jmp __b3
     // [33] phi from init_plot_tables::@4 to init_plot_tables::@3 [phi:init_plot_tables::@4->init_plot_tables::@3]
   __b3_from___b4:
-    // [33] phi (byte*) init_plot_tables::yoffs#2 = (byte*) init_plot_tables::yoffs#4 [phi:init_plot_tables::@4->init_plot_tables::@3#0] -- register_copy 
-    // [33] phi (byte) init_plot_tables::y#2 = (byte) init_plot_tables::y#1 [phi:init_plot_tables::@4->init_plot_tables::@3#1] -- register_copy 
+    // [33] phi init_plot_tables::yoffs#2 = init_plot_tables::yoffs#4 [phi:init_plot_tables::@4->init_plot_tables::@3#0] -- register_copy 
+    // [33] phi init_plot_tables::y#2 = init_plot_tables::y#1 [phi:init_plot_tables::@4->init_plot_tables::@3#1] -- register_copy 
     jmp __b3
     // init_plot_tables::@3
   __b3:
-    // [34] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
+    // [34] init_plot_tables::$9 = init_plot_tables::y#2 & 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax.z __9
-    // [35] (byte~) init_plot_tables::$6 ← < (byte*) init_plot_tables::yoffs#2 -- vbuaa=_lo_pbuz1 
+    // [35] init_plot_tables::$6 = < init_plot_tables::yoffs#2 -- vbuaa=_lo_pbuz1 
     lda.z yoffs
-    // [36] (byte~) init_plot_tables::$7 ← (byte~) init_plot_tables::$9 | (byte~) init_plot_tables::$6 -- vbuaa=vbuz1_bor_vbuaa 
+    // [36] init_plot_tables::$7 = init_plot_tables::$9 | init_plot_tables::$6 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __9
-    // [37] *((const to_nomodify byte*) plot_ylo + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [37] plot_ylo[init_plot_tables::y#2] = init_plot_tables::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_ylo,x
-    // [38] (byte~) init_plot_tables::$8 ← > (byte*) init_plot_tables::yoffs#2 -- vbuaa=_hi_pbuz1 
+    // [38] init_plot_tables::$8 = > init_plot_tables::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
-    // [39] *((const to_nomodify byte*) plot_yhi + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [39] plot_yhi[init_plot_tables::y#2] = init_plot_tables::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_yhi,x
-    // [40] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [40] if(init_plot_tables::$9!=7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
     cmp.z __9
     bne __b4_from___b3
     jmp __b5
     // init_plot_tables::@5
   __b5:
-    // [41] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
+    // [41] init_plot_tables::yoffs#1 = init_plot_tables::yoffs#2 + (word)$28*8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z yoffs
     adc #<$28*8
@@ -1623,13 +1207,13 @@ init_plot_tables: {
     // [42] phi from init_plot_tables::@3 init_plot_tables::@5 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4]
   __b4_from___b3:
   __b4_from___b5:
-    // [42] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4#0] -- register_copy 
+    // [42] phi init_plot_tables::yoffs#4 = init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4#0] -- register_copy 
     jmp __b4
     // init_plot_tables::@4
   __b4:
-    // [43] (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2 -- vbuxx=_inc_vbuxx 
+    // [43] init_plot_tables::y#1 = ++ init_plot_tables::y#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [44] if((byte) init_plot_tables::y#1!=(byte) 0) goto init_plot_tables::@3 -- vbuxx_neq_0_then_la1 
+    // [44] if(init_plot_tables::y#1!=0) goto init_plot_tables::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b3_from___b4
     jmp __breturn
@@ -1642,12 +1226,12 @@ init_plot_tables: {
 plots: {
     // [47] phi from plots to plots::@1 [phi:plots->plots::@1]
   __b1_from_plots:
-    // [47] phi (byte) plots::i#2 = (byte) 0 [phi:plots->plots::@1#0] -- vbuxx=vbuc1 
+    // [47] phi plots::i#2 = 0 [phi:plots->plots::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // plots::@1
   __b1:
-    // [48] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [48] if(plots::i#2<plots_cnt) goto plots::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #plots_cnt
     bcc __b2
     jmp __breturn
@@ -1657,10 +1241,10 @@ plots: {
     rts
     // plots::@2
   __b2:
-    // [50] (byte) plot::x#0 ← *((const byte*) plots_x + (byte) plots::i#2) -- vbuz1=pbuc1_derefidx_vbuxx 
+    // [50] plot::x#0 = plots_x[plots::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_x,x
     sta.z plot.x
-    // [51] (byte) plot::y#0 ← *((const byte*) plots_y + (byte) plots::i#2) -- vbuz1=pbuc1_derefidx_vbuxx 
+    // [51] plot::y#0 = plots_y[plots::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_y,x
     sta.z plot.y
     // [52] call plot 
@@ -1668,11 +1252,11 @@ plots: {
     jmp __b3
     // plots::@3
   __b3:
-    // [53] (byte) plots::i#1 ← ++ (byte) plots::i#2 -- vbuxx=_inc_vbuxx 
+    // [53] plots::i#1 = ++ plots::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [47] phi from plots::@3 to plots::@1 [phi:plots::@3->plots::@1]
   __b1_from___b3:
-    // [47] phi (byte) plots::i#2 = (byte) plots::i#1 [phi:plots::@3->plots::@1#0] -- register_copy 
+    // [47] phi plots::i#2 = plots::i#1 [phi:plots::@3->plots::@1#0] -- register_copy 
     jmp __b1
 }
   // plot
@@ -1683,31 +1267,31 @@ plot: {
     .label plotter_x = 4
     .label plotter_y = 6
     .label plotter = 4
-    // [54] (byte~) plot::$6 ← *((const to_nomodify byte*) plot_xhi + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [54] plot::$6 = plot_xhi[plot::x#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z x
     lda plot_xhi,y
-    // [55] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6 -- pbuz1=pbuc1_sethi_vbuaa 
+    // [55] plot::plotter_x#1 = (byte*) 0 hi= plot::$6 -- pbuz1=pbuc1_sethi_vbuaa 
     sta.z plotter_x+1
     lda #<0
     sta.z plotter_x
-    // [56] (byte~) plot::$7 ← *((const to_nomodify byte*) plot_xlo + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [56] plot::$7 = plot_xlo[plot::x#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z x
     lda plot_xlo,y
-    // [57] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 -- pbuz1=pbuz1_setlo_vbuaa 
+    // [57] plot::plotter_x#2 = plot::plotter_x#1 lo= plot::$7 -- pbuz1=pbuz1_setlo_vbuaa 
     sta.z plotter_x
-    // [58] (byte~) plot::$8 ← *((const to_nomodify byte*) plot_yhi + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [58] plot::$8 = plot_yhi[plot::y#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z y
     lda plot_yhi,y
-    // [59] (word) plot::plotter_y#1 ← (word) 0 hi= (byte~) plot::$8 -- vwuz1=vwuc1_sethi_vbuaa 
+    // [59] plot::plotter_y#1 = 0 hi= plot::$8 -- vwuz1=vwuc1_sethi_vbuaa 
     sta.z plotter_y+1
     lda #<0
     sta.z plotter_y
-    // [60] (byte~) plot::$9 ← *((const to_nomodify byte*) plot_ylo + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [60] plot::$9 = plot_ylo[plot::y#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z y
     lda plot_ylo,y
-    // [61] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 -- vwuz1=vwuz1_setlo_vbuaa 
+    // [61] plot::plotter_y#2 = plot::plotter_y#1 lo= plot::$9 -- vwuz1=vwuz1_setlo_vbuaa 
     sta.z plotter_y
-    // [62] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 -- pbuz1=pbuz1_plus_vwuz2 
+    // [62] plot::plotter#0 = plot::plotter_x#2 + plot::plotter_y#2 -- pbuz1=pbuz1_plus_vwuz2 
     lda.z plotter
     clc
     adc.z plotter_y
@@ -1715,12 +1299,12 @@ plot: {
     lda.z plotter+1
     adc.z plotter_y+1
     sta.z plotter+1
-    // [63] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#0) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [63] plot::$5 = *plot::plotter#0 | plot_bit[plot::x#0] -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter),y
     ldy.z x
     ora plot_bit,y
-    // [64] *((byte*) plot::plotter#0) ← (byte~) plot::$5 -- _deref_pbuz1=vbuaa 
+    // [64] *plot::plotter#0 = plot::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (plotter),y
     jmp __breturn
@@ -1806,95 +1390,95 @@ Removing instruction jmp __b3
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const byte*) BG_COLOR = (byte*) 53280
-(const nomodify byte*) BITMAP = (byte*) 8192
-(const byte) BMM = (byte) $20
-(const byte*) D011 = (byte*) 53265
-(const byte*) D018 = (byte*) 53272
-(const byte) DEN = (byte) $10
-(const byte*) FGCOL = (byte*) 53281
-(const byte*) RASTER = (byte*) 53266
-(const byte) RSEL = (byte) 8
-(const byte*) SCREEN = (byte*) 1024
-(void()) init_plot_tables()
-(byte~) init_plot_tables::$0 reg byte a 202.0
-(byte~) init_plot_tables::$6 reg byte a 202.0
-(byte~) init_plot_tables::$7 reg byte a 202.0
-(byte~) init_plot_tables::$8 reg byte a 202.0
-(byte~) init_plot_tables::$9 zp[1]:2 50.5
-(label) init_plot_tables::@1
-(label) init_plot_tables::@2
-(label) init_plot_tables::@3
-(label) init_plot_tables::@4
-(label) init_plot_tables::@5
-(label) init_plot_tables::@6
-(label) init_plot_tables::@return
-(byte) init_plot_tables::bits
-(byte) init_plot_tables::bits#1 reg byte y 101.0
-(byte) init_plot_tables::bits#3 reg byte y 60.599999999999994
-(byte) init_plot_tables::bits#4 reg byte y 67.33333333333333
-(byte) init_plot_tables::x
-(byte) init_plot_tables::x#1 reg byte x 151.5
-(byte) init_plot_tables::x#2 reg byte x 67.33333333333333
-(byte) init_plot_tables::y
-(byte) init_plot_tables::y#1 reg byte x 151.5
-(byte) init_plot_tables::y#2 reg byte x 50.5
-(byte*) init_plot_tables::yoffs
-(byte*) init_plot_tables::yoffs#1 yoffs zp[2]:6 202.0
-(byte*) init_plot_tables::yoffs#2 yoffs zp[2]:6 63.125
-(byte*) init_plot_tables::yoffs#4 yoffs zp[2]:6 101.0
-(void()) init_screen()
-(label) init_screen::@1
-(label) init_screen::@2
-(label) init_screen::@3
-(label) init_screen::@4
-(label) init_screen::@return
-(byte*) init_screen::b
-(byte*) init_screen::b#1 b zp[2]:6 202.0
-(byte*) init_screen::b#2 b zp[2]:6 134.66666666666666
-(byte*) init_screen::c
-(byte*) init_screen::c#1 c zp[2]:4 202.0
-(byte*) init_screen::c#2 c zp[2]:4 134.66666666666666
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(void()) plot((byte) plot::x , (byte) plot::y)
-(byte~) plot::$5 reg byte a 200002.0
-(byte~) plot::$6 reg byte a 200002.0
-(byte~) plot::$7 reg byte a 200002.0
-(byte~) plot::$8 reg byte a 200002.0
-(byte~) plot::$9 reg byte a 200002.0
-(label) plot::@return
-(byte*) plot::plotter
-(byte*) plot::plotter#0 plotter zp[2]:4 150001.5
-(byte*) plot::plotter_x
-(byte*) plot::plotter_x#1 plotter_x zp[2]:4 100001.0
-(byte*) plot::plotter_x#2 plotter_x zp[2]:4 40000.4
-(word) plot::plotter_y
-(word) plot::plotter_y#1 plotter_y zp[2]:6 100001.0
-(word) plot::plotter_y#2 plotter_y zp[2]:6 200002.0
-(byte) plot::x
-(byte) plot::x#0 x zp[1]:2 28182.181818181816
-(byte) plot::y
-(byte) plot::y#0 y zp[1]:3 30000.428571428572
-(const to_nomodify byte*) plot_bit[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_xhi[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_xlo[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_yhi[(number) $100]  = { fill( $100, 0) }
-(const to_nomodify byte*) plot_ylo[(number) $100]  = { fill( $100, 0) }
-(void()) plots()
-(label) plots::@1
-(label) plots::@2
-(label) plots::@3
-(label) plots::@return
-(byte) plots::i
-(byte) plots::i#1 reg byte x 20002.0
-(byte) plots::i#2 reg byte x 10001.0
-(const byte) plots_cnt = (byte) 8
-(const byte*) plots_x[]  = { (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28, (byte) $a, (byte) $28 }
-(const byte*) plots_y[]  = { (byte) $a, (byte) $28, (byte) $3c, (byte) $50, (byte) $6e, (byte) $50, (byte) $3c, (byte) $28 }
+const byte* BG_COLOR = (byte*) 53280
+const nomodify byte* BITMAP = (byte*) 8192
+const byte BMM = $20
+const byte* D011 = (byte*) 53265
+const byte* D018 = (byte*) 53272
+const byte DEN = $10
+const byte* FGCOL = (byte*) 53281
+const byte* RASTER = (byte*) 53266
+const byte RSEL = 8
+const byte* SCREEN = (byte*) 1024
+void init_plot_tables()
+byte~ init_plot_tables::$0 reg byte a 202.0
+byte~ init_plot_tables::$6 reg byte a 202.0
+byte~ init_plot_tables::$7 reg byte a 202.0
+byte~ init_plot_tables::$8 reg byte a 202.0
+byte~ init_plot_tables::$9 zp[1]:2 50.5
+label init_plot_tables::@1
+label init_plot_tables::@2
+label init_plot_tables::@3
+label init_plot_tables::@4
+label init_plot_tables::@5
+label init_plot_tables::@6
+label init_plot_tables::@return
+byte init_plot_tables::bits
+byte init_plot_tables::bits#1 reg byte y 101.0
+byte init_plot_tables::bits#3 reg byte y 60.599999999999994
+byte init_plot_tables::bits#4 reg byte y 67.33333333333333
+byte init_plot_tables::x
+byte init_plot_tables::x#1 reg byte x 151.5
+byte init_plot_tables::x#2 reg byte x 67.33333333333333
+byte init_plot_tables::y
+byte init_plot_tables::y#1 reg byte x 151.5
+byte init_plot_tables::y#2 reg byte x 50.5
+byte* init_plot_tables::yoffs
+byte* init_plot_tables::yoffs#1 yoffs zp[2]:6 202.0
+byte* init_plot_tables::yoffs#2 yoffs zp[2]:6 63.125
+byte* init_plot_tables::yoffs#4 yoffs zp[2]:6 101.0
+void init_screen()
+label init_screen::@1
+label init_screen::@2
+label init_screen::@3
+label init_screen::@4
+label init_screen::@return
+byte* init_screen::b
+byte* init_screen::b#1 b zp[2]:6 202.0
+byte* init_screen::b#2 b zp[2]:6 134.66666666666666
+byte* init_screen::c
+byte* init_screen::c#1 c zp[2]:4 202.0
+byte* init_screen::c#2 c zp[2]:4 134.66666666666666
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+void plot(byte plot::x , byte plot::y)
+byte~ plot::$5 reg byte a 200002.0
+byte~ plot::$6 reg byte a 200002.0
+byte~ plot::$7 reg byte a 200002.0
+byte~ plot::$8 reg byte a 200002.0
+byte~ plot::$9 reg byte a 200002.0
+label plot::@return
+byte* plot::plotter
+byte* plot::plotter#0 plotter zp[2]:4 150001.5
+byte* plot::plotter_x
+byte* plot::plotter_x#1 plotter_x zp[2]:4 100001.0
+byte* plot::plotter_x#2 plotter_x zp[2]:4 40000.4
+word plot::plotter_y
+word plot::plotter_y#1 plotter_y zp[2]:6 100001.0
+word plot::plotter_y#2 plotter_y zp[2]:6 200002.0
+byte plot::x
+byte plot::x#0 x zp[1]:2 28182.181818181816
+byte plot::y
+byte plot::y#0 y zp[1]:3 30000.428571428572
+const to_nomodify byte* plot_bit[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_xhi[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_xlo[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_yhi[$100]  = { fill( $100, 0) }
+const to_nomodify byte* plot_ylo[$100]  = { fill( $100, 0) }
+void plots()
+label plots::@1
+label plots::@2
+label plots::@3
+label plots::@return
+byte plots::i
+byte plots::i#1 reg byte x 20002.0
+byte plots::i#2 reg byte x 10001.0
+const byte plots_cnt = 8
+const byte* plots_x[]  = { $3c, $50, $6e, $50, $3c, $28, $a, $28 }
+const byte* plots_y[]  = { $a, $28, $3c, $50, $6e, $50, $3c, $28 }
 
 reg byte x [ init_plot_tables::x#2 init_plot_tables::x#1 ]
 reg byte y [ init_plot_tables::bits#3 init_plot_tables::bits#4 init_plot_tables::bits#1 ]
@@ -1938,18 +1522,18 @@ Score: 6531
   // main
 main: {
     // *BG_COLOR = 0
-    // [0] *((const byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BG_COLOR
     // *FGCOL = 0
-    // [1] *((const byte*) FGCOL) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [1] *FGCOL = 0 -- _deref_pbuc1=vbuc2 
     sta FGCOL
     // *D011 = BMM|DEN|RSEL|3
-    // [2] *((const byte*) D011) ← (const byte) BMM|(const byte) DEN|(const byte) RSEL|(byte) 3 -- _deref_pbuc1=vbuc2 
+    // [2] *D011 = BMM|DEN|RSEL|3 -- _deref_pbuc1=vbuc2 
     lda #BMM|DEN|RSEL|3
     sta D011
     // *D018 = (byte)(((word)SCREEN/$40)|((word)BITMAP/$400))
-    // [3] *((const byte*) D018) ← (byte)(word)(const byte*) SCREEN/(byte) $40|(word)(const nomodify byte*) BITMAP/(word) $400 -- _deref_pbuc1=vbuc2 
+    // [3] *D018 = (byte)(word)SCREEN/$40|(word)BITMAP/$400 -- _deref_pbuc1=vbuc2 
     lda #SCREEN/$40|BITMAP/$400
     sta D018
     // init_screen()
@@ -1965,13 +1549,13 @@ main: {
     // main::@1
   __b1:
     // while (*RASTER!=$ff)
-    // [7] if(*((const byte*) RASTER)!=(byte) $ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
+    // [7] if(*RASTER!=$ff) goto main::@1 -- _deref_pbuc1_neq_vbuc2_then_la1 
     lda #$ff
     cmp RASTER
     bne __b1
     // main::@2
     // (*BG_COLOR)++;
-    // [8] *((const byte*) BG_COLOR) ← ++ *((const byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [8] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // plots()
     // [9] call plots 
@@ -1979,7 +1563,7 @@ main: {
     jsr plots
     // main::@4
     // (*BG_COLOR)--;
-    // [10] *((const byte*) BG_COLOR) ← -- *((const byte*) BG_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [10] *BG_COLOR = -- *BG_COLOR -- _deref_pbuc1=_dec__deref_pbuc1 
     dec BG_COLOR
     jmp __b1
 }
@@ -1988,7 +1572,7 @@ init_screen: {
     .label b = 6
     .label c = 4
     // [12] phi from init_screen to init_screen::@1 [phi:init_screen->init_screen::@1]
-    // [12] phi (byte*) init_screen::b#2 = (const nomodify byte*) BITMAP [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
+    // [12] phi init_screen::b#2 = BITMAP [phi:init_screen->init_screen::@1#0] -- pbuz1=pbuc1 
     lda #<BITMAP
     sta.z b
     lda #>BITMAP
@@ -1996,7 +1580,7 @@ init_screen: {
     // init_screen::@1
   __b1:
     // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
-    // [13] if((byte*) init_screen::b#2!=(const nomodify byte*) BITMAP+(word) $2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [13] if(init_screen::b#2!=BITMAP+$2000) goto init_screen::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z b+1
     cmp #>BITMAP+$2000
     bne __b2
@@ -2004,7 +1588,7 @@ init_screen: {
     cmp #<BITMAP+$2000
     bne __b2
     // [14] phi from init_screen::@1 to init_screen::@3 [phi:init_screen::@1->init_screen::@3]
-    // [14] phi (byte*) init_screen::c#2 = (const byte*) SCREEN [phi:init_screen::@1->init_screen::@3#0] -- pbuz1=pbuc1 
+    // [14] phi init_screen::c#2 = SCREEN [phi:init_screen::@1->init_screen::@3#0] -- pbuz1=pbuc1 
     lda #<SCREEN
     sta.z c
     lda #>SCREEN
@@ -2012,7 +1596,7 @@ init_screen: {
     // init_screen::@3
   __b3:
     // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
-    // [15] if((byte*) init_screen::c#2!=(const byte*) SCREEN+(word) $400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
+    // [15] if(init_screen::c#2!=SCREEN+$400) goto init_screen::@4 -- pbuz1_neq_pbuc1_then_la1 
     lda.z c+1
     cmp #>SCREEN+$400
     bne __b4
@@ -2026,34 +1610,34 @@ init_screen: {
     // init_screen::@4
   __b4:
     // *c = $14
-    // [17] *((byte*) init_screen::c#2) ← (byte) $14 -- _deref_pbuz1=vbuc1 
+    // [17] *init_screen::c#2 = $14 -- _deref_pbuz1=vbuc1 
     lda #$14
     ldy #0
     sta (c),y
     // for(byte* c = SCREEN; c!=SCREEN+$400;c++)
-    // [18] (byte*) init_screen::c#1 ← ++ (byte*) init_screen::c#2 -- pbuz1=_inc_pbuz1 
+    // [18] init_screen::c#1 = ++ init_screen::c#2 -- pbuz1=_inc_pbuz1 
     inc.z c
     bne !+
     inc.z c+1
   !:
     // [14] phi from init_screen::@4 to init_screen::@3 [phi:init_screen::@4->init_screen::@3]
-    // [14] phi (byte*) init_screen::c#2 = (byte*) init_screen::c#1 [phi:init_screen::@4->init_screen::@3#0] -- register_copy 
+    // [14] phi init_screen::c#2 = init_screen::c#1 [phi:init_screen::@4->init_screen::@3#0] -- register_copy 
     jmp __b3
     // init_screen::@2
   __b2:
     // *b = 0
-    // [19] *((byte*) init_screen::b#2) ← (byte) 0 -- _deref_pbuz1=vbuc1 
+    // [19] *init_screen::b#2 = 0 -- _deref_pbuz1=vbuc1 
     lda #0
     tay
     sta (b),y
     // for(byte* b = BITMAP; b!=BITMAP+$2000; b++)
-    // [20] (byte*) init_screen::b#1 ← ++ (byte*) init_screen::b#2 -- pbuz1=_inc_pbuz1 
+    // [20] init_screen::b#1 = ++ init_screen::b#2 -- pbuz1=_inc_pbuz1 
     inc.z b
     bne !+
     inc.z b+1
   !:
     // [12] phi from init_screen::@2 to init_screen::@1 [phi:init_screen::@2->init_screen::@1]
-    // [12] phi (byte*) init_screen::b#2 = (byte*) init_screen::b#1 [phi:init_screen::@2->init_screen::@1#0] -- register_copy 
+    // [12] phi init_screen::b#2 = init_screen::b#1 [phi:init_screen::@2->init_screen::@1#0] -- register_copy 
     jmp __b1
 }
   // init_plot_tables
@@ -2061,93 +1645,93 @@ init_plot_tables: {
     .label __9 = 2
     .label yoffs = 6
     // [22] phi from init_plot_tables to init_plot_tables::@1 [phi:init_plot_tables->init_plot_tables::@1]
-    // [22] phi (byte) init_plot_tables::bits#3 = (byte) $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
+    // [22] phi init_plot_tables::bits#3 = $80 [phi:init_plot_tables->init_plot_tables::@1#0] -- vbuyy=vbuc1 
     ldy #$80
-    // [22] phi (byte) init_plot_tables::x#2 = (byte) 0 [phi:init_plot_tables->init_plot_tables::@1#1] -- vbuxx=vbuc1 
+    // [22] phi init_plot_tables::x#2 = 0 [phi:init_plot_tables->init_plot_tables::@1#1] -- vbuxx=vbuc1 
     ldx #0
     // [22] phi from init_plot_tables::@2 to init_plot_tables::@1 [phi:init_plot_tables::@2->init_plot_tables::@1]
-    // [22] phi (byte) init_plot_tables::bits#3 = (byte) init_plot_tables::bits#4 [phi:init_plot_tables::@2->init_plot_tables::@1#0] -- register_copy 
-    // [22] phi (byte) init_plot_tables::x#2 = (byte) init_plot_tables::x#1 [phi:init_plot_tables::@2->init_plot_tables::@1#1] -- register_copy 
+    // [22] phi init_plot_tables::bits#3 = init_plot_tables::bits#4 [phi:init_plot_tables::@2->init_plot_tables::@1#0] -- register_copy 
+    // [22] phi init_plot_tables::x#2 = init_plot_tables::x#1 [phi:init_plot_tables::@2->init_plot_tables::@1#1] -- register_copy 
     // init_plot_tables::@1
   __b1:
     // x&$f8
-    // [23] (byte~) init_plot_tables::$0 ← (byte) init_plot_tables::x#2 & (byte) $f8 -- vbuaa=vbuxx_band_vbuc1 
+    // [23] init_plot_tables::$0 = init_plot_tables::x#2 & $f8 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$f8
     // plot_xlo[x] = x&$f8
-    // [24] *((const to_nomodify byte*) plot_xlo + (byte) init_plot_tables::x#2) ← (byte~) init_plot_tables::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [24] plot_xlo[init_plot_tables::x#2] = init_plot_tables::$0 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_xlo,x
     // plot_xhi[x] = >BITMAP
-    // [25] *((const to_nomodify byte*) plot_xhi + (byte) init_plot_tables::x#2) ← >(const nomodify byte*) BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [25] plot_xhi[init_plot_tables::x#2] = >BITMAP -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #>BITMAP
     sta plot_xhi,x
     // plot_bit[x] = bits
-    // [26] *((const to_nomodify byte*) plot_bit + (byte) init_plot_tables::x#2) ← (byte) init_plot_tables::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
+    // [26] plot_bit[init_plot_tables::x#2] = init_plot_tables::bits#3 -- pbuc1_derefidx_vbuxx=vbuyy 
     tya
     sta plot_bit,x
     // bits = bits/2
-    // [27] (byte) init_plot_tables::bits#1 ← (byte) init_plot_tables::bits#3 >> (byte) 1 -- vbuyy=vbuyy_ror_1 
+    // [27] init_plot_tables::bits#1 = init_plot_tables::bits#3 >> 1 -- vbuyy=vbuyy_ror_1 
     tya
     lsr
     tay
     // if(bits==0)
-    // [28] if((byte) init_plot_tables::bits#1!=(byte) 0) goto init_plot_tables::@6 -- vbuyy_neq_0_then_la1 
+    // [28] if(init_plot_tables::bits#1!=0) goto init_plot_tables::@6 -- vbuyy_neq_0_then_la1 
     cpy #0
     bne __b2
     // [30] phi from init_plot_tables::@1 to init_plot_tables::@2 [phi:init_plot_tables::@1->init_plot_tables::@2]
-    // [30] phi (byte) init_plot_tables::bits#4 = (byte) $80 [phi:init_plot_tables::@1->init_plot_tables::@2#0] -- vbuyy=vbuc1 
+    // [30] phi init_plot_tables::bits#4 = $80 [phi:init_plot_tables::@1->init_plot_tables::@2#0] -- vbuyy=vbuc1 
     ldy #$80
     // [29] phi from init_plot_tables::@1 to init_plot_tables::@6 [phi:init_plot_tables::@1->init_plot_tables::@6]
     // init_plot_tables::@6
     // [30] phi from init_plot_tables::@6 to init_plot_tables::@2 [phi:init_plot_tables::@6->init_plot_tables::@2]
-    // [30] phi (byte) init_plot_tables::bits#4 = (byte) init_plot_tables::bits#1 [phi:init_plot_tables::@6->init_plot_tables::@2#0] -- register_copy 
+    // [30] phi init_plot_tables::bits#4 = init_plot_tables::bits#1 [phi:init_plot_tables::@6->init_plot_tables::@2#0] -- register_copy 
     // init_plot_tables::@2
   __b2:
     // for(byte x : 0..255)
-    // [31] (byte) init_plot_tables::x#1 ← ++ (byte) init_plot_tables::x#2 -- vbuxx=_inc_vbuxx 
+    // [31] init_plot_tables::x#1 = ++ init_plot_tables::x#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [32] if((byte) init_plot_tables::x#1!=(byte) 0) goto init_plot_tables::@1 -- vbuxx_neq_0_then_la1 
+    // [32] if(init_plot_tables::x#1!=0) goto init_plot_tables::@1 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b1
     // [33] phi from init_plot_tables::@2 to init_plot_tables::@3 [phi:init_plot_tables::@2->init_plot_tables::@3]
-    // [33] phi (byte*) init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
+    // [33] phi init_plot_tables::yoffs#2 = (byte*) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#0] -- pbuz1=pbuc1 
     lda #<0
     sta.z yoffs
     sta.z yoffs+1
-    // [33] phi (byte) init_plot_tables::y#2 = (byte) 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuxx=vbuc1 
+    // [33] phi init_plot_tables::y#2 = 0 [phi:init_plot_tables::@2->init_plot_tables::@3#1] -- vbuxx=vbuc1 
     tax
     // [33] phi from init_plot_tables::@4 to init_plot_tables::@3 [phi:init_plot_tables::@4->init_plot_tables::@3]
-    // [33] phi (byte*) init_plot_tables::yoffs#2 = (byte*) init_plot_tables::yoffs#4 [phi:init_plot_tables::@4->init_plot_tables::@3#0] -- register_copy 
-    // [33] phi (byte) init_plot_tables::y#2 = (byte) init_plot_tables::y#1 [phi:init_plot_tables::@4->init_plot_tables::@3#1] -- register_copy 
+    // [33] phi init_plot_tables::yoffs#2 = init_plot_tables::yoffs#4 [phi:init_plot_tables::@4->init_plot_tables::@3#0] -- register_copy 
+    // [33] phi init_plot_tables::y#2 = init_plot_tables::y#1 [phi:init_plot_tables::@4->init_plot_tables::@3#1] -- register_copy 
     // init_plot_tables::@3
   __b3:
     // y&$7
-    // [34] (byte~) init_plot_tables::$9 ← (byte) init_plot_tables::y#2 & (byte) 7 -- vbuz1=vbuxx_band_vbuc1 
+    // [34] init_plot_tables::$9 = init_plot_tables::y#2 & 7 -- vbuz1=vbuxx_band_vbuc1 
     lda #7
     sax.z __9
     // <yoffs
-    // [35] (byte~) init_plot_tables::$6 ← < (byte*) init_plot_tables::yoffs#2 -- vbuaa=_lo_pbuz1 
+    // [35] init_plot_tables::$6 = < init_plot_tables::yoffs#2 -- vbuaa=_lo_pbuz1 
     lda.z yoffs
     // y&$7 | <yoffs
-    // [36] (byte~) init_plot_tables::$7 ← (byte~) init_plot_tables::$9 | (byte~) init_plot_tables::$6 -- vbuaa=vbuz1_bor_vbuaa 
+    // [36] init_plot_tables::$7 = init_plot_tables::$9 | init_plot_tables::$6 -- vbuaa=vbuz1_bor_vbuaa 
     ora.z __9
     // plot_ylo[y] = y&$7 | <yoffs
-    // [37] *((const to_nomodify byte*) plot_ylo + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [37] plot_ylo[init_plot_tables::y#2] = init_plot_tables::$7 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_ylo,x
     // >yoffs
-    // [38] (byte~) init_plot_tables::$8 ← > (byte*) init_plot_tables::yoffs#2 -- vbuaa=_hi_pbuz1 
+    // [38] init_plot_tables::$8 = > init_plot_tables::yoffs#2 -- vbuaa=_hi_pbuz1 
     lda.z yoffs+1
     // plot_yhi[y] = >yoffs
-    // [39] *((const to_nomodify byte*) plot_yhi + (byte) init_plot_tables::y#2) ← (byte~) init_plot_tables::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [39] plot_yhi[init_plot_tables::y#2] = init_plot_tables::$8 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta plot_yhi,x
     // if((y&$7)==7)
-    // [40] if((byte~) init_plot_tables::$9!=(byte) 7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
+    // [40] if(init_plot_tables::$9!=7) goto init_plot_tables::@4 -- vbuz1_neq_vbuc1_then_la1 
     lda #7
     cmp.z __9
     bne __b4
     // init_plot_tables::@5
     // yoffs = yoffs + 40*8
-    // [41] (byte*) init_plot_tables::yoffs#1 ← (byte*) init_plot_tables::yoffs#2 + (word)(number) $28*(number) 8 -- pbuz1=pbuz1_plus_vwuc1 
+    // [41] init_plot_tables::yoffs#1 = init_plot_tables::yoffs#2 + (word)$28*8 -- pbuz1=pbuz1_plus_vwuc1 
     clc
     lda.z yoffs
     adc #<$28*8
@@ -2156,13 +1740,13 @@ init_plot_tables: {
     adc #>$28*8
     sta.z yoffs+1
     // [42] phi from init_plot_tables::@3 init_plot_tables::@5 to init_plot_tables::@4 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4]
-    // [42] phi (byte*) init_plot_tables::yoffs#4 = (byte*) init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4#0] -- register_copy 
+    // [42] phi init_plot_tables::yoffs#4 = init_plot_tables::yoffs#2 [phi:init_plot_tables::@3/init_plot_tables::@5->init_plot_tables::@4#0] -- register_copy 
     // init_plot_tables::@4
   __b4:
     // for(byte y : 0..255)
-    // [43] (byte) init_plot_tables::y#1 ← ++ (byte) init_plot_tables::y#2 -- vbuxx=_inc_vbuxx 
+    // [43] init_plot_tables::y#1 = ++ init_plot_tables::y#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [44] if((byte) init_plot_tables::y#1!=(byte) 0) goto init_plot_tables::@3 -- vbuxx_neq_0_then_la1 
+    // [44] if(init_plot_tables::y#1!=0) goto init_plot_tables::@3 -- vbuxx_neq_0_then_la1 
     cpx #0
     bne __b3
     // init_plot_tables::@return
@@ -2173,12 +1757,12 @@ init_plot_tables: {
   // plots
 plots: {
     // [47] phi from plots to plots::@1 [phi:plots->plots::@1]
-    // [47] phi (byte) plots::i#2 = (byte) 0 [phi:plots->plots::@1#0] -- vbuxx=vbuc1 
+    // [47] phi plots::i#2 = 0 [phi:plots->plots::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // plots::@1
   __b1:
     // for(byte i=0; i<plots_cnt;i++)
-    // [48] if((byte) plots::i#2<(const byte) plots_cnt) goto plots::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [48] if(plots::i#2<plots_cnt) goto plots::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #plots_cnt
     bcc __b2
     // plots::@return
@@ -2188,20 +1772,20 @@ plots: {
     // plots::@2
   __b2:
     // plot(plots_x[i], plots_y[i])
-    // [50] (byte) plot::x#0 ← *((const byte*) plots_x + (byte) plots::i#2) -- vbuz1=pbuc1_derefidx_vbuxx 
+    // [50] plot::x#0 = plots_x[plots::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_x,x
     sta.z plot.x
-    // [51] (byte) plot::y#0 ← *((const byte*) plots_y + (byte) plots::i#2) -- vbuz1=pbuc1_derefidx_vbuxx 
+    // [51] plot::y#0 = plots_y[plots::i#2] -- vbuz1=pbuc1_derefidx_vbuxx 
     lda plots_y,x
     sta.z plot.y
     // [52] call plot 
     jsr plot
     // plots::@3
     // for(byte i=0; i<plots_cnt;i++)
-    // [53] (byte) plots::i#1 ← ++ (byte) plots::i#2 -- vbuxx=_inc_vbuxx 
+    // [53] plots::i#1 = ++ plots::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // [47] phi from plots::@3 to plots::@1 [phi:plots::@3->plots::@1]
-    // [47] phi (byte) plots::i#2 = (byte) plots::i#1 [phi:plots::@3->plots::@1#0] -- register_copy 
+    // [47] phi plots::i#2 = plots::i#1 [phi:plots::@3->plots::@1#0] -- register_copy 
     jmp __b1
 }
   // plot
@@ -2213,33 +1797,33 @@ plot: {
     .label plotter_y = 6
     .label plotter = 4
     // >plotter_x = plot_xhi[x]
-    // [54] (byte~) plot::$6 ← *((const to_nomodify byte*) plot_xhi + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [54] plot::$6 = plot_xhi[plot::x#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z x
     lda plot_xhi,y
-    // [55] (byte*) plot::plotter_x#1 ← (byte*) 0 hi= (byte~) plot::$6 -- pbuz1=pbuc1_sethi_vbuaa 
+    // [55] plot::plotter_x#1 = (byte*) 0 hi= plot::$6 -- pbuz1=pbuc1_sethi_vbuaa 
     sta.z plotter_x+1
     lda #<0
     sta.z plotter_x
     // <plotter_x = plot_xlo[x]
-    // [56] (byte~) plot::$7 ← *((const to_nomodify byte*) plot_xlo + (byte) plot::x#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [56] plot::$7 = plot_xlo[plot::x#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     lda plot_xlo,y
-    // [57] (byte*) plot::plotter_x#2 ← (byte*) plot::plotter_x#1 lo= (byte~) plot::$7 -- pbuz1=pbuz1_setlo_vbuaa 
+    // [57] plot::plotter_x#2 = plot::plotter_x#1 lo= plot::$7 -- pbuz1=pbuz1_setlo_vbuaa 
     sta.z plotter_x
     // >plotter_y = plot_yhi[y]
-    // [58] (byte~) plot::$8 ← *((const to_nomodify byte*) plot_yhi + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [58] plot::$8 = plot_yhi[plot::y#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z y
     lda plot_yhi,y
-    // [59] (word) plot::plotter_y#1 ← (word) 0 hi= (byte~) plot::$8 -- vwuz1=vwuc1_sethi_vbuaa 
+    // [59] plot::plotter_y#1 = 0 hi= plot::$8 -- vwuz1=vwuc1_sethi_vbuaa 
     sta.z plotter_y+1
     lda #<0
     sta.z plotter_y
     // <plotter_y = plot_ylo[y]
-    // [60] (byte~) plot::$9 ← *((const to_nomodify byte*) plot_ylo + (byte) plot::y#0) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [60] plot::$9 = plot_ylo[plot::y#0] -- vbuaa=pbuc1_derefidx_vbuz1 
     lda plot_ylo,y
-    // [61] (word) plot::plotter_y#2 ← (word) plot::plotter_y#1 lo= (byte~) plot::$9 -- vwuz1=vwuz1_setlo_vbuaa 
+    // [61] plot::plotter_y#2 = plot::plotter_y#1 lo= plot::$9 -- vwuz1=vwuz1_setlo_vbuaa 
     sta.z plotter_y
     // plotter = plotter_x+plotter_y
-    // [62] (byte*) plot::plotter#0 ← (byte*) plot::plotter_x#2 + (word) plot::plotter_y#2 -- pbuz1=pbuz1_plus_vwuz2 
+    // [62] plot::plotter#0 = plot::plotter_x#2 + plot::plotter_y#2 -- pbuz1=pbuz1_plus_vwuz2 
     lda.z plotter
     clc
     adc.z plotter_y
@@ -2248,13 +1832,13 @@ plot: {
     adc.z plotter_y+1
     sta.z plotter+1
     // *plotter | plot_bit[x]
-    // [63] (byte~) plot::$5 ← *((byte*) plot::plotter#0) | *((const to_nomodify byte*) plot_bit + (byte) plot::x#0) -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
+    // [63] plot::$5 = *plot::plotter#0 | plot_bit[plot::x#0] -- vbuaa=_deref_pbuz1_bor_pbuc1_derefidx_vbuz2 
     ldy #0
     lda (plotter),y
     ldy.z x
     ora plot_bit,y
     // *plotter = *plotter | plot_bit[x]
-    // [64] *((byte*) plot::plotter#0) ← (byte~) plot::$5 -- _deref_pbuz1=vbuaa 
+    // [64] *plot::plotter#0 = plot::$5 -- _deref_pbuz1=vbuaa 
     ldy #0
     sta (plotter),y
     // plot::@return

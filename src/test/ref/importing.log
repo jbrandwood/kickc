@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const byte*) main::screen) ← (number) 1
-  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) RED
+  *main::screen = 1
+  *BG_COLOR = RED
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,24 +21,24 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
-(const nomodify byte) RED = (byte) 2
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte*) main::screen = (byte*)(number) $400
+const nomodify byte* BG_COLOR = (byte*)$d021
+const nomodify byte RED = 2
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte* main::screen = (byte*)$400
 
-Adding number conversion cast (unumber) 1 in *((const byte*) main::screen) ← (number) 1
+Adding number conversion cast (unumber) 1 in *main::screen = 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) main::screen) ← (unumber)(number) 1
+Inlining cast *main::screen = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -52,10 +52,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) main::screen) ← (byte) 1
-  [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) RED
+  [0] *main::screen = 1
+  [1] *BG_COLOR = RED
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -63,41 +63,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const RED = 2
-  .label BG_COLOR = $d021
-  // main
-main: {
-    .label screen = $400
-    // [0] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta screen
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta BG_COLOR
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) main::screen) ← (byte) 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::screen = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *BG_COLOR = RED [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -118,10 +90,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BG_COLOR
     jmp __breturn
@@ -139,11 +111,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53281
-(const nomodify byte) RED = (byte) 2
-(void()) main()
-(label) main::@return
-(const byte*) main::screen = (byte*) 1024
+const nomodify byte* BG_COLOR = (byte*) 53281
+const nomodify byte RED = 2
+void main()
+label main::@return
+const byte* main::screen = (byte*) 1024
 
 
 
@@ -162,11 +134,11 @@ Score: 18
 main: {
     .label screen = $400
     // *screen = 1
-    // [0] *((const byte*) main::screen) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta screen
     // *BG_COLOR = RED
-    // [1] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) RED -- _deref_pbuc1=vbuc2 
+    // [1] *BG_COLOR = RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta BG_COLOR
     // main::@return

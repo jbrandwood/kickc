@@ -2,15 +2,15 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const byte*) SCREEN + (number) 0) ← *((const byte*) SINTAB + (number) 0)
+  SCREEN[0] = SINTAB[0]
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -25,29 +25,29 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(const byte*) SINTAB[(number) $100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+const byte* SCREEN = (byte*)$400
+const byte* SINTAB[$100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
  }}
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((const byte*) SINTAB + (number) 0)
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((const byte*) SINTAB + (unumber)(number) 0)
+Adding number conversion cast (unumber) 0 in SCREEN[0] = SINTAB[0]
+Adding number conversion cast (unumber) 0 in SCREEN[0] = SINTAB[(unumber)0]
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SINTAB in [0] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB + (byte) 0)
-Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) SINTAB)
+Simplifying expression containing zero SINTAB in [0] SCREEN[0] = SINTAB[0]
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = *SINTAB
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -63,9 +63,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB)
+  [0] *SCREEN = *SINTAB
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -73,40 +73,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test initializing array using KickAssembler
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
-    lda SINTAB
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-// Sinus table
-SINTAB:
-.fill 256, 128 + 128*sin(i*2*PI/256)
-
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = *SINTAB [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -126,7 +98,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *SINTAB -- _deref_pbuc1=_deref_pbuc2 
     lda SINTAB
     sta SCREEN
     jmp __breturn
@@ -148,11 +120,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(const byte*) SINTAB[(number) $100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
+const byte* SCREEN = (byte*) 1024
+const byte* SINTAB[$100]  = kickasm {{ .fill 256, 128 + 128*sin(i*2*PI/256)
  }}
-(void()) main()
-(label) main::@return
+void main()
+label main::@return
 
 
 
@@ -170,7 +142,7 @@ Score: 14
   // main
 main: {
     // SCREEN[0] = SINTAB[0]
-    // [0] *((const byte*) SCREEN) ← *((const byte*) SINTAB) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *SINTAB -- _deref_pbuc1=_deref_pbuc2 
     lda SINTAB
     sta SCREEN
     // main::@return

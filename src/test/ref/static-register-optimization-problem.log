@@ -1,30 +1,30 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (signed word) main::lasti#0 ← (signed word) -1
-  (signed word) main::i#0 ← (signed word) 0
+  main::lasti#0 = -1
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (signed word) main::lasti#3 ← phi( main/(signed word) main::lasti#0 main::@2/(signed word) main::lasti#1 )
-  (signed word) main::i#2 ← phi( main/(signed word) main::i#0 main::@2/(signed word) main::i#1 )
-  (bool~) main::$0 ← (signed word) main::i#2 < (number) $a
-  if((bool~) main::$0) goto main::@2
+  main::lasti#3 = phi( main/main::lasti#0, main::@2/main::lasti#1 )
+  main::i#2 = phi( main/main::i#0, main::@2/main::i#1 )
+  main::$0 = main::i#2 < $a
+  if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (signed word) main::i#3 ← phi( main::@1/(signed word) main::i#2 )
-  (signed word) main::lasti#2 ← phi( main::@1/(signed word) main::lasti#3 )
-  (byte~) main::$1 ← < (signed word) main::lasti#2
-  *((const byte*) main::screen + (signed word) main::i#3) ← (byte~) main::$1
-  (signed word) main::lasti#1 ← (signed word) main::i#3
-  (signed word) main::i#1 ← ++ (signed word) main::i#3
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::lasti#2 = phi( main::@1/main::lasti#3 )
+  main::$1 = < main::lasti#2
+  main::screen[main::i#3] = main::$1
+  main::lasti#1 = main::i#3
+  main::i#1 = ++ main::i#3
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -35,46 +35,46 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(byte~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(signed word) main::i
-(signed word) main::i#0
-(signed word) main::i#1
-(signed word) main::i#2
-(signed word) main::i#3
-(signed word) main::lasti
-(signed word) main::lasti#0
-(signed word) main::lasti#1
-(signed word) main::lasti#2
-(signed word) main::lasti#3
-(const byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+byte~ main::$1
+label main::@1
+label main::@2
+label main::@return
+signed word main::i
+signed word main::i#0
+signed word main::i#1
+signed word main::i#2
+signed word main::i#3
+signed word main::lasti
+signed word main::lasti#0
+signed word main::lasti#1
+signed word main::lasti#2
+signed word main::lasti#3
+const byte* main::screen = (byte*)$400
 
-Adding number conversion cast (snumber) $a in (bool~) main::$0 ← (signed word) main::i#2 < (number) $a
+Adding number conversion cast (snumber) $a in main::$0 = main::i#2 < $a
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type (signed byte) $a
+Finalized signed number type $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (phi-usage) main::i#2 = main::i#3 main::lasti#1 
 Alias main::lasti#2 = main::lasti#3 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (phi-usage) main::i#2 = main::i#3 main::lasti#1 
-Identical Phi Values (signed word) main::i#3 (signed word) main::i#2
+Identical Phi Values main::i#3 main::i#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [4] if((signed word) main::i#2<(signed byte) $a) goto main::@2
+Simple Condition main::$0 [4] if(main::i#2<$a) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const signed word) main::lasti#0 = -1
-Constant (const signed word) main::i#0 = 0
+Constant main::lasti#0 = -1
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [7] *((const byte*) main::screen + (signed word) main::i#2) ← (byte~) main::$1
+De-inlining pointer[w] to *(pointer+w)   [7] main::screen[main::i#2] = main::$1
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -82,10 +82,10 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Alias candidate removed (phi-usage) main::lasti#1 = main::i#2 
-Inlining constant with var siblings (const signed word) main::lasti#0
-Inlining constant with var siblings (const signed word) main::i#0
-Constant inlined main::i#0 = (signed word) 0
-Constant inlined main::lasti#0 = (signed word) -1
+Inlining constant with var siblings main::lasti#0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Constant inlined main::lasti#0 = -1
 Successful SSA optimization Pass2ConstantInlining
 Alias candidate removed (phi-usage) main::lasti#1 = main::i#2 
 Alias candidate removed (phi-usage) main::lasti#1 = main::i#2 
@@ -93,44 +93,44 @@ Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 2 initial phi equivalence classes
-Coalesced [9] main::i#4 ← main::i#1
-Coalesced [10] main::lasti#4 ← main::lasti#1
+Coalesced [9] main::i#4 = main::i#1
+Coalesced [10] main::lasti#4 = main::lasti#1
 Coalesced down to 2 phi equivalence classes
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [1] (signed word) main::lasti#2 ← phi( main/(signed word) -1 main::@2/(signed word) main::lasti#1 )
-  [1] (signed word) main::i#2 ← phi( main/(signed word) 0 main::@2/(signed word) main::i#1 )
-  [2] if((signed word) main::i#2<(signed byte) $a) goto main::@2
+  [1] main::lasti#2 = phi( main/-1, main::@2/main::lasti#1 )
+  [1] main::i#2 = phi( main/0, main::@2/main::i#1 )
+  [2] if(main::i#2<$a) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [3] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [4] (byte~) main::$1 ← < (signed word) main::lasti#2
-  [5] (byte*~) main::$2 ← (const byte*) main::screen + (signed word) main::i#2
-  [6] *((byte*~) main::$2) ← (byte~) main::$1
-  [7] (signed word) main::lasti#1 ← (signed word) main::i#2
-  [8] (signed word) main::i#1 ← ++ (signed word) main::i#2
+  [4] main::$1 = < main::lasti#2
+  [5] main::$2 = main::screen + main::i#2
+  [6] *main::$2 = main::$1
+  [7] main::lasti#1 = main::i#2
+  [8] main::i#1 = ++ main::i#2
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$1 11.0
-(byte*~) main::$2 22.0
-(signed word) main::i
-(signed word) main::i#1 22.0
-(signed word) main::i#2 9.166666666666666
-(signed word) main::lasti
-(signed word) main::lasti#1 11.0
-(signed word) main::lasti#2 11.0
+void main()
+byte~ main::$1 11.0
+byte*~ main::$2 22.0
+signed word main::i
+signed word main::i#1 22.0
+signed word main::i#2 9.166666666666666
+signed word main::lasti
+signed word main::lasti#1 11.0
+signed word main::lasti#2 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -146,99 +146,16 @@ Allocated zp[2]:2 [ main::i#2 main::i#1 ]
 Allocated zp[2]:4 [ main::lasti#2 main::lasti#1 ]
 Allocated zp[1]:6 [ main::$1 ]
 Allocated zp[2]:7 [ main::$2 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// https://gitlab.com/camelot/kickc/issues/336
-// ASM Static Register Value analysis erronously believes >-1 == 0
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    .label __1 = 6
-    .label lasti = 4
-    .label i = 2
-    .label __2 = 7
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (signed word) main::lasti#2 = (signed word) -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
-    lda #<-1
-    sta.z lasti
-    lda #>-1
-    sta.z lasti+1
-    // [1] phi (signed word) main::i#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
-    lda #<0
-    sta.z i
-    lda #>0
-    sta.z i+1
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] if((signed word) main::i#2<(signed byte) $a) goto main::@2 -- vwsz1_lt_vwuc1_then_la1 
-    lda.z i+1
-    bmi __b2
-    cmp #>$a
-    bcc __b2
-    bne !+
-    lda.z i
-    cmp #<$a
-    bcc __b2
-  !:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-    // main::@2
-  __b2:
-    // [4] (byte~) main::$1 ← < (signed word) main::lasti#2 -- vbuz1=_lo_vwsz2 
-    lda.z lasti
-    sta.z __1
-    // [5] (byte*~) main::$2 ← (const byte*) main::screen + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
-    lda #<screen
-    clc
-    adc.z i
-    sta.z __2
-    lda #>screen
-    adc.z i+1
-    sta.z __2+1
-    // [6] *((byte*~) main::$2) ← (byte~) main::$1 -- _deref_pbuz1=vbuz2 
-    lda.z __1
-    ldy #0
-    sta (__2),y
-    // [7] (signed word) main::lasti#1 ← (signed word) main::i#2 -- vwsz1=vwsz2 
-    lda.z i
-    sta.z lasti
-    lda.z i+1
-    sta.z lasti+1
-    // [8] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
-    inc.z i
-    bne !+
-    inc.z i+1
-  !:
-    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-  __b1_from___b2:
-    // [1] phi (signed word) main::lasti#2 = (signed word) main::lasti#1 [phi:main::@2->main::@1#0] -- register_copy 
-    // [1] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] if((signed word) main::i#2<(signed byte) $a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
-Statement [5] (byte*~) main::$2 ← (const byte*) main::screen + (signed word) main::i#2 [ main::i#2 main::$1 main::$2 ] (  [ main::i#2 main::$1 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [2] if(main::i#2<$a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$2 = main::screen + main::i#2 [ main::i#2 main::$1 main::$2 ] (  [ main::i#2 main::$1 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::$1 ]
-Statement [6] *((byte*~) main::$2) ← (byte~) main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] (signed word) main::lasti#1 ← (signed word) main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
-Statement [2] if((signed word) main::i#2<(signed byte) $a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
-Statement [5] (byte*~) main::$2 ← (const byte*) main::screen + (signed word) main::i#2 [ main::i#2 main::$1 main::$2 ] (  [ main::i#2 main::$1 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [6] *((byte*~) main::$2) ← (byte~) main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] (signed word) main::lasti#1 ← (signed word) main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
+Statement [6] *main::$2 = main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] main::lasti#1 = main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
+Statement [2] if(main::i#2<$a) goto main::@2 [ main::i#2 main::lasti#2 ] (  [ main::i#2 main::lasti#2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$2 = main::screen + main::i#2 [ main::i#2 main::$1 main::$2 ] (  [ main::i#2 main::$1 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [6] *main::$2 = main::$1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] main::lasti#1 = main::i#2 [ main::i#2 main::lasti#1 ] (  [ main::i#2 main::lasti#1 ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::i#2 main::i#1 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ main::lasti#2 main::lasti#1 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ main::$1 ] : zp[1]:6 , reg byte x , reg byte y , 
@@ -269,12 +186,12 @@ main: {
     .label __2 = 6
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (signed word) main::lasti#2 = (signed word) -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
+    // [1] phi main::lasti#2 = -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-1
     sta.z lasti
     lda #>-1
     sta.z lasti+1
-    // [1] phi (signed word) main::i#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z i
     lda #>0
@@ -282,7 +199,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if((signed word) main::i#2<(signed byte) $a) goto main::@2 -- vwsz1_lt_vwuc1_then_la1 
+    // [2] if(main::i#2<$a) goto main::@2 -- vwsz1_lt_vwuc1_then_la1 
     lda.z i+1
     bmi __b2
     cmp #>$a
@@ -299,9 +216,9 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] (byte~) main::$1 ← < (signed word) main::lasti#2 -- vbuxx=_lo_vwsz1 
+    // [4] main::$1 = < main::lasti#2 -- vbuxx=_lo_vwsz1 
     ldx.z lasti
-    // [5] (byte*~) main::$2 ← (const byte*) main::screen + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [5] main::$2 = main::screen + main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<screen
     clc
     adc.z i
@@ -309,24 +226,24 @@ main: {
     lda #>screen
     adc.z i+1
     sta.z __2+1
-    // [6] *((byte*~) main::$2) ← (byte~) main::$1 -- _deref_pbuz1=vbuxx 
+    // [6] *main::$2 = main::$1 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (__2),y
-    // [7] (signed word) main::lasti#1 ← (signed word) main::i#2 -- vwsz1=vwsz2 
+    // [7] main::lasti#1 = main::i#2 -- vwsz1=vwsz2 
     lda.z i
     sta.z lasti
     lda.z i+1
     sta.z lasti+1
-    // [8] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
+    // [8] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1
   !:
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
   __b1_from___b2:
-    // [1] phi (signed word) main::lasti#2 = (signed word) main::lasti#1 [phi:main::@2->main::@1#0] -- register_copy 
-    // [1] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [1] phi main::lasti#2 = main::lasti#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -344,19 +261,19 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(byte~) main::$1 reg byte x 11.0
-(byte*~) main::$2 zp[2]:6 22.0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(signed word) main::i
-(signed word) main::i#1 i zp[2]:2 22.0
-(signed word) main::i#2 i zp[2]:2 9.166666666666666
-(signed word) main::lasti
-(signed word) main::lasti#1 lasti zp[2]:4 11.0
-(signed word) main::lasti#2 lasti zp[2]:4 11.0
-(const byte*) main::screen = (byte*) 1024
+void main()
+byte~ main::$1 reg byte x 11.0
+byte*~ main::$2 zp[2]:6 22.0
+label main::@1
+label main::@2
+label main::@return
+signed word main::i
+signed word main::i#1 i zp[2]:2 22.0
+signed word main::i#2 i zp[2]:2 9.166666666666666
+signed word main::lasti
+signed word main::lasti#1 lasti zp[2]:4 11.0
+signed word main::lasti#2 lasti zp[2]:4 11.0
+const byte* main::screen = (byte*) 1024
 
 zp[2]:2 [ main::i#2 main::i#1 ]
 zp[2]:4 [ main::lasti#2 main::lasti#1 ]
@@ -382,18 +299,18 @@ main: {
     .label i = 2
     .label __2 = 6
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (signed word) main::lasti#2 = (signed word) -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
+    // [1] phi main::lasti#2 = -1 [phi:main->main::@1#0] -- vwsz1=vwsc1 
     lda #<-1
     sta.z lasti
     sta.z lasti+1
-    // [1] phi (signed word) main::i#2 = (signed word) 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#1] -- vwsz1=vwsc1 
     lda #<0
     sta.z i
     sta.z i+1
     // main::@1
   __b1:
     // for(int i=0;i<10;i++)
-    // [2] if((signed word) main::i#2<(signed byte) $a) goto main::@2 -- vwsz1_lt_vwuc1_then_la1 
+    // [2] if(main::i#2<$a) goto main::@2 -- vwsz1_lt_vwuc1_then_la1 
     lda.z i+1
     bmi __b2
     cmp #>$a
@@ -410,10 +327,10 @@ main: {
     // main::@2
   __b2:
     // <lasti
-    // [4] (byte~) main::$1 ← < (signed word) main::lasti#2 -- vbuxx=_lo_vwsz1 
+    // [4] main::$1 = < main::lasti#2 -- vbuxx=_lo_vwsz1 
     ldx.z lasti
     // screen[i] = <lasti
-    // [5] (byte*~) main::$2 ← (const byte*) main::screen + (signed word) main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
+    // [5] main::$2 = main::screen + main::i#2 -- pbuz1=pbuc1_plus_vwsz2 
     lda #<screen
     clc
     adc.z i
@@ -421,25 +338,25 @@ main: {
     lda #>screen
     adc.z i+1
     sta.z __2+1
-    // [6] *((byte*~) main::$2) ← (byte~) main::$1 -- _deref_pbuz1=vbuxx 
+    // [6] *main::$2 = main::$1 -- _deref_pbuz1=vbuxx 
     txa
     ldy #0
     sta (__2),y
     // lasti = i
-    // [7] (signed word) main::lasti#1 ← (signed word) main::i#2 -- vwsz1=vwsz2 
+    // [7] main::lasti#1 = main::i#2 -- vwsz1=vwsz2 
     lda.z i
     sta.z lasti
     lda.z i+1
     sta.z lasti+1
     // for(int i=0;i<10;i++)
-    // [8] (signed word) main::i#1 ← ++ (signed word) main::i#2 -- vwsz1=_inc_vwsz1 
+    // [8] main::i#1 = ++ main::i#2 -- vwsz1=_inc_vwsz1 
     inc.z i
     bne !+
     inc.z i+1
   !:
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
-    // [1] phi (signed word) main::lasti#2 = (signed word) main::lasti#1 [phi:main::@2->main::@1#0] -- register_copy 
-    // [1] phi (signed word) main::i#2 = (signed word) main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
+    // [1] phi main::lasti#2 = main::lasti#1 [phi:main::@2->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

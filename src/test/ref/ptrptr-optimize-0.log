@@ -1,19 +1,19 @@
-Setting inferred volatile on symbol affected by address-of (byte**) main::pscreen ← &(byte*) main::screen
+Setting inferred volatile on symbol affected by address-of main::pscreen = &main::screen
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (volatile byte*) main::screen ← (byte*)(number) $400
-  *(*((const byte**) main::pscreen)) ← (byte) 'a'
-  *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
-  *(*((const byte**) main::pscreen)) ← (byte) 'b'
+  main::screen = (byte*)$400
+  *(*main::pscreen) = 'a'
+  *main::pscreen = ++ *main::pscreen
+  *(*main::pscreen) = 'b'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -24,13 +24,13 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte**) main::pscreen = &(volatile byte*) main::screen
-(volatile byte*) main::screen loadstore
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte** main::pscreen = &main::screen
+volatile byte* main::screen loadstore
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -46,12 +46,12 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile byte*) main::screen ← (byte*) 1024
-  [1] *(*((const byte**) main::pscreen)) ← (byte) 'a'
-  [2] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen)
-  [3] *(*((const byte**) main::pscreen)) ← (byte) 'b'
+  [0] main::screen = (byte*) 1024
+  [1] *(*main::pscreen) = 'a'
+  [2] *main::pscreen = ++ *main::pscreen
+  [3] *(*main::pscreen) = 'b'
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
@@ -59,66 +59,18 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(volatile byte*) main::screen loadstore 20.0
+void main()
+volatile byte* main::screen loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::screen to live range equivalence class [ main::screen ]
 Complete equivalence classes
 [ main::screen ]
 Allocated zp[2]:2 [ main::screen ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests optimization of constant pointers to pointers
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label pscreen = screen
-    .label screen = 2
-    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [1] *(*((const byte**) main::pscreen)) ← (byte) 'a' -- _deref_(_deref_qbuc1)=vbuc2 
-    lda #'a'
-    ldy.z pscreen
-    sty.z $fe
-    ldy.z pscreen+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // [2] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_qbuc1=_inc__deref_qbuc1 
-    inc.z pscreen
-    bne !+
-    inc.z pscreen+1
-  !:
-    // [3] *(*((const byte**) main::pscreen)) ← (byte) 'b' -- _deref_(_deref_qbuc1)=vbuc2 
-    lda #'b'
-    ldy.z pscreen
-    sty.z $fe
-    ldy.z pscreen+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile byte*) main::screen ← (byte*) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *(*((const byte**) main::pscreen)) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [3] *(*((const byte**) main::pscreen)) ← (byte) 'b' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] main::screen = (byte*) 1024 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(*main::pscreen) = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [3] *(*main::pscreen) = 'b' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ main::screen ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -140,12 +92,12 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .label pscreen = screen
     .label screen = 2
-    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
-    // [1] *(*((const byte**) main::pscreen)) ← (byte) 'a' -- _deref_(_deref_qbuc1)=vbuc2 
+    // [1] *(*main::pscreen) = 'a' -- _deref_(_deref_qbuc1)=vbuc2 
     lda #'a'
     ldy.z pscreen
     sty.z $fe
@@ -153,12 +105,12 @@ main: {
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [2] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_qbuc1=_inc__deref_qbuc1 
+    // [2] *main::pscreen = ++ *main::pscreen -- _deref_qbuc1=_inc__deref_qbuc1 
     inc.z pscreen
     bne !+
     inc.z pscreen+1
   !:
-    // [3] *(*((const byte**) main::pscreen)) ← (byte) 'b' -- _deref_(_deref_qbuc1)=vbuc2 
+    // [3] *(*main::pscreen) = 'b' -- _deref_(_deref_qbuc1)=vbuc2 
     lda #'b'
     ldy.z pscreen
     sty.z $fe
@@ -181,10 +133,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const byte**) main::pscreen = &(volatile byte*) main::screen
-(volatile byte*) main::screen loadstore zp[2]:2 20.0
+void main()
+label main::@return
+const byte** main::pscreen = &main::screen
+volatile byte* main::screen loadstore zp[2]:2 20.0
 
 zp[2]:2 [ main::screen ]
 
@@ -204,13 +156,13 @@ main: {
     .label pscreen = screen
     .label screen = 2
     // screen = 0x400
-    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
     sta.z screen+1
     // **pscreen = 'a'
-    // [1] *(*((const byte**) main::pscreen)) ← (byte) 'a' -- _deref_(_deref_qbuc1)=vbuc2 
+    // [1] *(*main::pscreen) = 'a' -- _deref_(_deref_qbuc1)=vbuc2 
     lda #'a'
     ldy.z pscreen
     sty.z $fe
@@ -219,13 +171,13 @@ main: {
     ldy #0
     sta ($fe),y
     // (*pscreen)++;
-    // [2] *((const byte**) main::pscreen) ← ++ *((const byte**) main::pscreen) -- _deref_qbuc1=_inc__deref_qbuc1 
+    // [2] *main::pscreen = ++ *main::pscreen -- _deref_qbuc1=_inc__deref_qbuc1 
     inc.z pscreen
     bne !+
     inc.z pscreen+1
   !:
     // **pscreen = 'b'
-    // [3] *(*((const byte**) main::pscreen)) ← (byte) 'b' -- _deref_(_deref_qbuc1)=vbuc2 
+    // [3] *(*main::pscreen) = 'b' -- _deref_(_deref_qbuc1)=vbuc2 
     lda #'b'
     ldy.z pscreen
     sty.z $fe

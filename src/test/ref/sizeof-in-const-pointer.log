@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'a'
+  SCREEN[0] = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,16 +20,16 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400+(const byte) SIZEOF_BYTE*(number) $64
-(const byte) SIZEOF_BYTE = (byte) 1
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400+SIZEOF_BYTE*$64
+const byte SIZEOF_BYTE = 1
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
 Adding number conversion cast (unumber) $64 in 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (byte) 'a'
+Adding number conversion cast (unumber) 0 in SCREEN[0] = 'a'
 Successful SSA optimization PassNAddNumberTypeConversions
 Adding number conversion cast (unumber) $400 in 
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -37,11 +37,11 @@ Simplifying constant integer cast $400
 Simplifying constant integer cast $64
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (byte) $64
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type $400
+Finalized unsigned number type $64
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (byte) 'a'
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = 'a'
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -55,9 +55,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (byte) 'a'
+  [0] *SCREEN = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -65,38 +65,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Support for sizeof() in const pointer definition
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const SIZEOF_BYTE = 1
-  // Commodore 64 processor port
-  .label SCREEN = $400+SIZEOF_BYTE*$64
-  // main
-main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -118,7 +92,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400+SIZEOF_BYTE*$64
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     jmp __breturn
@@ -136,10 +110,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*)(word) $400+(const byte) SIZEOF_BYTE*(byte) $64
-(const byte) SIZEOF_BYTE = (byte) 1
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400+SIZEOF_BYTE*$64
+const byte SIZEOF_BYTE = 1
+void main()
+label main::@return
 
 
 
@@ -159,7 +133,7 @@ Score: 12
   // main
 main: {
     // SCREEN[0] = 'a'
-    // [0] *((const nomodify byte*) SCREEN) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta SCREEN
     // main::@return

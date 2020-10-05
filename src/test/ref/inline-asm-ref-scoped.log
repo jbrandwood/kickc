@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { lda#'c' stasub.ll+1  }
   call sub 
@@ -12,7 +12,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) sub()
+void sub()
 sub: scope:[sub]  from main
   asm { ll: lda#0 sta$400  }
   to:sub::@return
@@ -20,7 +20,7 @@ sub::@return: scope:[sub]  from sub
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -31,14 +31,14 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@return
-(void()) sub()
-(label) sub::@return
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@return
+void sub()
+label sub::@return
 
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -51,11 +51,11 @@ Calls in [main] to sub:1
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { lda#'c' stasub.ll+1  }
   [1] call sub 
@@ -64,7 +64,7 @@ main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-(void()) sub()
+void sub()
 sub: scope:[sub]  from main
   asm { ll: lda#0 sta$400  }
   to:sub::@return
@@ -74,48 +74,11 @@ sub::@return: scope:[sub]  from sub
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(void()) sub()
+void main()
+void sub()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that references to labels in other scopes is possible from inline ASM
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // asm { lda#'c' stasub.ll+1  }
-    lda #'c'
-    sta sub.ll+1
-    // [1] call sub 
-    jsr sub
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // sub
-sub: {
-    // asm { ll: lda#0 sta$400  }
-  ll:
-    lda #0
-    sta $400
-    jmp __breturn
-    // sub::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { lda#'c' stasub.ll+1  } always clobbers reg byte a 
 Statement asm { ll: lda#0 sta$400  } always clobbers reg byte a 
@@ -173,10 +136,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(void()) sub()
-(label) sub::@return
+void main()
+label main::@return
+void sub()
+label sub::@return
 
 
 

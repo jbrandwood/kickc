@@ -2,26 +2,26 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  (bool~) main::$0 ← (byte) i < (number) 7
-  if((bool~) main::$0) goto main::@2
+  main::$0 = i < 7
+  if(main::$0) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  *((const nomodify byte*) SCREEN + (byte) i) ← (byte) i
-  (byte) i ← ++ (byte) i
+  SCREEN[i] = i
+  i = ++ i
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte) i ← (byte) 3
+  i = 3
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -33,27 +33,27 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(byte) i loadstore !zp[-1]:2
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+byte i loadstore !zp[-1]:2
+void main()
+bool~ main::$0
+label main::@1
+label main::@2
+label main::@return
 
-Adding number conversion cast (unumber) 7 in (bool~) main::$0 ← (byte) i < (number) 7
+Adding number conversion cast (unumber) 7 in main::$0 = i < 7
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 7
+Finalized unsigned number type 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [1] if((byte) i<(byte) 7) goto main::@2
+Simple Condition main::$0 [1] if(i<7) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -64,19 +64,19 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (byte) i ← (byte) 3
+  [1] i = 3
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -86,97 +86,35 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   [5] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@2
-  [6] if((byte) i<(byte) 7) goto main::@2
+  [6] if(i<7) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [7] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [8] *((const nomodify byte*) SCREEN + (byte) i) ← (byte) i
-  [9] (byte) i ← ++ (byte) i
+  [8] SCREEN[i] = i
+  [9] i = ++ i
   to:main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(byte) i loadstore !zp[-1]:2 84.49999999999999
-(void()) main()
+void __start()
+byte i loadstore !zp[-1]:2 84.49999999999999
+void main()
 
 Initial phi equivalence classes
 Added variable i to live range equivalence class [ i ]
 Complete equivalence classes
 [ i ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test that address vars are turned into load/store and located at hardcoded addresses
-// Hard-coded zero-page address - global variable
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label i = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (byte) i ← (byte) 3 -- vbuz1=vbuc1 
-    lda #3
-    sta.z i
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
-  main_from___b1:
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    jmp __b1
-    // main::@1
-  __b1:
-    // [6] if((byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z i
-    cmp #7
-    bcc __b2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-    // main::@2
-  __b2:
-    // [8] *((const nomodify byte*) SCREEN + (byte) i) ← (byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
-    ldy.z i
-    tya
-    sta SCREEN,y
-    // [9] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
-    inc.z i
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (byte) i ← (byte) 3 [ i ] (  [ i ] { }  ) always clobbers reg byte a 
-Statement [6] if((byte) i<(byte) 7) goto main::@2 [ i ] ( main:3 [ i ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) SCREEN + (byte) i) ← (byte) i [ i ] ( main:3 [ i ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] i = 3 [ i ] (  [ i ] { }  ) always clobbers reg byte a 
+Statement [6] if(i<7) goto main::@2 [ i ] ( main:3 [ i ] { }  ) always clobbers reg byte a 
+Statement [8] SCREEN[i] = i [ i ] ( main:3 [ i ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ i ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -206,7 +144,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (byte) i ← (byte) 3 -- vbuz1=vbuc1 
+    // [1] i = 3 -- vbuz1=vbuc1 
     lda #3
     sta.z i
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -229,7 +167,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [6] if((byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if(i<7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #7
     bcc __b2
@@ -240,11 +178,11 @@ main: {
     rts
     // main::@2
   __b2:
-    // [8] *((const nomodify byte*) SCREEN + (byte) i) ← (byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [8] SCREEN[i] = i -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
-    // [9] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    // [9] i = ++ i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }
@@ -267,16 +205,16 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(byte) i loadstore !zp[-1]:2 zp[1]:2 84.49999999999999
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+byte i loadstore !zp[-1]:2 zp[1]:2 84.49999999999999
+void main()
+label main::@1
+label main::@2
+label main::@return
 
 zp[1]:2 [ i ]
 
@@ -298,7 +236,7 @@ Score: 278
 __start: {
     // __start::__init1
     // i = 3
-    // [1] (byte) i ← (byte) 3 -- vbuz1=vbuc1 
+    // [1] i = 3 -- vbuz1=vbuc1 
     lda #3
     sta.z i
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -315,7 +253,7 @@ main: {
     // main::@1
   __b1:
     // while(i<7)
-    // [6] if((byte) i<(byte) 7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [6] if(i<7) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z i
     cmp #7
     bcc __b2
@@ -326,12 +264,12 @@ main: {
     // main::@2
   __b2:
     // SCREEN[i++] = i
-    // [8] *((const nomodify byte*) SCREEN + (byte) i) ← (byte) i -- pbuc1_derefidx_vbuz1=vbuz1 
+    // [8] SCREEN[i] = i -- pbuc1_derefidx_vbuz1=vbuz1 
     ldy.z i
     tya
     sta SCREEN,y
     // SCREEN[i++] = i;
-    // [9] (byte) i ← ++ (byte) i -- vbuz1=_inc_vbuz1 
+    // [9] i = ++ i -- vbuz1=_inc_vbuz1 
     inc.z i
     jmp __b1
 }

@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
-  *((const nomodify byte*) SCREEN + (number) 1) ← (const byte) main::point1_y
+  SCREEN[0] = main::point1_x
+  SCREEN[1] = main::point1_y
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,28 +21,28 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(byte) Point::x
-(byte) Point::y
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const byte) main::point1_x = (byte) 2
-(const byte) main::point1_y = (byte) 3
+byte Point::x
+byte Point::y
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const byte main::point1_x = 2
+const byte main::point1_y = 3
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) main::point1_x
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← (const byte) main::point1_y
+Adding number conversion cast (unumber) 0 in SCREEN[0] = main::point1_x
+Adding number conversion cast (unumber) 1 in SCREEN[1] = main::point1_y
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) main::point1_x
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = main::point1_x
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -58,10 +58,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x
-  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y
+  [0] *SCREEN = main::point1_x
+  [1] *(SCREEN+1) = main::point1_y
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -69,44 +69,15 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) Point::x
-(byte) Point::y
-(void()) main()
+byte Point::x
+byte Point::y
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Minimal struct with MemberUnwind behavior - simple members and local initializer
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .const point1_x = 2
-    .const point1_y = 3
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
-    lda #point1_x
-    sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
-    lda #point1_y
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = main::point1_x [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = main::point1_y [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
@@ -130,10 +101,10 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const point1_x = 2
     .const point1_y = 3
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = main::point1_y -- _deref_pbuc1=vbuc2 
     lda #point1_y
     sta SCREEN+1
     jmp __breturn
@@ -151,13 +122,13 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(byte) Point::x
-(byte) Point::y
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
-(const byte) main::point1_x = (byte) 2
-(const byte) main::point1_y = (byte) 3
+byte Point::x
+byte Point::y
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
+const byte main::point1_x = 2
+const byte main::point1_y = 3
 
 
 
@@ -177,11 +148,11 @@ main: {
     .const point1_x = 2
     .const point1_y = 3
     // SCREEN[0] = point1.x
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) main::point1_x -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = main::point1_x -- _deref_pbuc1=vbuc2 
     lda #point1_x
     sta SCREEN
     // SCREEN[1] = point1.y
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (const byte) main::point1_y -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = main::point1_y -- _deref_pbuc1=vbuc2 
     lda #point1_y
     sta SCREEN+1
     // main::@return

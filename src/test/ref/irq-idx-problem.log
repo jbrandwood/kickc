@@ -1,62 +1,62 @@
-Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN)(void()) table_driven_irq()
-Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN) void table_driven_irq()
+Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
-  *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
-  *((const nomodify byte*) RASTER) ← (number) $60
-  *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
-  *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq()
+  *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *VIC_CONTROL = *VIC_CONTROL & $7f
+  *RASTER = $60
+  *IRQ_ENABLE = IRQ_RASTER
+  *IRQ_STATUS = IRQ_RASTER
+  *KERNEL_IRQ = &table_driven_irq
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) table_driven_irq()
+interrupt(KERNEL_MIN) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@4
-  (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx)
-  (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx)
-  (volatile byte) irq_idx ← ++ (volatile byte) irq_idx
-  (bool~) table_driven_irq::$0 ← (byte) table_driven_irq::idx#0 < (const nomodify byte) VIC_SIZE
-  if((bool~) table_driven_irq::$0) goto table_driven_irq::@2
+  table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx]
+  table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx]
+  irq_idx = ++ irq_idx
+  table_driven_irq::$0 = table_driven_irq::idx#0 < VIC_SIZE
+  if(table_driven_irq::$0) goto table_driven_irq::@2
   to:table_driven_irq::@5
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
-  (byte) table_driven_irq::idx#1 ← phi( table_driven_irq::@1/(byte) table_driven_irq::idx#0 )
-  (byte) table_driven_irq::val#1 ← phi( table_driven_irq::@1/(byte) table_driven_irq::val#0 )
-  *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#1) ← (byte) table_driven_irq::val#1
+  table_driven_irq::idx#1 = phi( table_driven_irq::@1/table_driven_irq::idx#0 )
+  table_driven_irq::val#1 = phi( table_driven_irq::@1/table_driven_irq::val#0 )
+  VIC_BASE[table_driven_irq::idx#1] = table_driven_irq::val#1
   to:table_driven_irq::@4
 table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@1
-  (byte) table_driven_irq::val#4 ← phi( table_driven_irq::@1/(byte) table_driven_irq::val#0 )
-  (byte) table_driven_irq::idx#2 ← phi( table_driven_irq::@1/(byte) table_driven_irq::idx#0 )
-  (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (const nomodify byte) VIC_SIZE+(number) 8
-  if((bool~) table_driven_irq::$1) goto table_driven_irq::@3
+  table_driven_irq::val#4 = phi( table_driven_irq::@1/table_driven_irq::val#0 )
+  table_driven_irq::idx#2 = phi( table_driven_irq::@1/table_driven_irq::idx#0 )
+  table_driven_irq::$1 = table_driven_irq::idx#2 < VIC_SIZE+8
+  if(table_driven_irq::$1) goto table_driven_irq::@3
   to:table_driven_irq::@6
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@5
-  (byte) table_driven_irq::val#2 ← phi( table_driven_irq::@5/(byte) table_driven_irq::val#4 )
-  (byte) table_driven_irq::idx#3 ← phi( table_driven_irq::@5/(byte) table_driven_irq::idx#2 )
-  (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (number) $3f8
-  (number~) table_driven_irq::$5 ← (number~) table_driven_irq::$4 - (const nomodify byte) VIC_SIZE
-  *((const nomodify byte*) SCREEN + (number~) table_driven_irq::$5) ← (byte) table_driven_irq::val#2
+  table_driven_irq::val#2 = phi( table_driven_irq::@5/table_driven_irq::val#4 )
+  table_driven_irq::idx#3 = phi( table_driven_irq::@5/table_driven_irq::idx#2 )
+  table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
+  table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
+  SCREEN[table_driven_irq::$5] = table_driven_irq::val#2
   to:table_driven_irq::@4
 table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
-  (byte) table_driven_irq::val#3 ← phi( table_driven_irq::@5/(byte) table_driven_irq::val#4 )
-  *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  *((const nomodify byte*) RASTER) ← (byte) table_driven_irq::val#3
-  (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const nomodify byte*) RASTER)
-  (bool~) table_driven_irq::$3 ← ! (bool~) table_driven_irq::$2
-  if((bool~) table_driven_irq::$3) goto table_driven_irq::@return
+  table_driven_irq::val#3 = phi( table_driven_irq::@5/table_driven_irq::val#4 )
+  *IRQ_STATUS = IRQ_RASTER
+  *RASTER = table_driven_irq::val#3
+  table_driven_irq::$2 = table_driven_irq::val#3 < *RASTER
+  table_driven_irq::$3 = ! table_driven_irq::$2
+  if(table_driven_irq::$3) goto table_driven_irq::@return
   to:table_driven_irq::@7
 table_driven_irq::@7: scope:[table_driven_irq]  from table_driven_irq::@6
-  (volatile byte) irq_idx ← (number) 0
+  irq_idx = 0
   to:table_driven_irq::@return
 table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@4 table_driven_irq::@6 table_driven_irq::@7
   return 
@@ -65,11 +65,11 @@ table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@2 table_
   if(true) goto table_driven_irq::@1
   to:table_driven_irq::@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) irq_idx ← (byte) 0
+  irq_idx = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -81,151 +81,151 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*)(number) $dc00
-(const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
-(const byte*) IRQ_CHANGE_IDX[]  = { (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT }
-(const nomodify byte) IRQ_CHANGE_NEXT = (byte) $7f
-(const byte*) IRQ_CHANGE_VAL[]  = { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
-(const nomodify byte*) IRQ_ENABLE = (byte*)(number) $d01a
-(const nomodify byte) IRQ_RASTER = (byte) 1
-(const nomodify byte*) IRQ_STATUS = (byte*)(number) $d019
-(const nomodify void()**) KERNEL_IRQ = (void()**)(number) $314
-(byte) MOS6526_CIA::INTERRUPT
-(byte) MOS6526_CIA::PORT_A
-(byte) MOS6526_CIA::PORT_A_DDR
-(byte) MOS6526_CIA::PORT_B
-(byte) MOS6526_CIA::PORT_B_DDR
-(byte) MOS6526_CIA::SERIAL_DATA
-(word) MOS6526_CIA::TIMER_A
-(byte) MOS6526_CIA::TIMER_A_CONTROL
-(word) MOS6526_CIA::TIMER_B
-(byte) MOS6526_CIA::TIMER_B_CONTROL
-(byte) MOS6526_CIA::TOD_10THS
-(byte) MOS6526_CIA::TOD_HOURS
-(byte) MOS6526_CIA::TOD_MIN
-(byte) MOS6526_CIA::TOD_SEC
-(byte) MOS6569_VICII::BG_COLOR
-(byte) MOS6569_VICII::BG_COLOR1
-(byte) MOS6569_VICII::BG_COLOR2
-(byte) MOS6569_VICII::BG_COLOR3
-(byte) MOS6569_VICII::BORDER_COLOR
-(byte) MOS6569_VICII::CONTROL1
-(byte) MOS6569_VICII::CONTROL2
-(byte) MOS6569_VICII::IRQ_ENABLE
-(byte) MOS6569_VICII::IRQ_STATUS
-(byte) MOS6569_VICII::LIGHTPEN_X
-(byte) MOS6569_VICII::LIGHTPEN_Y
-(byte) MOS6569_VICII::MEMORY
-(byte) MOS6569_VICII::RASTER
-(byte) MOS6569_VICII::SPRITE0_COLOR
-(byte) MOS6569_VICII::SPRITE0_X
-(byte) MOS6569_VICII::SPRITE0_Y
-(byte) MOS6569_VICII::SPRITE1_COLOR
-(byte) MOS6569_VICII::SPRITE1_X
-(byte) MOS6569_VICII::SPRITE1_Y
-(byte) MOS6569_VICII::SPRITE2_COLOR
-(byte) MOS6569_VICII::SPRITE2_X
-(byte) MOS6569_VICII::SPRITE2_Y
-(byte) MOS6569_VICII::SPRITE3_COLOR
-(byte) MOS6569_VICII::SPRITE3_X
-(byte) MOS6569_VICII::SPRITE3_Y
-(byte) MOS6569_VICII::SPRITE4_COLOR
-(byte) MOS6569_VICII::SPRITE4_X
-(byte) MOS6569_VICII::SPRITE4_Y
-(byte) MOS6569_VICII::SPRITE5_COLOR
-(byte) MOS6569_VICII::SPRITE5_X
-(byte) MOS6569_VICII::SPRITE5_Y
-(byte) MOS6569_VICII::SPRITE6_COLOR
-(byte) MOS6569_VICII::SPRITE6_X
-(byte) MOS6569_VICII::SPRITE6_Y
-(byte) MOS6569_VICII::SPRITE7_COLOR
-(byte) MOS6569_VICII::SPRITE7_X
-(byte) MOS6569_VICII::SPRITE7_Y
-(byte) MOS6569_VICII::SPRITES_BG_COLLISION
-(byte) MOS6569_VICII::SPRITES_COLLISION
-(byte) MOS6569_VICII::SPRITES_ENABLE
-(byte) MOS6569_VICII::SPRITES_EXPAND_X
-(byte) MOS6569_VICII::SPRITES_EXPAND_Y
-(byte) MOS6569_VICII::SPRITES_MC
-(byte) MOS6569_VICII::SPRITES_MCOLOR1
-(byte) MOS6569_VICII::SPRITES_MCOLOR2
-(byte) MOS6569_VICII::SPRITES_PRIORITY
-(byte) MOS6569_VICII::SPRITES_XMSB
-(byte) MOS6581_SID::CH1_ATTACK_DECAY
-(byte) MOS6581_SID::CH1_CONTROL
-(word) MOS6581_SID::CH1_FREQ
-(word) MOS6581_SID::CH1_PULSE_WIDTH
-(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH2_ATTACK_DECAY
-(byte) MOS6581_SID::CH2_CONTROL
-(word) MOS6581_SID::CH2_FREQ
-(word) MOS6581_SID::CH2_PULSE_WIDTH
-(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH3_ATTACK_DECAY
-(byte) MOS6581_SID::CH3_CONTROL
-(byte) MOS6581_SID::CH3_ENV
-(word) MOS6581_SID::CH3_FREQ
-(byte) MOS6581_SID::CH3_OSC
-(word) MOS6581_SID::CH3_PULSE_WIDTH
-(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
-(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
-(byte) MOS6581_SID::FILTER_CUTOFF_LOW
-(byte) MOS6581_SID::FILTER_SETUP
-(byte) MOS6581_SID::POT_X
-(byte) MOS6581_SID::POT_Y
-(byte) MOS6581_SID::VOLUME_FILTER_MODE
-(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
-(const nomodify byte*) RASTER = (byte*)(number) $d012
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const nomodify byte*) VIC_BASE = (byte*)(number) $d000
-(const nomodify byte*) VIC_CONTROL = (byte*)(number) $d011
-(const nomodify byte) VIC_SIZE = (byte) $30
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(volatile byte) irq_idx loadstore
-(void()) main()
-(label) main::@return
-interrupt(KERNEL_MIN)(void()) table_driven_irq()
-(bool~) table_driven_irq::$0
-(bool~) table_driven_irq::$1
-(bool~) table_driven_irq::$2
-(bool~) table_driven_irq::$3
-(number~) table_driven_irq::$4
-(number~) table_driven_irq::$5
-(label) table_driven_irq::@1
-(label) table_driven_irq::@2
-(label) table_driven_irq::@3
-(label) table_driven_irq::@4
-(label) table_driven_irq::@5
-(label) table_driven_irq::@6
-(label) table_driven_irq::@7
-(label) table_driven_irq::@return
-(byte) table_driven_irq::idx
-(byte) table_driven_irq::idx#0
-(byte) table_driven_irq::idx#1
-(byte) table_driven_irq::idx#2
-(byte) table_driven_irq::idx#3
-(byte) table_driven_irq::val
-(byte) table_driven_irq::val#0
-(byte) table_driven_irq::val#1
-(byte) table_driven_irq::val#2
-(byte) table_driven_irq::val#3
-(byte) table_driven_irq::val#4
+const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*)$dc00
+const nomodify byte CIA_INTERRUPT_CLEAR = $7f
+const byte* IRQ_CHANGE_IDX[]  = { $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT }
+const nomodify byte IRQ_CHANGE_NEXT = $7f
+const byte* IRQ_CHANGE_VAL[]  = { $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60 }
+const nomodify byte* IRQ_ENABLE = (byte*)$d01a
+const nomodify byte IRQ_RASTER = 1
+const nomodify byte* IRQ_STATUS = (byte*)$d019
+const nomodify void()** KERNEL_IRQ = (void()**)$314
+byte MOS6526_CIA::INTERRUPT
+byte MOS6526_CIA::PORT_A
+byte MOS6526_CIA::PORT_A_DDR
+byte MOS6526_CIA::PORT_B
+byte MOS6526_CIA::PORT_B_DDR
+byte MOS6526_CIA::SERIAL_DATA
+word MOS6526_CIA::TIMER_A
+byte MOS6526_CIA::TIMER_A_CONTROL
+word MOS6526_CIA::TIMER_B
+byte MOS6526_CIA::TIMER_B_CONTROL
+byte MOS6526_CIA::TOD_10THS
+byte MOS6526_CIA::TOD_HOURS
+byte MOS6526_CIA::TOD_MIN
+byte MOS6526_CIA::TOD_SEC
+byte MOS6569_VICII::BG_COLOR
+byte MOS6569_VICII::BG_COLOR1
+byte MOS6569_VICII::BG_COLOR2
+byte MOS6569_VICII::BG_COLOR3
+byte MOS6569_VICII::BORDER_COLOR
+byte MOS6569_VICII::CONTROL1
+byte MOS6569_VICII::CONTROL2
+byte MOS6569_VICII::IRQ_ENABLE
+byte MOS6569_VICII::IRQ_STATUS
+byte MOS6569_VICII::LIGHTPEN_X
+byte MOS6569_VICII::LIGHTPEN_Y
+byte MOS6569_VICII::MEMORY
+byte MOS6569_VICII::RASTER
+byte MOS6569_VICII::SPRITE0_COLOR
+byte MOS6569_VICII::SPRITE0_X
+byte MOS6569_VICII::SPRITE0_Y
+byte MOS6569_VICII::SPRITE1_COLOR
+byte MOS6569_VICII::SPRITE1_X
+byte MOS6569_VICII::SPRITE1_Y
+byte MOS6569_VICII::SPRITE2_COLOR
+byte MOS6569_VICII::SPRITE2_X
+byte MOS6569_VICII::SPRITE2_Y
+byte MOS6569_VICII::SPRITE3_COLOR
+byte MOS6569_VICII::SPRITE3_X
+byte MOS6569_VICII::SPRITE3_Y
+byte MOS6569_VICII::SPRITE4_COLOR
+byte MOS6569_VICII::SPRITE4_X
+byte MOS6569_VICII::SPRITE4_Y
+byte MOS6569_VICII::SPRITE5_COLOR
+byte MOS6569_VICII::SPRITE5_X
+byte MOS6569_VICII::SPRITE5_Y
+byte MOS6569_VICII::SPRITE6_COLOR
+byte MOS6569_VICII::SPRITE6_X
+byte MOS6569_VICII::SPRITE6_Y
+byte MOS6569_VICII::SPRITE7_COLOR
+byte MOS6569_VICII::SPRITE7_X
+byte MOS6569_VICII::SPRITE7_Y
+byte MOS6569_VICII::SPRITES_BG_COLLISION
+byte MOS6569_VICII::SPRITES_COLLISION
+byte MOS6569_VICII::SPRITES_ENABLE
+byte MOS6569_VICII::SPRITES_EXPAND_X
+byte MOS6569_VICII::SPRITES_EXPAND_Y
+byte MOS6569_VICII::SPRITES_MC
+byte MOS6569_VICII::SPRITES_MCOLOR1
+byte MOS6569_VICII::SPRITES_MCOLOR2
+byte MOS6569_VICII::SPRITES_PRIORITY
+byte MOS6569_VICII::SPRITES_XMSB
+byte MOS6581_SID::CH1_ATTACK_DECAY
+byte MOS6581_SID::CH1_CONTROL
+word MOS6581_SID::CH1_FREQ
+word MOS6581_SID::CH1_PULSE_WIDTH
+byte MOS6581_SID::CH1_SUSTAIN_RELEASE
+byte MOS6581_SID::CH2_ATTACK_DECAY
+byte MOS6581_SID::CH2_CONTROL
+word MOS6581_SID::CH2_FREQ
+word MOS6581_SID::CH2_PULSE_WIDTH
+byte MOS6581_SID::CH2_SUSTAIN_RELEASE
+byte MOS6581_SID::CH3_ATTACK_DECAY
+byte MOS6581_SID::CH3_CONTROL
+byte MOS6581_SID::CH3_ENV
+word MOS6581_SID::CH3_FREQ
+byte MOS6581_SID::CH3_OSC
+word MOS6581_SID::CH3_PULSE_WIDTH
+byte MOS6581_SID::CH3_SUSTAIN_RELEASE
+byte MOS6581_SID::FILTER_CUTOFF_HIGH
+byte MOS6581_SID::FILTER_CUTOFF_LOW
+byte MOS6581_SID::FILTER_SETUP
+byte MOS6581_SID::POT_X
+byte MOS6581_SID::POT_Y
+byte MOS6581_SID::VOLUME_FILTER_MODE
+const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+const nomodify byte* RASTER = (byte*)$d012
+const nomodify byte* SCREEN = (byte*)$400
+const nomodify byte* VIC_BASE = (byte*)$d000
+const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte VIC_SIZE = $30
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+volatile byte irq_idx loadstore
+void main()
+label main::@return
+interrupt(KERNEL_MIN) void table_driven_irq()
+bool~ table_driven_irq::$0
+bool~ table_driven_irq::$1
+bool~ table_driven_irq::$2
+bool~ table_driven_irq::$3
+number~ table_driven_irq::$4
+number~ table_driven_irq::$5
+label table_driven_irq::@1
+label table_driven_irq::@2
+label table_driven_irq::@3
+label table_driven_irq::@4
+label table_driven_irq::@5
+label table_driven_irq::@6
+label table_driven_irq::@7
+label table_driven_irq::@return
+byte table_driven_irq::idx
+byte table_driven_irq::idx#0
+byte table_driven_irq::idx#1
+byte table_driven_irq::idx#2
+byte table_driven_irq::idx#3
+byte table_driven_irq::val
+byte table_driven_irq::val#0
+byte table_driven_irq::val#1
+byte table_driven_irq::val#2
+byte table_driven_irq::val#3
+byte table_driven_irq::val#4
 
-Adding number conversion cast (unumber) $7f in *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (number) $7f
-Adding number conversion cast (unumber) $60 in *((const nomodify byte*) RASTER) ← (number) $60
-Adding number conversion cast (unumber) VIC_SIZE+8 in (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (const nomodify byte) VIC_SIZE+(number) 8
-Adding number conversion cast (unumber) 8 in (bool~) table_driven_irq::$1 ← (byte) table_driven_irq::idx#2 < (unumber)(const nomodify byte) VIC_SIZE+(number) 8
-Adding number conversion cast (unumber) $3f8 in (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (number) $3f8
-Adding number conversion cast (unumber) table_driven_irq::$4 in (number~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (unumber)(number) $3f8
-Adding number conversion cast (unumber) table_driven_irq::$5 in (number~) table_driven_irq::$5 ← (unumber~) table_driven_irq::$4 - (const nomodify byte) VIC_SIZE
-Adding number conversion cast (unumber) 0 in (volatile byte) irq_idx ← (number) 0
+Adding number conversion cast (unumber) $7f in *VIC_CONTROL = *VIC_CONTROL & $7f
+Adding number conversion cast (unumber) $60 in *RASTER = $60
+Adding number conversion cast (unumber) VIC_SIZE+8 in table_driven_irq::$1 = table_driven_irq::idx#2 < VIC_SIZE+8
+Adding number conversion cast (unumber) 8 in table_driven_irq::$1 = table_driven_irq::idx#2 < (unumber)VIC_SIZE+8
+Adding number conversion cast (unumber) $3f8 in table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
+Adding number conversion cast (unumber) table_driven_irq::$4 in table_driven_irq::$4 = table_driven_irq::idx#3 + (unumber)$3f8
+Adding number conversion cast (unumber) table_driven_irq::$5 in table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
+Adding number conversion cast (unumber) 0 in irq_idx = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) RASTER) ← (unumber)(number) $60
-Inlining cast (volatile byte) irq_idx ← (unumber)(number) 0
+Inlining cast *RASTER = (unumber)$60
+Inlining cast irq_idx = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant pointer cast (byte*) 53265
@@ -237,31 +237,31 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $60
-Simplifying constant integer cast (const nomodify byte) VIC_SIZE+(unumber)(number) 8
+Simplifying constant integer cast VIC_SIZE+(unumber)8
 Simplifying constant integer cast 8
 Simplifying constant integer cast $3f8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $7f
-Finalized unsigned number type (byte) $60
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (word) $3f8
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type $7f
+Finalized unsigned number type $60
+Finalized unsigned number type 8
+Finalized unsigned number type $3f8
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to word in (unumber~) table_driven_irq::$4 ← (byte) table_driven_irq::idx#3 + (word) $3f8
-Inferred type updated to word in (unumber~) table_driven_irq::$5 ← (word~) table_driven_irq::$4 - (const nomodify byte) VIC_SIZE
-Inversing boolean not [27] (bool~) table_driven_irq::$3 ← (byte) table_driven_irq::val#3 >= *((const nomodify byte*) RASTER) from [26] (bool~) table_driven_irq::$2 ← (byte) table_driven_irq::val#3 < *((const nomodify byte*) RASTER)
+Inferred type updated to word in table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
+Inferred type updated to word in table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
+Inversing boolean not [27] table_driven_irq::$3 = table_driven_irq::val#3 >= *RASTER from [26] table_driven_irq::$2 = table_driven_irq::val#3 < *RASTER
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias table_driven_irq::val#0 = table_driven_irq::val#1 table_driven_irq::val#4 table_driven_irq::val#2 table_driven_irq::val#3 
 Alias table_driven_irq::idx#0 = table_driven_irq::idx#1 table_driven_irq::idx#2 table_driven_irq::idx#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition (bool~) table_driven_irq::$0 [13] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2
-Simple Condition (bool~) table_driven_irq::$1 [16] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
-Simple Condition (bool~) table_driven_irq::$3 [23] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return
+Simple Condition table_driven_irq::$0 [13] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2
+Simple Condition table_driven_irq::$1 [16] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3
+Simple Condition table_driven_irq::$3 [23] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [26] if(true) goto table_driven_irq::@1
 Successful SSA optimization Pass2ConstantIfs
-De-inlining pointer[w] to *(pointer+w)   [19] *((const nomodify byte*) SCREEN + (word~) table_driven_irq::$5) ← (byte) table_driven_irq::val#0
+De-inlining pointer[w] to *(pointer+w)   [19] SCREEN[table_driven_irq::$5] = table_driven_irq::val#0
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -271,9 +271,9 @@ Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias table_driven_irq::idx#0 = table_driven_irq::$5 
 Successful SSA optimization Pass2AliasElimination
-Converting *(pointer+n) to pointer[n] [16] *((byte*~) table_driven_irq::$6) ← (byte) table_driven_irq::val#0  -- *(SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0)
+Converting *(pointer+n) to pointer[n] [16] *table_driven_irq::$6 = table_driven_irq::val#0  -- (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0]
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (byte*~) table_driven_irq::$6 and assignment [15] (byte*~) table_driven_irq::$6 ← (const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0
+Eliminating unused variable table_driven_irq::$6 and assignment [15] table_driven_irq::$6 = SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -285,8 +285,8 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) table_driven_irq::@4
+Culled Empty Block label __start::@2
+Culled Empty Block label table_driven_irq::@4
 Renumbering block table_driven_irq::@5 to table_driven_irq::@4
 Renumbering block table_driven_irq::@6 to table_driven_irq::@5
 Renumbering block table_driven_irq::@7 to table_driven_irq::@6
@@ -296,12 +296,12 @@ Adding NOP phi() at start of table_driven_irq
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) irq_idx ← (byte) 0
+  [1] irq_idx = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -311,46 +311,46 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN)(void()) table_driven_irq()
+interrupt(KERNEL_MIN) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   [5] phi()
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@2 table_driven_irq::@3
-  [6] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx)
-  [7] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx)
-  [8] (volatile byte) irq_idx ← ++ (volatile byte) irq_idx
-  [9] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2
+  [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx]
+  [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx]
+  [8] irq_idx = ++ irq_idx
+  [9] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2
   to:table_driven_irq::@4
 table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@1
-  [10] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3
+  [10] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3
   to:table_driven_irq::@5
 table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@4
-  [11] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  [12] *((const nomodify byte*) RASTER) ← (byte) table_driven_irq::val#0
-  [13] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return
+  [11] *IRQ_STATUS = IRQ_RASTER
+  [12] *RASTER = table_driven_irq::val#0
+  [13] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return
   to:table_driven_irq::@6
 table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
-  [14] (volatile byte) irq_idx ← (byte) 0
+  [14] irq_idx = 0
   to:table_driven_irq::@return
 table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@5 table_driven_irq::@6
   [15] return 
   to:@return
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@4
-  [16] *((const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
+  [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0
   to:table_driven_irq::@1
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
-  [17] *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0
+  [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0
   to:table_driven_irq::@1
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
-  [19] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  [20] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f
-  [21] *((const nomodify byte*) RASTER) ← (byte) $60
-  [22] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER
-  [23] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER
-  [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq()
+  [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [20] *VIC_CONTROL = *VIC_CONTROL & $7f
+  [21] *RASTER = $60
+  [22] *IRQ_ENABLE = IRQ_RASTER
+  [23] *IRQ_STATUS = IRQ_RASTER
+  [24] *KERNEL_IRQ = &table_driven_irq
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -359,98 +359,98 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) MOS6526_CIA::INTERRUPT
-(byte) MOS6526_CIA::PORT_A
-(byte) MOS6526_CIA::PORT_A_DDR
-(byte) MOS6526_CIA::PORT_B
-(byte) MOS6526_CIA::PORT_B_DDR
-(byte) MOS6526_CIA::SERIAL_DATA
-(word) MOS6526_CIA::TIMER_A
-(byte) MOS6526_CIA::TIMER_A_CONTROL
-(word) MOS6526_CIA::TIMER_B
-(byte) MOS6526_CIA::TIMER_B_CONTROL
-(byte) MOS6526_CIA::TOD_10THS
-(byte) MOS6526_CIA::TOD_HOURS
-(byte) MOS6526_CIA::TOD_MIN
-(byte) MOS6526_CIA::TOD_SEC
-(byte) MOS6569_VICII::BG_COLOR
-(byte) MOS6569_VICII::BG_COLOR1
-(byte) MOS6569_VICII::BG_COLOR2
-(byte) MOS6569_VICII::BG_COLOR3
-(byte) MOS6569_VICII::BORDER_COLOR
-(byte) MOS6569_VICII::CONTROL1
-(byte) MOS6569_VICII::CONTROL2
-(byte) MOS6569_VICII::IRQ_ENABLE
-(byte) MOS6569_VICII::IRQ_STATUS
-(byte) MOS6569_VICII::LIGHTPEN_X
-(byte) MOS6569_VICII::LIGHTPEN_Y
-(byte) MOS6569_VICII::MEMORY
-(byte) MOS6569_VICII::RASTER
-(byte) MOS6569_VICII::SPRITE0_COLOR
-(byte) MOS6569_VICII::SPRITE0_X
-(byte) MOS6569_VICII::SPRITE0_Y
-(byte) MOS6569_VICII::SPRITE1_COLOR
-(byte) MOS6569_VICII::SPRITE1_X
-(byte) MOS6569_VICII::SPRITE1_Y
-(byte) MOS6569_VICII::SPRITE2_COLOR
-(byte) MOS6569_VICII::SPRITE2_X
-(byte) MOS6569_VICII::SPRITE2_Y
-(byte) MOS6569_VICII::SPRITE3_COLOR
-(byte) MOS6569_VICII::SPRITE3_X
-(byte) MOS6569_VICII::SPRITE3_Y
-(byte) MOS6569_VICII::SPRITE4_COLOR
-(byte) MOS6569_VICII::SPRITE4_X
-(byte) MOS6569_VICII::SPRITE4_Y
-(byte) MOS6569_VICII::SPRITE5_COLOR
-(byte) MOS6569_VICII::SPRITE5_X
-(byte) MOS6569_VICII::SPRITE5_Y
-(byte) MOS6569_VICII::SPRITE6_COLOR
-(byte) MOS6569_VICII::SPRITE6_X
-(byte) MOS6569_VICII::SPRITE6_Y
-(byte) MOS6569_VICII::SPRITE7_COLOR
-(byte) MOS6569_VICII::SPRITE7_X
-(byte) MOS6569_VICII::SPRITE7_Y
-(byte) MOS6569_VICII::SPRITES_BG_COLLISION
-(byte) MOS6569_VICII::SPRITES_COLLISION
-(byte) MOS6569_VICII::SPRITES_ENABLE
-(byte) MOS6569_VICII::SPRITES_EXPAND_X
-(byte) MOS6569_VICII::SPRITES_EXPAND_Y
-(byte) MOS6569_VICII::SPRITES_MC
-(byte) MOS6569_VICII::SPRITES_MCOLOR1
-(byte) MOS6569_VICII::SPRITES_MCOLOR2
-(byte) MOS6569_VICII::SPRITES_PRIORITY
-(byte) MOS6569_VICII::SPRITES_XMSB
-(byte) MOS6581_SID::CH1_ATTACK_DECAY
-(byte) MOS6581_SID::CH1_CONTROL
-(word) MOS6581_SID::CH1_FREQ
-(word) MOS6581_SID::CH1_PULSE_WIDTH
-(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH2_ATTACK_DECAY
-(byte) MOS6581_SID::CH2_CONTROL
-(word) MOS6581_SID::CH2_FREQ
-(word) MOS6581_SID::CH2_PULSE_WIDTH
-(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH3_ATTACK_DECAY
-(byte) MOS6581_SID::CH3_CONTROL
-(byte) MOS6581_SID::CH3_ENV
-(word) MOS6581_SID::CH3_FREQ
-(byte) MOS6581_SID::CH3_OSC
-(word) MOS6581_SID::CH3_PULSE_WIDTH
-(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
-(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
-(byte) MOS6581_SID::FILTER_CUTOFF_LOW
-(byte) MOS6581_SID::FILTER_SETUP
-(byte) MOS6581_SID::POT_X
-(byte) MOS6581_SID::POT_Y
-(byte) MOS6581_SID::VOLUME_FILTER_MODE
-(void()) __start()
-(volatile byte) irq_idx loadstore 6.0
-(void()) main()
-interrupt(KERNEL_MIN)(void()) table_driven_irq()
-(byte) table_driven_irq::idx
-(byte) table_driven_irq::idx#0 11.0
-(byte) table_driven_irq::val
-(byte) table_driven_irq::val#0 6.166666666666666
+byte MOS6526_CIA::INTERRUPT
+byte MOS6526_CIA::PORT_A
+byte MOS6526_CIA::PORT_A_DDR
+byte MOS6526_CIA::PORT_B
+byte MOS6526_CIA::PORT_B_DDR
+byte MOS6526_CIA::SERIAL_DATA
+word MOS6526_CIA::TIMER_A
+byte MOS6526_CIA::TIMER_A_CONTROL
+word MOS6526_CIA::TIMER_B
+byte MOS6526_CIA::TIMER_B_CONTROL
+byte MOS6526_CIA::TOD_10THS
+byte MOS6526_CIA::TOD_HOURS
+byte MOS6526_CIA::TOD_MIN
+byte MOS6526_CIA::TOD_SEC
+byte MOS6569_VICII::BG_COLOR
+byte MOS6569_VICII::BG_COLOR1
+byte MOS6569_VICII::BG_COLOR2
+byte MOS6569_VICII::BG_COLOR3
+byte MOS6569_VICII::BORDER_COLOR
+byte MOS6569_VICII::CONTROL1
+byte MOS6569_VICII::CONTROL2
+byte MOS6569_VICII::IRQ_ENABLE
+byte MOS6569_VICII::IRQ_STATUS
+byte MOS6569_VICII::LIGHTPEN_X
+byte MOS6569_VICII::LIGHTPEN_Y
+byte MOS6569_VICII::MEMORY
+byte MOS6569_VICII::RASTER
+byte MOS6569_VICII::SPRITE0_COLOR
+byte MOS6569_VICII::SPRITE0_X
+byte MOS6569_VICII::SPRITE0_Y
+byte MOS6569_VICII::SPRITE1_COLOR
+byte MOS6569_VICII::SPRITE1_X
+byte MOS6569_VICII::SPRITE1_Y
+byte MOS6569_VICII::SPRITE2_COLOR
+byte MOS6569_VICII::SPRITE2_X
+byte MOS6569_VICII::SPRITE2_Y
+byte MOS6569_VICII::SPRITE3_COLOR
+byte MOS6569_VICII::SPRITE3_X
+byte MOS6569_VICII::SPRITE3_Y
+byte MOS6569_VICII::SPRITE4_COLOR
+byte MOS6569_VICII::SPRITE4_X
+byte MOS6569_VICII::SPRITE4_Y
+byte MOS6569_VICII::SPRITE5_COLOR
+byte MOS6569_VICII::SPRITE5_X
+byte MOS6569_VICII::SPRITE5_Y
+byte MOS6569_VICII::SPRITE6_COLOR
+byte MOS6569_VICII::SPRITE6_X
+byte MOS6569_VICII::SPRITE6_Y
+byte MOS6569_VICII::SPRITE7_COLOR
+byte MOS6569_VICII::SPRITE7_X
+byte MOS6569_VICII::SPRITE7_Y
+byte MOS6569_VICII::SPRITES_BG_COLLISION
+byte MOS6569_VICII::SPRITES_COLLISION
+byte MOS6569_VICII::SPRITES_ENABLE
+byte MOS6569_VICII::SPRITES_EXPAND_X
+byte MOS6569_VICII::SPRITES_EXPAND_Y
+byte MOS6569_VICII::SPRITES_MC
+byte MOS6569_VICII::SPRITES_MCOLOR1
+byte MOS6569_VICII::SPRITES_MCOLOR2
+byte MOS6569_VICII::SPRITES_PRIORITY
+byte MOS6569_VICII::SPRITES_XMSB
+byte MOS6581_SID::CH1_ATTACK_DECAY
+byte MOS6581_SID::CH1_CONTROL
+word MOS6581_SID::CH1_FREQ
+word MOS6581_SID::CH1_PULSE_WIDTH
+byte MOS6581_SID::CH1_SUSTAIN_RELEASE
+byte MOS6581_SID::CH2_ATTACK_DECAY
+byte MOS6581_SID::CH2_CONTROL
+word MOS6581_SID::CH2_FREQ
+word MOS6581_SID::CH2_PULSE_WIDTH
+byte MOS6581_SID::CH2_SUSTAIN_RELEASE
+byte MOS6581_SID::CH3_ATTACK_DECAY
+byte MOS6581_SID::CH3_CONTROL
+byte MOS6581_SID::CH3_ENV
+word MOS6581_SID::CH3_FREQ
+byte MOS6581_SID::CH3_OSC
+word MOS6581_SID::CH3_PULSE_WIDTH
+byte MOS6581_SID::CH3_SUSTAIN_RELEASE
+byte MOS6581_SID::FILTER_CUTOFF_HIGH
+byte MOS6581_SID::FILTER_CUTOFF_LOW
+byte MOS6581_SID::FILTER_SETUP
+byte MOS6581_SID::POT_X
+byte MOS6581_SID::POT_Y
+byte MOS6581_SID::VOLUME_FILTER_MODE
+void __start()
+volatile byte irq_idx loadstore 6.0
+void main()
+interrupt(KERNEL_MIN) void table_driven_irq()
+byte table_driven_irq::idx
+byte table_driven_irq::idx#0 11.0
+byte table_driven_irq::val
+byte table_driven_irq::val#0 6.166666666666666
 
 Initial phi equivalence classes
 Added variable irq_idx to live range equivalence class [ irq_idx ]
@@ -463,201 +463,35 @@ Complete equivalence classes
 Allocated zp[1]:2 [ irq_idx ]
 Allocated zp[1]:3 [ table_driven_irq::idx#0 ]
 Allocated zp[1]:4 [ table_driven_irq::val#0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test interrupt routine using a variable between calls (irq_idx)
-// Commodore 64 Registers and Constants
-// The MOS 6526 Complex Interface Adapter (CIA)
-// http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
-  // Bits for the VICII IRQ Status/Enable Registers
-  .const IRQ_RASTER = 1
-  .const VIC_SIZE = $30
-  .const IRQ_CHANGE_NEXT = $7f
-  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-  .label RASTER = $d012
-  .label VIC_CONTROL = $d011
-  // VIC II IRQ Status Register
-  .label IRQ_STATUS = $d019
-  // VIC II IRQ Enable Register
-  .label IRQ_ENABLE = $d01a
-  // The CIA#1: keyboard matrix, joystick #1/#2
-  .label CIA1 = $dc00
-  // The vector used when the KERNAL serves IRQ interrupts
-  .label KERNEL_IRQ = $314
-  .label SCREEN = $400
-  .label VIC_BASE = $d000
-  .label irq_idx = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z irq_idx
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // table_driven_irq
-table_driven_irq: {
-    .label idx = 3
-    .label val = 4
-    // entry interrupt(KERNEL_MIN)
-    jmp __b1
-    // table_driven_irq::@1
-  __b1:
-    // [6] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z irq_idx
-    lda IRQ_CHANGE_IDX,y
-    sta.z idx
-    // [7] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx) -- vbuz1=pbuc1_derefidx_vbuz2 
-    ldy.z irq_idx
-    lda IRQ_CHANGE_VAL,y
-    sta.z val
-    // [8] (volatile byte) irq_idx ← ++ (volatile byte) irq_idx -- vbuz1=_inc_vbuz1 
-    inc.z irq_idx
-    // [9] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z idx
-    cmp #VIC_SIZE
-    bcc __b2
-    jmp __b4
-    // table_driven_irq::@4
-  __b4:
-    // [10] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z idx
-    cmp #VIC_SIZE+8
-    bcc __b3
-    jmp __b5
-    // table_driven_irq::@5
-  __b5:
-    // [11] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [12] *((const nomodify byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuz1 
-    lda.z val
-    sta RASTER
-    // [13] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return -- vbuz1_ge__deref_pbuc1_then_la1 
-    lda RASTER
-    ldy.z val
-    sta.z $ff
-    cpy.z $ff
-    bcs __breturn
-    jmp __b6
-    // table_driven_irq::@6
-  __b6:
-    // [14] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z irq_idx
-    jmp __breturn
-    // table_driven_irq::@return
-  __breturn:
-    // [15] return  - exit interrupt(KERNEL_MIN)
-    jmp $ea81
-    // table_driven_irq::@3
-  __b3:
-    // [16] *((const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z val
-    ldy.z idx
-    sta SCREEN+-VIC_SIZE+$3f8,y
-    jmp __b1
-    // table_driven_irq::@2
-  __b2:
-    // [17] *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuz1=vbuz2 
-    lda.z val
-    ldy.z idx
-    sta VIC_BASE,y
-    jmp __b1
-}
-  // main
-main: {
-    // asm { sei  }
-    sei
-    // [19] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
-    // Disable CIA 1 Timer IRQ
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [20] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
-    // Set raster line to $60
-    lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
-    // [21] *((const nomodify byte*) RASTER) ← (byte) $60 -- _deref_pbuc1=vbuc2 
-    lda #$60
-    sta RASTER
-    // [22] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Enable Raster Interrupt
-    lda #IRQ_RASTER
-    sta IRQ_ENABLE
-    // [23] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
-    // Acknowledge any IRQ
-    lda #IRQ_RASTER
-    sta IRQ_STATUS
-    // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() -- _deref_qprc1=pprc2 
-    // Setup the table driven IRQ routine
-    lda #<table_driven_irq
-    sta KERNEL_IRQ
-    lda #>table_driven_irq
-    sta KERNEL_IRQ+1
-    // asm { cli  }
-    cli
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [26] return 
-    rts
-}
-  // File Data
-  IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
-  IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) irq_idx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx) [ irq_idx table_driven_irq::idx#0 ] (  [ irq_idx table_driven_irq::idx#0 ] { }  ) always clobbers reg byte y 
-Statement [7] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx) [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] { }  ) always clobbers reg byte y 
+Statement [1] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx] [ irq_idx table_driven_irq::idx#0 ] (  [ irq_idx table_driven_irq::idx#0 ] { }  ) always clobbers reg byte y 
+Statement [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx] [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] { }  ) always clobbers reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:3 [ table_driven_irq::idx#0 ]
-Statement [11] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] { }  ) always clobbers reg byte a 
+Statement [11] *IRQ_STATUS = IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ table_driven_irq::val#0 ]
-Statement [14] (volatile byte) irq_idx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
-Statement [17] *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
-Statement [19] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) RASTER) ← (byte) $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [22] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [23] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [1] (volatile byte) irq_idx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx) [ irq_idx table_driven_irq::idx#0 ] (  [ irq_idx table_driven_irq::idx#0 ] { }  ) always clobbers reg byte y 
-Statement [7] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx) [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] { }  ) always clobbers reg byte y 
-Statement [11] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] { }  ) always clobbers reg byte a 
-Statement [14] (volatile byte) irq_idx ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] *((const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
-Statement [17] *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
-Statement [19] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [21] *((const nomodify byte*) RASTER) ← (byte) $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [22] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [23] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [14] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [21] *RASTER = $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [22] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [23] *IRQ_STATUS = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [24] *KERNEL_IRQ = &table_driven_irq [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [1] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx] [ irq_idx table_driven_irq::idx#0 ] (  [ irq_idx table_driven_irq::idx#0 ] { }  ) always clobbers reg byte y 
+Statement [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx] [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] { }  ) always clobbers reg byte y 
+Statement [11] *IRQ_STATUS = IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] { }  ) always clobbers reg byte a 
+Statement [14] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [21] *RASTER = $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [22] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [23] *IRQ_STATUS = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [24] *KERNEL_IRQ = &table_driven_irq [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ irq_idx ] : zp[1]:2 , 
 Potential registers zp[1]:3 [ table_driven_irq::idx#0 ] : zp[1]:3 , reg byte a , reg byte x , 
 Potential registers zp[1]:4 [ table_driven_irq::val#0 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -717,7 +551,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] irq_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -739,32 +573,32 @@ table_driven_irq: {
     jmp __b1
     // table_driven_irq::@1
   __b1:
-    // [6] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
-    // [7] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z irq_idx
     ldx IRQ_CHANGE_VAL,y
-    // [8] (volatile byte) irq_idx ← ++ (volatile byte) irq_idx -- vbuz1=_inc_vbuz1 
+    // [8] irq_idx = ++ irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
-    // [9] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
+    // [9] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE
     bcc __b2
     jmp __b4
     // table_driven_irq::@4
   __b4:
-    // [10] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
+    // [10] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE+8
     bcc __b3
     jmp __b5
     // table_driven_irq::@5
   __b5:
-    // [11] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [11] *IRQ_STATUS = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [12] *((const nomodify byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
+    // [12] *RASTER = table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
     stx RASTER
-    // [13] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
+    // [13] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
     ldy RASTER
     sty.z $ff
     cpx.z $ff
@@ -772,7 +606,7 @@ table_driven_irq: {
     jmp __b6
     // table_driven_irq::@6
   __b6:
-    // [14] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    // [14] irq_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
     jmp __breturn
@@ -782,14 +616,14 @@ table_driven_irq: {
     jmp $ea81
     // table_driven_irq::@3
   __b3:
-    // [16] *((const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
     jmp __b1
     // table_driven_irq::@2
   __b2:
-    // [17] *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta VIC_BASE,y
@@ -799,27 +633,27 @@ table_driven_irq: {
 main: {
     // asm { sei  }
     sei
-    // [19] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [20] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [20] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $60
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
-    // [21] *((const nomodify byte*) RASTER) ← (byte) $60 -- _deref_pbuc1=vbuc2 
+    // [21] *RASTER = $60 -- _deref_pbuc1=vbuc2 
     lda #$60
     sta RASTER
-    // [22] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [22] *IRQ_ENABLE = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
-    // [23] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [23] *IRQ_STATUS = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge any IRQ
     lda #IRQ_RASTER
     sta IRQ_STATUS
-    // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() -- _deref_qprc1=pprc2 
+    // [24] *KERNEL_IRQ = &table_driven_irq -- _deref_qprc1=pprc2 
     // Setup the table driven IRQ routine
     lda #<table_driven_irq
     sta KERNEL_IRQ
@@ -868,124 +702,124 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 Fixing long branch [49] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
-(const nomodify struct MOS6526_CIA*) CIA1 = (struct MOS6526_CIA*) 56320
-(const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
-(const byte*) IRQ_CHANGE_IDX[]  = { (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT, (byte) $20, (byte) $21, (const nomodify byte) IRQ_CHANGE_NEXT }
-(const nomodify byte) IRQ_CHANGE_NEXT = (byte) $7f
-(const byte*) IRQ_CHANGE_VAL[]  = { (byte) $b, (byte) $b, (byte) $63, (byte) 0, (byte) 0, (byte) $80, (byte) 7, (byte) 7, (byte) $83, (byte) 0, (byte) 0, (byte) $60 }
-(const nomodify byte*) IRQ_ENABLE = (byte*) 53274
-(const nomodify byte) IRQ_RASTER = (byte) 1
-(const nomodify byte*) IRQ_STATUS = (byte*) 53273
-(const nomodify void()**) KERNEL_IRQ = (void()**) 788
-(byte) MOS6526_CIA::INTERRUPT
-(byte) MOS6526_CIA::PORT_A
-(byte) MOS6526_CIA::PORT_A_DDR
-(byte) MOS6526_CIA::PORT_B
-(byte) MOS6526_CIA::PORT_B_DDR
-(byte) MOS6526_CIA::SERIAL_DATA
-(word) MOS6526_CIA::TIMER_A
-(byte) MOS6526_CIA::TIMER_A_CONTROL
-(word) MOS6526_CIA::TIMER_B
-(byte) MOS6526_CIA::TIMER_B_CONTROL
-(byte) MOS6526_CIA::TOD_10THS
-(byte) MOS6526_CIA::TOD_HOURS
-(byte) MOS6526_CIA::TOD_MIN
-(byte) MOS6526_CIA::TOD_SEC
-(byte) MOS6569_VICII::BG_COLOR
-(byte) MOS6569_VICII::BG_COLOR1
-(byte) MOS6569_VICII::BG_COLOR2
-(byte) MOS6569_VICII::BG_COLOR3
-(byte) MOS6569_VICII::BORDER_COLOR
-(byte) MOS6569_VICII::CONTROL1
-(byte) MOS6569_VICII::CONTROL2
-(byte) MOS6569_VICII::IRQ_ENABLE
-(byte) MOS6569_VICII::IRQ_STATUS
-(byte) MOS6569_VICII::LIGHTPEN_X
-(byte) MOS6569_VICII::LIGHTPEN_Y
-(byte) MOS6569_VICII::MEMORY
-(byte) MOS6569_VICII::RASTER
-(byte) MOS6569_VICII::SPRITE0_COLOR
-(byte) MOS6569_VICII::SPRITE0_X
-(byte) MOS6569_VICII::SPRITE0_Y
-(byte) MOS6569_VICII::SPRITE1_COLOR
-(byte) MOS6569_VICII::SPRITE1_X
-(byte) MOS6569_VICII::SPRITE1_Y
-(byte) MOS6569_VICII::SPRITE2_COLOR
-(byte) MOS6569_VICII::SPRITE2_X
-(byte) MOS6569_VICII::SPRITE2_Y
-(byte) MOS6569_VICII::SPRITE3_COLOR
-(byte) MOS6569_VICII::SPRITE3_X
-(byte) MOS6569_VICII::SPRITE3_Y
-(byte) MOS6569_VICII::SPRITE4_COLOR
-(byte) MOS6569_VICII::SPRITE4_X
-(byte) MOS6569_VICII::SPRITE4_Y
-(byte) MOS6569_VICII::SPRITE5_COLOR
-(byte) MOS6569_VICII::SPRITE5_X
-(byte) MOS6569_VICII::SPRITE5_Y
-(byte) MOS6569_VICII::SPRITE6_COLOR
-(byte) MOS6569_VICII::SPRITE6_X
-(byte) MOS6569_VICII::SPRITE6_Y
-(byte) MOS6569_VICII::SPRITE7_COLOR
-(byte) MOS6569_VICII::SPRITE7_X
-(byte) MOS6569_VICII::SPRITE7_Y
-(byte) MOS6569_VICII::SPRITES_BG_COLLISION
-(byte) MOS6569_VICII::SPRITES_COLLISION
-(byte) MOS6569_VICII::SPRITES_ENABLE
-(byte) MOS6569_VICII::SPRITES_EXPAND_X
-(byte) MOS6569_VICII::SPRITES_EXPAND_Y
-(byte) MOS6569_VICII::SPRITES_MC
-(byte) MOS6569_VICII::SPRITES_MCOLOR1
-(byte) MOS6569_VICII::SPRITES_MCOLOR2
-(byte) MOS6569_VICII::SPRITES_PRIORITY
-(byte) MOS6569_VICII::SPRITES_XMSB
-(byte) MOS6581_SID::CH1_ATTACK_DECAY
-(byte) MOS6581_SID::CH1_CONTROL
-(word) MOS6581_SID::CH1_FREQ
-(word) MOS6581_SID::CH1_PULSE_WIDTH
-(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH2_ATTACK_DECAY
-(byte) MOS6581_SID::CH2_CONTROL
-(word) MOS6581_SID::CH2_FREQ
-(word) MOS6581_SID::CH2_PULSE_WIDTH
-(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH3_ATTACK_DECAY
-(byte) MOS6581_SID::CH3_CONTROL
-(byte) MOS6581_SID::CH3_ENV
-(word) MOS6581_SID::CH3_FREQ
-(byte) MOS6581_SID::CH3_OSC
-(word) MOS6581_SID::CH3_PULSE_WIDTH
-(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
-(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
-(byte) MOS6581_SID::FILTER_CUTOFF_LOW
-(byte) MOS6581_SID::FILTER_SETUP
-(byte) MOS6581_SID::POT_X
-(byte) MOS6581_SID::POT_Y
-(byte) MOS6581_SID::VOLUME_FILTER_MODE
-(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
-(const nomodify byte*) RASTER = (byte*) 53266
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const nomodify byte*) VIC_BASE = (byte*) 53248
-(const nomodify byte*) VIC_CONTROL = (byte*) 53265
-(const nomodify byte) VIC_SIZE = (byte) $30
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(volatile byte) irq_idx loadstore zp[1]:2 6.0
-(void()) main()
-(label) main::@return
-interrupt(KERNEL_MIN)(void()) table_driven_irq()
-(label) table_driven_irq::@1
-(label) table_driven_irq::@2
-(label) table_driven_irq::@3
-(label) table_driven_irq::@4
-(label) table_driven_irq::@5
-(label) table_driven_irq::@6
-(label) table_driven_irq::@return
-(byte) table_driven_irq::idx
-(byte) table_driven_irq::idx#0 reg byte a 11.0
-(byte) table_driven_irq::val
-(byte) table_driven_irq::val#0 reg byte x 6.166666666666666
+const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
+const nomodify byte CIA_INTERRUPT_CLEAR = $7f
+const byte* IRQ_CHANGE_IDX[]  = { $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT }
+const nomodify byte IRQ_CHANGE_NEXT = $7f
+const byte* IRQ_CHANGE_VAL[]  = { $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60 }
+const nomodify byte* IRQ_ENABLE = (byte*) 53274
+const nomodify byte IRQ_RASTER = 1
+const nomodify byte* IRQ_STATUS = (byte*) 53273
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+byte MOS6526_CIA::INTERRUPT
+byte MOS6526_CIA::PORT_A
+byte MOS6526_CIA::PORT_A_DDR
+byte MOS6526_CIA::PORT_B
+byte MOS6526_CIA::PORT_B_DDR
+byte MOS6526_CIA::SERIAL_DATA
+word MOS6526_CIA::TIMER_A
+byte MOS6526_CIA::TIMER_A_CONTROL
+word MOS6526_CIA::TIMER_B
+byte MOS6526_CIA::TIMER_B_CONTROL
+byte MOS6526_CIA::TOD_10THS
+byte MOS6526_CIA::TOD_HOURS
+byte MOS6526_CIA::TOD_MIN
+byte MOS6526_CIA::TOD_SEC
+byte MOS6569_VICII::BG_COLOR
+byte MOS6569_VICII::BG_COLOR1
+byte MOS6569_VICII::BG_COLOR2
+byte MOS6569_VICII::BG_COLOR3
+byte MOS6569_VICII::BORDER_COLOR
+byte MOS6569_VICII::CONTROL1
+byte MOS6569_VICII::CONTROL2
+byte MOS6569_VICII::IRQ_ENABLE
+byte MOS6569_VICII::IRQ_STATUS
+byte MOS6569_VICII::LIGHTPEN_X
+byte MOS6569_VICII::LIGHTPEN_Y
+byte MOS6569_VICII::MEMORY
+byte MOS6569_VICII::RASTER
+byte MOS6569_VICII::SPRITE0_COLOR
+byte MOS6569_VICII::SPRITE0_X
+byte MOS6569_VICII::SPRITE0_Y
+byte MOS6569_VICII::SPRITE1_COLOR
+byte MOS6569_VICII::SPRITE1_X
+byte MOS6569_VICII::SPRITE1_Y
+byte MOS6569_VICII::SPRITE2_COLOR
+byte MOS6569_VICII::SPRITE2_X
+byte MOS6569_VICII::SPRITE2_Y
+byte MOS6569_VICII::SPRITE3_COLOR
+byte MOS6569_VICII::SPRITE3_X
+byte MOS6569_VICII::SPRITE3_Y
+byte MOS6569_VICII::SPRITE4_COLOR
+byte MOS6569_VICII::SPRITE4_X
+byte MOS6569_VICII::SPRITE4_Y
+byte MOS6569_VICII::SPRITE5_COLOR
+byte MOS6569_VICII::SPRITE5_X
+byte MOS6569_VICII::SPRITE5_Y
+byte MOS6569_VICII::SPRITE6_COLOR
+byte MOS6569_VICII::SPRITE6_X
+byte MOS6569_VICII::SPRITE6_Y
+byte MOS6569_VICII::SPRITE7_COLOR
+byte MOS6569_VICII::SPRITE7_X
+byte MOS6569_VICII::SPRITE7_Y
+byte MOS6569_VICII::SPRITES_BG_COLLISION
+byte MOS6569_VICII::SPRITES_COLLISION
+byte MOS6569_VICII::SPRITES_ENABLE
+byte MOS6569_VICII::SPRITES_EXPAND_X
+byte MOS6569_VICII::SPRITES_EXPAND_Y
+byte MOS6569_VICII::SPRITES_MC
+byte MOS6569_VICII::SPRITES_MCOLOR1
+byte MOS6569_VICII::SPRITES_MCOLOR2
+byte MOS6569_VICII::SPRITES_PRIORITY
+byte MOS6569_VICII::SPRITES_XMSB
+byte MOS6581_SID::CH1_ATTACK_DECAY
+byte MOS6581_SID::CH1_CONTROL
+word MOS6581_SID::CH1_FREQ
+word MOS6581_SID::CH1_PULSE_WIDTH
+byte MOS6581_SID::CH1_SUSTAIN_RELEASE
+byte MOS6581_SID::CH2_ATTACK_DECAY
+byte MOS6581_SID::CH2_CONTROL
+word MOS6581_SID::CH2_FREQ
+word MOS6581_SID::CH2_PULSE_WIDTH
+byte MOS6581_SID::CH2_SUSTAIN_RELEASE
+byte MOS6581_SID::CH3_ATTACK_DECAY
+byte MOS6581_SID::CH3_CONTROL
+byte MOS6581_SID::CH3_ENV
+word MOS6581_SID::CH3_FREQ
+byte MOS6581_SID::CH3_OSC
+word MOS6581_SID::CH3_PULSE_WIDTH
+byte MOS6581_SID::CH3_SUSTAIN_RELEASE
+byte MOS6581_SID::FILTER_CUTOFF_HIGH
+byte MOS6581_SID::FILTER_CUTOFF_LOW
+byte MOS6581_SID::FILTER_SETUP
+byte MOS6581_SID::POT_X
+byte MOS6581_SID::POT_Y
+byte MOS6581_SID::VOLUME_FILTER_MODE
+const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+const nomodify byte* RASTER = (byte*) 53266
+const nomodify byte* SCREEN = (byte*) 1024
+const nomodify byte* VIC_BASE = (byte*) 53248
+const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte VIC_SIZE = $30
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+volatile byte irq_idx loadstore zp[1]:2 6.0
+void main()
+label main::@return
+interrupt(KERNEL_MIN) void table_driven_irq()
+label table_driven_irq::@1
+label table_driven_irq::@2
+label table_driven_irq::@3
+label table_driven_irq::@4
+label table_driven_irq::@5
+label table_driven_irq::@6
+label table_driven_irq::@return
+byte table_driven_irq::idx
+byte table_driven_irq::idx#0 reg byte a 11.0
+byte table_driven_irq::val
+byte table_driven_irq::val#0 reg byte x 6.166666666666666
 
 zp[1]:2 [ irq_idx ]
 reg byte a [ table_driven_irq::idx#0 ]
@@ -1029,7 +863,7 @@ Score: 604
 __start: {
     // __start::__init1
     // irq_idx = 0
-    // [1] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] irq_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -1046,34 +880,34 @@ table_driven_irq: {
     // table_driven_irq::@1
   __b1:
     // idx = IRQ_CHANGE_IDX[irq_idx]
-    // [6] (byte) table_driven_irq::idx#0 ← *((const byte*) IRQ_CHANGE_IDX + (volatile byte) irq_idx) -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx] -- vbuaa=pbuc1_derefidx_vbuz1 
     ldy.z irq_idx
     lda IRQ_CHANGE_IDX,y
     // val = IRQ_CHANGE_VAL[irq_idx]
-    // [7] (byte) table_driven_irq::val#0 ← *((const byte*) IRQ_CHANGE_VAL + (volatile byte) irq_idx) -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldx IRQ_CHANGE_VAL,y
     // irq_idx++;
-    // [8] (volatile byte) irq_idx ← ++ (volatile byte) irq_idx -- vbuz1=_inc_vbuz1 
+    // [8] irq_idx = ++ irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
     // if (idx < VIC_SIZE)
-    // [9] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
+    // [9] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE
     bcc __b2
     // table_driven_irq::@4
     // if (idx < VIC_SIZE + 8)
-    // [10] if((byte) table_driven_irq::idx#0<(const nomodify byte) VIC_SIZE+(byte) 8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
+    // [10] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
     cmp #VIC_SIZE+8
     bcc __b3
     // table_driven_irq::@5
     // *IRQ_STATUS = IRQ_RASTER
-    // [11] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [11] *IRQ_STATUS = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // *RASTER = val
-    // [12] *((const nomodify byte*) RASTER) ← (byte) table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
+    // [12] *RASTER = table_driven_irq::val#0 -- _deref_pbuc1=vbuxx 
     stx RASTER
     // if (val < *RASTER)
-    // [13] if((byte) table_driven_irq::val#0>=*((const nomodify byte*) RASTER)) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
+    // [13] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return -- vbuxx_ge__deref_pbuc1_then_la1 
     ldy RASTER
     sty.z $ff
     cpx.z $ff
@@ -1082,7 +916,7 @@ table_driven_irq: {
   !__ea81:
     // table_driven_irq::@6
     // irq_idx = 0
-    // [14] (volatile byte) irq_idx ← (byte) 0 -- vbuz1=vbuc1 
+    // [14] irq_idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z irq_idx
     // table_driven_irq::@return
@@ -1092,7 +926,7 @@ table_driven_irq: {
     // table_driven_irq::@3
   __b3:
     // SCREEN[idx + $3f8 - VIC_SIZE] = val
-    // [16] *((const nomodify byte*) SCREEN+-(const nomodify byte) VIC_SIZE+(word) $3f8 + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta SCREEN+-VIC_SIZE+$3f8,y
@@ -1100,7 +934,7 @@ table_driven_irq: {
     // table_driven_irq::@2
   __b2:
     // VIC_BASE[idx] = val
-    // [17] *((const nomodify byte*) VIC_BASE + (byte) table_driven_irq::idx#0) ← (byte) table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
     sta VIC_BASE,y
@@ -1112,31 +946,31 @@ main: {
     // asm { sei  }
     sei
     // CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [19] *((byte*)(const nomodify struct MOS6526_CIA*) CIA1+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *VIC_CONTROL &=$7f
-    // [20] *((const nomodify byte*) VIC_CONTROL) ← *((const nomodify byte*) VIC_CONTROL) & (byte) $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [20] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $60
     lda #$7f
     and VIC_CONTROL
     sta VIC_CONTROL
     // *RASTER = $60
-    // [21] *((const nomodify byte*) RASTER) ← (byte) $60 -- _deref_pbuc1=vbuc2 
+    // [21] *RASTER = $60 -- _deref_pbuc1=vbuc2 
     lda #$60
     sta RASTER
     // *IRQ_ENABLE = IRQ_RASTER
-    // [22] *((const nomodify byte*) IRQ_ENABLE) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [22] *IRQ_ENABLE = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Enable Raster Interrupt
     lda #IRQ_RASTER
     sta IRQ_ENABLE
     // *IRQ_STATUS = IRQ_RASTER
-    // [23] *((const nomodify byte*) IRQ_STATUS) ← (const nomodify byte) IRQ_RASTER -- _deref_pbuc1=vbuc2 
+    // [23] *IRQ_STATUS = IRQ_RASTER -- _deref_pbuc1=vbuc2 
     // Acknowledge any IRQ
     sta IRQ_STATUS
     // *KERNEL_IRQ = &table_driven_irq
-    // [24] *((const nomodify void()**) KERNEL_IRQ) ← &interrupt(KERNEL_MIN)(void()) table_driven_irq() -- _deref_qprc1=pprc2 
+    // [24] *KERNEL_IRQ = &table_driven_irq -- _deref_qprc1=pprc2 
     // Setup the table driven IRQ routine
     lda #<table_driven_irq
     sta KERNEL_IRQ

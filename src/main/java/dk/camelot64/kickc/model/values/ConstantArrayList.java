@@ -70,7 +70,7 @@ public class ConstantArrayList implements ConstantArray {
             out.append(", ");
          }
          first = false;
-         out.append(constantValue.toString(program));
+         out.append(constantValue.toString(null));
       }
       out.append(" }");
       return out.toString();

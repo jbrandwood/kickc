@@ -1,9 +1,9 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte*) print::str#0 ← (const byte*) main::str
+  print::str#0 = main::str
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -12,16 +12,16 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) print((byte*) print::str)
+void print(byte* print::str)
 print: scope:[print]  from main
-  (byte*) print::str#1 ← phi( main/(byte*) print::str#0 )
-  *((byte**)(number) $80) ← (byte*)(byte*) print::str#1
+  print::str#1 = phi( main/print::str#0 )
+  *((byte**)$80) = (byte*)print::str#1
   to:print::@return
 print::@return: scope:[print]  from print
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -32,32 +32,32 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte*) main::str[(byte) 4]  = (byte*) "qwe"
-(void()) print((byte*) print::str)
-(label) print::@return
-(byte*) print::str
-(byte*) print::str#0
-(byte*) print::str#1
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@return
+const byte* main::str[4]  = "qwe"
+void print(byte* print::str)
+label print::@return
+byte* print::str
+byte* print::str#0
+byte* print::str#1
 
-Simplifying constant integer cast (byte*) print::str#1
+Simplifying constant integer cast print::str#1
 Simplifying constant pointer cast (byte**) 128
 Successful SSA optimization PassNCastSimplification
-Identical Phi Values (byte*) print::str#1 (byte*) print::str#0
+Identical Phi Values print::str#1 print::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) print::str#0 = main::str
+Constant print::str#0 = main::str
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined print::str#0 = (const byte*) main::str
+Constant inlined print::str#0 = main::str
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -66,12 +66,12 @@ Calls in [main] to print:1
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call print 
@@ -80,9 +80,9 @@ main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-(void()) print((byte*) print::str)
+void print(byte* print::str)
 print: scope:[print]  from main
-  [3] *((byte**) 128) ← (const byte*) main::str
+  [3] *((byte**) 128) = main::str
   to:print::@return
 print::@return: scope:[print]  from print
   [4] return 
@@ -90,51 +90,14 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(void()) print((byte*) print::str)
-(byte*) print::str
+void main()
+void print(byte* print::str)
+byte* print::str
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests assigning a literal word pointer
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // [1] call print 
-    jsr print
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-    str: .text "qwe"
-    .byte 0
-}
-  // print
-print: {
-    // [3] *((byte**) 128) ← (const byte*) main::str -- _deref_qbuc1=pbuc2 
-    lda #<main.str
-    sta $80
-    lda #>main.str
-    sta $80+1
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [3] *((byte**) 128) ← (const byte*) main::str [ ] ( print:1 [ ] { }  ) always clobbers reg byte a 
+Statement [3] *((byte**) 128) = main::str [ ] ( print:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -167,7 +130,7 @@ main: {
 }
   // print
 print: {
-    // [3] *((byte**) 128) ← (const byte*) main::str -- _deref_qbuc1=pbuc2 
+    // [3] *((byte**) 128) = main::str -- _deref_qbuc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str
@@ -189,12 +152,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const byte*) main::str[(byte) 4]  = (byte*) "qwe"
-(void()) print((byte*) print::str)
-(label) print::@return
-(byte*) print::str
+void main()
+label main::@return
+const byte* main::str[4]  = "qwe"
+void print(byte* print::str)
+label print::@return
+byte* print::str
 
 
 
@@ -223,7 +186,7 @@ main: {
   // print
 print: {
     // *(char**)0x80 = (char*)str
-    // [3] *((byte**) 128) ← (const byte*) main::str -- _deref_qbuc1=pbuc2 
+    // [3] *((byte**) 128) = main::str -- _deref_qbuc1=pbuc2 
     lda #<main.str
     sta $80
     lda #>main.str

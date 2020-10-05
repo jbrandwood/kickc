@@ -2,38 +2,38 @@ Loading link script "ataritempest.ld"
 
 CONTROL FLOW GRAPH SSA
 
-(void()) entryPoint()
+void entryPoint()
 entryPoint: scope:[entryPoint]  from
-  (byte) entryPoint::i#0 ← (byte) 0
+  entryPoint::i#0 = 0
   to:entryPoint::@1
 entryPoint::@1: scope:[entryPoint]  from entryPoint entryPoint::@1
-  (byte) entryPoint::i#2 ← phi( entryPoint/(byte) entryPoint::i#0 entryPoint::@1/(byte) entryPoint::i#1 )
-  *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2)
-  (byte) entryPoint::i#1 ← (byte) entryPoint::i#2 + rangenext(0,$31)
-  (bool~) entryPoint::$0 ← (byte) entryPoint::i#1 != rangelast(0,$31)
-  if((bool~) entryPoint::$0) goto entryPoint::@1
+  entryPoint::i#2 = phi( entryPoint/entryPoint::i#0, entryPoint::@1/entryPoint::i#1 )
+  SCREEN[entryPoint::i#2] = MESSAGE[entryPoint::i#2]
+  entryPoint::i#1 = entryPoint::i#2 + rangenext(0,$31)
+  entryPoint::$0 = entryPoint::i#1 != rangelast(0,$31)
+  if(entryPoint::$0) goto entryPoint::@1
   to:entryPoint::@return
 entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
   return 
   to:@return
 
-interrupt(HARDWARE_ALL)(void()) nmiHandler()
+interrupt(HARDWARE_ALL) void nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
-  *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  *BG_COLOR = ++ *BG_COLOR
   to:nmiHandler::@return
 nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  *BG_COLOR = ++ *BG_COLOR
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -44,85 +44,85 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $c01a
-(const byte*) MESSAGE[]  = (byte*) "hello world"
-(const byte*) SCREEN[(number) $32]  = { fill( $32, 0) }
-(const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) entryPoint()
-(bool~) entryPoint::$0
-(label) entryPoint::@1
-(label) entryPoint::@return
-(byte) entryPoint::i
-(byte) entryPoint::i#0
-(byte) entryPoint::i#1
-(byte) entryPoint::i#2
-(void()) main()
-(label) main::@return
-interrupt(HARDWARE_ALL)(void()) nmiHandler()
-(label) nmiHandler::@return
+const nomodify byte* BG_COLOR = (byte*)$c01a
+const byte* MESSAGE[]  = "hello world"
+const byte* SCREEN[$32]  = { fill( $32, 0) }
+const to_nomodify void()** VECTORS[]  = { &nmiHandler, &entryPoint }
+void __start()
+label __start::@1
+label __start::@return
+void entryPoint()
+bool~ entryPoint::$0
+label entryPoint::@1
+label entryPoint::@return
+byte entryPoint::i
+byte entryPoint::i#0
+byte entryPoint::i#1
+byte entryPoint::i#2
+void main()
+label main::@return
+interrupt(HARDWARE_ALL) void nmiHandler()
+label nmiHandler::@return
 
 Simplifying constant pointer cast (byte*) 49178
 Successful SSA optimization PassNCastSimplification
-Simple Condition (bool~) entryPoint::$0 [5] if((byte) entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1
+Simple Condition entryPoint::$0 [5] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) entryPoint::i#0 = 0
+Constant entryPoint::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [3] entryPoint::i#1 ← ++ entryPoint::i#2 to ++
-Resolved ranged comparison value [5] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1 to (number) $32
+Resolved ranged next value [3] entryPoint::i#1 = ++ entryPoint::i#2 to ++
+Resolved ranged comparison value [5] if(entryPoint::i#1!=rangelast(0,$31)) goto entryPoint::@1 to $32
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) $32 in [3] if((byte) entryPoint::i#1!=(number) $32) goto entryPoint::@1
+Adding number conversion cast (unumber) $32 in [3] if(entryPoint::i#1!=$32) goto entryPoint::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $32
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $32
+Finalized unsigned number type $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) entryPoint::i#0
-Constant inlined entryPoint::i#0 = (byte) 0
+Inlining constant with var siblings entryPoint::i#0
+Constant inlined entryPoint::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting entryPoint::@2(between entryPoint::@1 and entryPoint::@1)
 Adding NOP phi() at start of entryPoint
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [10] entryPoint::i#3 ← entryPoint::i#1
+Coalesced [10] entryPoint::i#3 = entryPoint::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) entryPoint::@2
+Culled Empty Block label entryPoint::@2
 Adding NOP phi() at start of entryPoint
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  [0] *BG_COLOR = ++ *BG_COLOR
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
   to:@return
 
-interrupt(HARDWARE_ALL)(void()) nmiHandler()
+interrupt(HARDWARE_ALL) void nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
-  [2] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR)
+  [2] *BG_COLOR = ++ *BG_COLOR
   to:nmiHandler::@return
 nmiHandler::@return: scope:[nmiHandler]  from nmiHandler
   [3] return 
   to:@return
 
-(void()) entryPoint()
+void entryPoint()
 entryPoint: scope:[entryPoint]  from
   [4] phi()
   to:entryPoint::@1
 entryPoint::@1: scope:[entryPoint]  from entryPoint entryPoint::@1
-  [5] (byte) entryPoint::i#2 ← phi( entryPoint/(byte) 0 entryPoint::@1/(byte) entryPoint::i#1 )
-  [6] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2)
-  [7] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2
-  [8] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1
+  [5] entryPoint::i#2 = phi( entryPoint/0, entryPoint::@1/entryPoint::i#1 )
+  [6] SCREEN[entryPoint::i#2] = MESSAGE[entryPoint::i#2]
+  [7] entryPoint::i#1 = ++ entryPoint::i#2
+  [8] if(entryPoint::i#1!=$32) goto entryPoint::@1
   to:entryPoint::@return
 entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
   [9] return 
@@ -130,113 +130,24 @@ entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) entryPoint()
-(byte) entryPoint::i
-(byte) entryPoint::i#1 16.5
-(byte) entryPoint::i#2 22.0
-(void()) main()
-interrupt(HARDWARE_ALL)(void()) nmiHandler()
+void entryPoint()
+byte entryPoint::i
+byte entryPoint::i#1 16.5
+byte entryPoint::i#2 22.0
+void main()
+interrupt(HARDWARE_ALL) void nmiHandler()
 
 Initial phi equivalence classes
 [ entryPoint::i#2 entryPoint::i#1 ]
 Complete equivalence classes
 [ entryPoint::i#2 entryPoint::i#1 ]
 Allocated zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Atari Tempest ROM Development Template
-// Each function of the kernal is a no-args function
-// The functions are placed in the SYSCALLS table surrounded by JMP and NOP
-  // Upstart
-  .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
-.segmentdef AtariTempest [segments="Code, RomData, Vectors"]
-.segmentdef Code [start=$9000, min=$9000, max=$Fff9]
-.segmentdef RomData [startAfter="Code", min=$9000, max=$Fff9]
-.segmentdef RamData [start=$200, min=$200, max=$7ff]
-.segmentdef Vectors [start=$FFFA, min=$FFFA, max=$FFFF, fill]
-.segment Code
-init:
-  // Global Constants & labels
-  .label BG_COLOR = $c01a
-.segment Code
-  // main
-main: {
-    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // nmiHandler
-nmiHandler: {
-    // entry interrupt(HARDWARE_ALL)
-    sta rega+1
-    stx regx+1
-    sty regy+1
-    // [2] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc BG_COLOR
-    jmp __breturn
-    // nmiHandler::@return
-  __breturn:
-    // [3] return  - exit interrupt(HARDWARE_ALL)
-  rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
-    rti
-}
-  // entryPoint
-entryPoint: {
-    .label i = 2
-    // [5] phi from entryPoint to entryPoint::@1 [phi:entryPoint->entryPoint::@1]
-  __b1_from_entryPoint:
-    // [5] phi (byte) entryPoint::i#2 = (byte) 0 [phi:entryPoint->entryPoint::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [5] phi from entryPoint::@1 to entryPoint::@1 [phi:entryPoint::@1->entryPoint::@1]
-  __b1_from___b1:
-    // [5] phi (byte) entryPoint::i#2 = (byte) entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
-    jmp __b1
-    // entryPoint::@1
-  __b1:
-    // [6] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1 
-    ldy.z i
-    lda MESSAGE,y
-    sta SCREEN,y
-    // [7] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [8] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$32
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // entryPoint::@return
-  __breturn:
-    // [9] return 
-    rts
-}
-  // File Data
-.segment RomData
-  MESSAGE: .text "hello world"
-  .byte 0
-.segment RamData
-  SCREEN: .fill $32, 0
-.segment Vectors
-  VECTORS: .word nmiHandler, entryPoint
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [3] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [6] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] SCREEN[entryPoint::i#2] = MESSAGE[entryPoint::i#2] [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ]
 Statement [3] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
-Statement [6] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] { }  ) always clobbers reg byte a 
+Statement [6] SCREEN[entryPoint::i#2] = MESSAGE[entryPoint::i#2] [ entryPoint::i#2 ] (  [ entryPoint::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ entryPoint::i#2 entryPoint::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -269,7 +180,7 @@ init:
 .segment Code
   // main
 main: {
-    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // main::@return
@@ -283,7 +194,7 @@ nmiHandler: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [2] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [2] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // nmiHandler::@return
@@ -301,21 +212,21 @@ nmiHandler: {
 entryPoint: {
     // [5] phi from entryPoint to entryPoint::@1 [phi:entryPoint->entryPoint::@1]
   __b1_from_entryPoint:
-    // [5] phi (byte) entryPoint::i#2 = (byte) 0 [phi:entryPoint->entryPoint::@1#0] -- vbuxx=vbuc1 
+    // [5] phi entryPoint::i#2 = 0 [phi:entryPoint->entryPoint::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
     // [5] phi from entryPoint::@1 to entryPoint::@1 [phi:entryPoint::@1->entryPoint::@1]
   __b1_from___b1:
-    // [5] phi (byte) entryPoint::i#2 = (byte) entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
+    // [5] phi entryPoint::i#2 = entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
     jmp __b1
     // entryPoint::@1
   __b1:
-    // [6] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [6] SCREEN[entryPoint::i#2] = MESSAGE[entryPoint::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,x
-    // [7] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] entryPoint::i#1 = ++ entryPoint::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [8] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if(entryPoint::i#1!=$32) goto entryPoint::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$32
     bne __b1_from___b1
     jmp __breturn
@@ -351,20 +262,20 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 49178
-(const byte*) MESSAGE[]  = (byte*) "hello world"
-(const byte*) SCREEN[(number) $32]  = { fill( $32, 0) }
-(const to_nomodify void()**) VECTORS[]  = { &interrupt(HARDWARE_ALL)(void()) nmiHandler(), &(void()) entryPoint() }
-(void()) entryPoint()
-(label) entryPoint::@1
-(label) entryPoint::@return
-(byte) entryPoint::i
-(byte) entryPoint::i#1 reg byte x 16.5
-(byte) entryPoint::i#2 reg byte x 22.0
-(void()) main()
-(label) main::@return
-interrupt(HARDWARE_ALL)(void()) nmiHandler()
-(label) nmiHandler::@return
+const nomodify byte* BG_COLOR = (byte*) 49178
+const byte* MESSAGE[]  = "hello world"
+const byte* SCREEN[$32]  = { fill( $32, 0) }
+const to_nomodify void()** VECTORS[]  = { &nmiHandler, &entryPoint }
+void entryPoint()
+label entryPoint::@1
+label entryPoint::@return
+byte entryPoint::i
+byte entryPoint::i#1 reg byte x 16.5
+byte entryPoint::i#2 reg byte x 22.0
+void main()
+label main::@return
+interrupt(HARDWARE_ALL) void nmiHandler()
+label nmiHandler::@return
 
 reg byte x [ entryPoint::i#2 entryPoint::i#1 ]
 
@@ -391,7 +302,7 @@ init:
   // main
 main: {
     // (*BG_COLOR)++;
-    // [0] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [0] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // main::@return
     // }
@@ -405,7 +316,7 @@ nmiHandler: {
     stx regx+1
     sty regy+1
     // (*BG_COLOR)++;
-    // [2] *((const nomodify byte*) BG_COLOR) ← ++ *((const nomodify byte*) BG_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [2] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // nmiHandler::@return
     // }
@@ -421,20 +332,20 @@ nmiHandler: {
   // entryPoint
 entryPoint: {
     // [5] phi from entryPoint to entryPoint::@1 [phi:entryPoint->entryPoint::@1]
-    // [5] phi (byte) entryPoint::i#2 = (byte) 0 [phi:entryPoint->entryPoint::@1#0] -- vbuxx=vbuc1 
+    // [5] phi entryPoint::i#2 = 0 [phi:entryPoint->entryPoint::@1#0] -- vbuxx=vbuc1 
     ldx #0
     // [5] phi from entryPoint::@1 to entryPoint::@1 [phi:entryPoint::@1->entryPoint::@1]
-    // [5] phi (byte) entryPoint::i#2 = (byte) entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
+    // [5] phi entryPoint::i#2 = entryPoint::i#1 [phi:entryPoint::@1->entryPoint::@1#0] -- register_copy 
     // entryPoint::@1
   __b1:
     // SCREEN[i] = MESSAGE[i]
-    // [6] *((const byte*) SCREEN + (byte) entryPoint::i#2) ← *((const byte*) MESSAGE + (byte) entryPoint::i#2) -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
+    // [6] SCREEN[entryPoint::i#2] = MESSAGE[entryPoint::i#2] -- pbuc1_derefidx_vbuxx=pbuc2_derefidx_vbuxx 
     lda MESSAGE,x
     sta SCREEN,x
     // for( char i:0..49)
-    // [7] (byte) entryPoint::i#1 ← ++ (byte) entryPoint::i#2 -- vbuxx=_inc_vbuxx 
+    // [7] entryPoint::i#1 = ++ entryPoint::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [8] if((byte) entryPoint::i#1!=(byte) $32) goto entryPoint::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [8] if(entryPoint::i#1!=$32) goto entryPoint::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$32
     bne __b1
     // entryPoint::@return

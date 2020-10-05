@@ -2,60 +2,60 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) idx#5 ← phi( __start::@1/(byte) idx#9 )
+  idx#5 = phi( __start::@1/idx#9 )
   kickasm() {{ sei  }}
-  *((const byte*) SCREEN + (byte) idx#5) ← (byte) 'x'
-  (byte) idx#0 ← ++ (byte) idx#5
+  SCREEN[idx#5] = 'x'
+  idx#0 = ++ idx#5
   kickasm() {{ cli  }}
   to:main::@return
 main::@return: scope:[main]  from main
-  (byte) idx#6 ← phi( main/(byte) idx#0 )
-  (byte) idx#1 ← (byte) idx#6
+  idx#6 = phi( main/idx#0 )
+  idx#1 = idx#6
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte) idx#2 ← (byte) 0
+  idx#2 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  (byte) idx#9 ← phi( __start::__init1/(byte) idx#2 )
+  idx#9 = phi( __start::__init1/idx#2 )
   call main 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
-  (byte) idx#7 ← phi( __start::@1/(byte) idx#1 )
-  (byte) idx#3 ← (byte) idx#7
+  idx#7 = phi( __start::@1/idx#1 )
+  idx#3 = idx#7
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@2
-  (byte) idx#8 ← phi( __start::@2/(byte) idx#3 )
-  (byte) idx#4 ← (byte) idx#8
+  idx#8 = phi( __start::@2/idx#3 )
+  idx#4 = idx#8
   return 
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(byte) idx
-(byte) idx#0
-(byte) idx#1
-(byte) idx#2
-(byte) idx#3
-(byte) idx#4
-(byte) idx#5
-(byte) idx#6
-(byte) idx#7
-(byte) idx#8
-(byte) idx#9
-(void()) main()
-(label) main::@return
+const byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+byte idx
+byte idx#0
+byte idx#1
+byte idx#2
+byte idx#3
+byte idx#4
+byte idx#5
+byte idx#6
+byte idx#7
+byte idx#8
+byte idx#9
+void main()
+label main::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -63,16 +63,16 @@ Alias idx#0 = idx#6 idx#1
 Alias idx#2 = idx#9 
 Alias idx#3 = idx#7 idx#8 idx#4 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte) idx#5 (byte) idx#2
-Identical Phi Values (byte) idx#3 (byte) idx#0
+Identical Phi Values idx#5 idx#2
+Identical Phi Values idx#3 idx#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte) idx#2 = 0
+Constant idx#2 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero SCREEN in [2] *((const byte*) SCREEN + (const byte) idx#2) ← (byte) 'x'
+Simplifying expression containing zero SCREEN in [2] SCREEN[idx#2] = 'x'
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) idx#0 and assignment [2] (byte) idx#0 ← ++ (const byte) idx#2
+Eliminating unused variable idx#0 and assignment [2] idx#0 = ++ idx#2
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const byte) idx#2
+Eliminating unused constant idx#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -88,10 +88,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   kickasm() {{ sei  }}
-  [1] *((const byte*) SCREEN) ← (byte) 'x'
+  [1] *SCREEN = 'x'
   kickasm() {{ cli  }}
   to:main::@return
 main::@return: scope:[main]  from main
@@ -100,42 +100,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) idx
-(void()) main()
+byte idx
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test the preprocessor
-// Macro generating inline kickasm
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    // kickasm() {{ sei  }}
-    sei 
-    // [1] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
-    lda #'x'
-    sta SCREEN
-    // kickasm() {{ cli  }}
-    cli 
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] *((const byte*) SCREEN) ← (byte) 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *SCREEN = 'x' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -158,7 +129,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // kickasm() {{ sei  }}
     sei 
-    // [1] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [1] *SCREEN = 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     // kickasm() {{ cli  }}
@@ -178,10 +149,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(byte) idx
-(void()) main()
-(label) main::@return
+const byte* SCREEN = (byte*) 1024
+byte idx
+void main()
+label main::@return
 
 
 
@@ -203,7 +174,7 @@ main: {
     // kickasm() {{ sei  }}
     sei 
     // SCREEN[idx++] = 'x'
-    // [1] *((const byte*) SCREEN) ← (byte) 'x' -- _deref_pbuc1=vbuc2 
+    // [1] *SCREEN = 'x' -- _deref_pbuc1=vbuc2 
     lda #'x'
     sta SCREEN
     // CLI

@@ -2,15 +2,15 @@ Fixing struct type SIZE_OF struct Point to 4
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) SIZEOF_STRUCT_POINT
+  SCREEN[0] = SIZEOF_STRUCT_POINT
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,24 +21,24 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
-(signed word) Point::x
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const byte) SIZEOF_STRUCT_POINT = (byte) 4
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const byte* Point::initials[2]  = { fill( 2, 0) }
+signed word Point::x
+const nomodify byte* SCREEN = (byte*)$400
+const byte SIZEOF_STRUCT_POINT = 4
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (const byte) SIZEOF_STRUCT_POINT
+Adding number conversion cast (unumber) 0 in SCREEN[0] = SIZEOF_STRUCT_POINT
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (const byte) SIZEOF_STRUCT_POINT
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = SIZEOF_STRUCT_POINT
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -52,9 +52,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (const byte) SIZEOF_STRUCT_POINT
+  [0] *SCREEN = SIZEOF_STRUCT_POINT
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -62,38 +62,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(signed word) Point::x
-(void()) main()
+signed word Point::x
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Minimal struct with C-Standard behavior - member array sizeof
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const SIZEOF_STRUCT_POINT = 4
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
-    lda #SIZEOF_STRUCT_POINT
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (const byte) SIZEOF_STRUCT_POINT [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = SIZEOF_STRUCT_POINT [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [Point] 
@@ -116,7 +91,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
     lda #SIZEOF_STRUCT_POINT
     sta SCREEN
     jmp __breturn
@@ -134,12 +109,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) Point::initials[(number) 2]  = { fill( 2, 0) }
-(signed word) Point::x
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const byte) SIZEOF_STRUCT_POINT = (byte) 4
-(void()) main()
-(label) main::@return
+const byte* Point::initials[2]  = { fill( 2, 0) }
+signed word Point::x
+const nomodify byte* SCREEN = (byte*) 1024
+const byte SIZEOF_STRUCT_POINT = 4
+void main()
+label main::@return
 
 
 
@@ -158,7 +133,7 @@ Score: 12
   // main
 main: {
     // SCREEN[0] = sizeof(struct Point)
-    // [0] *((const nomodify byte*) SCREEN) ← (const byte) SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = SIZEOF_STRUCT_POINT -- _deref_pbuc1=vbuc2 
     lda #SIZEOF_STRUCT_POINT
     sta SCREEN
     // main::@return

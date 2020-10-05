@@ -2,57 +2,57 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte*) screen#0 ← ((byte*)) (number) $400
-  *((byte*) screen#0) ← (byte) 'a'
+  screen#0 = ((byte*)) $400
+  *screen#0 = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
-  (byte*) screen#5 ← phi( main/(byte*) screen#0 )
-  (byte*) screen#1 ← (byte*) screen#5
+  screen#5 = phi( main/screen#0 )
+  screen#1 = screen#5
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte*) screen#2 ← (byte*) 0
+  screen#2 = (byte*) 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  (byte*) screen#8 ← phi( __start::__init1/(byte*) screen#2 )
+  screen#8 = phi( __start::__init1/screen#2 )
   call main 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
-  (byte*) screen#6 ← phi( __start::@1/(byte*) screen#1 )
-  (byte*) screen#3 ← (byte*) screen#6
+  screen#6 = phi( __start::@1/screen#1 )
+  screen#3 = screen#6
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@2
-  (byte*) screen#7 ← phi( __start::@2/(byte*) screen#3 )
-  (byte*) screen#4 ← (byte*) screen#7
+  screen#7 = phi( __start::@2/screen#3 )
+  screen#4 = screen#7
   return 
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-(byte*) screen
-(byte*) screen#0
-(byte*) screen#1
-(byte*) screen#2
-(byte*) screen#3
-(byte*) screen#4
-(byte*) screen#5
-(byte*) screen#6
-(byte*) screen#7
-(byte*) screen#8
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+byte* screen
+byte* screen#0
+byte* screen#1
+byte* screen#2
+byte* screen#3
+byte* screen#4
+byte* screen#5
+byte* screen#6
+byte* screen#7
+byte* screen#8
 
-Inlining cast (byte*) screen#0 ← (byte*)(number) $400
+Inlining cast screen#0 = (byte*)$400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -60,12 +60,12 @@ Alias screen#0 = screen#5 screen#1
 Alias screen#2 = screen#8 
 Alias screen#3 = screen#6 screen#7 screen#4 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) screen#3 (byte*) screen#0
+Identical Phi Values screen#3 screen#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant (const byte*) screen#0 = (byte*) 1024
-Constant (const byte*) screen#2 = (byte*) 0
+Constant screen#0 = (byte*) 1024
+Constant screen#2 = (byte*) 0
 Successful SSA optimization Pass2ConstantIdentification
-Eliminating unused constant (const byte*) screen#2
+Eliminating unused constant screen#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -81,9 +81,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) screen#0) ← (byte) 'a'
+  [0] *screen#0 = 'a'
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -91,37 +91,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte*) screen
+void main()
+byte* screen
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Variables without initialization causes problems when compiling
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label screen = $400
-  // main
-main: {
-    // [0] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
-    lda #'a'
-    sta screen
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) screen#0) ← (byte) 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *screen#0 = 'a' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -141,7 +117,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label screen = $400
   // main
 main: {
-    // [0] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *screen#0 = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     jmp __breturn
@@ -159,10 +135,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(byte*) screen
-(const byte*) screen#0 screen = (byte*) 1024
+void main()
+label main::@return
+byte* screen
+const byte* screen#0 screen = (byte*) 1024
 
 
 
@@ -180,7 +156,7 @@ Score: 12
   // main
 main: {
     // *screen = 'a'
-    // [0] *((const byte*) screen#0) ← (byte) 'a' -- _deref_pbuc1=vbuc2 
+    // [0] *screen#0 = 'a' -- _deref_pbuc1=vbuc2 
     lda #'a'
     sta screen
     // main::@return

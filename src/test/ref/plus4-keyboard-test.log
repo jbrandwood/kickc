@@ -1,130 +1,130 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+void* memset(void* memset::str , byte memset::c , word memset::num)
 memset: scope:[memset]  from main
-  (byte) memset::c#4 ← phi( main/(byte) memset::c#0 )
-  (void*) memset::str#3 ← phi( main/(void*) memset::str#0 )
-  (word) memset::num#1 ← phi( main/(word) memset::num#0 )
-  (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
-  (bool~) memset::$1 ← ! (bool~) memset::$0
-  if((bool~) memset::$1) goto memset::@1
+  memset::c#4 = phi( main/memset::c#0 )
+  memset::str#3 = phi( main/memset::str#0 )
+  memset::num#1 = phi( main/memset::num#0 )
+  memset::$0 = memset::num#1 > 0
+  memset::$1 = ! memset::$0
+  if(memset::$1) goto memset::@1
   to:memset::@2
 memset::@1: scope:[memset]  from memset memset::@3
-  (void*) memset::str#1 ← phi( memset/(void*) memset::str#3 memset::@3/(void*) memset::str#4 )
-  (void*) memset::return#0 ← (void*) memset::str#1
+  memset::str#1 = phi( memset/memset::str#3, memset::@3/memset::str#4 )
+  memset::return#0 = memset::str#1
   to:memset::@return
 memset::@2: scope:[memset]  from memset
-  (byte) memset::c#3 ← phi( memset/(byte) memset::c#4 )
-  (word) memset::num#2 ← phi( memset/(word) memset::num#1 )
-  (void*) memset::str#2 ← phi( memset/(void*) memset::str#3 )
-  (byte*~) memset::$4 ← (byte*)(void*) memset::str#2
-  (byte*~) memset::$2 ← (byte*~) memset::$4 + (word) memset::num#2
-  (byte*) memset::end#0 ← (byte*~) memset::$2
-  (byte*) memset::dst#0 ← ((byte*)) (void*) memset::str#2
+  memset::c#3 = phi( memset/memset::c#4 )
+  memset::num#2 = phi( memset/memset::num#1 )
+  memset::str#2 = phi( memset/memset::str#3 )
+  memset::$4 = (byte*)memset::str#2
+  memset::$2 = memset::$4 + memset::num#2
+  memset::end#0 = memset::$2
+  memset::dst#0 = ((byte*)) memset::str#2
   to:memset::@3
 memset::@3: scope:[memset]  from memset::@2 memset::@4
-  (byte) memset::c#2 ← phi( memset::@2/(byte) memset::c#3 memset::@4/(byte) memset::c#1 )
-  (void*) memset::str#4 ← phi( memset::@2/(void*) memset::str#2 memset::@4/(void*) memset::str#5 )
-  (byte*) memset::end#1 ← phi( memset::@2/(byte*) memset::end#0 memset::@4/(byte*) memset::end#2 )
-  (byte*) memset::dst#2 ← phi( memset::@2/(byte*) memset::dst#0 memset::@4/(byte*) memset::dst#1 )
-  (bool~) memset::$3 ← (byte*) memset::dst#2 != (byte*) memset::end#1
-  if((bool~) memset::$3) goto memset::@4
+  memset::c#2 = phi( memset::@2/memset::c#3, memset::@4/memset::c#1 )
+  memset::str#4 = phi( memset::@2/memset::str#2, memset::@4/memset::str#5 )
+  memset::end#1 = phi( memset::@2/memset::end#0, memset::@4/memset::end#2 )
+  memset::dst#2 = phi( memset::@2/memset::dst#0, memset::@4/memset::dst#1 )
+  memset::$3 = memset::dst#2 != memset::end#1
+  if(memset::$3) goto memset::@4
   to:memset::@1
 memset::@4: scope:[memset]  from memset::@3
-  (void*) memset::str#5 ← phi( memset::@3/(void*) memset::str#4 )
-  (byte*) memset::end#2 ← phi( memset::@3/(byte*) memset::end#1 )
-  (byte*) memset::dst#3 ← phi( memset::@3/(byte*) memset::dst#2 )
-  (byte) memset::c#1 ← phi( memset::@3/(byte) memset::c#2 )
-  *((byte*) memset::dst#3) ← (byte) memset::c#1
-  (byte*) memset::dst#1 ← ++ (byte*) memset::dst#3
+  memset::str#5 = phi( memset::@3/memset::str#4 )
+  memset::end#2 = phi( memset::@3/memset::end#1 )
+  memset::dst#3 = phi( memset::@3/memset::dst#2 )
+  memset::c#1 = phi( memset::@3/memset::c#2 )
+  *memset::dst#3 = memset::c#1
+  memset::dst#1 = ++ memset::dst#3
   to:memset::@3
 memset::@return: scope:[memset]  from memset::@1
-  (void*) memset::return#3 ← phi( memset::@1/(void*) memset::return#0 )
-  (void*) memset::return#1 ← (void*) memset::return#3
+  memset::return#3 = phi( memset::@1/memset::return#0 )
+  memset::return#1 = memset::return#3
   return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { sei  }
-  (void*) memset::str#0 ← (void*)(const nomodify byte*) DEFAULT_SCREEN
-  (byte) memset::c#0 ← (byte) ' '
-  (word) memset::num#0 ← (number) $400
+  memset::str#0 = (void*)DEFAULT_SCREEN
+  memset::c#0 = ' '
+  memset::num#0 = $400
   call memset 
-  (void*) memset::return#2 ← (void*) memset::return#1
+  memset::return#2 = memset::return#1
   to:main::@10
 main::@10: scope:[main]  from main
   to:main::@1
 main::@1: scope:[main]  from main::@10 main::@3
-  (bool~) main::$8 ← (number) 0 != (number) 1
-  if((bool~) main::$8) goto main::@2
+  main::$8 = 0 != 1
+  if(main::$8) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (byte*) main::row#0 ← (const nomodify byte*) DEFAULT_SCREEN
-  (byte) main::y#0 ← (byte) 0
+  main::row#0 = DEFAULT_SCREEN
+  main::y#0 = 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@7
-  (byte*) main::row#8 ← phi( main::@2/(byte*) main::row#0 main::@7/(byte*) main::row#1 )
-  (byte) main::y#2 ← phi( main::@2/(byte) main::y#0 main::@7/(byte) main::y#1 )
-  (bool~) main::$1 ← (byte) main::y#2 < (number) 8
-  if((bool~) main::$1) goto main::@4
+  main::row#8 = phi( main::@2/main::row#0, main::@7/main::row#1 )
+  main::y#2 = phi( main::@2/main::y#0, main::@7/main::y#1 )
+  main::$1 = main::y#2 < 8
+  if(main::$1) goto main::@4
   to:main::@1
 main::@4: scope:[main]  from main::@3
-  (byte*) main::row#6 ← phi( main::@3/(byte*) main::row#8 )
-  (byte) main::y#3 ← phi( main::@3/(byte) main::y#2 )
-  (number~) main::$2 ← (number) 1 << (byte) main::y#3
-  (number~) main::$3 ← (number) $ff ^ (number~) main::$2
-  *((const nomodify byte*) KEYBOARD_SCAN) ← (number~) main::$3
-  *((const nomodify byte*) KEYBOARD_INPUT) ← (number) 0
-  (number~) main::$4 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (number) $ff
-  (byte) main::key_bit#0 ← (number~) main::$4
-  (byte) main::x#0 ← (byte) 0
+  main::row#6 = phi( main::@3/main::row#8 )
+  main::y#3 = phi( main::@3/main::y#2 )
+  main::$2 = 1 << main::y#3
+  main::$3 = $ff ^ main::$2
+  *KEYBOARD_SCAN = main::$3
+  *KEYBOARD_INPUT = 0
+  main::$4 = *KEYBOARD_INPUT ^ $ff
+  main::key_bit#0 = main::$4
+  main::x#0 = 0
   to:main::@5
 main::@5: scope:[main]  from main::@4 main::@8
-  (byte) main::y#5 ← phi( main::@4/(byte) main::y#3 main::@8/(byte) main::y#6 )
-  (byte*) main::row#4 ← phi( main::@4/(byte*) main::row#6 main::@8/(byte*) main::row#7 )
-  (byte) main::key_bit#4 ← phi( main::@4/(byte) main::key_bit#0 main::@8/(byte) main::key_bit#1 )
-  (byte) main::x#2 ← phi( main::@4/(byte) main::x#0 main::@8/(byte) main::x#1 )
-  (bool~) main::$5 ← (byte) main::x#2 < (number) 8
-  if((bool~) main::$5) goto main::@6
+  main::y#5 = phi( main::@4/main::y#3, main::@8/main::y#6 )
+  main::row#4 = phi( main::@4/main::row#6, main::@8/main::row#7 )
+  main::key_bit#4 = phi( main::@4/main::key_bit#0, main::@8/main::key_bit#1 )
+  main::x#2 = phi( main::@4/main::x#0, main::@8/main::x#1 )
+  main::$5 = main::x#2 < 8
+  if(main::$5) goto main::@6
   to:main::@7
 main::@6: scope:[main]  from main::@5
-  (byte) main::y#7 ← phi( main::@5/(byte) main::y#5 )
-  (byte*) main::row#5 ← phi( main::@5/(byte*) main::row#4 )
-  (byte) main::x#5 ← phi( main::@5/(byte) main::x#2 )
-  (byte) main::key_bit#2 ← phi( main::@5/(byte) main::key_bit#4 )
-  (number~) main::$6 ← (byte) main::key_bit#2 & (number) $80
-  (bool~) main::$9 ← (number) 0 != (number~) main::$6
-  (bool~) main::$7 ← ! (bool~) main::$9
-  if((bool~) main::$7) goto main::@8
+  main::y#7 = phi( main::@5/main::y#5 )
+  main::row#5 = phi( main::@5/main::row#4 )
+  main::x#5 = phi( main::@5/main::x#2 )
+  main::key_bit#2 = phi( main::@5/main::key_bit#4 )
+  main::$6 = main::key_bit#2 & $80
+  main::$9 = 0 != main::$6
+  main::$7 = ! main::$9
+  if(main::$7) goto main::@8
   to:main::@9
 main::@7: scope:[main]  from main::@5
-  (byte) main::y#4 ← phi( main::@5/(byte) main::y#5 )
-  (byte*) main::row#2 ← phi( main::@5/(byte*) main::row#4 )
-  (byte*) main::row#1 ← (byte*) main::row#2 + (number) $28
-  (byte) main::y#1 ← ++ (byte) main::y#4
+  main::y#4 = phi( main::@5/main::y#5 )
+  main::row#2 = phi( main::@5/main::row#4 )
+  main::row#1 = main::row#2 + $28
+  main::y#1 = ++ main::y#4
   to:main::@3
 main::@8: scope:[main]  from main::@6 main::@9
-  (byte) main::y#6 ← phi( main::@6/(byte) main::y#7 main::@9/(byte) main::y#8 )
-  (byte*) main::row#7 ← phi( main::@6/(byte*) main::row#5 main::@9/(byte*) main::row#3 )
-  (byte) main::x#3 ← phi( main::@6/(byte) main::x#5 main::@9/(byte) main::x#4 )
-  (byte) main::key_bit#3 ← phi( main::@6/(byte) main::key_bit#2 main::@9/(byte) main::key_bit#5 )
-  (byte) main::key_bit#1 ← (byte) main::key_bit#3 << (number) 1
-  (byte) main::x#1 ← ++ (byte) main::x#3
+  main::y#6 = phi( main::@6/main::y#7, main::@9/main::y#8 )
+  main::row#7 = phi( main::@6/main::row#5, main::@9/main::row#3 )
+  main::x#3 = phi( main::@6/main::x#5, main::@9/main::x#4 )
+  main::key_bit#3 = phi( main::@6/main::key_bit#2, main::@9/main::key_bit#5 )
+  main::key_bit#1 = main::key_bit#3 << 1
+  main::x#1 = ++ main::x#3
   to:main::@5
 main::@9: scope:[main]  from main::@6
-  (byte) main::y#8 ← phi( main::@6/(byte) main::y#7 )
-  (byte) main::key_bit#5 ← phi( main::@6/(byte) main::key_bit#2 )
-  (byte) main::x#4 ← phi( main::@6/(byte) main::x#5 )
-  (byte*) main::row#3 ← phi( main::@6/(byte*) main::row#5 )
-  *((byte*) main::row#3 + (byte) main::x#4) ← (byte) '*'
+  main::y#8 = phi( main::@6/main::y#7 )
+  main::key_bit#5 = phi( main::@6/main::key_bit#2 )
+  main::x#4 = phi( main::@6/main::x#5 )
+  main::row#3 = phi( main::@6/main::row#5 )
+  main::row#3[main::x#4] = '*'
   to:main::@8
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -135,130 +135,130 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) DEFAULT_SCREEN = (byte*)(number) $c00
-(const nomodify byte*) KEYBOARD_INPUT = (byte*)(number) $ff08
-(const nomodify byte*) KEYBOARD_SCAN = (byte*)(number) $fd30
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$1
-(number~) main::$2
-(number~) main::$3
-(number~) main::$4
-(bool~) main::$5
-(number~) main::$6
-(bool~) main::$7
-(bool~) main::$8
-(bool~) main::$9
-(label) main::@1
-(label) main::@10
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(label) main::@8
-(label) main::@9
-(label) main::@return
-(byte) main::key_bit
-(byte) main::key_bit#0
-(byte) main::key_bit#1
-(byte) main::key_bit#2
-(byte) main::key_bit#3
-(byte) main::key_bit#4
-(byte) main::key_bit#5
-(byte*) main::row
-(byte*) main::row#0
-(byte*) main::row#1
-(byte*) main::row#2
-(byte*) main::row#3
-(byte*) main::row#4
-(byte*) main::row#5
-(byte*) main::row#6
-(byte*) main::row#7
-(byte*) main::row#8
-(byte) main::x
-(byte) main::x#0
-(byte) main::x#1
-(byte) main::x#2
-(byte) main::x#3
-(byte) main::x#4
-(byte) main::x#5
-(byte) main::y
-(byte) main::y#0
-(byte) main::y#1
-(byte) main::y#2
-(byte) main::y#3
-(byte) main::y#4
-(byte) main::y#5
-(byte) main::y#6
-(byte) main::y#7
-(byte) main::y#8
-(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
-(bool~) memset::$0
-(bool~) memset::$1
-(byte*~) memset::$2
-(bool~) memset::$3
-(byte*~) memset::$4
-(label) memset::@1
-(label) memset::@2
-(label) memset::@3
-(label) memset::@4
-(label) memset::@return
-(byte) memset::c
-(byte) memset::c#0
-(byte) memset::c#1
-(byte) memset::c#2
-(byte) memset::c#3
-(byte) memset::c#4
-(byte*) memset::dst
-(byte*) memset::dst#0
-(byte*) memset::dst#1
-(byte*) memset::dst#2
-(byte*) memset::dst#3
-(byte*) memset::end
-(byte*) memset::end#0
-(byte*) memset::end#1
-(byte*) memset::end#2
-(word) memset::num
-(word) memset::num#0
-(word) memset::num#1
-(word) memset::num#2
-(void*) memset::return
-(void*) memset::return#0
-(void*) memset::return#1
-(void*) memset::return#2
-(void*) memset::return#3
-(void*) memset::str
-(void*) memset::str#0
-(void*) memset::str#1
-(void*) memset::str#2
-(void*) memset::str#3
-(void*) memset::str#4
-(void*) memset::str#5
+const nomodify byte* DEFAULT_SCREEN = (byte*)$c00
+const nomodify byte* KEYBOARD_INPUT = (byte*)$ff08
+const nomodify byte* KEYBOARD_SCAN = (byte*)$fd30
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$1
+number~ main::$2
+number~ main::$3
+number~ main::$4
+bool~ main::$5
+number~ main::$6
+bool~ main::$7
+bool~ main::$8
+bool~ main::$9
+label main::@1
+label main::@10
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+label main::@7
+label main::@8
+label main::@9
+label main::@return
+byte main::key_bit
+byte main::key_bit#0
+byte main::key_bit#1
+byte main::key_bit#2
+byte main::key_bit#3
+byte main::key_bit#4
+byte main::key_bit#5
+byte* main::row
+byte* main::row#0
+byte* main::row#1
+byte* main::row#2
+byte* main::row#3
+byte* main::row#4
+byte* main::row#5
+byte* main::row#6
+byte* main::row#7
+byte* main::row#8
+byte main::x
+byte main::x#0
+byte main::x#1
+byte main::x#2
+byte main::x#3
+byte main::x#4
+byte main::x#5
+byte main::y
+byte main::y#0
+byte main::y#1
+byte main::y#2
+byte main::y#3
+byte main::y#4
+byte main::y#5
+byte main::y#6
+byte main::y#7
+byte main::y#8
+void* memset(void* memset::str , byte memset::c , word memset::num)
+bool~ memset::$0
+bool~ memset::$1
+byte*~ memset::$2
+bool~ memset::$3
+byte*~ memset::$4
+label memset::@1
+label memset::@2
+label memset::@3
+label memset::@4
+label memset::@return
+byte memset::c
+byte memset::c#0
+byte memset::c#1
+byte memset::c#2
+byte memset::c#3
+byte memset::c#4
+byte* memset::dst
+byte* memset::dst#0
+byte* memset::dst#1
+byte* memset::dst#2
+byte* memset::dst#3
+byte* memset::end
+byte* memset::end#0
+byte* memset::end#1
+byte* memset::end#2
+word memset::num
+word memset::num#0
+word memset::num#1
+word memset::num#2
+void* memset::return
+void* memset::return#0
+void* memset::return#1
+void* memset::return#2
+void* memset::return#3
+void* memset::str
+void* memset::str#0
+void* memset::str#1
+void* memset::str#2
+void* memset::str#3
+void* memset::str#4
+void* memset::str#5
 
-Adding number conversion cast (unumber) 0 in (bool~) memset::$0 ← (word) memset::num#1 > (number) 0
-Adding number conversion cast (unumber) $400 in (word) memset::num#0 ← (number) $400
-Adding number conversion cast (unumber) 8 in (bool~) main::$1 ← (byte) main::y#2 < (number) 8
-Adding number conversion cast (unumber) 1 in (number~) main::$2 ← (number) 1 << (byte) main::y#3
-Adding number conversion cast (unumber) main::$2 in (number~) main::$2 ← (unumber)(number) 1 << (byte) main::y#3
-Adding number conversion cast (unumber) $ff in (number~) main::$3 ← (number) $ff ^ (unumber~) main::$2
-Adding number conversion cast (unumber) main::$3 in (number~) main::$3 ← (unumber)(number) $ff ^ (unumber~) main::$2
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) KEYBOARD_INPUT) ← (number) 0
-Adding number conversion cast (unumber) $ff in (number~) main::$4 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (number) $ff
-Adding number conversion cast (unumber) main::$4 in (number~) main::$4 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (unumber)(number) $ff
-Adding number conversion cast (unumber) 8 in (bool~) main::$5 ← (byte) main::x#2 < (number) 8
-Adding number conversion cast (unumber) $80 in (number~) main::$6 ← (byte) main::key_bit#2 & (number) $80
-Adding number conversion cast (unumber) main::$6 in (number~) main::$6 ← (byte) main::key_bit#2 & (unumber)(number) $80
-Adding number conversion cast (unumber) 0 in (bool~) main::$9 ← (number) 0 != (unumber~) main::$6
-Adding number conversion cast (unumber) $28 in (byte*) main::row#1 ← (byte*) main::row#2 + (number) $28
-Adding number conversion cast (unumber) 1 in (byte) main::key_bit#1 ← (byte) main::key_bit#3 << (number) 1
+Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#1 > 0
+Adding number conversion cast (unumber) $400 in memset::num#0 = $400
+Adding number conversion cast (unumber) 8 in main::$1 = main::y#2 < 8
+Adding number conversion cast (unumber) 1 in main::$2 = 1 << main::y#3
+Adding number conversion cast (unumber) main::$2 in main::$2 = (unumber)1 << main::y#3
+Adding number conversion cast (unumber) $ff in main::$3 = $ff ^ main::$2
+Adding number conversion cast (unumber) main::$3 in main::$3 = (unumber)$ff ^ main::$2
+Adding number conversion cast (unumber) 0 in *KEYBOARD_INPUT = 0
+Adding number conversion cast (unumber) $ff in main::$4 = *KEYBOARD_INPUT ^ $ff
+Adding number conversion cast (unumber) main::$4 in main::$4 = *KEYBOARD_INPUT ^ (unumber)$ff
+Adding number conversion cast (unumber) 8 in main::$5 = main::x#2 < 8
+Adding number conversion cast (unumber) $80 in main::$6 = main::key_bit#2 & $80
+Adding number conversion cast (unumber) main::$6 in main::$6 = main::key_bit#2 & (unumber)$80
+Adding number conversion cast (unumber) 0 in main::$9 = 0 != main::$6
+Adding number conversion cast (unumber) $28 in main::row#1 = main::row#2 + $28
+Adding number conversion cast (unumber) 1 in main::key_bit#1 = main::key_bit#3 << 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (byte*) memset::dst#0 ← (byte*)(void*) memset::str#2
-Inlining cast (word) memset::num#0 ← (unumber)(number) $400
-Inlining cast *((const nomodify byte*) KEYBOARD_INPUT) ← (unumber)(number) 0
+Inlining cast memset::dst#0 = (byte*)memset::str#2
+Inlining cast memset::num#0 = (unumber)$400
+Inlining cast *KEYBOARD_INPUT = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 65288
 Simplifying constant pointer cast (byte*) 64816
@@ -276,25 +276,25 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 8
-Finalized unsigned number type (byte) $80
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 0
+Finalized unsigned number type $400
+Finalized unsigned number type 8
+Finalized unsigned number type 1
+Finalized unsigned number type $ff
+Finalized unsigned number type 0
+Finalized unsigned number type $ff
+Finalized unsigned number type 8
+Finalized unsigned number type $80
+Finalized unsigned number type 0
+Finalized unsigned number type $28
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$2 ← (byte) 1 << (byte) main::y#3
-Inferred type updated to byte in (unumber~) main::$3 ← (byte) $ff ^ (byte~) main::$2
-Inferred type updated to byte in (unumber~) main::$4 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff
-Inferred type updated to byte in (unumber~) main::$6 ← (byte) main::key_bit#2 & (byte) $80
-Inversing boolean not [2] (bool~) memset::$1 ← (word) memset::num#1 <= (byte) 0 from [1] (bool~) memset::$0 ← (word) memset::num#1 > (byte) 0
-Inversing boolean not [47] (bool~) main::$7 ← (byte) 0 == (byte~) main::$6 from [46] (bool~) main::$9 ← (byte) 0 != (byte~) main::$6
+Inferred type updated to byte in main::$2 = 1 << main::y#3
+Inferred type updated to byte in main::$3 = $ff ^ main::$2
+Inferred type updated to byte in main::$4 = *KEYBOARD_INPUT ^ $ff
+Inferred type updated to byte in main::$6 = main::key_bit#2 & $80
+Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
+Inversing boolean not [47] main::$7 = 0 == main::$6 from [46] main::$9 = 0 != main::$6
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memset::return#0 = memset::str#1 memset::return#3 memset::return#1 
 Alias memset::str#2 = memset::str#3 
@@ -318,39 +318,39 @@ Alias main::x#2 = main::x#3
 Alias main::row#2 = main::row#7 
 Alias main::y#4 = main::y#6 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (word) memset::num#1 (word) memset::num#0
-Identical Phi Values (void*) memset::str#2 (void*) memset::str#0
-Identical Phi Values (byte) memset::c#3 (byte) memset::c#0
-Identical Phi Values (byte*) memset::end#1 (byte*) memset::end#0
-Identical Phi Values (void*) memset::str#4 (void*) memset::str#2
-Identical Phi Values (byte) memset::c#1 (byte) memset::c#3
-Identical Phi Values (byte*) main::row#2 (byte*) main::row#6
-Identical Phi Values (byte) main::y#4 (byte) main::y#2
+Identical Phi Values memset::num#1 memset::num#0
+Identical Phi Values memset::str#2 memset::str#0
+Identical Phi Values memset::c#3 memset::c#0
+Identical Phi Values memset::end#1 memset::end#0
+Identical Phi Values memset::str#4 memset::str#2
+Identical Phi Values memset::c#1 memset::c#3
+Identical Phi Values main::row#2 main::row#6
+Identical Phi Values main::y#4 main::y#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-Identical Phi Values (void*) memset::return#0 (void*) memset::str#0
+Identical Phi Values memset::return#0 memset::str#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) memset::$1 [2] if((word) memset::num#0<=(byte) 0) goto memset::@1
-Simple Condition (bool~) memset::$3 [9] if((byte*) memset::dst#2!=(byte*) memset::end#0) goto memset::@4
-Simple Condition (bool~) main::$8 [20] if((number) 0!=(number) 1) goto main::@2
-Simple Condition (bool~) main::$1 [25] if((byte) main::y#2<(byte) 8) goto main::@4
-Simple Condition (bool~) main::$5 [34] if((byte) main::x#2<(byte) 8) goto main::@6
-Simple Condition (bool~) main::$7 [37] if((byte) 0==(byte~) main::$6) goto main::@8
+Simple Condition memset::$1 [2] if(memset::num#0<=0) goto memset::@1
+Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4
+Simple Condition main::$8 [20] if(0!=1) goto main::@2
+Simple Condition main::$1 [25] if(main::y#2<8) goto main::@4
+Simple Condition main::$5 [34] if(main::x#2<8) goto main::@6
+Simple Condition main::$7 [37] if(0==main::$6) goto main::@8
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const void*) memset::str#0 = (void*)DEFAULT_SCREEN
-Constant (const byte) memset::c#0 = ' '
-Constant (const word) memset::num#0 = $400
-Constant (const byte*) main::row#0 = DEFAULT_SCREEN
-Constant (const byte) main::y#0 = 0
-Constant (const byte) main::x#0 = 0
+Constant memset::str#0 = (void*)DEFAULT_SCREEN
+Constant memset::c#0 = ' '
+Constant memset::num#0 = $400
+Constant main::row#0 = DEFAULT_SCREEN
+Constant main::y#0 = 0
+Constant main::x#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) memset::$4 = (byte*)memset::str#0
-Constant (const byte*) memset::dst#0 = (byte*)memset::str#0
-Constant (const void*) memset::return#2 = memset::str#0
+Constant memset::$4 = (byte*)memset::str#0
+Constant memset::dst#0 = (byte*)memset::str#0
+Constant memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always false - eliminating [2] if((const word) memset::num#0<=(byte) 0) goto memset::@1
-if() condition always true - replacing block destination [20] if((number) 0!=(number) 1) goto main::@2
+if() condition always false - eliminating [2] if(memset::num#0<=0) goto memset::@1
+if() condition always true - replacing block destination [20] if(0!=1) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
-Eliminating unused constant (const void*) memset::return#2
+Eliminating unused constant memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -359,19 +359,19 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [0] (byte*) memset::end#0 ← (const byte*) memset::$4 + (const word) memset::num#0
+Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) memset::end#0 = memset::$4+memset::num#0
+Constant memset::end#0 = memset::$4+memset::num#0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte*) memset::dst#0
-Inlining constant with var siblings (const byte*) main::row#0
-Inlining constant with var siblings (const byte) main::y#0
-Inlining constant with var siblings (const byte) main::x#0
-Constant inlined memset::dst#0 = (byte*)(const void*) memset::str#0
-Constant inlined main::x#0 = (byte) 0
-Constant inlined main::y#0 = (byte) 0
-Constant inlined memset::$4 = (byte*)(const void*) memset::str#0
-Constant inlined main::row#0 = (const nomodify byte*) DEFAULT_SCREEN
+Inlining constant with var siblings memset::dst#0
+Inlining constant with var siblings main::row#0
+Inlining constant with var siblings main::y#0
+Inlining constant with var siblings main::x#0
+Constant inlined memset::dst#0 = (byte*)memset::str#0
+Constant inlined main::x#0 = 0
+Constant inlined main::y#0 = 0
+Constant inlined memset::$4 = (byte*)memset::str#0
+Constant inlined main::row#0 = DEFAULT_SCREEN
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main::@10
 Adding NOP phi() at start of main::@1
@@ -383,18 +383,18 @@ CALL GRAPH
 Calls in [main] to memset:1 
 
 Created 5 initial phi equivalence classes
-Coalesced [12] main::key_bit#6 ← main::key_bit#0
-Coalesced [17] main::y#9 ← main::y#1
-Coalesced [18] main::row#9 ← main::row#1
-Coalesced [24] main::x#6 ← main::x#1
-Coalesced [25] main::key_bit#7 ← main::key_bit#1
-Coalesced [34] memset::dst#4 ← memset::dst#1
+Coalesced [12] main::key_bit#6 = main::key_bit#0
+Coalesced [17] main::y#9 = main::y#1
+Coalesced [18] main::row#9 = main::row#1
+Coalesced [24] main::x#6 = main::x#1
+Coalesced [25] main::key_bit#7 = main::key_bit#1
+Coalesced [34] memset::dst#4 = memset::dst#1
 Coalesced down to 5 phi equivalence classes
-Culled Empty Block (label) main::@10
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@2
-Culled Empty Block (label) memset::@2
-Culled Empty Block (label) memset::@1
+Culled Empty Block label main::@10
+Culled Empty Block label main::@1
+Culled Empty Block label main::@2
+Culled Empty Block label memset::@2
+Culled Empty Block label memset::@1
 Renumbering block memset::@3 to memset::@1
 Renumbering block memset::@4 to memset::@2
 Renumbering block main::@3 to main::@1
@@ -408,88 +408,88 @@ Adding NOP phi() at start of memset
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { sei  }
   [1] call memset 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@5
-  [2] (byte*) main::row#6 ← phi( main::@1/(const nomodify byte*) DEFAULT_SCREEN main::@5/(byte*) main::row#1 )
-  [2] (byte) main::y#2 ← phi( main::@1/(byte) 0 main::@5/(byte) main::y#1 )
-  [3] if((byte) main::y#2<(byte) 8) goto main::@2
+  [2] main::row#6 = phi( main::@1/DEFAULT_SCREEN, main::@5/main::row#1 )
+  [2] main::y#2 = phi( main::@1/0, main::@5/main::y#1 )
+  [3] if(main::y#2<8) goto main::@2
   to:main::@1
 main::@2: scope:[main]  from main::@1
-  [4] (byte~) main::$2 ← (byte) 1 << (byte) main::y#2
-  [5] (byte~) main::$3 ← (byte) $ff ^ (byte~) main::$2
-  [6] *((const nomodify byte*) KEYBOARD_SCAN) ← (byte~) main::$3
-  [7] *((const nomodify byte*) KEYBOARD_INPUT) ← (byte) 0
-  [8] (byte) main::key_bit#0 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff
+  [4] main::$2 = 1 << main::y#2
+  [5] main::$3 = $ff ^ main::$2
+  [6] *KEYBOARD_SCAN = main::$3
+  [7] *KEYBOARD_INPUT = 0
+  [8] main::key_bit#0 = *KEYBOARD_INPUT ^ $ff
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@6
-  [9] (byte) main::key_bit#2 ← phi( main::@2/(byte) main::key_bit#0 main::@6/(byte) main::key_bit#1 )
-  [9] (byte) main::x#2 ← phi( main::@2/(byte) 0 main::@6/(byte) main::x#1 )
-  [10] if((byte) main::x#2<(byte) 8) goto main::@4
+  [9] main::key_bit#2 = phi( main::@2/main::key_bit#0, main::@6/main::key_bit#1 )
+  [9] main::x#2 = phi( main::@2/0, main::@6/main::x#1 )
+  [10] if(main::x#2<8) goto main::@4
   to:main::@5
 main::@5: scope:[main]  from main::@3
-  [11] (byte*) main::row#1 ← (byte*) main::row#6 + (byte) $28
-  [12] (byte) main::y#1 ← ++ (byte) main::y#2
+  [11] main::row#1 = main::row#6 + $28
+  [12] main::y#1 = ++ main::y#2
   to:main::@1
 main::@4: scope:[main]  from main::@3
-  [13] (byte~) main::$6 ← (byte) main::key_bit#2 & (byte) $80
-  [14] if((byte) 0==(byte~) main::$6) goto main::@6
+  [13] main::$6 = main::key_bit#2 & $80
+  [14] if(0==main::$6) goto main::@6
   to:main::@7
 main::@7: scope:[main]  from main::@4
-  [15] *((byte*) main::row#6 + (byte) main::x#2) ← (byte) '*'
+  [15] main::row#6[main::x#2] = '*'
   to:main::@6
 main::@6: scope:[main]  from main::@4 main::@7
-  [16] (byte) main::key_bit#1 ← (byte) main::key_bit#2 << (byte) 1
-  [17] (byte) main::x#1 ← ++ (byte) main::x#2
+  [16] main::key_bit#1 = main::key_bit#2 << 1
+  [17] main::x#1 = ++ main::x#2
   to:main::@3
 
-(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
+void* memset(void* memset::str , byte memset::c , word memset::num)
 memset: scope:[memset]  from main
   [18] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [19] (byte*) memset::dst#2 ← phi( memset/(byte*)(const void*) memset::str#0 memset::@2/(byte*) memset::dst#1 )
-  [20] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2
+  [19] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
+  [20] if(memset::dst#2!=memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
   [21] return 
   to:@return
 memset::@2: scope:[memset]  from memset::@1
-  [22] *((byte*) memset::dst#2) ← (const byte) memset::c#0
-  [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2
+  [22] *memset::dst#2 = memset::c#0
+  [23] memset::dst#1 = ++ memset::dst#2
   to:memset::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$2 22.0
-(byte~) main::$3 22.0
-(byte~) main::$6 202.0
-(byte) main::key_bit
-(byte) main::key_bit#0 22.0
-(byte) main::key_bit#1 101.0
-(byte) main::key_bit#2 62.8
-(byte*) main::row
-(byte*) main::row#1 11.0
-(byte*) main::row#6 8.785714285714286
-(byte) main::x
-(byte) main::x#1 202.0
-(byte) main::x#2 67.33333333333333
-(byte) main::y
-(byte) main::y#1 22.0
-(byte) main::y#2 8.933333333333332
-(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
-(byte) memset::c
-(byte*) memset::dst
-(byte*) memset::dst#1 202.0
-(byte*) memset::dst#2 134.66666666666666
-(byte*) memset::end
-(word) memset::num
-(void*) memset::return
-(void*) memset::str
+void main()
+byte~ main::$2 22.0
+byte~ main::$3 22.0
+byte~ main::$6 202.0
+byte main::key_bit
+byte main::key_bit#0 22.0
+byte main::key_bit#1 101.0
+byte main::key_bit#2 62.8
+byte* main::row
+byte* main::row#1 11.0
+byte* main::row#6 8.785714285714286
+byte main::x
+byte main::x#1 202.0
+byte main::x#2 67.33333333333333
+byte main::y
+byte main::y#1 22.0
+byte main::y#2 8.933333333333332
+void* memset(void* memset::str , byte memset::c , word memset::num)
+byte memset::c
+byte* memset::dst
+byte* memset::dst#1 202.0
+byte* memset::dst#2 134.66666666666666
+byte* memset::end
+word memset::num
+void* memset::return
+void* memset::str
 
 Initial phi equivalence classes
 [ main::y#2 main::y#1 ]
@@ -517,217 +517,27 @@ Allocated zp[2]:7 [ memset::dst#2 memset::dst#1 ]
 Allocated zp[1]:9 [ main::$2 ]
 Allocated zp[1]:10 [ main::$3 ]
 Allocated zp[1]:11 [ main::$6 ]
-
-INITIAL ASM
-Target platform is plus4basic / MOS6502X
-  // File Comments
-// Test reading keyboard port on the TED of the Plus/4
-// C standard library string.h
-// Functions to manipulate C strings and arrays.
-  // Upstart
-.pc = $1001 "Basic"
-:BasicUpstart(main)
-.pc = $100d "Program"
-
-  // Global Constants & labels
-  // Keyboard latch
-  .label KEYBOARD_INPUT = $ff08
-  // Keyboard scan
-  .label KEYBOARD_SCAN = $fd30
-  // Default address of screen character matrix
-  .label DEFAULT_SCREEN = $c00
-  // main
-main: {
-    .label __2 = 9
-    .label __3 = $a
-    .label __6 = $b
-    .label key_bit = 6
-    .label row = 3
-    .label y = 2
-    .label x = 5
-    // asm { sei  }
-    sei
-    // [1] call memset 
-    // [18] phi from main to memset [phi:main->memset]
-  memset_from_main:
-    jsr memset
-    // [2] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [3] if((byte) main::y#2<(byte) 8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z y
-    cmp #8
-    bcc __b2
-    // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [2] phi (byte*) main::row#6 = (const nomodify byte*) DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
-    lda #<DEFAULT_SCREEN
-    sta.z row
-    lda #>DEFAULT_SCREEN
-    sta.z row+1
-    // [2] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z y
-    jmp __b1
-    // main::@2
-  __b2:
-    // [4] (byte~) main::$2 ← (byte) 1 << (byte) main::y#2 -- vbuz1=vbuc1_rol_vbuz2 
-    lda #1
-    ldy.z y
-    cpy #0
-    beq !e+
-  !:
-    asl
-    dey
-    bne !-
-  !e:
-    sta.z __2
-    // [5] (byte~) main::$3 ← (byte) $ff ^ (byte~) main::$2 -- vbuz1=vbuc1_bxor_vbuz2 
-    lda #$ff
-    eor.z __2
-    sta.z __3
-    // [6] *((const nomodify byte*) KEYBOARD_SCAN) ← (byte~) main::$3 -- _deref_pbuc1=vbuz1 
-    lda.z __3
-    sta KEYBOARD_SCAN
-    // [7] *((const nomodify byte*) KEYBOARD_INPUT) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta KEYBOARD_INPUT
-    // [8] (byte) main::key_bit#0 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff -- vbuz1=_deref_pbuc1_bxor_vbuc2 
-    lda #$ff
-    eor KEYBOARD_INPUT
-    sta.z key_bit
-    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  __b3_from___b2:
-    // [9] phi (byte) main::key_bit#2 = (byte) main::key_bit#0 [phi:main::@2->main::@3#0] -- register_copy 
-    // [9] phi (byte) main::x#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z x
-    jmp __b3
-    // main::@3
-  __b3:
-    // [10] if((byte) main::x#2<(byte) 8) goto main::@4 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z x
-    cmp #8
-    bcc __b4
-    jmp __b5
-    // main::@5
-  __b5:
-    // [11] (byte*) main::row#1 ← (byte*) main::row#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
-    lda #$28
-    clc
-    adc.z row
-    sta.z row
-    bcc !+
-    inc.z row+1
-  !:
-    // [12] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
-    inc.z y
-    // [2] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-  __b1_from___b5:
-    // [2] phi (byte*) main::row#6 = (byte*) main::row#1 [phi:main::@5->main::@1#0] -- register_copy 
-    // [2] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
-    jmp __b1
-    // main::@4
-  __b4:
-    // [13] (byte~) main::$6 ← (byte) main::key_bit#2 & (byte) $80 -- vbuz1=vbuz2_band_vbuc1 
-    lda #$80
-    and.z key_bit
-    sta.z __6
-    // [14] if((byte) 0==(byte~) main::$6) goto main::@6 -- vbuc1_eq_vbuz1_then_la1 
-    lda #0
-    cmp.z __6
-    beq __b6
-    jmp __b7
-    // main::@7
-  __b7:
-    // [15] *((byte*) main::row#6 + (byte) main::x#2) ← (byte) '*' -- pbuz1_derefidx_vbuz2=vbuc1 
-    lda #'*'
-    ldy.z x
-    sta (row),y
-    jmp __b6
-    // main::@6
-  __b6:
-    // [16] (byte) main::key_bit#1 ← (byte) main::key_bit#2 << (byte) 1 -- vbuz1=vbuz1_rol_1 
-    asl.z key_bit
-    // [17] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuz1=_inc_vbuz1 
-    inc.z x
-    // [9] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
-  __b3_from___b6:
-    // [9] phi (byte) main::key_bit#2 = (byte) main::key_bit#1 [phi:main::@6->main::@3#0] -- register_copy 
-    // [9] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@6->main::@3#1] -- register_copy 
-    jmp __b3
-}
-  // memset
-// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-memset: {
-    .const c = ' '
-    .const num = $400
-    .label str = DEFAULT_SCREEN
-    .label end = str+num
-    .label dst = 7
-    // [19] phi from memset to memset::@1 [phi:memset->memset::@1]
-  __b1_from_memset:
-    // [19] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
-    lda #<str
-    sta.z dst
-    lda #>str
-    sta.z dst+1
-    jmp __b1
-    // memset::@1
-  __b1:
-    // [20] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
-    lda.z dst+1
-    cmp #>end
-    bne __b2
-    lda.z dst
-    cmp #<end
-    bne __b2
-    jmp __breturn
-    // memset::@return
-  __breturn:
-    // [21] return 
-    rts
-    // memset::@2
-  __b2:
-    // [22] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
-    lda #c
-    ldy #0
-    sta (dst),y
-    // [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
-    inc.z dst
-    bne !+
-    inc.z dst+1
-  !:
-    // [19] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-  __b1_from___b2:
-    // [19] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
-    jmp __b1
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [4] (byte~) main::$2 ← (byte) 1 << (byte) main::y#2 [ main::y#2 main::row#6 main::$2 ] (  [ main::y#2 main::row#6 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [4] main::$2 = 1 << main::y#2 [ main::y#2 main::row#6 main::$2 ] (  [ main::y#2 main::row#6 main::$2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::y#2 main::y#1 ]
-Statement [5] (byte~) main::$3 ← (byte) $ff ^ (byte~) main::$2 [ main::y#2 main::row#6 main::$3 ] (  [ main::y#2 main::row#6 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) KEYBOARD_INPUT) ← (byte) 0 [ main::y#2 main::row#6 ] (  [ main::y#2 main::row#6 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte) main::key_bit#0 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff [ main::y#2 main::row#6 main::key_bit#0 ] (  [ main::y#2 main::row#6 main::key_bit#0 ] { }  ) always clobbers reg byte a 
-Statement [11] (byte*) main::row#1 ← (byte*) main::row#6 + (byte) $28 [ main::y#2 main::row#1 ] (  [ main::y#2 main::row#1 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*) main::row#6 + (byte) main::x#2) ← (byte) '*' [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] (  [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$3 = $ff ^ main::$2 [ main::y#2 main::row#6 main::$3 ] (  [ main::y#2 main::row#6 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [7] *KEYBOARD_INPUT = 0 [ main::y#2 main::row#6 ] (  [ main::y#2 main::row#6 ] { }  ) always clobbers reg byte a 
+Statement [8] main::key_bit#0 = *KEYBOARD_INPUT ^ $ff [ main::y#2 main::row#6 main::key_bit#0 ] (  [ main::y#2 main::row#6 main::key_bit#0 ] { }  ) always clobbers reg byte a 
+Statement [11] main::row#1 = main::row#6 + $28 [ main::y#2 main::row#1 ] (  [ main::y#2 main::row#1 ] { }  ) always clobbers reg byte a 
+Statement [15] main::row#6[main::x#2] = '*' [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] (  [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ main::x#2 main::x#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ main::key_bit#2 main::key_bit#0 main::key_bit#1 ]
-Statement [20] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [22] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [4] (byte~) main::$2 ← (byte) 1 << (byte) main::y#2 [ main::y#2 main::row#6 main::$2 ] (  [ main::y#2 main::row#6 main::$2 ] { }  ) always clobbers reg byte a 
-Statement [5] (byte~) main::$3 ← (byte) $ff ^ (byte~) main::$2 [ main::y#2 main::row#6 main::$3 ] (  [ main::y#2 main::row#6 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [7] *((const nomodify byte*) KEYBOARD_INPUT) ← (byte) 0 [ main::y#2 main::row#6 ] (  [ main::y#2 main::row#6 ] { }  ) always clobbers reg byte a 
-Statement [8] (byte) main::key_bit#0 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff [ main::y#2 main::row#6 main::key_bit#0 ] (  [ main::y#2 main::row#6 main::key_bit#0 ] { }  ) always clobbers reg byte a 
-Statement [11] (byte*) main::row#1 ← (byte*) main::row#6 + (byte) $28 [ main::y#2 main::row#1 ] (  [ main::y#2 main::row#1 ] { }  ) always clobbers reg byte a 
-Statement [13] (byte~) main::$6 ← (byte) main::key_bit#2 & (byte) $80 [ main::y#2 main::row#6 main::x#2 main::key_bit#2 main::$6 ] (  [ main::y#2 main::row#6 main::x#2 main::key_bit#2 main::$6 ] { }  ) always clobbers reg byte a 
-Statement [15] *((byte*) main::row#6 + (byte) main::x#2) ← (byte) '*' [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] (  [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] { }  ) always clobbers reg byte a 
-Statement [20] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [22] *((byte*) memset::dst#2) ← (const byte) memset::c#0 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [20] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [22] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [4] main::$2 = 1 << main::y#2 [ main::y#2 main::row#6 main::$2 ] (  [ main::y#2 main::row#6 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$3 = $ff ^ main::$2 [ main::y#2 main::row#6 main::$3 ] (  [ main::y#2 main::row#6 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [7] *KEYBOARD_INPUT = 0 [ main::y#2 main::row#6 ] (  [ main::y#2 main::row#6 ] { }  ) always clobbers reg byte a 
+Statement [8] main::key_bit#0 = *KEYBOARD_INPUT ^ $ff [ main::y#2 main::row#6 main::key_bit#0 ] (  [ main::y#2 main::row#6 main::key_bit#0 ] { }  ) always clobbers reg byte a 
+Statement [11] main::row#1 = main::row#6 + $28 [ main::y#2 main::row#1 ] (  [ main::y#2 main::row#1 ] { }  ) always clobbers reg byte a 
+Statement [13] main::$6 = main::key_bit#2 & $80 [ main::y#2 main::row#6 main::x#2 main::key_bit#2 main::$6 ] (  [ main::y#2 main::row#6 main::x#2 main::key_bit#2 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [15] main::row#6[main::x#2] = '*' [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] (  [ main::y#2 main::row#6 main::x#2 main::key_bit#2 ] { }  ) always clobbers reg byte a 
+Statement [20] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [22] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( memset:1 [ memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ main::y#2 main::y#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::row#6 main::row#1 ] : zp[2]:3 , 
 Potential registers zp[1]:5 [ main::x#2 main::x#1 ] : zp[1]:5 , reg byte x , reg byte y , 
@@ -786,24 +596,24 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [3] if((byte) main::y#2<(byte) 8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [3] if(main::y#2<8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z y
     cmp #8
     bcc __b2
     // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [2] phi (byte*) main::row#6 = (const nomodify byte*) DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi main::row#6 = DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
     sta.z row
     lda #>DEFAULT_SCREEN
     sta.z row+1
-    // [2] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
+    // [2] phi main::y#2 = 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     jmp __b1
     // main::@2
   __b2:
-    // [4] (byte~) main::$2 ← (byte) 1 << (byte) main::y#2 -- vbuaa=vbuc1_rol_vbuz1 
+    // [4] main::$2 = 1 << main::y#2 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy.z y
     cpy #0
@@ -813,32 +623,32 @@ main: {
     dey
     bne !-
   !e:
-    // [5] (byte~) main::$3 ← (byte) $ff ^ (byte~) main::$2 -- vbuaa=vbuc1_bxor_vbuaa 
+    // [5] main::$3 = $ff ^ main::$2 -- vbuaa=vbuc1_bxor_vbuaa 
     eor #$ff
-    // [6] *((const nomodify byte*) KEYBOARD_SCAN) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [6] *KEYBOARD_SCAN = main::$3 -- _deref_pbuc1=vbuaa 
     sta KEYBOARD_SCAN
-    // [7] *((const nomodify byte*) KEYBOARD_INPUT) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [7] *KEYBOARD_INPUT = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta KEYBOARD_INPUT
-    // [8] (byte) main::key_bit#0 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff -- vbuxx=_deref_pbuc1_bxor_vbuc2 
+    // [8] main::key_bit#0 = *KEYBOARD_INPUT ^ $ff -- vbuxx=_deref_pbuc1_bxor_vbuc2 
     lda #$ff
     eor KEYBOARD_INPUT
     tax
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
   __b3_from___b2:
-    // [9] phi (byte) main::key_bit#2 = (byte) main::key_bit#0 [phi:main::@2->main::@3#0] -- register_copy 
-    // [9] phi (byte) main::x#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuyy=vbuc1 
+    // [9] phi main::key_bit#2 = main::key_bit#0 [phi:main::@2->main::@3#0] -- register_copy 
+    // [9] phi main::x#2 = 0 [phi:main::@2->main::@3#1] -- vbuyy=vbuc1 
     ldy #0
     jmp __b3
     // main::@3
   __b3:
-    // [10] if((byte) main::x#2<(byte) 8) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+    // [10] if(main::x#2<8) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
     cpy #8
     bcc __b4
     jmp __b5
     // main::@5
   __b5:
-    // [11] (byte*) main::row#1 ← (byte*) main::row#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [11] main::row#1 = main::row#6 + $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z row
@@ -846,40 +656,40 @@ main: {
     bcc !+
     inc.z row+1
   !:
-    // [12] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    // [12] main::y#1 = ++ main::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [2] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
   __b1_from___b5:
-    // [2] phi (byte*) main::row#6 = (byte*) main::row#1 [phi:main::@5->main::@1#0] -- register_copy 
-    // [2] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [2] phi main::row#6 = main::row#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [2] phi main::y#2 = main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp __b1
     // main::@4
   __b4:
-    // [13] (byte~) main::$6 ← (byte) main::key_bit#2 & (byte) $80 -- vbuaa=vbuxx_band_vbuc1 
+    // [13] main::$6 = main::key_bit#2 & $80 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$80
-    // [14] if((byte) 0==(byte~) main::$6) goto main::@6 -- vbuc1_eq_vbuaa_then_la1 
+    // [14] if(0==main::$6) goto main::@6 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq __b6
     jmp __b7
     // main::@7
   __b7:
-    // [15] *((byte*) main::row#6 + (byte) main::x#2) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [15] main::row#6[main::x#2] = '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
     sta (row),y
     jmp __b6
     // main::@6
   __b6:
-    // [16] (byte) main::key_bit#1 ← (byte) main::key_bit#2 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [16] main::key_bit#1 = main::key_bit#2 << 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
-    // [17] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
+    // [17] main::x#1 = ++ main::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [9] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
   __b3_from___b6:
-    // [9] phi (byte) main::key_bit#2 = (byte) main::key_bit#1 [phi:main::@6->main::@3#0] -- register_copy 
-    // [9] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@6->main::@3#1] -- register_copy 
+    // [9] phi main::key_bit#2 = main::key_bit#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [9] phi main::x#2 = main::x#1 [phi:main::@6->main::@3#1] -- register_copy 
     jmp __b3
 }
   // memset
@@ -892,7 +702,7 @@ memset: {
     .label dst = 5
     // [19] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [19] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [19] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -900,7 +710,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [20] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [20] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -914,18 +724,18 @@ memset: {
     rts
     // memset::@2
   __b2:
-    // [22] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [22] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [23] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     // [19] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [19] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [19] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -954,49 +764,49 @@ Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) DEFAULT_SCREEN = (byte*) 3072
-(const nomodify byte*) KEYBOARD_INPUT = (byte*) 65288
-(const nomodify byte*) KEYBOARD_SCAN = (byte*) 64816
-(void()) main()
-(byte~) main::$2 reg byte a 22.0
-(byte~) main::$3 reg byte a 22.0
-(byte~) main::$6 reg byte a 202.0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@6
-(label) main::@7
-(byte) main::key_bit
-(byte) main::key_bit#0 reg byte x 22.0
-(byte) main::key_bit#1 reg byte x 101.0
-(byte) main::key_bit#2 reg byte x 62.8
-(byte*) main::row
-(byte*) main::row#1 row zp[2]:3 11.0
-(byte*) main::row#6 row zp[2]:3 8.785714285714286
-(byte) main::x
-(byte) main::x#1 reg byte y 202.0
-(byte) main::x#2 reg byte y 67.33333333333333
-(byte) main::y
-(byte) main::y#1 y zp[1]:2 22.0
-(byte) main::y#2 y zp[1]:2 8.933333333333332
-(void*()) memset((void*) memset::str , (byte) memset::c , (word) memset::num)
-(label) memset::@1
-(label) memset::@2
-(label) memset::@return
-(byte) memset::c
-(const byte) memset::c#0 c = (byte) ' '
-(byte*) memset::dst
-(byte*) memset::dst#1 dst zp[2]:5 202.0
-(byte*) memset::dst#2 dst zp[2]:5 134.66666666666666
-(byte*) memset::end
-(const byte*) memset::end#0 end = (byte*)(const void*) memset::str#0+(const word) memset::num#0
-(word) memset::num
-(const word) memset::num#0 num = (word) $400
-(void*) memset::return
-(void*) memset::str
-(const void*) memset::str#0 str = (void*)(const nomodify byte*) DEFAULT_SCREEN
+const nomodify byte* DEFAULT_SCREEN = (byte*) 3072
+const nomodify byte* KEYBOARD_INPUT = (byte*) 65288
+const nomodify byte* KEYBOARD_SCAN = (byte*) 64816
+void main()
+byte~ main::$2 reg byte a 22.0
+byte~ main::$3 reg byte a 22.0
+byte~ main::$6 reg byte a 202.0
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@6
+label main::@7
+byte main::key_bit
+byte main::key_bit#0 reg byte x 22.0
+byte main::key_bit#1 reg byte x 101.0
+byte main::key_bit#2 reg byte x 62.8
+byte* main::row
+byte* main::row#1 row zp[2]:3 11.0
+byte* main::row#6 row zp[2]:3 8.785714285714286
+byte main::x
+byte main::x#1 reg byte y 202.0
+byte main::x#2 reg byte y 67.33333333333333
+byte main::y
+byte main::y#1 y zp[1]:2 22.0
+byte main::y#2 y zp[1]:2 8.933333333333332
+void* memset(void* memset::str , byte memset::c , word memset::num)
+label memset::@1
+label memset::@2
+label memset::@return
+byte memset::c
+const byte memset::c#0 c = ' '
+byte* memset::dst
+byte* memset::dst#1 dst zp[2]:5 202.0
+byte* memset::dst#2 dst zp[2]:5 134.66666666666666
+byte* memset::end
+const byte* memset::end#0 end = (byte*)memset::str#0+memset::num#0
+word memset::num
+const word memset::num#0 num = $400
+void* memset::return
+void* memset::str
+const void* memset::str#0 str = (void*)DEFAULT_SCREEN
 
 zp[1]:2 [ main::y#2 main::y#1 ]
 zp[2]:3 [ main::row#6 main::row#1 ]
@@ -1042,24 +852,24 @@ main: {
     // main::@1
   __b1:
     // for(char y=0;y<8;y++)
-    // [3] if((byte) main::y#2<(byte) 8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    // [3] if(main::y#2<8) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
     lda.z y
     cmp #8
     bcc __b2
     // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [2] phi (byte*) main::row#6 = (const nomodify byte*) DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
+    // [2] phi main::row#6 = DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
     lda #<DEFAULT_SCREEN
     sta.z row
     lda #>DEFAULT_SCREEN
     sta.z row+1
-    // [2] phi (byte) main::y#2 = (byte) 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
+    // [2] phi main::y#2 = 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
     lda #0
     sta.z y
     jmp __b1
     // main::@2
   __b2:
     // 1<<y
-    // [4] (byte~) main::$2 ← (byte) 1 << (byte) main::y#2 -- vbuaa=vbuc1_rol_vbuz1 
+    // [4] main::$2 = 1 << main::y#2 -- vbuaa=vbuc1_rol_vbuz1 
     lda #1
     ldy.z y
     cpy #0
@@ -1070,33 +880,33 @@ main: {
     bne !-
   !e:
     // 0xff^(1<<y)
-    // [5] (byte~) main::$3 ← (byte) $ff ^ (byte~) main::$2 -- vbuaa=vbuc1_bxor_vbuaa 
+    // [5] main::$3 = $ff ^ main::$2 -- vbuaa=vbuc1_bxor_vbuaa 
     eor #$ff
     // *KEYBOARD_SCAN = 0xff^(1<<y)
-    // [6] *((const nomodify byte*) KEYBOARD_SCAN) ← (byte~) main::$3 -- _deref_pbuc1=vbuaa 
+    // [6] *KEYBOARD_SCAN = main::$3 -- _deref_pbuc1=vbuaa 
     sta KEYBOARD_SCAN
     // *KEYBOARD_INPUT = 0
-    // [7] *((const nomodify byte*) KEYBOARD_INPUT) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [7] *KEYBOARD_INPUT = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta KEYBOARD_INPUT
     // key_bit = *KEYBOARD_INPUT^0xff
-    // [8] (byte) main::key_bit#0 ← *((const nomodify byte*) KEYBOARD_INPUT) ^ (byte) $ff -- vbuxx=_deref_pbuc1_bxor_vbuc2 
+    // [8] main::key_bit#0 = *KEYBOARD_INPUT ^ $ff -- vbuxx=_deref_pbuc1_bxor_vbuc2 
     lda #$ff
     eor KEYBOARD_INPUT
     tax
     // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-    // [9] phi (byte) main::key_bit#2 = (byte) main::key_bit#0 [phi:main::@2->main::@3#0] -- register_copy 
-    // [9] phi (byte) main::x#2 = (byte) 0 [phi:main::@2->main::@3#1] -- vbuyy=vbuc1 
+    // [9] phi main::key_bit#2 = main::key_bit#0 [phi:main::@2->main::@3#0] -- register_copy 
+    // [9] phi main::x#2 = 0 [phi:main::@2->main::@3#1] -- vbuyy=vbuc1 
     ldy #0
     // main::@3
   __b3:
     // for(char x=0;x<8;x++)
-    // [10] if((byte) main::x#2<(byte) 8) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+    // [10] if(main::x#2<8) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
     cpy #8
     bcc __b4
     // main::@5
     // row += 40
-    // [11] (byte*) main::row#1 ← (byte*) main::row#6 + (byte) $28 -- pbuz1=pbuz1_plus_vbuc1 
+    // [11] main::row#1 = main::row#6 + $28 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$28
     clc
     adc.z row
@@ -1105,40 +915,40 @@ main: {
     inc.z row+1
   !:
     // for(char y=0;y<8;y++)
-    // [12] (byte) main::y#1 ← ++ (byte) main::y#2 -- vbuz1=_inc_vbuz1 
+    // [12] main::y#1 = ++ main::y#2 -- vbuz1=_inc_vbuz1 
     inc.z y
     // [2] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
-    // [2] phi (byte*) main::row#6 = (byte*) main::row#1 [phi:main::@5->main::@1#0] -- register_copy 
-    // [2] phi (byte) main::y#2 = (byte) main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
+    // [2] phi main::row#6 = main::row#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [2] phi main::y#2 = main::y#1 [phi:main::@5->main::@1#1] -- register_copy 
     jmp __b1
     // main::@4
   __b4:
     // key_bit&0x80
-    // [13] (byte~) main::$6 ← (byte) main::key_bit#2 & (byte) $80 -- vbuaa=vbuxx_band_vbuc1 
+    // [13] main::$6 = main::key_bit#2 & $80 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$80
     // if(key_bit&0x80)
-    // [14] if((byte) 0==(byte~) main::$6) goto main::@6 -- vbuc1_eq_vbuaa_then_la1 
+    // [14] if(0==main::$6) goto main::@6 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     beq __b6
     // main::@7
     // row[x] = '*'
-    // [15] *((byte*) main::row#6 + (byte) main::x#2) ← (byte) '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+    // [15] main::row#6[main::x#2] = '*' -- pbuz1_derefidx_vbuyy=vbuc1 
     lda #'*'
     sta (row),y
     // main::@6
   __b6:
     // key_bit <<= 1
-    // [16] (byte) main::key_bit#1 ← (byte) main::key_bit#2 << (byte) 1 -- vbuxx=vbuxx_rol_1 
+    // [16] main::key_bit#1 = main::key_bit#2 << 1 -- vbuxx=vbuxx_rol_1 
     txa
     asl
     tax
     // for(char x=0;x<8;x++)
-    // [17] (byte) main::x#1 ← ++ (byte) main::x#2 -- vbuyy=_inc_vbuyy 
+    // [17] main::x#1 = ++ main::x#2 -- vbuyy=_inc_vbuyy 
     iny
     // [9] phi from main::@6 to main::@3 [phi:main::@6->main::@3]
-    // [9] phi (byte) main::key_bit#2 = (byte) main::key_bit#1 [phi:main::@6->main::@3#0] -- register_copy 
-    // [9] phi (byte) main::x#2 = (byte) main::x#1 [phi:main::@6->main::@3#1] -- register_copy 
+    // [9] phi main::key_bit#2 = main::key_bit#1 [phi:main::@6->main::@3#0] -- register_copy 
+    // [9] phi main::x#2 = main::x#1 [phi:main::@6->main::@3#1] -- register_copy 
     jmp __b3
 }
   // memset
@@ -1150,7 +960,7 @@ memset: {
     .label end = str+num
     .label dst = 5
     // [19] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [19] phi (byte*) memset::dst#2 = (byte*)(const void*) memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [19] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1158,7 +968,7 @@ memset: {
     // memset::@1
   __b1:
     // for(char* dst = str; dst!=end; dst++)
-    // [20] if((byte*) memset::dst#2!=(const byte*) memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [20] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -1172,18 +982,18 @@ memset: {
     // memset::@2
   __b2:
     // *dst = c
-    // [22] *((byte*) memset::dst#2) ← (const byte) memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [22] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [23] (byte*) memset::dst#1 ← ++ (byte*) memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [23] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
     // [19] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [19] phi (byte*) memset::dst#2 = (byte*) memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [19] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

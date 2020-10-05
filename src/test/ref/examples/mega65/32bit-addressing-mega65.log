@@ -2,22 +2,22 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM
+  ADDR32 = MEGA65_MEM_COLOR_RAM
   asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
-  (volatile dword) ADDR32 ← (number) $800
+  ADDR32 = $800
   asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile dword) ADDR32 ← (dword) 0
+  ADDR32 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -29,23 +29,23 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(volatile dword) ADDR32 loadstore
-(const nomodify dword) MEGA65_MEM_COLOR_RAM = (dword) $ff80000
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
+volatile dword ADDR32 loadstore
+const nomodify dword MEGA65_MEM_COLOR_RAM = $ff80000
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) $800 in (volatile dword) ADDR32 ← (number) $800
+Adding number conversion cast (unumber) $800 in ADDR32 = $800
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast (volatile dword) ADDR32 ← (unumber)(number) $800
+Inlining cast ADDR32 = (unumber)$800
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $800
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $800
+Finalized unsigned number type $800
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -55,18 +55,18 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile dword) ADDR32 ← (dword) 0
+  [1] ADDR32 = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -76,11 +76,11 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM
+  [5] ADDR32 = MEGA65_MEM_COLOR_RAM
   asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
-  [7] (volatile dword) ADDR32 ← (word) $800
+  [7] ADDR32 = $800
   asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -89,116 +89,20 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(volatile dword) ADDR32 loadstore 12.0
-(void()) __start()
-(void()) main()
+volatile dword ADDR32 loadstore 12.0
+void __start()
+void main()
 
 Initial phi equivalence classes
 Added variable ADDR32 to live range equivalence class [ ADDR32 ]
 Complete equivalence classes
 [ ADDR32 ]
 Allocated zp[4]:2 [ ADDR32 ]
-
-INITIAL ASM
-Target platform is mega65 / MEGA45GS02
-  // File Comments
-// 32-bit addressing using the new addressing mode
-// Absolute 32-bit address to use for storing/loading data
-  // Upstart
-.cpu _45gs02
-  // MEGA65 platform PRG executable starting in MEGA65 mode.
-.file [name="32bit-addressing-mega65.prg", type="prg", segments="Program"]
-.segmentdef Program [segments="Basic, Code, Data"]
-.segmentdef Basic [start=$2001]
-.segmentdef Code [start=$2017]
-.segmentdef Data [startAfter="Code"]
-.segment Basic
-.byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0
-.byte $15, $20, $14, $00, $9e, $20                      // 20 SYS 
-.text toIntString(__start)                                   //         NNNN
-.byte $00, $00, $00                                     // 
-  // Global Constants & labels
-  // The address of the coloir RAM in MEGA65 main memory
-  .const MEGA65_MEM_COLOR_RAM = $ff80000
-  .label ADDR32 = 2
-.segment Code
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile dword) ADDR32 ← (dword) 0 -- vduz1=vduc1 
-    lda #<0
-    sta.z ADDR32
-    lda #>0
-    sta.z ADDR32+1
-    lda #<0>>$10
-    sta.z ADDR32+2
-    lda #>0>>$10
-    sta.z ADDR32+3
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    // [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
-    // Modify Color Ram using 32-bit addressing
-    lda #<MEGA65_MEM_COLOR_RAM
-    sta.z ADDR32
-    lda #>MEGA65_MEM_COLOR_RAM
-    sta.z ADDR32+1
-    lda #<MEGA65_MEM_COLOR_RAM>>$10
-    sta.z ADDR32+2
-    lda #>MEGA65_MEM_COLOR_RAM>>$10
-    sta.z ADDR32+3
-    // asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  }
-    ldz #0
-  !:
-    tza
-    sta.z ((ADDR32)),z
-    inz
-    cpz #$50
-    bne !-
-    // [7] (volatile dword) ADDR32 ← (word) $800 -- vduz1=vduc1 
-    // Modify Screen using 32-bit addressing
-    lda #<$800
-    sta.z ADDR32
-    lda #>$800
-    sta.z ADDR32+1
-    lda #<$800>>$10
-    sta.z ADDR32+2
-    lda #>$800>>$10
-    sta.z ADDR32+3
-    // asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  }
-    lda #'*'
-    ldz #$4f
-  !:
-    sta.z ((ADDR32)),z
-    dez
-    bpl !-
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [9] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile dword) ADDR32 ← (dword) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
+Statement [1] ADDR32 = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] ADDR32 = MEGA65_MEM_COLOR_RAM [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
 Statement asm { ldz#0 !: tza sta((ADDR32)),z inz cpz#80 bne!-  } always clobbers reg byte a reg byte z 
-Statement [7] (volatile dword) ADDR32 ← (word) $800 [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
+Statement [7] ADDR32 = $800 [ ADDR32 ] ( main:3 [ ADDR32 ] { }  ) always clobbers reg byte a 
 Statement asm { lda#'*' ldz#79 !: sta((ADDR32)),z dez bpl!-  } always clobbers reg byte a reg byte z 
 Potential registers zp[4]:2 [ ADDR32 ] : zp[4]:2 , 
 
@@ -238,7 +142,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile dword) ADDR32 ← (dword) 0 -- vduz1=vduc1 
+    // [1] ADDR32 = 0 -- vduz1=vduc1 
     lda #<0
     sta.z ADDR32
     lda #>0
@@ -262,7 +166,7 @@ __start: {
 }
   // main
 main: {
-    // [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
+    // [5] ADDR32 = MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
     // Modify Color Ram using 32-bit addressing
     lda #<MEGA65_MEM_COLOR_RAM
     sta.z ADDR32
@@ -280,7 +184,7 @@ main: {
     inz
     cpz #$50
     bne !-
-    // [7] (volatile dword) ADDR32 ← (word) $800 -- vduz1=vduc1 
+    // [7] ADDR32 = $800 -- vduz1=vduc1 
     // Modify Screen using 32-bit addressing
     lda #<$800
     sta.z ADDR32
@@ -322,14 +226,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(volatile dword) ADDR32 loadstore zp[4]:2 12.0
-(const nomodify dword) MEGA65_MEM_COLOR_RAM = (dword) $ff80000
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
+volatile dword ADDR32 loadstore zp[4]:2 12.0
+const nomodify dword MEGA65_MEM_COLOR_RAM = $ff80000
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
 
 zp[4]:2 [ ADDR32 ]
 
@@ -362,7 +266,7 @@ Score: 107
 __start: {
     // __start::__init1
     // ADDR32
-    // [1] (volatile dword) ADDR32 ← (dword) 0 -- vduz1=vduc1 
+    // [1] ADDR32 = 0 -- vduz1=vduc1 
     lda #<0
     sta.z ADDR32
     sta.z ADDR32+1
@@ -381,7 +285,7 @@ __start: {
   // main
 main: {
     // ADDR32 = MEGA65_MEM_COLOR_RAM
-    // [5] (volatile dword) ADDR32 ← (const nomodify dword) MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
+    // [5] ADDR32 = MEGA65_MEM_COLOR_RAM -- vduz1=vduc1 
     // Modify Color Ram using 32-bit addressing
     lda #<MEGA65_MEM_COLOR_RAM
     sta.z ADDR32
@@ -401,7 +305,7 @@ main: {
     cpz #$50
     bne !-
     // ADDR32 = 0x00000800
-    // [7] (volatile dword) ADDR32 ← (word) $800 -- vduz1=vduc1 
+    // [7] ADDR32 = $800 -- vduz1=vduc1 
     // Modify Screen using 32-bit addressing
     lda #<$800
     sta.z ADDR32

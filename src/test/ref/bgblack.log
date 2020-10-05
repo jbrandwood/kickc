@@ -1,15 +1,15 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  *BG_COLOR = BLACK
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -20,13 +20,13 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
-(const nomodify byte) BLACK = (byte) 0
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)$d021
+const nomodify byte BLACK = 0
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
 Simplifying constant pointer cast (byte*) 53281
 Successful SSA optimization PassNCastSimplification
@@ -42,9 +42,9 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK
+  [0] *BG_COLOR = BLACK
   to:main::@return
 main::@return: scope:[main]  from main
   [1] return 
@@ -52,36 +52,12 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const BLACK = 0
-  .label BG_COLOR = $d021
-  // main
-main: {
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
-    lda #BLACK
-    sta BG_COLOR
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [1] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *BG_COLOR = BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -101,7 +77,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BG_COLOR = $d021
   // main
 main: {
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BG_COLOR
     jmp __breturn
@@ -119,10 +95,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53281
-(const nomodify byte) BLACK = (byte) 0
-(void()) main()
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*) 53281
+const nomodify byte BLACK = 0
+void main()
+label main::@return
 
 
 
@@ -140,7 +116,7 @@ Score: 12
   // main
 main: {
     // *BG_COLOR = BLACK
-    // [0] *((const nomodify byte*) BG_COLOR) ← (const nomodify byte) BLACK -- _deref_pbuc1=vbuc2 
+    // [0] *BG_COLOR = BLACK -- _deref_pbuc1=vbuc2 
     lda #BLACK
     sta BG_COLOR
     // main::@return

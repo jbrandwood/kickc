@@ -1,23 +1,23 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
+  main::i#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  (number~) main::$0 ← (number) $ff - (byte) main::i#2
-  *((const byte*) table + (number~) main::$0) ← (number) 0
-  (byte) main::i#1 ← (byte) main::i#2 + rangenext(0,$80)
-  (bool~) main::$1 ← (byte) main::i#1 != rangelast(0,$80)
-  if((bool~) main::$1) goto main::@1
+  main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
+  main::$0 = $ff - main::i#2
+  table[main::$0] = 0
+  main::i#1 = main::i#2 + rangenext(0,$80)
+  main::$1 = main::i#1 != rangelast(0,$80)
+  if(main::$1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -28,75 +28,75 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(number~) main::$0
-(bool~) main::$1
-(label) main::@1
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
-(const byte*) table[(number) $100]  = { fill( $100, 0) }
+void __start()
+label __start::@1
+label __start::@return
+void main()
+number~ main::$0
+bool~ main::$1
+label main::@1
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+const byte* table[$100]  = { fill( $100, 0) }
 
-Adding number conversion cast (unumber) $ff in (number~) main::$0 ← (number) $ff - (byte) main::i#2
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) $ff - (byte) main::i#2
-Adding number conversion cast (unumber) 0 in *((const byte*) table + (unumber~) main::$0) ← (number) 0
+Adding number conversion cast (unumber) $ff in main::$0 = $ff - main::i#2
+Adding number conversion cast (unumber) main::$0 in main::$0 = (unumber)$ff - main::i#2
+Adding number conversion cast (unumber) 0 in table[main::$0] = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) table + (unumber~) main::$0) ← (unumber)(number) 0
+Inlining cast table[main::$0] = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $ff
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type $ff
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) $ff - (byte) main::i#2
-Simple Condition (bool~) main::$1 [6] if((byte) main::i#1!=rangelast(0,$80)) goto main::@1
+Inferred type updated to byte in main::$0 = $ff - main::i#2
+Simple Condition main::$1 [6] if(main::i#1!=rangelast(0,$80)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [4] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,$80)) goto main::@1 to (number) $81
+Resolved ranged next value [4] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [6] if(main::i#1!=rangelast(0,$80)) goto main::@1 to $81
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding number conversion cast (unumber) $81 in [4] if((byte) main::i#1!=(number) $81) goto main::@1
+Adding number conversion cast (unumber) $81 in [4] if(main::i#1!=$81) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $81
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $81
+Finalized unsigned number type $81
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined main::i#0 = (byte) 0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [7] main::i#3 ← main::i#1
+Coalesced [7] main::i#3 = main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@2
+Culled Empty Block label main::@2
 Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] (byte) main::i#2 ← phi( main/(byte) 0 main::@1/(byte) main::i#1 )
-  [2] (byte~) main::$0 ← (byte) $ff - (byte) main::i#2
-  [3] *((const byte*) table + (byte~) main::$0) ← (byte) 0
-  [4] (byte) main::i#1 ← ++ (byte) main::i#2
-  [5] if((byte) main::i#1!=(byte) $81) goto main::@1
+  [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
+  [2] main::$0 = $ff - main::i#2
+  [3] table[main::$0] = 0
+  [4] main::i#1 = ++ main::i#2
+  [5] if(main::i#1!=$81) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -104,11 +104,11 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$0 22.0
-(byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 11.0
+void main()
+byte~ main::$0 22.0
+byte main::i
+byte main::i#1 16.5
+byte main::i#2 11.0
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
@@ -118,63 +118,12 @@ Complete equivalence classes
 [ main::$0 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 Allocated zp[1]:3 [ main::$0 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// java.lang.NullPointerException during Pass2TypeInference.java
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-// Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
-main: {
-    .label __0 = 3
-    .label i = 2
-    // [1] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #0
-    sta.z i
-    jmp __b1
-    // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [2] (byte~) main::$0 ← (byte) $ff - (byte) main::i#2 -- vbuz1=vbuc1_minus_vbuz2 
-    lda #$ff
-    sec
-    sbc.z i
-    sta.z __0
-    // [3] *((const byte*) table + (byte~) main::$0) ← (byte) 0 -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #0
-    ldy.z __0
-    sta table,y
-    // [4] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [5] if((byte) main::i#1!=(byte) $81) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$81
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [6] return 
-    rts
-}
-  // File Data
-  table: .fill $100, 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] (byte~) main::$0 ← (byte) $ff - (byte) main::i#2 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [2] main::$0 = $ff - main::i#2 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [3] *((const byte*) table + (byte~) main::$0) ← (byte) 0 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
-Statement [2] (byte~) main::$0 ← (byte) $ff - (byte) main::i#2 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
-Statement [3] *((const byte*) table + (byte~) main::$0) ← (byte) 0 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [3] table[main::$0] = 0 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [2] main::$0 = $ff - main::i#2 [ main::i#2 main::$0 ] (  [ main::i#2 main::$0 ] { }  ) always clobbers reg byte a 
+Statement [3] table[main::$0] = 0 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ main::$0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
 
@@ -198,26 +147,26 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     jmp __b1
     // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [2] (byte~) main::$0 ← (byte) $ff - (byte) main::i#2 -- vbuxx=vbuc1_minus_vbuyy 
+    // [2] main::$0 = $ff - main::i#2 -- vbuxx=vbuc1_minus_vbuyy 
     tya
     eor #$ff
     tax
     axs #-$ff-1
-    // [3] *((const byte*) table + (byte~) main::$0) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [3] table[main::$0] = 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta table,x
-    // [4] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // [4] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [5] if((byte) main::i#1!=(byte) $81) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [5] if(main::i#1!=$81) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$81
     bne __b1_from___b1
     jmp __breturn
@@ -243,14 +192,14 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(byte~) main::$0 reg byte x 22.0
-(label) main::@1
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte y 16.5
-(byte) main::i#2 reg byte y 11.0
-(const byte*) table[(number) $100]  = { fill( $100, 0) }
+void main()
+byte~ main::$0 reg byte x 22.0
+label main::@1
+label main::@return
+byte main::i
+byte main::i#1 reg byte y 16.5
+byte main::i#2 reg byte y 11.0
+const byte* table[$100]  = { fill( $100, 0) }
 
 reg byte y [ main::i#2 main::i#1 ]
 reg byte x [ main::$0 ]
@@ -270,26 +219,26 @@ Score: 241
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#0] -- vbuyy=vbuc1 
     ldy #0
     // [1] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [1] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // 255-i
-    // [2] (byte~) main::$0 ← (byte) $ff - (byte) main::i#2 -- vbuxx=vbuc1_minus_vbuyy 
+    // [2] main::$0 = $ff - main::i#2 -- vbuxx=vbuc1_minus_vbuyy 
     tya
     eor #$ff
     tax
     axs #-$ff-1
     // table[255-i] = 0
-    // [3] *((const byte*) table + (byte~) main::$0) ← (byte) 0 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [3] table[main::$0] = 0 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #0
     sta table,x
     // for( byte i:0..128)
-    // [4] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuyy=_inc_vbuyy 
+    // [4] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [5] if((byte) main::i#1!=(byte) $81) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
+    // [5] if(main::i#1!=$81) goto main::@1 -- vbuyy_neq_vbuc1_then_la1 
     cpy #$81
     bne __b1
     // main::@return

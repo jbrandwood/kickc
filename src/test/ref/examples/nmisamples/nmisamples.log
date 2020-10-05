@@ -1,66 +1,66 @@
-Resolved forward reference nmi to interrupt(HARDWARE_ALL)(void()) nmi()
-Resolved forward reference nmi2 to interrupt(HARDWARE_ALL)(void()) nmi2()
-Inlined call (byte~) vicSelectGfxBank::$0 ← call toDd00 (byte*) vicSelectGfxBank::gfx 
+Resolved forward reference nmi to interrupt(HARDWARE_ALL) void nmi()
+Resolved forward reference nmi2 to interrupt(HARDWARE_ALL) void nmi2()
+Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
-  *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
-  *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (number) $88
-  *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (number) $81
-  *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (number) 1
+  *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  *KERNEL_NMI = &nmi
+  *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88
+  *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81
+  *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 1
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(HARDWARE_ALL)(void()) nmi()
+interrupt(HARDWARE_ALL) void nmi()
 nmi: scope:[nmi]  from
-  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
-  (number~) nmi::$1 ← *((volatile byte*) sample) & (number) $f
-  *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (number~) nmi::$1
-  *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
-  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  nmi::$1 = *sample & $f
+  *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi::$1
+  *KERNEL_NMI = &nmi2
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:nmi::@return
 nmi::@return: scope:[nmi]  from nmi
   return 
   to:@return
 
-interrupt(HARDWARE_ALL)(void()) nmi2()
+interrupt(HARDWARE_ALL) void nmi2()
 nmi2: scope:[nmi2]  from
-  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
-  (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (number) 4
-  *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1
-  (volatile byte*) sample ← ++ (volatile byte*) sample
-  (byte~) nmi2::$2 ← > (volatile byte*) sample
-  (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
-  (bool~) nmi2::$4 ← ! (bool~) nmi2::$3
-  if((bool~) nmi2::$4) goto nmi2::@1
+  nmi2::$1 = *sample >> 4
+  *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi2::$1
+  sample = ++ sample
+  nmi2::$2 = > sample
+  nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
+  nmi2::$4 = ! nmi2::$3
+  if(nmi2::$4) goto nmi2::@1
   to:nmi2::@2
 nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
-  *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
-  *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  *KERNEL_NMI = &nmi
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:nmi2::@return
 nmi2::@2: scope:[nmi2]  from nmi2
-  (volatile byte*) sample ← (const byte*) SAMPLE
+  sample = SAMPLE
   to:nmi2::@1
 nmi2::@return: scope:[nmi2]  from nmi2::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte*) sample ← (const byte*) SAMPLE
+  sample = SAMPLE
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -72,134 +72,134 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*)(number) $dd00
-(const nomodify byte*) CIA2_INTERRUPT = (byte*)(number) $dd0d
-(const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
-(const nomodify void()**) KERNEL_NMI = (void()**)(number) $318
-(byte) MOS6526_CIA::INTERRUPT
-(byte) MOS6526_CIA::PORT_A
-(byte) MOS6526_CIA::PORT_A_DDR
-(byte) MOS6526_CIA::PORT_B
-(byte) MOS6526_CIA::PORT_B_DDR
-(byte) MOS6526_CIA::SERIAL_DATA
-(word) MOS6526_CIA::TIMER_A
-(byte) MOS6526_CIA::TIMER_A_CONTROL
-(word) MOS6526_CIA::TIMER_B
-(byte) MOS6526_CIA::TIMER_B_CONTROL
-(byte) MOS6526_CIA::TOD_10THS
-(byte) MOS6526_CIA::TOD_HOURS
-(byte) MOS6526_CIA::TOD_MIN
-(byte) MOS6526_CIA::TOD_SEC
-(byte) MOS6569_VICII::BG_COLOR
-(byte) MOS6569_VICII::BG_COLOR1
-(byte) MOS6569_VICII::BG_COLOR2
-(byte) MOS6569_VICII::BG_COLOR3
-(byte) MOS6569_VICII::BORDER_COLOR
-(byte) MOS6569_VICII::CONTROL1
-(byte) MOS6569_VICII::CONTROL2
-(byte) MOS6569_VICII::IRQ_ENABLE
-(byte) MOS6569_VICII::IRQ_STATUS
-(byte) MOS6569_VICII::LIGHTPEN_X
-(byte) MOS6569_VICII::LIGHTPEN_Y
-(byte) MOS6569_VICII::MEMORY
-(byte) MOS6569_VICII::RASTER
-(byte) MOS6569_VICII::SPRITE0_COLOR
-(byte) MOS6569_VICII::SPRITE0_X
-(byte) MOS6569_VICII::SPRITE0_Y
-(byte) MOS6569_VICII::SPRITE1_COLOR
-(byte) MOS6569_VICII::SPRITE1_X
-(byte) MOS6569_VICII::SPRITE1_Y
-(byte) MOS6569_VICII::SPRITE2_COLOR
-(byte) MOS6569_VICII::SPRITE2_X
-(byte) MOS6569_VICII::SPRITE2_Y
-(byte) MOS6569_VICII::SPRITE3_COLOR
-(byte) MOS6569_VICII::SPRITE3_X
-(byte) MOS6569_VICII::SPRITE3_Y
-(byte) MOS6569_VICII::SPRITE4_COLOR
-(byte) MOS6569_VICII::SPRITE4_X
-(byte) MOS6569_VICII::SPRITE4_Y
-(byte) MOS6569_VICII::SPRITE5_COLOR
-(byte) MOS6569_VICII::SPRITE5_X
-(byte) MOS6569_VICII::SPRITE5_Y
-(byte) MOS6569_VICII::SPRITE6_COLOR
-(byte) MOS6569_VICII::SPRITE6_X
-(byte) MOS6569_VICII::SPRITE6_Y
-(byte) MOS6569_VICII::SPRITE7_COLOR
-(byte) MOS6569_VICII::SPRITE7_X
-(byte) MOS6569_VICII::SPRITE7_Y
-(byte) MOS6569_VICII::SPRITES_BG_COLLISION
-(byte) MOS6569_VICII::SPRITES_COLLISION
-(byte) MOS6569_VICII::SPRITES_ENABLE
-(byte) MOS6569_VICII::SPRITES_EXPAND_X
-(byte) MOS6569_VICII::SPRITES_EXPAND_Y
-(byte) MOS6569_VICII::SPRITES_MC
-(byte) MOS6569_VICII::SPRITES_MCOLOR1
-(byte) MOS6569_VICII::SPRITES_MCOLOR2
-(byte) MOS6569_VICII::SPRITES_PRIORITY
-(byte) MOS6569_VICII::SPRITES_XMSB
-(byte) MOS6581_SID::CH1_ATTACK_DECAY
-(byte) MOS6581_SID::CH1_CONTROL
-(word) MOS6581_SID::CH1_FREQ
-(word) MOS6581_SID::CH1_PULSE_WIDTH
-(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH2_ATTACK_DECAY
-(byte) MOS6581_SID::CH2_CONTROL
-(word) MOS6581_SID::CH2_FREQ
-(word) MOS6581_SID::CH2_PULSE_WIDTH
-(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH3_ATTACK_DECAY
-(byte) MOS6581_SID::CH3_CONTROL
-(byte) MOS6581_SID::CH3_ENV
-(word) MOS6581_SID::CH3_FREQ
-(byte) MOS6581_SID::CH3_OSC
-(word) MOS6581_SID::CH3_PULSE_WIDTH
-(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
-(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
-(byte) MOS6581_SID::FILTER_CUTOFF_LOW
-(byte) MOS6581_SID::FILTER_SETUP
-(byte) MOS6581_SID::POT_X
-(byte) MOS6581_SID::POT_Y
-(byte) MOS6581_SID::VOLUME_FILTER_MODE
-(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
-(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A = (byte) 4
-(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
-(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
-(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = (byte) $18
-(const byte*) SAMPLE[(const nomodify word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
-(const nomodify word) SAMPLE_SIZE = (word) $6100
-(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*)(number) $d400
-(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*)(number) $d000
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-interrupt(HARDWARE_ALL)(void()) nmi()
-(number~) nmi::$1
-(label) nmi::@return
-interrupt(HARDWARE_ALL)(void()) nmi2()
-(byte~) nmi2::$1
-(byte~) nmi2::$2
-(bool~) nmi2::$3
-(bool~) nmi2::$4
-(label) nmi2::@1
-(label) nmi2::@2
-(label) nmi2::@return
-(volatile byte*) sample loadstore
+const nomodify struct MOS6526_CIA* CIA2 = (struct MOS6526_CIA*)$dd00
+const nomodify byte* CIA2_INTERRUPT = (byte*)$dd0d
+const nomodify byte CIA_INTERRUPT_CLEAR = $7f
+const nomodify void()** KERNEL_NMI = (void()**)$318
+byte MOS6526_CIA::INTERRUPT
+byte MOS6526_CIA::PORT_A
+byte MOS6526_CIA::PORT_A_DDR
+byte MOS6526_CIA::PORT_B
+byte MOS6526_CIA::PORT_B_DDR
+byte MOS6526_CIA::SERIAL_DATA
+word MOS6526_CIA::TIMER_A
+byte MOS6526_CIA::TIMER_A_CONTROL
+word MOS6526_CIA::TIMER_B
+byte MOS6526_CIA::TIMER_B_CONTROL
+byte MOS6526_CIA::TOD_10THS
+byte MOS6526_CIA::TOD_HOURS
+byte MOS6526_CIA::TOD_MIN
+byte MOS6526_CIA::TOD_SEC
+byte MOS6569_VICII::BG_COLOR
+byte MOS6569_VICII::BG_COLOR1
+byte MOS6569_VICII::BG_COLOR2
+byte MOS6569_VICII::BG_COLOR3
+byte MOS6569_VICII::BORDER_COLOR
+byte MOS6569_VICII::CONTROL1
+byte MOS6569_VICII::CONTROL2
+byte MOS6569_VICII::IRQ_ENABLE
+byte MOS6569_VICII::IRQ_STATUS
+byte MOS6569_VICII::LIGHTPEN_X
+byte MOS6569_VICII::LIGHTPEN_Y
+byte MOS6569_VICII::MEMORY
+byte MOS6569_VICII::RASTER
+byte MOS6569_VICII::SPRITE0_COLOR
+byte MOS6569_VICII::SPRITE0_X
+byte MOS6569_VICII::SPRITE0_Y
+byte MOS6569_VICII::SPRITE1_COLOR
+byte MOS6569_VICII::SPRITE1_X
+byte MOS6569_VICII::SPRITE1_Y
+byte MOS6569_VICII::SPRITE2_COLOR
+byte MOS6569_VICII::SPRITE2_X
+byte MOS6569_VICII::SPRITE2_Y
+byte MOS6569_VICII::SPRITE3_COLOR
+byte MOS6569_VICII::SPRITE3_X
+byte MOS6569_VICII::SPRITE3_Y
+byte MOS6569_VICII::SPRITE4_COLOR
+byte MOS6569_VICII::SPRITE4_X
+byte MOS6569_VICII::SPRITE4_Y
+byte MOS6569_VICII::SPRITE5_COLOR
+byte MOS6569_VICII::SPRITE5_X
+byte MOS6569_VICII::SPRITE5_Y
+byte MOS6569_VICII::SPRITE6_COLOR
+byte MOS6569_VICII::SPRITE6_X
+byte MOS6569_VICII::SPRITE6_Y
+byte MOS6569_VICII::SPRITE7_COLOR
+byte MOS6569_VICII::SPRITE7_X
+byte MOS6569_VICII::SPRITE7_Y
+byte MOS6569_VICII::SPRITES_BG_COLLISION
+byte MOS6569_VICII::SPRITES_COLLISION
+byte MOS6569_VICII::SPRITES_ENABLE
+byte MOS6569_VICII::SPRITES_EXPAND_X
+byte MOS6569_VICII::SPRITES_EXPAND_Y
+byte MOS6569_VICII::SPRITES_MC
+byte MOS6569_VICII::SPRITES_MCOLOR1
+byte MOS6569_VICII::SPRITES_MCOLOR2
+byte MOS6569_VICII::SPRITES_PRIORITY
+byte MOS6569_VICII::SPRITES_XMSB
+byte MOS6581_SID::CH1_ATTACK_DECAY
+byte MOS6581_SID::CH1_CONTROL
+word MOS6581_SID::CH1_FREQ
+word MOS6581_SID::CH1_PULSE_WIDTH
+byte MOS6581_SID::CH1_SUSTAIN_RELEASE
+byte MOS6581_SID::CH2_ATTACK_DECAY
+byte MOS6581_SID::CH2_CONTROL
+word MOS6581_SID::CH2_FREQ
+word MOS6581_SID::CH2_PULSE_WIDTH
+byte MOS6581_SID::CH2_SUSTAIN_RELEASE
+byte MOS6581_SID::CH3_ATTACK_DECAY
+byte MOS6581_SID::CH3_CONTROL
+byte MOS6581_SID::CH3_ENV
+word MOS6581_SID::CH3_FREQ
+byte MOS6581_SID::CH3_OSC
+word MOS6581_SID::CH3_PULSE_WIDTH
+byte MOS6581_SID::CH3_SUSTAIN_RELEASE
+byte MOS6581_SID::FILTER_CUTOFF_HIGH
+byte MOS6581_SID::FILTER_CUTOFF_LOW
+byte MOS6581_SID::FILTER_SETUP
+byte MOS6581_SID::POT_X
+byte MOS6581_SID::POT_Y
+byte MOS6581_SID::VOLUME_FILTER_MODE
+const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+const byte OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
+const byte OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+const byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+const byte OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
+const byte* SAMPLE[SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
+const nomodify word SAMPLE_SIZE = $6100
+const nomodify struct MOS6581_SID* SID = (struct MOS6581_SID*)$d400
+const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+interrupt(HARDWARE_ALL) void nmi()
+number~ nmi::$1
+label nmi::@return
+interrupt(HARDWARE_ALL) void nmi2()
+byte~ nmi2::$1
+byte~ nmi2::$2
+bool~ nmi2::$3
+bool~ nmi2::$4
+label nmi2::@1
+label nmi2::@2
+label nmi2::@return
+volatile byte* sample loadstore
 
-Adding number conversion cast (unumber) $88 in *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (number) $88
-Adding number conversion cast (unumber) $81 in *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (number) $81
-Adding number conversion cast (unumber) 1 in *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (number) 1
-Adding number conversion cast (unumber) $f in (number~) nmi::$1 ← *((volatile byte*) sample) & (number) $f
-Adding number conversion cast (unumber) nmi::$1 in (number~) nmi::$1 ← *((volatile byte*) sample) & (unumber)(number) $f
-Adding number conversion cast (unumber) 4 in (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (number) 4
-Adding number conversion cast (unumber) $6100 in (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(number) $6100
+Adding number conversion cast (unumber) $88 in *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88
+Adding number conversion cast (unumber) $81 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81
+Adding number conversion cast (unumber) 1 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 1
+Adding number conversion cast (unumber) $f in nmi::$1 = *sample & $f
+Adding number conversion cast (unumber) nmi::$1 in nmi::$1 = *sample & (unumber)$f
+Adding number conversion cast (unumber) 4 in nmi2::$1 = *sample >> 4
+Adding number conversion cast (unumber) $6100 in nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (unumber)(number) $88
-Inlining cast *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (unumber)(number) $81
-Inlining cast *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (unumber)(number) 1
+Inlining cast *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = (unumber)$88
+Inlining cast *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = (unumber)$81
+Inlining cast *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (struct MOS6581_SID*) 54272
 Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
@@ -213,17 +213,17 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast 4
 Simplifying constant integer cast $6100
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $88
-Finalized unsigned number type (byte) $81
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) 4
-Finalized unsigned number type (word) $6100
+Finalized unsigned number type $88
+Finalized unsigned number type $81
+Finalized unsigned number type 1
+Finalized unsigned number type $f
+Finalized unsigned number type 4
+Finalized unsigned number type $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f
-Inversing boolean not [23] (bool~) nmi2::$4 ← (byte~) nmi2::$2 != >(const byte*) SAMPLE+(word) $6100 from [22] (bool~) nmi2::$3 ← (byte~) nmi2::$2 == >(const byte*) SAMPLE+(word) $6100
+Inferred type updated to byte in nmi::$1 = *sample & $f
+Inversing boolean not [23] nmi2::$4 = nmi2::$2 != >SAMPLE+$6100 from [22] nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
 Successful SSA optimization Pass2UnaryNotSimplification
-Simple Condition (bool~) nmi2::$4 [23] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
+Simple Condition nmi2::$4 [23] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -233,18 +233,18 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte*) sample ← (const byte*) SAMPLE
+  [1] sample = SAMPLE
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -254,49 +254,49 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(HARDWARE_ALL)(void()) nmi2()
+interrupt(HARDWARE_ALL) void nmi2()
 nmi2: scope:[nmi2]  from
-  [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
-  [7] (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (byte) 4
-  [8] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1
-  [9] (volatile byte*) sample ← ++ (volatile byte*) sample
-  [10] (byte~) nmi2::$2 ← > (volatile byte*) sample
-  [11] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1
+  [7] nmi2::$1 = *sample >> 4
+  [8] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi2::$1
+  [9] sample = ++ sample
+  [10] nmi2::$2 = > sample
+  [11] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1
   to:nmi2::@2
 nmi2::@2: scope:[nmi2]  from nmi2
-  [12] (volatile byte*) sample ← (const byte*) SAMPLE
+  [12] sample = SAMPLE
   to:nmi2::@1
 nmi2::@1: scope:[nmi2]  from nmi2 nmi2::@2
-  [13] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
-  [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [13] *KERNEL_NMI = &nmi
+  [14] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:nmi2::@return
 nmi2::@return: scope:[nmi2]  from nmi2::@1
   [15] return 
   to:@return
 
-interrupt(HARDWARE_ALL)(void()) nmi()
+interrupt(HARDWARE_ALL) void nmi()
 nmi: scope:[nmi]  from
-  [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [16] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
-  [18] (byte~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f
-  [19] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1
-  [20] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2()
-  [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
+  [18] nmi::$1 = *sample & $f
+  [19] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi::$1
+  [20] *KERNEL_NMI = &nmi2
+  [21] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   to:nmi::@return
 nmi::@return: scope:[nmi]  from nmi
   [22] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
   asm { sei  }
-  [25] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR
-  [26] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi()
-  [27] *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (byte) $88
-  [28] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (byte) $81
-  [29] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 1
+  [25] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
+  [26] *KERNEL_NMI = &nmi
+  [27] *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88
+  [28] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81
+  [29] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 1
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -305,98 +305,98 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(byte) MOS6526_CIA::INTERRUPT
-(byte) MOS6526_CIA::PORT_A
-(byte) MOS6526_CIA::PORT_A_DDR
-(byte) MOS6526_CIA::PORT_B
-(byte) MOS6526_CIA::PORT_B_DDR
-(byte) MOS6526_CIA::SERIAL_DATA
-(word) MOS6526_CIA::TIMER_A
-(byte) MOS6526_CIA::TIMER_A_CONTROL
-(word) MOS6526_CIA::TIMER_B
-(byte) MOS6526_CIA::TIMER_B_CONTROL
-(byte) MOS6526_CIA::TOD_10THS
-(byte) MOS6526_CIA::TOD_HOURS
-(byte) MOS6526_CIA::TOD_MIN
-(byte) MOS6526_CIA::TOD_SEC
-(byte) MOS6569_VICII::BG_COLOR
-(byte) MOS6569_VICII::BG_COLOR1
-(byte) MOS6569_VICII::BG_COLOR2
-(byte) MOS6569_VICII::BG_COLOR3
-(byte) MOS6569_VICII::BORDER_COLOR
-(byte) MOS6569_VICII::CONTROL1
-(byte) MOS6569_VICII::CONTROL2
-(byte) MOS6569_VICII::IRQ_ENABLE
-(byte) MOS6569_VICII::IRQ_STATUS
-(byte) MOS6569_VICII::LIGHTPEN_X
-(byte) MOS6569_VICII::LIGHTPEN_Y
-(byte) MOS6569_VICII::MEMORY
-(byte) MOS6569_VICII::RASTER
-(byte) MOS6569_VICII::SPRITE0_COLOR
-(byte) MOS6569_VICII::SPRITE0_X
-(byte) MOS6569_VICII::SPRITE0_Y
-(byte) MOS6569_VICII::SPRITE1_COLOR
-(byte) MOS6569_VICII::SPRITE1_X
-(byte) MOS6569_VICII::SPRITE1_Y
-(byte) MOS6569_VICII::SPRITE2_COLOR
-(byte) MOS6569_VICII::SPRITE2_X
-(byte) MOS6569_VICII::SPRITE2_Y
-(byte) MOS6569_VICII::SPRITE3_COLOR
-(byte) MOS6569_VICII::SPRITE3_X
-(byte) MOS6569_VICII::SPRITE3_Y
-(byte) MOS6569_VICII::SPRITE4_COLOR
-(byte) MOS6569_VICII::SPRITE4_X
-(byte) MOS6569_VICII::SPRITE4_Y
-(byte) MOS6569_VICII::SPRITE5_COLOR
-(byte) MOS6569_VICII::SPRITE5_X
-(byte) MOS6569_VICII::SPRITE5_Y
-(byte) MOS6569_VICII::SPRITE6_COLOR
-(byte) MOS6569_VICII::SPRITE6_X
-(byte) MOS6569_VICII::SPRITE6_Y
-(byte) MOS6569_VICII::SPRITE7_COLOR
-(byte) MOS6569_VICII::SPRITE7_X
-(byte) MOS6569_VICII::SPRITE7_Y
-(byte) MOS6569_VICII::SPRITES_BG_COLLISION
-(byte) MOS6569_VICII::SPRITES_COLLISION
-(byte) MOS6569_VICII::SPRITES_ENABLE
-(byte) MOS6569_VICII::SPRITES_EXPAND_X
-(byte) MOS6569_VICII::SPRITES_EXPAND_Y
-(byte) MOS6569_VICII::SPRITES_MC
-(byte) MOS6569_VICII::SPRITES_MCOLOR1
-(byte) MOS6569_VICII::SPRITES_MCOLOR2
-(byte) MOS6569_VICII::SPRITES_PRIORITY
-(byte) MOS6569_VICII::SPRITES_XMSB
-(byte) MOS6581_SID::CH1_ATTACK_DECAY
-(byte) MOS6581_SID::CH1_CONTROL
-(word) MOS6581_SID::CH1_FREQ
-(word) MOS6581_SID::CH1_PULSE_WIDTH
-(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH2_ATTACK_DECAY
-(byte) MOS6581_SID::CH2_CONTROL
-(word) MOS6581_SID::CH2_FREQ
-(word) MOS6581_SID::CH2_PULSE_WIDTH
-(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH3_ATTACK_DECAY
-(byte) MOS6581_SID::CH3_CONTROL
-(byte) MOS6581_SID::CH3_ENV
-(word) MOS6581_SID::CH3_FREQ
-(byte) MOS6581_SID::CH3_OSC
-(word) MOS6581_SID::CH3_PULSE_WIDTH
-(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
-(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
-(byte) MOS6581_SID::FILTER_CUTOFF_LOW
-(byte) MOS6581_SID::FILTER_SETUP
-(byte) MOS6581_SID::POT_X
-(byte) MOS6581_SID::POT_Y
-(byte) MOS6581_SID::VOLUME_FILTER_MODE
-(void()) __start()
-(void()) main()
-interrupt(HARDWARE_ALL)(void()) nmi()
-(byte~) nmi::$1 4.0
-interrupt(HARDWARE_ALL)(void()) nmi2()
-(byte~) nmi2::$1 4.0
-(byte~) nmi2::$2 4.0
-(volatile byte*) sample loadstore 1.9999999999999996
+byte MOS6526_CIA::INTERRUPT
+byte MOS6526_CIA::PORT_A
+byte MOS6526_CIA::PORT_A_DDR
+byte MOS6526_CIA::PORT_B
+byte MOS6526_CIA::PORT_B_DDR
+byte MOS6526_CIA::SERIAL_DATA
+word MOS6526_CIA::TIMER_A
+byte MOS6526_CIA::TIMER_A_CONTROL
+word MOS6526_CIA::TIMER_B
+byte MOS6526_CIA::TIMER_B_CONTROL
+byte MOS6526_CIA::TOD_10THS
+byte MOS6526_CIA::TOD_HOURS
+byte MOS6526_CIA::TOD_MIN
+byte MOS6526_CIA::TOD_SEC
+byte MOS6569_VICII::BG_COLOR
+byte MOS6569_VICII::BG_COLOR1
+byte MOS6569_VICII::BG_COLOR2
+byte MOS6569_VICII::BG_COLOR3
+byte MOS6569_VICII::BORDER_COLOR
+byte MOS6569_VICII::CONTROL1
+byte MOS6569_VICII::CONTROL2
+byte MOS6569_VICII::IRQ_ENABLE
+byte MOS6569_VICII::IRQ_STATUS
+byte MOS6569_VICII::LIGHTPEN_X
+byte MOS6569_VICII::LIGHTPEN_Y
+byte MOS6569_VICII::MEMORY
+byte MOS6569_VICII::RASTER
+byte MOS6569_VICII::SPRITE0_COLOR
+byte MOS6569_VICII::SPRITE0_X
+byte MOS6569_VICII::SPRITE0_Y
+byte MOS6569_VICII::SPRITE1_COLOR
+byte MOS6569_VICII::SPRITE1_X
+byte MOS6569_VICII::SPRITE1_Y
+byte MOS6569_VICII::SPRITE2_COLOR
+byte MOS6569_VICII::SPRITE2_X
+byte MOS6569_VICII::SPRITE2_Y
+byte MOS6569_VICII::SPRITE3_COLOR
+byte MOS6569_VICII::SPRITE3_X
+byte MOS6569_VICII::SPRITE3_Y
+byte MOS6569_VICII::SPRITE4_COLOR
+byte MOS6569_VICII::SPRITE4_X
+byte MOS6569_VICII::SPRITE4_Y
+byte MOS6569_VICII::SPRITE5_COLOR
+byte MOS6569_VICII::SPRITE5_X
+byte MOS6569_VICII::SPRITE5_Y
+byte MOS6569_VICII::SPRITE6_COLOR
+byte MOS6569_VICII::SPRITE6_X
+byte MOS6569_VICII::SPRITE6_Y
+byte MOS6569_VICII::SPRITE7_COLOR
+byte MOS6569_VICII::SPRITE7_X
+byte MOS6569_VICII::SPRITE7_Y
+byte MOS6569_VICII::SPRITES_BG_COLLISION
+byte MOS6569_VICII::SPRITES_COLLISION
+byte MOS6569_VICII::SPRITES_ENABLE
+byte MOS6569_VICII::SPRITES_EXPAND_X
+byte MOS6569_VICII::SPRITES_EXPAND_Y
+byte MOS6569_VICII::SPRITES_MC
+byte MOS6569_VICII::SPRITES_MCOLOR1
+byte MOS6569_VICII::SPRITES_MCOLOR2
+byte MOS6569_VICII::SPRITES_PRIORITY
+byte MOS6569_VICII::SPRITES_XMSB
+byte MOS6581_SID::CH1_ATTACK_DECAY
+byte MOS6581_SID::CH1_CONTROL
+word MOS6581_SID::CH1_FREQ
+word MOS6581_SID::CH1_PULSE_WIDTH
+byte MOS6581_SID::CH1_SUSTAIN_RELEASE
+byte MOS6581_SID::CH2_ATTACK_DECAY
+byte MOS6581_SID::CH2_CONTROL
+word MOS6581_SID::CH2_FREQ
+word MOS6581_SID::CH2_PULSE_WIDTH
+byte MOS6581_SID::CH2_SUSTAIN_RELEASE
+byte MOS6581_SID::CH3_ATTACK_DECAY
+byte MOS6581_SID::CH3_CONTROL
+byte MOS6581_SID::CH3_ENV
+word MOS6581_SID::CH3_FREQ
+byte MOS6581_SID::CH3_OSC
+word MOS6581_SID::CH3_PULSE_WIDTH
+byte MOS6581_SID::CH3_SUSTAIN_RELEASE
+byte MOS6581_SID::FILTER_CUTOFF_HIGH
+byte MOS6581_SID::FILTER_CUTOFF_LOW
+byte MOS6581_SID::FILTER_SETUP
+byte MOS6581_SID::POT_X
+byte MOS6581_SID::POT_Y
+byte MOS6581_SID::VOLUME_FILTER_MODE
+void __start()
+void main()
+interrupt(HARDWARE_ALL) void nmi()
+byte~ nmi::$1 4.0
+interrupt(HARDWARE_ALL) void nmi2()
+byte~ nmi2::$1 4.0
+byte~ nmi2::$2 4.0
+volatile byte* sample loadstore 1.9999999999999996
 
 Initial phi equivalence classes
 Added variable sample to live range equivalence class [ sample ]
@@ -412,227 +412,23 @@ Allocated zp[2]:2 [ sample ]
 Allocated zp[1]:4 [ nmi2::$1 ]
 Allocated zp[1]:5 [ nmi2::$2 ]
 Allocated zp[1]:6 [ nmi::$1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// NMI Sample Player using the SID volume register
-// Code by Scan of Desire (Richard-William Loerakker)
-// Sample from ART OF NOISE: MOMENTS IN LOVE
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
-  .const CIA_INTERRUPT_CLEAR = $7f
-  .const SAMPLE_SIZE = $6100
-  .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
-  .const OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
-  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
-  .const OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
-  // The SID MOS 6581/8580
-  .label SID = $d400
-  // The VIC-II MOS 6567/6569
-  .label VICII = $d000
-  // The CIA#2: Serial bus, RS-232, VIC memory bank
-  .label CIA2 = $dd00
-  // CIA#2 Interrupt for reading in ASM
-  .label CIA2_INTERRUPT = $dd0d
-  // The vector used when the KERNAL serves NMI interrupts
-  .label KERNEL_NMI = $318
-  .label sample = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
-    lda #<SAMPLE
-    sta.z sample
-    lda #>SAMPLE
-    sta.z sample+1
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // nmi2
-nmi2: {
-    .label __1 = 4
-    .label __2 = 5
-    // entry interrupt(HARDWARE_ALL)
-    sta rega+1
-    stx regx+1
-    sty regy+1
-    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // asm { ldaCIA2_INTERRUPT  }
-    lda CIA2_INTERRUPT
-    // [7] (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (byte) 4 -- vbuz1=_deref_pbuz2_ror_4 
-    ldy #0
-    lda (sample),y
-    lsr
-    lsr
-    lsr
-    lsr
-    sta.z __1
-    // [8] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuz1 
-    lda.z __1
-    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
-    // [9] (volatile byte*) sample ← ++ (volatile byte*) sample -- pbuz1=_inc_pbuz1 
-    inc.z sample
-    bne !+
-    inc.z sample+1
-  !:
-    // [10] (byte~) nmi2::$2 ← > (volatile byte*) sample -- vbuz1=_hi_pbuz2 
-    lda.z sample+1
-    sta.z __2
-    // [11] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #>SAMPLE+$6100
-    cmp.z __2
-    bne __b1
-    jmp __b2
-    // nmi2::@2
-  __b2:
-    // [12] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
-    lda #<SAMPLE
-    sta.z sample
-    lda #>SAMPLE
-    sta.z sample+1
-    jmp __b1
-    // nmi2::@1
-  __b1:
-    // [13] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_qprc1=pprc2 
-    lda #<nmi
-    sta KERNEL_NMI
-    lda #>nmi
-    sta KERNEL_NMI+1
-    // [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    jmp __breturn
-    // nmi2::@return
-  __breturn:
-    // [15] return  - exit interrupt(HARDWARE_ALL)
-  rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
-    rti
-}
-  // nmi
-nmi: {
-    .label __1 = 6
-    // entry interrupt(HARDWARE_ALL)
-    sta rega+1
-    stx regx+1
-    sty regy+1
-    // [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
-    inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // asm { ldaCIA2_INTERRUPT  }
-    lda CIA2_INTERRUPT
-    // [18] (byte~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f -- vbuz1=_deref_pbuz2_band_vbuc1 
-    lda #$f
-    ldy #0
-    and (sample),y
-    sta.z __1
-    // [19] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuz1 
-    lda.z __1
-    sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
-    // [20] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_qprc1=pprc2 
-    lda #<nmi2
-    sta KERNEL_NMI
-    lda #>nmi2
-    sta KERNEL_NMI+1
-    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
-    dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    jmp __breturn
-    // nmi::@return
-  __breturn:
-    // [22] return  - exit interrupt(HARDWARE_ALL)
-  rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
-    rti
-}
-  // main
-main: {
-    // asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  }
-    // Boosting 8580 Digis
-    // See https://gist.github.com/munshkr/30f35e39905e63876ff7 (line 909)
-    lda #$ff
-    sta $d406
-    sta $d40d
-    sta $d414
-    lda #$49
-    sta $d404
-    sta $d40b
-    sta $d412
-    // asm { sei  }
-    sei
-    // [25] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
-    lda #CIA_INTERRUPT_CLEAR
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [26] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_qprc1=pprc2 
-    lda #<nmi
-    sta KERNEL_NMI
-    lda #>nmi
-    sta KERNEL_NMI+1
-    // [27] *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (byte) $88 -- _deref_pwuc1=vbuc2 
-    lda #0
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
-    lda #<$88
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
-    // [28] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (byte) $81 -- _deref_pbuc1=vbuc2 
-    // speed
-    lda #$81
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [29] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 1 -- _deref_pbuc1=vbuc2 
-    lda #1
-    sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // asm { cli  }
-    cli
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [31] return 
-    rts
-}
-  // File Data
-SAMPLE:
-.import binary "moments_sample.bin" 
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte*) sample ← (const byte*) SAMPLE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] sample = SAMPLE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldaCIA2_INTERRUPT  } always clobbers reg byte a 
-Statement [7] (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (byte) 4 [ sample nmi2::$1 ] (  [ sample nmi2::$1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [12] (volatile byte*) sample ← (const byte*) SAMPLE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [13] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] nmi2::$1 = *sample >> 4 [ sample nmi2::$1 ] (  [ sample nmi2::$1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [12] sample = SAMPLE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] *KERNEL_NMI = &nmi [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [15] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement asm { ldaCIA2_INTERRUPT  } always clobbers reg byte a 
-Statement [18] (byte~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f [ nmi::$1 ] (  [ nmi::$1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [20] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [18] nmi::$1 = *sample & $f [ nmi::$1 ] (  [ nmi::$1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [20] *KERNEL_NMI = &nmi2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [22] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x reg byte y 
 Statement asm { lda#$ff sta$d406 sta$d40d sta$d414 lda#$49 sta$d404 sta$d40b sta$d412  } always clobbers reg byte a 
-Statement [25] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [26] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [27] *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (byte) $88 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [28] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (byte) $81 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [29] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 1 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [25] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [26] *KERNEL_NMI = &nmi [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [27] *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [29] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 1 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ sample ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ nmi2::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:5 [ nmi2::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
@@ -691,7 +487,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    // [1] sample = SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
@@ -715,33 +511,33 @@ nmi2: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
-    // [7] (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (byte) 4 -- vbuaa=_deref_pbuz1_ror_4 
+    // [7] nmi2::$1 = *sample >> 4 -- vbuaa=_deref_pbuz1_ror_4 
     ldy #0
     lda (sample),y
     lsr
     lsr
     lsr
     lsr
-    // [8] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
+    // [8] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi2::$1 -- _deref_pbuc1=vbuaa 
     sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
-    // [9] (volatile byte*) sample ← ++ (volatile byte*) sample -- pbuz1=_inc_pbuz1 
+    // [9] sample = ++ sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
     inc.z sample+1
   !:
-    // [10] (byte~) nmi2::$2 ← > (volatile byte*) sample -- vbuaa=_hi_pbuz1 
+    // [10] nmi2::$2 = > sample -- vbuaa=_hi_pbuz1 
     lda.z sample+1
-    // [11] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [11] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
     bne __b1
     jmp __b2
     // nmi2::@2
   __b2:
-    // [12] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    // [12] sample = SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
@@ -749,12 +545,12 @@ nmi2: {
     jmp __b1
     // nmi2::@1
   __b1:
-    // [13] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_qprc1=pprc2 
+    // [13] *KERNEL_NMI = &nmi -- _deref_qprc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
-    // [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [14] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // nmi2::@return
@@ -774,22 +570,22 @@ nmi: {
     sta rega+1
     stx regx+1
     sty regy+1
-    // [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
-    // [18] (byte~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [18] nmi::$1 = *sample & $f -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$f
     ldy #0
     and (sample),y
-    // [19] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
+    // [19] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi::$1 -- _deref_pbuc1=vbuaa 
     sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
-    // [20] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_qprc1=pprc2 
+    // [20] *KERNEL_NMI = &nmi2 -- _deref_qprc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
-    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [21] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __breturn
     // nmi::@return
@@ -818,24 +614,24 @@ main: {
     sta $d412
     // asm { sei  }
     sei
-    // [25] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [25] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [26] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_qprc1=pprc2 
+    // [26] *KERNEL_NMI = &nmi -- _deref_qprc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
-    // [27] *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (byte) $88 -- _deref_pwuc1=vbuc2 
+    // [27] *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88 -- _deref_pwuc1=vbuc2 
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
     lda #<$88
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
-    // [28] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (byte) $81 -- _deref_pbuc1=vbuc2 
+    // [28] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81 -- _deref_pbuc1=vbuc2 
     // speed
     lda #$81
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [29] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [29] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // asm { cli  }
@@ -872,119 +668,119 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify struct MOS6526_CIA*) CIA2 = (struct MOS6526_CIA*) 56576
-(const nomodify byte*) CIA2_INTERRUPT = (byte*) 56589
-(const nomodify byte) CIA_INTERRUPT_CLEAR = (byte) $7f
-(const nomodify void()**) KERNEL_NMI = (void()**) 792
-(byte) MOS6526_CIA::INTERRUPT
-(byte) MOS6526_CIA::PORT_A
-(byte) MOS6526_CIA::PORT_A_DDR
-(byte) MOS6526_CIA::PORT_B
-(byte) MOS6526_CIA::PORT_B_DDR
-(byte) MOS6526_CIA::SERIAL_DATA
-(word) MOS6526_CIA::TIMER_A
-(byte) MOS6526_CIA::TIMER_A_CONTROL
-(word) MOS6526_CIA::TIMER_B
-(byte) MOS6526_CIA::TIMER_B_CONTROL
-(byte) MOS6526_CIA::TOD_10THS
-(byte) MOS6526_CIA::TOD_HOURS
-(byte) MOS6526_CIA::TOD_MIN
-(byte) MOS6526_CIA::TOD_SEC
-(byte) MOS6569_VICII::BG_COLOR
-(byte) MOS6569_VICII::BG_COLOR1
-(byte) MOS6569_VICII::BG_COLOR2
-(byte) MOS6569_VICII::BG_COLOR3
-(byte) MOS6569_VICII::BORDER_COLOR
-(byte) MOS6569_VICII::CONTROL1
-(byte) MOS6569_VICII::CONTROL2
-(byte) MOS6569_VICII::IRQ_ENABLE
-(byte) MOS6569_VICII::IRQ_STATUS
-(byte) MOS6569_VICII::LIGHTPEN_X
-(byte) MOS6569_VICII::LIGHTPEN_Y
-(byte) MOS6569_VICII::MEMORY
-(byte) MOS6569_VICII::RASTER
-(byte) MOS6569_VICII::SPRITE0_COLOR
-(byte) MOS6569_VICII::SPRITE0_X
-(byte) MOS6569_VICII::SPRITE0_Y
-(byte) MOS6569_VICII::SPRITE1_COLOR
-(byte) MOS6569_VICII::SPRITE1_X
-(byte) MOS6569_VICII::SPRITE1_Y
-(byte) MOS6569_VICII::SPRITE2_COLOR
-(byte) MOS6569_VICII::SPRITE2_X
-(byte) MOS6569_VICII::SPRITE2_Y
-(byte) MOS6569_VICII::SPRITE3_COLOR
-(byte) MOS6569_VICII::SPRITE3_X
-(byte) MOS6569_VICII::SPRITE3_Y
-(byte) MOS6569_VICII::SPRITE4_COLOR
-(byte) MOS6569_VICII::SPRITE4_X
-(byte) MOS6569_VICII::SPRITE4_Y
-(byte) MOS6569_VICII::SPRITE5_COLOR
-(byte) MOS6569_VICII::SPRITE5_X
-(byte) MOS6569_VICII::SPRITE5_Y
-(byte) MOS6569_VICII::SPRITE6_COLOR
-(byte) MOS6569_VICII::SPRITE6_X
-(byte) MOS6569_VICII::SPRITE6_Y
-(byte) MOS6569_VICII::SPRITE7_COLOR
-(byte) MOS6569_VICII::SPRITE7_X
-(byte) MOS6569_VICII::SPRITE7_Y
-(byte) MOS6569_VICII::SPRITES_BG_COLLISION
-(byte) MOS6569_VICII::SPRITES_COLLISION
-(byte) MOS6569_VICII::SPRITES_ENABLE
-(byte) MOS6569_VICII::SPRITES_EXPAND_X
-(byte) MOS6569_VICII::SPRITES_EXPAND_Y
-(byte) MOS6569_VICII::SPRITES_MC
-(byte) MOS6569_VICII::SPRITES_MCOLOR1
-(byte) MOS6569_VICII::SPRITES_MCOLOR2
-(byte) MOS6569_VICII::SPRITES_PRIORITY
-(byte) MOS6569_VICII::SPRITES_XMSB
-(byte) MOS6581_SID::CH1_ATTACK_DECAY
-(byte) MOS6581_SID::CH1_CONTROL
-(word) MOS6581_SID::CH1_FREQ
-(word) MOS6581_SID::CH1_PULSE_WIDTH
-(byte) MOS6581_SID::CH1_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH2_ATTACK_DECAY
-(byte) MOS6581_SID::CH2_CONTROL
-(word) MOS6581_SID::CH2_FREQ
-(word) MOS6581_SID::CH2_PULSE_WIDTH
-(byte) MOS6581_SID::CH2_SUSTAIN_RELEASE
-(byte) MOS6581_SID::CH3_ATTACK_DECAY
-(byte) MOS6581_SID::CH3_CONTROL
-(byte) MOS6581_SID::CH3_ENV
-(word) MOS6581_SID::CH3_FREQ
-(byte) MOS6581_SID::CH3_OSC
-(word) MOS6581_SID::CH3_PULSE_WIDTH
-(byte) MOS6581_SID::CH3_SUSTAIN_RELEASE
-(byte) MOS6581_SID::FILTER_CUTOFF_HIGH
-(byte) MOS6581_SID::FILTER_CUTOFF_LOW
-(byte) MOS6581_SID::FILTER_SETUP
-(byte) MOS6581_SID::POT_X
-(byte) MOS6581_SID::POT_Y
-(byte) MOS6581_SID::VOLUME_FILTER_MODE
-(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = (byte) $d
-(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A = (byte) 4
-(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = (byte) $e
-(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = (byte) $20
-(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = (byte) $18
-(const byte*) SAMPLE[(const nomodify word) SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
-(const nomodify word) SAMPLE_SIZE = (word) $6100
-(const nomodify struct MOS6581_SID*) SID = (struct MOS6581_SID*) 54272
-(const nomodify struct MOS6569_VICII*) VICII = (struct MOS6569_VICII*) 53248
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
-interrupt(HARDWARE_ALL)(void()) nmi()
-(byte~) nmi::$1 reg byte a 4.0
-(label) nmi::@return
-interrupt(HARDWARE_ALL)(void()) nmi2()
-(byte~) nmi2::$1 reg byte a 4.0
-(byte~) nmi2::$2 reg byte a 4.0
-(label) nmi2::@1
-(label) nmi2::@2
-(label) nmi2::@return
-(volatile byte*) sample loadstore zp[2]:2 1.9999999999999996
+const nomodify struct MOS6526_CIA* CIA2 = (struct MOS6526_CIA*) 56576
+const nomodify byte* CIA2_INTERRUPT = (byte*) 56589
+const nomodify byte CIA_INTERRUPT_CLEAR = $7f
+const nomodify void()** KERNEL_NMI = (void()**) 792
+byte MOS6526_CIA::INTERRUPT
+byte MOS6526_CIA::PORT_A
+byte MOS6526_CIA::PORT_A_DDR
+byte MOS6526_CIA::PORT_B
+byte MOS6526_CIA::PORT_B_DDR
+byte MOS6526_CIA::SERIAL_DATA
+word MOS6526_CIA::TIMER_A
+byte MOS6526_CIA::TIMER_A_CONTROL
+word MOS6526_CIA::TIMER_B
+byte MOS6526_CIA::TIMER_B_CONTROL
+byte MOS6526_CIA::TOD_10THS
+byte MOS6526_CIA::TOD_HOURS
+byte MOS6526_CIA::TOD_MIN
+byte MOS6526_CIA::TOD_SEC
+byte MOS6569_VICII::BG_COLOR
+byte MOS6569_VICII::BG_COLOR1
+byte MOS6569_VICII::BG_COLOR2
+byte MOS6569_VICII::BG_COLOR3
+byte MOS6569_VICII::BORDER_COLOR
+byte MOS6569_VICII::CONTROL1
+byte MOS6569_VICII::CONTROL2
+byte MOS6569_VICII::IRQ_ENABLE
+byte MOS6569_VICII::IRQ_STATUS
+byte MOS6569_VICII::LIGHTPEN_X
+byte MOS6569_VICII::LIGHTPEN_Y
+byte MOS6569_VICII::MEMORY
+byte MOS6569_VICII::RASTER
+byte MOS6569_VICII::SPRITE0_COLOR
+byte MOS6569_VICII::SPRITE0_X
+byte MOS6569_VICII::SPRITE0_Y
+byte MOS6569_VICII::SPRITE1_COLOR
+byte MOS6569_VICII::SPRITE1_X
+byte MOS6569_VICII::SPRITE1_Y
+byte MOS6569_VICII::SPRITE2_COLOR
+byte MOS6569_VICII::SPRITE2_X
+byte MOS6569_VICII::SPRITE2_Y
+byte MOS6569_VICII::SPRITE3_COLOR
+byte MOS6569_VICII::SPRITE3_X
+byte MOS6569_VICII::SPRITE3_Y
+byte MOS6569_VICII::SPRITE4_COLOR
+byte MOS6569_VICII::SPRITE4_X
+byte MOS6569_VICII::SPRITE4_Y
+byte MOS6569_VICII::SPRITE5_COLOR
+byte MOS6569_VICII::SPRITE5_X
+byte MOS6569_VICII::SPRITE5_Y
+byte MOS6569_VICII::SPRITE6_COLOR
+byte MOS6569_VICII::SPRITE6_X
+byte MOS6569_VICII::SPRITE6_Y
+byte MOS6569_VICII::SPRITE7_COLOR
+byte MOS6569_VICII::SPRITE7_X
+byte MOS6569_VICII::SPRITE7_Y
+byte MOS6569_VICII::SPRITES_BG_COLLISION
+byte MOS6569_VICII::SPRITES_COLLISION
+byte MOS6569_VICII::SPRITES_ENABLE
+byte MOS6569_VICII::SPRITES_EXPAND_X
+byte MOS6569_VICII::SPRITES_EXPAND_Y
+byte MOS6569_VICII::SPRITES_MC
+byte MOS6569_VICII::SPRITES_MCOLOR1
+byte MOS6569_VICII::SPRITES_MCOLOR2
+byte MOS6569_VICII::SPRITES_PRIORITY
+byte MOS6569_VICII::SPRITES_XMSB
+byte MOS6581_SID::CH1_ATTACK_DECAY
+byte MOS6581_SID::CH1_CONTROL
+word MOS6581_SID::CH1_FREQ
+word MOS6581_SID::CH1_PULSE_WIDTH
+byte MOS6581_SID::CH1_SUSTAIN_RELEASE
+byte MOS6581_SID::CH2_ATTACK_DECAY
+byte MOS6581_SID::CH2_CONTROL
+word MOS6581_SID::CH2_FREQ
+word MOS6581_SID::CH2_PULSE_WIDTH
+byte MOS6581_SID::CH2_SUSTAIN_RELEASE
+byte MOS6581_SID::CH3_ATTACK_DECAY
+byte MOS6581_SID::CH3_CONTROL
+byte MOS6581_SID::CH3_ENV
+word MOS6581_SID::CH3_FREQ
+byte MOS6581_SID::CH3_OSC
+word MOS6581_SID::CH3_PULSE_WIDTH
+byte MOS6581_SID::CH3_SUSTAIN_RELEASE
+byte MOS6581_SID::FILTER_CUTOFF_HIGH
+byte MOS6581_SID::FILTER_CUTOFF_LOW
+byte MOS6581_SID::FILTER_SETUP
+byte MOS6581_SID::POT_X
+byte MOS6581_SID::POT_Y
+byte MOS6581_SID::VOLUME_FILTER_MODE
+const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
+const byte OFFSET_STRUCT_MOS6526_CIA_TIMER_A = 4
+const byte OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL = $e
+const byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+const byte OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE = $18
+const byte* SAMPLE[SAMPLE_SIZE]  = kickasm {{ .import binary "moments_sample.bin"  }}
+const nomodify word SAMPLE_SIZE = $6100
+const nomodify struct MOS6581_SID* SID = (struct MOS6581_SID*) 54272
+const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
+interrupt(HARDWARE_ALL) void nmi()
+byte~ nmi::$1 reg byte a 4.0
+label nmi::@return
+interrupt(HARDWARE_ALL) void nmi2()
+byte~ nmi2::$1 reg byte a 4.0
+byte~ nmi2::$2 reg byte a 4.0
+label nmi2::@1
+label nmi2::@2
+label nmi2::@return
+volatile byte* sample loadstore zp[2]:2 1.9999999999999996
 
 zp[2]:2 [ sample ]
 reg byte a [ nmi2::$1 ]
@@ -1027,7 +823,7 @@ Score: 483
 __start: {
     // __start::__init1
     // sample = SAMPLE
-    // [1] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    // [1] sample = SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
@@ -1047,13 +843,13 @@ nmi2: {
     stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
-    // [5] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
     // *sample >> 4
-    // [7] (byte~) nmi2::$1 ← *((volatile byte*) sample) >> (byte) 4 -- vbuaa=_deref_pbuz1_ror_4 
+    // [7] nmi2::$1 = *sample >> 4 -- vbuaa=_deref_pbuz1_ror_4 
     ldy #0
     lda (sample),y
     lsr
@@ -1061,24 +857,24 @@ nmi2: {
     lsr
     lsr
     // SID->VOLUME_FILTER_MODE = *sample >> 4
-    // [8] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi2::$1 -- _deref_pbuc1=vbuaa 
+    // [8] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi2::$1 -- _deref_pbuc1=vbuaa 
     sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // sample++;
-    // [9] (volatile byte*) sample ← ++ (volatile byte*) sample -- pbuz1=_inc_pbuz1 
+    // [9] sample = ++ sample -- pbuz1=_inc_pbuz1 
     inc.z sample
     bne !+
     inc.z sample+1
   !:
     // >sample
-    // [10] (byte~) nmi2::$2 ← > (volatile byte*) sample -- vbuaa=_hi_pbuz1 
+    // [10] nmi2::$2 = > sample -- vbuaa=_hi_pbuz1 
     lda.z sample+1
     // if (>sample == >(SAMPLE+$6100))
-    // [11] if((byte~) nmi2::$2!=>(const byte*) SAMPLE+(word) $6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
+    // [11] if(nmi2::$2!=>SAMPLE+$6100) goto nmi2::@1 -- vbuaa_neq_vbuc1_then_la1 
     cmp #>SAMPLE+$6100
     bne __b1
     // nmi2::@2
     // sample = SAMPLE
-    // [12] (volatile byte*) sample ← (const byte*) SAMPLE -- pbuz1=pbuc1 
+    // [12] sample = SAMPLE -- pbuz1=pbuc1 
     lda #<SAMPLE
     sta.z sample
     lda #>SAMPLE
@@ -1086,13 +882,13 @@ nmi2: {
     // nmi2::@1
   __b1:
     // *KERNEL_NMI = &nmi
-    // [13] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_qprc1=pprc2 
+    // [13] *KERNEL_NMI = &nmi -- _deref_qprc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
     // (VICII->BORDER_COLOR)--;
-    // [14] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [14] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // nmi2::@return
     // }
@@ -1112,27 +908,27 @@ nmi: {
     stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
-    // [16] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← ++ *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
+    // [16] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // asm
     // asm { ldaCIA2_INTERRUPT  }
     lda CIA2_INTERRUPT
     // *sample & $0f
-    // [18] (byte~) nmi::$1 ← *((volatile byte*) sample) & (byte) $f -- vbuaa=_deref_pbuz1_band_vbuc1 
+    // [18] nmi::$1 = *sample & $f -- vbuaa=_deref_pbuz1_band_vbuc1 
     lda #$f
     ldy #0
     and (sample),y
     // SID->VOLUME_FILTER_MODE = *sample & $0f
-    // [19] *((byte*)(const nomodify struct MOS6581_SID*) SID+(const byte) OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) ← (byte~) nmi::$1 -- _deref_pbuc1=vbuaa 
+    // [19] *((byte*)SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE) = nmi::$1 -- _deref_pbuc1=vbuaa 
     sta SID+OFFSET_STRUCT_MOS6581_SID_VOLUME_FILTER_MODE
     // *KERNEL_NMI = &nmi2
-    // [20] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi2() -- _deref_qprc1=pprc2 
+    // [20] *KERNEL_NMI = &nmi2 -- _deref_qprc1=pprc2 
     lda #<nmi2
     sta KERNEL_NMI
     lda #>nmi2
     sta KERNEL_NMI+1
     // (VICII->BORDER_COLOR)--;
-    // [21] *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) ← -- *((byte*)(const nomodify struct MOS6569_VICII*) VICII+(const byte) OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
+    // [21] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = -- *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_dec__deref_pbuc1 
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // nmi::@return
     // }
@@ -1162,28 +958,28 @@ main: {
     // asm { sei  }
     sei
     // CIA2->INTERRUPT = CIA_INTERRUPT_CLEAR
-    // [25] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (const nomodify byte) CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
+    // [25] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR -- _deref_pbuc1=vbuc2 
     lda #CIA_INTERRUPT_CLEAR
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // *KERNEL_NMI = &nmi
-    // [26] *((const nomodify void()**) KERNEL_NMI) ← &interrupt(HARDWARE_ALL)(void()) nmi() -- _deref_qprc1=pprc2 
+    // [26] *KERNEL_NMI = &nmi -- _deref_qprc1=pprc2 
     lda #<nmi
     sta KERNEL_NMI
     lda #>nmi
     sta KERNEL_NMI+1
     // CIA2->TIMER_A = 0x88
-    // [27] *((word*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A) ← (byte) $88 -- _deref_pwuc1=vbuc2 
+    // [27] *((word*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A) = $88 -- _deref_pwuc1=vbuc2 
     lda #0
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A+1
     lda #<$88
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A
     // CIA2->INTERRUPT = 0x81
-    // [28] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) ← (byte) $81 -- _deref_pbuc1=vbuc2 
+    // [28] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = $81 -- _deref_pbuc1=vbuc2 
     // speed
     lda #$81
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // CIA2->TIMER_A_CONTROL = 0x01
-    // [29] *((byte*)(const nomodify struct MOS6526_CIA*) CIA2+(const byte) OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) ← (byte) 1 -- _deref_pbuc1=vbuc2 
+    // [29] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = 1 -- _deref_pbuc1=vbuc2 
     lda #1
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
     // asm

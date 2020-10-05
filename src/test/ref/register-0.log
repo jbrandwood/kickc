@@ -2,17 +2,17 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte) print::ch#0 ← (byte) 'c'
+  print::ch#0 = 'c'
   call print 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) print::ch#1 ← (byte) 'm'
+  print::ch#1 = 'm'
   call print 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) print::ch#2 ← (byte) 'l'
+  print::ch#2 = 'l'
   call print 
   to:main::@3
 main::@3: scope:[main]  from main::@2
@@ -21,9 +21,9 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-(void()) print((byte) print::ch)
+void print(byte print::ch)
 print: scope:[print]  from main main::@1 main::@2
-  (byte) print::ch#3 ← phi( main/(byte) print::ch#0 main::@1/(byte) print::ch#1 main::@2/(byte) print::ch#2 )
+  print::ch#3 = phi( main/print::ch#0, main::@1/print::ch#1, main::@2/print::ch#2 )
   kickasm( uses print::ch#3) {{  }}
   asm { ldxidx staSCREEN,x incidx  }
   to:print::@return
@@ -31,11 +31,11 @@ print::@return: scope:[print]  from print
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (volatile byte) idx ← (byte) 0
+  idx = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -47,38 +47,38 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(volatile byte) idx loadstore !zp[-1]:3
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@return
-(void()) print((byte) print::ch)
-(label) print::@return
-(byte) print::ch !reg byte a
-(byte) print::ch#0 !reg byte a
-(byte) print::ch#1 !reg byte a
-(byte) print::ch#2 !reg byte a
-(byte) print::ch#3 !reg byte a
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+volatile byte idx loadstore !zp[-1]:3
+void main()
+label main::@1
+label main::@2
+label main::@3
+label main::@return
+void print(byte print::ch)
+label print::@return
+byte print::ch !reg byte a
+byte print::ch#0 !reg byte a
+byte print::ch#1 !reg byte a
+byte print::ch#2 !reg byte a
+byte print::ch#3 !reg byte a
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant (const byte) print::ch#0 = 'c'
-Constant (const byte) print::ch#1 = 'm'
-Constant (const byte) print::ch#2 = 'l'
+Constant print::ch#0 = 'c'
+Constant print::ch#1 = 'm'
+Constant print::ch#2 = 'l'
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) print::ch#0
-Inlining constant with var siblings (const byte) print::ch#1
-Inlining constant with var siblings (const byte) print::ch#2
-Constant inlined print::ch#2 = (byte) 'l'
-Constant inlined print::ch#1 = (byte) 'm'
-Constant inlined print::ch#0 = (byte) 'c'
+Inlining constant with var siblings print::ch#0
+Inlining constant with var siblings print::ch#1
+Inlining constant with var siblings print::ch#2
+Constant inlined print::ch#2 = 'l'
+Constant inlined print::ch#1 = 'm'
+Constant inlined print::ch#0 = 'c'
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -93,8 +93,8 @@ Calls in [main] to print:7 print:9 print:11
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) __start::@2
-Culled Empty Block (label) main::@3
+Culled Empty Block label __start::@2
+Culled Empty Block label main::@3
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
@@ -103,12 +103,12 @@ Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (volatile byte) idx ← (byte) 0
+  [1] idx = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -118,7 +118,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
   [5] phi()
   [6] call print 
@@ -135,9 +135,9 @@ main::@return: scope:[main]  from main::@2
   [11] return 
   to:@return
 
-(void()) print((byte) print::ch)
+void print(byte print::ch)
 print: scope:[print]  from main main::@1 main::@2
-  [12] (byte) print::ch#3 ← phi( main/(byte) 'c' main::@1/(byte) 'm' main::@2/(byte) 'l' )
+  [12] print::ch#3 = phi( main/'c', main::@1/'m', main::@2/'l' )
   kickasm( uses print::ch#3) {{  }}
   asm { ldxidx staSCREEN,x incidx  }
   to:print::@return
@@ -147,12 +147,12 @@ print::@return: scope:[print]  from print
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(volatile byte) idx loadstore !zp[-1]:3 0.18181818181818182
-(void()) main()
-(void()) print((byte) print::ch)
-(byte) print::ch !reg byte a
-(byte) print::ch#3 !reg byte a
+void __start()
+volatile byte idx loadstore !zp[-1]:3 0.18181818181818182
+void main()
+void print(byte print::ch)
+byte print::ch !reg byte a
+byte print::ch#3 !reg byte a
 
 Initial phi equivalence classes
 [ print::ch#3 ]
@@ -160,98 +160,8 @@ Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
 [ print::ch#3 ]
 [ idx ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test declaring a variable as at a hard-coded register
-// hard-coded register parameter
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label idx = 3
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
-    lda #0
-    sta.z idx
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    // [5] phi from __start::@1 to main [phi:__start::@1->main]
-  main_from___b1:
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    // [6] call print 
-    // [12] phi from main to print [phi:main->print]
-  print_from_main:
-    // [12] phi (byte) print::ch#3 = (byte) 'c' [phi:main->print#0] -- vbuaa=vbuc1 
-    lda #'c'
-    jsr print
-    // [7] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [8] call print 
-    // [12] phi from main::@1 to print [phi:main::@1->print]
-  print_from___b1:
-    // [12] phi (byte) print::ch#3 = (byte) 'm' [phi:main::@1->print#0] -- vbuaa=vbuc1 
-    lda #'m'
-    jsr print
-    // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  __b2_from___b1:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [10] call print 
-    // [12] phi from main::@2 to print [phi:main::@2->print]
-  print_from___b2:
-    // [12] phi (byte) print::ch#3 = (byte) 'l' [phi:main::@2->print#0] -- vbuaa=vbuc1 
-    lda #'l'
-    jsr print
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [11] return 
-    rts
-}
-  // print
-// print(byte register(A) ch)
-print: {
-    // kickasm( uses print::ch#3) {{  }}
-    // Force usage of ch
-    
-    // asm { ldxidx staSCREEN,x incidx  }
-    ldx idx
-    sta SCREEN,x
-    inc idx
-    jmp __breturn
-    // print::@return
-  __breturn:
-    // [15] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (volatile byte) idx ← (byte) 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
+Statement [1] idx = 0 [ idx ] (  [ idx ] { }  ) always clobbers reg byte a 
 Statement asm { ldxidx staSCREEN,x incidx  } always clobbers reg byte x 
 Potential registers reg byte a [ print::ch#3 ] : reg byte a , 
 Potential registers zp[1]:3 [ idx ] : zp[1]:3 , 
@@ -285,7 +195,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z idx
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -308,7 +218,7 @@ main: {
     // [6] call print 
     // [12] phi from main to print [phi:main->print]
   print_from_main:
-    // [12] phi (byte) print::ch#3 = (byte) 'c' [phi:main->print#0] -- vbuaa=vbuc1 
+    // [12] phi print::ch#3 = 'c' [phi:main->print#0] -- vbuaa=vbuc1 
     lda #'c'
     jsr print
     // [7] phi from main to main::@1 [phi:main->main::@1]
@@ -319,7 +229,7 @@ main: {
     // [8] call print 
     // [12] phi from main::@1 to print [phi:main::@1->print]
   print_from___b1:
-    // [12] phi (byte) print::ch#3 = (byte) 'm' [phi:main::@1->print#0] -- vbuaa=vbuc1 
+    // [12] phi print::ch#3 = 'm' [phi:main::@1->print#0] -- vbuaa=vbuc1 
     lda #'m'
     jsr print
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -330,7 +240,7 @@ main: {
     // [10] call print 
     // [12] phi from main::@2 to print [phi:main::@2->print]
   print_from___b2:
-    // [12] phi (byte) print::ch#3 = (byte) 'l' [phi:main::@2->print#0] -- vbuaa=vbuc1 
+    // [12] phi print::ch#3 = 'l' [phi:main::@2->print#0] -- vbuaa=vbuc1 
     lda #'l'
     jsr print
     jmp __breturn
@@ -384,20 +294,20 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(volatile byte) idx loadstore !zp[-1]:3 zp[1]:3 0.18181818181818182
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(void()) print((byte) print::ch)
-(label) print::@return
-(byte) print::ch !reg byte a
-(byte) print::ch#3 !reg byte a
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+volatile byte idx loadstore !zp[-1]:3 zp[1]:3 0.18181818181818182
+void main()
+label main::@1
+label main::@2
+label main::@return
+void print(byte print::ch)
+label print::@return
+byte print::ch !reg byte a
+byte print::ch#3 !reg byte a
 
 reg byte a [ print::ch#3 ]
 zp[1]:3 [ idx ]
@@ -420,7 +330,7 @@ Score: 324
 __start: {
     // __start::__init1
     // idx
-    // [1] (volatile byte) idx ← (byte) 0 -- vbuz1=vbuc1 
+    // [1] idx = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z idx
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -437,7 +347,7 @@ main: {
     // print('c')
     // [6] call print 
     // [12] phi from main to print [phi:main->print]
-    // [12] phi (byte) print::ch#3 = (byte) 'c' [phi:main->print#0] -- vbuaa=vbuc1 
+    // [12] phi print::ch#3 = 'c' [phi:main->print#0] -- vbuaa=vbuc1 
     lda #'c'
     jsr print
     // [7] phi from main to main::@1 [phi:main->main::@1]
@@ -445,7 +355,7 @@ main: {
     // print('m')
     // [8] call print 
     // [12] phi from main::@1 to print [phi:main::@1->print]
-    // [12] phi (byte) print::ch#3 = (byte) 'm' [phi:main::@1->print#0] -- vbuaa=vbuc1 
+    // [12] phi print::ch#3 = 'm' [phi:main::@1->print#0] -- vbuaa=vbuc1 
     lda #'m'
     jsr print
     // [9] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -453,7 +363,7 @@ main: {
     // print('l')
     // [10] call print 
     // [12] phi from main::@2 to print [phi:main::@2->print]
-    // [12] phi (byte) print::ch#3 = (byte) 'l' [phi:main::@2->print#0] -- vbuaa=vbuc1 
+    // [12] phi print::ch#3 = 'l' [phi:main::@2->print#0] -- vbuaa=vbuc1 
     lda #'l'
     jsr print
     // main::@return

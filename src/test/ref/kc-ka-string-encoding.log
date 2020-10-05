@@ -1,23 +1,23 @@
 
 CONTROL FLOW GRAPH SSA
 
-(signed word()) main()
+signed word main()
 main: scope:[main]  from __start
-  *((const byte*) strTemp + (number) 2) ← (byte) 'e'pm
-  *((const byte*) strTemp + (number) 3) ← (number) 0
+  strTemp[2] = 'e'pm
+  strTemp[3] = 0
   asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
-  (signed word) main::return#0 ← (number) 0
+  main::return#0 = 0
   to:main::@return
 main::@return: scope:[main]  from main
-  (signed word) main::return#3 ← phi( main/(signed word) main::return#0 )
-  (signed word) main::return#1 ← (signed word) main::return#3
+  main::return#3 = phi( main/main::return#0 )
+  main::return#1 = main::return#3
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
-  (signed word) main::return#2 ← (signed word) main::return#1
+  main::return#2 = main::return#1
   to:__start::@1
 __start::@1: scope:[__start]  from __start
   to:__start::@return
@@ -26,45 +26,45 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(signed word()) main()
-(label) main::@return
-(signed word) main::return
-(signed word) main::return#0
-(signed word) main::return#1
-(signed word) main::return#2
-(signed word) main::return#3
-(const byte*) strTemp[]  = (byte*) "v=X"pm
+void __start()
+label __start::@1
+label __start::@return
+signed word main()
+label main::@return
+signed word main::return
+signed word main::return#0
+signed word main::return#1
+signed word main::return#2
+signed word main::return#3
+const byte* strTemp[]  = "v=X"pm
 
-Adding number conversion cast (unumber) 2 in *((const byte*) strTemp + (number) 2) ← (byte) 'e'pm
-Adding number conversion cast (unumber) 0 in *((const byte*) strTemp + (number) 3) ← (number) 0
-Adding number conversion cast (unumber) 3 in *((const byte*) strTemp + (number) 3) ← ((unumber)) (number) 0
-Adding number conversion cast (snumber) 0 in (signed word) main::return#0 ← (number) 0
+Adding number conversion cast (unumber) 2 in strTemp[2] = 'e'pm
+Adding number conversion cast (unumber) 0 in strTemp[3] = 0
+Adding number conversion cast (unumber) 3 in strTemp[3] = ((unumber)) 0
+Adding number conversion cast (snumber) 0 in main::return#0 = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const byte*) strTemp + (unumber)(number) 3) ← (unumber)(number) 0
-Inlining cast (signed word) main::return#0 ← (snumber)(number) 0
+Inlining cast strTemp[(unumber)3] = (unumber)0
+Inlining cast main::return#0 = (snumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 3
-Finalized signed number type (signed byte) 0
+Finalized unsigned number type 2
+Finalized unsigned number type 0
+Finalized unsigned number type 3
+Finalized signed number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::return#0 = main::return#3 main::return#1 
 Successful SSA optimization Pass2AliasElimination
-Constant (const signed word) main::return#0 = 0
+Constant main::return#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const signed word) main::return#2 = main::return#0
+Constant main::return#2 = main::return#0
 Successful SSA optimization Pass2ConstantIdentification
-Eliminating unused constant (const signed word) main::return#2
+Eliminating unused constant main::return#2
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused constant (const signed word) main::return#0
+Eliminating unused constant main::return#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -81,10 +81,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(signed word()) main()
+signed word main()
 main: scope:[main]  from
-  [0] *((const byte*) strTemp+(byte) 2) ← (byte) 'e'pm
-  [1] *((const byte*) strTemp+(byte) 3) ← (byte) 0
+  [0] *(strTemp+2) = 'e'pm
+  [1] *(strTemp+3) = 0
   asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
   to:main::@return
 main::@return: scope:[main]  from main
@@ -93,51 +93,14 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(signed word()) main()
-(signed word) main::return
+signed word main()
+signed word main::return
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // [0] *((const byte*) strTemp+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
-  .encoding "petscii_mixed"
-    lda #'e'
-    sta strTemp+2
-    // [1] *((const byte*) strTemp+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta strTemp+3
-    // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
-    ldy #0
-  loop:
-    lda strTemp,y
-    beq done
-    jsr $ffd2
-    iny
-    jmp loop
-  done:
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [3] return 
-    rts
-}
-  // File Data
-  strTemp: .text "v=X"
-  .byte 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) strTemp+(byte) 2) ← (byte) 'e'pm [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) strTemp+(byte) 3) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *(strTemp+2) = 'e'pm [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(strTemp+3) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  } always clobbers reg byte a reg byte x reg byte y 
 
 REGISTER UPLIFT SCOPES
@@ -156,11 +119,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Global Constants & labels
   // main
 main: {
-    // [0] *((const byte*) strTemp+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
+    // [0] *(strTemp+2) = 'e'pm -- _deref_pbuc1=vbuc2 
   .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
-    // [1] *((const byte*) strTemp+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [1] *(strTemp+3) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta strTemp+3
     // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
@@ -190,10 +153,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
 
 FINAL SYMBOL TABLE
-(signed word()) main()
-(label) main::@return
-(signed word) main::return
-(const byte*) strTemp[]  = (byte*) "v=X"pm
+signed word main()
+label main::@return
+signed word main::return
+const byte* strTemp[]  = "v=X"pm
 
 
 
@@ -209,12 +172,12 @@ Score: 38
   // main
 main: {
     // strTemp[2] = 'e'
-    // [0] *((const byte*) strTemp+(byte) 2) ← (byte) 'e'pm -- _deref_pbuc1=vbuc2 
+    // [0] *(strTemp+2) = 'e'pm -- _deref_pbuc1=vbuc2 
   .encoding "petscii_mixed"
     lda #'e'
     sta strTemp+2
     // strTemp[3] = 0
-    // [1] *((const byte*) strTemp+(byte) 3) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [1] *(strTemp+3) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta strTemp+3
     // asm

@@ -1,25 +1,25 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::a#0 ← (byte) 0
-  (byte) main::a#1 ← (byte) 'c'
-  *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
-  *((const byte*) main::screen + (number) $28) ← (byte) main::a#1
-  *((const byte*) main::screen + (number) 1) ← (byte) 'm'
-  (byte) main::a#2 ← *((const byte*) main::screen + (number) 1)
-  *((const byte*) main::screen + (number) $29) ← (byte) main::a#2
-  (byte) main::a#3 ← (byte) 'l'
-  (number~) main::$0 ← (number) 1 + (byte) main::a#3
-  *((const byte*) main::screen + (number) 2) ← (number~) main::$0
-  *((const byte*) main::screen + (number) $2a) ← (byte) main::a#3
+  main::a#0 = 0
+  main::a#1 = 'c'
+  main::screen[0] = main::a#1
+  main::screen[$28] = main::a#1
+  main::screen[1] = 'm'
+  main::a#2 = main::screen[1]
+  main::screen[$29] = main::a#2
+  main::a#3 = 'l'
+  main::$0 = 1 + main::a#3
+  main::screen[2] = main::$0
+  main::screen[$2a] = main::a#3
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -30,27 +30,27 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(number~) main::$0
-(label) main::@return
-(byte) main::a
-(byte) main::a#0
-(byte) main::a#1
-(byte) main::a#2
-(byte) main::a#3
-(const byte*) main::screen = (byte*)(number) $400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+number~ main::$0
+label main::@return
+byte main::a
+byte main::a#0
+byte main::a#1
+byte main::a#2
+byte main::a#3
+const byte* main::screen = (byte*)$400
 
-Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a#1
-Adding number conversion cast (unumber) $28 in *((const byte*) main::screen + (number) $28) ← (byte) main::a#1
-Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) 'm'
-Adding number conversion cast (unumber) $29 in *((const byte*) main::screen + (number) $29) ← (byte) main::a#2
-Adding number conversion cast (unumber) 1 in (number~) main::$0 ← (number) 1 + (byte) main::a#3
-Adding number conversion cast (unumber) main::$0 in (number~) main::$0 ← (unumber)(number) 1 + (byte) main::a#3
-Adding number conversion cast (unumber) 2 in *((const byte*) main::screen + (number) 2) ← (unumber~) main::$0
-Adding number conversion cast (unumber) $2a in *((const byte*) main::screen + (number) $2a) ← (byte) main::a#3
+Adding number conversion cast (unumber) 0 in main::screen[0] = main::a#1
+Adding number conversion cast (unumber) $28 in main::screen[$28] = main::a#1
+Adding number conversion cast (unumber) 1 in main::screen[1] = 'm'
+Adding number conversion cast (unumber) $29 in main::screen[$29] = main::a#2
+Adding number conversion cast (unumber) 1 in main::$0 = 1 + main::a#3
+Adding number conversion cast (unumber) main::$0 in main::$0 = (unumber)1 + main::a#3
+Adding number conversion cast (unumber) 2 in main::screen[2] = main::$0
+Adding number conversion cast (unumber) $2a in main::screen[$2a] = main::a#3
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -61,37 +61,37 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast $2a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $28
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) $29
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) $2a
+Finalized unsigned number type 0
+Finalized unsigned number type $28
+Finalized unsigned number type 1
+Finalized unsigned number type $29
+Finalized unsigned number type 1
+Finalized unsigned number type 2
+Finalized unsigned number type $2a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inferred type updated to byte in (unumber~) main::$0 ← (byte) 1 + (byte) main::a#3
-Constant (const byte) main::a#0 = 0
-Constant (const byte) main::a#1 = 'c'
-Constant (const byte) main::a#3 = 'l'
+Inferred type updated to byte in main::$0 = 1 + main::a#3
+Constant main::a#0 = 0
+Constant main::a#1 = 'c'
+Constant main::a#3 = 'l'
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [2] *((const byte*) main::screen + (byte) 0) ← (const byte) main::a#1
+Simplifying expression containing zero main::screen in [2] main::screen[0] = main::a#1
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant (const byte) main::a#0
+Eliminating unused constant main::a#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [5] (byte~) main::$0 ← (byte) 1 + (const byte) main::a#3
+Constant right-side identified [5] main::$0 = 1 + main::a#3
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::$0 = 1+main::a#3
+Constant main::$0 = 1+main::a#3
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with var siblings (const byte) main::a#1
-Inlining constant with var siblings (const byte) main::a#3
-Constant inlined main::a#3 = (byte) 'l'
-Constant inlined main::$0 = (byte) 1+(byte) 'l'
-Constant inlined main::a#1 = (byte) 'c'
+Inlining constant with var siblings main::a#1
+Inlining constant with var siblings main::a#3
+Constant inlined main::a#3 = 'l'
+Constant inlined main::$0 = 1+'l'
+Constant inlined main::a#1 = 'c'
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::screen+$28)
 Consolidated array index constant in *(main::screen+1)
@@ -107,15 +107,15 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) main::screen) ← (byte) 'c'
-  [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c'
-  [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm'
-  [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1)
-  [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2
-  [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l'
-  [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l'
+  [0] *main::screen = 'c'
+  [1] *(main::screen+$28) = 'c'
+  [2] *(main::screen+1) = 'm'
+  [3] main::a#2 = *(main::screen+1)
+  [4] *(main::screen+$29) = main::a#2
+  [5] *(main::screen+2) = 1+'l'
+  [6] *(main::screen+$2a) = 'l'
   to:main::@return
 main::@return: scope:[main]  from main
   [7] return 
@@ -123,65 +123,21 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte) main::a
-(byte) main::a#2 4.0
+void main()
+byte main::a
+byte main::a#2 4.0
 
 Initial phi equivalence classes
 Added variable main::a#2 to live range equivalence class [ main::a#2 ]
 Complete equivalence classes
 [ main::a#2 ]
 Allocated zp[1]:2 [ main::a#2 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests that chained assignments work as intended
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    .label a = 2
-    // [0] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
-    lda #'c'
-    sta screen
-    // [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
-    lda #'c'
-    sta screen+$28
-    // [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
-    lda #'m'
-    sta screen+1
-    // [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuz1=_deref_pbuc1 
-    lda screen+1
-    sta.z a
-    // [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuz1 
-    lda.z a
-    sta screen+$29
-    // [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
-    lda #1+'l'
-    sta screen+2
-    // [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
-    // Chained assignment with a modification of the result
-    lda #'l'
-    sta screen+$2a
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [7] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) main::screen) ← (byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::screen = 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::screen+$28) = 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *(main::screen+1) = 'm' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *(main::screen+2) = 1+'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *(main::screen+$2a) = 'l' [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::a#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -202,23 +158,23 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
-    // [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *(main::screen+$28) = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen+$28
-    // [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [2] *(main::screen+1) = 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
-    // [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [3] main::a#2 = *(main::screen+1) -- vbuaa=_deref_pbuc1 
     lda screen+1
-    // [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
+    // [4] *(main::screen+$29) = main::a#2 -- _deref_pbuc1=vbuaa 
     sta screen+$29
-    // [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [5] *(main::screen+2) = 1+'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
-    // [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [6] *(main::screen+$2a) = 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a
@@ -240,11 +196,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(byte) main::a
-(byte) main::a#2 reg byte a 4.0
-(const byte*) main::screen = (byte*) 1024
+void main()
+label main::@return
+byte main::a
+byte main::a#2 reg byte a 4.0
+const byte* main::screen = (byte*) 1024
 
 reg byte a [ main::a#2 ]
 
@@ -263,27 +219,27 @@ Score: 38
 main: {
     .label screen = $400
     // screen[0] = a = 'c'
-    // [0] *((const byte*) main::screen) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [0] *main::screen = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta screen
     // screen[40] = a
-    // [1] *((const byte*) main::screen+(byte) $28) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *(main::screen+$28) = 'c' -- _deref_pbuc1=vbuc2 
     sta screen+$28
     // screen[1] = 'm'
-    // [2] *((const byte*) main::screen+(byte) 1) ← (byte) 'm' -- _deref_pbuc1=vbuc2 
+    // [2] *(main::screen+1) = 'm' -- _deref_pbuc1=vbuc2 
     lda #'m'
     sta screen+1
     // a = screen[1] = 'm'
-    // [3] (byte) main::a#2 ← *((const byte*) main::screen+(byte) 1) -- vbuaa=_deref_pbuc1 
+    // [3] main::a#2 = *(main::screen+1) -- vbuaa=_deref_pbuc1 
     // screen[41] = a
-    // [4] *((const byte*) main::screen+(byte) $29) ← (byte) main::a#2 -- _deref_pbuc1=vbuaa 
+    // [4] *(main::screen+$29) = main::a#2 -- _deref_pbuc1=vbuaa 
     sta screen+$29
     // screen[2] = 1 + (a = 'l')
-    // [5] *((const byte*) main::screen+(byte) 2) ← (byte) 1+(byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [5] *(main::screen+2) = 1+'l' -- _deref_pbuc1=vbuc2 
     lda #1+'l'
     sta screen+2
     // screen[42] = a
-    // [6] *((const byte*) main::screen+(byte) $2a) ← (byte) 'l' -- _deref_pbuc1=vbuc2 
+    // [6] *(main::screen+$2a) = 'l' -- _deref_pbuc1=vbuc2 
     // Chained assignment with a modification of the result
     lda #'l'
     sta screen+$2a

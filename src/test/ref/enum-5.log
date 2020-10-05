@@ -1,9 +1,9 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) main::SCREEN) ← (const byte) main::state
+  *main::SCREEN = main::state
   call test 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -12,15 +12,15 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) test()
+void test()
 test: scope:[test]  from main
-  *((const nomodify byte*) test::SCREEN) ← (const byte) test::state
+  *test::SCREEN = test::state
   to:test::@return
 test::@return: scope:[test]  from test
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -31,20 +31,20 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@return
-(const byte) main::ON = (byte) 1
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte) main::state = (const byte) main::ON
-(void()) test()
-(label) test::@return
-(const byte) test::ON = (byte) 8
-(const nomodify byte*) test::SCREEN = (byte*)(number) $428
-(const byte) test::state = (const byte) test::ON
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@return
+const byte main::ON = 1
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte main::state = main::ON
+void test()
+label test::@return
+const byte test::ON = 8
+const nomodify byte* test::SCREEN = (byte*)$428
+const byte test::state = test::ON
 
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1064
@@ -54,8 +54,8 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant inlined main::state = (const byte) main::ON
-Constant inlined test::state = (const byte) test::ON
+Constant inlined main::state = main::ON
+Constant inlined test::state = test::ON
 Successful SSA optimization Pass2ConstantInlining
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -63,22 +63,22 @@ Calls in [main] to test:1
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
+Culled Empty Block label main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON
+  [0] *main::SCREEN = main::ON
   [1] call test 
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
   to:@return
 
-(void()) test()
+void test()
 test: scope:[test]  from main
-  [3] *((const nomodify byte*) test::SCREEN) ← (const byte) test::ON
+  [3] *test::SCREEN = test::ON
   to:test::@return
 test::@return: scope:[test]  from test
   [4] return 
@@ -86,54 +86,14 @@ test::@return: scope:[test]  from test
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(void()) test()
+void main()
+void test()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test of simple enum - multiple inline enum definitions
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .const ON = 1
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
-    lda #ON
-    sta SCREEN
-    // [1] call test 
-    jsr test
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // test
-test: {
-    .const ON = 8
-    .label SCREEN = $428
-    // [3] *((const nomodify byte*) test::SCREEN) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
-    lda #ON
-    sta SCREEN
-    jmp __breturn
-    // test::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const nomodify byte*) test::SCREEN) ← (const byte) test::ON [ ] ( test:1 [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = main::ON [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] *test::SCREEN = test::ON [ ] ( test:1 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -156,7 +116,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const ON = 1
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // [1] call test 
@@ -171,7 +131,7 @@ main: {
 test: {
     .const ON = 8
     .label SCREEN = $428
-    // [3] *((const nomodify byte*) test::SCREEN) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    // [3] *test::SCREEN = test::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     jmp __breturn
@@ -191,14 +151,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const byte) main::ON = (byte) 1
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(void()) test()
-(label) test::@return
-(const byte) test::ON = (byte) 8
-(const nomodify byte*) test::SCREEN = (byte*) 1064
+void main()
+label main::@return
+const byte main::ON = 1
+const nomodify byte* main::SCREEN = (byte*) 1024
+void test()
+label test::@return
+const byte test::ON = 8
+const nomodify byte* test::SCREEN = (byte*) 1064
 
 
 
@@ -217,7 +177,7 @@ main: {
     .const ON = 1
     .label SCREEN = $400
     // *SCREEN = state
-    // [0] *((const nomodify byte*) main::SCREEN) ← (const byte) main::ON -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = main::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // test()
@@ -233,7 +193,7 @@ test: {
     .const ON = 8
     .label SCREEN = $428
     // *SCREEN = state
-    // [3] *((const nomodify byte*) test::SCREEN) ← (const byte) test::ON -- _deref_pbuc1=vbuc2 
+    // [3] *test::SCREEN = test::ON -- _deref_pbuc1=vbuc2 
     lda #ON
     sta SCREEN
     // test::@return

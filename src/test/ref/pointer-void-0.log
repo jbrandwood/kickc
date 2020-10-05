@@ -1,19 +1,19 @@
-Setting inferred volatile on symbol affected by address-of (word*) main::wp ← &(word) main::w
+Setting inferred volatile on symbol affected by address-of main::wp = &main::w
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (volatile word) main::w ← (word) $4d2
-  (void*) main::vp#0 ← ((void*)) (const word*) main::wp
-  (byte*) main::bp#0 ← ((byte*)) (void*) main::vp#0
-  *((const nomodify byte*) main::SCREEN) ← *((byte*) main::bp#0)
+  main::w = $4d2
+  main::vp#0 = ((void*)) main::wp
+  main::bp#0 = ((byte*)) main::vp#0
+  *main::SCREEN = *main::bp#0
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -24,29 +24,29 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(byte*) main::bp
-(byte*) main::bp#0
-(void*) main::vp
-(void*) main::vp#0
-(volatile word) main::w loadstore
-(const word*) main::wp = &(volatile word) main::w
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+byte* main::bp
+byte* main::bp#0
+void* main::vp
+void* main::vp#0
+volatile word main::w loadstore
+const word* main::wp = &main::w
 
-Inlining cast (void*) main::vp#0 ← (void*)(const word*) main::wp
-Inlining cast (byte*) main::bp#0 ← (byte*)(void*) main::vp#0
+Inlining cast main::vp#0 = (void*)main::wp
+Inlining cast main::bp#0 = (byte*)main::vp#0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant right-side identified [1] (void*) main::vp#0 ← (void*)(const word*) main::wp
+Constant right-side identified [1] main::vp#0 = (void*)main::wp
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const void*) main::vp#0 = (void*)main::wp
+Constant main::vp#0 = (void*)main::wp
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) main::bp#0 = (byte*)main::vp#0
+Constant main::bp#0 = (byte*)main::vp#0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -60,10 +60,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile word) main::w ← (word) $4d2
-  [1] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0)
+  [0] main::w = $4d2
+  [1] *main::SCREEN = *main::bp#0
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -71,52 +71,19 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte*) main::bp
-(void*) main::vp
-(volatile word) main::w loadstore 20.0
+void main()
+byte* main::bp
+void* main::vp
+volatile word main::w loadstore 20.0
 
 Initial phi equivalence classes
 Added variable main::w to live range equivalence class [ main::w ]
 Complete equivalence classes
 [ main::w ]
 Allocated zp[2]:2 [ main::w ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test simple void pointer (conversion without casting)
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    .label wp = w
-    .label vp = wp
-    .label bp = vp
-    .label w = 2
-    // [0] (volatile word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
-    lda #<$4d2
-    sta.z w
-    lda #>$4d2
-    sta.z w+1
-    // [1] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
-    lda.z bp
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile word) main::w ← (word) $4d2 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] main::w = $4d2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *main::SCREEN = *main::bp#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::w ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -141,12 +108,12 @@ main: {
     .label vp = wp
     .label bp = vp
     .label w = 2
-    // [0] (volatile word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
+    // [0] main::w = $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
     sta.z w+1
-    // [1] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *main::SCREEN = *main::bp#0 -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     jmp __breturn
@@ -164,15 +131,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(byte*) main::bp
-(const byte*) main::bp#0 bp = (byte*)(const void*) main::vp#0
-(void*) main::vp
-(const void*) main::vp#0 vp = (void*)(const word*) main::wp
-(volatile word) main::w loadstore zp[2]:2 20.0
-(const word*) main::wp = &(volatile word) main::w
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+byte* main::bp
+const byte* main::bp#0 bp = (byte*)main::vp#0
+void* main::vp
+const void* main::vp#0 vp = (void*)main::wp
+volatile word main::w loadstore zp[2]:2 20.0
+const word* main::wp = &main::w
 
 zp[2]:2 [ main::w ]
 
@@ -195,13 +162,13 @@ main: {
     .label bp = vp
     .label w = 2
     // w = 1234
-    // [0] (volatile word) main::w ← (word) $4d2 -- vwuz1=vwuc1 
+    // [0] main::w = $4d2 -- vwuz1=vwuc1 
     lda #<$4d2
     sta.z w
     lda #>$4d2
     sta.z w+1
     // *SCREEN = *bp
-    // [1] *((const nomodify byte*) main::SCREEN) ← *((const byte*) main::bp#0) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *main::SCREEN = *main::bp#0 -- _deref_pbuc1=_deref_pbuc2 
     lda.z bp
     sta SCREEN
     // main::@return

@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) SCREEN + (number) 0) ← <(word)(const nomodify dword) DVAL/(number) $400
-  *((const nomodify byte*) SCREEN + (number) 1) ← >(word)(const nomodify dword) DVAL/(number) $400
+  SCREEN[0] = <(word)DVAL/$400
+  SCREEN[1] = >(word)DVAL/$400
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,18 +21,18 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify dword) DVAL = (dword) $20000
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify dword DVAL = $20000
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) $400 in *((const nomodify byte*) SCREEN + (number) 0) ← <(word)(const nomodify dword) DVAL/(number) $400
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← <(word)(const nomodify dword) DVAL/(unumber)(number) $400
-Adding number conversion cast (unumber) $400 in *((const nomodify byte*) SCREEN + (number) 1) ← >(word)(const nomodify dword) DVAL/(number) $400
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (number) 1) ← >(word)(const nomodify dword) DVAL/(unumber)(number) $400
+Adding number conversion cast (unumber) $400 in SCREEN[0] = <(word)DVAL/$400
+Adding number conversion cast (unumber) 0 in SCREEN[0] = <(word)DVAL/(unumber)$400
+Adding number conversion cast (unumber) $400 in SCREEN[1] = >(word)DVAL/$400
+Adding number conversion cast (unumber) 1 in SCREEN[1] = >(word)DVAL/(unumber)$400
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $400
@@ -40,14 +40,14 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $400
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (word) $400
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type $400
+Finalized unsigned number type 0
+Finalized unsigned number type $400
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying constant evaluating to zero >(word)(const nomodify dword) DVAL/(word) $400 in [1] *((const nomodify byte*) SCREEN + (byte) 1) ← >(word)(const nomodify dword) DVAL/(word) $400
+Simplifying constant evaluating to zero >(word)DVAL/$400 in [1] SCREEN[1] = >(word)DVAL/$400
 Successful SSA optimization PassNSimplifyConstantZero
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← <(word)(const nomodify dword) DVAL/(word) $400
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = <(word)DVAL/$400
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -63,10 +63,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← <(word)(const nomodify dword) DVAL/(word) $400
-  [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 0
+  [0] *SCREEN = <(word)DVAL/$400
+  [1] *(SCREEN+1) = 0
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -74,45 +74,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Illustrates problem with constant evaluation of lo/hi-operator
-// $20000 /$400 results in a byte value - confusing the lo/hi-evaluation
-// which currently relies on getting the type from the literal value.
-// A fix could be adding support for "declared" types for constant literal values
-// - enabling the lo/hi to know that their operand is a word (from the cast).
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const DVAL = $20000
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const nomodify byte*) SCREEN) ← <(word)(const nomodify dword) DVAL/(word) $400 -- _deref_pbuc1=vbuc2 
-    lda #<DVAL/$400
-    sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← <(word)(const nomodify dword) DVAL/(word) $400 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = <(word)DVAL/$400 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -137,10 +105,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← <(word)(const nomodify dword) DVAL/(word) $400 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = <(word)DVAL/$400 -- _deref_pbuc1=vbuc2 
     lda #<DVAL/$400
     sta SCREEN
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+1
     jmp __breturn
@@ -158,10 +126,10 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify dword) DVAL = (dword) $20000
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
+const nomodify dword DVAL = $20000
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
 
 
 
@@ -184,11 +152,11 @@ Score: 18
   // main
 main: {
     // SCREEN[0] = <(word)(DVAL/$400)
-    // [0] *((const nomodify byte*) SCREEN) ← <(word)(const nomodify dword) DVAL/(word) $400 -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = <(word)DVAL/$400 -- _deref_pbuc1=vbuc2 
     lda #<DVAL/$400
     sta SCREEN
     // SCREEN[1] = >(word)(DVAL/$400)
-    // [1] *((const nomodify byte*) SCREEN+(byte) 1) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta SCREEN+1
     // main::@return

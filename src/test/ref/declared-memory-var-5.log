@@ -1,19 +1,19 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i#0 ← (byte) 0
-  *((const nomodify byte*) main::SCREEN + (byte) main::i#0) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
-  (byte) main::i#1 ← ++ (byte) main::i#0
-  *((const nomodify byte*) main::SCREEN + (byte) main::i#1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
-  (byte) main::i#2 ← ++ (byte) main::i#1
+  main::i#0 = 0
+  main::SCREEN[main::i#0] = *((byte*)&bar+OFFSET_STRUCT_FOO_THING1)
+  main::i#1 = ++ main::i#0
+  main::SCREEN[main::i#1] = *((byte*)&bar+OFFSET_STRUCT_FOO_THING2)
+  main::i#2 = ++ main::i#1
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -24,45 +24,45 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const byte) OFFSET_STRUCT_FOO_THING1 = (byte) 0
-(const byte) OFFSET_STRUCT_FOO_THING2 = (byte) 1
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(struct foo) bar loadstore = { thing1: (byte) 'a', thing2: (byte) 'b' }
-(byte) foo::thing1
-(byte) foo::thing2
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
+const byte OFFSET_STRUCT_FOO_THING1 = 0
+const byte OFFSET_STRUCT_FOO_THING2 = 1
+void __start()
+label __start::@1
+label __start::@return
+struct foo bar loadstore = { thing1: 'a', thing2: 'b' }
+byte foo::thing1
+byte foo::thing2
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant (const byte) main::i#0 = 0
+Constant main::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero (byte*)&bar in [1] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING1)
-Simplifying expression containing zero main::SCREEN in [1] *((const nomodify byte*) main::SCREEN + (const byte) main::i#0) ← *((byte*)&(struct foo) bar)
+Simplifying expression containing zero (byte*)&bar in [1] main::SCREEN[main::i#0] = *((byte*)&bar+OFFSET_STRUCT_FOO_THING1)
+Simplifying expression containing zero main::SCREEN in [1] main::SCREEN[main::i#0] = *((byte*)&bar)
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte) main::i#2 and assignment [3] (byte) main::i#2 ← ++ (byte) main::i#1
-Eliminating unused constant (const byte) OFFSET_STRUCT_FOO_THING1
+Eliminating unused variable main::i#2 and assignment [3] main::i#2 = ++ main::i#1
+Eliminating unused constant OFFSET_STRUCT_FOO_THING1
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [1] (byte) main::i#1 ← ++ (const byte) main::i#0
+Constant right-side identified [1] main::i#1 = ++ main::i#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#1 = ++main::i#0
+Constant main::i#1 = ++main::i#0
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with different constant siblings (const byte) main::i#0
-Inlining constant with different constant siblings (const byte) main::i#1
-Constant inlined main::i#0 = (byte) 0
-Constant inlined main::i#1 = ++(byte) 0
+Inlining constant with different constant siblings main::i#0
+Inlining constant with different constant siblings main::i#1
+Constant inlined main::i#0 = 0
+Constant inlined main::i#1 = ++0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+++0)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -75,10 +75,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct foo) bar)
-  [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2)
+  [0] *main::SCREEN = *((byte*)&bar)
+  [1] *(main::SCREEN+1) = *((byte*)&bar+OFFSET_STRUCT_FOO_THING2)
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -86,50 +86,20 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(struct foo) bar loadstore = { thing1: (byte) 'a', thing2: (byte) 'b' }
-(byte) foo::thing1
-(byte) foo::thing2
-(void()) main()
-(byte) main::i
+struct foo bar loadstore = { thing1: 'a', thing2: 'b' }
+byte foo::thing1
+byte foo::thing2
+void main()
+byte main::i
 
 Initial phi equivalence classes
 Added variable bar to live range equivalence class [ bar ]
 Complete equivalence classes
 [ bar ]
 Allocated mem[2] [ bar ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
-// Test a memory variable struct value
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const OFFSET_STRUCT_FOO_THING2 = 1
-  // main
-main: {
-    .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
-    lda bar
-    sta SCREEN
-    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
-    lda bar+OFFSET_STRUCT_FOO_THING2
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-  bar: .byte 'a', 'b'
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) [ bar ] (  [ bar ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = *((byte*)&bar) [ bar ] (  [ bar ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = *((byte*)&bar+OFFSET_STRUCT_FOO_THING2) [ ] (  [ ] { }  ) always clobbers reg byte a 
 Potential registers mem[2] [ bar ] : mem[2] , 
 
 REGISTER UPLIFT SCOPES
@@ -154,10 +124,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label SCREEN = $400
-    // [0] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *main::SCREEN = *((byte*)&bar) -- _deref_pbuc1=_deref_pbuc2 
     lda bar
     sta SCREEN
-    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *(main::SCREEN+1) = *((byte*)&bar+OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     jmp __breturn
@@ -176,14 +146,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte) OFFSET_STRUCT_FOO_THING2 = (byte) 1
-(struct foo) bar loadstore mem[2] = { thing1: (byte) 'a', thing2: (byte) 'b' }
-(byte) foo::thing1
-(byte) foo::thing2
-(void()) main()
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(byte) main::i
+const byte OFFSET_STRUCT_FOO_THING2 = 1
+struct foo bar loadstore mem[2] = { thing1: 'a', thing2: 'b' }
+byte foo::thing1
+byte foo::thing2
+void main()
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+byte main::i
 
 mem[2] [ bar ]
 
@@ -204,11 +174,11 @@ Score: 22
 main: {
     .label SCREEN = $400
     // SCREEN[i++] = bar.thing1
-    // [0] *((const nomodify byte*) main::SCREEN) ← *((byte*)&(struct foo) bar) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *main::SCREEN = *((byte*)&bar) -- _deref_pbuc1=_deref_pbuc2 
     lda bar
     sta SCREEN
     // SCREEN[i++] = bar.thing2
-    // [1] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*)&(struct foo) bar+(const byte) OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
+    // [1] *(main::SCREEN+1) = *((byte*)&bar+OFFSET_STRUCT_FOO_THING2) -- _deref_pbuc1=_deref_pbuc2 
     lda bar+OFFSET_STRUCT_FOO_THING2
     sta SCREEN+1
     // main::@return

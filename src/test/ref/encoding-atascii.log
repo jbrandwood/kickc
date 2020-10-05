@@ -2,17 +2,17 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const byte*) SCREEN + (number) 0) ← *((const byte*) TEXT + (number) $d)
-  *((const byte*) SCREEN + (number) 1) ← (byte) '
+  SCREEN[0] = TEXT[$d]
+  SCREEN[1] = '
 'at
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
@@ -27,20 +27,20 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const byte*) SCREEN = (byte*)(number) $400
-(const byte*) TEXT[]  = (byte*) "hello, world!
+const byte* SCREEN = (byte*)$400
+const byte* TEXT[]  = "hello, world!
 "at
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(void()) main()
-(label) main::@return
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) $d in *((const byte*) SCREEN + (number) 0) ← *((const byte*) TEXT + (number) $d)
-Adding number conversion cast (unumber) 0 in *((const byte*) SCREEN + (number) 0) ← *((const byte*) TEXT + (unumber)(number) $d)
-Adding number conversion cast (unumber) 1 in *((const byte*) SCREEN + (number) 1) ← (byte) '
+Adding number conversion cast (unumber) $d in SCREEN[0] = TEXT[$d]
+Adding number conversion cast (unumber) 0 in SCREEN[0] = TEXT[(unumber)$d]
+Adding number conversion cast (unumber) 1 in SCREEN[1] = '
 'at
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
@@ -48,11 +48,11 @@ Simplifying constant integer cast $d
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $d
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type $d
+Finalized unsigned number type 0
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const byte*) SCREEN + (byte) 0) ← *((const byte*) TEXT + (byte) $d)
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = TEXT[$d]
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -71,10 +71,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const byte*) SCREEN) ← *((const byte*) TEXT+(byte) $d)
-  [1] *((const byte*) SCREEN+(byte) 1) ← (byte) '
+  [0] *SCREEN = *(TEXT+$d)
+  [1] *(SCREEN+1) = '
 'at
   to:main::@return
 main::@return: scope:[main]  from main
@@ -83,43 +83,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests ATASCII encoding
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    // [0] *((const byte*) SCREEN) ← *((const byte*) TEXT+(byte) $d) -- _deref_pbuc1=_deref_pbuc2 
-    lda TEXT+$d
-    sta SCREEN
-    // [1] *((const byte*) SCREEN+(byte) 1) ← (byte) ' 'at -- _deref_pbuc1=vbuc2 
-  .encoding "ascii"
-    lda #'\$9b'
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-  TEXT: .text @"hello, world!\$9b"
-  .byte 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const byte*) SCREEN) ← *((const byte*) TEXT+(byte) $d) [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) SCREEN+(byte) 1) ← (byte) '
+Statement [0] *SCREEN = *(TEXT+$d) [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(SCREEN+1) = '
 'at [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -140,10 +110,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] *((const byte*) SCREEN) ← *((const byte*) TEXT+(byte) $d) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *(TEXT+$d) -- _deref_pbuc1=_deref_pbuc2 
     lda TEXT+$d
     sta SCREEN
-    // [1] *((const byte*) SCREEN+(byte) 1) ← (byte) ' 'at -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = ' 'at -- _deref_pbuc1=vbuc2 
   .encoding "ascii"
     lda #'\$9b'
     sta SCREEN+1
@@ -164,11 +134,11 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const byte*) SCREEN = (byte*) 1024
-(const byte*) TEXT[]  = (byte*) "hello, world!
+const byte* SCREEN = (byte*) 1024
+const byte* TEXT[]  = "hello, world!
 "at
-(void()) main()
-(label) main::@return
+void main()
+label main::@return
 
 
 
@@ -186,11 +156,11 @@ Score: 20
   // main
 main: {
     // SCREEN[0] = TEXT[13]
-    // [0] *((const byte*) SCREEN) ← *((const byte*) TEXT+(byte) $d) -- _deref_pbuc1=_deref_pbuc2 
+    // [0] *SCREEN = *(TEXT+$d) -- _deref_pbuc1=_deref_pbuc2 
     lda TEXT+$d
     sta SCREEN
     // SCREEN[1] = '\n'
-    // [1] *((const byte*) SCREEN+(byte) 1) ← (byte) ' 'at -- _deref_pbuc1=vbuc2 
+    // [1] *(SCREEN+1) = ' 'at -- _deref_pbuc1=vbuc2 
   .encoding "ascii"
     lda #'\$9b'
     sta SCREEN+1

@@ -47,6 +47,7 @@ public class ConstantString implements ConstantLiteral<String> {
 
    /**
     * Get the string where characters have been escaped. (eg. newline as '\n')
+    *
     * @return The escaped string.
     */
    public String getStringEscaped() {
@@ -75,11 +76,7 @@ public class ConstantString implements ConstantLiteral<String> {
    public String toString(Program program) {
       String suffix = (encoding.equals(StringEncoding.SCREENCODE_MIXED)) ? "" : encoding.suffix;
       suffix += zeroTerminated ? "" : "z";
-      if(program == null) {
-         return "\"" + value + "\"" + suffix;
-      } else {
-         return "(" + getType(program.getScope()).getTypeName() + ") " + "\"" + value + "\"" + suffix;
-      }
+      return "\"" + value + "\"" + suffix;
    }
 
    @Override

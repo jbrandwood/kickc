@@ -1,18 +1,18 @@
-Setting inferred volatile on symbol affected by address-of (void~) main::$0 ← call sub (byte) 'a' &(byte*) main::screen 
-Setting inferred volatile on symbol affected by address-of (void~) main::$1 ← call sub (byte) 'b' &(volatile byte*) main::screen 
+Setting inferred volatile on symbol affected by address-of main::$0 = call sub 'a' &main::screen 
+Setting inferred volatile on symbol affected by address-of main::$1 = call sub 'b' &main::screen 
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (volatile byte*) main::screen ← (byte*)(number) $400
-  (byte) sub::ch#0 ← (byte) 'a'
-  (byte**) sub::dst#0 ← &(volatile byte*) main::screen
+  main::screen = (byte*)$400
+  sub::ch#0 = 'a'
+  sub::dst#0 = &main::screen
   call sub 
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte) sub::ch#1 ← (byte) 'b'
-  (byte**) sub::dst#1 ← &(volatile byte*) main::screen
+  sub::ch#1 = 'b'
+  sub::dst#1 = &main::screen
   call sub 
   to:main::@2
 main::@2: scope:[main]  from main::@1
@@ -21,18 +21,18 @@ main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-(void()) sub((byte) sub::ch , (byte**) sub::dst)
+void sub(byte sub::ch , byte** sub::dst)
 sub: scope:[sub]  from main main::@1
-  (byte**) sub::dst#2 ← phi( main/(byte**) sub::dst#0 main::@1/(byte**) sub::dst#1 )
-  (byte) sub::ch#2 ← phi( main/(byte) sub::ch#0 main::@1/(byte) sub::ch#1 )
-  *(*((byte**) sub::dst#2)) ← (byte) sub::ch#2
-  *((byte**) sub::dst#2) ← ++ *((byte**) sub::dst#2)
+  sub::dst#2 = phi( main/sub::dst#0, main::@1/sub::dst#1 )
+  sub::ch#2 = phi( main/sub::ch#0, main::@1/sub::ch#1 )
+  *(*sub::dst#2) = sub::ch#2
+  *sub::dst#2 = ++ *sub::dst#2
   to:sub::@return
 sub::@return: scope:[sub]  from sub
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -43,47 +43,47 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(volatile byte*) main::screen loadstore
-(void()) sub((byte) sub::ch , (byte**) sub::dst)
-(label) sub::@return
-(byte) sub::ch
-(byte) sub::ch#0
-(byte) sub::ch#1
-(byte) sub::ch#2
-(byte**) sub::dst
-(byte**) sub::dst#0
-(byte**) sub::dst#1
-(byte**) sub::dst#2
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@1
+label main::@2
+label main::@return
+volatile byte* main::screen loadstore
+void sub(byte sub::ch , byte** sub::dst)
+label sub::@return
+byte sub::ch
+byte sub::ch#0
+byte sub::ch#1
+byte sub::ch#2
+byte** sub::dst
+byte** sub::dst#0
+byte** sub::dst#1
+byte** sub::dst#2
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Constant (const byte) sub::ch#0 = 'a'
-Constant (const byte**) sub::dst#0 = &main::screen
-Constant (const byte) sub::ch#1 = 'b'
-Constant (const byte**) sub::dst#1 = &main::screen
+Constant sub::ch#0 = 'a'
+Constant sub::dst#0 = &main::screen
+Constant sub::ch#1 = 'b'
+Constant sub::dst#1 = &main::screen
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Inlining constant with var siblings (const byte) sub::ch#0
-Inlining constant with var siblings (const byte**) sub::dst#0
-Inlining constant with var siblings (const byte) sub::ch#1
-Inlining constant with var siblings (const byte**) sub::dst#1
-Constant inlined sub::ch#1 = (byte) 'b'
-Constant inlined sub::ch#0 = (byte) 'a'
-Constant inlined sub::dst#1 = &(volatile byte*) main::screen
-Constant inlined sub::dst#0 = &(volatile byte*) main::screen
+Inlining constant with var siblings sub::ch#0
+Inlining constant with var siblings sub::dst#0
+Inlining constant with var siblings sub::ch#1
+Inlining constant with var siblings sub::dst#1
+Constant inlined sub::ch#1 = 'b'
+Constant inlined sub::ch#0 = 'a'
+Constant inlined sub::dst#1 = &main::screen
+Constant inlined sub::dst#0 = &main::screen
 Successful SSA optimization Pass2ConstantInlining
-Identical Phi Values (byte**) sub::dst#2 &(volatile byte*) main::screen
+Identical Phi Values sub::dst#2 &main::screen
 Successful SSA optimization Pass2IdenticalPhiElimination
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -92,14 +92,14 @@ Calls in [main] to sub:1 sub:3
 
 Created 1 initial phi equivalence classes
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@2
+Culled Empty Block label main::@2
 Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (volatile byte*) main::screen ← (byte*) 1024
+  [0] main::screen = (byte*) 1024
   [1] call sub 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -110,11 +110,11 @@ main::@return: scope:[main]  from main::@1
   [4] return 
   to:@return
 
-(void()) sub((byte) sub::ch , (byte**) sub::dst)
+void sub(byte sub::ch , byte** sub::dst)
 sub: scope:[sub]  from main main::@1
-  [5] (byte) sub::ch#2 ← phi( main/(byte) 'a' main::@1/(byte) 'b' )
-  [6] *(*(&(volatile byte*) main::screen)) ← (byte) sub::ch#2
-  [7] *(&(volatile byte*) main::screen) ← ++ *(&(volatile byte*) main::screen)
+  [5] sub::ch#2 = phi( main/'a', main::@1/'b' )
+  [6] *(*(&main::screen)) = sub::ch#2
+  [7] *(&main::screen) = ++ *(&main::screen)
   to:sub::@return
 sub::@return: scope:[sub]  from sub
   [8] return 
@@ -122,12 +122,12 @@ sub::@return: scope:[sub]  from sub
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(volatile byte*) main::screen loadstore 0.2857142857142857
-(void()) sub((byte) sub::ch , (byte**) sub::dst)
-(byte) sub::ch
-(byte) sub::ch#2 11.0
-(byte**) sub::dst
+void main()
+volatile byte* main::screen loadstore 0.2857142857142857
+void sub(byte sub::ch , byte** sub::dst)
+byte sub::ch
+byte sub::ch#2 11.0
+byte** sub::dst
 
 Initial phi equivalence classes
 [ sub::ch#2 ]
@@ -137,78 +137,9 @@ Complete equivalence classes
 [ main::screen ]
 Allocated zp[1]:2 [ sub::ch#2 ]
 Allocated zp[2]:3 [ main::screen ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests (non-)optimization of constant pointers to pointers
-// The two examples of &screen is not detected as identical leading to ASM that could be optimized more
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = 3
-    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
-    lda #<$400
-    sta.z screen
-    lda #>$400
-    sta.z screen+1
-    // [1] call sub 
-    // [5] phi from main to sub [phi:main->sub]
-  sub_from_main:
-    // [5] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuz1=vbuc1 
-    lda #'a'
-    sta.z sub.ch
-    jsr sub
-    // [2] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    jmp __b1
-    // main::@1
-  __b1:
-    // [3] call sub 
-    // [5] phi from main::@1 to sub [phi:main::@1->sub]
-  sub_from___b1:
-    // [5] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuz1=vbuc1 
-    lda #'b'
-    sta.z sub.ch
-    jsr sub
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // sub
-// sub(byte zp(2) ch)
-sub: {
-    .label ch = 2
-    // [6] *(*(&(volatile byte*) main::screen)) ← (byte) sub::ch#2 -- _deref_(_deref_qbuc1)=vbuz1 
-    lda.z ch
-    ldy.z main.screen
-    sty.z $fe
-    ldy.z main.screen+1
-    sty.z $ff
-    ldy #0
-    sta ($fe),y
-    // [7] *(&(volatile byte*) main::screen) ← ++ *(&(volatile byte*) main::screen) -- _deref_qbuc1=_inc__deref_qbuc1 
-    inc.z main.screen
-    bne !+
-    inc.z main.screen+1
-  !:
-    jmp __breturn
-    // sub::@return
-  __breturn:
-    // [8] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (volatile byte*) main::screen ← (byte*) 1024 [ main::screen ] (  [ main::screen ] { }  ) always clobbers reg byte a 
-Statement [6] *(*(&(volatile byte*) main::screen)) ← (byte) sub::ch#2 [ main::screen ] ( sub:1 [ main::screen ] { }  sub:3 [ main::screen ] { }  ) always clobbers reg byte y 
+Statement [0] main::screen = (byte*) 1024 [ main::screen ] (  [ main::screen ] { }  ) always clobbers reg byte a 
+Statement [6] *(*(&main::screen)) = sub::ch#2 [ main::screen ] ( sub:1 [ main::screen ] { }  sub:3 [ main::screen ] { }  ) always clobbers reg byte y 
 Potential registers zp[1]:2 [ sub::ch#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[2]:3 [ main::screen ] : zp[2]:3 , 
 
@@ -234,7 +165,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = 2
-    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -242,7 +173,7 @@ main: {
     // [1] call sub 
     // [5] phi from main to sub [phi:main->sub]
   sub_from_main:
-    // [5] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
+    // [5] phi sub::ch#2 = 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
     jsr sub
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -253,7 +184,7 @@ main: {
     // [3] call sub 
     // [5] phi from main::@1 to sub [phi:main::@1->sub]
   sub_from___b1:
-    // [5] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
+    // [5] phi sub::ch#2 = 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
     jsr sub
     jmp __breturn
@@ -265,14 +196,14 @@ main: {
   // sub
 // sub(byte register(A) ch)
 sub: {
-    // [6] *(*(&(volatile byte*) main::screen)) ← (byte) sub::ch#2 -- _deref_(_deref_qbuc1)=vbuaa 
+    // [6] *(*(&main::screen)) = sub::ch#2 -- _deref_(_deref_qbuc1)=vbuaa 
     ldy.z main.screen
     sty.z $fe
     ldy.z main.screen+1
     sty.z $ff
     ldy #0
     sta ($fe),y
-    // [7] *(&(volatile byte*) main::screen) ← ++ *(&(volatile byte*) main::screen) -- _deref_qbuc1=_inc__deref_qbuc1 
+    // [7] *(&main::screen) = ++ *(&main::screen) -- _deref_qbuc1=_inc__deref_qbuc1 
     inc.z main.screen
     bne !+
     inc.z main.screen+1
@@ -300,15 +231,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@1
-(label) main::@return
-(volatile byte*) main::screen loadstore zp[2]:2 0.2857142857142857
-(void()) sub((byte) sub::ch , (byte**) sub::dst)
-(label) sub::@return
-(byte) sub::ch
-(byte) sub::ch#2 reg byte a 11.0
-(byte**) sub::dst
+void main()
+label main::@1
+label main::@return
+volatile byte* main::screen loadstore zp[2]:2 0.2857142857142857
+void sub(byte sub::ch , byte** sub::dst)
+label sub::@return
+byte sub::ch
+byte sub::ch#2 reg byte a 11.0
+byte** sub::dst
 
 reg byte a [ sub::ch#2 ]
 zp[2]:2 [ main::screen ]
@@ -329,7 +260,7 @@ Score: 70
 main: {
     .label screen = 2
     // screen = 0x400
-    // [0] (volatile byte*) main::screen ← (byte*) 1024 -- pbuz1=pbuc1 
+    // [0] main::screen = (byte*) 1024 -- pbuz1=pbuc1 
     lda #<$400
     sta.z screen
     lda #>$400
@@ -337,7 +268,7 @@ main: {
     // sub('a',&screen)
     // [1] call sub 
     // [5] phi from main to sub [phi:main->sub]
-    // [5] phi (byte) sub::ch#2 = (byte) 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
+    // [5] phi sub::ch#2 = 'a' [phi:main->sub#0] -- vbuaa=vbuc1 
     lda #'a'
     jsr sub
     // [2] phi from main to main::@1 [phi:main->main::@1]
@@ -345,7 +276,7 @@ main: {
     // sub('b',&screen)
     // [3] call sub 
     // [5] phi from main::@1 to sub [phi:main::@1->sub]
-    // [5] phi (byte) sub::ch#2 = (byte) 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
+    // [5] phi sub::ch#2 = 'b' [phi:main::@1->sub#0] -- vbuaa=vbuc1 
     lda #'b'
     jsr sub
     // main::@return
@@ -357,7 +288,7 @@ main: {
 // sub(byte register(A) ch)
 sub: {
     // *(*dst)++ = ch
-    // [6] *(*(&(volatile byte*) main::screen)) ← (byte) sub::ch#2 -- _deref_(_deref_qbuc1)=vbuaa 
+    // [6] *(*(&main::screen)) = sub::ch#2 -- _deref_(_deref_qbuc1)=vbuaa 
     ldy.z main.screen
     sty.z $fe
     ldy.z main.screen+1
@@ -365,7 +296,7 @@ sub: {
     ldy #0
     sta ($fe),y
     // *(*dst)++ = ch;
-    // [7] *(&(volatile byte*) main::screen) ← ++ *(&(volatile byte*) main::screen) -- _deref_qbuc1=_inc__deref_qbuc1 
+    // [7] *(&main::screen) = ++ *(&main::screen) -- _deref_qbuc1=_inc__deref_qbuc1 
     inc.z main.screen
     bne !+
     inc.z main.screen+1

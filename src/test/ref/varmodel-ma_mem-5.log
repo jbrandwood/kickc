@@ -1,21 +1,21 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte) main::i ← (byte) 0
+  main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  *((const nomodify byte*) SCREEN + (byte) main::i) ← (byte) '*'
-  (bool~) main::$0 ← (byte) main::i < (number) 4
-  (byte) main::i ← ++ (byte) main::i
-  if((bool~) main::$0) goto main::@1
+  SCREEN[main::i] = '*'
+  main::$0 = main::i < 4
+  main::i = ++ main::i
+  if(main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -26,26 +26,26 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@return
-(byte) main::i loadstore
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+bool~ main::$0
+label main::@1
+label main::@return
+byte main::i loadstore
 
-Adding number conversion cast (unumber) 4 in (bool~) main::$0 ← (byte) main::i < (number) 4
+Adding number conversion cast (unumber) 4 in main::$0 = main::i < 4
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 4
+Finalized unsigned number type 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Condition not simple (bool~) main::$0 [4] if((bool~) main::$0) goto main::@1
-Introduced intermediate condition variable (byte~) main::$1 ← (byte) main::i
-Simple Condition (bool~) main::$0 [4] if((byte~) main::$1<(byte) 4) goto main::@1
+Condition not simple main::$0 [4] if(main::$0) goto main::@1
+Introduced intermediate condition variable main::$1 = main::i
+Simple Condition main::$0 [4] if(main::$1<4) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -59,15 +59,15 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] (byte) main::i ← (byte) 0
+  [0] main::i = 0
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [1] *((const nomodify byte*) SCREEN + (byte) main::i) ← (byte) '*'
-  [2] (byte~) main::$1 ← (byte) main::i
-  [3] (byte) main::i ← ++ (byte) main::i
-  [4] if((byte~) main::$1<(byte) 4) goto main::@1
+  [1] SCREEN[main::i] = '*'
+  [2] main::$1 = main::i
+  [3] main::i = ++ main::i
+  [4] if(main::$1<4) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [5] return 
@@ -75,9 +75,9 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
-(byte~) main::$1 11.0
-(byte) main::i loadstore 9.200000000000001
+void main()
+byte~ main::$1 11.0
+byte main::i loadstore 9.200000000000001
 
 Initial phi equivalence classes
 Added variable main::i to live range equivalence class [ main::i ]
@@ -87,52 +87,9 @@ Complete equivalence classes
 [ main::$1 ]
 Allocated mem[1] [ main::i ]
 Allocated zp[1]:2 [ main::$1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test memory model
-// Demonstrates problem where post-increase on __ma memory variables is performed to early
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  // main
-main: {
-    .label __1 = 2
-    // [0] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
-    lda #0
-    sta i
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] *((const nomodify byte*) SCREEN + (byte) main::i) ← (byte) '*' -- pbuc1_derefidx_vbum1=vbuc2 
-    lda #'*'
-    ldy i
-    sta SCREEN,y
-    // [2] (byte~) main::$1 ← (byte) main::i -- vbuz1=vbum2 
-    lda i
-    sta.z __1
-    // [3] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
-    inc i
-    // [4] if((byte~) main::$1<(byte) 4) goto main::@1 -- vbuz1_lt_vbuc1_then_la1 
-    lda.z __1
-    cmp #4
-    bcc __b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [5] return 
-    rts
-    i: .byte 0
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] (byte) main::i ← (byte) 0 [ main::i ] (  [ main::i ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) SCREEN + (byte) main::i) ← (byte) '*' [ main::i ] (  [ main::i ] { }  ) always clobbers reg byte a reg byte y 
+Statement [0] main::i = 0 [ main::i ] (  [ main::i ] { }  ) always clobbers reg byte a 
+Statement [1] SCREEN[main::i] = '*' [ main::i ] (  [ main::i ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers mem[1] [ main::i ] : mem[1] , 
 Potential registers zp[1]:2 [ main::$1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 
@@ -157,21 +114,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   // main
 main: {
-    // [0] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [0] main::i = 0 -- vbum1=vbuc1 
     lda #0
     sta i
     jmp __b1
     // main::@1
   __b1:
-    // [1] *((const nomodify byte*) SCREEN + (byte) main::i) ← (byte) '*' -- pbuc1_derefidx_vbum1=vbuc2 
+    // [1] SCREEN[main::i] = '*' -- pbuc1_derefidx_vbum1=vbuc2 
     lda #'*'
     ldy i
     sta SCREEN,y
-    // [2] (byte~) main::$1 ← (byte) main::i -- vbuaa=vbum1 
+    // [2] main::$1 = main::i -- vbuaa=vbum1 
     lda i
-    // [3] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [3] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
-    // [4] if((byte~) main::$1<(byte) 4) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+    // [4] if(main::$1<4) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
     cmp #4
     bcc __b1
     jmp __breturn
@@ -192,12 +149,12 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(byte~) main::$1 reg byte a 11.0
-(label) main::@1
-(label) main::@return
-(byte) main::i loadstore mem[1] 9.200000000000001
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+byte~ main::$1 reg byte a 11.0
+label main::@1
+label main::@return
+byte main::i loadstore mem[1] 9.200000000000001
 
 mem[1] [ main::i ]
 reg byte a [ main::$1 ]
@@ -218,23 +175,23 @@ Score: 247
   // main
 main: {
     // i=0
-    // [0] (byte) main::i ← (byte) 0 -- vbum1=vbuc1 
+    // [0] main::i = 0 -- vbum1=vbuc1 
     lda #0
     sta i
     // main::@1
   __b1:
     // SCREEN[i] = '*'
-    // [1] *((const nomodify byte*) SCREEN + (byte) main::i) ← (byte) '*' -- pbuc1_derefidx_vbum1=vbuc2 
+    // [1] SCREEN[main::i] = '*' -- pbuc1_derefidx_vbum1=vbuc2 
     lda #'*'
     ldy i
     sta SCREEN,y
     // i++<4
-    // [2] (byte~) main::$1 ← (byte) main::i -- vbuaa=vbum1 
+    // [2] main::$1 = main::i -- vbuaa=vbum1 
     tya
     // while(i++<4)
-    // [3] (byte) main::i ← ++ (byte) main::i -- vbum1=_inc_vbum1 
+    // [3] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
-    // [4] if((byte~) main::$1<(byte) 4) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
+    // [4] if(main::$1<4) goto main::@1 -- vbuaa_lt_vbuc1_then_la1 
     cmp #4
     bcc __b1
     // main::@return

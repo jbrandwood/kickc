@@ -1,44 +1,44 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte*) first::msg#0 ← (const byte*) msg1
+  first::msg#0 = msg1
   call first 
-  (byte*) first::return#0 ← (byte*) first::return#3
+  first::return#0 = first::return#3
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) first::return#4 ← phi( main/(byte*) first::return#0 )
-  (byte*~) main::$0 ← (byte*) first::return#4
-  (byte*~) main::$1 ← (byte*~) main::$0 + (number) 0
-  *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
-  (byte*) first::msg#1 ← (const byte*) msg2
+  first::return#4 = phi( main/first::return#0 )
+  main::$0 = first::return#4
+  main::$1 = main::$0 + 0
+  main::SCREEN[0] = *main::$1
+  first::msg#1 = msg2
   call first 
-  (byte*) first::return#1 ← (byte*) first::return#3
+  first::return#1 = first::return#3
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte*) first::return#5 ← phi( main::@1/(byte*) first::return#1 )
-  (byte*~) main::$2 ← (byte*) first::return#5
-  (byte*~) main::$3 ← (byte*~) main::$2 + (number) 0
-  *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
+  first::return#5 = phi( main::@1/first::return#1 )
+  main::$2 = first::return#5
+  main::$3 = main::$2 + 0
+  main::SCREEN[1] = *main::$3
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-(byte*()) first((byte*) first::msg)
+byte* first(byte* first::msg)
 first: scope:[first]  from main main::@1
-  (byte*) first::msg#2 ← phi( main/(byte*) first::msg#0 main::@1/(byte*) first::msg#1 )
-  (byte*~) first::$0 ← (byte*) first::msg#2 + (number) 0
-  (byte*) first::return#2 ← (byte*)(byte*~) first::$0
+  first::msg#2 = phi( main/first::msg#0, main::@1/first::msg#1 )
+  first::$0 = first::msg#2 + 0
+  first::return#2 = (byte*)first::$0
   to:first::@return
 first::@return: scope:[first]  from first
-  (byte*) first::return#6 ← phi( first/(byte*) first::return#2 )
-  (byte*) first::return#3 ← (byte*) first::return#6
+  first::return#6 = phi( first/first::return#2 )
+  first::return#3 = first::return#6
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -49,41 +49,41 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(byte*()) first((byte*) first::msg)
-(byte*~) first::$0
-(label) first::@return
-(byte*) first::msg
-(byte*) first::msg#0
-(byte*) first::msg#1
-(byte*) first::msg#2
-(byte*) first::return
-(byte*) first::return#0
-(byte*) first::return#1
-(byte*) first::return#2
-(byte*) first::return#3
-(byte*) first::return#4
-(byte*) first::return#5
-(byte*) first::return#6
-(void()) main()
-(byte*~) main::$0
-(byte*~) main::$1
-(byte*~) main::$2
-(byte*~) main::$3
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*)(number) $400
-(const byte*) msg1[]  = (byte*) "hello world!"
-(const byte*) msg2[]  = (byte*) "goodbye sky?"
+void __start()
+label __start::@1
+label __start::@return
+byte* first(byte* first::msg)
+byte*~ first::$0
+label first::@return
+byte* first::msg
+byte* first::msg#0
+byte* first::msg#1
+byte* first::msg#2
+byte* first::return
+byte* first::return#0
+byte* first::return#1
+byte* first::return#2
+byte* first::return#3
+byte* first::return#4
+byte* first::return#5
+byte* first::return#6
+void main()
+byte*~ main::$0
+byte*~ main::$1
+byte*~ main::$2
+byte*~ main::$3
+label main::@1
+label main::@2
+label main::@return
+const nomodify byte* main::SCREEN = (byte*)$400
+const byte* msg1[]  = "hello world!"
+const byte* msg2[]  = "goodbye sky?"
 
-Adding number conversion cast (unumber) 0 in (byte*~) main::$1 ← (byte*~) main::$0 + (number) 0
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) main::SCREEN + (number) 0) ← *((byte*~) main::$1)
-Adding number conversion cast (unumber) 0 in (byte*~) main::$3 ← (byte*~) main::$2 + (number) 0
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) main::SCREEN + (number) 1) ← *((byte*~) main::$3)
-Adding number conversion cast (unumber) 0 in (byte*~) first::$0 ← (byte*) first::msg#2 + (number) 0
+Adding number conversion cast (unumber) 0 in main::$1 = main::$0 + 0
+Adding number conversion cast (unumber) 0 in main::SCREEN[0] = *main::$1
+Adding number conversion cast (unumber) 0 in main::$3 = main::$2 + 0
+Adding number conversion cast (unumber) 1 in main::SCREEN[1] = *main::$3
+Adding number conversion cast (unumber) 0 in first::$0 = first::msg#2 + 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
@@ -91,33 +91,33 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
-Simplifying constant integer cast (byte*~) first::$0
+Simplifying constant integer cast first::$0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type 1
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias first::return#0 = first::return#4 
 Alias first::return#1 = first::return#5 
 Alias first::return#2 = first::$0 first::return#6 first::return#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) first::msg#0 = msg1
-Constant (const byte*) first::msg#1 = msg2
+Constant first::msg#0 = msg1
+Constant first::msg#1 = msg2
 Successful SSA optimization Pass2ConstantIdentification
-Converting *(pointer+n) to pointer[n] [5] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$1)  -- *(main::$0 + 0)
-Converting *(pointer+n) to pointer[n] [11] *((const nomodify byte*) main::SCREEN + (byte) 1) ← *((byte*~) main::$3)  -- *(main::$2 + 0)
+Converting *(pointer+n) to pointer[n] [5] main::SCREEN[0] = *main::$1  -- main::$0[0]
+Converting *(pointer+n) to pointer[n] [11] main::SCREEN[1] = *main::$3  -- main::$2[0]
 Successful SSA optimization Pass2InlineDerefIdx
-Simplifying expression containing zero main::$0 in [4] (byte*~) main::$1 ← (byte*~) main::$0 + (byte) 0
-Simplifying expression containing zero main::$0 in [5] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0 + (byte) 0)
-Simplifying expression containing zero main::SCREEN in [5] *((const nomodify byte*) main::SCREEN + (byte) 0) ← *((byte*~) main::$0)
-Simplifying expression containing zero main::$2 in [10] (byte*~) main::$3 ← (byte*~) main::$2 + (byte) 0
-Simplifying expression containing zero main::$2 in [11] *((const nomodify byte*) main::SCREEN + (byte) 1) ← *((byte*~) main::$2 + (byte) 0)
-Simplifying expression containing zero first::msg#2 in [14] (byte*) first::return#2 ← (byte*) first::msg#2 + (byte) 0
+Simplifying expression containing zero main::$0 in [4] main::$1 = main::$0 + 0
+Simplifying expression containing zero main::$0 in [5] main::SCREEN[0] = main::$0[0]
+Simplifying expression containing zero main::SCREEN in [5] main::SCREEN[0] = *main::$0
+Simplifying expression containing zero main::$2 in [10] main::$3 = main::$2 + 0
+Simplifying expression containing zero main::$2 in [11] main::SCREEN[1] = main::$2[0]
+Simplifying expression containing zero first::msg#2 in [14] first::return#2 = first::msg#2 + 0
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable (byte*~) main::$1 and assignment [3] (byte*~) main::$1 ← (byte*~) main::$0
-Eliminating unused variable (byte*~) main::$3 and assignment [8] (byte*~) main::$3 ← (byte*~) main::$2
+Eliminating unused variable main::$1 and assignment [3] main::$1 = main::$0
+Eliminating unused variable main::$3 and assignment [8] main::$3 = main::$2
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -126,8 +126,8 @@ Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Alias first::return#2 = first::msg#2 
 Successful SSA optimization Pass2AliasElimination
-Constant inlined first::msg#0 = (const byte*) msg1
-Constant inlined first::msg#1 = (const byte*) msg2
+Constant inlined first::msg#0 = msg1
+Constant inlined first::msg#1 = msg2
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -141,29 +141,29 @@ Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   [0] phi()
   [1] call first 
-  [2] (byte*) first::return#0 ← (byte*) first::return#2
+  [2] first::return#0 = first::return#2
   to:main::@1
 main::@1: scope:[main]  from main
-  [3] (byte*~) main::$0 ← (byte*) first::return#0
-  [4] *((const nomodify byte*) main::SCREEN) ← *((byte*~) main::$0)
+  [3] main::$0 = first::return#0
+  [4] *main::SCREEN = *main::$0
   [5] call first 
-  [6] (byte*) first::return#1 ← (byte*) first::return#2
+  [6] first::return#1 = first::return#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [7] (byte*~) main::$2 ← (byte*) first::return#1
-  [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2)
+  [7] main::$2 = first::return#1
+  [8] *(main::SCREEN+1) = *main::$2
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [9] return 
   to:@return
 
-(byte*()) first((byte*) first::msg)
+byte* first(byte* first::msg)
 first: scope:[first]  from main main::@1
-  [10] (byte*) first::return#2 ← phi( main/(const byte*) msg1 main::@1/(const byte*) msg2 )
+  [10] first::return#2 = phi( main/msg1, main::@1/msg2 )
   to:first::@return
 first::@return: scope:[first]  from first
   [11] return 
@@ -171,15 +171,15 @@ first::@return: scope:[first]  from first
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*()) first((byte*) first::msg)
-(byte*) first::msg
-(byte*) first::return
-(byte*) first::return#0 4.0
-(byte*) first::return#1 4.0
-(byte*) first::return#2 1.0
-(void()) main()
-(byte*~) main::$0 4.0
-(byte*~) main::$2 4.0
+byte* first(byte* first::msg)
+byte* first::msg
+byte* first::return
+byte* first::return#0 4.0
+byte* first::return#1 4.0
+byte* first::return#2 1.0
+void main()
+byte*~ main::$0 4.0
+byte*~ main::$2 4.0
 
 Initial phi equivalence classes
 [ first::return#2 ]
@@ -198,103 +198,13 @@ Allocated zp[2]:4 [ first::return#0 ]
 Allocated zp[2]:6 [ main::$0 ]
 Allocated zp[2]:8 [ first::return#1 ]
 Allocated zp[2]:10 [ main::$2 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests pointer plus 0 elimination
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label SCREEN = $400
-    .label __0 = 6
-    .label __2 = $a
-    // [1] call first 
-    // [10] phi from main to first [phi:main->first]
-  first_from_main:
-    // [10] phi (byte*) first::return#2 = (const byte*) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
-    lda #<msg1
-    sta.z first.return_2
-    lda #>msg1
-    sta.z first.return_2+1
-    jsr first
-    // [2] (byte*) first::return#0 ← (byte*) first::return#2 -- pbuz1=pbuz2 
-    lda.z first.return_2
-    sta.z first.return
-    lda.z first.return_2+1
-    sta.z first.return+1
-    jmp __b1
-    // main::@1
-  __b1:
-    // [3] (byte*~) main::$0 ← (byte*) first::return#0 -- pbuz1=pbuz2 
-    lda.z first.return
-    sta.z __0
-    lda.z first.return+1
-    sta.z __0+1
-    // [4] *((const nomodify byte*) main::SCREEN) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
-    ldy #0
-    lda (__0),y
-    sta SCREEN
-    // [5] call first 
-    // [10] phi from main::@1 to first [phi:main::@1->first]
-  first_from___b1:
-    // [10] phi (byte*) first::return#2 = (const byte*) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
-    lda #<msg2
-    sta.z first.return_2
-    lda #>msg2
-    sta.z first.return_2+1
-    jsr first
-    // [6] (byte*) first::return#1 ← (byte*) first::return#2 -- pbuz1=pbuz2 
-    lda.z first.return_2
-    sta.z first.return_1
-    lda.z first.return_2+1
-    sta.z first.return_1+1
-    jmp __b2
-    // main::@2
-  __b2:
-    // [7] (byte*~) main::$2 ← (byte*) first::return#1 -- pbuz1=pbuz2 
-    lda.z first.return_1
-    sta.z __2
-    lda.z first.return_1+1
-    sta.z __2+1
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
-    ldy #0
-    lda (__2),y
-    sta SCREEN+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [9] return 
-    rts
-}
-  // first
-first: {
-    .label return = 4
-    .label return_1 = 8
-    .label return_2 = 2
-    jmp __breturn
-    // first::@return
-  __breturn:
-    // [11] return 
-    rts
-}
-  // File Data
-  msg1: .text "hello world!"
-  .byte 0
-  msg2: .text "goodbye sky?"
-  .byte 0
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [2] (byte*) first::return#0 ← (byte*) first::return#2 [ first::return#0 ] (  [ first::return#0 ] { { first::return#0 = first::return#2 } }  ) always clobbers reg byte a 
-Statement [3] (byte*~) main::$0 ← (byte*) first::return#0 [ main::$0 ] (  [ main::$0 ] { { first::return#1 = first::return#2 } }  ) always clobbers reg byte a 
-Statement [4] *((const nomodify byte*) main::SCREEN) ← *((byte*~) main::$0) [ ] (  [ ] { { first::return#1 = first::return#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [6] (byte*) first::return#1 ← (byte*) first::return#2 [ first::return#1 ] (  [ first::return#1 ] { { first::return#1 = first::return#2 } }  ) always clobbers reg byte a 
-Statement [7] (byte*~) main::$2 ← (byte*) first::return#1 [ main::$2 ] (  [ main::$2 ] { }  ) always clobbers reg byte a 
-Statement [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Statement [2] first::return#0 = first::return#2 [ first::return#0 ] (  [ first::return#0 ] { { first::return#0 = first::return#2 } }  ) always clobbers reg byte a 
+Statement [3] main::$0 = first::return#0 [ main::$0 ] (  [ main::$0 ] { { first::return#1 = first::return#2 } }  ) always clobbers reg byte a 
+Statement [4] *main::SCREEN = *main::$0 [ ] (  [ ] { { first::return#1 = first::return#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [6] first::return#1 = first::return#2 [ first::return#1 ] (  [ first::return#1 ] { { first::return#1 = first::return#2 } }  ) always clobbers reg byte a 
+Statement [7] main::$2 = first::return#1 [ main::$2 ] (  [ main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] *(main::SCREEN+1) = *main::$2 [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[2]:2 [ first::return#2 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ first::return#0 ] : zp[2]:4 , 
 Potential registers zp[2]:6 [ main::$0 ] : zp[2]:6 , 
@@ -330,36 +240,36 @@ main: {
     // [1] call first 
     // [10] phi from main to first [phi:main->first]
   first_from_main:
-    // [10] phi (byte*) first::return#2 = (const byte*) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
+    // [10] phi first::return#2 = msg1 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z first.return
     lda #>msg1
     sta.z first.return+1
     jsr first
-    // [2] (byte*) first::return#0 ← (byte*) first::return#2
+    // [2] first::return#0 = first::return#2
     jmp __b1
     // main::@1
   __b1:
-    // [3] (byte*~) main::$0 ← (byte*) first::return#0
-    // [4] *((const nomodify byte*) main::SCREEN) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
+    // [3] main::$0 = first::return#0
+    // [4] *main::SCREEN = *main::$0 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (__0),y
     sta SCREEN
     // [5] call first 
     // [10] phi from main::@1 to first [phi:main::@1->first]
   first_from___b1:
-    // [10] phi (byte*) first::return#2 = (const byte*) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+    // [10] phi first::return#2 = msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return
     lda #>msg2
     sta.z first.return+1
     jsr first
-    // [6] (byte*) first::return#1 ← (byte*) first::return#2
+    // [6] first::return#1 = first::return#2
     jmp __b2
     // main::@2
   __b2:
-    // [7] (byte*~) main::$2 ← (byte*) first::return#1
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
+    // [7] main::$2 = first::return#1
+    // [8] *(main::SCREEN+1) = *main::$2 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (__2),y
     sta SCREEN+1
@@ -399,22 +309,22 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(byte*()) first((byte*) first::msg)
-(label) first::@return
-(byte*) first::msg
-(byte*) first::return
-(byte*) first::return#0 return zp[2]:2 4.0
-(byte*) first::return#1 return zp[2]:2 4.0
-(byte*) first::return#2 return zp[2]:2 1.0
-(void()) main()
-(byte*~) main::$0 zp[2]:2 4.0
-(byte*~) main::$2 zp[2]:2 4.0
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(const nomodify byte*) main::SCREEN = (byte*) 1024
-(const byte*) msg1[]  = (byte*) "hello world!"
-(const byte*) msg2[]  = (byte*) "goodbye sky?"
+byte* first(byte* first::msg)
+label first::@return
+byte* first::msg
+byte* first::return
+byte* first::return#0 return zp[2]:2 4.0
+byte* first::return#1 return zp[2]:2 4.0
+byte* first::return#2 return zp[2]:2 1.0
+void main()
+byte*~ main::$0 zp[2]:2 4.0
+byte*~ main::$2 zp[2]:2 4.0
+label main::@1
+label main::@2
+label main::@return
+const nomodify byte* main::SCREEN = (byte*) 1024
+const byte* msg1[]  = "hello world!"
+const byte* msg2[]  = "goodbye sky?"
 
 zp[2]:2 [ first::return#2 first::return#0 first::return#1 main::$0 main::$2 ]
 
@@ -437,36 +347,36 @@ main: {
     // first(msg1)
     // [1] call first 
     // [10] phi from main to first [phi:main->first]
-    // [10] phi (byte*) first::return#2 = (const byte*) msg1 [phi:main->first#0] -- pbuz1=pbuc1 
+    // [10] phi first::return#2 = msg1 [phi:main->first#0] -- pbuz1=pbuc1 
     lda #<msg1
     sta.z first.return
     lda #>msg1
     sta.z first.return+1
     jsr first
     // first(msg1)
-    // [2] (byte*) first::return#0 ← (byte*) first::return#2
+    // [2] first::return#0 = first::return#2
     // main::@1
-    // [3] (byte*~) main::$0 ← (byte*) first::return#0
+    // [3] main::$0 = first::return#0
     // SCREEN[0] = *(first(msg1)+0)
-    // [4] *((const nomodify byte*) main::SCREEN) ← *((byte*~) main::$0) -- _deref_pbuc1=_deref_pbuz1 
+    // [4] *main::SCREEN = *main::$0 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (__0),y
     sta SCREEN
     // first(msg2)
     // [5] call first 
     // [10] phi from main::@1 to first [phi:main::@1->first]
-    // [10] phi (byte*) first::return#2 = (const byte*) msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
+    // [10] phi first::return#2 = msg2 [phi:main::@1->first#0] -- pbuz1=pbuc1 
     lda #<msg2
     sta.z first.return
     lda #>msg2
     sta.z first.return+1
     jsr first
     // first(msg2)
-    // [6] (byte*) first::return#1 ← (byte*) first::return#2
+    // [6] first::return#1 = first::return#2
     // main::@2
-    // [7] (byte*~) main::$2 ← (byte*) first::return#1
+    // [7] main::$2 = first::return#1
     // SCREEN[1] = *(first(msg2)+0)
-    // [8] *((const nomodify byte*) main::SCREEN+(byte) 1) ← *((byte*~) main::$2) -- _deref_pbuc1=_deref_pbuz1 
+    // [8] *(main::SCREEN+1) = *main::$2 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (__2),y
     sta SCREEN+1

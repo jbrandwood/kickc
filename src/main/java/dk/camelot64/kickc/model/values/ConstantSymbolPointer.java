@@ -70,7 +70,7 @@ public class ConstantSymbolPointer implements ConstantValue {
 
    @Override
    public String toString(Program program) {
-      return "&" + toSymbol.toString(program);
+      return "&" + toSymbol.toString(null);
    }
 
    @Override

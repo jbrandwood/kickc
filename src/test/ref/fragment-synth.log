@@ -1,55 +1,55 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  (byte*) main::z#0 ← (byte*)(number) $450
-  *((byte*) main::z#0 + (number) 2) ← (number) $f0
-  *((byte*) main::z#0 + (number) 3) ← (number) $f
-  (byte) main::x#0 ← (byte) $aa
-  (byte) fct::x#0 ← (byte) main::x#0
-  (byte*) fct::z#0 ← (byte*) main::z#0
+  main::z#0 = (byte*)$450
+  main::z#0[2] = $f0
+  main::z#0[3] = $f
+  main::x#0 = $aa
+  fct::x#0 = main::x#0
+  fct::z#0 = main::z#0
   call fct 
-  (byte) fct::return#0 ← (byte) fct::return#3
+  fct::return#0 = fct::return#3
   to:main::@1
 main::@1: scope:[main]  from main
-  (byte*) main::z#2 ← phi( main/(byte*) main::z#0 )
-  (byte) fct::return#4 ← phi( main/(byte) fct::return#0 )
-  (byte~) main::$0 ← (byte) fct::return#4
-  (byte) main::a1#0 ← (byte~) main::$0
-  *((const byte*) main::screen + (number) 0) ← (byte) main::a1#0
-  (byte*) main::z#1 ← ++ (byte*) main::z#2
-  (byte) main::x#1 ← (number) $55
-  (byte) fct::x#1 ← (byte) main::x#1
-  (byte*) fct::z#1 ← (byte*) main::z#1
+  main::z#2 = phi( main/main::z#0 )
+  fct::return#4 = phi( main/fct::return#0 )
+  main::$0 = fct::return#4
+  main::a1#0 = main::$0
+  main::screen[0] = main::a1#0
+  main::z#1 = ++ main::z#2
+  main::x#1 = $55
+  fct::x#1 = main::x#1
+  fct::z#1 = main::z#1
   call fct 
-  (byte) fct::return#1 ← (byte) fct::return#3
+  fct::return#1 = fct::return#3
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  (byte) fct::return#5 ← phi( main::@1/(byte) fct::return#1 )
-  (byte~) main::$1 ← (byte) fct::return#5
-  (byte) main::a2#0 ← (byte~) main::$1
-  *((const byte*) main::screen + (number) 1) ← (byte) main::a2#0
+  fct::return#5 = phi( main::@1/fct::return#1 )
+  main::$1 = fct::return#5
+  main::a2#0 = main::$1
+  main::screen[1] = main::a2#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   return 
   to:@return
 
-(byte()) fct((byte) fct::x , (byte*) fct::z)
+byte fct(byte fct::x , byte* fct::z)
 fct: scope:[fct]  from main main::@1
-  (byte*) fct::z#2 ← phi( main/(byte*) fct::z#0 main::@1/(byte*) fct::z#1 )
-  (byte) fct::x#2 ← phi( main/(byte) fct::x#0 main::@1/(byte) fct::x#1 )
-  (byte~) fct::$0 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (number) 2)
-  (byte) fct::a#0 ← (byte~) fct::$0
-  (byte) fct::return#2 ← (byte) fct::a#0
+  fct::z#2 = phi( main/fct::z#0, main::@1/fct::z#1 )
+  fct::x#2 = phi( main/fct::x#0, main::@1/fct::x#1 )
+  fct::$0 = fct::x#2 & fct::z#2[2]
+  fct::a#0 = fct::$0
+  fct::return#2 = fct::a#0
   to:fct::@return
 fct::@return: scope:[fct]  from fct
-  (byte) fct::return#6 ← phi( fct/(byte) fct::return#2 )
-  (byte) fct::return#3 ← (byte) fct::return#6
+  fct::return#6 = phi( fct/fct::return#2 )
+  fct::return#3 = fct::return#6
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -60,61 +60,61 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(byte()) fct((byte) fct::x , (byte*) fct::z)
-(byte~) fct::$0
-(label) fct::@return
-(byte) fct::a !reg byte a
-(byte) fct::a#0 !reg byte a
-(byte) fct::return
-(byte) fct::return#0
-(byte) fct::return#1
-(byte) fct::return#2
-(byte) fct::return#3
-(byte) fct::return#4
-(byte) fct::return#5
-(byte) fct::return#6
-(byte) fct::x !reg byte x
-(byte) fct::x#0 !reg byte x
-(byte) fct::x#1 !reg byte x
-(byte) fct::x#2 !reg byte x
-(byte*) fct::z
-(byte*) fct::z#0
-(byte*) fct::z#1
-(byte*) fct::z#2
-(void()) main()
-(byte~) main::$0
-(byte~) main::$1
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::a1
-(byte) main::a1#0
-(byte) main::a2
-(byte) main::a2#0
-(const byte*) main::screen = (byte*)(number) $400
-(byte) main::x
-(byte) main::x#0
-(byte) main::x#1
-(byte*) main::z
-(byte*) main::z#0
-(byte*) main::z#1
-(byte*) main::z#2
+void __start()
+label __start::@1
+label __start::@return
+byte fct(byte fct::x , byte* fct::z)
+byte~ fct::$0
+label fct::@return
+byte fct::a !reg byte a
+byte fct::a#0 !reg byte a
+byte fct::return
+byte fct::return#0
+byte fct::return#1
+byte fct::return#2
+byte fct::return#3
+byte fct::return#4
+byte fct::return#5
+byte fct::return#6
+byte fct::x !reg byte x
+byte fct::x#0 !reg byte x
+byte fct::x#1 !reg byte x
+byte fct::x#2 !reg byte x
+byte* fct::z
+byte* fct::z#0
+byte* fct::z#1
+byte* fct::z#2
+void main()
+byte~ main::$0
+byte~ main::$1
+label main::@1
+label main::@2
+label main::@return
+byte main::a1
+byte main::a1#0
+byte main::a2
+byte main::a2#0
+const byte* main::screen = (byte*)$400
+byte main::x
+byte main::x#0
+byte main::x#1
+byte* main::z
+byte* main::z#0
+byte* main::z#1
+byte* main::z#2
 
-Adding number conversion cast (unumber) $f0 in *((byte*) main::z#0 + (number) 2) ← (number) $f0
-Adding number conversion cast (unumber) 2 in *((byte*) main::z#0 + (number) 2) ← ((unumber)) (number) $f0
-Adding number conversion cast (unumber) $f in *((byte*) main::z#0 + (number) 3) ← (number) $f
-Adding number conversion cast (unumber) 3 in *((byte*) main::z#0 + (number) 3) ← ((unumber)) (number) $f
-Adding number conversion cast (unumber) 0 in *((const byte*) main::screen + (number) 0) ← (byte) main::a1#0
-Adding number conversion cast (unumber) $55 in (byte) main::x#1 ← (number) $55
-Adding number conversion cast (unumber) 1 in *((const byte*) main::screen + (number) 1) ← (byte) main::a2#0
-Adding number conversion cast (unumber) 2 in (byte~) fct::$0 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (number) 2)
+Adding number conversion cast (unumber) $f0 in main::z#0[2] = $f0
+Adding number conversion cast (unumber) 2 in main::z#0[2] = ((unumber)) $f0
+Adding number conversion cast (unumber) $f in main::z#0[3] = $f
+Adding number conversion cast (unumber) 3 in main::z#0[3] = ((unumber)) $f
+Adding number conversion cast (unumber) 0 in main::screen[0] = main::a1#0
+Adding number conversion cast (unumber) $55 in main::x#1 = $55
+Adding number conversion cast (unumber) 1 in main::screen[1] = main::a2#0
+Adding number conversion cast (unumber) 2 in fct::$0 = fct::x#2 & fct::z#2[2]
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((byte*) main::z#0 + (unumber)(number) 2) ← (unumber)(number) $f0
-Inlining cast *((byte*) main::z#0 + (unumber)(number) 3) ← (unumber)(number) $f
-Inlining cast (byte) main::x#1 ← (unumber)(number) $55
+Inlining cast main::z#0[(unumber)2] = (unumber)$f0
+Inlining cast main::z#0[(unumber)3] = (unumber)$f
+Inlining cast main::x#1 = (unumber)$55
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1104
@@ -127,14 +127,14 @@ Simplifying constant integer cast $55
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $f0
-Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) $f
-Finalized unsigned number type (byte) 3
-Finalized unsigned number type (byte) 0
-Finalized unsigned number type (byte) $55
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 2
+Finalized unsigned number type $f0
+Finalized unsigned number type 2
+Finalized unsigned number type $f
+Finalized unsigned number type 3
+Finalized unsigned number type 0
+Finalized unsigned number type $55
+Finalized unsigned number type 1
+Finalized unsigned number type 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias fct::return#0 = fct::return#4 
 Alias main::z#0 = main::z#2 
@@ -143,43 +143,43 @@ Alias fct::return#1 = fct::return#5
 Alias main::a2#0 = main::$1 
 Alias fct::return#2 = fct::a#0 fct::$0 fct::return#6 fct::return#3 
 Successful SSA optimization Pass2AliasElimination
-Constant (const byte*) main::z#0 = (byte*) 1104
-Constant (const byte) main::x#0 = $aa
-Constant (const byte) main::x#1 = $55
+Constant main::z#0 = (byte*) 1104
+Constant main::x#0 = $aa
+Constant main::x#1 = $55
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte) fct::x#0 = main::x#0
-Constant (const byte*) fct::z#0 = main::z#0
-Constant (const byte) fct::x#1 = main::x#1
+Constant fct::x#0 = main::x#0
+Constant fct::z#0 = main::z#0
+Constant fct::x#1 = main::x#1
 Successful SSA optimization Pass2ConstantIdentification
-Simplifying expression containing zero main::screen in [9] *((const byte*) main::screen + (byte) 0) ← (byte) main::a1#0
+Simplifying expression containing zero main::screen in [9] main::screen[0] = main::a1#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Constant right-side identified [6] (byte*) main::z#1 ← ++ (const byte*) main::z#0
+Constant right-side identified [6] main::z#1 = ++ main::z#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte*) main::z#1 = ++main::z#0
+Constant main::z#1 = ++main::z#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant (const byte*) fct::z#1 = main::z#1
+Constant fct::z#1 = main::z#1
 Successful SSA optimization Pass2ConstantIdentification
-Inlining constant with different constant siblings (const byte*) main::z#0
-Inlining constant with different constant siblings (const byte) main::x#0
-Inlining constant with different constant siblings (const byte) main::x#1
-Inlining constant with different constant siblings (const byte*) main::z#1
-Inlining constant with var siblings (const byte) fct::x#0
-Inlining constant with var siblings (const byte*) fct::z#0
-Inlining constant with var siblings (const byte) fct::x#1
-Inlining constant with var siblings (const byte*) fct::z#1
+Inlining constant with different constant siblings main::z#0
+Inlining constant with different constant siblings main::x#0
+Inlining constant with different constant siblings main::x#1
+Inlining constant with different constant siblings main::z#1
+Inlining constant with var siblings fct::x#0
+Inlining constant with var siblings fct::z#0
+Inlining constant with var siblings fct::x#1
+Inlining constant with var siblings fct::z#1
 Constant inlined fct::z#0 = (byte*) 1104
 Constant inlined fct::z#1 = ++(byte*) 1104
 Constant inlined main::z#0 = (byte*) 1104
 Constant inlined main::z#1 = ++(byte*) 1104
-Constant inlined main::x#0 = (byte) $aa
-Constant inlined main::x#1 = (byte) $55
-Constant inlined fct::x#0 = (byte) $aa
-Constant inlined fct::x#1 = (byte) $55
+Constant inlined main::x#0 = $aa
+Constant inlined main::x#1 = $55
+Constant inlined fct::x#0 = $aa
+Constant inlined fct::x#1 = $55
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *((byte*) 1104+2)
 Consolidated array index constant in *((byte*) 1104+3)
@@ -193,32 +193,32 @@ Coalesced down to 2 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((byte*) 1104+(byte) 2) ← (byte) $f0
-  [1] *((byte*) 1104+(byte) 3) ← (byte) $f
+  [0] *((byte*) 1104+2) = $f0
+  [1] *((byte*) 1104+3) = $f
   [2] call fct 
-  [3] (byte) fct::return#0 ← (byte) fct::return#2
+  [3] fct::return#0 = fct::return#2
   to:main::@1
 main::@1: scope:[main]  from main
-  [4] (byte) main::a1#0 ← (byte) fct::return#0
-  [5] *((const byte*) main::screen) ← (byte) main::a1#0
+  [4] main::a1#0 = fct::return#0
+  [5] *main::screen = main::a1#0
   [6] call fct 
-  [7] (byte) fct::return#1 ← (byte) fct::return#2
+  [7] fct::return#1 = fct::return#2
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [8] (byte) main::a2#0 ← (byte) fct::return#1
-  [9] *((const byte*) main::screen+(byte) 1) ← (byte) main::a2#0
+  [8] main::a2#0 = fct::return#1
+  [9] *(main::screen+1) = main::a2#0
   to:main::@return
 main::@return: scope:[main]  from main::@2
   [10] return 
   to:@return
 
-(byte()) fct((byte) fct::x , (byte*) fct::z)
+byte fct(byte fct::x , byte* fct::z)
 fct: scope:[fct]  from main main::@1
-  [11] (byte*) fct::z#2 ← phi( main/(byte*) 1104 main::@1/++(byte*) 1104 )
-  [11] (byte) fct::x#2 ← phi( main/(byte) $aa main::@1/(byte) $55 )
-  [12] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2)
+  [11] fct::z#2 = phi( main/(byte*) 1104, main::@1/++(byte*) 1104 )
+  [11] fct::x#2 = phi( main/$aa, main::@1/$55 )
+  [12] fct::return#2 = fct::x#2 & fct::z#2[2]
   to:fct::@return
 fct::@return: scope:[fct]  from fct
   [13] return 
@@ -226,23 +226,23 @@ fct::@return: scope:[fct]  from fct
 
 
 VARIABLE REGISTER WEIGHTS
-(byte()) fct((byte) fct::x , (byte*) fct::z)
-(byte) fct::a !reg byte a
-(byte) fct::return
-(byte) fct::return#0 4.0
-(byte) fct::return#1 4.0
-(byte) fct::return#2 3.75
-(byte) fct::x !reg byte x
-(byte) fct::x#2 !reg byte x 11.0
-(byte*) fct::z
-(byte*) fct::z#2 11.0
-(void()) main()
-(byte) main::a1
-(byte) main::a1#0 4.0
-(byte) main::a2
-(byte) main::a2#0 4.0
-(byte) main::x
-(byte*) main::z
+byte fct(byte fct::x , byte* fct::z)
+byte fct::a !reg byte a
+byte fct::return
+byte fct::return#0 4.0
+byte fct::return#1 4.0
+byte fct::return#2 3.75
+byte fct::x !reg byte x
+byte fct::x#2 !reg byte x 11.0
+byte* fct::z
+byte* fct::z#2 11.0
+void main()
+byte main::a1
+byte main::a1#0 4.0
+byte main::a2
+byte main::a2#0 4.0
+byte main::x
+byte* main::z
 
 Initial phi equivalence classes
 [ fct::x#2 ]
@@ -266,104 +266,10 @@ Allocated zp[1]:5 [ main::a1#0 ]
 Allocated zp[1]:6 [ fct::return#1 ]
 Allocated zp[1]:7 [ main::a2#0 ]
 Allocated zp[1]:8 [ fct::return#2 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests a sub-optimal fragment synthesis
-// vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 < vbuaa=pbuz1_derefidx_vbuc1_band_vbuxx < vbuaa=pbuz1_derefidx_vbuaa_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuxx < vbuaa=pbuz1_derefidx_vbuyy_band_vbuaa < vbuaa=vbuaa_band_pbuz1_derefidx_vbuyy - clobber:A Y  cycles:11.5
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    .label screen = $400
-    .label a1 = 5
-    .label a2 = 7
-    // [0] *((byte*) 1104+(byte) 2) ← (byte) $f0 -- _deref_pbuc1=vbuc2 
-    lda #$f0
-    sta $450+2
-    // [1] *((byte*) 1104+(byte) 3) ← (byte) $f -- _deref_pbuc1=vbuc2 
-    lda #$f
-    sta $450+3
-    // [2] call fct 
-    // [11] phi from main to fct [phi:main->fct]
-  fct_from_main:
-    // [11] phi (byte*) fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
-    lda #<$450
-    sta.z fct.z
-    lda #>$450
-    sta.z fct.z+1
-    // [11] phi (byte) fct::x#2 = (byte) $aa [phi:main->fct#1] -- vbuxx=vbuc1 
-    ldx #$aa
-    jsr fct
-    // [3] (byte) fct::return#0 ← (byte) fct::return#2 -- vbuz1=vbuz2 
-    lda.z fct.return_2
-    sta.z fct.return
-    jmp __b1
-    // main::@1
-  __b1:
-    // [4] (byte) main::a1#0 ← (byte) fct::return#0 -- vbuz1=vbuz2 
-    lda.z fct.return
-    sta.z a1
-    // [5] *((const byte*) main::screen) ← (byte) main::a1#0 -- _deref_pbuc1=vbuz1 
-    lda.z a1
-    sta screen
-    // [6] call fct 
-    // [11] phi from main::@1 to fct [phi:main::@1->fct]
-  fct_from___b1:
-    // [11] phi (byte*) fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
-    lda #<$450+1
-    sta.z fct.z
-    lda #>$450+1
-    sta.z fct.z+1
-    // [11] phi (byte) fct::x#2 = (byte) $55 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
-    ldx #$55
-    jsr fct
-    // [7] (byte) fct::return#1 ← (byte) fct::return#2 -- vbuz1=vbuz2 
-    lda.z fct.return_2
-    sta.z fct.return_1
-    jmp __b2
-    // main::@2
-  __b2:
-    // [8] (byte) main::a2#0 ← (byte) fct::return#1 -- vbuz1=vbuz2 
-    lda.z fct.return_1
-    sta.z a2
-    // [9] *((const byte*) main::screen+(byte) 1) ← (byte) main::a2#0 -- _deref_pbuc1=vbuz1 
-    lda.z a2
-    sta screen+1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [10] return 
-    rts
-}
-  // fct
-// fct(byte register(X) x, byte* zp(2) z)
-fct: {
-    .label return = 4
-    .label return_1 = 6
-    .label return_2 = 8
-    .label z = 2
-    // [12] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2) -- vbuz1=vbuxx_band_pbuz2_derefidx_vbuc1 
-    ldy #2
-    txa
-    and (z),y
-    sta.z return_2
-    jmp __breturn
-    // fct::@return
-  __breturn:
-    // [13] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((byte*) 1104+(byte) 2) ← (byte) $f0 [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
-Statement [1] *((byte*) 1104+(byte) 3) ← (byte) $f [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
-Statement [12] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2) [ fct::return#2 ] ( fct:2 [ fct::return#2 ] { { fct::return#0 = fct::return#2 } }  fct:6 [ fct::return#2 ] { { fct::return#1 = fct::return#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [0] *((byte*) 1104+2) = $f0 [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
+Statement [1] *((byte*) 1104+3) = $f [ ] (  [ ] { { fct::return#0 = fct::return#2 } }  ) always clobbers reg byte a 
+Statement [12] fct::return#2 = fct::x#2 & fct::z#2[2] [ fct::return#2 ] ( fct:2 [ fct::return#2 ] { { fct::return#0 = fct::return#2 } }  fct:6 [ fct::return#2 ] { { fct::return#1 = fct::return#2 } }  ) always clobbers reg byte a reg byte y 
 Potential registers reg byte x [ fct::x#2 ] : reg byte x , 
 Potential registers zp[2]:2 [ fct::z#2 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ fct::return#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
@@ -393,47 +299,47 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .label screen = $400
-    // [0] *((byte*) 1104+(byte) 2) ← (byte) $f0 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*) 1104+2) = $f0 -- _deref_pbuc1=vbuc2 
     lda #$f0
     sta $450+2
-    // [1] *((byte*) 1104+(byte) 3) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*) 1104+3) = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta $450+3
     // [2] call fct 
     // [11] phi from main to fct [phi:main->fct]
   fct_from_main:
-    // [11] phi (byte*) fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
     lda #<$450
     sta.z fct.z
     lda #>$450
     sta.z fct.z+1
-    // [11] phi (byte) fct::x#2 = (byte) $aa [phi:main->fct#1] -- vbuxx=vbuc1 
+    // [11] phi fct::x#2 = $aa [phi:main->fct#1] -- vbuxx=vbuc1 
     ldx #$aa
     jsr fct
-    // [3] (byte) fct::return#0 ← (byte) fct::return#2
+    // [3] fct::return#0 = fct::return#2
     jmp __b1
     // main::@1
   __b1:
-    // [4] (byte) main::a1#0 ← (byte) fct::return#0
-    // [5] *((const byte*) main::screen) ← (byte) main::a1#0 -- _deref_pbuc1=vbuaa 
+    // [4] main::a1#0 = fct::return#0
+    // [5] *main::screen = main::a1#0 -- _deref_pbuc1=vbuaa 
     sta screen
     // [6] call fct 
     // [11] phi from main::@1 to fct [phi:main::@1->fct]
   fct_from___b1:
-    // [11] phi (byte*) fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
     lda #<$450+1
     sta.z fct.z
     lda #>$450+1
     sta.z fct.z+1
-    // [11] phi (byte) fct::x#2 = (byte) $55 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
+    // [11] phi fct::x#2 = $55 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
     ldx #$55
     jsr fct
-    // [7] (byte) fct::return#1 ← (byte) fct::return#2
+    // [7] fct::return#1 = fct::return#2
     jmp __b2
     // main::@2
   __b2:
-    // [8] (byte) main::a2#0 ← (byte) fct::return#1
-    // [9] *((const byte*) main::screen+(byte) 1) ← (byte) main::a2#0 -- _deref_pbuc1=vbuaa 
+    // [8] main::a2#0 = fct::return#1
+    // [9] *(main::screen+1) = main::a2#0 -- _deref_pbuc1=vbuaa 
     sta screen+1
     jmp __breturn
     // main::@return
@@ -445,7 +351,7 @@ main: {
 // fct(byte register(X) x, byte* zp(2) z)
 fct: {
     .label z = 2
-    // [12] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2) -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
+    // [12] fct::return#2 = fct::x#2 & fct::z#2[2] -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
     ldy #2
     txa
     and (z),y
@@ -472,28 +378,28 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(byte()) fct((byte) fct::x , (byte*) fct::z)
-(label) fct::@return
-(byte) fct::a !reg byte a
-(byte) fct::return
-(byte) fct::return#0 reg byte a 4.0
-(byte) fct::return#1 reg byte a 4.0
-(byte) fct::return#2 reg byte a 3.75
-(byte) fct::x !reg byte x
-(byte) fct::x#2 !reg byte x 11.0
-(byte*) fct::z
-(byte*) fct::z#2 z zp[2]:2 11.0
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@return
-(byte) main::a1
-(byte) main::a1#0 reg byte a 4.0
-(byte) main::a2
-(byte) main::a2#0 reg byte a 4.0
-(const byte*) main::screen = (byte*) 1024
-(byte) main::x
-(byte*) main::z
+byte fct(byte fct::x , byte* fct::z)
+label fct::@return
+byte fct::a !reg byte a
+byte fct::return
+byte fct::return#0 reg byte a 4.0
+byte fct::return#1 reg byte a 4.0
+byte fct::return#2 reg byte a 3.75
+byte fct::x !reg byte x
+byte fct::x#2 !reg byte x 11.0
+byte* fct::z
+byte* fct::z#2 z zp[2]:2 11.0
+void main()
+label main::@1
+label main::@2
+label main::@return
+byte main::a1
+byte main::a1#0 reg byte a 4.0
+byte main::a2
+byte main::a2#0 reg byte a 4.0
+const byte* main::screen = (byte*) 1024
+byte main::x
+byte* main::z
 
 reg byte x [ fct::x#2 ]
 zp[2]:2 [ fct::z#2 ]
@@ -519,50 +425,50 @@ Score: 77
 main: {
     .label screen = $400
     // z[2] = $f0
-    // [0] *((byte*) 1104+(byte) 2) ← (byte) $f0 -- _deref_pbuc1=vbuc2 
+    // [0] *((byte*) 1104+2) = $f0 -- _deref_pbuc1=vbuc2 
     lda #$f0
     sta $450+2
     // z[3] = $0f
-    // [1] *((byte*) 1104+(byte) 3) ← (byte) $f -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*) 1104+3) = $f -- _deref_pbuc1=vbuc2 
     lda #$f
     sta $450+3
     // fct(x, z)
     // [2] call fct 
     // [11] phi from main to fct [phi:main->fct]
-    // [11] phi (byte*) fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = (byte*) 1104 [phi:main->fct#0] -- pbuz1=pbuc1 
     lda #<$450
     sta.z fct.z
     lda #>$450
     sta.z fct.z+1
-    // [11] phi (byte) fct::x#2 = (byte) $aa [phi:main->fct#1] -- vbuxx=vbuc1 
+    // [11] phi fct::x#2 = $aa [phi:main->fct#1] -- vbuxx=vbuc1 
     ldx #$aa
     jsr fct
     // fct(x, z)
-    // [3] (byte) fct::return#0 ← (byte) fct::return#2
+    // [3] fct::return#0 = fct::return#2
     // main::@1
     // a1 = fct(x, z)
-    // [4] (byte) main::a1#0 ← (byte) fct::return#0
+    // [4] main::a1#0 = fct::return#0
     // screen[0] = a1
-    // [5] *((const byte*) main::screen) ← (byte) main::a1#0 -- _deref_pbuc1=vbuaa 
+    // [5] *main::screen = main::a1#0 -- _deref_pbuc1=vbuaa 
     sta screen
     // fct(x, z)
     // [6] call fct 
     // [11] phi from main::@1 to fct [phi:main::@1->fct]
-    // [11] phi (byte*) fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
+    // [11] phi fct::z#2 = ++(byte*) 1104 [phi:main::@1->fct#0] -- pbuz1=pbuc1 
     lda #<$450+1
     sta.z fct.z
     lda #>$450+1
     sta.z fct.z+1
-    // [11] phi (byte) fct::x#2 = (byte) $55 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
+    // [11] phi fct::x#2 = $55 [phi:main::@1->fct#1] -- vbuxx=vbuc1 
     ldx #$55
     jsr fct
     // fct(x, z)
-    // [7] (byte) fct::return#1 ← (byte) fct::return#2
+    // [7] fct::return#1 = fct::return#2
     // main::@2
     // a2 = fct(x, z)
-    // [8] (byte) main::a2#0 ← (byte) fct::return#1
+    // [8] main::a2#0 = fct::return#1
     // screen[1] = a2
-    // [9] *((const byte*) main::screen+(byte) 1) ← (byte) main::a2#0 -- _deref_pbuc1=vbuaa 
+    // [9] *(main::screen+1) = main::a2#0 -- _deref_pbuc1=vbuaa 
     sta screen+1
     // main::@return
     // }
@@ -574,7 +480,7 @@ main: {
 fct: {
     .label z = 2
     // x & z[2]
-    // [12] (byte) fct::return#2 ← (byte) fct::x#2 & *((byte*) fct::z#2 + (byte) 2) -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
+    // [12] fct::return#2 = fct::x#2 & fct::z#2[2] -- vbuaa=vbuxx_band_pbuz1_derefidx_vbuc1 
     ldy #2
     txa
     and (z),y

@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  }
-  *((byte*)(number) $400) ← (byte) 'c'
+  *((byte*)$400) = 'c'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,11 +21,11 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -41,10 +41,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  }
-  [1] *((byte*) 1024) ← (byte) 'c'
+  [1] *((byte*) 1024) = 'c'
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -52,42 +52,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Example of inline ASM where a JMP is erronously culled during compilation
-// https://gitlab.com/camelot/kickc/issues/302
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  // main
-main: {
-    // asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  }
-    jmp qwe
-    .byte 0, 25, 51, 76, 102, 128, 153, 179, 204, 230
-  qwe:
-    lda #$32
-    // [1] *((byte*) 1024) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
-    lda #'c'
-    sta $400
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement asm { jmpqwe .byte0,25,51,76,102,128,153,179,204,230 qwe: lda#50  } always clobbers reg byte a 
-Statement [1] *((byte*) 1024) ← (byte) 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*) 1024) = 'c' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -112,7 +83,7 @@ main: {
     .byte 0, 25, 51, 76, 102, 128, 153, 179, 204, 230
   qwe:
     lda #$32
-    // [1] *((byte*) 1024) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*) 1024) = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta $400
     jmp __breturn
@@ -130,8 +101,8 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(void()) main()
-(label) main::@return
+void main()
+label main::@return
 
 
 
@@ -155,7 +126,7 @@ main: {
   qwe:
     lda #$32
     // *((char*)0x0400) = 'c'
-    // [1] *((byte*) 1024) ← (byte) 'c' -- _deref_pbuc1=vbuc2 
+    // [1] *((byte*) 1024) = 'c' -- _deref_pbuc1=vbuc2 
     lda #'c'
     sta $400
     // main::@return

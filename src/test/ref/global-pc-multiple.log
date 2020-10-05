@@ -1,7 +1,7 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
   asm { sei  }
   to:main::@1
@@ -9,8 +9,8 @@ main::@1: scope:[main]  from main main::@4 main::@5
   if(true) goto main::@2
   to:main::@return
 main::@2: scope:[main]  from main::@1
-  (bool~) main::$0 ← *((const nomodify byte*) RASTER) < (number) $1e
-  if((bool~) main::$0) goto main::@3
+  main::$0 = *RASTER < $1e
+  if(main::$0) goto main::@3
   to:main::@4
 main::@3: scope:[main]  from main::@2
   call incScreen 
@@ -18,21 +18,21 @@ main::@3: scope:[main]  from main::@2
 main::@5: scope:[main]  from main::@3
   to:main::@1
 main::@4: scope:[main]  from main::@2
-  *((const nomodify byte*) BG_COLOR) ← (number) 0
+  *BG_COLOR = 0
   to:main::@1
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) incScreen()
+void incScreen()
 incScreen: scope:[incScreen]  from main::@3
-  *((const nomodify byte*) BG_COLOR) ← *((const nomodify byte*) RASTER)
+  *BG_COLOR = *RASTER
   to:incScreen::@return
 incScreen::@return: scope:[incScreen]  from incScreen
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -43,36 +43,36 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BG_COLOR = (byte*)(number) $d021
-(const nomodify byte*) RASTER = (byte*)(number) $d012
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) incScreen()
-(label) incScreen::@return
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@2
-(label) main::@3
-(label) main::@4
-(label) main::@5
-(label) main::@return
+const nomodify byte* BG_COLOR = (byte*)$d021
+const nomodify byte* RASTER = (byte*)$d012
+void __start()
+label __start::@1
+label __start::@return
+void incScreen()
+label incScreen::@return
+void main()
+bool~ main::$0
+label main::@1
+label main::@2
+label main::@3
+label main::@4
+label main::@5
+label main::@return
 
-Adding number conversion cast (unumber) $1e in (bool~) main::$0 ← *((const nomodify byte*) RASTER) < (number) $1e
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) BG_COLOR) ← (number) 0
+Adding number conversion cast (unumber) $1e in main::$0 = *RASTER < $1e
+Adding number conversion cast (unumber) 0 in *BG_COLOR = 0
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) BG_COLOR) ← (unumber)(number) 0
+Inlining cast *BG_COLOR = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant pointer cast (byte*) 53266
 Simplifying constant integer cast $1e
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $1e
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type $1e
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simple Condition (bool~) main::$0 [3] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@3
+Simple Condition main::$0 [3] if(*RASTER<$1e) goto main::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [1] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -91,8 +91,8 @@ Calls in [main] to incScreen:5
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) main::@1
-Culled Empty Block (label) main::@5
+Culled Empty Block label main::@1
+Culled Empty Block label main::@5
 Renumbering block main::@2 to main::@1
 Renumbering block main::@3 to main::@2
 Renumbering block main::@4 to main::@3
@@ -100,24 +100,24 @@ Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
   asm { sei  }
   to:main::@1
 main::@1: scope:[main]  from main main::@2 main::@3
-  [1] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2
+  [1] if(*RASTER<$1e) goto main::@2
   to:main::@3
 main::@3: scope:[main]  from main::@1
-  [2] *((const nomodify byte*) BG_COLOR) ← (byte) 0
+  [2] *BG_COLOR = 0
   to:main::@1
 main::@2: scope:[main]  from main::@1
   [3] phi()
   [4] call incScreen 
   to:main::@1
 
-(void()) incScreen()
+void incScreen()
 incScreen: scope:[incScreen]  from main::@2
-  [5] *((const nomodify byte*) BG_COLOR) ← *((const nomodify byte*) RASTER)
+  [5] *BG_COLOR = *RASTER
   to:incScreen::@return
 incScreen::@return: scope:[incScreen]  from incScreen
   [6] return 
@@ -125,67 +125,15 @@ incScreen::@return: scope:[incScreen]  from incScreen
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) incScreen()
-(void()) main()
+void incScreen()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test setting the program PC through a #pc directive
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $2000 "Program"
-  // Global Constants & labels
-  .label BG_COLOR = $d021
-  .label RASTER = $d012
-  // main
-main: {
-    // asm { sei  }
-    sei
-    jmp __b1
-    // main::@1
-  __b1:
-    // [1] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
-    lda RASTER
-    cmp #$1e
-    bcc __b2_from___b1
-    jmp __b3
-    // main::@3
-  __b3:
-    // [2] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
-    lda #0
-    sta BG_COLOR
-    jmp __b1
-    // [3] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
-  __b2_from___b1:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [4] call incScreen 
-    jsr incScreen
-    jmp __b1
-}
-  // incScreen
-incScreen: {
-    // [5] *((const nomodify byte*) BG_COLOR) ← *((const nomodify byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
-    lda RASTER
-    sta BG_COLOR
-    jmp __breturn
-    // incScreen::@return
-  __breturn:
-    // [6] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] *((const nomodify byte*) BG_COLOR) ← (byte) 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) BG_COLOR) ← *((const nomodify byte*) RASTER) [ ] ( incScreen:4 [ ] { }  ) always clobbers reg byte a 
+Statement [1] if(*RASTER<$1e) goto main::@2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [5] *BG_COLOR = *RASTER [ ] ( incScreen:4 [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -213,14 +161,14 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [1] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [1] if(*RASTER<$1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$1e
     bcc __b2_from___b1
     jmp __b3
     // main::@3
   __b3:
-    // [2] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [2] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BG_COLOR
     jmp __b1
@@ -235,7 +183,7 @@ main: {
 }
   // incScreen
 incScreen: {
-    // [5] *((const nomodify byte*) BG_COLOR) ← *((const nomodify byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *BG_COLOR = *RASTER -- _deref_pbuc1=_deref_pbuc2 
     lda RASTER
     sta BG_COLOR
     jmp __breturn
@@ -260,14 +208,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BG_COLOR = (byte*) 53281
-(const nomodify byte*) RASTER = (byte*) 53266
-(void()) incScreen()
-(label) incScreen::@return
-(void()) main()
-(label) main::@1
-(label) main::@2
-(label) main::@3
+const nomodify byte* BG_COLOR = (byte*) 53281
+const nomodify byte* RASTER = (byte*) 53266
+void incScreen()
+label incScreen::@return
+void main()
+label main::@1
+label main::@2
+label main::@3
 
 
 
@@ -291,13 +239,13 @@ main: {
     // main::@1
   __b1:
     // if(*RASTER<30)
-    // [1] if(*((const nomodify byte*) RASTER)<(byte) $1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
+    // [1] if(*RASTER<$1e) goto main::@2 -- _deref_pbuc1_lt_vbuc2_then_la1 
     lda RASTER
     cmp #$1e
     bcc __b2
     // main::@3
     // *BG_COLOR = 0
-    // [2] *((const nomodify byte*) BG_COLOR) ← (byte) 0 -- _deref_pbuc1=vbuc2 
+    // [2] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BG_COLOR
     jmp __b1
@@ -312,7 +260,7 @@ main: {
   // incScreen
 incScreen: {
     // *BG_COLOR = *RASTER
-    // [5] *((const nomodify byte*) BG_COLOR) ← *((const nomodify byte*) RASTER) -- _deref_pbuc1=_deref_pbuc2 
+    // [5] *BG_COLOR = *RASTER -- _deref_pbuc1=_deref_pbuc2 
     lda RASTER
     sta BG_COLOR
     // incScreen::@return

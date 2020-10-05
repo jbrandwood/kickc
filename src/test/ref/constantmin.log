@@ -2,115 +2,115 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  (byte*) BG_COLOR#2 ← phi( __start::@1/(byte*) BG_COLOR#4 )
-  *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR
-  *((byte*) BG_COLOR#2) ← (const byte) RED
-  (byte) main::i#0 ← (byte) $28
+  BG_COLOR#2 = phi( __start::@1/BG_COLOR#4 )
+  *SCREEN = STAR
+  *BG_COLOR#2 = RED
+  main::i#0 = $28
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  (byte) main::i#2 ← phi( main/(byte) main::i#0 main::@1/(byte) main::i#1 )
-  *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(number) 1
-  (byte) main::i#1 ← (byte) main::i#2 + rangenext($28,$4f)
-  (bool~) main::$0 ← (byte) main::i#1 != rangelast($28,$4f)
-  if((bool~) main::$0) goto main::@1
+  main::i#2 = phi( main/main::i#0, main::@1/main::i#1 )
+  SCREEN[main::i#2] = STAR+1
+  main::i#1 = main::i#2 + rangenext($28,$4f)
+  main::$0 = main::i#1 != rangelast($28,$4f)
+  if(main::$0) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (byte*~) __start::__init1_$0 ← (const byte*) VIC + (number) $10*(number) 2
-  (byte*~) __start::__init1_$1 ← (byte*~) __start::__init1_$0 + (number) 1
-  (byte*) BG_COLOR#0 ← (byte*~) __start::__init1_$1
+  __start::__init1_$0 = VIC + $10*2
+  __start::__init1_$1 = __start::__init1_$0 + 1
+  BG_COLOR#0 = __start::__init1_$1
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
-  (byte*) BG_COLOR#4 ← phi( __start::__init1/(byte*) BG_COLOR#0 )
+  BG_COLOR#4 = phi( __start::__init1/BG_COLOR#0 )
   call main 
   to:__start::@2
 __start::@2: scope:[__start]  from __start::@1
-  (byte*) BG_COLOR#5 ← phi( __start::@1/(byte*) BG_COLOR#4 )
+  BG_COLOR#5 = phi( __start::@1/BG_COLOR#4 )
   to:__start::@return
 __start::@return: scope:[__start]  from __start::@2
-  (byte*) BG_COLOR#3 ← phi( __start::@2/(byte*) BG_COLOR#5 )
-  (byte*) BG_COLOR#1 ← (byte*) BG_COLOR#3
+  BG_COLOR#3 = phi( __start::@2/BG_COLOR#5 )
+  BG_COLOR#1 = BG_COLOR#3
   return 
   to:@return
 
 SYMBOL TABLE SSA
-(byte*) BG_COLOR
-(byte*) BG_COLOR#0
-(byte*) BG_COLOR#1
-(byte*) BG_COLOR#2
-(byte*) BG_COLOR#3
-(byte*) BG_COLOR#4
-(byte*) BG_COLOR#5
-(const byte) RED = (byte) 2
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(const nomodify byte) STAR = (byte) $51
-(const byte*) VIC = (byte*)(number) $d000
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(byte*~) __start::__init1_$0
-(byte*~) __start::__init1_$1
-(void()) main()
-(bool~) main::$0
-(label) main::@1
-(label) main::@return
-(byte) main::i
-(byte) main::i#0
-(byte) main::i#1
-(byte) main::i#2
+byte* BG_COLOR
+byte* BG_COLOR#0
+byte* BG_COLOR#1
+byte* BG_COLOR#2
+byte* BG_COLOR#3
+byte* BG_COLOR#4
+byte* BG_COLOR#5
+const byte RED = 2
+const nomodify byte* SCREEN = (byte*)$400
+const nomodify byte STAR = $51
+const byte* VIC = (byte*)$d000
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+byte*~ __start::__init1_$0
+byte*~ __start::__init1_$1
+void main()
+bool~ main::$0
+label main::@1
+label main::@return
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
 
-Adding number conversion cast (unumber) STAR+1 in *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(number) 1
-Adding number conversion cast (unumber) 1 in *((const nomodify byte*) SCREEN + (byte) main::i#2) ← ((unumber)) (const nomodify byte) STAR+(number) 1
-Adding number conversion cast (unumber) $10*2 in (byte*~) __start::__init1_$0 ← (const byte*) VIC + (number) $10*(number) 2
-Adding number conversion cast (unumber) 1 in (byte*~) __start::__init1_$1 ← (byte*~) __start::__init1_$0 + (number) 1
+Adding number conversion cast (unumber) STAR+1 in SCREEN[main::i#2] = STAR+1
+Adding number conversion cast (unumber) 1 in SCREEN[main::i#2] = ((unumber)) STAR+1
+Adding number conversion cast (unumber) $10*2 in __start::__init1_$0 = VIC + $10*2
+Adding number conversion cast (unumber) 1 in __start::__init1_$1 = __start::__init1_$0 + 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (unumber)(const nomodify byte) STAR+(unumber)(number) 1
+Inlining cast SCREEN[main::i#2] = (unumber)STAR+(unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53248
-Simplifying constant integer cast (const nomodify byte) STAR+(unumber)(number) 1
+Simplifying constant integer cast STAR+(unumber)1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 1
-Finalized unsigned number type (byte) 1
+Finalized unsigned number type 1
+Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias BG_COLOR#0 = __start::__init1_$1 BG_COLOR#4 BG_COLOR#5 BG_COLOR#3 BG_COLOR#1 
 Successful SSA optimization Pass2AliasElimination
-Identical Phi Values (byte*) BG_COLOR#2 (byte*) BG_COLOR#0
+Identical Phi Values BG_COLOR#2 BG_COLOR#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Simple Condition (bool~) main::$0 [8] if((byte) main::i#1!=rangelast($28,$4f)) goto main::@1
+Simple Condition main::$0 [8] if(main::i#1!=rangelast($28,$4f)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [10] (byte*~) __start::__init1_$0 ← (const byte*) VIC + (byte)(number) $10*(number) 2
+Constant right-side identified [10] __start::__init1_$0 = VIC + (byte)$10*2
 Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant (const byte) main::i#0 = $28
-Constant (const byte*) __start::__init1_$0 = VIC+(byte)$10*2
+Constant main::i#0 = $28
+Constant __start::__init1_$0 = VIC+(byte)$10*2
 Successful SSA optimization Pass2ConstantIdentification
-Resolved ranged next value [6] main::i#1 ← ++ main::i#2 to ++
-Resolved ranged comparison value [8] if(main::i#1!=rangelast($28,$4f)) goto main::@1 to (number) $50
-Converting *(pointer+n) to pointer[n] [2] *((byte*) BG_COLOR#0) ← (const byte) RED  -- *(__start::__init1_$0 + 1)
+Resolved ranged next value [6] main::i#1 = ++ main::i#2 to ++
+Resolved ranged comparison value [8] if(main::i#1!=rangelast($28,$4f)) goto main::@1 to $50
+Converting *(pointer+n) to pointer[n] [2] *BG_COLOR#0 = RED  -- __start::__init1_$0[1]
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable (byte*) BG_COLOR#0 and assignment [7] (byte*) BG_COLOR#0 ← (const byte*) __start::__init1_$0 + (byte) 1
+Eliminating unused variable BG_COLOR#0 and assignment [7] BG_COLOR#0 = __start::__init1_$0 + 1
 Successful SSA optimization PassNEliminateUnusedVars
-Adding number conversion cast (unumber) $50 in [5] if((byte) main::i#1!=(number) $50) goto main::@1
+Adding number conversion cast (unumber) $50 in [5] if(main::i#1!=$50) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $50
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) $50
+Finalized unsigned number type $50
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inlining constant with var siblings (const byte) main::i#0
-Constant inlined __start::__init1_$0 = (const byte*) VIC+(byte)(number) $10*(number) 2
-Constant inlined main::i#0 = (byte) $28
+Inlining constant with var siblings main::i#0
+Constant inlined __start::__init1_$0 = VIC+(byte)$10*2
+Constant inlined main::i#0 = $28
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(VIC+(byte)$10*2+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
@@ -125,22 +125,22 @@ Added new block during phi lifting main::@2(between main::@1 and main::@1)
 CALL GRAPH
 
 Created 1 initial phi equivalence classes
-Coalesced [7] main::i#3 ← main::i#1
+Coalesced [7] main::i#3 = main::i#1
 Coalesced down to 1 phi equivalence classes
-Culled Empty Block (label) main::@2
+Culled Empty Block label main::@2
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR
-  [1] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED
+  [0] *SCREEN = STAR
+  [1] *(VIC+(byte)$10*2+1) = RED
   to:main::@1
 main::@1: scope:[main]  from main main::@1
-  [2] (byte) main::i#2 ← phi( main/(byte) $28 main::@1/(byte) main::i#1 )
-  [3] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1
-  [4] (byte) main::i#1 ← ++ (byte) main::i#2
-  [5] if((byte) main::i#1!=(byte) $50) goto main::@1
+  [2] main::i#2 = phi( main/$28, main::@1/main::i#1 )
+  [3] SCREEN[main::i#2] = STAR+1
+  [4] main::i#1 = ++ main::i#2
+  [5] if(main::i#1!=$50) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [6] return 
@@ -148,77 +148,25 @@ main::@return: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-(byte*) BG_COLOR
-(void()) main()
-(byte) main::i
-(byte) main::i#1 16.5
-(byte) main::i#2 16.5
+byte* BG_COLOR
+void main()
+byte main::i
+byte main::i#1 16.5
+byte main::i#2 16.5
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const STAR = $51
-  .const RED = 2
-  .label SCREEN = $400
-  .label VIC = $d000
-  // main
-main: {
-    .label i = 2
-    // [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
-    lda #STAR
-    sta SCREEN
-    // [1] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED -- _deref_pbuc1=vbuc2 
-    lda #RED
-    sta VIC+$10*2+1
-    // [2] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
-    // [2] phi (byte) main::i#2 = (byte) $28 [phi:main->main::@1#0] -- vbuz1=vbuc1 
-    lda #$28
-    sta.z i
-    jmp __b1
-    // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
-    jmp __b1
-    // main::@1
-  __b1:
-    // [3] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #STAR+1
-    ldy.z i
-    sta SCREEN,y
-    // [4] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuz1=_inc_vbuz1 
-    inc.z i
-    // [5] if((byte) main::i#1!=(byte) $50) goto main::@1 -- vbuz1_neq_vbuc1_then_la1 
-    lda #$50
-    cmp.z i
-    bne __b1_from___b1
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [6] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = STAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(VIC+(byte)$10*2+1) = RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] SCREEN[main::i#2] = STAR+1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
-Statement [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [3] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
+Statement [0] *SCREEN = STAR [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(VIC+(byte)$10*2+1) = RED [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] SCREEN[main::i#2] = STAR+1 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
@@ -241,29 +189,29 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label VIC = $d000
   // main
 main: {
-    // [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = STAR -- _deref_pbuc1=vbuc2 
     lda #STAR
     sta SCREEN
-    // [1] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [1] *(VIC+(byte)$10*2+1) = RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta VIC+$10*2+1
     // [2] phi from main to main::@1 [phi:main->main::@1]
   __b1_from_main:
-    // [2] phi (byte) main::i#2 = (byte) $28 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [2] phi main::i#2 = $28 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #$28
     jmp __b1
     // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
   __b1_from___b1:
-    // [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [2] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     jmp __b1
     // main::@1
   __b1:
-    // [3] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [3] SCREEN[main::i#2] = STAR+1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #STAR+1
     sta SCREEN,x
-    // [4] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [4] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] if((byte) main::i#1!=(byte) $50) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [5] if(main::i#1!=$50) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$50
     bne __b1_from___b1
     jmp __breturn
@@ -288,17 +236,17 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 
 FINAL SYMBOL TABLE
-(byte*) BG_COLOR
-(const byte) RED = (byte) 2
-(const nomodify byte*) SCREEN = (byte*) 1024
-(const nomodify byte) STAR = (byte) $51
-(const byte*) VIC = (byte*) 53248
-(void()) main()
-(label) main::@1
-(label) main::@return
-(byte) main::i
-(byte) main::i#1 reg byte x 16.5
-(byte) main::i#2 reg byte x 16.5
+byte* BG_COLOR
+const byte RED = 2
+const nomodify byte* SCREEN = (byte*) 1024
+const nomodify byte STAR = $51
+const byte* VIC = (byte*) 53248
+void main()
+label main::@1
+label main::@return
+byte main::i
+byte main::i#1 reg byte x 16.5
+byte main::i#2 reg byte x 16.5
 
 reg byte x [ main::i#2 main::i#1 ]
 
@@ -319,28 +267,28 @@ Score: 173
   // main
 main: {
     // *SCREEN = STAR
-    // [0] *((const nomodify byte*) SCREEN) ← (const nomodify byte) STAR -- _deref_pbuc1=vbuc2 
+    // [0] *SCREEN = STAR -- _deref_pbuc1=vbuc2 
     lda #STAR
     sta SCREEN
     // *BG_COLOR = RED
-    // [1] *((const byte*) VIC+(byte)(number) $10*(number) 2+(byte) 1) ← (const byte) RED -- _deref_pbuc1=vbuc2 
+    // [1] *(VIC+(byte)$10*2+1) = RED -- _deref_pbuc1=vbuc2 
     lda #RED
     sta VIC+$10*2+1
     // [2] phi from main to main::@1 [phi:main->main::@1]
-    // [2] phi (byte) main::i#2 = (byte) $28 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    // [2] phi main::i#2 = $28 [phi:main->main::@1#0] -- vbuxx=vbuc1 
     ldx #$28
     // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [2] phi (byte) main::i#2 = (byte) main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
+    // [2] phi main::i#2 = main::i#1 [phi:main::@1->main::@1#0] -- register_copy 
     // main::@1
   __b1:
     // SCREEN[i] = (STAR+1)
-    // [3] *((const nomodify byte*) SCREEN + (byte) main::i#2) ← (const nomodify byte) STAR+(byte) 1 -- pbuc1_derefidx_vbuxx=vbuc2 
+    // [3] SCREEN[main::i#2] = STAR+1 -- pbuc1_derefidx_vbuxx=vbuc2 
     lda #STAR+1
     sta SCREEN,x
     // for(byte i: 40..79)
-    // [4] (byte) main::i#1 ← ++ (byte) main::i#2 -- vbuxx=_inc_vbuxx 
+    // [4] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] if((byte) main::i#1!=(byte) $50) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [5] if(main::i#1!=$50) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$50
     bne __b1
     // main::@return

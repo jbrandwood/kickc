@@ -642,9 +642,9 @@ public class Compiler {
 
       // Initial Code generation
       new Pass4CodeGeneration(program, false, program.isWarnFragmentMissing()).generate();
-      getLog().append("\nINITIAL ASM");
-      getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " + program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
-      getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
+      //getLog().append("\nINITIAL ASM");
+      //getLog().append("Target platform is " + program.getTargetPlatform().getName() + " / " + program.getTargetCpu().getName().toUpperCase(Locale.ENGLISH));
+      //getLog().append(program.getAsm().toString(new AsmProgram.AsmPrintState(true), program));
       new Pass4AssertNoCpuClobber(program).check();
 
       if(disableUplift) {
@@ -716,11 +716,9 @@ public class Compiler {
       pass5Optimizations.add(new Pass5UnnecesaryLoadElimination(program));
       pass5Optimizations.add(new Pass5RedundantLabelElimination(program));
       pass5Optimizations.add(new Pass5UnusedLabelElimination(program));
-      //pass5Optimizations.add(new Pass5SkipBegin(program));
       pass5Optimizations.add(new Pass5DoubleJumpElimination(program));
       pass5Optimizations.add(new Pass5UnreachableCodeElimination(program));
       pass5Optimizations.add(new Pass5RelabelLongLabels(program));
-      //pass5Optimizations.add(new Pass5SkipBegin(program));
       pass5Optimizations.add(new Pass5AddMainRts(program));
       boolean asmOptimized = true;
       while(asmOptimized) {

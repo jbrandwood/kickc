@@ -2,19 +2,19 @@ Inlined call call __init
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  *((const nomodify byte*) SCREEN + (number) 0) ← (nomodify volatile byte) i
+  SCREEN[0] = i
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  (nomodify volatile byte) i ← (byte) 7
+  i = 7
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   call main 
@@ -26,24 +26,24 @@ __start::@return: scope:[__start]  from __start::@2
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@2
-(label) __start::@return
-(label) __start::__init1
-(nomodify volatile byte) i loadstore
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@2
+label __start::@return
+label __start::__init1
+nomodify volatile byte i loadstore
+void main()
+label main::@return
 
-Adding number conversion cast (unumber) 0 in *((const nomodify byte*) SCREEN + (number) 0) ← (nomodify volatile byte) i
+Adding number conversion cast (unumber) 0 in SCREEN[0] = i
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type (byte) 0
+Finalized unsigned number type 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Simplifying expression containing zero SCREEN in [0] *((const nomodify byte*) SCREEN + (byte) 0) ← (nomodify volatile byte) i
+Simplifying expression containing zero SCREEN in [0] SCREEN[0] = i
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -53,18 +53,18 @@ Calls in [__start] to main:3
 
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
-Culled Empty Block (label) __start::@2
+Culled Empty Block label __start::@2
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] (nomodify volatile byte) i ← (byte) 7
+  [1] i = 7
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -74,9 +74,9 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-(void()) main()
+void main()
 main: scope:[main]  from __start::@1
-  [5] *((const nomodify byte*) SCREEN) ← (nomodify volatile byte) i
+  [5] *SCREEN = i
   to:main::@return
 main::@return: scope:[main]  from main
   [6] return 
@@ -84,64 +84,18 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) __start()
-(nomodify volatile byte) i loadstore 6.5
-(void()) main()
+void __start()
+nomodify volatile byte i loadstore 6.5
+void main()
 
 Initial phi equivalence classes
 Added variable i to live range equivalence class [ i ]
 Complete equivalence classes
 [ i ]
 Allocated zp[1]:2 [ i ]
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Test that a volatile nomodify-variable works as expected
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(__start)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .label SCREEN = $400
-  .label i = 2
-  // __start
-__start: {
-    jmp __init1
-    // __start::__init1
-  __init1:
-    // [1] (nomodify volatile byte) i ← (byte) 7 -- vbuz1=vbuc1 
-    lda #7
-    sta.z i
-    // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
-  __b1_from___init1:
-    jmp __b1
-    // __start::@1
-  __b1:
-    // [3] call main 
-    jsr main
-    jmp __breturn
-    // __start::@return
-  __breturn:
-    // [4] return 
-    rts
-}
-  // main
-main: {
-    // [5] *((const nomodify byte*) SCREEN) ← (nomodify volatile byte) i -- _deref_pbuc1=vbuz1 
-    lda.z i
-    sta SCREEN
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [6] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] (nomodify volatile byte) i ← (byte) 7 [ i ] (  [ i ] { }  ) always clobbers reg byte a 
-Statement [5] *((const nomodify byte*) SCREEN) ← (nomodify volatile byte) i [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [1] i = 7 [ i ] (  [ i ] { }  ) always clobbers reg byte a 
+Statement [5] *SCREEN = i [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ i ] : zp[1]:2 , 
 
 REGISTER UPLIFT SCOPES
@@ -170,7 +124,7 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] (nomodify volatile byte) i ← (byte) 7 -- vbuz1=vbuc1 
+    // [1] i = 7 -- vbuz1=vbuc1 
     lda #7
     sta.z i
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -188,7 +142,7 @@ __start: {
 }
   // main
 main: {
-    // [5] *((const nomodify byte*) SCREEN) ← (nomodify volatile byte) i -- _deref_pbuc1=vbuz1 
+    // [5] *SCREEN = i -- _deref_pbuc1=vbuz1 
     lda.z i
     sta SCREEN
     jmp __breturn
@@ -214,14 +168,14 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(label) __start::__init1
-(nomodify volatile byte) i loadstore zp[1]:2 6.5
-(void()) main()
-(label) main::@return
+const nomodify byte* SCREEN = (byte*) 1024
+void __start()
+label __start::@1
+label __start::@return
+label __start::__init1
+nomodify volatile byte i loadstore zp[1]:2 6.5
+void main()
+label main::@return
 
 zp[1]:2 [ i ]
 
@@ -242,7 +196,7 @@ Score: 30
 __start: {
     // __start::__init1
     // i = 7
-    // [1] (nomodify volatile byte) i ← (byte) 7 -- vbuz1=vbuc1 
+    // [1] i = 7 -- vbuz1=vbuc1 
     lda #7
     sta.z i
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
@@ -256,7 +210,7 @@ __start: {
   // main
 main: {
     // SCREEN[0] = i
-    // [5] *((const nomodify byte*) SCREEN) ← (nomodify volatile byte) i -- _deref_pbuc1=vbuz1 
+    // [5] *SCREEN = i -- _deref_pbuc1=vbuz1 
     lda.z i
     sta SCREEN
     // main::@return

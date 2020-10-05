@@ -1,16 +1,16 @@
 
 CONTROL FLOW GRAPH SSA
 
-(void()) main()
+void main()
 main: scope:[main]  from __start
-  *((const nomodify byte*) BODY1) ← (byte) '*'
-  *((const nomodify byte*) BODY2) ← (byte) '*'
+  *BODY1 = '*'
+  *BODY2 = '*'
   to:main::@return
 main::@return: scope:[main]  from main
   return 
   to:@return
 
-(void()) __start()
+void __start()
 __start: scope:[__start]  from
   call main 
   to:__start::@1
@@ -21,18 +21,18 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
-(const nomodify byte*) BODY1 = (const nomodify byte*) SCREEN+(const nomodify byte) MARGIN_TOP*(const nomodify byte) LINE_LEN+(const nomodify byte) MARGIN_LEFT
-(const nomodify byte*) BODY2 = (const nomodify byte*) SCREEN+(const nomodify word) OFFSET
-(const nomodify byte) LINE_LEN = (byte) $28
-(const nomodify byte) MARGIN_LEFT = (byte) 4
-(const nomodify byte) MARGIN_TOP = (byte) 4
-(const nomodify word) OFFSET = (word)(number) $28*(number) 5+(number) 5
-(const nomodify byte*) SCREEN = (byte*)(number) $400
-(void()) __start()
-(label) __start::@1
-(label) __start::@return
-(void()) main()
-(label) main::@return
+const nomodify byte* BODY1 = SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
+const nomodify byte* BODY2 = SCREEN+OFFSET
+const nomodify byte LINE_LEN = $28
+const nomodify byte MARGIN_LEFT = 4
+const nomodify byte MARGIN_TOP = 4
+const nomodify word OFFSET = (word)$28*5+5
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+label __start::@1
+label __start::@return
+void main()
+label main::@return
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -48,10 +48,10 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-(void()) main()
+void main()
 main: scope:[main]  from
-  [0] *((const nomodify byte*) BODY1) ← (byte) '*'
-  [1] *((const nomodify byte*) BODY2) ← (byte) '*'
+  [0] *BODY1 = '*'
+  [1] *BODY2 = '*'
   to:main::@return
 main::@return: scope:[main]  from main
   [2] return 
@@ -59,46 +59,13 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-(void()) main()
+void main()
 
 Initial phi equivalence classes
 Complete equivalence classes
-
-INITIAL ASM
-Target platform is c64basic / MOS6502X
-  // File Comments
-// Tests a number of constant declarations
-  // Upstart
-.pc = $801 "Basic"
-:BasicUpstart(main)
-.pc = $80d "Program"
-  // Global Constants & labels
-  .const LINE_LEN = $28
-  .const MARGIN_TOP = 4
-  .const MARGIN_LEFT = 4
-  .const OFFSET = $28*5+5
-  .label SCREEN = $400
-  .label BODY1 = SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
-  .label BODY2 = SCREEN+OFFSET
-  // main
-main: {
-    // [0] *((const nomodify byte*) BODY1) ← (byte) '*' -- _deref_pbuc1=vbuc2 
-    lda #'*'
-    sta BODY1
-    // [1] *((const nomodify byte*) BODY2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
-    lda #'*'
-    sta BODY2
-    jmp __breturn
-    // main::@return
-  __breturn:
-    // [2] return 
-    rts
-}
-  // File Data
-
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *((const nomodify byte*) BODY1) ← (byte) '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *((const nomodify byte*) BODY2) ← (byte) '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *BODY1 = '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *BODY2 = '*' [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 
@@ -124,10 +91,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BODY2 = SCREEN+OFFSET
   // main
 main: {
-    // [0] *((const nomodify byte*) BODY1) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [0] *BODY1 = '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta BODY1
-    // [1] *((const nomodify byte*) BODY2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [1] *BODY2 = '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta BODY2
     jmp __breturn
@@ -147,15 +114,15 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-(const nomodify byte*) BODY1 = (const nomodify byte*) SCREEN+(const nomodify byte) MARGIN_TOP*(const nomodify byte) LINE_LEN+(const nomodify byte) MARGIN_LEFT
-(const nomodify byte*) BODY2 = (const nomodify byte*) SCREEN+(const nomodify word) OFFSET
-(const nomodify byte) LINE_LEN = (byte) $28
-(const nomodify byte) MARGIN_LEFT = (byte) 4
-(const nomodify byte) MARGIN_TOP = (byte) 4
-(const nomodify word) OFFSET = (word)(number) $28*(number) 5+(number) 5
-(const nomodify byte*) SCREEN = (byte*) 1024
-(void()) main()
-(label) main::@return
+const nomodify byte* BODY1 = SCREEN+MARGIN_TOP*LINE_LEN+MARGIN_LEFT
+const nomodify byte* BODY2 = SCREEN+OFFSET
+const nomodify byte LINE_LEN = $28
+const nomodify byte MARGIN_LEFT = 4
+const nomodify byte MARGIN_TOP = 4
+const nomodify word OFFSET = (word)$28*5+5
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+label main::@return
 
 
 
@@ -179,11 +146,11 @@ Score: 16
   // main
 main: {
     // *BODY1 = '*'
-    // [0] *((const nomodify byte*) BODY1) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [0] *BODY1 = '*' -- _deref_pbuc1=vbuc2 
     lda #'*'
     sta BODY1
     // *BODY2 = '*'
-    // [1] *((const nomodify byte*) BODY2) ← (byte) '*' -- _deref_pbuc1=vbuc2 
+    // [1] *BODY2 = '*' -- _deref_pbuc1=vbuc2 
     sta BODY2
     // main::@return
     // }

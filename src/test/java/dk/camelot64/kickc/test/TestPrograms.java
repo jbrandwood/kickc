@@ -1906,7 +1906,7 @@ public class TestPrograms {
 
    @Test
    public void testInitializer5() throws IOException, URISyntaxException {
-      compileAndCompare("initializer-5.c", log());
+      compileAndCompare("initializer-5.c");
    }
 
    /*
@@ -4317,7 +4317,7 @@ public class TestPrograms {
 
    @Test
    public void testIncD0202() throws IOException, URISyntaxException {
-      compileAndCompare("incd020-2.c", log());
+      compileAndCompare("incd020-2.c");
    }
 
    @Test

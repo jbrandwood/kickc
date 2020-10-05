@@ -80,7 +80,7 @@ public class StatementCallPointer extends StatementBase implements StatementLVal
       res.append(super.idxString());
       if(lValue != null) {
          res.append(lValue.toString(program));
-         res.append(" ← ");
+         res.append(" = ");
       }
       res.append("call ");
          res.append(procedure.toString(program) + " ");

@@ -57,11 +57,7 @@ public class ConstantInteger implements ConstantEnumerable<Long> {
 
    @Override
    public String toString(Program program) {
-      if(program == null) {
-         return AsmFormat.getAsmNumber(number);
-      } else {
-         return "(" + getType(program.getScope()).getTypeName() + ") " + AsmFormat.getAsmNumber(number);
-      }
+      return AsmFormat.getAsmNumber(number);
    }
 
    @Override

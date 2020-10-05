@@ -61,7 +61,7 @@ public class StatementCallFinalize extends StatementBase implements StatementLVa
       res.append(super.idxString());
       if(lValue != null) {
          res.append(lValue.toString(program));
-         res.append(" ← ");
+         res.append(" = ");
       }
       res.append("callfinalize ");
       if(procedure != null) {

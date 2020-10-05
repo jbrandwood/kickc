@@ -81,9 +81,14 @@ public class StatementPhiBlock extends StatementBase {
       for(PhiVariable phiVariable : variables) {
          s.append(super.idxString());
          s.append(phiVariable.getVariable().toString(program));
-         s.append(" ← phi(");
+         s.append(" = phi(");
+         boolean first = true;
          for(PhiRValue phiRValue : phiVariable.getValues()) {
-            s.append(" ");
+            if(first)
+               s.append(" ");
+            else
+               s.append(", ");
+            first = false;
             s.append(phiRValue.getPredecessor().toString(null));
             s.append("/");
             RValue rValue = phiRValue.getrValue();

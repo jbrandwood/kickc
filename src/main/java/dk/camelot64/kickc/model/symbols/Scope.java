@@ -370,7 +370,7 @@ public abstract class Scope implements Symbol, Serializable {
             Variable symVar = (Variable) symbol;
             if(!onlyVars || symVar.isVariable()) {
                // Output if not instructed to only output variables - or if it is a variable
-               res.append(symbol.toString(program));
+               res.append(symVar.typeString() + " " + symVar.toString());
                if(symVar.isArray()) {
                   res.append("[");
                   if(symVar.getArraySize() != null) {

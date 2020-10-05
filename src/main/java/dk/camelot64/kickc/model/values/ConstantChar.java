@@ -65,11 +65,7 @@ public class ConstantChar implements ConstantEnumerable<Character> {
    @Override
    public String toString(Program program) {
       String enc = (encoding.equals(StringEncoding.SCREENCODE_MIXED)) ? "" : encoding.suffix;
-      if(program == null) {
-         return "'" + value + "'" + enc;
-      } else {
-         return "(" + SymbolType.BYTE.getTypeName() + ") " + "'" + value + "'" + enc;
-      }
+      return "'" + value + "'" + enc;
    }
 
 }

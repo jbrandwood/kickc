@@ -629,13 +629,22 @@ public class Variable implements Symbol {
 
    @Override
    public String toString() {
-      return toString(null);
+      return getFullName();
    }
 
    @Override
    public String toString(Program program) {
-      return new StringBuilder()
-            .append("(")
+      return toString();
+   }
+
+   /**
+    * Get a string describing the type of the variable
+    *
+    * @return The type as a string
+    */
+   public String typeString() {
+      final StringBuilder print = new StringBuilder();
+      print
             .append(isKindConstant() ? "const " : "")
             .append(isNoModify() ? "nomodify " : "")
             .append(isVolatile() ? "volatile " : "")
@@ -643,8 +652,8 @@ public class Variable implements Symbol {
             .append(isToVolatile() ? "to_volatile " : "")
             .append(getType().getTypeName())
             .append(isKindIntermediate() ? "~" : "")
-            .append(") ")
-            .append(getFullName()).toString();
+            ;
+      return print.toString();
    }
 
    @Override

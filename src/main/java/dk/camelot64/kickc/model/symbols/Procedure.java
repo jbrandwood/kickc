@@ -256,9 +256,7 @@ public class Procedure extends Scope {
       if(interruptType != null) {
          res.append("interrupt(").append(interruptType).append(")");
       }
-      res.append("(").append(getType().getTypeName()).append(") ");
-      res.append(getFullName());
-      res.append("(");
+      res.append(getType().getTypeName()).append(" ").append(getFullName()).append("(");
       boolean first = true;
       if(parameterNames != null) {
          for(Variable parameter : getParameters()) {

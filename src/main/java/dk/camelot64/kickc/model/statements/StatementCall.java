@@ -89,7 +89,7 @@ public class StatementCall extends StatementBase implements StatementLValue, Sta
       res.append(super.idxString());
       if(lValue != null) {
          res.append(lValue.toString(program));
-         res.append(" ← ");
+         res.append(" = ");
       }
       res.append("call ");
       if(procedure != null) {

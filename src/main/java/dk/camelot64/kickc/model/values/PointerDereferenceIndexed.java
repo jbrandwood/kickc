@@ -37,7 +37,10 @@ public class PointerDereferenceIndexed implements PointerDereference {
 
    @Override
    public String toString(Program program) {
-      return "*(" + pointer.toString(program) + " + " + index.toString(program) + ')';
+      String pointerString = pointer.toString(program);
+      if(!pointerString.matches("[a-zA-Z0-9:#$]*"))
+         pointerString = "(" + pointerString + ")";
+      return pointerString + "[" + index.toString(program) + ']';
    }
 
 }

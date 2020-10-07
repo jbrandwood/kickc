@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testStrengthReduction6() throws IOException, URISyntaxException {
+      compileAndCompare("strength-reduction-6.c", log());
+   }
+
+   @Test
    public void testStrengthReduction5() throws IOException, URISyntaxException {
       compileAndCompare("strength-reduction-5.c", log());
    }

@@ -5,10 +5,12 @@ import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
 import dk.camelot64.kickc.model.symbols.Variable;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.LabelRef;
+import dk.camelot64.kickc.model.values.PointerDereference;
+import dk.camelot64.kickc.model.values.ScopeRef;
+import dk.camelot64.kickc.model.values.VariableRef;
 
 import java.util.Collection;
-import java.util.ListIterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,9 +30,7 @@ public class Pass2LoopInvariantHoisting extends Pass2SsaOptimization {
          // Look for loop invariant computations
          for(LabelRef loopBlockRef : loop.getBlocks()) {
             final ControlFlowBlock loopBlock = getGraph().getBlock(loopBlockRef);
-            final ListIterator<Statement> stmtIt = loopBlock.getStatements().listIterator();
-            while(stmtIt.hasNext()) {
-               Statement statement = stmtIt.next();
+            for(Statement statement : loopBlock.getStatements()) {
                if(statement instanceof StatementAssignment) {
                   StatementAssignment assignment = (StatementAssignment) statement;
                   boolean canHoist = isLoopInvariantComputation(assignment, loop);
@@ -55,23 +55,24 @@ public class Pass2LoopInvariantHoisting extends Pass2SsaOptimization {
       final StatementInfos statementInfos = getProgram().getStatementInfos();
       // We assume the statement is hoistable and try to find reasons not to
       AtomicBoolean canHoist = new AtomicBoolean(true);
-      // Is there a pointer deref of a pointer to volatile in the expression?
+
+      // Is there a pointer deref in the expression?
       ProgramValueIterator.execute(assignment, (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof PointerDereference) {
-            final RValue pointer = ((PointerDereference) programValue.get()).getPointer();
-            if(pointer instanceof SymbolVariableRef) {
-               final Variable pointerVar = getScope().getVar((SymbolVariableRef) pointer);
-               if(pointerVar.isToVolatile())
-                  canHoist.set(false);
-            }
+            canHoist.set(false);
          }
       }, null, null);
+
       if(!canHoist.get())
          return false;
-      // Examine whether all variables used (not defined) are defined outside the loop
+      // Examine whether any variables used (not defined) are defined outside the loop
       final Collection<VariableRef> usedVars = variableReferenceInfos.getUsedVars(assignment);
-      for(VariableRef usedVar : usedVars) {
-         final Collection<Integer> defineStatements = variableReferenceInfos.getVarDefineStatements(usedVar);
+      for(VariableRef usedVarRef : usedVars) {
+         final Variable usedVar = getScope().getVar(usedVarRef);
+         // Is the variable volatile
+         if(usedVar.isVolatile())
+            return false;
+         final Collection<Integer> defineStatements = variableReferenceInfos.getVarDefineStatements(usedVarRef);
          for(Integer defineStmtIdx : defineStatements) {
             final LabelRef defineBlockRef = statementInfos.getBlockRef(defineStmtIdx);
             // Is the variable defined inside the loop

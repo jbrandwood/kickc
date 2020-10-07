@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.passes;
 
 import dk.camelot64.kickc.model.*;
+import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.statements.StatementAssignment;
@@ -10,7 +11,9 @@ import dk.camelot64.kickc.model.values.PointerDereference;
 import dk.camelot64.kickc.model.values.ScopeRef;
 import dk.camelot64.kickc.model.values.VariableRef;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,15 +31,30 @@ public class Pass2LoopInvariantHoisting extends Pass2SsaOptimization {
       final NaturalLoopSet loops = getProgram().getLoopSet();
       for(NaturalLoop loop : loops.getLoops()) {
          // Look for loop invariant computations
+         List<Statement> hoistStatements = new ArrayList<>();
          for(LabelRef loopBlockRef : loop.getBlocks()) {
             final ControlFlowBlock loopBlock = getGraph().getBlock(loopBlockRef);
             for(Statement statement : loopBlock.getStatements()) {
                if(statement instanceof StatementAssignment) {
                   StatementAssignment assignment = (StatementAssignment) statement;
                   boolean canHoist = isLoopInvariantComputation(assignment, loop);
-                  if(canHoist)
-                     getLog().append("Statement can be hoisted out of loop " + statement.toString());
+                  if(canHoist) {
+                     hoistStatements.add(statement);
+                  }
                }
+            }
+         }
+
+         // Hoist the statements identified
+         if(hoistStatements.size()>0) {
+            final StatementInfos statementInfos = getProgram().getStatementInfos();
+            // Find or create a loop pre-header block
+            ControlFlowBlock preHeaderBlock = getPreHeaderBlock(loop);
+            for(Statement hoistStatement : hoistStatements) {
+               ControlFlowBlock stmtBlock = statementInfos.getBlock(hoistStatement);
+               stmtBlock.getStatements().removeIf(statement -> statement.equals(hoistStatement));
+               preHeaderBlock.addStatement(hoistStatement);
+               getLog().append("Hoisting  loop invariant computation statement out of loop from: " +stmtBlock.getLabel().toString()+" to " +preHeaderBlock.getLabel().toString() + " " +hoistStatement.toString());
             }
          }
       }
@@ -44,10 +62,31 @@ public class Pass2LoopInvariantHoisting extends Pass2SsaOptimization {
    }
 
    /**
+    * Finds or creates pre-header block for a loop.
+    * A pre-header is a block guaranteed to be executed exactly once just before entering the header of the loop.
+    *
+    * @param loop The loop in question
+    * @return The existing or newly created pre-header block
+    */
+   private ControlFlowBlock getPreHeaderBlock(NaturalLoop loop) {
+      ControlFlowBlock headBlock = getGraph().getBlock(loop.getHead());
+      List<ControlFlowBlock> headPredecessors = getGraph().getPredecessors(headBlock);
+      headPredecessors.removeIf(block -> loop.contains(block.getLabel()));
+      if(headPredecessors.size()==1) {
+         ControlFlowBlock preHeaderCandidate = headPredecessors.get(0);
+         List<ControlFlowBlock> preHeaderCandidatePredecessors = getGraph().getPredecessors(preHeaderCandidate);
+         if(preHeaderCandidatePredecessors.size()<=1)
+            return preHeaderCandidate;
+      }
+      // No pre-header block was found - we create one
+      throw new InternalError("No loop pre-header block found for "+loop.toString());
+   }
+
+   /**
     * Examine whether an assignment statement can be hoisted out of a loop
     *
     * @param assignment The assignment to examine
-    * @param loop The loop containing the assigmnent
+    * @param loop The loop containing the assignment
     * @return true if the assignment can be hoisted out of the loop
     */
    private boolean isLoopInvariantComputation(StatementAssignment assignment, NaturalLoop loop) {
@@ -65,6 +104,15 @@ public class Pass2LoopInvariantHoisting extends Pass2SsaOptimization {
 
       if(!canHoist.get())
          return false;
+
+      Collection<VariableRef> definedVars = variableReferenceInfos.getDefinedVars(assignment);
+      for(VariableRef definedVarRef : definedVars) {
+         Variable definedVar = getScope().getVar(definedVarRef);
+         // Is the variable volatile
+         if(definedVar.isVolatile())
+            return false;
+      }
+
       // Examine whether any variables used (not defined) are defined outside the loop
       final Collection<VariableRef> usedVars = variableReferenceInfos.getUsedVars(assignment);
       for(VariableRef usedVarRef : usedVars) {

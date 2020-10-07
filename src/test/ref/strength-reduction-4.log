@@ -1,0 +1,290 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::x#0 = SCREEN[0]
+  main::c#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::x#2 = phi( main/main::x#0, main::@2/main::x#1 )
+  main::c#2 = phi( main/main::c#0, main::@2/main::c#1 )
+  main::$0 = main::c#2 < $28
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::c#3 = phi( main::@1/main::c#2 )
+  main::x#1 = phi( main::@1/main::x#2 )
+  main::$1 = main::x#1 + 5
+  main::$2 = main::$1 * 2
+  SCREEN[main::c#3] = main::$2
+  main::c#1 = ++ main::c#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+void main()
+bool~ main::$0
+number~ main::$1
+number~ main::$2
+byte main::c
+byte main::c#0
+byte main::c#1
+byte main::c#2
+byte main::c#3
+byte main::x
+byte main::x#0
+byte main::x#1
+byte main::x#2
+
+Adding number conversion cast (unumber) 0 in main::x#0 = SCREEN[0]
+Adding number conversion cast (unumber) $28 in main::$0 = main::c#2 < $28
+Adding number conversion cast (unumber) 5 in main::$1 = main::x#1 + 5
+Adding number conversion cast (unumber) main::$1 in main::$1 = main::x#1 + (unumber)5
+Adding number conversion cast (unumber) 2 in main::$2 = main::$1 * 2
+Adding number conversion cast (unumber) main::$2 in main::$2 = main::$1 * (unumber)2
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 0
+Simplifying constant integer cast $28
+Simplifying constant integer cast 5
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type 0
+Finalized unsigned number type $28
+Finalized unsigned number type 5
+Finalized unsigned number type 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in main::$1 = main::x#1 + 5
+Inferred type updated to byte in main::$2 = main::$1 * 2
+Alias main::x#1 = main::x#2 
+Alias main::c#2 = main::c#3 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::x#1 main::x#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Hoisting  loop invariant computation statement out of loop from: main::@2 to main [5] main::$1 = main::x#0 + 5
+Simple Condition main::$0 [5] if(main::c#2<$28) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::c#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SCREEN in [0] main::x#0 = SCREEN[0]
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Hoisting  loop invariant computation statement out of loop from: main::@2 to main [4] main::$2 = main::$1 * 2
+Rewriting multiplication to use shift [2] main::$2 = main::$1 * 2
+Successful SSA optimization Pass2MultiplyToShiftRewriting
+Inlining constant with var siblings main::c#0
+Constant inlined main::c#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [8] main::c#4 = main::c#1
+Coalesced down to 1 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] main::x#0 = *SCREEN
+  [1] main::$1 = main::x#0 + 5
+  [2] main::$2 = main::$1 << 1
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [3] main::c#2 = phi( main/0, main::@2/main::c#1 )
+  [4] if(main::c#2<$28) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [5] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [6] SCREEN[main::c#2] = main::$2
+  [7] main::c#1 = ++ main::c#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte~ main::$1 4.0
+byte~ main::$2 2.6
+byte main::c
+byte main::c#1 22.0
+byte main::c#2 14.666666666666666
+byte main::x
+byte main::x#0 4.0
+
+Initial phi equivalence classes
+[ main::c#2 main::c#1 ]
+Added variable main::x#0 to live range equivalence class [ main::x#0 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Complete equivalence classes
+[ main::c#2 main::c#1 ]
+[ main::x#0 ]
+[ main::$1 ]
+[ main::$2 ]
+Allocated zp[1]:2 [ main::c#2 main::c#1 ]
+Allocated zp[1]:3 [ main::x#0 ]
+Allocated zp[1]:4 [ main::$1 ]
+Allocated zp[1]:5 [ main::$2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] main::$2 = main::$1 << 1 [ main::$2 ] (  [ main::$2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::x#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::$1 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::$2 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 36.67: zp[1]:2 [ main::c#2 main::c#1 ] 4: zp[1]:3 [ main::x#0 ] 4: zp[1]:4 [ main::$1 ] 2.6: zp[1]:5 [ main::$2 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 241 combination reg byte x [ main::c#2 main::c#1 ] reg byte a [ main::x#0 ] reg byte a [ main::$1 ] reg byte a [ main::$2 ] 
+Limited combination testing to 100 combinations of 256 possible.
+Uplifting [] best 241 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test loop invariant computation detection
+// http://www.cs.toronto.edu/~pekhimenko/courses/cscd70-w18/docs/Lecture%205%20[LICM%20and%20Strength%20Reduction]%2002.08.2018.pdf
+// Complex expressions can also be loop invariant computations
+// (x+5)*2 is a loop invariant computations
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // [0] main::x#0 = *SCREEN -- vbuaa=_deref_pbuc1 
+    lda SCREEN
+    // [1] main::$1 = main::x#0 + 5 -- vbuaa=vbuaa_plus_vbuc1 
+    clc
+    adc #5
+    // [2] main::$2 = main::$1 << 1 -- vbuaa=vbuaa_rol_1 
+    asl
+    // [3] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [3] phi main::c#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [4] if(main::c#2<$28) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$28
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+    // main::@2
+  __b2:
+    // [6] SCREEN[main::c#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    // [7] main::c#1 = ++ main::c#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [3] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [3] phi main::c#2 = main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+byte~ main::$1 reg byte a 4.0
+byte~ main::$2 reg byte a 2.6
+byte main::c
+byte main::c#1 reg byte x 22.0
+byte main::c#2 reg byte x 14.666666666666666
+byte main::x
+byte main::x#0 reg byte a 4.0
+
+reg byte x [ main::c#2 main::c#1 ]
+reg byte a [ main::x#0 ]
+reg byte a [ main::$1 ]
+reg byte a [ main::$2 ]
+
+
+FINAL ASSEMBLER
+Score: 181
+
+  // File Comments
+// Test loop invariant computation detection
+// http://www.cs.toronto.edu/~pekhimenko/courses/cscd70-w18/docs/Lecture%205%20[LICM%20and%20Strength%20Reduction]%2002.08.2018.pdf
+// Complex expressions can also be loop invariant computations
+// (x+5)*2 is a loop invariant computations
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    // x = SCREEN[0]
+    // [0] main::x#0 = *SCREEN -- vbuaa=_deref_pbuc1 
+    lda SCREEN
+    // x+5
+    // [1] main::$1 = main::x#0 + 5 -- vbuaa=vbuaa_plus_vbuc1 
+    clc
+    adc #5
+    // (x+5)*2
+    // [2] main::$2 = main::$1 << 1 -- vbuaa=vbuaa_rol_1 
+    asl
+    // [3] phi from main to main::@1 [phi:main->main::@1]
+    // [3] phi main::c#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char c=0;c<40;c++)
+    // [4] if(main::c#2<$28) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$28
+    bcc __b2
+    // main::@return
+    // }
+    // [5] return 
+    rts
+    // main::@2
+  __b2:
+    // SCREEN[c] = (x+5)*2
+    // [6] SCREEN[main::c#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    // for(char c=0;c<40;c++)
+    // [7] main::c#1 = ++ main::c#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [3] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [3] phi main::c#2 = main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+

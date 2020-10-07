@@ -1,0 +1,247 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::c#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  main::c#2 = phi( main/main::c#0, main::@2/main::c#1 )
+  main::$0 = main::c#2 < $28
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::c#3 = phi( main::@1/main::c#2 )
+  main::$1 = *BGCOL + 5
+  SCREEN[main::c#3] = main::$1
+  main::c#1 = ++ main::c#3
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* BGCOL = (byte*)$d020
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+void main()
+bool~ main::$0
+number~ main::$1
+byte main::c
+byte main::c#0
+byte main::c#1
+byte main::c#2
+byte main::c#3
+
+Adding number conversion cast (unumber) $28 in main::$0 = main::c#2 < $28
+Adding number conversion cast (unumber) 5 in main::$1 = *BGCOL + 5
+Adding number conversion cast (unumber) main::$1 in main::$1 = *BGCOL + (unumber)5
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 53280
+Simplifying constant integer cast $28
+Simplifying constant integer cast 5
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type $28
+Finalized unsigned number type 5
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in main::$1 = *BGCOL + 5
+Alias main::c#2 = main::c#3 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$0 [3] if(main::c#2<$28) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::c#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining constant with var siblings main::c#0
+Constant inlined main::c#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced [7] main::c#4 = main::c#1
+Coalesced down to 1 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@2
+  [1] main::c#2 = phi( main/0, main::@2/main::c#1 )
+  [2] if(main::c#2<$28) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] main::$1 = *BGCOL + 5
+  [5] SCREEN[main::c#2] = main::$1
+  [6] main::c#1 = ++ main::c#2
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte~ main::$1 22.0
+byte main::c
+byte main::c#1 22.0
+byte main::c#2 11.0
+
+Initial phi equivalence classes
+[ main::c#2 main::c#1 ]
+Added variable main::$1 to live range equivalence class [ main::$1 ]
+Complete equivalence classes
+[ main::c#2 main::c#1 ]
+[ main::$1 ]
+Allocated zp[1]:2 [ main::c#2 main::c#1 ]
+Allocated zp[1]:3 [ main::$1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] main::$1 = *BGCOL + 5 [ main::c#2 main::$1 ] (  [ main::c#2 main::$1 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::c#2 main::c#1 ]
+Statement [4] main::$1 = *BGCOL + 5 [ main::c#2 main::$1 ] (  [ main::c#2 main::$1 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::c#2 main::c#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::$1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 33: zp[1]:2 [ main::c#2 main::c#1 ] 22: zp[1]:3 [ main::$1 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 311 combination reg byte x [ main::c#2 main::c#1 ] reg byte a [ main::$1 ] 
+Uplifting [] best 311 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test loop invariant computation detection
+// http://www.cs.toronto.edu/~pekhimenko/courses/cscd70-w18/docs/Lecture%205%20[LICM%20and%20Strength%20Reduction]%2002.08.2018.pdf
+// Deref of a pointer cannot be hoisted
+// *BGCOL+5 is NOT a loop invariant computation
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label BGCOL = $d020
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::c#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::c#2<$28) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$28
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] main::$1 = *BGCOL + 5 -- vbuaa=_deref_pbuc1_plus_vbuc2 
+    lda #5
+    clc
+    adc BGCOL
+    // [5] SCREEN[main::c#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    // [6] main::c#1 = ++ main::c#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+  __b1_from___b2:
+    // [1] phi main::c#2 = main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b1_from___b2:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* BGCOL = (byte*) 53280
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+byte~ main::$1 reg byte a 22.0
+byte main::c
+byte main::c#1 reg byte x 22.0
+byte main::c#2 reg byte x 11.0
+
+reg byte x [ main::c#2 main::c#1 ]
+reg byte a [ main::$1 ]
+
+
+FINAL ASSEMBLER
+Score: 251
+
+  // File Comments
+// Test loop invariant computation detection
+// http://www.cs.toronto.edu/~pekhimenko/courses/cscd70-w18/docs/Lecture%205%20[LICM%20and%20Strength%20Reduction]%2002.08.2018.pdf
+// Deref of a pointer cannot be hoisted
+// *BGCOL+5 is NOT a loop invariant computation
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label BGCOL = $d020
+  // main
+main: {
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::c#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char c=0;c<40;c++)
+    // [2] if(main::c#2<$28) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$28
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // *BGCOL+5
+    // [4] main::$1 = *BGCOL + 5 -- vbuaa=_deref_pbuc1_plus_vbuc2 
+    lda #5
+    clc
+    adc BGCOL
+    // SCREEN[c] = *BGCOL+5
+    // [5] SCREEN[main::c#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    sta SCREEN,x
+    // for(char c=0;c<40;c++)
+    // [6] main::c#1 = ++ main::c#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
+    // [1] phi main::c#2 = main::c#1 [phi:main::@2->main::@1#0] -- register_copy 
+    jmp __b1
+}
+  // File Data
+

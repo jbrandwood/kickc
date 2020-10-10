@@ -5,12 +5,10 @@
 char * const SCREEN = 0x0400;
 char * const BGCOL = 0xd020;
 void main() {
-    char x = SCREEN[0];
     char y = SCREEN[0];
     for(char c=0;c<40;c++) {
         if(c==10)
             y = 0;
-        SCREEN[c] = x;
     }
     SCREEN[80] = y;
 }

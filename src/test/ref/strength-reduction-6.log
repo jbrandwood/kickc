@@ -1,0 +1,489 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::y#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  main::y#2 = phi( main/main::y#0, main::@5/main::y#1 )
+  main::$0 = main::y#2 < $19
+  if(main::$0) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::y#6 = phi( main::@1/main::y#2 )
+  main::x#0 = 0
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  main::y#5 = phi( main::@2/main::y#6, main::@4/main::y#3 )
+  main::x#2 = phi( main::@2/main::x#0, main::@4/main::x#1 )
+  main::$1 = main::x#2 < $28
+  if(main::$1) goto main::@4
+  to:main::@5
+main::@4: scope:[main]  from main::@3
+  main::x#3 = phi( main::@3/main::x#2 )
+  main::y#3 = phi( main::@3/main::y#5 )
+  main::$5 = (word)main::y#3
+  main::$2 = main::$5 * $28
+  main::$3 = SCREEN + main::$2
+  main::$4 = main::$3 + main::x#3
+  main::p#0 = main::$4
+  *main::p#0 = '*'
+  main::x#1 = ++ main::x#3
+  to:main::@3
+main::@5: scope:[main]  from main::@3
+  main::y#4 = phi( main::@3/main::y#5 )
+  main::y#1 = ++ main::y#4
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+void main()
+bool~ main::$0
+bool~ main::$1
+number~ main::$2
+byte*~ main::$3
+byte*~ main::$4
+word~ main::$5
+byte* main::p
+byte* main::p#0
+byte main::x
+byte main::x#0
+byte main::x#1
+byte main::x#2
+byte main::x#3
+byte main::y
+byte main::y#0
+byte main::y#1
+byte main::y#2
+byte main::y#3
+byte main::y#4
+byte main::y#5
+byte main::y#6
+
+Adding number conversion cast (unumber) $19 in main::$0 = main::y#2 < $19
+Adding number conversion cast (unumber) $28 in main::$1 = main::x#2 < $28
+Adding number conversion cast (unumber) $28 in main::$2 = main::$5 * $28
+Adding number conversion cast (unumber) main::$2 in main::$2 = main::$5 * (unumber)$28
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast $19
+Simplifying constant integer cast $28
+Simplifying constant integer cast $28
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type $19
+Finalized unsigned number type $28
+Finalized unsigned number type $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to word in main::$2 = main::$5 * $28
+Alias main::y#2 = main::y#6 
+Alias main::y#3 = main::y#5 main::y#4 
+Alias main::x#2 = main::x#3 
+Alias main::p#0 = main::$4 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values main::y#3 main::y#2
+Successful SSA optimization Pass2IdenticalPhiElimination
+Hoisting  loop invariant computation statement out of loop from: main::@4 to main::@2 [8] main::$5 = (word)main::y#2
+Hoisting  loop invariant computation statement out of loop from: main::@2 to main [4] main::x#0 = 0
+Simple Condition main::$0 [4] if(main::y#2<$19) goto main::@2
+Simple Condition main::$1 [8] if(main::x#2<$28) goto main::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::y#0 = 0
+Constant main::x#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Converting *(pointer+n) to pointer[n] [12] *main::p#0 = '*'  -- main::$3[main::x#2]
+Successful SSA optimization Pass2InlineDerefIdx
+Eliminating unused variable main::p#0 and assignment [7] main::p#0 = main::$3 + main::x#2
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Hoisting  loop invariant computation statement out of loop from: main::@4 to main::@2 [5] main::$2 = main::$5 * $28
+Rewriting multiplication to use shift and addition[3] main::$2 = main::$5 * $28
+Inlining constant with var siblings main::y#0
+Inlining constant with var siblings main::x#0
+Constant inlined main::x#0 = 0
+Constant inlined main::y#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Alias main::$2 = main::$8 
+Successful SSA optimization Pass2AliasElimination
+Hoisting  loop invariant computation statement out of loop from: main::@4 to main::@2 [8] main::$3 = SCREEN + main::$2
+Adding NOP phi() at start of main
+CALL GRAPH
+
+Created 2 initial phi equivalence classes
+Coalesced [12] main::y#7 = main::y#1
+Coalesced [15] main::x#4 = main::x#1
+Coalesced down to 2 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [1] main::y#2 = phi( main/0, main::@5/main::y#1 )
+  [2] if(main::y#2<$19) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] main::$5 = (word)main::y#2
+  [5] main::$6 = main::$5 << 2
+  [6] main::$7 = main::$6 + main::$5
+  [7] main::$2 = main::$7 << 3
+  [8] main::$3 = SCREEN + main::$2
+  to:main::@3
+main::@3: scope:[main]  from main::@2 main::@4
+  [9] main::x#2 = phi( main::@2/0, main::@4/main::x#1 )
+  [10] if(main::x#2<$28) goto main::@4
+  to:main::@5
+main::@5: scope:[main]  from main::@3
+  [11] main::y#1 = ++ main::y#2
+  to:main::@1
+main::@4: scope:[main]  from main::@3
+  [12] main::$3[main::x#2] = '*'
+  [13] main::x#1 = ++ main::x#2
+  to:main::@3
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+word~ main::$2 22.0
+byte*~ main::$3 22.4
+word~ main::$5 16.5
+word~ main::$6 22.0
+word~ main::$7 22.0
+byte* main::p
+byte main::x
+byte main::x#1 202.0
+byte main::x#2 134.66666666666666
+byte main::y
+byte main::y#1 22.0
+byte main::y#2 3.0
+
+Initial phi equivalence classes
+[ main::y#2 main::y#1 ]
+[ main::x#2 main::x#1 ]
+Added variable main::$5 to live range equivalence class [ main::$5 ]
+Added variable main::$6 to live range equivalence class [ main::$6 ]
+Added variable main::$7 to live range equivalence class [ main::$7 ]
+Added variable main::$2 to live range equivalence class [ main::$2 ]
+Added variable main::$3 to live range equivalence class [ main::$3 ]
+Complete equivalence classes
+[ main::y#2 main::y#1 ]
+[ main::x#2 main::x#1 ]
+[ main::$5 ]
+[ main::$6 ]
+[ main::$7 ]
+[ main::$2 ]
+[ main::$3 ]
+Allocated zp[1]:2 [ main::y#2 main::y#1 ]
+Allocated zp[1]:3 [ main::x#2 main::x#1 ]
+Allocated zp[2]:4 [ main::$5 ]
+Allocated zp[2]:6 [ main::$6 ]
+Allocated zp[2]:8 [ main::$7 ]
+Allocated zp[2]:10 [ main::$2 ]
+Allocated zp[2]:12 [ main::$3 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [4] main::$5 = (word)main::y#2 [ main::y#2 main::$5 ] (  [ main::y#2 main::$5 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::y#2 main::y#1 ]
+Statement [5] main::$6 = main::$5 << 2 [ main::y#2 main::$5 main::$6 ] (  [ main::y#2 main::$5 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [6] main::$7 = main::$6 + main::$5 [ main::y#2 main::$7 ] (  [ main::y#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [7] main::$2 = main::$7 << 3 [ main::y#2 main::$2 ] (  [ main::y#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] main::$3 = SCREEN + main::$2 [ main::y#2 main::$3 ] (  [ main::y#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [12] main::$3[main::x#2] = '*' [ main::y#2 main::$3 main::x#2 ] (  [ main::y#2 main::$3 main::x#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:3 [ main::x#2 main::x#1 ]
+Statement [4] main::$5 = (word)main::y#2 [ main::y#2 main::$5 ] (  [ main::y#2 main::$5 ] { }  ) always clobbers reg byte a 
+Statement [5] main::$6 = main::$5 << 2 [ main::y#2 main::$5 main::$6 ] (  [ main::y#2 main::$5 main::$6 ] { }  ) always clobbers reg byte a 
+Statement [6] main::$7 = main::$6 + main::$5 [ main::y#2 main::$7 ] (  [ main::y#2 main::$7 ] { }  ) always clobbers reg byte a 
+Statement [7] main::$2 = main::$7 << 3 [ main::y#2 main::$2 ] (  [ main::y#2 main::$2 ] { }  ) always clobbers reg byte a 
+Statement [8] main::$3 = SCREEN + main::$2 [ main::y#2 main::$3 ] (  [ main::y#2 main::$3 ] { }  ) always clobbers reg byte a 
+Statement [12] main::$3[main::x#2] = '*' [ main::y#2 main::$3 main::x#2 ] (  [ main::y#2 main::$3 main::x#2 ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::y#2 main::y#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::x#2 main::x#1 ] : zp[1]:3 , reg byte x , reg byte y , 
+Potential registers zp[2]:4 [ main::$5 ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ main::$6 ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ main::$7 ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ main::$2 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ main::$3 ] : zp[2]:12 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 336.67: zp[1]:3 [ main::x#2 main::x#1 ] 25: zp[1]:2 [ main::y#2 main::y#1 ] 22.4: zp[2]:12 [ main::$3 ] 22: zp[2]:6 [ main::$6 ] 22: zp[2]:8 [ main::$7 ] 22: zp[2]:10 [ main::$2 ] 16.5: zp[2]:4 [ main::$5 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 3831 combination reg byte y [ main::x#2 main::x#1 ] reg byte x [ main::y#2 main::y#1 ] zp[2]:12 [ main::$3 ] zp[2]:6 [ main::$6 ] zp[2]:8 [ main::$7 ] zp[2]:10 [ main::$2 ] zp[2]:4 [ main::$5 ] 
+Uplifting [] best 3831 combination 
+Coalescing zero page register [ zp[2]:4 [ main::$5 ] ] with [ zp[2]:8 [ main::$7 ] ] - score: 1
+Coalescing zero page register [ zp[2]:10 [ main::$2 ] ] with [ zp[2]:12 [ main::$3 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ main::$5 main::$7 ] ] with [ zp[2]:10 [ main::$2 main::$3 ] ] - score: 1
+Allocated (was zp[2]:4) zp[2]:2 [ main::$5 main::$7 main::$2 main::$3 ]
+Allocated (was zp[2]:6) zp[2]:4 [ main::$6 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test loop invariant computation detection
+// http://www.cs.toronto.edu/~pekhimenko/courses/cscd70-w18/docs/Lecture%205%20[LICM%20and%20Strength%20Reduction]%2002.08.2018.pdf
+// In a double loop a constant expression in the inner loop is hoisted out into the outer loop
+// SCREEN + (unsigned int)y*40 can be hoisted to the outer y-loop
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    .label __2 = 2
+    .label __3 = 2
+    .label __5 = 2
+    .label __6 = 4
+    .label __7 = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::y#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(main::y#2<$19) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$19
+    bcc __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] main::$5 = (word)main::y#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta.z __5
+    lda #0
+    sta.z __5+1
+    // [5] main::$6 = main::$5 << 2 -- vwuz1=vwuz2_rol_2 
+    lda.z __5
+    asl
+    sta.z __6
+    lda.z __5+1
+    rol
+    sta.z __6+1
+    asl.z __6
+    rol.z __6+1
+    // [6] main::$7 = main::$6 + main::$5 -- vwuz1=vwuz2_plus_vwuz1 
+    lda.z __7
+    clc
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
+    // [7] main::$2 = main::$7 << 3 -- vwuz1=vwuz1_rol_3 
+    asl.z __2
+    rol.z __2+1
+    asl.z __2
+    rol.z __2+1
+    asl.z __2
+    rol.z __2+1
+    // [8] main::$3 = SCREEN + main::$2 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda.z __3
+    adc #<SCREEN
+    sta.z __3
+    lda.z __3+1
+    adc #>SCREEN
+    sta.z __3+1
+    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+  __b3_from___b2:
+    // [9] phi main::x#2 = 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
+    ldy #0
+    jmp __b3
+    // main::@3
+  __b3:
+    // [10] if(main::x#2<$28) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #$28
+    bcc __b4
+    jmp __b5
+    // main::@5
+  __b5:
+    // [11] main::y#1 = ++ main::y#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  __b1_from___b5:
+    // [1] phi main::y#2 = main::y#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@4
+  __b4:
+    // [12] main::$3[main::x#2] = '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+    lda #'*'
+    sta (__3),y
+    // [13] main::x#1 = ++ main::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [9] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+  __b3_from___b4:
+    // [9] phi main::x#2 = main::x#1 [phi:main::@4->main::@3#0] -- register_copy 
+    jmp __b3
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b5
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction __b3_from___b2:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
+Removing instruction __b3_from___b4:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+word~ main::$2 zp[2]:2 22.0
+byte*~ main::$3 zp[2]:2 22.4
+word~ main::$5 zp[2]:2 16.5
+word~ main::$6 zp[2]:4 22.0
+word~ main::$7 zp[2]:2 22.0
+byte* main::p
+byte main::x
+byte main::x#1 reg byte y 202.0
+byte main::x#2 reg byte y 134.66666666666666
+byte main::y
+byte main::y#1 reg byte x 22.0
+byte main::y#2 reg byte x 3.0
+
+reg byte x [ main::y#2 main::y#1 ]
+reg byte y [ main::x#2 main::x#1 ]
+zp[2]:2 [ main::$5 main::$7 main::$2 main::$3 ]
+zp[2]:4 [ main::$6 ]
+
+
+FINAL ASSEMBLER
+Score: 3111
+
+  // File Comments
+// Test loop invariant computation detection
+// http://www.cs.toronto.edu/~pekhimenko/courses/cscd70-w18/docs/Lecture%205%20[LICM%20and%20Strength%20Reduction]%2002.08.2018.pdf
+// In a double loop a constant expression in the inner loop is hoisted out into the outer loop
+// SCREEN + (unsigned int)y*40 can be hoisted to the outer y-loop
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  // main
+main: {
+    .label __2 = 2
+    .label __3 = 2
+    .label __5 = 2
+    .label __6 = 4
+    .label __7 = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::y#2 = 0 [phi:main->main::@1#0] -- vbuxx=vbuc1 
+    ldx #0
+    // main::@1
+  __b1:
+    // for(char y=0;y<25;y++)
+    // [2] if(main::y#2<$19) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    cpx #$19
+    bcc __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // (unsigned int)y*40
+    // [4] main::$5 = (word)main::y#2 -- vwuz1=_word_vbuxx 
+    txa
+    sta.z __5
+    lda #0
+    sta.z __5+1
+    // [5] main::$6 = main::$5 << 2 -- vwuz1=vwuz2_rol_2 
+    lda.z __5
+    asl
+    sta.z __6
+    lda.z __5+1
+    rol
+    sta.z __6+1
+    asl.z __6
+    rol.z __6+1
+    // [6] main::$7 = main::$6 + main::$5 -- vwuz1=vwuz2_plus_vwuz1 
+    lda.z __7
+    clc
+    adc.z __6
+    sta.z __7
+    lda.z __7+1
+    adc.z __6+1
+    sta.z __7+1
+    // [7] main::$2 = main::$7 << 3 -- vwuz1=vwuz1_rol_3 
+    asl.z __2
+    rol.z __2+1
+    asl.z __2
+    rol.z __2+1
+    asl.z __2
+    rol.z __2+1
+    // SCREEN + (unsigned int)y*40
+    // [8] main::$3 = SCREEN + main::$2 -- pbuz1=pbuc1_plus_vwuz1 
+    clc
+    lda.z __3
+    adc #<SCREEN
+    sta.z __3
+    lda.z __3+1
+    adc #>SCREEN
+    sta.z __3+1
+    // [9] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
+    // [9] phi main::x#2 = 0 [phi:main::@2->main::@3#0] -- vbuyy=vbuc1 
+    ldy #0
+    // main::@3
+  __b3:
+    // for(char x=0;x<40;x++)
+    // [10] if(main::x#2<$28) goto main::@4 -- vbuyy_lt_vbuc1_then_la1 
+    cpy #$28
+    bcc __b4
+    // main::@5
+    // for(char y=0;y<25;y++)
+    // [11] main::y#1 = ++ main::y#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [1] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [1] phi main::y#2 = main::y#1 [phi:main::@5->main::@1#0] -- register_copy 
+    jmp __b1
+    // main::@4
+  __b4:
+    // *p = '*'
+    // [12] main::$3[main::x#2] = '*' -- pbuz1_derefidx_vbuyy=vbuc1 
+    lda #'*'
+    sta (__3),y
+    // for(char x=0;x<40;x++)
+    // [13] main::x#1 = ++ main::x#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [9] phi from main::@4 to main::@3 [phi:main::@4->main::@3]
+    // [9] phi main::x#2 = main::x#1 [phi:main::@4->main::@3#0] -- register_copy 
+    jmp __b3
+}
+  // File Data
+

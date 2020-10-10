@@ -46,32 +46,32 @@ public class TestPrograms {
 
    @Test
    public void testStrengthReduction6() throws IOException, URISyntaxException {
-      compileAndCompare("strength-reduction-6.c", log());
+      compileAndCompare("strength-reduction-6.c");
    }
 
    @Test
    public void testStrengthReduction5() throws IOException, URISyntaxException {
-      compileAndCompare("strength-reduction-5.c", log());
+      compileAndCompare("strength-reduction-5.c");
    }
 
    @Test
    public void testStrengthReduction4() throws IOException, URISyntaxException {
-      compileAndCompare("strength-reduction-4.c", log());
+      compileAndCompare("strength-reduction-4.c");
    }
 
    @Test
    public void testStrengthReduction3() throws IOException, URISyntaxException {
-      compileAndCompare("strength-reduction-3.c", log());
+      compileAndCompare("strength-reduction-3.c");
    }
 
    @Test
    public void testStrengthReduction2() throws IOException, URISyntaxException {
-      compileAndCompare("strength-reduction-2.c", log());
+      compileAndCompare("strength-reduction-2.c");
    }
 
    @Test
    public void testStrengthReduction1() throws IOException, URISyntaxException {
-      compileAndCompare("strength-reduction-1.c", log());
+      compileAndCompare("strength-reduction-1.c");
    }
 
    @Test

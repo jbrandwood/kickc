@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopHeadTrivial1() throws IOException, URISyntaxException {
+      compileAndCompare("loophead-trivial-1.c");
+   }
+
+   @Test
    public void testStrengthReduction1() throws IOException, URISyntaxException {
       compileAndCompare("strength-reduction-1.c");
    }
@@ -1291,13 +1296,13 @@ public class TestPrograms {
    // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/290
    @Test
    public void testLoopheadProblem2() throws IOException, URISyntaxException {
-      compileAndCompare("loophead-problem-2.c");
+      compileAndCompare("loophead-problem-2.c", log().verboseLoopUnroll());
    }
 
    // TODO: Fix loop head problem! https://gitlab.com/camelot/kickc/issues/261
    @Test
    public void testLoopheadProblem() throws IOException, URISyntaxException {
-      compileAndCompare("loophead-problem.c");
+      compileAndCompare("loophead-problem.c", log().verboseLoopUnroll());
    }
 
    @Test
@@ -1438,6 +1443,11 @@ public class TestPrograms {
    @Test
    public void testInlineAsmParam() throws IOException, URISyntaxException {
       compileAndCompare("inline-asm-param.c");
+   }
+
+   @Test
+   public void testDyppa2() throws IOException, URISyntaxException {
+      compileAndCompare("complex/dyppa2/dyppa2.c", log());
    }
 
    @Test

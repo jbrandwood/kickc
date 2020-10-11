@@ -697,7 +697,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       File resourceFile = SourceLoader.loadFile(resourceName, currentPath, new ArrayList<>());
       if(resourceFile == null)
          throw new CompileError("File  not found " + resourceName);
-      program.addAsmResourceFile(resourceFile.toPath());
+      if(!program.getAsmResourceFiles().contains(resourceFile.toPath()))
+         program.addAsmResourceFile(resourceFile.toPath());
       if(program.getLog().isVerboseParse()) {
          program.getLog().append("Added resource " + resourceFile.getPath().replace('\\', '/'));
       }

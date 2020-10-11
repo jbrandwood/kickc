@@ -83,7 +83,7 @@ public class Unroller {
             Map<LabelRef, SymbolVariableRef> varVersions = new LinkedHashMap<>();
             reVersionAllUsages(origVarRef, newPhis, varVersions);
             if(program.getLog().isVerboseLoopUnroll()) {
-               program.getLog().append("Created new versions for " + origVarRef + ")");
+               program.getLog().append("Created new versions for " + origVarRef );
                //program.getLog().append(program.getGraph().toString(program));
             }
             // Recursively fill out & add PHI-functions until they have propagated everywhere needed

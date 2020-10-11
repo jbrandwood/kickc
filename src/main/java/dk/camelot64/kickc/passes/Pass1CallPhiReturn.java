@@ -57,10 +57,10 @@ public class Pass1CallPhiReturn {
     * Handle PHI-call by assigning return value to LValue and updating all variables modified inside the procedure.
     * @param call The call statement
     * @param procedure The procedure
-    * @param block The block containing the call
+    * @param callBlock The block containing the call
     * @param stmtIt Iterator used for adding statements
     */
-   void handlePhiCall(StatementCall call, Procedure procedure, ControlFlowBlock block, ListIterator<Statement> stmtIt) {
+   void handlePhiCall(StatementCall call, Procedure procedure, ControlFlowBlock callBlock, ListIterator<Statement> stmtIt) {
       // Generate return value assignment (call finalize)
       if(!SymbolType.VOID.equals(procedure.getReturnType())) {
          // Find return variable final version
@@ -90,7 +90,7 @@ public class Pass1CallPhiReturn {
       }
 
       // Patch versions of rValues in assignments for vars modified in the call (call finalize)
-      LabelRef successor = block.getDefaultSuccessor();
+      LabelRef successor = callBlock.getDefaultSuccessor();
       ControlFlowBlock successorBlock = program.getGraph().getBlock(successor);
       Set<VariableRef> modifiedVars = program.getProcedureModifiedVars().getModifiedVars(procedure.getRef());
       for(Statement statement : successorBlock.getStatements()) {
@@ -101,7 +101,7 @@ public class Pass1CallPhiReturn {
                VariableRef unversionedVar = new VariableRef(phiVar.getFullNameUnversioned());
                if(modifiedVars.contains(unversionedVar)) {
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
-                     if(phiRValue.getPredecessor().equals(block.getLabel())) {
+                     if(phiRValue.getPredecessor().equals(callBlock.getLabel())) {
                         VariableRef procReturnVersion = findReturnVersion(procedure, unversionedVar);
                         phiRValue.setrValue(procReturnVersion);
                      }

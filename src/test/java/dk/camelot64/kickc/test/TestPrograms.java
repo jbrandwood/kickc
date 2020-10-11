@@ -667,6 +667,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testPostIncrementProblem5() throws IOException, URISyntaxException {
+      assertError("post-increment-problem-5.c", "Constants can not be modified");
+   }
+
+   @Test
    public void testPostIncrementProblem4() throws IOException, URISyntaxException {
       compileAndCompare("post-increment-problem-4.c");
    }
@@ -1447,7 +1452,7 @@ public class TestPrograms {
 
    @Test
    public void testDyppa2() throws IOException, URISyntaxException {
-      compileAndCompare("complex/dyppa2/dyppa2.c", log());
+      compileAndCompare("complex/dyppa2/dyppa2.c");
    }
 
    @Test

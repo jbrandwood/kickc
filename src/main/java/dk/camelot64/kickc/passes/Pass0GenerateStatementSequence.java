@@ -2766,7 +2766,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             List<PrePostModifier> modifiers,
             StatementSource source) {
          for(PrePostModifier mod : modifiers) {
-            if(mod.child instanceof ConstantRef) {
+            if(mod.child instanceof ConstantValue) {
                throw new CompileError("Constants can not be modified " + mod.child.toString(), source);
             }
             Statement stmt = new StatementAssignment((LValue) mod.child, mod.operator, copyLValue((LValue) mod.child), false, source, Comment.NO_COMMENTS);

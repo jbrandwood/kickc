@@ -1,11 +1,11 @@
 package dk.camelot64.kickc.fragment;
 
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.statements.Statement;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeIntegerFixed;
 import dk.camelot64.kickc.model.values.*;
-import kickass.nonasm.c64.CharToPetsciiConverter;
 
 import java.util.*;
 
@@ -94,7 +94,12 @@ public class AsmFragmentInstanceSpec {
                // Found a constant value that may be multi-typed
                Value value = bindings.get(name);
                if(value instanceof ConstantValue) {
-                  ConstantLiteral constantLiteral = ((ConstantValue) value).calculateLiteral(program.getScope());
+                  ConstantLiteral constantLiteral = null;
+                  try {
+                     constantLiteral = ((ConstantValue) value).calculateLiteral(program.getScope());
+                  } catch (ConstantNotLiteral e) {
+                     // ignore
+                  }
                   Long constIntValue = null;
                   if(constantLiteral instanceof ConstantInteger) {
                      constIntValue = ((ConstantInteger) constantLiteral).getValue();

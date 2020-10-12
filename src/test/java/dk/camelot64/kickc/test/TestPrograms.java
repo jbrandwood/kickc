@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testConstRefNotLiteralProblem() throws IOException, URISyntaxException {
+      compileAndCompare("constref-not-literal-problem.c");
+   }
+
+   @Test
    public void testStrengthReduction1() throws IOException, URISyntaxException {
       compileAndCompare("strength-reduction-1.c");
    }

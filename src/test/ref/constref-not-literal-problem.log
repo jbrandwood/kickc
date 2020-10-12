@@ -1,0 +1,294 @@
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  copy::destination#0 = (void*)B
+  copy::source#0 = (void*)A
+  call copy 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void copy(void* copy::destination , void* copy::source)
+copy: scope:[copy]  from main
+  copy::source#1 = phi( main/copy::source#0 )
+  copy::destination#1 = phi( main/copy::destination#0 )
+  copy::$2 = (word)copy::destination#1
+  copy::$3 = (word)copy::source#1
+  copy::$0 = copy::$2 > copy::$3
+  copy::$1 = ! copy::$0
+  if(copy::$1) goto copy::@return
+  to:copy::@1
+copy::@1: scope:[copy]  from copy
+  copy::destination#2 = phi( copy/copy::destination#1 )
+  copy::source#2 = phi( copy/copy::source#1 )
+  copy::src#0 = ((byte*)) copy::source#2
+  copy::dst#0 = ((byte*)) copy::destination#2
+  *copy::dst#0 = *copy::src#0
+  to:copy::@return
+copy::@return: scope:[copy]  from copy copy::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const byte* A[]  = "qwe"
+const byte* B = (byte*)$8000
+void __start()
+void copy(void* copy::destination , void* copy::source)
+bool~ copy::$0
+bool~ copy::$1
+word~ copy::$2
+word~ copy::$3
+void* copy::destination
+void* copy::destination#0
+void* copy::destination#1
+void* copy::destination#2
+byte* copy::dst
+byte* copy::dst#0
+void* copy::source
+void* copy::source#0
+void* copy::source#1
+void* copy::source#2
+byte* copy::src
+byte* copy::src#0
+void main()
+
+Inlining cast copy::src#0 = (byte*)copy::source#2
+Inlining cast copy::dst#0 = (byte*)copy::destination#2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 32768
+Successful SSA optimization PassNCastSimplification
+Inversing boolean not [8] copy::$1 = copy::$2 <= copy::$3 from [7] copy::$0 = copy::$2 > copy::$3
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias copy::source#1 = copy::source#2 
+Alias copy::destination#1 = copy::destination#2 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values copy::destination#1 copy::destination#0
+Identical Phi Values copy::source#1 copy::source#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition copy::$1 [8] if(copy::$2<=copy::$3) goto copy::@return
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant right-side identified [0] copy::destination#0 = (void*)B
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant copy::destination#0 = (void*)B
+Constant copy::source#0 = (void*)A
+Successful SSA optimization Pass2ConstantIdentification
+Constant copy::$2 = (word)copy::destination#0
+Constant copy::$3 = (word)copy::source#0
+Constant copy::src#0 = (byte*)copy::source#0
+Constant copy::dst#0 = (byte*)copy::destination#0
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant inlined copy::$2 = (word)copy::destination#0
+Constant inlined copy::$3 = (word)copy::source#0
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [main] to copy:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block label main::@1
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call copy 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+void copy(void* copy::destination , void* copy::source)
+copy: scope:[copy]  from main
+  [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return
+  to:copy::@1
+copy::@1: scope:[copy]  from copy
+  [4] *copy::dst#0 = *copy::src#0
+  to:copy::@return
+copy::@return: scope:[copy]  from copy copy::@1
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void copy(void* copy::destination , void* copy::source)
+void* copy::destination
+byte* copy::dst
+void* copy::source
+byte* copy::src
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return [ ] ( copy:1 [ ] { }  ) always clobbers reg byte a 
+Statement [4] *copy::dst#0 = *copy::src#0 [ ] ( copy:1 [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [copy] 
+Uplift Scope [] 
+
+Uplifting [main] best 50 combination 
+Uplifting [copy] best 50 combination 
+Uplifting [] best 50 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates a problem where constant references are not literal
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label B = $8000
+  // main
+main: {
+    // [1] call copy 
+    jsr copy
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // copy
+// Copy a byte if the destination is after the source
+copy: {
+    .label destination = B
+    .label source = A
+    .label src = source
+    .label dst = destination
+    // [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return -- vwuc1_le_vwuc2_then_la1 
+    lda #>destination
+    cmp #>source
+    bne !+
+    lda #<destination
+    cmp #<source
+    beq __breturn
+  !:
+    bcc __breturn
+    jmp __b1
+    // copy::@1
+  __b1:
+    // [4] *copy::dst#0 = *copy::src#0 -- _deref_pbuc1=_deref_pbuc2 
+    lda src
+    sta dst
+    jmp __breturn
+    // copy::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+  A: .text "qwe"
+  .byte 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __b1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const byte* A[]  = "qwe"
+const byte* B = (byte*) 32768
+void copy(void* copy::destination , void* copy::source)
+void* copy::destination
+const void* copy::destination#0 destination = (void*)B
+byte* copy::dst
+const byte* copy::dst#0 dst = (byte*)copy::destination#0
+void* copy::source
+const void* copy::source#0 source = (void*)A
+byte* copy::src
+const byte* copy::src#0 src = (byte*)copy::source#0
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 41
+
+  // File Comments
+// Demonstrates a problem where constant references are not literal
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label B = $8000
+  // main
+main: {
+    // copy(B, A)
+    // [1] call copy 
+    jsr copy
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // copy
+// Copy a byte if the destination is after the source
+copy: {
+    .label destination = B
+    .label source = A
+    .label src = source
+    .label dst = destination
+    // if((unsigned int)destination>(unsigned int)source)
+    // [3] if((word)copy::destination#0<=(word)copy::source#0) goto copy::@return -- vwuc1_le_vwuc2_then_la1 
+    lda #>destination
+    cmp #>source
+    bne !+
+    lda #<destination
+    cmp #<source
+    beq __breturn
+  !:
+    bcc __breturn
+    // copy::@1
+    // *dst = *src
+    // [4] *copy::dst#0 = *copy::src#0 -- _deref_pbuc1=_deref_pbuc2 
+    lda src
+    sta dst
+    // copy::@return
+  __breturn:
+    // }
+    // [5] return 
+    rts
+}
+  // File Data
+  A: .text "qwe"
+  .byte 0
+

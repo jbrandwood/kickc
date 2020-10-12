@@ -548,15 +548,15 @@ main: {
     jmp __b12
   __b9:
     // chrPtr[c]=vicPtr[c]
-    lda.z c_1
     clc
+    lda.z c_1
     adc #<$d000
     sta.z __111
     lda.z c_1+1
     adc #>$d000
     sta.z __111+1
-    lda.z c_1
     clc
+    lda.z c_1
     adc #<$f800
     sta.z __112
     lda.z c_1+1
@@ -573,8 +573,8 @@ main: {
     jmp __b8
   __b7:
     // scrPtr[c]=32
-    lda.z c
     clc
+    lda.z c
     adc #<$e000
     sta.z __109
     lda.z c+1
@@ -584,8 +584,8 @@ main: {
     ldy #0
     sta (__109),y
     // colPtr[c]=14
-    lda.z c
     clc
+    lda.z c
     adc #<$d800
     sta.z __110
     lda.z c+1

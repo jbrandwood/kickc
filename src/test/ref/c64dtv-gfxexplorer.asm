@@ -2792,8 +2792,8 @@ memset: {
     .label dst = $1a
     .label str = $1a
     // end = (char*)str + num
-    lda.z str
     clc
+    lda.z str
     adc #<num
     sta.z end
     lda.z str+1

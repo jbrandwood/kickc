@@ -61,8 +61,8 @@ main: {
     jmp __b11
   __b8:
     // if (!sieve[i])
-    lda.z i_1
     clc
+    lda.z i_1
     adc #<sieve
     sta.z __16
     lda.z i_1+1
@@ -98,8 +98,8 @@ main: {
     rol
     sta.z j+1
     // s = &sieve[j]
-    lda.z j
     clc
+    lda.z j
     adc #<sieve
     sta.z s
     lda.z j+1

@@ -70,8 +70,8 @@ main: {
     sta.z circle.r+1
     jsr circle
     // i += 5
-    lda.z i
     clc
+    lda.z i
     adc #<5
     sta.z i
     lda.z i+1
@@ -195,8 +195,8 @@ circle: {
     adc.z __6+1
     sta.z __7+1
     // p = p + ((x-y) << 2) + 10
-    lda.z p
     clc
+    lda.z p
     adc #<$a
     sta.z p
     lda.z p+1
@@ -204,8 +204,8 @@ circle: {
     sta.z p+1
   __b4:
     // plot(xc+x,yc-y)
-    lda.z x1
     clc
+    lda.z x1
     adc #<xc
     sta.z plot.x
     lda.z x1+1
@@ -236,15 +236,15 @@ circle: {
     sta.z plot.y+1
     jsr plot
     // plot(xc+x,yc+y)
-    lda.z x1
     clc
+    lda.z x1
     adc #<xc
     sta.z plot.x
     lda.z x1+1
     adc #>xc
     sta.z plot.x+1
-    lda.z y
     clc
+    lda.z y
     adc #<yc
     sta.z plot.y
     lda.z y+1
@@ -259,8 +259,8 @@ circle: {
     lda #>xc
     sbc.z x1+1
     sta.z plot.x+1
-    lda.z y
     clc
+    lda.z y
     adc #<yc
     sta.z plot.y
     lda.z y+1
@@ -268,8 +268,8 @@ circle: {
     sta.z plot.y+1
     jsr plot
     // plot(xc+y,yc-x)
-    lda.z y
     clc
+    lda.z y
     adc #<xc
     sta.z plot.x
     lda.z y+1
@@ -300,15 +300,15 @@ circle: {
     sta.z plot.y+1
     jsr plot
     // plot(xc+y,yc+x)
-    lda.z y
     clc
+    lda.z y
     adc #<xc
     sta.z plot.x
     lda.z y+1
     adc #>xc
     sta.z plot.x+1
-    lda.z x1
     clc
+    lda.z x1
     adc #<yc
     sta.z plot.y
     lda.z x1+1
@@ -323,8 +323,8 @@ circle: {
     lda #>xc
     sbc.z y+1
     sta.z plot.x+1
-    lda.z x1
     clc
+    lda.z x1
     adc #<yc
     sta.z plot.y
     lda.z x1+1
@@ -356,8 +356,8 @@ circle: {
     adc.z __9+1
     sta.z __10+1
     // p = p + (x << 2) + 6
-    lda.z p
     clc
+    lda.z p
     adc #<6
     sta.z p
     lda.z p+1

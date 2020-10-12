@@ -148,8 +148,8 @@ print_uchar_at: {
     and.z b
     tay
     // print_char_at(print_hextab[b&$f], at+1)
-    lda.z at
     clc
+    lda.z at
     adc #1
     sta.z print_char_at.at
     lda.z at+1

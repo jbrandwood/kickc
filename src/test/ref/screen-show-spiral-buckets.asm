@@ -239,8 +239,8 @@ main: {
     lda (bucket),y
     sta.z offset+1
     // fill = SCREEN_FILL+offset
-    lda.z offset
     clc
+    lda.z offset
     adc #<SCREEN_FILL
     sta.z fill
     lda.z offset+1
@@ -307,8 +307,8 @@ init_dist_screen: {
     // init_squares()
     jsr init_squares
     // screen_bottomline = screen+40*24
-    lda.z screen
     clc
+    lda.z screen
     adc #<$28*$18
     sta.z screen_bottomline
     lda.z screen+1

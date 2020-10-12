@@ -93,8 +93,8 @@ mulf_init: {
     adc.z add+1
     sta.z sqr+1
     // add +=2
-    lda.z add
     clc
+    lda.z add
     adc #<2
     sta.z add
     lda.z add+1

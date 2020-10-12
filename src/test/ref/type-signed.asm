@@ -29,8 +29,8 @@ main: {
     sta.z a+1
   __b1:
     // a += -7
-    lda.z a
     clc
+    lda.z a
     adc #<-7
     sta.z a
     lda.z a+1

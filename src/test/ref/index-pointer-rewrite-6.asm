@@ -30,15 +30,15 @@ main: {
     rts
   __b2:
     // fibs[i]+fibs[i+1]
-    lda.z i
     clc
+    lda.z i
     adc #<fibs
     sta.z __4
     lda.z i+1
     adc #>fibs
     sta.z __4+1
-    lda.z i
     clc
+    lda.z i
     adc #<fibs+1
     sta.z __5
     lda.z i+1
@@ -50,8 +50,8 @@ main: {
     adc (__5),y
     tax
     // fibs[i+2] = fibs[i]+fibs[i+1]
-    lda.z i
     clc
+    lda.z i
     adc #<fibs+2
     sta.z __6
     lda.z i+1

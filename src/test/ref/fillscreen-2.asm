@@ -23,8 +23,8 @@ main: {
     rts
   __b2:
     // SCREEN[i] = ' '
-    lda.z i
     clc
+    lda.z i
     adc #<SCREEN
     sta.z __1
     lda.z i+1

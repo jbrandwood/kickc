@@ -49,8 +49,8 @@ main: {
     jsr mul8u
     // mul8u(idx, SIZEOF_ENTRY)
     // files+mul8u(idx, SIZEOF_ENTRY)
-    lda.z fileEntry1___0
     clc
+    lda.z fileEntry1___0
     adc #<files
     sta.z entry1
     lda.z fileEntry1___0+1

@@ -374,8 +374,8 @@ main: {
     rol.z __44+1
     asl.z __44
     rol.z __44+1
-    lda.z __44
     clc
+    lda.z __44
     adc #<balls
     sta.z __63
     lda.z __44+1
@@ -430,8 +430,8 @@ main: {
     bcs __b9
   !:
     // balls[i].x_velocity ^= 0xFFFF
-    lda.z __44
     clc
+    lda.z __44
     adc #<balls
     sta.z __71
     lda.z __44+1
@@ -447,8 +447,8 @@ main: {
     sta (__71),y
   __b9:
     // balls[i].y_position >> 8
-    lda.z __44
     clc
+    lda.z __44
     adc #<balls
     sta.z __69
     lda.z __44+1
@@ -484,8 +484,8 @@ main: {
     bcs __b10
   !:
     // balls[i].y_velocity ^= 0xFFFF
-    lda.z __44
     clc
+    lda.z __44
     adc #<balls
     sta.z __76
     lda.z __44+1
@@ -586,8 +586,8 @@ main: {
     rol.z __36+1
     asl.z __36
     rol.z __36+1
-    lda.z __36
     clc
+    lda.z __36
     adc #<balls
     sta.z __55
     lda.z __36+1

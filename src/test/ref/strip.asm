@@ -62,8 +62,8 @@ strip: {
   !:
   __b2:
     // while(*p++!=0)
-    lda.z p_1
     clc
+    lda.z p_1
     adc #1
     sta.z p
     lda.z p_1+1

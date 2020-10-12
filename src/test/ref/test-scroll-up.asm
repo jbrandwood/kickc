@@ -58,8 +58,8 @@ scrollup1: {
     adc.z line+1
     sta.z __4+1
     // screen[line+c] = screen[line+c+40]
-    lda.z __4
     clc
+    lda.z __4
     adc #<screen+$28
     sta.z __5
     lda.z __4+1
@@ -162,15 +162,15 @@ scrollup3: {
     jmp __b1
   __b4:
     // screen[l2++] = screen[l2+40]
-    lda.z l2
     clc
+    lda.z l2
     adc #<screen+$28
     sta.z __3
     lda.z l2+1
     adc #>screen+$28
     sta.z __3+1
-    lda.z l2
     clc
+    lda.z l2
     adc #<screen
     sta.z __4
     lda.z l2+1

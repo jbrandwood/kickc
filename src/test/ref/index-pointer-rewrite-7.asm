@@ -47,8 +47,8 @@ main: {
     adc.z i+1
     sta.z __1+1
     // i+1
-    lda.z i
     clc
+    lda.z i
     adc #1
     sta.z __2
     lda.z i+1

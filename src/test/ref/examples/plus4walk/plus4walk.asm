@@ -109,8 +109,8 @@ main: {
     inc.z offset+1
   !:
     // VISITS+offset
-    lda.z offset
     clc
+    lda.z offset
     adc #<VISITS
     sta.z __6
     lda.z offset+1
@@ -210,8 +210,8 @@ memset: {
     .label dst = 3
     .label str = 3
     // end = (char*)str + num
-    lda.z str
     clc
+    lda.z str
     adc #<$3e8
     sta.z end
     lda.z str+1

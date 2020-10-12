@@ -379,8 +379,8 @@ font_2x2: {
     sta.z next_2x2_left+1
   __b1:
     // next_2x2_right = next_2x2 + 0x40*8
-    lda.z next_2x2_left
     clc
+    lda.z next_2x2_left
     adc #<$40*8
     sta.z next_2x2_right
     lda.z next_2x2_left+1
@@ -467,16 +467,16 @@ font_2x2: {
     cmp.z l2
     bne __b8
     // next_2x2_left = next_2x2 + 0x80*8
-    lda.z next_2x2_left
     clc
+    lda.z next_2x2_left
     adc #<$80*8
     sta.z next_2x2_left_1
     lda.z next_2x2_left+1
     adc #>$80*8
     sta.z next_2x2_left_1+1
     // next_2x2_right = next_2x2 + 0xc0*8
-    lda.z next_2x2_left
     clc
+    lda.z next_2x2_left
     adc #<$c0*8
     sta.z next_2x2_right
     lda.z next_2x2_left+1
@@ -547,8 +547,8 @@ font_2x2_to_sprites: {
     rts
   __b2:
     // char_right = char_current + 0x40*8
-    lda.z char_current
     clc
+    lda.z char_current
     adc #<$40*8
     sta.z char_right
     lda.z char_current+1
@@ -625,16 +625,16 @@ font_2x2_to_sprites: {
     jmp __b1
   __b4:
     // char_left = char_current + 0x80*8
-    lda.z char_current
     clc
+    lda.z char_current
     adc #<$80*8
     sta.z char_left
     lda.z char_current+1
     adc #>$80*8
     sta.z char_left+1
     // char_right = char_current + 0xc0*8
-    lda.z char_current
     clc
+    lda.z char_current
     adc #<$c0*8
     sta.z char_right
     lda.z char_current+1

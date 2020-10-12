@@ -77,8 +77,8 @@ memset: {
     .label dst = 2
     .label str = 2
     // end = (char*)str + num
-    lda.z str
     clc
+    lda.z str
     adc #<$28*$19
     sta.z end
     lda.z str+1

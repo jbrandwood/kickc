@@ -43,8 +43,8 @@ test: {
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
-    lda.z diff
     clc
+    lda.z diff
     adc #<other
     sta.z __1
     lda.z diff+1

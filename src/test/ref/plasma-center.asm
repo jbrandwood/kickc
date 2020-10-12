@@ -157,8 +157,8 @@ init_dist_screen: {
     // init_squares()
     jsr init_squares
     // screen_bottomline = screen+40*24
-    lda.z screen
     clc
+    lda.z screen
     adc #<$28*$18
     sta.z screen_bottomline
     lda.z screen+1
@@ -522,8 +522,8 @@ memset: {
     .label dst = 4
     .label str = 4
     // end = (char*)str + num
-    lda.z str
     clc
+    lda.z str
     adc #<$3e8
     sta.z end
     lda.z str+1

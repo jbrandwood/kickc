@@ -1579,8 +1579,8 @@ memcpy: {
     .label source = $1e
     .label destination = $e
     // src_end = (char*)source+num
-    lda.z source
     clc
+    lda.z source
     adc #<$19*$28-$28
     sta.z src_end
     lda.z source+1

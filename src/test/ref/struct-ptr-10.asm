@@ -59,8 +59,8 @@ main: {
     lda.z i1+1
     rol
     sta.z __3+1
-    lda.z __3
     clc
+    lda.z __3
     adc #<points
     sta.z __6
     lda.z __3+1

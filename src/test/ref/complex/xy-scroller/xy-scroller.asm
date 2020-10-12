@@ -406,8 +406,8 @@ main: {
     // petscii_ptr(x_pos_coarse-20, y_pos_coarse+12)
     // petscii = petscii_ptr(x_pos_coarse-20, y_pos_coarse+12)
     // scrn = screen_hidden+24*40
-    lda.z screen_hidden
     clc
+    lda.z screen_hidden
     adc #<$18*$28
     sta.z scrn
     lda.z screen_hidden+1
@@ -623,32 +623,32 @@ screencpy: {
     adc.z dst+1
     sta.z dst_250+1
     // src_500 = src+500
-    lda.z src
     clc
+    lda.z src
     adc #<$1f4
     sta.z src_500
     lda.z src+1
     adc #>$1f4
     sta.z src_500+1
     // dst_500 = dst+500
-    lda.z dst
     clc
+    lda.z dst
     adc #<$1f4
     sta.z dst_500
     lda.z dst+1
     adc #>$1f4
     sta.z dst_500+1
     // src_750 = src+750
-    lda.z src
     clc
+    lda.z src
     adc #<$2ee
     sta.z src_750
     lda.z src+1
     adc #>$2ee
     sta.z src_750+1
     // dst_750 = dst+750
-    lda.z dst
     clc
+    lda.z dst
     adc #<$2ee
     sta.z dst_750
     lda.z dst+1

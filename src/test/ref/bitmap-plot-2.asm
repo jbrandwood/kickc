@@ -219,8 +219,8 @@ main: {
     ror.z __11+1
     ror.z __11
     // 100 + ((signed word)>ypos)>>2
-    lda.z y
     clc
+    lda.z y
     adc #<$64
     sta.z y
     lda.z y+1

@@ -1038,8 +1038,8 @@ startProcessing: {
     inc.z offset+1
   !:
     // colPtr = COLS+offset
-    lda.z offset
     clc
+    lda.z offset
     adc #<COLS
     sta.z colPtr
     lda.z offset+1

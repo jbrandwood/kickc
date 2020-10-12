@@ -97,8 +97,8 @@ main: {
   !:
   __b2:
     // testnum +=2
-    lda.z testnum
     clc
+    lda.z testnum
     adc #<2
     sta.z testnum
     lda.z testnum+1
@@ -143,8 +143,8 @@ main: {
     lda.z rem16s
     bne __b4
     // testnum +=2
-    lda.z testnum
     clc
+    lda.z testnum
     adc #<2
     sta.z testnum
     lda.z testnum+1

@@ -34,19 +34,19 @@ set_process_name: {
     rts
   __b2:
     // process_name[j]=name[j]
-    lda #<main.name
     clc
-    adc.z j
+    lda.z j
+    adc #<main.name
     sta.z __1
-    lda #>main.name
-    adc.z j+1
+    lda.z j+1
+    adc #>main.name
     sta.z __1+1
-    lda #<process_name
     clc
-    adc.z j
+    lda.z j
+    adc #<process_name
     sta.z __2
-    lda #>process_name
-    adc.z j+1
+    lda.z j+1
+    adc #>process_name
     sta.z __2+1
     ldy #0
     lda (__1),y

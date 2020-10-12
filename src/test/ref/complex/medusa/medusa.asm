@@ -50,8 +50,8 @@ memcpy: {
     .label source = 2
     .label destination = 4
     // src_end = (char*)source+num
-    lda.z source
     clc
+    lda.z source
     adc #<$3e8
     sta.z src_end
     lda.z source+1

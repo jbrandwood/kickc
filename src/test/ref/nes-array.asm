@@ -57,8 +57,8 @@ foo: {
     txa
     asl
     tax
-    clc
     ldy #0
+    clc
     lda wow,x
     adc (return),y
     pha

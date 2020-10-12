@@ -95,8 +95,8 @@ font_2x2: {
     sta.z next_2x2_left+1
   __b1:
     // next_2x2_right = next_2x2 + 0x40*8
-    lda.z next_2x2_left
     clc
+    lda.z next_2x2_left
     adc #<$40*8
     sta.z next_2x2_right
     lda.z next_2x2_left+1
@@ -183,16 +183,16 @@ font_2x2: {
     cmp.z l2
     bne __b8
     // next_2x2_left = next_2x2 + 0x80*8
-    lda.z next_2x2_left
     clc
+    lda.z next_2x2_left
     adc #<$80*8
     sta.z next_2x2_left_1
     lda.z next_2x2_left+1
     adc #>$80*8
     sta.z next_2x2_left_1+1
     // next_2x2_right = next_2x2 + 0xc0*8
-    lda.z next_2x2_left
     clc
+    lda.z next_2x2_left
     adc #<$c0*8
     sta.z next_2x2_right
     lda.z next_2x2_left+1

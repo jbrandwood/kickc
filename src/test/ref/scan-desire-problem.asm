@@ -158,8 +158,8 @@ draw_block: {
     // drawtile = tileset[tileno]
     ldx tileset,y
     // screen[z] = drawtile
-    lda.z z_1
     clc
+    lda.z z_1
     adc #<screen
     sta.z __11
     lda.z z_1+1
@@ -169,8 +169,8 @@ draw_block: {
     ldy #0
     sta (__11),y
     // colors[z] = YELLOW
-    lda.z z_1
     clc
+    lda.z z_1
     adc #<colors
     sta.z __12
     lda.z z_1+1
@@ -179,16 +179,16 @@ draw_block: {
     lda #YELLOW
     sta (__12),y
     // z+1
-    lda.z z_1
     clc
+    lda.z z_1
     adc #1
     sta.z __6
     lda.z z_1+1
     adc #0
     sta.z __6+1
     // screen[z+1] = 1
-    lda.z __6
     clc
+    lda.z __6
     adc #<screen
     sta.z __13
     lda.z __6+1
@@ -215,8 +215,8 @@ draw_block: {
     adc.z z_1+1
     sta.z __8+1
     // screen[z+40] = 2
-    lda.z __8
     clc
+    lda.z __8
     adc #<screen
     sta.z __15
     lda.z __8+1
@@ -243,8 +243,8 @@ draw_block: {
     inc.z __10+1
   !:
     // screen[z+41] = 3
-    lda.z __10
     clc
+    lda.z __10
     adc #<screen
     sta.z __17
     lda.z __10+1
@@ -294,8 +294,8 @@ memset: {
     .label dst = 4
     .label str = 4
     // end = (char*)str + num
-    lda.z str
     clc
+    lda.z str
     adc #<$3e8
     sta.z end
     lda.z str+1

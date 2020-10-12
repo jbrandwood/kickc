@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 1098941965 1098943491
+//KICKC FRAGMENT CACHE 112243579e 11224372f4
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -119,8 +119,8 @@ lda {c1},y
 ldy #0
 sta ({z1}),y
 //FRAGMENT pbuz1=_inc_pbuz2
-lda {z2}
 clc
+lda {z2}
 adc #1
 sta {z1}
 lda {z2}+1
@@ -301,8 +301,8 @@ lda {z1}
 cmp {z2}
 bcs {la1}
 //FRAGMENT pbuz1=pbuz2_plus_vwuc1
-lda {z2}
 clc
+lda {z2}
 adc #<{c1}
 sta {z1}
 lda {z2}+1

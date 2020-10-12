@@ -217,8 +217,8 @@ init_dist_screen: {
     // init_squares()
     jsr init_squares
     // screen_bottomline = screen+40*24
-    lda.z screen
     clc
+    lda.z screen
     adc #<$28*$18
     sta.z screen_bottomline
     lda.z screen+1

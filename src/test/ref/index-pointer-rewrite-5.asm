@@ -42,8 +42,8 @@ main: {
     txa
     asl
     tax
-    lda fibs,x
     clc
+    lda fibs,x
     adc fibs,y
     sta.z __3
     lda fibs+1,x

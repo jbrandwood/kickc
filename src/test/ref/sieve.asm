@@ -195,8 +195,8 @@ main: {
     jmp __b13
   __b9:
     // if (!sieve[i])
-    lda.z i_1
     clc
+    lda.z i_1
     adc #<sieve
     sta.z __33
     lda.z i_1+1
@@ -237,8 +237,8 @@ main: {
     rol
     sta.z j+1
     // s = &sieve[j]
-    lda.z j
     clc
+    lda.z j
     adc #<sieve
     sta.z s
     lda.z j+1
@@ -544,8 +544,8 @@ print_char: {
     ldy #0
     sta (print_char_cursor),y
     // *(print_char_cursor++) = ch;
-    lda.z print_char_cursor
     clc
+    lda.z print_char_cursor
     adc #1
     sta.z print_char_cursor_1
     lda.z print_char_cursor+1

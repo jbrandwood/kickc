@@ -13,12 +13,12 @@ main: {
     sta.z i+1
   __b1:
     // sc = SCREEN + i
-    lda #<SCREEN
     clc
-    adc.z i
+    lda.z i
+    adc #<SCREEN
     sta.z sc
-    lda #>SCREEN
-    adc.z i+1
+    lda.z i+1
+    adc #>SCREEN
     sta.z sc+1
     // *sc = (char)i
     lda.z i

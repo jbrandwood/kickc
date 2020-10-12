@@ -181,8 +181,8 @@ MakeNiceScreen: {
     rts
   __b2:
     // strlen (T->Msg)
-    lda.z T
     clc
+    lda.z T
     adc #1
     sta.z strlen.str
     lda.z T+1
@@ -199,8 +199,8 @@ MakeNiceScreen: {
     lsr
     tax
     // cputsxy (X, T->Y, T->Msg)
-    lda.z T
     clc
+    lda.z T
     adc #1
     sta.z cputsxy.s
     lda.z T+1
@@ -577,8 +577,8 @@ gotoxy: {
     asl.z line_offset
     rol.z line_offset+1
     // CONIO_SCREEN_TEXT + line_offset
-    lda.z line_offset
     clc
+    lda.z line_offset
     adc #<DEFAULT_SCREEN
     sta.z __5
     lda.z line_offset+1
@@ -763,8 +763,8 @@ memcpy: {
     .label source = $b
     .label destination = $17
     // src_end = (char*)source+num
-    lda.z source
     clc
+    lda.z source
     adc #<$19*$28-$28
     sta.z src_end
     lda.z source+1

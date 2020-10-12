@@ -300,8 +300,8 @@ render_sine: {
     lda.z sin_idx+1
     rol
     sta.z __11+1
-    lda.z __11
     clc
+    lda.z __11
     adc #<sin
     sta.z __1
     lda.z __11+1
@@ -339,8 +339,8 @@ render_sine: {
     lda (__4),y
     sta.z sin2_val+1
     // wrap_y(sin2_val+10)
-    lda.z wrap_y.y
     clc
+    lda.z wrap_y.y
     adc #<$a
     sta.z wrap_y.y
     lda.z wrap_y.y+1

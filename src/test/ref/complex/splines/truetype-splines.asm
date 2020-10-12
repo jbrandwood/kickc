@@ -364,15 +364,15 @@ show_letter: {
     // rotate(to, angle)
     // to = rotate(to, angle)
     // to = { to.x + 100, to.y + 100}
-    lda.z to_x_1
     clc
+    lda.z to_x_1
     adc #<$64
     sta.z current_x_1
     lda.z to_x_1+1
     adc #>$64
     sta.z current_x_1+1
-    lda.z to_y_1
     clc
+    lda.z to_y_1
     adc #<$64
     sta.z current_y_1
     lda.z to_y_1+1
@@ -409,15 +409,15 @@ show_letter: {
     // rotate(via, angle)
     // via = rotate(via, angle)
     // via = { via.x + 100, via.y + 100}
-    lda.z segment_via_x
     clc
+    lda.z segment_via_x
     adc #<$64
     sta.z segment_via_x
     lda.z segment_via_x+1
     adc #>$64
     sta.z segment_via_x+1
-    lda.z segment_via_y
     clc
+    lda.z segment_via_y
     adc #<$64
     sta.z segment_via_y
     lda.z segment_via_y+1
@@ -1037,8 +1037,8 @@ spline_8segB: {
     tay
   __b1:
     // p.x+0x20
-    lda.z p_x
     clc
+    lda.z p_x
     adc #<$20
     sta.z __22
     lda.z p_x+1
@@ -1062,8 +1062,8 @@ spline_8segB: {
     rol.z __23
     rol.z __23+1
     // p.y+0x20
-    lda.z p_y
     clc
+    lda.z p_y
     adc #<$20
     sta.z __24
     lda.z p_y+1
@@ -1136,8 +1136,8 @@ spline_8segB: {
     jmp __b1
   !__b1:
     // p.x+0x20
-    lda.z __18
     clc
+    lda.z __18
     adc #<$20
     sta.z __18
     lda.z __18+1
@@ -1161,8 +1161,8 @@ spline_8segB: {
     rol.z __19
     rol.z __19+1
     // p.y+0x20
-    lda.z __20
     clc
+    lda.z __20
     adc #<$20
     sta.z __20
     lda.z __20+1

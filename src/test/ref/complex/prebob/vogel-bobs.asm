@@ -120,8 +120,8 @@ main: {
     jsr mulf8s
     // mulf8s(r, COS[a])
     // x = mulf8s(r, COS[a]) + 75*0x100
-    lda.z __10
     clc
+    lda.z __10
     adc #<$4b*$100
     sta.z x
     lda.z __10+1

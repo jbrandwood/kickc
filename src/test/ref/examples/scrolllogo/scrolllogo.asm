@@ -90,8 +90,8 @@ memset: {
     .label dst = $24
     .label str = $24
     // end = (char*)str + num
-    lda.z str
     clc
+    lda.z str
     adc #<$3e8
     sta.z end
     lda.z str+1

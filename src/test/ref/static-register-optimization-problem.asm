@@ -31,12 +31,12 @@ main: {
     // <lasti
     ldx.z lasti
     // screen[i] = <lasti
-    lda #<screen
     clc
-    adc.z i
+    lda.z i
+    adc #<screen
     sta.z __2
-    lda #>screen
-    adc.z i+1
+    lda.z i+1
+    adc #>screen
     sta.z __2+1
     txa
     ldy #0

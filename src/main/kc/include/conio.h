@@ -60,6 +60,6 @@ unsigned char kbhit (void);
 unsigned char cursor(unsigned char onoff);
 
 // If onoff is 1, scrolling is enabled when outputting past the end of the screen
-// If onoff is 1, scrolling is disabled and the cursor instead moves to (0,0)
+// If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
 unsigned char scroll(unsigned char onoff);

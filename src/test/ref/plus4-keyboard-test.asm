@@ -18,18 +18,19 @@ main: {
     sei
     // memset(DEFAULT_SCREEN, ' ', 0x0400)
     jsr memset
-  __b1:
-    // for(char y=0;y<8;y++)
-    lda.z y
-    cmp #8
-    bcc __b2
+  __b5:
     lda #<DEFAULT_SCREEN
     sta.z row
     lda #>DEFAULT_SCREEN
     sta.z row+1
     lda #0
     sta.z y
-    jmp __b1
+  __b1:
+    // for(char y=0;y<8;y++)
+    lda.z y
+    cmp #8
+    bcc __b2
+    jmp __b5
   __b2:
     // 1<<y
     lda #1

@@ -396,8 +396,8 @@ main: scope:[main]  from
   [1] call memset 
   to:main::@1
 main::@1: scope:[main]  from main main::@1 main::@5
-  [2] main::row#6 = phi( main::@1/DEFAULT_SCREEN, main::@5/main::row#1 )
-  [2] main::y#2 = phi( main::@1/0, main::@5/main::y#1 )
+  [2] main::row#6 = phi( main/DEFAULT_SCREEN, main::@5/main::row#1, main::@1/DEFAULT_SCREEN )
+  [2] main::y#2 = phi( main/0, main::@5/main::y#1, main::@1/0 )
   [3] if(main::y#2<8) goto main::@2
   to:main::@1
 main::@2: scope:[main]  from main::@1
@@ -573,8 +573,17 @@ main: {
     // [18] phi from main to memset [phi:main->memset]
   memset_from_main:
     jsr memset
-    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
   __b1_from_main:
+  __b1_from___b1:
+    // [2] phi main::row#6 = DEFAULT_SCREEN [phi:main/main::@1->main::@1#0] -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z row
+    lda #>DEFAULT_SCREEN
+    sta.z row+1
+    // [2] phi main::y#2 = 0 [phi:main/main::@1->main::@1#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z y
     jmp __b1
     // main::@1
   __b1:
@@ -582,17 +591,7 @@ main: {
     lda.z y
     cmp #8
     bcc __b2
-    // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-  __b1_from___b1:
-    // [2] phi main::row#6 = DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
-    lda #<DEFAULT_SCREEN
-    sta.z row
-    lda #>DEFAULT_SCREEN
-    sta.z row+1
-    // [2] phi main::y#2 = 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z y
-    jmp __b1
+    jmp __b1_from___b1
     // main::@2
   __b2:
     // [4] main::$2 = 1 << main::y#2 -- vbuaa=vbuc1_rol_vbuz1 
@@ -734,7 +733,6 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1_from_main:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction memset_from_main:
-Removing instruction __b1_from___b1:
 Removing instruction __b3_from___b2:
 Removing instruction __b5:
 Removing instruction __b1_from___b5:
@@ -744,6 +742,8 @@ Removing instruction __b1_from_memset:
 Removing instruction __breturn:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
+Relabelling long label __b1_from___b1 to __b5
+Succesful ASM optimization Pass5RelabelLongLabels
 
 FINAL SYMBOL TABLE
 const nomodify byte* DEFAULT_SCREEN = (byte*) 3072
@@ -820,7 +820,16 @@ main: {
     // [1] call memset 
     // [18] phi from main to memset [phi:main->memset]
     jsr memset
-    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // [2] phi from main main::@1 to main::@1 [phi:main/main::@1->main::@1]
+  __b5:
+    // [2] phi main::row#6 = DEFAULT_SCREEN [phi:main/main::@1->main::@1#0] -- pbuz1=pbuc1 
+    lda #<DEFAULT_SCREEN
+    sta.z row
+    lda #>DEFAULT_SCREEN
+    sta.z row+1
+    // [2] phi main::y#2 = 0 [phi:main/main::@1->main::@1#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z y
     // main::@1
   __b1:
     // for(char y=0;y<8;y++)
@@ -828,16 +837,7 @@ main: {
     lda.z y
     cmp #8
     bcc __b2
-    // [2] phi from main::@1 to main::@1 [phi:main::@1->main::@1]
-    // [2] phi main::row#6 = DEFAULT_SCREEN [phi:main::@1->main::@1#0] -- pbuz1=pbuc1 
-    lda #<DEFAULT_SCREEN
-    sta.z row
-    lda #>DEFAULT_SCREEN
-    sta.z row+1
-    // [2] phi main::y#2 = 0 [phi:main::@1->main::@1#1] -- vbuz1=vbuc1 
-    lda #0
-    sta.z y
-    jmp __b1
+    jmp __b5
     // main::@2
   __b2:
     // 1<<y

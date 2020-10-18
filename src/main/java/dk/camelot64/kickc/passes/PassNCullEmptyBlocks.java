@@ -60,20 +60,6 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
          if(dontCull)
             continue;
 
-         for(ControlFlowBlock predecessor : predecessors) {
-            Map<LabelRef, LabelRef> replace = new LinkedHashMap<>();
-            replace.put(removeBlock.getLabel(), successorRef);
-            if(removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
-               predecessor.setDefaultSuccessor(successorRef);
-            }
-            if(removeBlock.getLabel().equals(predecessor.getConditionalSuccessor())) {
-               predecessor.setConditionalSuccessor(successorRef);
-            }
-            if(removeBlock.getLabel().equals(predecessor.getCallSuccessor())) {
-               predecessor.setCallSuccessor(successorRef);
-            }
-            replaceLabels(predecessor, replace);
-         }
          // In all phi functions of a successor blocks make a copy of the phi assignment for each predecessor
          ControlFlowGraphBaseVisitor<Void> phiFixVisitor = new ControlFlowGraphBaseVisitor<Void>() {
             @Override
@@ -99,6 +85,21 @@ public class PassNCullEmptyBlocks extends Pass2SsaOptimization {
             }
          };
          phiFixVisitor.visitBlock(successor);
+
+         for(ControlFlowBlock predecessor : predecessors) {
+            Map<LabelRef, LabelRef> replace = new LinkedHashMap<>();
+            replace.put(removeBlock.getLabel(), successorRef);
+            if(removeBlock.getLabel().equals(predecessor.getDefaultSuccessor())) {
+               predecessor.setDefaultSuccessor(successorRef);
+            }
+            if(removeBlock.getLabel().equals(predecessor.getConditionalSuccessor())) {
+               predecessor.setConditionalSuccessor(successorRef);
+            }
+            if(removeBlock.getLabel().equals(predecessor.getCallSuccessor())) {
+               predecessor.setCallSuccessor(successorRef);
+            }
+            replaceLabels(predecessor, replace);
+         }
          getGraph().getAllBlocks().remove(removeBlock);
          LabelRef removeBlockLabelRef = removeBlock.getLabel();
          Label removeBlockLabel = getScope().getLabel(removeBlockLabelRef);

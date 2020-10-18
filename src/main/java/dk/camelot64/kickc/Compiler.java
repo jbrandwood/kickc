@@ -576,8 +576,21 @@ public class Compiler {
 
       // Phi mem coalesce removes as many variables introduced by phi lifting as possible - as long as their live ranges do not overlap
       new Pass3PhiMemCoalesce(program).step();
+
+      if(getLog().isVerboseSSAOptimize()) {
+         getLog().append("CONTROL FLOW GRAPH");
+         getLog().append(program.getGraph().toString(program));
+      }
       new PassNCullEmptyBlocks(program, false).step();
+      if(getLog().isVerboseSSAOptimize()) {
+         getLog().append("CONTROL FLOW GRAPH");
+         getLog().append(program.getGraph().toString(program));
+      }
       new PassNRenumberLabels(program, false).execute();
+      if(getLog().isVerboseSSAOptimize()) {
+         getLog().append("CONTROL FLOW GRAPH");
+         getLog().append(program.getGraph().toString(program));
+      }
       new PassNBlockSequencePlanner(program).step();
       new Pass3AddNopBeforeCallOns(program).generate();
       new PassNStatementIndices(program).execute();

@@ -3956,6 +3956,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLoopProblem3() throws IOException, URISyntaxException {
+      compileAndCompare("loop-problem3.c");
+   }
+
+   @Test
    public void testLoopProblem2() throws IOException, URISyntaxException {
       compileAndCompare("loop-problem2.c");
    }

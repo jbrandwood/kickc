@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 11224357a0 11224372f6
+//KICKC FRAGMENT CACHE 110cb2b103 110cb2cc7a
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -8902,11 +8902,6 @@ sty {z1}
 txa
 sta {z1}+1
 sty {z1}
-//FRAGMENT _deref_qbuc1=pbuc2
-lda #<{c2}
-sta {c1}
-lda #>{c2}
-sta {c1}+1
 //FRAGMENT _deref_pbsc1=vbsc2
 lda #{c2}
 sta {c1}
@@ -9297,6 +9292,11 @@ tax
 stx $ff
 cpy $ff
 bne {la1}
+//FRAGMENT _deref_qbuc1=pbuc2
+lda #<{c2}
+sta {c1}
+lda #>{c2}
+sta {c1}+1
 //FRAGMENT pwuz1_derefidx_vbuc1=vwuz2
 ldy #{c1}
 lda {z2}
@@ -18829,3 +18829,101 @@ sta {c1},x
 lda #{c2}
 ora {c1},y
 sta {c1},y
+//FRAGMENT _deref_pwuc1=vbuz1
+lda {z1}
+sta {c1}
+lda #0
+sta {c1}+1
+//FRAGMENT pvoz1=_deref_qvoc1
+lda {c1}
+sta {z1}
+lda {c1}+1
+sta {z1}+1
+//FRAGMENT _deref_(_deref_qbuc1)=_deref_pbuc2
+lda {c2}
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT vbuz1=pbuc1_derefidx_(_deref_pbuc2)
+ldy {c2}
+lda {c1},y
+sta {z1}
+//FRAGMENT _deref_pwuc1=_inc__deref_pwuc1
+inc {c1}
+bne !+
+inc {c1}+1
+!:
+//FRAGMENT _deref_pwuc1_eq_vbuc2_then_la1
+lda {c1}+1
+bne !+
+lda {c1}
+cmp #{c2}
+beq {la1}
+!:
+//FRAGMENT pbuz1=_deref_qbuc1_plus_vwuz2
+clc
+lda {z2}
+adc {c1}
+sta {z1}
+lda {z2}+1
+adc {c1}+1
+sta {z1}+1
+//FRAGMENT pbuz1=pbuz2_plus__deref_pwuc1
+clc
+lda {c1}
+adc {z2}
+sta {z1}
+lda {c1}+1
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT _deref_(_deref_qbuc1)=_deref_(_deref_qbuc1)_bxor_vbuc2
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+lda ($fe),y
+eor #{c2}
+sta ($fe),y
+//FRAGMENT _deref_pwuc1=vbuaa
+sta {c1}
+lda #0
+sta {c1}+1
+//FRAGMENT _deref_pwuc1=vbuxx
+txa
+sta {c1}
+lda #0
+sta {c1}+1
+//FRAGMENT _deref_pwuc1=vbuyy
+tya
+sta {c1}
+lda #0
+sta {c1}+1
+//FRAGMENT vbuaa=pbuc1_derefidx_(_deref_pbuc2)
+ldy {c2}
+lda {c1},y
+//FRAGMENT vbuxx=pbuc1_derefidx_(_deref_pbuc2)
+ldy {c2}
+ldx {c1},y
+//FRAGMENT vbuyy=pbuc1_derefidx_(_deref_pbuc2)
+ldx {c2}
+ldy {c1},x
+//FRAGMENT pbuz1=_deref_qbuc1_plus_vwuz1
+clc
+lda {z1}
+adc {c1}
+sta {z1}
+lda {z1}+1
+adc {c1}+1
+sta {z1}+1
+//FRAGMENT pbuz1=pbuz1_plus__deref_pwuc1
+clc
+lda {c1}
+adc {z1}
+sta {z1}
+lda {c1}+1
+adc {z1}+1
+sta {z1}+1

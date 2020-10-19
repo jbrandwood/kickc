@@ -395,6 +395,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAtariXlConioTest() throws IOException, URISyntaxException {
+      compileAndCompare("examples/atarixl/conio-test.c");
+   }
+
+   @Test
    public void testAtariXlRasterbars() throws IOException, URISyntaxException {
       compileAndCompare("examples/atarixl/rasterbars.c");
    }

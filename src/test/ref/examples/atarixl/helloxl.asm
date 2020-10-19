@@ -37,6 +37,7 @@ ProgramEnd:
   .const BLANK4 = $30
   // Blank 8 lines
   .const BLANK8 = $70
+  // Atari OS Shadow registers
   // OS Shadow ANTIC Direct Memory Access Control ($D400)
   .label SDMCTL = $22f
   // OS Shadow ANTIC Display List Pointer ($D402)

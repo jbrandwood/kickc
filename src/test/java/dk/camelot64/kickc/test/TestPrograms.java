@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testChipsetTest() throws IOException, URISyntaxException {
+      compileAndCompare("chipset-test.c");
+   }
+
+   @Test
    public void testConstRefNotLiteralProblem() throws IOException, URISyntaxException {
       compileAndCompare("constref-not-literal-problem.c");
    }

@@ -1,0 +1,159 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  *((byte*)(struct __pia*)$d300+OFFSET_STRUCT___PIA_PORTA) = 7
+  *((byte*)PIA2+OFFSET_STRUCT_ATARI_PIA_PORTA) = 7
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const byte OFFSET_STRUCT_ATARI_PIA_PORTA = 0
+const byte OFFSET_STRUCT___PIA_PORTA = 0
+const nomodify struct ATARI_PIA* PIA2 = (struct ATARI_PIA*)$d300
+void __start()
+void main()
+
+Adding number conversion cast (unumber) 7 in *((byte*)(struct __pia*)$d300+OFFSET_STRUCT___PIA_PORTA) = 7
+Adding number conversion cast (unumber) 7 in *((byte*)PIA2+OFFSET_STRUCT_ATARI_PIA_PORTA) = 7
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((byte*)(struct __pia*)$d300+OFFSET_STRUCT___PIA_PORTA) = (unumber)7
+Inlining cast *((byte*)PIA2+OFFSET_STRUCT_ATARI_PIA_PORTA) = (unumber)7
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (struct ATARI_PIA*) 54016
+Simplifying constant integer cast 7
+Simplifying constant pointer cast (struct __pia*) 54016
+Simplifying constant integer cast 7
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type 7
+Finalized unsigned number type 7
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying expression containing zero (byte*)(struct __pia*) 54016 in [0] *((byte*)(struct __pia*) 54016+OFFSET_STRUCT___PIA_PORTA) = 7
+Simplifying expression containing zero (byte*)PIA2 in [1] *((byte*)PIA2+OFFSET_STRUCT_ATARI_PIA_PORTA) = 7
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant OFFSET_STRUCT___PIA_PORTA
+Eliminating unused constant OFFSET_STRUCT_ATARI_PIA_PORTA
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *((byte*)(struct __pia*) 54016) = 7
+  [1] *((byte*)PIA2) = 7
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *((byte*)(struct __pia*) 54016) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *((byte*)PIA2) = 7 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [__pia] 
+Uplift Scope [ATARI_PIA] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [__pia] best 21 combination 
+Uplifting [ATARI_PIA] best 21 combination 
+Uplifting [main] best 21 combination 
+Uplifting [] best 21 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test ATARI chipset variations
+// Pointer to struct versus MAcro pointer to struct
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label PIA2 = $d300
+  // main
+main: {
+    // [0] *((byte*)(struct __pia*) 54016) = 7 -- _deref_pbuc1=vbuc2 
+    lda #7
+    sta $d300
+    // [1] *((byte*)PIA2) = 7 -- _deref_pbuc1=vbuc2 
+    lda #7
+    sta PIA2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #7
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify struct ATARI_PIA* PIA2 = (struct ATARI_PIA*) 54016
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 16
+
+  // File Comments
+// Test ATARI chipset variations
+// Pointer to struct versus MAcro pointer to struct
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label PIA2 = $d300
+  // main
+main: {
+    // PIA1.porta = 7
+    // [0] *((byte*)(struct __pia*) 54016) = 7 -- _deref_pbuc1=vbuc2 
+    lda #7
+    sta $d300
+    // PIA2->PORTA = 7
+    // [1] *((byte*)PIA2) = 7 -- _deref_pbuc1=vbuc2 
+    sta PIA2
+    // main::@return
+    // }
+    // [2] return 
+    rts
+}
+  // File Data
+

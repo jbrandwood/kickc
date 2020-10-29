@@ -37,6 +37,10 @@ char * const COLS = 0xd800;
 
 // Default address of screen character matrix
 char * const DEFAULT_SCREEN = 0x0400;
+// Default address of the chargen font (upper case)
+char * const DEFAULT_FONT_UPPER = 0x1000;
+// Default address of the chargen font (mixed case)
+char * const DEFAULT_FONT_MIXED = 0x1800;
 
 // The CIA#1: keyboard matrix, joystick #1/#2
 struct MOS6526_CIA * const CIA1 = 0xdc00;

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAtariXlMd5() throws IOException, URISyntaxException {
+      compileAndCompare("atarixl-md5.c");
+   }
+
+   @Test
    public void testZpReserveCoalesceProblem() throws IOException, URISyntaxException {
       compileAndCompare("zp-reserve-coalesce-problem.c");
    }

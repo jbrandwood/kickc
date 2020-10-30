@@ -50,6 +50,10 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAtariXlMd5b() throws IOException, URISyntaxException {
+      compileAndCompare("atarixl-md5b.c");
+   }
+   @Test
    public void testAtariXlMd5() throws IOException, URISyntaxException {
       compileAndCompare("atarixl-md5.c");
    }

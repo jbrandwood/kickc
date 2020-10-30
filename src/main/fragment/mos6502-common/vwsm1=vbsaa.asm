@@ -1,6 +1,6 @@
 sta {m1}
-ora #$7f
-bmi !+
-lda #0
+and #$80
+beq !+
+lda #$ff
 !:
 sta {m1}+1

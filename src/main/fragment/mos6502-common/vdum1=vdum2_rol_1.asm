@@ -10,4 +10,3 @@ sta {m1}+2
 lda {m2}+3
 rol
 sta {m1}+3
-

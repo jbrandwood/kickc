@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void test32bitRols() throws IOException, URISyntaxException {
+      compileAndCompare("32bit-rols.c");
+   }
+
+   @Test
    public void testAtariXlMd5() throws IOException, URISyntaxException {
       compileAndCompare("atarixl-md5.c");
    }

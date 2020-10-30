@@ -184,17 +184,15 @@ anim: {
     adc.z yvel_1+1
     sta.z ypos+1
     // xpos>>7
-    lda.z xpos
-    sta.z $ff
     lda.z xpos+1
     sta.z __5
-    lda #0
-    bit.z xpos+1
-    bpl !+
+    and #$80
+    beq !+
     lda #$ff
   !:
     sta.z __5+1
-    rol.z $ff
+    lda.z xpos
+    rol
     rol.z __5
     rol.z __5+1
     // sprite_x = xpos>>7 + 160

@@ -57,9 +57,9 @@ main: {
     // test_casting(signed_char_value)
     lda.z signed_char_value
     sta.z test_casting.signed_short_value
-    ora #$7f
-    bmi !+
-    lda #0
+    and #$80
+    beq !+
+    lda #$ff
   !:
     sta.z test_casting.signed_short_value+1
     jsr test_casting

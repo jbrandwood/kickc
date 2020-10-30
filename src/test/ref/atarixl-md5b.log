@@ -123,7 +123,7 @@ md5: scope:[md5]  from main::@3
 md5::@1: scope:[md5]  from md5 md5::@6
   md5::c#4 = phi( md5/md5::c#0, md5::@6/md5::c#7 )
   md5::b#4 = phi( md5/md5::b#0, md5::@6/md5::b#7 )
-  md5::a#3 = phi( md5/md5::a#0, md5::@6/md5::a#4 )
+  md5::a#5 = phi( md5/md5::a#0, md5::@6/md5::a#7 )
   md5::i#2 = phi( md5/md5::i#0, md5::@6/md5::i#1 )
   md5::$0 = md5::i#2 < 4
   if(md5::$0) goto md5::@2
@@ -131,35 +131,32 @@ md5::@1: scope:[md5]  from md5 md5::@6
 md5::@2: scope:[md5]  from md5::@1
   md5::c#2 = phi( md5::@1/md5::c#4 )
   md5::b#2 = phi( md5::@1/md5::b#4 )
-  md5::a#2 = phi( md5::@1/md5::a#3 )
+  md5::a#3 = phi( md5::@1/md5::a#5 )
   md5::i#3 = phi( md5::@1/md5::i#2 )
   print::i#0 = md5::i#3
-  print::a#0 = md5::a#2
+  print::a#0 = md5::a#3
   print::b#0 = md5::b#2
   print::c#0 = md5::c#2
   call print 
   to:md5::@5
 md5::@5: scope:[md5]  from md5::@2
+  md5::a#6 = phi( md5::@2/md5::a#3 )
   md5::b#6 = phi( md5::@2/md5::b#2 )
   md5::c#6 = phi( md5::@2/md5::c#2 )
   md5::i#4 = phi( md5::@2/md5::i#3 )
   md5::$2 = md5::i#4 & 1
-  md5::$5 = 0 != md5::$2
-  if(md5::$5) goto md5::@3
+  md5::$6 = 0 != md5::$2
+  md5::$3 = ! md5::$6
+  if(md5::$3) goto md5::@3
   to:md5::@4
-md5::@4: scope:[md5]  from md5::@5
-  md5::i#7 = phi( md5::@5/md5::i#4 )
-  md5::b#5 = phi( md5::@5/md5::b#6 )
-  md5::c#5 = phi( md5::@5/md5::c#6 )
-  to:md5::@3
 md5::@3: scope:[md5]  from md5::@4 md5::@5
   md5::i#5 = phi( md5::@4/md5::i#7, md5::@5/md5::i#4 )
   md5::b#3 = phi( md5::@4/md5::b#5, md5::@5/md5::b#6 )
   md5::c#3 = phi( md5::@4/md5::c#5, md5::@5/md5::c#6 )
   md5::temp#0 = md5::c#3
   md5::c#1 = md5::b#3
-  md5::$3 = md5::b#3 + 1
-  md5::b#1 = md5::$3
+  md5::$4 = md5::b#3 + 1
+  md5::b#1 = md5::$4
   md5::a#1 = md5::temp#0
   print::i#1 = md5::i#5
   print::a#1 = md5::a#1
@@ -170,10 +167,17 @@ md5::@3: scope:[md5]  from md5::@4 md5::@5
 md5::@6: scope:[md5]  from md5::@3
   md5::c#7 = phi( md5::@3/md5::c#1 )
   md5::b#7 = phi( md5::@3/md5::b#1 )
-  md5::a#4 = phi( md5::@3/md5::a#1 )
+  md5::a#7 = phi( md5::@3/md5::a#1 )
   md5::i#6 = phi( md5::@3/md5::i#5 )
   md5::i#1 = ++ md5::i#6
   to:md5::@1
+md5::@4: scope:[md5]  from md5::@5
+  md5::i#7 = phi( md5::@5/md5::i#4 )
+  md5::b#5 = phi( md5::@5/md5::b#6 )
+  md5::c#5 = phi( md5::@5/md5::c#6 )
+  md5::a#4 = phi( md5::@5/md5::a#6 )
+  md5::a#2 = ++ md5::a#4
+  to:md5::@3
 md5::@return: scope:[md5]  from md5::@1
   return 
   to:@return
@@ -209,14 +213,18 @@ byte* main::s#3
 void md5()
 bool~ md5::$0
 number~ md5::$2
-number~ md5::$3
-bool~ md5::$5
+bool~ md5::$3
+number~ md5::$4
+bool~ md5::$6
 byte md5::a
 byte md5::a#0
 byte md5::a#1
 byte md5::a#2
 byte md5::a#3
 byte md5::a#4
+byte md5::a#5
+byte md5::a#6
+byte md5::a#7
 byte md5::b
 byte md5::b#0
 byte md5::b#1
@@ -318,9 +326,9 @@ Adding number conversion cast (unumber) 0 in idx = 0
 Adding number conversion cast (unumber) 4 in md5::$0 = md5::i#2 < 4
 Adding number conversion cast (unumber) 1 in md5::$2 = md5::i#4 & 1
 Adding number conversion cast (unumber) md5::$2 in md5::$2 = md5::i#4 & (unumber)1
-Adding number conversion cast (unumber) 0 in md5::$5 = 0 != md5::$2
-Adding number conversion cast (unumber) 1 in md5::$3 = md5::b#3 + 1
-Adding number conversion cast (unumber) md5::$3 in md5::$3 = md5::b#3 + (unumber)1
+Adding number conversion cast (unumber) 0 in md5::$6 = 0 != md5::$2
+Adding number conversion cast (unumber) 1 in md5::$4 = md5::b#3 + 1
+Adding number conversion cast (unumber) md5::$4 in md5::$4 = md5::b#3 + (unumber)1
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast idx = (unumber)0
 Successful SSA optimization Pass2InlineCast
@@ -367,19 +375,21 @@ Inferred type updated to byte in print::print323_$1 = print::print323_l#1 & $f
 Inferred type updated to byte in print::print324_$0 = print::print324_l#1 / $10
 Inferred type updated to byte in print::print324_$1 = print::print324_l#1 & $f
 Inferred type updated to byte in md5::$2 = md5::i#4 & 1
-Inferred type updated to byte in md5::$3 = md5::b#3 + 1
+Inferred type updated to byte in md5::$4 = md5::b#3 + 1
+Inversing boolean not [72] md5::$3 = 0 == md5::$2 from [71] md5::$6 = 0 != md5::$2
+Successful SSA optimization Pass2UnaryNotSimplification
 Alias main::s#2 = main::s#3 
 Alias print::print321_l#0 = print::i#2 print::print321_l#1 
 Alias print::a#2 = print::a#3 print::a#4 print::print322_l#0 print::print322_l#1 
 Alias print::b#2 = print::b#5 print::b#6 print::b#4 print::b#3 print::print323_l#0 print::print323_l#1 
 Alias print::c#2 = print::c#7 print::c#8 print::c#6 print::c#5 print::c#4 print::c#3 print::print324_l#0 print::print324_l#1 
 Alias md5::i#2 = md5::i#3 md5::i#4 md5::i#7 
-Alias md5::a#2 = md5::a#3 
+Alias md5::a#3 = md5::a#5 md5::a#6 md5::a#4 
 Alias md5::b#2 = md5::b#4 md5::b#6 md5::b#5 
 Alias md5::c#2 = md5::c#4 md5::c#6 md5::c#5 
-Alias md5::a#1 = md5::temp#0 md5::c#3 md5::a#4 
+Alias md5::a#1 = md5::temp#0 md5::c#3 md5::a#7 
 Alias md5::c#1 = md5::b#3 md5::c#7 
-Alias md5::b#1 = md5::$3 md5::b#7 
+Alias md5::b#1 = md5::$4 md5::b#7 
 Alias md5::i#5 = md5::i#6 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (phi-usage) md5::c#1 = md5::b#2 
@@ -391,7 +401,7 @@ Identical Phi Values md5::c#1 md5::b#2
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition main::$1 [3] if(main::s#2<$800) goto main::@2
 Simple Condition md5::$0 [50] if(md5::i#2<4) goto md5::@2
-Simple Condition md5::$5 [58] if(0!=md5::$2) goto md5::@3
+Simple Condition md5::$3 [58] if(0==md5::$2) goto md5::@3
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant main::s#0 = (byte*) 1024
 Constant md5::a#0 = $67
@@ -399,6 +409,8 @@ Constant md5::b#0 = $ef
 Constant md5::c#0 = $98
 Constant md5::i#0 = 0
 Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable md5::a#2 and assignment [58] md5::a#2 = ++ md5::a#3
+Successful SSA optimization PassNEliminateUnusedVars
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Rewriting division to use shift [6] print::print321_$0 = print::print321_l#0 / $10
@@ -443,9 +455,9 @@ Coalesced [39] print::a#6 = print::a#1
 Coalesced [40] print::b#8 = print::b#1
 Coalesced [41] print::c#10 = print::c#1
 Coalesced [44] md5::i#8 = md5::i#1
-Not coalescing [45] md5::a#5 = md5::a#1
+Not coalescing [45] md5::a#8 = md5::a#1
 Not coalescing [46] md5::b#8 = md5::b#1
-Not coalescing [47] md5::a#6 = md5::b#2
+Not coalescing [47] md5::a#9 = md5::b#2
 Coalesced down to 10 phi equivalence classes
 Culled Empty Block label __start::@2
 Culled Empty Block label main::@5
@@ -503,9 +515,9 @@ md5: scope:[md5]  from main::@3
   [14] phi()
   to:md5::@1
 md5::@1: scope:[md5]  from md5 md5::@6
-  [15] md5::a#1 = phi( md5/md5::c#0, md5::@6/md5::a#6 )
+  [15] md5::a#1 = phi( md5/md5::c#0, md5::@6/md5::a#9 )
   [15] md5::b#2 = phi( md5/$ef, md5::@6/md5::b#8 )
-  [15] md5::a#2 = phi( md5/$67, md5::@6/md5::a#5 )
+  [15] md5::a#3 = phi( md5/$67, md5::@6/md5::a#8 )
   [15] md5::i#2 = phi( md5/0, md5::@6/md5::i#1 )
   [16] if(md5::i#2<4) goto md5::@2
   to:md5::@return
@@ -514,14 +526,14 @@ md5::@return: scope:[md5]  from md5::@1
   to:@return
 md5::@2: scope:[md5]  from md5::@1
   [18] print::i#0 = md5::i#2
-  [19] print::a#0 = md5::a#2
+  [19] print::a#0 = md5::a#3
   [20] print::b#0 = md5::b#2
   [21] print::c#0 = md5::a#1
   [22] call print 
   to:md5::@5
 md5::@5: scope:[md5]  from md5::@2
   [23] md5::$2 = md5::i#2 & 1
-  [24] if(0!=md5::$2) goto md5::@3
+  [24] if(0==md5::$2) goto md5::@3
   to:md5::@4
 md5::@4: scope:[md5]  from md5::@5
   [25] phi()
@@ -536,9 +548,9 @@ md5::@3: scope:[md5]  from md5::@4 md5::@5
   to:md5::@6
 md5::@6: scope:[md5]  from md5::@3
   [32] md5::i#1 = ++ md5::i#2
-  [33] md5::a#5 = md5::a#1
+  [33] md5::a#8 = md5::a#1
   [34] md5::b#8 = md5::b#1
-  [35] md5::a#6 = md5::b#2
+  [35] md5::a#9 = md5::b#2
   to:md5::@1
 
 void print(byte print::i , byte print::a , byte print::b , byte print::c)
@@ -609,9 +621,9 @@ void md5()
 byte~ md5::$2 2002.0
 byte md5::a
 byte md5::a#1 235.52941176470588
-byte md5::a#2 667.3333333333334
-byte md5::a#5 667.3333333333334
-byte md5::a#6 2002.0
+byte md5::a#3 667.3333333333334
+byte md5::a#8 667.3333333333334
+byte md5::a#9 2002.0
 byte md5::b
 byte md5::b#1 375.375
 byte md5::b#2 263.42105263157896
@@ -654,9 +666,9 @@ byte print::print324_l
 Initial phi equivalence classes
 [ main::s#2 main::s#1 ]
 [ md5::i#2 md5::i#1 ]
-[ md5::a#2 md5::a#5 ]
+[ md5::a#3 md5::a#8 ]
 [ md5::b#2 md5::b#8 ]
-[ md5::a#1 md5::a#6 ]
+[ md5::a#1 md5::a#9 ]
 [ print::print321_l#0 print::i#0 print::i#1 ]
 [ print::a#2 print::a#0 print::a#1 ]
 [ print::b#2 print::b#0 print::b#1 ]
@@ -676,9 +688,9 @@ Added variable print::print324_$1 to live range equivalence class [ print::print
 Complete equivalence classes
 [ main::s#2 main::s#1 ]
 [ md5::i#2 md5::i#1 ]
-[ md5::a#2 md5::a#5 ]
+[ md5::a#3 md5::a#8 ]
 [ md5::b#2 md5::b#8 ]
-[ md5::a#1 md5::a#6 ]
+[ md5::a#1 md5::a#9 ]
 [ print::print321_l#0 print::i#0 print::i#1 ]
 [ print::a#2 print::a#0 print::a#1 ]
 [ print::b#2 print::b#0 print::b#1 ]
@@ -697,9 +709,9 @@ Complete equivalence classes
 [ print::print324_$1 ]
 Allocated zp[2]:2 [ main::s#2 main::s#1 ]
 Allocated zp[1]:4 [ md5::i#2 md5::i#1 ]
-Allocated zp[1]:5 [ md5::a#2 md5::a#5 ]
+Allocated zp[1]:5 [ md5::a#3 md5::a#8 ]
 Allocated zp[1]:6 [ md5::b#2 md5::b#8 ]
-Allocated zp[1]:7 [ md5::a#1 md5::a#6 ]
+Allocated zp[1]:7 [ md5::a#1 md5::a#9 ]
 Allocated zp[1]:8 [ print::print321_l#0 print::i#0 print::i#1 ]
 Allocated zp[1]:9 [ print::a#2 print::a#0 print::a#1 ]
 Allocated zp[1]:10 [ print::b#2 print::b#0 print::b#1 ]
@@ -721,76 +733,76 @@ Statement [1] line = (byte*) 1024 [ line ] (  [ line ] { }  ) always clobbers re
 Statement [2] idx = 0 [ line idx ] (  [ line idx ] { }  ) always clobbers reg byte a 
 Statement [8] if(main::s#2<$800) goto main::@2 [ line idx main::s#2 ] ( main:4 [ line idx main::s#2 ] { }  ) always clobbers reg byte a 
 Statement [12] *main::s#2 = ' ' [ line idx main::s#2 ] ( main:4 [ line idx main::s#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [37] print::print321_$0 = print::print321_l#0 >> 4 [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [37] print::print321_$0 = print::print321_l#0 >> 4 [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ md5::i#2 md5::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ md5::b#2 md5::b#8 ]
-Removing always clobbered register reg byte a as potential for zp[1]:7 [ md5::a#1 md5::a#6 ]
+Removing always clobbered register reg byte a as potential for zp[1]:7 [ md5::a#1 md5::a#9 ]
 Removing always clobbered register reg byte a as potential for zp[1]:8 [ print::print321_l#0 print::i#0 print::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:9 [ print::a#2 print::a#0 print::a#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:10 [ print::b#2 print::b#0 print::b#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:11 [ print::c#2 print::c#0 print::c#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ md5::b#1 ]
-Statement [38] line[idx] = HEX[print::print321_$0] [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [38] line[idx] = HEX[print::print321_$0] [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:4 [ md5::i#2 md5::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:6 [ md5::b#2 md5::b#8 ]
-Removing always clobbered register reg byte y as potential for zp[1]:7 [ md5::a#1 md5::a#6 ]
+Removing always clobbered register reg byte y as potential for zp[1]:7 [ md5::a#1 md5::a#9 ]
 Removing always clobbered register reg byte y as potential for zp[1]:8 [ print::print321_l#0 print::i#0 print::i#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:9 [ print::a#2 print::a#0 print::a#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:10 [ print::b#2 print::b#0 print::b#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:11 [ print::c#2 print::c#0 print::c#1 ]
 Removing always clobbered register reg byte y as potential for zp[1]:16 [ md5::b#1 ]
-Statement [40] print::print321_$1 = print::print321_l#0 & $f [ line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [41] line[idx] = HEX[print::print321_$1] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [43] line[idx] = ' ' [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [45] print::print322_$0 = print::a#2 >> 4 [ line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [46] line[idx] = HEX[print::print322_$0] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [48] print::print322_$1 = print::a#2 & $f [ line idx print::b#2 print::c#2 print::print322_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [49] line[idx] = HEX[print::print322_$1] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [51] line[idx] = ' ' [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [53] print::print323_$0 = print::b#2 >> 4 [ line idx print::b#2 print::c#2 print::print323_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [54] line[idx] = HEX[print::print323_$0] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [56] print::print323_$1 = print::b#2 & $f [ line idx print::c#2 print::print323_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [57] line[idx] = HEX[print::print323_$1] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [59] line[idx] = ' ' [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [61] print::print324_$0 = print::c#2 >> 4 [ line idx print::c#2 print::print324_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [62] line[idx] = HEX[print::print324_$0] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [64] print::print324_$1 = print::c#2 & $f [ line idx print::print324_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [65] line[idx] = HEX[print::print324_$1] [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [67] line[idx] = ' ' [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [69] line = line + $28 [ line ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [70] idx = 0 [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [40] print::print321_$1 = print::print321_l#0 & $f [ line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [41] line[idx] = HEX[print::print321_$1] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [43] line[idx] = ' ' [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [45] print::print322_$0 = print::a#2 >> 4 [ line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [46] line[idx] = HEX[print::print322_$0] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [48] print::print322_$1 = print::a#2 & $f [ line idx print::b#2 print::c#2 print::print322_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [49] line[idx] = HEX[print::print322_$1] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [51] line[idx] = ' ' [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [53] print::print323_$0 = print::b#2 >> 4 [ line idx print::b#2 print::c#2 print::print323_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [54] line[idx] = HEX[print::print323_$0] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [56] print::print323_$1 = print::b#2 & $f [ line idx print::c#2 print::print323_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [57] line[idx] = HEX[print::print323_$1] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [59] line[idx] = ' ' [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [61] print::print324_$0 = print::c#2 >> 4 [ line idx print::c#2 print::print324_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [62] line[idx] = HEX[print::print324_$0] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [64] print::print324_$1 = print::c#2 & $f [ line idx print::print324_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [65] line[idx] = HEX[print::print324_$1] [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [67] line[idx] = ' ' [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [69] line = line + $28 [ line ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [70] idx = 0 [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
 Statement [1] line = (byte*) 1024 [ line ] (  [ line ] { }  ) always clobbers reg byte a 
 Statement [2] idx = 0 [ line idx ] (  [ line idx ] { }  ) always clobbers reg byte a 
 Statement [8] if(main::s#2<$800) goto main::@2 [ line idx main::s#2 ] ( main:4 [ line idx main::s#2 ] { }  ) always clobbers reg byte a 
 Statement [12] *main::s#2 = ' ' [ line idx main::s#2 ] ( main:4 [ line idx main::s#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [23] md5::$2 = md5::i#2 & 1 [ line idx md5::i#2 md5::b#2 md5::a#1 md5::$2 ] ( main:4::md5:10 [ line idx md5::i#2 md5::b#2 md5::a#1 md5::$2 ] { }  ) always clobbers reg byte a 
-Statement [37] print::print321_$0 = print::print321_l#0 >> 4 [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [38] line[idx] = HEX[print::print321_$0] [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [40] print::print321_$1 = print::print321_l#0 & $f [ line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [41] line[idx] = HEX[print::print321_$1] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [43] line[idx] = ' ' [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [45] print::print322_$0 = print::a#2 >> 4 [ line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [46] line[idx] = HEX[print::print322_$0] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [48] print::print322_$1 = print::a#2 & $f [ line idx print::b#2 print::c#2 print::print322_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [49] line[idx] = HEX[print::print322_$1] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [51] line[idx] = ' ' [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [53] print::print323_$0 = print::b#2 >> 4 [ line idx print::b#2 print::c#2 print::print323_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [54] line[idx] = HEX[print::print323_$0] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [56] print::print323_$1 = print::b#2 & $f [ line idx print::c#2 print::print323_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [57] line[idx] = HEX[print::print323_$1] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [59] line[idx] = ' ' [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [61] print::print324_$0 = print::c#2 >> 4 [ line idx print::c#2 print::print324_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [62] line[idx] = HEX[print::print324_$0] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [64] print::print324_$1 = print::c#2 & $f [ line idx print::print324_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [65] line[idx] = HEX[print::print324_$1] [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [67] line[idx] = ' ' [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [69] line = line + $28 [ line ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
-Statement [70] idx = 0 [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#2 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [37] print::print321_$0 = print::print321_l#0 >> 4 [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 print::print321_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [38] line[idx] = HEX[print::print321_$0] [ line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print321_l#0 print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [40] print::print321_$1 = print::print321_l#0 & $f [ line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print321_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [41] line[idx] = HEX[print::print321_$1] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [43] line[idx] = ' ' [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [45] print::print322_$0 = print::a#2 >> 4 [ line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 print::print322_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [46] line[idx] = HEX[print::print322_$0] [ line idx print::a#2 print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::a#2 print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [48] print::print322_$1 = print::a#2 & $f [ line idx print::b#2 print::c#2 print::print322_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print322_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [49] line[idx] = HEX[print::print322_$1] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [51] line[idx] = ' ' [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [53] print::print323_$0 = print::b#2 >> 4 [ line idx print::b#2 print::c#2 print::print323_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 print::print323_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [54] line[idx] = HEX[print::print323_$0] [ line idx print::b#2 print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::b#2 print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [56] print::print323_$1 = print::b#2 & $f [ line idx print::c#2 print::print323_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print323_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [57] line[idx] = HEX[print::print323_$1] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [59] line[idx] = ' ' [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [61] print::print324_$0 = print::c#2 >> 4 [ line idx print::c#2 print::print324_$0 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 print::print324_$0 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [62] line[idx] = HEX[print::print324_$0] [ line idx print::c#2 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::c#2 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [64] print::print324_$1 = print::c#2 & $f [ line idx print::print324_$1 ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx print::print324_$1 ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [65] line[idx] = HEX[print::print324_$1] [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [67] line[idx] = ' ' [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [69] line = line + $28 [ line ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
+Statement [70] idx = 0 [ line idx ] ( main:4::md5:10::print:22 [ md5::i#2 md5::b#2 md5::a#1 line idx ] { { print::print321_l#0 = print::i#0 md5::i#2 } { print::a#0 = print::a#2 md5::a#3 } { print::b#0 = print::b#2 md5::b#2 } { print::c#0 = print::c#2 md5::a#1 } }  main:4::md5:10::print:31 [ md5::i#2 md5::b#2 md5::a#1 md5::b#1 line idx ] { { print::print321_l#0 = print::i#1 md5::i#2 } { print::a#1 = print::a#2 md5::a#1 } { print::b#1 = print::b#2 md5::b#1 } { print::c#1 = print::c#2 md5::b#2 } }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ main::s#2 main::s#1 ] : zp[2]:2 , 
 Potential registers zp[1]:4 [ md5::i#2 md5::i#1 ] : zp[1]:4 , reg byte x , 
-Potential registers zp[1]:5 [ md5::a#2 md5::a#5 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ md5::a#3 md5::a#8 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:6 [ md5::b#2 md5::b#8 ] : zp[1]:6 , reg byte x , 
-Potential registers zp[1]:7 [ md5::a#1 md5::a#6 ] : zp[1]:7 , reg byte x , 
+Potential registers zp[1]:7 [ md5::a#1 md5::a#9 ] : zp[1]:7 , reg byte x , 
 Potential registers zp[1]:8 [ print::print321_l#0 print::i#0 print::i#1 ] : zp[1]:8 , reg byte x , 
 Potential registers zp[1]:9 [ print::a#2 print::a#0 print::a#1 ] : zp[1]:9 , reg byte x , 
 Potential registers zp[1]:10 [ print::b#2 print::b#0 print::b#1 ] : zp[1]:10 , reg byte x , 
@@ -810,14 +822,14 @@ Potential registers zp[1]:24 [ print::print324_$1 ] : zp[1]:24 , reg byte a , re
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [print] 20,002: zp[1]:17 [ print::print321_$0 ] 20,002: zp[1]:18 [ print::print321_$1 ] 20,002: zp[1]:19 [ print::print322_$0 ] 20,002: zp[1]:20 [ print::print322_$1 ] 20,002: zp[1]:21 [ print::print323_$0 ] 20,002: zp[1]:22 [ print::print323_$1 ] 20,002: zp[1]:23 [ print::print324_$0 ] 20,002: zp[1]:24 [ print::print324_$1 ] 6,502: zp[1]:8 [ print::print321_l#0 print::i#0 print::i#1 ] 4,789.86: zp[1]:11 [ print::c#2 print::c#0 print::c#1 ] 3,168.33: zp[1]:9 [ print::a#2 print::a#0 print::a#1 ] 3,102.2: zp[1]:10 [ print::b#2 print::b#0 print::b#1 ] 
-Uplift Scope [md5] 2,237.53: zp[1]:7 [ md5::a#1 md5::a#6 ] 2,002: zp[1]:15 [ md5::$2 ] 1,334.67: zp[1]:5 [ md5::a#2 md5::a#5 ] 1,264.42: zp[1]:6 [ md5::b#2 md5::b#8 ] 875.88: zp[1]:4 [ md5::i#2 md5::i#1 ] 375.38: zp[1]:16 [ md5::b#1 ] 
+Uplift Scope [md5] 2,237.53: zp[1]:7 [ md5::a#1 md5::a#9 ] 2,002: zp[1]:15 [ md5::$2 ] 1,334.67: zp[1]:5 [ md5::a#3 md5::a#8 ] 1,264.42: zp[1]:6 [ md5::b#2 md5::b#8 ] 875.88: zp[1]:4 [ md5::i#2 md5::i#1 ] 375.38: zp[1]:16 [ md5::b#1 ] 
 Uplift Scope [] 5,873.63: zp[1]:14 [ idx ] 2,121.45: zp[2]:12 [ line ] 
 Uplift Scope [main] 336.67: zp[2]:2 [ main::s#2 main::s#1 ] 
 Uplift Scope [__start] 
 
 Uplifting [print] best 2463 combination reg byte a [ print::print321_$0 ] reg byte a [ print::print321_$1 ] reg byte a [ print::print322_$0 ] reg byte a [ print::print322_$1 ] zp[1]:21 [ print::print323_$0 ] zp[1]:22 [ print::print323_$1 ] zp[1]:23 [ print::print324_$0 ] zp[1]:24 [ print::print324_$1 ] zp[1]:8 [ print::print321_l#0 print::i#0 print::i#1 ] zp[1]:11 [ print::c#2 print::c#0 print::c#1 ] zp[1]:9 [ print::a#2 print::a#0 print::a#1 ] zp[1]:10 [ print::b#2 print::b#0 print::b#1 ] 
 Limited combination testing to 100 combinations of 1048576 possible.
-Uplifting [md5] best 2153 combination zp[1]:7 [ md5::a#1 md5::a#6 ] reg byte a [ md5::$2 ] reg byte y [ md5::a#2 md5::a#5 ] zp[1]:6 [ md5::b#2 md5::b#8 ] reg byte x [ md5::i#2 md5::i#1 ] zp[1]:16 [ md5::b#1 ] 
+Uplifting [md5] best 2153 combination zp[1]:7 [ md5::a#1 md5::a#9 ] reg byte a [ md5::$2 ] reg byte y [ md5::a#3 md5::a#8 ] zp[1]:6 [ md5::b#2 md5::b#8 ] reg byte x [ md5::i#2 md5::i#1 ] zp[1]:16 [ md5::b#1 ] 
 Limited combination testing to 100 combinations of 256 possible.
 Uplifting [] best 2153 combination zp[1]:14 [ idx ] zp[2]:12 [ line ] 
 Uplifting [main] best 2153 combination zp[2]:2 [ main::s#2 main::s#1 ] 
@@ -840,15 +852,15 @@ Attempting to uplift remaining variables inzp[1]:9 [ print::a#2 print::a#0 print
 Uplifting [print] best 2075 combination zp[1]:9 [ print::a#2 print::a#0 print::a#1 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ print::b#2 print::b#0 print::b#1 ]
 Uplifting [print] best 2075 combination zp[1]:10 [ print::b#2 print::b#0 print::b#1 ] 
-Attempting to uplift remaining variables inzp[1]:7 [ md5::a#1 md5::a#6 ]
-Uplifting [md5] best 2075 combination zp[1]:7 [ md5::a#1 md5::a#6 ] 
+Attempting to uplift remaining variables inzp[1]:7 [ md5::a#1 md5::a#9 ]
+Uplifting [md5] best 2075 combination zp[1]:7 [ md5::a#1 md5::a#9 ] 
 Attempting to uplift remaining variables inzp[1]:6 [ md5::b#2 md5::b#8 ]
 Uplifting [md5] best 2075 combination zp[1]:6 [ md5::b#2 md5::b#8 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ md5::b#1 ]
 Uplifting [md5] best 2075 combination zp[1]:16 [ md5::b#1 ] 
 Coalescing zero page register [ zp[1]:10 [ print::b#2 print::b#0 print::b#1 ] ] with [ zp[1]:16 [ md5::b#1 ] ] - score: 1
 Allocated (was zp[1]:6) zp[1]:4 [ md5::b#2 md5::b#8 ]
-Allocated (was zp[1]:7) zp[1]:5 [ md5::a#1 md5::a#6 ]
+Allocated (was zp[1]:7) zp[1]:5 [ md5::a#1 md5::a#9 ]
 Allocated (was zp[1]:9) zp[1]:6 [ print::a#2 print::a#0 print::a#1 ]
 Allocated (was zp[1]:10) zp[1]:7 [ print::b#2 print::b#0 print::b#1 md5::b#1 ]
 Allocated (was zp[1]:11) zp[1]:8 [ print::c#2 print::c#0 print::c#1 ]
@@ -961,7 +973,7 @@ md5: {
     // [15] phi md5::b#2 = $ef [phi:md5->md5::@1#1] -- vbuz1=vbuc1 
     lda #$ef
     sta.z b_1
-    // [15] phi md5::a#2 = $67 [phi:md5->md5::@1#2] -- vbuyy=vbuc1 
+    // [15] phi md5::a#3 = $67 [phi:md5->md5::@1#2] -- vbuyy=vbuc1 
     ldy #$67
     // [15] phi md5::i#2 = 0 [phi:md5->md5::@1#3] -- vbuxx=vbuc1 
     ldx #0
@@ -979,7 +991,7 @@ md5: {
     // md5::@2
   __b2:
     // [18] print::i#0 = md5::i#2
-    // [19] print::a#0 = md5::a#2 -- vbuz1=vbuyy 
+    // [19] print::a#0 = md5::a#3 -- vbuz1=vbuyy 
     sty.z print.a
     // [20] print::b#0 = md5::b#2 -- vbuz1=vbuz2 
     lda.z b_1
@@ -1001,9 +1013,9 @@ md5: {
     // [23] md5::$2 = md5::i#2 & 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [24] if(0!=md5::$2) goto md5::@3 -- vbuc1_neq_vbuaa_then_la1 
+    // [24] if(0==md5::$2) goto md5::@3 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
-    bne __b3
+    beq __b3
     // [25] phi from md5::@5 to md5::@4 [phi:md5::@5->md5::@4]
   __b4_from___b5:
     jmp __b4
@@ -1037,19 +1049,19 @@ md5: {
   __b6:
     // [32] md5::i#1 = ++ md5::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [33] md5::a#5 = md5::a#1 -- vbuyy=vbuz1 
+    // [33] md5::a#8 = md5::a#1 -- vbuyy=vbuz1 
     ldy.z a
     // [34] md5::b#8 = md5::b#1 -- vbuz1=vbuz2 
     lda.z b
     sta.z b_1
-    // [35] md5::a#6 = md5::b#2 -- vbuz1=vbuz2 
+    // [35] md5::a#9 = md5::b#2 -- vbuz1=vbuz2 
     lda.z b_1
     sta.z a
     // [15] phi from md5::@6 to md5::@1 [phi:md5::@6->md5::@1]
   __b1_from___b6:
-    // [15] phi md5::a#1 = md5::a#6 [phi:md5::@6->md5::@1#0] -- register_copy 
+    // [15] phi md5::a#1 = md5::a#9 [phi:md5::@6->md5::@1#0] -- register_copy 
     // [15] phi md5::b#2 = md5::b#8 [phi:md5::@6->md5::@1#1] -- register_copy 
-    // [15] phi md5::a#2 = md5::a#5 [phi:md5::@6->md5::@1#2] -- register_copy 
+    // [15] phi md5::a#3 = md5::a#8 [phi:md5::@6->md5::@1#2] -- register_copy 
     // [15] phi md5::i#2 = md5::i#1 [phi:md5::@6->md5::@1#3] -- register_copy 
     jmp __b1
 }
@@ -1263,7 +1275,7 @@ Removing instruction print324:
 Removing instruction println1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing instruction bne __b3
+Removing instruction beq __b3
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b3:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -1281,9 +1293,9 @@ void md5()
 byte~ md5::$2 reg byte a 2002.0
 byte md5::a
 byte md5::a#1 a zp[1]:5 235.52941176470588
-byte md5::a#2 reg byte y 667.3333333333334
-byte md5::a#5 reg byte y 667.3333333333334
-byte md5::a#6 a zp[1]:5 2002.0
+byte md5::a#3 reg byte y 667.3333333333334
+byte md5::a#8 reg byte y 667.3333333333334
+byte md5::a#9 a zp[1]:5 2002.0
 byte md5::b
 byte md5::b#1 b zp[1]:7 375.375
 byte md5::b#2 b_1 zp[1]:4 263.42105263157896
@@ -1326,9 +1338,9 @@ byte print::print324_l
 
 zp[2]:2 [ main::s#2 main::s#1 ]
 reg byte x [ md5::i#2 md5::i#1 ]
-reg byte y [ md5::a#2 md5::a#5 ]
+reg byte y [ md5::a#3 md5::a#8 ]
 zp[1]:4 [ md5::b#2 md5::b#8 ]
-zp[1]:5 [ md5::a#1 md5::a#6 ]
+zp[1]:5 [ md5::a#1 md5::a#9 ]
 reg byte x [ print::print321_l#0 print::i#0 print::i#1 ]
 zp[1]:6 [ print::a#2 print::a#0 print::a#1 ]
 zp[1]:7 [ print::b#2 print::b#0 print::b#1 md5::b#1 ]
@@ -1441,7 +1453,7 @@ md5: {
     // [15] phi md5::b#2 = $ef [phi:md5->md5::@1#1] -- vbuz1=vbuc1 
     lda #$ef
     sta.z b_1
-    // [15] phi md5::a#2 = $67 [phi:md5->md5::@1#2] -- vbuyy=vbuc1 
+    // [15] phi md5::a#3 = $67 [phi:md5->md5::@1#2] -- vbuyy=vbuc1 
     ldy #$67
     // [15] phi md5::i#2 = 0 [phi:md5->md5::@1#3] -- vbuxx=vbuc1 
     ldx #0
@@ -1459,7 +1471,7 @@ md5: {
   __b2:
     // print(i, a, b, c)
     // [18] print::i#0 = md5::i#2
-    // [19] print::a#0 = md5::a#2 -- vbuz1=vbuyy 
+    // [19] print::a#0 = md5::a#3 -- vbuz1=vbuyy 
     sty.z print.a
     // [20] print::b#0 = md5::b#2 -- vbuz1=vbuz2 
     lda.z b_1
@@ -1480,7 +1492,7 @@ md5: {
     txa
     and #1
     // if(i&1)
-    // [24] if(0!=md5::$2) goto md5::@3 -- vbuc1_neq_vbuaa_then_la1 
+    // [24] if(0==md5::$2) goto md5::@3 -- vbuc1_eq_vbuaa_then_la1 
     cmp #0
     // [25] phi from md5::@5 to md5::@4 [phi:md5::@5->md5::@4]
     // md5::@4
@@ -1510,17 +1522,17 @@ md5: {
     // for(char i = 0; i<4; i++)
     // [32] md5::i#1 = ++ md5::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [33] md5::a#5 = md5::a#1 -- vbuyy=vbuz1 
+    // [33] md5::a#8 = md5::a#1 -- vbuyy=vbuz1 
     ldy.z a
     // [34] md5::b#8 = md5::b#1 -- vbuz1=vbuz2 
     lda.z b
     sta.z b_1
-    // [35] md5::a#6 = md5::b#2 -- vbuz1=vbuz2 
+    // [35] md5::a#9 = md5::b#2 -- vbuz1=vbuz2 
     sta.z a
     // [15] phi from md5::@6 to md5::@1 [phi:md5::@6->md5::@1]
-    // [15] phi md5::a#1 = md5::a#6 [phi:md5::@6->md5::@1#0] -- register_copy 
+    // [15] phi md5::a#1 = md5::a#9 [phi:md5::@6->md5::@1#0] -- register_copy 
     // [15] phi md5::b#2 = md5::b#8 [phi:md5::@6->md5::@1#1] -- register_copy 
-    // [15] phi md5::a#2 = md5::a#5 [phi:md5::@6->md5::@1#2] -- register_copy 
+    // [15] phi md5::a#3 = md5::a#8 [phi:md5::@6->md5::@1#2] -- register_copy 
     // [15] phi md5::i#2 = md5::i#1 [phi:md5::@6->md5::@1#3] -- register_copy 
     jmp __b1
 }

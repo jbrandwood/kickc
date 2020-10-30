@@ -1684,3 +1684,9 @@ sta ({z1}),y
 lda {c1},y
 ldy {z2}
 sta ({z1}),y
+//FRAGMENT vbuc1_eq_vbuaa_then_la1
+cmp #{c1}
+beq {la1}
+//FRAGMENT vbuc1_eq_vbuyy_then_la1
+cpy #{c1}
+beq {la1}

@@ -35,12 +35,7 @@ void md5() {
     char c = 0x98;
     for(char i = 0; i<4; i++) {
         print(i, a, b, c);
-        char f;
-        if(i&1) {
-            f = 1; 
-        } else {
-            f = 2; 
-        }
+        if(i&1) a++;
         char temp = c;
         c = b;
         b = b + 1; 

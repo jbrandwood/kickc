@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testZpReserveCoalesceProblem() throws IOException, URISyntaxException {
+      compileAndCompare("zp-reserve-coalesce-problem.c");
+   }
+
+   @Test
    public void testChipsetTest() throws IOException, URISyntaxException {
       compileAndCompare("chipset-test.c");
    }

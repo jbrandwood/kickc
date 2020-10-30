@@ -146,8 +146,19 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
       // Check the both registers have the same size
       if(register1.getBytes() != register2.getBytes())
          return false;
+      // check if either are in the reserved zp registers
+      if(register1 instanceof Registers.RegisterZpMem) {
+         int zp = ((Registers.RegisterZpMem) register1).getZp();
+         if(program.getReservedZps().contains(zp))
+            return false;
+      }
+      if(register2 instanceof Registers.RegisterZpMem) {
+         int zp = ((Registers.RegisterZpMem) register2).getZp();
+         if(program.getReservedZps().contains(zp))
+            return false;
+      }
       return true;
-   }
+}
 
    /**
     * Determines if two live range equivalence classes can be coalesced without clobber.
@@ -220,46 +231,46 @@ public abstract class Pass4MemoryCoalesce extends Pass2Base {
    }
 
 
-   /**
-    * A pair of live range equivalence classes that are candidates for coalescing.
-    * The pair is unordered - meaning it is equal to the pair with the same classes in opposite order.
-    */
-   static class LiveRangeEquivalenceClassCoalesceCandidate {
-      private LiveRangeEquivalenceClass ec1;
-      private LiveRangeEquivalenceClass ec2;
-      private Integer score;
+/**
+ * A pair of live range equivalence classes that are candidates for coalescing.
+ * The pair is unordered - meaning it is equal to the pair with the same classes in opposite order.
+ */
+static class LiveRangeEquivalenceClassCoalesceCandidate {
+   private LiveRangeEquivalenceClass ec1;
+   private LiveRangeEquivalenceClass ec2;
+   private Integer score;
 
-      public LiveRangeEquivalenceClassCoalesceCandidate(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Integer score) {
-         this.ec1 = ec1;
-         this.ec2 = ec2;
-         this.score = score;
-      }
-
-      @Override
-      public boolean equals(Object o) {
-         if(this == o) return true;
-         if(o == null || getClass() != o.getClass()) return false;
-         LiveRangeEquivalenceClassCoalesceCandidate that = (LiveRangeEquivalenceClassCoalesceCandidate) o;
-         if(ec1.equals(that.ec1) && ec2.equals(that.ec2)) return true;
-         if(ec1.equals(that.ec2) && ec2.equals(that.ec1)) return true;
-         return false;
-      }
-
-      @Override
-      public int hashCode() {
-         return ec1.hashCode() + ec2.hashCode();
-      }
-
-      public Integer getScore() {
-         return score;
-      }
-
-      public LiveRangeEquivalenceClass getEc1() {
-         return ec1;
-      }
-
-      public LiveRangeEquivalenceClass getEc2() {
-         return ec2;
-      }
+   public LiveRangeEquivalenceClassCoalesceCandidate(LiveRangeEquivalenceClass ec1, LiveRangeEquivalenceClass ec2, Integer score) {
+      this.ec1 = ec1;
+      this.ec2 = ec2;
+      this.score = score;
    }
+
+   @Override
+   public boolean equals(Object o) {
+      if(this == o) return true;
+      if(o == null || getClass() != o.getClass()) return false;
+      LiveRangeEquivalenceClassCoalesceCandidate that = (LiveRangeEquivalenceClassCoalesceCandidate) o;
+      if(ec1.equals(that.ec1) && ec2.equals(that.ec2)) return true;
+      if(ec1.equals(that.ec2) && ec2.equals(that.ec1)) return true;
+      return false;
+   }
+
+   @Override
+   public int hashCode() {
+      return ec1.hashCode() + ec2.hashCode();
+   }
+
+   public Integer getScore() {
+      return score;
+   }
+
+   public LiveRangeEquivalenceClass getEc1() {
+      return ec1;
+   }
+
+   public LiveRangeEquivalenceClass getEc2() {
+      return ec2;
+   }
+}
 }

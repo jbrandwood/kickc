@@ -124,7 +124,7 @@ public class Procedure extends Scope {
    public List<Variable> getParameters() {
       ArrayList<Variable> parameters = new ArrayList<>();
       for(String name : parameterNames) {
-         parameters.add(this.getLocalVariable(name));
+         parameters.add(this.getLocalVar(name));
       }
       return parameters;
    }

@@ -46,6 +46,11 @@ public class TestPrograms {
 
 
    @Test
+   public void testFunctionPointerProblem1() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-problem-1.c");
+   }
+
+   @Test
    public void testInlineKickasmUsesProblem() throws IOException, URISyntaxException {
       compileAndCompare("inline-kickasm-uses-problem.c");
    }
@@ -3096,6 +3101,11 @@ public class TestPrograms {
    @Test
    public void testPointerPointer1() throws IOException, URISyntaxException {
       compileAndCompare("pointer-pointer-1.c");
+   }
+
+   @Test
+   public void testFunctionPointerNoargCall14() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-14.c");
    }
 
    @Test

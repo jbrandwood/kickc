@@ -25,11 +25,12 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      final Aliases aliases = findAliases(getProgram());
-
-      fixAliasSources(aliases);
-      removeAliasAssignments(aliases);
-      replaceVariables(aliases.getReplacements(getScope()));
+      Program program = getProgram();
+      Aliases aliases = findAliasesCandidates(program);
+      cleanUpAliasCandidates(aliases, program);
+      fixAliasSources(aliases, program);
+      removeAliasAssignments(aliases, program);
+      replaceVariables(aliases.getReplacements(getScope()), program);
       for(AliasSet aliasSet : aliases.getAliasSets()) {
          getLog().append("Alias " + aliasSet.toString(getProgram()));
       }
@@ -37,13 +38,11 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
       return (aliases.size() > 0);
    }
 
-
-   private static Aliases findAliases(Program program) {
-      Aliases candidates = findAliasesCandidates(program);
+   static void cleanUpAliasCandidates(Aliases candidates, Program program) {
       cleanupCandidates(candidates, program);
       cleanupCandidateVolatiles(candidates, program);
-      return candidates;
    }
+
 
    // Remove all candidates that are used after assignment in phi blocks
    private static void cleanupCandidates(Aliases candidates, Program program) {
@@ -55,7 +54,9 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
             if(block.hasPhiBlock()) {
                StatementPhiBlock phi = block.getPhiBlock();
                boolean lMatch = false;
-               for(StatementPhiBlock.PhiVariable phiVariable : phi.getPhiVariables()) {
+               List<StatementPhiBlock.PhiVariable> phiVariables = new ArrayList<>(phi.getPhiVariables());
+               Collections.reverse(phiVariables);
+               for(StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
                   if(lMatch) {
                      if(aliasSet.contains(phiVariable.getVariable())) {
                         // Assigning inside tha alias set again - no need to check the variables
@@ -241,13 +242,13 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     *
     * @param aliases The aliases
     */
-   private void fixAliasSources(Aliases aliases) {
+   static void fixAliasSources(Aliases aliases, Program program) {
       for(AliasSet aliasSet : aliases.getAliasSets()) {
          // Find the best statement source among the aliases
          StatementSource bestSource = null;
          List<Statement> assignments = new ArrayList<>();
          for(VariableRef aliasVar : aliasSet.getVars()) {
-            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(aliasVar, getGraph(), getScope());
+            final List<VarAssignments.VarAssignment> varAssignments = VarAssignments.get(aliasVar, program.getGraph(), program.getScope());
             if(varAssignments.size()!=1)
                continue;
             final VarAssignments.VarAssignment varAssignment = varAssignments.get(0);
@@ -285,8 +286,8 @@ public class Pass2AliasElimination extends Pass2SsaOptimization {
     *
     * @param aliases The aliases
     */
-   private void removeAliasAssignments(Aliases aliases) {
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
+   static void removeAliasAssignments(Aliases aliases, Program program) {
+      for(ControlFlowBlock block : program.getGraph().getAllBlocks()) {
          for(Iterator<Statement> iterator = block.getStatements().iterator(); iterator.hasNext(); ) {
             Statement statement = iterator.next();
             if(statement instanceof StatementAssignment) {

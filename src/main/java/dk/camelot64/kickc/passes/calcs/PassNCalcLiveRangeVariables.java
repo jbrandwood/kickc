@@ -28,12 +28,11 @@ public class PassNCalcLiveRangeVariables extends PassNCalcBase<LiveRangeVariable
       do {
          propagating = calculateLiveRanges(liveRanges, procedureReferencedVars);
          getProgram().setLiveRangeVariables(liveRanges);
-         if(getLog().isVerboseLiveRanges()) {
-            getLog().append("Propagating live ranges...");
-            getLog().append("CONTROL FLOW GRAPH - LIVE RANGES IN PROGRESS");
-            getLog().append(getProgram().getGraph().toString(getProgram()));
-         }
       } while(propagating);
+      if(getLog().isVerboseLiveRanges()) {
+         getLog().append("CONTROL FLOW GRAPH - LIVE RANGES");
+         getLog().append(getProgram().getGraph().toString(getProgram()));
+      }
       return liveRanges;
    }
 

@@ -42,5 +42,4 @@ void md5() {
         a = temp;
         print(i, a, b, c);
     }
-
 }

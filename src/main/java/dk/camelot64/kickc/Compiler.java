@@ -556,6 +556,12 @@ public class Compiler {
       new Pass3AssertNoMulDivMod(program).check();
       // Phi lifting ensures that all variables in phi-blocks are in different live range equivalence classes
       new Pass3PhiLifting(program).perform();
+
+      if(getLog().isVerboseSSAOptimize()) {
+         getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
+         getLog().append(program.getGraph().toString(program));
+      }
+
       new PassNBlockSequencePlanner(program).step();
       //getLog().append("CONTROL FLOW GRAPH - PHI LIFTED");
       //getLog().append(program.getGraph().toString(program));

@@ -41,7 +41,9 @@ public class Pass3PhiLifting {
          Map<LabelRef, LabelRef> newBlocks = new HashMap<>();
          if(block.hasPhiBlock()) {
             StatementPhiBlock phiBlock = block.getPhiBlock();
-            for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+            final List<StatementPhiBlock.PhiVariable> phiVariables = new LinkedList<>(phiBlock.getPhiVariables());
+            Collections.reverse(phiVariables);
+            for(StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
                for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                   if(!(phiRValue.getrValue() instanceof ConstantValue)) {
                      LabelRef predecessorRef = phiRValue.getPredecessor();
@@ -63,6 +65,7 @@ public class Pass3PhiLifting {
                         lastPredecessorStatement = predecessorStatements.get(predecessorStatements.size() - 1);
                      }
                      StatementAssignment newAssignment = new StatementAssignment((LValue) newVar.getRef(), phiRValue.getrValue(), false, phiBlock.getSource(), Comment.NO_COMMENTS);
+                     // program.getLog().append("Added new assignment during phi lifting " + newAssignment.toString());
                      if(lastPredecessorStatement instanceof StatementConditionalJump) {
                         // Use or Create a new block between the predecessor and this one - replace labels where appropriate
                         ControlFlowBlock newBlock;
@@ -105,7 +108,7 @@ public class Pass3PhiLifting {
             }
             if(newBlocks.size() > 0) {
                // If new blocks have been inserted: Update the predecessors of all phi values
-               for(StatementPhiBlock.PhiVariable phiVariable : phiBlock.getPhiVariables()) {
+               for(StatementPhiBlock.PhiVariable phiVariable : phiVariables) {
                   for(StatementPhiBlock.PhiRValue phiRValue : phiVariable.getValues()) {
                      LabelRef predecessor = phiRValue.getPredecessor();
                      LabelRef newBlock = newBlocks.get(predecessor);

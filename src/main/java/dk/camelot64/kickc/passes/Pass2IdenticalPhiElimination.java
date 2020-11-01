@@ -25,7 +25,8 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
     */
    @Override
    public boolean step() {
-      Map<VariableRef, RValue> phiIdentical = new LinkedHashMap<>();
+      Map<VariableRef, RValue> consts = new LinkedHashMap<>();
+      Pass2AliasElimination.Aliases aliases = new Pass2AliasElimination.Aliases();
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          for(Statement statement : block.getStatements()) {
             if(statement instanceof StatementPhiBlock) {
@@ -57,22 +58,41 @@ public class Pass2IdenticalPhiElimination extends Pass2SsaOptimization {
                         }
                      }
                   }
-                  if(identical && rValue!=null) {
+                  if(identical && rValue != null) {
                      // Found a phi-value with all rValues being identical
-                     phiIdentical.put(phiVariable.getVariable(), rValue);
-                     phiVariableIt.remove();
+                     if(rValue instanceof VariableRef) {
+                        // Flip the sequence to let the incoming RValue win if the AliasSet.keepvar scores are identical
+                        aliases.add((VariableRef) rValue, phiVariable.getVariable());
+                     } else {
+                        consts.put(phiVariable.getVariable(), rValue);
+                     }
                   }
                }
             }
          }
       }
-      replaceVariables(phiIdentical);
-      for(VariableRef var : phiIdentical.keySet()) {
-         RValue alias = phiIdentical.get(var);
-         getLog().append("Identical Phi Values " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
+      // Handle constants
+      if(consts.size() > 0) {
+         removeAssignments(getGraph(), consts.keySet());
+         replaceVariables(consts, getProgram());
+         for(VariableRef var : consts.keySet()) {
+            RValue alias = consts.get(var);
+            getLog().append("Identical Phi Const Values " + var.toString(getProgram()) + " " + alias.toString(getProgram()));
+         }
+         deleteSymbols(getScope(), consts.keySet());
       }
-      deleteSymbols(getScope(), phiIdentical.keySet());
-      return phiIdentical.size() > 0;
+      // Handle variable aliases
+      if(aliases.size() > 0) {
+         Pass2AliasElimination.cleanUpAliasCandidates(aliases, getProgram());
+         Pass2AliasElimination.fixAliasSources(aliases, getProgram());
+         Pass2AliasElimination.removeAliasAssignments(aliases, getProgram());
+         replaceVariables(aliases.getReplacements(getScope()), getProgram());
+         for(Pass2AliasElimination.AliasSet aliasSet : aliases.getAliasSets()) {
+            getLog().append("Identical Phi Alias " + aliasSet.toString(getProgram()));
+         }
+         deleteSymbols(getScope(), aliases.getSymbolsToRemove(getScope()));
+      }
+      return (consts.size() > 0) || (aliases.size() > 0);
    }
 
 }

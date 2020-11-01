@@ -114,9 +114,9 @@ public class Pass2NopCastInlining extends Pass2SsaOptimization {
 
       if(replace1.size() > 0) {
          // 1. Perform first replace
-         replaceVariables(replace1);
+         replaceVariables(replace1, getProgram());
          // 2. Perform second replace
-         replaceVariables(replace2);
+         replaceVariables(replace2, getProgram());
          // 3. Delete unused symbols
          deleteSymbols(getScope(), delete);
       }

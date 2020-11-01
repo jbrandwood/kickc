@@ -47,8 +47,8 @@ public abstract class Pass2SsaOptimization extends Pass1Base implements PassStep
     *
     * @param aliases Variables that have alias values.
     */
-   public void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases) {
-      ProgramValueIterator.execute(getProgram(), new AliasReplacer(aliases));
+   public static void replaceVariables(final Map<? extends SymbolRef, ? extends RValue> aliases, Program program) {
+      ProgramValueIterator.execute(program, new AliasReplacer(aliases));
    }
 
    /**

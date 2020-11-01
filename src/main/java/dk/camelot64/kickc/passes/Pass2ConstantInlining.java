@@ -48,7 +48,7 @@ public class Pass2ConstantInlining extends Pass2SsaOptimization {
       // Perform alias replacement within the constant values inside the aliases
       replaceInValues(inline);
       // Replace all usages of the constants in the control flow graph or symbol table
-      replaceVariables(inline);
+      replaceVariables(inline, getProgram());
       // Remove from symbol table
       deleteSymbols(getScope(), inline.keySet());
 

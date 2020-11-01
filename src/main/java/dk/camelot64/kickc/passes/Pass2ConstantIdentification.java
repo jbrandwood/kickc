@@ -77,7 +77,7 @@ public class Pass2ConstantIdentification extends Pass2SsaOptimization {
       // Remove assignments to constants in the code
       removeAssignments(getGraph(), constants.keySet());
       // Replace VariableRef's with ConstantRef's
-      replaceVariables(constAliases);
+      replaceVariables(constAliases, getProgram());
       return constants.size() > 0;
    }
 

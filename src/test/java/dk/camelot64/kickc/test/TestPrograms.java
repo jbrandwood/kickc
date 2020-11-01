@@ -45,14 +45,25 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMemsetMin() throws IOException, URISyntaxException {
+      compileAndCompare("memset-min.c");
+   }
+
+   @Test
    public void test32bitRols() throws IOException, URISyntaxException {
       compileAndCompare("32bit-rols.c");
+   }
+
+   @Test
+   public void testAtariXlMd5c() throws IOException, URISyntaxException {
+      compileAndCompare("atarixl-md5c.c");
    }
 
    @Test
    public void testAtariXlMd5b() throws IOException, URISyntaxException {
       compileAndCompare("atarixl-md5b.c");
    }
+
    @Test
    public void testAtariXlMd5() throws IOException, URISyntaxException {
       compileAndCompare("atarixl-md5.c");

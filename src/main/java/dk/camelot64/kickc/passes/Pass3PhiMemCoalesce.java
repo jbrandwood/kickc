@@ -43,7 +43,7 @@ public class Pass3PhiMemCoalesce extends Pass2SsaOptimization {
       PhiMemCoalescer phiMemCoalescer = new PhiMemCoalescer(phiEquivalenceClasses);
       phiMemCoalescer.visitGraph(getGraph());
       removeAssignments(getGraph(), phiMemCoalescer.getRemove());
-      replaceVariables(phiMemCoalescer.getReplace());
+      replaceVariables(phiMemCoalescer.getReplace(), getProgram());
       deleteSymbols(getScope(), phiMemCoalescer.getRemove());
       getLog().append("Coalesced down to " + phiEquivalenceClasses.size() + " phi equivalence classes");
       return false;

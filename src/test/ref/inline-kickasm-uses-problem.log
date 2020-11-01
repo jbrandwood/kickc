@@ -1,0 +1,372 @@
+Setting inferred volatile on symbol affected by address-of foo::v2 = &foo::a2
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  foo::x1#0 = main::a
+  foo::x2#0 = main::b
+  call foo 
+  to:main::@1
+main::@1: scope:[main]  from main
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void foo(byte* foo::x1 , byte* foo::x2)
+foo: scope:[foo]  from main
+  foo::x1#1 = phi( main/foo::x1#0 )
+  foo::v1 = (byte*) 0
+  foo::v2 = (byte*) 0
+  foo::a2 = 2
+  foo::v1 = foo::x1#1
+  foo::v2 = &foo::a2
+  kickasm( uses foo::v1 uses foo::v2) {{ lda v1
+		sta v2
+	 }}
+  *OUT = foo::a2
+  to:foo::@return
+foo::@return: scope:[foo]  from foo
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const to_nomodify byte* OUT = (byte*)$8000
+void __start()
+void foo(byte* foo::x1 , byte* foo::x2)
+volatile byte foo::a2 loadstore
+to_volatile byte* foo::v1 loadstore
+byte* foo::v2 loadstore
+byte* foo::x1
+byte* foo::x1#0
+byte* foo::x1#1
+byte* foo::x2
+byte* foo::x2#0
+void main()
+const byte* main::a[]  = { $80, $4f, 2, $d }
+const byte* main::b[]  = { $80, $6e, $d9, $ec }
+
+Simplifying constant pointer cast (byte*) 32768
+Successful SSA optimization PassNCastSimplification
+Alias candidate removed (volatile)foo::x1#1 = foo::v1 
+Identical Phi Values foo::x1#1 foo::x1#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Constant foo::x1#0 = main::a
+Constant foo::x2#0 = main::b
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused constant foo::x2#0
+Successful SSA optimization PassNEliminateUnusedVars
+Eliminating unused constant main::b
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant inlined foo::x1#0 = main::a
+Successful SSA optimization Pass2ConstantInlining
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [main] to foo:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block label main::@1
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call foo 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [2] return 
+  to:@return
+
+void foo(byte* foo::x1 , byte* foo::x2)
+foo: scope:[foo]  from main
+  [3] foo::v1 = (byte*) 0
+  [4] foo::v2 = (byte*) 0
+  [5] foo::a2 = 2
+  [6] foo::v1 = main::a
+  [7] foo::v2 = &foo::a2
+  kickasm( uses foo::v1 uses foo::v2) {{ lda v1
+		sta v2
+	 }}
+  [9] *OUT = foo::a2
+  to:foo::@return
+foo::@return: scope:[foo]  from foo
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void foo(byte* foo::x1 , byte* foo::x2)
+volatile byte foo::a2 loadstore 5.5
+to_volatile byte* foo::v1 loadstore 11.0
+byte* foo::v2 loadstore 22.0
+byte* foo::x1
+byte* foo::x2
+void main()
+
+Initial phi equivalence classes
+Added variable foo::v1 to live range equivalence class [ foo::v1 ]
+Added variable foo::v2 to live range equivalence class [ foo::v2 ]
+Added variable foo::a2 to live range equivalence class [ foo::a2 ]
+Complete equivalence classes
+[ foo::v1 ]
+[ foo::v2 ]
+[ foo::a2 ]
+Allocated zp[2]:128 [ foo::v1 ]
+Allocated zp[2]:130 [ foo::v2 ]
+Allocated zp[1]:132 [ foo::a2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [3] foo::v1 = (byte*) 0 [ ] ( foo:1 [ ] { }  ) always clobbers reg byte a 
+Statement [4] foo::v2 = (byte*) 0 [ ] ( foo:1 [ ] { }  ) always clobbers reg byte a 
+Statement [5] foo::a2 = 2 [ foo::a2 ] ( foo:1 [ foo::a2 ] { }  ) always clobbers reg byte a 
+Statement [6] foo::v1 = main::a [ foo::v1 foo::a2 ] ( foo:1 [ foo::v1 foo::a2 ] { }  ) always clobbers reg byte a 
+Statement [7] foo::v2 = &foo::a2 [ foo::v1 foo::v2 foo::a2 ] ( foo:1 [ foo::v1 foo::v2 foo::a2 ] { }  ) always clobbers reg byte a 
+Statement [9] *OUT = foo::a2 [ ] ( foo:1 [ ] { }  ) always clobbers reg byte a 
+Potential registers zp[2]:128 [ foo::v1 ] : zp[2]:128 , 
+Potential registers zp[2]:130 [ foo::v2 ] : zp[2]:130 , 
+Potential registers zp[1]:132 [ foo::a2 ] : zp[1]:132 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [foo] 22: zp[2]:130 [ foo::v2 ] 11: zp[2]:128 [ foo::v1 ] 5.5: zp[1]:132 [ foo::a2 ] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [foo] best 332 combination zp[2]:130 [ foo::v2 ] zp[2]:128 [ foo::v1 ] zp[1]:132 [ foo::a2 ] 
+Uplifting [main] best 332 combination 
+Uplifting [] best 332 combination 
+Attempting to uplift remaining variables inzp[1]:132 [ foo::a2 ]
+Uplifting [foo] best 332 combination zp[1]:132 [ foo::a2 ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Variable used in inline kickasm must be __ma
+// See https://gitlab.com/camelot/kickc/-/issues/558
+  // Upstart
+  // Atari XL/XE executable XEX file with a single segment
+// https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.file [name="inline-kickasm-uses-problem.xex", type="bin", segments="XexFile"]
+.segmentdef XexFile
+.segment XexFile
+// Binary File Header
+.byte $ff, $ff
+// Program segment [start address, end address, data]
+.word ProgramStart, ProgramEnd-1
+.segmentout [ segments="Program" ]
+// RunAd - Run Address Segment [start address, end address, data]
+.word $02e0, $02e1
+.word main
+.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
+.segmentdef ProgramStart [start=$2000]
+.segment ProgramStart
+ProgramStart:
+.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef Data [startAfter="Code"]
+.segmentdef ProgramEnd [startAfter="Data"]
+.segment ProgramEnd
+ProgramEnd:
+
+  // Global Constants & labels
+  .label OUT = $8000
+.segment Code
+  // main
+main: {
+    // [1] call foo 
+    jsr foo
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [2] return 
+    rts
+  .segment Data
+    a: .byte $80, $4f, 2, $d
+}
+.segment Code
+  // foo
+foo: {
+    .label v1 = $80
+    .label v2 = $82
+    .label a2 = $84
+    // [3] foo::v1 = (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z v1
+    lda #>0
+    sta.z v1+1
+    // [4] foo::v2 = (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z v2
+    lda #>0
+    sta.z v2+1
+    // [5] foo::a2 = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z a2
+    // [6] foo::v1 = main::a -- pbuz1=pbuc1 
+    lda #<main.a
+    sta.z v1
+    lda #>main.a
+    sta.z v1+1
+    // [7] foo::v2 = &foo::a2 -- pbuz1=pbuc1 
+    lda #<a2
+    sta.z v2
+    lda #>a2
+    sta.z v2+1
+    // kickasm( uses foo::v1 uses foo::v2) {{ lda v1 		sta v2 	 }}
+    lda v1
+		sta v2
+	
+    // [9] *OUT = foo::a2 -- _deref_pbuc1=vbuz1 
+    lda.z a2
+    sta OUT
+    jmp __breturn
+    // foo::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Removing instruction lda #<0
+Removing instruction lda #>0
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const to_nomodify byte* OUT = (byte*) 32768
+void foo(byte* foo::x1 , byte* foo::x2)
+volatile byte foo::a2 loadstore zp[1]:132 5.5
+to_volatile byte* foo::v1 loadstore zp[2]:128 11.0
+byte* foo::v2 loadstore zp[2]:130 22.0
+byte* foo::x1
+byte* foo::x2
+void main()
+const byte* main::a[]  = { $80, $4f, 2, $d }
+
+zp[2]:128 [ foo::v1 ]
+zp[2]:130 [ foo::v2 ]
+zp[1]:132 [ foo::a2 ]
+
+
+FINAL ASSEMBLER
+Score: 320
+
+  // File Comments
+// Variable used in inline kickasm must be __ma
+// See https://gitlab.com/camelot/kickc/-/issues/558
+  // Upstart
+  // Atari XL/XE executable XEX file with a single segment
+// https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.file [name="inline-kickasm-uses-problem.xex", type="bin", segments="XexFile"]
+.segmentdef XexFile
+.segment XexFile
+// Binary File Header
+.byte $ff, $ff
+// Program segment [start address, end address, data]
+.word ProgramStart, ProgramEnd-1
+.segmentout [ segments="Program" ]
+// RunAd - Run Address Segment [start address, end address, data]
+.word $02e0, $02e1
+.word main
+.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
+.segmentdef ProgramStart [start=$2000]
+.segment ProgramStart
+ProgramStart:
+.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef Data [startAfter="Code"]
+.segmentdef ProgramEnd [startAfter="Data"]
+.segment ProgramEnd
+ProgramEnd:
+
+  // Global Constants & labels
+  .label OUT = $8000
+.segment Code
+  // main
+main: {
+    // foo(a, b)
+    // [1] call foo 
+    jsr foo
+    // main::@return
+    // }
+    // [2] return 
+    rts
+  .segment Data
+    a: .byte $80, $4f, 2, $d
+}
+.segment Code
+  // foo
+foo: {
+    .label v1 = $80
+    .label v2 = $82
+    .label a2 = $84
+    // v1
+    // [3] foo::v1 = (byte*) 0 -- pbuz1=pbuc1 
+    lda #<0
+    sta.z v1
+    sta.z v1+1
+    // v2
+    // [4] foo::v2 = (byte*) 0 -- pbuz1=pbuc1 
+    sta.z v2
+    sta.z v2+1
+    // a2 = 2
+    // [5] foo::a2 = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z a2
+    // v1 = x1
+    // [6] foo::v1 = main::a -- pbuz1=pbuc1 
+    lda #<main.a
+    sta.z v1
+    lda #>main.a
+    sta.z v1+1
+    // v2 = &a2
+    // [7] foo::v2 = &foo::a2 -- pbuz1=pbuc1 
+    lda #<a2
+    sta.z v2
+    lda #>a2
+    sta.z v2+1
+    // kickasm
+    // kickasm( uses foo::v1 uses foo::v2) {{ lda v1 		sta v2 	 }}
+    lda v1
+		sta v2
+	
+    // *(OUT) = a2
+    // [9] *OUT = foo::a2 -- _deref_pbuc1=vbuz1 
+    lda.z a2
+    sta OUT
+    // foo::@return
+    // }
+    // [10] return 
+    rts
+}
+  // File Data
+

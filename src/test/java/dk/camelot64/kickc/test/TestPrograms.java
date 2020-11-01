@@ -44,6 +44,12 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+
+   @Test
+   public void testInlineKickasmUsesProblem() throws IOException, URISyntaxException {
+      compileAndCompare("inline-kickasm-uses-problem.c");
+   }
+
    @Test
    public void test32bitRols() throws IOException, URISyntaxException {
       compileAndCompare("32bit-rols.c");

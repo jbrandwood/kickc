@@ -1,0 +1,550 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  memset::str#0 = (void*)SCREEN
+  memset::c#0 = '*'
+  memset::num#0 = $3e8
+  call memset 
+  memset::return#0 = memset::return#3
+  to:main::@1
+main::@1: scope:[main]  from main
+  memset::str#1 = (void*)COLS
+  memset::c#1 = 0
+  memset::num#1 = $3e8
+  call memset 
+  memset::return#1 = memset::return#3
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+void* memset(void* memset::str , byte memset::c , word memset::num)
+memset: scope:[memset]  from main main::@1
+  memset::c#5 = phi( main/memset::c#0, main::@1/memset::c#1 )
+  memset::str#4 = phi( main/memset::str#0, main::@1/memset::str#1 )
+  memset::num#2 = phi( main/memset::num#0, main::@1/memset::num#1 )
+  memset::$0 = memset::num#2 > 0
+  memset::$1 = ! memset::$0
+  if(memset::$1) goto memset::@1
+  to:memset::@2
+memset::@1: scope:[memset]  from memset memset::@3
+  memset::str#2 = phi( memset/memset::str#4, memset::@3/memset::str#5 )
+  memset::return#2 = memset::str#2
+  to:memset::@return
+memset::@2: scope:[memset]  from memset
+  memset::c#4 = phi( memset/memset::c#5 )
+  memset::num#3 = phi( memset/memset::num#2 )
+  memset::str#3 = phi( memset/memset::str#4 )
+  memset::$4 = (byte*)memset::str#3
+  memset::$2 = memset::$4 + memset::num#3
+  memset::end#0 = memset::$2
+  memset::dst#0 = ((byte*)) memset::str#3
+  to:memset::@3
+memset::@3: scope:[memset]  from memset::@2 memset::@4
+  memset::c#3 = phi( memset::@2/memset::c#4, memset::@4/memset::c#2 )
+  memset::str#5 = phi( memset::@2/memset::str#3, memset::@4/memset::str#6 )
+  memset::end#1 = phi( memset::@2/memset::end#0, memset::@4/memset::end#2 )
+  memset::dst#2 = phi( memset::@2/memset::dst#0, memset::@4/memset::dst#1 )
+  memset::$3 = memset::dst#2 != memset::end#1
+  if(memset::$3) goto memset::@4
+  to:memset::@1
+memset::@4: scope:[memset]  from memset::@3
+  memset::str#6 = phi( memset::@3/memset::str#5 )
+  memset::end#2 = phi( memset::@3/memset::end#1 )
+  memset::dst#3 = phi( memset::@3/memset::dst#2 )
+  memset::c#2 = phi( memset::@3/memset::c#3 )
+  *memset::dst#3 = memset::c#2
+  memset::dst#1 = ++ memset::dst#3
+  to:memset::@3
+memset::@return: scope:[memset]  from memset::@1
+  memset::return#4 = phi( memset::@1/memset::return#2 )
+  memset::return#3 = memset::return#4
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* COLS = (byte*)$d800
+const nomodify byte* SCREEN = (byte*)$400
+void __start()
+void main()
+void* memset(void* memset::str , byte memset::c , word memset::num)
+bool~ memset::$0
+bool~ memset::$1
+byte*~ memset::$2
+bool~ memset::$3
+byte*~ memset::$4
+byte memset::c
+byte memset::c#0
+byte memset::c#1
+byte memset::c#2
+byte memset::c#3
+byte memset::c#4
+byte memset::c#5
+byte* memset::dst
+byte* memset::dst#0
+byte* memset::dst#1
+byte* memset::dst#2
+byte* memset::dst#3
+byte* memset::end
+byte* memset::end#0
+byte* memset::end#1
+byte* memset::end#2
+word memset::num
+word memset::num#0
+word memset::num#1
+word memset::num#2
+word memset::num#3
+void* memset::return
+void* memset::return#0
+void* memset::return#1
+void* memset::return#2
+void* memset::return#3
+void* memset::return#4
+void* memset::str
+void* memset::str#0
+void* memset::str#1
+void* memset::str#2
+void* memset::str#3
+void* memset::str#4
+void* memset::str#5
+void* memset::str#6
+
+Adding number conversion cast (unumber) $3e8 in memset::num#0 = $3e8
+Adding number conversion cast (unumber) 0 in memset::c#1 = 0
+Adding number conversion cast (unumber) $3e8 in memset::num#1 = $3e8
+Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast memset::num#0 = (unumber)$3e8
+Inlining cast memset::c#1 = (unumber)0
+Inlining cast memset::num#1 = (unumber)$3e8
+Inlining cast memset::dst#0 = (byte*)memset::str#3
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 55296
+Simplifying constant integer cast $3e8
+Simplifying constant integer cast 0
+Simplifying constant integer cast $3e8
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type $3e8
+Finalized unsigned number type 0
+Finalized unsigned number type $3e8
+Finalized unsigned number type 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [13] memset::$1 = memset::num#2 <= 0 from [12] memset::$0 = memset::num#2 > 0
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias memset::return#2 = memset::str#2 memset::return#4 memset::return#3 
+Alias memset::str#3 = memset::str#4 
+Alias memset::num#2 = memset::num#3 
+Alias memset::c#4 = memset::c#5 
+Alias memset::end#0 = memset::$2 
+Alias memset::c#2 = memset::c#3 
+Alias memset::dst#2 = memset::dst#3 
+Alias memset::end#1 = memset::end#2 
+Alias memset::str#5 = memset::str#6 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Alias memset::end#0 = memset::end#1 
+Identical Phi Alias memset::str#3 = memset::str#5 
+Identical Phi Alias memset::c#2 = memset::c#4 
+Successful SSA optimization Pass2IdenticalPhiElimination
+Identical Phi Alias memset::str#3 = memset::return#2 
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition memset::$1 [13] if(memset::num#2<=0) goto memset::@1
+Simple Condition memset::$3 [19] if(memset::dst#2!=memset::end#0) goto memset::@4
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant memset::str#0 = (void*)SCREEN
+Constant memset::c#0 = '*'
+Constant memset::num#0 = $3e8
+Constant memset::str#1 = (void*)COLS
+Constant memset::c#1 = 0
+Constant memset::num#1 = $3e8
+Successful SSA optimization Pass2ConstantIdentification
+Eliminating unused variable memset::return#0 and assignment [1] memset::return#0 = memset::str#3
+Eliminating unused variable memset::return#1 and assignment [3] memset::return#1 = memset::str#3
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Inlining Noop Cast [5] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
+Inlining Noop Cast [7] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
+Successful SSA optimization Pass2NopCastInlining
+Inlining constant with var siblings memset::str#0
+Inlining constant with var siblings memset::c#0
+Inlining constant with var siblings memset::num#0
+Inlining constant with var siblings memset::str#1
+Inlining constant with var siblings memset::c#1
+Inlining constant with var siblings memset::num#1
+Constant inlined memset::str#1 = (void*)COLS
+Constant inlined memset::str#0 = (void*)SCREEN
+Constant inlined memset::num#1 = $3e8
+Constant inlined memset::c#0 = '*'
+Constant inlined memset::num#0 = $3e8
+Constant inlined memset::c#1 = 0
+Successful SSA optimization Pass2ConstantInlining
+Identical Phi Const Values memset::num#2 $3e8
+Successful SSA optimization Pass2IdenticalPhiElimination
+if() condition always false - eliminating [4] if($3e8<=0) goto memset::@1
+Successful SSA optimization Pass2ConstantIfs
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of memset::@1
+CALL GRAPH
+Calls in [main] to memset:1 memset:3 
+
+Created 3 initial phi equivalence classes
+Coalesced [15] memset::dst#5 = memset::dst#1
+Coalesced down to 3 phi equivalence classes
+Culled Empty Block label main::@2
+Culled Empty Block label memset::@1
+Renumbering block memset::@2 to memset::@1
+Renumbering block memset::@3 to memset::@2
+Renumbering block memset::@4 to memset::@3
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call memset 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [2] phi()
+  [3] call memset 
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [4] return 
+  to:@return
+
+void* memset(void* memset::str , byte memset::c , word memset::num)
+memset: scope:[memset]  from main main::@1
+  [5] memset::c#2 = phi( main/'*', main::@1/0 )
+  [5] memset::str#3 = phi( main/(void*)SCREEN, main::@1/(void*)COLS )
+  to:memset::@1
+memset::@1: scope:[memset]  from memset
+  [6] memset::end#0 = (byte*)memset::str#3 + $3e8
+  [7] memset::dst#4 = (byte*)memset::str#3
+  to:memset::@2
+memset::@2: scope:[memset]  from memset::@1 memset::@3
+  [8] memset::dst#2 = phi( memset::@1/memset::dst#4, memset::@3/memset::dst#1 )
+  [9] if(memset::dst#2!=memset::end#0) goto memset::@3
+  to:memset::@return
+memset::@return: scope:[memset]  from memset::@2
+  [10] return 
+  to:@return
+memset::@3: scope:[memset]  from memset::@2
+  [11] *memset::dst#2 = memset::c#2
+  [12] memset::dst#1 = ++ memset::dst#2
+  to:memset::@2
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+void* memset(void* memset::str , byte memset::c , word memset::num)
+byte memset::c
+byte memset::c#2 14.428571428571429
+byte* memset::dst
+byte* memset::dst#1 202.0
+byte* memset::dst#2 138.33333333333331
+byte* memset::dst#4 22.0
+byte* memset::end
+byte* memset::end#0 18.666666666666664
+word memset::num
+void* memset::return
+void* memset::str
+void* memset::str#3
+
+Initial phi equivalence classes
+[ memset::str#3 ]
+[ memset::c#2 ]
+[ memset::dst#2 memset::dst#4 memset::dst#1 ]
+Added variable memset::end#0 to live range equivalence class [ memset::end#0 ]
+Complete equivalence classes
+[ memset::str#3 ]
+[ memset::c#2 ]
+[ memset::dst#2 memset::dst#4 memset::dst#1 ]
+[ memset::end#0 ]
+Allocated zp[2]:2 [ memset::str#3 ]
+Allocated zp[1]:4 [ memset::c#2 ]
+Allocated zp[2]:5 [ memset::dst#2 memset::dst#4 memset::dst#1 ]
+Allocated zp[2]:7 [ memset::end#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [6] memset::end#0 = (byte*)memset::str#3 + $3e8 [ memset::str#3 memset::c#2 memset::end#0 ] ( memset:1 [ memset::str#3 memset::c#2 memset::end#0 ] { }  memset:3 [ memset::str#3 memset::c#2 memset::end#0 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:4 [ memset::c#2 ]
+Statement [7] memset::dst#4 = (byte*)memset::str#3 [ memset::c#2 memset::end#0 memset::dst#4 ] ( memset:1 [ memset::c#2 memset::end#0 memset::dst#4 ] { }  memset:3 [ memset::c#2 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [9] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#2 memset::end#0 memset::dst#2 ] ( memset:1 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  memset:3 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [11] *memset::dst#2 = memset::c#2 [ memset::c#2 memset::end#0 memset::dst#2 ] ( memset:1 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  memset:3 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:4 [ memset::c#2 ]
+Statement [6] memset::end#0 = (byte*)memset::str#3 + $3e8 [ memset::str#3 memset::c#2 memset::end#0 ] ( memset:1 [ memset::str#3 memset::c#2 memset::end#0 ] { }  memset:3 [ memset::str#3 memset::c#2 memset::end#0 ] { }  ) always clobbers reg byte a 
+Statement [7] memset::dst#4 = (byte*)memset::str#3 [ memset::c#2 memset::end#0 memset::dst#4 ] ( memset:1 [ memset::c#2 memset::end#0 memset::dst#4 ] { }  memset:3 [ memset::c#2 memset::end#0 memset::dst#4 ] { }  ) always clobbers reg byte a 
+Statement [9] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#2 memset::end#0 memset::dst#2 ] ( memset:1 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  memset:3 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [11] *memset::dst#2 = memset::c#2 [ memset::c#2 memset::end#0 memset::dst#2 ] ( memset:1 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  memset:3 [ memset::c#2 memset::end#0 memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[2]:2 [ memset::str#3 ] : zp[2]:2 , 
+Potential registers zp[1]:4 [ memset::c#2 ] : zp[1]:4 , reg byte x , 
+Potential registers zp[2]:5 [ memset::dst#2 memset::dst#4 memset::dst#1 ] : zp[2]:5 , 
+Potential registers zp[2]:7 [ memset::end#0 ] : zp[2]:7 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [memset] 362.33: zp[2]:5 [ memset::dst#2 memset::dst#4 memset::dst#1 ] 18.67: zp[2]:7 [ memset::end#0 ] 14.43: zp[1]:4 [ memset::c#2 ] 0: zp[2]:2 [ memset::str#3 ] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [memset] best 599 combination zp[2]:5 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:7 [ memset::end#0 ] reg byte x [ memset::c#2 ] zp[2]:2 [ memset::str#3 ] 
+Uplifting [main] best 599 combination 
+Uplifting [] best 599 combination 
+Coalescing zero page register [ zp[2]:2 [ memset::str#3 ] ] with [ zp[2]:5 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
+Allocated (was zp[2]:7) zp[2]:4 [ memset::end#0 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Minimal memset usage
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label COLS = $d800
+  // main
+main: {
+    // [1] call memset 
+    // [5] phi from main to memset [phi:main->memset]
+  memset_from_main:
+    // [5] phi memset::c#2 = '*' [phi:main->memset#0] -- vbuxx=vbuc1 
+    ldx #'*'
+    // [5] phi memset::str#3 = (void*)SCREEN [phi:main->memset#1] -- pvoz1=pvoc1 
+    lda #<SCREEN
+    sta.z memset.str
+    lda #>SCREEN
+    sta.z memset.str+1
+    jsr memset
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] call memset 
+    // [5] phi from main::@1 to memset [phi:main::@1->memset]
+  memset_from___b1:
+    // [5] phi memset::c#2 = 0 [phi:main::@1->memset#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [5] phi memset::str#3 = (void*)COLS [phi:main::@1->memset#1] -- pvoz1=pvoc1 
+    lda #<COLS
+    sta.z memset.str
+    lda #>COLS
+    sta.z memset.str+1
+    jsr memset
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(2) str, byte register(X) c)
+memset: {
+    .label end = 4
+    .label dst = 2
+    .label str = 2
+    jmp __b1
+    // memset::@1
+  __b1:
+    // [6] memset::end#0 = (byte*)memset::str#3 + $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+    clc
+    lda.z str
+    adc #<$3e8
+    sta.z end
+    lda.z str+1
+    adc #>$3e8
+    sta.z end+1
+    // [7] memset::dst#4 = (byte*)memset::str#3
+    // [8] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+  __b2_from___b1:
+  __b2_from___b3:
+    // [8] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    jmp __b2
+    // memset::@2
+  __b2:
+    // [9] if(memset::dst#2!=memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    jmp __breturn
+    // memset::@return
+  __breturn:
+    // [10] return 
+    rts
+    // memset::@3
+  __b3:
+    // [11] *memset::dst#2 = memset::c#2 -- _deref_pbuz1=vbuxx 
+    txa
+    ldy #0
+    sta (dst),y
+    // [12] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2_from___b3
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b2_from___b3 with __b2
+Removing instruction __b1_from_main:
+Removing instruction memset_from___b1:
+Removing instruction __b2_from___b1:
+Removing instruction __b2_from___b3:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction memset_from_main:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* COLS = (byte*) 55296
+const nomodify byte* SCREEN = (byte*) 1024
+void main()
+void* memset(void* memset::str , byte memset::c , word memset::num)
+byte memset::c
+byte memset::c#2 reg byte x 14.428571428571429
+byte* memset::dst
+byte* memset::dst#1 dst zp[2]:2 202.0
+byte* memset::dst#2 dst zp[2]:2 138.33333333333331
+byte* memset::dst#4 dst zp[2]:2 22.0
+byte* memset::end
+byte* memset::end#0 end zp[2]:4 18.666666666666664
+word memset::num
+void* memset::return
+void* memset::str
+void* memset::str#3 str zp[2]:2
+
+zp[2]:2 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 ]
+reg byte x [ memset::c#2 ]
+zp[2]:4 [ memset::end#0 ]
+
+
+FINAL ASSEMBLER
+Score: 491
+
+  // File Comments
+// Minimal memset usage
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label SCREEN = $400
+  .label COLS = $d800
+  // main
+main: {
+    // memset(SCREEN, '*', 1000)
+    // [1] call memset 
+    // [5] phi from main to memset [phi:main->memset]
+    // [5] phi memset::c#2 = '*' [phi:main->memset#0] -- vbuxx=vbuc1 
+    ldx #'*'
+    // [5] phi memset::str#3 = (void*)SCREEN [phi:main->memset#1] -- pvoz1=pvoc1 
+    lda #<SCREEN
+    sta.z memset.str
+    lda #>SCREEN
+    sta.z memset.str+1
+    jsr memset
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+    // memset(COLS, 0, 1000)
+    // [3] call memset 
+    // [5] phi from main::@1 to memset [phi:main::@1->memset]
+    // [5] phi memset::c#2 = 0 [phi:main::@1->memset#0] -- vbuxx=vbuc1 
+    ldx #0
+    // [5] phi memset::str#3 = (void*)COLS [phi:main::@1->memset#1] -- pvoz1=pvoc1 
+    lda #<COLS
+    sta.z memset.str
+    lda #>COLS
+    sta.z memset.str+1
+    jsr memset
+    // main::@return
+    // }
+    // [4] return 
+    rts
+}
+  // memset
+// Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
+// memset(void* zp(2) str, byte register(X) c)
+memset: {
+    .label end = 4
+    .label dst = 2
+    .label str = 2
+    // memset::@1
+    // end = (char*)str + num
+    // [6] memset::end#0 = (byte*)memset::str#3 + $3e8 -- pbuz1=pbuz2_plus_vwuc1 
+    clc
+    lda.z str
+    adc #<$3e8
+    sta.z end
+    lda.z str+1
+    adc #>$3e8
+    sta.z end+1
+    // [7] memset::dst#4 = (byte*)memset::str#3
+    // [8] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [8] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // memset::@2
+  __b2:
+    // for(char* dst = str; dst!=end; dst++)
+    // [9] if(memset::dst#2!=memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    lda.z dst+1
+    cmp.z end+1
+    bne __b3
+    lda.z dst
+    cmp.z end
+    bne __b3
+    // memset::@return
+    // }
+    // [10] return 
+    rts
+    // memset::@3
+  __b3:
+    // *dst = c
+    // [11] *memset::dst#2 = memset::c#2 -- _deref_pbuz1=vbuxx 
+    txa
+    ldy #0
+    sta (dst),y
+    // for(char* dst = str; dst!=end; dst++)
+    // [12] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    inc.z dst
+    bne !+
+    inc.z dst+1
+  !:
+    jmp __b2
+}
+  // File Data
+

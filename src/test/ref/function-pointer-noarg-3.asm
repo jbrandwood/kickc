@@ -18,7 +18,11 @@ fn1: {
 }
 main: {
     .label f = 2
-    ldx #0
+    // f
+    lda #<0
+    sta.z f
+    sta.z f+1
+    tax
   __b2:
     // ++i;
     inx
@@ -28,21 +32,23 @@ main: {
     // if((i&1)==0)
     cmp #0
     beq __b3
+    // f = &fn2
     lda #<fn2
     sta.z f
     lda #>fn2
-    sta.z f+1
-    jmp __b4
-  __b3:
-    lda #<fn1
-    sta.z f
-    lda #>fn1
     sta.z f+1
   __b4:
     // kickasm
     jsr ff
         
     jmp __b2
+  __b3:
+    // f = &fn1
+    lda #<fn1
+    sta.z f
+    lda #>fn1
+    sta.z f+1
+    jmp __b4
 }
 // Inline KickAsm function
 ff:

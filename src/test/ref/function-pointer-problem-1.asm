@@ -13,17 +13,21 @@ fn1: {
 }
 main: {
     // enableDLI(&fn1)
+    lda #<fn1
+    sta.z enableDLI.dliptr
+    lda #>fn1
+    sta.z enableDLI.dliptr+1
     jsr enableDLI
     // }
     rts
 }
-// enableDLI(void*  dliptr)
+// enableDLI(void* zp(2) dliptr)
 enableDLI: {
-    .label dliptr = fn1
+    .label dliptr = 2
     // asm
-    lda #<dliptr
+    lda dliptr
     sta dlivec
-    lda #>dliptr
+    lda dliptr+1
     sta dlivec+1
     jmp !+
   dlivec:

@@ -22,11 +22,11 @@ void fn2() {
 	*r = 2;
 }
 
-void enableDLI(__ma void *dliptr) {
+void enableDLI(void *dliptr) {
 	asm {
-		lda #<dliptr
+		lda dliptr
 		sta dlivec
-		lda #>dliptr
+		lda dliptr+1
 		sta dlivec+1
 
 		jmp !+

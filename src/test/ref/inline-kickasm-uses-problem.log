@@ -1,4 +1,10 @@
 Setting inferred volatile on symbol affected by address-of foo::v2 = &foo::a2
+Setting inferred volatile on symbol affected by address-of: foo::v1 in kickasm( uses foo::v1 uses foo::v2) {{ lda v1
+		sta v2
+	 }}
+Setting inferred volatile on symbol affected by address-of: foo::v2 in kickasm( uses foo::v1 uses foo::v2) {{ lda v1
+		sta v2
+	 }}
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -51,8 +57,8 @@ const to_nomodify byte* OUT = (byte*)$8000
 void __start()
 void foo(byte* foo::x1 , byte* foo::x2)
 volatile byte foo::a2 loadstore
-to_volatile byte* foo::v1 loadstore
-byte* foo::v2 loadstore
+volatile to_volatile byte* foo::v1 loadstore
+volatile byte* foo::v2 loadstore
 byte* foo::x1
 byte* foo::x1#0
 byte* foo::x1#1
@@ -124,8 +130,8 @@ foo::@return: scope:[foo]  from foo
 VARIABLE REGISTER WEIGHTS
 void foo(byte* foo::x1 , byte* foo::x2)
 volatile byte foo::a2 loadstore 5.5
-to_volatile byte* foo::v1 loadstore 11.0
-byte* foo::v2 loadstore 22.0
+volatile to_volatile byte* foo::v1 loadstore 11.0
+volatile byte* foo::v2 loadstore 22.0
 byte* foo::x1
 byte* foo::x2
 void main()
@@ -266,8 +272,8 @@ FINAL SYMBOL TABLE
 const to_nomodify byte* OUT = (byte*) 32768
 void foo(byte* foo::x1 , byte* foo::x2)
 volatile byte foo::a2 loadstore zp[1]:132 5.5
-to_volatile byte* foo::v1 loadstore zp[2]:128 11.0
-byte* foo::v2 loadstore zp[2]:130 22.0
+volatile to_volatile byte* foo::v1 loadstore zp[2]:128 11.0
+volatile byte* foo::v2 loadstore zp[2]:130 22.0
 byte* foo::x1
 byte* foo::x2
 void main()

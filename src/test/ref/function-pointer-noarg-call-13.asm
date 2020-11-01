@@ -59,9 +59,9 @@ main: {
 enableDLI: {
     .label dliptr = $80
     // asm
-    lda #<dliptr
+    lda dliptr
     sta dlivec
-    lda #>dliptr
+    lda dliptr+1
     sta dlivec+1
     jmp !+
   dlivec:

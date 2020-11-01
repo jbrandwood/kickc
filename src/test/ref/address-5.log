@@ -1,3 +1,4 @@
+Setting inferred volatile on symbol affected by address-of: print::ch in asm { ldxidx ldach staSCREEN,x incidx  }
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -21,7 +22,7 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-void print(byte print::ch)
+void print(volatile byte print::ch)
 print: scope:[print]  from main main::@1 main::@2
   asm { ldxidx ldach staSCREEN,x incidx  }
   to:print::@return
@@ -49,8 +50,8 @@ const nomodify byte* SCREEN = (byte*)$400
 void __start()
 volatile byte idx loadstore !zp[-1]:3
 void main()
-void print(byte print::ch)
-byte print::ch loadstore !zp[-1]:2
+void print(volatile byte print::ch)
+volatile byte print::ch loadstore !zp[-1]:2
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
@@ -103,7 +104,7 @@ main::@return: scope:[main]  from main::@2
   [11] return 
   to:@return
 
-void print(byte print::ch)
+void print(volatile byte print::ch)
 print: scope:[print]  from main main::@1 main::@2
   asm { ldxidx ldach staSCREEN,x incidx  }
   to:print::@return
@@ -116,8 +117,8 @@ VARIABLE REGISTER WEIGHTS
 void __start()
 volatile byte idx loadstore !zp[-1]:3 0.2222222222222222
 void main()
-void print(byte print::ch)
-byte print::ch loadstore !zp[-1]:2 11.0
+void print(volatile byte print::ch)
+volatile byte print::ch loadstore !zp[-1]:2 11.0
 
 Initial phi equivalence classes
 Added variable idx to live range equivalence class [ idx ]
@@ -252,8 +253,8 @@ const nomodify byte* SCREEN = (byte*) 1024
 void __start()
 volatile byte idx loadstore !zp[-1]:3 zp[1]:3 0.2222222222222222
 void main()
-void print(byte print::ch)
-byte print::ch loadstore !zp[-1]:2 zp[1]:2 11.0
+void print(volatile byte print::ch)
+volatile byte print::ch loadstore !zp[-1]:2 zp[1]:2 11.0
 
 zp[1]:3 [ idx ]
 zp[1]:2 [ print::ch ]

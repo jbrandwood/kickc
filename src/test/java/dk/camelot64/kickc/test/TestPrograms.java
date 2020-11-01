@@ -3335,8 +3335,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testInlineAsmRefoutIllegal() throws IOException, URISyntaxException {
-      assertError("inline-asm-refout-illegal.c", "Inline ASM reference is not constant");
+   public void testInlineAsmRefout() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-refout-illegal.c");
    }
 
    @Test
@@ -3388,8 +3388,8 @@ public class TestPrograms {
    }
 
    @Test
-   public void testInlineAsmRefout() throws IOException, URISyntaxException {
-      compileAndCompare("inline-asm-refout.c");
+   public void testInlineAsmRefoutVar() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-refout-var.c");
    }
 
    @Test

@@ -21,9 +21,9 @@ void main() {
 	// foo(b, a);
 }
 
-void foo(__mem uint8_t *x1, uint8_t *x2) {
-	__ma volatile uint8_t * v1;
-	__ma uint8_t * v2;
+void foo(uint8_t *x1, uint8_t *x2) {
+	volatile uint8_t * v1;
+	uint8_t * v2;
 	uint8_t a1 = 1;
 	uint8_t a2 = 2;
 	v1 = x1;

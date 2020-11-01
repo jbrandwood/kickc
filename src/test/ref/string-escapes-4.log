@@ -1,3 +1,5 @@
+Setting inferred volatile on symbol affected by address-of: chrout::petscii in kickasm( uses chrout::petscii) {{ jsr $ffd2
+     }}
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -14,7 +16,7 @@ main::@1: scope:[main]  from main main::@4
   to:main::@3
 main::@2: scope:[main]  from main::@1
   main::i#3 = phi( main::@1/main::i#2 )
-  chrout::petscii#0 = MSG1[main::i#3]
+  chrout::petscii = MSG1[main::i#3]
   call chrout 
   to:main::@4
 main::@4: scope:[main]  from main::@2
@@ -29,10 +31,9 @@ main::@return: scope:[main]  from main::@3
   return 
   to:@return
 
-void chrout(byte chrout::petscii)
+void chrout(volatile byte chrout::petscii)
 chrout: scope:[chrout]  from main::@2
-  chrout::petscii#1 = phi( main::@2/chrout::petscii#0 )
-  kickasm( uses chrout::petscii#1) {{ jsr $ffd2
+  kickasm( uses chrout::petscii) {{ jsr $ffd2
      }}
   to:chrout::@return
 chrout::@return: scope:[chrout]  from chrout
@@ -60,10 +61,8 @@ const byte* MSG2[]  = "CAMELOT"su
 const byte* SCREEN1 = (byte*)$400
 const byte* SCREEN2 = (byte*)$428
 void __start()
-void chrout(byte chrout::petscii)
-byte chrout::petscii !reg byte a
-byte chrout::petscii#0 !reg byte a
-byte chrout::petscii#1 !reg byte a
+void chrout(volatile byte chrout::petscii)
+volatile byte chrout::petscii loadstore !reg byte a
 void main()
 bool~ main::$1
 byte main::i
@@ -109,12 +108,11 @@ Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 CALL GRAPH
-Calls in [main] to chrout:7 
+Calls in [main] to chrout:6 
 
-Created 2 initial phi equivalence classes
-Coalesced [6] chrout::petscii#2 = chrout::petscii#0
-Coalesced [10] main::i#5 = main::i#1
-Coalesced down to 2 phi equivalence classes
+Created 1 initial phi equivalence classes
+Coalesced [9] main::i#5 = main::i#1
+Coalesced down to 1 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
@@ -133,7 +131,7 @@ main::@return: scope:[main]  from main::@3
   [4] return 
   to:@return
 main::@2: scope:[main]  from main::@1
-  [5] chrout::petscii#0 = MSG1[main::i#2]
+  [5] chrout::petscii = MSG1[main::i#2]
   [6] call chrout 
   to:main::@4
 main::@4: scope:[main]  from main::@2
@@ -141,22 +139,19 @@ main::@4: scope:[main]  from main::@2
   [8] main::i#1 = ++ main::i#2
   to:main::@1
 
-void chrout(byte chrout::petscii)
+void chrout(volatile byte chrout::petscii)
 chrout: scope:[chrout]  from main::@2
-  [9] chrout::petscii#1 = phi( main::@2/chrout::petscii#0 )
-  kickasm( uses chrout::petscii#1) {{ jsr $ffd2
+  kickasm( uses chrout::petscii) {{ jsr $ffd2
      }}
   to:chrout::@return
 chrout::@return: scope:[chrout]  from chrout
-  [11] return 
+  [10] return 
   to:@return
 
 
 VARIABLE REGISTER WEIGHTS
-void chrout(byte chrout::petscii)
-byte chrout::petscii !reg byte a
-byte chrout::petscii#0 !reg byte a 22.0
-byte chrout::petscii#1 !reg byte a 11.0
+void chrout(volatile byte chrout::petscii)
+volatile byte chrout::petscii loadstore !reg byte a 11.0
 void main()
 byte main::i
 byte main::i#1 22.0
@@ -164,34 +159,34 @@ byte main::i#2 13.2
 
 Initial phi equivalence classes
 [ main::i#2 main::i#1 ]
-[ chrout::petscii#1 chrout::petscii#0 ]
+Added variable chrout::petscii to live range equivalence class [ chrout::petscii ]
 Complete equivalence classes
 [ main::i#2 main::i#1 ]
-[ chrout::petscii#1 chrout::petscii#0 ]
+[ chrout::petscii ]
 Allocated zp[1]:2 [ main::i#2 main::i#1 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *((byte*) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] if(0!=MSG1[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
 Statement [3] *SCREEN2 = CH [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] chrout::petscii#0 = MSG1[main::i#2] [ main::i#2 chrout::petscii#0 ] (  [ main::i#2 chrout::petscii#0 ] { { chrout::petscii#0 = chrout::petscii#1 } }  ) always clobbers reg byte a 
+Statement [5] chrout::petscii = MSG1[main::i#2] [ main::i#2 chrout::petscii ] (  [ main::i#2 chrout::petscii ] { }  ) always clobbers reg byte a 
 Statement [7] SCREEN1[main::i#2] = MSG2[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [0] *((byte*) 53272) = $17 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] if(0!=MSG1[main::i#2]) goto main::@2 [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Statement [3] *SCREEN2 = CH [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [5] chrout::petscii#0 = MSG1[main::i#2] [ main::i#2 chrout::petscii#0 ] (  [ main::i#2 chrout::petscii#0 ] { { chrout::petscii#0 = chrout::petscii#1 } }  ) always clobbers reg byte a 
+Statement [5] chrout::petscii = MSG1[main::i#2] [ main::i#2 chrout::petscii ] (  [ main::i#2 chrout::petscii ] { }  ) always clobbers reg byte a 
 Statement [7] SCREEN1[main::i#2] = MSG2[main::i#2] [ main::i#2 ] (  [ main::i#2 ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
-Potential registers reg byte a [ chrout::petscii#1 chrout::petscii#0 ] : reg byte a , 
+Potential registers reg byte a [ chrout::petscii ] : reg byte a , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [main] 35.2: zp[1]:2 [ main::i#2 main::i#1 ] 
-Uplift Scope [chrout] 33: reg byte a [ chrout::petscii#1 chrout::petscii#0 ] 
+Uplift Scope [chrout] 11: reg byte a [ chrout::petscii ] 
 Uplift Scope [] 
 
-Uplifting [main] best 655 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [chrout] best 655 combination reg byte a [ chrout::petscii#1 chrout::petscii#0 ] 
-Uplifting [] best 655 combination 
+Uplifting [main] best 736 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [chrout] best 736 combination reg byte a [ chrout::petscii ] 
+Uplifting [] best 736 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -236,12 +231,9 @@ main: {
     rts
     // main::@2
   __b2:
-    // [5] chrout::petscii#0 = MSG1[main::i#2] -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [5] chrout::petscii = MSG1[main::i#2] -- vbuaa=pbuc1_derefidx_vbuxx 
     lda MSG1,x
     // [6] call chrout 
-    // [9] phi from main::@2 to chrout [phi:main::@2->chrout]
-  chrout_from___b2:
-    // [9] phi chrout::petscii#1 = chrout::petscii#0 [phi:main::@2->chrout#0] -- register_copy 
     jsr chrout
     jmp __b4
     // main::@4
@@ -259,13 +251,13 @@ main: {
   // chrout
 // chrout(byte register(A) petscii)
 chrout: {
-    // kickasm( uses chrout::petscii#1) {{ jsr $ffd2      }}
+    // kickasm( uses chrout::petscii) {{ jsr $ffd2      }}
     jsr $ffd2
     
     jmp __breturn
     // chrout::@return
   __breturn:
-    // [11] return 
+    // [10] return 
     rts
 }
   // File Data
@@ -286,7 +278,6 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __b1_from_main:
 Removing instruction __b3:
 Removing instruction __breturn:
-Removing instruction chrout_from___b2:
 Removing instruction __b4:
 Removing instruction __b1_from___b4:
 Removing instruction __breturn:
@@ -298,21 +289,19 @@ const byte* MSG1[]  = "cAmElot"pm
 const byte* MSG2[]  = "CAMELOT"su
 const byte* SCREEN1 = (byte*) 1024
 const byte* SCREEN2 = (byte*) 1064
-void chrout(byte chrout::petscii)
-byte chrout::petscii !reg byte a
-byte chrout::petscii#0 !reg byte a 22.0
-byte chrout::petscii#1 !reg byte a 11.0
+void chrout(volatile byte chrout::petscii)
+volatile byte chrout::petscii loadstore !reg byte a 11.0
 void main()
 byte main::i
 byte main::i#1 reg byte x 22.0
 byte main::i#2 reg byte x 13.2
 
 reg byte x [ main::i#2 main::i#1 ]
-reg byte a [ chrout::petscii#1 chrout::petscii#0 ]
+reg byte a [ chrout::petscii ]
 
 
 FINAL ASSEMBLER
-Score: 586
+Score: 640
 
   // File Comments
 // Test using some simple supported string escape
@@ -355,11 +344,9 @@ main: {
     // main::@2
   __b2:
     // chrout(MSG1[i])
-    // [5] chrout::petscii#0 = MSG1[main::i#2] -- vbuaa=pbuc1_derefidx_vbuxx 
+    // [5] chrout::petscii = MSG1[main::i#2] -- vbuaa=pbuc1_derefidx_vbuxx 
     lda MSG1,x
     // [6] call chrout 
-    // [9] phi from main::@2 to chrout [phi:main::@2->chrout]
-    // [9] phi chrout::petscii#1 = chrout::petscii#0 [phi:main::@2->chrout#0] -- register_copy 
     jsr chrout
     // main::@4
     // SCREEN1[i] = MSG2[i]
@@ -377,12 +364,12 @@ main: {
 // chrout(byte register(A) petscii)
 chrout: {
     // kickasm
-    // kickasm( uses chrout::petscii#1) {{ jsr $ffd2      }}
+    // kickasm( uses chrout::petscii) {{ jsr $ffd2      }}
     jsr $ffd2
     
     // chrout::@return
     // }
-    // [11] return 
+    // [10] return 
     rts
 }
   // File Data

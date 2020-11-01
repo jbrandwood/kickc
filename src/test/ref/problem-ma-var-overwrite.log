@@ -1,3 +1,4 @@
+Setting inferred volatile on symbol affected by address-of: test::dst in asm { ldy#0 lda#1 sta(dst),y  }
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -63,7 +64,7 @@ byte* test::colorMem#1
 byte* test::diff
 byte* test::diff#0
 byte* test::diff#1
-byte* test::dst loadstore
+volatile byte* test::dst loadstore
 byte* test::other
 byte* test::other#0
 byte* test::other#1
@@ -169,7 +170,7 @@ byte*~ test::$1 202.0
 byte* test::colorMem
 byte* test::diff
 word test::diff#1 101.0
-byte* test::dst loadstore 151.5
+volatile byte* test::dst loadstore 151.5
 byte* test::other
 byte* test::videoMem
 byte* test::videoMem#0 56.0
@@ -217,7 +218,7 @@ Uplifting [] best 172 combination zp[2]:2 [ h1 ]
 Uplifting [main] best 172 combination 
 Uplifting [__start] best 172 combination 
 Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 ] ] with [ zp[2]:8 [ test::diff#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:6 [ test::dst ] ] with [ zp[2]:10 [ test::$1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ test::videoMem#0 test::diff#1 ] ] with [ zp[2]:10 [ test::$1 ] ] - score: 1
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -273,7 +274,7 @@ test: {
     .label colorMem = $d800
     .label other = $c000
     .label dst = 6
-    .label __1 = 6
+    .label __1 = 4
     .label diff = 4
     .label videoMem = 4
     // [8] test::dst = (byte*) 0 -- pbuz1=pbuc1 
@@ -289,15 +290,19 @@ test: {
     lda #>colorMem
     sbc.z diff+1
     sta.z diff+1
-    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda.z diff
+    lda.z __1
     adc #<other
     sta.z __1
-    lda.z diff+1
+    lda.z __1+1
     adc #>other
     sta.z __1+1
-    // [11] test::dst = test::$1
+    // [11] test::dst = test::$1 -- pbuz1=pbuz2 
+    lda.z __1
+    sta.z dst
+    lda.z __1+1
+    sta.z dst+1
     // [12] *test::dst = 1 -- _deref_pbuz1=vbuc1 
     lda #1
     ldy #0
@@ -340,24 +345,24 @@ void __start()
 volatile byte* h1 loadstore zp[2]:2 6.5
 void main()
 void test(byte* test::videoMem , byte* test::colorMem , byte* test::other)
-byte*~ test::$1 zp[2]:6 202.0
+byte*~ test::$1 zp[2]:4 202.0
 byte* test::colorMem
 const byte* test::colorMem#0 colorMem = (byte*) 55296
 byte* test::diff
 word test::diff#1 diff zp[2]:4 101.0
-byte* test::dst loadstore zp[2]:6 151.5
+volatile byte* test::dst loadstore zp[2]:6 151.5
 byte* test::other
 const byte* test::other#0 other = (byte*) 49152
 byte* test::videoMem
 byte* test::videoMem#0 videoMem zp[2]:4 56.0
 
 zp[2]:2 [ h1 ]
-zp[2]:4 [ test::videoMem#0 test::diff#1 ]
-zp[2]:6 [ test::dst test::$1 ]
+zp[2]:4 [ test::videoMem#0 test::diff#1 test::$1 ]
+zp[2]:6 [ test::dst ]
 
 
 FINAL ASSEMBLER
-Score: 110
+Score: 122
 
   // File Comments
 // Demonstrates that a local __ma variable overwrites a parameter§
@@ -405,7 +410,7 @@ test: {
     .label colorMem = $d800
     .label other = $c000
     .label dst = 6
-    .label __1 = 6
+    .label __1 = 4
     .label diff = 4
     .label videoMem = 4
     // dst
@@ -423,16 +428,20 @@ test: {
     sbc.z diff+1
     sta.z diff+1
     // other + ((unsigned int)diff)
-    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz2 
+    // [10] test::$1 = test::other#0 + (word)(byte*)test::diff#1 -- pbuz1=pbuc1_plus_vwuz1 
     clc
-    lda.z diff
+    lda.z __1
     adc #<other
     sta.z __1
-    lda.z diff+1
+    lda.z __1+1
     adc #>other
     sta.z __1+1
     // dst = other + ((unsigned int)diff)
-    // [11] test::dst = test::$1
+    // [11] test::dst = test::$1 -- pbuz1=pbuz2 
+    lda.z __1
+    sta.z dst
+    lda.z __1+1
+    sta.z dst+1
     // dst[0] = 1
     // [12] *test::dst = 1 -- _deref_pbuz1=vbuc1 
     lda #1

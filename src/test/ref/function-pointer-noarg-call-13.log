@@ -1,5 +1,6 @@
 Resolved forward reference fn1 to void fn1()
 Resolved forward reference fn2 to void fn2()
+Setting inferred volatile on symbol affected by address-of: enableDLI::dliptr in asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -35,9 +36,9 @@ fn2::@return: scope:[fn2]  from fn2
   return 
   to:@return
 
-void enableDLI(void* enableDLI::dliptr)
+void enableDLI(volatile void* enableDLI::dliptr)
 enableDLI: scope:[enableDLI]  from main main::@1
-  asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+  asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
   to:enableDLI::@return
 enableDLI::@return: scope:[enableDLI]  from enableDLI
   return 
@@ -59,8 +60,8 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-void enableDLI(void* enableDLI::dliptr)
-void* enableDLI::dliptr loadstore
+void enableDLI(volatile void* enableDLI::dliptr)
+volatile void* enableDLI::dliptr loadstore
 void fn1()
 void fn2()
 void main()
@@ -125,9 +126,9 @@ main::@return: scope:[main]  from main::@1
   [8] return 
   to:@return
 
-void enableDLI(void* enableDLI::dliptr)
+void enableDLI(volatile void* enableDLI::dliptr)
 enableDLI: scope:[enableDLI]  from main main::@1
-  asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+  asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
   to:enableDLI::@return
 enableDLI::@return: scope:[enableDLI]  from enableDLI
   [10] return 
@@ -135,8 +136,8 @@ enableDLI::@return: scope:[enableDLI]  from enableDLI
 
 
 VARIABLE REGISTER WEIGHTS
-void enableDLI(void* enableDLI::dliptr)
-void* enableDLI::dliptr loadstore 2.0
+void enableDLI(volatile void* enableDLI::dliptr)
+volatile void* enableDLI::dliptr loadstore 2.0
 void fn1()
 void fn2()
 void main()
@@ -151,7 +152,7 @@ Statement [0] *r = 2 [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [2] *r = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] enableDLI::dliptr = (void*)&fn1 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
 Statement [6] enableDLI::dliptr = (void*)&fn2 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
-Statement asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  } always clobbers reg byte a 
+Statement asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  } always clobbers reg byte a 
 Potential registers zp[2]:128 [ enableDLI::dliptr ] : zp[2]:128 , 
 
 REGISTER UPLIFT SCOPES
@@ -161,11 +162,11 @@ Uplift Scope [fn1]
 Uplift Scope [fn2] 
 Uplift Scope [] 
 
-Uplifting [enableDLI] best 98 combination zp[2]:128 [ enableDLI::dliptr ] 
-Uplifting [main] best 98 combination 
-Uplifting [fn1] best 98 combination 
-Uplifting [fn2] best 98 combination 
-Uplifting [] best 98 combination 
+Uplifting [enableDLI] best 102 combination zp[2]:128 [ enableDLI::dliptr ] 
+Uplifting [main] best 102 combination 
+Uplifting [fn1] best 102 combination 
+Uplifting [fn2] best 102 combination 
+Uplifting [] best 102 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -249,10 +250,10 @@ main: {
 // enableDLI(void* zp($80) dliptr)
 enableDLI: {
     .label dliptr = $80
-    // asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
-    lda #<dliptr
+    // asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+    lda dliptr
     sta dlivec
-    lda #>dliptr
+    lda dliptr+1
     sta dlivec+1
     jmp !+
   dlivec:
@@ -281,8 +282,8 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-void enableDLI(void* enableDLI::dliptr)
-void* enableDLI::dliptr loadstore zp[2]:128 2.0
+void enableDLI(volatile void* enableDLI::dliptr)
+volatile void* enableDLI::dliptr loadstore zp[2]:128 2.0
 void fn1()
 void fn2()
 void main()
@@ -292,7 +293,7 @@ zp[2]:128 [ enableDLI::dliptr ]
 
 
 FINAL ASSEMBLER
-Score: 83
+Score: 87
 
   // File Comments
 // Tests trouble passing a function pointer
@@ -375,10 +376,10 @@ main: {
 enableDLI: {
     .label dliptr = $80
     // asm
-    // asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
-    lda #<dliptr
+    // asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+    lda dliptr
     sta dlivec
-    lda #>dliptr
+    lda dliptr+1
     sta dlivec+1
     jmp !+
   dlivec:

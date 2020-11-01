@@ -1,4 +1,5 @@
 Resolved forward reference fn1 to void fn1()
+Setting inferred volatile on symbol affected by address-of: enableDLI::dliptr in asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -22,9 +23,9 @@ fn1::@return: scope:[fn1]  from fn1
   return 
   to:@return
 
-void enableDLI(void* enableDLI::dliptr)
+void enableDLI(volatile void* enableDLI::dliptr)
 enableDLI: scope:[enableDLI]  from main
-  asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+  asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
   to:enableDLI::@return
 enableDLI::@return: scope:[enableDLI]  from enableDLI
   return 
@@ -46,8 +47,8 @@ __start::@return: scope:[__start]  from __start::@2
 
 SYMBOL TABLE SSA
 void __start()
-void enableDLI(void* enableDLI::dliptr)
-void* enableDLI::dliptr loadstore
+void enableDLI(volatile void* enableDLI::dliptr)
+volatile void* enableDLI::dliptr loadstore
 void fn1()
 void main()
 const to_nomodify byte* r = (byte*)$8000
@@ -61,8 +62,6 @@ Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Constant enableDLI::dliptr = (void*)&fn1
-Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::__init1
@@ -70,7 +69,6 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
-Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 CALL GRAPH
 Calls in [main] to enableDLI:3 
@@ -78,7 +76,6 @@ Calls in [main] to enableDLI:3
 Created 0 initial phi equivalence classes
 Coalesced down to 0 phi equivalence classes
 Culled Empty Block label main::@1
-Adding NOP phi() at start of main
 
 FINAL CONTROL FLOW GRAPH
 
@@ -92,16 +89,16 @@ fn1::@return: scope:[fn1]  from fn1
 
 void main()
 main: scope:[main]  from
-  [2] phi()
+  [2] enableDLI::dliptr = (void*)&fn1
   [3] call enableDLI 
   to:main::@return
 main::@return: scope:[main]  from main
   [4] return 
   to:@return
 
-void enableDLI(const void* enableDLI::dliptr)
+void enableDLI(volatile void* enableDLI::dliptr)
 enableDLI: scope:[enableDLI]  from main
-  asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+  asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
   to:enableDLI::@return
 enableDLI::@return: scope:[enableDLI]  from enableDLI
   [6] return 
@@ -109,26 +106,32 @@ enableDLI::@return: scope:[enableDLI]  from enableDLI
 
 
 VARIABLE REGISTER WEIGHTS
-void enableDLI(const void* enableDLI::dliptr)
+void enableDLI(volatile void* enableDLI::dliptr)
+volatile void* enableDLI::dliptr loadstore 2.0
 void fn1()
 void main()
 
 Initial phi equivalence classes
+Added variable enableDLI::dliptr to live range equivalence class [ enableDLI::dliptr ]
 Complete equivalence classes
+[ enableDLI::dliptr ]
+Allocated zp[2]:2 [ enableDLI::dliptr ]
 REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [0] *r = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  } always clobbers reg byte a 
+Statement [2] enableDLI::dliptr = (void*)&fn1 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
+Statement asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  } always clobbers reg byte a 
+Potential registers zp[2]:2 [ enableDLI::dliptr ] : zp[2]:2 , 
 
 REGISTER UPLIFT SCOPES
+Uplift Scope [enableDLI] 2: zp[2]:2 [ enableDLI::dliptr ] 
 Uplift Scope [main] 
 Uplift Scope [fn1] 
-Uplift Scope [enableDLI] 
 Uplift Scope [] 
 
-Uplifting [main] best 54 combination 
-Uplifting [fn1] best 54 combination 
-Uplifting [enableDLI] best 54 combination 
-Uplifting [] best 54 combination 
+Uplifting [enableDLI] best 68 combination zp[2]:2 [ enableDLI::dliptr ] 
+Uplifting [main] best 68 combination 
+Uplifting [fn1] best 68 combination 
+Uplifting [] best 68 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -153,6 +156,11 @@ fn1: {
 }
   // main
 main: {
+    // [2] enableDLI::dliptr = (void*)&fn1 -- pvoz1=pvoc1 
+    lda #<fn1
+    sta.z enableDLI.dliptr
+    lda #>fn1
+    sta.z enableDLI.dliptr+1
     // [3] call enableDLI 
     jsr enableDLI
     jmp __breturn
@@ -162,13 +170,13 @@ main: {
     rts
 }
   // enableDLI
-// enableDLI(void*  dliptr)
+// enableDLI(void* zp(2) dliptr)
 enableDLI: {
-    .label dliptr = fn1
-    // asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
-    lda #<dliptr
+    .label dliptr = 2
+    // asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+    lda dliptr
     sta dlivec
-    lda #>dliptr
+    lda dliptr+1
     sta dlivec+1
     jmp !+
   dlivec:
@@ -193,16 +201,17 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
-void enableDLI(const void* enableDLI::dliptr)
-const void* enableDLI::dliptr = (void*)&fn1
+void enableDLI(volatile void* enableDLI::dliptr)
+volatile void* enableDLI::dliptr loadstore zp[2]:2 2.0
 void fn1()
 void main()
 const to_nomodify byte* r = (byte*) 32768
 
+zp[2]:2 [ enableDLI::dliptr ]
 
 
 FINAL ASSEMBLER
-Score: 45
+Score: 59
 
   // File Comments
 // The following casuses an exception in pass 2
@@ -227,6 +236,11 @@ fn1: {
   // main
 main: {
     // enableDLI(&fn1)
+    // [2] enableDLI::dliptr = (void*)&fn1 -- pvoz1=pvoc1 
+    lda #<fn1
+    sta.z enableDLI.dliptr
+    lda #>fn1
+    sta.z enableDLI.dliptr+1
     // [3] call enableDLI 
     jsr enableDLI
     // main::@return
@@ -235,14 +249,14 @@ main: {
     rts
 }
   // enableDLI
-// enableDLI(void*  dliptr)
+// enableDLI(void* zp(2) dliptr)
 enableDLI: {
-    .label dliptr = fn1
+    .label dliptr = 2
     // asm
-    // asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
-    lda #<dliptr
+    // asm { ldadliptr stadlivec ldadliptr+1 stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+    lda dliptr
     sta dlivec
-    lda #>dliptr
+    lda dliptr+1
     sta dlivec+1
     jmp !+
   dlivec:

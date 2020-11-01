@@ -1116,10 +1116,10 @@ cputc: {
 // Allocates memory and returns a pointer to it. Sets allocated memory to zero.
 // - nitems − This is the number of elements to be allocated.
 // - size − This is the size of elements.
-// calloc(word zp($5a) nitems)
+// calloc(word zp($5d) nitems)
 calloc: {
     .label return = $36
-    .label nitems = $5a
+    .label nitems = $5d
     // malloc(nitems*size)
     lda.z nitems
     sta.z malloc.size
@@ -1137,12 +1137,12 @@ calloc: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($5a) destination, byte* zp($2c) source, word zp(2) num)
+// memcpy(void* zp($5d) destination, byte* zp($2c) source, word zp(2) num)
 memcpy: {
-    .label src_end = $57
-    .label dst = $5a
+    .label src_end = $5a
+    .label dst = $5d
     .label src = $2c
-    .label destination = $5a
+    .label destination = $5d
     .label source = $2c
     .label num = 2
     // src_end = (char*)source+num
@@ -1312,6 +1312,8 @@ leftRotate: {
     sta.z rotateLeft.p
     lda #>p
     sta.z rotateLeft.p+1
+    lda.z r
+    sta.z rotateLeft.r
     jsr rotateLeft
     jmp __b5
 }
@@ -1371,7 +1373,7 @@ mod16: {
 mul3: {
     .label __1 = $2c
     .label return = $2c
-    .label __2 = $5a
+    .label __2 = $5d
     // ((uint16_t) a) * 3
     sta.z __1
     lda #0
@@ -1396,7 +1398,7 @@ mul3: {
 mul5: {
     .label __1 = $2c
     .label return = $2c
-    .label __2 = $57
+    .label __2 = $5d
     // ((uint16_t) a) * 5
     sta.z __1
     lda #0
@@ -1421,7 +1423,7 @@ mul5: {
 }
 // Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
 putchar: {
-    .label loc = $57
+    .label loc = $5a
     // **OLDADR = *OLDCHR
     lda OLDCHR
     ldy OLDADR
@@ -1447,7 +1449,7 @@ putchar: {
 }
 // Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
 setcursor: {
-    .label loc = $57
+    .label loc = $5a
     // **OLDADR = *OLDCHR
     // save the current oldchr into oldadr
     lda OLDCHR
@@ -1570,12 +1572,12 @@ malloc: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($2e) str, word zp($5a) num)
+// memset(void* zp($2e) str, word zp($5d) num)
 memset: {
-    .label end = $5a
+    .label end = $5d
     .label dst = $2e
     .label str = $2e
-    .label num = $5a
+    .label num = $5d
     // if(num>0)
     lda.z num
     bne !+
@@ -1620,7 +1622,7 @@ memset: {
 // - radix : The radix to convert the number to (from the enum RADIX)
 // uctoa(byte register(X) value, byte* zp($2e) buffer)
 uctoa: {
-    .label digit_value = $59
+    .label digit_value = $5c
     .label buffer = $2e
     .label digit = $30
     .label started = $31
@@ -1785,10 +1787,10 @@ move16Left: {
     // }
     rts
 }
-// rotateLeft(byte* zp($57) p, byte zp($49) r)
+// rotateLeft(byte* zp($57) p, byte zp($59) r)
 rotateLeft: {
     .label p = $57
-    .label r = $49
+    .label r = $59
     // kickasm
     ldx #r
 		!s:
@@ -1825,12 +1827,12 @@ move8Left: {
 }
 // Return a pointer to the location of the cursor
 cursorLocation: {
-    .label __0 = $57
-    .label __1 = $57
-    .label __3 = $57
-    .label return = $57
-    .label __4 = $5a
-    .label __5 = $57
+    .label __0 = $5a
+    .label __1 = $5a
+    .label __3 = $5a
+    .label return = $5a
+    .label __4 = $5d
+    .label __5 = $5a
     // (word)(*ROWCRS)*CONIO_WIDTH
     lda ROWCRS
     sta.z __3
@@ -1884,10 +1886,10 @@ cursorLocation: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($2e) buffer, byte register(X) value, byte zp($59) sub)
+// uctoa_append(byte* zp($2e) buffer, byte register(X) value, byte zp($5c) sub)
 uctoa_append: {
     .label buffer = $2e
-    .label sub = $59
+    .label sub = $5c
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1910,11 +1912,11 @@ uctoa_append: {
     jmp __b1
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($59) pad, byte zp($31) length)
+// printf_padding(byte zp($5c) pad, byte zp($31) length)
 printf_padding: {
     .label i = $32
     .label length = $31
-    .label pad = $59
+    .label pad = $5c
     lda #0
     sta.z i
   __b1:

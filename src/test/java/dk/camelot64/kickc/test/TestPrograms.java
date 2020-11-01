@@ -3336,7 +3336,7 @@ public class TestPrograms {
 
    @Test
    public void testInlineAsmRefout() throws IOException, URISyntaxException {
-      compileAndCompare("inline-asm-refout-illegal.c");
+      compileAndCompare("inline-asm-refout.c");
    }
 
    @Test

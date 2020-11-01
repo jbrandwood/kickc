@@ -8,7 +8,10 @@ import dk.camelot64.kickc.model.operators.Operators;
 import dk.camelot64.kickc.model.symbols.Symbol;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
-import dk.camelot64.kickc.model.values.*;
+import dk.camelot64.kickc.model.values.ConstantSymbolPointer;
+import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.SymbolVariableRef;
+import dk.camelot64.kickc.model.values.Value;
 
 /**
  * Update variables properly if address-of is used
@@ -21,6 +24,7 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
 
    @Override
    public boolean step() {
+      // Expressions using & operator
       ProgramExpressionIterator.execute(getProgram(), (programExpression, currentStmt, stmtIt, currentBlock) -> {
          if(Operators.ADDRESS_OF.equals(programExpression.getOperator())) {
             RValue rValue = ((ProgramExpressionUnary) programExpression).getOperand();
@@ -36,13 +40,16 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
       });
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof ConstantSymbolPointer) {
+            // Values containing constant pointers
             Value value = ((ConstantSymbolPointer) programValue.get()).getToSymbol();
             if(value instanceof SymbolVariableRef) {
                Symbol toSymbol = getScope().getSymbol((SymbolVariableRef) value);
                if(toSymbol instanceof Variable) {
                   final Variable variable = (Variable) toSymbol;
-                  final String stmtStr = currentStmt==null?toSymbol.toString(getProgram()):currentStmt.toString(getProgram(), false);
-                  updateAddressOfVariable(variable, stmtStr);
+                  if(!variable.isNoModify() && !variable.isVolatile()) {
+                     final String stmtStr = currentStmt == null ? toSymbol.toString(getProgram()) : currentStmt.toString(getProgram(), false);
+                     updateAddressOfVariable(variable, stmtStr);
+                  }
                }
             }
          }
@@ -54,10 +61,12 @@ public class Pass1AddressOfHandling extends Pass2SsaOptimization {
       if(variable.getType() instanceof SymbolTypeStruct) {
          variable.setKind(Variable.Kind.LOAD_STORE);
          getLog().append("Setting struct to load/store in variable affected by address-of " + stmtStr);
+         //getLog().append("Setting struct to load/store in variable affected by address-of: " + variable.toString() + " in " + stmtStr);
       } else {
          variable.setKind(Variable.Kind.LOAD_STORE);
          variable.setVolatile(true);
          getLog().append("Setting inferred volatile on symbol affected by address-of " + stmtStr);
+         //getLog().append("Setting inferred volatile on symbol affected by address-of: " + variable.toString() + " in " + stmtStr);
       }
    }
 

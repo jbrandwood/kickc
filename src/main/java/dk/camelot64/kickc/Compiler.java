@@ -18,7 +18,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -277,6 +276,7 @@ public class Compiler {
       new PassNAddTypeConversionAssignment(program, true).execute();
 
       new Pass1EarlyConstantIdentification(program).execute();
+      new Pass1AsmUsesHandling(program).execute();
       new PassNAssertConstantModification(program).execute();
       new PassNAssertTypeDeref(program).check();
 

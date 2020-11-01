@@ -1,0 +1,393 @@
+Resolved forward reference fn1 to void fn1()
+Resolved forward reference fn2 to void fn2()
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  enableDLI::dliptr = (void*)&fn1
+  call enableDLI 
+  to:main::@1
+main::@1: scope:[main]  from main
+  enableDLI::dliptr = (void*)&fn2
+  call enableDLI 
+  to:main::@2
+main::@2: scope:[main]  from main::@1
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  return 
+  to:@return
+
+void fn1()
+fn1: scope:[fn1]  from
+  *r = 1
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  return 
+  to:@return
+
+void fn2()
+fn2: scope:[fn2]  from
+  *r = 2
+  to:fn2::@return
+fn2::@return: scope:[fn2]  from fn2
+  return 
+  to:@return
+
+void enableDLI(void* enableDLI::dliptr)
+enableDLI: scope:[enableDLI]  from main main::@1
+  asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+  to:enableDLI::@return
+enableDLI::@return: scope:[enableDLI]  from enableDLI
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void enableDLI(void* enableDLI::dliptr)
+void* enableDLI::dliptr loadstore
+void fn1()
+void fn2()
+void main()
+const to_nomodify byte* r = (byte*)$8000
+
+Adding number conversion cast (unumber) 1 in *r = 1
+Adding number conversion cast (unumber) 2 in *r = 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *r = (unumber)1
+Inlining cast *r = (unumber)2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 32768
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type 1
+Finalized unsigned number type 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Adding NOP phi() at start of main::@2
+CALL GRAPH
+Calls in [main] to enableDLI:5 enableDLI:7 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block label main::@2
+
+FINAL CONTROL FLOW GRAPH
+
+void fn2()
+fn2: scope:[fn2]  from
+  [0] *r = 2
+  to:fn2::@return
+fn2::@return: scope:[fn2]  from fn2
+  [1] return 
+  to:@return
+
+void fn1()
+fn1: scope:[fn1]  from
+  [2] *r = 1
+  to:fn1::@return
+fn1::@return: scope:[fn1]  from fn1
+  [3] return 
+  to:@return
+
+void main()
+main: scope:[main]  from
+  [4] enableDLI::dliptr = (void*)&fn1
+  [5] call enableDLI 
+  to:main::@1
+main::@1: scope:[main]  from main
+  [6] enableDLI::dliptr = (void*)&fn2
+  [7] call enableDLI 
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [8] return 
+  to:@return
+
+void enableDLI(void* enableDLI::dliptr)
+enableDLI: scope:[enableDLI]  from main main::@1
+  asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+  to:enableDLI::@return
+enableDLI::@return: scope:[enableDLI]  from enableDLI
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void enableDLI(void* enableDLI::dliptr)
+void* enableDLI::dliptr loadstore 2.0
+void fn1()
+void fn2()
+void main()
+
+Initial phi equivalence classes
+Added variable enableDLI::dliptr to live range equivalence class [ enableDLI::dliptr ]
+Complete equivalence classes
+[ enableDLI::dliptr ]
+Allocated zp[2]:128 [ enableDLI::dliptr ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *r = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] *r = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] enableDLI::dliptr = (void*)&fn1 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
+Statement [6] enableDLI::dliptr = (void*)&fn2 [ enableDLI::dliptr ] (  [ enableDLI::dliptr ] { }  ) always clobbers reg byte a 
+Statement asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  } always clobbers reg byte a 
+Potential registers zp[2]:128 [ enableDLI::dliptr ] : zp[2]:128 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [enableDLI] 2: zp[2]:128 [ enableDLI::dliptr ] 
+Uplift Scope [main] 
+Uplift Scope [fn1] 
+Uplift Scope [fn2] 
+Uplift Scope [] 
+
+Uplifting [enableDLI] best 98 combination zp[2]:128 [ enableDLI::dliptr ] 
+Uplifting [main] best 98 combination 
+Uplifting [fn1] best 98 combination 
+Uplifting [fn2] best 98 combination 
+Uplifting [] best 98 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests trouble passing a function pointer
+// See https://gitlab.com/camelot/kickc/-/issues/557
+  // Upstart
+  // Atari XL/XE executable XEX file with a single segment
+// https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.file [name="function-pointer-noarg-call-13.xex", type="bin", segments="XexFile"]
+.segmentdef XexFile
+.segment XexFile
+// Binary File Header
+.byte $ff, $ff
+// Program segment [start address, end address, data]
+.word ProgramStart, ProgramEnd-1
+.segmentout [ segments="Program" ]
+// RunAd - Run Address Segment [start address, end address, data]
+.word $02e0, $02e1
+.word main
+.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
+.segmentdef ProgramStart [start=$2000]
+.segment ProgramStart
+ProgramStart:
+.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef Data [startAfter="Code"]
+.segmentdef ProgramEnd [startAfter="Data"]
+.segment ProgramEnd
+ProgramEnd:
+
+  // Global Constants & labels
+  .label r = $8000
+.segment Code
+  // fn2
+fn2: {
+    // [0] *r = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta r
+    jmp __breturn
+    // fn2::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    // [2] *r = 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta r
+    jmp __breturn
+    // fn1::@return
+  __breturn:
+    // [3] return 
+    rts
+}
+  // main
+main: {
+    // [4] enableDLI::dliptr = (void*)&fn1 -- pvoz1=pvoc1 
+    lda #<fn1
+    sta.z enableDLI.dliptr
+    lda #>fn1
+    sta.z enableDLI.dliptr+1
+    // [5] call enableDLI 
+    jsr enableDLI
+    jmp __b1
+    // main::@1
+  __b1:
+    // [6] enableDLI::dliptr = (void*)&fn2 -- pvoz1=pvoc1 
+    lda #<fn2
+    sta.z enableDLI.dliptr
+    lda #>fn2
+    sta.z enableDLI.dliptr+1
+    // [7] call enableDLI 
+    jsr enableDLI
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [8] return 
+    rts
+}
+  // enableDLI
+// enableDLI(void* zp($80) dliptr)
+enableDLI: {
+    .label dliptr = $80
+    // asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+    lda #<dliptr
+    sta dlivec
+    lda #>dliptr
+    sta dlivec+1
+    jmp !+
+  dlivec:
+    .byte 0, 0
+  !:
+    jmp __breturn
+    // enableDLI::@return
+  __breturn:
+    // [10] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void enableDLI(void* enableDLI::dliptr)
+void* enableDLI::dliptr loadstore zp[2]:128 2.0
+void fn1()
+void fn2()
+void main()
+const to_nomodify byte* r = (byte*) 32768
+
+zp[2]:128 [ enableDLI::dliptr ]
+
+
+FINAL ASSEMBLER
+Score: 83
+
+  // File Comments
+// Tests trouble passing a function pointer
+// See https://gitlab.com/camelot/kickc/-/issues/557
+  // Upstart
+  // Atari XL/XE executable XEX file with a single segment
+// https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.file [name="function-pointer-noarg-call-13.xex", type="bin", segments="XexFile"]
+.segmentdef XexFile
+.segment XexFile
+// Binary File Header
+.byte $ff, $ff
+// Program segment [start address, end address, data]
+.word ProgramStart, ProgramEnd-1
+.segmentout [ segments="Program" ]
+// RunAd - Run Address Segment [start address, end address, data]
+.word $02e0, $02e1
+.word main
+.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
+.segmentdef ProgramStart [start=$2000]
+.segment ProgramStart
+ProgramStart:
+.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef Data [startAfter="Code"]
+.segmentdef ProgramEnd [startAfter="Data"]
+.segment ProgramEnd
+ProgramEnd:
+
+  // Global Constants & labels
+  .label r = $8000
+.segment Code
+  // fn2
+fn2: {
+    // *r = 2
+    // [0] *r = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta r
+    // fn2::@return
+    // }
+    // [1] return 
+    rts
+}
+  // fn1
+fn1: {
+    // *r = 1
+    // [2] *r = 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta r
+    // fn1::@return
+    // }
+    // [3] return 
+    rts
+}
+  // main
+main: {
+    // enableDLI(&fn1)
+    // [4] enableDLI::dliptr = (void*)&fn1 -- pvoz1=pvoc1 
+    lda #<fn1
+    sta.z enableDLI.dliptr
+    lda #>fn1
+    sta.z enableDLI.dliptr+1
+    // [5] call enableDLI 
+    jsr enableDLI
+    // main::@1
+    // enableDLI(&fn2)
+    // [6] enableDLI::dliptr = (void*)&fn2 -- pvoz1=pvoc1 
+    lda #<fn2
+    sta.z enableDLI.dliptr
+    lda #>fn2
+    sta.z enableDLI.dliptr+1
+    // [7] call enableDLI 
+    jsr enableDLI
+    // main::@return
+    // }
+    // [8] return 
+    rts
+}
+  // enableDLI
+// enableDLI(void* zp($80) dliptr)
+enableDLI: {
+    .label dliptr = $80
+    // asm
+    // asm { lda#<dliptr stadlivec lda#>dliptr stadlivec+1 jmp!+ dlivec: .byte0,0 !:  }
+    lda #<dliptr
+    sta dlivec
+    lda #>dliptr
+    sta dlivec+1
+    jmp !+
+  dlivec:
+    .byte 0, 0
+  !:
+    // enableDLI::@return
+    // }
+    // [10] return 
+    rts
+}
+  // File Data
+

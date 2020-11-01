@@ -3093,6 +3093,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testFunctionPointerNoargCall13() throws IOException, URISyntaxException {
+      compileAndCompare("function-pointer-noarg-call-13.c");
+   }
+
+   @Test
    public void testFunctionPointerNoargCall12() throws IOException, URISyntaxException {
       compileAndCompare("function-pointer-noarg-call-12.c");
    }

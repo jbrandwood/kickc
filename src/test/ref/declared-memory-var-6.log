@@ -5,25 +5,33 @@ CONTROL FLOW GRAPH SSA
 void main()
 main: scope:[main]  from __start::@1
   i#31 = phi( __start::@1/i#32 )
+  main::reg_zp_abs#0 = '.'
+  main::reg_mem_abs#0 = '.'
+  main::default_zp_abs = '.'
+  main::default_mem_abs = '.'
   out::c#0 = main::reg_zp_flex
   call out 
   to:main::@1
 main::@1: scope:[main]  from main
+  main::reg_mem_abs#3 = phi( main/main::reg_mem_abs#0 )
+  main::reg_zp_abs#1 = phi( main/main::reg_zp_abs#0 )
   i#16 = phi( main/i#12 )
   i#0 = i#16
-  out::c#1 = main::reg_zp_abs
+  out::c#1 = main::reg_zp_abs#1
   call out 
   to:main::@2
 main::@2: scope:[main]  from main::@1
+  main::reg_mem_abs#2 = phi( main::@1/main::reg_mem_abs#3 )
   i#17 = phi( main::@1/i#12 )
   i#1 = i#17
   out::c#2 = main::reg_mem_flex
   call out 
   to:main::@3
 main::@3: scope:[main]  from main::@2
+  main::reg_mem_abs#1 = phi( main::@2/main::reg_mem_abs#2 )
   i#18 = phi( main::@2/i#12 )
   i#2 = i#18
-  out::c#3 = main::reg_mem_abs
+  out::c#3 = main::reg_mem_abs#1
   call out 
   to:main::@4
 main::@4: scope:[main]  from main::@3
@@ -144,14 +152,20 @@ byte i#8
 byte i#9
 void main()
 const byte main::default_default = '.'
-const byte main::default_mem_abs !mem[-1]:4096 = '.'
+byte main::default_mem_abs loadstore !mem[-1]:4097
 const byte main::default_mem_flex = '.'
-const byte main::default_zp_abs !zp[-1]:16 = '.'
+byte main::default_zp_abs loadstore !zp[-1]:17
 const byte main::default_zp_flex = '.'
 const byte main::reg_default = '.'
-const byte main::reg_mem_abs !mem[-1]:4096 = '.'
+byte main::reg_mem_abs !mem[-1]:4096
+byte main::reg_mem_abs#0 !mem[-1]:4096
+byte main::reg_mem_abs#1 !mem[-1]:4096
+byte main::reg_mem_abs#2 !mem[-1]:4096
+byte main::reg_mem_abs#3 !mem[-1]:4096
 const byte main::reg_mem_flex = '.'
-const byte main::reg_zp_abs !zp[-1]:16 = '.'
+byte main::reg_zp_abs !zp[-1]:16
+byte main::reg_zp_abs#0 !zp[-1]:16
+byte main::reg_zp_abs#1 !zp[-1]:16
 const byte main::reg_zp_flex = '.'
 void out(byte out::c)
 byte out::c
@@ -169,6 +183,8 @@ byte out::c#9
 
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
+Alias main::reg_zp_abs#0 = main::reg_zp_abs#1 
+Alias main::reg_mem_abs#0 = main::reg_mem_abs#3 main::reg_mem_abs#2 main::reg_mem_abs#1 
 Alias i#0 = i#16 
 Alias i#1 = i#17 
 Alias i#18 = i#2 
@@ -197,15 +213,11 @@ Identical Phi Values i#10 i#11
 Identical Phi Values i#14 i#10
 Successful SSA optimization Pass2IdenticalPhiElimination
 Constant out::c#0 = main::reg_zp_flex
-Constant out::c#1 = main::reg_zp_abs
 Constant out::c#2 = main::reg_mem_flex
-Constant out::c#3 = main::reg_mem_abs
 Constant out::c#4 = main::default_default
 Constant out::c#5 = main::reg_default
 Constant out::c#6 = main::default_zp_flex
-Constant out::c#7 = main::default_zp_abs
 Constant out::c#8 = main::default_mem_flex
-Constant out::c#9 = main::default_mem_abs
 Constant i#13 = 0
 Successful SSA optimization Pass2ConstantIdentification
 Removing unused procedure __start
@@ -216,112 +228,105 @@ Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings out::c#0
-Inlining constant with var siblings out::c#1
 Inlining constant with var siblings out::c#2
-Inlining constant with var siblings out::c#3
 Inlining constant with var siblings out::c#4
 Inlining constant with var siblings out::c#5
 Inlining constant with var siblings out::c#6
-Inlining constant with var siblings out::c#7
 Inlining constant with var siblings out::c#8
-Inlining constant with var siblings out::c#9
 Inlining constant with var siblings i#13
 Constant inlined out::c#8 = main::default_mem_flex
-Constant inlined out::c#9 = main::default_mem_abs
 Constant inlined out::c#6 = main::default_zp_flex
-Constant inlined out::c#7 = main::default_zp_abs
 Constant inlined out::c#0 = main::reg_zp_flex
-Constant inlined out::c#1 = main::reg_zp_abs
 Constant inlined out::c#4 = main::default_default
 Constant inlined i#13 = 0
 Constant inlined out::c#5 = main::reg_default
 Constant inlined out::c#2 = main::reg_mem_flex
-Constant inlined out::c#3 = main::reg_mem_abs
 Successful SSA optimization Pass2ConstantInlining
-Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@10
 CALL GRAPH
-Calls in [main] to out:1 out:3 out:5 out:7 out:9 out:11 out:13 out:15 out:17 out:19 
+Calls in [main] to out:4 out:8 out:10 out:14 out:16 out:18 out:20 out:24 out:26 out:30 
 
 Created 2 initial phi equivalence classes
-Coalesced [2] i#33 = i#11
-Coalesced (already) [4] i#34 = i#11
-Coalesced (already) [6] i#35 = i#11
-Coalesced (already) [8] i#36 = i#11
-Coalesced (already) [10] i#37 = i#11
-Coalesced (already) [12] i#38 = i#11
-Coalesced (already) [14] i#39 = i#11
-Coalesced (already) [16] i#40 = i#11
-Coalesced (already) [18] i#41 = i#11
+Coalesced [6] out::c#11 = out::c#1
+Coalesced [7] i#33 = i#11
+Coalesced (already) [9] i#34 = i#11
+Coalesced [12] out::c#12 = out::c#3
+Coalesced (already) [13] i#35 = i#11
+Coalesced (already) [15] i#36 = i#11
+Coalesced (already) [17] i#37 = i#11
+Coalesced (already) [19] i#38 = i#11
+Coalesced [22] out::c#13 = out::c#7
+Coalesced (already) [23] i#39 = i#11
+Coalesced (already) [25] i#40 = i#11
+Coalesced [28] out::c#14 = out::c#9
+Coalesced (already) [29] i#41 = i#11
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block label main::@10
-Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
-Adding NOP phi() at start of main::@3
 Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::@6
-Adding NOP phi() at start of main::@7
 Adding NOP phi() at start of main::@8
-Adding NOP phi() at start of main::@9
 
 FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] phi()
-  [1] call out 
+  [0] main::reg_zp_abs#0 = '.'
+  [1] main::reg_mem_abs#0 = '.'
+  [2] main::default_zp_abs = '.'
+  [3] main::default_mem_abs = '.'
+  [4] call out 
   to:main::@1
 main::@1: scope:[main]  from main
-  [2] phi()
-  [3] call out 
+  [5] out::c#1 = main::reg_zp_abs#0
+  [6] call out 
   to:main::@2
 main::@2: scope:[main]  from main::@1
-  [4] phi()
-  [5] call out 
+  [7] phi()
+  [8] call out 
   to:main::@3
 main::@3: scope:[main]  from main::@2
-  [6] phi()
-  [7] call out 
+  [9] out::c#3 = main::reg_mem_abs#0
+  [10] call out 
   to:main::@4
 main::@4: scope:[main]  from main::@3
-  [8] phi()
-  [9] call out 
+  [11] phi()
+  [12] call out 
   to:main::@5
 main::@5: scope:[main]  from main::@4
-  [10] phi()
-  [11] call out 
+  [13] phi()
+  [14] call out 
   to:main::@6
 main::@6: scope:[main]  from main::@5
-  [12] phi()
-  [13] call out 
+  [15] phi()
+  [16] call out 
   to:main::@7
 main::@7: scope:[main]  from main::@6
-  [14] phi()
-  [15] call out 
+  [17] out::c#7 = main::default_zp_abs
+  [18] call out 
   to:main::@8
 main::@8: scope:[main]  from main::@7
-  [16] phi()
-  [17] call out 
+  [19] phi()
+  [20] call out 
   to:main::@9
 main::@9: scope:[main]  from main::@8
-  [18] phi()
-  [19] call out 
+  [21] out::c#9 = main::default_mem_abs
+  [22] call out 
   to:main::@return
 main::@return: scope:[main]  from main::@9
-  [20] return 
+  [23] return 
   to:@return
 
 void out(byte out::c)
 out: scope:[out]  from main main::@1 main::@2 main::@3 main::@4 main::@5 main::@6 main::@7 main::@8 main::@9
-  [21] i#27 = phi( main/0, main::@1/i#11, main::@2/i#11, main::@3/i#11, main::@4/i#11, main::@5/i#11, main::@6/i#11, main::@7/i#11, main::@8/i#11, main::@9/i#11 )
-  [21] out::c#10 = phi( main/main::reg_zp_flex, main::@1/main::reg_zp_abs, main::@2/main::reg_mem_flex, main::@3/main::reg_mem_abs, main::@4/main::default_default, main::@5/main::reg_default, main::@6/main::default_zp_flex, main::@7/main::default_zp_abs, main::@8/main::default_mem_flex, main::@9/main::default_mem_abs )
-  [22] SCREEN[i#27] = out::c#10
-  [23] i#11 = ++ i#27
+  [24] i#27 = phi( main/0, main::@1/i#11, main::@2/i#11, main::@3/i#11, main::@4/i#11, main::@5/i#11, main::@6/i#11, main::@7/i#11, main::@8/i#11, main::@9/i#11 )
+  [24] out::c#10 = phi( main/main::reg_zp_flex, main::@1/out::c#1, main::@2/main::reg_mem_flex, main::@3/out::c#3, main::@4/main::default_default, main::@5/main::reg_default, main::@6/main::default_zp_flex, main::@7/out::c#7, main::@8/main::default_mem_flex, main::@9/out::c#9 )
+  [25] SCREEN[i#27] = out::c#10
+  [26] i#11 = ++ i#27
   to:out::@return
 out::@return: scope:[out]  from out
-  [24] return 
+  [27] return 
   to:@return
 
 
@@ -330,30 +335,64 @@ byte i
 byte i#11 1.45
 byte i#27 20.0
 void main()
+byte main::default_mem_abs loadstore !mem[-1]:4097 0.2222222222222222
+byte main::default_zp_abs loadstore !zp[-1]:17 0.26666666666666666
+byte main::reg_mem_abs !mem[-1]:4096
+byte main::reg_mem_abs#0 !mem[-1]:4096 0.5
+byte main::reg_zp_abs !zp[-1]:16
+byte main::reg_zp_abs#0 !zp[-1]:16 0.8
 void out(byte out::c)
 byte out::c
-byte out::c#10 11.0
+byte out::c#1 4.0
+byte out::c#10 19.0
+byte out::c#3 4.0
+byte out::c#7 4.0
+byte out::c#9 4.0
 
 Initial phi equivalence classes
-[ out::c#10 ]
+[ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ]
 [ i#27 i#11 ]
+Added variable main::reg_zp_abs#0 to live range equivalence class [ main::reg_zp_abs#0 ]
+Added variable main::reg_mem_abs#0 to live range equivalence class [ main::reg_mem_abs#0 ]
+Added variable main::default_zp_abs to live range equivalence class [ main::default_zp_abs ]
+Added variable main::default_mem_abs to live range equivalence class [ main::default_mem_abs ]
 Complete equivalence classes
-[ out::c#10 ]
+[ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ]
 [ i#27 i#11 ]
-Allocated zp[1]:2 [ out::c#10 ]
+[ main::reg_zp_abs#0 ]
+[ main::reg_mem_abs#0 ]
+[ main::default_zp_abs ]
+[ main::default_mem_abs ]
+Allocated zp[1]:2 [ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ]
 Allocated zp[1]:3 [ i#27 i#11 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Potential registers zp[1]:2 [ out::c#10 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Statement [0] main::reg_zp_abs#0 = '.' [ main::reg_zp_abs#0 ] (  [ main::reg_zp_abs#0 ] { }  ) always clobbers reg byte a 
+Statement [1] main::reg_mem_abs#0 = '.' [ main::reg_zp_abs#0 main::reg_mem_abs#0 ] (  [ main::reg_zp_abs#0 main::reg_mem_abs#0 ] { }  ) always clobbers reg byte a 
+Statement [2] main::default_zp_abs = '.' [ main::reg_zp_abs#0 main::reg_mem_abs#0 main::default_zp_abs ] (  [ main::reg_zp_abs#0 main::reg_mem_abs#0 main::default_zp_abs ] { }  ) always clobbers reg byte a 
+Statement [3] main::default_mem_abs = '.' [ main::reg_zp_abs#0 main::reg_mem_abs#0 main::default_zp_abs main::default_mem_abs ] (  [ main::reg_zp_abs#0 main::reg_mem_abs#0 main::default_zp_abs main::default_mem_abs ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ i#27 i#11 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:16 [ main::reg_zp_abs#0 ] : zp[1]:16 , 
+Potential registers mem[1]:4096 [ main::reg_mem_abs#0 ] : mem[1]:4096 , 
+Potential registers zp[1]:17 [ main::default_zp_abs ] : zp[1]:17 , 
+Potential registers mem[1]:4097 [ main::default_mem_abs ] : mem[1]:4097 , 
 
 REGISTER UPLIFT SCOPES
+Uplift Scope [out] 35: zp[1]:2 [ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ] 
 Uplift Scope [] 21.45: zp[1]:3 [ i#27 i#11 ] 
-Uplift Scope [out] 11: zp[1]:2 [ out::c#10 ] 
-Uplift Scope [main] 
+Uplift Scope [main] 0.8: zp[1]:16 [ main::reg_zp_abs#0 ] 0.5: mem[1]:4096 [ main::reg_mem_abs#0 ] 0.27: zp[1]:17 [ main::default_zp_abs ] 0.22: mem[1]:4097 [ main::default_mem_abs ] 
 
-Uplifting [] best 167 combination reg byte x [ i#27 i#11 ] 
-Uplifting [out] best 134 combination reg byte a [ out::c#10 ] 
-Uplifting [main] best 134 combination 
+Uplifting [out] best 173 combination reg byte x [ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ] 
+Uplifting [] best 164 combination reg byte y [ i#27 i#11 ] 
+Uplifting [main] best 164 combination zp[1]:16 [ main::reg_zp_abs#0 ] mem[1]:4096 [ main::reg_mem_abs#0 ] zp[1]:17 [ main::default_zp_abs ] mem[1]:4097 [ main::default_mem_abs ] 
+Attempting to uplift remaining variables inzp[1]:16 [ main::reg_zp_abs#0 ]
+Uplifting [main] best 164 combination zp[1]:16 [ main::reg_zp_abs#0 ] 
+Attempting to uplift remaining variables inmem[1]:4096 [ main::reg_mem_abs#0 ]
+Uplifting [main] best 164 combination mem[1]:4096 [ main::reg_mem_abs#0 ] 
+Attempting to uplift remaining variables inzp[1]:17 [ main::default_zp_abs ]
+Uplifting [main] best 164 combination zp[1]:17 [ main::default_zp_abs ] 
+Attempting to uplift remaining variables inmem[1]:4097 [ main::default_mem_abs ]
+Uplifting [main] best 164 combination mem[1]:4097 [ main::default_mem_abs ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -367,148 +406,157 @@ ASSEMBLER BEFORE OPTIMIZATION
   // main
 main: {
     .const reg_zp_flex = '.'
-    .const reg_zp_abs = '.'
     .const reg_mem_flex = '.'
-    .const reg_mem_abs = '.'
     .const default_default = '.'
     .const reg_default = '.'
     .const default_zp_flex = '.'
-    .const default_zp_abs = '.'
     .const default_mem_flex = '.'
-    .const default_mem_abs = '.'
-    // [1] call out 
-    // [21] phi from main to out [phi:main->out]
+    .label default_zp_abs = $11
+    .label default_mem_abs = $1001
+    .label reg_zp_abs = $10
+    .label reg_mem_abs = $1000
+    // [0] main::reg_zp_abs#0 = '.' -- vbuz1=vbuc1 
+    lda #'.'
+    sta.z reg_zp_abs
+    // [1] main::reg_mem_abs#0 = '.' -- vbum1=vbuc1 
+    lda #'.'
+    sta reg_mem_abs
+    // [2] main::default_zp_abs = '.' -- vbuz1=vbuc1 
+    lda #'.'
+    sta.z default_zp_abs
+    // [3] main::default_mem_abs = '.' -- vbum1=vbuc1 
+    lda #'.'
+    sta default_mem_abs
+    // [4] call out 
+    // [24] phi from main to out [phi:main->out]
   out_from_main:
-    // [21] phi i#27 = 0 [phi:main->out#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [21] phi out::c#10 = main::reg_zp_flex [phi:main->out#1] -- vbuaa=vbuc1 
-    lda #reg_zp_flex
+    // [24] phi i#27 = 0 [phi:main->out#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [24] phi out::c#10 = main::reg_zp_flex [phi:main->out#1] -- vbuxx=vbuc1 
+    ldx #reg_zp_flex
     jsr out
-    // [2] phi from main to main::@1 [phi:main->main::@1]
-  __b1_from_main:
     jmp __b1
     // main::@1
   __b1:
-    // [3] call out 
-    // [21] phi from main::@1 to out [phi:main::@1->out]
+    // [5] out::c#1 = main::reg_zp_abs#0 -- vbuxx=vbuz1 
+    ldx.z reg_zp_abs
+    // [6] call out 
+    // [24] phi from main::@1 to out [phi:main::@1->out]
   out_from___b1:
-    // [21] phi i#27 = i#11 [phi:main::@1->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_zp_abs [phi:main::@1->out#1] -- vbuaa=vbuc1 
-    lda #reg_zp_abs
+    // [24] phi i#27 = i#11 [phi:main::@1->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#1 [phi:main::@1->out#1] -- register_copy 
     jsr out
-    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
     jmp __b2
     // main::@2
   __b2:
-    // [5] call out 
-    // [21] phi from main::@2 to out [phi:main::@2->out]
+    // [8] call out 
+    // [24] phi from main::@2 to out [phi:main::@2->out]
   out_from___b2:
-    // [21] phi i#27 = i#11 [phi:main::@2->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_mem_flex [phi:main::@2->out#1] -- vbuaa=vbuc1 
-    lda #reg_mem_flex
+    // [24] phi i#27 = i#11 [phi:main::@2->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::reg_mem_flex [phi:main::@2->out#1] -- vbuxx=vbuc1 
+    ldx #reg_mem_flex
     jsr out
-    // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
-  __b3_from___b2:
     jmp __b3
     // main::@3
   __b3:
-    // [7] call out 
-    // [21] phi from main::@3 to out [phi:main::@3->out]
+    // [9] out::c#3 = main::reg_mem_abs#0 -- vbuxx=vbum1 
+    ldx reg_mem_abs
+    // [10] call out 
+    // [24] phi from main::@3 to out [phi:main::@3->out]
   out_from___b3:
-    // [21] phi i#27 = i#11 [phi:main::@3->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_mem_abs [phi:main::@3->out#1] -- vbuaa=vbuc1 
-    lda #reg_mem_abs
+    // [24] phi i#27 = i#11 [phi:main::@3->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#3 [phi:main::@3->out#1] -- register_copy 
     jsr out
-    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
   __b4_from___b3:
     jmp __b4
     // main::@4
   __b4:
-    // [9] call out 
-    // [21] phi from main::@4 to out [phi:main::@4->out]
+    // [12] call out 
+    // [24] phi from main::@4 to out [phi:main::@4->out]
   out_from___b4:
-    // [21] phi i#27 = i#11 [phi:main::@4->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_default [phi:main::@4->out#1] -- vbuaa=vbuc1 
-    lda #default_default
+    // [24] phi i#27 = i#11 [phi:main::@4->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::default_default [phi:main::@4->out#1] -- vbuxx=vbuc1 
+    ldx #default_default
     jsr out
-    // [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+    // [13] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
   __b5_from___b4:
     jmp __b5
     // main::@5
   __b5:
-    // [11] call out 
-    // [21] phi from main::@5 to out [phi:main::@5->out]
+    // [14] call out 
+    // [24] phi from main::@5 to out [phi:main::@5->out]
   out_from___b5:
-    // [21] phi i#27 = i#11 [phi:main::@5->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_default [phi:main::@5->out#1] -- vbuaa=vbuc1 
-    lda #reg_default
+    // [24] phi i#27 = i#11 [phi:main::@5->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::reg_default [phi:main::@5->out#1] -- vbuxx=vbuc1 
+    ldx #reg_default
     jsr out
-    // [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+    // [15] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
   __b6_from___b5:
     jmp __b6
     // main::@6
   __b6:
-    // [13] call out 
-    // [21] phi from main::@6 to out [phi:main::@6->out]
+    // [16] call out 
+    // [24] phi from main::@6 to out [phi:main::@6->out]
   out_from___b6:
-    // [21] phi i#27 = i#11 [phi:main::@6->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_zp_flex [phi:main::@6->out#1] -- vbuaa=vbuc1 
-    lda #default_zp_flex
+    // [24] phi i#27 = i#11 [phi:main::@6->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::default_zp_flex [phi:main::@6->out#1] -- vbuxx=vbuc1 
+    ldx #default_zp_flex
     jsr out
-    // [14] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
-  __b7_from___b6:
     jmp __b7
     // main::@7
   __b7:
-    // [15] call out 
-    // [21] phi from main::@7 to out [phi:main::@7->out]
+    // [17] out::c#7 = main::default_zp_abs -- vbuxx=vbuz1 
+    ldx.z default_zp_abs
+    // [18] call out 
+    // [24] phi from main::@7 to out [phi:main::@7->out]
   out_from___b7:
-    // [21] phi i#27 = i#11 [phi:main::@7->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_zp_abs [phi:main::@7->out#1] -- vbuaa=vbuc1 
-    lda #default_zp_abs
+    // [24] phi i#27 = i#11 [phi:main::@7->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#7 [phi:main::@7->out#1] -- register_copy 
     jsr out
-    // [16] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
+    // [19] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
   __b8_from___b7:
     jmp __b8
     // main::@8
   __b8:
-    // [17] call out 
-    // [21] phi from main::@8 to out [phi:main::@8->out]
+    // [20] call out 
+    // [24] phi from main::@8 to out [phi:main::@8->out]
   out_from___b8:
-    // [21] phi i#27 = i#11 [phi:main::@8->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_mem_flex [phi:main::@8->out#1] -- vbuaa=vbuc1 
-    lda #default_mem_flex
+    // [24] phi i#27 = i#11 [phi:main::@8->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::default_mem_flex [phi:main::@8->out#1] -- vbuxx=vbuc1 
+    ldx #default_mem_flex
     jsr out
-    // [18] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
-  __b9_from___b8:
     jmp __b9
     // main::@9
   __b9:
-    // [19] call out 
-    // [21] phi from main::@9 to out [phi:main::@9->out]
+    // [21] out::c#9 = main::default_mem_abs -- vbuxx=vbum1 
+    ldx default_mem_abs
+    // [22] call out 
+    // [24] phi from main::@9 to out [phi:main::@9->out]
   out_from___b9:
-    // [21] phi i#27 = i#11 [phi:main::@9->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_mem_abs [phi:main::@9->out#1] -- vbuaa=vbuc1 
-    lda #default_mem_abs
+    // [24] phi i#27 = i#11 [phi:main::@9->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#9 [phi:main::@9->out#1] -- register_copy 
     jsr out
     jmp __breturn
     // main::@return
   __breturn:
-    // [20] return 
+    // [23] return 
     rts
 }
   // out
-// out(byte register(A) c)
+// out(byte register(X) c)
 out: {
-    // [22] SCREEN[i#27] = out::c#10 -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
-    // [23] i#11 = ++ i#27 -- vbuxx=_inc_vbuxx 
-    inx
+    // [25] SCREEN[i#27] = out::c#10 -- pbuc1_derefidx_vbuyy=vbuxx 
+    txa
+    sta SCREEN,y
+    // [26] i#11 = ++ i#27 -- vbuyy=_inc_vbuyy 
+    iny
     jmp __breturn
     // out::@return
   __breturn:
-    // [24] return 
+    // [27] return 
     rts
 }
   // File Data
@@ -526,35 +574,35 @@ Removing instruction jmp __b9
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction __b1_from_main:
-Removing instruction out_from___b1:
+Removing instruction lda #'.'
+Removing instruction lda #'.'
+Removing instruction lda #'.'
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b2_from___b1:
 Removing instruction out_from___b2:
-Removing instruction __b3_from___b2:
-Removing instruction out_from___b3:
 Removing instruction __b4_from___b3:
 Removing instruction out_from___b4:
 Removing instruction __b5_from___b4:
 Removing instruction out_from___b5:
 Removing instruction __b6_from___b5:
 Removing instruction out_from___b6:
-Removing instruction __b7_from___b6:
-Removing instruction out_from___b7:
 Removing instruction __b8_from___b7:
 Removing instruction out_from___b8:
-Removing instruction __b9_from___b8:
-Removing instruction out_from___b9:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction out_from_main:
 Removing instruction __b1:
+Removing instruction out_from___b1:
 Removing instruction __b2:
 Removing instruction __b3:
+Removing instruction out_from___b3:
 Removing instruction __b4:
 Removing instruction __b5:
 Removing instruction __b6:
 Removing instruction __b7:
+Removing instruction out_from___b7:
 Removing instruction __b8:
 Removing instruction __b9:
+Removing instruction out_from___b9:
 Removing instruction __breturn:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
@@ -562,29 +610,39 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 const nomodify byte* SCREEN = (byte*) 1024
 byte i
-byte i#11 reg byte x 1.45
-byte i#27 reg byte x 20.0
+byte i#11 reg byte y 1.45
+byte i#27 reg byte y 20.0
 void main()
 const byte main::default_default = '.'
-const byte main::default_mem_abs !mem[-1]:4096 = '.'
+byte main::default_mem_abs loadstore !mem[-1]:4097 mem[1]:4097 0.2222222222222222
 const byte main::default_mem_flex = '.'
-const byte main::default_zp_abs !zp[-1]:16 = '.'
+byte main::default_zp_abs loadstore !zp[-1]:17 zp[1]:17 0.26666666666666666
 const byte main::default_zp_flex = '.'
 const byte main::reg_default = '.'
-const byte main::reg_mem_abs !mem[-1]:4096 = '.'
+byte main::reg_mem_abs !mem[-1]:4096
+byte main::reg_mem_abs#0 reg_mem_abs !mem[-1]:4096 mem[1]:4096 0.5
 const byte main::reg_mem_flex = '.'
-const byte main::reg_zp_abs !zp[-1]:16 = '.'
+byte main::reg_zp_abs !zp[-1]:16
+byte main::reg_zp_abs#0 reg_zp_abs !zp[-1]:16 zp[1]:16 0.8
 const byte main::reg_zp_flex = '.'
 void out(byte out::c)
 byte out::c
-byte out::c#10 reg byte a 11.0
+byte out::c#1 reg byte x 4.0
+byte out::c#10 reg byte x 19.0
+byte out::c#3 reg byte x 4.0
+byte out::c#7 reg byte x 4.0
+byte out::c#9 reg byte x 4.0
 
-reg byte a [ out::c#10 ]
-reg byte x [ i#27 i#11 ]
+reg byte x [ out::c#10 out::c#1 out::c#3 out::c#7 out::c#9 ]
+reg byte y [ i#27 i#11 ]
+zp[1]:16 [ main::reg_zp_abs#0 ]
+mem[1]:4096 [ main::reg_mem_abs#0 ]
+zp[1]:17 [ main::default_zp_abs ]
+mem[1]:4097 [ main::default_mem_abs ]
 
 
 FINAL ASSEMBLER
-Score: 101
+Score: 125
 
   // File Comments
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
@@ -597,121 +655,135 @@ Score: 101
   // main
 main: {
     .const reg_zp_flex = '.'
-    .const reg_zp_abs = '.'
     .const reg_mem_flex = '.'
-    .const reg_mem_abs = '.'
     .const default_default = '.'
     .const reg_default = '.'
     .const default_zp_flex = '.'
-    .const default_zp_abs = '.'
     .const default_mem_flex = '.'
-    .const default_mem_abs = '.'
+    .label default_zp_abs = $11
+    .label default_mem_abs = $1001
+    .label reg_zp_abs = $10
+    .label reg_mem_abs = $1000
+    // reg_zp_abs = '.'
+    // [0] main::reg_zp_abs#0 = '.' -- vbuz1=vbuc1 
+    lda #'.'
+    sta.z reg_zp_abs
+    // reg_mem_abs = '.'
+    // [1] main::reg_mem_abs#0 = '.' -- vbum1=vbuc1 
+    sta reg_mem_abs
+    // default_zp_abs = '.'
+    // [2] main::default_zp_abs = '.' -- vbuz1=vbuc1 
+    sta.z default_zp_abs
+    // default_mem_abs = '.'
+    // [3] main::default_mem_abs = '.' -- vbum1=vbuc1 
+    sta default_mem_abs
     // out(reg_zp_flex)
-    // [1] call out 
-    // [21] phi from main to out [phi:main->out]
-    // [21] phi i#27 = 0 [phi:main->out#0] -- vbuxx=vbuc1 
-    ldx #0
-    // [21] phi out::c#10 = main::reg_zp_flex [phi:main->out#1] -- vbuaa=vbuc1 
-    lda #reg_zp_flex
+    // [4] call out 
+    // [24] phi from main to out [phi:main->out]
+    // [24] phi i#27 = 0 [phi:main->out#0] -- vbuyy=vbuc1 
+    ldy #0
+    // [24] phi out::c#10 = main::reg_zp_flex [phi:main->out#1] -- vbuxx=vbuc1 
+    ldx #reg_zp_flex
     jsr out
-    // [2] phi from main to main::@1 [phi:main->main::@1]
     // main::@1
     // out(reg_zp_abs)
-    // [3] call out 
-    // [21] phi from main::@1 to out [phi:main::@1->out]
-    // [21] phi i#27 = i#11 [phi:main::@1->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_zp_abs [phi:main::@1->out#1] -- vbuaa=vbuc1 
-    lda #reg_zp_abs
+    // [5] out::c#1 = main::reg_zp_abs#0 -- vbuxx=vbuz1 
+    ldx.z reg_zp_abs
+    // [6] call out 
+    // [24] phi from main::@1 to out [phi:main::@1->out]
+    // [24] phi i#27 = i#11 [phi:main::@1->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#1 [phi:main::@1->out#1] -- register_copy 
     jsr out
-    // [4] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [7] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // main::@2
     // out(reg_mem_flex)
-    // [5] call out 
-    // [21] phi from main::@2 to out [phi:main::@2->out]
-    // [21] phi i#27 = i#11 [phi:main::@2->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_mem_flex [phi:main::@2->out#1] -- vbuaa=vbuc1 
-    lda #reg_mem_flex
+    // [8] call out 
+    // [24] phi from main::@2 to out [phi:main::@2->out]
+    // [24] phi i#27 = i#11 [phi:main::@2->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::reg_mem_flex [phi:main::@2->out#1] -- vbuxx=vbuc1 
+    ldx #reg_mem_flex
     jsr out
-    // [6] phi from main::@2 to main::@3 [phi:main::@2->main::@3]
     // main::@3
     // out(reg_mem_abs)
-    // [7] call out 
-    // [21] phi from main::@3 to out [phi:main::@3->out]
-    // [21] phi i#27 = i#11 [phi:main::@3->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_mem_abs [phi:main::@3->out#1] -- vbuaa=vbuc1 
-    lda #reg_mem_abs
+    // [9] out::c#3 = main::reg_mem_abs#0 -- vbuxx=vbum1 
+    ldx reg_mem_abs
+    // [10] call out 
+    // [24] phi from main::@3 to out [phi:main::@3->out]
+    // [24] phi i#27 = i#11 [phi:main::@3->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#3 [phi:main::@3->out#1] -- register_copy 
     jsr out
-    // [8] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
+    // [11] phi from main::@3 to main::@4 [phi:main::@3->main::@4]
     // main::@4
     // out(default_default)
-    // [9] call out 
-    // [21] phi from main::@4 to out [phi:main::@4->out]
-    // [21] phi i#27 = i#11 [phi:main::@4->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_default [phi:main::@4->out#1] -- vbuaa=vbuc1 
-    lda #default_default
+    // [12] call out 
+    // [24] phi from main::@4 to out [phi:main::@4->out]
+    // [24] phi i#27 = i#11 [phi:main::@4->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::default_default [phi:main::@4->out#1] -- vbuxx=vbuc1 
+    ldx #default_default
     jsr out
-    // [10] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
+    // [13] phi from main::@4 to main::@5 [phi:main::@4->main::@5]
     // main::@5
     // out(reg_default)
-    // [11] call out 
-    // [21] phi from main::@5 to out [phi:main::@5->out]
-    // [21] phi i#27 = i#11 [phi:main::@5->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::reg_default [phi:main::@5->out#1] -- vbuaa=vbuc1 
-    lda #reg_default
+    // [14] call out 
+    // [24] phi from main::@5 to out [phi:main::@5->out]
+    // [24] phi i#27 = i#11 [phi:main::@5->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::reg_default [phi:main::@5->out#1] -- vbuxx=vbuc1 
+    ldx #reg_default
     jsr out
-    // [12] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
+    // [15] phi from main::@5 to main::@6 [phi:main::@5->main::@6]
     // main::@6
     // out(default_zp_flex)
-    // [13] call out 
-    // [21] phi from main::@6 to out [phi:main::@6->out]
-    // [21] phi i#27 = i#11 [phi:main::@6->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_zp_flex [phi:main::@6->out#1] -- vbuaa=vbuc1 
-    lda #default_zp_flex
+    // [16] call out 
+    // [24] phi from main::@6 to out [phi:main::@6->out]
+    // [24] phi i#27 = i#11 [phi:main::@6->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::default_zp_flex [phi:main::@6->out#1] -- vbuxx=vbuc1 
+    ldx #default_zp_flex
     jsr out
-    // [14] phi from main::@6 to main::@7 [phi:main::@6->main::@7]
     // main::@7
     // out(default_zp_abs)
-    // [15] call out 
-    // [21] phi from main::@7 to out [phi:main::@7->out]
-    // [21] phi i#27 = i#11 [phi:main::@7->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_zp_abs [phi:main::@7->out#1] -- vbuaa=vbuc1 
-    lda #default_zp_abs
+    // [17] out::c#7 = main::default_zp_abs -- vbuxx=vbuz1 
+    ldx.z default_zp_abs
+    // [18] call out 
+    // [24] phi from main::@7 to out [phi:main::@7->out]
+    // [24] phi i#27 = i#11 [phi:main::@7->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#7 [phi:main::@7->out#1] -- register_copy 
     jsr out
-    // [16] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
+    // [19] phi from main::@7 to main::@8 [phi:main::@7->main::@8]
     // main::@8
     // out(default_mem_flex)
-    // [17] call out 
-    // [21] phi from main::@8 to out [phi:main::@8->out]
-    // [21] phi i#27 = i#11 [phi:main::@8->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_mem_flex [phi:main::@8->out#1] -- vbuaa=vbuc1 
-    lda #default_mem_flex
+    // [20] call out 
+    // [24] phi from main::@8 to out [phi:main::@8->out]
+    // [24] phi i#27 = i#11 [phi:main::@8->out#0] -- register_copy 
+    // [24] phi out::c#10 = main::default_mem_flex [phi:main::@8->out#1] -- vbuxx=vbuc1 
+    ldx #default_mem_flex
     jsr out
-    // [18] phi from main::@8 to main::@9 [phi:main::@8->main::@9]
     // main::@9
     // out(default_mem_abs)
-    // [19] call out 
-    // [21] phi from main::@9 to out [phi:main::@9->out]
-    // [21] phi i#27 = i#11 [phi:main::@9->out#0] -- register_copy 
-    // [21] phi out::c#10 = main::default_mem_abs [phi:main::@9->out#1] -- vbuaa=vbuc1 
-    lda #default_mem_abs
+    // [21] out::c#9 = main::default_mem_abs -- vbuxx=vbum1 
+    ldx default_mem_abs
+    // [22] call out 
+    // [24] phi from main::@9 to out [phi:main::@9->out]
+    // [24] phi i#27 = i#11 [phi:main::@9->out#0] -- register_copy 
+    // [24] phi out::c#10 = out::c#9 [phi:main::@9->out#1] -- register_copy 
     jsr out
     // main::@return
     // }
-    // [20] return 
+    // [23] return 
     rts
 }
   // out
-// out(byte register(A) c)
+// out(byte register(X) c)
 out: {
     // SCREEN[i++] = c
-    // [22] SCREEN[i#27] = out::c#10 -- pbuc1_derefidx_vbuxx=vbuaa 
-    sta SCREEN,x
+    // [25] SCREEN[i#27] = out::c#10 -- pbuc1_derefidx_vbuyy=vbuxx 
+    txa
+    sta SCREEN,y
     // SCREEN[i++] = c;
-    // [23] i#11 = ++ i#27 -- vbuxx=_inc_vbuxx 
-    inx
+    // [26] i#11 = ++ i#27 -- vbuyy=_inc_vbuyy 
+    iny
     // out::@return
     // }
-    // [24] return 
+    // [27] return 
     rts
 }
   // File Data

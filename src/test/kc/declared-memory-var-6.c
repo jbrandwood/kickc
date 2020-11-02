@@ -13,9 +13,9 @@ void main(void) {
     char default_default = '.';
     char reg_default = '.';
     char __ssa __zp  default_zp_flex = '.';
-    char __address(0x10)  default_zp_abs = '.';
+    char __address(0x11)  default_zp_abs = '.';
     char __mem default_mem_flex = '.';
-    char __address(0x1000) default_mem_abs = '.';
+    char __address(0x1001) default_mem_abs = '.';
 
     out(reg_zp_flex);
     out(reg_zp_abs);

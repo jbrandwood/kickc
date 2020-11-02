@@ -44,10 +44,14 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
-
    @Test
    public void testFunctionPointerProblem1() throws IOException, URISyntaxException {
       compileAndCompare("function-pointer-problem-1.c");
+   }
+
+   @Test
+   public void testInlineAsmUsesProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-uses-problem-2.c");
    }
 
    @Test

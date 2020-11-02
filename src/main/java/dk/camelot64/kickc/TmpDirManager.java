@@ -84,8 +84,7 @@ public class TmpDirManager {
                Path todoPath = new File(todoPathAbs).toPath();
                boolean success = deleteTmpDir(todoPath);
                if(!success) {
-                  failedDirs.add(todoPath);
-                  //System.out.println("Cannot delete postponed temporary folder - postponing again " + todoPathAbs);
+                  System.err.println("Cannot delete postponed temporary folder - skipping " + todoPathAbs);
                } else {
                   //System.out.println("Successfully deleted postponed temporary folder " + todoPathAbs);
                }

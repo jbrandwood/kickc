@@ -3,6 +3,7 @@ package dk.camelot64.kickc.test;
 import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
 import dk.camelot64.kickc.SourceLoader;
+import dk.camelot64.kickc.TmpDirManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -68,6 +69,7 @@ public class TestPrograms {
    public void testAtariXlMd5b() throws IOException, URISyntaxException {
       compileAndCompare("atarixl-md5b.c");
    }
+
    @Test
    public void testAtariXlMd5() throws IOException, URISyntaxException {
       compileAndCompare("atarixl-md5.c");
@@ -4822,10 +4824,13 @@ public class TestPrograms {
 
    @BeforeAll
    public static void setUp() {
+      TmpDirManager.init(new File("").toPath());
    }
 
    @AfterAll
    public static void tearDown() {
+      if(TmpDirManager.MANAGER != null)
+         TmpDirManager.MANAGER.cleanup();
       //AsmFragmentTemplateUsages.logUsages(log, false, false, false, false, false, false);
       //printGCStats();
    }

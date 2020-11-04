@@ -220,6 +220,9 @@ public class KickC implements Callable<Integer> {
 
       Program program = compiler.getProgram();
 
+      // Initialize tmp dir manager
+      TmpDirManager.init(program.getAsmFragmentBaseFolder());
+
       // Initialize the master ASM fragment synthesizer
       program.initAsmFragmentMasterSynthesizer(!optimizeNoFragmentCache);
 
@@ -485,6 +488,9 @@ public class KickC implements Callable<Integer> {
             process.waitFor();
          }
       }
+
+      if(TmpDirManager.MANAGER!=null)
+         TmpDirManager.MANAGER.cleanup();
 
       return CommandLine.ExitCode.OK;
    }

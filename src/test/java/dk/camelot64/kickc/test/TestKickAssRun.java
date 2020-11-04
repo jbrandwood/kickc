@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.test;
 
+import dk.camelot64.kickc.TmpDirManager;
 import kickass.KickAssembler65CE02;
 import kickass.nonasm.c64.CharToPetsciiConverter;
 import org.junit.jupiter.api.Test;
@@ -19,16 +20,22 @@ public class TestKickAssRun {
     */
    @Test
    public void testKickAssRun() throws IOException, URISyntaxException {
+      TmpDirManager.init(new File("").toPath());
+
       ReferenceHelper asmHelper = new ReferenceHelperFolder("src/test/java/dk/camelot64/kickc/test/");
       URI asmUri = asmHelper.loadReferenceFile("kickasstest", ".asm");
       Path asmPath = Paths.get(asmUri);
-      File asmPrgFile = getTmpFile("kickasstest", ".prg");
+
+      Path tmpDir = TmpDirManager.MANAGER.newTmpDir();
+      File asmFile = getTmpFile(tmpDir, "kickasstest", ".asm");
+      File asmPrgFile = getTmpFile(tmpDir, "kickasstest", ".prg");
+      Files.copy(asmPath, asmFile.toPath());
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
       try {
          CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
-         KickAssembler65CE02.main2(new String[]{asmPath.toAbsolutePath().toString(), "-o", asmPrgFile.getAbsolutePath()});
-      } catch (AssertionError e) {
+         KickAssembler65CE02.main2(new String[]{asmFile.getAbsolutePath(), "-o", asmPrgFile.getAbsolutePath()});
+      } catch(AssertionError e) {
          System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
          String output = kickAssOut.toString();
          System.out.println(output);
@@ -38,11 +45,11 @@ public class TestKickAssRun {
       }
       String output = kickAssOut.toString();
       System.out.println(output);
+
+      TmpDirManager.MANAGER.cleanup();
    }
 
-
-   public File getTmpFile(String fileName, String extension) throws IOException {
-      Path tmpDir = Files.createTempDirectory("kickc");
+   public static File getTmpFile(Path tmpDir, String fileName, String extension) throws IOException {
       Path kcPath = FileSystems.getDefault().getPath(fileName);
       return new File(tmpDir.toFile(), kcPath.getFileName().toString() + extension);
    }
@@ -90,7 +97,7 @@ public class TestKickAssRun {
    private void printPetscii(String encoding, char ch, String sCh) {
       CharToPetsciiConverter.setCurrentEncoding(encoding);
       Byte petscii = CharToPetsciiConverter.convert(ch);
-      System.out.println(encoding+": "+sCh+" > "+(petscii==null?"null":(int)petscii));
+      System.out.println(encoding + ": " + sCh + " > " + (petscii == null ? "null" : (int) petscii));
    }
 
 

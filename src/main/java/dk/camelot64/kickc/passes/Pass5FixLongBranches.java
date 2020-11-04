@@ -2,6 +2,7 @@ package dk.camelot64.kickc.passes;
 
 import dk.camelot64.cpufamily6502.CpuAddressingMode;
 import dk.camelot64.cpufamily6502.CpuOpcode;
+import dk.camelot64.kickc.TmpDirManager;
 import dk.camelot64.kickc.asm.*;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -20,8 +21,6 @@ import java.util.regex.Pattern;
  * Requires KickAssembler in CLASS path
  */
 public class Pass5FixLongBranches extends Pass5AsmOptimization {
-
-   private Path tmpDir;
 
    public Pass5FixLongBranches(Program program) {
       super(program);
@@ -54,35 +53,25 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
    private boolean step() {
       // Reindex ASM lines
       new Pass5ReindexAsmLines(getProgram()).optimize();
-
-      // Create a temporary directory for the ASM file
-      try {
-         tmpDir = Files.createTempDirectory("kickc");
-      } catch(IOException e) {
-         throw new CompileError("Error creating temp file.", e);
-      }
-
+      Path tmpDir = TmpDirManager.MANAGER.newTmpDir();
       // Generate the ASM file
       String outputFileName = getProgram().getPrimaryFileName();
       try {
          //getLog().append("ASM");
          //getLog().append(getProgram().getAsm().toString(false, true));
-
-         writeOutputFile(outputFileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
-
+         writeOutputFile(tmpDir, outputFileName, ".asm", getProgram().getAsm().toString(new AsmProgram.AsmPrintState(false), null));
          // Copy Resource Files
          for(Path asmResourceFile : getProgram().getAsmResourceFiles()) {
-            File binFile = getTmpFile(asmResourceFile.getFileName().toString());
+            File binFile = getTmpFile(tmpDir, asmResourceFile.getFileName().toString());
             Files.copy(asmResourceFile, binFile.toPath());
          }
-
       } catch(IOException e) {
          throw new CompileError("Error writing ASM temp file.", e);
       }
 
       // Compile using KickAssembler - catch the output in a String
-      File asmFile = getTmpFile(outputFileName, ".asm");
-      File binaryFile = getTmpFile(outputFileName, "."+getProgram().getTargetPlatform().getOutFileExtension());
+      File asmFile = getTmpFile(tmpDir, outputFileName, ".asm");
+      File binaryFile = getTmpFile(tmpDir, outputFileName, "."+getProgram().getTargetPlatform().getOutFileExtension());
       ByteArrayOutputStream kickAssOut = new ByteArrayOutputStream();
       System.setOut(new PrintStream(kickAssOut));
       int asmRes = -1;
@@ -117,7 +106,6 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
                   // Found line number
                   //getLog().append("Found long branch line number "+contextLineIdx);
                   if(fixLongBranch(contextLineIdx - 1)) {
-                     removeTmpDir();
                      return true;
                   }
                }
@@ -125,23 +113,7 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
             }
          }
       }
-
-      removeTmpDir();
       return false;
-   }
-
-   private void removeTmpDir() {
-      // Delete the temporary directory with folders
-      String[]entries = tmpDir.toFile().list();
-      for(String s: entries){
-         File currentFile = new File(tmpDir.toFile(),s);
-         if(!currentFile.delete()) {
-            System.err.println("Warning! Cannot delete temporary file "+currentFile.getAbsolutePath());
-         }
-      }
-      if(!tmpDir.toFile().delete()) {
-         System.err.println("Warning! Cannot delete temporary folder "+tmpDir.toAbsolutePath());
-      }
    }
 
    /**
@@ -202,9 +174,9 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       }
    }
 
-   public File writeOutputFile(String fileName, String extension, String outputString) throws IOException {
+   private File writeOutputFile(Path tmpDir, String fileName, String extension, String outputString) throws IOException {
       // Write output file
-      File file = getTmpFile(fileName, extension);
+      File file = getTmpFile(tmpDir, fileName, extension);
       FileOutputStream outputStream = new FileOutputStream(file);
       OutputStreamWriter writer = new OutputStreamWriter(outputStream);
       writer.write(outputString);
@@ -214,12 +186,12 @@ public class Pass5FixLongBranches extends Pass5AsmOptimization {
       return file;
    }
 
-   public File getTmpFile(String fileName, String extension) {
+   private static File getTmpFile(Path tmpDir, String fileName, String extension) {
       Path kcPath = FileSystems.getDefault().getPath(fileName);
       return new File(tmpDir.toFile(), kcPath.getFileName().toString() + extension);
    }
 
-   public File getTmpFile(String fileName) {
+   private static File getTmpFile(Path tmpDir, String fileName) {
       return new File(tmpDir.toFile(), fileName );
    }
 

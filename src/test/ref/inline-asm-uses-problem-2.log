@@ -1,0 +1,176 @@
+Setting inferred volatile on symbol affected by address-of: main::zp2 in asm { lda#$28 stazp2  }
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::zp2 = (byte*)$400
+  main::zp2[1] = '*'
+  asm { lda#$28 stazp2  }
+  main::zp2[2] = '*'
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+volatile byte* main::zp2 loadstore !zp[-1]:252
+
+Adding number conversion cast (unumber) 1 in main::zp2[1] = '*'
+Adding number conversion cast (unumber) 2 in main::zp2[2] = '*'
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 1
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type 1
+Finalized unsigned number type 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] main::zp2 = (byte*) 1024
+  [1] main::zp2[1] = '*'
+  asm { lda#$28 stazp2  }
+  [3] main::zp2[2] = '*'
+  to:main::@return
+main::@return: scope:[main]  from main
+  [4] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+volatile byte* main::zp2 loadstore !zp[-1]:252 2.0
+
+Initial phi equivalence classes
+Added variable main::zp2 to live range equivalence class [ main::zp2 ]
+Complete equivalence classes
+[ main::zp2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] main::zp2 = (byte*) 1024 [ main::zp2 ] (  [ main::zp2 ] { }  ) always clobbers reg byte a 
+Statement [1] main::zp2[1] = '*' [ main::zp2 ] (  [ main::zp2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement asm { lda#$28 stazp2  } always clobbers reg byte a 
+Statement [3] main::zp2[2] = '*' [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[2]:252 [ main::zp2 ] : zp[2]:252 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 2: zp[2]:252 [ main::zp2 ] 
+Uplift Scope [] 
+
+Uplifting [main] best 45 combination zp[2]:252 [ main::zp2 ] 
+Uplifting [] best 45 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates problem with inline ASM usages - and early-detect constants
+// zp2 should be forced to live at address $fc - but is identified to be constant by Pass1EarlyConstantIdentification
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    .label zp2 = $fc
+    // [0] main::zp2 = (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z zp2
+    lda #>$400
+    sta.z zp2+1
+    // [1] main::zp2[1] = '*' -- pbuz1_derefidx_vbuc1=vbuc2 
+    lda #'*'
+    ldy #1
+    sta (zp2),y
+    // asm { lda#$28 stazp2  }
+    lda #$28
+    sta zp2
+    // [3] main::zp2[2] = '*' -- pbuz1_derefidx_vbuc1=vbuc2 
+    lda #'*'
+    ldy #2
+    sta (zp2),y
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [4] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+volatile byte* main::zp2 loadstore !zp[-1]:252 zp[2]:252 2.0
+
+zp[2]:252 [ main::zp2 ]
+
+
+FINAL ASSEMBLER
+Score: 42
+
+  // File Comments
+// Demonstrates problem with inline ASM usages - and early-detect constants
+// zp2 should be forced to live at address $fc - but is identified to be constant by Pass1EarlyConstantIdentification
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // main
+main: {
+    .label zp2 = $fc
+    // zp2 = 0x0400
+    // [0] main::zp2 = (byte*) 1024 -- pbuz1=pbuc1 
+    lda #<$400
+    sta.z zp2
+    lda #>$400
+    sta.z zp2+1
+    // zp2[1] = '*'
+    // [1] main::zp2[1] = '*' -- pbuz1_derefidx_vbuc1=vbuc2 
+    lda #'*'
+    ldy #1
+    sta (zp2),y
+    // asm
+    // asm { lda#$28 stazp2  }
+    lda #$28
+    sta zp2
+    // zp2[2] = '*'
+    // [3] main::zp2[2] = '*' -- pbuz1_derefidx_vbuc1=vbuc2 
+    lda #'*'
+    ldy #2
+    sta (zp2),y
+    // main::@return
+    // }
+    // [4] return 
+    rts
+}
+  // File Data
+

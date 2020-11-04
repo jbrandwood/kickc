@@ -44,6 +44,12 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   // https://gitlab.com/camelot/kickc/-/issues/564
+   //@Test
+   //public void testUnknownVarProblem() throws IOException, URISyntaxException {
+   //   compileAndCompare("unknown-var-problem.c", log().verboseParse());
+   //}
+
    @Test
    public void testFunctionPointerProblem1() throws IOException, URISyntaxException {
       compileAndCompare("function-pointer-problem-1.c");

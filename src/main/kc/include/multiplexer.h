@@ -27,7 +27,7 @@ extern char PLEX_YPOS[PLEX_COUNT];
 extern char PLEX_PTR[PLEX_COUNT];
 
 // The address of the sprite pointers on the current screen (screen+0x3f8).
-extern char* PLEX_SCREEN_PTR;
+extern char* volatile PLEX_SCREEN_PTR;
 
 // Indexes of the plex-sprites sorted by sprite y-position. Each call to plexSort() will fix the sorting if changes to the Y-positions have ruined it.
 extern char PLEX_SORTED_IDX[PLEX_COUNT];

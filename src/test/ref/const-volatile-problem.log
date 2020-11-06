@@ -5,7 +5,7 @@ CONTROL FLOW GRAPH SSA
 
 void main()
 main: scope:[main]  from __start::@1
-  PLEX_SCREEN_PTR1#0 = ((byte*)) $400+$3f8
+  PLEX_SCREEN_PTR1#0 = ((byte*)) $400
   *IRQ = &irq
   to:main::@return
 main::@return: scope:[main]  from main
@@ -17,9 +17,9 @@ main::@return: scope:[main]  from main
 interrupt(KERNEL_KEYBOARD) void irq()
 irq: scope:[irq]  from
   PLEX_SCREEN_PTR1#6 = phi( )
-  PLEX_SCREEN_PTR1#6[plex_sprite_idx] = 7
-  PLEX_SCREEN_PTR2[plex_sprite_idx] = 7
-  plex_sprite_idx = ++ plex_sprite_idx
+  PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx]
+  PLEX_SCREEN_PTR2[idx] = ++ PLEX_SCREEN_PTR2[idx]
+  idx = ++ idx
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   return 
@@ -29,8 +29,8 @@ void __start()
 __start: scope:[__start]  from
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  PLEX_SCREEN_PTR1#2 = (byte*)$400+$3f8
-  plex_sprite_idx = 0
+  PLEX_SCREEN_PTR1#2 = (byte*)$400
+  idx = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   PLEX_SCREEN_PTR1#9 = phi( __start::__init1/PLEX_SCREEN_PTR1#2 )
@@ -59,36 +59,27 @@ byte* PLEX_SCREEN_PTR1#6
 byte* PLEX_SCREEN_PTR1#7
 byte* PLEX_SCREEN_PTR1#8
 byte* PLEX_SCREEN_PTR1#9
-const byte* PLEX_SCREEN_PTR2 = (byte*)$400+$3f8
+const byte* PLEX_SCREEN_PTR2 = (byte*)$500
 void __start()
+volatile byte idx loadstore
 interrupt(KERNEL_KEYBOARD) void irq()
 void main()
-volatile byte plex_sprite_idx loadstore
 
-Adding number conversion cast (unumber) 7 in PLEX_SCREEN_PTR1#6[plex_sprite_idx] = 7
-Adding number conversion cast (unumber) 7 in PLEX_SCREEN_PTR2[plex_sprite_idx] = 7
-Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast PLEX_SCREEN_PTR1#0 = (byte*)$400+$3f8
-Inlining cast PLEX_SCREEN_PTR1#6[plex_sprite_idx] = (unumber)7
-Inlining cast PLEX_SCREEN_PTR2[plex_sprite_idx] = (unumber)7
+Inlining cast PLEX_SCREEN_PTR1#0 = (byte*)$400
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (void()**) 788
-Simplifying constant integer cast 7
-Simplifying constant integer cast 7
+Simplifying constant pointer cast (byte*) 1280
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 7
-Finalized unsigned number type 7
-Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias PLEX_SCREEN_PTR1#0 = PLEX_SCREEN_PTR1#5 PLEX_SCREEN_PTR1#1 
 Alias PLEX_SCREEN_PTR1#2 = PLEX_SCREEN_PTR1#9 
 Alias PLEX_SCREEN_PTR1#3 = PLEX_SCREEN_PTR1#7 PLEX_SCREEN_PTR1#8 PLEX_SCREEN_PTR1#4 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values PLEX_SCREEN_PTR1#3 PLEX_SCREEN_PTR1#0
 Successful SSA optimization Pass2IdenticalPhiElimination
-Constant right-side identified [0] PLEX_SCREEN_PTR1#0 = (byte*)$400+$3f8
-Successful SSA optimization Pass2ConstantRValueConsolidation
-Constant PLEX_SCREEN_PTR1#0 = (byte*)$400+$3f8
-Constant PLEX_SCREEN_PTR1#2 = (byte*)$400+$3f8
+Constant PLEX_SCREEN_PTR1#0 = (byte*) 1024
+Constant PLEX_SCREEN_PTR1#2 = (byte*) 1024
 Successful SSA optimization Pass2ConstantIdentification
 Eliminating unused constant PLEX_SCREEN_PTR1#0
 Eliminating unused constant PLEX_SCREEN_PTR1#2
@@ -112,7 +103,7 @@ __start: scope:[__start]  from
   [0] phi()
   to:__start::__init1
 __start::__init1: scope:[__start]  from __start
-  [1] plex_sprite_idx = 0
+  [1] idx = 0
   to:__start::@1
 __start::@1: scope:[__start]  from __start::__init1
   [2] phi()
@@ -125,9 +116,9 @@ __start::@return: scope:[__start]  from __start::@1
 interrupt(KERNEL_KEYBOARD) void irq()
 irq: scope:[irq]  from
   [5] PLEX_SCREEN_PTR1#6 = phi( )
-  [6] PLEX_SCREEN_PTR1#6[plex_sprite_idx] = 7
-  [7] PLEX_SCREEN_PTR2[plex_sprite_idx] = 7
-  [8] plex_sprite_idx = ++ plex_sprite_idx
+  [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx]
+  [7] PLEX_SCREEN_PTR2[idx] = ++ PLEX_SCREEN_PTR2[idx]
+  [8] idx = ++ idx
   to:irq::@return
 irq::@return: scope:[irq]  from irq
   [9] return 
@@ -144,40 +135,40 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 byte* PLEX_SCREEN_PTR1
-byte* PLEX_SCREEN_PTR1#6 2.0
+byte* PLEX_SCREEN_PTR1#6 4.0
 void __start()
+volatile byte idx loadstore 4.666666666666666
 interrupt(KERNEL_KEYBOARD) void irq()
 void main()
-volatile byte plex_sprite_idx loadstore 3.333333333333333
 
 Initial phi equivalence classes
 [ PLEX_SCREEN_PTR1#6 ]
-Added variable plex_sprite_idx to live range equivalence class [ plex_sprite_idx ]
+Added variable idx to live range equivalence class [ idx ]
 Complete equivalence classes
 [ PLEX_SCREEN_PTR1#6 ]
-[ plex_sprite_idx ]
+[ idx ]
 Allocated zp[2]:2 [ PLEX_SCREEN_PTR1#6 ]
-Allocated zp[1]:4 [ plex_sprite_idx ]
+Allocated zp[1]:4 [ idx ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] plex_sprite_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] PLEX_SCREEN_PTR1#6[plex_sprite_idx] = 7 [ plex_sprite_idx ] (  [ plex_sprite_idx ] { }  ) always clobbers reg byte a reg byte y 
-Statement [7] PLEX_SCREEN_PTR2[plex_sprite_idx] = 7 [ plex_sprite_idx ] (  [ plex_sprite_idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [1] idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx] [ idx ] (  [ idx ] { }  ) always clobbers reg byte a reg byte y 
+Statement [7] PLEX_SCREEN_PTR2[idx] = ++ PLEX_SCREEN_PTR2[idx] [ idx ] (  [ idx ] { }  ) always clobbers reg byte x 
 Statement [10] *IRQ = &irq [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Potential registers zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] : zp[2]:2 , 
-Potential registers zp[1]:4 [ plex_sprite_idx ] : zp[1]:4 , 
+Potential registers zp[1]:4 [ idx ] : zp[1]:4 , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [] 3.33: zp[1]:4 [ plex_sprite_idx ] 2: zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] 
+Uplift Scope [] 4.67: zp[1]:4 [ idx ] 4: zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] 
 Uplift Scope [main] 
 Uplift Scope [irq] 
 Uplift Scope [__start] 
 
-Uplifting [] best 106 combination zp[1]:4 [ plex_sprite_idx ] zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] 
-Uplifting [main] best 106 combination 
-Uplifting [irq] best 106 combination 
-Uplifting [__start] best 106 combination 
-Attempting to uplift remaining variables inzp[1]:4 [ plex_sprite_idx ]
-Uplifting [] best 106 combination zp[1]:4 [ plex_sprite_idx ] 
+Uplifting [] best 113 combination zp[1]:4 [ idx ] zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] 
+Uplifting [main] best 113 combination 
+Uplifting [irq] best 113 combination 
+Uplifting [__start] best 113 combination 
+Attempting to uplift remaining variables inzp[1]:4 [ idx ]
+Uplifting [] best 113 combination zp[1]:4 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -192,8 +183,8 @@ ASSEMBLER BEFORE OPTIMIZATION
 .pc = $80d "Program"
   // Global Constants & labels
   .label IRQ = $314
-  .label PLEX_SCREEN_PTR2 = $400+$3f8
-  .label plex_sprite_idx = 4
+  .label PLEX_SCREEN_PTR2 = $500
+  .label idx = 4
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR1 = 2
   // __start
@@ -201,9 +192,9 @@ __start: {
     jmp __init1
     // __start::__init1
   __init1:
-    // [1] plex_sprite_idx = 0 -- vbuz1=vbuc1 
+    // [1] idx = 0 -- vbuz1=vbuc1 
     lda #0
-    sta.z plex_sprite_idx
+    sta.z idx
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
     jmp __b1
@@ -221,16 +212,17 @@ __start: {
 // Interrupt Routine
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // [6] PLEX_SCREEN_PTR1#6[plex_sprite_idx] = 7 -- pbuz1_derefidx_vbuz2=vbuc1 
-    lda #7
-    ldy.z plex_sprite_idx
+    // [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx] -- pbuz1_derefidx_vbuz2=_inc_pbuz1_derefidx_vbuz2 
+    ldy.z idx
+    lda (PLEX_SCREEN_PTR1),y
+    clc
+    adc #1
     sta (PLEX_SCREEN_PTR1),y
-    // [7] PLEX_SCREEN_PTR2[plex_sprite_idx] = 7 -- pbuc1_derefidx_vbuz1=vbuc2 
-    lda #7
-    ldy.z plex_sprite_idx
-    sta PLEX_SCREEN_PTR2,y
-    // [8] plex_sprite_idx = ++ plex_sprite_idx -- vbuz1=_inc_vbuz1 
-    inc.z plex_sprite_idx
+    // [7] PLEX_SCREEN_PTR2[idx] = ++ PLEX_SCREEN_PTR2[idx] -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    ldx.z idx
+    inc PLEX_SCREEN_PTR2,x
+    // [8] idx = ++ idx -- vbuz1=_inc_vbuz1 
+    inc.z idx
     jmp __breturn
     // irq::@return
   __breturn:
@@ -259,9 +251,6 @@ Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Removing instruction lda #7
-Removing instruction ldy.z plex_sprite_idx
-Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __b1_from___init1:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
@@ -274,19 +263,19 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 const nomodify void()** IRQ = (void()**) 788
 byte* PLEX_SCREEN_PTR1
-byte* PLEX_SCREEN_PTR1#6 PLEX_SCREEN_PTR1 zp[2]:2 2.0
-const byte* PLEX_SCREEN_PTR2 = (byte*)$400+$3f8
+byte* PLEX_SCREEN_PTR1#6 PLEX_SCREEN_PTR1 zp[2]:2 4.0
+const byte* PLEX_SCREEN_PTR2 = (byte*) 1280
 void __start()
+volatile byte idx loadstore zp[1]:4 4.666666666666666
 interrupt(KERNEL_KEYBOARD) void irq()
 void main()
-volatile byte plex_sprite_idx loadstore zp[1]:4 3.333333333333333
 
 zp[2]:2 [ PLEX_SCREEN_PTR1#6 ]
-zp[1]:4 [ plex_sprite_idx ]
+zp[1]:4 [ idx ]
 
 
 FINAL ASSEMBLER
-Score: 59
+Score: 71
 
   // File Comments
 // Demonstrates problem where a pointer with constant value is never assigned - because it is only used in an IRQ
@@ -300,17 +289,17 @@ Score: 59
 .pc = $80d "Program"
   // Global Constants & labels
   .label IRQ = $314
-  .label PLEX_SCREEN_PTR2 = $400+$3f8
-  .label plex_sprite_idx = 4
+  .label PLEX_SCREEN_PTR2 = $500
+  .label idx = 4
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR1 = 2
   // __start
 __start: {
     // __start::__init1
-    // plex_sprite_idx = 0
-    // [1] plex_sprite_idx = 0 -- vbuz1=vbuc1 
+    // idx = 0
+    // [1] idx = 0 -- vbuz1=vbuc1 
     lda #0
-    sta.z plex_sprite_idx
+    sta.z idx
     // [2] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [3] call main 
@@ -323,17 +312,20 @@ __start: {
 // Interrupt Routine
 irq: {
     // entry interrupt(KERNEL_KEYBOARD)
-    // PLEX_SCREEN_PTR1[plex_sprite_idx] = 7
-    // [6] PLEX_SCREEN_PTR1#6[plex_sprite_idx] = 7 -- pbuz1_derefidx_vbuz2=vbuc1 
-    lda #7
-    ldy.z plex_sprite_idx
+    // PLEX_SCREEN_PTR1[idx]++;
+    // [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx] -- pbuz1_derefidx_vbuz2=_inc_pbuz1_derefidx_vbuz2 
+    ldy.z idx
+    lda (PLEX_SCREEN_PTR1),y
+    clc
+    adc #1
     sta (PLEX_SCREEN_PTR1),y
-    // PLEX_SCREEN_PTR2[plex_sprite_idx] = 7
-    // [7] PLEX_SCREEN_PTR2[plex_sprite_idx] = 7 -- pbuc1_derefidx_vbuz1=vbuc2 
-    sta PLEX_SCREEN_PTR2,y
-    // plex_sprite_idx++;
-    // [8] plex_sprite_idx = ++ plex_sprite_idx -- vbuz1=_inc_vbuz1 
-    inc.z plex_sprite_idx
+    // PLEX_SCREEN_PTR2[idx]++;
+    // [7] PLEX_SCREEN_PTR2[idx] = ++ PLEX_SCREEN_PTR2[idx] -- pbuc1_derefidx_vbuz1=_inc_pbuc1_derefidx_vbuz1 
+    ldx.z idx
+    inc PLEX_SCREEN_PTR2,x
+    // idx++;
+    // [8] idx = ++ idx -- vbuz1=_inc_vbuz1 
+    inc.z idx
     // irq::@return
     // }
     // [9] return  - exit interrupt(KERNEL_KEYBOARD)

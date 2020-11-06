@@ -7,27 +7,30 @@
 :BasicUpstart(__start)
 .pc = $80d "Program"
   .label IRQ = $314
-  .label PLEX_SCREEN_PTR2 = $400+$3f8
-  .label plex_sprite_idx = 4
+  .label PLEX_SCREEN_PTR2 = $500
+  .label idx = 4
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR1 = 2
 __start: {
-    // plex_sprite_idx = 0
+    // idx = 0
     lda #0
-    sta.z plex_sprite_idx
+    sta.z idx
     jsr main
     rts
 }
 // Interrupt Routine
 irq: {
-    // PLEX_SCREEN_PTR1[plex_sprite_idx] = 7
-    lda #7
-    ldy.z plex_sprite_idx
+    // PLEX_SCREEN_PTR1[idx]++;
+    ldy.z idx
+    lda (PLEX_SCREEN_PTR1),y
+    clc
+    adc #1
     sta (PLEX_SCREEN_PTR1),y
-    // PLEX_SCREEN_PTR2[plex_sprite_idx] = 7
-    sta PLEX_SCREEN_PTR2,y
-    // plex_sprite_idx++;
-    inc.z plex_sprite_idx
+    // PLEX_SCREEN_PTR2[idx]++;
+    ldx.z idx
+    inc PLEX_SCREEN_PTR2,x
+    // idx++;
+    inc.z idx
     // }
     jmp $ea31
 }

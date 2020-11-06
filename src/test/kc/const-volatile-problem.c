@@ -5,20 +5,20 @@
 // A potential fix is https://gitlab.com/camelot/kickc/-/issues/430
 
 // The address of the sprite pointers on the current screen (screen+0x3f8).
-char* PLEX_SCREEN_PTR1 = 0x400+0x3f8;
-char* PLEX_SCREEN_PTR2 = 0x400+0x3f8;
-volatile char plex_sprite_idx = 0;
+char* PLEX_SCREEN_PTR1 = 0x400;
+char* PLEX_SCREEN_PTR2 = 0x500;
+volatile char idx = 0;
 
 void()** const IRQ = 0x314;
 
 void main() {
-    PLEX_SCREEN_PTR1 = 0x400+0x3f8;
+    PLEX_SCREEN_PTR1 = 0x400;
     *IRQ = &irq;
 }
 
 // Interrupt Routine
 interrupt(kernel_keyboard) void irq() {
-    PLEX_SCREEN_PTR1[plex_sprite_idx] = 7;
-    PLEX_SCREEN_PTR2[plex_sprite_idx] = 7;
-    plex_sprite_idx++;
+    PLEX_SCREEN_PTR1[idx]++;
+    PLEX_SCREEN_PTR2[idx]++;
+    idx++;
 }

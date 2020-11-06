@@ -53,7 +53,7 @@ public class TestPrograms {
 
    @Test
    public void testConstVolatileProblem1() throws IOException, URISyntaxException {
-      compileAndCompare("const-volatile-problem.c", log());
+      compileAndCompare("const-volatile-problem.c");
    }
 
    @Test

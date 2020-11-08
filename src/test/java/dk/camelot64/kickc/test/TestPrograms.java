@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.test;
 
-import dk.camelot64.kickc.CompileLog;
+import dk.camelot64.kickc.*;
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.TmpDirManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -28,8 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Compile a number of source files and compare the resulting assembler with expected output
@@ -184,6 +181,17 @@ public class TestPrograms {
    @Test
    public void testPragmaUnknown() throws IOException, URISyntaxException {
       compileAndCompare("pragma-unknown.c");
+   }
+
+   @Test
+   public void testErrorFormatter() throws IOException, URISyntaxException {
+      try {
+         compileAndCompare("library-constructor-error-2.c");
+      }
+      catch (CompileError e) {
+         ErrorFormatter formatter = new ErrorFormatter();
+         assertTrue(formatter.formatError(e).contains("library-constructor-error-2.c:4:82: error: Error! Procedure not found print"));
+      }
    }
 
    @Test

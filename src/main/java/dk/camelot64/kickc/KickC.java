@@ -384,7 +384,8 @@ public class KickC implements Callable<Integer> {
             compiler.compile(cFiles, effectiveDefines);
          } catch(CompileError e) {
             // Print the error and exit with compile error
-            System.err.println(e.getMessage());
+            ErrorFormatter formatter = new ErrorFormatter();
+            System.err.println(formatter.formatError(e));
             return COMPILE_ERROR;
          }
 

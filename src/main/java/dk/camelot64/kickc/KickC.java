@@ -463,12 +463,14 @@ public class KickC implements Callable<Integer> {
                CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
                kasmResult = KickAssembler65CE02.main2(assembleCommand.toArray(new String[0]));
             } catch(Throwable e) {
-               throw new CompileError("KickAssembling file failed! ", e);
+               System.err.println("KickAssembling file failed! "+e.getMessage());
+               return COMPILE_ERROR;
             } finally {
                System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             }
             if(kasmResult != 0) {
-               throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());
+               System.err.println("KickAssembling file failed! " + kasmLogOutputStream.toString());
+               return COMPILE_ERROR;
             }
          }
 
@@ -491,8 +493,13 @@ public class KickC implements Callable<Integer> {
             if(verbose) {
                System.out.println("Executing command:  " + executeCommand);
             }
-            Process process = Runtime.getRuntime().exec(executeCommand);
-            process.waitFor();
+            try {
+               Process process = Runtime.getRuntime().exec(executeCommand);
+               process.waitFor();
+            } catch(Throwable e) {
+               System.err.println("Executing emulator failed! "+e.getMessage());
+               return COMPILE_ERROR;
+            }
          }
       }
 

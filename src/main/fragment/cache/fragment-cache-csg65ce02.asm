@@ -2439,3 +2439,83 @@ sty {c1}
 //FRAGMENT _deref_pbsc1=vbszz
 tza
 sta {c1}
+//FRAGMENT vwuz1=_word_vbuz2
+lda {z2}
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz2_rol_2
+lda {z2}
+asl
+sta {z1}
+lda {z2}+1
+rol
+sta {z1}+1
+asl {z1}
+rol {z1}+1
+//FRAGMENT vwuz1=vwuz2_plus_vwuz3
+lda {z2}
+clc
+adc {z3}
+sta {z1}
+lda {z2}+1
+adc {z3}+1
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz2_rol_3
+lda {z2}
+asl
+sta {z1}
+lda {z2}+1
+rol
+sta {z1}+1
+asl {z1}
+rol {z1}+1
+asl {z1}
+rol {z1}+1
+//FRAGMENT pbuz1=pbuc1_plus_vwuz2
+clc
+lda {z2}
+adc #<{c1}
+sta {z1}
+lda {z2}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=_word_vbuxx
+txa
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=_word_vbuyy
+tya
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=_word_vbuzz
+tza
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vbuyy=_deref_pbuc1
+ldy {c1}
+//FRAGMENT vbuzz=_deref_pbuc1
+ldz {c1}
+//FRAGMENT vwuz1=vwuz2_plus_vwuz1
+lda {z1}
+clc
+adc {z2}
+sta {z1}
+lda {z1}+1
+adc {z2}+1
+sta {z1}+1
+//FRAGMENT pbuz1=pbuc1_plus_vwuz1
+clc
+lda {z1}
+adc #<{c1}
+sta {z1}
+lda {z1}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vwuz1=vwuz1_rol_3
+asw {z1}
+asw {z1}
+asw {z1}

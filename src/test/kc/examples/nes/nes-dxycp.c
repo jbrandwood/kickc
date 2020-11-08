@@ -79,17 +79,17 @@ char PALETTE[0x20] = {
     0x0f, 0x0f, 0x0f, 0x0f   // All black
 }; 
 
-// Sinus Table (0-239)
+// Sine Table (0-239)
 const char SINTABLE_240[0x100] = kickasm {{
     .fill $100, round(115.5+107.5*sin(2*PI*i/256))
 }};
 
-// Sinus Table (0-63)
+// Sine Table (0-63)
 const char SINTABLE_64[89] = kickasm {{
     .fill 89, round(52.5+52.5*sin(2*PI*i/89))
 }};
 
-// Sinus Table (0-183)
+// Sine Table (0-183)
 const char SINTABLE_184[239] = kickasm {{
     .fill 239, round(71.5+71.5*sin(2*PI*i/239))
 }};

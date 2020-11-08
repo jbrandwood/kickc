@@ -1,5 +1,5 @@
-// Generates a 16-bit signed sinus
-#include <sinus.h>
+// Generates a 16-bit signed sine
+#include <sine.h>
 #include <print.h>
 
 void main() {

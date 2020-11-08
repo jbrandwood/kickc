@@ -185,8 +185,8 @@ divMEMbyFAC: {
     rts
 }
 // FAC = sin(FAC)
-// Set FAC to sinus of the FAC - sin(FAC)
-// Sinus is calculated on radians (0-2*PI)
+// Set FAC to sine of the FAC - sin(FAC)
+// Sine is calculated on radians (0-2*PI)
 sinFAC: {
     // asm
     jsr $e26b

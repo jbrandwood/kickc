@@ -127,10 +127,10 @@ makechar: {
     // }
     rts
   __b2:
-    // s = sinustable[(char)c]
+    // s = sinetable[(char)c]
     lda.z c
     tay
-    lda sinustable,y
+    lda sinetable,y
     sta.z s
     lda #0
     sta.z i
@@ -308,13 +308,13 @@ doplasma: {
     iny
     jmp __b6
   __b4:
-    // sinustable[c2a] + sinustable[c2b]
+    // sinetable[c2a] + sinetable[c2b]
     ldy.z c2a
-    lda sinustable,y
+    lda sinetable,y
     ldy.z c2b
     clc
-    adc sinustable,y
-    // xbuf[i] = (sinustable[c2a] + sinustable[c2b])
+    adc sinetable,y
+    // xbuf[i] = (sinetable[c2a] + sinetable[c2b])
     ldy.z i
     sta xbuf,y
     // c2a += 3
@@ -329,13 +329,13 @@ doplasma: {
     inc.z i
     jmp __b3
   __b2:
-    // sinustable[c1a] + sinustable[c1b]
+    // sinetable[c1a] + sinetable[c1b]
     ldy.z c1a
-    lda sinustable,y
+    lda sinetable,y
     ldy.z c1b
     clc
-    adc sinustable,y
-    // ybuf[ii] = (sinustable[c1a] + sinustable[c1b])
+    adc sinetable,y
+    // ybuf[ii] = (sinetable[c1a] + sinetable[c1b])
     ldy.z ii
     sta ybuf,y
     // c1a += 4
@@ -490,7 +490,7 @@ print_char: {
 }
   print_hextab: .text "0123456789abcdef"
   .align $100
-  sinustable: .byte $80, $7d, $7a, $77, $74, $70, $6d, $6a, $67, $64, $61, $5e, $5b, $58, $55, $52, $4f, $4d, $4a, $47, $44, $41, $3f, $3c, $39, $37, $34, $32, $2f, $2d, $2b, $28, $26, $24, $22, $20, $1e, $1c, $1a, $18, $16, $15, $13, $11, $10, $f, $d, $c, $b, $a, 8, 7, 6, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6, 6, 7, 8, $a, $b, $c, $d, $f, $10, $11, $13, $15, $16, $18, $1a, $1c, $1e, $20, $22, $24, $26, $28, $2b, $2d, $2f, $32, $34, $37, $39, $3c, $3f, $41, $44, $47, $4a, $4d, $4f, $52, $55, $58, $5b, $5e, $61, $64, $67, $6a, $6d, $70, $74, $77, $7a, $7d, $80, $83, $86, $89, $8c, $90, $93, $96, $99, $9c, $9f, $a2, $a5, $a8, $ab, $ae, $b1, $b3, $b6, $b9, $bc, $bf, $c1, $c4, $c7, $c9, $cc, $ce, $d1, $d3, $d5, $d8, $da, $dc, $de, $e0, $e2, $e4, $e6, $e8, $ea, $eb, $ed, $ef, $f0, $f1, $f3, $f4, $f5, $f6, $f8, $f9, $fa, $fa, $fb, $fc, $fd, $fd, $fe, $fe, $fe, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $fe, $fe, $fe, $fd, $fd, $fc, $fb, $fa, $fa, $f9, $f8, $f6, $f5, $f4, $f3, $f1, $f0, $ef, $ed, $eb, $ea, $e8, $e6, $e4, $e2, $e0, $de, $dc, $da, $d8, $d5, $d3, $d1, $ce, $cc, $c9, $c7, $c4, $c1, $bf, $bc, $b9, $b6, $b3, $b1, $ae, $ab, $a8, $a5, $a2, $9f, $9c, $99, $96, $93, $90, $8c, $89, $86, $83
+  sinetable: .byte $80, $7d, $7a, $77, $74, $70, $6d, $6a, $67, $64, $61, $5e, $5b, $58, $55, $52, $4f, $4d, $4a, $47, $44, $41, $3f, $3c, $39, $37, $34, $32, $2f, $2d, $2b, $28, $26, $24, $22, $20, $1e, $1c, $1a, $18, $16, $15, $13, $11, $10, $f, $d, $c, $b, $a, 8, 7, 6, 6, 5, 4, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3, 4, 5, 6, 6, 7, 8, $a, $b, $c, $d, $f, $10, $11, $13, $15, $16, $18, $1a, $1c, $1e, $20, $22, $24, $26, $28, $2b, $2d, $2f, $32, $34, $37, $39, $3c, $3f, $41, $44, $47, $4a, $4d, $4f, $52, $55, $58, $5b, $5e, $61, $64, $67, $6a, $6d, $70, $74, $77, $7a, $7d, $80, $83, $86, $89, $8c, $90, $93, $96, $99, $9c, $9f, $a2, $a5, $a8, $ab, $ae, $b1, $b3, $b6, $b9, $bc, $bf, $c1, $c4, $c7, $c9, $cc, $ce, $d1, $d3, $d5, $d8, $da, $dc, $de, $e0, $e2, $e4, $e6, $e8, $ea, $eb, $ed, $ef, $f0, $f1, $f3, $f4, $f5, $f6, $f8, $f9, $fa, $fa, $fb, $fc, $fd, $fd, $fe, $fe, $fe, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $fe, $fe, $fe, $fd, $fd, $fc, $fb, $fa, $fa, $f9, $f8, $f6, $f5, $f4, $f3, $f1, $f0, $ef, $ed, $eb, $ea, $e8, $e6, $e4, $e2, $e0, $de, $dc, $da, $d8, $d5, $d3, $d1, $ce, $cc, $c9, $c7, $c4, $c1, $bf, $bc, $b9, $b6, $b3, $b1, $ae, $ab, $a8, $a5, $a2, $9f, $9c, $99, $96, $93, $90, $8c, $89, $86, $83
   xbuf: .fill $28, 0
   ybuf: .fill $19, 0
   bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80

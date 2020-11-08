@@ -22,10 +22,10 @@ char RENDER_BUFFER[8*8] =
     " ****** "
     "   **   "z;
 
-// The number of sinus values in the table
+// The number of sine values in the table
 const unsigned int SINSIZE = 2048;
 
-// Sinus table [-399,399]
+// Sine table [-399,399]
 signed int SINTAB[SINSIZE] = kickasm(uses SINSIZE) {{
     .fillword SINSIZE, 399*sin(i*2*PI/SINSIZE)
 }};
@@ -39,7 +39,7 @@ export __address(0x4000) char PETSCII_ART[140*125] = kickasm(resource "cml.png")
             .byte petsciiPic.getPixel(x,y)==0?' ':$a0;
 }};
 
-// Current index into the sinus
+// Current index into the sine
 unsigned int x_sin_idx = 0;
 unsigned int y_sin_idx = SINSIZE/4;
 // Current x/y-position (the center of the screen)

@@ -86,13 +86,13 @@ void pwrMEMbyFAC(char* mem);
 void intFAC();
 
 // FAC = sin(FAC)
-// Set FAC to sinus of the FAC - sin(FAC)
-// Sinus is calculated on radians (0-2*PI)
+// Set FAC to sine of the FAC - sin(FAC)
+// Sine is calculated on radians (0-2*PI)
 void sinFAC();
 
 // FAC = cos(FAC)
-// Set FAC to cosinus of the FAC - cos(FAC)
-// Cosinus is calculated on radians (0-2*PI)
+// Set FAC to cosine of the FAC - cos(FAC)
+// Cosine is calculated on radians (0-2*PI)
 void cosFAC();
 
 // FAC = tan(FAC)

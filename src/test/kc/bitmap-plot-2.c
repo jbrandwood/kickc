@@ -1,7 +1,7 @@
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
 // Plots a spiral
 #include <c64.h>
-#include <sinus.h>
+#include <sine.h>
 #include <multiply.h>
 #include <bitmap2.h>
 
@@ -10,10 +10,10 @@ byte* SCREEN = 0x0400;
 
 byte plots_per_frame[0x100];
 
-align(0x100) signed word SINUS[512];
+align(0x100) signed word SINE[512];
 
 void main() {
-    sin16s_gen2(SINUS, 512, -0x1001, 0x1001);
+    sin16s_gen2(SINE, 512, -0x1001, 0x1001);
     bitmap_init(BITMAP, SCREEN);
     bitmap_clear(BLACK, WHITE);
     *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
@@ -24,10 +24,10 @@ void main() {
     signed word r = 0;
     byte r_add = 32;
     while(true) {
-        signed word cos_x = SINUS[idx_x];
+        signed word cos_x = SINE[idx_x];
         signed dword xpos = mul16s(r, cos_x);
         word x = (word)(160 + ((signed word)>xpos)>>2);
-        signed word sin_y = SINUS[idx_y];
+        signed word sin_y = SINE[idx_y];
         signed dword ypos = mul16s(r, sin_y);
         word y = (word)(100 + ((signed word)>ypos)>>2);
         bitmap_plot(x, (byte)y);

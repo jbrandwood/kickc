@@ -299,7 +299,7 @@ init: {
 }
 // The raster loop
 loop: {
-    // The current index into the y-sinus
+    // The current index into the y-sine
     .label sin_idx = 4
     lda #0
     sta.z sin_idx

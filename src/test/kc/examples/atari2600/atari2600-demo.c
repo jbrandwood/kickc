@@ -3,7 +3,7 @@
 #pragma target(atari2600)
 #include <atari2600.h>
 
-// Sinus table
+// Sine table
 const char SINTABLE[0x100] = kickasm {{
     .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 }};

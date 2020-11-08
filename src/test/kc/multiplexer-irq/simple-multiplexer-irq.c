@@ -72,12 +72,12 @@ interrupt(kernel_min) void plex_irq() {
 
 // The raster loop
 void loop() {
-// The current index into the y-sinus
+// The current index into the y-sine
     char sin_idx = 0;
     while(true) {
         while(!framedone) { }
         *BORDER_COLOR = RED;
-        // Assign sinus positions
+        // Assign sine positions
         char y_idx = sin_idx;
         for(char sy: 0..PLEX_COUNT-1) {
             PLEX_YPOS[sy] = YSIN[y_idx];

@@ -1,4 +1,4 @@
-#include <sinus.h>
+#include <sine.h>
 #include <print.h>
 
 word wavelength = 192;

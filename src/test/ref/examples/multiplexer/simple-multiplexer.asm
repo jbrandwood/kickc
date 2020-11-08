@@ -122,7 +122,7 @@ init: {
 }
 // The raster loop
 loop: {
-    // The current index into the y-sinus
+    // The current index into the y-sine
     .label sin_idx = 4
     .label plexFreeNextYpos1_return = $c
     .label ss = 5

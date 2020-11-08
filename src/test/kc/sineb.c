@@ -1,14 +1,14 @@
-// Sinus Generator functions using only multiplication, addition and bit shifting
+// Sine Generator functions using only multiplication, addition and bit shifting
 // Uses a single division for converting the wavelength to a reciprocal.
-// Generates sinus using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
+// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
-// Optimization possibility: Use symmetries when generating sinustables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
+// Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
 
-#include <sinus.h>
+#include <sine.h>
 
-// Generate signed (large) word sinus table - on the full -$7fff - $7fff range
+// Generate signed (large) word sine table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin16s_genb(signed word* sintab, word wavelength) {
     // u[4.28] step = PI*2/wavelength
     dword step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
@@ -20,11 +20,11 @@ void sin16s_genb(signed word* sintab, word wavelength) {
     }
 }
 
-// Calculate signed word sinus sin(x)
+// Calculate signed word sine sin(x)
 // x: unsigned dword input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed word sin(x) s[0.15] - using the full range  -$7fff - $7fff
 signed word sin16sb(word x) {
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    // Move x1 into the range 0-PI/2 using sine mirror symmetries
     byte isUpper = 0;
     if(x >= PI_u4f12 ) {
         x = x - PI_u4f12;

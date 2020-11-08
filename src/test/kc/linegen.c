@@ -1,5 +1,5 @@
 // Linear table generator
-// Work in progress towards a sinus generator
+// Work in progress towards a sine generator
 #include <division.h>
 #include <print.h>
 
@@ -39,7 +39,7 @@ void main() {
 
 // Generate word linear table
 // lintab - the table to generate into
-// length - the number of points in a total sinus wavelength (the size of the table)
+// length - the number of points in a total sine wavelength (the size of the table)
 void lin16u_gen(word min, word max, word* lintab, word length) {
     word ampl = max-min;
     word stepi = divr16u(ampl, length-1, 0);

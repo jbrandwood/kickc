@@ -85,7 +85,7 @@
   .label songInit = SONG
   // Pointer to the song play routine
   .label songPlay = SONG+3
-  // Sinus Position (used across effects)
+  // Sine Position (used across effects)
   .label sin_idx = 6
   // scroll soft position of text scrolly (0-7)
   .label scroll_soft = 7
@@ -271,9 +271,9 @@ irq: {
     inx
     jmp __b28
   __b22:
-    // idx = SINUS[sin_bar]
+    // idx = SINE[sin_bar]
     ldy.z sin_bar
-    ldx SINUS,y
+    ldx SINE,y
     // barcol = barcnt*16
     lda.z barcnt
     asl
@@ -328,8 +328,8 @@ irq: {
     inx
     jmp __b18
   __b17:
-    // col = SINUS[sin_col]/4
-    lda SINUS,y
+    // col = SINE[sin_col]/4
+    lda SINE,y
     lsr
     lsr
     // (COLORRAM + GREET_ROW*40)[i] = col
@@ -379,10 +379,10 @@ irq: {
     // if(line == SCROLL_Y+SCROLL_BLACKBARS+1)
     cpz #SCROLL_Y+SCROLL_BLACKBARS+1
     bne __b7
-    // zoomval = SINUS[greet_zoomx++]
+    // zoomval = SINE[greet_zoomx++]
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
-    lda SINUS,y
+    lda SINE,y
     inc.z greet_zoomx
     // VICIV->CHRXSCL = zoomval
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL
@@ -431,11 +431,11 @@ irq: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     jmp __b7
   __b4:
-    // VICIV->TEXTXPOS_LO =  SINUS[wobble_idx++]
+    // VICIV->TEXTXPOS_LO =  SINE[wobble_idx++]
     // if raster position < SCROLL_Y pos do wobble Logo!
-    lda SINUS,x
+    lda SINE,x
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // VICIV->TEXTXPOS_LO =  SINUS[wobble_idx++];
+    // VICIV->TEXTXPOS_LO =  SINE[wobble_idx++];
     inx
     // VICIV->CHRXSCL = 0x66
     // No zooming
@@ -595,9 +595,9 @@ memset: {
 SONG:
 .import c64 "DiscoZak_2SID_patched.prg"
 
-.pc = $2c00 "SINUS"
-  // Sinus Values 0-183
-SINUS:
+.pc = $2c00 "SINE"
+  // Sine Values 0-183
+SINE:
 .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
 
 .pc = $3000 "rasters"

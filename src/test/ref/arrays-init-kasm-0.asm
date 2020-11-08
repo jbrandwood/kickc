@@ -10,7 +10,7 @@ main: {
     // }
     rts
 }
-// Sinus table
+// Sine table
 SINTAB:
 .fill 256, 128 + 128*sin(i*2*PI/256)
 

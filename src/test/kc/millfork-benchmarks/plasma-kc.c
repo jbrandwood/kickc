@@ -7,7 +7,7 @@ char* const CHARSET = 0xE800;
 const char PAGE1 = ((((unsigned int)SCREEN1) >> 6) & 0xF0) | (((unsigned int)CHARSET >> 10) & 0x0E);
 const char PAGE2 = ((((unsigned int)SCREEN2) >> 6) & 0xF0) | (((unsigned int)CHARSET >> 10) & 0x0E);
 
-const char align($100) sinustable[0x100] = {
+const char align($100) sinetable[0x100] = {
     0x80, 0x7d, 0x7a, 0x77, 0x74, 0x70, 0x6d, 0x6a,
     0x67, 0x64, 0x61, 0x5e, 0x5b, 0x58, 0x55, 0x52,
     0x4f, 0x4d, 0x4a, 0x47, 0x44, 0x41, 0x3f, 0x3c,
@@ -58,7 +58,7 @@ void doplasma (char* scrn)
     c1a = c1A;
     c1b = c1B;
     for (ii = 0; ii < 25; ++ii) {
-        ybuf[ii] = (sinustable[c1a] + sinustable[c1b]);
+        ybuf[ii] = (sinetable[c1a] + sinetable[c1b]);
         c1a += 4;
         c1b += 9;
     }
@@ -67,7 +67,7 @@ void doplasma (char* scrn)
     c2a = c2A;
     c2b = c2B;
     for (i = 0; i < 40; ++i) {
-        xbuf[i] = (sinustable[c2a] + sinustable[c2b]);
+        xbuf[i] = (sinetable[c2a] + sinetable[c2b]);
         c2a += 3;
         c2b += 7;
     }
@@ -93,7 +93,7 @@ void makechar (void)
     unsigned int c;
 
     for (c = 0; c < 0x100; ++c) {
-        s = sinustable[(char)c];
+        s = sinetable[(char)c];
         for (i = 0; i < 8; ++i){
             b = 0;
             for (ii = 0; ii < 8; ++ii) {

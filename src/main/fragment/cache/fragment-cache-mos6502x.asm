@@ -19952,3 +19952,7 @@ ror {z1}
 dex
 bne !-
 !e:
+//FRAGMENT vbuz1=vbuaa_plus_2
+clc
+adc #2
+sta {z1}

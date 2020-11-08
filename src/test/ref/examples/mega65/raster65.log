@@ -164,7 +164,7 @@ irq::@3: scope:[irq]  from irq::@1
 irq::@4: scope:[irq]  from irq::@2
   irq::line#13 = phi( irq::@2/irq::line#3 )
   irq::wobble_idx#2 = phi( irq::@2/irq::wobble_idx#3 )
-  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINUS[irq::wobble_idx#2]
+  *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#2]
   irq::wobble_idx#1 = ++ irq::wobble_idx#2
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = $66
   to:irq::@7
@@ -201,7 +201,7 @@ irq::@12: scope:[irq]  from irq::@11
 irq::@13: scope:[irq]  from irq::@12
   irq::wobble_idx#9 = phi( irq::@12/irq::wobble_idx#8 )
   irq::line#10 = phi( irq::@12/irq::line#6 )
-  irq::zoomval#0 = SINUS[greet_zoomx]
+  irq::zoomval#0 = SINE[greet_zoomx]
   greet_zoomx = ++ greet_zoomx
   *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = irq::zoomval#0
   irq::$10 = irq::zoomval#0 + 1
@@ -249,7 +249,7 @@ irq::@16: scope:[irq]  from irq::@17 irq::@3
 irq::@17: scope:[irq]  from irq::@16
   irq::i#3 = phi( irq::@16/irq::i#2 )
   irq::sin_col#2 = phi( irq::@16/irq::sin_col#3 )
-  irq::$17 = SINUS[irq::sin_col#2] / 4
+  irq::$17 = SINE[irq::sin_col#2] / 4
   irq::col1#0 = irq::$17
   (COLORRAM+GREET_ROW*$28)[irq::i#3] = irq::col1#0
   irq::col1#1 = irq::col1#0 / 2
@@ -289,7 +289,7 @@ irq::@22: scope:[irq]  from irq::@21 irq::@30
 irq::@23: scope:[irq]  from irq::@22
   irq::barcnt#3 = phi( irq::@22/irq::barcnt#2 )
   irq::sin_bar#2 = phi( irq::@22/irq::sin_bar#4 )
-  irq::idx#0 = SINUS[irq::sin_bar#2]
+  irq::idx#0 = SINE[irq::sin_bar#2]
   irq::$20 = irq::barcnt#3 * $10
   irq::barcol#0 = irq::$20
   irq::i1#0 = 0
@@ -486,7 +486,7 @@ const nomodify byte SCROLL_BLACKBARS = $13
 const nomodify byte SCROLL_ROW = $d
 const byte* SCROLL_TEXT[]  = "    THIS SMALL MEGA65 RASTER INTRO ... WAS MADE BY DEFT IN 2015 ... AND BROUGHT BACK TO LIFE 5 YEARS LATER IN 2020 ... BECAUSE THE MEGA65 HARDWARE CHANGED SO MUCH IN THE PAST 5 YEARS ... UNFORTUNATELY MY ASSEMBLER SKILLS DID NOT SO THIS IS THE FIRST APPROACH TO GET BETTER ... HOPEFULLY DR.MUTTI WILL HAVE TO SCOLD ME LESS ... THE PAST 5 YEARS HAVE BEEN AN UNFORGETTABLE & UNIQUE RIDE ... IF YOU DO WATCH THIS DEMO ON YOUR VERY OWN MEGA65 THERE IS ENOUGH EVIDENCE OF WHAT WE ACTUALLY ACHIEVED ... BELOW ARE THE GREETINGS TO DEAR AND VERY SPECIAL PEOPLE WHO HELPED TO GET THERE ... THANK YOU SO MUCH FOR YOUR SUPPORT AND FOR NOT GIVING UP ... DUAL SID TUNE BY RAYDEN OF ALPHA FLIGHT ... THIS SCROLLY WILL NOW RESTART           *WRAP*                    "
 const nomodify byte SCROLL_Y = $66
-const byte* SINUS[$100]  = kickasm {{ .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
+const byte* SINE[$100]  = kickasm {{ .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
  }}
 const byte* SONG[]  = kickasm {{ .import c64 "DiscoZak_2SID_patched.prg"
  }}
@@ -753,8 +753,8 @@ Adding number conversion cast (unumber) irq::$10 in irq::$10 = irq::zoomval#0 + 
 Adding number conversion cast (unumber) 0 in irq::$11 = greet_zoomx == 0
 Adding number conversion cast (unumber) 0 in greet_idx = 0
 Adding number conversion cast (unumber) $28 in irq::$16 = irq::i#2 < $28
-Adding number conversion cast (unumber) 4 in irq::$17 = SINUS[irq::sin_col#2] / 4
-Adding number conversion cast (unumber) irq::$17 in irq::$17 = SINUS[irq::sin_col#2] / (unumber)4
+Adding number conversion cast (unumber) 4 in irq::$17 = SINE[irq::sin_col#2] / 4
+Adding number conversion cast (unumber) irq::$17 in irq::$17 = SINE[irq::sin_col#2] / (unumber)4
 Adding number conversion cast (unumber) GREET_ROW*$28 in (COLORRAM+GREET_ROW*$28)[irq::i#3] = irq::col1#0
 Adding number conversion cast (unumber) $28 in (COLORRAM+(unumber)GREET_ROW*$28)[irq::i#3] = irq::col1#0
 Adding number conversion cast (unumber) 2 in irq::col1#1 = irq::col1#0 / 2
@@ -986,7 +986,7 @@ Finalized unsigned number type $28
 Finalized unsigned number type $27
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in irq::$10 = irq::zoomval#0 + 1
-Inferred type updated to byte in irq::$17 = SINUS[irq::sin_col#2] / 4
+Inferred type updated to byte in irq::$17 = SINE[irq::sin_col#2] / 4
 Inferred type updated to byte in irq::$20 = irq::barcnt#3 * $10
 Inferred type updated to byte in irq::$26 = rasters[irq::$25] / 2
 Inferred type updated to byte in irq::$27 = irq::$26 & 7
@@ -1126,7 +1126,7 @@ Simplifying constant integer cast $bc
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type $bc
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Rewriting division to use shift [73] irq::col1#0 = SINUS[irq::sin_col#2] / 4
+Rewriting division to use shift [73] irq::col1#0 = SINE[irq::sin_col#2] / 4
 Rewriting division to use shift [75] irq::col1#1 = irq::col1#0 / 2
 Rewriting multiplication to use shift [93] irq::barcol#0 = irq::barcnt#2 * $10
 Rewriting division to use shift [112] irq::$26 = rasters[irq::$25] / 2
@@ -1388,7 +1388,7 @@ irq::@29: scope:[irq]  from irq::@28
   [53] irq::i3#1 = ++ irq::i3#2
   to:irq::@28
 irq::@22: scope:[irq]  from irq::@21
-  [54] irq::idx#0 = SINUS[irq::sin_bar#2]
+  [54] irq::idx#0 = SINE[irq::sin_bar#2]
   [55] irq::barcol#0 = irq::barcnt#2 << 4
   to:irq::@23
 irq::@23: scope:[irq]  from irq::@22 irq::@24
@@ -1424,7 +1424,7 @@ irq::@19: scope:[irq]  from irq::@18
   [71] irq::l#1 = ++ irq::l#2
   to:irq::@18
 irq::@17: scope:[irq]  from irq::@16
-  [72] irq::col1#0 = SINUS[irq::sin_col#2] >> 2
+  [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2
   [73] (COLORRAM+GREET_ROW*$28)[irq::i#2] = irq::col1#0
   [74] irq::col1#1 = irq::col1#0 >> 1
   [75] (COLORRAM+LOGO_ROW*$28-1)[irq::i#2] = irq::col1#1
@@ -1453,7 +1453,7 @@ irq::@12: scope:[irq]  from irq::@11
   [90] if(irq::line#10!=SCROLL_Y+SCROLL_BLACKBARS+1) goto irq::@7
   to:irq::@13
 irq::@13: scope:[irq]  from irq::@12
-  [91] irq::zoomval#0 = SINUS[greet_zoomx]
+  [91] irq::zoomval#0 = SINE[greet_zoomx]
   [92] greet_zoomx = ++ greet_zoomx
   [93] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = irq::zoomval#0
   [94] irq::$10 = irq::zoomval#0 + 1
@@ -1485,7 +1485,7 @@ irq::@5: scope:[irq]  from irq::@10
   [106] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = scroll_soft
   to:irq::@7
 irq::@4: scope:[irq]  from irq::@2
-  [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINUS[irq::wobble_idx#10]
+  [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10]
   [108] irq::wobble_idx#1 = ++ irq::wobble_idx#10
   [109] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = $66
   to:irq::@7
@@ -1799,7 +1799,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:17 [ irq::i
 Statement [60] irq::sin_bar#1 = irq::sin_bar#2 + $a [ scroll_soft scroll_ptr greet_idx irq::barcnt#2 irq::sin_bar#1 ] (  [ scroll_soft scroll_ptr greet_idx irq::barcnt#2 irq::sin_bar#1 ] { }  ) always clobbers reg byte a 
 Statement [70] rasters[irq::l#2] = 0 [ sin_idx scroll_soft scroll_ptr greet_idx irq::l#2 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::l#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ irq::l#2 irq::l#1 ]
-Statement [72] irq::col1#0 = SINUS[irq::sin_col#2] >> 2 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] { }  ) always clobbers reg byte a 
+Statement [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ irq::i#2 irq::i#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ irq::sin_col#2 irq::sin_col#1 irq::sin_col#0 ]
 Statement [74] irq::col1#1 = irq::col1#0 >> 1 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] { }  ) always clobbers reg byte a 
@@ -1812,7 +1812,7 @@ Statement [99] greet_idx = 0 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_
 Statement [104] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [106] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = scroll_soft [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
-Statement [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINUS[irq::wobble_idx#10] [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
+Statement [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10] [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [109] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = $66 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#1 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#1 ] { }  ) always clobbers reg byte a 
 Statement [110] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
 Statement [111] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
@@ -1862,7 +1862,7 @@ Statement [51] irq::$27 = irq::$26 & 7 [ scroll_soft scroll_ptr greet_idx irq::i
 Statement [55] irq::barcol#0 = irq::barcnt#2 << 4 [ scroll_soft scroll_ptr greet_idx irq::barcnt#2 irq::sin_bar#2 irq::idx#0 irq::barcol#0 ] (  [ scroll_soft scroll_ptr greet_idx irq::barcnt#2 irq::sin_bar#2 irq::idx#0 irq::barcol#0 ] { }  ) always clobbers reg byte a 
 Statement [60] irq::sin_bar#1 = irq::sin_bar#2 + $a [ scroll_soft scroll_ptr greet_idx irq::barcnt#2 irq::sin_bar#1 ] (  [ scroll_soft scroll_ptr greet_idx irq::barcnt#2 irq::sin_bar#1 ] { }  ) always clobbers reg byte a 
 Statement [70] rasters[irq::l#2] = 0 [ sin_idx scroll_soft scroll_ptr greet_idx irq::l#2 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::l#2 ] { }  ) always clobbers reg byte a 
-Statement [72] irq::col1#0 = SINUS[irq::sin_col#2] >> 2 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] { }  ) always clobbers reg byte a 
+Statement [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#0 ] { }  ) always clobbers reg byte a 
 Statement [74] irq::col1#1 = irq::col1#0 >> 1 [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 irq::col1#1 ] { }  ) always clobbers reg byte a 
 Statement [81] (COLORRAM+SCROLL_ROW*$28)[irq::i#2] = PAL_GREEN[irq::sin_col#2] [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 ] (  [ sin_idx scroll_soft scroll_ptr greet_idx irq::i#2 irq::sin_col#2 ] { }  ) always clobbers reg byte a 
 Statement [96] if(greet_zoomx!=0) goto irq::@7 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
@@ -1871,7 +1871,7 @@ Statement [99] greet_idx = 0 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_
 Statement [104] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [105] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = $50 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [106] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2) = scroll_soft [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
-Statement [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINUS[irq::wobble_idx#10] [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
+Statement [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10] [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#10 ] { }  ) always clobbers reg byte a 
 Statement [109] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = $66 [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#1 ] (  [ sin_idx scroll_soft scroll_ptr greet_zoomx greet_idx irq::line#10 irq::wobble_idx#1 ] { }  ) always clobbers reg byte a 
 Statement [110] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $47 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
 Statement [111] *((byte*)VICIII+OFFSET_STRUCT_MOS4569_VICIII_KEY) = $53 [ ] ( main:7 [ ] { }  ) always clobbers reg byte a 
@@ -2117,7 +2117,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label songInit = SONG
   // Pointer to the song play routine
   .label songPlay = SONG+3
-  // Sinus Position (used across effects)
+  // Sine Position (used across effects)
   .label sin_idx = 6
   // scroll soft position of text scrolly (0-7)
   .label scroll_soft = 7
@@ -2400,9 +2400,9 @@ irq: {
     jmp __b28
     // irq::@22
   __b22:
-    // [54] irq::idx#0 = SINUS[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
+    // [54] irq::idx#0 = SINE[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z sin_bar
-    ldx SINUS,y
+    ldx SINE,y
     // [55] irq::barcol#0 = irq::barcnt#2 << 4 -- vbuzz=vbuz1_rol_4 
     lda.z barcnt
     asl
@@ -2496,8 +2496,8 @@ irq: {
     jmp __b18
     // irq::@17
   __b17:
-    // [72] irq::col1#0 = SINUS[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
-    lda SINUS,y
+    // [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
+    lda SINE,y
     lsr
     lsr
     // [73] (COLORRAM+GREET_ROW*$28)[irq::i#2] = irq::col1#0 -- pbuc1_derefidx_vbuxx=vbuaa 
@@ -2564,10 +2564,10 @@ irq: {
     jmp __b13
     // irq::@13
   __b13:
-    // [91] irq::zoomval#0 = SINUS[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
+    // [91] irq::zoomval#0 = SINE[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
-    lda SINUS,y
+    lda SINE,y
     // [92] greet_zoomx = ++ greet_zoomx -- vbuz1=_inc_vbuz1 
     inc.z greet_zoomx
     // [93] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_CHRXSCL) = irq::zoomval#0 -- _deref_pbuc1=vbuaa 
@@ -2648,9 +2648,9 @@ irq: {
     jmp __b7_from___b5
     // irq::@4
   __b4:
-    // [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINUS[irq::wobble_idx#10] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     // if raster position < SCROLL_Y pos do wobble Logo!
-    lda SINUS,x
+    lda SINE,x
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
     // [108] irq::wobble_idx#1 = ++ irq::wobble_idx#10 -- vbuxx=_inc_vbuxx 
     inx
@@ -2865,9 +2865,9 @@ memset: {
 SONG:
 .import c64 "DiscoZak_2SID_patched.prg"
 
-.pc = $2c00 "SINUS"
-  // Sinus Values 0-183
-SINUS:
+.pc = $2c00 "SINE"
+  // Sine Values 0-183
+SINE:
 .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
 
 .pc = $3000 "rasters"
@@ -3043,7 +3043,7 @@ const nomodify byte SCROLL_BLACKBARS = $13
 const nomodify byte SCROLL_ROW = $d
 const byte* SCROLL_TEXT[]  = "    THIS SMALL MEGA65 RASTER INTRO ... WAS MADE BY DEFT IN 2015 ... AND BROUGHT BACK TO LIFE 5 YEARS LATER IN 2020 ... BECAUSE THE MEGA65 HARDWARE CHANGED SO MUCH IN THE PAST 5 YEARS ... UNFORTUNATELY MY ASSEMBLER SKILLS DID NOT SO THIS IS THE FIRST APPROACH TO GET BETTER ... HOPEFULLY DR.MUTTI WILL HAVE TO SCOLD ME LESS ... THE PAST 5 YEARS HAVE BEEN AN UNFORGETTABLE & UNIQUE RIDE ... IF YOU DO WATCH THIS DEMO ON YOUR VERY OWN MEGA65 THERE IS ENOUGH EVIDENCE OF WHAT WE ACTUALLY ACHIEVED ... BELOW ARE THE GREETINGS TO DEAR AND VERY SPECIAL PEOPLE WHO HELPED TO GET THERE ... THANK YOU SO MUCH FOR YOUR SUPPORT AND FOR NOT GIVING UP ... DUAL SID TUNE BY RAYDEN OF ALPHA FLIGHT ... THIS SCROLLY WILL NOW RESTART           *WRAP*                    "
 const nomodify byte SCROLL_Y = $66
-const byte* SINUS[$100]  = kickasm {{ .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
+const byte* SINE[$100]  = kickasm {{ .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
  }}
 const byte SIZEOF_BYTE = 1
 const byte* SONG[]  = kickasm {{ .import c64 "DiscoZak_2SID_patched.prg"
@@ -3289,7 +3289,7 @@ Score: 9963
   .label songInit = SONG
   // Pointer to the song play routine
   .label songPlay = SONG+3
-  // Sinus Position (used across effects)
+  // Sine Position (used across effects)
   .label sin_idx = 6
   // scroll soft position of text scrolly (0-7)
   .label scroll_soft = 7
@@ -3573,10 +3573,10 @@ irq: {
     jmp __b28
     // irq::@22
   __b22:
-    // idx = SINUS[sin_bar]
-    // [54] irq::idx#0 = SINUS[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
+    // idx = SINE[sin_bar]
+    // [54] irq::idx#0 = SINE[irq::sin_bar#2] -- vbuxx=pbuc1_derefidx_vbuz1 
     ldy.z sin_bar
-    ldx SINUS,y
+    ldx SINE,y
     // barcol = barcnt*16
     // [55] irq::barcol#0 = irq::barcnt#2 << 4 -- vbuzz=vbuz1_rol_4 
     lda.z barcnt
@@ -3674,9 +3674,9 @@ irq: {
     jmp __b18
     // irq::@17
   __b17:
-    // col = SINUS[sin_col]/4
-    // [72] irq::col1#0 = SINUS[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
-    lda SINUS,y
+    // col = SINE[sin_col]/4
+    // [72] irq::col1#0 = SINE[irq::sin_col#2] >> 2 -- vbuaa=pbuc1_derefidx_vbuyy_ror_2 
+    lda SINE,y
     lsr
     lsr
     // (COLORRAM + GREET_ROW*40)[i] = col
@@ -3752,11 +3752,11 @@ irq: {
     cpz #SCROLL_Y+SCROLL_BLACKBARS+1
     bne __b7
     // irq::@13
-    // zoomval = SINUS[greet_zoomx++]
-    // [91] irq::zoomval#0 = SINUS[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
+    // zoomval = SINE[greet_zoomx++]
+    // [91] irq::zoomval#0 = SINE[greet_zoomx] -- vbuaa=pbuc1_derefidx_vbuz1 
     // if raster position > SCROLL_Y pos do zoom
     ldy.z greet_zoomx
-    lda SINUS,y
+    lda SINE,y
     // [92] greet_zoomx = ++ greet_zoomx -- vbuz1=_inc_vbuz1 
     inc.z greet_zoomx
     // VICIV->CHRXSCL = zoomval
@@ -3832,12 +3832,12 @@ irq: {
     jmp __b7
     // irq::@4
   __b4:
-    // VICIV->TEXTXPOS_LO =  SINUS[wobble_idx++]
-    // [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINUS[irq::wobble_idx#10] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // VICIV->TEXTXPOS_LO =  SINE[wobble_idx++]
+    // [107] *((byte*)VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO) = SINE[irq::wobble_idx#10] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     // if raster position < SCROLL_Y pos do wobble Logo!
-    lda SINUS,x
+    lda SINE,x
     sta VICIV+OFFSET_STRUCT_MEGA65_VICIV_TEXTXPOS_LO
-    // VICIV->TEXTXPOS_LO =  SINUS[wobble_idx++];
+    // VICIV->TEXTXPOS_LO =  SINE[wobble_idx++];
     // [108] irq::wobble_idx#1 = ++ irq::wobble_idx#10 -- vbuxx=_inc_vbuxx 
     inx
     // VICIV->CHRXSCL = 0x66
@@ -4062,9 +4062,9 @@ memset: {
 SONG:
 .import c64 "DiscoZak_2SID_patched.prg"
 
-.pc = $2c00 "SINUS"
-  // Sinus Values 0-183
-SINUS:
+.pc = $2c00 "SINE"
+  // Sine Values 0-183
+SINE:
 .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
 
 .pc = $3000 "rasters"

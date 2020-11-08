@@ -1,8 +1,8 @@
-// Sinus Generator functions using only multiplication, addition and bit shifting
+// Sine Generator functions using only multiplication, addition and bit shifting
 // Uses a single division for converting the wavelength to a reciprocal.
-// Generates sinus using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
+// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
-// Optimization possibility: Use symmetries when generating sinustables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
+// Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
@@ -32,9 +32,9 @@ print_cls: {
     // }
     rts
 }
-// Generate unsigned byte sinus table in a min-max range
+// Generate unsigned byte sine table in a min-max range
 // sintab - the table to generate into
-// tabsize - the number of sinus points (the size of the table)
+// tabsize - the number of sine points (the size of the table)
 // min - the minimal value
 // max - the maximal value
 // sin8u_table(byte* zp(4) sintab)
@@ -373,7 +373,7 @@ print_ln: {
     // }
     rts
 }
-// Calculate signed char sinus sin(x)
+// Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
 // sin8s(word zp($c) x)
@@ -385,7 +385,7 @@ sin8s: {
     .label x1 = $14
     .label x3 = $15
     .label usinx = $16
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    // Move x1 into the range 0-PI/2 using sine mirror symmetries
     .label isUpper = $12
     // if(x >= PI_u4f12 )
     lda.z x+1

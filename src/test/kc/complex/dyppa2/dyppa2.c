@@ -1,4 +1,4 @@
-// Chunky DYPP with arbitrary sinus
+// Chunky DYPP with arbitrary sine
 // First implemented as dyppa.asm in 2011
 
 #pragma emulator("C64Debugger")

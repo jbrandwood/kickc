@@ -47,11 +47,11 @@ void init() {
 
 // The raster loop
 void loop() {
-    // The current index into the y-sinus
+    // The current index into the y-sine
     char sin_idx = 0;
     while(true) {
         while(VICII->RASTER!=$ff) {}
-        // Assign sinus positions
+        // Assign sine positions
         (VICII->BORDER_COLOR)++;
         char y_idx = sin_idx;
         for(char sy: 0..PLEX_COUNT-1) {

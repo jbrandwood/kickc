@@ -1,5 +1,5 @@
 // Linear table generator
-// Work in progress towards a sinus generator
+// Work in progress towards a sine generator
 // Simple binary division implementation
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
@@ -220,7 +220,7 @@ main: {
 }
 // Generate word linear table
 // lintab - the table to generate into
-// length - the number of points in a total sinus wavelength (the size of the table)
+// length - the number of points in a total sine wavelength (the size of the table)
 // lin16u_gen(word zp(9) min, word zp(7) max, word* zp($d) lintab)
 lin16u_gen: {
     .label __6 = $18

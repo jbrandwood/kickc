@@ -6,7 +6,7 @@
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
-  // The number of sinus values in the table
+  // The number of sine values in the table
   .const SINSIZE = $800
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
@@ -23,7 +23,7 @@
   .label MAIN_CHARSET = $1000
   // The current screen displayed (0/1)
   .label screen_buffer = 2
-  // Current index into the sinus
+  // Current index into the sine
   .label x_sin_idx = $b
   .label y_sin_idx = $d
   // Current x/y-position (the center of the screen)
@@ -742,7 +742,7 @@ petscii_ptr: {
     // }
     rts
 }
-// Sinus table [-399,399]
+// Sine table [-399,399]
 SINTAB:
 .fillword SINSIZE, 399*sin(i*2*PI/SINSIZE)
 

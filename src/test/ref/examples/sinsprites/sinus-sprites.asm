@@ -349,11 +349,11 @@ progress_init: {
     // }
     rts
 }
-// Generate a sinus table using BASIC floats
+// Generate a sine table using BASIC floats
 // - sintab is a pointer to the table to fill
 // - length is the length of the sine table
-// - min is the minimum value of the generated sinus
-// - max is the maximum value of the generated sinus
+// - min is the minimum value of the generated sine
+// - max is the maximum value of the generated sine
 // gen_sintab(byte* zp($13) sintab, byte zp(4) length, byte zp(3) min, byte register(X) max)
 gen_sintab: {
     // amplitude/2
@@ -753,8 +753,8 @@ mulFACbyMEM: {
     rts
 }
 // FAC = sin(FAC)
-// Set FAC to sinus of the FAC - sin(FAC)
-// Sinus is calculated on radians (0-2*PI)
+// Set FAC to sine of the FAC - sin(FAC)
+// Sine is calculated on radians (0-2*PI)
 sinFAC: {
     // asm
     jsr $e26b

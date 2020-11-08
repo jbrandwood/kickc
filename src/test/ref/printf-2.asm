@@ -39,7 +39,25 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
+    // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
+    jsr conio_c64_init
     jsr main
+    rts
+}
+// Set initial cursor position
+conio_c64_init: {
+    // Position cursor at current line
+    .label BASIC_CURSOR_LINE = $d6
+    // line = *BASIC_CURSOR_LINE
+    ldx BASIC_CURSOR_LINE
+    // if(line>=CONIO_HEIGHT)
+    cpx #$19
+    bcc __b1
+    ldx #$19-1
+  __b1:
+    // gotoxy(0, line)
+    jsr gotoxy
+    // }
     rts
 }
 main: {
@@ -69,6 +87,82 @@ main: {
     jsr printf_uint
     // cputln()
     jsr cputln
+    // }
+    rts
+}
+// Set the cursor to the specified position
+// gotoxy(byte register(X) y)
+gotoxy: {
+    .const x = 0
+    .label __5 = $19
+    .label __6 = $15
+    .label __7 = $15
+    .label line_offset = $15
+    .label __8 = $17
+    .label __9 = $15
+    // if(y>CONIO_HEIGHT)
+    cpx #$19+1
+    bcc __b2
+    ldx #0
+  __b2:
+    // conio_cursor_x = x
+    lda #x
+    sta.z conio_cursor_x
+    // conio_cursor_y = y
+    stx.z conio_cursor_y
+    // (unsigned int)y*CONIO_WIDTH
+    txa
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    // line_offset = (unsigned int)y*CONIO_WIDTH
+    lda.z __7
+    asl
+    sta.z __8
+    lda.z __7+1
+    rol
+    sta.z __8+1
+    asl.z __8
+    rol.z __8+1
+    lda.z __9
+    clc
+    adc.z __8
+    sta.z __9
+    lda.z __9+1
+    adc.z __8+1
+    sta.z __9+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    // CONIO_SCREEN_TEXT + line_offset
+    clc
+    lda.z line_offset
+    adc #<DEFAULT_SCREEN
+    sta.z __5
+    lda.z line_offset+1
+    adc #>DEFAULT_SCREEN
+    sta.z __5+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
+    // CONIO_SCREEN_COLORS + line_offset
+    clc
+    lda.z __6
+    adc #<COLORRAM
+    sta.z __6
+    lda.z __6+1
+    adc #>COLORRAM
+    sta.z __6+1
+    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    lda.z __6
+    sta.z conio_line_color
+    lda.z __6+1
+    sta.z conio_line_color+1
     // }
     rts
 }
@@ -382,7 +476,7 @@ printf_number_buffer: {
     .label __19 = 6
     .label buffer_sign = 3
     .label format_zero_padding = 2
-    .label padding = $15
+    .label padding = $1b
     .label format_justify_left = 5
     .label format_upper_case = 4
     // if(format.min_length)
@@ -553,7 +647,7 @@ cscroll: {
 // utoa(word zp($b) value, byte* zp(6) buffer)
 utoa: {
     .const max_digits = 4
-    .label digit_value = $16
+    .label digit_value = $1c
     .label buffer = 6
     .label digit = 5
     .label value = $b
@@ -634,10 +728,10 @@ utoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp(6) buffer, byte register(X) value, byte zp($15) sub)
+// uctoa_append(byte* zp(6) buffer, byte register(X) value, byte zp($1b) sub)
 uctoa_append: {
     .label buffer = 6
-    .label sub = $15
+    .label sub = $1b
     ldy #0
   __b1:
     // while (value >= sub)
@@ -802,13 +896,13 @@ cputs: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($16) destination, void* zp($d) source)
+// memcpy(void* zp($1c) destination, void* zp($d) source)
 memcpy: {
-    .label src_end = $18
-    .label dst = $16
+    .label src_end = $1e
+    .label dst = $1c
     .label src = $d
     .label source = $d
-    .label destination = $16
+    .label destination = $1c
     // src_end = (char*)source+num
     clc
     lda.z source
@@ -846,7 +940,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp($d) str, byte register(X) c)
 memset: {
-    .label end = $18
+    .label end = $1e
     .label dst = $d
     .label str = $d
     // end = (char*)str + num
@@ -887,11 +981,11 @@ memset: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(6) buffer, word zp($b) value, word zp($16) sub)
+// utoa_append(byte* zp(6) buffer, word zp($b) value, word zp($1c) sub)
 utoa_append: {
     .label buffer = 6
     .label value = $b
-    .label sub = $16
+    .label sub = $1c
     .label return = $b
     ldx #0
   __b1:

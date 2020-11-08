@@ -16,6 +16,18 @@ const char CONIO_TEXTCOLOR_DEFAULT = BLUE;
 // Use the shared CMB flat memory implementation
 #include "conio-cbm-shared.c"
 
+// Initializer for conio.h on VIC20
+#pragma constructor_for(conio_vic20_init, cputc, clrscr, cscroll)
+
+// Set initial cursor position
+void conio_vic20_init() {
+    // Position cursor at current line
+    char * const BASIC_CURSOR_LINE = 0xD6;
+    char line = *BASIC_CURSOR_LINE;
+    if(line>=CONIO_HEIGHT) line=CONIO_HEIGHT-1;
+    gotoxy(0, line);
+}
+
 // Return true if there's a key waiting, return false if not
 unsigned char kbhit (void) {
     // Read all keyboard matrix rows

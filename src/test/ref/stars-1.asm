@@ -35,7 +35,25 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
+    // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
+    jsr conio_c64_init
     jsr main
+    rts
+}
+// Set initial cursor position
+conio_c64_init: {
+    // Position cursor at current line
+    .label BASIC_CURSOR_LINE = $d6
+    // line = *BASIC_CURSOR_LINE
+    ldx BASIC_CURSOR_LINE
+    // if(line>=CONIO_HEIGHT)
+    cpx #$19
+    bcc __b1
+    ldx #$19-1
+  __b1:
+    // gotoxy(0, line)
+    jsr gotoxy
+    // }
     rts
 }
 main: {
@@ -106,6 +124,82 @@ main: {
     .byte 0
     s2: .text @"\n"
     .byte 0
+}
+// Set the cursor to the specified position
+// gotoxy(byte register(X) y)
+gotoxy: {
+    .const x = 0
+    .label __5 = $1c
+    .label __6 = $18
+    .label __7 = $18
+    .label line_offset = $18
+    .label __8 = $1a
+    .label __9 = $18
+    // if(y>CONIO_HEIGHT)
+    cpx #$19+1
+    bcc __b2
+    ldx #0
+  __b2:
+    // conio_cursor_x = x
+    lda #x
+    sta.z conio_cursor_x
+    // conio_cursor_y = y
+    stx.z conio_cursor_y
+    // (unsigned int)y*CONIO_WIDTH
+    txa
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    // line_offset = (unsigned int)y*CONIO_WIDTH
+    lda.z __7
+    asl
+    sta.z __8
+    lda.z __7+1
+    rol
+    sta.z __8+1
+    asl.z __8
+    rol.z __8+1
+    lda.z __9
+    clc
+    adc.z __8
+    sta.z __9
+    lda.z __9+1
+    adc.z __8+1
+    sta.z __9+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    // CONIO_SCREEN_TEXT + line_offset
+    clc
+    lda.z line_offset
+    adc #<DEFAULT_SCREEN
+    sta.z __5
+    lda.z line_offset+1
+    adc #>DEFAULT_SCREEN
+    sta.z __5+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
+    // CONIO_SCREEN_COLORS + line_offset
+    clc
+    lda.z __6
+    adc #<COLORRAM
+    sta.z __6
+    lda.z __6+1
+    adc #>COLORRAM
+    sta.z __6+1
+    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    lda.z __6
+    sta.z conio_line_color
+    lda.z __6+1
+    sta.z conio_line_color+1
+    // }
+    rts
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
@@ -259,7 +353,7 @@ printf_uchar: {
 // utoa(word zp(5) value, byte* zp($b) buffer)
 utoa: {
     .const max_digits = 4
-    .label digit_value = $18
+    .label digit_value = $1e
     .label buffer = $b
     .label digit = 7
     .label value = 5
@@ -330,14 +424,14 @@ utoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($a) buffer_sign, byte register(X) format_min_length, byte zp(7) format_justify_left, byte zp(9) format_zero_padding, byte zp($1a) format_upper_case)
+// printf_number_buffer(byte zp($a) buffer_sign, byte register(X) format_min_length, byte zp(7) format_justify_left, byte zp(9) format_zero_padding, byte zp($20) format_upper_case)
 printf_number_buffer: {
-    .label __19 = $18
+    .label __19 = $1e
     .label buffer_sign = $a
     .label padding = 8
     .label format_zero_padding = 9
     .label format_justify_left = 7
-    .label format_upper_case = $1a
+    .label format_upper_case = $20
     // if(format.min_length)
     cpx #0
     beq __b6
@@ -475,7 +569,7 @@ cputc: {
 // - radix : The radix to convert the number to (from the enum RADIX)
 // uctoa(byte register(X) value, byte* zp($b) buffer)
 uctoa: {
-    .label digit_value = $1a
+    .label digit_value = $20
     .label buffer = $b
     .label digit = 9
     .label started = $a
@@ -543,11 +637,11 @@ uctoa: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($b) buffer, word zp(5) value, word zp($18) sub)
+// utoa_append(byte* zp($b) buffer, word zp(5) value, word zp($1e) sub)
 utoa_append: {
     .label buffer = $b
     .label value = 5
-    .label sub = $18
+    .label sub = $1e
     .label return = 5
     ldx #0
   __b1:
@@ -582,9 +676,9 @@ utoa_append: {
 // Computes the length of the string str up to but not including the terminating null character.
 // strlen(byte* zp($10) str)
 strlen: {
-    .label len = $18
+    .label len = $1e
     .label str = $10
-    .label return = $18
+    .label return = $1e
     lda #<0
     sta.z len
     sta.z len+1
@@ -703,10 +797,10 @@ cputln: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($b) buffer, byte register(X) value, byte zp($1a) sub)
+// uctoa_append(byte* zp($b) buffer, byte register(X) value, byte zp($20) sub)
 uctoa_append: {
     .label buffer = $b
-    .label sub = $1a
+    .label sub = $20
     ldy #0
   __b1:
     // while (value >= sub)
@@ -811,13 +905,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($1d) destination, void* zp($10) source)
+// memcpy(void* zp($23) destination, void* zp($10) source)
 memcpy: {
-    .label src_end = $1b
-    .label dst = $1d
+    .label src_end = $21
+    .label dst = $23
     .label src = $10
     .label source = $10
-    .label destination = $1d
+    .label destination = $23
     // src_end = (char*)source+num
     clc
     lda.z source
@@ -855,7 +949,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp($10) str, byte register(X) c)
 memset: {
-    .label end = $1d
+    .label end = $23
     .label dst = $10
     .label str = $10
     // end = (char*)str + num

@@ -88,6 +88,31 @@ clock_start::@return: scope:[clock_start]  from clock_start
   return 
   to:@return
 
+void gotoxy(byte gotoxy::x , byte gotoxy::y)
+gotoxy: scope:[gotoxy]  from conio_c64_init::@1
+  gotoxy::x#3 = phi( conio_c64_init::@1/gotoxy::x#1 )
+  gotoxy::y#2 = phi( conio_c64_init::@1/gotoxy::y#1 )
+  gotoxy::$0 = gotoxy::y#2 > $19
+  gotoxy::$1 = ! gotoxy::$0
+  if(gotoxy::$1) goto gotoxy::@1
+  to:gotoxy::@2
+gotoxy::@1: scope:[gotoxy]  from gotoxy gotoxy::@2
+  gotoxy::x#2 = phi( gotoxy/gotoxy::x#3, gotoxy::@2/gotoxy::x#4 )
+  gotoxy::$2 = gotoxy::x#2 >= $28
+  gotoxy::$3 = ! gotoxy::$2
+  if(gotoxy::$3) goto gotoxy::@return
+  to:gotoxy::@3
+gotoxy::@2: scope:[gotoxy]  from gotoxy
+  gotoxy::x#4 = phi( gotoxy/gotoxy::x#3 )
+  gotoxy::y#0 = 0
+  to:gotoxy::@1
+gotoxy::@3: scope:[gotoxy]  from gotoxy::@1
+  gotoxy::x#0 = 0
+  to:gotoxy::@return
+gotoxy::@return: scope:[gotoxy]  from gotoxy::@1 gotoxy::@3
+  return 
+  to:@return
+
 byte textcolor(byte textcolor::color)
 textcolor: scope:[textcolor]  from main::@16
   textcolor::color#1 = phi( main::@16/textcolor::color#0 )
@@ -98,6 +123,28 @@ textcolor: scope:[textcolor]  from main::@16
 textcolor::@return: scope:[textcolor]  from textcolor
   textcolor::return#3 = phi( textcolor/textcolor::return#0 )
   textcolor::return#1 = textcolor::return#3
+  return 
+  to:@return
+
+void conio_c64_init()
+conio_c64_init: scope:[conio_c64_init]  from __start::__init1_@1
+  conio_c64_init::line#0 = *conio_c64_init::BASIC_CURSOR_LINE
+  conio_c64_init::$0 = conio_c64_init::line#0 >= $19
+  conio_c64_init::$1 = ! conio_c64_init::$0
+  if(conio_c64_init::$1) goto conio_c64_init::@1
+  to:conio_c64_init::@2
+conio_c64_init::@1: scope:[conio_c64_init]  from conio_c64_init conio_c64_init::@2
+  conio_c64_init::line#2 = phi( conio_c64_init/conio_c64_init::line#0, conio_c64_init::@2/conio_c64_init::line#1 )
+  gotoxy::x#1 = 0
+  gotoxy::y#1 = conio_c64_init::line#2
+  call gotoxy 
+  to:conio_c64_init::@3
+conio_c64_init::@3: scope:[conio_c64_init]  from conio_c64_init::@1
+  to:conio_c64_init::@return
+conio_c64_init::@2: scope:[conio_c64_init]  from conio_c64_init
+  conio_c64_init::line#1 = $19-1
+  to:conio_c64_init::@1
+conio_c64_init::@return: scope:[conio_c64_init]  from conio_c64_init::@3
   return 
   to:@return
 
@@ -1034,13 +1081,16 @@ __start::__init1_@1: scope:[__start]  from __start::__init1_toD0181_@return
   __start::__init1_$0 = __start::__init1_toD0181_return#3
   canvas_show_memory = __start::__init1_$0
   canvas_show_flag = 0
-  to:__start::@1
-__start::@1: scope:[__start]  from __start::__init1_@1
-  call main 
+  call conio_c64_init 
   to:__start::@2
-__start::@2: scope:[__start]  from __start::@1
+__start::@2: scope:[__start]  from __start::__init1_@1
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::@2
+  call main 
+  to:__start::@3
+__start::@3: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@2
+__start::@return: scope:[__start]  from __start::@3
   return 
   to:@return
 
@@ -1139,6 +1189,14 @@ dword clock::return#1
 dword clock::return#2
 dword clock::return#3
 void clock_start()
+void conio_c64_init()
+bool~ conio_c64_init::$0
+bool~ conio_c64_init::$1
+const nomodify byte* conio_c64_init::BASIC_CURSOR_LINE = (byte*)$d6
+byte conio_c64_init::line
+byte conio_c64_init::line#0
+byte conio_c64_init::line#1
+byte conio_c64_init::line#2
 byte conio_textcolor loadstore
 void eorfill(byte* eorfill::line_buffer , byte* eorfill::canvas)
 bool~ eorfill::$0
@@ -1183,6 +1241,21 @@ byte eorfill::y#0
 byte eorfill::y#1
 byte eorfill::y#2
 byte eorfill::y#3
+void gotoxy(byte gotoxy::x , byte gotoxy::y)
+bool~ gotoxy::$0
+bool~ gotoxy::$1
+bool~ gotoxy::$2
+bool~ gotoxy::$3
+byte gotoxy::x
+byte gotoxy::x#0
+byte gotoxy::x#1
+byte gotoxy::x#2
+byte gotoxy::x#3
+byte gotoxy::x#4
+byte gotoxy::y
+byte gotoxy::y#0
+byte gotoxy::y#1
+byte gotoxy::y#2
 interrupt(KERNEL_MIN) void irq_bottom_1()
 byte~ irq_bottom_1::$0
 number~ irq_bottom_1::toD0181_$0
@@ -1880,6 +1953,13 @@ Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#4 > 0
 Adding number conversion cast (unumber) $ffffffff in clock::$0 = $ffffffff - *CIA2_TIMER_AB
 Adding number conversion cast (unumber) clock::$0 in clock::$0 = (unumber)$ffffffff - *CIA2_TIMER_AB
 Adding number conversion cast (unumber) $ffffffff in *CIA2_TIMER_AB = $ffffffff
+Adding number conversion cast (unumber) $19 in gotoxy::$0 = gotoxy::y#2 > $19
+Adding number conversion cast (unumber) $28 in gotoxy::$2 = gotoxy::x#2 >= $28
+Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
+Adding number conversion cast (unumber) 0 in gotoxy::x#0 = 0
+Adding number conversion cast (unumber) $19 in conio_c64_init::$0 = conio_c64_init::line#0 >= $19
+Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
+Adding number conversion cast (unumber) $19-1 in conio_c64_init::line#1 = $19-1
 Adding number conversion cast (unumber) 0 in *kbhit::CIA1_PORT_A = 0
 Adding number conversion cast (unumber) $28*$19 in memset::num#0 = $28*$19
 Adding number conversion cast (unumber) 0 in memset::c#1 = 0
@@ -2012,6 +2092,10 @@ Adding number conversion cast (unumber) __start::__init1_toD0181_$6 in __start::
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast memset::dst#0 = (byte*)memset::str#5
 Inlining cast *CIA2_TIMER_AB = (unumber)$ffffffff
+Inlining cast gotoxy::y#0 = (unumber)0
+Inlining cast gotoxy::x#0 = (unumber)0
+Inlining cast gotoxy::x#1 = (unumber)0
+Inlining cast conio_c64_init::line#1 = (unumber)$19-1
 Inlining cast *kbhit::CIA1_PORT_A = (unumber)0
 Inlining cast memset::num#0 = (unumber)$28*$19
 Inlining cast memset::c#1 = (unumber)0
@@ -2033,6 +2117,7 @@ Simplifying constant pointer cast (struct MOS6526_CIA*) 56320
 Simplifying constant pointer cast (struct MOS6526_CIA*) 56576
 Simplifying constant pointer cast (dword*) 56580
 Simplifying constant pointer cast (void()**) 788
+Simplifying constant pointer cast (byte*) 214
 Simplifying constant pointer cast (byte*) 56320
 Simplifying constant pointer cast (byte*) 56321
 Simplifying constant pointer cast (byte*) 8192
@@ -2046,6 +2131,12 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast 0
 Simplifying constant integer cast $ffffffff
 Simplifying constant integer cast $ffffffff
+Simplifying constant integer cast $19
+Simplifying constant integer cast $28
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $19
+Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $c
@@ -2120,6 +2211,12 @@ Finalized unsigned number type $40
 Finalized unsigned number type 0
 Finalized unsigned number type $ffffffff
 Finalized unsigned number type $ffffffff
+Finalized unsigned number type $19
+Finalized unsigned number type $28
+Finalized unsigned number type 0
+Finalized unsigned number type 0
+Finalized unsigned number type $19
+Finalized unsigned number type 0
 Finalized unsigned number type 0
 Finalized unsigned number type 0
 Finalized unsigned number type $c
@@ -2244,11 +2341,14 @@ Inferred type updated to byte in __start::__init1_toD0181_$4 = __start::__init1_
 Inferred type updated to byte in __start::__init1_toD0181_$5 = __start::__init1_toD0181_$4 & $f
 Inferred type updated to byte in __start::__init1_toD0181_$6 = __start::__init1_toD0181_$2 | __start::__init1_toD0181_$5
 Inversing boolean not [2] memset::$1 = memset::num#4 <= 0 from [1] memset::$0 = memset::num#4 > 0
-Inversing boolean not [221] irq_bottom_2::$1 = 0 == irq_bottom_2::$0 from [220] irq_bottom_2::$3 = 0 != irq_bottom_2::$0
-Inversing boolean not [278] line::$9 = line::sx#1 != $ff from [277] line::$8 = line::sx#1 == $ff
-Inversing boolean not [303] line::$21 = line::dx#3 != 0 from [302] line::$20 = line::dx#3 == 0
-Inversing boolean not [312] line::$14 = line::e#1 <= line::dy#3 from [311] line::$13 = line::e#1 > line::dy#3
-Inversing boolean not [375] line::$29 = line::e2#1 <= line::dx#6 from [374] line::$28 = line::e2#1 > line::dx#6
+Inversing boolean not [33] gotoxy::$1 = gotoxy::y#2 <= $19 from [32] gotoxy::$0 = gotoxy::y#2 > $19
+Inversing boolean not [37] gotoxy::$3 = gotoxy::x#2 < $28 from [36] gotoxy::$2 = gotoxy::x#2 >= $28
+Inversing boolean not [52] conio_c64_init::$1 = conio_c64_init::line#0 < $19 from [51] conio_c64_init::$0 = conio_c64_init::line#0 >= $19
+Inversing boolean not [243] irq_bottom_2::$1 = 0 == irq_bottom_2::$0 from [242] irq_bottom_2::$3 = 0 != irq_bottom_2::$0
+Inversing boolean not [300] line::$9 = line::sx#1 != $ff from [299] line::$8 = line::sx#1 == $ff
+Inversing boolean not [325] line::$21 = line::dx#3 != 0 from [324] line::$20 = line::dx#3 == 0
+Inversing boolean not [334] line::$14 = line::e#1 <= line::dy#3 from [333] line::$13 = line::e#1 > line::dy#3
+Inversing boolean not [397] line::$29 = line::e2#1 <= line::dx#6 from [396] line::$28 = line::e2#1 > line::dx#6
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)__start::__init1_toD0181_return#0 = __start::__init1_toD0181_$6 __start::__init1_toD0181_return#2 __start::__init1_toD0181_return#1 __start::__init1_toD0181_return#3 __start::__init1_$0 canvas_show_memory 
 Alias memset::return#0 = memset::str#4 memset::return#6 memset::return#1 
@@ -2261,6 +2361,7 @@ Alias memset::dst#2 = memset::dst#3
 Alias memset::end#1 = memset::end#2 
 Alias memset::str#7 = memset::str#8 
 Alias clock::return#0 = clock::$0 clock::return#3 clock::return#1 
+Alias gotoxy::x#3 = gotoxy::x#4 
 Alias textcolor::return#0 = textcolor::old#0 textcolor::return#3 textcolor::return#1 
 Alias kbhit::return#0 = kbhit::$0 kbhit::return#3 kbhit::return#1 
 Alias main::y#2 = main::y#3 main::c#0 
@@ -2379,6 +2480,7 @@ Alias __start::__init1_toD0181_screen#0 = __start::__init1_toD0181_screen#1
 Alias __start::__init1_toD0181_gfx#0 = __start::__init1_toD0181_gfx#1 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)__start::__init1_toD0181_return#0 = __start::__init1_toD0181_$6 __start::__init1_toD0181_return#2 __start::__init1_toD0181_return#1 __start::__init1_toD0181_return#3 __start::__init1_$0 canvas_show_memory 
+Alias gotoxy::x#2 = gotoxy::x#3 
 Alias line::dx#0 = line::dx#1 
 Alias line::dy#0 = line::dy#1 
 Alias line::sx#0 = line::sx#12 
@@ -2402,6 +2504,8 @@ Alias candidate removed (volatile)__start::__init1_toD0181_return#0 = __start::_
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#7 memset::str#5
 Identical Phi Values memset::c#4 memset::c#6
+Identical Phi Values gotoxy::y#2 gotoxy::y#1
+Identical Phi Values gotoxy::x#2 gotoxy::x#1
 Identical Phi Values textcolor::color#1 textcolor::color#0
 Identical Phi Values main::cols#2 main::cols#5
 Identical Phi Values main::screen#2 main::screen#5
@@ -2437,30 +2541,38 @@ Identical Phi Values memset::return#0 memset::str#5
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition memset::$1 [2] if(memset::num#4<=0) goto memset::@1
 Simple Condition memset::$3 [9] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition main::$7 [48] if(main::y#2<$10) goto main::@2
-Simple Condition main::$8 [62] if(main::x#2<$10) goto main::@5
-Simple Condition main::$21 [72] if(0!=1) goto main::@8
-Simple Condition main::$22 [109] if(0!=canvas_show_flag) goto main::@9
-Simple Condition irq_bottom_2::$1 [171] if(0==irq_bottom_2::$0) goto irq_bottom_2::@1
-Simple Condition line::$9 [207] if(line::sx#0!=$ff) goto line::@1
-Simple Condition line::$10 [210] if(line::dx#0>line::dy#0) goto line::@2
-Simple Condition line::$11 [215] if(line::sx#0==line::sy#0) goto line::@6
-Simple Condition line::$21 [222] if(line::dx#0!=0) goto line::@11
-Simple Condition line::$14 [228] if(line::e#1<=line::dy#0) goto line::@8
-Simple Condition line::$17 [231] if(line::y#10!=line::y2#13) goto line::@7
-Simple Condition line::$23 [251] if(line::e1#1<=line::dy#0) goto line::@12
-Simple Condition line::$25 [260] if(line::x#19!=line::x2#15) goto line::@12
-Simple Condition line::$29 [270] if(line::e2#1<=line::dx#0) goto line::@15
-Simple Condition line::$30 [273] if(line::x#12!=line::x2#15) goto line::@14
-Simple Condition eorfill::$0 [285] if(eorfill::x#2<$10) goto eorfill::@2
-Simple Condition eorfill::$1 [291] if(eorfill::y#2<(byte)$10*8) goto eorfill::@4
-Simple Condition abs_u8::$2 [302] if(0!=abs_u8::$0) goto abs_u8::@1
-Simple Condition sgn_u8::$1 [309] if(0!=sgn_u8::$0) goto sgn_u8::@1
+Simple Condition gotoxy::$1 [23] if(gotoxy::y#1<=$19) goto gotoxy::@1
+Simple Condition gotoxy::$3 [25] if(gotoxy::x#1<$28) goto gotoxy::@return
+Simple Condition conio_c64_init::$1 [35] if(conio_c64_init::line#0<$19) goto conio_c64_init::@1
+Simple Condition main::$7 [65] if(main::y#2<$10) goto main::@2
+Simple Condition main::$8 [79] if(main::x#2<$10) goto main::@5
+Simple Condition main::$21 [89] if(0!=1) goto main::@8
+Simple Condition main::$22 [126] if(0!=canvas_show_flag) goto main::@9
+Simple Condition irq_bottom_2::$1 [188] if(0==irq_bottom_2::$0) goto irq_bottom_2::@1
+Simple Condition line::$9 [224] if(line::sx#0!=$ff) goto line::@1
+Simple Condition line::$10 [227] if(line::dx#0>line::dy#0) goto line::@2
+Simple Condition line::$11 [232] if(line::sx#0==line::sy#0) goto line::@6
+Simple Condition line::$21 [239] if(line::dx#0!=0) goto line::@11
+Simple Condition line::$14 [245] if(line::e#1<=line::dy#0) goto line::@8
+Simple Condition line::$17 [248] if(line::y#10!=line::y2#13) goto line::@7
+Simple Condition line::$23 [268] if(line::e1#1<=line::dy#0) goto line::@12
+Simple Condition line::$25 [277] if(line::x#19!=line::x2#15) goto line::@12
+Simple Condition line::$29 [287] if(line::e2#1<=line::dx#0) goto line::@15
+Simple Condition line::$30 [290] if(line::x#12!=line::x2#15) goto line::@14
+Simple Condition eorfill::$0 [302] if(eorfill::x#2<$10) goto eorfill::@2
+Simple Condition eorfill::$1 [308] if(eorfill::y#2<(byte)$10*8) goto eorfill::@4
+Simple Condition abs_u8::$2 [319] if(0!=abs_u8::$0) goto abs_u8::@1
+Simple Condition sgn_u8::$1 [326] if(0!=sgn_u8::$0) goto sgn_u8::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [30] memset::num#0 = (unumber)$28*$19
-Constant right-side identified [35] memset::num#1 = (unumber)$28*$19
-Constant right-side identified [40] memset::num#2 = (unumber)$28*$19
+Constant right-side identified [40] conio_c64_init::line#1 = (unumber)$19-1
+Constant right-side identified [47] memset::num#0 = (unumber)$28*$19
+Constant right-side identified [52] memset::num#1 = (unumber)$28*$19
+Constant right-side identified [57] memset::num#2 = (unumber)$28*$19
 Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant gotoxy::y#0 = 0
+Constant gotoxy::x#0 = 0
+Constant gotoxy::x#1 = 0
+Constant conio_c64_init::line#1 = (unumber)$19-1
 Constant memset::str#0 = (void*)CONSOLE
 Constant memset::c#0 = ' '
 Constant memset::num#0 = (unumber)$28*$19
@@ -2505,14 +2617,16 @@ Constant irq_bottom_1::toD0181_$7 = (word)irq_bottom_1::toD0181_screen#0
 Constant irq_bottom_2::toD0181_$7 = (word)irq_bottom_2::toD0181_screen#0
 Constant __start::__init1_toD0181_$7 = (word)__start::__init1_toD0181_screen#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (word)main::toD0181_gfx#0 in [122] main::toD0181_$3 = > (word)main::toD0181_gfx#0
-Constant value identified (word)main::toD0182_gfx#0 in [132] main::toD0182_$3 = > (word)main::toD0182_gfx#0
-Constant value identified (word)irq_bottom_1::toD0181_gfx#0 in [157] irq_bottom_1::toD0181_$3 = > (word)irq_bottom_1::toD0181_gfx#0
-Constant value identified (word)irq_bottom_2::toD0181_gfx#0 in [179] irq_bottom_2::toD0181_$3 = > (word)irq_bottom_2::toD0181_gfx#0
-Constant value identified (word)__start::__init1_toD0181_gfx#0 in [321] __start::__init1_toD0181_$3 = > (word)__start::__init1_toD0181_gfx#0
+Constant value identified (word)main::toD0181_gfx#0 in [139] main::toD0181_$3 = > (word)main::toD0181_gfx#0
+Constant value identified (word)main::toD0182_gfx#0 in [149] main::toD0182_$3 = > (word)main::toD0182_gfx#0
+Constant value identified (word)irq_bottom_1::toD0181_gfx#0 in [174] irq_bottom_1::toD0181_$3 = > (word)irq_bottom_1::toD0181_gfx#0
+Constant value identified (word)irq_bottom_2::toD0181_gfx#0 in [196] irq_bottom_2::toD0181_$3 = > (word)irq_bottom_2::toD0181_gfx#0
+Constant value identified (word)__start::__init1_toD0181_gfx#0 in [338] __start::__init1_toD0181_$3 = > (word)__start::__init1_toD0181_gfx#0
 Successful SSA optimization Pass2ConstantValues
-if() condition always true - replacing block destination [72] if(0!=1) goto main::@8
+if() condition always true - replacing block destination [25] if(gotoxy::x#1<$28) goto gotoxy::@return
+if() condition always true - replacing block destination [89] if(0!=1) goto main::@8
 Successful SSA optimization Pass2ConstantIfs
+Rewriting conditional comparison [23] if(gotoxy::y#1<=$19) goto gotoxy::@1
 Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES in [15] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
 Simplifying constant evaluating to zero CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS in [16] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = CIA_TIMER_CONTROL_STOP|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Successful SSA optimization PassNSimplifyConstantZero
@@ -2520,35 +2634,56 @@ Simplifying expression containing zero LINE_BUFFER in
 Simplifying expression containing zero CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A in [16] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = 0|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Simplifying expression containing zero CIA_TIMER_CONTROL_START in [18] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_B_COUNT_UNDERFLOW_A
 Simplifying expression containing zero CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS in [19] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS|CIA_TIMER_CONTROL_A_COUNT_CYCLES
-Simplifying expression containing zero eorfill::line_column#2 in [286] eorfill::eor#0 = eorfill::line_column#2[0]
-Simplifying expression containing zero eorfill::fill_column#2 in [287] eorfill::fill_column#2[0] = eorfill::eor#0
+Simplifying expression containing zero eorfill::line_column#2 in [303] eorfill::eor#0 = eorfill::line_column#2[0]
+Simplifying expression containing zero eorfill::fill_column#2 in [304] eorfill::fill_column#2[0] = eorfill::eor#0
 Successful SSA optimization PassNSimplifyExpressionWithZero
 Simplifying expression containing zero CIA_TIMER_CONTROL_START in [19] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL) = CIA_TIMER_CONTROL_START|CIA_TIMER_CONTROL_CONTINUOUS
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused variable memset::return#2 and assignment [25] memset::return#2 = memset::str#5
-Eliminating unused variable memset::return#3 and assignment [27] memset::return#3 = memset::str#5
-Eliminating unused variable memset::return#4 and assignment [29] memset::return#4 = memset::str#5
-Eliminating unused variable textcolor::return#2 and assignment [36] textcolor::return#2 = textcolor::return#0
-Eliminating unused variable memset::return#5 and assignment [51] memset::return#5 = memset::str#5
-Eliminating unused variable clock::return#2 and assignment [101] clock::return#2 = clock::return#0
+Removing call to constructor procedure [349] call conio_c64_init 
+Successful SSA optimization PassNEliminateUnusedConstructors
+Eliminating unused variable memset::return#2 and assignment [33] memset::return#2 = memset::str#5
+Eliminating unused variable memset::return#3 and assignment [35] memset::return#3 = memset::str#5
+Eliminating unused variable memset::return#4 and assignment [37] memset::return#4 = memset::str#5
+Eliminating unused variable textcolor::return#2 and assignment [44] textcolor::return#2 = textcolor::return#0
+Eliminating unused variable memset::return#5 and assignment [59] memset::return#5 = memset::str#5
+Eliminating unused variable clock::return#2 and assignment [109] clock::return#2 = clock::return#0
 Eliminating unused constant CIA_TIMER_CONTROL_STOP
 Eliminating unused constant CIA_TIMER_CONTROL_CONTINUOUS
 Eliminating unused constant CIA_TIMER_CONTROL_A_COUNT_CYCLES
+Eliminating unused constant gotoxy::y#0
+Eliminating unused constant gotoxy::x#0
+Eliminating unused constant gotoxy::x#1
 Eliminating unused constant line::canvas#0
 Eliminating unused constant line::canvas#1
 Eliminating unused constant line::canvas#2
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused variable clock::return#0 and assignment [10] clock::return#0 = $ffffffff - *CIA2_TIMER_AB
-Eliminating unused variable textcolor::return#0 and assignment [18] textcolor::return#0 = conio_textcolor
+Eliminating unused variable textcolor::return#0 and assignment [20] textcolor::return#0 = conio_textcolor
 Successful SSA optimization PassNEliminateUnusedVars
-Eliminating unused variable conio_textcolor and assignment [17] conio_textcolor = textcolor::color#0
-Eliminating unused variable conio_textcolor(null) and assignment [241] conio_textcolor(null) = CONIO_TEXTCOLOR_DEFAULT
+Eliminating unused variable conio_textcolor and assignment [19] conio_textcolor = textcolor::color#0
+Eliminating unused variable conio_textcolor(null) and assignment [249] conio_textcolor(null) = CONIO_TEXTCOLOR_DEFAULT
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant CONIO_TEXTCOLOR_DEFAULT
 Eliminating unused constant textcolor::color#0
 Successful SSA optimization PassNEliminateUnusedVars
 Eliminating unused constant LIGHT_BLUE
 Successful SSA optimization PassNEliminateUnusedVars
+Eliminating variable conio_c64_init::line#0 from unused block conio_c64_init
+Eliminating variable conio_c64_init::line#2 from unused block conio_c64_init::@1
+Eliminating variable gotoxy::y#1 from unused block conio_c64_init::@1
+Removing unused procedure gotoxy
+Removing unused procedure block gotoxy
+Removing unused procedure block gotoxy::@1
+Removing unused procedure block gotoxy::@2
+Removing unused procedure block gotoxy::@3
+Removing unused procedure block gotoxy::@return
+Removing unused procedure conio_c64_init
+Removing unused procedure block conio_c64_init
+Removing PHI-reference to removed block (conio_c64_init) in block conio_c64_init::@1
+Removing unused procedure block conio_c64_init::@1
+Removing unused procedure block conio_c64_init::@3
+Removing unused procedure block conio_c64_init::@2
+Removing unused procedure block conio_c64_init::@return
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Removing call to empty procedure [92] call clock 
@@ -2790,8 +2925,9 @@ Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::__init1
 Adding NOP phi() at start of __start::__init1_toD0181
 Adding NOP phi() at start of __start::__init1_toD0181_@return
-Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@3
 Adding NOP phi() at start of irq_bottom_2::@3
 Adding NOP phi() at start of irq_bottom_2::toD0181
 Adding NOP phi() at start of irq_bottom_2::toD0181_@return
@@ -2817,83 +2953,84 @@ Adding NOP phi() at start of line::@17
 Adding NOP phi() at start of sgn_u8::@2
 Adding NOP phi() at start of sgn_u8::@1
 CALL GRAPH
-Calls in [__start] to main:7 
-Calls in [irq_bottom_2] to kbhit:11 
-Calls in [main] to memset:34 memset:36 memset:38 setup_irq:44 clock_start:49 memset:51 line:64 line:75 line:84 eorfill:92 
-Calls in [line] to abs_u8:151 abs_u8:156 sgn_u8:161 sgn_u8:166 
+Calls in [__start] to main:8 
+Calls in [irq_bottom_2] to kbhit:12 
+Calls in [main] to memset:35 memset:37 memset:39 setup_irq:45 clock_start:50 memset:52 line:65 line:76 line:85 eorfill:93 
+Calls in [line] to abs_u8:152 abs_u8:157 sgn_u8:162 sgn_u8:167 
 
 Created 41 initial phi equivalence classes
-Coalesced [60] line::x#33 = line::x1#0
-Coalesced [61] line::y#34 = line::y1#0
-Coalesced [62] line::x2#25 = line::x2#0
-Coalesced [63] line::y2#18 = line::y2#0
-Coalesced [71] line::x#34 = line::x1#1
-Coalesced [72] line::y#35 = line::y1#1
-Coalesced [73] line::x2#26 = line::x2#1
-Coalesced [74] line::y2#19 = line::y2#1
-Coalesced [80] line::x#35 = line::x1#2
-Coalesced [81] line::y#36 = line::y1#2
-Coalesced [82] line::x2#27 = line::x2#2
-Coalesced [83] line::y2#20 = line::y2#2
-Coalesced [101] main::p0_idx#19 = main::p0_idx#1
-Coalesced [102] main::p1_idx#19 = main::p1_idx#1
-Coalesced [103] main::p2_idx#19 = main::p2_idx#1
-Not coalescing [105] main::c#4 = main::y#2
-Coalesced [111] main::y#7 = main::y#1
-Coalesced [112] main::cols#7 = main::cols#1
-Coalesced [113] main::screen#7 = main::screen#1
-Coalesced [118] main::x#4 = main::x#1
-Coalesced [119] main::c#5 = main::c#1
-Coalesced [133] memset::dst#5 = memset::dst#1
-Coalesced [150] abs_u8::u#5 = abs_u8::u#0
-Coalesced [155] abs_u8::u#6 = abs_u8::u#1
-Coalesced [160] sgn_u8::u#3 = sgn_u8::u#0
-Coalesced [165] sgn_u8::u#4 = sgn_u8::u#1
-Coalesced [172] line::y#38 = line::y#1
-Coalesced [173] line::y2#22 = line::y2#3
-Coalesced [178] line::y#39 = line::y#17
-Coalesced [179] line::e#8 = line::e#0
-Coalesced [180] line::x#36 = line::x#0
-Coalesced [193] line::e#10 = line::e#2
-Coalesced [194] line::x#38 = line::x#1
-Coalesced [204] line::y#40 = line::y#10
-Coalesced [205] line::e#9 = line::e#5
-Coalesced [206] line::x#37 = line::x#17
-Coalesced [207] line::e#11 = line::e#1
-Coalesced (already) [208] line::x#39 = line::x#15
-Coalesced [217] line::y#41 = line::y#17
-Coalesced [218] line::e1#7 = line::e1#0
-Coalesced [219] line::x#40 = line::x#0
-Coalesced [232] line::y#43 = line::y#12
-Coalesced [233] line::e1#9 = line::e1#2
-Coalesced [234] line::x#42 = line::x#19
-Coalesced (already) [235] line::y#42 = line::y#12
-Coalesced [236] line::e1#8 = line::e1#1
-Coalesced (already) [237] line::x#41 = line::x#18
-Coalesced [239] line::x#44 = line::x#0
-Coalesced [240] line::y#45 = line::y#17
-Coalesced [241] line::e2#9 = line::e2#0
-Coalesced [253] line::y#46 = line::y#4
-Coalesced [254] line::e2#10 = line::e2#2
-Coalesced [263] line::x#43 = line::x#12
-Coalesced [264] line::y#44 = line::y#15
-Coalesced [265] line::e2#8 = line::e2#7
-Coalesced (already) [266] line::y#47 = line::y#13
-Coalesced [267] line::e2#11 = line::e2#1
-Coalesced [268] line::y#37 = line::y#0
-Coalesced [269] line::y2#21 = line::y2#10
-Coalesced [270] eorfill::fill_column#7 = eorfill::canvas#0
-Coalesced [276] eorfill::eor#4 = eorfill::eor#0
-Coalesced [282] eorfill::x#7 = eorfill::x#1
-Coalesced [283] eorfill::line_column#7 = eorfill::line_column#1
-Coalesced [284] eorfill::fill_column#8 = eorfill::fill_column#1
-Coalesced [288] eorfill::y#4 = eorfill::y#1
-Coalesced [289] eorfill::eor#5 = eorfill::eor#1
-Coalesced [293] abs_u8::return#9 = abs_u8::u#2
-Coalesced [297] abs_u8::return#8 = abs_u8::return#2
+Coalesced [61] line::x#33 = line::x1#0
+Coalesced [62] line::y#34 = line::y1#0
+Coalesced [63] line::x2#25 = line::x2#0
+Coalesced [64] line::y2#18 = line::y2#0
+Coalesced [72] line::x#34 = line::x1#1
+Coalesced [73] line::y#35 = line::y1#1
+Coalesced [74] line::x2#26 = line::x2#1
+Coalesced [75] line::y2#19 = line::y2#1
+Coalesced [81] line::x#35 = line::x1#2
+Coalesced [82] line::y#36 = line::y1#2
+Coalesced [83] line::x2#27 = line::x2#2
+Coalesced [84] line::y2#20 = line::y2#2
+Coalesced [102] main::p0_idx#19 = main::p0_idx#1
+Coalesced [103] main::p1_idx#19 = main::p1_idx#1
+Coalesced [104] main::p2_idx#19 = main::p2_idx#1
+Not coalescing [106] main::c#4 = main::y#2
+Coalesced [112] main::y#7 = main::y#1
+Coalesced [113] main::cols#7 = main::cols#1
+Coalesced [114] main::screen#7 = main::screen#1
+Coalesced [119] main::x#4 = main::x#1
+Coalesced [120] main::c#5 = main::c#1
+Coalesced [134] memset::dst#5 = memset::dst#1
+Coalesced [151] abs_u8::u#5 = abs_u8::u#0
+Coalesced [156] abs_u8::u#6 = abs_u8::u#1
+Coalesced [161] sgn_u8::u#3 = sgn_u8::u#0
+Coalesced [166] sgn_u8::u#4 = sgn_u8::u#1
+Coalesced [173] line::y#38 = line::y#1
+Coalesced [174] line::y2#22 = line::y2#3
+Coalesced [179] line::y#39 = line::y#17
+Coalesced [180] line::e#8 = line::e#0
+Coalesced [181] line::x#36 = line::x#0
+Coalesced [194] line::e#10 = line::e#2
+Coalesced [195] line::x#38 = line::x#1
+Coalesced [205] line::y#40 = line::y#10
+Coalesced [206] line::e#9 = line::e#5
+Coalesced [207] line::x#37 = line::x#17
+Coalesced [208] line::e#11 = line::e#1
+Coalesced (already) [209] line::x#39 = line::x#15
+Coalesced [218] line::y#41 = line::y#17
+Coalesced [219] line::e1#7 = line::e1#0
+Coalesced [220] line::x#40 = line::x#0
+Coalesced [233] line::y#43 = line::y#12
+Coalesced [234] line::e1#9 = line::e1#2
+Coalesced [235] line::x#42 = line::x#19
+Coalesced (already) [236] line::y#42 = line::y#12
+Coalesced [237] line::e1#8 = line::e1#1
+Coalesced (already) [238] line::x#41 = line::x#18
+Coalesced [240] line::x#44 = line::x#0
+Coalesced [241] line::y#45 = line::y#17
+Coalesced [242] line::e2#9 = line::e2#0
+Coalesced [254] line::y#46 = line::y#4
+Coalesced [255] line::e2#10 = line::e2#2
+Coalesced [264] line::x#43 = line::x#12
+Coalesced [265] line::y#44 = line::y#15
+Coalesced [266] line::e2#8 = line::e2#7
+Coalesced (already) [267] line::y#47 = line::y#13
+Coalesced [268] line::e2#11 = line::e2#1
+Coalesced [269] line::y#37 = line::y#0
+Coalesced [270] line::y2#21 = line::y2#10
+Coalesced [271] eorfill::fill_column#7 = eorfill::canvas#0
+Coalesced [277] eorfill::eor#4 = eorfill::eor#0
+Coalesced [283] eorfill::x#7 = eorfill::x#1
+Coalesced [284] eorfill::line_column#7 = eorfill::line_column#1
+Coalesced [285] eorfill::fill_column#8 = eorfill::fill_column#1
+Coalesced [289] eorfill::y#4 = eorfill::y#1
+Coalesced [290] eorfill::eor#5 = eorfill::eor#1
+Coalesced [294] abs_u8::return#9 = abs_u8::u#2
+Coalesced [298] abs_u8::return#8 = abs_u8::return#2
 Coalesced down to 28 phi equivalence classes
 Culled Empty Block label __start::__init1_toD0181_@return
 Culled Empty Block label __start::@2
+Culled Empty Block label __start::@3
 Culled Empty Block label irq_bottom_2::@3
 Culled Empty Block label irq_bottom_2::toD0181_@return
 Culled Empty Block label irq_bottom_1::toD0181_@return

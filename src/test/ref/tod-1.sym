@@ -13,10 +13,15 @@ const byte OFFSET_STRUCT_TIME_OF_DAY_MIN = 2
 const byte OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
 struct TIME_OF_DAY TOD_ZERO loadstore mem[4] = { TENTHS: 0, SEC: 0, MIN: 0, HOURS: 0 }
 void __start()
-byte conio_cursor_x loadstore zp[1]:10 405432.6756756756
-byte conio_cursor_y loadstore zp[1]:11 6037754.867924528
-byte* conio_line_color loadstore zp[2]:8 4333353.098039215
-byte* conio_line_text loadstore zp[2]:6 4250019.384615384
+void conio_c64_init()
+const nomodify byte* conio_c64_init::BASIC_CURSOR_LINE = (byte*) 214
+byte conio_c64_init::line
+byte conio_c64_init::line#0 reg byte x 11.0
+byte conio_c64_init::line#2 reg byte x 22.0
+byte conio_cursor_x loadstore zp[1]:6 348860.67441860464
+byte conio_cursor_y loadstore zp[1]:7 5423745.898305085
+byte* conio_line_color loadstore zp[2]:10 4333353.098039215
+byte* conio_line_text loadstore zp[2]:8 4169830.3396226414
 void cputc(byte cputc::c)
 byte cputc::c
 byte cputc::c#0 reg byte a 1050001.5
@@ -29,19 +34,26 @@ to_nomodify byte* cputs::s#0 s zp[2]:2 50000.5
 to_nomodify byte* cputs::s#2 s zp[2]:2 150001.5
 void cscroll()
 void gotoxy(byte gotoxy::x , byte gotoxy::y)
+byte*~ gotoxy::$5 zp[2]:18 2002.0
+byte*~ gotoxy::$6 zp[2]:14 2002.0
+word~ gotoxy::$7 zp[2]:14 1501.5
+word~ gotoxy::$8 zp[2]:16 2002.0
+word~ gotoxy::$9 zp[2]:14 2002.0
 word gotoxy::line_offset
+word gotoxy::line_offset#0 line_offset zp[2]:14 1001.0
 byte gotoxy::x
-const byte gotoxy::x#2 x = 0
 byte gotoxy::y
-const byte gotoxy::y#2 y = 0
+byte gotoxy::y#2 reg byte x 22.0
+byte gotoxy::y#4 reg byte x 671.0
+byte gotoxy::y#5 reg byte x 667.3333333333334
 void main()
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
 void* memcpy::destination
-void* memcpy::destination#2 destination zp[2]:17
+void* memcpy::destination#2 destination zp[2]:23
 byte* memcpy::dst
-byte* memcpy::dst#1 dst zp[2]:17 1.000000000001E12
-byte* memcpy::dst#2 dst zp[2]:17 1.0003333333346667E12
-byte* memcpy::dst#4 dst zp[2]:17 2.000000002E9
+byte* memcpy::dst#1 dst zp[2]:23 1.000000000001E12
+byte* memcpy::dst#2 dst zp[2]:23 1.0003333333346667E12
+byte* memcpy::dst#4 dst zp[2]:23 2.000000002E9
 word memcpy::num
 void* memcpy::return
 void* memcpy::source
@@ -51,7 +63,7 @@ byte* memcpy::src#1 src zp[2]:4 2.000000000002E12
 byte* memcpy::src#2 src zp[2]:4 1.00025000000125E12
 byte* memcpy::src#4 src zp[2]:4 1.000000001E9
 byte* memcpy::src_end
-byte* memcpy::src_end#0 src_end zp[2]:15 1.2512500000025E11
+byte* memcpy::src_end#0 src_end zp[2]:21 1.2512500000025E11
 void* memset(void* memset::str , byte memset::c , word memset::num)
 byte memset::c
 byte memset::c#4 reg byte x 1.428571428572857E11
@@ -60,7 +72,7 @@ byte* memset::dst#1 dst zp[2]:4 2.000000000002E12
 byte* memset::dst#2 dst zp[2]:4 1.3336666666683335E12
 byte* memset::dst#4 dst zp[2]:4 2.000000002E9
 byte* memset::end
-byte* memset::end#0 end zp[2]:17 1.668333333336667E11
+byte* memset::end#0 end zp[2]:23 1.668333333336667E11
 word memset::num
 void* memset::return
 void* memset::str
@@ -73,15 +85,15 @@ byte tod_init::tod_HOURS#0 reg byte y 37.33333333333333
 byte tod_init::tod_MIN
 byte tod_init::tod_MIN#0 reg byte x 22.4
 byte tod_init::tod_SEC
-byte tod_init::tod_SEC#0 tod_SEC zp[1]:11 16.0
+byte tod_init::tod_SEC#0 tod_SEC zp[1]:13 16.0
 byte tod_init::tod_TENTHS
-byte tod_init::tod_TENTHS#0 tod_TENTHS zp[1]:10 12.444444444444443
+byte tod_init::tod_TENTHS#0 tod_TENTHS zp[1]:12 12.444444444444443
 struct TIME_OF_DAY tod_read()
 byte tod_read::hours
 byte tod_read::mins
 struct TIME_OF_DAY tod_read::return
 byte tod_read::return_HOURS
-byte tod_read::return_HOURS#0 return_HOURS zp[1]:14 122.44444444444446
+byte tod_read::return_HOURS#0 return_HOURS zp[1]:20 122.44444444444446
 byte tod_read::return_HOURS#2 reg byte a 50.5
 byte tod_read::return_MIN
 byte tod_read::return_MIN#0 reg byte a 157.42857142857142
@@ -122,27 +134,32 @@ byte tod_str::tod_HOURS#0 reg byte x 525.75
 byte tod_str::tod_MIN
 byte tod_str::tod_MIN#0 reg byte y 191.1818181818182
 byte tod_str::tod_SEC
-byte tod_str::tod_SEC#0 tod_SEC zp[1]:13 116.83333333333334
+byte tod_str::tod_SEC#0 tod_SEC zp[1]:20 116.83333333333334
 byte tod_str::tod_TENTHS
-byte tod_str::tod_TENTHS#0 tod_TENTHS zp[1]:14 84.12
+byte tod_str::tod_TENTHS#0 tod_TENTHS zp[1]:13 84.12
 
+reg byte x [ conio_c64_init::line#2 conio_c64_init::line#0 ]
+reg byte x [ gotoxy::y#5 gotoxy::y#4 gotoxy::y#2 ]
 zp[2]:2 [ cputs::s#2 cputs::s#0 ]
 zp[2]:4 [ memset::str#3 memset::dst#2 memset::dst#4 memset::dst#1 memcpy::source#2 memcpy::src#2 memcpy::src#4 memcpy::src#1 ]
 reg byte x [ memset::c#4 ]
-zp[2]:6 [ conio_line_text ]
-zp[2]:8 [ conio_line_color ]
-zp[1]:10 [ tod_init::tod_TENTHS#0 conio_cursor_x ]
-zp[1]:11 [ tod_init::tod_SEC#0 conio_cursor_y ]
+zp[1]:6 [ conio_cursor_x ]
+zp[1]:7 [ conio_cursor_y ]
+zp[2]:8 [ conio_line_text ]
+zp[2]:10 [ conio_line_color ]
 reg byte x [ tod_init::tod_MIN#0 ]
 reg byte y [ tod_init::tod_HOURS#0 ]
 reg byte y [ tod_read::return_TENTHS#2 ]
 reg byte x [ tod_read::return_SEC#2 ]
-zp[1]:12 [ tod_read::return_MIN#2 ]
+zp[1]:12 [ tod_read::return_MIN#2 tod_init::tod_TENTHS#0 ]
 reg byte a [ tod_read::return_HOURS#2 ]
-zp[1]:13 [ tod_str::tod_SEC#0 ]
+zp[1]:13 [ tod_str::tod_TENTHS#0 tod_init::tod_SEC#0 ]
 reg byte y [ tod_str::tod_MIN#0 ]
 reg byte x [ tod_str::tod_HOURS#0 ]
-zp[1]:14 [ tod_read::return_HOURS#0 tod_str::tod_TENTHS#0 ]
+zp[2]:14 [ gotoxy::$7 gotoxy::$9 gotoxy::line_offset#0 gotoxy::$6 ]
+zp[2]:16 [ gotoxy::$8 ]
+zp[2]:18 [ gotoxy::$5 ]
+zp[1]:20 [ tod_read::return_HOURS#0 tod_str::tod_SEC#0 ]
 reg byte a [ tod_read::return_MIN#0 ]
 reg byte x [ tod_read::return_SEC#0 ]
 reg byte y [ tod_read::return_TENTHS#0 ]
@@ -164,6 +181,6 @@ reg byte a [ tod_str::$14 ]
 reg byte a [ tod_str::$15 ]
 reg byte a [ cputs::c#1 ]
 reg byte a [ cputc::c#0 ]
-zp[2]:15 [ memcpy::src_end#0 ]
-zp[2]:17 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
+zp[2]:21 [ memcpy::src_end#0 ]
+zp[2]:23 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ]
 mem[4] [ TOD_ZERO ]

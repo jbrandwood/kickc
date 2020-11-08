@@ -47,7 +47,7 @@ void conio_mega65_init() {
     // Position cursor at current line
     char * const BASIC_CURSOR_LINE = 0xeb;
     char line = *BASIC_CURSOR_LINE+1;
-    if(line>24) line=24;
+    if(line>=CONIO_HEIGHT) line=CONIO_HEIGHT-1;
     gotoxy(0, line);
 }
 

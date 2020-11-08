@@ -16,6 +16,18 @@ const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE;
 // Use the shared CMB flat memory implementation
 #include "conio-cbm-shared.c"
 
+// Initializer for conio.h on C64
+#pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
+
+// Set initial cursor position
+void conio_c64_init() {
+    // Position cursor at current line
+    char * const BASIC_CURSOR_LINE = 0xD6;
+    char line = *BASIC_CURSOR_LINE;
+    if(line>=CONIO_HEIGHT) line=CONIO_HEIGHT-1;
+    gotoxy(0, line);
+}
+
 // Return true if there's a key waiting, return false if not
 unsigned char kbhit (void) {
     // CIA#1 Port A: keyboard matrix columns and joystick #2

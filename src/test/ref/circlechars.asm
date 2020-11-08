@@ -14,13 +14,13 @@
   .label SCREEN = $400
   // The number of bytes on the screen
   // The current cursor x-position
-  .label conio_cursor_x = 9
+  .label conio_cursor_x = $d
   // The current cursor y-position
-  .label conio_cursor_y = $a
+  .label conio_cursor_y = $e
   // The current text cursor line start
-  .label conio_line_text = $b
+  .label conio_line_text = $f
   // The current color cursor line start
-  .label conio_line_color = $d
+  .label conio_line_color = $11
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -37,18 +37,36 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
+    // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
+    jsr conio_c64_init
     jsr main
     rts
 }
+// Set initial cursor position
+conio_c64_init: {
+    // Position cursor at current line
+    .label BASIC_CURSOR_LINE = $d6
+    // line = *BASIC_CURSOR_LINE
+    ldx BASIC_CURSOR_LINE
+    // if(line>=CONIO_HEIGHT)
+    cpx #$19
+    bcc __b1
+    ldx #$19-1
+  __b1:
+    // gotoxy(0, line)
+    jsr gotoxy
+    // }
+    rts
+}
 main: {
-    .label __9 = $10
-    .label __10 = 4
-    .label yd = $f
-    .label dist_sq = $10
-    .label y = 9
-    .label sc = $b
-    .label x = $a
-    .label count = 2
+    .label __9 = $14
+    .label __10 = 8
+    .label yd = $13
+    .label dist_sq = $14
+    .label y = 2
+    .label sc = 5
+    .label x = 7
+    .label count = 3
     // memset(SCREEN, ' ', 1000)
     ldx #' '
     lda #<SCREEN
@@ -78,6 +96,7 @@ main: {
   !:
     bmi __b2
     // gotoxy(0,0)
+    ldx #0
     jsr gotoxy
     // printf("%u chars",count)
     jsr printf_uint
@@ -172,13 +191,88 @@ main: {
     s: .text " chars"
     .byte 0
 }
+// Set the cursor to the specified position
+// gotoxy(byte register(X) y)
+gotoxy: {
+    .label __5 = $1a
+    .label __6 = $16
+    .label __7 = $16
+    .label line_offset = $16
+    .label __8 = $18
+    .label __9 = $16
+    // if(y>CONIO_HEIGHT)
+    cpx #$19+1
+    bcc __b2
+    ldx #0
+  __b2:
+    // conio_cursor_x = x
+    lda #0
+    sta.z conio_cursor_x
+    // conio_cursor_y = y
+    stx.z conio_cursor_y
+    // (unsigned int)y*CONIO_WIDTH
+    txa
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    // line_offset = (unsigned int)y*CONIO_WIDTH
+    lda.z __7
+    asl
+    sta.z __8
+    lda.z __7+1
+    rol
+    sta.z __8+1
+    asl.z __8
+    rol.z __8+1
+    lda.z __9
+    clc
+    adc.z __8
+    sta.z __9
+    lda.z __9+1
+    adc.z __8+1
+    sta.z __9+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    // CONIO_SCREEN_TEXT + line_offset
+    clc
+    lda.z line_offset
+    adc #<DEFAULT_SCREEN
+    sta.z __5
+    lda.z line_offset+1
+    adc #>DEFAULT_SCREEN
+    sta.z __5+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
+    // CONIO_SCREEN_COLORS + line_offset
+    clc
+    lda.z __6
+    adc #<COLORRAM
+    sta.z __6
+    lda.z __6+1
+    adc #>COLORRAM
+    sta.z __6+1
+    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    lda.z __6
+    sta.z conio_line_color
+    lda.z __6+1
+    sta.z conio_line_color+1
+    // }
+    rts
+}
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($10) str, byte register(X) c, word zp(4) num)
+// memset(void* zp($14) str, byte register(X) c, word zp(8) num)
 memset: {
-    .label end = 4
-    .label dst = $10
-    .label num = 4
-    .label str = $10
+    .label end = 8
+    .label dst = $14
+    .label num = 8
+    .label str = $14
     // if(num>0)
     lda.z num
     bne !+
@@ -216,33 +310,10 @@ memset: {
   !:
     jmp __b2
 }
-// Set the cursor to the specified position
-gotoxy: {
-    .const x = 0
-    .const y = 0
-    // conio_cursor_x = x
-    lda #x
-    sta.z conio_cursor_x
-    // conio_cursor_y = y
-    lda #y
-    sta.z conio_cursor_y
-    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
-    lda #<DEFAULT_SCREEN
-    sta.z conio_line_text
-    lda #>DEFAULT_SCREEN
-    sta.z conio_line_text+1
-    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
-    lda #<COLORRAM
-    sta.z conio_line_color
-    lda #>COLORRAM
-    sta.z conio_line_color+1
-    // }
-    rts
-}
 // Print an unsigned int using a specific format
-// printf_uint(word zp(2) uvalue)
+// printf_uint(word zp(3) uvalue)
 printf_uint: {
-    .label uvalue = 2
+    .label uvalue = 3
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -258,9 +329,9 @@ printf_uint: {
     rts
 }
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp(7) s)
+// cputs(byte* zp($b) s)
 cputs: {
-    .label s = 7
+    .label s = $b
   __b1:
     // while(c=*s++)
     ldy #0
@@ -280,10 +351,10 @@ cputs: {
 }
 // Multiply of two signed chars to a signed int
 // Fixes offsets introduced by using unsigned multiplication
-// mul8s(signed byte zp(6) a, signed byte register(Y) b)
+// mul8s(signed byte zp($a) a, signed byte register(Y) b)
 mul8s: {
-    .label m = 4
-    .label a = 6
+    .label m = 8
+    .label a = $a
     // mul8u((char)a, (char) b)
     ldx.z a
     tya
@@ -319,13 +390,13 @@ mul8s: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(2) value, byte* zp($10) buffer)
+// utoa(word zp(3) value, byte* zp($14) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $12
-    .label buffer = $10
-    .label digit = 6
-    .label value = 2
+    .label digit_value = $1c
+    .label buffer = $14
+    .label digit = $a
+    .label value = 3
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -442,9 +513,9 @@ cputc: {
 // Perform binary multiplication of two unsigned 8-bit chars into a 16-bit unsigned int
 // mul8u(byte register(X) a, byte register(A) b)
 mul8u: {
-    .label mb = 7
-    .label res = 4
-    .label return = 4
+    .label mb = $b
+    .label res = 8
+    .label return = 8
     // mb = b
     sta.z mb
     lda #0
@@ -490,12 +561,12 @@ mul8u: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp($10) buffer, word zp(2) value, word zp($12) sub)
+// utoa_append(byte* zp($14) buffer, word zp(3) value, word zp($1c) sub)
 utoa_append: {
-    .label buffer = $10
-    .label value = 2
-    .label sub = $12
-    .label return = 2
+    .label buffer = $14
+    .label value = 3
+    .label sub = $1c
+    .label return = 3
     ldx #0
   __b1:
     // while (value >= sub)
@@ -626,13 +697,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($12) destination, void* zp($10) source)
+// memcpy(void* zp($1c) destination, void* zp($14) source)
 memcpy: {
-    .label src_end = $14
-    .label dst = $12
-    .label src = $10
-    .label source = $10
-    .label destination = $12
+    .label src_end = $1e
+    .label dst = $1c
+    .label src = $14
+    .label source = $14
+    .label destination = $1c
     // src_end = (char*)source+num
     clc
     lda.z source

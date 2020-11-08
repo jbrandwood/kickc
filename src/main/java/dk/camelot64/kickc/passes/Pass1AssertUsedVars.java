@@ -76,7 +76,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
          Collection<VariableRef> used = referenceInfos.getUsedVars(statement);
          for(VariableRef usedRef : used) {
             if(!defined.contains(usedRef)) {
-               throw new CompileError("Error! Variable used before being defined " + usedRef.toString(getProgram()) + " in " + statement.toString(getProgram(), false), statement.getSource());
+               throw new CompileError("Variable used before being defined " + usedRef.toString(getProgram()) + " in " + statement.toString(getProgram(), false), statement.getSource());
             }
          }
          Collection<VariableRef> defd = referenceInfos.getDefinedVars(statement);
@@ -143,7 +143,7 @@ public class Pass1AssertUsedVars extends Pass1Base {
          // Found used variables - check that they are defined
          for(SymbolVariableRef usedRef : used) {
             if(!defined.contains(usedRef)) {
-               throw new CompileError("Error! Variable used before being defined " + usedRef.toString(getProgram()) + " in " + phiBlock.toString(getProgram(), false), phiBlock.getSource());
+               throw new CompileError("Variable used before being defined " + usedRef.toString(getProgram()) + " in " + phiBlock.toString(getProgram(), false), phiBlock.getSource());
             }
          }
          // Add all variables fefined by the PHI block

@@ -43,7 +43,7 @@ public class Pass1CallVoidReturns extends Pass2SsaOptimization {
                      if(usages.size() > 0) {
                         final Integer usageIdx = usages.iterator().next();
                         final Statement usage = getProgram().getStatementInfos().getStatement(usageIdx);
-                        throw new CompileError("Error! Function " + procedure.getLocalName() + " does not return a value! ", usage);
+                        throw new CompileError("Function " + procedure.getLocalName() + " does not return a value! ", usage);
                      } else {
                         // Delete the temporary variable
                         final Variable var = getScope().getVar(tmpVar);

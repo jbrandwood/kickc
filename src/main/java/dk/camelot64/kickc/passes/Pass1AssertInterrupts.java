@@ -24,20 +24,20 @@ public class Pass1AssertInterrupts extends Pass1Base {
                ProcedureRef procedureRef = ((StatementCalling) statement).getProcedure();
                Procedure procedure = getScope().getProcedure(procedureRef);
                if(procedure.getInterruptType()!=null) {
-                  throw new CompileError("Error! Interrupts cannot be called.", statement.getSource());
+                  throw new CompileError("Interrupts cannot be called.", statement.getSource());
                }
             }
          }
          for(Procedure procedure : getScope().getAllProcedures(true)) {
             if(procedure.getInterruptType()!=null) {
                if(procedure.isDeclaredInline()) {
-                  throw new CompileError("Error! Interrupts cannot be inlined. " + procedure.toString());
+                  throw new CompileError("Interrupts cannot be inlined. " + procedure.toString());
                }
                if(procedure.getParameters().size()>0) {
-                  throw new CompileError("Error! Interrupts cannot have parameters. " + procedure.toString());
+                  throw new CompileError("Interrupts cannot have parameters. " + procedure.toString());
                }
                if(!SymbolType.VOID.equals(procedure.getReturnType())) {
-                  throw new CompileError("Error! Interrupts cannot return anything. " + procedure.toString());
+                  throw new CompileError("Interrupts cannot return anything. " + procedure.toString());
                }
             }
          }

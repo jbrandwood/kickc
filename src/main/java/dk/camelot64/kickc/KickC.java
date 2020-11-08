@@ -53,6 +53,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-a"}, description = "Assemble the output file using KickAssembler. Produces a binary file.")
    private boolean assemble = false;
 
+   @CommandLine.Option(names = {"-Xassembler"}, description = "Passes the next option to the assembler. The option should generally be quoted. This option can be repeated to pass multiple options.")
+   private List<String> assemblerOptions = null;
+
    @CommandLine.Option(names = {"-e"}, description = "Execute the assembled binary file using an appropriate emulator. The emulator chosen depends on the target platform.")
    private boolean execute = false;
 
@@ -181,6 +184,8 @@ public class KickC implements Callable<Integer> {
 
    public static void main(String[] args) {
       final CommandLine commandLine = new CommandLine(new KickC());
+      commandLine.setTrimQuotes(true);
+      commandLine.setUnmatchedOptionsAllowedAsOptionParameters(true);
       final int exitCode = commandLine.execute(args);
       System.exit(exitCode);
    }
@@ -438,6 +443,10 @@ public class KickC implements Callable<Integer> {
             assembleCommand.add("-vicesymbols");
             assembleCommand.add("-showmem");
             assembleCommand.add("-debugdump");
+            // Add passed options
+            if(assemblerOptions !=null)
+               assembleCommand.addAll(assemblerOptions);
+
             if(verbose) {
                System.out.print("Assembling command: java -jar KickAss.jar ");
                for(String cmd : assembleCommand) {
@@ -465,7 +474,6 @@ public class KickC implements Callable<Integer> {
 
          // Execute the binary file if instructed
          if(emulator != null) {
-
             // Find commandline options for the emulator
             String emuOptions = "";
             if(emulator.equals("C64Debugger")) {
@@ -478,7 +486,6 @@ public class KickC implements Callable<Integer> {
                Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
                emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
             }
-
             System.out.println("Executing " + outputBinaryFilePath + " using " + emulator);
             String executeCommand = emulator + " " + emuOptions + outputBinaryFilePath.toAbsolutePath().toString();
             if(verbose) {

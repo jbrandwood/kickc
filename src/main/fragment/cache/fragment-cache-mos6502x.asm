@@ -19956,3 +19956,16 @@ bne !-
 clc
 adc #2
 sta {z1}
+//FRAGMENT vbuz1=pbuc1_derefidx_vbum2
+ldy {m2}
+lda {c1},y
+sta {z1}
+//FRAGMENT vbuaa=pbuc1_derefidx_vbum1
+ldy {m1}
+lda {c1},y
+//FRAGMENT vbuxx=pbuc1_derefidx_vbum1
+ldy {m1}
+ldx {c1},y
+//FRAGMENT vbuyy=pbuc1_derefidx_vbum1
+ldx {m1}
+ldy {c1},x

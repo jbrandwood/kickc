@@ -4,7 +4,7 @@
 // Display Lists atariarchives.org/mapping/appendix8.php
 
 #pragma target(atarixl)
-#pragma emulator("65XEDebugger")
+#pragma encoding(screencode_atari)
 #include <atari-xl.h>
 
 void main() {

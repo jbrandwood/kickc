@@ -4,7 +4,7 @@
 byte* const BG_COLOR = 0xd021;
 byte* const RASTER = 0xd012;
 
-#pragma pc(0x1000)
+#pragma start_address(0x1000)
 
 void main() {
     asm { sei }
@@ -16,7 +16,7 @@ void main() {
     }
 }
 
-#pragma pc(0x2000)
+#pragma start_address(0x2000)
 
 void incScreen() {
     *BG_COLOR = *RASTER;

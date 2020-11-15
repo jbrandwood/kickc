@@ -1,7 +1,7 @@
 // Raster Bars for Atari XL / XE
 
 #pragma target(atarixl)
-#pragma emulator("65XEDebugger")
+#pragma encoding(screencode_atari)
 #include <atari-xl.h>
 
 void main() {

@@ -38,7 +38,7 @@ public class CParser {
    public static final String PRAGMA_ENCODING = "encoding";
    public static final String PRAGMA_CODE_SEG = "code_seg";
    public static final String PRAGMA_DATA_SEG = "data_seg";
-   public static final String PRAGMA_PC = "pc";
+   public static final String PRAGMA_START_ADDRESS = "start_address";
    public static final String PRAGMA_CALLING = "calling";
    public static final String PRAGMA_ZP_RESERVE = "zp_reserve";
    public static final String PRAGMA_CONSTRUCTOR_FOR = "constructor_for";

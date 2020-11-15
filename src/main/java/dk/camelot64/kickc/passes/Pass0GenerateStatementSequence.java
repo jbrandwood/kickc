@@ -243,9 +243,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          case CParser.PRAGMA_DATA_SEG:
             this.currentDataSegment = pragmaParamName(pragmaParamSingle(ctx));
             break;
-         case CParser.PRAGMA_PC:
-            Number programPc = pragmaParamNumber(pragmaParamSingle(ctx));
-            program.setProgramPc(programPc);
+         case CParser.PRAGMA_START_ADDRESS:
+            Number startAddress = pragmaParamNumber(pragmaParamSingle(ctx));
+            program.getTargetPlatform().setStartAddress(startAddress);
             break;
          case CParser.PRAGMA_CALLING:
             currentCallingConvention = pragmaParamCallingConvention(pragmaParamSingle(ctx));

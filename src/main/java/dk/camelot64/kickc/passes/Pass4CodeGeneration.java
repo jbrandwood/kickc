@@ -96,9 +96,8 @@ public class Pass4CodeGeneration {
       linkScriptBody = linkScriptBody.replace("%^O", outputFileName.toUpperCase());
       String entryName = program.getStartProcedure().getFullName();
       linkScriptBody = linkScriptBody.replace("%E", entryName);
-      Number programPc = program.getProgramPc();
-      if(programPc == null) programPc = 0x080d;
-      linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(programPc));
+      Number startAddress = program.getTargetPlatform().getStartAddress();
+      linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(startAddress));
       asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
 
       // If the link script contains ".segment" then generate segments!

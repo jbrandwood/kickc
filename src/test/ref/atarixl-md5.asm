@@ -1,27 +1,12 @@
 // 8 bit converted md5 calculator
   // Atari XL/XE executable XEX file with a single segment
 // https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.plugin "dk.camelot64.kickass.xexplugin.AtariXex"
 .file [name="atarixl-md5.xex", type="bin", segments="XexFile"]
-.segmentdef XexFile
-.segment XexFile
-// Binary File Header
-.byte $ff, $ff
-// Program segment [start address, end address, data]
-.word ProgramStart, ProgramEnd-1
-.segmentout [ segments="Program" ]
-// RunAd - Run Address Segment [start address, end address, data]
-.word $02e0, $02e1
-.word main
-.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
-.segmentdef ProgramStart [start=$2000]
-.segment ProgramStart
-ProgramStart:
-.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef XexFile [segments="Program", modify="XexFormat", _RunAddr=main]
+.segmentdef Program [segments="Code, Data"]
+.segmentdef Code [start=$2000]
 .segmentdef Data [startAfter="Code"]
-.segmentdef ProgramEnd [startAfter="Data"]
-.segment ProgramEnd
-ProgramEnd:
-
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
   // 2-byte saved memory scan counter
@@ -39,10 +24,10 @@ ProgramEnd:
   .label ROWCRS = $54
   // 2-byte cursor column
   .label COLCRS = $55
-  .label h0 = 6
-  .label h1 = $a
-  .label h2 = $e
-  .label h3 = $12
+  .label h0 = $84
+  .label h1 = $88
+  .label h2 = $8c
+  .label h3 = $90
 .segment Code
 main: {
     // printf("Calculating MD5\n")
@@ -71,9 +56,9 @@ main: {
 }
 .segment Code
 // Output a NUL-terminated string at the current cursor position
-// cputs(byte* zp($38) s)
+// cputs(byte* zp($b6) s)
 cputs: {
-    .label s = $38
+    .label s = $b6
   __b1:
     // while (c = *s++)
     ldy #0
@@ -93,11 +78,11 @@ cputs: {
     jmp __b1
 }
 // Computes the length of the string str up to but not including the terminating null character.
-// strlen(byte* zp($38) str)
+// strlen(byte* zp($b6) str)
 strlen: {
-    .label len = 2
-    .label str = $38
-    .label return = 2
+    .label len = $80
+    .label str = $b6
+    .label return = $80
     lda #<0
     sta.z len
     sta.z len+1
@@ -122,46 +107,46 @@ strlen: {
   !:
     jmp __b1
 }
-// md5(word zp(2) initial_len)
+// md5(word zp($80) initial_len)
 md5: {
-    .label __0 = $34
-    .label __1 = $34
-    .label __2 = $34
-    .label __3 = $34
-    .label bits_len = $3a
-    .label __8 = 2
-    .label __26 = $27
-    .label __27 = $52
-    .label __28 = $52
-    .label __30 = $27
-    .label __31 = $4e
-    .label __32 = $4e
-    .label __34 = $2c
-    .label __37 = $27
-    .label __39 = $2c
-    .label __42 = $27
-    .label __43 = $27
-    .label __65 = $17
-    .label __66 = $17
-    .label __67 = $17
-    .label __71 = $2b
-    .label __72 = $44
-    .label initial_len = 2
-    .label new_len = $34
-    .label msg = $36
-    .label w = $3e
-    .label a = $17
-    .label b = $1b
-    .label c = $1f
-    .label d = $23
-    .label offset = 4
-    .label f = $27
-    .label g = $2b
-    .label temp = $23
-    .label lr = $4a
-    .label b_1 = $4a
-    .label i = $16
-    .label __74 = $38
+    .label __0 = $b2
+    .label __1 = $b2
+    .label __2 = $b2
+    .label __3 = $b2
+    .label bits_len = $b8
+    .label __8 = $80
+    .label __26 = $a5
+    .label __27 = $d0
+    .label __28 = $d0
+    .label __30 = $a5
+    .label __31 = $cc
+    .label __32 = $cc
+    .label __34 = $aa
+    .label __37 = $a5
+    .label __39 = $aa
+    .label __42 = $a5
+    .label __43 = $a5
+    .label __65 = $95
+    .label __66 = $95
+    .label __67 = $95
+    .label __71 = $a9
+    .label __72 = $c2
+    .label initial_len = $80
+    .label new_len = $b2
+    .label msg = $b4
+    .label w = $bc
+    .label a = $95
+    .label b = $99
+    .label c = $9d
+    .label d = $a1
+    .label offset = $82
+    .label f = $a5
+    .label g = $a9
+    .label temp = $a1
+    .label lr = $c8
+    .label b_1 = $c8
+    .label i = $94
+    .label __74 = $b6
     // initial_len + 8
     lda #8
     clc
@@ -1050,10 +1035,10 @@ md5: {
 .segment Code
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
-// cputc(byte zp($33) c)
+// cputc(byte zp($b1) c)
 cputc: {
     .label convertToScreenCode1_v = c
-    .label c = $33
+    .label c = $b1
     // if (c == '\r')
     lda #'\r'
     cmp.z c
@@ -1116,10 +1101,10 @@ cputc: {
 // Allocates memory and returns a pointer to it. Sets allocated memory to zero.
 // - nitems − This is the number of elements to be allocated.
 // - size − This is the size of elements.
-// calloc(word zp($5d) nitems)
+// calloc(word zp($db) nitems)
 calloc: {
-    .label return = $36
-    .label nitems = $5d
+    .label return = $b4
+    .label nitems = $db
     // malloc(nitems*size)
     lda.z nitems
     sta.z malloc.size
@@ -1137,14 +1122,14 @@ calloc: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($5d) destination, byte* zp($2c) source, word zp(2) num)
+// memcpy(void* zp($db) destination, byte* zp($aa) source, word zp($80) num)
 memcpy: {
-    .label src_end = $5a
-    .label dst = $5d
-    .label src = $2c
-    .label destination = $5d
-    .label source = $2c
-    .label num = 2
+    .label src_end = $d8
+    .label dst = $db
+    .label src = $aa
+    .label destination = $db
+    .label source = $aa
+    .label num = $80
     // src_end = (char*)source+num
     lda.z source
     clc
@@ -1180,9 +1165,9 @@ memcpy: {
     jmp __b1
 }
 // Print an unsigned char using a specific format
-// printf_uchar(byte register(X) uvalue, byte zp($49) format_zero_padding)
+// printf_uchar(byte register(X) uvalue, byte zp($c7) format_zero_padding)
 printf_uchar: {
-    .label format_zero_padding = $49
+    .label format_zero_padding = $c7
     // printf_buffer.sign = format.sign_always?'+':0
     // Handle any sign
     lda #0
@@ -1198,10 +1183,10 @@ printf_uchar: {
     // }
     rts
 }
-// print32(dword zp($40) l)
+// print32(dword zp($be) l)
 print32: {
     .label dp = l
-    .label l = $40
+    .label l = $be
     // printf("%02x%02x%02x%02x", dp[0], dp[1], dp[2], dp[3])
     ldx.z dp
     lda #1
@@ -1236,13 +1221,13 @@ cputln: {
     // }
     rts
 }
-// leftRotate(dword zp($45) a, byte zp($49) r)
+// leftRotate(dword zp($c3) a, byte zp($c7) r)
 leftRotate: {
     .label p = a
     .label result = p
-    .label a = $45
-    .label return = $4a
-    .label r = $49
+    .label a = $c3
+    .label return = $c8
+    .label r = $c7
     // if (r < 8)
     lda.z r
     cmp #8
@@ -1319,11 +1304,11 @@ leftRotate: {
 }
 // mul7(byte register(A) a)
 mul7: {
-    .label __1 = $2c
-    .label return = $2c
-    .label __2 = $5a
-    .label __3 = $5a
-    .label __4 = $5a
+    .label __1 = $aa
+    .label return = $aa
+    .label __2 = $d8
+    .label __3 = $d8
+    .label __4 = $d8
     // ((uint16_t) a) * 7
     sta.z __1
     lda #0
@@ -1353,10 +1338,10 @@ mul7: {
     // }
     rts
 }
-// mod16(word zp($2c) a)
+// mod16(word zp($aa) a)
 mod16: {
-    .label t = $2c
-    .label a = $2c
+    .label t = $aa
+    .label a = $aa
     // t = a % 16
     lda #$10-1
     and.z t
@@ -1371,9 +1356,9 @@ mod16: {
 }
 // mul3(byte register(A) a)
 mul3: {
-    .label __1 = $2c
-    .label return = $2c
-    .label __2 = $5d
+    .label __1 = $aa
+    .label return = $aa
+    .label __2 = $db
     // ((uint16_t) a) * 3
     sta.z __1
     lda #0
@@ -1396,9 +1381,9 @@ mul3: {
 }
 // mul5(byte register(A) a)
 mul5: {
-    .label __1 = $2c
-    .label return = $2c
-    .label __2 = $5d
+    .label __1 = $aa
+    .label return = $aa
+    .label __2 = $db
     // ((uint16_t) a) * 5
     sta.z __1
     lda #0
@@ -1423,7 +1408,7 @@ mul5: {
 }
 // Puts a character to the screen a the current location. Uses internal screencode. Deals with storing the old cursor value
 putchar: {
-    .label loc = $5a
+    .label loc = $d8
     // **OLDADR = *OLDCHR
     lda OLDCHR
     ldy OLDADR
@@ -1449,7 +1434,7 @@ putchar: {
 }
 // Handles cursor movement, displaying it if required, and inverting character it is over if there is one (and enabled)
 setcursor: {
-    .label loc = $5a
+    .label loc = $d8
     // **OLDADR = *OLDCHR
     // save the current oldchr into oldadr
     lda OLDCHR
@@ -1491,7 +1476,7 @@ setcursor: {
     rts
 }
 newline: {
-    .label start = $2e
+    .label start = $ac
     // if ((*ROWCRS)++ == CONIO_HEIGHT)
     inc ROWCRS
     lda #$18
@@ -1556,10 +1541,10 @@ newline: {
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
 // The content of the newly allocated block of memory is not initialized, remaining with indeterminate values.
-// malloc(word zp($36) size)
+// malloc(word zp($b4) size)
 malloc: {
-    .label mem = $36
-    .label size = $36
+    .label mem = $b4
+    .label size = $b4
     // mem = heap_head-size
     sec
     lda #<HEAP_TOP
@@ -1572,12 +1557,12 @@ malloc: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($2e) str, word zp($5d) num)
+// memset(void* zp($ac) str, word zp($db) num)
 memset: {
-    .label end = $5d
-    .label dst = $2e
-    .label str = $2e
-    .label num = $5d
+    .label end = $db
+    .label dst = $ac
+    .label str = $ac
+    .label num = $db
     // if(num>0)
     lda.z num
     bne !+
@@ -1620,12 +1605,12 @@ memset: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// uctoa(byte register(X) value, byte* zp($2e) buffer)
+// uctoa(byte register(X) value, byte* zp($ac) buffer)
 uctoa: {
-    .label digit_value = $5c
-    .label buffer = $2e
-    .label digit = $30
-    .label started = $31
+    .label digit_value = $da
+    .label buffer = $ac
+    .label digit = $ae
+    .label started = $af
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
     sta.z buffer
     lda #>printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1684,14 +1669,14 @@ uctoa: {
 }
 // Print the contents of the number buffer using a specific format.
 // This handles minimum length, zero-filling, and left/right justification from the format
-// printf_number_buffer(byte zp($56) buffer_sign, byte zp($49) format_zero_padding)
+// printf_number_buffer(byte zp($d4) buffer_sign, byte zp($c7) format_zero_padding)
 printf_number_buffer: {
     .const format_min_length = 2
     .label buffer_digits = printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
-    .label __19 = 2
-    .label buffer_sign = $56
-    .label format_zero_padding = $49
-    .label padding = $30
+    .label __19 = $80
+    .label buffer_sign = $d4
+    .label format_zero_padding = $c7
+    .label padding = $ae
     // strlen(buffer.digits)
     lda #<buffer_digits
     sta.z strlen.str
@@ -1787,10 +1772,10 @@ move16Left: {
     // }
     rts
 }
-// rotateLeft(byte* zp($57) p, byte zp($59) r)
+// rotateLeft(byte* zp($d5) p, byte zp($d7) r)
 rotateLeft: {
-    .label p = $57
-    .label r = $59
+    .label p = $d5
+    .label r = $d7
     // kickasm
     ldx #r
 		!s:
@@ -1827,12 +1812,12 @@ move8Left: {
 }
 // Return a pointer to the location of the cursor
 cursorLocation: {
-    .label __0 = $5a
-    .label __1 = $5a
-    .label __3 = $5a
-    .label return = $5a
-    .label __4 = $5d
-    .label __5 = $5a
+    .label __0 = $d8
+    .label __1 = $d8
+    .label __3 = $d8
+    .label return = $d8
+    .label __4 = $db
+    .label __5 = $d8
     // (word)(*ROWCRS)*CONIO_WIDTH
     lda ROWCRS
     sta.z __3
@@ -1886,10 +1871,10 @@ cursorLocation: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// uctoa_append(byte* zp($2e) buffer, byte register(X) value, byte zp($5c) sub)
+// uctoa_append(byte* zp($ac) buffer, byte register(X) value, byte zp($da) sub)
 uctoa_append: {
-    .label buffer = $2e
-    .label sub = $5c
+    .label buffer = $ac
+    .label sub = $da
     ldy #0
   __b1:
     // while (value >= sub)
@@ -1912,11 +1897,11 @@ uctoa_append: {
     jmp __b1
 }
 // Print a padding char a number of times
-// printf_padding(byte zp($5c) pad, byte zp($31) length)
+// printf_padding(byte zp($da) pad, byte zp($af) length)
 printf_padding: {
-    .label i = $32
-    .label length = $31
-    .label pad = $5c
+    .label i = $b0
+    .label length = $af
+    .label pad = $da
     lda #0
     sta.z i
   __b1:

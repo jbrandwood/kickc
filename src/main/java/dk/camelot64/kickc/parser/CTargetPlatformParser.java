@@ -28,7 +28,6 @@ public class CTargetPlatformParser {
    /** The file extension used for target platform files. */
    public static final String FILE_EXTENSION = "tgt";
 
-
    public static TargetPlatform parseTargetPlatformFile(String platformName, File platformFile, Path currentFolder, List<String> platformSearchPaths) {
       try {
          final JsonReader jsonReader = Json.createReader(new BufferedInputStream(new FileInputStream(platformFile)));
@@ -43,6 +42,13 @@ public class CTargetPlatformParser {
             final String linkScriptName = platformJson.getString("link", null);
             if(linkScriptName != null)
                targetPlatform.setLinkScriptFile(SourceLoader.loadFile(linkScriptName, currentFolder, platformSearchPaths));
+         }
+         {
+            final String startAddress = platformJson.getString("start_address", null);
+            if(startAddress != null) {
+               final Number startAddressNumber = NumberParser.parseLiteral(startAddress);
+               targetPlatform.setStartAddress(startAddressNumber.intValue());
+            }
          }
          {
             final String emulatorCommand = platformJson.getString("emulator", null);

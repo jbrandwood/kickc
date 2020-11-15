@@ -47,8 +47,6 @@ public class Program {
    /** Enable live ranges per call path optimization, which limits memory usage and code, but takes a lot of compile time. */
    private boolean enableLiveRangeCallPath = true;
 
-   /** Absolute start address of the code. Null to start ad 0x080d. PASS 0-5 (STATIC) */
-   private Number programPc;
    /** Reserved ZP addresses that the compiler cannot use. PASS 0-5 (STATIC) */
    private List<Integer> reservedZps;
    /** Resource files that should be copied to the output folder to be compiled with the generated ASM. PASS 0-5 (STATIC) */
@@ -225,7 +223,6 @@ public class Program {
    public TargetCpu getTargetCpu() {
       return getTargetPlatform().getCpu();
    }
-
 
    public StructVariableMemberUnwinding getStructVariableMemberUnwinding() {
       return structVariableMemberUnwinding;
@@ -513,19 +510,6 @@ public class Program {
       this.reservedZps = reservedZps;
    }
 
-   /**
-    * Set the absolute position of the program code
-    *
-    * @param programPc The address
-    */
-   public void setProgramPc(Number programPc) {
-      this.programPc = programPc;
-   }
-
-   public Number getProgramPc() {
-      return programPc;
-   }
-
    public CompileLog getLog() {
       return log;
    }
@@ -533,7 +517,6 @@ public class Program {
    public void setLog(CompileLog log) {
       this.log = log;
    }
-
 
    /**
     * Get information about the size of the program

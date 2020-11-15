@@ -260,7 +260,7 @@ public class CPreprocessor implements TokenSource {
          final String fileName = fileNameToken.getText();
          cParser.includeCFile(fileName, true);
       } else {
-         throw new CompileError("Error! #include not followed by file!", new StatementSource(inputToken, fileNameToken));
+         throw new CompileError("#include not followed by file!", new StatementSource(inputToken, fileNameToken));
       }
    }
 
@@ -286,7 +286,7 @@ public class CPreprocessor implements TokenSource {
             final Token paramToken = cTokenSource.nextToken();
             if(paramToken.getType() == KickCLexer.PAR_END) {
                if(!commaNext && macroParameters.size() > 0)
-                  throw new CompileError("Error! #define declared parameter list ends with COMMA.", paramToken);
+                  throw new CompileError("#define declared parameter list ends with COMMA.", paramToken);
                // We reached the end of the parameters
                break;
             } else if(!commaNext && paramToken.getType() == KickCLexer.NAME) {
@@ -298,7 +298,7 @@ public class CPreprocessor implements TokenSource {
                commaNext = false;
             else
                // Unexpected token
-               throw new CompileError("Error! #define declared parameter not a NAME.", paramToken);
+               throw new CompileError("#define declared parameter not a NAME.", paramToken);
          }
       }
       final ArrayList<Token> macroBody = readBody(cTokenSource);

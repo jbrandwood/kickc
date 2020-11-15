@@ -804,7 +804,7 @@ public class Pass4CodeGeneration {
                generateStatementAsm(asm, block, statement, aluState, true);
             } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
                if(warnFragmentMissing) {
-                  program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature() + "\n" + statement.getSource().toStringShort());
+                  program.getLog().append("Warning! Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature() + "\n" + statement.getSource().format());
                   asm.addLine(new AsmInlineKickAsm(".assert \"Missing ASM fragment " + e.getFragmentSignature() + "\", 0, 1", 0L, 0L));
                } else {
                   throw new CompileError("Unknown fragment for statement " + statement.toString(program, false) + "\nMissing ASM fragment " + e.getFragmentSignature(), statement.getSource());

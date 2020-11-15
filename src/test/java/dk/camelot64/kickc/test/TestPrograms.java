@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.test;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.SourceLoader;
-import dk.camelot64.kickc.TmpDirManager;
+import dk.camelot64.kickc.*;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -28,8 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Compile a number of source files and compare the resulting assembler with expected output
@@ -187,18 +184,28 @@ public class TestPrograms {
    }
 
    @Test
+   public void testErrorFormatter() throws IOException, URISyntaxException {
+      // Error on a char
+      assertError("printf-error-6.c", "printf-error-6.c:7:5: error: printf missing parameter with index 1");
+      // Error on a line
+      assertError("library-constructor-error-2.c", "library-constructor-error-2.c:4: error: Procedure not found print");
+      // Error without a line
+      assertError("cstyle-decl-function-missing.c", "Error! Function body is never defined: sum", false);
+   }
+
+   @Test
    public void testLibraryConstructorError2() throws IOException, URISyntaxException {
-      assertError("library-constructor-error-2.c", "Error! Procedure not found print");
+      assertError("library-constructor-error-2.c", "Procedure not found print");
    }
 
    @Test
    public void testLibraryConstructorError1() throws IOException, URISyntaxException {
-      assertError("library-constructor-error-1.c", "Error! Constructor procedure not found my_init");
+      assertError("library-constructor-error-1.c", "Constructor procedure not found my_init");
    }
 
    @Test
    public void testLibraryConstructorError0() throws IOException, URISyntaxException {
-      assertError("library-constructor-error-0.c", "Error! #pragma constructor_for requires at least 2 parameters.");
+      assertError("library-constructor-error-0.c", "#pragma constructor_for requires at least 2 parameters.");
    }
 
    @Test
@@ -570,7 +577,7 @@ public class TestPrograms {
 
    @Test
    public void testDoubleCallProblem() throws IOException, URISyntaxException {
-      assertError("double-call-problem.c", "Error! Function clrscr does not return a value! ");
+      assertError("double-call-problem.c", "Function clrscr does not return a value! ");
    }
 
    @Test
@@ -615,27 +622,27 @@ public class TestPrograms {
 
    @Test
    public void testPrintfError6() throws IOException, URISyntaxException {
-      assertError("printf-error-6.c", "Error! printf missing parameter with index 1");
+      assertError("printf-error-6.c", "printf missing parameter with index 1");
    }
 
    @Test
    public void testPrintfError5() throws IOException, URISyntaxException {
-      assertError("printf-error-5.c", "Error! printf() format parameter must be a string!");
+      assertError("printf-error-5.c", "printf() format parameter must be a string!");
    }
 
    @Test
    public void testPrintfError4() throws IOException, URISyntaxException {
-      assertError("printf-error-4.c", "Error! Only constant printf() format parameter supported!");
+      assertError("printf-error-4.c", "Only constant printf() format parameter supported!");
    }
 
    @Test
    public void testPrintfError3() throws IOException, URISyntaxException {
-      assertError("printf-error-3.c", "Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
+      assertError("printf-error-3.c", "If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
    }
 
    @Test
    public void testPrintfError2() throws IOException, URISyntaxException {
-      assertError("printf-error-2.c", "Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
+      assertError("printf-error-2.c", "If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!");
    }
 
    @Test
@@ -780,12 +787,12 @@ public class TestPrograms {
 
    @Test
    public void testCStyleDeclVarMismatch() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-var-mismatch.c", "Error! Conflicting declarations for: SCREEN");
+      assertError("cstyle-decl-var-mismatch.c", "Conflicting declarations for: SCREEN");
    }
 
    @Test
    public void testCStyleDeclVarRedefinition() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-var-redefinition.c", "Error! Redefinition of variable: SCREEN");
+      assertError("cstyle-decl-var-redefinition.c", "Redefinition of variable: SCREEN");
    }
 
    @Test
@@ -800,12 +807,12 @@ public class TestPrograms {
 
    @Test
    public void testCStyleDeclFunctionRedefinition() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-function-redefinition.c", "Error! Redefinition of function: sum");
+      assertError("cstyle-decl-function-redefinition.c", "Redefinition of function: sum");
    }
 
    @Test
    public void testCStyleDeclFunctionMismatch() throws IOException, URISyntaxException {
-      assertError("cstyle-decl-function-mismatch.c", "Error! Conflicting declarations for: sum");
+      assertError("cstyle-decl-function-mismatch.c", "Conflicting declarations for: sum");
    }
 
    @Test
@@ -925,7 +932,7 @@ public class TestPrograms {
 
    @Test
    public void testVarModelUnknown() throws IOException, URISyntaxException {
-      assertError("varmodel-unknown.c", "Error! Malformed var_model parameter");
+      assertError("varmodel-unknown.c", "Malformed var_model parameter");
    }
 
    @Test
@@ -1414,7 +1421,7 @@ public class TestPrograms {
 
    @Test
    public void testFunctionAsArray() throws IOException, URISyntaxException {
-      assertError("function-as-array.c", "Error! Dereferencing a non-pointer type void()");
+      assertError("function-as-array.c", "Dereferencing a non-pointer type void()");
    }
 
    //@Test
@@ -3679,7 +3686,7 @@ public class TestPrograms {
 
    @Test
    public void testUnrollInfinite() throws IOException, URISyntaxException {
-      assertError("unroll-infinite.c", "Loop cannot be unrolled.", false);
+      assertError("unroll-infinite.c", "Loop cannot be unrolled.");
    }
 
    @Test
@@ -3784,7 +3791,7 @@ public class TestPrograms {
 
    @Test
    public void testForRangedNpe() throws IOException, URISyntaxException {
-      assertError("forranged-npe.c", "Error! Loop variable not declared i");
+      assertError("forranged-npe.c", "Loop variable not declared i");
    }
 
    @Test
@@ -3889,7 +3896,7 @@ public class TestPrograms {
 
    @Test
    public void testLoopNpe() throws IOException, URISyntaxException {
-      assertError("loop-npe.c", "Error! Loop variable not declared");
+      assertError("loop-npe.c", "Loop variable not declared");
    }
 
    @Test
@@ -4229,7 +4236,7 @@ public class TestPrograms {
 
    @Test
    public void testArraysNonstandardSyntax() throws IOException, URISyntaxException {
-      assertError("arrays-nonstandard-syntax.c", "ERROR! Non-standard array declaration.");
+      assertError("arrays-nonstandard-syntax.c", "Non-standard array declaration.");
    }
 
    @Test
@@ -4735,7 +4742,7 @@ public class TestPrograms {
 
    @Test
    public void testReturnFromVoid() throws IOException, URISyntaxException {
-      assertError("returnfromvoid.c", "Error! Return value from void function");
+      assertError("returnfromvoid.c", "Return value from void function");
    }
 
    @Test
@@ -4750,7 +4757,7 @@ public class TestPrograms {
 
    @Test
    public void testInvalidConstType() throws IOException, URISyntaxException {
-      assertError("invalid-consttype.c", "Constant init-value has a non-matching type", false);
+      assertError("invalid-consttype.c", "Constant init-value has a non-matching type");
    }
 
    @Test
@@ -4890,16 +4897,22 @@ public class TestPrograms {
       assertError(kcFile, expectError, true);
    }
 
-   private void assertError(String kcFile, String expectError, boolean expectLineNumber) throws IOException, URISyntaxException {
+   private void assertError(String kcFile, String expectError, boolean expectSource) throws IOException, URISyntaxException {
       try {
          compileAndCompare(kcFile);
       } catch(CompileError e) {
-         System.out.println("Got error: " + e.getMessage());
+         final String error = e.format();
+         System.out.println("Got error: " + error);
          // expecting error!
-         assertTrue(e.getMessage().contains(expectError), "Error message expected  '" + expectError + "' - was:" + e.getMessage());
-         if(expectLineNumber) {
-            // expecting line number!
-            assertTrue(e.getMessage().contains("Line"), "Error message expected line number - was:" + e.getMessage());
+         assertTrue(error.contains(expectError), "Error message expected  '" + expectError + "' - was:" + error);
+         if(expectSource) {
+            // expecting a source for the error, so it may be related back to a file/line
+            assertNotNull(e.getSource(), "Error source expected");
+            assertNotNull(e.getSource().getFileName(), "Error file name expected");
+            assertNotNull(e.getSource().getLineNumber(), "Error line number expected");
+            assertNotNull(e.getSource().getCharPosInLine(), "Error charpos expected");
+         } else {
+            assertTrue(e.getSource() == null || e.getSource().getFileName() == null, "No error information expected");
          }
          return;
       }

@@ -64,10 +64,10 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                final List<RValue> parameters = printfCall.getParameters();
                final RValue formatParameter = getParameterValue(parameters, 0, printfCall);
                if(!(formatParameter instanceof ConstantValue))
-                  throw new CompileError("Error! Only constant printf() format parameter supported!", statement);
+                  throw new CompileError("Only constant printf() format parameter supported!", statement);
                final ConstantLiteral formatLiteral = ((ConstantValue) formatParameter).calculateLiteral(getProgram().getScope());
                if(!(formatLiteral instanceof ConstantString))
-                  throw new CompileError("Error! printf() format parameter must be a string!", statement);
+                  throw new CompileError("printf() format parameter must be a string!", statement);
                final String formatString = ((ConstantString) formatLiteral).getString();
                final StringEncoding formatEncoding = ((ConstantString) formatLiteral).getEncoding();
 
@@ -103,10 +103,10 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
                   final String paramField = matcher.group(1);
                   // Ensure that all fields use parameter index syntax!
                   if(paramField == null && fieldParamIdx && !typeField.equals("%"))
-                     throw new CompileError("Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
+                     throw new CompileError("If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
                   if(paramField != null) {
                      if(!fieldParamIdx && paramIdx > 1)
-                        throw new CompileError("Error! If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
+                        throw new CompileError("If any single printf() placeholder specifies a parameter, all the rest of the placeholders must also specify a parameter!", statement);
                      fieldParamIdx = true;
                      paramIdx = Integer.parseInt(paramField.substring(0, paramField.length() - 1));
                   }
@@ -256,7 +256,7 @@ public class Pass1PrintfIntrinsicRewrite extends Pass2SsaOptimization {
     */
    private RValue getParameterValue(List<RValue> parameters, int paramIdx, StatementCall printfCall) {
       if(parameters.size()<=paramIdx)
-         throw new CompileError("Error! printf missing parameter with index "+paramIdx, printfCall);
+         throw new CompileError("printf missing parameter with index "+paramIdx, printfCall);
       return parameters.get(paramIdx);
    }
 

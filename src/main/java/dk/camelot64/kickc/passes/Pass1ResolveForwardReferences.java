@@ -29,7 +29,7 @@ public class Pass1ResolveForwardReferences extends Pass1Base {
                programValue.set(symbol.getRef());
             }  else {
                getLog().append("ERROR! Unknown variable " + varName);
-               throw new CompileError("ERROR! Unknown variable " + varName, currentStmt.getSource());
+               throw new CompileError("Unknown variable " + varName, currentStmt.getSource());
             }
          }
       });

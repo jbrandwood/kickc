@@ -38,11 +38,11 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
             if(statement instanceof StatementKickAsm) {
                RValue bytes = ((StatementKickAsm) statement).getBytes();
                if(bytes != null && !(bytes instanceof ConstantValue)) {
-                  throw new CompileError("Error! KickAssembler bytes is not constant " + bytes.toString(), statement);
+                  throw new CompileError("KickAssembler bytes is not constant " + bytes.toString(), statement);
                }
                RValue cycles = ((StatementKickAsm) statement).getCycles();
                if(cycles != null && !(cycles instanceof ConstantValue)) {
-                  throw new CompileError("Error! KickAssembler cycles is not constant " + cycles.toString(), statement);
+                  throw new CompileError("KickAssembler cycles is not constant " + cycles.toString(), statement);
                }
             } else if(statement instanceof StatementAsm) {
                StatementAsm statementAsm = (StatementAsm) statement;
@@ -60,14 +60,14 @@ public class Pass3AssertConstants extends Pass2SsaAssertion {
                      // Referencing load/store is fine!
                      continue;
                   else
-                     throw new CompileError("Error! Inline ASM reference is not constant " + label, statement);
+                     throw new CompileError("Inline ASM reference is not constant " + label, statement);
                }
             } else if(statement instanceof StatementKickAsm) {
                StatementKickAsm statementAsm = (StatementKickAsm) statement;
                List<SymbolRef> uses = statementAsm.getUses();
                for(SymbolRef use : uses) {
                   if(!(use instanceof ConstantRef)) {
-                     throw new CompileError("Error! Inline KickAsm reference is not constant " + use, statement);
+                     throw new CompileError("Inline KickAsm reference is not constant " + use, statement);
                   }
                }
             }

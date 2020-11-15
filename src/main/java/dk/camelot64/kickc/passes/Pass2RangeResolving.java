@@ -38,10 +38,10 @@ public class Pass2RangeResolving extends Pass2SsaOptimization {
                ConstantLiteral firstLiteral = ((ConstantValue) rangeValue.getRangeFirst()).calculateLiteral(getScope());
                ConstantLiteral lastLiteral = ((ConstantValue) rangeValue.getRangeLast()).calculateLiteral(getScope());
                if(!(firstLiteral instanceof ConstantEnumerable)) {
-                  throw new CompileError("Error! Ranged for() has non-integer first value in the range " + currentStmt.getSource().toString());
+                  throw new CompileError("Ranged for() has non-integer first value in the range " + currentStmt.getSource().toString(), currentStmt);
                }
                if(!(lastLiteral instanceof ConstantEnumerable)) {
-                  throw new CompileError("Error! Ranged for() has non-integer first value in the range " + currentStmt.getSource().toString());
+                  throw new CompileError("Ranged for() has non-integer first value in the range " + currentStmt.getSource().toString(), currentStmt);
                }
 
                ConstantEnumerable first = (ConstantEnumerable) firstLiteral;

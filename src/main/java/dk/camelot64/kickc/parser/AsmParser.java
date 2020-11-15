@@ -22,7 +22,7 @@ public class AsmParser {
          @Override
          public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
             StatementSource subSource =
-                  new StatementSource(source.getFileName(), source.getLineNumber() + line, source.getCode(), source.getStartIndex(), source.getStopIndex());
+                  new StatementSource(source.getFileName(), source.getLineNumber() + line, charPositionInLine, source.getCode(), source.getStartIndex(), source.getStopIndex());
 
             throw new CompileError("Error parsing assembler. " + msg, subSource);
          }

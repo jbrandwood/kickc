@@ -133,16 +133,16 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       for(KickCParser.PragmaContext pragmaConstructorFor : pragmaConstructorFors) {
          final List<KickCParser.PragmaParamContext> names = pragmaConstructorFor.pragmaParam();
          if(names.size() < 2)
-            throw new CompileError("Error! #pragma constructor_for requires at least 2 parameters.", new StatementSource(pragmaConstructorFor));
+            throw new CompileError("#pragma constructor_for requires at least 2 parameters.", new StatementSource(pragmaConstructorFor));
          final String constructorProcName = pragmaParamName(names.get(0));
          final Procedure constructorProc = program.getScope().getLocalProcedure(constructorProcName);
          if(constructorProc == null)
-            throw new CompileError("Error! Constructor procedure not found " + constructorProcName, new StatementSource(pragmaConstructorFor));
+            throw new CompileError("Constructor procedure not found " + constructorProcName, new StatementSource(pragmaConstructorFor));
          for(int i = 1; i < names.size(); i++) {
             final String procName = pragmaParamName(names.get(i));
             final Procedure proc = program.getScope().getLocalProcedure(procName);
             if(proc == null)
-               throw new CompileError("Error! Procedure not found " + procName, new StatementSource(pragmaConstructorFor));
+               throw new CompileError("Procedure not found " + procName, new StatementSource(pragmaConstructorFor));
             if(program.getLog().isVerboseParse())
                program.getLog().append("Added constructor procedure " + constructorProc.getRef().toString() + " to procedure " + proc.getRef().toString());
             proc.getConstructorRefs().add(constructorProc.getRef());
@@ -272,7 +272,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private static KickCParser.PragmaParamContext pragmaParamSingle(KickCParser.PragmaContext ctx) {
       if(ctx.pragmaParam().size() != 1)
-         throw new CompileError("Error! #pragma expects a single parameter!", new StatementSource(ctx));
+         throw new CompileError("#pragma expects a single parameter!", new StatementSource(ctx));
       return ctx.pragmaParam().get(0);
    }
 
@@ -285,10 +285,10 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private static Number pragmaParamNumber(KickCParser.PragmaParamContext paramCtx) {
       if(!(paramCtx instanceof KickCParser.PragmaParamNumberContext))
-         throw new CompileError("Error! Expected a NUMBER parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a NUMBER parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       final Number number = NumberParser.parseLiteral(((KickCParser.PragmaParamNumberContext) paramCtx).NUMBER().getText());
       if(number == null)
-         throw new CompileError("Error! Expected a NUMBER parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a NUMBER parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       return number;
    }
 
@@ -301,11 +301,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private static Procedure.CallingConvention pragmaParamCallingConvention(KickCParser.PragmaParamContext paramCtx) {
       if(!(paramCtx instanceof KickCParser.PragmaParamCallingConventionContext))
-         throw new CompileError("Error! Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       final String callingConventionName = ((KickCParser.PragmaParamCallingConventionContext) paramCtx).CALLINGCONVENTION().getText();
       final Procedure.CallingConvention callingConvention = Procedure.CallingConvention.getCallingConvension(callingConventionName);
       if(callingConvention == null)
-         throw new CompileError("Error! Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a CALLINGCONVENTION parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       return callingConvention;
    }
 
@@ -319,7 +319,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private static String pragmaParamName(KickCParser.PragmaParamContext paramCtx) {
       if(!(paramCtx instanceof KickCParser.PragmaParamNameContext))
-         throw new CompileError("Error! Expected a NAME parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a NAME parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       return ((KickCParser.PragmaParamNameContext) paramCtx).NAME().getText();
    }
 
@@ -332,7 +332,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private static String pragmaParamString(KickCParser.PragmaParamContext paramCtx) {
       if(!(paramCtx instanceof KickCParser.PragmaParamStringContext))
-         throw new CompileError("Error! Expected a STRING parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
+         throw new CompileError("Expected a STRING parameter. Found '" + paramCtx.getText() + "'.", new StatementSource(paramCtx.getParent()));
       final String stringLiteral = ((KickCParser.PragmaParamStringContext) paramCtx).STRING().getText();
       return stringLiteral.substring(1, stringLiteral.length() - 1);
    }
@@ -363,7 +363,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
                zp++;
             }
          } else {
-            throw new CompileError("Error! Expected a NUMBER or RANGE parameter. Found '" + reserveCtx.getText() + "'.", new StatementSource(reserveCtx.getParent()));
+            throw new CompileError("Expected a NUMBER or RANGE parameter. Found '" + reserveCtx.getText() + "'.", new StatementSource(reserveCtx.getParent()));
          }
       }
       return reservedZps;
@@ -409,7 +409,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(existingSymbol != null) {
          // Already declared  - check equality
          if(!(existingSymbol instanceof Procedure) || !SymbolTypeConversion.procedureDeclarationMatch((Procedure) existingSymbol, procedure))
-            throw new CompileError("Error! Conflicting declarations for: " + procedure.getFullName(), new StatementSource(ctx));
+            throw new CompileError("Conflicting declarations for: " + procedure.getFullName(), new StatementSource(ctx));
       } else {
          // Not declared before - add it
          program.getScope().add(procedure);
@@ -429,7 +429,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Check that the body has not already been added
          final StatementSequence statementSequence = getCurrentProcedureCompilation().getStatementSequence();
          if(statementSequence != null && statementSequence.getStatements().size() > 0)
-            throw new CompileError("Error! Redefinition of function: " + procedure.getFullName(), StatementSource.procedureBegin(ctx));
+            throw new CompileError("Redefinition of function: " + procedure.getFullName(), StatementSource.procedureBegin(ctx));
          // Add the body
          addStatement(new StatementProcedureBegin(procedure.getRef(), StatementSource.procedureBegin(ctx), Comment.NO_COMMENTS));
          // Add parameter assignments
@@ -729,7 +729,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       String clobberString = ctx.STRING().getText().toUpperCase(Locale.ENGLISH);
       clobberString = clobberString.substring(1, clobberString.length() - 1);
       if(!clobberString.matches("[AXY]*")) {
-         throw new CompileError("Error! Illegal clobber value " + clobberString, new StatementSource(ctx));
+         throw new CompileError("Illegal clobber value " + clobberString, new StatementSource(ctx));
       }
       CpuClobber clobber = new CpuClobber(clobberString);
       return new AsmDirectiveClobber(clobber);
@@ -1668,7 +1668,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       } else {
          lValue = getCurrentScope().findVariable(varName);
          if(lValue == null) {
-            throw new CompileError("Error! Loop variable not declared " + varName, statementSource);
+            throw new CompileError("Loop variable not declared " + varName, statementSource);
          }
       }
       boolean initialAssignment = (varDecl.getEffectiveType() != null);
@@ -1869,7 +1869,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       RValue rValue;
       if(exprCtx != null) {
          if(SymbolType.VOID.equals(procedure.getReturnType())) {
-            throw new CompileError("Error! Return value from void function " + procedure.getFullName(), new StatementSource(ctx));
+            throw new CompileError("Return value from void function " + procedure.getFullName(), new StatementSource(ctx));
          }
          PrePostModifierHandler.addPreModifiers(this, exprCtx, new StatementSource(ctx));
          rValue = (RValue) this.visit(exprCtx);
@@ -2096,7 +2096,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          varDecl.setVarDeclType(arrayDeclType);
          return null;
       } else {
-         throw new CompileError("ERROR! Non-standard array declaration. Allow using commandline option -Warraytype", new StatementSource(ctx));
+         throw new CompileError("Non-standard array declaration. Allow using commandline option -Warraytype", new StatementSource(ctx));
       }
    }
 
@@ -2187,7 +2187,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("const variable may not be modified " + val.toString(), new StatementSource(ctx));
       }
       if(!(val instanceof LValue)) {
-         throw new CompileError("Error! Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
+         throw new CompileError("Illegal assignment Lvalue " + val.toString(), new StatementSource(ctx));
       }
       LValue lValue = (LValue) val;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
@@ -2207,7 +2207,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       // Assignment (rValue/lValue)
       Object value = visit(ctx.expr(0));
       if(!(value instanceof LValue)) {
-         throw new CompileError("Error! Illegal assignment Lvalue " + value.toString(), new StatementSource(ctx));
+         throw new CompileError("Illegal assignment Lvalue " + value.toString(), new StatementSource(ctx));
       }
       LValue lValue = (LValue) value;
       if(lValue instanceof VariableRef && ((VariableRef) lValue).isIntermediate()) {
@@ -2616,7 +2616,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          // Either forward reference or a non-existing variable. Create a forward reference for later resolving.
          return new ForwardVariableRef(ctx.NAME().getText());
       }
-      throw new CompileError("Error! Unhandled symbol " + symbol.toString(program));
+      throw new CompileError("Unhandled symbol " + symbol.toString(program));
    }
 
    /**

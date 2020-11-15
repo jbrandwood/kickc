@@ -38,7 +38,7 @@ public class Initializers {
          } else {
             // Add an zero-filled array initializer
             if(typeSpec.getArraySpec().getArraySize() == null) {
-               throw new CompileError("Error! Array has no declared size. ", statementSource);
+               throw new CompileError("Array has no declared size.", statementSource);
             }
             return new ConstantArrayFilled(typePointer.getElementType(), typeSpec.getArraySpec().getArraySize());
          }
@@ -130,7 +130,7 @@ public class Initializers {
                if(SymbolTypeConversion.assignmentTypeMatch(typeSpec.getType(), inferredType))
                   initValue = new CastValue(typeSpec.getType(), initValue);
                else
-                  throw new CompileError("ERROR! Type mismatch (" + typeSpec.getType().getTypeName() + ") cannot be assigned from (" + inferredType.getTypeName() + ").", source);
+                  throw new CompileError("Type mismatch (" + typeSpec.getType().getTypeName() + ") cannot be assigned from (" + inferredType.getTypeName() + ").", source);
             }
          }
       }

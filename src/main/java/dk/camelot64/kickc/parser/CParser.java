@@ -5,6 +5,7 @@ import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import org.antlr.v4.runtime.*;
 
@@ -95,7 +96,8 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            throw new CompileError("Error parsing  file " + recognizer.getInputStream().getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            StatementSource source = new StatementSource(recognizer.getInputStream().getSourceName(), line, charPositionInLine, null, -1, -1);
+            throw new CompileError("Error parsing file: " + msg, source);
          }
       });
    }
@@ -290,7 +292,8 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            throw new CompileError("Error parsing file " + charStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            StatementSource source = new StatementSource(charStream.getSourceName(), line, charPositionInLine, null, -1,-1);
+            throw new CompileError("Error parsing file: " + msg, source);
          }
       });
       return lexer;

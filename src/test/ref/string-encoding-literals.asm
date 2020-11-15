@@ -4,6 +4,10 @@
 .pc = $80d "Program"
 main: {
     .label SCREEN = $400
+    .label D018 = $d018
+    // *D018 = 0x16
+    lda #$16
+    sta D018
     ldx #0
   __b1:
     // (SCREEN+40*0)[i] = petscii_mixed[i]
@@ -24,16 +28,29 @@ main: {
     // (SCREEN+40*5)[i] = screencode_standard[i]
     lda screencode_standard,x
     sta SCREEN+$28*5,x
-    // (SCREEN+40*6)[i] = standard[i]
-    lda standard,x
+    // (SCREEN+40*6)[i] = ascii[i]
+    lda ascii,x
     sta SCREEN+$28*6,x
-    // for( byte i: 0..5 )
+    // (SCREEN+40*7)[i] = atascii[i]
+    lda atascii,x
+    sta SCREEN+$28*7,x
+    // (SCREEN+40*8)[i] = screencode_atari[i]
+    lda screencode_atari,x
+    sta SCREEN+$28*8,x
+    // (SCREEN+40*9)[i] = standard[i]
+    lda standard,x
+    sta SCREEN+$28*9,x
+    // (SCREEN+40*10)[i] = no_null[i]
+    lda no_null,x
+    sta SCREEN+$28*$a,x
+    // for( char i: 0..7 )
     inx
-    cpx #6
+    cpx #8
     bne __b1
     // }
     rts
 }
+  no_null: .text "abcABC1"
 .encoding "petscii_mixed"
   petscii_mixed: .text "abcABC1"
   .byte 0
@@ -52,5 +69,15 @@ main: {
 .encoding "screencode_mixed"
   screencode_standard: .text "abcABC6"
   .byte 0
-  standard: .text "abcABC7"
+.encoding "ascii"
+  ascii: .text "abcABC7"
+  .byte 0
+.encoding "ascii"
+  atascii: .text "abcABC8"
+  .byte 0
+.encoding "ascii"
+  screencode_atari: .text @"abc\$21\$22\$23\$19"
+  .byte 0
+.encoding "screencode_mixed"
+  standard: .text "abcABC0"
   .byte 0

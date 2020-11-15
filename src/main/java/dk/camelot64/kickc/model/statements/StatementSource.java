@@ -9,7 +9,6 @@ import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import java.io.File;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -237,10 +236,8 @@ public class StatementSource implements Serializable {
    public String format() {
       if(getFileName() == null)
          return "";
-      Path currentPath = new File(".").toPath().toAbsolutePath();
       Path sourcePath = Paths.get(getFileName());
-      Path relativePath = currentPath.relativize(sourcePath);
-      String relativeFileName = relativePath.toString();
+      String relativeFileName = sourcePath.toAbsolutePath().toString();
       if(getCharPosInLine() == null || getCharPosInLine() == 0) {
          // No relevant column idx  - format without
          return String.format("%s:%s:", relativeFileName, getLineNumber());

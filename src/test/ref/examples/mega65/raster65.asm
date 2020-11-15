@@ -10,7 +10,7 @@
 .file [name="raster65.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$0801]
-.segmentdef Code [start=$080d]
+.segmentdef Code [start=$80d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)

@@ -3,8 +3,7 @@
 # Prepare by making the "official" metadata local
 cp ./repo/dk/camelot64/kickass/xexplugin/kickassxexformat/maven-metadata.xml ./repo/dk/camelot64/kickass/xexplugin/kickassxexformat/maven-metadata-local.xml
 
-# mvn install:install-file -Dmaven.repo.local=./repo/ -Dfile=/Applications/KickAssembler/KickAss.jar -DgroupId=cml.kickass -DartifactId=kickassembler -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -Dversion=5.16
-mvn install:install-file -Dmaven.repo.local=./repo/ -Dfile=/Users/jespergravgaard/c64/kickass-plugin-atari-xex/bin/KickAssXexFormat.jar -DgroupId=dk.camelot64.kickass.xexplugin -DartifactId=kickassxexformat -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -Dversion=1.0
+mvn install:install-file -Dmaven.repo.local=./repo/ -Dfile=/Users/jespergravgaard/c64/kickass-plugin-atari-xex/bin/KickAssXexFormat.jar -DgroupId=dk.camelot64.kickass.xexplugin -DartifactId=kickassxexformat -Dpackaging=jar -DgeneratePom=true -DcreateChecksum=true -Dversion=1.1
 
 # Finalize by making the local metadata official
 pushd ./repo/dk/camelot64/kickass/xexplugin/kickassxexformat

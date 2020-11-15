@@ -97,7 +97,8 @@ public class Pass4CodeGeneration {
       String entryName = program.getStartProcedure().getFullName();
       linkScriptBody = linkScriptBody.replace("%E", entryName);
       Number startAddress = program.getTargetPlatform().getStartAddress();
-      linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(startAddress));
+      if(startAddress!=null)
+         linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(startAddress));
       asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
 
       // If the link script contains ".segment" then generate segments!

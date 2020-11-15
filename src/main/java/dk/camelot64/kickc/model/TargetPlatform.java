@@ -56,8 +56,6 @@ public class TargetPlatform {
       VariableBuilderConfig.defaultPreConfig(config);
       VariableBuilderConfig.defaultPostConfig(config);
       this.variableBuilderConfig = config;
-      // Set the default start address
-      this.startAddress = 0x080d;
    }
 
    public String getName() {

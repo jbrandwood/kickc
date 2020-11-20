@@ -330,17 +330,17 @@ Uplift Scope [MOS6569_VICII]
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [] 
 
-Uplifting [position_sprite] best 925 combination reg byte a [ position_sprite::$2 ] reg byte a [ position_sprite::$4 ] reg byte a [ position_sprite::$5 ] reg byte a [ position_sprite::$6 ] zp[1]:8 [ position_sprite::$1 ] zp[1]:5 [ position_sprite::spriteno#0 ] zp[2]:6 [ position_sprite::x#0 ] 
+Uplifting [position_sprite] best 923 combination reg byte a [ position_sprite::$2 ] reg byte a [ position_sprite::$4 ] reg byte a [ position_sprite::$5 ] reg byte a [ position_sprite::$6 ] zp[1]:8 [ position_sprite::$1 ] zp[1]:5 [ position_sprite::spriteno#0 ] zp[2]:6 [ position_sprite::x#0 ] 
 Limited combination testing to 100 combinations of 2304 possible.
-Uplifting [main] best 805 combination reg byte x [ main::s#2 main::s#1 ] zp[2]:3 [ main::xpos#2 main::xpos#1 ] 
-Uplifting [MOS6526_CIA] best 805 combination 
-Uplifting [MOS6569_VICII] best 805 combination 
-Uplifting [MOS6581_SID] best 805 combination 
-Uplifting [] best 805 combination 
+Uplifting [main] best 803 combination reg byte x [ main::s#2 main::s#1 ] zp[2]:3 [ main::xpos#2 main::xpos#1 ] 
+Uplifting [MOS6526_CIA] best 803 combination 
+Uplifting [MOS6569_VICII] best 803 combination 
+Uplifting [MOS6581_SID] best 803 combination 
+Uplifting [] best 803 combination 
 Attempting to uplift remaining variables inzp[1]:8 [ position_sprite::$1 ]
-Uplifting [position_sprite] best 798 combination reg byte y [ position_sprite::$1 ] 
+Uplifting [position_sprite] best 796 combination reg byte y [ position_sprite::$1 ] 
 Attempting to uplift remaining variables inzp[1]:5 [ position_sprite::spriteno#0 ]
-Uplifting [position_sprite] best 798 combination zp[1]:5 [ position_sprite::spriteno#0 ] 
+Uplifting [position_sprite] best 796 combination zp[1]:5 [ position_sprite::spriteno#0 ] 
 Coalescing zero page register [ zp[2]:3 [ main::xpos#2 main::xpos#1 ] ] with [ zp[2]:6 [ position_sprite::x#0 ] ] - score: 1
 Allocated (was zp[2]:3) zp[2]:2 [ main::xpos#2 main::xpos#1 position_sprite::x#0 ]
 Allocated (was zp[1]:5) zp[1]:4 [ position_sprite::spriteno#0 ]
@@ -423,11 +423,9 @@ position_sprite: {
     // [13] if(position_sprite::x#0>$ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
     lda.z x+1
     bne __b1
-    lda.z x
-    cmp #$ff
-    beq !+
-    bcs __b1
-  !:
+    lda #$ff
+    cmp.z x
+    bcc __b1
     jmp __b2
     // position_sprite::@2
   __b2:
@@ -527,7 +525,7 @@ reg byte a [ position_sprite::$6 ]
 
 
 FINAL ASSEMBLER
-Score: 555
+Score: 553
 
   // File Comments
 // Tests rolling sprite MSB by variable amount
@@ -607,11 +605,9 @@ position_sprite: {
     // [13] if(position_sprite::x#0>$ff) goto position_sprite::@1 -- vwuz1_gt_vbuc1_then_la1 
     lda.z x+1
     bne __b1
-    lda.z x
-    cmp #$ff
-    beq !+
-    bcs __b1
-  !:
+    lda #$ff
+    cmp.z x
+    bcc __b1
     // position_sprite::@2
     // 1 << spriteno
     // [14] position_sprite::$4 = 1 << position_sprite::spriteno#0 -- vbuaa=vbuc1_rol_vbuz1 

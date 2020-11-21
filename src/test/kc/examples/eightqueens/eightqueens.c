@@ -4,7 +4,8 @@
 //
 // This is an iterative solution.
 
-#include<stdio.h>
+#include <stdio.h>
+#include <conio.h>
 
 #define QUEENS 8
 #define PRINT_SOLUTIONS
@@ -21,6 +22,7 @@ void main() {
   printf("\nnumber of queens:%u",QUEENS);
   queens();
   printf("\n\nsolutions: %lu\n",count);
+  while(!kbhit()) ;
 }
 
 // Generates all valid placements of queens on a NxN board without recursion

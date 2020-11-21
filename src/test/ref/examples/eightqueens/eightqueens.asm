@@ -102,6 +102,12 @@ main: {
     lda #>s3
     sta.z cputs.s+1
     jsr cputs
+  __b1:
+    // kbhit()
+    jsr kbhit
+    // while(!kbhit())
+    cmp #0
+    beq __b1
     // }
     rts
     s: .text " - n queens problem using backtracking -"
@@ -400,6 +406,21 @@ printf_ulong: {
     sta.z printf_number_buffer.format_justify_left
     tax
     jsr printf_number_buffer
+    // }
+    rts
+}
+// Return true if there's a key waiting, return false if not
+kbhit: {
+    // CIA#1 Port A: keyboard matrix columns and joystick #2
+    .label CIA1_PORT_A = $dc00
+    // CIA#1 Port B: keyboard matrix rows and joystick #1.
+    .label CIA1_PORT_B = $dc01
+    // *CIA1_PORT_A = 0
+    lda #0
+    sta CIA1_PORT_A
+    // ~*CIA1_PORT_B
+    lda CIA1_PORT_B
+    eor #$ff
     // }
     rts
 }

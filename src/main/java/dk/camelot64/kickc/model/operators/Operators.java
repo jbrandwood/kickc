@@ -4,7 +4,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
 
-/** Constainer for all the expression operators */
+/** Container for all the expression operators */
 public class Operators {
 
    public static final OperatorUnary INCREMENT = new OperatorIncrement(1);

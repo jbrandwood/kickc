@@ -99,7 +99,7 @@ public class AsmFormat {
                ")";
       }
 
-      // Handle non-associative operators - only handle right side since parser is left-associativeA-B-C = (A-B)-C
+      // Handle non-associative operators - only handle right side since parser is left-associative A-B-C = (A-B)-C
       boolean rightParenthesis = false;
       if(!operator.isAssociative()) {
          if(right instanceof ConstantBinary && ((ConstantBinary) right).getOperator().equals(operator)) {

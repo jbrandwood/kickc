@@ -1,0 +1,219 @@
+Calling convention __varcall adding prepare/execute/finalize for call setbg 0 
+Calling convention __varcall adding prepare/execute/finalize for call setbg $b 
+Converting parameter in __varcall procedure to load/store setbg::col
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  setbg::col = 0
+  callexecute setbg 
+  setbg::col = $b
+  callexecute setbg 
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__varcall void setbg(byte setbg::col)
+setbg: scope:[setbg]  from
+  *BGCOL = setbg::col
+  to:setbg::@return
+setbg::@return: scope:[setbg]  from setbg
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* BGCOL = (byte*)$d021
+void __start()
+void main()
+__varcall void setbg(byte setbg::col)
+byte setbg::col loadstore
+
+Adding number conversion cast (unumber) 0 in setbg::col = 0
+Adding number conversion cast (unumber) $b in setbg::col = $b
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast setbg::col = (unumber)0
+Inlining cast setbg::col = (unumber)$b
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 53281
+Simplifying constant integer cast 0
+Simplifying constant integer cast $b
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type 0
+Finalized unsigned number type $b
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+Calls in [main] to setbg:3 setbg:5 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+__varcall void setbg(byte setbg::col)
+setbg: scope:[setbg]  from
+  [0] *BGCOL = setbg::col
+  to:setbg::@return
+setbg::@return: scope:[setbg]  from setbg
+  [1] return 
+  to:@return
+
+void main()
+main: scope:[main]  from
+  [2] setbg::col = 0
+  [3] callexecute setbg 
+  [4] setbg::col = $b
+  [5] callexecute setbg 
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+__varcall void setbg(byte setbg::col)
+byte setbg::col loadstore 7.5
+
+Initial phi equivalence classes
+Added variable setbg::col to live range equivalence class [ setbg::col ]
+Complete equivalence classes
+[ setbg::col ]
+Allocated zp[1]:2 [ setbg::col ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *BGCOL = setbg::col [ ] ( setbg:3 [ ] { }  setbg:5 [ ] { }  ) always clobbers reg byte a 
+Statement [2] setbg::col = 0 [ setbg::col ] (  [ setbg::col ] { }  ) always clobbers reg byte a 
+Statement [4] setbg::col = $b [ setbg::col ] (  [ setbg::col ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ setbg::col ] : zp[1]:2 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [setbg] 7.5: zp[1]:2 [ setbg::col ] 
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [setbg] best 47 combination zp[1]:2 [ setbg::col ] 
+Uplifting [main] best 47 combination 
+Uplifting [] best 47 combination 
+Attempting to uplift remaining variables inzp[1]:2 [ setbg::col ]
+Uplifting [setbg] best 47 combination zp[1]:2 [ setbg::col ] 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d021
+  // setbg
+// setbg(byte zp(2) col)
+setbg: {
+    .label col = 2
+    // [0] *BGCOL = setbg::col -- _deref_pbuc1=vbuz1 
+    lda.z col
+    sta BGCOL
+    jmp __breturn
+    // setbg::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // main
+main: {
+    // [2] setbg::col = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z setbg.col
+    // [3] callexecute setbg  -- jsr 
+    jsr setbg
+    // [4] setbg::col = $b -- vbuz1=vbuc1 
+    lda #$b
+    sta.z setbg.col
+    // [5] callexecute setbg  -- jsr 
+    jsr setbg
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* BGCOL = (byte*) 53281
+void main()
+__varcall void setbg(byte setbg::col)
+byte setbg::col loadstore zp[1]:2 7.5
+
+zp[1]:2 [ setbg::col ]
+
+
+FINAL ASSEMBLER
+Score: 41
+
+  // File Comments
+// Test __varcall calling convention
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d021
+  // setbg
+// setbg(byte zp(2) col)
+setbg: {
+    .label col = 2
+    // *BGCOL = col
+    // [0] *BGCOL = setbg::col -- _deref_pbuc1=vbuz1 
+    lda.z col
+    sta BGCOL
+    // setbg::@return
+    // }
+    // [1] return 
+    rts
+}
+  // main
+main: {
+    // setbg(0)
+    // [2] setbg::col = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z setbg.col
+    // [3] callexecute setbg  -- jsr 
+    jsr setbg
+    // setbg(0x0b)
+    // [4] setbg::col = $b -- vbuz1=vbuc1 
+    lda #$b
+    sta.z setbg.col
+    // [5] callexecute setbg  -- jsr 
+    jsr setbg
+    // main::@return
+    // }
+    // [6] return 
+    rts
+}
+  // File Data
+

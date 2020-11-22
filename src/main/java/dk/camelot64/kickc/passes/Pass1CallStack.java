@@ -19,7 +19,7 @@ import dk.camelot64.kickc.passes.utils.SizeOfConstants;
 
 import java.util.*;
 
-/** Handle calling convention {@link Procedure.CallingConvention#STACK_CALL} by converting the making control flow graph and symbols calling convention specific. */
+/** Handle calling convention {@link Procedure.CallingConvention#STACK_CALL} by converting parameter passing / return values to stack operations. */
 public class Pass1CallStack extends Pass2SsaOptimization {
 
    public Pass1CallStack(Program program) {
@@ -52,41 +52,6 @@ public class Pass1CallStack extends Pass2SsaOptimization {
       // Add global STACK_BASE constant
       if(createStackBase)
          CallingConventionStack.getStackBaseConstant(getScope());
-
-      // Set variables modified in STACK_CALL procedures to load/store
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
-         if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-            Set<VariableRef> modifiedVars = getProgram().getProcedureModifiedVars().getModifiedVars(procedure.getRef());
-            for(VariableRef modifiedVar : modifiedVars) {
-               final Variable variable = getScope().getVariable(modifiedVar);
-               if(variable.isKindPhiMaster()) {
-                  getLog().append("Converting PHI-variable modified inside __stackcall procedure "+procedure.getFullName()+"() to load/store "+variable.toString(getProgram()));
-                  variable.setKind(Variable.Kind.LOAD_STORE);
-               }
-            }
-         }
-      }
-
-      // Transform STACK_CALL calls to call-prepare, call-execute, call-finalize
-      for(ControlFlowBlock block : getGraph().getAllBlocks()) {
-         ListIterator<Statement> stmtIt = block.getStatements().listIterator();
-         while(stmtIt.hasNext()) {
-            Statement statement = stmtIt.next();
-            if(statement instanceof StatementCall) {
-               StatementCall call = (StatementCall) statement;
-               ProcedureRef procedureRef = call.getProcedure();
-               Procedure procedure = getScope().getProcedure(procedureRef);
-               if(Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
-                  boolean hasPrepare = (call.getParameters().size() > 0) || !SymbolType.VOID.equals(procedure.getReturnType());
-                  stmtIt.remove();
-                  stmtIt.add(new StatementCallPrepare(procedureRef, call.getParameters(), call.getSource(), hasPrepare?call.getComments():Comment.NO_COMMENTS));
-                  stmtIt.add(new StatementCallExecute(procedureRef, call.getSource(), hasPrepare?Comment.NO_COMMENTS:call.getComments()));
-                  stmtIt.add(new StatementCallFinalize(call.getlValue(), procedureRef, call.getSource(), Comment.NO_COMMENTS));
-                  getLog().append("Calling convention " + Procedure.CallingConvention.STACK_CALL + " adding prepare/execute/finalize for " + call.toString(getProgram(), false));
-               }
-            }
-         }
-      }
 
       // Convert param(xxx) to stackidx(PARAM_X) = xxx
       if(offsetConstants.size() > 0) {

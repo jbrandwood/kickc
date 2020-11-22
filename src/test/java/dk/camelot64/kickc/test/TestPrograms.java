@@ -49,6 +49,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testVarCall1() throws IOException, URISyntaxException {
+      compileAndCompare("varcall-1.c", log());
+   }
+
+   @Test
    public void testConstVolatileProblem1() throws IOException, URISyntaxException {
       compileAndCompare("const-volatile-problem.c");
    }

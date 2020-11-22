@@ -1,4 +1,5 @@
 // Test __varcall calling convention
+// Parameter passing
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"

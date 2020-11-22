@@ -1,4 +1,5 @@
 // Test __varcall calling convention
+// Parameter passing
 
 void main() {
     setbg(0);

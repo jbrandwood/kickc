@@ -311,13 +311,17 @@ public class Compiler {
 
       new Pass1CallVoidReturns(program).execute();
       new Pass1CallStackVar(program).execute();
-      //getLog().append("PROCEDURE CALLS");
-      //getLog().append(program.getGraph().toString(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE CALLS");
+         getLog().append(program.getGraph().toString(program));
+      }
       new Pass1CallStack(program).execute();
       new Pass1CallVar(program).execute();
       new Pass1CallPhiParameters(program).execute();
-      //getLog().append("PROCEDURE PARAMETERS");
-      //getLog().append(program.getGraph().toString(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE PARAMETERS");
+         getLog().append(program.getGraph().toString(program));
+      }
       new PassNUnwindLValueLists(program).execute();
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
       new Pass1CallPhiReturn(program).execute();

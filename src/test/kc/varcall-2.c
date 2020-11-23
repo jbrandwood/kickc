@@ -8,7 +8,7 @@ void main() {
     *BGCOL = a;
     a = plus(a, 1);
     *BGCOL = a;
-    a = plus(a, 1);
+    a = plus(a, a);
     *BGCOL = a;
 }
 

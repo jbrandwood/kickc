@@ -30,12 +30,11 @@ main: {
     lda.z plus.return
     // *BGCOL = a
     sta BGCOL
-    // plus(a, 1)
+    // plus(a, a)
     sta.z plus.a
-    lda #1
     sta.z plus.b
     jsr plus
-    // a = plus(a, 1)
+    // a = plus(a, a)
     lda.z plus.return
     // *BGCOL = a
     sta BGCOL

@@ -49,6 +49,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testVarCall3() throws IOException, URISyntaxException {
+      compileAndCompare("varcall-3.c");
+   }
+
+   @Test
    public void testVarCall2() throws IOException, URISyntaxException {
       compileAndCompare("varcall-2.c");
    }

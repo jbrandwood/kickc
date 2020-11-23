@@ -1,5 +1,5 @@
 Calling convention __varcall adding prepare/execute/finalize for main::$0 = call plus main::a 1 
-Calling convention __varcall adding prepare/execute/finalize for main::$1 = call plus main::a 1 
+Calling convention __varcall adding prepare/execute/finalize for main::$1 = call plus main::a main::a 
 Converting parameter in __varcall procedure to load/store plus::a
 Converting parameter in __varcall procedure to load/store plus::b
 Converting return in __varcall procedure to load/store plus::return
@@ -17,7 +17,7 @@ main: scope:[main]  from __start
   main::a#1 = main::$0
   *BGCOL = main::a#1
   plus::a = main::a#1
-  plus::b = 1
+  plus::b = main::a#1
   callexecute plus 
   main::$1 = plus::return
   main::a#2 = main::$1
@@ -63,16 +63,12 @@ byte plus::b loadstore
 byte plus::return loadstore
 
 Adding number conversion cast (unumber) 1 in plus::b = 1
-Adding number conversion cast (unumber) 1 in plus::b = 1
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast plus::b = (unumber)1
 Inlining cast plus::b = (unumber)1
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 1
-Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
 Finalized unsigned number type 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)plus::return = plus::$0 
@@ -119,7 +115,7 @@ main: scope:[main]  from
   [7] main::a#1 = plus::return
   [8] *BGCOL = main::a#1
   [9] plus::a = main::a#1
-  [10] plus::b = 1
+  [10] plus::b = main::a#1
   [11] callexecute plus 
   [12] main::a#2 = plus::return
   [13] *BGCOL = main::a#2
@@ -132,7 +128,7 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 void main()
 byte main::a
-byte main::a#1 3.0
+byte main::a#1 2.6666666666666665
 byte main::a#2 4.0
 __varcall byte plus(byte plus::a , byte plus::b)
 byte~ plus::$0 22.0
@@ -161,11 +157,10 @@ Allocated zp[1]:5 [ plus::b ]
 Allocated zp[1]:6 [ main::a#1 ]
 Allocated zp[1]:7 [ main::a#2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] plus::$0 = plus::a + plus::b [ plus::$0 ] ( plus:6 [ plus::$0 ] { { main::a#1 = plus::a } }  plus:11 [ plus::$0 ] { { main::a#1 = plus::a } }  ) always clobbers reg byte a 
+Statement [0] plus::$0 = plus::a + plus::b [ plus::$0 ] ( plus:6 [ plus::$0 ] { { main::a#1 = plus::a plus::b } }  plus:11 [ plus::$0 ] { { main::a#1 = plus::a plus::b } }  ) always clobbers reg byte a 
 Statement [3] *BGCOL = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] plus::a = 1 [ plus::a ] (  [ plus::a ] { }  ) always clobbers reg byte a 
 Statement [5] plus::b = 1 [ plus::a plus::b ] (  [ plus::a plus::b ] { }  ) always clobbers reg byte a 
-Statement [10] plus::b = 1 [ plus::a plus::b ] (  [ plus::a plus::b ] { }  ) always clobbers reg byte a 
 Potential registers zp[1]:2 [ plus::$0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ plus::return ] : zp[1]:3 , 
 Potential registers zp[1]:4 [ plus::a ] : zp[1]:4 , 
@@ -175,18 +170,18 @@ Potential registers zp[1]:7 [ main::a#2 ] : zp[1]:7 , reg byte a , reg byte x , 
 
 REGISTER UPLIFT SCOPES
 Uplift Scope [plus] 22: zp[1]:2 [ plus::$0 ] 7.5: zp[1]:5 [ plus::b ] 3.75: zp[1]:3 [ plus::return ] 3.75: zp[1]:4 [ plus::a ] 
-Uplift Scope [main] 4: zp[1]:7 [ main::a#2 ] 3: zp[1]:6 [ main::a#1 ] 
+Uplift Scope [main] 4: zp[1]:7 [ main::a#2 ] 2.67: zp[1]:6 [ main::a#1 ] 
 Uplift Scope [] 
 
-Uplifting [plus] best 94 combination reg byte a [ plus::$0 ] zp[1]:5 [ plus::b ] zp[1]:3 [ plus::return ] zp[1]:4 [ plus::a ] 
-Uplifting [main] best 79 combination reg byte a [ main::a#2 ] reg byte a [ main::a#1 ] 
-Uplifting [] best 79 combination 
+Uplifting [plus] best 95 combination reg byte a [ plus::$0 ] zp[1]:5 [ plus::b ] zp[1]:3 [ plus::return ] zp[1]:4 [ plus::a ] 
+Uplifting [main] best 77 combination reg byte a [ main::a#2 ] reg byte a [ main::a#1 ] 
+Uplifting [] best 77 combination 
 Attempting to uplift remaining variables inzp[1]:5 [ plus::b ]
-Uplifting [plus] best 79 combination zp[1]:5 [ plus::b ] 
+Uplifting [plus] best 77 combination zp[1]:5 [ plus::b ] 
 Attempting to uplift remaining variables inzp[1]:3 [ plus::return ]
-Uplifting [plus] best 79 combination zp[1]:3 [ plus::return ] 
+Uplifting [plus] best 77 combination zp[1]:3 [ plus::return ] 
 Attempting to uplift remaining variables inzp[1]:4 [ plus::a ]
-Uplifting [plus] best 79 combination zp[1]:4 [ plus::a ] 
+Uplifting [plus] best 77 combination zp[1]:4 [ plus::a ] 
 Allocated (was zp[1]:3) zp[1]:2 [ plus::return ]
 Allocated (was zp[1]:4) zp[1]:3 [ plus::a ]
 Allocated (was zp[1]:5) zp[1]:4 [ plus::b ]
@@ -238,8 +233,7 @@ main: {
     sta BGCOL
     // [9] plus::a = main::a#1 -- vbuz1=vbuaa 
     sta.z plus.a
-    // [10] plus::b = 1 -- vbuz1=vbuc1 
-    lda #1
+    // [10] plus::b = main::a#1 -- vbuz1=vbuaa 
     sta.z plus.b
     // [11] callexecute plus  -- jsr 
     jsr plus
@@ -270,7 +264,7 @@ FINAL SYMBOL TABLE
 const nomodify byte* BGCOL = (byte*) 53281
 void main()
 byte main::a
-byte main::a#1 reg byte a 3.0
+byte main::a#1 reg byte a 2.6666666666666665
 byte main::a#2 reg byte a 4.0
 __varcall byte plus(byte plus::a , byte plus::b)
 byte~ plus::$0 reg byte a 22.0
@@ -287,7 +281,7 @@ reg byte a [ main::a#2 ]
 
 
 FINAL ASSEMBLER
-Score: 69
+Score: 67
 
   // File Comments
 // Test __varcall calling convention
@@ -336,15 +330,14 @@ main: {
     // *BGCOL = a
     // [8] *BGCOL = main::a#1 -- _deref_pbuc1=vbuaa 
     sta BGCOL
-    // plus(a, 1)
+    // plus(a, a)
     // [9] plus::a = main::a#1 -- vbuz1=vbuaa 
     sta.z plus.a
-    // [10] plus::b = 1 -- vbuz1=vbuc1 
-    lda #1
+    // [10] plus::b = main::a#1 -- vbuz1=vbuaa 
     sta.z plus.b
     // [11] callexecute plus  -- jsr 
     jsr plus
-    // a = plus(a, 1)
+    // a = plus(a, a)
     // [12] main::a#2 = plus::return -- vbuaa=vbuz1 
     lda.z plus.return
     // *BGCOL = a

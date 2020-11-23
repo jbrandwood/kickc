@@ -49,6 +49,11 @@ public class TestPrograms {
    //}
 
    @Test
+   public void testVarCall4() throws IOException, URISyntaxException {
+      compileAndCompare("varcall-4.c", log().verboseStructUnwind().verboseCreateSsa());
+   }
+
+   @Test
    public void testVarCall3() throws IOException, URISyntaxException {
       compileAndCompare("varcall-3.c");
    }

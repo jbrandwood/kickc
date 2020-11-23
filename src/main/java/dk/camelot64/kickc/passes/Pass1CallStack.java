@@ -171,7 +171,7 @@ public class Pass1CallStack extends Pass2SsaOptimization {
     * @param stackReturnOffset The offset onto the stack to place the value at
     * @param source The source line
     * @param comments The comments
-    * @param stmtIt The statment iterator used to add statements to.
+    * @param stmtIt The statement iterator used to add statements to.
     */
    private void generateStackReturnValues(RValue value, SymbolType returnType, ConstantValue stackReturnOffset, StatementSource source, List<Comment> comments, ListIterator<Statement> stmtIt) {
       if(!(value instanceof ValueList) || !(returnType instanceof SymbolTypeStruct)) {

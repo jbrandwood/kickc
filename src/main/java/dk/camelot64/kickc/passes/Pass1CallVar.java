@@ -8,8 +8,13 @@ import dk.camelot64.kickc.model.symbols.Procedure;
 import dk.camelot64.kickc.model.symbols.Scope;
 import dk.camelot64.kickc.model.symbols.Variable;
 import dk.camelot64.kickc.model.types.SymbolType;
+import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.values.CastValue;
 import dk.camelot64.kickc.model.values.LValue;
 import dk.camelot64.kickc.model.values.RValue;
+import dk.camelot64.kickc.model.values.ValueList;
+import dk.camelot64.kickc.passes.unwinding.ValueSource;
+import dk.camelot64.kickc.passes.unwinding.ValueSourceFactory;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -74,7 +79,7 @@ public class Pass1CallVar extends Pass2SsaOptimization {
                   if(lValue!=null) {
                      Variable returnVar = procedure.getLocalVariable("return");
                      stmtIt.previous();
-                     stmtIt.add(new StatementAssignment(lValue, returnVar.getRef(), call.isInitialAssignment(), source, comments));
+                     generateCallFinalize(lValue, returnVar,  source, comments, stmtIt, statement);
                      stmtIt.next();
                   }
                   stmtIt.remove();
@@ -109,6 +114,37 @@ public class Pass1CallVar extends Pass2SsaOptimization {
          }
       }
       return false;
+   }
+
+   private void generateCallFinalize(LValue lValue, Variable returnVar, StatementSource source, List<Comment> comments, ListIterator<Statement> stmtIt, Statement currentStmt) {
+      final SymbolType returnType = returnVar.getType();
+      if(!(lValue instanceof ValueList) || !(returnType instanceof SymbolTypeStruct)) {
+         // A simple value - add simple assignment
+         final StatementAssignment stackPull = new StatementAssignment(lValue, returnVar.getRef(), false, source, comments);
+         stmtIt.add(stackPull);
+         getLog().append("Calling convention " + Procedure.CallingConvention.VAR_CALL + " adding return value assignment " + stackPull);
+      } else {
+         final CastValue structLValue = new CastValue(returnType, lValue);
+         // A struct to unwind
+         final ValueSource lValueSource = ValueSourceFactory.getValueSource(structLValue, getProgram(), getScope(), currentStmt, stmtIt, null);
+         final ValueSource rValueSource = ValueSourceFactory.getValueSource(returnVar.getRef(), getProgram(), getScope(), currentStmt, stmtIt, null);
+         Pass1UnwindStructValues.copyValues(lValueSource, rValueSource, null, false, currentStmt, null, stmtIt, getProgram());
+
+
+         /*
+         final List<RValue> memberLValues = ((ValueList) lValue).getList();
+         final StructVariableMemberUnwinding structVariableMemberUnwinding = getProgram().getStructVariableMemberUnwinding();
+         final StructVariableMemberUnwinding.VariableUnwinding returnVarUnwinding = structVariableMemberUnwinding.getVariableUnwinding(returnVar.getRef());
+         for(RValue memberLValue : memberLValues) {
+
+         }
+         for(int i = 0; i < structMemberVars.size(); i++) {
+            final Variable memberVar = structMemberVars.get(i);
+            final RValue memberValue = memberLValues.get(i);
+            generateCallFinalize(memberValue, memberVar.getType(), source, comments, stmtIt);
+         }
+         */
+      }
    }
 
 }

@@ -1,9 +1,9 @@
-// Attempt to store and use a sinus on zeropage
+// Attempt to store and use a sine on zeropage
 // $00/$11 is carefully chosen to be $ff - which plays well with the processor port
 
 #include <c64.h>
 
-// A 256-byte (co)sinus (with $ff in the first two entries)
+// A 256-byte (co)sine (with $ff in the first two entries)
 const unsigned char align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
@@ -56,7 +56,7 @@ void restoreZeropage() {
     }
 }
 
-// Move the SINUS values to zeropage
+// Move the SINE values to zeropage
 void sinZeropage() {
     asm {
         ldx #0
@@ -68,7 +68,7 @@ void sinZeropage() {
     }
 }
 
-// Move a sprite in the sinus on zeropage
+// Move a sprite in the sine on zeropage
 void animSprite() {
     kickasm {{
         ldx #$00

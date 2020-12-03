@@ -79,7 +79,7 @@ public class AsmFragmentTemplate {
     */
    private void initAsm() {
       // Parse the body ASM
-      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature + ".asm", 1, this.body, 0, 0));
+      this.bodyAsm = AsmParser.parseAsm(this.body, new StatementSource(signature + ".asm", 1, 1, this.body, -1, -1));
       // Generate a dummy instance to find clobber & cycles
       ProgramScope scope = new ProgramScope();
       LinkedHashMap<String, Value> bindings = new LinkedHashMap<>();

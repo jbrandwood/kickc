@@ -50,11 +50,9 @@ position_sprite: {
     // if (x > 255)
     lda.z x+1
     bne __b1
-    lda.z x
-    cmp #$ff
-    beq !+
-    bcs __b1
-  !:
+    lda #$ff
+    cmp.z x
+    bcc __b1
     // 1 << spriteno
     lda #1
     ldy.z spriteno

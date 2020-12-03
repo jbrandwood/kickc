@@ -31,16 +31,21 @@
   .label SCREEN = $400
   .label COS = SIN+$40
   // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = SCREEN+$3f8
+  .label PLEX_SCREEN_PTR = $11
   // The index in the PLEX tables of the next sprite to show
-  .label plex_show_idx = $11
+  .label plex_show_idx = $13
   // The index the next sprite to use for showing (sprites are used round-robin)
-  .label plex_sprite_idx = $12
+  .label plex_sprite_idx = $14
   // The MSB bit of the next sprite to use for showing
-  .label plex_sprite_msb = $13
+  .label plex_sprite_msb = $15
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  .label plex_free_next = $14
+  .label plex_free_next = $16
 __start: {
+    // PLEX_SCREEN_PTR = 0x400+0x3f8
+    lda #<$400+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>$400+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     // plex_show_idx=0
     lda #0
     sta.z plex_show_idx
@@ -153,7 +158,7 @@ loop: {
     .label i = 3
     // Render Rotated BOBs
     .label angle = 2
-    .label plexFreeNextYpos1_return = $15
+    .label plexFreeNextYpos1_return = $17
     .label i1 = 4
     lda #0
     sta.z angle
@@ -311,6 +316,11 @@ exit: {
 }
 // Initialize the multiplexer data structures
 plexInit: {
+    // PLEX_SCREEN_PTR = screen+0x3f8
+    lda #<SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     ldx #0
   __b1:
     // PLEX_SORTED_IDX[i] = i
@@ -517,9 +527,9 @@ mulf8s: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $16
-    .label nxt_y = $17
-    .label m = $15
+    .label nxt_idx = $18
+    .label nxt_y = $19
+    .label m = $17
     lda #0
     sta.z m
   __b1:
@@ -587,7 +597,7 @@ plexSort: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $17
+    .label plex_sprite_idx2 = $19
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -616,8 +626,8 @@ plexShowSprite: {
     // PLEX_SCREEN_PTR[plex_sprite_idx] = PLEX_PTR[PLEX_SORTED_IDX[plex_show_idx]]
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
-    ldx.z plex_sprite_idx
-    sta PLEX_SCREEN_PTR,x
+    ldy.z plex_sprite_idx
+    sta (PLEX_SCREEN_PTR),y
     // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y
@@ -700,11 +710,11 @@ mulf8u_prepare: {
 }
 // Calculate fast multiply with a prepared unsigned char to a unsigned int result
 // The prepared number is set by calling mulf8s_prepare(char a)
-// mulf8s_prepared(signed byte zp($16) b)
+// mulf8s_prepared(signed byte zp($18) b)
 mulf8s_prepared: {
     .label memA = $fd
     .label m = $f
-    .label b = $16
+    .label b = $18
     // mulf8u_prepared((char) b)
     lda.z b
     jsr mulf8u_prepared

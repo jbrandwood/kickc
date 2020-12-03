@@ -5,6 +5,7 @@ import dk.camelot64.kickc.SourceLoader;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.TargetPlatform;
+import dk.camelot64.kickc.model.statements.StatementSource;
 import dk.camelot64.kickc.preprocessor.CPreprocessor;
 import org.antlr.v4.runtime.*;
 
@@ -38,7 +39,7 @@ public class CParser {
    public static final String PRAGMA_ENCODING = "encoding";
    public static final String PRAGMA_CODE_SEG = "code_seg";
    public static final String PRAGMA_DATA_SEG = "data_seg";
-   public static final String PRAGMA_PC = "pc";
+   public static final String PRAGMA_START_ADDRESS = "start_address";
    public static final String PRAGMA_CALLING = "calling";
    public static final String PRAGMA_ZP_RESERVE = "zp_reserve";
    public static final String PRAGMA_CONSTRUCTOR_FOR = "constructor_for";
@@ -95,7 +96,8 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            throw new CompileError("Error parsing  file " + recognizer.getInputStream().getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            StatementSource source = new StatementSource(recognizer.getInputStream().getSourceName(), line, charPositionInLine, null, -1, -1);
+            throw new CompileError("Error parsing file: " + msg, source);
          }
       });
    }
@@ -290,7 +292,8 @@ public class CParser {
                int charPositionInLine,
                String msg,
                RecognitionException e) {
-            throw new CompileError("Error parsing file " + charStream.getSourceName() + "\n - Line: " + line + "\n - Message: " + msg);
+            StatementSource source = new StatementSource(charStream.getSourceName(), line, charPositionInLine, null, -1,-1);
+            throw new CompileError("Error parsing file: " + msg, source);
          }
       });
       return lexer;

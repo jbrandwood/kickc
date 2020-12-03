@@ -1,6 +1,6 @@
-// Generates a 16-bit signed sinus
-#include <sinus.h>
-#include "sinusb.c"
+// Generates a 16-bit signed sine
+#include <sine.h>
+#include "sineb.c"
 #include <print.h>
 
 void main() {

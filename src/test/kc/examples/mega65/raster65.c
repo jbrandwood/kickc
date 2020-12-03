@@ -29,8 +29,8 @@ __address(0x0fc0) char SONG[] = kickasm(resource "DiscoZak_2SID_patched.prg") {{
     .import c64 "DiscoZak_2SID_patched.prg"
 }};
 
-// Sinus Values 0-183
-__address(0x2c00) char SINUS[256] = kickasm {{
+// Sine Values 0-183
+__address(0x2c00) char SINE[256] = kickasm {{
     .fill 256, 91.5 + 91.5*sin(i*2*PI/256)
 }};
 
@@ -90,7 +90,7 @@ void main() {
     for(;;) ;
 }
 
-// Sinus Position (used across effects)
+// Sine Position (used across effects)
 volatile char sin_idx;
 // scroll soft position of text scrolly (0-7)
 volatile char scroll_soft = 7;
@@ -118,7 +118,7 @@ interrupt(hardware_stack) void irq() {
         VICIII->BG_COLOR = col;
         if(line < SCROLL_Y) {
             // if raster position < SCROLL_Y pos do wobble Logo!
-            VICIV->TEXTXPOS_LO =  SINUS[wobble_idx++];
+            VICIV->TEXTXPOS_LO =  SINE[wobble_idx++];
             // No zooming
             VICIV->CHRXSCL = 0x66;
         } else if(line == SCROLL_Y) {
@@ -133,7 +133,7 @@ interrupt(hardware_stack) void irq() {
             VICIV->TEXTXPOS_LO = 0x50;
         } else if(line == SCROLL_Y+SCROLL_BLACKBARS+1) {
             // if raster position > SCROLL_Y pos do zoom
-            char zoomval = SINUS[greet_zoomx++];
+            char zoomval = SINE[greet_zoomx++];
             VICIV->CHRXSCL = zoomval;
             VICIV->TEXTXPOS_LO = zoomval+1;
             if(greet_zoomx==0) {
@@ -154,7 +154,7 @@ interrupt(hardware_stack) void irq() {
     char sin_col = sin_idx;
     for(char i=0;i<40;i++) {
         // Greeting colors
-        char col = SINUS[sin_col]/4;
+        char col = SINE[sin_col]/4;
         (COLORRAM + GREET_ROW*40)[i] = col;
         // Logo colors
         col /= 2;
@@ -175,7 +175,7 @@ interrupt(hardware_stack) void irq() {
     // Big block of bars (16)
     char sin_bar = sin_idx;
     for(char barcnt=0; barcnt<16; barcnt++) {
-        char idx = SINUS[sin_bar];
+        char idx = SINE[sin_bar];
         char barcol = barcnt*16;
         for(char i=0;i<16;i++)
             rasters[idx++] = barcol++;

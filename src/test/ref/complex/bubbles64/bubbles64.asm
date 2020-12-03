@@ -301,14 +301,11 @@ main: {
     ldy #5
     tax
     lda (d),y
-    sty.z $ff
     stx.z $ff
     clc
     adc.z $ff
-    ldy.z $ff
     sta (d),y
     // if (d->vx<-32)
-    ldy #5
     lda (d),y
     sec
     sbc #-$20
@@ -328,9 +325,8 @@ main: {
   !:
     bmi __b21
     // d->ax=-1
-    lda #7
-    tay
     lda #-1
+    ldy #7
     sta (d),y
   __b21:
     // if (d->y>248<<F)
@@ -359,9 +355,8 @@ main: {
   !:
     bpl __b23
     // d->vy=1<<F
-    lda #6
-    tay
     lda #1<<F
+    ldy #6
     sta (d),y
   __b23:
     // d->x+=d->vx
@@ -468,16 +463,14 @@ main: {
     jmp __b17
   __b22:
     // d->vy=-1<<F
-    lda #6
-    tay
     lda #-1<<F
+    ldy #6
     sta (d),y
     jmp __b23
   __b20:
     // d->ax=1
-    lda #7
-    tay
     lda #1
+    ldy #7
     sta (d),y
     jmp __b21
   __b13:
@@ -517,14 +510,12 @@ main: {
     lda #>$70<<F
     sta (d1),y
     // d->vx=(sbyte)i
-    lda #5
-    tay
+    ldy #5
     txa
     sta (d1),y
     // d->ax=1
-    lda #7
-    tay
     lda #1
+    ldy #7
     sta (d1),y
     // d->y=24<<F
     ldy #3
@@ -534,14 +525,12 @@ main: {
     lda #>$18<<F
     sta (d1),y
     // d->vy=1<<F
-    lda #6
-    tay
     lda #1<<F
+    ldy #6
     sta (d1),y
     // d->ay=1
-    lda #8
-    tay
     lda #1
+    ldy #8
     sta (d1),y
     // i+=1
     inx

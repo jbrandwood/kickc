@@ -56,10 +56,10 @@
   .label PETSCII = $1000
   .label COSTAB = SINTAB+$40
   // The current canvas being rendered to the screen - in D018 format.
-  .label canvas_show_memory = $11
+  .label canvas_show_memory = $13
   // Flag signalling that the canvas on screen needs to be updated.
   // Set to 1 by the renderer when a new canvas is ready for showing, and to 0 by the raster when the canvas is shown on screen.
-  .label canvas_show_flag = $12
+  .label canvas_show_flag = $14
 __start: {
     .const __init1_toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
     // canvas_show_memory = toD018(SCREEN, CANVAS2)
@@ -146,12 +146,12 @@ main: {
     // Setup 16x16 canvas for rendering
     .label screen = 5
     .label y = 2
-    .label x0 = $13
-    .label y0 = $14
+    .label x0 = $15
+    .label y0 = $16
     .label x1 = $c
-    .label y1 = $15
+    .label y1 = $17
     .label x2 = $c
-    .label y2 = $16
+    .label y2 = $18
     .label p0_idx = 7
     .label p1_idx = 8
     .label p2_idx = 9
@@ -389,12 +389,12 @@ kbhit: {
     rts
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($1f) str, byte register(X) c, word zp($1c) num)
+// memset(void* zp($20) str, byte register(X) c, word zp($1e) num)
 memset: {
-    .label end = $1c
-    .label dst = $1f
-    .label num = $1c
-    .label str = $1f
+    .label end = $1e
+    .label dst = $20
+    .label num = $1e
+    .label str = $20
     // if(num>0)
     lda.z num
     bne !+
@@ -493,27 +493,27 @@ clock_start: {
 }
 // Draw a EOR friendly line between two points
 // Uses bresenham line drawing routine
-// line(byte zp($f) x1, byte zp($10) y1, byte zp($c) x2, byte zp($d) y2)
+// line(byte zp($10) x1, byte zp($11) y1, byte zp($c) x2, byte zp($d) y2)
 line: {
-    .label plot2___1 = $1e
-    .label plot5___1 = $27
-    .label x1 = $f
-    .label y1 = $10
+    .label x1 = $10
+    .label y1 = $11
     .label x2 = $c
     .label y2 = $d
-    .label x = $f
-    .label y = $10
-    .label dx = $17
-    .label dy = $18
-    .label sx = $19
-    .label sy = $1a
-    .label plot1_column = $21
-    .label plot2_y = $1b
-    .label plot2_column = $1c
-    .label plot3_column = $1f
-    .label e1 = $e
-    .label plot4_column = $23
-    .label plot5_column = $25
+    .label x = $10
+    .label y = $11
+    .label dx = $19
+    .label dy = $1a
+    .label sx = $1b
+    .label sy = $1c
+    .label e2 = $12
+    .label plot1_column = $22
+    .label e = $e
+    .label plot2_y = $1d
+    .label plot2_column = $1e
+    .label plot3_column = $20
+    .label e1 = $f
+    .label plot4_column = $24
+    .label plot5_column = $26
     .label plot6_column = $28
     // abs_u8(x2-x1)
     lda.z x2
@@ -570,7 +570,7 @@ line: {
     // e = dy/2
     lda.z dy
     lsr
-    tax
+    sta.z e
   __b6:
     // y += sy
     lda.z y
@@ -578,14 +578,13 @@ line: {
     adc.z sy
     sta.z y
     // e += dx
-    txa
+    lda.z e
     clc
     adc.z dx
-    tax
+    sta.z e
     // if(e>dy)
     lda.z dy
-    stx.z $ff
-    cmp.z $ff
+    cmp.z e
     bcs __b7
     // plot(x, y-sy)
     lda.z y
@@ -607,13 +606,11 @@ line: {
     // x&7
     lda #7
     and.z x
-    sta.z plot2___1
     // column[y] |= plot_bit[x&7]
     ldy.z plot2_y
+    tax
     lda (plot2_column),y
-    ldy.z plot2___1
-    ora plot_bit,y
-    ldy.z plot2_y
+    ora plot_bit,x
     sta (plot2_column),y
     // x += sx
     lda.z x
@@ -621,10 +618,10 @@ line: {
     adc.z sx
     sta.z x
     // e -= dy
-    txa
+    lda.z e
     sec
     sbc.z dy
-    tax
+    sta.z e
   __b7:
     // while (y != y2)
     lda.z y
@@ -740,7 +737,7 @@ line: {
     // e = dx/2
     lda.z dx
     lsr
-    tax
+    sta.z e2
   plot5:
     // x/8
     lda.z x
@@ -757,13 +754,11 @@ line: {
     // x&7
     lda #7
     and.z x
-    sta.z plot5___1
     // column[y] |= plot_bit[x&7]
     ldy.z y
+    tax
     lda (plot5_column),y
-    ldy.z plot5___1
-    ora plot_bit,y
-    ldy.z y
+    ora plot_bit,x
     sta (plot5_column),y
     // x += sx
     lda.z x
@@ -771,14 +766,13 @@ line: {
     adc.z sx
     sta.z x
     // e += dy
-    txa
+    lda.z e2
     clc
     adc.z dy
-    tax
+    sta.z e2
     // if(e>dx)
     lda.z dx
-    stx.z $ff
-    cmp.z $ff
+    cmp.z e2
     bcs __b13
     // y += sy
     tya
@@ -786,10 +780,10 @@ line: {
     adc.z sy
     sta.z y
     // e -= dx
-    txa
+    lda.z e2
     sec
     sbc.z dx
-    tax
+    sta.z e2
   __b13:
     // while (x != x2)
     lda.z x
@@ -818,11 +812,11 @@ line: {
     rts
 }
 // EOR fill from the line buffer onto the canvas
-// eorfill(byte* zp($1f) canvas)
+// eorfill(byte* zp($20) canvas)
 eorfill: {
-    .label canvas = $1f
-    .label line_column = $1c
-    .label fill_column = $1f
+    .label canvas = $20
+    .label line_column = $1e
+    .label fill_column = $20
     lda #<LINE_BUFFER
     sta.z line_column
     lda #>LINE_BUFFER

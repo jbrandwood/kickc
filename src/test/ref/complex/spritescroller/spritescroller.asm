@@ -44,6 +44,8 @@
   .label SCREEN = $400
   // The high-value table
   .label XMOVEMENT_HI = XMOVEMENT+$100
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
+  .label PLEX_SCREEN_PTR = $f
   // The index in the PLEX tables of the next sprite to show
   .label plex_show_idx = $11
   // The index the next sprite to use for showing (sprites are used round-robin)
@@ -55,14 +57,17 @@
   // Signal used between IRQ and main loop. Set to true when the IRQ is done showing the sprites.
   .label frame_done = $15
   // The next char to use from the scroll text
-  .label scroll_text_next = $e
+  .label scroll_text_next = $c
   // Y-sine index
-  .label y_sin_idx = $b
+  .label y_sin_idx = 9
   // X-movement index
-  .label x_movement_idx = $c
-  // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = 2
+  .label x_movement_idx = $a
 __start: {
+    // PLEX_SCREEN_PTR = 0x400+0x3f8
+    lda #<$400+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>$400+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     // plex_show_idx=0
     lda #0
     sta.z plex_show_idx
@@ -132,7 +137,7 @@ plex_irq: {
 }
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET_DEFAULT)/4&$f
-    .label s = 4
+    .label s = 2
     .label __13 = $17
     // asm
     // Create 2x2 font from CHARGEN
@@ -358,15 +363,15 @@ font_2x2: {
     .label __5 = $17
     .label __7 = $17
     .label next_2x2_left = $1a
-    .label next_2x2_right = 9
-    .label glyph_bits = $d
+    .label next_2x2_right = 7
+    .label glyph_bits = $b
     .label glyph_bits_2x2 = $17
     .label l2 = $1c
     .label l = $1d
-    .label next_2x2_left_1 = 7
+    .label next_2x2_left_1 = 5
     .label next_2x2 = $1a
-    .label next_original = 5
-    .label c = $10
+    .label next_original = 3
+    .label c = $e
     lda #0
     sta.z c
     lda #<CHARGEN
@@ -522,12 +527,12 @@ font_2x2: {
 font_2x2_to_sprites: {
     .const num_chars = $40
     .label __3 = $1c
-    .label char_right = 9
+    .label char_right = 7
     .label sprite_idx = $1d
-    .label char_left = 7
+    .label char_left = 5
     .label char_current = $1a
-    .label sprite = 5
-    .label c = $10
+    .label sprite = 3
+    .label c = $e
     lda #<SPRITES
     sta.z sprite
     lda #>SPRITES
@@ -644,6 +649,11 @@ font_2x2_to_sprites: {
 }
 // Initialize the multiplexer data structures
 plexInit: {
+    // PLEX_SCREEN_PTR = screen+0x3f8
+    lda #<SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     ldx #0
   __b1:
     // PLEX_SORTED_IDX[i] = i
@@ -659,8 +669,8 @@ plexInit: {
 // Move the plex sprites in an Y-sine and scroll them to the left.
 plex_move: {
     .label y_idx = $1c
-    .label x_idx = $10
-    .label s = $d
+    .label x_idx = $e
+    .label s = $b
     .label __7 = $1a
     // y_idx = y_sin_idx
     lda.z y_sin_idx
@@ -752,7 +762,7 @@ plex_move: {
 plexSort: {
     .label nxt_idx = $1c
     .label nxt_y = $1d
-    .label m = $10
+    .label m = $e
     lda #0
     sta.z m
   __b1:

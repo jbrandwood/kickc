@@ -104,7 +104,7 @@ main: {
     .label r_add = 8
     .label __30 = $d
     .label __31 = $d
-    // sin16s_gen2(SINUS, 512, -0x1001, 0x1001)
+    // sin16s_gen2(SINE, 512, -0x1001, 0x1001)
     jsr sin16s_gen2
     // bitmap_init(BITMAP, SCREEN)
     jsr bitmap_init
@@ -130,7 +130,7 @@ main: {
     sta.z idx_x
     sta.z idx_x+1
   __b2:
-    // cos_x = SINUS[idx_x]
+    // cos_x = SINE[idx_x]
     lda.z idx_x
     asl
     sta.z __26
@@ -139,10 +139,10 @@ main: {
     sta.z __26+1
     clc
     lda.z __30
-    adc #<SINUS
+    adc #<SINE
     sta.z __30
     lda.z __30+1
-    adc #>SINUS
+    adc #>SINE
     sta.z __30+1
     ldy #0
     lda (cos_x),y
@@ -178,7 +178,7 @@ main: {
     lda.z x+1
     adc #>$a0
     sta.z x+1
-    // sin_y = SINUS[idx_y]
+    // sin_y = SINE[idx_y]
     lda.z idx_y
     asl
     sta.z __27
@@ -187,10 +187,10 @@ main: {
     sta.z __27+1
     clc
     lda.z __31
-    adc #<SINUS
+    adc #<SINE
     sta.z __31
     lda.z __31+1
-    adc #>SINUS
+    adc #>SINE
     sta.z __31+1
     ldy #0
     lda (sin_y),y
@@ -308,9 +308,9 @@ main: {
     inc BORDER_COLOR
     jmp __b7
 }
-// Generate signed int sinus table - with values in the range min-max.
+// Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 // sin16s_gen2(signed word* zp($17) sintab)
 sin16s_gen2: {
     .const min = -$1001
@@ -329,9 +329,9 @@ sin16s_gen2: {
     jsr div32u16u
     // div32u16u(PI2_u4f28, wavelength)
     // step = div32u16u(PI2_u4f28, wavelength)
-    lda #<SINUS
+    lda #<SINE
     sta.z sintab
-    lda #>SINUS
+    lda #>SINE
     sta.z sintab+1
     lda #<0
     sta.z x
@@ -694,7 +694,7 @@ div32u16u: {
     // }
     rts
 }
-// Calculate signed int sinus sin(x)
+// Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp($13) x)
@@ -1125,4 +1125,4 @@ mulu16_sel: {
   bitmap_plot_bit: .fill $100, 0
   plots_per_frame: .fill $100, 0
   .align $100
-  SINUS: .fill 2*$200, 0
+  SINE: .fill 2*$200, 0

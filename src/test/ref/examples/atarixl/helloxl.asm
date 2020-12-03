@@ -4,27 +4,12 @@
 // Display Lists atariarchives.org/mapping/appendix8.php
   // Atari XL/XE executable XEX file with a single segment
 // https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.plugin "dk.camelot64.kickass.xexplugin.AtariXex"
 .file [name="helloxl.xex", type="bin", segments="XexFile"]
-.segmentdef XexFile
-.segment XexFile
-// Binary File Header
-.byte $ff, $ff
-// Program segment [start address, end address, data]
-.word ProgramStart, ProgramEnd-1
-.segmentout [ segments="Program" ]
-// RunAd - Run Address Segment [start address, end address, data]
-.word $02e0, $02e1
-.word main
-.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
-.segmentdef ProgramStart [start=$2000]
-.segment ProgramStart
-ProgramStart:
-.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef XexFile [segments="Program", modify="XexFormat", _RunAddr=main]
+.segmentdef Program [segments="Code, Data"]
+.segmentdef Code [start=$2000]
 .segmentdef Data [startAfter="Code"]
-.segmentdef ProgramEnd [startAfter="Data"]
-.segment ProgramEnd
-ProgramEnd:
-
   // 2: High Resolution Text Mode. 8 scanlines per char, 32/40/48 chars wide.  bit 7 controls inversion or blinking, based on modes in CHACTL.
   .const MODE2 = 2
   // 7:  Single color text in five colors. 16 scanlines per char, 16/20/24 chars wide.  the upper two bits are used to select the foreground color used by 1 bits, with 00-11 producing PF0-PF3.

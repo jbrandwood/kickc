@@ -1,5 +1,5 @@
 #include <c64.h>
-#include <sinus.h>
+#include <sine.h>
 #include <string.h>
 
 char* SCREEN = $400;

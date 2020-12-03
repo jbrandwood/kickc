@@ -66,14 +66,20 @@ public enum StringEncoding {
          return PETSCII_MIXED;
       } else if(suffix.contains("pu")) {
          return PETSCII_UPPER;
-      } else if(suffix.contains("p")) {
-         return PETSCII_MIXED;
       } else if(suffix.contains("sm")) {
          return SCREENCODE_MIXED;
       } else if(suffix.contains("su")) {
          return SCREENCODE_UPPER;
+      } else if(suffix.contains("as")) {
+         return ASCII;
+      } else if(suffix.contains("at")) {
+         return ATASCII;
+      } else if(suffix.contains("sa")) {
+         return SCREENCODE_ATARI;
       } else if(suffix.contains("s")) {
          return SCREENCODE_MIXED;
+      } else if(suffix.contains("p")) {
+         return PETSCII_MIXED;
       } else {
          return defaultEncoding;
       }

@@ -1,4 +1,4 @@
-// Attempt to store and use a sinus on zeropage
+// Attempt to store and use a sine on zeropage
 // $00/$11 is carefully chosen to be $ff - which plays well with the processor port
 .pc = $801 "Basic"
 :BasicUpstart(main)
@@ -48,7 +48,7 @@ saveZeropage: {
     // }
     rts
 }
-// Move the SINUS values to zeropage
+// Move the SINE values to zeropage
 sinZeropage: {
     // asm
     ldx #0
@@ -60,7 +60,7 @@ sinZeropage: {
     // }
     rts
 }
-// Move a sprite in the sinus on zeropage
+// Move a sprite in the sine on zeropage
 animSprite: {
     // kickasm
     ldx #$00
@@ -99,7 +99,7 @@ restoreZeropage: {
     // }
     rts
 }
-  // A 256-byte (co)sinus (with $ff in the first two entries)
+  // A 256-byte (co)sine (with $ff in the first two entries)
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)

@@ -26,7 +26,7 @@ public class Pass1AssertNoModifyVars extends Pass1Base {
                if(!statementLValue.isInitialAssignment() && statementLValue.getlValue() instanceof VariableRef) {
                   Variable assignedVar = getScope().getVariable((VariableRef) statementLValue.getlValue());
                   if(assignedVar.isNoModify())
-                     throw new CompileError("Error! const variable may not be modified! " + assignedVar.toString(), statement);
+                     throw new CompileError("const variable may not be modified! " + assignedVar.toString(), statement);
                }
             }
          }

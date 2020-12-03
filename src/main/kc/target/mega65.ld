@@ -2,7 +2,7 @@
 .file [name="%O", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$2001]
-.segmentdef Code [start=$2017]
+.segmentdef Code [start=%P]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 .byte $0a, $20, $0a, $00, $fe, $02, $20, $30, $00       // 10 BANK 0

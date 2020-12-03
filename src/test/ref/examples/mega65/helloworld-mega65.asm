@@ -83,10 +83,10 @@ conio_mega65_init: {
     // line = *BASIC_CURSOR_LINE+1
     ldx BASIC_CURSOR_LINE
     inx
-    // if(line>24)
-    cpx #$18+1
+    // if(line>=CONIO_HEIGHT)
+    cpx #$19
     bcc __b1
-    ldx #$18
+    ldx #$19-1
   __b1:
     // gotoxy(0, line)
     jsr gotoxy

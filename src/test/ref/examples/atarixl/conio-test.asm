@@ -1,27 +1,12 @@
 // Example usages of conio for Atari XL target.
   // Atari XL/XE executable XEX file with a single segment
 // https://www.atarimax.com/jindroush.atari.org/afmtexe.html
+.plugin "dk.camelot64.kickass.xexplugin.AtariXex"
 .file [name="conio-test.xex", type="bin", segments="XexFile"]
-.segmentdef XexFile
-.segment XexFile
-// Binary File Header
-.byte $ff, $ff
-// Program segment [start address, end address, data]
-.word ProgramStart, ProgramEnd-1
-.segmentout [ segments="Program" ]
-// RunAd - Run Address Segment [start address, end address, data]
-.word $02e0, $02e1
-.word __start
-.segmentdef Program [segments="ProgramStart, Code, Data, ProgramEnd"]
-.segmentdef ProgramStart [start=$2000]
-.segment ProgramStart
-ProgramStart:
-.segmentdef Code [startAfter="ProgramStart"]
+.segmentdef XexFile [segments="Program", modify="XexFormat", _RunAddr=__start]
+.segmentdef Program [segments="Code, Data"]
+.segmentdef Code [start=$2000]
 .segmentdef Data [startAfter="Code"]
-.segmentdef ProgramEnd [startAfter="Data"]
-.segment ProgramEnd
-ProgramEnd:
-
   .const DARK_ORANGE = $30
   .const MEDIUM_BLUE = $80
   .const WHITE = $fe

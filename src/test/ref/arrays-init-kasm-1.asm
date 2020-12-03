@@ -12,7 +12,7 @@ main: {
     rts
 }
 .pc = $1000 "SINTAB"
-// Sinus table at an absolute address in memory
+// Sine table at an absolute address in memory
 SINTAB:
 .fill 256, 128 + 128*sin(i*2*PI/256)
 

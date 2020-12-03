@@ -34,7 +34,25 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
+    // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
+    jsr conio_c64_init
     jsr main
+    rts
+}
+// Set initial cursor position
+conio_c64_init: {
+    // Position cursor at current line
+    .label BASIC_CURSOR_LINE = $d6
+    // line = *BASIC_CURSOR_LINE
+    ldx BASIC_CURSOR_LINE
+    // if(line>=CONIO_HEIGHT)
+    cpx #$19
+    bcc __b1
+    ldx #$19-1
+  __b1:
+    // gotoxy(0, line)
+    jsr gotoxy
+    // }
     rts
 }
 main: {
@@ -78,6 +96,82 @@ main: {
     .byte 0
     str1: .text "-5678"
     .byte 0
+}
+// Set the cursor to the specified position
+// gotoxy(byte register(X) y)
+gotoxy: {
+    .const x = 0
+    .label __5 = $13
+    .label __6 = $f
+    .label __7 = $f
+    .label line_offset = $f
+    .label __8 = $11
+    .label __9 = $f
+    // if(y>CONIO_HEIGHT)
+    cpx #$19+1
+    bcc __b2
+    ldx #0
+  __b2:
+    // conio_cursor_x = x
+    lda #x
+    sta.z conio_cursor_x
+    // conio_cursor_y = y
+    stx.z conio_cursor_y
+    // (unsigned int)y*CONIO_WIDTH
+    txa
+    sta.z __7
+    lda #0
+    sta.z __7+1
+    // line_offset = (unsigned int)y*CONIO_WIDTH
+    lda.z __7
+    asl
+    sta.z __8
+    lda.z __7+1
+    rol
+    sta.z __8+1
+    asl.z __8
+    rol.z __8+1
+    lda.z __9
+    clc
+    adc.z __8
+    sta.z __9
+    lda.z __9+1
+    adc.z __8+1
+    sta.z __9+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    asl.z line_offset
+    rol.z line_offset+1
+    // CONIO_SCREEN_TEXT + line_offset
+    clc
+    lda.z line_offset
+    adc #<DEFAULT_SCREEN
+    sta.z __5
+    lda.z line_offset+1
+    adc #>DEFAULT_SCREEN
+    sta.z __5+1
+    // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
+    // CONIO_SCREEN_COLORS + line_offset
+    clc
+    lda.z __6
+    adc #<COLORRAM
+    sta.z __6
+    lda.z __6+1
+    adc #>COLORRAM
+    sta.z __6+1
+    // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    lda.z __6
+    sta.z conio_line_color
+    lda.z __6+1
+    sta.z conio_line_color+1
+    // }
+    rts
 }
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 clrscr: {
@@ -157,7 +251,7 @@ atoi: {
     .label res = 2
     .label return = 2
     .label str = 5
-    .label __8 = $11
+    .label __8 = $17
     .label __9 = 2
     // if (str[i] == '-')
     ldy #0
@@ -299,7 +393,7 @@ cputs: {
 // - radix : The radix to convert the number to (from the enum RADIX)
 // utoa(word zp(2) value, byte* zp(5) buffer)
 utoa: {
-    .label digit_value = $f
+    .label digit_value = $15
     .label buffer = 5
     .label digit = 4
     .label value = 2
@@ -424,11 +518,11 @@ cputc: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(5) buffer, word zp(2) value, word zp($f) sub)
+// utoa_append(byte* zp(5) buffer, word zp(2) value, word zp($15) sub)
 utoa_append: {
     .label buffer = 5
     .label value = 2
-    .label sub = $f
+    .label sub = $15
     .label return = 2
     ldx #0
   __b1:
@@ -552,13 +646,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($11) destination, void* zp(7) source)
+// memcpy(void* zp($17) destination, void* zp(7) source)
 memcpy: {
-    .label src_end = $f
-    .label dst = $11
+    .label src_end = $15
+    .label dst = $17
     .label src = 7
     .label source = 7
-    .label destination = $11
+    .label destination = $17
     // src_end = (char*)source+num
     clc
     lda.z source
@@ -596,7 +690,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(7) str, byte register(X) c)
 memset: {
-    .label end = $11
+    .label end = $17
     .label dst = 7
     .label str = 7
     // end = (char*)str + num

@@ -1,7 +1,7 @@
-// Generate a big sinus and plot it on a bitmap
+// Generate a big sine and plot it on a bitmap
 
 #include <c64.h>
-#include <sinus.h>
+#include <sine.h>
 #include <string.h>
 #include <bitmap2.h>
 

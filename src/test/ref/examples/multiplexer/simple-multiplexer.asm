@@ -26,16 +26,21 @@
   // Location of screen & sprites
   .label SCREEN = $400
   // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = SCREEN+$3f8
+  .label PLEX_SCREEN_PTR = 6
   // The index in the PLEX tables of the next sprite to show
-  .label plex_show_idx = 6
+  .label plex_show_idx = 8
   // The index the next sprite to use for showing (sprites are used round-robin)
-  .label plex_sprite_idx = 7
+  .label plex_sprite_idx = 9
   // The MSB bit of the next sprite to use for showing
-  .label plex_sprite_msb = 8
+  .label plex_sprite_msb = $a
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
-  .label plex_free_next = 9
+  .label plex_free_next = $b
 __start: {
+    // PLEX_SCREEN_PTR = 0x400+0x3f8
+    lda #<$400+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>$400+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     // plex_show_idx=0
     lda #0
     sta.z plex_show_idx
@@ -117,9 +122,9 @@ init: {
 }
 // The raster loop
 loop: {
-    // The current index into the y-sinus
+    // The current index into the y-sine
     .label sin_idx = 4
-    .label plexFreeNextYpos1_return = $a
+    .label plexFreeNextYpos1_return = $c
     .label ss = 5
     lda #0
     sta.z sin_idx
@@ -191,6 +196,11 @@ loop: {
 }
 // Initialize the multiplexer data structures
 plexInit: {
+    // PLEX_SCREEN_PTR = screen+0x3f8
+    lda #<SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     ldx #0
   __b1:
     // PLEX_SORTED_IDX[i] = i
@@ -213,9 +223,9 @@ plexInit: {
 //     elements before the marker are shifted right one at a time until encountering one smaller than the current one.
 //      It is then inserted at the spot. Now the marker can move forward.
 plexSort: {
-    .label nxt_idx = $c
-    .label nxt_y = $b
-    .label m = $a
+    .label nxt_idx = $e
+    .label nxt_y = $d
+    .label m = $c
     lda #0
     sta.z m
   __b1:
@@ -283,7 +293,7 @@ plexSort: {
 // Show the next sprite.
 // plexSort() prepares showing the sprites
 plexShowSprite: {
-    .label plex_sprite_idx2 = $c
+    .label plex_sprite_idx2 = $e
     // plex_sprite_idx2 = plex_sprite_idx*2
     lda.z plex_sprite_idx
     asl
@@ -313,8 +323,8 @@ plexShowSprite: {
     ldx.z plex_show_idx
     ldy PLEX_SORTED_IDX,x
     lda PLEX_PTR,y
-    ldx.z plex_sprite_idx
-    sta PLEX_SCREEN_PTR,x
+    ldy.z plex_sprite_idx
+    sta (PLEX_SCREEN_PTR),y
     // xpos_idx = PLEX_SORTED_IDX[plex_show_idx]
     ldy.z plex_show_idx
     lda PLEX_SORTED_IDX,y

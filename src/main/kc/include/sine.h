@@ -1,8 +1,8 @@
-// Sinus Generator functions using only multiplication, addition and bit shifting
+// Sine Generator functions using only multiplication, addition and bit shifting
 // Uses a single division for converting the wavelength to a reciprocal.
-// Generates sinus using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
+// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
-// Optimization possibility: Use symmetries when generating sinustables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
+// Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
 
 // PI*2 in u[4.28] format
 extern const unsigned long PI2_u4f28;
@@ -18,27 +18,27 @@ extern const unsigned int PI_u4f12;
 // PI/2 in u[4.12] format
 extern const unsigned int PI_HALF_u4f12;
 
-// Generate signed (large) unsigned int sinus table - on the full -$7fff - $7fff range
+// Generate signed (large) unsigned int sine table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin16s_gen(int* sintab, unsigned int wavelength);
 
-// Generate signed int sinus table - with values in the range min-max.
+// Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin16s_gen2(int* sintab, unsigned int wavelength, int min, int max);
 
-// Generate signed char sinus table - on the full -$7f - $7f range
+// Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin8s_gen(signed char*  sintab, unsigned int wavelength);
 
-// Calculate signed int sinus sin(x)
+// Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 int sin16s(unsigned long x);
 
-// Calculate signed char sinus sin(x)
+// Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
 signed char sin8s(unsigned int x);

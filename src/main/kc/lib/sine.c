@@ -1,10 +1,10 @@
-// Sinus Generator functions using only multiplication, addition and bit shifting
+// Sine Generator functions using only multiplication, addition and bit shifting
 // Uses a single division for converting the wavelength to a reciprocal.
-// Generates sinus using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
+// Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
-// Optimization possibility: Use symmetries when generating sinustables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
+// Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
 
-#include <sinus.h>
+#include <sine.h>
 #include <division.h>
 #include <multiply.h>
 
@@ -22,9 +22,9 @@ const unsigned int PI_u4f12 = $3244;
 // PI/2 in u[4.12] format
 const unsigned int PI_HALF_u4f12 = $1922;
 
-// Generate signed (large) unsigned int sinus table - on the full -$7fff - $7fff range
+// Generate signed (large) unsigned int sine table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin16s_gen(signed int* sintab, unsigned int wavelength) {
     // u[4.28] step = PI*2/wavelength
     unsigned long step = div32u16u(PI2_u4f28, wavelength); // u[4.28]
@@ -36,9 +36,9 @@ void sin16s_gen(signed int* sintab, unsigned int wavelength) {
     }
 }
 
-// Generate signed int sinus table - with values in the range min-max.
+// Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin16s_gen2(signed int* sintab, unsigned int wavelength, signed int min, signed int max) {
     signed int ampl = max-min;
     signed int offs = min + ampl>>1; // ampl is always positive so shifting left does not alter the sign
@@ -52,9 +52,9 @@ void sin16s_gen2(signed int* sintab, unsigned int wavelength, signed int min, si
     }
 }
 
-// Generate signed char sinus table - on the full -$7f - $7f range
+// Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 void sin8s_gen(signed char* sintab, unsigned int wavelength) {
     // u[4.28] step = PI*2/wavelength
     unsigned int step = div16u(PI2_u4f12, wavelength); // u[4.12]
@@ -66,11 +66,11 @@ void sin8s_gen(signed char* sintab, unsigned int wavelength) {
     }
 }
 
-// Calculate signed int sinus sin(x)
+// Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 signed int sin16s(unsigned long x) {
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    // Move x1 into the range 0-PI/2 using sine mirror symmetries
     char isUpper = 0;
     if(x >= PI_u4f28 ) {
         x = x - PI_u4f28;
@@ -96,11 +96,11 @@ signed int sin16s(unsigned long x) {
      return sinx;
 }
 
-// Calculate signed char sinus sin(x)
+// Calculate signed char sine sin(x)
 // x: unsigned int input u[4.12] in the interval $0000 - PI2_u4f12
 // result: signed char sin(x) s[0.7] - using the full range  -$7f - $7f
 signed char sin8s(unsigned int x) {
-    // Move x1 into the range 0-PI/2 using sinus mirror symmetries
+    // Move x1 into the range 0-PI/2 using sine mirror symmetries
     char isUpper = 0;
     if(x >= PI_u4f12 ) {
         x = x - PI_u4f12;

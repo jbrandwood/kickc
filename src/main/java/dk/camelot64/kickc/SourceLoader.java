@@ -19,6 +19,14 @@ public class SourceLoader {
     * @return The file if found. null if not.
     */
    public static File loadFile(String fileName, Path currentPath, List<String> searchPaths) {
+      File fileAbs = new File(fileName);
+      if(fileAbs.isAbsolute())
+         if(fileAbs.exists())
+            return fileAbs;
+         else
+            return null;
+
+      // File name is relative - look through search paths
       List<String> allSearchPaths = new ArrayList<>();
       if(currentPath != null)
          allSearchPaths.add(currentPath.toString());

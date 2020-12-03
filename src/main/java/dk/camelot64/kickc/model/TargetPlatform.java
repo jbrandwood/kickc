@@ -26,6 +26,9 @@ public class TargetPlatform {
    /** The target CPU. */
    private TargetCpu cpu;
 
+   /** The default program start address. */
+   private Number startAddress;
+
    /** The link script file. */
    private File linkScriptFile;
 
@@ -69,6 +72,14 @@ public class TargetPlatform {
 
    public void setCpu(TargetCpu cpu) {
       this.cpu = cpu;
+   }
+
+   public Number getStartAddress() {
+      return startAddress;
+   }
+
+   public void setStartAddress(Number startAddress) {
+      this.startAddress = startAddress;
    }
 
    public File getLinkScriptFile() {

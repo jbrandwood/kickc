@@ -175,11 +175,11 @@ void gen_chargen_sprite(char ch, char* sprite) {
 // Reserve zeropage addresses used by the BASIC FP operations
 #pragma zp_reserve(0x07, 0x0d, 0x0e, 0x12)
 
-// Generate a sinus table using BASIC floats
+// Generate a sine table using BASIC floats
 // - sintab is a pointer to the table to fill
 // - length is the length of the sine table
-// - min is the minimum value of the generated sinus
-// - max is the maximum value of the generated sinus
+// - min is the minimum value of the generated sine
+// - max is the maximum value of the generated sine
 void gen_sintab(char* sintab, char length, char min, char max) {
     char f_i[] = {0, 0, 0, 0, 0};   // i * 2 * PI
     char f_min[] = {0, 0, 0, 0, 0}; // amplitude/2 + min

@@ -119,9 +119,9 @@ memset: {
   !:
     jmp __b2
 }
-// Generate signed int sinus table - with values in the range min-max.
+// Generate signed int sine table - with values in the range min-max.
 // sintab - the table to generate into
-// wavelength - the number of sinus points in a total sinus wavelength (the size of the table)
+// wavelength - the number of sine points in a total sine wavelength (the size of the table)
 // sin16s_gen2(signed word* zp(6) sintab)
 sin16s_gen2: {
     .const min = -$140
@@ -321,7 +321,7 @@ div32u16u: {
     // }
     rts
 }
-// Calculate signed int sinus sin(x)
+// Calculate signed int sine sin(x)
 // x: unsigned long input u[4.28] in the interval $00000000 - PI2_u4f28
 // result: signed int sin(x) s[0.15] - using the full range  -$7fff - $7fff
 // sin16s(dword zp(8) x)

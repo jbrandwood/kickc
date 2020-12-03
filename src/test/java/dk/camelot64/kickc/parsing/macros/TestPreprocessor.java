@@ -170,11 +170,11 @@ public class TestPreprocessor {
    @Test
    public void testErrors() {
       // Declared parameters are not names
-      assertError("#define f(x,1) x", "Error! #define declared parameter not a NAME.", true);
+      assertError("#define f(x,1) x", "#define declared parameter not a NAME.", true);
       // Declared parameter list ends with comma
       assertError("#define f(x,y,) x", "#define declared parameter list ends with COMMA.", true);
       // Number of parameters not matching
-      assertError("#define f(x,y) x+y\nf(7);", "Error! Wrong number of macro parameters. Expected 2 was 1", true);
+      assertError("#define f(x,y) x+y\nf(7);", "Wrong number of macro parameters. Expected 2 was 1", true);
    }
 
    /**
@@ -216,9 +216,10 @@ public class TestPreprocessor {
          System.out.println("Got error: " + e.getMessage());
          // expecting error!
          assertTrue(e.getMessage().contains(expectError), "Error message expected  '" + expectError + "' - was:" + e.getMessage());
-         if(expectLineNumber) {
-            // expecting line number!
-            assertTrue(e.getMessage().contains("Line"), "Error message expected line number - was:" + e.getMessage());
+         if (expectLineNumber) {
+            // expecting a source for the error, so it may be related back to a file/line
+            assertNotNull(e.getSource());
+            assertNotNull(e.getSource().getLineNumber());
          }
          return;
       }

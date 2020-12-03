@@ -53,6 +53,9 @@ public class KickC implements Callable<Integer> {
    @CommandLine.Option(names = {"-a"}, description = "Assemble the output file using KickAssembler. Produces a binary file.")
    private boolean assemble = false;
 
+   @CommandLine.Option(names = {"-Xassembler"}, description = "Passes the next option to the assembler. The option should generally be quoted. This option can be repeated to pass multiple options.")
+   private List<String> assemblerOptions = null;
+
    @CommandLine.Option(names = {"-e"}, description = "Execute the assembled binary file using an appropriate emulator. The emulator chosen depends on the target platform.")
    private boolean execute = false;
 
@@ -181,6 +184,8 @@ public class KickC implements Callable<Integer> {
 
    public static void main(String[] args) {
       final CommandLine commandLine = new CommandLine(new KickC());
+      commandLine.setTrimQuotes(true);
+      commandLine.setUnmatchedOptionsAllowedAsOptionParameters(true);
       final int exitCode = commandLine.execute(args);
       System.exit(exitCode);
    }
@@ -379,7 +384,7 @@ public class KickC implements Callable<Integer> {
             compiler.compile(cFiles, effectiveDefines);
          } catch(CompileError e) {
             // Print the error and exit with compile error
-            System.err.println(e.getMessage());
+            System.err.println(e.format());
             return COMPILE_ERROR;
          }
 
@@ -438,6 +443,10 @@ public class KickC implements Callable<Integer> {
             assembleCommand.add("-vicesymbols");
             assembleCommand.add("-showmem");
             assembleCommand.add("-debugdump");
+            // Add passed options
+            if(assemblerOptions !=null)
+               assembleCommand.addAll(assemblerOptions);
+
             if(verbose) {
                System.out.print("Assembling command: java -jar KickAss.jar ");
                for(String cmd : assembleCommand) {
@@ -454,18 +463,19 @@ public class KickC implements Callable<Integer> {
                CharToPetsciiConverter.setCurrentEncoding("screencode_mixed");
                kasmResult = KickAssembler65CE02.main2(assembleCommand.toArray(new String[0]));
             } catch(Throwable e) {
-               throw new CompileError("KickAssembling file failed! ", e);
+               System.err.println("KickAssembling file failed! "+e.getMessage());
+               return COMPILE_ERROR;
             } finally {
                System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             }
             if(kasmResult != 0) {
-               throw new CompileError("KickAssembling file failed! " + kasmLogOutputStream.toString());
+               System.err.println("KickAssembling file failed! " + kasmLogOutputStream.toString());
+               return COMPILE_ERROR;
             }
          }
 
          // Execute the binary file if instructed
          if(emulator != null) {
-
             // Find commandline options for the emulator
             String emuOptions = "";
             if(emulator.equals("C64Debugger")) {
@@ -478,14 +488,18 @@ public class KickC implements Callable<Integer> {
                Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
                emuOptions = "-moncommands " + viceSymbolsPath.toAbsolutePath().toString() + " ";
             }
-
             System.out.println("Executing " + outputBinaryFilePath + " using " + emulator);
             String executeCommand = emulator + " " + emuOptions + outputBinaryFilePath.toAbsolutePath().toString();
             if(verbose) {
                System.out.println("Executing command:  " + executeCommand);
             }
-            Process process = Runtime.getRuntime().exec(executeCommand);
-            process.waitFor();
+            try {
+               Process process = Runtime.getRuntime().exec(executeCommand);
+               process.waitFor();
+            } catch(Throwable e) {
+               System.err.println("Executing emulator failed! "+e.getMessage());
+               return COMPILE_ERROR;
+            }
          }
       }
 

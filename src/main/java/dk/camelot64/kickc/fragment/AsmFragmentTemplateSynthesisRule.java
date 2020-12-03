@@ -362,6 +362,8 @@ class AsmFragmentTemplateSynthesisRule {
       String rvalAa = ".*=.*aa.*|.*_.*aa.*|...aa_(lt|gt|le|ge|eq|neq)_.*";
       String rvalXx = ".*=.*xx.*|.*_.*xx.*|...xx_(lt|gt|le|ge|eq|neq)_.*";
       String rvalYy = ".*=.*yy.*|.*_.*yy.*|...yy_(lt|gt|le|ge|eq|neq)_.*";
+      String rvalYy2 = ".*=.*yy.*";
+      String rvalXx2 = ".*=.*xx.*";
       String rvalZz = ".*=.*zz.*|.*_.*zz.*|...zz_(lt|gt|le|ge|eq|neq)_.*";
       String rvalZ1 = ".*=.*z1.*|.*_.*z1.*|...z1_(lt|gt|le|ge|eq|neq)_.*";
       String rvalZ2 = ".*=.*z2.*|.*_.*z2.*|...z2_(lt|gt|le|ge|eq|neq)_.*";
@@ -775,17 +777,23 @@ class AsmFragmentTemplateSynthesisRule {
       // Rewrite left-size C1,y to use AA and a STA C1,y
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", null, null, "vb$1aa=$2", "sta {c1},y", null, "yy"));
       // Rewrite C1,y to save and reload YY from $FF
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", null, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta {c1},y", null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", null, "sty $ff" , "vb$1aa=$2", "ldy $ff\nsta {c1},y", null));
+      // Rewrite C1,y to use AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuyy=(.*)", null, null , "vb$1aa=$2", "sta {c1},y", null, "yy"));
       // Rewrite (Z1),y to save and reload YY from $FF
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZM1, "sty $ff\n" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZM1, "sty $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
+      // Rewrite (Z1),y to use AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuyy=(.*)", twoZM1, null , "vb$1aa=$2", "sta ({z1}),y", mapZM1, "yy"));
       if(targetCpu.getCpu65xx().hasRegisterZ())
          // Rewrite (Z1),z to save and reload ZZ from $FF
-         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuzz=(.*)", twoZM1, "stz $ff\n" , "vb$1aa=$2", "ldz $ff\nsta ({z1}),z", mapZM1));
+         synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuzz=(.*)", twoZM1, "stz $ff" , "vb$1aa=$2", "ldz $ff\nsta ({z1}),z", mapZM1));
 
       // Rewrite left-size C1,x to use AA and a STA C1,x
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", null, null, "vb$1aa=$2", "sta {c1},x", null, "xx"));
       // Rewrite C1,x to save and reload XX from $FF
-      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", null, "stx $ff\n" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", null));
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", null, "stx $ff" , "vb$1aa=$2", "ldx $ff\nsta {c1},x", null));
+      // Rewrite C1,x to use AA
+      synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)c1_derefidx_vbuxx=(.*)", null, null , "vb$1aa=$2", "sta {c1},x", null, "xx"));
       // Rewrite (Z1),x to save Y to $FF and reload it into YY
       synths.add(new AsmFragmentTemplateSynthesisRule("pb(.)z1_derefidx_vbuxx=(.*)", twoZM1, "stx $ff" , "vb$1aa=$2", "ldy $ff\nsta ({z1}),y", mapZM1));
       if(targetCpu.getCpu65xx().hasRegisterZ())
@@ -903,6 +911,11 @@ class AsmFragmentTemplateSynthesisRule {
 
       // Remove any parenthesis ending up around values
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)\\(([vp][bwd][us][mzcaxy][123456axyz])\\)(.*)", null, null, "$1$2$3", null, null));
+
+      // Rewrite (pbuc1_derefidx_vbuxx) to use YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)\\(pb(.)c1_derefidx_vbuxx\\)(.*)", rvalYy+"|"+twoC1, "ldy {c1},x" , "$1vb$2yy$3", null, mapC1, "yy"));
+      // Rewrite 2 * (pbuc1_derefidx_vbuxx) to use YY
+      synths.add(new AsmFragmentTemplateSynthesisRule("(.*)\\(pb(.)c1_derefidx_vbuxx\\)(.*)\\(pb(.)c1_derefidx_vbuxx\\)(.*)", rvalYy+"|"+threeC1, "ldy {c1},x" , "$1vb$2yy$3vb$4yy$5", null, mapC1, "yy"));
 
       synths.add(new AsmFragmentTemplateSynthesisRule("(.*)_derefidx_vbuz1_(.*)", rvalYy+"|"+twoZM1, "ldy {z1}", "$1_derefidx_vbuyy_$2", null, mapZM1));
       if(targetCpu.getCpu65xx().hasRegisterZ())

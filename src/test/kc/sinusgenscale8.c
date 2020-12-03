@@ -1,4 +1,4 @@
-#include <sinus.h>
+#include <sine.h>
 #include <multiply.h>
 #include <print.h>
 
@@ -20,9 +20,9 @@ void main() {
     */
 }
 
-// Generate unsigned byte sinus table in a min-max range
+// Generate unsigned byte sine table in a min-max range
 // sintab - the table to generate into
-// tabsize - the number of sinus points (the size of the table)
+// tabsize - the number of sine points (the size of the table)
 // min - the minimal value
 // max - the maximal value
 void sin8u_table(byte* sintab, word tabsize, byte min, byte max) {

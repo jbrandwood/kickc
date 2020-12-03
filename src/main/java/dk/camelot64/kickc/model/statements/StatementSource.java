@@ -10,6 +10,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /** Contains information about the source of a program statement */
 public class StatementSource implements Serializable {
@@ -18,6 +20,8 @@ public class StatementSource implements Serializable {
    private String fileName;
    /** The line number of the start of the source. */
    private Integer lineNumber;
+   /** The char position on the line of the start of the source. */
+   private Integer charPosInLine;
    /** The source code. */
    private String code;
    /** The index of the first char of the source in the file. */
@@ -25,24 +29,26 @@ public class StatementSource implements Serializable {
    /** The index of the last char of the source in the file. */
    private int stopIndex;
 
-   public StatementSource(String fileName, Integer lineNumber, String code, int startIndex, int stopIndex) {
+   public StatementSource(String fileName, Integer lineNumber, Integer charPosInLine, String code, int startIndex, int stopIndex) {
       this.fileName = fileName;
       this.lineNumber = lineNumber;
+      this.charPosInLine = charPosInLine;
       this.code = code;
       this.startIndex = startIndex;
       this.stopIndex = stopIndex;
    }
 
    /** An empty statement source. */
-   public static StatementSource NONE = new StatementSource(null, null, null, 0, 0);
+   public static StatementSource NONE = new StatementSource(null, null, null, null, -1, -1);
 
    public StatementSource(Token tokenStart, Token tokenStop) {
-      if(tokenStart != null && tokenStart.getStartIndex() != 0) {
+      if(tokenStart != null && tokenStart.getStartIndex() >= 0) {
          this.startIndex = tokenStart.getStartIndex();
          CharStream stream = tokenStart.getInputStream();
          this.fileName = stream.getSourceName();
          this.lineNumber = tokenStart.getLine();
-         if(tokenStop != null && tokenStop.getStopIndex() != 0) {
+         this.charPosInLine = tokenStart.getCharPositionInLine();
+         if(tokenStop != null && tokenStop.getStopIndex() >= this.startIndex) {
             this.stopIndex = tokenStop.getStopIndex();
             Interval interval = getInterval();
             this.code = stream.getText(interval);
@@ -198,6 +204,10 @@ public class StatementSource implements Serializable {
       return lineNumber;
    }
 
+   public Integer getCharPosInLine() {
+      return charPosInLine;
+   }
+
    public String getCode() {
       return code;
    }
@@ -212,22 +222,28 @@ public class StatementSource implements Serializable {
 
    @Override
    public String toString() {
-      if(getFileName() != null) {
-         return "File " + getFileName() + "\nLine " + getLineNumber() + "\n" + getCode();
-      } else {
-         return "";
-      }
+      return format();
    }
 
-   public String toStringShort() {
-      if(getFileName() != null) {
-         String fileName = getFileName();
-         final int slashIdx = fileName.lastIndexOf("/");
-         if(slashIdx>0)
-            fileName = fileName.substring(slashIdx+1);
-         return "File " + fileName + "\nLine " + getLineNumber() + "\n" + getCode();
-      } else {
+   /**
+    * Format the statement source in GCC format
+    * https://www.gnu.org/prep/standards/html_node/Errors.html
+    * <li> sourcefile:lineno:
+    * <li> sourcefile:lineno:column:
+    *
+    * @return The formatted source location
+    */
+   public String format() {
+      if(getFileName() == null)
          return "";
+      Path sourcePath = Paths.get(getFileName());
+      String relativeFileName = sourcePath.toAbsolutePath().toString();
+      if(getCharPosInLine() == null || getCharPosInLine() == 0) {
+         // No relevant column idx  - format without
+         return String.format("%s:%s:", relativeFileName, getLineNumber());
+      } else {
+         // Format with column idx
+         return String.format("%s:%s:%s:", relativeFileName, getLineNumber(), getCharPosInLine() + 1);
       }
    }
 

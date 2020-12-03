@@ -46,7 +46,25 @@ __start: {
     sta.z conio_line_color
     lda #>COLORRAM
     sta.z conio_line_color+1
+    // #pragma constructor_for(conio_c64_init, cputc, clrscr, cscroll)
+    jsr conio_c64_init
     jsr main
+    rts
+}
+// Set initial cursor position
+conio_c64_init: {
+    // Position cursor at current line
+    .label BASIC_CURSOR_LINE = $d6
+    // line = *BASIC_CURSOR_LINE
+    ldx BASIC_CURSOR_LINE
+    // if(line>=CONIO_HEIGHT)
+    cpx #$19
+    bcc __b1
+    ldx #$19-1
+  __b1:
+    // gotoxy(0, line)
+    jsr gotoxy
+    // }
     rts
 }
 main: {
@@ -128,46 +146,15 @@ main: {
     s1: .text "qwe "
     .byte 0
 }
-// Initialize time-of-day clock
-// This uses the MOS6526 CIA#1
-// tod_init(byte zp($f) tod_TENTHS, byte zp($e) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
-tod_init: {
-    .label tod_TENTHS = $f
-    .label tod_SEC = $e
-    // CIA1->TIMER_A_CONTROL |= 0x80
-    // Set 50hz (this assumes PAL!) (bit7=1)
-    lda #$80
-    ora CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
-    // CIA1->TIMER_B_CONTROL &= 0x7f
-    // Writing TOD clock (bit7=0)
-    lda #$7f
-    and CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
-    // CIA1->TOD_HOURS = tod.HOURS
-    // Reset TOD clock
-    // Writing sequence is important. TOD stops when hours is written and starts when 10ths is written.
-    sty CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
-    // CIA1->TOD_MIN = tod.MIN
-    stx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
-    // CIA1->TOD_SEC = tod.SEC
-    lda.z tod_SEC
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
-    // CIA1->TOD_10THS = tod.TENTHS
-    lda.z tod_TENTHS
-    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
-    // }
-    rts
-}
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
-    .label __5 = $a
-    .label __6 = $c
-    .label __7 = $c
-    .label line_offset = $c
-    .label __8 = $11
-    .label __9 = $c
+    .label __5 = $14
+    .label __6 = $10
+    .label __7 = $10
+    .label line_offset = $10
+    .label __8 = $12
+    .label __9 = $10
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -214,6 +201,10 @@ gotoxy: {
     adc #>DEFAULT_SCREEN
     sta.z __5+1
     // conio_line_text = CONIO_SCREEN_TEXT + line_offset
+    lda.z __5
+    sta.z conio_line_text
+    lda.z __5+1
+    sta.z conio_line_text+1
     // CONIO_SCREEN_COLORS + line_offset
     clc
     lda.z __6
@@ -223,12 +214,47 @@ gotoxy: {
     adc #>COLORRAM
     sta.z __6+1
     // conio_line_color = CONIO_SCREEN_COLORS + line_offset
+    lda.z __6
+    sta.z conio_line_color
+    lda.z __6+1
+    sta.z conio_line_color+1
+    // }
+    rts
+}
+// Initialize time-of-day clock
+// This uses the MOS6526 CIA#1
+// tod_init(byte zp($f) tod_TENTHS, byte zp($e) tod_SEC, byte register(X) tod_MIN, byte register(Y) tod_HOURS)
+tod_init: {
+    .label tod_TENTHS = $f
+    .label tod_SEC = $e
+    // CIA1->TIMER_A_CONTROL |= 0x80
+    // Set 50hz (this assumes PAL!) (bit7=1)
+    lda #$80
+    ora CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_A_CONTROL
+    // CIA1->TIMER_B_CONTROL &= 0x7f
+    // Writing TOD clock (bit7=0)
+    lda #$7f
+    and CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TIMER_B_CONTROL
+    // CIA1->TOD_HOURS = tod.HOURS
+    // Reset TOD clock
+    // Writing sequence is important. TOD stops when hours is written and starts when 10ths is written.
+    sty CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_HOURS
+    // CIA1->TOD_MIN = tod.MIN
+    stx CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_MIN
+    // CIA1->TOD_SEC = tod.SEC
+    lda.z tod_SEC
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_SEC
+    // CIA1->TOD_10THS = tod.TENTHS
+    lda.z tod_TENTHS
+    sta CIA1+OFFSET_STRUCT_MOS6526_CIA_TOD_10THS
     // }
     rts
 }
 // Read time of day
 tod_read: {
-    .label return_HOURS = $10
+    .label return_HOURS = $16
     .label return_MIN = $e
     // hours = CIA1->TOD_HOURS
     // Reading sequence is important. TOD latches on reading hours until 10ths is read.
@@ -244,9 +270,9 @@ tod_read: {
     rts
 }
 // Convert time of day to a human-readable string "hh:mm:ss:10"
-// tod_str(byte zp($10) tod_TENTHS, byte zp($f) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
+// tod_str(byte zp($16) tod_TENTHS, byte zp($f) tod_SEC, byte register(Y) tod_MIN, byte register(X) tod_HOURS)
 tod_str: {
-    .label tod_TENTHS = $10
+    .label tod_TENTHS = $16
     .label tod_SEC = $f
     // tod.HOURS>>4
     txa
@@ -415,11 +441,11 @@ cputc: {
 // - value : The number to be converted to RADIX
 // - buffer : receives the string representing the number and zero-termination.
 // - radix : The radix to convert the number to (from the enum RADIX)
-// utoa(word zp(4) value, byte* zp(6) buffer)
+// utoa(word zp(4) value, byte* zp($19) buffer)
 utoa: {
     .const max_digits = 5
-    .label digit_value = $11
-    .label buffer = 6
+    .label digit_value = $17
+    .label buffer = $19
     .label digit = $f
     .label value = 4
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -543,11 +569,11 @@ cputln: {
 // - sub : the value of a '1' in the digit. Subtracted continually while the digit is increased.
 //        (For decimal the subs used are 10000, 1000, 100, 10, 1)
 // returns : the value reduced by sub * digit so that it is less than sub.
-// utoa_append(byte* zp(6) buffer, word zp(4) value, word zp($11) sub)
+// utoa_append(byte* zp($19) buffer, word zp(4) value, word zp($17) sub)
 utoa_append: {
-    .label buffer = 6
+    .label buffer = $19
     .label value = 4
-    .label sub = $11
+    .label sub = $17
     .label return = 4
     ldx #0
   __b1:
@@ -643,13 +669,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($11) destination, void* zp(6) source)
+// memcpy(void* zp(6) destination, void* zp($19) source)
 memcpy: {
-    .label src_end = $13
-    .label dst = $11
-    .label src = 6
-    .label source = 6
-    .label destination = $11
+    .label src_end = $17
+    .label dst = 6
+    .label src = $19
+    .label source = $19
+    .label destination = 6
     // src_end = (char*)source+num
     clc
     lda.z source
@@ -685,11 +711,11 @@ memcpy: {
     jmp __b1
 }
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
-// memset(void* zp($11) str, byte register(X) c)
+// memset(void* zp(6) str, byte register(X) c)
 memset: {
-    .label end = $13
-    .label dst = $11
-    .label str = $11
+    .label end = $19
+    .label dst = 6
+    .label str = 6
     // end = (char*)str + num
     lda #$28
     clc

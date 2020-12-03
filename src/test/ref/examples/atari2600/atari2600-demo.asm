@@ -144,7 +144,7 @@ main: {
     jmp __b3
 }
 .segment Data
-// Sinus table
+// Sine table
 SINTABLE:
 .fill $100, round(127.5+127.5*sin(2*PI*i/256))
 

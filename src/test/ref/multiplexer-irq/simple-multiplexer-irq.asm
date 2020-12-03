@@ -34,6 +34,10 @@
   .label CIA1 = $dc00
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
+  // Location of screen & sprites
+  .label SCREEN = $400
+  // The address of the sprite pointers on the current screen (screen+0x3f8).
+  .label PLEX_SCREEN_PTR = 6
   // The index in the PLEX tables of the next sprite to show
   .label plex_show_idx = 8
   // The index the next sprite to use for showing (sprites are used round-robin)
@@ -43,9 +47,12 @@
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
   .label framedone = $c
-  // The address of the sprite pointers on the current screen (screen+0x3f8).
-  .label PLEX_SCREEN_PTR = 2
 __start: {
+    // PLEX_SCREEN_PTR = 0x400+0x3f8
+    lda #<$400+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>$400+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     // plex_show_idx=0
     lda #0
     sta.z plex_show_idx
@@ -213,7 +220,7 @@ plexShowSprite: {
 // Initialize the program
 init: {
     // Set the x-positions & pointers
-    .label xp = 4
+    .label xp = 2
     // *D011 = VIC_DEN | VIC_RSEL | 3
     lda #VIC_DEN|VIC_RSEL|3
     sta D011
@@ -292,8 +299,8 @@ init: {
 }
 // The raster loop
 loop: {
-    // The current index into the y-sinus
-    .label sin_idx = 6
+    // The current index into the y-sine
+    .label sin_idx = 4
     lda #0
     sta.z sin_idx
   __b2:
@@ -335,6 +342,11 @@ loop: {
 }
 // Initialize the multiplexer data structures
 plexInit: {
+    // PLEX_SCREEN_PTR = screen+0x3f8
+    lda #<SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR
+    lda #>SCREEN+$3f8
+    sta.z PLEX_SCREEN_PTR+1
     ldx #0
   __b1:
     // PLEX_SORTED_IDX[i] = i
@@ -359,7 +371,7 @@ plexInit: {
 plexSort: {
     .label nxt_idx = $f
     .label nxt_y = $10
-    .label m = 7
+    .label m = 5
     lda #0
     sta.z m
   __b1:

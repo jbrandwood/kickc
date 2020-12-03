@@ -386,6 +386,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testMega65DmaTest6() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/dma-test6.c");
+   }
+
+   @Test
+   public void testMega65DmaTest5() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/dma-test5.c");
+   }
+
+   @Test
    public void testMega65DmaTest4() throws IOException, URISyntaxException {
       compileAndCompare("examples/mega65/dma-test4.c");
    }
@@ -433,6 +443,11 @@ public class TestPrograms {
    @Test
    public void testMega65Raster65() throws IOException, URISyntaxException {
       compileAndCompare("examples/mega65/raster65.c");
+   }
+
+   @Test
+   public void testMega65Dypp65() throws IOException, URISyntaxException {
+      compileAndCompare("examples/mega65/dypp65.c");
    }
 
    @Test

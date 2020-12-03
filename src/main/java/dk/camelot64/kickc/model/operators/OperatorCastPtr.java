@@ -5,10 +5,7 @@ import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.symbols.ProgramScope;
 import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
-import dk.camelot64.kickc.model.values.ConstantInteger;
-import dk.camelot64.kickc.model.values.ConstantLiteral;
-import dk.camelot64.kickc.model.values.ConstantPointer;
-import dk.camelot64.kickc.model.values.ConstantString;
+import dk.camelot64.kickc.model.values.*;
 
 /** Unary Cast to a pointer ( type* ) */
 public class OperatorCastPtr extends OperatorCast {
@@ -24,6 +21,8 @@ public class OperatorCastPtr extends OperatorCast {
    public ConstantLiteral calculateLiteral(ConstantLiteral value, ProgramScope scope) {
       if(value instanceof ConstantInteger) {
          return new ConstantPointer(((ConstantInteger) value).getInteger(), pointerType.getElementType());
+      } else if(value instanceof ConstantChar) {
+         return new ConstantPointer(((ConstantChar) value).getInteger(), pointerType.getElementType());
       } else if(value instanceof ConstantPointer) {
          return new ConstantPointer(((ConstantPointer) value).getLocation(), pointerType.getElementType());
       }  else if(value instanceof ConstantString){

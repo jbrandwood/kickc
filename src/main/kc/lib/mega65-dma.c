@@ -127,3 +127,87 @@ char memcpy_dma_command256[] = {
     0,                               // sub-command
     0, 0                             // modulo-value
 };
+
+
+// Fill a memory block within the first 64K memory space using MEGA65 DMagic DMA
+// Fills the values of num bytes at the destination with a single byte value.
+// - dest The destination address (within the MB and bank)
+// - fill The char to fill with
+// - num The number of bytes to copy
+void memset_dma(void* dest, char fill, unsigned int num) {
+    // Remember current F018 A/B mode
+    char dmaMode = DMA->EN018B;
+    // Set up command
+    memset_dma_command.count = num;
+    memset_dma_command.src = (char*)fill;
+    memset_dma_command.dest = dest;
+    // Set F018B mode
+    DMA->EN018B = 1;
+    // Set address of DMA list
+    DMA->ADDRMB = 0;
+    DMA->ADDRBANK = 0;
+    DMA-> ADDRMSB = >&memset_dma_command;
+    // Trigger the DMA (without option lists)
+    DMA-> ADDRLSBTRIG = <&memset_dma_command;
+    // Re-enable F018A mode
+    DMA->EN018B = dmaMode;
+}
+
+// DMA list entry for filling data
+struct DMA_LIST_F018B memset_dma_command = {
+    DMA_COMMAND_FILL,   // command
+    0,                  // count
+    0,                  // source
+    0,                  // source bank
+    0,                  // destination
+    0,                  // destination bank
+    0,                  // sub-command
+    0                   // modulo-value
+};
+
+
+// Set a memory block anywhere in the entire 256MB memory space using MEGA65 DMagic DMA
+// Sets the values of num bytes to the memory block pointed to by destination.
+// - dest_mb The MB value for the destination (0-255)
+// - dest_bank The 64KB bank for the destination (0-15)
+// - dest The destination address (within the MB and bank)
+// - num The number of bytes to copy
+void memset_dma256(char dest_mb, char dest_bank, void* dest, char fill, unsigned int num) {
+    // Remember current F018 A/B mode
+    char dmaMode = DMA->EN018B;
+    // Set up command
+    memset_dma_command256[1] = dest_mb;
+    struct DMA_LIST_F018B * f018b = (struct DMA_LIST_F018B *)(&memset_dma_command256[4]);
+    f018b->count = num;
+    f018b->dest_bank = dest_bank;
+    f018b->dest = dest;
+    // Set fill byte
+    f018b->src = (char*)fill;
+    // Set F018B mode
+    DMA->EN018B = 1;
+    // Set address of DMA list
+    DMA->ADDRMB = 0;
+    DMA->ADDRBANK = 0;
+    DMA-> ADDRMSB = >memset_dma_command256;
+    // Trigger the DMA (with option lists)
+    DMA-> ETRIG = <memset_dma_command256;
+    // Re-enable F018A mode
+    DMA->EN018B = dmaMode;
+}
+
+// DMA list entry with options for setting data in the 256MB memory space
+// Contains DMA options options for setting MB followed by DMA_LIST_F018B struct.
+char memset_dma_command256[] = {
+    DMA_OPTION_DEST_MB, 0x00,        // Set MB of destination address
+    DMA_OPTION_FORMAT_F018B,         // Use F018B list format
+    DMA_OPTION_END,                  // End of options
+                                     // struct DMA_LIST_F018B
+    DMA_COMMAND_FILL,                // command
+    0, 0,                            // count
+    0, 0,                            // source
+    0,                               // source bank
+    0, 0,                            // destination
+    0,                               // destination bank
+    0,                               // sub-command
+    0, 0                             // modulo-value
+};

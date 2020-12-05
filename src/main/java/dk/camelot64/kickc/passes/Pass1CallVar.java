@@ -29,21 +29,6 @@ public class Pass1CallVar extends Pass2SsaOptimization {
    @Override
    public boolean step() {
 
-      // Set all parameter/return variables in VAR_CALL procedures to LOAD/STORE
-      for(Procedure procedure : getScope().getAllProcedures(true)) {
-         if(Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
-            for(Variable parameter : procedure.getParameters()) {
-               parameter.setKind(Variable.Kind.LOAD_STORE);
-               getLog().append("Converting parameter in "+procedure.getCallingConvention().getName()+" procedure to load/store "+parameter.toString(getProgram()));
-            }
-            if(!SymbolType.VOID.equals(procedure.getReturnType())) {
-               Variable returnVar = procedure.getLocalVariable("return");
-               returnVar.setKind(Variable.Kind.LOAD_STORE);
-               getLog().append("Converting return in "+procedure.getCallingConvention().getName()+" procedure to load/store "+returnVar.toString(getProgram()));
-            }
-         }
-      }
-
       // Convert procedure return xxx to proc.return = xxx;
       for(ControlFlowBlock block : getGraph().getAllBlocks()) {
          ListIterator<Statement> stmtIt = block.getStatements().listIterator();

@@ -50,7 +50,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          while(stmtIt.hasNext()) {
             Statement statement = stmtIt.next();
             if(statement instanceof StatementAssignment) {
-               modified |= unwindAssignment((StatementAssignment) statement, stmtIt, block);
+               modified |= unwindAssignment((StatementAssignment) statement, stmtIt, block, getProgram());
             } else if(statement instanceof StatementCall) {
                modified |= unwindCall((StatementCall) statement, stmtIt, block);
             } else if(statement instanceof StatementReturn) {
@@ -90,35 +90,58 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param call The call to unwind
     */
    private boolean unwindCall(StatementCall call, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+      final Procedure procedure = getScope().getProcedure(call.getProcedure());
+
       // Unwind struct value return value
+
       boolean lvalUnwound = false;
-      final ValueSource valueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
-      RValue unwoundLValue = unwindValue(valueSource, call, stmtIt, currentBlock);
-      if(unwoundLValue != null && !call.getlValue().equals(unwoundLValue)) {
-         call.setlValue((LValue) unwoundLValue);
-         if(getLog().isVerboseStructUnwind())
-            getLog().append("Converted procedure call LValue to member unwinding " + call.toString(getProgram(), false));
-         lvalUnwound = true;
+      Variable procReturnVar = procedure.getLocalVariable("return");
+      // TODO: Return-variable has been unwound - detect that instead - use getProgram().getStructVariableMemberUnwinding().getUnwindingMaster() like for parameters
+      if(procReturnVar != null && procReturnVar.isStructUnwind()) {
+         if(!(call.getlValue() instanceof ValueList)) {
+            // Return value already unwound - move on
+            final ValueSource valueSource = ValueSourceFactory.getValueSource(call.getlValue(), getProgram(), getScope(), call, stmtIt, currentBlock);
+            RValue unwoundLValue = unwindValue(valueSource, call, stmtIt, currentBlock);
+            if(call.getlValue().equals(unwoundLValue))
+               throw new CompileError("Call return value already unwound", call);
+            if(unwoundLValue == null)
+               throw new CompileError("Cannot unwind call return value", call);
+            call.setlValue((LValue) unwoundLValue);
+            if(getLog().isVerboseStructUnwind())
+               getLog().append("Converted procedure call LValue to member unwinding " + call.toString(getProgram(), false));
+            lvalUnwound = true;
+         }
       }
 
       // Unwind any struct value parameters
       ArrayList<RValue> unwoundParameters = new ArrayList<>();
       boolean anyParameterUnwound = false;
-      for(RValue parameter : call.getParameters()) {
+      final List<Variable> procParameters = procedure.getParameters();
+      final List<RValue> callParameters = call.getParameters();
+      for(int idx_call = 0, idx_proc = 0; idx_call < callParameters.size(); idx_call++) {
+         final RValue callParameter = callParameters.get(idx_call);
+         final Variable procParameter = procParameters.get(idx_proc);
          boolean unwound = false;
-         final ValueSource parameterSource = ValueSourceFactory.getValueSource(parameter, getProgram(), getScope(), call, stmtIt, currentBlock);
-         if(parameterSource != null && parameterSource.isUnwindable()) {
-            // Passing a struct variable - convert it to member variables
-            for(String memberName : parameterSource.getMemberNames(getScope())) {
-               ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
-               unwoundParameters.add(memberUnwinding.getSimpleValue(getScope()));
-            }
-            unwound = true;
-            anyParameterUnwound = true;
+         final SymbolVariableRef unwindingMaster = getProgram().getStructVariableMemberUnwinding().getUnwindingMaster(procParameter.getRef());
+         if(unwindingMaster != null) {
+            // The procedure parameter is unwound
+            final ValueSource parameterSource = ValueSourceFactory.getValueSource(callParameter, getProgram(), getScope(), call, stmtIt, currentBlock);
+            if(parameterSource != null && parameterSource.isUnwindable())
+               // Passing an unwinding struct value
+               for(String memberName : parameterSource.getMemberNames(getScope())) {
+                  ValueSource memberUnwinding = parameterSource.getMemberUnwinding(memberName, getProgram(), getScope(), call, stmtIt, currentBlock);
+                  unwoundParameters.add(memberUnwinding.getSimpleValue(getScope()));
+                  unwound = true;
+                  anyParameterUnwound = true;
+                  idx_proc++;
+               }
+            else
+               idx_proc++;
+         } else {
+            idx_proc++;
          }
-
          if(!unwound) {
-            unwoundParameters.add(parameter);
+            unwoundParameters.add(callParameter);
          }
       }
 
@@ -131,7 +154,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
    }
 
    /**
-    * Unwind an LVa.lue to a ValueList if it is unwindable.
+    * Unwind an LValue to a ValueList if it is unwindable.
     *
     * @param value The value to unwind
     * @param statement The current statement
@@ -185,7 +208,7 @@ public class Pass1UnwindStructValues extends Pass1Base {
          ArrayList<String> unwoundParameterNames = new ArrayList<>();
          boolean procedureUnwound = false;
          for(Variable parameter : procedure.getParameters()) {
-            if(parameter.getType() instanceof SymbolTypeStruct) {
+            if(parameter.isStructUnwind()) {
                StructVariableMemberUnwinding structVariableMemberUnwinding = getProgram().getStructVariableMemberUnwinding();
                StructVariableMemberUnwinding.VariableUnwinding parameterUnwinding = structVariableMemberUnwinding.getVariableUnwinding(parameter.getRef());
                for(String memberName : parameterUnwinding.getMemberNames()) {
@@ -214,9 +237,9 @@ public class Pass1UnwindStructValues extends Pass1Base {
     * @param stmtIt The statement iterator used for adding/removing statements
     * @param currentBlock The current code block
     */
-   private boolean unwindAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock) {
+   public static boolean unwindAssignment(StatementAssignment assignment, ListIterator<Statement> stmtIt, ControlFlowBlock currentBlock, Program program) {
       LValue lValue = assignment.getlValue();
-      SymbolType lValueType = SymbolTypeInference.inferType(getScope(), lValue);
+      SymbolType lValueType = SymbolTypeInference.inferType(program.getScope(), lValue);
 
       if(lValueType instanceof SymbolTypeStruct && assignment.getOperator() == null) {
 
@@ -230,10 +253,10 @@ public class Pass1UnwindStructValues extends Pass1Base {
          if(rValue instanceof MemcpyValue || rValue instanceof MemsetValue || rValue instanceof StructUnwoundPlaceholder)
             return false;
 
-         ValueSource lValueSource = ValueSourceFactory.getValueSource(lValue, getProgram(), getScope(), assignment, stmtIt, currentBlock);
-         ValueSource rValueSource = ValueSourceFactory.getValueSource(rValue, getProgram(), getScope(), assignment, stmtIt, currentBlock);
+         ValueSource lValueSource = ValueSourceFactory.getValueSource(lValue, program, program.getScope(), assignment, stmtIt, currentBlock);
+         ValueSource rValueSource = ValueSourceFactory.getValueSource(rValue, program, program.getScope(), assignment, stmtIt, currentBlock);
          List<RValue> lValueUnwoundList = new ArrayList<>();
-         if(copyValues(lValueSource, rValueSource, lValueUnwoundList, initialAssignment, assignment, currentBlock, stmtIt, getProgram())) {
+         if(copyValues(lValueSource, rValueSource, lValueUnwoundList, initialAssignment, assignment, currentBlock, stmtIt, program)) {
             if(lValue instanceof VariableRef) {
                StructUnwoundPlaceholder unwoundPlaceholder = new StructUnwoundPlaceholder(lValueStructType, lValueUnwoundList);
                assignment.setrValue2(unwoundPlaceholder);

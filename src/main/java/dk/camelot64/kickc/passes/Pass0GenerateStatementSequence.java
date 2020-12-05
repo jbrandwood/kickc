@@ -390,13 +390,15 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       Procedure procedure = new Procedure(name, type, program.getScope(), currentCodeSegment, currentDataSegment, currentCallingConvention);
       addDirectives(procedure, directives, StatementSource.procedureDecl(ctx));
       procedure.setComments(ensureUnusedComments(getCommentsSymbol(ctx)));
-      varDecl.exitType();
 
       scopeStack.push(procedure);
       Variable returnVar = null;
       if(!SymbolType.VOID.equals(type)) {
-         returnVar = procedure.add(Variable.createPhiMaster("return", type, procedure, defaultMemoryArea, procedure.getSegmentData()));
+         final VariableBuilder builder = new VariableBuilder("return", procedure, false, varDecl.getEffectiveType(), varDecl.getEffectiveArraySpec(), varDecl.getEffectiveDirectives(), currentDataSegment, program.getTargetPlatform().getVariableBuilderConfig());
+         returnVar = builder.build();
       }
+      varDecl.exitType();
+
       List<Variable> parameterList = new ArrayList<>();
       if(ctx.parameterListDecl() != null) {
          parameterList = (List<Variable>) this.visit(ctx.parameterListDecl());
@@ -1169,8 +1171,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
             procedure.setReservedZps(((Directive.ReserveZp) directive).reservedZp);
          } else if(directive instanceof Directive.Intrinsic) {
             procedure.setDeclaredIntrinsic(true);
-         } else {
-            throw new CompileError("Unsupported function directive " + directive, source);
+         //} else {
+         //   throw new CompileError("Unsupported function directive " + directive.getName(), source);
          }
       }
    }
@@ -1189,7 +1191,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          if(directive instanceof Directive.Inline) {
             conditional.setDeclaredUnroll(true);
          } else {
-            throw new CompileError("Unsupported loop directive " + directive, source);
+            throw new CompileError("Unsupported loop directive " + directive.getName(), source);
          }
       }
    }

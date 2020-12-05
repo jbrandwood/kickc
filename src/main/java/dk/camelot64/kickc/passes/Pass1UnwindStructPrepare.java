@@ -20,9 +20,9 @@ import java.util.List;
  * - Constantify all assignment RValues that are structs
  * - Add casts to struct parameter values in calls
  */
-public class Pass1PrepareUnwindStruct extends Pass2SsaOptimization {
+public class Pass1UnwindStructPrepare extends Pass2SsaOptimization {
 
-   public Pass1PrepareUnwindStruct(Program program) {
+   public Pass1UnwindStructPrepare(Program program) {
       super(program);
    }
 

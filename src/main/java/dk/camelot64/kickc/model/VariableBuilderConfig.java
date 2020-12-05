@@ -1,6 +1,5 @@
 package dk.camelot64.kickc.model;
 
-import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.model.statements.StatementSource;
 
 import java.util.*;

@@ -42,16 +42,54 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testAdventOfCode04() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-04.c");
+   }
+
+   @Test
+   public void testAdventOfCode03() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-03.c");
+   }
+
+   @Test
+   public void testAdventOfCode02() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-02.c");
+   }
+
+   @Test
+   public void testAdventOfCode01() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-01.c");
+   }
+
+
    // https://gitlab.com/camelot/kickc/-/issues/564
    //@Test
    //public void testUnknownVarProblem() throws IOException, URISyntaxException {
    //   compileAndCompare("unknown-var-problem.c", log().verboseParse());
    //}
 
+   // TODO: Fix functions returning __ma/__ssa structs
+   //@Test
+   //public void testStructUnwinding3() throws IOException, URISyntaxException {
+   //   compileAndCompare("struct-unwinding-3.c", log().verboseCreateSsa().verboseCreateSsa());
+   //}
+
    @Test
-   public void testVarCall4() throws IOException, URISyntaxException {
-      compileAndCompare("varcall-4.c", log().verboseStructUnwind().verboseCreateSsa());
+   public void testStructUnwinding2() throws IOException, URISyntaxException {
+      compileAndCompare("struct-unwinding-2.c");
    }
+
+   @Test
+   public void testStructUnwinding1() throws IOException, URISyntaxException {
+      compileAndCompare("struct-unwinding-1.c");
+   }
+
+   // TODO: Fix __varcall returning structs
+   //@Test
+   //public void testVarCall4() throws IOException, URISyntaxException {
+   //   compileAndCompare("varcall-4.c", log().verboseStructUnwind().verboseCreateSsa());
+   //}
 
    @Test
    public void testVarCall3() throws IOException, URISyntaxException {

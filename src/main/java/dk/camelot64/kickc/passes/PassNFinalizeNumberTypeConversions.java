@@ -28,12 +28,12 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
       ProgramValueIterator.execute(getProgram(), (programValue, currentStmt, stmtIt, currentBlock) -> {
          if(programValue.get() instanceof ConstantInteger) {
             ConstantInteger constantInteger = (ConstantInteger) programValue.get();
-            if(SymbolType.UNUMBER.equals(constantInteger.getType())) {
+            if(SymbolType.UNUMBER.equals(constantInteger.getType()) || (SymbolType.NUMBER.equals(constantInteger.getType()) && constantInteger.getValue()>=0)) {
                SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
                getLog().append("Finalized unsigned number type "+programValue.get().toString(getProgram()));
                modified.set(true);
-            } else  if(SymbolType.SNUMBER.equals(constantInteger.getType())) {
+            } else if(SymbolType.SNUMBER.equals(constantInteger.getType()) || (SymbolType.NUMBER.equals(constantInteger.getType()) && constantInteger.getValue()<0)) {
                SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
                getLog().append("Finalized signed number type "+programValue.get().toString(getProgram()));

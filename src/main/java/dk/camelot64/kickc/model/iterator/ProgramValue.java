@@ -851,7 +851,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value val) {
-         memsetValue.setSize((ConstantRef) val);
+         memsetValue.setSize((ConstantValue) val);
       }
 
    }
@@ -872,7 +872,7 @@ public interface ProgramValue {
 
       @Override
       public void set(Value val) {
-         memcpyValue.setSize((ConstantRef) val);
+         memcpyValue.setSize((ConstantValue) val);
       }
 
    }

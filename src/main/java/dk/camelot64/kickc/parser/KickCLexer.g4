@@ -78,7 +78,7 @@ ADDRESS_MAINMEM: '__mem' ;
 FORM_SSA: '__ssa' ;
 FORM_MA: '__ma' ;
 INTRINSIC: '__intrinsic' ;
-CALLINGCONVENTION: '__stackcall' | '__phicall' ;
+CALLINGCONVENTION: '__stackcall' | '__phicall' | '__varcall' ;
 IF: 'if' ;
 ELSE: 'else' ;
 WHILE: 'while' ;

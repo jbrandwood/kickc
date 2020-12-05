@@ -6,7 +6,6 @@ pha
 iny
 lda ({z1}),y
 adc ({z2}),y
-sta ({z1}),y
-dey
+sta {z1}+1
 pla
-sta ({z1}),y
+sta {z1}

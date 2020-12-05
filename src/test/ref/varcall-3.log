@@ -1,0 +1,396 @@
+Converting parameter in __varcall procedure to load/store plus::a
+Converting parameter in __varcall procedure to load/store plus::b
+Converting return in __varcall procedure to load/store plus::return
+Calling convention __varcall adding prepare/execute/finalize for main::$0 = call plus main::a $203 
+Calling convention __varcall adding prepare/execute/finalize for main::$1 = call plus main::a main::a 
+Calling convention VAR_CALL adding return value assignment main::$0 = plus::return
+Calling convention VAR_CALL adding return value assignment main::$1 = plus::return
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::a#0 = $102
+  *BGCOL = main::a#0
+  plus::a = main::a#0
+  plus::b = $203
+  callexecute plus 
+  main::$0 = plus::return
+  main::a#1 = main::$0
+  *BGCOL = main::a#1
+  plus::a = main::a#1
+  plus::b = main::a#1
+  callexecute plus 
+  main::$1 = plus::return
+  main::a#2 = main::$1
+  *BGCOL = main::a#2
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__varcall signed word plus(signed word plus::a , signed word plus::b)
+plus: scope:[plus]  from
+  plus::$0 = plus::a + plus::b
+  plus::return = plus::$0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify signed word* BGCOL = (signed word*)$d020
+void __start()
+void main()
+signed word~ main::$0
+signed word~ main::$1
+signed word main::a
+signed word main::a#0
+signed word main::a#1
+signed word main::a#2
+__varcall signed word plus(signed word plus::a , signed word plus::b)
+signed word~ plus::$0
+signed word plus::a loadstore
+signed word plus::b loadstore
+signed word plus::return loadstore
+
+Adding number conversion cast (snumber) $203 in plus::b = $203
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast plus::b = (snumber)$203
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (signed word*) 53280
+Simplifying constant integer cast $203
+Successful SSA optimization PassNCastSimplification
+Finalized signed number type $203
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)plus::return = plus::$0 
+Alias main::a#1 = main::$0 
+Alias main::a#2 = main::$1 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)plus::return = plus::$0 
+Constant main::a#0 = $102
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)plus::return = plus::$0 
+Inlining constant with var siblings main::a#0
+Constant inlined main::a#0 = $102
+Successful SSA optimization Pass2ConstantInlining
+Alias candidate removed (volatile)plus::return = plus::$0 
+Alias candidate removed (volatile)plus::return = plus::$0 
+CALL GRAPH
+Calls in [main] to plus:6 plus:11 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+__varcall signed word plus(signed word plus::a , signed word plus::b)
+plus: scope:[plus]  from
+  [0] plus::$0 = plus::a + plus::b
+  [1] plus::return = plus::$0
+  to:plus::@return
+plus::@return: scope:[plus]  from plus
+  [2] return 
+  to:@return
+
+void main()
+main: scope:[main]  from
+  [3] *BGCOL = $102
+  [4] plus::a = $102
+  [5] plus::b = $203
+  [6] callexecute plus 
+  [7] main::a#1 = plus::return
+  [8] *BGCOL = main::a#1
+  [9] plus::a = main::a#1
+  [10] plus::b = main::a#1
+  [11] callexecute plus 
+  [12] main::a#2 = plus::return
+  [13] *BGCOL = main::a#2
+  to:main::@return
+main::@return: scope:[main]  from main
+  [14] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+signed word main::a
+signed word main::a#1 2.6666666666666665
+signed word main::a#2 4.0
+__varcall signed word plus(signed word plus::a , signed word plus::b)
+signed word~ plus::$0 22.0
+signed word plus::a loadstore 3.75
+signed word plus::b loadstore 7.5
+signed word plus::return loadstore 3.75
+
+Initial phi equivalence classes
+Added variable plus::$0 to live range equivalence class [ plus::$0 ]
+Added variable plus::return to live range equivalence class [ plus::return ]
+Added variable plus::a to live range equivalence class [ plus::a ]
+Added variable plus::b to live range equivalence class [ plus::b ]
+Added variable main::a#1 to live range equivalence class [ main::a#1 ]
+Added variable main::a#2 to live range equivalence class [ main::a#2 ]
+Complete equivalence classes
+[ plus::$0 ]
+[ plus::return ]
+[ plus::a ]
+[ plus::b ]
+[ main::a#1 ]
+[ main::a#2 ]
+Allocated zp[2]:2 [ plus::$0 ]
+Allocated zp[2]:4 [ plus::return ]
+Allocated zp[2]:6 [ plus::a ]
+Allocated zp[2]:8 [ plus::b ]
+Allocated zp[2]:10 [ main::a#1 ]
+Allocated zp[2]:12 [ main::a#2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] plus::$0 = plus::a + plus::b [ plus::$0 ] ( plus:6 [ plus::$0 ] { { main::a#1 = plus::a plus::b } }  plus:11 [ plus::$0 ] { { main::a#1 = plus::a plus::b } }  ) always clobbers reg byte a 
+Statement [1] plus::return = plus::$0 [ plus::return ] ( plus:6 [ plus::return ] { { main::a#1 = plus::a plus::b } }  plus:11 [ plus::return ] { { main::a#1 = plus::a plus::b } }  ) always clobbers reg byte a 
+Statement [3] *BGCOL = $102 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] plus::a = $102 [ plus::a ] (  [ plus::a ] { }  ) always clobbers reg byte a 
+Statement [5] plus::b = $203 [ plus::a plus::b ] (  [ plus::a plus::b ] { }  ) always clobbers reg byte a 
+Statement [7] main::a#1 = plus::return [ main::a#1 ] (  [ main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [8] *BGCOL = main::a#1 [ main::a#1 ] (  [ main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [9] plus::a = main::a#1 [ plus::a main::a#1 ] (  [ plus::a main::a#1 ] { }  ) always clobbers reg byte a 
+Statement [10] plus::b = main::a#1 [ plus::a plus::b ] (  [ plus::a plus::b ] { }  ) always clobbers reg byte a 
+Statement [12] main::a#2 = plus::return [ main::a#2 ] (  [ main::a#2 ] { }  ) always clobbers reg byte a 
+Statement [13] *BGCOL = main::a#2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers zp[2]:2 [ plus::$0 ] : zp[2]:2 , 
+Potential registers zp[2]:4 [ plus::return ] : zp[2]:4 , 
+Potential registers zp[2]:6 [ plus::a ] : zp[2]:6 , 
+Potential registers zp[2]:8 [ plus::b ] : zp[2]:8 , 
+Potential registers zp[2]:10 [ main::a#1 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ main::a#2 ] : zp[2]:12 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [plus] 22: zp[2]:2 [ plus::$0 ] 7.5: zp[2]:8 [ plus::b ] 3.75: zp[2]:4 [ plus::return ] 3.75: zp[2]:6 [ plus::a ] 
+Uplift Scope [main] 4: zp[2]:12 [ main::a#2 ] 2.67: zp[2]:10 [ main::a#1 ] 
+Uplift Scope [] 
+
+Uplifting [plus] best 170 combination zp[2]:2 [ plus::$0 ] zp[2]:8 [ plus::b ] zp[2]:4 [ plus::return ] zp[2]:6 [ plus::a ] 
+Uplifting [main] best 170 combination zp[2]:12 [ main::a#2 ] zp[2]:10 [ main::a#1 ] 
+Uplifting [] best 170 combination 
+Coalescing zero page register [ zp[2]:2 [ plus::$0 ] ] with [ zp[2]:4 [ plus::return ] ] - score: 1
+Coalescing zero page register [ zp[2]:2 [ plus::$0 plus::return ] ] with [ zp[2]:6 [ plus::a ] ] - score: 1
+Coalescing zero page register [ zp[2]:8 [ plus::b ] ] with [ zp[2]:10 [ main::a#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:2 [ plus::$0 plus::return plus::a ] ] with [ zp[2]:12 [ main::a#2 ] ] - score: 1
+Allocated (was zp[2]:8) zp[2]:4 [ plus::b main::a#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Test __varcall calling convention
+// Larger type parameter & return value
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d020
+  // plus
+// plus(signed word zp(2) a, signed word zp(4) b)
+plus: {
+    .label return = 2
+    .label a = 2
+    .label b = 4
+    .label __0 = 2
+    // [0] plus::$0 = plus::a + plus::b -- vwsz1=vwsz1_plus_vwsz2 
+    lda.z __0
+    clc
+    adc.z b
+    sta.z __0
+    lda.z __0+1
+    adc.z b+1
+    sta.z __0+1
+    // [1] plus::return = plus::$0
+    jmp __breturn
+    // plus::@return
+  __breturn:
+    // [2] return 
+    rts
+}
+  // main
+main: {
+    .label a = 4
+    .label a_1 = 2
+    // [3] *BGCOL = $102 -- _deref_pwsc1=vwsc2 
+    lda #<$102
+    sta BGCOL
+    lda #>$102
+    sta BGCOL+1
+    // [4] plus::a = $102 -- vwsz1=vwsc1 
+    lda #<$102
+    sta.z plus.a
+    lda #>$102
+    sta.z plus.a+1
+    // [5] plus::b = $203 -- vwsz1=vwsc1 
+    lda #<$203
+    sta.z plus.b
+    lda #>$203
+    sta.z plus.b+1
+    // [6] callexecute plus  -- jsr 
+    jsr plus
+    // [7] main::a#1 = plus::return -- vwsz1=vwsz2 
+    lda.z plus.return
+    sta.z a
+    lda.z plus.return+1
+    sta.z a+1
+    // [8] *BGCOL = main::a#1 -- _deref_pwsc1=vwsz1 
+    lda.z a
+    sta BGCOL
+    lda.z a+1
+    sta BGCOL+1
+    // [9] plus::a = main::a#1 -- vwsz1=vwsz2 
+    lda.z a
+    sta.z plus.a
+    lda.z a+1
+    sta.z plus.a+1
+    // [10] plus::b = main::a#1
+    // [11] callexecute plus  -- jsr 
+    jsr plus
+    // [12] main::a#2 = plus::return
+    // [13] *BGCOL = main::a#2 -- _deref_pwsc1=vwsz1 
+    lda.z a_1
+    sta BGCOL
+    lda.z a_1+1
+    sta BGCOL+1
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [14] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify signed word* BGCOL = (signed word*) 53280
+void main()
+signed word main::a
+signed word main::a#1 a zp[2]:4 2.6666666666666665
+signed word main::a#2 a_1 zp[2]:2 4.0
+__varcall signed word plus(signed word plus::a , signed word plus::b)
+signed word~ plus::$0 zp[2]:2 22.0
+signed word plus::a loadstore zp[2]:2 3.75
+signed word plus::b loadstore zp[2]:4 7.5
+signed word plus::return loadstore zp[2]:2 3.75
+
+zp[2]:2 [ plus::$0 plus::return plus::a main::a#2 ]
+zp[2]:4 [ plus::b main::a#1 ]
+
+
+FINAL ASSEMBLER
+Score: 128
+
+  // File Comments
+// Test __varcall calling convention
+// Larger type parameter & return value
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .label BGCOL = $d020
+  // plus
+// plus(signed word zp(2) a, signed word zp(4) b)
+plus: {
+    .label return = 2
+    .label a = 2
+    .label b = 4
+    .label __0 = 2
+    // a+b
+    // [0] plus::$0 = plus::a + plus::b -- vwsz1=vwsz1_plus_vwsz2 
+    lda.z __0
+    clc
+    adc.z b
+    sta.z __0
+    lda.z __0+1
+    adc.z b+1
+    sta.z __0+1
+    // return a+b;
+    // [1] plus::return = plus::$0
+    // plus::@return
+    // }
+    // [2] return 
+    rts
+}
+  // main
+main: {
+    .label a = 4
+    .label a_1 = 2
+    // *BGCOL = a
+    // [3] *BGCOL = $102 -- _deref_pwsc1=vwsc2 
+    lda #<$102
+    sta BGCOL
+    lda #>$102
+    sta BGCOL+1
+    // plus(a, 0x0203)
+    // [4] plus::a = $102 -- vwsz1=vwsc1 
+    lda #<$102
+    sta.z plus.a
+    lda #>$102
+    sta.z plus.a+1
+    // [5] plus::b = $203 -- vwsz1=vwsc1 
+    lda #<$203
+    sta.z plus.b
+    lda #>$203
+    sta.z plus.b+1
+    // [6] callexecute plus  -- jsr 
+    jsr plus
+    // a = plus(a, 0x0203)
+    // [7] main::a#1 = plus::return -- vwsz1=vwsz2 
+    lda.z plus.return
+    sta.z a
+    lda.z plus.return+1
+    sta.z a+1
+    // *BGCOL = a
+    // [8] *BGCOL = main::a#1 -- _deref_pwsc1=vwsz1 
+    lda.z a
+    sta BGCOL
+    lda.z a+1
+    sta BGCOL+1
+    // plus(a, a)
+    // [9] plus::a = main::a#1 -- vwsz1=vwsz2 
+    lda.z a
+    sta.z plus.a
+    lda.z a+1
+    sta.z plus.a+1
+    // [10] plus::b = main::a#1
+    // [11] callexecute plus  -- jsr 
+    jsr plus
+    // a = plus(a, a)
+    // [12] main::a#2 = plus::return
+    // *BGCOL = a
+    // [13] *BGCOL = main::a#2 -- _deref_pwsc1=vwsz1 
+    lda.z a_1
+    sta BGCOL
+    lda.z a_1+1
+    sta BGCOL+1
+    // main::@return
+    // }
+    // [14] return 
+    rts
+}
+  // File Data
+

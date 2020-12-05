@@ -1,7 +1,7 @@
 // Tests the target platform ASM6502
 
 #pragma target(asm6502)
-#pragma start_address(0x2000)
+#pragma start_address(0x3000)
 
 unsigned char TABLE[10];
 

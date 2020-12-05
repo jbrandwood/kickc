@@ -40,10 +40,12 @@ public class Procedure extends Scope {
 
    /** The method for passing parameters and return value to the procedure. */
    public enum CallingConvention {
-      /** Parameters and return value handled through call PHI-transitions. */
+      /** Parameters and return value handled through PHI-transitions. */
       PHI_CALL("__phicall"),
       /** Parameters and return value over the stack. */
-      STACK_CALL("__stackcall");
+      STACK_CALL("__stackcall"),
+      /** Parameters and return value handled through variables. */
+      VAR_CALL("__varcall");
 
       private final String name;
 

@@ -251,6 +251,8 @@ public class Compiler {
       new Pass1AssertNoLValueIntermediate(program).execute();
       new PassNAddTypeConversionAssignment(program, true).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
+      new Pass1ModifiedVarsAnalysis(program).execute();
+      new Pass1CallStackVarPrepare(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE SIZEOF FIX");
@@ -262,7 +264,7 @@ public class Compiler {
 
       new PassNAssertTypeMatch(program).check();
 
-      new Pass1PrepareUnwindStruct(program).execute();
+      new Pass1UnwindStructPrepare(program).execute();
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
@@ -310,10 +312,18 @@ public class Compiler {
       }
 
       new Pass1CallVoidReturns(program).execute();
+      new Pass1CallStackVarConvert(program).execute();
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE CALLS");
+         getLog().append(program.getGraph().toString(program));
+      }
       new Pass1CallStack(program).execute();
+      new Pass1CallVar(program).execute();
       new Pass1CallPhiParameters(program).execute();
-      //getLog().append("PROCEDURE PARAMETERS");
-      //getLog().append(program.getGraph().toString(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE PARAMETERS");
+         getLog().append(program.getGraph().toString(program));
+      }
       new PassNUnwindLValueLists(program).execute();
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
       new Pass1CallPhiReturn(program).execute();

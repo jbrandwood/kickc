@@ -62,6 +62,11 @@ public class TestPrograms {
       compileAndCompare("adventofcode/2020-01.c");
    }
 
+   @Test
+   public void testMissingBand() throws IOException, URISyntaxException {
+      compileAndCompare("missing-band.c");
+   }
+
 
    // https://gitlab.com/camelot/kickc/-/issues/564
    //@Test

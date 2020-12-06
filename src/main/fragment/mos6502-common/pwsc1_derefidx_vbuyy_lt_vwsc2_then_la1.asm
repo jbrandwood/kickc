@@ -1,7 +1,7 @@
 lda {c1},y
-cmp {c2}
+cmp #<{c2}
 lda {c1}+1,y
-sbc {c2}+1
+sbc #>{c2}
 bvc !+
 eor #$80
 !:

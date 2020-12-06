@@ -4998,8 +4998,8 @@ public class TestPrograms {
       success &= helper.testOutput(baseFileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(baseFileName, ".log", program.getLog().toString());
       if(!success) {
-         System.out.println("\nCOMPILE LOG");
-         System.out.println(program.getLog().toString());
+         //System.out.println("\nCOMPILE LOG");
+         //System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
       // Save the ASM fragment caches (if there are any changes)

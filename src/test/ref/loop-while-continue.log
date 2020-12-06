@@ -72,6 +72,11 @@ Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type $28
+Finalized unsigned number type 6
+Successful SSA optimization Pass2FinalizeAllNumbers
+Simplifying constant integer cast $28*6
+Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting main::@4(between main::@2 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -92,7 +97,7 @@ main: scope:[main]  from
 main::@1: scope:[main]  from main main::@2 main::@3
   [1] main::i#2 = phi( main/0, main::@2/main::i#1, main::@3/main::i#1 )
   [2] main::i#1 = ++ main::i#2
-  [3] if(main::i#1<(byte)$28*6) goto main::@2
+  [3] if(main::i#1<$28*6) goto main::@2
   to:main::@return
 main::@return: scope:[main]  from main::@1
   [4] return 
@@ -154,7 +159,7 @@ main: {
   __b1:
     // [2] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [3] if(main::i#1<(byte)$28*6) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [3] if(main::i#1<$28*6) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28*6
     bcc __b2
     jmp __breturn
@@ -227,7 +232,7 @@ main: {
     // while(++i<40*6)
     // [2] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [3] if(main::i#1<(byte)$28*6) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [3] if(main::i#1<$28*6) goto main::@2 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$28*6
     bcc __b2
     // main::@return

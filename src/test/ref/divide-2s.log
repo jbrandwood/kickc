@@ -123,6 +123,20 @@ Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Alias main::i#2 = main::$0 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type $28
+Finalized unsigned number type 1
+Finalized unsigned number type $28
+Finalized unsigned number type 2
+Finalized unsigned number type $28
+Finalized unsigned number type 3
+Finalized unsigned number type $28
+Finalized unsigned number type 5
+Successful SSA optimization Pass2FinalizeAllNumbers
+Simplifying constant integer cast $28*1
+Simplifying constant integer cast $28*2
+Simplifying constant integer cast $28*3
+Simplifying constant integer cast $28*5
+Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -143,14 +157,14 @@ main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
   [2] main::SCREEN[main::i#2] = main::i#2
   [3] main::$1 = main::i#2 >> 1
-  [4] (main::SCREEN+(byte)$28*1)[main::i#2] = main::$1
+  [4] (main::SCREEN+$28*1)[main::i#2] = main::$1
   [5] main::$2 = main::i#2 >> 2
-  [6] (main::SCREEN+(byte)$28*2)[main::i#2] = main::$2
+  [6] (main::SCREEN+$28*2)[main::i#2] = main::$2
   [7] main::$3 = main::i#2 >> 3
-  [8] (main::SCREEN+(byte)$28*3)[main::i#2] = main::$3
+  [8] (main::SCREEN+$28*3)[main::i#2] = main::$3
   [9] main::sb#0 = - (signed byte)main::i#2
   [10] main::$5 = main::sb#0 >> 1
-  [11] (main::SCREEN+(byte)$28*5)[main::i#2] = (byte)main::$5
+  [11] (main::SCREEN+$28*5)[main::i#2] = (byte)main::$5
   [12] main::i#1 = ++ main::i#2
   [13] if(main::i#1!=$b) goto main::@1
   to:main::@return
@@ -251,20 +265,20 @@ main: {
     // [3] main::$1 = main::i#2 >> 1 -- vbuaa=vbuxx_ror_1 
     txa
     lsr
-    // [4] (main::SCREEN+(byte)$28*1)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [4] (main::SCREEN+$28*1)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*1,x
     // [5] main::$2 = main::i#2 >> 2 -- vbuaa=vbuxx_ror_2 
     txa
     lsr
     lsr
-    // [6] (main::SCREEN+(byte)$28*2)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [6] (main::SCREEN+$28*2)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*2,x
     // [7] main::$3 = main::i#2 >> 3 -- vbuaa=vbuxx_ror_3 
     txa
     lsr
     lsr
     lsr
-    // [8] (main::SCREEN+(byte)$28*3)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] (main::SCREEN+$28*3)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*3,x
     // [9] main::sb#0 = - (signed byte)main::i#2 -- vbsaa=_neg_vbsxx 
     txa
@@ -274,7 +288,7 @@ main: {
     // [10] main::$5 = main::sb#0 >> 1 -- vbsaa=vbsaa_ror_1 
     cmp #$80
     ror
-    // [11] (main::SCREEN+(byte)$28*5)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] (main::SCREEN+$28*5)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*5,x
     // [12] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -352,7 +366,7 @@ main: {
     txa
     lsr
     // (SCREEN+40*1)[i] = i/2
-    // [4] (main::SCREEN+(byte)$28*1)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [4] (main::SCREEN+$28*1)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*1,x
     // i/4
     // [5] main::$2 = main::i#2 >> 2 -- vbuaa=vbuxx_ror_2 
@@ -360,7 +374,7 @@ main: {
     lsr
     lsr
     // (SCREEN+40*2)[i] = i/4
-    // [6] (main::SCREEN+(byte)$28*2)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [6] (main::SCREEN+$28*2)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*2,x
     // i/8
     // [7] main::$3 = main::i#2 >> 3 -- vbuaa=vbuxx_ror_3 
@@ -369,7 +383,7 @@ main: {
     lsr
     lsr
     // (SCREEN+40*3)[i] = i/8
-    // [8] (main::SCREEN+(byte)$28*3)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] (main::SCREEN+$28*3)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*3,x
     // sb = -(signed byte)i
     // [9] main::sb#0 = - (signed byte)main::i#2 -- vbsaa=_neg_vbsxx 
@@ -382,7 +396,7 @@ main: {
     cmp #$80
     ror
     // (SCREEN+40*5)[i] = (byte)(sb/2)
-    // [11] (main::SCREEN+(byte)$28*5)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] (main::SCREEN+$28*5)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+$28*5,x
     // for(byte i: 0..10)
     // [12] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 

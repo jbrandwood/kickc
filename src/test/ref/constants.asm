@@ -85,7 +85,7 @@ test_bytes: {
 // Test different signed byte constants
 test_sbytes: {
     .const bb = 0
-    .const bf = $ff&-$7f-$7f
+    .const bf = -$7f-$7f
     .const bc = 2
     .const bd = bc-4
     .const be = -bd

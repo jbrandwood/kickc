@@ -183,6 +183,7 @@ public class Compiler {
          pass2Optimize();
          pass2UnrollLoops();
          pass2InlineConstants();
+         pass2FinalizeAllNumbers();
 
          //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
          //getLog().append(program.getGraph().toString(program));
@@ -489,6 +490,18 @@ public class Compiler {
       constantOptimizations.add(new Pass2ConstantInlining(program));
       constantOptimizations.add(new Pass2ConstantAdditionElimination(program));
       constantOptimizations.add(new Pass2ConstantSimplification(program));
+      constantOptimizations.addAll(getPass2Optimizations());
+      pass2Execute(constantOptimizations);
+
+   }
+
+   private void pass2FinalizeAllNumbers() {
+      if(getLog().isVerboseSizeInfo()) {
+         getLog().append(program.getSizeInfo());
+      }
+      // Constant inlining optimizations - as the last step to ensure that constant identification has been completed
+      List<PassStep> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new Pass2FinalizeAllNumbers(program));
       constantOptimizations.addAll(getPass2Optimizations());
       pass2Execute(constantOptimizations);
 

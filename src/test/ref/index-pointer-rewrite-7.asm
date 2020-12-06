@@ -85,10 +85,9 @@ main: {
     iny
     lda (__3),y
     adc (__9),y
-    sta (__3),y
-    dey
+    sta.z __3+1
     pla
-    sta (__3),y
+    sta.z __3
     // fibs[i+2] = fibs[i]+fibs[i+1]
     asl.z __8
     rol.z __8+1

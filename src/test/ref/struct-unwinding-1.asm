@@ -1,0 +1,58 @@
+// Test combining unwind structs with classic structs
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  .const SIZEOF_STRUCT_POINT = 2
+  .const OFFSET_STRUCT_POINT_Y = 1
+  .label SCREEN = $400
+main: {
+    .label p1 = 2
+    // p1 = { 1, 2 }
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda __0-1,y
+    sta p1-1,y
+    dey
+    bne !-
+    // SCREEN[0] = p1
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p1-1,y
+    sta SCREEN-1,y
+    dey
+    bne !-
+    // p2 = p1
+    lda.z p1
+    ldx p1+OFFSET_STRUCT_POINT_Y
+    // SCREEN[2] = p2
+    sta SCREEN+2*SIZEOF_STRUCT_POINT
+    stx SCREEN+2*SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
+    // p1.x = 3
+    // Set in classic struct
+    lda #3
+    sta.z p1
+    // SCREEN[4] = p1
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p1-1,y
+    sta SCREEN+4*SIZEOF_STRUCT_POINT-1,y
+    dey
+    bne !-
+    // SCREEN[6] = p2
+    lda #4
+    sta SCREEN+6*SIZEOF_STRUCT_POINT
+    stx SCREEN+6*SIZEOF_STRUCT_POINT+OFFSET_STRUCT_POINT_Y
+    // p1 = p2
+    sta.z p1
+    stx p1+OFFSET_STRUCT_POINT_Y
+    // SCREEN[8] = p1
+    ldy #SIZEOF_STRUCT_POINT
+  !:
+    lda p1-1,y
+    sta SCREEN+8*SIZEOF_STRUCT_POINT-1,y
+    dey
+    bne !-
+    // }
+    rts
+}
+  __0: .byte 1, 2

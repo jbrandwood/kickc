@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE fb64e786f fb64e95eb
+//KICKC FRAGMENT CACHE 12916116c7 12916134cc
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
@@ -15822,6 +15822,29 @@ tax
 //FRAGMENT vbuyy=_hi_pwsc1_derefidx_vbuyy
 lda {c1}+1,y
 tay
+//FRAGMENT vwuz1=vbuz2_band_vbuc1
+lda {z2}
+and #{c1}
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=vbuaa_band_vbuc1
+and #{c1}
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=vbuxx_band_vbuc1
+txa
+and #{c1}
+sta {z1}
+lda #0
+sta {z1}+1
+//FRAGMENT vwuz1=vbuyy_band_vbuc1
+tya
+and #{c1}
+sta {z1}
+lda #0
+sta {z1}+1
 //FRAGMENT vwuc1_le_vwuc2_then_la1
 lda #>{c1}
 cmp #>{c2}

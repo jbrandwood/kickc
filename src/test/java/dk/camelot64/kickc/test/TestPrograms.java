@@ -4855,6 +4855,11 @@ public class TestPrograms {
       compileAndCompare("condition-type-mismatch.c");
    }
 
+   @Test
+   public void testIssue594() throws IOException, URISyntaxException {
+      compileAndCompare("issue-594-case.c");
+   }
+
    @BeforeAll
    public static void setUp() {
       TmpDirManager.init(new File("").toPath());
@@ -4993,8 +4998,8 @@ public class TestPrograms {
       success &= helper.testOutput(baseFileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(baseFileName, ".log", program.getLog().toString());
       if(!success) {
-         //System.out.println("\nCOMPILE LOG");
-         //System.out.println(program.getLog().toString());
+         System.out.println("\nCOMPILE LOG");
+         System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
       // Save the ASM fragment caches (if there are any changes)

@@ -48,11 +48,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testStructArrayProblem1() throws IOException, URISyntaxException {
-      compileAndCompare("struct-array-problem-1.c");
-   }
-
-   @Test
    public void testAdventOfCode03() throws IOException, URISyntaxException {
       compileAndCompare("adventofcode/2020-03.c");
    }

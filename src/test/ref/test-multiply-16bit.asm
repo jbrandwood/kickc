@@ -503,10 +503,8 @@ muls16u: {
     .label b = $1a
     // if(a!=0)
     lda.z a
-    bne !+
-    lda.z a+1
+    ora.z a+1
     beq __b4
-  !:
     lda #<0
     sta.z m
     sta.z m+1
@@ -583,8 +581,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts

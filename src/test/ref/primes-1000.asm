@@ -139,8 +139,7 @@ main: {
   !:
     // if(rem16s == 0)
     lda.z rem16s+1
-    bne __b4
-    lda.z rem16s
+    ora.z rem16s
     bne __b4
     // testnum +=2
     clc
@@ -370,8 +369,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts

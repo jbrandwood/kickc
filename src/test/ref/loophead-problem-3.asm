@@ -58,8 +58,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts

@@ -23,8 +23,7 @@ main: {
     inc.z w+1
   !:
     lda.z w
-    bne __b1
-    lda.z w+1
+    ora.z w+1
     bne __b1
     lda #<-$7fff
     sta.z sw

@@ -126,8 +126,7 @@ main: {
     beq __b5
   !:
     lda.z x
-    bne __b3
-    lda.z x+1
+    ora.z x+1
     bne __b3
   __b5:
     // vx = -vx

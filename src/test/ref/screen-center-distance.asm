@@ -568,8 +568,7 @@ bsearch16u: {
     sbc (pivot),y
     sta.z result+1
     // if (result == 0)
-    bne __b6
-    lda.z result
+    ora.z result
     bne __b6
     lda.z pivot
     sta.z return

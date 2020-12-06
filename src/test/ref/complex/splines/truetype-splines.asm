@@ -689,16 +689,13 @@ bitmap_line: {
     // dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
-    bne __b1
-    lda.z dx+1
+    ora.z dx+1
     bne __b1
     lda.z dy
-    bne !+
-    lda.z dy+1
+    ora.z dy+1
     bne !__b4+
     jmp __b4
   !__b4:
-  !:
   __b1:
     // sgn_u16(x2-x1)
     lda.z x2

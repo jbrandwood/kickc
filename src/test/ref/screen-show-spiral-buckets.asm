@@ -895,8 +895,7 @@ atan2_16: {
   __b10:
     // if(yi==0)
     lda.z yi+1
-    bne __b11
-    lda.z yi
+    ora.z yi
     bne __b11
   __b12:
     // angle /=2
@@ -1124,8 +1123,7 @@ bsearch16u: {
     sbc (pivot),y
     sta.z result+1
     // if (result == 0)
-    bne __b6
-    lda.z result
+    ora.z result
     bne __b6
     lda.z pivot
     sta.z return

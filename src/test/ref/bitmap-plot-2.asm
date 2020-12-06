@@ -284,8 +284,7 @@ main: {
     sta.z r+1
     // if((idx_x==0) && (r_add!=1))
     lda.z idx_x
-    bne __b5
-    lda.z idx_x+1
+    ora.z idx_x+1
     bne __b5
     lda #1
     cmp.z r_add
@@ -975,8 +974,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts

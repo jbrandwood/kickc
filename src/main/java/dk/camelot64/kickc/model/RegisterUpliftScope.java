@@ -47,7 +47,7 @@ public class RegisterUpliftScope {
          }
          out.append(equivalenceClass.toString() + " ");
       }
-      return out.toString().trim();
+      return out.toString();
    }
 
    @Override

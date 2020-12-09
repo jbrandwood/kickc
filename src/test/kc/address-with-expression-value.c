@@ -13,4 +13,3 @@ char __address(var1 + var2) DATA[1000];
 void main() {
     SCREEN[0] = DATA[0];
 }
-

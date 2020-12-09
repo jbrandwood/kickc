@@ -1066,7 +1066,7 @@ public class TestPrograms {
 
    @Test
    public void testAddressWithExpressionValue() throws IOException, URISyntaxException {
-      compileAndCompare("address-with-expression-value.c");
+      compileAndCompare("address-with-expression-value.c", log());
    }
 
    @Test

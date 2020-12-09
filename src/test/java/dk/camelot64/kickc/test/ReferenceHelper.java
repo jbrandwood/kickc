@@ -47,7 +47,7 @@ abstract class ReferenceHelper {
          String outLine = outLines.get(i);
          if(refLines.size()>i) {
             String refLine = refLines.get(i);
-            if(!outLine.equals(refLine)) {
+            if(!outLine.trim().equals(refLine.trim())) {
                writeOutputFile(fileName, extension, outputString);
                System.out.println(
                      "Output does not match reference on line "+i+"\n"+

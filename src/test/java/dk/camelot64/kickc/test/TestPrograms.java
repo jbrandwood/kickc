@@ -43,6 +43,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testLocalVarShadowingProcedure() throws IOException, URISyntaxException {
+      assertError("local-var-shadowing-procedure.c", "Called symbol is not a procedure. main::doit");
+   }
+
+   @Test
    public void testAdventOfCode04() throws IOException, URISyntaxException {
       compileAndCompare("adventofcode/2020-04.c");
    }

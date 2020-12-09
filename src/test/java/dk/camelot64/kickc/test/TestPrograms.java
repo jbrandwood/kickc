@@ -1065,6 +1065,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAddressWithExpressionValue() throws IOException, URISyntaxException {
+      compileAndCompare("address-with-expression-value.c", log());
+   }
+
+   @Test
    public void testAddress8() throws IOException, URISyntaxException {
       compileAndCompare("address-8.c");
    }
@@ -5056,8 +5061,8 @@ public class TestPrograms {
       success &= helper.testOutput(baseFileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(baseFileName, ".log", program.getLog().toString());
       if(!success) {
-         //System.out.println("\nCOMPILE LOG");
-         //System.out.println(program.getLog().toString());
+         // System.out.println("\nCOMPILE LOG");
+         // System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
       // Save the ASM fragment caches (if there are any changes)

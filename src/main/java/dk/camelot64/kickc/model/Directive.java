@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.ConstantValue;
 
 import java.util.List;
 

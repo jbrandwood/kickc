@@ -49,10 +49,10 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 2
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = 2 * main::x
 Inferred type updated to byte in main::$1 = main::x + main::$0
@@ -79,6 +79,14 @@ Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN+1)
 Consolidated array index constant in *(main::SCREEN+2)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast 2*1
+Simplifying constant integer cast 2*2
+Successful SSA optimization PassNCastSimplification
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -88,8 +96,8 @@ FINAL CONTROL FLOW GRAPH
 
 void main()
 main: scope:[main]  from
-  [0] *main::SCREEN = (byte)2*1
-  [1] *(main::SCREEN+1) = (byte)2*2
+  [0] *main::SCREEN = 2*1
+  [1] *(main::SCREEN+1) = 2*2
   [2] *(main::SCREEN+2) = main::x+2*main::x
   to:main::@return
 main::@return: scope:[main]  from main
@@ -103,8 +111,8 @@ void main()
 Initial phi equivalence classes
 Complete equivalence classes
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [0] *main::SCREEN = (byte)2*1 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [1] *(main::SCREEN+1) = (byte)2*2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [0] *main::SCREEN = 2*1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *(main::SCREEN+1) = 2*2 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *(main::SCREEN+2) = main::x+2*main::x [ ] (  [ ] { }  ) always clobbers reg byte a 
 
 REGISTER UPLIFT SCOPES
@@ -130,11 +138,11 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const x = 7
     .label SCREEN = $400
-    // [0] *main::SCREEN = (byte)2*1 -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = 2*1 -- _deref_pbuc1=vbuc2 
     // Call without spaces
     lda #2*1
     sta SCREEN
-    // [1] *(main::SCREEN+1) = (byte)2*2 -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = 2*2 -- _deref_pbuc1=vbuc2 
     // Call with spaces
     lda #2*2
     sta SCREEN+1
@@ -182,12 +190,12 @@ main: {
     .const x = 7
     .label SCREEN = $400
     // SCREEN[0] = FOO
-    // [0] *main::SCREEN = (byte)2*1 -- _deref_pbuc1=vbuc2 
+    // [0] *main::SCREEN = 2*1 -- _deref_pbuc1=vbuc2 
     // Call without spaces
     lda #2*1
     sta SCREEN
     // SCREEN[1] = FOO
-    // [1] *(main::SCREEN+1) = (byte)2*2 -- _deref_pbuc1=vbuc2 
+    // [1] *(main::SCREEN+1) = 2*2 -- _deref_pbuc1=vbuc2 
     // Call with spaces
     lda #2*2
     sta SCREEN+1

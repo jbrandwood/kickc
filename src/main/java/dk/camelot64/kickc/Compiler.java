@@ -183,6 +183,7 @@ public class Compiler {
          pass2Optimize();
          pass2UnrollLoops();
          pass2InlineConstants();
+         pass2FinalizeAllNumbers();
 
          //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
          //getLog().append(program.getGraph().toString(program));
@@ -365,7 +366,7 @@ public class Compiler {
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
-      optimizations.add(new PassNFinalizeNumberTypeConversions(program));
+      optimizations.add(new PassNFinalizeNumberTypeConversions(program, false));
       optimizations.add(new PassNTypeInference(program));
       optimizations.add(new PassNAddTypeConversionAssignment(program, false));
       optimizations.add(new PassNTypeIdSimplification(program));
@@ -502,6 +503,16 @@ public class Compiler {
       constantOptimizations.addAll(getPass2Optimizations());
       pass2Execute(constantOptimizations);
 
+   }
+
+   private void pass2FinalizeAllNumbers() {
+      if(getLog().isVerboseSizeInfo()) {
+         getLog().append(program.getSizeInfo());
+      }
+      List<PassStep> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new PassNFinalizeNumberTypeConversions(program, true));
+      constantOptimizations.addAll(getPass2Optimizations());
+      pass2Execute(constantOptimizations);
    }
 
    /**

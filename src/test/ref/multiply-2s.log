@@ -78,11 +78,11 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast 8
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 2
-Finalized unsigned number type 4
-Finalized unsigned number type 8
-Finalized signed number type 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 8
+Finalized signed number type (signed byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = main::i#2 * 1
 Inferred type updated to byte in main::$1 = main::i#2 * 2
@@ -110,7 +110,7 @@ Adding number conversion cast (unumber) $b in [13] if(main::i#1!=$b) goto main::
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $b
+Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to remove identity multiply/divide [1] main::$0 = main::i#2 * 1
 Rewriting multiplication to use shift [3] main::$1 = main::i#2 * 2
@@ -123,6 +123,20 @@ Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Alias main::i#2 = main::$0 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast 1*$28
+Simplifying constant integer cast 2*$28
+Simplifying constant integer cast 3*$28
+Simplifying constant integer cast 5*$28
+Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -143,14 +157,14 @@ main::@1: scope:[main]  from main main::@1
   [1] main::i#2 = phi( main/0, main::@1/main::i#1 )
   [2] main::SCREEN[main::i#2] = main::i#2
   [3] main::$1 = main::i#2 << 1
-  [4] (main::SCREEN+(byte)1*$28)[main::i#2] = main::$1
+  [4] (main::SCREEN+1*$28)[main::i#2] = main::$1
   [5] main::$2 = main::i#2 << 2
-  [6] (main::SCREEN+(byte)2*$28)[main::i#2] = main::$2
+  [6] (main::SCREEN+2*$28)[main::i#2] = main::$2
   [7] main::$3 = main::i#2 << 3
-  [8] (main::SCREEN+(byte)3*$28)[main::i#2] = main::$3
+  [8] (main::SCREEN+3*$28)[main::i#2] = main::$3
   [9] main::sb#0 = - (signed byte)main::i#2
   [10] main::$5 = main::sb#0 << 1
-  [11] (main::SCREEN+(byte)5*$28)[main::i#2] = (byte)main::$5
+  [11] (main::SCREEN+5*$28)[main::i#2] = (byte)main::$5
   [12] main::i#1 = ++ main::i#2
   [13] if(main::i#1!=$b) goto main::@1
   to:main::@return
@@ -251,20 +265,20 @@ main: {
     // [3] main::$1 = main::i#2 << 1 -- vbuaa=vbuxx_rol_1 
     txa
     asl
-    // [4] (main::SCREEN+(byte)1*$28)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [4] (main::SCREEN+1*$28)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+1*$28,x
     // [5] main::$2 = main::i#2 << 2 -- vbuaa=vbuxx_rol_2 
     txa
     asl
     asl
-    // [6] (main::SCREEN+(byte)2*$28)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [6] (main::SCREEN+2*$28)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+2*$28,x
     // [7] main::$3 = main::i#2 << 3 -- vbuaa=vbuxx_rol_3 
     txa
     asl
     asl
     asl
-    // [8] (main::SCREEN+(byte)3*$28)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] (main::SCREEN+3*$28)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+3*$28,x
     // [9] main::sb#0 = - (signed byte)main::i#2 -- vbsaa=_neg_vbsxx 
     txa
@@ -273,7 +287,7 @@ main: {
     adc #1
     // [10] main::$5 = main::sb#0 << 1 -- vbsaa=vbsaa_rol_1 
     asl
-    // [11] (main::SCREEN+(byte)5*$28)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] (main::SCREEN+5*$28)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
     // [12] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
@@ -351,7 +365,7 @@ main: {
     txa
     asl
     // (SCREEN+1*40)[i] = i*2
-    // [4] (main::SCREEN+(byte)1*$28)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [4] (main::SCREEN+1*$28)[main::i#2] = main::$1 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+1*$28,x
     // i*4
     // [5] main::$2 = main::i#2 << 2 -- vbuaa=vbuxx_rol_2 
@@ -359,7 +373,7 @@ main: {
     asl
     asl
     // (SCREEN+2*40)[i] = i*4
-    // [6] (main::SCREEN+(byte)2*$28)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [6] (main::SCREEN+2*$28)[main::i#2] = main::$2 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+2*$28,x
     // i*8
     // [7] main::$3 = main::i#2 << 3 -- vbuaa=vbuxx_rol_3 
@@ -368,7 +382,7 @@ main: {
     asl
     asl
     // (SCREEN+3*40)[i] = i*8
-    // [8] (main::SCREEN+(byte)3*$28)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [8] (main::SCREEN+3*$28)[main::i#2] = main::$3 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+3*$28,x
     // sb = -(signed byte)i
     // [9] main::sb#0 = - (signed byte)main::i#2 -- vbsaa=_neg_vbsxx 
@@ -380,7 +394,7 @@ main: {
     // [10] main::$5 = main::sb#0 << 1 -- vbsaa=vbsaa_rol_1 
     asl
     // (SCREEN+5*40)[i] = (byte)(sb*2)
-    // [11] (main::SCREEN+(byte)5*$28)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
+    // [11] (main::SCREEN+5*$28)[main::i#2] = (byte)main::$5 -- pbuc1_derefidx_vbuxx=vbuaa 
     sta SCREEN+5*$28,x
     // for(byte i: 0..10)
     // [12] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 

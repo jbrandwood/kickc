@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.test;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.*;
+import dk.camelot64.kickc.SourceLoader;
+import dk.camelot64.kickc.TmpDirManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -1386,13 +1388,10 @@ public class TestPrograms {
    }
    */
 
-   /**
-    * Fix number type resolving https://gitlab.com/camelot/kickc/issues/199
-    *
-    * @Test public void testConstBool0() throws IOException, URISyntaxException {
-    * compileAndCompare("const-bool-0.c");
-    * }
-    */
+   @Test
+   public void testConstBool0() throws IOException, URISyntaxException {
+      compileAndCompare("const-bool-0.c");
+   }
 
    @Test
    public void testAsmCullingJmp() throws IOException, URISyntaxException {
@@ -2033,23 +2032,20 @@ public class TestPrograms {
       compileAndCompare("unused-irq.c");
    }
 
-
-/*
-    * TODO: Fix error with number resolving
-
-     @Test public void testNumberTernaryFail2() throws IOException, URISyntaxException {
-     compileAndCompare("number-ternary-fail-2.c");
-     }
-     @Test public void testNumberTernaryFail() throws IOException, URISyntaxException {
-     compileAndCompare("number-ternary-fail.c");
-     }
-
-   @Test public void testNumberTernaryFail3() throws IOException, URISyntaxException {
-      compileAndCompare("number-ternary-fail-3.c");
+   @Test
+   public void testNumberTernaryFail2() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail-2.c");
    }
 
- */
+   @Test
+   public void testNumberTernaryFail() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail.c");
+   }
 
+   @Test
+   public void testNumberTernaryFail3() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail-3.c");
+   }
 
    @Test
    public void testTextbox() throws IOException, URISyntaxException {
@@ -3167,8 +3163,6 @@ public class TestPrograms {
    }
    */
 
-   // TODO: Fix number type conversion https://gitlab.com/camelot/kickc/issues/199
-   /*
    @Test
    public void testTernary4() throws IOException, URISyntaxException {
       compileAndCompare("ternary-4.c");
@@ -3183,7 +3177,6 @@ public class TestPrograms {
    public void testBoolNotOperator2() throws IOException, URISyntaxException {
       compileAndCompare("bool-not-operator-2.c");
    }
-   */
 
    @Test
    public void testTernary3() throws IOException, URISyntaxException {
@@ -3759,13 +3752,10 @@ public class TestPrograms {
       compileAndCompare("min-fmul-16.c");
    }
 
-   // Fix literal number type conversion (also over the bitwise NOT operator). https://gitlab.com/camelot/kickc/issues/199
-   /*
    @Test
    public void testBitwiseNot1() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not-1.c");
    }
- */
 
    @Test
    public void testBitwiseNot() throws IOException, URISyntaxException {
@@ -4926,6 +4916,11 @@ public class TestPrograms {
    @Test
    public void testConditionTypeMismatch() throws IOException, URISyntaxException {
       compileAndCompare("condition-type-mismatch.c");
+   }
+
+   @Test
+   public void testIssue594() throws IOException, URISyntaxException {
+      compileAndCompare("issue-594-case.c");
    }
 
    @BeforeAll

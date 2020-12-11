@@ -1,0 +1,276 @@
+Setting inferred volatile on symbol affected by address-of main::ss = &main::substate
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  main::substate = HOSTS
+  main::$0 = *main::ss == DEVICES
+  if(main::$0) goto main::@1
+  to:main::@2
+main::@1: scope:[main]  from main
+  main::$2 = $d
+  to:main::@3
+main::@2: scope:[main]  from main
+  main::$1 = 2
+  to:main::@3
+main::@3: scope:[main]  from main::@1 main::@2
+  main::$3 = phi( main::@1/main::$2, main::@2/main::$1 )
+  main::x#0 = main::$3
+  *OUT = main::x#0
+  to:main::@return
+main::@return: scope:[main]  from main::@3
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const byte DEVICES = 1
+const byte HOSTS = 0
+const to_nomodify byte* OUT = (byte*)$8000
+void __start()
+const byte _substate_hosts::DEVICES = 1
+const byte _substate_hosts::DONE = 2
+const byte _substate_hosts::HOSTS = 0
+void main()
+bool~ main::$0
+number~ main::$1
+number~ main::$2
+number~ main::$3
+const byte* main::ss = &main::substate
+volatile byte main::substate loadstore
+byte main::x
+byte main::x#0
+
+Adding number conversion cast (unumber) main::$3 in main::x#0 = main::$3
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast main::x#0 = (unumber)main::$3
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 32768
+Successful SSA optimization PassNCastSimplification
+Simple Condition main::$0 [2] if(*main::ss==DEVICES) goto main::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::$2 = $d
+Constant main::$1 = 2
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::__init1
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant inlined main::$1 = 2
+Constant inlined main::$2 = $d
+Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $d
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding number conversion cast (unumber) main::$3 in main::$3 = phi( main::@1/$d, main::@2/2 )
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast main::$3
+Successful SSA optimization PassNCastSimplification
+Inferred type updated to byte for main::$3
+Alias main::x#0 = main::$3 
+Successful SSA optimization Pass2AliasElimination
+Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+
+Created 1 initial phi equivalence classes
+Coalesced down to 1 phi equivalence classes
+Culled Empty Block label main::@2
+Renumbering block main::@3 to main::@2
+Adding NOP phi() at start of main::@1
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] main::substate = HOSTS
+  [1] if(*main::ss==DEVICES) goto main::@1
+  to:main::@2
+main::@1: scope:[main]  from main
+  [2] phi()
+  to:main::@2
+main::@2: scope:[main]  from main main::@1
+  [3] main::x#0 = phi( main::@1/$d, main/2 )
+  [4] *OUT = main::x#0
+  to:main::@return
+main::@return: scope:[main]  from main::@2
+  [5] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+volatile byte main::substate loadstore 20.0
+byte main::x
+byte main::x#0 2.0
+
+Initial phi equivalence classes
+[ main::x#0 ]
+Added variable main::substate to live range equivalence class [ main::substate ]
+Complete equivalence classes
+[ main::x#0 ]
+[ main::substate ]
+Allocated zp[1]:2 [ main::x#0 ]
+Allocated zp[1]:3 [ main::substate ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] main::substate = HOSTS [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] if(*main::ss==DEVICES) goto main::@1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::x#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::substate ] : zp[1]:3 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 20: zp[1]:3 [ main::substate ] 2: zp[1]:2 [ main::x#0 ] 
+Uplift Scope [_substate_hosts] 
+Uplift Scope [] 
+
+Uplifting [main] best 38 combination zp[1]:3 [ main::substate ] reg byte a [ main::x#0 ] 
+Uplifting [_substate_hosts] best 38 combination 
+Uplifting [] best 38 combination 
+Attempting to uplift remaining variables inzp[1]:3 [ main::substate ]
+Uplifting [main] best 38 combination zp[1]:3 [ main::substate ] 
+Allocated (was zp[1]:3) zp[1]:2 [ main::substate ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const HOSTS = 0
+  .const DEVICES = 1
+  .label OUT = $8000
+  // main
+main: {
+    .label ss = substate
+    .label substate = 2
+    // [0] main::substate = HOSTS -- vbuz1=vbuc1 
+    lda #HOSTS
+    sta.z substate
+    // [1] if(*main::ss==DEVICES) goto main::@1 -- _deref_pbuc1_eq_vbuc2_then_la1 
+    lda #DEVICES
+    cmp.z ss
+    beq __b1_from_main
+    // [3] phi from main to main::@2 [phi:main->main::@2]
+  __b2_from_main:
+    // [3] phi main::x#0 = 2 [phi:main->main::@2#0] -- vbuaa=vbuc1 
+    lda #2
+    jmp __b2
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+  __b2_from___b1:
+    // [3] phi main::x#0 = $d [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
+    lda #$d
+    jmp __b2
+    // main::@2
+  __b2:
+    // [4] *OUT = main::x#0 -- _deref_pbuc1=vbuaa 
+    sta OUT
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __b2
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b1_from_main with __b1
+Removing instruction __b1_from_main:
+Removing instruction __b2_from___b1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b2_from_main:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const byte DEVICES = 1
+const byte HOSTS = 0
+const to_nomodify byte* OUT = (byte*) 32768
+const byte _substate_hosts::DEVICES = 1
+const byte _substate_hosts::DONE = 2
+const byte _substate_hosts::HOSTS = 0
+void main()
+const byte* main::ss = &main::substate
+volatile byte main::substate loadstore zp[1]:2 20.0
+byte main::x
+byte main::x#0 reg byte a 2.0
+
+reg byte a [ main::x#0 ]
+zp[1]:2 [ main::substate ]
+
+
+FINAL ASSEMBLER
+Score: 29
+
+  // File Comments
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  .const HOSTS = 0
+  .const DEVICES = 1
+  .label OUT = $8000
+  // main
+main: {
+    .label ss = substate
+    .label substate = 2
+    // substate = HOSTS
+    // [0] main::substate = HOSTS -- vbuz1=vbuc1 
+    lda #HOSTS
+    sta.z substate
+    // *ss == DEVICES ? ORIGIN_DEVICE_SLOTS : ORIGIN_HOST_SLOTS
+    // [1] if(*main::ss==DEVICES) goto main::@1 -- _deref_pbuc1_eq_vbuc2_then_la1 
+    lda #DEVICES
+    cmp.z ss
+    beq __b1
+    // [3] phi from main to main::@2 [phi:main->main::@2]
+    // [3] phi main::x#0 = 2 [phi:main->main::@2#0] -- vbuaa=vbuc1 
+    lda #2
+    jmp __b2
+    // [2] phi from main to main::@1 [phi:main->main::@1]
+    // main::@1
+  __b1:
+    // *ss == DEVICES ? ORIGIN_DEVICE_SLOTS : ORIGIN_HOST_SLOTS
+    // [3] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
+    // [3] phi main::x#0 = $d [phi:main::@1->main::@2#0] -- vbuaa=vbuc1 
+    lda #$d
+    // main::@2
+  __b2:
+    // *OUT = x
+    // [4] *OUT = main::x#0 -- _deref_pbuc1=vbuaa 
+    sta OUT
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // File Data
+

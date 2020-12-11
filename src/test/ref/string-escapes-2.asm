@@ -9,9 +9,9 @@ main: {
     sta.z i
   __b1:
     // while(MESSAGE[i])
-    lda #0
     ldy.z i
-    cmp MESSAGE,y
+    lda MESSAGE,y
+    cmp #0
     bne __b2
     // }
     rts

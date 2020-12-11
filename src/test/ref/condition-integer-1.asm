@@ -40,11 +40,8 @@ main: {
   // loop word
   __b7:
     // if(!i)
-    lda.z i1+1
-    cmp #>0
-    bne __b8
     lda.z i1
-    cmp #<0
+    ora.z i1+1
     bne __b8
     // SCREEN[idx++] = '0'
     lda #'0'

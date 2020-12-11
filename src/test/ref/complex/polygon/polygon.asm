@@ -302,8 +302,8 @@ main: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
   __b9:
     // while(canvas_show_flag)
-    lda #0
-    cmp.z canvas_show_flag
+    lda.z canvas_show_flag
+    cmp #0
     bne __b9
     // VICII->BORDER_COLOR = BLACK
     lda #BLACK

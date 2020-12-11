@@ -15,8 +15,8 @@ main: {
     lda #1
     sax.z __6
     // (i&1)?i+3:i*4
-    lda #0
-    cmp.z __6
+    lda.z __6
+    cmp #0
     bne __b2
     txa
     asl
@@ -31,8 +31,8 @@ main: {
     inc.z screen+1
   !:
     // (i&1)?i+3:i*4
-    lda #0
-    cmp.z __6
+    lda.z __6
+    cmp #0
     bne __b5
     txa
     asl

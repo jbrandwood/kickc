@@ -7,8 +7,8 @@ main: {
     .label SCREEN = $400
     .label a = aa
     // if(!a->b)
-    lda #0
-    cmp a
+    lda a
+    cmp #0
     bne !a+
     // *SCREEN = 'a'
     lda #'a'

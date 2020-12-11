@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 129161168d 129161348a
+//KICKC FRAGMENT CACHE 140bf2a915 140bf2c716
 //FRAGMENT _deref_pbuc1=vbuc2
 lda #{c2}
 sta {c1}
@@ -1229,9 +1229,9 @@ lda {z2}
 sta {z1}
 lda {z2}+1
 sta {z1}+1
-//FRAGMENT vbuc1_neq_vbuz1_then_la1
-lda #{c1}
-cmp {z1}
+//FRAGMENT 0_neq_vbuz1_then_la1
+lda {z1}
+cmp #0
 bne {la1}
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuz3
 lda {z3}
@@ -1313,8 +1313,8 @@ tza
 sta {z1}
 lda #0
 sta {z1}+1
-//FRAGMENT vbuc1_neq_vbuaa_then_la1
-cmp #{c1}
+//FRAGMENT 0_neq_vbuaa_then_la1
+cmp #0
 bne {la1}
 //FRAGMENT vbuz1=vbuaa
 sta {z1}
@@ -1333,18 +1333,18 @@ sta ({z1}),y
 tza
 ldz {z2}
 sta ({z1}),z
-//FRAGMENT vbuc1_neq_vbuxx_then_la1
-cpx #{c1}
+//FRAGMENT 0_neq_vbuxx_then_la1
+cpx #0
 bne {la1}
 //FRAGMENT vbuaa=vbuxx
 txa
-//FRAGMENT vbuc1_neq_vbuyy_then_la1
-cpy #{c1}
+//FRAGMENT 0_neq_vbuyy_then_la1
+cpy #0
 bne {la1}
 //FRAGMENT vbuaa=vbuyy
 tya
-//FRAGMENT vbuc1_neq_vbuzz_then_la1
-cpz #{c1}
+//FRAGMENT 0_neq_vbuzz_then_la1
+cpz #0
 bne {la1}
 //FRAGMENT vbuaa=vbuzz
 tza
@@ -2536,33 +2536,33 @@ sta {c1},x
 tay
 //FRAGMENT vbuzz=vbuaa
 taz
-//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1
-lda #{c1}
+//FRAGMENT 0_neq_pbuc1_derefidx_vbuz1_then_la1
 ldy {z1}
-cmp {c2},y
+lda {c1},y
+cmp #0
 bne {la1}
 //FRAGMENT pbuc1_derefidx_vbuz1=vbuz1
 ldy {z1}
 tya
 sta {c1},y
-//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuaa_then_la1
+//FRAGMENT 0_neq_pbuc1_derefidx_vbuaa_then_la1
 tay
-lda #{c1}
-cmp {c2},y
+lda {c1},y
+cmp #0
 bne {la1}
-//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1
-lda {c2},x
-cmp #{c1}
+//FRAGMENT 0_neq_pbuc1_derefidx_vbuxx_then_la1
+lda {c1},x
+cmp #0
 bne {la1}
-//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1
-lda #{c1}
-cmp {c2},y
+//FRAGMENT 0_neq_pbuc1_derefidx_vbuyy_then_la1
+lda {c1},y
+cmp #0
 bne {la1}
-//FRAGMENT vbuc1_neq_pbuc2_derefidx_vbuzz_then_la1
+//FRAGMENT 0_neq_pbuc1_derefidx_vbuzz_then_la1
 tza
 tay
-lda #{c1}
-cmp {c2},y
+lda {c1},y
+cmp #0
 bne {la1}
 //FRAGMENT pbuc1_derefidx_vbuxx=vbuxx
 txa

@@ -35,11 +35,8 @@ SolveMaze: {
     sta.z forward+1
   __b2:
     // forward ? 2 : 3
-    lda.z forward+1
-    cmp #>0
-    bne __b3
     lda.z forward
-    cmp #<0
+    ora.z forward+1
     bne __b3
     lda #3
     jmp __b4

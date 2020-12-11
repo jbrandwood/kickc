@@ -277,10 +277,11 @@ printf_string: {
     sta.z padding
   __b1:
     // if(!format.justify_left && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b4
     jmp __b2
   __b4:
@@ -294,10 +295,11 @@ printf_string: {
     // cputs(str)
     jsr cputs
     // if(format.justify_left && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b5
     rts
   __b5:

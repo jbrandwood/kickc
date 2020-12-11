@@ -66,8 +66,8 @@ irq: {
     lda #WHITE
     sta BG_COLOR
     // if(frame_cnt)
-    lda #0
-    cmp.z frame_cnt
+    lda.z frame_cnt
+    cmp #0
     beq __b1
     // frame_cnt++;
     inc.z frame_cnt

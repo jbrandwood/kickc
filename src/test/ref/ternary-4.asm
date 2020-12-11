@@ -12,9 +12,10 @@ main: {
     ldx #0
   __b2:
     // (b) ? 24 + (v & 2 ? 8 : 13) * 8 : 0
-    lda #0
-    cmp.z b
+    lda.z b
+    cmp #0
     bne __b3
+    lda #0
   __b4:
     // SCREEN[i++] = x
     sta SCREEN,y

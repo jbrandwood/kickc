@@ -214,8 +214,8 @@ main: {
     bcc __b36
   !:
     // if (0==stopIt && objects<maxDrawObjects)
-    lda #0
-    cmp.z stopIt
+    lda.z stopIt
+    cmp #0
     bne __b11
     lda.z objects
     cmp #maxDrawObjects

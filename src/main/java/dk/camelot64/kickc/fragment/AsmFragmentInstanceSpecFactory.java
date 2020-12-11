@@ -199,7 +199,12 @@ public class AsmFragmentInstanceSpecFactory {
          ControlFlowBlock block,
          ControlFlowGraph graph) {
       StringBuilder signature = new StringBuilder();
-      if(conditionalJump.getrValue1() != null) {
+      if(conditionalJump.getrValue1() instanceof ConstantInteger && ((ConstantInteger) conditionalJump.getrValue1()).getValue() == 0) {
+         signature.append("0");
+      } else if(conditionalJump.getrValue1() instanceof ConstantBool) {
+         ConstantBool boolValue = (ConstantBool) conditionalJump.getrValue1();
+         signature.append(boolValue.toString());
+      } else if(conditionalJump.getrValue1() != null) {
          signature.append(bind(conditionalJump.getrValue1()));
       }
       if(conditionalJump.getOperator() != null) {

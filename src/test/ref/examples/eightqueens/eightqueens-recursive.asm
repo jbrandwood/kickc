@@ -101,8 +101,8 @@ queen: {
     jsr legal
     // legal(r,column)
     // if(legal(r,column))
-    lda #0
-    cmp.z __1
+    lda.z __1
+    cmp #0
     beq __b3
     // board[r]=column
     //no conflicts so place queen
@@ -595,8 +595,8 @@ cputs: {
     bne !+
     inc.z s+1
   !:
-    lda #0
-    cmp.z c
+    lda.z c
+    cmp #0
     bne __b2
     // }
     rts
@@ -998,8 +998,8 @@ utoa: {
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     lda.z digit_value+1
     cmp.z value+1
@@ -1040,8 +1040,8 @@ printf_number_buffer: {
     .label format_justify_left = $19
     .label format_upper_case = $24
     // if(format.min_length)
-    lda #0
-    cmp.z format_min_length
+    lda.z format_min_length
+    cmp #0
     beq __b6
     // strlen(buffer.digits)
     jsr strlen
@@ -1051,8 +1051,8 @@ printf_number_buffer: {
     lda.z __19
     sta.z len
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b13
     // len++;
     inc.z len
@@ -1070,12 +1070,14 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b8
     jmp __b2
   __b8:
@@ -1087,19 +1089,19 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     sta.z cputc.c
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b10
     jmp __b4
   __b10:
@@ -1111,8 +1113,8 @@ printf_number_buffer: {
     jsr printf_padding
   __b4:
     // if(format.upper_case)
-    lda #0
-    cmp.z format_upper_case
+    lda.z format_upper_case
+    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -1124,12 +1126,14 @@ printf_number_buffer: {
     sta.z cputs.s+1
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b12
     rts
   __b12:
@@ -1203,8 +1207,8 @@ ultoa: {
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     lda.z value+3
     cmp.z digit_value+3
@@ -1286,8 +1290,8 @@ uctoa: {
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     lda.z value
     cmp.z digit_value

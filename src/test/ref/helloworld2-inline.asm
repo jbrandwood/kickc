@@ -8,15 +8,15 @@ main: {
     ldy #0
   print21___b1:
     // for(byte i=0; msg[i]; i++)
-    lda #0
-    cmp hello,y
+    lda hello,y
+    cmp #0
     bne print21___b2
-    tax
-    tay
+    ldx #0
+    ldy #0
   print22___b1:
     // for(byte i=0; msg[i]; i++)
-    lda #0
-    cmp hello,y
+    lda hello,y
+    cmp #0
     bne print22___b2
     // }
     rts

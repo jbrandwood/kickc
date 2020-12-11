@@ -184,9 +184,9 @@ main: {
   __b9:
   // Skip letters until we hit another whitespace
     // while(*pass && *pass!=' ' && *pass!='\n')
-    lda #0
-    tay
-    cmp (pass),y
+    ldy #0
+    lda (pass),y
+    cmp #0
     bne !__b1+
     jmp __b1
   !__b1:

@@ -209,8 +209,7 @@ atan2_8: {
     sta.z i
   __b10:
     // if(yi==0)
-    txa
-    cmp #0
+    cpx #0
     bne __b11
   __b12:
     // angle = angle/2

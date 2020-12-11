@@ -326,8 +326,8 @@ uctoa: {
     lda RADIX_DECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5

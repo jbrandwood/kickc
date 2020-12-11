@@ -71,13 +71,9 @@ strncat: {
     bne !+
     inc.z source+1
   !:
-    lda #0
-    cmp.z num
-    bne !+
-    lda.z num+1
-    bne !+
-    jmp __b5
-  !:
+    lda.z num
+    ora.z num+1
+    beq __b5
     ldy #0
     lda (dst),y
     cmp #0

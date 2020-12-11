@@ -315,11 +315,12 @@ main: {
     sta $2001
   __b13:
     // while (!vblank_hit)
-    lda #0
-    cmp.z vblank_hit
+    lda.z vblank_hit
+    cmp #0
     beq __b13
     // vblank_hit = 0
     // wait for vblank
+    lda #0
     sta.z vblank_hit
     // poke(0x2001) = 0x18
     lda #$18

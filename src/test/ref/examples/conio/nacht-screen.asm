@@ -715,11 +715,11 @@ cscroll: {
     cmp.z conio_cursor_y
     bne __breturn
     // if(conio_scroll_enable)
-    lda #0
-    cmp.z conio_scroll_enable
+    lda.z conio_scroll_enable
+    cmp #0
     bne __b3
     // gotoxy(0,0)
-    tax
+    ldx #0
     txa
     jsr gotoxy
   __breturn:

@@ -53,11 +53,8 @@ main: {
   /* Run the demo until a key was hit */
   __b1:
     // while (count)
-    lda.z count+1
-    cmp #>0
-    bne __b2
     lda.z count
-    cmp #<0
+    ora.z count+1
     bne __b2
     // *VIC_MEMORY = v
     lda.z v

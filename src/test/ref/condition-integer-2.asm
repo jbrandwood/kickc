@@ -25,8 +25,8 @@ main: {
     // while( j-- )
     ldy.z j
     dey
-    lda #0
-    cmp.z j
+    lda.z j
+    cmp #0
     bne __b5
     // SCREEN[idx++] = ' '
     lda #' '

@@ -500,7 +500,7 @@ public class Pass4CodeGeneration {
             // Set segment
             setCurrentSegment(constantVar.getDataSegment(), asm);
             // Set absolute address
-            asm.addLine(new AsmSetPc(asmName, AsmFormat.getAsmNumber(constantVar.getMemoryAddress())));
+            asm.addLine(new AsmSetPc(asmName, AsmFormat.getAsmConstant(program, constantVar.getMemoryAddress(), 99, scopeRef)));
             // Add any comments
             generateComments(asm, constantVar.getComments());
             // Add any alignment

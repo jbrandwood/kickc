@@ -95,7 +95,7 @@ public class Variable implements Symbol {
    private Integer memoryAlignment;
 
    /** Specifies that the variable must be placed at an absolute address in memory. Only allowed for arrays & strings. [Only Variables in memory and arrays] */
-   private Long memoryAddress;
+   private ConstantValue memoryAddress;
 
    /** The data segment to put the variable into (if it is allocated in memory). [Only variables stored in memory and arrays] */
    private String dataSegment;
@@ -582,11 +582,11 @@ public class Variable implements Symbol {
       this.memoryAlignment = memoryAlignment;
    }
 
-   public Long getMemoryAddress() {
+   public ConstantValue getMemoryAddress() {
       return memoryAddress;
    }
 
-   public void setMemoryAddress(Long memoryAddress) {
+   public void setMemoryAddress(ConstantValue memoryAddress) {
       this.memoryAddress = memoryAddress;
    }
 

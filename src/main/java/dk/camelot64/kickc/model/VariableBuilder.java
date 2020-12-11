@@ -5,6 +5,7 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.types.SymbolTypeConversion;
 import dk.camelot64.kickc.model.types.SymbolTypePointer;
 import dk.camelot64.kickc.model.types.SymbolTypeStruct;
+import dk.camelot64.kickc.model.values.ConstantValue;
 import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.List;
@@ -322,7 +323,7 @@ public class VariableBuilder {
          return Variable.MemoryArea.MAIN_MEMORY;
       Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
       if(addressDirective != null)
-         return (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
+         return (addressDirective.addressLiteral < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
       else if(!isConstant() && isOptimize())
          return Variable.MemoryArea.ZEROPAGE_MEMORY;
       else {
@@ -359,11 +360,11 @@ public class VariableBuilder {
     *
     * @return The memory alignment
     */
-   public Long getAddress() {
+   public ConstantValue getAddress() {
       Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
       if(addressDirective != null) {
          if(isArray()) {
-            return addressDirective.address;
+            return addressDirective.addressValue;
          }
       }
       return null;
@@ -382,12 +383,12 @@ public class VariableBuilder {
 
       Directive.Address addressDirective = findDirective(Directive.Address.class, directives);
       if(addressDirective != null) {
-         Variable.MemoryArea memoryArea = (addressDirective.address < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
+         Variable.MemoryArea memoryArea = (addressDirective.addressLiteral < 0x100) ? Variable.MemoryArea.ZEROPAGE_MEMORY : Variable.MemoryArea.MAIN_MEMORY;
          if(Variable.MemoryArea.ZEROPAGE_MEMORY.equals(memoryArea)) {
-            return new Registers.RegisterZpMem(addressDirective.address.intValue(), -1, true);
+            return new Registers.RegisterZpMem(addressDirective.addressLiteral.intValue(), -1, true);
          } else {
             // TODO: Fix VariableRef for the hard-coded register
-            return new Registers.RegisterMainMem(null, -1, addressDirective.address);
+            return new Registers.RegisterMainMem(null, -1, addressDirective.addressLiteral);
          }
       }
 

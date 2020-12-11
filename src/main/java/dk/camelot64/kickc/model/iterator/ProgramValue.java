@@ -651,6 +651,26 @@ public interface ProgramValue {
 
    }
 
+   /** The memory address of a variable. */
+   class ProgramValueMemoryAddress implements ProgramValue {
+      private final Variable constantVar;
+
+      ProgramValueMemoryAddress(Variable constantVar) {
+         this.constantVar = constantVar;
+      }
+
+      @Override
+      public Value get() {
+         return constantVar.getMemoryAddress();
+      }
+
+      @Override
+      public void set(Value val) {
+         constantVar.setMemoryAddress((ConstantValue) val);
+      }
+
+   }
+
    /** Bytes inside inline kickasm code. */
    class ProgramValueKickAsmBytes implements ProgramValue {
 

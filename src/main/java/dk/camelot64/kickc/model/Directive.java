@@ -1,6 +1,7 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.ConstantValue;
 
 import java.util.List;
 
@@ -138,12 +139,16 @@ public class Directive {
    /** Variable hardcoded __address() directive */
    public static class Address extends Directive {
 
-      /** Optional hard-coded address to use for storing the variable. */
-      public Long address;
+      /** Expression for calculating the address. */
+      public ConstantValue addressValue;
 
-      public Address(Long address) {
+      /** Optional hard-coded address to use for storing the variable. */
+      public Long addressLiteral;
+
+      public Address(ConstantValue addressValue, Long addressLiteral) {
          super("__address");
-         this.address = address;
+         this.addressValue = addressValue;
+         this.addressLiteral = addressLiteral;
       }
 
    }

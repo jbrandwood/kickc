@@ -151,7 +151,7 @@ directive
     | REGISTER ( PAR_BEGIN ( NAME ) PAR_END)? #directiveRegister
     | ADDRESS_ZEROPAGE #directiveMemoryAreaZp
     | ADDRESS_MAINMEM #directiveMemoryAreaMain
-    | ADDRESS PAR_BEGIN ( NUMBER ) PAR_END #directiveMemoryAreaAddress
+    | ADDRESS PAR_BEGIN ( expr ) PAR_END #directiveMemoryAreaAddress
     | VOLATILE #directiveVolatile
     | STATIC #directiveStatic
     | FORM_SSA #directiveFormSsa

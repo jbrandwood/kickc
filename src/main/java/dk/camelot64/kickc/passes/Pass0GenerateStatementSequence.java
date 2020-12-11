@@ -1261,9 +1261,18 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    @Override
    public Directive visitDirectiveMemoryAreaAddress(KickCParser.DirectiveMemoryAreaAddressContext ctx) {
       try {
-         ConstantInteger memoryAddress = NumberParser.parseIntegerLiteral(ctx.NUMBER().getText());
-         Long address = memoryAddress.getInteger();
-         return new Directive.Address(address);
+         KickCParser.ExprContext initializer = ctx.expr();
+         RValue initValue = (initializer == null) ? null : (RValue) visit(initializer);
+         StatementSource statementSource = new StatementSource(ctx);
+         ConstantValue addressAsConstantValue = getConstInitValue(initValue, initializer, statementSource);
+         ConstantLiteral literal = addressAsConstantValue.calculateLiteral(program.getScope());
+         if(literal instanceof ConstantInteger) {
+            Long address = ((ConstantInteger) literal).getValue();
+            return new Directive.Address(addressAsConstantValue, address);
+         } else {
+            throw new CompileError("__address is not an integer :" + initValue.toString(program), new StatementSource(ctx));
+         }
+
       } catch(NumberFormatException e) {
          throw new CompileError(e.getMessage(), new StatementSource(ctx));
       }

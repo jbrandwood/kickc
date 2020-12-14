@@ -8,6 +8,7 @@
 // These 3 registers are multiplexed using the ADDR_SEL in the CTRL register.
 // When ADDR_SEL = 0, ADDRx_L/ADDRx_M/ADDRx_H become ADDR0_L/ADDR0_M/ADDR0_H.
 // When ADDR_SEL = 1, ADDRx_L/ADDRx_M/ADDRx_H become ADDR1_L/ADDR1_M/ADDR1_H.
+// See https://github.com/commanderx16/x16-emulator/wiki/(VERA-0.8)-Registers-$9F23-and-$9F24-(and-$9F25)
 
 // $9F20 VRAM Address (7:0)
 char * const VERA_ADDRC_L = 0x9f20;
@@ -55,6 +56,7 @@ char * const VERA_ISR = 0x9f27;
 // Note that bit 8 of this value is present in the IEN register.
 // For interlaced modes the interrupt will be generated each field and the bit 0 of IRQ_LINE is ignored.
 char * const VERA_IRQLINE_L = 0x9f28;
+
 // $9F29	DC_VIDEO (DCSEL=0)
 // Bit 7: Current Field     Read-only bit which reflects the active interlaced field in composite and RGB modes. (0: even, 1: odd)
 // Bit 6: Sprites Enable	Enable output from the Sprites renderer

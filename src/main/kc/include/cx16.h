@@ -9,7 +9,7 @@
 // Port A Bits 0-7 RAM bank
 // Port B Bits 0-2 ROM bank
 // Port B Bits 3-7 [TBD]
-struct MOS6522_VIA * const VIA1 = 0x9160;
+struct MOS6522_VIA * const VIA1 = 0x9f60;
 // The VIA#2: Keyboard/Joy/Mouse
 // Port A Bit  0   KBD PS/2 DAT
 // Port A Bit  1   KBD PS/2 CLK
@@ -23,7 +23,7 @@ struct MOS6522_VIA * const VIA1 = 0x9160;
 // Port B Bit  1   MOUSE PS/2 CLK
 // Port B Bits 2-7 [TBD]
 // NOTE: The pin assignment of the NES/SNES controller is likely to change.
-struct MOS6522_VIA * const VIA2 = 0x9070;
+struct MOS6522_VIA * const VIA2 = 0x9f70;
 
 // Interrupt Vectors
 // https://github.com/commanderx16/x16-emulator/wiki/(ASM-Programming)-Interrupts-and-interrupt-handling

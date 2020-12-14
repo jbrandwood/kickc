@@ -463,6 +463,11 @@ public class TestPrograms {
       compileAndCompare("examples/nes/nes-demo.c");
    }
 
+   @Test
+   public void testCx16Rasterbars() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/rasterbars.c");
+   }
+
    //@Test
    //public void testMega65Wator() throws IOException, URISyntaxException {
    //   compileAndCompare("complex/m65wator/main.c");

@@ -1,0 +1,964 @@
+Resolved forward reference irq_zero to void irq_zero()
+Inlined call call SEI 
+Inlined call call CLI 
+Inlined call call __init 
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start::@1
+  to:main::SEI1
+main::SEI1: scope:[main]  from main
+  asm { sei  }
+  to:main::@2
+main::@2: scope:[main]  from main::SEI1
+  *KERNEL_IRQ = &irq_zero
+  *VERA_IEN = VERA_LINE
+  *VERA_IRQLINE_L = 0
+  to:main::CLI1
+main::CLI1: scope:[main]  from main::@2
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main::@1 main::CLI1
+  to:main::@1
+main::@return: scope:[main]  from
+  return 
+  to:@return
+
+void irq_zero()
+irq_zero: scope:[irq_zero]  from
+  *VERA_CTRL = *VERA_CTRL | VERA_DCSEL
+  *VERA_DC_HSTART = hstart
+  *VERA_DC_HSTOP = hstop
+  *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL
+  irq_zero::l#0 = 0
+  to:irq_zero::@2
+irq_zero::@2: scope:[irq_zero]  from irq_zero irq_zero::@7
+  irq_zero::l#2 = phi( irq_zero/irq_zero::l#0, irq_zero::@7/irq_zero::l#1 )
+  irq_zero::$2 = irq_zero::l#2 != $ff
+  if(irq_zero::$2) goto irq_zero::@3
+  to:irq_zero::@4
+irq_zero::@3: scope:[irq_zero]  from irq_zero::@2
+  irq_zero::l#3 = phi( irq_zero::@2/irq_zero::l#2 )
+  *VERA_DC_BORDER = BARS[irq_zero::l#3]
+  irq_zero::i#0 = 0
+  to:irq_zero::@5
+irq_zero::@4: scope:[irq_zero]  from irq_zero::@2
+  *VERA_DC_BORDER = 0
+  *VERA_CTRL = *VERA_CTRL | VERA_DCSEL
+  cnt = -- cnt
+  irq_zero::$0 = cnt == 0
+  irq_zero::$1 = ! irq_zero::$0
+  if(irq_zero::$1) goto irq_zero::@1
+  to:irq_zero::@8
+irq_zero::@5: scope:[irq_zero]  from irq_zero::@3 irq_zero::@6
+  irq_zero::l#5 = phi( irq_zero::@3/irq_zero::l#3, irq_zero::@6/irq_zero::l#6 )
+  irq_zero::i#2 = phi( irq_zero::@3/irq_zero::i#0, irq_zero::@6/irq_zero::i#1 )
+  irq_zero::$3 = irq_zero::i#2 < $17
+  if(irq_zero::$3) goto irq_zero::@6
+  to:irq_zero::@7
+irq_zero::@6: scope:[irq_zero]  from irq_zero::@5
+  irq_zero::l#6 = phi( irq_zero::@5/irq_zero::l#5 )
+  irq_zero::i#3 = phi( irq_zero::@5/irq_zero::i#2 )
+  irq_zero::i#1 = ++ irq_zero::i#3
+  to:irq_zero::@5
+irq_zero::@7: scope:[irq_zero]  from irq_zero::@5
+  irq_zero::l#4 = phi( irq_zero::@5/irq_zero::l#5 )
+  irq_zero::l#1 = ++ irq_zero::l#4
+  to:irq_zero::@2
+irq_zero::@1: scope:[irq_zero]  from irq_zero::@4 irq_zero::@8 irq_zero::@9
+  *VERA_ISR = VERA_LINE
+  asm { ply plx pla rti  }
+  to:irq_zero::@return
+irq_zero::@8: scope:[irq_zero]  from irq_zero::@4
+  cnt = 2
+  irq_zero::$4 = hstart <= $140/4
+  irq_zero::$5 = ! irq_zero::$4
+  if(irq_zero::$5) goto irq_zero::@1
+  to:irq_zero::@9
+irq_zero::@9: scope:[irq_zero]  from irq_zero::@8
+  hstart = ++ hstart
+  hstop = -- hstop
+  to:irq_zero::@1
+irq_zero::@return: scope:[irq_zero]  from irq_zero::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  hstart = (byte)0/4
+  hstop = (byte)$280/4
+  cnt = 2
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@2
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const byte* BARS[]  = { $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0 }
+const nomodify void()** KERNEL_IRQ = (void()**)$314
+const nomodify byte* VERA_CTRL = (byte*)$9f25
+const nomodify byte VERA_DCSEL = 2
+const nomodify byte* VERA_DC_BORDER = (byte*)$9f2c
+const nomodify byte* VERA_DC_HSTART = (byte*)$9f29
+const nomodify byte* VERA_DC_HSTOP = (byte*)$9f2a
+const nomodify byte* VERA_IEN = (byte*)$9f26
+const nomodify byte* VERA_IRQLINE_L = (byte*)$9f28
+const nomodify byte* VERA_ISR = (byte*)$9f27
+const nomodify byte VERA_LINE = 2
+void __start()
+volatile byte cnt loadstore
+volatile byte hstart loadstore
+volatile byte hstop loadstore
+void irq_zero()
+bool~ irq_zero::$0
+bool~ irq_zero::$1
+bool~ irq_zero::$2
+bool~ irq_zero::$3
+bool~ irq_zero::$4
+bool~ irq_zero::$5
+byte irq_zero::i
+byte irq_zero::i#0
+byte irq_zero::i#1
+byte irq_zero::i#2
+byte irq_zero::i#3
+byte irq_zero::l
+byte irq_zero::l#0
+byte irq_zero::l#1
+byte irq_zero::l#2
+byte irq_zero::l#3
+byte irq_zero::l#4
+byte irq_zero::l#5
+byte irq_zero::l#6
+void main()
+
+Adding number conversion cast (unumber) 0 in *VERA_IRQLINE_L = 0
+Adding number conversion cast (unumber) $ff in irq_zero::$2 = irq_zero::l#2 != $ff
+Adding number conversion cast (unumber) 0 in *VERA_DC_BORDER = 0
+Adding number conversion cast (unumber) 0 in irq_zero::$0 = cnt == 0
+Adding number conversion cast (unumber) $17 in irq_zero::$3 = irq_zero::i#2 < $17
+Adding number conversion cast (unumber) 2 in cnt = 2
+Adding number conversion cast (unumber) $140/4 in irq_zero::$4 = hstart <= $140/4
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *VERA_IRQLINE_L = (unumber)0
+Inlining cast *VERA_DC_BORDER = (unumber)0
+Inlining cast cnt = (unumber)2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 40741
+Simplifying constant pointer cast (byte*) 40742
+Simplifying constant pointer cast (byte*) 40743
+Simplifying constant pointer cast (byte*) 40744
+Simplifying constant pointer cast (byte*) 40748
+Simplifying constant pointer cast (byte*) 40745
+Simplifying constant pointer cast (byte*) 40746
+Simplifying constant pointer cast (void()**) 788
+Simplifying constant integer cast 0
+Simplifying constant integer cast $ff
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $17
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $17
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inversing boolean not [21] irq_zero::$1 = cnt != 0 from [20] irq_zero::$0 = cnt == 0
+Inversing boolean not [34] irq_zero::$5 = hstart > (byte)$140/4 from [33] irq_zero::$4 = hstart <= (byte)$140/4
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias irq_zero::l#2 = irq_zero::l#3 
+Alias irq_zero::i#2 = irq_zero::i#3 
+Alias irq_zero::l#4 = irq_zero::l#6 irq_zero::l#5 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values irq_zero::l#4 irq_zero::l#2
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition irq_zero::$2 [13] if(irq_zero::l#2!=$ff) goto irq_zero::@3
+Simple Condition irq_zero::$1 [20] if(cnt!=0) goto irq_zero::@1
+Simple Condition irq_zero::$3 [23] if(irq_zero::i#2<$17) goto irq_zero::@6
+Simple Condition irq_zero::$5 [30] if(hstart>(byte)$140/4) goto irq_zero::@1
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant irq_zero::l#0 = 0
+Constant irq_zero::i#0 = 0
+Successful SSA optimization Pass2ConstantIdentification
+Rewriting conditional comparison [30] if(hstart>(byte)$140/4) goto irq_zero::@1
+Simplifying constant evaluating to zero (byte)0/4 in [34] hstart = (byte)0/4
+Successful SSA optimization PassNSimplifyConstantZero
+Removing unused block main::@return
+Successful SSA optimization Pass2EliminateUnusedBlocks
+Adding number conversion cast (unumber) (byte)$140/4+1 in if(hstart>=(byte)$140/4+1) goto irq_zero::@1
+Adding number conversion cast (unumber) 1 in if(hstart>=(unumber)(byte)$140/4+1) goto irq_zero::@1
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant integer cast (byte)$140/4+(unumber)1
+Simplifying constant integer cast 1
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inlining constant with var siblings irq_zero::l#0
+Inlining constant with var siblings irq_zero::i#0
+Constant inlined irq_zero::l#0 = 0
+Constant inlined irq_zero::i#0 = 0
+Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $140
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (word) $280
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of __start::@2
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+CALL GRAPH
+Calls in [__start] to main:5 
+
+Created 2 initial phi equivalence classes
+Coalesced [29] irq_zero::l#7 = irq_zero::l#1
+Coalesced [31] irq_zero::i#4 = irq_zero::i#1
+Coalesced down to 2 phi equivalence classes
+Culled Empty Block label __start::@2
+Adding NOP phi() at start of __start
+Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+
+FINAL CONTROL FLOW GRAPH
+
+void __start()
+__start: scope:[__start]  from
+  [0] phi()
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
+  [1] hstart = 0
+  [2] hstop = (byte)$280/4
+  [3] cnt = 2
+  to:__start::@1
+__start::@1: scope:[__start]  from __start::__init1
+  [4] phi()
+  [5] call main 
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  [6] return 
+  to:@return
+
+void irq_zero()
+irq_zero: scope:[irq_zero]  from
+  [7] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL
+  [8] *VERA_DC_HSTART = hstart
+  [9] *VERA_DC_HSTOP = hstop
+  [10] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL
+  to:irq_zero::@2
+irq_zero::@2: scope:[irq_zero]  from irq_zero irq_zero::@7
+  [11] irq_zero::l#2 = phi( irq_zero/0, irq_zero::@7/irq_zero::l#1 )
+  [12] if(irq_zero::l#2!=$ff) goto irq_zero::@3
+  to:irq_zero::@4
+irq_zero::@4: scope:[irq_zero]  from irq_zero::@2
+  [13] *VERA_DC_BORDER = 0
+  [14] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL
+  [15] cnt = -- cnt
+  [16] if(cnt!=0) goto irq_zero::@1
+  to:irq_zero::@8
+irq_zero::@8: scope:[irq_zero]  from irq_zero::@4
+  [17] cnt = 2
+  [18] if(hstart>=(byte)$140/4+1) goto irq_zero::@1
+  to:irq_zero::@9
+irq_zero::@9: scope:[irq_zero]  from irq_zero::@8
+  [19] hstart = ++ hstart
+  [20] hstop = -- hstop
+  to:irq_zero::@1
+irq_zero::@1: scope:[irq_zero]  from irq_zero::@4 irq_zero::@8 irq_zero::@9
+  [21] *VERA_ISR = VERA_LINE
+  asm { ply plx pla rti  }
+  to:irq_zero::@return
+irq_zero::@return: scope:[irq_zero]  from irq_zero::@1
+  [23] return 
+  to:@return
+irq_zero::@3: scope:[irq_zero]  from irq_zero::@2
+  [24] *VERA_DC_BORDER = BARS[irq_zero::l#2]
+  to:irq_zero::@5
+irq_zero::@5: scope:[irq_zero]  from irq_zero::@3 irq_zero::@6
+  [25] irq_zero::i#2 = phi( irq_zero::@3/0, irq_zero::@6/irq_zero::i#1 )
+  [26] if(irq_zero::i#2<$17) goto irq_zero::@6
+  to:irq_zero::@7
+irq_zero::@7: scope:[irq_zero]  from irq_zero::@5
+  [27] irq_zero::l#1 = ++ irq_zero::l#2
+  to:irq_zero::@2
+irq_zero::@6: scope:[irq_zero]  from irq_zero::@5
+  [28] irq_zero::i#1 = ++ irq_zero::i#2
+  to:irq_zero::@5
+
+void main()
+main: scope:[main]  from __start::@1
+  [29] phi()
+  to:main::SEI1
+main::SEI1: scope:[main]  from main
+  asm { sei  }
+  to:main::@2
+main::@2: scope:[main]  from main::SEI1
+  [31] *KERNEL_IRQ = &irq_zero
+  [32] *VERA_IEN = VERA_LINE
+  [33] *VERA_IRQLINE_L = 0
+  to:main::CLI1
+main::CLI1: scope:[main]  from main::@2
+  asm { cli  }
+  to:main::@1
+main::@1: scope:[main]  from main::@1 main::CLI1
+  [35] phi()
+  to:main::@1
+
+
+VARIABLE REGISTER WEIGHTS
+void __start()
+volatile byte cnt loadstore 0.7142857142857142
+volatile byte hstart loadstore 0.5882352941176471
+volatile byte hstop loadstore 0.4444444444444444
+void irq_zero()
+byte irq_zero::i
+byte irq_zero::i#1 202.0
+byte irq_zero::i#2 151.5
+byte irq_zero::l
+byte irq_zero::l#1 22.0
+byte irq_zero::l#2 7.333333333333333
+void main()
+
+Initial phi equivalence classes
+[ irq_zero::l#2 irq_zero::l#1 ]
+[ irq_zero::i#2 irq_zero::i#1 ]
+Added variable hstart to live range equivalence class [ hstart ]
+Added variable hstop to live range equivalence class [ hstop ]
+Added variable cnt to live range equivalence class [ cnt ]
+Complete equivalence classes
+[ irq_zero::l#2 irq_zero::l#1 ]
+[ irq_zero::i#2 irq_zero::i#1 ]
+[ hstart ]
+[ hstop ]
+[ cnt ]
+Allocated zp[1]:2 [ irq_zero::l#2 irq_zero::l#1 ]
+Allocated zp[1]:3 [ irq_zero::i#2 irq_zero::i#1 ]
+Allocated zp[1]:4 [ hstart ]
+Allocated zp[1]:5 [ hstop ]
+Allocated zp[1]:6 [ cnt ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [1] hstart = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] hstop = (byte)$280/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] cnt = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [8] *VERA_DC_HSTART = hstart [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [9] *VERA_DC_HSTOP = hstop [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [10] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [13] *VERA_DC_BORDER = 0 [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [14] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [16] if(cnt!=0) goto irq_zero::@1 [ hstart hstop ] (  [ hstart hstop ] { }  ) always clobbers reg byte a 
+Statement [17] cnt = 2 [ hstart hstop ] (  [ hstart hstop ] { }  ) always clobbers reg byte a 
+Statement [18] if(hstart>=(byte)$140/4+1) goto irq_zero::@1 [ hstart hstop ] (  [ hstart hstop ] { }  ) always clobbers reg byte a 
+Statement [21] *VERA_ISR = VERA_LINE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement asm { ply plx pla rti  } always clobbers reg byte a reg byte x reg byte y 
+Statement [24] *VERA_DC_BORDER = BARS[irq_zero::l#2] [ hstart hstop cnt irq_zero::l#2 ] (  [ hstart hstop cnt irq_zero::l#2 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ irq_zero::l#2 irq_zero::l#1 ]
+Statement [31] *KERNEL_IRQ = &irq_zero [ ] ( main:5 [ ] { }  ) always clobbers reg byte a 
+Statement [32] *VERA_IEN = VERA_LINE [ ] ( main:5 [ ] { }  ) always clobbers reg byte a 
+Statement [33] *VERA_IRQLINE_L = 0 [ ] ( main:5 [ ] { }  ) always clobbers reg byte a 
+Statement [1] hstart = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [2] hstop = (byte)$280/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [3] cnt = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [8] *VERA_DC_HSTART = hstart [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [9] *VERA_DC_HSTOP = hstop [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [10] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [13] *VERA_DC_BORDER = 0 [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [14] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL [ hstart hstop cnt ] (  [ hstart hstop cnt ] { }  ) always clobbers reg byte a 
+Statement [16] if(cnt!=0) goto irq_zero::@1 [ hstart hstop ] (  [ hstart hstop ] { }  ) always clobbers reg byte a 
+Statement [17] cnt = 2 [ hstart hstop ] (  [ hstart hstop ] { }  ) always clobbers reg byte a 
+Statement [18] if(hstart>=(byte)$140/4+1) goto irq_zero::@1 [ hstart hstop ] (  [ hstart hstop ] { }  ) always clobbers reg byte a 
+Statement [21] *VERA_ISR = VERA_LINE [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement asm { ply plx pla rti  } always clobbers reg byte a reg byte x reg byte y 
+Statement [24] *VERA_DC_BORDER = BARS[irq_zero::l#2] [ hstart hstop cnt irq_zero::l#2 ] (  [ hstart hstop cnt irq_zero::l#2 ] { }  ) always clobbers reg byte a 
+Statement [31] *KERNEL_IRQ = &irq_zero [ ] ( main:5 [ ] { }  ) always clobbers reg byte a 
+Statement [32] *VERA_IEN = VERA_LINE [ ] ( main:5 [ ] { }  ) always clobbers reg byte a 
+Statement [33] *VERA_IRQLINE_L = 0 [ ] ( main:5 [ ] { }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ irq_zero::l#2 irq_zero::l#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ irq_zero::i#2 irq_zero::i#1 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ hstart ] : zp[1]:4 , 
+Potential registers zp[1]:5 [ hstop ] : zp[1]:5 , 
+Potential registers zp[1]:6 [ cnt ] : zp[1]:6 , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [irq_zero] 353.5: zp[1]:3 [ irq_zero::i#2 irq_zero::i#1 ] 29.33: zp[1]:2 [ irq_zero::l#2 irq_zero::l#1 ] 
+Uplift Scope [] 0.71: zp[1]:6 [ cnt ] 0.59: zp[1]:4 [ hstart ] 0.44: zp[1]:5 [ hstop ] 
+Uplift Scope [main] 
+Uplift Scope [__start] 
+
+Uplifting [irq_zero] best 2323 combination reg byte a [ irq_zero::i#2 irq_zero::i#1 ] reg byte x [ irq_zero::l#2 irq_zero::l#1 ] 
+Uplifting [] best 2323 combination zp[1]:6 [ cnt ] zp[1]:4 [ hstart ] zp[1]:5 [ hstop ] 
+Uplifting [main] best 2323 combination 
+Uplifting [__start] best 2323 combination 
+Attempting to uplift remaining variables inzp[1]:6 [ cnt ]
+Uplifting [] best 2323 combination zp[1]:6 [ cnt ] 
+Attempting to uplift remaining variables inzp[1]:4 [ hstart ]
+Uplifting [] best 2323 combination zp[1]:4 [ hstart ] 
+Attempting to uplift remaining variables inzp[1]:5 [ hstop ]
+Uplifting [] best 2323 combination zp[1]:5 [ hstop ] 
+Allocated (was zp[1]:4) zp[1]:2 [ hstart ]
+Allocated (was zp[1]:5) zp[1]:3 [ hstop ]
+Allocated (was zp[1]:6) zp[1]:4 [ cnt ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Example program for the Commander X16
+// Displays raster bars in the border
+  // Upstart
+.cpu _65c02
+  // Commodore 64 PRG executable file
+.file [name="rasterbars.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(__start)
+.segment Code
+
+
+  // Global Constants & labels
+  .const VERA_DCSEL = 2
+  .const VERA_LINE = 2
+  // $9F25	CTRL Control
+  // Bit 7: Reset
+  // Bit 1: DCSEL
+  // Bit 2: ADDRSEL
+  .label VERA_CTRL = $9f25
+  // $9F26	IEN		Interrupt Enable
+  // Bit 7: IRQ line (8)
+  // Bit 3: AFLOW
+  // Bit 2: SPRCOL
+  // Bit 1: LINE
+  // Bit 0: VSYNC
+  .label VERA_IEN = $9f26
+  // $9F27	ISR     Interrupt Status
+  // Interrupts will be generated for the interrupt sources set in the lower 4 bits of IEN. ISR will indicate the interrupts that have occurred.
+  // Writing a 1 to one of the lower 3 bits in ISR will clear that interrupt status. AFLOW can only be cleared by filling the audio FIFO for at least 1/4.
+  // Bit 4-7: Sprite Collisions. This field indicates which groups of sprites have collided.
+  // Bit 3: AFLOW
+  // Bit 2: SPRCOL
+  // Bit 1: LINE
+  // Bit 0: VSYNC
+  .label VERA_ISR = $9f27
+  // $9F28	IRQLINE_L	IRQ line (7:0)
+  // IRQ_LINE specifies at which line the LINE interrupt will be generated.
+  // Note that bit 8 of this value is present in the IEN register.
+  // For interlaced modes the interrupt will be generated each field and the bit 0 of IRQ_LINE is ignored.
+  .label VERA_IRQLINE_L = $9f28
+  // $9F2C	DC_BORDER (DCSEL=0)	Border Color
+  .label VERA_DC_BORDER = $9f2c
+  // $9F29	DC_HSTART (DCSEL=1)	Active Display H-Start (9:2)
+  .label VERA_DC_HSTART = $9f29
+  // $9F2A	DC_HSTOP (DCSEL=1)	Active Display H-Stop (9:2)
+  .label VERA_DC_HSTOP = $9f2a
+  // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
+  .label KERNEL_IRQ = $314
+  // The horizontal start
+  .label hstart = 2
+  // The horizontal stop
+  .label hstop = 3
+  // The countdown
+  .label cnt = 4
+.segment Code
+  // __start
+__start: {
+    jmp __init1
+    // __start::__init1
+  __init1:
+    // [1] hstart = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z hstart
+    // [2] hstop = (byte)$280/4 -- vbuz1=vbuc1 
+    lda #$280/4
+    sta.z hstop
+    // [3] cnt = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z cnt
+    // [4] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+  __b1_from___init1:
+    jmp __b1
+    // __start::@1
+  __b1:
+    // [5] call main 
+    // [29] phi from __start::@1 to main [phi:__start::@1->main]
+  main_from___b1:
+    jsr main
+    jmp __breturn
+    // __start::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // irq_zero
+// Interrupt Routine at raster 0
+irq_zero: {
+    // [7] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // Update the border
+    lda #VERA_DCSEL
+    ora VERA_CTRL
+    sta VERA_CTRL
+    // [8] *VERA_DC_HSTART = hstart -- _deref_pbuc1=vbuz1 
+    lda.z hstart
+    sta VERA_DC_HSTART
+    // [9] *VERA_DC_HSTOP = hstop -- _deref_pbuc1=vbuz1 
+    lda.z hstop
+    sta VERA_DC_HSTOP
+    // [10] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Show color raster bars in the border
+    lda #VERA_DCSEL^$ff
+    and VERA_CTRL
+    sta VERA_CTRL
+    // [11] phi from irq_zero to irq_zero::@2 [phi:irq_zero->irq_zero::@2]
+  __b2_from_irq_zero:
+    // [11] phi irq_zero::l#2 = 0 [phi:irq_zero->irq_zero::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    jmp __b2
+    // irq_zero::@2
+  __b2:
+    // [12] if(irq_zero::l#2!=$ff) goto irq_zero::@3 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$ff
+    bne __b3
+    jmp __b4
+    // irq_zero::@4
+  __b4:
+    // [13] *VERA_DC_BORDER = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta VERA_DC_BORDER
+    // [14] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda #VERA_DCSEL
+    ora VERA_CTRL
+    sta VERA_CTRL
+    // [15] cnt = -- cnt -- vbuz1=_dec_vbuz1 
+    dec.z cnt
+    // [16] if(cnt!=0) goto irq_zero::@1 -- vbuz1_neq_0_then_la1 
+    lda.z cnt
+    cmp #0
+    bne __b1
+    jmp __b8
+    // irq_zero::@8
+  __b8:
+    // [17] cnt = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z cnt
+    // [18] if(hstart>=(byte)$140/4+1) goto irq_zero::@1 -- vbuz1_ge_vbuc1_then_la1 
+    lda.z hstart
+    cmp #$140/4+1
+    bcs __b1
+    jmp __b9
+    // irq_zero::@9
+  __b9:
+    // [19] hstart = ++ hstart -- vbuz1=_inc_vbuz1 
+    inc.z hstart
+    // [20] hstop = -- hstop -- vbuz1=_dec_vbuz1 
+    dec.z hstop
+    jmp __b1
+    // irq_zero::@1
+  __b1:
+    // [21] *VERA_ISR = VERA_LINE -- _deref_pbuc1=vbuc2 
+    // Reset the LINE interrupt
+    lda #VERA_LINE
+    sta VERA_ISR
+    // asm { ply plx pla rti  }
+    // Exit CX16 KERNAL IRQ
+    ply
+    plx
+    pla
+    rti
+    jmp __breturn
+    // irq_zero::@return
+  __breturn:
+    // [23] return 
+    rts
+    // irq_zero::@3
+  __b3:
+    // [24] *VERA_DC_BORDER = BARS[irq_zero::l#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    lda BARS,x
+    sta VERA_DC_BORDER
+    // [25] phi from irq_zero::@3 to irq_zero::@5 [phi:irq_zero::@3->irq_zero::@5]
+  __b5_from___b3:
+    // [25] phi irq_zero::i#2 = 0 [phi:irq_zero::@3->irq_zero::@5#0] -- vbuaa=vbuc1 
+    lda #0
+    jmp __b5
+    // irq_zero::@5
+  __b5:
+    // [26] if(irq_zero::i#2<$17) goto irq_zero::@6 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$17
+    bcc __b6
+    jmp __b7
+    // irq_zero::@7
+  __b7:
+    // [27] irq_zero::l#1 = ++ irq_zero::l#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [11] phi from irq_zero::@7 to irq_zero::@2 [phi:irq_zero::@7->irq_zero::@2]
+  __b2_from___b7:
+    // [11] phi irq_zero::l#2 = irq_zero::l#1 [phi:irq_zero::@7->irq_zero::@2#0] -- register_copy 
+    jmp __b2
+    // irq_zero::@6
+  __b6:
+    // [28] irq_zero::i#1 = ++ irq_zero::i#2 -- vbuaa=_inc_vbuaa 
+    inc
+    // [25] phi from irq_zero::@6 to irq_zero::@5 [phi:irq_zero::@6->irq_zero::@5]
+  __b5_from___b6:
+    // [25] phi irq_zero::i#2 = irq_zero::i#1 [phi:irq_zero::@6->irq_zero::@5#0] -- register_copy 
+    jmp __b5
+}
+  // main
+main: {
+    jmp SEI1
+    // main::SEI1
+  SEI1:
+    // asm { sei  }
+    sei
+    jmp __b2
+    // main::@2
+  __b2:
+    // [31] *KERNEL_IRQ = &irq_zero -- _deref_qprc1=pprc2 
+    lda #<irq_zero
+    sta KERNEL_IRQ
+    lda #>irq_zero
+    sta KERNEL_IRQ+1
+    // [32] *VERA_IEN = VERA_LINE -- _deref_pbuc1=vbuc2 
+    lda #VERA_LINE
+    sta VERA_IEN
+    // [33] *VERA_IRQLINE_L = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta VERA_IRQLINE_L
+    jmp CLI1
+    // main::CLI1
+  CLI1:
+    // asm { cli  }
+    cli
+    // [35] phi from main::@1 main::CLI1 to main::@1 [phi:main::@1/main::CLI1->main::@1]
+  __b1_from___b1:
+  __b1_from_CLI1:
+    jmp __b1
+    // main::@1
+  __b1:
+    jmp __b1_from___b1
+}
+  // File Data
+.segment Data
+  .align $100
+  BARS: .byte $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __init1
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b2
+Removing instruction jmp __b4
+Removing instruction jmp __b8
+Removing instruction jmp __b9
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b5
+Removing instruction jmp __b7
+Removing instruction jmp SEI1
+Removing instruction jmp __b2
+Removing instruction jmp CLI1
+Removing instruction jmp __b1
+Succesful ASM optimization Pass5NextJumpElimination
+Replacing label __b1_from___b1 with __b1
+Removing instruction __b1_from___init1:
+Removing instruction main_from___b1:
+Removing instruction __b1_from___b1:
+Removing instruction __b1_from_CLI1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __init1:
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __b2_from_irq_zero:
+Removing instruction __b4:
+Removing instruction __b8:
+Removing instruction __b9:
+Removing instruction __breturn:
+Removing instruction __b5_from___b3:
+Removing instruction __b7:
+Removing instruction __b2_from___b7:
+Removing instruction __b5_from___b6:
+Removing instruction SEI1:
+Removing instruction __b2:
+Removing instruction CLI1:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const byte* BARS[]  = { $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0 }
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+const nomodify byte* VERA_CTRL = (byte*) 40741
+const nomodify byte VERA_DCSEL = 2
+const nomodify byte* VERA_DC_BORDER = (byte*) 40748
+const nomodify byte* VERA_DC_HSTART = (byte*) 40745
+const nomodify byte* VERA_DC_HSTOP = (byte*) 40746
+const nomodify byte* VERA_IEN = (byte*) 40742
+const nomodify byte* VERA_IRQLINE_L = (byte*) 40744
+const nomodify byte* VERA_ISR = (byte*) 40743
+const nomodify byte VERA_LINE = 2
+void __start()
+volatile byte cnt loadstore zp[1]:4 0.7142857142857142
+volatile byte hstart loadstore zp[1]:2 0.5882352941176471
+volatile byte hstop loadstore zp[1]:3 0.4444444444444444
+void irq_zero()
+byte irq_zero::i
+byte irq_zero::i#1 reg byte a 202.0
+byte irq_zero::i#2 reg byte a 151.5
+byte irq_zero::l
+byte irq_zero::l#1 reg byte x 22.0
+byte irq_zero::l#2 reg byte x 7.333333333333333
+void main()
+
+reg byte x [ irq_zero::l#2 irq_zero::l#1 ]
+reg byte a [ irq_zero::i#2 irq_zero::i#1 ]
+zp[1]:2 [ hstart ]
+zp[1]:3 [ hstop ]
+zp[1]:4 [ cnt ]
+
+
+FINAL ASSEMBLER
+Score: 1549
+
+  // File Comments
+// Example program for the Commander X16
+// Displays raster bars in the border
+  // Upstart
+.cpu _65c02
+  // Commodore 64 PRG executable file
+.file [name="rasterbars.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(__start)
+.segment Code
+
+
+  // Global Constants & labels
+  .const VERA_DCSEL = 2
+  .const VERA_LINE = 2
+  // $9F25	CTRL Control
+  // Bit 7: Reset
+  // Bit 1: DCSEL
+  // Bit 2: ADDRSEL
+  .label VERA_CTRL = $9f25
+  // $9F26	IEN		Interrupt Enable
+  // Bit 7: IRQ line (8)
+  // Bit 3: AFLOW
+  // Bit 2: SPRCOL
+  // Bit 1: LINE
+  // Bit 0: VSYNC
+  .label VERA_IEN = $9f26
+  // $9F27	ISR     Interrupt Status
+  // Interrupts will be generated for the interrupt sources set in the lower 4 bits of IEN. ISR will indicate the interrupts that have occurred.
+  // Writing a 1 to one of the lower 3 bits in ISR will clear that interrupt status. AFLOW can only be cleared by filling the audio FIFO for at least 1/4.
+  // Bit 4-7: Sprite Collisions. This field indicates which groups of sprites have collided.
+  // Bit 3: AFLOW
+  // Bit 2: SPRCOL
+  // Bit 1: LINE
+  // Bit 0: VSYNC
+  .label VERA_ISR = $9f27
+  // $9F28	IRQLINE_L	IRQ line (7:0)
+  // IRQ_LINE specifies at which line the LINE interrupt will be generated.
+  // Note that bit 8 of this value is present in the IEN register.
+  // For interlaced modes the interrupt will be generated each field and the bit 0 of IRQ_LINE is ignored.
+  .label VERA_IRQLINE_L = $9f28
+  // $9F2C	DC_BORDER (DCSEL=0)	Border Color
+  .label VERA_DC_BORDER = $9f2c
+  // $9F29	DC_HSTART (DCSEL=1)	Active Display H-Start (9:2)
+  .label VERA_DC_HSTART = $9f29
+  // $9F2A	DC_HSTOP (DCSEL=1)	Active Display H-Stop (9:2)
+  .label VERA_DC_HSTOP = $9f2a
+  // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
+  .label KERNEL_IRQ = $314
+  // The horizontal start
+  .label hstart = 2
+  // The horizontal stop
+  .label hstop = 3
+  // The countdown
+  .label cnt = 4
+.segment Code
+  // __start
+__start: {
+    // __start::__init1
+    // hstart = 0/4
+    // [1] hstart = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z hstart
+    // hstop = 640/4
+    // [2] hstop = (byte)$280/4 -- vbuz1=vbuc1 
+    lda #$280/4
+    sta.z hstop
+    // cnt = 2
+    // [3] cnt = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z cnt
+    // [4] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
+    // __start::@1
+    // [5] call main 
+    // [29] phi from __start::@1 to main [phi:__start::@1->main]
+    jsr main
+    // __start::@return
+    // [6] return 
+    rts
+}
+  // irq_zero
+// Interrupt Routine at raster 0
+irq_zero: {
+    // *VERA_CTRL |= VERA_DCSEL
+    // [7] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // Update the border
+    lda #VERA_DCSEL
+    ora VERA_CTRL
+    sta VERA_CTRL
+    // *VERA_DC_HSTART = hstart
+    // [8] *VERA_DC_HSTART = hstart -- _deref_pbuc1=vbuz1 
+    lda.z hstart
+    sta VERA_DC_HSTART
+    // *VERA_DC_HSTOP = hstop
+    // [9] *VERA_DC_HSTOP = hstop -- _deref_pbuc1=vbuz1 
+    lda.z hstop
+    sta VERA_DC_HSTOP
+    // *VERA_CTRL &= ~VERA_DCSEL
+    // [10] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Show color raster bars in the border
+    lda #VERA_DCSEL^$ff
+    and VERA_CTRL
+    sta VERA_CTRL
+    // [11] phi from irq_zero to irq_zero::@2 [phi:irq_zero->irq_zero::@2]
+    // [11] phi irq_zero::l#2 = 0 [phi:irq_zero->irq_zero::@2#0] -- vbuxx=vbuc1 
+    ldx #0
+    // irq_zero::@2
+  __b2:
+    // for(char l=0;l!=255;l++)
+    // [12] if(irq_zero::l#2!=$ff) goto irq_zero::@3 -- vbuxx_neq_vbuc1_then_la1 
+    cpx #$ff
+    bne __b3
+    // irq_zero::@4
+    // *VERA_DC_BORDER = 0
+    // [13] *VERA_DC_BORDER = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta VERA_DC_BORDER
+    // *VERA_CTRL |= VERA_DCSEL
+    // [14] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    lda #VERA_DCSEL
+    ora VERA_CTRL
+    sta VERA_CTRL
+    // if(--cnt==0)
+    // [15] cnt = -- cnt -- vbuz1=_dec_vbuz1 
+    dec.z cnt
+    // [16] if(cnt!=0) goto irq_zero::@1 -- vbuz1_neq_0_then_la1 
+    lda.z cnt
+    cmp #0
+    bne __b1
+    // irq_zero::@8
+    // cnt = 2
+    // [17] cnt = 2 -- vbuz1=vbuc1 
+    lda #2
+    sta.z cnt
+    // if(hstart<=320/4)
+    // [18] if(hstart>=(byte)$140/4+1) goto irq_zero::@1 -- vbuz1_ge_vbuc1_then_la1 
+    lda.z hstart
+    cmp #$140/4+1
+    bcs __b1
+    // irq_zero::@9
+    // hstart++;
+    // [19] hstart = ++ hstart -- vbuz1=_inc_vbuz1 
+    inc.z hstart
+    // hstop--;
+    // [20] hstop = -- hstop -- vbuz1=_dec_vbuz1 
+    dec.z hstop
+    // irq_zero::@1
+  __b1:
+    // *VERA_ISR = VERA_LINE
+    // [21] *VERA_ISR = VERA_LINE -- _deref_pbuc1=vbuc2 
+    // Reset the LINE interrupt
+    lda #VERA_LINE
+    sta VERA_ISR
+    // asm
+    // asm { ply plx pla rti  }
+    // Exit CX16 KERNAL IRQ
+    ply
+    plx
+    pla
+    rti
+    // irq_zero::@return
+    // }
+    // [23] return 
+    rts
+    // irq_zero::@3
+  __b3:
+    // *VERA_DC_BORDER = BARS[l]
+    // [24] *VERA_DC_BORDER = BARS[irq_zero::l#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    lda BARS,x
+    sta VERA_DC_BORDER
+    // [25] phi from irq_zero::@3 to irq_zero::@5 [phi:irq_zero::@3->irq_zero::@5]
+    // [25] phi irq_zero::i#2 = 0 [phi:irq_zero::@3->irq_zero::@5#0] -- vbuaa=vbuc1 
+    lda #0
+    // irq_zero::@5
+  __b5:
+    // for(char i=0;i<23;i++)
+    // [26] if(irq_zero::i#2<$17) goto irq_zero::@6 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #$17
+    bcc __b6
+    // irq_zero::@7
+    // for(char l=0;l!=255;l++)
+    // [27] irq_zero::l#1 = ++ irq_zero::l#2 -- vbuxx=_inc_vbuxx 
+    inx
+    // [11] phi from irq_zero::@7 to irq_zero::@2 [phi:irq_zero::@7->irq_zero::@2]
+    // [11] phi irq_zero::l#2 = irq_zero::l#1 [phi:irq_zero::@7->irq_zero::@2#0] -- register_copy 
+    jmp __b2
+    // irq_zero::@6
+  __b6:
+    // for(char i=0;i<23;i++)
+    // [28] irq_zero::i#1 = ++ irq_zero::i#2 -- vbuaa=_inc_vbuaa 
+    inc
+    // [25] phi from irq_zero::@6 to irq_zero::@5 [phi:irq_zero::@6->irq_zero::@5]
+    // [25] phi irq_zero::i#2 = irq_zero::i#1 [phi:irq_zero::@6->irq_zero::@5#0] -- register_copy 
+    jmp __b5
+}
+  // main
+main: {
+    // main::SEI1
+    // asm
+    // asm { sei  }
+    sei
+    // main::@2
+    // *KERNEL_IRQ = &irq_zero
+    // [31] *KERNEL_IRQ = &irq_zero -- _deref_qprc1=pprc2 
+    lda #<irq_zero
+    sta KERNEL_IRQ
+    lda #>irq_zero
+    sta KERNEL_IRQ+1
+    // *VERA_IEN = VERA_LINE
+    // [32] *VERA_IEN = VERA_LINE -- _deref_pbuc1=vbuc2 
+    lda #VERA_LINE
+    sta VERA_IEN
+    // *VERA_IRQLINE_L = 0
+    // [33] *VERA_IRQLINE_L = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta VERA_IRQLINE_L
+    // main::CLI1
+    // asm
+    // asm { cli  }
+    cli
+    // [35] phi from main::@1 main::CLI1 to main::@1 [phi:main::@1/main::CLI1->main::@1]
+    // main::@1
+  __b1:
+    jmp __b1
+}
+  // File Data
+.segment Data
+  .align $100
+  BARS: .byte $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0, $10, 0, $11, 0, $12, 0, $13, 0, $14, 0, $15, 0, $16, 0, $17, 0, $18, 0, $19, 0, $1a, 0, $1b, 0, $1c, 0, $1d, 0, $1e, 0, $1f, 0, $1f, 0, $1e, 0, $1d, 0, $1c, 0, $1b, 0, $1a, 0, $19, 0, $18, 0, $17, 0, $16, 0, $15, 0, $14, 0, $13, 0, $12, 0, $11, 0, $10, 0
+

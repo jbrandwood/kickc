@@ -11,7 +11,7 @@
 // See https://github.com/commanderx16/x16-emulator/wiki/(VERA-0.8)-Registers-$9F23-and-$9F24-(and-$9F25)
 
 // $9F20 VRAM Address (7:0)
-char * const VERA_ADDRC_L = 0x9f20;
+char * const VERA_ADDRX_L = 0x9f20;
 // $9F21 VRAM Address (15:8)
 char * const VERA_ADDRX_M = 0x9f21;
 // $9F22 VRAM Address (7:0)
@@ -20,6 +20,22 @@ char * const VERA_ADDRX_M = 0x9f21;
 // Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
 // Bit 0: VRAM Address (16)
 char * const VERA_ADDRX_H = 0x9f22;
+const char VERA_INC_0 = 0x00;
+const char VERA_INC_1 = 0x10;
+const char VERA_INC_2 = 0x20;
+const char VERA_INC_4 = 0x30;
+const char VERA_INC_8 = 0x40;
+const char VERA_INC_16 = 0x50;
+const char VERA_INC_32 = 0x60;
+const char VERA_INC_64 = 0x70;
+const char VERA_INC_128 = 0x80;
+const char VERA_INC_256 = 0x90;
+const char VERA_INC_512 = 0xa0;
+const char VERA_INC_40 = 0xb0;
+const char VERA_INC_80 = 0xc0;
+const char VERA_INC_160 = 0xd0;
+const char VERA_INC_320 = 0xe0;
+const char VERA_INC_640 = 0xf0;
 // $9F23	DATA0	VRAM Data port 0
 char * const VERA_DATA0 = 0x9f23;
 // $9F24	DATA1	VRAM Data port 1

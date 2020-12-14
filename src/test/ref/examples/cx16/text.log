@@ -1,0 +1,668 @@
+
+CONTROL FLOW GRAPH SSA
+
+void vpoke(byte vpoke::bank , byte* vpoke::addr , byte vpoke::data)
+vpoke: scope:[vpoke]  from main::@2 main::@3
+  vpoke::data#2 = phi( main::@2/vpoke::data#0, main::@3/vpoke::data#1 )
+  vpoke::bank#2 = phi( main::@2/vpoke::bank#0, main::@3/vpoke::bank#1 )
+  vpoke::addr#2 = phi( main::@2/vpoke::addr#0, main::@3/vpoke::addr#1 )
+  *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
+  vpoke::$0 = < vpoke::addr#2
+  *VERA_ADDRX_L = vpoke::$0
+  vpoke::$1 = > vpoke::addr#2
+  *VERA_ADDRX_M = vpoke::$1
+  vpoke::$2 = VERA_INC_0 | vpoke::bank#2
+  *VERA_ADDRX_H = vpoke::$2
+  *VERA_DATA0 = vpoke::data#2
+  to:vpoke::@return
+vpoke::@return: scope:[vpoke]  from vpoke
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  main::vaddr#0 = (byte*)0
+  main::i#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  main::vaddr#6 = phi( main/main::vaddr#0, main::@4/main::vaddr#2 )
+  main::i#2 = phi( main/main::i#0, main::@4/main::i#1 )
+  main::$2 = 0 != main::MSG[main::i#2]
+  if(main::$2) goto main::@2
+  to:main::@return
+main::@2: scope:[main]  from main::@1
+  main::i#3 = phi( main::@1/main::i#2 )
+  main::vaddr#3 = phi( main::@1/main::vaddr#6 )
+  vpoke::bank#0 = 0
+  vpoke::addr#0 = main::vaddr#3
+  vpoke::data#0 = main::MSG[main::i#3]
+  call vpoke 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  main::i#5 = phi( main::@2/main::i#3 )
+  main::vaddr#4 = phi( main::@2/main::vaddr#3 )
+  main::vaddr#1 = ++ main::vaddr#4
+  vpoke::bank#1 = 0
+  vpoke::addr#1 = main::vaddr#1
+  vpoke::data#1 = $21
+  call vpoke 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  main::i#4 = phi( main::@3/main::i#5 )
+  main::vaddr#5 = phi( main::@3/main::vaddr#1 )
+  main::vaddr#2 = ++ main::vaddr#5
+  main::i#1 = ++ main::i#4
+  to:main::@1
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte VERA_ADDRSEL = 1
+const nomodify byte* VERA_ADDRX_H = (byte*)$9f22
+const nomodify byte* VERA_ADDRX_L = (byte*)$9f20
+const nomodify byte* VERA_ADDRX_M = (byte*)$9f21
+const nomodify byte* VERA_CTRL = (byte*)$9f25
+const nomodify byte* VERA_DATA0 = (byte*)$9f23
+const nomodify byte VERA_INC_0 = 0
+void __start()
+void main()
+bool~ main::$2
+const byte* main::MSG[]  = "hello world!"
+byte main::i
+byte main::i#0
+byte main::i#1
+byte main::i#2
+byte main::i#3
+byte main::i#4
+byte main::i#5
+byte* main::vaddr
+byte* main::vaddr#0
+byte* main::vaddr#1
+byte* main::vaddr#2
+byte* main::vaddr#3
+byte* main::vaddr#4
+byte* main::vaddr#5
+byte* main::vaddr#6
+void vpoke(byte vpoke::bank , byte* vpoke::addr , byte vpoke::data)
+byte~ vpoke::$0
+byte~ vpoke::$1
+byte~ vpoke::$2
+byte* vpoke::addr
+byte* vpoke::addr#0
+byte* vpoke::addr#1
+byte* vpoke::addr#2
+byte vpoke::bank
+byte vpoke::bank#0
+byte vpoke::bank#1
+byte vpoke::bank#2
+byte vpoke::data
+byte vpoke::data#0
+byte vpoke::data#1
+byte vpoke::data#2
+
+Adding number conversion cast (unumber) 0 in main::$2 = 0 != main::MSG[main::i#2]
+Adding number conversion cast (unumber) 0 in vpoke::bank#0 = 0
+Adding number conversion cast (unumber) 0 in vpoke::bank#1 = 0
+Adding number conversion cast (unumber) $21 in vpoke::data#1 = $21
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast vpoke::bank#0 = (unumber)0
+Inlining cast vpoke::bank#1 = (unumber)0
+Inlining cast vpoke::data#1 = (unumber)$21
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 40736
+Simplifying constant pointer cast (byte*) 40737
+Simplifying constant pointer cast (byte*) 40738
+Simplifying constant pointer cast (byte*) 40739
+Simplifying constant pointer cast (byte*) 40741
+Simplifying constant pointer cast (byte*) 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $21
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $21
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias main::vaddr#3 = main::vaddr#6 main::vaddr#4 
+Alias main::i#2 = main::i#3 main::i#5 main::i#4 
+Alias main::vaddr#1 = main::vaddr#5 
+Successful SSA optimization Pass2AliasElimination
+Simple Condition main::$2 [14] if(0!=main::MSG[main::i#2]) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant main::vaddr#0 = (byte*) 0
+Constant main::i#0 = 0
+Constant vpoke::bank#0 = 0
+Constant vpoke::bank#1 = 0
+Constant vpoke::data#1 = $21
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero vpoke::bank#2 in [6] vpoke::$2 = VERA_INC_0 | vpoke::bank#2
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant VERA_INC_0
+Successful SSA optimization PassNEliminateUnusedVars
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias vpoke::bank#2 = vpoke::$2 
+Successful SSA optimization Pass2AliasElimination
+Inlining constant with var siblings vpoke::bank#0
+Inlining constant with var siblings vpoke::bank#1
+Inlining constant with var siblings vpoke::data#1
+Inlining constant with var siblings main::vaddr#0
+Inlining constant with var siblings main::i#0
+Constant inlined main::i#0 = 0
+Constant inlined vpoke::bank#1 = 0
+Constant inlined vpoke::bank#0 = 0
+Constant inlined main::vaddr#0 = (byte*) 0
+Constant inlined vpoke::data#1 = $21
+Successful SSA optimization Pass2ConstantInlining
+Identical Phi Values vpoke::bank#2 0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Adding NOP phi() at start of main
+CALL GRAPH
+Calls in [main] to vpoke:8 vpoke:12 
+
+Created 4 initial phi equivalence classes
+Coalesced [6] vpoke::addr#3 = vpoke::addr#0
+Coalesced [7] vpoke::data#3 = vpoke::data#0
+Coalesced [11] vpoke::addr#4 = vpoke::addr#1
+Coalesced [15] main::i#6 = main::i#1
+Coalesced [16] main::vaddr#7 = main::vaddr#2
+Coalesced down to 4 phi equivalence classes
+Adding NOP phi() at start of main
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  to:main::@1
+main::@1: scope:[main]  from main main::@4
+  [1] main::vaddr#3 = phi( main/(byte*) 0, main::@4/main::vaddr#2 )
+  [1] main::i#2 = phi( main/0, main::@4/main::i#1 )
+  [2] if(0!=main::MSG[main::i#2]) goto main::@2
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [3] return 
+  to:@return
+main::@2: scope:[main]  from main::@1
+  [4] vpoke::addr#0 = main::vaddr#3
+  [5] vpoke::data#0 = main::MSG[main::i#2]
+  [6] call vpoke 
+  to:main::@3
+main::@3: scope:[main]  from main::@2
+  [7] main::vaddr#1 = ++ main::vaddr#3
+  [8] vpoke::addr#1 = main::vaddr#1
+  [9] call vpoke 
+  to:main::@4
+main::@4: scope:[main]  from main::@3
+  [10] main::vaddr#2 = ++ main::vaddr#1
+  [11] main::i#1 = ++ main::i#2
+  to:main::@1
+
+void vpoke(byte vpoke::bank , byte* vpoke::addr , byte vpoke::data)
+vpoke: scope:[vpoke]  from main::@2 main::@3
+  [12] vpoke::data#2 = phi( main::@2/vpoke::data#0, main::@3/$21 )
+  [12] vpoke::addr#2 = phi( main::@2/vpoke::addr#0, main::@3/vpoke::addr#1 )
+  [13] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
+  [14] vpoke::$0 = < vpoke::addr#2
+  [15] *VERA_ADDRX_L = vpoke::$0
+  [16] vpoke::$1 = > vpoke::addr#2
+  [17] *VERA_ADDRX_M = vpoke::$1
+  [18] *VERA_ADDRX_H = 0
+  [19] *VERA_DATA0 = vpoke::data#2
+  to:vpoke::@return
+vpoke::@return: scope:[vpoke]  from vpoke
+  [20] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::i
+byte main::i#1 22.0
+byte main::i#2 4.888888888888889
+byte* main::vaddr
+byte* main::vaddr#1 11.0
+byte* main::vaddr#2 11.0
+byte* main::vaddr#3 6.6000000000000005
+void vpoke(byte vpoke::bank , byte* vpoke::addr , byte vpoke::data)
+byte~ vpoke::$0 202.0
+byte~ vpoke::$1 202.0
+byte* vpoke::addr
+byte* vpoke::addr#0 11.0
+byte* vpoke::addr#1 22.0
+byte* vpoke::addr#2 56.0
+byte vpoke::bank
+byte vpoke::data
+byte vpoke::data#0 22.0
+byte vpoke::data#2 16.0
+
+Initial phi equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::vaddr#3 main::vaddr#2 ]
+[ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ]
+[ vpoke::data#2 vpoke::data#0 ]
+Added variable main::vaddr#1 to live range equivalence class [ main::vaddr#1 ]
+Added variable vpoke::$0 to live range equivalence class [ vpoke::$0 ]
+Added variable vpoke::$1 to live range equivalence class [ vpoke::$1 ]
+Complete equivalence classes
+[ main::i#2 main::i#1 ]
+[ main::vaddr#3 main::vaddr#2 ]
+[ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ]
+[ vpoke::data#2 vpoke::data#0 ]
+[ main::vaddr#1 ]
+[ vpoke::$0 ]
+[ vpoke::$1 ]
+Allocated zp[1]:2 [ main::i#2 main::i#1 ]
+Allocated zp[2]:3 [ main::vaddr#3 main::vaddr#2 ]
+Allocated zp[2]:5 [ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ]
+Allocated zp[1]:7 [ vpoke::data#2 vpoke::data#0 ]
+Allocated zp[2]:8 [ main::vaddr#1 ]
+Allocated zp[1]:10 [ vpoke::$0 ]
+Allocated zp[1]:11 [ vpoke::$1 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [2] if(0!=main::MSG[main::i#2]) goto main::@2 [ main::i#2 main::vaddr#3 ] (  [ main::i#2 main::vaddr#3 ] { }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ main::i#2 main::i#1 ]
+Statement [4] vpoke::addr#0 = main::vaddr#3 [ main::i#2 main::vaddr#3 vpoke::addr#0 ] (  [ main::i#2 main::vaddr#3 vpoke::addr#0 ] { { vpoke::addr#0 = vpoke::addr#2 main::vaddr#3 } { vpoke::data#0 = vpoke::data#2 } }  ) always clobbers reg byte a 
+Statement [7] main::vaddr#1 = ++ main::vaddr#3 [ main::i#2 main::vaddr#1 ] (  [ main::i#2 main::vaddr#1 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Statement [8] vpoke::addr#1 = main::vaddr#1 [ main::i#2 main::vaddr#1 vpoke::addr#1 ] (  [ main::i#2 main::vaddr#1 vpoke::addr#1 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Statement [10] main::vaddr#2 = ++ main::vaddr#1 [ main::i#2 main::vaddr#2 ] (  [ main::i#2 main::vaddr#2 ] { }  ) always clobbers reg byte a 
+Statement [13] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ vpoke::addr#2 vpoke::data#2 ] ( vpoke:6 [ main::i#2 main::vaddr#3 vpoke::addr#2 vpoke::data#2 ] { { vpoke::addr#0 = vpoke::addr#2 main::vaddr#3 } { vpoke::data#0 = vpoke::data#2 } }  vpoke:9 [ main::i#2 main::vaddr#1 vpoke::addr#2 vpoke::data#2 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:7 [ vpoke::data#2 vpoke::data#0 ]
+Statement [18] *VERA_ADDRX_H = 0 [ vpoke::data#2 ] ( vpoke:6 [ main::i#2 main::vaddr#3 vpoke::data#2 ] { { vpoke::addr#0 = vpoke::addr#2 main::vaddr#3 } { vpoke::data#0 = vpoke::data#2 } }  vpoke:9 [ main::i#2 main::vaddr#1 vpoke::data#2 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Statement [2] if(0!=main::MSG[main::i#2]) goto main::@2 [ main::i#2 main::vaddr#3 ] (  [ main::i#2 main::vaddr#3 ] { }  ) always clobbers reg byte a 
+Statement [4] vpoke::addr#0 = main::vaddr#3 [ main::i#2 main::vaddr#3 vpoke::addr#0 ] (  [ main::i#2 main::vaddr#3 vpoke::addr#0 ] { { vpoke::addr#0 = vpoke::addr#2 main::vaddr#3 } { vpoke::data#0 = vpoke::data#2 } }  ) always clobbers reg byte a 
+Statement [7] main::vaddr#1 = ++ main::vaddr#3 [ main::i#2 main::vaddr#1 ] (  [ main::i#2 main::vaddr#1 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Statement [8] vpoke::addr#1 = main::vaddr#1 [ main::i#2 main::vaddr#1 vpoke::addr#1 ] (  [ main::i#2 main::vaddr#1 vpoke::addr#1 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Statement [10] main::vaddr#2 = ++ main::vaddr#1 [ main::i#2 main::vaddr#2 ] (  [ main::i#2 main::vaddr#2 ] { }  ) always clobbers reg byte a 
+Statement [13] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ vpoke::addr#2 vpoke::data#2 ] ( vpoke:6 [ main::i#2 main::vaddr#3 vpoke::addr#2 vpoke::data#2 ] { { vpoke::addr#0 = vpoke::addr#2 main::vaddr#3 } { vpoke::data#0 = vpoke::data#2 } }  vpoke:9 [ main::i#2 main::vaddr#1 vpoke::addr#2 vpoke::data#2 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Statement [18] *VERA_ADDRX_H = 0 [ vpoke::data#2 ] ( vpoke:6 [ main::i#2 main::vaddr#3 vpoke::data#2 ] { { vpoke::addr#0 = vpoke::addr#2 main::vaddr#3 } { vpoke::data#0 = vpoke::data#2 } }  vpoke:9 [ main::i#2 main::vaddr#1 vpoke::data#2 ] { { vpoke::addr#1 = vpoke::addr#2 main::vaddr#1 } }  ) always clobbers reg byte a 
+Potential registers zp[1]:2 [ main::i#2 main::i#1 ] : zp[1]:2 , reg byte x , reg byte y , 
+Potential registers zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] : zp[2]:3 , 
+Potential registers zp[2]:5 [ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ] : zp[2]:5 , 
+Potential registers zp[1]:7 [ vpoke::data#2 vpoke::data#0 ] : zp[1]:7 , reg byte x , reg byte y , 
+Potential registers zp[2]:8 [ main::vaddr#1 ] : zp[2]:8 , 
+Potential registers zp[1]:10 [ vpoke::$0 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:11 [ vpoke::$1 ] : zp[1]:11 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [vpoke] 202: zp[1]:10 [ vpoke::$0 ] 202: zp[1]:11 [ vpoke::$1 ] 89: zp[2]:5 [ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ] 38: zp[1]:7 [ vpoke::data#2 vpoke::data#0 ] 
+Uplift Scope [main] 26.89: zp[1]:2 [ main::i#2 main::i#1 ] 17.6: zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] 11: zp[2]:8 [ main::vaddr#1 ] 
+Uplift Scope [MOS6522_VIA] 
+Uplift Scope [] 
+
+Uplifting [vpoke] best 1154 combination reg byte a [ vpoke::$0 ] reg byte a [ vpoke::$1 ] zp[2]:5 [ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ] reg byte x [ vpoke::data#2 vpoke::data#0 ] 
+Uplifting [main] best 1034 combination reg byte y [ main::i#2 main::i#1 ] zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] zp[2]:8 [ main::vaddr#1 ] 
+Uplifting [MOS6522_VIA] best 1034 combination 
+Uplifting [] best 1034 combination 
+Coalescing zero page register [ zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] ] with [ zp[2]:8 [ main::vaddr#1 ] ] - score: 2
+Coalescing zero page register [ zp[2]:3 [ main::vaddr#3 main::vaddr#2 main::vaddr#1 ] ] with [ zp[2]:5 [ vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ] ] - score: 1
+Allocated (was zp[2]:3) zp[2]:2 [ main::vaddr#3 main::vaddr#2 main::vaddr#1 vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Example program for the Commander X16
+// Displays text on the screen by transfering data to VERA
+  // Upstart
+.cpu _65c02
+  // Commodore 64 PRG executable file
+.file [name="text.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+
+
+  // Global Constants & labels
+  .const VERA_ADDRSEL = 1
+  // $9F20 VRAM Address (7:0)
+  .label VERA_ADDRX_L = $9f20
+  // $9F21 VRAM Address (15:8)
+  .label VERA_ADDRX_M = $9f21
+  // $9F22 VRAM Address (7:0)
+  // Bit 4-7: Address Increment  The following is the amount incremented per value value:increment
+  //                             0:0, 1:1, 2:2, 3:4, 4:8, 5:16, 6:32, 7:64, 8:128, 9:256, 10:512, 11:40, 12:80, 13:160, 14:320, 15:640
+  // Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
+  // Bit 0: VRAM Address (16)
+  .label VERA_ADDRX_H = $9f22
+  // $9F23	DATA0	VRAM Data port 0
+  .label VERA_DATA0 = $9f23
+  // $9F25	CTRL Control
+  // Bit 7: Reset
+  // Bit 1: DCSEL
+  // Bit 2: ADDRSEL
+  .label VERA_CTRL = $9f25
+.segment Code
+  // main
+main: {
+    // Address of the default screen
+    .label vaddr = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [1] phi main::vaddr#3 = (byte*) 0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<0
+    sta.z vaddr
+    lda #>0
+    sta.z vaddr+1
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+    ldy #0
+    jmp __b1
+    // main::@1
+  __b1:
+    // [2] if(0!=main::MSG[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda MSG,y
+    cmp #0
+    bne __b2
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // [4] vpoke::addr#0 = main::vaddr#3
+    // [5] vpoke::data#0 = main::MSG[main::i#2] -- vbuxx=pbuc1_derefidx_vbuyy 
+    ldx MSG,y
+    // [6] call vpoke 
+    // [12] phi from main::@2 to vpoke [phi:main::@2->vpoke]
+  vpoke_from___b2:
+    // [12] phi vpoke::data#2 = vpoke::data#0 [phi:main::@2->vpoke#0] -- register_copy 
+    // [12] phi vpoke::addr#2 = vpoke::addr#0 [phi:main::@2->vpoke#1] -- register_copy 
+    jsr vpoke
+    jmp __b3
+    // main::@3
+  __b3:
+    // [7] main::vaddr#1 = ++ main::vaddr#3 -- pbuz1=_inc_pbuz1 
+    inc.z vaddr
+    bne !+
+    inc.z vaddr+1
+  !:
+    // [8] vpoke::addr#1 = main::vaddr#1
+    // [9] call vpoke 
+  // Message
+    // [12] phi from main::@3 to vpoke [phi:main::@3->vpoke]
+  vpoke_from___b3:
+    // [12] phi vpoke::data#2 = $21 [phi:main::@3->vpoke#0] -- vbuxx=vbuc1 
+    ldx #$21
+    // [12] phi vpoke::addr#2 = vpoke::addr#1 [phi:main::@3->vpoke#1] -- register_copy 
+    jsr vpoke
+    jmp __b4
+    // main::@4
+  __b4:
+    // [10] main::vaddr#2 = ++ main::vaddr#1 -- pbuz1=_inc_pbuz1 
+    inc.z vaddr
+    bne !+
+    inc.z vaddr+1
+  !:
+    // [11] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+  __b1_from___b4:
+    // [1] phi main::vaddr#3 = main::vaddr#2 [phi:main::@4->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#1] -- register_copy 
+    jmp __b1
+  .segment Data
+    MSG: .text "hello world!"
+    .byte 0
+}
+.segment Code
+  // vpoke
+// Put a single byte into VRAM.
+// Uses VERA DATA0
+// - bank: Which 64K VRAM bank to put data into (0/1)
+// - addr: The address in VRAM
+// - data: The data to put into VRAM
+// vpoke(byte* zp(2) addr, byte register(X) data)
+vpoke: {
+    .label addr = 2
+    // [13] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Select DATA0
+    lda #VERA_ADDRSEL^$ff
+    and VERA_CTRL
+    sta VERA_CTRL
+    // [14] vpoke::$0 = < vpoke::addr#2 -- vbuaa=_lo_pbuz1 
+    lda.z addr
+    // [15] *VERA_ADDRX_L = vpoke::$0 -- _deref_pbuc1=vbuaa 
+    // Set address
+    sta VERA_ADDRX_L
+    // [16] vpoke::$1 = > vpoke::addr#2 -- vbuaa=_hi_pbuz1 
+    lda.z addr+1
+    // [17] *VERA_ADDRX_M = vpoke::$1 -- _deref_pbuc1=vbuaa 
+    sta VERA_ADDRX_M
+    // [18] *VERA_ADDRX_H = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta VERA_ADDRX_H
+    // [19] *VERA_DATA0 = vpoke::data#2 -- _deref_pbuc1=vbuxx 
+    // Set data
+    stx VERA_DATA0
+    jmp __breturn
+    // vpoke::@return
+  __breturn:
+    // [20] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __b3
+Removing instruction jmp __b4
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda #>0
+Replacing instruction ldy #0 with TAY
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Removing instruction __b1_from_main:
+Removing instruction __breturn:
+Removing instruction vpoke_from___b2:
+Removing instruction __b3:
+Removing instruction vpoke_from___b3:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte VERA_ADDRSEL = 1
+const nomodify byte* VERA_ADDRX_H = (byte*) 40738
+const nomodify byte* VERA_ADDRX_L = (byte*) 40736
+const nomodify byte* VERA_ADDRX_M = (byte*) 40737
+const nomodify byte* VERA_CTRL = (byte*) 40741
+const nomodify byte* VERA_DATA0 = (byte*) 40739
+void main()
+const byte* main::MSG[]  = "hello world!"
+byte main::i
+byte main::i#1 reg byte y 22.0
+byte main::i#2 reg byte y 4.888888888888889
+byte* main::vaddr
+byte* main::vaddr#1 vaddr zp[2]:2 11.0
+byte* main::vaddr#2 vaddr zp[2]:2 11.0
+byte* main::vaddr#3 vaddr zp[2]:2 6.6000000000000005
+void vpoke(byte vpoke::bank , byte* vpoke::addr , byte vpoke::data)
+byte~ vpoke::$0 reg byte a 202.0
+byte~ vpoke::$1 reg byte a 202.0
+byte* vpoke::addr
+byte* vpoke::addr#0 addr zp[2]:2 11.0
+byte* vpoke::addr#1 addr zp[2]:2 22.0
+byte* vpoke::addr#2 addr zp[2]:2 56.0
+byte vpoke::bank
+byte vpoke::data
+byte vpoke::data#0 reg byte x 22.0
+byte vpoke::data#2 reg byte x 16.0
+
+reg byte y [ main::i#2 main::i#1 ]
+zp[2]:2 [ main::vaddr#3 main::vaddr#2 main::vaddr#1 vpoke::addr#2 vpoke::addr#0 vpoke::addr#1 ]
+reg byte x [ vpoke::data#2 vpoke::data#0 ]
+reg byte a [ vpoke::$0 ]
+reg byte a [ vpoke::$1 ]
+
+
+FINAL ASSEMBLER
+Score: 595
+
+  // File Comments
+// Example program for the Commander X16
+// Displays text on the screen by transfering data to VERA
+  // Upstart
+.cpu _65c02
+  // Commodore 64 PRG executable file
+.file [name="text.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+
+
+  // Global Constants & labels
+  .const VERA_ADDRSEL = 1
+  // $9F20 VRAM Address (7:0)
+  .label VERA_ADDRX_L = $9f20
+  // $9F21 VRAM Address (15:8)
+  .label VERA_ADDRX_M = $9f21
+  // $9F22 VRAM Address (7:0)
+  // Bit 4-7: Address Increment  The following is the amount incremented per value value:increment
+  //                             0:0, 1:1, 2:2, 3:4, 4:8, 5:16, 6:32, 7:64, 8:128, 9:256, 10:512, 11:40, 12:80, 13:160, 14:320, 15:640
+  // Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
+  // Bit 0: VRAM Address (16)
+  .label VERA_ADDRX_H = $9f22
+  // $9F23	DATA0	VRAM Data port 0
+  .label VERA_DATA0 = $9f23
+  // $9F25	CTRL Control
+  // Bit 7: Reset
+  // Bit 1: DCSEL
+  // Bit 2: ADDRSEL
+  .label VERA_CTRL = $9f25
+.segment Code
+  // main
+main: {
+    // Address of the default screen
+    .label vaddr = 2
+    // [1] phi from main to main::@1 [phi:main->main::@1]
+    // [1] phi main::vaddr#3 = (byte*) 0 [phi:main->main::@1#0] -- pbuz1=pbuc1 
+    lda #<0
+    sta.z vaddr
+    sta.z vaddr+1
+    // [1] phi main::i#2 = 0 [phi:main->main::@1#1] -- vbuyy=vbuc1 
+    tay
+    // main::@1
+  __b1:
+    // for(char i=0;MSG[i];i++)
+    // [2] if(0!=main::MSG[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda MSG,y
+    cmp #0
+    bne __b2
+    // main::@return
+    // }
+    // [3] return 
+    rts
+    // main::@2
+  __b2:
+    // vpoke(0, vaddr++, MSG[i])
+    // [4] vpoke::addr#0 = main::vaddr#3
+    // [5] vpoke::data#0 = main::MSG[main::i#2] -- vbuxx=pbuc1_derefidx_vbuyy 
+    ldx MSG,y
+    // [6] call vpoke 
+    // [12] phi from main::@2 to vpoke [phi:main::@2->vpoke]
+    // [12] phi vpoke::data#2 = vpoke::data#0 [phi:main::@2->vpoke#0] -- register_copy 
+    // [12] phi vpoke::addr#2 = vpoke::addr#0 [phi:main::@2->vpoke#1] -- register_copy 
+    jsr vpoke
+    // main::@3
+    // vpoke(0, vaddr++, MSG[i]);
+    // [7] main::vaddr#1 = ++ main::vaddr#3 -- pbuz1=_inc_pbuz1 
+    inc.z vaddr
+    bne !+
+    inc.z vaddr+1
+  !:
+    // vpoke(0, vaddr++, 0x21)
+    // [8] vpoke::addr#1 = main::vaddr#1
+    // [9] call vpoke 
+  // Message
+    // [12] phi from main::@3 to vpoke [phi:main::@3->vpoke]
+    // [12] phi vpoke::data#2 = $21 [phi:main::@3->vpoke#0] -- vbuxx=vbuc1 
+    ldx #$21
+    // [12] phi vpoke::addr#2 = vpoke::addr#1 [phi:main::@3->vpoke#1] -- register_copy 
+    jsr vpoke
+    // main::@4
+    // vpoke(0, vaddr++, 0x21);
+    // [10] main::vaddr#2 = ++ main::vaddr#1 -- pbuz1=_inc_pbuz1 
+    inc.z vaddr
+    bne !+
+    inc.z vaddr+1
+  !:
+    // for(char i=0;MSG[i];i++)
+    // [11] main::i#1 = ++ main::i#2 -- vbuyy=_inc_vbuyy 
+    iny
+    // [1] phi from main::@4 to main::@1 [phi:main::@4->main::@1]
+    // [1] phi main::vaddr#3 = main::vaddr#2 [phi:main::@4->main::@1#0] -- register_copy 
+    // [1] phi main::i#2 = main::i#1 [phi:main::@4->main::@1#1] -- register_copy 
+    jmp __b1
+  .segment Data
+    MSG: .text "hello world!"
+    .byte 0
+}
+.segment Code
+  // vpoke
+// Put a single byte into VRAM.
+// Uses VERA DATA0
+// - bank: Which 64K VRAM bank to put data into (0/1)
+// - addr: The address in VRAM
+// - data: The data to put into VRAM
+// vpoke(byte* zp(2) addr, byte register(X) data)
+vpoke: {
+    .label addr = 2
+    // *VERA_CTRL &= ~VERA_ADDRSEL
+    // [13] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Select DATA0
+    lda #VERA_ADDRSEL^$ff
+    and VERA_CTRL
+    sta VERA_CTRL
+    // <addr
+    // [14] vpoke::$0 = < vpoke::addr#2 -- vbuaa=_lo_pbuz1 
+    lda.z addr
+    // *VERA_ADDRX_L = <addr
+    // [15] *VERA_ADDRX_L = vpoke::$0 -- _deref_pbuc1=vbuaa 
+    // Set address
+    sta VERA_ADDRX_L
+    // >addr
+    // [16] vpoke::$1 = > vpoke::addr#2 -- vbuaa=_hi_pbuz1 
+    lda.z addr+1
+    // *VERA_ADDRX_M = >addr
+    // [17] *VERA_ADDRX_M = vpoke::$1 -- _deref_pbuc1=vbuaa 
+    sta VERA_ADDRX_M
+    // *VERA_ADDRX_H = VERA_INC_0 | bank
+    // [18] *VERA_ADDRX_H = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta VERA_ADDRX_H
+    // *VERA_DATA0 = data
+    // [19] *VERA_DATA0 = vpoke::data#2 -- _deref_pbuc1=vbuxx 
+    // Set data
+    stx VERA_DATA0
+    // vpoke::@return
+    // }
+    // [20] return 
+    rts
+}
+  // File Data
+

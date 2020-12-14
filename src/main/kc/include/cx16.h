@@ -34,3 +34,10 @@ void()** const HARDWARE_IRQ = 0xfffe;
 void()** const KERNEL_IRQ = 0x0314;
 // $0316	(RAM) BRK vector - The vector used when the KERNAL serves IRQ caused by a BRK
 void()** const KERNEL_BRK = 0x0316;
+
+// Put a single byte into VRAM.
+// Uses VERA DATA0
+// - bank: Which 64K VRAM bank to put data into (0/1)
+// - addr: The address in VRAM
+// - data: The data to put into VRAM
+void vpoke(char bank, char* addr, char data);

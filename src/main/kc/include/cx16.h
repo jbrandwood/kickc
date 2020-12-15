@@ -35,9 +35,22 @@ void()** const KERNEL_IRQ = 0x0314;
 // $0316	(RAM) BRK vector - The vector used when the KERNAL serves IRQ caused by a BRK
 void()** const KERNEL_BRK = 0x0316;
 
+// VRAM Address of the default screen
+char * const DEFAULT_SCREEN = 0x0000;
+// VRAM Bank (0/1) of the default screen
+char * const DEFAULT_SCREEN_VBANK = 0;
+
 // Put a single byte into VRAM.
 // Uses VERA DATA0
-// - bank: Which 64K VRAM bank to put data into (0/1)
-// - addr: The address in VRAM
+// - vbank: Which 64K VRAM bank to put data into (0/1)
+// - vaddr: The address in VRAM
 // - data: The data to put into VRAM
-void vpoke(char bank, char* addr, char data);
+void vpoke(char vbank, char* vaddr, char data);
+
+// Copy block of memory (from RAM to VRAM)
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
+// - vbank: Which 64K VRAM bank to put data into (0/1)
+// - vdest: The destination address in VRAM
+// - src: The source address in RAM
+// - num: The number of bytes to copy
+void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );

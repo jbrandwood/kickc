@@ -81,6 +81,14 @@ char * const VERA_IRQLINE_L = 0x9f28;
 // Bit 2: Chroma Disable    Setting 'Chroma Disable' disables output of chroma in NTSC composite mode and will give a better picture on a monochrome display. (Setting this bit will also disable the chroma output on the S-video output.)
 // Bit 0-1: Output Mode     0: Video disabled, 1: VGA output, 2: NTSC composite, 3: RGB interlaced, composite sync (via VGA connector)
 char * const VERA_DC_VIDEO = 0x9f29;
+char VERA_SPRITES_ENABLE = 0x40;
+char VERA_LAYER1_ENABLE = 0x20;
+char VERA_LAYER0_ENABLE = 0x10;
+char VERA_CROMA_DISABLE = 0x04;
+char VERA_OUTPUT_DISABLE = 0x00;
+char VERA_OUTPUT_VGA = 0x01;
+char VERA_OUTPUT_NTSC = 0x02;
+char VERA_OUTPUT_RGB = 0x03;
 // $9F2A	DC_HSCALE (DCSEL=0)	Active Display H-Scale
 char * const VERA_DC_HSCALE = 0x9f2a;
 // $9F2B	DC_VSCALE (DCSEL=0)	Active Display V-Scale
@@ -156,3 +164,32 @@ char * const VERA_SPI_DATA = 0x9f3e;
 // Bit 1:   Slow clock
 // Bit 0:   Select
 char * const VERA_SPI_CTRL = 0x9f3f;
+
+// Sprite Attributes address in VERA VRAM
+const unsigned long VERA_SPRITE_ATTR = 0x1fc00;
+
+// The VERA structure of a sprite (8 bytes)
+// 128*8 bytes located at $1FC00-$1FFFF
+struct VERA_SPRITE {
+    // 0-1 ADDRESS Address and mode
+    // - bits 0-11: Address (16:5)
+    // - bits 15: Mode (0:4 bpp 1:8 bpp)
+    unsigned int ADDR;
+    // 2-3	X (9:0)
+    unsigned int X;
+    // 4-5	Y (9:0)
+    unsigned int Y;
+    // 6 CTRL1 Control 1
+    // - bits 4-7 Collision mask
+    // - bits 2-3 Z-depth ( 0:Sprite disabled, 1:Sprite between background and layer 0, 2:Sprite between layer 0 and layer 1, 3:Sprite in front of layer 1 )
+    // - bits   1 V-flip
+    // - bits   0 H-flip
+    char CTRL1;
+    // 7 CTRL2 Control 2
+    // - bits 6-7 Sprite height ( 0:8 pixels, 1:16 pixels, 2:32 pixels, 3:64 pixels )
+    // - bits 4-5 Sprite width ( 0:8 pixels, 1:16 pixels, 2:32 pixels, 3:64 pixels )
+    // - bits 0-3 Palette offset (if 4bpp Color index 1-15 is modified by adding 16 x palette offset)
+    char CTRL2;
+};
+// 8BPP sprite mode (add to VERA_SPRITE.ADDR to enable)
+const unsigned int VERA_SPRITE_8BPP = 0x8000;

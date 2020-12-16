@@ -464,6 +464,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCx16Sprite() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/sprite.c");
+   }
+
+   @Test
    public void testCx16Text() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/text.c");
    }

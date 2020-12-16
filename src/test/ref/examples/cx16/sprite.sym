@@ -1,0 +1,71 @@
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+const byte OFFSET_STRUCT_VERA_SPRITE_X = 2
+const byte OFFSET_STRUCT_VERA_SPRITE_Y = 4
+const word* SINX[$f1]  = kickasm {{ .fillword 256, 288+288*sin(i*2*PI/241)
+ }}
+const word* SINY[$fb]  = kickasm {{ .fillword 256, 208+208*sin(i*2*PI/251)
+ }}
+const byte SIZEOF_BYTE = 1
+const byte SIZEOF_STRUCT_VERA_SPRITE = 8
+struct VERA_SPRITE SPRITE_ATTR loadstore mem[8] = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
+const byte* SPRITE_PIXELS[$40*$40]  = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+	.for (var x=0;x<64; x++)
+    	.for (var y=0; y<64; y++)
+            .byte (pic.getPixel(x,y)==0) ? 0 : 1
+ }}
+const nomodify dword SPRITE_PIXELS_VRAM = $8000
+const nomodify byte VERA_ADDRSEL = 1
+const nomodify byte* VERA_ADDRX_H = (byte*) 40738
+const nomodify byte* VERA_ADDRX_L = (byte*) 40736
+const nomodify byte* VERA_ADDRX_M = (byte*) 40737
+const nomodify byte* VERA_CTRL = (byte*) 40741
+const nomodify byte* VERA_DATA0 = (byte*) 40739
+const nomodify byte VERA_DCSEL = 2
+const nomodify byte* VERA_DC_VIDEO = (byte*) 40745
+const nomodify byte* VERA_IEN = (byte*) 40742
+const nomodify byte VERA_INC_1 = $10
+const nomodify byte* VERA_ISR = (byte*) 40743
+const byte VERA_SPRITES_ENABLE = $40
+const nomodify word VERA_SPRITE_8BPP = $8000
+const nomodify dword VERA_SPRITE_ATTR = $1fc00
+const nomodify byte VERA_VSYNC = 1
+void __start()
+void irq_vsync()
+word~ irq_vsync::$5 zp[2]:12 4.0
+word~ irq_vsync::$6 zp[2]:14 4.0
+word*~ irq_vsync::$7 zp[2]:12 4.0
+word*~ irq_vsync::$8 zp[2]:14 4.0
+void main()
+void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
+byte~ memcpy_to_vram::$0 reg byte a 202.0
+byte~ memcpy_to_vram::$1 reg byte a 202.0
+byte~ memcpy_to_vram::$2 reg byte a 202.0
+byte* memcpy_to_vram::end
+byte* memcpy_to_vram::end#0 end zp[2]:6 183.66666666666669
+word memcpy_to_vram::num
+word memcpy_to_vram::num#3 num zp[2]:6 12.625
+byte* memcpy_to_vram::s
+byte* memcpy_to_vram::s#1 s zp[2]:4 2002.0
+byte* memcpy_to_vram::s#2 s zp[2]:4 1368.3333333333335
+byte* memcpy_to_vram::s#4 s zp[2]:4 202.0
+void* memcpy_to_vram::src
+void* memcpy_to_vram::src#3 src zp[2]:4
+byte memcpy_to_vram::vbank
+byte memcpy_to_vram::vbank#3 reg byte x 16.833333333333332
+void* memcpy_to_vram::vdest
+void* memcpy_to_vram::vdest#3 vdest zp[2]:2 50.5
+volatile word sin_idx_x loadstore zp[2]:8 1.9999999999999998
+volatile word sin_idx_y loadstore zp[2]:10 1.3333333333333335
+
+zp[2]:2 [ memcpy_to_vram::vdest#3 ]
+reg byte x [ memcpy_to_vram::vbank#3 ]
+zp[2]:4 [ memcpy_to_vram::src#3 memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
+zp[2]:6 [ memcpy_to_vram::num#3 memcpy_to_vram::end#0 ]
+zp[2]:8 [ sin_idx_x ]
+zp[2]:10 [ sin_idx_y ]
+zp[2]:12 [ irq_vsync::$5 irq_vsync::$7 ]
+zp[2]:14 [ irq_vsync::$6 irq_vsync::$8 ]
+reg byte a [ memcpy_to_vram::$0 ]
+reg byte a [ memcpy_to_vram::$1 ]
+reg byte a [ memcpy_to_vram::$2 ]
+mem[8] [ SPRITE_ATTR ]

@@ -47,6 +47,13 @@ char * const DEFAULT_SCREEN_VBANK = 0;
 // - data: The data to put into VRAM
 void vpoke(char vbank, char* vaddr, char data);
 
+// Read a single byte from VRAM.
+// Uses VERA DATA0
+// - bank: Which 64K VRAM bank to put data into (0/1)
+// - addr: The address in VRAM
+// - returns: The data to put into VRAM
+char vpeek(char vbank, char* vaddr);
+
 // Copy block of memory (from RAM to VRAM)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
 // - vbank: Which 64K VRAM bank to put data into (0/1)

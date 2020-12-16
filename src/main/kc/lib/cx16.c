@@ -20,6 +20,22 @@ void vpoke(char vbank, char* vaddr, char data) {
     *VERA_DATA0 = data;
 }
 
+// Read a single byte from VRAM.
+// Uses VERA DATA0
+// - bank: Which 64K VRAM bank to put data into (0/1)
+// - addr: The address in VRAM
+// - returns: The data to put into VRAM
+char vpeek(char vbank, char* vaddr) {
+    // Select DATA0
+    *VERA_CTRL &= ~VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <vaddr;
+    *VERA_ADDRX_M = >vaddr;
+    *VERA_ADDRX_H = VERA_INC_0 | vbank;
+    // Get data
+    return *VERA_DATA0;
+}
+
 // Copy block of memory (from RAM to VRAM)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
 // - vbank: Which 64K VRAM bank to put data into (0/1)
@@ -34,8 +50,7 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num ) {
     *VERA_ADDRX_M = >vdest;
     *VERA_ADDRX_H = VERA_INC_1 | vbank;
     // Transfer the data
-    char *s = src;
     char *end = (char*)src+num;
-    for(; s!=end; s++)
+    for(char *s = src; s!=end; s++)
         *VERA_DATA0 = *s;
 }

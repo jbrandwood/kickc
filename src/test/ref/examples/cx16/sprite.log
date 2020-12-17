@@ -1,7 +1,9 @@
 Resolved forward reference irq_vsync to void irq_vsync()
-Setting struct to load/store in variable affected by address-of main::$3 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR <VERA_SPRITE_ATTR &SPRITE_ATTR main::$2 
-Setting struct to load/store in variable affected by address-of irq_vsync::$4 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR <VERA_SPRITE_ATTR+2 &SPRITE_ATTR+2 4 
-Resolving sizeof() main::$2 = sizeof  SPRITE_ATTR
+Setting struct to load/store in variable affected by address-of main::$6 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR main::vram_sprite_attr &SPRITE_ATTR main::$5 
+Setting struct to load/store in variable affected by address-of irq_vsync::$5 = call memcpy_to_vram irq_vsync::vram_sprite_attr_bank irq_vsync::vram_sprite_pos &SPRITE_ATTR+2 4 
+Resolving sizeof() main::$5 = sizeof  SPRITE_ATTR
+Resolving sizeof() main::$7 = sizeof  SPRITE_ATTR
+Resolving sizeof() irq_vsync::$6 = sizeof  SPRITE_ATTR
 Inlined call call SEI 
 Inlined call call CLI 
 Inlined call call __init 
@@ -9,11 +11,11 @@ Inlined call call __init
 CONTROL FLOW GRAPH SSA
 
 void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-memcpy_to_vram: scope:[memcpy_to_vram]  from irq_vsync::@2 main main::@2
-  memcpy_to_vram::num#3 = phi( irq_vsync::@2/memcpy_to_vram::num#2, main/memcpy_to_vram::num#0, main::@2/memcpy_to_vram::num#1 )
-  memcpy_to_vram::src#3 = phi( irq_vsync::@2/memcpy_to_vram::src#2, main/memcpy_to_vram::src#0, main::@2/memcpy_to_vram::src#1 )
-  memcpy_to_vram::vbank#3 = phi( irq_vsync::@2/memcpy_to_vram::vbank#2, main/memcpy_to_vram::vbank#0, main::@2/memcpy_to_vram::vbank#1 )
-  memcpy_to_vram::vdest#3 = phi( irq_vsync::@2/memcpy_to_vram::vdest#2, main/memcpy_to_vram::vdest#0, main::@2/memcpy_to_vram::vdest#1 )
+memcpy_to_vram: scope:[memcpy_to_vram]  from irq_vsync::@6 main main::@2
+  memcpy_to_vram::num#3 = phi( irq_vsync::@6/memcpy_to_vram::num#2, main/memcpy_to_vram::num#0, main::@2/memcpy_to_vram::num#1 )
+  memcpy_to_vram::src#3 = phi( irq_vsync::@6/memcpy_to_vram::src#2, main/memcpy_to_vram::src#0, main::@2/memcpy_to_vram::src#1 )
+  memcpy_to_vram::vbank#3 = phi( irq_vsync::@6/memcpy_to_vram::vbank#2, main/memcpy_to_vram::vbank#0, main::@2/memcpy_to_vram::vbank#1 )
+  memcpy_to_vram::vdest#3 = phi( irq_vsync::@6/memcpy_to_vram::vdest#2, main/memcpy_to_vram::vdest#0, main::@2/memcpy_to_vram::vdest#1 )
   *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
   memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3
   *VERA_ADDRX_L = memcpy_to_vram::$0
@@ -50,27 +52,48 @@ main: scope:[main]  from __start::@1
   memcpy_to_vram::src#0 = (void*)SPRITE_PIXELS
   memcpy_to_vram::num#0 = main::$0
   call memcpy_to_vram 
-  to:main::@2
-main::@2: scope:[main]  from main
-  main::$2 = SIZEOF_STRUCT_VERA_SPRITE
-  memcpy_to_vram::vbank#1 = (byte)>VERA_SPRITE_ATTR
-  memcpy_to_vram::vdest#1 = (void*)<VERA_SPRITE_ATTR
-  memcpy_to_vram::src#1 = (void*)&SPRITE_ATTR
-  memcpy_to_vram::num#1 = main::$2
-  call memcpy_to_vram 
+  to:main::@5
+main::@5: scope:[main]  from main
+  main::vram_sprite_attr#0 = (byte*)<VERA_SPRITE_ATTR
+  main::s#0 = 0
+  to:main::@1
+main::@1: scope:[main]  from main::@5 main::@6
+  main::vram_sprite_attr#4 = phi( main::@5/main::vram_sprite_attr#0, main::@6/main::vram_sprite_attr#1 )
+  main::s#2 = phi( main::@5/main::s#0, main::@6/main::s#1 )
+  main::$4 = main::s#2 < $80
+  if(main::$4) goto main::@2
   to:main::@3
-main::@3: scope:[main]  from main::@2
+main::@2: scope:[main]  from main::@1
+  main::s#4 = phi( main::@1/main::s#2 )
+  main::vram_sprite_attr#2 = phi( main::@1/main::vram_sprite_attr#4 )
+  *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a
+  *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a
+  main::$5 = SIZEOF_STRUCT_VERA_SPRITE
+  memcpy_to_vram::vbank#1 = (byte)>VERA_SPRITE_ATTR
+  memcpy_to_vram::vdest#1 = (void*)main::vram_sprite_attr#2
+  memcpy_to_vram::src#1 = (void*)&SPRITE_ATTR
+  memcpy_to_vram::num#1 = main::$5
+  call memcpy_to_vram 
+  to:main::@6
+main::@6: scope:[main]  from main::@2
+  main::s#3 = phi( main::@2/main::s#4 )
+  main::vram_sprite_attr#3 = phi( main::@2/main::vram_sprite_attr#2 )
+  main::$7 = SIZEOF_STRUCT_VERA_SPRITE
+  main::vram_sprite_attr#1 = main::vram_sprite_attr#3 + main::$7
+  main::s#1 = ++ main::s#3
+  to:main::@1
+main::@3: scope:[main]  from main::@1
   *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL
   *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE
   to:main::SEI1
 main::SEI1: scope:[main]  from main::@3
   asm { sei  }
-  to:main::@1
-main::@1: scope:[main]  from main::SEI1
+  to:main::@4
+main::@4: scope:[main]  from main::SEI1
   *KERNEL_IRQ = &irq_vsync
   *VERA_IEN = VERA_VSYNC
   to:main::CLI1
-main::CLI1: scope:[main]  from main::@1
+main::CLI1: scope:[main]  from main::@4
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main::CLI1
@@ -94,24 +117,85 @@ irq_vsync::@3: scope:[irq_vsync]  from irq_vsync
   sin_idx_x = 0
   to:irq_vsync::@1
 irq_vsync::@2: scope:[irq_vsync]  from irq_vsync::@1 irq_vsync::@4
-  irq_vsync::$5 = sin_idx_x * SIZEOF_WORD
-  *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = SINX[irq_vsync::$5]
-  irq_vsync::$6 = sin_idx_y * SIZEOF_WORD
-  *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = SINY[irq_vsync::$6]
-  memcpy_to_vram::vbank#2 = (byte)>VERA_SPRITE_ATTR
-  memcpy_to_vram::vdest#2 = (void*)<VERA_SPRITE_ATTR+2
-  memcpy_to_vram::src#2 = (void*)&SPRITE_ATTR+2
-  memcpy_to_vram::num#2 = 4
-  call memcpy_to_vram 
+  irq_vsync::vram_sprite_pos#0 = (byte*)<VERA_SPRITE_ATTR+2
+  irq_vsync::i_x#0 = sin_idx_x
+  irq_vsync::i_y#0 = sin_idx_y
+  irq_vsync::s#0 = 0
   to:irq_vsync::@5
-irq_vsync::@5: scope:[irq_vsync]  from irq_vsync::@2
-  *VERA_ISR = VERA_VSYNC
-  asm { jmp$e034  }
-  to:irq_vsync::@return
 irq_vsync::@4: scope:[irq_vsync]  from irq_vsync::@1
   sin_idx_y = $fb-1
   to:irq_vsync::@2
-irq_vsync::@return: scope:[irq_vsync]  from irq_vsync::@5
+irq_vsync::@5: scope:[irq_vsync]  from irq_vsync::@2 irq_vsync::@9
+  irq_vsync::vram_sprite_pos#4 = phi( irq_vsync::@2/irq_vsync::vram_sprite_pos#0, irq_vsync::@9/irq_vsync::vram_sprite_pos#5 )
+  irq_vsync::i_y#6 = phi( irq_vsync::@2/irq_vsync::i_y#0, irq_vsync::@9/irq_vsync::i_y#9 )
+  irq_vsync::i_x#6 = phi( irq_vsync::@2/irq_vsync::i_x#0, irq_vsync::@9/irq_vsync::i_x#7 )
+  irq_vsync::s#2 = phi( irq_vsync::@2/irq_vsync::s#0, irq_vsync::@9/irq_vsync::s#1 )
+  irq_vsync::$4 = irq_vsync::s#2 < $80
+  if(irq_vsync::$4) goto irq_vsync::@6
+  to:irq_vsync::@7
+irq_vsync::@6: scope:[irq_vsync]  from irq_vsync::@5
+  irq_vsync::s#8 = phi( irq_vsync::@5/irq_vsync::s#2 )
+  irq_vsync::vram_sprite_pos#2 = phi( irq_vsync::@5/irq_vsync::vram_sprite_pos#4 )
+  irq_vsync::i_y#3 = phi( irq_vsync::@5/irq_vsync::i_y#6 )
+  irq_vsync::i_x#3 = phi( irq_vsync::@5/irq_vsync::i_x#6 )
+  irq_vsync::$11 = irq_vsync::i_x#3 * SIZEOF_WORD
+  *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = SINX[irq_vsync::$11]
+  irq_vsync::$12 = irq_vsync::i_y#3 * SIZEOF_WORD
+  *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = SINY[irq_vsync::$12]
+  memcpy_to_vram::vbank#2 = irq_vsync::vram_sprite_attr_bank
+  memcpy_to_vram::vdest#2 = (void*)irq_vsync::vram_sprite_pos#2
+  memcpy_to_vram::src#2 = (void*)&SPRITE_ATTR+2
+  memcpy_to_vram::num#2 = 4
+  call memcpy_to_vram 
+  to:irq_vsync::@12
+irq_vsync::@12: scope:[irq_vsync]  from irq_vsync::@6
+  irq_vsync::s#7 = phi( irq_vsync::@6/irq_vsync::s#8 )
+  irq_vsync::i_y#8 = phi( irq_vsync::@6/irq_vsync::i_y#3 )
+  irq_vsync::i_x#4 = phi( irq_vsync::@6/irq_vsync::i_x#3 )
+  irq_vsync::vram_sprite_pos#3 = phi( irq_vsync::@6/irq_vsync::vram_sprite_pos#2 )
+  irq_vsync::$6 = SIZEOF_STRUCT_VERA_SPRITE
+  irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#3 + irq_vsync::$6
+  irq_vsync::i_x#1 = irq_vsync::i_x#4 + 3
+  irq_vsync::$7 = irq_vsync::i_x#1 >= $f1
+  irq_vsync::$8 = ! irq_vsync::$7
+  if(irq_vsync::$8) goto irq_vsync::@8
+  to:irq_vsync::@10
+irq_vsync::@7: scope:[irq_vsync]  from irq_vsync::@5
+  *VERA_ISR = VERA_VSYNC
+  asm { jmp$e034  }
+  to:irq_vsync::@return
+irq_vsync::@8: scope:[irq_vsync]  from irq_vsync::@10 irq_vsync::@12
+  irq_vsync::vram_sprite_pos#7 = phi( irq_vsync::@10/irq_vsync::vram_sprite_pos#8, irq_vsync::@12/irq_vsync::vram_sprite_pos#1 )
+  irq_vsync::i_x#9 = phi( irq_vsync::@10/irq_vsync::i_x#2, irq_vsync::@12/irq_vsync::i_x#1 )
+  irq_vsync::s#5 = phi( irq_vsync::@10/irq_vsync::s#6, irq_vsync::@12/irq_vsync::s#7 )
+  irq_vsync::i_y#4 = phi( irq_vsync::@10/irq_vsync::i_y#7, irq_vsync::@12/irq_vsync::i_y#8 )
+  irq_vsync::i_y#1 = irq_vsync::i_y#4 + 5
+  irq_vsync::$9 = irq_vsync::i_y#1 >= $fb
+  irq_vsync::$10 = ! irq_vsync::$9
+  if(irq_vsync::$10) goto irq_vsync::@9
+  to:irq_vsync::@11
+irq_vsync::@10: scope:[irq_vsync]  from irq_vsync::@12
+  irq_vsync::vram_sprite_pos#8 = phi( irq_vsync::@12/irq_vsync::vram_sprite_pos#1 )
+  irq_vsync::s#6 = phi( irq_vsync::@12/irq_vsync::s#7 )
+  irq_vsync::i_y#7 = phi( irq_vsync::@12/irq_vsync::i_y#8 )
+  irq_vsync::i_x#5 = phi( irq_vsync::@12/irq_vsync::i_x#1 )
+  irq_vsync::i_x#2 = irq_vsync::i_x#5 - $f1
+  to:irq_vsync::@8
+irq_vsync::@9: scope:[irq_vsync]  from irq_vsync::@11 irq_vsync::@8
+  irq_vsync::vram_sprite_pos#5 = phi( irq_vsync::@11/irq_vsync::vram_sprite_pos#6, irq_vsync::@8/irq_vsync::vram_sprite_pos#7 )
+  irq_vsync::i_y#9 = phi( irq_vsync::@11/irq_vsync::i_y#2, irq_vsync::@8/irq_vsync::i_y#1 )
+  irq_vsync::i_x#7 = phi( irq_vsync::@11/irq_vsync::i_x#8, irq_vsync::@8/irq_vsync::i_x#9 )
+  irq_vsync::s#3 = phi( irq_vsync::@11/irq_vsync::s#4, irq_vsync::@8/irq_vsync::s#5 )
+  irq_vsync::s#1 = ++ irq_vsync::s#3
+  to:irq_vsync::@5
+irq_vsync::@11: scope:[irq_vsync]  from irq_vsync::@8
+  irq_vsync::vram_sprite_pos#6 = phi( irq_vsync::@8/irq_vsync::vram_sprite_pos#7 )
+  irq_vsync::i_x#8 = phi( irq_vsync::@8/irq_vsync::i_x#9 )
+  irq_vsync::s#4 = phi( irq_vsync::@8/irq_vsync::s#5 )
+  irq_vsync::i_y#5 = phi( irq_vsync::@8/irq_vsync::i_y#1 )
+  irq_vsync::i_y#2 = irq_vsync::i_y#5 - $fb
+  to:irq_vsync::@9
+irq_vsync::@return: scope:[irq_vsync]  from irq_vsync::@7
   return 
   to:@return
 
@@ -167,13 +251,76 @@ void __start()
 void irq_vsync()
 bool~ irq_vsync::$0
 bool~ irq_vsync::$1
+bool~ irq_vsync::$10
+word~ irq_vsync::$11
+word~ irq_vsync::$12
 bool~ irq_vsync::$2
 bool~ irq_vsync::$3
-word~ irq_vsync::$5
-word~ irq_vsync::$6
+bool~ irq_vsync::$4
+byte~ irq_vsync::$6
+bool~ irq_vsync::$7
+bool~ irq_vsync::$8
+bool~ irq_vsync::$9
+word irq_vsync::i_x
+word irq_vsync::i_x#0
+word irq_vsync::i_x#1
+word irq_vsync::i_x#2
+word irq_vsync::i_x#3
+word irq_vsync::i_x#4
+word irq_vsync::i_x#5
+word irq_vsync::i_x#6
+word irq_vsync::i_x#7
+word irq_vsync::i_x#8
+word irq_vsync::i_x#9
+word irq_vsync::i_y
+word irq_vsync::i_y#0
+word irq_vsync::i_y#1
+word irq_vsync::i_y#2
+word irq_vsync::i_y#3
+word irq_vsync::i_y#4
+word irq_vsync::i_y#5
+word irq_vsync::i_y#6
+word irq_vsync::i_y#7
+word irq_vsync::i_y#8
+word irq_vsync::i_y#9
+byte irq_vsync::s
+byte irq_vsync::s#0
+byte irq_vsync::s#1
+byte irq_vsync::s#2
+byte irq_vsync::s#3
+byte irq_vsync::s#4
+byte irq_vsync::s#5
+byte irq_vsync::s#6
+byte irq_vsync::s#7
+byte irq_vsync::s#8
+const nomodify byte irq_vsync::vram_sprite_attr_bank = (byte)>VERA_SPRITE_ATTR
+byte* irq_vsync::vram_sprite_pos
+byte* irq_vsync::vram_sprite_pos#0
+byte* irq_vsync::vram_sprite_pos#1
+byte* irq_vsync::vram_sprite_pos#2
+byte* irq_vsync::vram_sprite_pos#3
+byte* irq_vsync::vram_sprite_pos#4
+byte* irq_vsync::vram_sprite_pos#5
+byte* irq_vsync::vram_sprite_pos#6
+byte* irq_vsync::vram_sprite_pos#7
+byte* irq_vsync::vram_sprite_pos#8
 void main()
 byte~ main::$0
-byte~ main::$2
+bool~ main::$4
+byte~ main::$5
+byte~ main::$7
+byte main::s
+byte main::s#0
+byte main::s#1
+byte main::s#2
+byte main::s#3
+byte main::s#4
+byte* main::vram_sprite_attr
+byte* main::vram_sprite_attr#0
+byte* main::vram_sprite_attr#1
+byte* main::vram_sprite_attr#2
+byte* main::vram_sprite_attr#3
+byte* main::vram_sprite_attr#4
 void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
 byte~ memcpy_to_vram::$0
 byte~ memcpy_to_vram::$1
@@ -215,18 +362,28 @@ volatile word sin_idx_y loadstore
 
 Adding number conversion cast (unumber) <SPRITE_PIXELS_VRAM/$20 in 
 Adding number conversion cast (unumber) $20 in 
+Adding number conversion cast (unumber) $80 in main::$4 = main::s#2 < $80
+Adding number conversion cast (unumber) $a in *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a
+Adding number conversion cast (unumber) $a in *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a
 Adding number conversion cast (unumber) $f1 in irq_vsync::$0 = sin_idx_x == $f1
 Adding number conversion cast (unumber) $ffff in irq_vsync::$2 = sin_idx_y == $ffff
 Adding number conversion cast (unumber) 0 in sin_idx_x = 0
-Adding number conversion cast (unumber) 2 in memcpy_to_vram::vdest#2 = (void*)<VERA_SPRITE_ATTR+2
+Adding number conversion cast (unumber) 2 in irq_vsync::vram_sprite_pos#0 = (byte*)<VERA_SPRITE_ATTR+2
+Adding number conversion cast (unumber) $fb-1 in sin_idx_y = $fb-1
+Adding number conversion cast (unumber) $80 in irq_vsync::$4 = irq_vsync::s#2 < $80
 Adding number conversion cast (unumber) 2 in memcpy_to_vram::src#2 = (void*)&SPRITE_ATTR+2
 Adding number conversion cast (unumber) 4 in memcpy_to_vram::num#2 = 4
-Adding number conversion cast (unumber) $fb-1 in sin_idx_y = $fb-1
+Adding number conversion cast (unumber) 3 in irq_vsync::i_x#1 = irq_vsync::i_x#4 + 3
+Adding number conversion cast (unumber) $f1 in irq_vsync::$7 = irq_vsync::i_x#1 >= $f1
+Adding number conversion cast (unumber) 5 in irq_vsync::i_y#1 = irq_vsync::i_y#4 + 5
+Adding number conversion cast (unumber) $fb in irq_vsync::$9 = irq_vsync::i_y#1 >= $fb
+Adding number conversion cast (unumber) $f1 in irq_vsync::i_x#2 = irq_vsync::i_x#5 - $f1
+Adding number conversion cast (unumber) $fb in irq_vsync::i_y#2 = irq_vsync::i_y#5 - $fb
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#3
 Inlining cast sin_idx_x = (unumber)0
-Inlining cast memcpy_to_vram::num#2 = (unumber)4
 Inlining cast sin_idx_y = (unumber)$fb-1
+Inlining cast memcpy_to_vram::num#2 = (unumber)4
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 40736
 Simplifying constant pointer cast (byte*) 40737
@@ -239,54 +396,101 @@ Simplifying constant pointer cast (byte*) 40745
 Simplifying constant pointer cast (void()**) 788
 Simplifying constant integer cast <SPRITE_PIXELS_VRAM/(unumber)$20
 Simplifying constant integer cast $20
+Simplifying constant integer cast $80
+Simplifying constant integer cast $a
+Simplifying constant integer cast $a
 Simplifying constant integer cast $f1
 Simplifying constant integer cast $ffff
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
+Simplifying constant integer cast $80
 Simplifying constant integer cast 2
 Simplifying constant integer cast 4
+Simplifying constant integer cast 3
+Simplifying constant integer cast $f1
+Simplifying constant integer cast 5
+Simplifying constant integer cast $fb
+Simplifying constant integer cast $f1
+Simplifying constant integer cast $fb
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $a
 Finalized unsigned number type (byte) $f1
 Finalized unsigned number type (word) $ffff
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $80
 Finalized unsigned number type (byte) 2
 Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $f1
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) $fb
+Finalized unsigned number type (byte) $f1
+Finalized unsigned number type (byte) $fb
 Successful SSA optimization PassNFinalizeNumberTypeConversions
-Inversing boolean not [40] irq_vsync::$1 = sin_idx_x != $f1 from [39] irq_vsync::$0 = sin_idx_x == $f1
-Inversing boolean not [44] irq_vsync::$3 = sin_idx_y != $ffff from [43] irq_vsync::$2 = sin_idx_y == $ffff
+Inversing boolean not [52] irq_vsync::$1 = sin_idx_x != $f1 from [51] irq_vsync::$0 = sin_idx_x == $f1
+Inversing boolean not [56] irq_vsync::$3 = sin_idx_y != $ffff from [55] irq_vsync::$2 = sin_idx_y == $ffff
+Inversing boolean not [82] irq_vsync::$8 = irq_vsync::i_x#1 < $f1 from [81] irq_vsync::$7 = irq_vsync::i_x#1 >= $f1
+Inversing boolean not [89] irq_vsync::$10 = irq_vsync::i_y#1 < $fb from [88] irq_vsync::$9 = irq_vsync::i_y#1 >= $fb
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias memcpy_to_vram::end#0 = memcpy_to_vram::$3 
 Alias memcpy_to_vram::s#2 = memcpy_to_vram::s#3 
 Alias memcpy_to_vram::end#1 = memcpy_to_vram::end#2 
 Alias memcpy_to_vram::num#0 = main::$0 
-Alias memcpy_to_vram::num#1 = main::$2 
+Alias main::vram_sprite_attr#2 = main::vram_sprite_attr#4 main::vram_sprite_attr#3 
+Alias main::s#2 = main::s#4 main::s#3 
+Alias memcpy_to_vram::num#1 = main::$5 
+Alias irq_vsync::i_x#3 = irq_vsync::i_x#6 irq_vsync::i_x#4 
+Alias irq_vsync::i_y#3 = irq_vsync::i_y#6 irq_vsync::i_y#8 irq_vsync::i_y#7 
+Alias irq_vsync::vram_sprite_pos#2 = irq_vsync::vram_sprite_pos#4 irq_vsync::vram_sprite_pos#3 
+Alias irq_vsync::s#2 = irq_vsync::s#8 irq_vsync::s#7 irq_vsync::s#6 
+Alias irq_vsync::i_x#1 = irq_vsync::i_x#5 
+Alias irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#8 
+Alias irq_vsync::i_y#1 = irq_vsync::i_y#5 
+Alias irq_vsync::s#4 = irq_vsync::s#5 
+Alias irq_vsync::i_x#8 = irq_vsync::i_x#9 
+Alias irq_vsync::vram_sprite_pos#6 = irq_vsync::vram_sprite_pos#7 
+Successful SSA optimization Pass2AliasElimination
+Alias irq_vsync::i_y#3 = irq_vsync::i_y#4 
+Alias irq_vsync::s#2 = irq_vsync::s#4 irq_vsync::s#3 
+Alias irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#6 irq_vsync::vram_sprite_pos#5 
+Alias irq_vsync::i_x#7 = irq_vsync::i_x#8 
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values memcpy_to_vram::end#1 memcpy_to_vram::end#0
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition memcpy_to_vram::$4 [13] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2
-Simple Condition irq_vsync::$1 [36] if(sin_idx_x!=$f1) goto irq_vsync::@1
-Simple Condition irq_vsync::$3 [39] if(sin_idx_y!=$ffff) goto irq_vsync::@2
+Simple Condition main::$4 [26] if(main::s#2<$80) goto main::@2
+Simple Condition irq_vsync::$1 [46] if(sin_idx_x!=$f1) goto irq_vsync::@1
+Simple Condition irq_vsync::$3 [49] if(sin_idx_y!=$ffff) goto irq_vsync::@2
+Simple Condition irq_vsync::$4 [58] if(irq_vsync::s#2<$80) goto irq_vsync::@6
+Simple Condition irq_vsync::$8 [72] if(irq_vsync::i_x#1<$f1) goto irq_vsync::@8
+Simple Condition irq_vsync::$10 [78] if(irq_vsync::i_y#1<$fb) goto irq_vsync::@9
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [17] memcpy_to_vram::num#0 = sizeof  SPRITE_PIXELS
-Constant right-side identified [52] sin_idx_y = (unumber)$fb-1
+Constant right-side identified [55] sin_idx_y = (unumber)$fb-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant memcpy_to_vram::num#0 = sizeof SPRITE_PIXELS
 Constant memcpy_to_vram::vbank#0 = (byte)>SPRITE_PIXELS_VRAM
 Constant memcpy_to_vram::vdest#0 = (void*)<SPRITE_PIXELS_VRAM
 Constant memcpy_to_vram::src#0 = (void*)SPRITE_PIXELS
+Constant main::vram_sprite_attr#0 = (byte*)<VERA_SPRITE_ATTR
+Constant main::s#0 = 0
 Constant memcpy_to_vram::num#1 = SIZEOF_STRUCT_VERA_SPRITE
 Constant memcpy_to_vram::vbank#1 = (byte)>VERA_SPRITE_ATTR
-Constant memcpy_to_vram::vdest#1 = (void*)<VERA_SPRITE_ATTR
 Constant memcpy_to_vram::src#1 = (void*)&SPRITE_ATTR
-Constant memcpy_to_vram::vbank#2 = (byte)>VERA_SPRITE_ATTR
-Constant memcpy_to_vram::vdest#2 = (void*)<VERA_SPRITE_ATTR+2
+Constant main::$7 = SIZEOF_STRUCT_VERA_SPRITE
+Constant irq_vsync::vram_sprite_pos#0 = (byte*)<VERA_SPRITE_ATTR+2
+Constant irq_vsync::s#0 = 0
+Constant memcpy_to_vram::vbank#2 = irq_vsync::vram_sprite_attr_bank
 Constant memcpy_to_vram::src#2 = (void*)&SPRITE_ATTR+2
 Constant memcpy_to_vram::num#2 = 4
+Constant irq_vsync::$6 = SIZEOF_STRUCT_VERA_SPRITE
 Successful SSA optimization Pass2ConstantIdentification
-De-inlining pointer[w] to *(pointer+w)   [42] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = SINX[irq_vsync::$5]
-De-inlining pointer[w] to *(pointer+w)   [44] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = SINY[irq_vsync::$6]
+De-inlining pointer[w] to *(pointer+w)   [60] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = SINX[irq_vsync::$11]
+De-inlining pointer[w] to *(pointer+w)   [62] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = SINY[irq_vsync::$12]
 Successful SSA optimization Pass2DeInlineWordDerefIdx
 Simplifying constant evaluating to zero (byte)>SPRITE_PIXELS_VRAM in 
 Successful SSA optimization PassNSimplifyConstantZero
@@ -299,8 +503,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining Noop Cast [8] memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#3 keeping memcpy_to_vram::src#3
 Inlining Noop Cast [10] memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#3 keeping memcpy_to_vram::src#3
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift [30] irq_vsync::$5 = sin_idx_x * SIZEOF_WORD
-Rewriting multiplication to use shift [33] irq_vsync::$6 = sin_idx_y * SIZEOF_WORD
+Rewriting multiplication to use shift [42] irq_vsync::$11 = irq_vsync::i_x#3 * SIZEOF_WORD
+Rewriting multiplication to use shift [45] irq_vsync::$12 = irq_vsync::i_y#3 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings memcpy_to_vram::num#0
 Inlining constant with var siblings memcpy_to_vram::vbank#0
@@ -308,22 +512,28 @@ Inlining constant with var siblings memcpy_to_vram::vdest#0
 Inlining constant with var siblings memcpy_to_vram::src#0
 Inlining constant with var siblings memcpy_to_vram::num#1
 Inlining constant with var siblings memcpy_to_vram::vbank#1
-Inlining constant with var siblings memcpy_to_vram::vdest#1
 Inlining constant with var siblings memcpy_to_vram::src#1
 Inlining constant with var siblings memcpy_to_vram::vbank#2
-Inlining constant with var siblings memcpy_to_vram::vdest#2
 Inlining constant with var siblings memcpy_to_vram::src#2
 Inlining constant with var siblings memcpy_to_vram::num#2
+Inlining constant with var siblings main::vram_sprite_attr#0
+Inlining constant with var siblings main::s#0
+Inlining constant with var siblings irq_vsync::vram_sprite_pos#0
+Inlining constant with var siblings irq_vsync::s#0
 Constant inlined memcpy_to_vram::num#0 = (word)$40*$40*SIZEOF_BYTE
+Constant inlined main::s#0 = 0
 Constant inlined memcpy_to_vram::vdest#0 = (void*)<SPRITE_PIXELS_VRAM
-Constant inlined memcpy_to_vram::vdest#1 = (void*)<VERA_SPRITE_ATTR
-Constant inlined memcpy_to_vram::vdest#2 = (void*)<VERA_SPRITE_ATTR+2
+Constant inlined irq_vsync::vram_sprite_pos#0 = (byte*)<VERA_SPRITE_ATTR+2
+Constant inlined irq_vsync::s#0 = 0
+Constant inlined irq_vsync::$6 = SIZEOF_STRUCT_VERA_SPRITE
+Constant inlined main::vram_sprite_attr#0 = (byte*)<VERA_SPRITE_ATTR
 Constant inlined memcpy_to_vram::src#0 = (void*)SPRITE_PIXELS
 Constant inlined memcpy_to_vram::src#1 = (void*)&SPRITE_ATTR
 Constant inlined memcpy_to_vram::vbank#0 = 0
 Constant inlined memcpy_to_vram::src#2 = (void*)&SPRITE_ATTR+2
 Constant inlined memcpy_to_vram::vbank#1 = (byte)>VERA_SPRITE_ATTR
-Constant inlined memcpy_to_vram::vbank#2 = (byte)>VERA_SPRITE_ATTR
+Constant inlined memcpy_to_vram::vbank#2 = irq_vsync::vram_sprite_attr_bank
+Constant inlined main::$7 = SIZEOF_STRUCT_VERA_SPRITE
 Constant inlined memcpy_to_vram::num#2 = 4
 Constant inlined memcpy_to_vram::num#1 = SIZEOF_STRUCT_VERA_SPRITE
 Successful SSA optimization Pass2ConstantInlining
@@ -343,24 +553,43 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying constant integer cast $140-$20
 Simplifying constant integer cast $fb-1
 Successful SSA optimization PassNCastSimplification
+Added new block during phi lifting irq_vsync::@13(between irq_vsync::@12 and irq_vsync::@8)
+Added new block during phi lifting irq_vsync::@14(between irq_vsync::@8 and irq_vsync::@9)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@2
+Adding NOP phi() at start of main::@5
 CALL GRAPH
 Calls in [__start] to main:4 
-Calls in [irq_vsync] to memcpy_to_vram:19 
-Calls in [main] to memcpy_to_vram:24 memcpy_to_vram:26 
+Calls in [irq_vsync] to memcpy_to_vram:30 
+Calls in [main] to memcpy_to_vram:50 memcpy_to_vram:65 
 
-Created 5 initial phi equivalence classes
-Coalesced [49] memcpy_to_vram::s#5 = memcpy_to_vram::s#1
-Coalesced down to 5 phi equivalence classes
+Created 13 initial phi equivalence classes
+Coalesced [15] irq_vsync::i_x#10 = irq_vsync::i_x#0
+Coalesced [16] irq_vsync::i_y#10 = irq_vsync::i_y#0
+Coalesced [29] memcpy_to_vram::vdest#4 = memcpy_to_vram::vdest#2
+Coalesced [35] irq_vsync::i_x#12 = irq_vsync::i_x#2
+Coalesced [40] irq_vsync::i_y#12 = irq_vsync::i_y#2
+Coalesced [43] irq_vsync::s#9 = irq_vsync::s#1
+Coalesced [44] irq_vsync::i_x#11 = irq_vsync::i_x#7
+Coalesced [45] irq_vsync::i_y#11 = irq_vsync::i_y#9
+Coalesced [46] irq_vsync::vram_sprite_pos#9 = irq_vsync::vram_sprite_pos#1
+Coalesced [47] irq_vsync::i_y#13 = irq_vsync::i_y#1
+Coalesced [48] irq_vsync::i_x#13 = irq_vsync::i_x#1
+Coalesced [64] memcpy_to_vram::vdest#5 = memcpy_to_vram::vdest#1
+Coalesced [68] main::s#5 = main::s#1
+Coalesced [69] main::vram_sprite_attr#5 = main::vram_sprite_attr#1
+Coalesced [85] memcpy_to_vram::s#5 = memcpy_to_vram::s#1
+Coalesced down to 11 phi equivalence classes
 Culled Empty Block label __start::@2
+Culled Empty Block label irq_vsync::@14
+Culled Empty Block label irq_vsync::@13
+Culled Empty Block label main::@5
+Renumbering block main::@6 to main::@5
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
-Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
 
@@ -396,75 +625,118 @@ irq_vsync::@4: scope:[irq_vsync]  from irq_vsync::@1
   [11] sin_idx_y = $fb-1
   to:irq_vsync::@2
 irq_vsync::@2: scope:[irq_vsync]  from irq_vsync::@1 irq_vsync::@4
-  [12] irq_vsync::$5 = sin_idx_x << 1
-  [13] irq_vsync::$7 = SINX + irq_vsync::$5
-  [14] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$7
-  [15] irq_vsync::$6 = sin_idx_y << 1
-  [16] irq_vsync::$8 = SINY + irq_vsync::$6
-  [17] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$8
-  [18] call memcpy_to_vram 
+  [12] irq_vsync::i_x#0 = sin_idx_x
+  [13] irq_vsync::i_y#0 = sin_idx_y
   to:irq_vsync::@5
-irq_vsync::@5: scope:[irq_vsync]  from irq_vsync::@2
-  [19] *VERA_ISR = VERA_VSYNC
+irq_vsync::@5: scope:[irq_vsync]  from irq_vsync::@2 irq_vsync::@9
+  [14] irq_vsync::vram_sprite_pos#2 = phi( irq_vsync::@2/(byte*)<VERA_SPRITE_ATTR+2, irq_vsync::@9/irq_vsync::vram_sprite_pos#1 )
+  [14] irq_vsync::i_y#3 = phi( irq_vsync::@2/irq_vsync::i_y#0, irq_vsync::@9/irq_vsync::i_y#9 )
+  [14] irq_vsync::i_x#3 = phi( irq_vsync::@2/irq_vsync::i_x#0, irq_vsync::@9/irq_vsync::i_x#7 )
+  [14] irq_vsync::s#2 = phi( irq_vsync::@2/0, irq_vsync::@9/irq_vsync::s#1 )
+  [15] if(irq_vsync::s#2<$80) goto irq_vsync::@6
+  to:irq_vsync::@7
+irq_vsync::@7: scope:[irq_vsync]  from irq_vsync::@5
+  [16] *VERA_ISR = VERA_VSYNC
   asm { jmp$e034  }
   to:irq_vsync::@return
-irq_vsync::@return: scope:[irq_vsync]  from irq_vsync::@5
-  [21] return 
+irq_vsync::@return: scope:[irq_vsync]  from irq_vsync::@7
+  [18] return 
   to:@return
+irq_vsync::@6: scope:[irq_vsync]  from irq_vsync::@5
+  [19] irq_vsync::$11 = irq_vsync::i_x#3 << 1
+  [20] irq_vsync::$13 = SINX + irq_vsync::$11
+  [21] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$13
+  [22] irq_vsync::$12 = irq_vsync::i_y#3 << 1
+  [23] irq_vsync::$14 = SINY + irq_vsync::$12
+  [24] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$14
+  [25] memcpy_to_vram::vdest#2 = (void*)irq_vsync::vram_sprite_pos#2
+  [26] call memcpy_to_vram 
+  to:irq_vsync::@12
+irq_vsync::@12: scope:[irq_vsync]  from irq_vsync::@6
+  [27] irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#2 + SIZEOF_STRUCT_VERA_SPRITE
+  [28] irq_vsync::i_x#1 = irq_vsync::i_x#3 + 3
+  [29] if(irq_vsync::i_x#1<$f1) goto irq_vsync::@8
+  to:irq_vsync::@10
+irq_vsync::@10: scope:[irq_vsync]  from irq_vsync::@12
+  [30] irq_vsync::i_x#2 = irq_vsync::i_x#1 - $f1
+  to:irq_vsync::@8
+irq_vsync::@8: scope:[irq_vsync]  from irq_vsync::@10 irq_vsync::@12
+  [31] irq_vsync::i_x#7 = phi( irq_vsync::@10/irq_vsync::i_x#2, irq_vsync::@12/irq_vsync::i_x#1 )
+  [32] irq_vsync::i_y#1 = irq_vsync::i_y#3 + 5
+  [33] if(irq_vsync::i_y#1<$fb) goto irq_vsync::@9
+  to:irq_vsync::@11
+irq_vsync::@11: scope:[irq_vsync]  from irq_vsync::@8
+  [34] irq_vsync::i_y#2 = irq_vsync::i_y#1 - $fb
+  to:irq_vsync::@9
+irq_vsync::@9: scope:[irq_vsync]  from irq_vsync::@11 irq_vsync::@8
+  [35] irq_vsync::i_y#9 = phi( irq_vsync::@11/irq_vsync::i_y#2, irq_vsync::@8/irq_vsync::i_y#1 )
+  [36] irq_vsync::s#1 = ++ irq_vsync::s#2
+  to:irq_vsync::@5
 
 void main()
 main: scope:[main]  from __start::@1
-  [22] phi()
-  [23] call memcpy_to_vram 
-  to:main::@2
-main::@2: scope:[main]  from main
-  [24] phi()
-  [25] call memcpy_to_vram 
+  [37] phi()
+  [38] call memcpy_to_vram 
+  to:main::@1
+main::@1: scope:[main]  from main main::@5
+  [39] main::vram_sprite_attr#2 = phi( main/(byte*)<VERA_SPRITE_ATTR, main::@5/main::vram_sprite_attr#1 )
+  [39] main::s#2 = phi( main/0, main::@5/main::s#1 )
+  [40] if(main::s#2<$80) goto main::@2
   to:main::@3
-main::@3: scope:[main]  from main::@2
-  [26] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL
-  [27] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE
+main::@3: scope:[main]  from main::@1
+  [41] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL
+  [42] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE
   to:main::SEI1
 main::SEI1: scope:[main]  from main::@3
   asm { sei  }
-  to:main::@1
-main::@1: scope:[main]  from main::SEI1
-  [29] *KERNEL_IRQ = &irq_vsync
-  [30] *VERA_IEN = VERA_VSYNC
+  to:main::@4
+main::@4: scope:[main]  from main::SEI1
+  [44] *KERNEL_IRQ = &irq_vsync
+  [45] *VERA_IEN = VERA_VSYNC
   to:main::CLI1
-main::CLI1: scope:[main]  from main::@1
+main::CLI1: scope:[main]  from main::@4
   asm { cli  }
   to:main::@return
 main::@return: scope:[main]  from main::CLI1
-  [32] return 
+  [47] return 
   to:@return
+main::@2: scope:[main]  from main::@1
+  [48] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a
+  [49] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a
+  [50] memcpy_to_vram::vdest#1 = (void*)main::vram_sprite_attr#2
+  [51] call memcpy_to_vram 
+  to:main::@5
+main::@5: scope:[main]  from main::@2
+  [52] main::vram_sprite_attr#1 = main::vram_sprite_attr#2 + SIZEOF_STRUCT_VERA_SPRITE
+  [53] main::s#1 = ++ main::s#2
+  to:main::@1
 
 void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-memcpy_to_vram: scope:[memcpy_to_vram]  from irq_vsync::@2 main main::@2
-  [33] memcpy_to_vram::num#3 = phi( irq_vsync::@2/4, main/(word)$40*$40*SIZEOF_BYTE, main::@2/SIZEOF_STRUCT_VERA_SPRITE )
-  [33] memcpy_to_vram::src#3 = phi( irq_vsync::@2/(void*)&SPRITE_ATTR+2, main/(void*)SPRITE_PIXELS, main::@2/(void*)&SPRITE_ATTR )
-  [33] memcpy_to_vram::vbank#3 = phi( irq_vsync::@2/(byte)>VERA_SPRITE_ATTR, main/0, main::@2/(byte)>VERA_SPRITE_ATTR )
-  [33] memcpy_to_vram::vdest#3 = phi( irq_vsync::@2/(void*)<VERA_SPRITE_ATTR+2, main/(void*)<SPRITE_PIXELS_VRAM, main::@2/(void*)<VERA_SPRITE_ATTR )
-  [34] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
-  [35] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3
-  [36] *VERA_ADDRX_L = memcpy_to_vram::$0
-  [37] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#3
-  [38] *VERA_ADDRX_M = memcpy_to_vram::$1
-  [39] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3
-  [40] *VERA_ADDRX_H = memcpy_to_vram::$2
-  [41] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3
-  [42] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3
+memcpy_to_vram: scope:[memcpy_to_vram]  from irq_vsync::@6 main main::@2
+  [54] memcpy_to_vram::num#3 = phi( irq_vsync::@6/4, main/(word)$40*$40*SIZEOF_BYTE, main::@2/SIZEOF_STRUCT_VERA_SPRITE )
+  [54] memcpy_to_vram::src#3 = phi( irq_vsync::@6/(void*)&SPRITE_ATTR+2, main/(void*)SPRITE_PIXELS, main::@2/(void*)&SPRITE_ATTR )
+  [54] memcpy_to_vram::vbank#3 = phi( irq_vsync::@6/irq_vsync::vram_sprite_attr_bank, main/0, main::@2/(byte)>VERA_SPRITE_ATTR )
+  [54] memcpy_to_vram::vdest#3 = phi( irq_vsync::@6/memcpy_to_vram::vdest#2, main/(void*)<SPRITE_PIXELS_VRAM, main::@2/memcpy_to_vram::vdest#1 )
+  [55] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL
+  [56] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3
+  [57] *VERA_ADDRX_L = memcpy_to_vram::$0
+  [58] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#3
+  [59] *VERA_ADDRX_M = memcpy_to_vram::$1
+  [60] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3
+  [61] *VERA_ADDRX_H = memcpy_to_vram::$2
+  [62] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3
+  [63] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
-  [43] memcpy_to_vram::s#2 = phi( memcpy_to_vram/memcpy_to_vram::s#4, memcpy_to_vram::@2/memcpy_to_vram::s#1 )
-  [44] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2
+  [64] memcpy_to_vram::s#2 = phi( memcpy_to_vram/memcpy_to_vram::s#4, memcpy_to_vram::@2/memcpy_to_vram::s#1 )
+  [65] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2
   to:memcpy_to_vram::@return
 memcpy_to_vram::@return: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
-  [45] return 
+  [66] return 
   to:@return
 memcpy_to_vram::@2: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
-  [46] *VERA_DATA0 = *memcpy_to_vram::s#2
-  [47] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2
+  [67] *VERA_DATA0 = *memcpy_to_vram::s#2
+  [68] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2
   to:memcpy_to_vram::@1
 
 
@@ -472,181 +744,267 @@ VARIABLE REGISTER WEIGHTS
 struct VERA_SPRITE SPRITE_ATTR loadstore = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
 void __start()
 void irq_vsync()
-word~ irq_vsync::$5 4.0
-word~ irq_vsync::$6 4.0
-word*~ irq_vsync::$7 4.0
-word*~ irq_vsync::$8 4.0
+word~ irq_vsync::$11 22.0
+word~ irq_vsync::$12 22.0
+word*~ irq_vsync::$13 22.0
+word*~ irq_vsync::$14 22.0
+word irq_vsync::i_x
+word irq_vsync::i_x#0 2.0
+word irq_vsync::i_x#1 22.0
+word irq_vsync::i_x#2 22.0
+word irq_vsync::i_x#3 3.1818181818181817
+word irq_vsync::i_x#7 5.5
+word irq_vsync::i_y
+word irq_vsync::i_y#0 4.0
+word irq_vsync::i_y#1 22.0
+word irq_vsync::i_y#2 22.0
+word irq_vsync::i_y#3 2.333333333333333
+word irq_vsync::i_y#9 16.5
+byte irq_vsync::s
+byte irq_vsync::s#1 22.0
+byte irq_vsync::s#2 1.736842105263158
+byte* irq_vsync::vram_sprite_pos
+byte* irq_vsync::vram_sprite_pos#1 2.2
+byte* irq_vsync::vram_sprite_pos#2 2.2
 void main()
+byte main::s
+byte main::s#1 202.0
+byte main::s#2 43.285714285714285
+byte* main::vram_sprite_attr
+byte* main::vram_sprite_attr#1 101.0
+byte* main::vram_sprite_attr#2 33.666666666666664
 void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-byte~ memcpy_to_vram::$0 202.0
-byte~ memcpy_to_vram::$1 202.0
-byte~ memcpy_to_vram::$2 202.0
+byte~ memcpy_to_vram::$0 2002.0
+byte~ memcpy_to_vram::$1 2002.0
+byte~ memcpy_to_vram::$2 2002.0
 byte* memcpy_to_vram::end
-byte* memcpy_to_vram::end#0 183.66666666666669
+byte* memcpy_to_vram::end#0 16833.666666666664
 word memcpy_to_vram::num
-word memcpy_to_vram::num#3 12.625
+word memcpy_to_vram::num#3 125.125
 byte* memcpy_to_vram::s
-byte* memcpy_to_vram::s#1 2002.0
-byte* memcpy_to_vram::s#2 1368.3333333333335
-byte* memcpy_to_vram::s#4 202.0
+byte* memcpy_to_vram::s#1 200002.0
+byte* memcpy_to_vram::s#2 133668.3333333333
+byte* memcpy_to_vram::s#4 2002.0
 void* memcpy_to_vram::src
 void* memcpy_to_vram::src#3
 byte memcpy_to_vram::vbank
-byte memcpy_to_vram::vbank#3 16.833333333333332
+byte memcpy_to_vram::vbank#3 166.83333333333334
 void* memcpy_to_vram::vdest
-void* memcpy_to_vram::vdest#3 50.5
+void* memcpy_to_vram::vdest#1 202.0
+void* memcpy_to_vram::vdest#2 22.0
+void* memcpy_to_vram::vdest#3 528.5
 volatile word sin_idx_x loadstore 1.9999999999999998
-volatile word sin_idx_y loadstore 1.3333333333333335
+volatile word sin_idx_y loadstore 1.714285714285714
 
 Initial phi equivalence classes
-[ memcpy_to_vram::vdest#3 ]
+[ irq_vsync::s#2 irq_vsync::s#1 ]
+[ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ]
+[ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ]
+[ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ]
+[ main::s#2 main::s#1 ]
+[ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ]
+[ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ]
 [ memcpy_to_vram::vbank#3 ]
 [ memcpy_to_vram::src#3 ]
 [ memcpy_to_vram::num#3 ]
 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
 Added variable sin_idx_x to live range equivalence class [ sin_idx_x ]
 Added variable sin_idx_y to live range equivalence class [ sin_idx_y ]
-Added variable irq_vsync::$5 to live range equivalence class [ irq_vsync::$5 ]
-Added variable irq_vsync::$7 to live range equivalence class [ irq_vsync::$7 ]
-Added variable irq_vsync::$6 to live range equivalence class [ irq_vsync::$6 ]
-Added variable irq_vsync::$8 to live range equivalence class [ irq_vsync::$8 ]
+Added variable irq_vsync::$11 to live range equivalence class [ irq_vsync::$11 ]
+Added variable irq_vsync::$13 to live range equivalence class [ irq_vsync::$13 ]
+Added variable irq_vsync::$12 to live range equivalence class [ irq_vsync::$12 ]
+Added variable irq_vsync::$14 to live range equivalence class [ irq_vsync::$14 ]
 Added variable memcpy_to_vram::$0 to live range equivalence class [ memcpy_to_vram::$0 ]
 Added variable memcpy_to_vram::$1 to live range equivalence class [ memcpy_to_vram::$1 ]
 Added variable memcpy_to_vram::$2 to live range equivalence class [ memcpy_to_vram::$2 ]
 Added variable memcpy_to_vram::end#0 to live range equivalence class [ memcpy_to_vram::end#0 ]
 Added variable SPRITE_ATTR to live range equivalence class [ SPRITE_ATTR ]
 Complete equivalence classes
-[ memcpy_to_vram::vdest#3 ]
+[ irq_vsync::s#2 irq_vsync::s#1 ]
+[ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ]
+[ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ]
+[ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ]
+[ main::s#2 main::s#1 ]
+[ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ]
+[ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ]
 [ memcpy_to_vram::vbank#3 ]
 [ memcpy_to_vram::src#3 ]
 [ memcpy_to_vram::num#3 ]
 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
 [ sin_idx_x ]
 [ sin_idx_y ]
-[ irq_vsync::$5 ]
-[ irq_vsync::$7 ]
-[ irq_vsync::$6 ]
-[ irq_vsync::$8 ]
+[ irq_vsync::$11 ]
+[ irq_vsync::$13 ]
+[ irq_vsync::$12 ]
+[ irq_vsync::$14 ]
 [ memcpy_to_vram::$0 ]
 [ memcpy_to_vram::$1 ]
 [ memcpy_to_vram::$2 ]
 [ memcpy_to_vram::end#0 ]
 [ SPRITE_ATTR ]
-Allocated zp[2]:2 [ memcpy_to_vram::vdest#3 ]
-Allocated zp[1]:4 [ memcpy_to_vram::vbank#3 ]
-Allocated zp[2]:5 [ memcpy_to_vram::src#3 ]
-Allocated zp[2]:7 [ memcpy_to_vram::num#3 ]
-Allocated zp[2]:9 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
-Allocated zp[2]:11 [ sin_idx_x ]
-Allocated zp[2]:13 [ sin_idx_y ]
-Allocated zp[2]:15 [ irq_vsync::$5 ]
-Allocated zp[2]:17 [ irq_vsync::$7 ]
-Allocated zp[2]:19 [ irq_vsync::$6 ]
-Allocated zp[2]:21 [ irq_vsync::$8 ]
-Allocated zp[1]:23 [ memcpy_to_vram::$0 ]
-Allocated zp[1]:24 [ memcpy_to_vram::$1 ]
-Allocated zp[1]:25 [ memcpy_to_vram::$2 ]
-Allocated zp[2]:26 [ memcpy_to_vram::end#0 ]
+Allocated zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
+Allocated zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ]
+Allocated zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ]
+Allocated zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ]
+Allocated zp[1]:9 [ main::s#2 main::s#1 ]
+Allocated zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ]
+Allocated zp[2]:12 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ]
+Allocated zp[1]:14 [ memcpy_to_vram::vbank#3 ]
+Allocated zp[2]:15 [ memcpy_to_vram::src#3 ]
+Allocated zp[2]:17 [ memcpy_to_vram::num#3 ]
+Allocated zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
+Allocated zp[2]:21 [ sin_idx_x ]
+Allocated zp[2]:23 [ sin_idx_y ]
+Allocated zp[2]:25 [ irq_vsync::$11 ]
+Allocated zp[2]:27 [ irq_vsync::$13 ]
+Allocated zp[2]:29 [ irq_vsync::$12 ]
+Allocated zp[2]:31 [ irq_vsync::$14 ]
+Allocated zp[1]:33 [ memcpy_to_vram::$0 ]
+Allocated zp[1]:34 [ memcpy_to_vram::$1 ]
+Allocated zp[1]:35 [ memcpy_to_vram::$2 ]
+Allocated zp[2]:36 [ memcpy_to_vram::end#0 ]
 Allocated mem[8] [ SPRITE_ATTR ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [1] sin_idx_x = $77 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] sin_idx_y = $4f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] sin_idx_x = $77 [ SPRITE_ATTR ] (  [ SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [2] sin_idx_y = $4f [ SPRITE_ATTR ] (  [ SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [7] if(sin_idx_x!=$f1) goto irq_vsync::@1 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [8] sin_idx_x = 0 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [9] sin_idx_y = -- sin_idx_y [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [10] if(sin_idx_y!=$ffff) goto irq_vsync::@2 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [11] sin_idx_y = $fb-1 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
-Statement [12] irq_vsync::$5 = sin_idx_x << 1 [ sin_idx_y irq_vsync::$5 SPRITE_ATTR ] (  [ sin_idx_y irq_vsync::$5 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
-Statement [13] irq_vsync::$7 = SINX + irq_vsync::$5 [ sin_idx_y irq_vsync::$7 SPRITE_ATTR ] (  [ sin_idx_y irq_vsync::$7 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
-Statement [14] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$7 [ sin_idx_y SPRITE_ATTR ] (  [ sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a reg byte y 
-Statement [15] irq_vsync::$6 = sin_idx_y << 1 [ SPRITE_ATTR irq_vsync::$6 ] (  [ SPRITE_ATTR irq_vsync::$6 ] { }  ) always clobbers reg byte a 
-Statement [16] irq_vsync::$8 = SINY + irq_vsync::$6 [ SPRITE_ATTR irq_vsync::$8 ] (  [ SPRITE_ATTR irq_vsync::$8 ] { }  ) always clobbers reg byte a 
-Statement [17] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$8 [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] *VERA_ISR = VERA_VSYNC [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [26] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [27] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [29] *KERNEL_IRQ = &irq_vsync [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [30] *VERA_IEN = VERA_VSYNC [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [34] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] ( memcpy_to_vram:18 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  ) always clobbers reg byte a 
-Removing always clobbered register reg byte a as potential for zp[1]:4 [ memcpy_to_vram::vbank#3 ]
-Statement [39] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] ( memcpy_to_vram:18 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  ) always clobbers reg byte a 
-Statement [41] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] ( memcpy_to_vram:18 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  ) always clobbers reg byte a 
-Statement [42] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] ( memcpy_to_vram:18 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  ) always clobbers reg byte a 
-Statement [44] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:18 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a 
-Statement [46] *VERA_DATA0 = *memcpy_to_vram::s#2 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:18 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [1] sin_idx_x = $77 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [2] sin_idx_y = $4f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] irq_vsync::i_x#0 = sin_idx_x [ sin_idx_y irq_vsync::i_x#0 SPRITE_ATTR ] (  [ sin_idx_y irq_vsync::i_x#0 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [13] irq_vsync::i_y#0 = sin_idx_y [ irq_vsync::i_x#0 irq_vsync::i_y#0 SPRITE_ATTR ] (  [ irq_vsync::i_x#0 irq_vsync::i_y#0 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [16] *VERA_ISR = VERA_VSYNC [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [19] irq_vsync::$11 = irq_vsync::i_x#3 << 1 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$11 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$11 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
+Statement [20] irq_vsync::$13 = SINX + irq_vsync::$11 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$13 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$13 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [21] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$13 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
+Statement [22] irq_vsync::$12 = irq_vsync::i_y#3 << 1 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$12 ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$12 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [23] irq_vsync::$14 = SINY + irq_vsync::$12 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$14 ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$14 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [24] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$14 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a reg byte y 
+Statement [25] memcpy_to_vram::vdest#2 = (void*)irq_vsync::vram_sprite_pos#2 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::vdest#2 ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::vdest#2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [27] irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#2 + SIZEOF_STRUCT_VERA_SPRITE [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [28] irq_vsync::i_x#1 = irq_vsync::i_x#3 + 3 [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] (  [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] { }  ) always clobbers reg byte a 
+Statement [29] if(irq_vsync::i_x#1<$f1) goto irq_vsync::@8 [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] (  [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] { }  ) always clobbers reg byte a 
+Statement [30] irq_vsync::i_x#2 = irq_vsync::i_x#1 - $f1 [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#2 ] (  [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#2 ] { }  ) always clobbers reg byte a 
+Statement [32] irq_vsync::i_y#1 = irq_vsync::i_y#3 + 5 [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] (  [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] { }  ) always clobbers reg byte a 
+Statement [33] if(irq_vsync::i_y#1<$fb) goto irq_vsync::@9 [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] (  [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] { }  ) always clobbers reg byte a 
+Statement [34] irq_vsync::i_y#2 = irq_vsync::i_y#1 - $fb [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#2 ] (  [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#2 ] { }  ) always clobbers reg byte a 
+Statement [41] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [42] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [44] *KERNEL_IRQ = &irq_vsync [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [45] *VERA_IEN = VERA_VSYNC [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [48] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:9 [ main::s#2 main::s#1 ]
+Statement [49] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [50] memcpy_to_vram::vdest#1 = (void*)main::vram_sprite_attr#2 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 memcpy_to_vram::vdest#1 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 memcpy_to_vram::vdest#1 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [52] main::vram_sprite_attr#1 = main::vram_sprite_attr#2 + SIZEOF_STRUCT_VERA_SPRITE [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#1 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#1 ] { }  ) always clobbers reg byte a 
+Statement [55] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Removing always clobbered register reg byte a as potential for zp[1]:14 [ memcpy_to_vram::vbank#3 ]
+Statement [60] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [62] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [63] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [65] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [67] *VERA_DATA0 = *memcpy_to_vram::s#2 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a reg byte y 
+Removing always clobbered register reg byte y as potential for zp[1]:9 [ main::s#2 main::s#1 ]
+Statement [1] sin_idx_x = $77 [ SPRITE_ATTR ] (  [ SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [2] sin_idx_y = $4f [ SPRITE_ATTR ] (  [ SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [7] if(sin_idx_x!=$f1) goto irq_vsync::@1 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [8] sin_idx_x = 0 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [9] sin_idx_y = -- sin_idx_y [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [10] if(sin_idx_y!=$ffff) goto irq_vsync::@2 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
 Statement [11] sin_idx_y = $fb-1 [ sin_idx_x sin_idx_y SPRITE_ATTR ] (  [ sin_idx_x sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a 
-Statement [12] irq_vsync::$5 = sin_idx_x << 1 [ sin_idx_y irq_vsync::$5 SPRITE_ATTR ] (  [ sin_idx_y irq_vsync::$5 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
-Statement [13] irq_vsync::$7 = SINX + irq_vsync::$5 [ sin_idx_y irq_vsync::$7 SPRITE_ATTR ] (  [ sin_idx_y irq_vsync::$7 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
-Statement [14] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$7 [ sin_idx_y SPRITE_ATTR ] (  [ sin_idx_y SPRITE_ATTR ] { }  ) always clobbers reg byte a reg byte y 
-Statement [15] irq_vsync::$6 = sin_idx_y << 1 [ SPRITE_ATTR irq_vsync::$6 ] (  [ SPRITE_ATTR irq_vsync::$6 ] { }  ) always clobbers reg byte a 
-Statement [16] irq_vsync::$8 = SINY + irq_vsync::$6 [ SPRITE_ATTR irq_vsync::$8 ] (  [ SPRITE_ATTR irq_vsync::$8 ] { }  ) always clobbers reg byte a 
-Statement [17] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$8 [ ] (  [ ] { }  ) always clobbers reg byte a reg byte y 
-Statement [19] *VERA_ISR = VERA_VSYNC [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [26] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [27] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [29] *KERNEL_IRQ = &irq_vsync [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [30] *VERA_IEN = VERA_VSYNC [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
-Statement [34] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] ( memcpy_to_vram:18 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  ) always clobbers reg byte a 
-Statement [39] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] ( memcpy_to_vram:18 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  ) always clobbers reg byte a 
-Statement [41] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] ( memcpy_to_vram:18 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  ) always clobbers reg byte a 
-Statement [42] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] ( memcpy_to_vram:18 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  ) always clobbers reg byte a 
-Statement [44] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:18 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a 
-Statement [46] *VERA_DATA0 = *memcpy_to_vram::s#2 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:18 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:23 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:25 [ memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[2]:2 [ memcpy_to_vram::vdest#3 ] : zp[2]:2 , 
-Potential registers zp[1]:4 [ memcpy_to_vram::vbank#3 ] : zp[1]:4 , reg byte x , reg byte y , 
-Potential registers zp[2]:5 [ memcpy_to_vram::src#3 ] : zp[2]:5 , 
-Potential registers zp[2]:7 [ memcpy_to_vram::num#3 ] : zp[2]:7 , 
-Potential registers zp[2]:9 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] : zp[2]:9 , 
-Potential registers zp[2]:11 [ sin_idx_x ] : zp[2]:11 , 
-Potential registers zp[2]:13 [ sin_idx_y ] : zp[2]:13 , 
-Potential registers zp[2]:15 [ irq_vsync::$5 ] : zp[2]:15 , 
-Potential registers zp[2]:17 [ irq_vsync::$7 ] : zp[2]:17 , 
-Potential registers zp[2]:19 [ irq_vsync::$6 ] : zp[2]:19 , 
-Potential registers zp[2]:21 [ irq_vsync::$8 ] : zp[2]:21 , 
-Potential registers zp[1]:23 [ memcpy_to_vram::$0 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:24 [ memcpy_to_vram::$1 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:25 [ memcpy_to_vram::$2 ] : zp[1]:25 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:26 [ memcpy_to_vram::end#0 ] : zp[2]:26 , 
+Statement [12] irq_vsync::i_x#0 = sin_idx_x [ sin_idx_y irq_vsync::i_x#0 SPRITE_ATTR ] (  [ sin_idx_y irq_vsync::i_x#0 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [13] irq_vsync::i_y#0 = sin_idx_y [ irq_vsync::i_x#0 irq_vsync::i_y#0 SPRITE_ATTR ] (  [ irq_vsync::i_x#0 irq_vsync::i_y#0 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [16] *VERA_ISR = VERA_VSYNC [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [19] irq_vsync::$11 = irq_vsync::i_x#3 << 1 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$11 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$11 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [20] irq_vsync::$13 = SINX + irq_vsync::$11 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$13 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 irq_vsync::$13 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [21] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$13 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a reg byte y 
+Statement [22] irq_vsync::$12 = irq_vsync::i_y#3 << 1 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$12 ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$12 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [23] irq_vsync::$14 = SINY + irq_vsync::$12 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$14 ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR irq_vsync::$14 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [24] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$14 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a reg byte y 
+Statement [25] memcpy_to_vram::vdest#2 = (void*)irq_vsync::vram_sprite_pos#2 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::vdest#2 ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::vdest#2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [27] irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#2 + SIZEOF_STRUCT_VERA_SPRITE [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR ] (  [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR ] { }  ) always clobbers reg byte a 
+Statement [28] irq_vsync::i_x#1 = irq_vsync::i_x#3 + 3 [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] (  [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] { }  ) always clobbers reg byte a 
+Statement [29] if(irq_vsync::i_x#1<$f1) goto irq_vsync::@8 [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] (  [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#1 ] { }  ) always clobbers reg byte a 
+Statement [30] irq_vsync::i_x#2 = irq_vsync::i_x#1 - $f1 [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#2 ] (  [ irq_vsync::s#2 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_x#2 ] { }  ) always clobbers reg byte a 
+Statement [32] irq_vsync::i_y#1 = irq_vsync::i_y#3 + 5 [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] (  [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] { }  ) always clobbers reg byte a 
+Statement [33] if(irq_vsync::i_y#1<$fb) goto irq_vsync::@9 [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] (  [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#1 ] { }  ) always clobbers reg byte a 
+Statement [34] irq_vsync::i_y#2 = irq_vsync::i_y#1 - $fb [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#2 ] (  [ irq_vsync::s#2 irq_vsync::i_x#7 irq_vsync::vram_sprite_pos#1 SPRITE_ATTR irq_vsync::i_y#2 ] { }  ) always clobbers reg byte a 
+Statement [41] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [42] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [44] *KERNEL_IRQ = &irq_vsync [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [45] *VERA_IEN = VERA_VSYNC [ ] ( main:4 [ ] { }  ) always clobbers reg byte a 
+Statement [48] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [49] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [50] memcpy_to_vram::vdest#1 = (void*)main::vram_sprite_attr#2 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 memcpy_to_vram::vdest#1 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#2 memcpy_to_vram::vdest#1 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [52] main::vram_sprite_attr#1 = main::vram_sprite_attr#2 + SIZEOF_STRUCT_VERA_SPRITE [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#1 ] ( main:4 [ SPRITE_ATTR main::s#2 main::vram_sprite_attr#1 ] { }  ) always clobbers reg byte a 
+Statement [55] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL [ SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::vdest#3 memcpy_to_vram::vbank#3 memcpy_to_vram::src#3 memcpy_to_vram::num#3 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [60] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::num#3 memcpy_to_vram::$2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [62] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::src#3 memcpy_to_vram::end#0 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [63] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#4 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [65] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a 
+Statement [67] *VERA_DATA0 = *memcpy_to_vram::s#2 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] ( memcpy_to_vram:26 [ irq_vsync::s#2 irq_vsync::i_x#3 irq_vsync::i_y#3 irq_vsync::vram_sprite_pos#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#2 = memcpy_to_vram::vdest#3 } }  main:4::memcpy_to_vram:38 [ SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { }  main:4::memcpy_to_vram:51 [ main::s#2 main::vram_sprite_attr#2 SPRITE_ATTR memcpy_to_vram::end#0 memcpy_to_vram::s#2 ] { { memcpy_to_vram::vdest#1 = memcpy_to_vram::vdest#3 } }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] : zp[1]:2 , reg byte x , 
+Potential registers zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ] : zp[2]:3 , 
+Potential registers zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ] : zp[2]:5 , 
+Potential registers zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ] : zp[2]:7 , 
+Potential registers zp[1]:9 [ main::s#2 main::s#1 ] : zp[1]:9 , reg byte x , 
+Potential registers zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ] : zp[2]:10 , 
+Potential registers zp[2]:12 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ] : zp[2]:12 , 
+Potential registers zp[1]:14 [ memcpy_to_vram::vbank#3 ] : zp[1]:14 , reg byte x , reg byte y , 
+Potential registers zp[2]:15 [ memcpy_to_vram::src#3 ] : zp[2]:15 , 
+Potential registers zp[2]:17 [ memcpy_to_vram::num#3 ] : zp[2]:17 , 
+Potential registers zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] : zp[2]:19 , 
+Potential registers zp[2]:21 [ sin_idx_x ] : zp[2]:21 , 
+Potential registers zp[2]:23 [ sin_idx_y ] : zp[2]:23 , 
+Potential registers zp[2]:25 [ irq_vsync::$11 ] : zp[2]:25 , 
+Potential registers zp[2]:27 [ irq_vsync::$13 ] : zp[2]:27 , 
+Potential registers zp[2]:29 [ irq_vsync::$12 ] : zp[2]:29 , 
+Potential registers zp[2]:31 [ irq_vsync::$14 ] : zp[2]:31 , 
+Potential registers zp[1]:33 [ memcpy_to_vram::$0 ] : zp[1]:33 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:34 [ memcpy_to_vram::$1 ] : zp[1]:34 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:35 [ memcpy_to_vram::$2 ] : zp[1]:35 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:36 [ memcpy_to_vram::end#0 ] : zp[2]:36 , 
 Potential registers mem[8] [ SPRITE_ATTR ] : mem[8] , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [memcpy_to_vram] 3,572.33: zp[2]:9 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] 202: zp[1]:23 [ memcpy_to_vram::$0 ] 202: zp[1]:24 [ memcpy_to_vram::$1 ] 202: zp[1]:25 [ memcpy_to_vram::$2 ] 183.67: zp[2]:26 [ memcpy_to_vram::end#0 ] 50.5: zp[2]:2 [ memcpy_to_vram::vdest#3 ] 16.83: zp[1]:4 [ memcpy_to_vram::vbank#3 ] 12.62: zp[2]:7 [ memcpy_to_vram::num#3 ] 0: zp[2]:5 [ memcpy_to_vram::src#3 ] 
-Uplift Scope [irq_vsync] 4: zp[2]:15 [ irq_vsync::$5 ] 4: zp[2]:17 [ irq_vsync::$7 ] 4: zp[2]:19 [ irq_vsync::$6 ] 4: zp[2]:21 [ irq_vsync::$8 ] 
-Uplift Scope [] 2: zp[2]:11 [ sin_idx_x ] 1.33: zp[2]:13 [ sin_idx_y ] 0: mem[8] [ SPRITE_ATTR ] 
+Uplift Scope [memcpy_to_vram] 335,672.33: zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] 16,833.67: zp[2]:36 [ memcpy_to_vram::end#0 ] 2,002: zp[1]:33 [ memcpy_to_vram::$0 ] 2,002: zp[1]:34 [ memcpy_to_vram::$1 ] 2,002: zp[1]:35 [ memcpy_to_vram::$2 ] 752.5: zp[2]:12 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ] 166.83: zp[1]:14 [ memcpy_to_vram::vbank#3 ] 125.12: zp[2]:17 [ memcpy_to_vram::num#3 ] 0: zp[2]:15 [ memcpy_to_vram::src#3 ] 
+Uplift Scope [main] 245.29: zp[1]:9 [ main::s#2 main::s#1 ] 134.67: zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ] 
+Uplift Scope [irq_vsync] 66.83: zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ] 54.68: zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ] 23.74: zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] 22: zp[2]:25 [ irq_vsync::$11 ] 22: zp[2]:27 [ irq_vsync::$13 ] 22: zp[2]:29 [ irq_vsync::$12 ] 22: zp[2]:31 [ irq_vsync::$14 ] 4.4: zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ] 
+Uplift Scope [] 2: zp[2]:21 [ sin_idx_x ] 1.71: zp[2]:23 [ sin_idx_y ] 0: mem[8] [ SPRITE_ATTR ] 
 Uplift Scope [VERA_SPRITE] 
 Uplift Scope [MOS6522_VIA] 
-Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [memcpy_to_vram] best 1042 combination zp[2]:9 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] reg byte a [ memcpy_to_vram::$0 ] reg byte a [ memcpy_to_vram::$1 ] reg byte a [ memcpy_to_vram::$2 ] zp[2]:26 [ memcpy_to_vram::end#0 ] zp[2]:2 [ memcpy_to_vram::vdest#3 ] reg byte x [ memcpy_to_vram::vbank#3 ] zp[2]:7 [ memcpy_to_vram::num#3 ] zp[2]:5 [ memcpy_to_vram::src#3 ] 
+Uplifting [memcpy_to_vram] best 9419 combination zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] zp[2]:36 [ memcpy_to_vram::end#0 ] reg byte a [ memcpy_to_vram::$0 ] reg byte a [ memcpy_to_vram::$1 ] reg byte a [ memcpy_to_vram::$2 ] zp[2]:12 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ] reg byte x [ memcpy_to_vram::vbank#3 ] zp[2]:17 [ memcpy_to_vram::num#3 ] zp[2]:15 [ memcpy_to_vram::src#3 ] 
 Limited combination testing to 100 combinations of 192 possible.
-Uplifting [irq_vsync] best 1042 combination zp[2]:15 [ irq_vsync::$5 ] zp[2]:17 [ irq_vsync::$7 ] zp[2]:19 [ irq_vsync::$6 ] zp[2]:21 [ irq_vsync::$8 ] 
-Uplifting [] best 1042 combination zp[2]:11 [ sin_idx_x ] zp[2]:13 [ sin_idx_y ] mem[8] [ SPRITE_ATTR ] 
-Uplifting [VERA_SPRITE] best 1042 combination 
-Uplifting [MOS6522_VIA] best 1042 combination 
-Uplifting [main] best 1042 combination 
-Uplifting [__start] best 1042 combination 
-Coalescing zero page register [ zp[2]:5 [ memcpy_to_vram::src#3 ] ] with [ zp[2]:9 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] ] - score: 1
-Coalescing zero page register [ zp[2]:7 [ memcpy_to_vram::num#3 ] ] with [ zp[2]:26 [ memcpy_to_vram::end#0 ] ] - score: 1
-Coalescing zero page register [ zp[2]:15 [ irq_vsync::$5 ] ] with [ zp[2]:17 [ irq_vsync::$7 ] ] - score: 1
-Coalescing zero page register [ zp[2]:19 [ irq_vsync::$6 ] ] with [ zp[2]:21 [ irq_vsync::$8 ] ] - score: 1
-Allocated (was zp[2]:5) zp[2]:4 [ memcpy_to_vram::src#3 memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
-Allocated (was zp[2]:7) zp[2]:6 [ memcpy_to_vram::num#3 memcpy_to_vram::end#0 ]
-Allocated (was zp[2]:11) zp[2]:8 [ sin_idx_x ]
-Allocated (was zp[2]:13) zp[2]:10 [ sin_idx_y ]
-Allocated (was zp[2]:15) zp[2]:12 [ irq_vsync::$5 irq_vsync::$7 ]
-Allocated (was zp[2]:19) zp[2]:14 [ irq_vsync::$6 irq_vsync::$8 ]
+Uplifting [main] best 9419 combination zp[1]:9 [ main::s#2 main::s#1 ] zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ] 
+Uplifting [irq_vsync] best 9419 combination zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ] zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ] zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] zp[2]:25 [ irq_vsync::$11 ] zp[2]:27 [ irq_vsync::$13 ] zp[2]:29 [ irq_vsync::$12 ] zp[2]:31 [ irq_vsync::$14 ] zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ] 
+Uplifting [] best 9419 combination zp[2]:21 [ sin_idx_x ] zp[2]:23 [ sin_idx_y ] mem[8] [ SPRITE_ATTR ] 
+Uplifting [VERA_SPRITE] best 9419 combination 
+Uplifting [MOS6522_VIA] best 9419 combination 
+Uplifting [__start] best 9419 combination 
+Attempting to uplift remaining variables inzp[1]:9 [ main::s#2 main::s#1 ]
+Uplifting [main] best 9419 combination zp[1]:9 [ main::s#2 main::s#1 ] 
+Attempting to uplift remaining variables inzp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
+Uplifting [irq_vsync] best 9419 combination zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] 
+Coalescing zero page register [ zp[2]:15 [ memcpy_to_vram::src#3 ] ] with [ zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] ] - score: 1
+Coalescing zero page register [ zp[2]:17 [ memcpy_to_vram::num#3 ] ] with [ zp[2]:36 [ memcpy_to_vram::end#0 ] ] - score: 1
+Coalescing zero page register [ zp[2]:25 [ irq_vsync::$11 ] ] with [ zp[2]:27 [ irq_vsync::$13 ] ] - score: 1
+Coalescing zero page register [ zp[2]:29 [ irq_vsync::$12 ] ] with [ zp[2]:31 [ irq_vsync::$14 ] ] - score: 1
+Allocated (was zp[2]:15) zp[2]:14 [ memcpy_to_vram::src#3 memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
+Allocated (was zp[2]:17) zp[2]:16 [ memcpy_to_vram::num#3 memcpy_to_vram::end#0 ]
+Allocated (was zp[2]:21) zp[2]:18 [ sin_idx_x ]
+Allocated (was zp[2]:23) zp[2]:20 [ sin_idx_y ]
+Allocated (was zp[2]:25) zp[2]:22 [ irq_vsync::$11 irq_vsync::$13 ]
+Allocated (was zp[2]:29) zp[2]:24 [ irq_vsync::$12 irq_vsync::$14 ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Example program for the Commander X16
-// Displays a sprite
+// Displays some sprites - exceeding the per-line limits of the CX16
   // Upstart
 .cpu _65c02
   // Commodore 64 PRG executable file
@@ -720,9 +1078,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // X sine index
-  .label sin_idx_x = 8
+  .label sin_idx_x = $12
   // Y sine index
-  .label sin_idx_y = $a
+  .label sin_idx_y = $14
 .segment Code
   // __start
 __start: {
@@ -745,7 +1103,7 @@ __start: {
     // __start::@1
   __b1:
     // [4] call main 
-    // [22] phi from __start::@1 to main [phi:__start::@1->main]
+    // [37] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -757,10 +1115,15 @@ __start: {
   // irq_vsync
 // VSYNC Interrupt Routine
 irq_vsync: {
-    .label __5 = $c
-    .label __6 = $e
-    .label __7 = $c
-    .label __8 = $e
+    .const vram_sprite_attr_bank = VERA_SPRITE_ATTR>>$10
+    .label __11 = $16
+    .label __12 = $18
+    .label i_x = 3
+    .label i_y = 5
+    .label vram_sprite_pos = 7
+    .label s = 2
+    .label __13 = $16
+    .label __14 = $18
     // [6] sin_idx_x = ++ sin_idx_x -- vwuz1=_inc_vwuz1 
     inc.z sin_idx_x
     bne !+
@@ -808,76 +1171,42 @@ irq_vsync: {
     jmp __b2
     // irq_vsync::@2
   __b2:
-    // [12] irq_vsync::$5 = sin_idx_x << 1 -- vwuz1=vwuz2_rol_1 
+    // [12] irq_vsync::i_x#0 = sin_idx_x -- vwuz1=vwuz2 
     lda.z sin_idx_x
-    asl
-    sta.z __5
+    sta.z i_x
     lda.z sin_idx_x+1
-    rol
-    sta.z __5+1
-    // [13] irq_vsync::$7 = SINX + irq_vsync::$5 -- pwuz1=pwuc1_plus_vwuz1 
-    clc
-    lda.z __7
-    adc #<SINX
-    sta.z __7
-    lda.z __7+1
-    adc #>SINX
-    sta.z __7+1
-    // [14] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$7 -- _deref_pwuc1=_deref_pwuz1 
-    ldy #0
-    lda (__7),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
-    iny
-    lda (__7),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
-    // [15] irq_vsync::$6 = sin_idx_y << 1 -- vwuz1=vwuz2_rol_1 
+    sta.z i_x+1
+    // [13] irq_vsync::i_y#0 = sin_idx_y -- vwuz1=vwuz2 
     lda.z sin_idx_y
-    asl
-    sta.z __6
+    sta.z i_y
     lda.z sin_idx_y+1
-    rol
-    sta.z __6+1
-    // [16] irq_vsync::$8 = SINY + irq_vsync::$6 -- pwuz1=pwuc1_plus_vwuz1 
-    clc
-    lda.z __8
-    adc #<SINY
-    sta.z __8
-    lda.z __8+1
-    adc #>SINY
-    sta.z __8+1
-    // [17] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$8 -- _deref_pwuc1=_deref_pwuz1 
-    ldy #0
-    lda (__8),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
-    iny
-    lda (__8),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
-    // [18] call memcpy_to_vram 
-  // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
-    // [33] phi from irq_vsync::@2 to memcpy_to_vram [phi:irq_vsync::@2->memcpy_to_vram]
-  memcpy_to_vram_from___b2:
-    // [33] phi memcpy_to_vram::num#3 = 4 [phi:irq_vsync::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
-    lda #<4
-    sta.z memcpy_to_vram.num
-    lda #>4
-    sta.z memcpy_to_vram.num+1
-    // [33] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR+2 [phi:irq_vsync::@2->memcpy_to_vram#1] -- pvoz1=pvoc1 
-    lda #<SPRITE_ATTR+2
-    sta.z memcpy_to_vram.src
-    lda #>SPRITE_ATTR+2
-    sta.z memcpy_to_vram.src+1
-    // [33] phi memcpy_to_vram::vbank#3 = (byte)>VERA_SPRITE_ATTR [phi:irq_vsync::@2->memcpy_to_vram#2] -- vbuxx=vbuc1 
-    ldx #VERA_SPRITE_ATTR>>$10
-    // [33] phi memcpy_to_vram::vdest#3 = (void*)<VERA_SPRITE_ATTR+2 [phi:irq_vsync::@2->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    sta.z i_y+1
+    // [14] phi from irq_vsync::@2 to irq_vsync::@5 [phi:irq_vsync::@2->irq_vsync::@5]
+  __b5_from___b2:
+    // [14] phi irq_vsync::vram_sprite_pos#2 = (byte*)<VERA_SPRITE_ATTR+2 [phi:irq_vsync::@2->irq_vsync::@5#0] -- pbuz1=pbuc1 
     lda #<VERA_SPRITE_ATTR+2&$ffff
-    sta.z memcpy_to_vram.vdest
+    sta.z vram_sprite_pos
     lda #>VERA_SPRITE_ATTR+2&$ffff
-    sta.z memcpy_to_vram.vdest+1
-    jsr memcpy_to_vram
+    sta.z vram_sprite_pos+1
+    // [14] phi irq_vsync::i_y#3 = irq_vsync::i_y#0 [phi:irq_vsync::@2->irq_vsync::@5#1] -- register_copy 
+    // [14] phi irq_vsync::i_x#3 = irq_vsync::i_x#0 [phi:irq_vsync::@2->irq_vsync::@5#2] -- register_copy 
+    // [14] phi irq_vsync::s#2 = 0 [phi:irq_vsync::@2->irq_vsync::@5#3] -- vbuz1=vbuc1 
+    lda #0
+    sta.z s
     jmp __b5
     // irq_vsync::@5
   __b5:
-    // [19] *VERA_ISR = VERA_VSYNC -- _deref_pbuc1=vbuc2 
+    // [15] if(irq_vsync::s#2<$80) goto irq_vsync::@6 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z s
+    cmp #$80
+    bcc __b6
+    jmp __b7
+    // irq_vsync::@7
+  __b7:
+    // [16] *VERA_ISR = VERA_VSYNC -- _deref_pbuc1=vbuc2 
+    // Black border
+    //*VERA_CTRL &= ~VERA_DCSEL;
+    //*VERA_DC_BORDER = 0; 
     // Reset the VSYNC interrupt
     lda #VERA_VSYNC
     sta VERA_ISR
@@ -887,69 +1216,223 @@ irq_vsync: {
     jmp __breturn
     // irq_vsync::@return
   __breturn:
-    // [21] return 
+    // [18] return 
     rts
+    // irq_vsync::@6
+  __b6:
+    // [19] irq_vsync::$11 = irq_vsync::i_x#3 << 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i_x
+    asl
+    sta.z __11
+    lda.z i_x+1
+    rol
+    sta.z __11+1
+    // [20] irq_vsync::$13 = SINX + irq_vsync::$11 -- pwuz1=pwuc1_plus_vwuz1 
+    clc
+    lda.z __13
+    adc #<SINX
+    sta.z __13
+    lda.z __13+1
+    adc #>SINX
+    sta.z __13+1
+    // [21] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$13 -- _deref_pwuc1=_deref_pwuz1 
+    ldy #0
+    lda (__13),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    iny
+    lda (__13),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    // [22] irq_vsync::$12 = irq_vsync::i_y#3 << 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i_y
+    asl
+    sta.z __12
+    lda.z i_y+1
+    rol
+    sta.z __12+1
+    // [23] irq_vsync::$14 = SINY + irq_vsync::$12 -- pwuz1=pwuc1_plus_vwuz1 
+    clc
+    lda.z __14
+    adc #<SINY
+    sta.z __14
+    lda.z __14+1
+    adc #>SINY
+    sta.z __14+1
+    // [24] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$14 -- _deref_pwuc1=_deref_pwuz1 
+    ldy #0
+    lda (__14),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    iny
+    lda (__14),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    // [25] memcpy_to_vram::vdest#2 = (void*)irq_vsync::vram_sprite_pos#2 -- pvoz1=pvoz2 
+    lda.z vram_sprite_pos
+    sta.z memcpy_to_vram.vdest
+    lda.z vram_sprite_pos+1
+    sta.z memcpy_to_vram.vdest+1
+    // [26] call memcpy_to_vram 
+  // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
+    // [54] phi from irq_vsync::@6 to memcpy_to_vram [phi:irq_vsync::@6->memcpy_to_vram]
+  memcpy_to_vram_from___b6:
+    // [54] phi memcpy_to_vram::num#3 = 4 [phi:irq_vsync::@6->memcpy_to_vram#0] -- vwuz1=vbuc1 
+    lda #<4
+    sta.z memcpy_to_vram.num
+    lda #>4
+    sta.z memcpy_to_vram.num+1
+    // [54] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR+2 [phi:irq_vsync::@6->memcpy_to_vram#1] -- pvoz1=pvoc1 
+    lda #<SPRITE_ATTR+2
+    sta.z memcpy_to_vram.src
+    lda #>SPRITE_ATTR+2
+    sta.z memcpy_to_vram.src+1
+    // [54] phi memcpy_to_vram::vbank#3 = irq_vsync::vram_sprite_attr_bank [phi:irq_vsync::@6->memcpy_to_vram#2] -- vbuxx=vbuc1 
+    ldx #vram_sprite_attr_bank
+    // [54] phi memcpy_to_vram::vdest#3 = memcpy_to_vram::vdest#2 [phi:irq_vsync::@6->memcpy_to_vram#3] -- register_copy 
+    jsr memcpy_to_vram
+    jmp __b12
+    // irq_vsync::@12
+  __b12:
+    // [27] irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#2 + SIZEOF_STRUCT_VERA_SPRITE -- pbuz1=pbuz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT_VERA_SPRITE
+    clc
+    adc.z vram_sprite_pos
+    sta.z vram_sprite_pos
+    bcc !+
+    inc.z vram_sprite_pos+1
+  !:
+    // [28] irq_vsync::i_x#1 = irq_vsync::i_x#3 + 3 -- vwuz1=vwuz1_plus_vbuc1 
+    lda #3
+    clc
+    adc.z i_x
+    sta.z i_x
+    bcc !+
+    inc.z i_x+1
+  !:
+    // [29] if(irq_vsync::i_x#1<$f1) goto irq_vsync::@8 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i_x+1
+    bne !+
+    lda.z i_x
+    cmp #$f1
+    bcc __b8_from___b12
+  !:
+    jmp __b10
+    // irq_vsync::@10
+  __b10:
+    // [30] irq_vsync::i_x#2 = irq_vsync::i_x#1 - $f1 -- vwuz1=vwuz1_minus_vbuc1 
+    sec
+    lda.z i_x
+    sbc #$f1
+    sta.z i_x
+    lda.z i_x+1
+    sbc #0
+    sta.z i_x+1
+    // [31] phi from irq_vsync::@10 irq_vsync::@12 to irq_vsync::@8 [phi:irq_vsync::@10/irq_vsync::@12->irq_vsync::@8]
+  __b8_from___b10:
+  __b8_from___b12:
+    // [31] phi irq_vsync::i_x#7 = irq_vsync::i_x#2 [phi:irq_vsync::@10/irq_vsync::@12->irq_vsync::@8#0] -- register_copy 
+    jmp __b8
+    // irq_vsync::@8
+  __b8:
+    // [32] irq_vsync::i_y#1 = irq_vsync::i_y#3 + 5 -- vwuz1=vwuz1_plus_vbuc1 
+    lda #5
+    clc
+    adc.z i_y
+    sta.z i_y
+    bcc !+
+    inc.z i_y+1
+  !:
+    // [33] if(irq_vsync::i_y#1<$fb) goto irq_vsync::@9 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i_y+1
+    bne !+
+    lda.z i_y
+    cmp #$fb
+    bcc __b9_from___b8
+  !:
+    jmp __b11
+    // irq_vsync::@11
+  __b11:
+    // [34] irq_vsync::i_y#2 = irq_vsync::i_y#1 - $fb -- vwuz1=vwuz1_minus_vbuc1 
+    sec
+    lda.z i_y
+    sbc #$fb
+    sta.z i_y
+    lda.z i_y+1
+    sbc #0
+    sta.z i_y+1
+    // [35] phi from irq_vsync::@11 irq_vsync::@8 to irq_vsync::@9 [phi:irq_vsync::@11/irq_vsync::@8->irq_vsync::@9]
+  __b9_from___b11:
+  __b9_from___b8:
+    // [35] phi irq_vsync::i_y#9 = irq_vsync::i_y#2 [phi:irq_vsync::@11/irq_vsync::@8->irq_vsync::@9#0] -- register_copy 
+    jmp __b9
+    // irq_vsync::@9
+  __b9:
+    // [36] irq_vsync::s#1 = ++ irq_vsync::s#2 -- vbuz1=_inc_vbuz1 
+    inc.z s
+    // [14] phi from irq_vsync::@9 to irq_vsync::@5 [phi:irq_vsync::@9->irq_vsync::@5]
+  __b5_from___b9:
+    // [14] phi irq_vsync::vram_sprite_pos#2 = irq_vsync::vram_sprite_pos#1 [phi:irq_vsync::@9->irq_vsync::@5#0] -- register_copy 
+    // [14] phi irq_vsync::i_y#3 = irq_vsync::i_y#9 [phi:irq_vsync::@9->irq_vsync::@5#1] -- register_copy 
+    // [14] phi irq_vsync::i_x#3 = irq_vsync::i_x#7 [phi:irq_vsync::@9->irq_vsync::@5#2] -- register_copy 
+    // [14] phi irq_vsync::s#2 = irq_vsync::s#1 [phi:irq_vsync::@9->irq_vsync::@5#3] -- register_copy 
+    jmp __b5
 }
   // main
 main: {
-    // [23] call memcpy_to_vram 
+    // Copy 8* sprite attributes to VRAM    
+    .label vram_sprite_attr = $a
+    .label s = 9
+    // [38] call memcpy_to_vram 
   // Copy sprite data to VRAM
-    // [33] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
+    // [54] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
   memcpy_to_vram_from_main:
-    // [33] phi memcpy_to_vram::num#3 = (word)$40*$40*SIZEOF_BYTE [phi:main->memcpy_to_vram#0] -- vwuz1=vwuc1 
+    // [54] phi memcpy_to_vram::num#3 = (word)$40*$40*SIZEOF_BYTE [phi:main->memcpy_to_vram#0] -- vwuz1=vwuc1 
     lda #<$40*$40*SIZEOF_BYTE
     sta.z memcpy_to_vram.num
     lda #>$40*$40*SIZEOF_BYTE
     sta.z memcpy_to_vram.num+1
-    // [33] phi memcpy_to_vram::src#3 = (void*)SPRITE_PIXELS [phi:main->memcpy_to_vram#1] -- pvoz1=pvoc1 
+    // [54] phi memcpy_to_vram::src#3 = (void*)SPRITE_PIXELS [phi:main->memcpy_to_vram#1] -- pvoz1=pvoc1 
     lda #<SPRITE_PIXELS
     sta.z memcpy_to_vram.src
     lda #>SPRITE_PIXELS
     sta.z memcpy_to_vram.src+1
-    // [33] phi memcpy_to_vram::vbank#3 = 0 [phi:main->memcpy_to_vram#2] -- vbuxx=vbuc1 
+    // [54] phi memcpy_to_vram::vbank#3 = 0 [phi:main->memcpy_to_vram#2] -- vbuxx=vbuc1 
     ldx #0
-    // [33] phi memcpy_to_vram::vdest#3 = (void*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [54] phi memcpy_to_vram::vdest#3 = (void*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
     lda #<SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
-    // [24] phi from main to main::@2 [phi:main->main::@2]
-  __b2_from_main:
-    jmp __b2
-    // main::@2
-  __b2:
-    // [25] call memcpy_to_vram 
-  // Copy sprite attributes to VRAM
-    // [33] phi from main::@2 to memcpy_to_vram [phi:main::@2->memcpy_to_vram]
-  memcpy_to_vram_from___b2:
-    // [33] phi memcpy_to_vram::num#3 = SIZEOF_STRUCT_VERA_SPRITE [phi:main::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
-    lda #<SIZEOF_STRUCT_VERA_SPRITE
-    sta.z memcpy_to_vram.num
-    lda #>SIZEOF_STRUCT_VERA_SPRITE
-    sta.z memcpy_to_vram.num+1
-    // [33] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR [phi:main::@2->memcpy_to_vram#1] -- pvoz1=pvoc1 
-    lda #<SPRITE_ATTR
-    sta.z memcpy_to_vram.src
-    lda #>SPRITE_ATTR
-    sta.z memcpy_to_vram.src+1
-    // [33] phi memcpy_to_vram::vbank#3 = (byte)>VERA_SPRITE_ATTR [phi:main::@2->memcpy_to_vram#2] -- vbuxx=vbuc1 
-    ldx #VERA_SPRITE_ATTR>>$10
-    // [33] phi memcpy_to_vram::vdest#3 = (void*)<VERA_SPRITE_ATTR [phi:main::@2->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [39] phi from main to main::@1 [phi:main->main::@1]
+  __b1_from_main:
+    // [39] phi main::vram_sprite_attr#2 = (byte*)<VERA_SPRITE_ATTR [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<VERA_SPRITE_ATTR&$ffff
-    sta.z memcpy_to_vram.vdest
+    sta.z vram_sprite_attr
     lda #>VERA_SPRITE_ATTR&$ffff
-    sta.z memcpy_to_vram.vdest+1
-    jsr memcpy_to_vram
+    sta.z vram_sprite_attr+1
+    // [39] phi main::s#2 = 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z s
+    jmp __b1
+    // main::@1
+  __b1:
+    // [40] if(main::s#2<$80) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z s
+    cmp #$80
+    bcc __b2
     jmp __b3
     // main::@3
   __b3:
-    // [26] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [41] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Makea border
+    //*VERA_CTRL |= VERA_DCSEL;
+    //*VERA_DC_HSTART = 16/4;
+    //*VERA_DC_HSTOP = 624/4;
+    //*VERA_DC_VSTART = 16/2;
+    //*VERA_DC_VSTOP = 464/2;    
     // Enable sprites
     lda #VERA_DCSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [27] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [42] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #VERA_SPRITES_ENABLE
     ora VERA_DC_VIDEO
     sta VERA_DC_VIDEO
@@ -958,15 +1441,15 @@ main: {
   SEI1:
     // asm { sei  }
     sei
-    jmp __b1
-    // main::@1
-  __b1:
-    // [29] *KERNEL_IRQ = &irq_vsync -- _deref_qprc1=pprc2 
+    jmp __b4
+    // main::@4
+  __b4:
+    // [44] *KERNEL_IRQ = &irq_vsync -- _deref_qprc1=pprc2 
     lda #<irq_vsync
     sta KERNEL_IRQ
     lda #>irq_vsync
     sta KERNEL_IRQ+1
-    // [30] *VERA_IEN = VERA_VSYNC -- _deref_pbuc1=vbuc2 
+    // [45] *VERA_IEN = VERA_VSYNC -- _deref_pbuc1=vbuc2 
     lda #VERA_VSYNC
     sta VERA_IEN
     jmp CLI1
@@ -977,8 +1460,66 @@ main: {
     jmp __breturn
     // main::@return
   __breturn:
-    // [32] return 
+    // [47] return 
     rts
+    // main::@2
+  __b2:
+    // [48] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    lda #<$a
+    clc
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    lda #>$a
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    // [49] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    lda #<$a
+    clc
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    lda #>$a
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    // [50] memcpy_to_vram::vdest#1 = (void*)main::vram_sprite_attr#2 -- pvoz1=pvoz2 
+    lda.z vram_sprite_attr
+    sta.z memcpy_to_vram.vdest
+    lda.z vram_sprite_attr+1
+    sta.z memcpy_to_vram.vdest+1
+    // [51] call memcpy_to_vram 
+    // [54] phi from main::@2 to memcpy_to_vram [phi:main::@2->memcpy_to_vram]
+  memcpy_to_vram_from___b2:
+    // [54] phi memcpy_to_vram::num#3 = SIZEOF_STRUCT_VERA_SPRITE [phi:main::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
+    lda #<SIZEOF_STRUCT_VERA_SPRITE
+    sta.z memcpy_to_vram.num
+    lda #>SIZEOF_STRUCT_VERA_SPRITE
+    sta.z memcpy_to_vram.num+1
+    // [54] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR [phi:main::@2->memcpy_to_vram#1] -- pvoz1=pvoc1 
+    lda #<SPRITE_ATTR
+    sta.z memcpy_to_vram.src
+    lda #>SPRITE_ATTR
+    sta.z memcpy_to_vram.src+1
+    // [54] phi memcpy_to_vram::vbank#3 = (byte)>VERA_SPRITE_ATTR [phi:main::@2->memcpy_to_vram#2] -- vbuxx=vbuc1 
+    ldx #VERA_SPRITE_ATTR>>$10
+    // [54] phi memcpy_to_vram::vdest#3 = memcpy_to_vram::vdest#1 [phi:main::@2->memcpy_to_vram#3] -- register_copy 
+    jsr memcpy_to_vram
+    jmp __b5
+    // main::@5
+  __b5:
+    // [52] main::vram_sprite_attr#1 = main::vram_sprite_attr#2 + SIZEOF_STRUCT_VERA_SPRITE -- pbuz1=pbuz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT_VERA_SPRITE
+    clc
+    adc.z vram_sprite_attr
+    sta.z vram_sprite_attr
+    bcc !+
+    inc.z vram_sprite_attr+1
+  !:
+    // [53] main::s#1 = ++ main::s#2 -- vbuz1=_inc_vbuz1 
+    inc.z s
+    // [39] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+  __b1_from___b5:
+    // [39] phi main::vram_sprite_attr#2 = main::vram_sprite_attr#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [39] phi main::s#2 = main::s#1 [phi:main::@5->main::@1#1] -- register_copy 
+    jmp __b1
 }
   // memcpy_to_vram
 // Copy block of memory (from RAM to VRAM)
@@ -987,33 +1528,33 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
-// memcpy_to_vram(byte register(X) vbank, void* zp(2) vdest, void* zp(4) src, word zp(6) num)
+// memcpy_to_vram(byte register(X) vbank, void* zp($c) vdest, void* zp($e) src, word zp($10) num)
 memcpy_to_vram: {
-    .label end = 6
-    .label s = 4
-    .label vdest = 2
-    .label src = 4
-    .label num = 6
-    // [34] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    .label end = $10
+    .label s = $e
+    .label vdest = $c
+    .label src = $e
+    .label num = $10
+    // [55] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
-    // [35] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3 -- vbuaa=_lo_pvoz1 
+    // [56] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3 -- vbuaa=_lo_pvoz1 
     lda.z vdest
-    // [36] *VERA_ADDRX_L = memcpy_to_vram::$0 -- _deref_pbuc1=vbuaa 
+    // [57] *VERA_ADDRX_L = memcpy_to_vram::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
-    // [37] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#3 -- vbuaa=_hi_pvoz1 
+    // [58] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#3 -- vbuaa=_hi_pvoz1 
     lda.z vdest+1
-    // [38] *VERA_ADDRX_M = memcpy_to_vram::$1 -- _deref_pbuc1=vbuaa 
+    // [59] *VERA_ADDRX_M = memcpy_to_vram::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
-    // [39] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 -- vbuaa=vbuc1_bor_vbuxx 
+    // [60] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 -- vbuaa=vbuc1_bor_vbuxx 
     txa
     ora #VERA_INC_1
-    // [40] *VERA_ADDRX_H = memcpy_to_vram::$2 -- _deref_pbuc1=vbuaa 
+    // [61] *VERA_ADDRX_H = memcpy_to_vram::$2 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_H
-    // [41] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 -- pbuz1=pbuz2_plus_vwuz1 
+    // [62] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
     adc.z src
@@ -1021,15 +1562,15 @@ memcpy_to_vram: {
     lda.z end+1
     adc.z src+1
     sta.z end+1
-    // [42] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3
-    // [43] phi from memcpy_to_vram memcpy_to_vram::@2 to memcpy_to_vram::@1 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1]
+    // [63] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3
+    // [64] phi from memcpy_to_vram memcpy_to_vram::@2 to memcpy_to_vram::@1 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1]
   __b1_from_memcpy_to_vram:
   __b1_from___b2:
-    // [43] phi memcpy_to_vram::s#2 = memcpy_to_vram::s#4 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1#0] -- register_copy 
+    // [64] phi memcpy_to_vram::s#2 = memcpy_to_vram::s#4 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1#0] -- register_copy 
     jmp __b1
     // memcpy_to_vram::@1
   __b1:
-    // [44] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [65] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z s+1
     cmp.z end+1
     bne __b2
@@ -1039,15 +1580,15 @@ memcpy_to_vram: {
     jmp __breturn
     // memcpy_to_vram::@return
   __breturn:
-    // [45] return 
+    // [66] return 
     rts
     // memcpy_to_vram::@2
   __b2:
-    // [46] *VERA_DATA0 = *memcpy_to_vram::s#2 -- _deref_pbuc1=_deref_pbuz1 
+    // [67] *VERA_DATA0 = *memcpy_to_vram::s#2 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (s),y
     sta VERA_DATA0
-    // [47] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2 -- pbuz1=_inc_pbuz1 
+    // [68] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+
     inc.z s+1
@@ -1087,22 +1628,34 @@ Removing instruction jmp __b1
 Removing instruction jmp __b4
 Removing instruction jmp __b2
 Removing instruction jmp __b5
+Removing instruction jmp __b7
 Removing instruction jmp __breturn
-Removing instruction jmp __b2
+Removing instruction jmp __b12
+Removing instruction jmp __b10
+Removing instruction jmp __b8
+Removing instruction jmp __b11
+Removing instruction jmp __b9
+Removing instruction jmp __b1
 Removing instruction jmp __b3
 Removing instruction jmp SEI1
-Removing instruction jmp __b1
+Removing instruction jmp __b4
 Removing instruction jmp CLI1
 Removing instruction jmp __breturn
+Removing instruction jmp __b5
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label __b8_from___b12 with __b8
+Replacing label __b9_from___b8 with __b9
 Replacing label __b1_from___b2 with __b1
 Removing instruction __b1_from___init1:
 Removing instruction main_from___b1:
-Removing instruction __b2_from_main:
+Removing instruction __b8_from___b10:
+Removing instruction __b8_from___b12:
+Removing instruction __b9_from___b11:
+Removing instruction __b9_from___b8:
 Removing instruction __b1_from_memcpy_to_vram:
 Removing instruction __b1_from___b2:
 Succesful ASM optimization Pass5RedundantLabelElimination
@@ -1111,17 +1664,24 @@ Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b3:
 Removing instruction __b4:
-Removing instruction memcpy_to_vram_from___b2:
-Removing instruction __b5:
+Removing instruction __b5_from___b2:
+Removing instruction __b7:
 Removing instruction __breturn:
+Removing instruction memcpy_to_vram_from___b6:
+Removing instruction __b12:
+Removing instruction __b10:
+Removing instruction __b11:
+Removing instruction __b5_from___b9:
 Removing instruction memcpy_to_vram_from_main:
-Removing instruction __b2:
-Removing instruction memcpy_to_vram_from___b2:
+Removing instruction __b1_from_main:
 Removing instruction __b3:
 Removing instruction SEI1:
-Removing instruction __b1:
+Removing instruction __b4:
 Removing instruction CLI1:
 Removing instruction __breturn:
+Removing instruction memcpy_to_vram_from___b2:
+Removing instruction __b5:
+Removing instruction __b1_from___b5:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 Removing unreachable instruction rts
@@ -1161,40 +1721,73 @@ const nomodify dword VERA_SPRITE_ATTR = $1fc00
 const nomodify byte VERA_VSYNC = 1
 void __start()
 void irq_vsync()
-word~ irq_vsync::$5 zp[2]:12 4.0
-word~ irq_vsync::$6 zp[2]:14 4.0
-word*~ irq_vsync::$7 zp[2]:12 4.0
-word*~ irq_vsync::$8 zp[2]:14 4.0
+word~ irq_vsync::$11 zp[2]:22 22.0
+word~ irq_vsync::$12 zp[2]:24 22.0
+word*~ irq_vsync::$13 zp[2]:22 22.0
+word*~ irq_vsync::$14 zp[2]:24 22.0
+word irq_vsync::i_x
+word irq_vsync::i_x#0 i_x zp[2]:3 2.0
+word irq_vsync::i_x#1 i_x zp[2]:3 22.0
+word irq_vsync::i_x#2 i_x zp[2]:3 22.0
+word irq_vsync::i_x#3 i_x zp[2]:3 3.1818181818181817
+word irq_vsync::i_x#7 i_x zp[2]:3 5.5
+word irq_vsync::i_y
+word irq_vsync::i_y#0 i_y zp[2]:5 4.0
+word irq_vsync::i_y#1 i_y zp[2]:5 22.0
+word irq_vsync::i_y#2 i_y zp[2]:5 22.0
+word irq_vsync::i_y#3 i_y zp[2]:5 2.333333333333333
+word irq_vsync::i_y#9 i_y zp[2]:5 16.5
+byte irq_vsync::s
+byte irq_vsync::s#1 s zp[1]:2 22.0
+byte irq_vsync::s#2 s zp[1]:2 1.736842105263158
+const nomodify byte irq_vsync::vram_sprite_attr_bank = (byte)>VERA_SPRITE_ATTR
+byte* irq_vsync::vram_sprite_pos
+byte* irq_vsync::vram_sprite_pos#1 vram_sprite_pos zp[2]:7 2.2
+byte* irq_vsync::vram_sprite_pos#2 vram_sprite_pos zp[2]:7 2.2
 void main()
+byte main::s
+byte main::s#1 s zp[1]:9 202.0
+byte main::s#2 s zp[1]:9 43.285714285714285
+byte* main::vram_sprite_attr
+byte* main::vram_sprite_attr#1 vram_sprite_attr zp[2]:10 101.0
+byte* main::vram_sprite_attr#2 vram_sprite_attr zp[2]:10 33.666666666666664
 void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
-byte~ memcpy_to_vram::$0 reg byte a 202.0
-byte~ memcpy_to_vram::$1 reg byte a 202.0
-byte~ memcpy_to_vram::$2 reg byte a 202.0
+byte~ memcpy_to_vram::$0 reg byte a 2002.0
+byte~ memcpy_to_vram::$1 reg byte a 2002.0
+byte~ memcpy_to_vram::$2 reg byte a 2002.0
 byte* memcpy_to_vram::end
-byte* memcpy_to_vram::end#0 end zp[2]:6 183.66666666666669
+byte* memcpy_to_vram::end#0 end zp[2]:16 16833.666666666664
 word memcpy_to_vram::num
-word memcpy_to_vram::num#3 num zp[2]:6 12.625
+word memcpy_to_vram::num#3 num zp[2]:16 125.125
 byte* memcpy_to_vram::s
-byte* memcpy_to_vram::s#1 s zp[2]:4 2002.0
-byte* memcpy_to_vram::s#2 s zp[2]:4 1368.3333333333335
-byte* memcpy_to_vram::s#4 s zp[2]:4 202.0
+byte* memcpy_to_vram::s#1 s zp[2]:14 200002.0
+byte* memcpy_to_vram::s#2 s zp[2]:14 133668.3333333333
+byte* memcpy_to_vram::s#4 s zp[2]:14 2002.0
 void* memcpy_to_vram::src
-void* memcpy_to_vram::src#3 src zp[2]:4
+void* memcpy_to_vram::src#3 src zp[2]:14
 byte memcpy_to_vram::vbank
-byte memcpy_to_vram::vbank#3 reg byte x 16.833333333333332
+byte memcpy_to_vram::vbank#3 reg byte x 166.83333333333334
 void* memcpy_to_vram::vdest
-void* memcpy_to_vram::vdest#3 vdest zp[2]:2 50.5
-volatile word sin_idx_x loadstore zp[2]:8 1.9999999999999998
-volatile word sin_idx_y loadstore zp[2]:10 1.3333333333333335
+void* memcpy_to_vram::vdest#1 vdest zp[2]:12 202.0
+void* memcpy_to_vram::vdest#2 vdest zp[2]:12 22.0
+void* memcpy_to_vram::vdest#3 vdest zp[2]:12 528.5
+volatile word sin_idx_x loadstore zp[2]:18 1.9999999999999998
+volatile word sin_idx_y loadstore zp[2]:20 1.714285714285714
 
-zp[2]:2 [ memcpy_to_vram::vdest#3 ]
+zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
+zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ]
+zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ]
+zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ]
+zp[1]:9 [ main::s#2 main::s#1 ]
+zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ]
+zp[2]:12 [ memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 memcpy_to_vram::vdest#1 ]
 reg byte x [ memcpy_to_vram::vbank#3 ]
-zp[2]:4 [ memcpy_to_vram::src#3 memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
-zp[2]:6 [ memcpy_to_vram::num#3 memcpy_to_vram::end#0 ]
-zp[2]:8 [ sin_idx_x ]
-zp[2]:10 [ sin_idx_y ]
-zp[2]:12 [ irq_vsync::$5 irq_vsync::$7 ]
-zp[2]:14 [ irq_vsync::$6 irq_vsync::$8 ]
+zp[2]:14 [ memcpy_to_vram::src#3 memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
+zp[2]:16 [ memcpy_to_vram::num#3 memcpy_to_vram::end#0 ]
+zp[2]:18 [ sin_idx_x ]
+zp[2]:20 [ sin_idx_y ]
+zp[2]:22 [ irq_vsync::$11 irq_vsync::$13 ]
+zp[2]:24 [ irq_vsync::$12 irq_vsync::$14 ]
 reg byte a [ memcpy_to_vram::$0 ]
 reg byte a [ memcpy_to_vram::$1 ]
 reg byte a [ memcpy_to_vram::$2 ]
@@ -1202,11 +1795,11 @@ mem[8] [ SPRITE_ATTR ]
 
 
 FINAL ASSEMBLER
-Score: 890
+Score: 8490
 
   // File Comments
 // Example program for the Commander X16
-// Displays a sprite
+// Displays some sprites - exceeding the per-line limits of the CX16
   // Upstart
 .cpu _65c02
   // Commodore 64 PRG executable file
@@ -1280,9 +1873,9 @@ Score: 890
   // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // X sine index
-  .label sin_idx_x = 8
+  .label sin_idx_x = $12
   // Y sine index
-  .label sin_idx_y = $a
+  .label sin_idx_y = $14
 .segment Code
   // __start
 __start: {
@@ -1302,7 +1895,7 @@ __start: {
     // [3] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [4] call main 
-    // [22] phi from __start::@1 to main [phi:__start::@1->main]
+    // [37] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [5] return 
@@ -1311,10 +1904,15 @@ __start: {
   // irq_vsync
 // VSYNC Interrupt Routine
 irq_vsync: {
-    .label __5 = $c
-    .label __6 = $e
-    .label __7 = $c
-    .label __8 = $e
+    .const vram_sprite_attr_bank = VERA_SPRITE_ATTR>>$10
+    .label __11 = $16
+    .label __12 = $18
+    .label i_x = 3
+    .label i_y = 5
+    .label vram_sprite_pos = 7
+    .label s = 2
+    .label __13 = $16
+    .label __14 = $18
     // if(++sin_idx_x==241)
     // [6] sin_idx_x = ++ sin_idx_x -- vwuz1=_inc_vwuz1 
     inc.z sin_idx_x
@@ -1359,77 +1957,42 @@ irq_vsync: {
     sta.z sin_idx_y+1
     // irq_vsync::@2
   __b2:
-    // SPRITE_ATTR.X = SINX[sin_idx_x]
-    // [12] irq_vsync::$5 = sin_idx_x << 1 -- vwuz1=vwuz2_rol_1 
+    // i_x = sin_idx_x
+    // [12] irq_vsync::i_x#0 = sin_idx_x -- vwuz1=vwuz2 
     lda.z sin_idx_x
-    asl
-    sta.z __5
+    sta.z i_x
     lda.z sin_idx_x+1
-    rol
-    sta.z __5+1
-    // [13] irq_vsync::$7 = SINX + irq_vsync::$5 -- pwuz1=pwuc1_plus_vwuz1 
-    clc
-    lda.z __7
-    adc #<SINX
-    sta.z __7
-    lda.z __7+1
-    adc #>SINX
-    sta.z __7+1
-    // [14] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$7 -- _deref_pwuc1=_deref_pwuz1 
-    ldy #0
-    lda (__7),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
-    iny
-    lda (__7),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
-    // SPRITE_ATTR.Y = SINY[sin_idx_y]
-    // [15] irq_vsync::$6 = sin_idx_y << 1 -- vwuz1=vwuz2_rol_1 
+    sta.z i_x+1
+    // i_y = sin_idx_y
+    // [13] irq_vsync::i_y#0 = sin_idx_y -- vwuz1=vwuz2 
     lda.z sin_idx_y
-    asl
-    sta.z __6
+    sta.z i_y
     lda.z sin_idx_y+1
-    rol
-    sta.z __6+1
-    // [16] irq_vsync::$8 = SINY + irq_vsync::$6 -- pwuz1=pwuc1_plus_vwuz1 
-    clc
-    lda.z __8
-    adc #<SINY
-    sta.z __8
-    lda.z __8+1
-    adc #>SINY
-    sta.z __8+1
-    // [17] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$8 -- _deref_pwuc1=_deref_pwuz1 
-    ldy #0
-    lda (__8),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
-    iny
-    lda (__8),y
-    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR+2, &SPRITE_ATTR+2, 4)
-    // [18] call memcpy_to_vram 
-  // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
-    // [33] phi from irq_vsync::@2 to memcpy_to_vram [phi:irq_vsync::@2->memcpy_to_vram]
-    // [33] phi memcpy_to_vram::num#3 = 4 [phi:irq_vsync::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
-    lda #<4
-    sta.z memcpy_to_vram.num
-    lda #>4
-    sta.z memcpy_to_vram.num+1
-    // [33] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR+2 [phi:irq_vsync::@2->memcpy_to_vram#1] -- pvoz1=pvoc1 
-    lda #<SPRITE_ATTR+2
-    sta.z memcpy_to_vram.src
-    lda #>SPRITE_ATTR+2
-    sta.z memcpy_to_vram.src+1
-    // [33] phi memcpy_to_vram::vbank#3 = (byte)>VERA_SPRITE_ATTR [phi:irq_vsync::@2->memcpy_to_vram#2] -- vbuxx=vbuc1 
-    ldx #VERA_SPRITE_ATTR>>$10
-    // [33] phi memcpy_to_vram::vdest#3 = (void*)<VERA_SPRITE_ATTR+2 [phi:irq_vsync::@2->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    sta.z i_y+1
+    // [14] phi from irq_vsync::@2 to irq_vsync::@5 [phi:irq_vsync::@2->irq_vsync::@5]
+    // [14] phi irq_vsync::vram_sprite_pos#2 = (byte*)<VERA_SPRITE_ATTR+2 [phi:irq_vsync::@2->irq_vsync::@5#0] -- pbuz1=pbuc1 
     lda #<VERA_SPRITE_ATTR+2&$ffff
-    sta.z memcpy_to_vram.vdest
+    sta.z vram_sprite_pos
     lda #>VERA_SPRITE_ATTR+2&$ffff
-    sta.z memcpy_to_vram.vdest+1
-    jsr memcpy_to_vram
+    sta.z vram_sprite_pos+1
+    // [14] phi irq_vsync::i_y#3 = irq_vsync::i_y#0 [phi:irq_vsync::@2->irq_vsync::@5#1] -- register_copy 
+    // [14] phi irq_vsync::i_x#3 = irq_vsync::i_x#0 [phi:irq_vsync::@2->irq_vsync::@5#2] -- register_copy 
+    // [14] phi irq_vsync::s#2 = 0 [phi:irq_vsync::@2->irq_vsync::@5#3] -- vbuz1=vbuc1 
+    lda #0
+    sta.z s
     // irq_vsync::@5
+  __b5:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    // [15] if(irq_vsync::s#2<$80) goto irq_vsync::@6 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z s
+    cmp #$80
+    bcc __b6
+    // irq_vsync::@7
     // *VERA_ISR = VERA_VSYNC
-    // [19] *VERA_ISR = VERA_VSYNC -- _deref_pbuc1=vbuc2 
+    // [16] *VERA_ISR = VERA_VSYNC -- _deref_pbuc1=vbuc2 
+    // Black border
+    //*VERA_CTRL &= ~VERA_DCSEL;
+    //*VERA_DC_BORDER = 0; 
     // Reset the VSYNC interrupt
     lda #VERA_VSYNC
     sta VERA_ISR
@@ -1439,65 +2002,218 @@ irq_vsync: {
     jmp $e034
     // irq_vsync::@return
     // }
-    // [21] return 
+    // [18] return 
+    // irq_vsync::@6
+  __b6:
+    // SPRITE_ATTR.X = SINX[i_x]
+    // [19] irq_vsync::$11 = irq_vsync::i_x#3 << 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i_x
+    asl
+    sta.z __11
+    lda.z i_x+1
+    rol
+    sta.z __11+1
+    // [20] irq_vsync::$13 = SINX + irq_vsync::$11 -- pwuz1=pwuc1_plus_vwuz1 
+    clc
+    lda.z __13
+    adc #<SINX
+    sta.z __13
+    lda.z __13+1
+    adc #>SINX
+    sta.z __13+1
+    // [21] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *irq_vsync::$13 -- _deref_pwuc1=_deref_pwuz1 
+    ldy #0
+    lda (__13),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    iny
+    lda (__13),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    // SPRITE_ATTR.Y = SINY[i_y]
+    // [22] irq_vsync::$12 = irq_vsync::i_y#3 << 1 -- vwuz1=vwuz2_rol_1 
+    lda.z i_y
+    asl
+    sta.z __12
+    lda.z i_y+1
+    rol
+    sta.z __12+1
+    // [23] irq_vsync::$14 = SINY + irq_vsync::$12 -- pwuz1=pwuc1_plus_vwuz1 
+    clc
+    lda.z __14
+    adc #<SINY
+    sta.z __14
+    lda.z __14+1
+    adc #>SINY
+    sta.z __14+1
+    // [24] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *irq_vsync::$14 -- _deref_pwuc1=_deref_pwuz1 
+    ldy #0
+    lda (__14),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    iny
+    lda (__14),y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    // memcpy_to_vram(vram_sprite_attr_bank, vram_sprite_pos, &SPRITE_ATTR+2, 4)
+    // [25] memcpy_to_vram::vdest#2 = (void*)irq_vsync::vram_sprite_pos#2 -- pvoz1=pvoz2 
+    lda.z vram_sprite_pos
+    sta.z memcpy_to_vram.vdest
+    lda.z vram_sprite_pos+1
+    sta.z memcpy_to_vram.vdest+1
+    // [26] call memcpy_to_vram 
+  // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
+    // [54] phi from irq_vsync::@6 to memcpy_to_vram [phi:irq_vsync::@6->memcpy_to_vram]
+    // [54] phi memcpy_to_vram::num#3 = 4 [phi:irq_vsync::@6->memcpy_to_vram#0] -- vwuz1=vbuc1 
+    lda #<4
+    sta.z memcpy_to_vram.num
+    lda #>4
+    sta.z memcpy_to_vram.num+1
+    // [54] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR+2 [phi:irq_vsync::@6->memcpy_to_vram#1] -- pvoz1=pvoc1 
+    lda #<SPRITE_ATTR+2
+    sta.z memcpy_to_vram.src
+    lda #>SPRITE_ATTR+2
+    sta.z memcpy_to_vram.src+1
+    // [54] phi memcpy_to_vram::vbank#3 = irq_vsync::vram_sprite_attr_bank [phi:irq_vsync::@6->memcpy_to_vram#2] -- vbuxx=vbuc1 
+    ldx #vram_sprite_attr_bank
+    // [54] phi memcpy_to_vram::vdest#3 = memcpy_to_vram::vdest#2 [phi:irq_vsync::@6->memcpy_to_vram#3] -- register_copy 
+    jsr memcpy_to_vram
+    // irq_vsync::@12
+    // vram_sprite_pos += sizeof(SPRITE_ATTR)
+    // [27] irq_vsync::vram_sprite_pos#1 = irq_vsync::vram_sprite_pos#2 + SIZEOF_STRUCT_VERA_SPRITE -- pbuz1=pbuz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT_VERA_SPRITE
+    clc
+    adc.z vram_sprite_pos
+    sta.z vram_sprite_pos
+    bcc !+
+    inc.z vram_sprite_pos+1
+  !:
+    // i_x += 3
+    // [28] irq_vsync::i_x#1 = irq_vsync::i_x#3 + 3 -- vwuz1=vwuz1_plus_vbuc1 
+    lda #3
+    clc
+    adc.z i_x
+    sta.z i_x
+    bcc !+
+    inc.z i_x+1
+  !:
+    // if(i_x>=241)
+    // [29] if(irq_vsync::i_x#1<$f1) goto irq_vsync::@8 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i_x+1
+    bne !+
+    lda.z i_x
+    cmp #$f1
+    bcc __b8
+  !:
+    // irq_vsync::@10
+    // i_x -= 241
+    // [30] irq_vsync::i_x#2 = irq_vsync::i_x#1 - $f1 -- vwuz1=vwuz1_minus_vbuc1 
+    sec
+    lda.z i_x
+    sbc #$f1
+    sta.z i_x
+    lda.z i_x+1
+    sbc #0
+    sta.z i_x+1
+    // [31] phi from irq_vsync::@10 irq_vsync::@12 to irq_vsync::@8 [phi:irq_vsync::@10/irq_vsync::@12->irq_vsync::@8]
+    // [31] phi irq_vsync::i_x#7 = irq_vsync::i_x#2 [phi:irq_vsync::@10/irq_vsync::@12->irq_vsync::@8#0] -- register_copy 
+    // irq_vsync::@8
+  __b8:
+    // i_y += 5
+    // [32] irq_vsync::i_y#1 = irq_vsync::i_y#3 + 5 -- vwuz1=vwuz1_plus_vbuc1 
+    lda #5
+    clc
+    adc.z i_y
+    sta.z i_y
+    bcc !+
+    inc.z i_y+1
+  !:
+    // if(i_y>=251)
+    // [33] if(irq_vsync::i_y#1<$fb) goto irq_vsync::@9 -- vwuz1_lt_vbuc1_then_la1 
+    lda.z i_y+1
+    bne !+
+    lda.z i_y
+    cmp #$fb
+    bcc __b9
+  !:
+    // irq_vsync::@11
+    // i_y -= 251
+    // [34] irq_vsync::i_y#2 = irq_vsync::i_y#1 - $fb -- vwuz1=vwuz1_minus_vbuc1 
+    sec
+    lda.z i_y
+    sbc #$fb
+    sta.z i_y
+    lda.z i_y+1
+    sbc #0
+    sta.z i_y+1
+    // [35] phi from irq_vsync::@11 irq_vsync::@8 to irq_vsync::@9 [phi:irq_vsync::@11/irq_vsync::@8->irq_vsync::@9]
+    // [35] phi irq_vsync::i_y#9 = irq_vsync::i_y#2 [phi:irq_vsync::@11/irq_vsync::@8->irq_vsync::@9#0] -- register_copy 
+    // irq_vsync::@9
+  __b9:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    // [36] irq_vsync::s#1 = ++ irq_vsync::s#2 -- vbuz1=_inc_vbuz1 
+    inc.z s
+    // [14] phi from irq_vsync::@9 to irq_vsync::@5 [phi:irq_vsync::@9->irq_vsync::@5]
+    // [14] phi irq_vsync::vram_sprite_pos#2 = irq_vsync::vram_sprite_pos#1 [phi:irq_vsync::@9->irq_vsync::@5#0] -- register_copy 
+    // [14] phi irq_vsync::i_y#3 = irq_vsync::i_y#9 [phi:irq_vsync::@9->irq_vsync::@5#1] -- register_copy 
+    // [14] phi irq_vsync::i_x#3 = irq_vsync::i_x#7 [phi:irq_vsync::@9->irq_vsync::@5#2] -- register_copy 
+    // [14] phi irq_vsync::s#2 = irq_vsync::s#1 [phi:irq_vsync::@9->irq_vsync::@5#3] -- register_copy 
+    jmp __b5
 }
   // main
 main: {
+    // Copy 8* sprite attributes to VRAM    
+    .label vram_sprite_attr = $a
+    .label s = 9
     // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, sizeof(SPRITE_PIXELS))
-    // [23] call memcpy_to_vram 
+    // [38] call memcpy_to_vram 
   // Copy sprite data to VRAM
-    // [33] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
-    // [33] phi memcpy_to_vram::num#3 = (word)$40*$40*SIZEOF_BYTE [phi:main->memcpy_to_vram#0] -- vwuz1=vwuc1 
+    // [54] phi from main to memcpy_to_vram [phi:main->memcpy_to_vram]
+    // [54] phi memcpy_to_vram::num#3 = (word)$40*$40*SIZEOF_BYTE [phi:main->memcpy_to_vram#0] -- vwuz1=vwuc1 
     lda #<$40*$40*SIZEOF_BYTE
     sta.z memcpy_to_vram.num
     lda #>$40*$40*SIZEOF_BYTE
     sta.z memcpy_to_vram.num+1
-    // [33] phi memcpy_to_vram::src#3 = (void*)SPRITE_PIXELS [phi:main->memcpy_to_vram#1] -- pvoz1=pvoc1 
+    // [54] phi memcpy_to_vram::src#3 = (void*)SPRITE_PIXELS [phi:main->memcpy_to_vram#1] -- pvoz1=pvoc1 
     lda #<SPRITE_PIXELS
     sta.z memcpy_to_vram.src
     lda #>SPRITE_PIXELS
     sta.z memcpy_to_vram.src+1
-    // [33] phi memcpy_to_vram::vbank#3 = 0 [phi:main->memcpy_to_vram#2] -- vbuxx=vbuc1 
+    // [54] phi memcpy_to_vram::vbank#3 = 0 [phi:main->memcpy_to_vram#2] -- vbuxx=vbuc1 
     ldx #0
-    // [33] phi memcpy_to_vram::vdest#3 = (void*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [54] phi memcpy_to_vram::vdest#3 = (void*)<SPRITE_PIXELS_VRAM [phi:main->memcpy_to_vram#3] -- pvoz1=pvoc1 
     lda #<SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest
     lda #>SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
-    // [24] phi from main to main::@2 [phi:main->main::@2]
-    // main::@2
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
-    // [25] call memcpy_to_vram 
-  // Copy sprite attributes to VRAM
-    // [33] phi from main::@2 to memcpy_to_vram [phi:main::@2->memcpy_to_vram]
-    // [33] phi memcpy_to_vram::num#3 = SIZEOF_STRUCT_VERA_SPRITE [phi:main::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
-    lda #<SIZEOF_STRUCT_VERA_SPRITE
-    sta.z memcpy_to_vram.num
-    lda #>SIZEOF_STRUCT_VERA_SPRITE
-    sta.z memcpy_to_vram.num+1
-    // [33] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR [phi:main::@2->memcpy_to_vram#1] -- pvoz1=pvoc1 
-    lda #<SPRITE_ATTR
-    sta.z memcpy_to_vram.src
-    lda #>SPRITE_ATTR
-    sta.z memcpy_to_vram.src+1
-    // [33] phi memcpy_to_vram::vbank#3 = (byte)>VERA_SPRITE_ATTR [phi:main::@2->memcpy_to_vram#2] -- vbuxx=vbuc1 
-    ldx #VERA_SPRITE_ATTR>>$10
-    // [33] phi memcpy_to_vram::vdest#3 = (void*)<VERA_SPRITE_ATTR [phi:main::@2->memcpy_to_vram#3] -- pvoz1=pvoc1 
+    // [39] phi from main to main::@1 [phi:main->main::@1]
+    // [39] phi main::vram_sprite_attr#2 = (byte*)<VERA_SPRITE_ATTR [phi:main->main::@1#0] -- pbuz1=pbuc1 
     lda #<VERA_SPRITE_ATTR&$ffff
-    sta.z memcpy_to_vram.vdest
+    sta.z vram_sprite_attr
     lda #>VERA_SPRITE_ATTR&$ffff
-    sta.z memcpy_to_vram.vdest+1
-    jsr memcpy_to_vram
+    sta.z vram_sprite_attr+1
+    // [39] phi main::s#2 = 0 [phi:main->main::@1#1] -- vbuz1=vbuc1 
+    lda #0
+    sta.z s
+    // main::@1
+  __b1:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    // [40] if(main::s#2<$80) goto main::@2 -- vbuz1_lt_vbuc1_then_la1 
+    lda.z s
+    cmp #$80
+    bcc __b2
     // main::@3
     // *VERA_CTRL &= ~VERA_DCSEL
-    // [26] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [41] *VERA_CTRL = *VERA_CTRL & ~VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // Makea border
+    //*VERA_CTRL |= VERA_DCSEL;
+    //*VERA_DC_HSTART = 16/4;
+    //*VERA_DC_HSTOP = 624/4;
+    //*VERA_DC_VSTART = 16/2;
+    //*VERA_DC_VSTOP = 464/2;    
     // Enable sprites
     lda #VERA_DCSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
     // *VERA_DC_VIDEO |= VERA_SPRITES_ENABLE
-    // [27] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [42] *VERA_DC_VIDEO = *VERA_DC_VIDEO | VERA_SPRITES_ENABLE -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     lda #VERA_SPRITES_ENABLE
     ora VERA_DC_VIDEO
     sta VERA_DC_VIDEO
@@ -1505,15 +2221,15 @@ main: {
     // asm
     // asm { sei  }
     sei
-    // main::@1
+    // main::@4
     // *KERNEL_IRQ = &irq_vsync
-    // [29] *KERNEL_IRQ = &irq_vsync -- _deref_qprc1=pprc2 
+    // [44] *KERNEL_IRQ = &irq_vsync -- _deref_qprc1=pprc2 
     lda #<irq_vsync
     sta KERNEL_IRQ
     lda #>irq_vsync
     sta KERNEL_IRQ+1
     // *VERA_IEN = VERA_VSYNC
-    // [30] *VERA_IEN = VERA_VSYNC -- _deref_pbuc1=vbuc2 
+    // [45] *VERA_IEN = VERA_VSYNC -- _deref_pbuc1=vbuc2 
     lda #VERA_VSYNC
     sta VERA_IEN
     // main::CLI1
@@ -1522,8 +2238,67 @@ main: {
     cli
     // main::@return
     // }
-    // [32] return 
+    // [47] return 
     rts
+    // main::@2
+  __b2:
+    // SPRITE_ATTR.X += 10
+    // [48] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X) + $a -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    lda #<$a
+    clc
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    lda #>$a
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    // SPRITE_ATTR.Y += 10
+    // [49] *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) = *((word*)&SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y) + $a -- _deref_pwuc1=_deref_pwuc1_plus_vwuc2 
+    lda #<$a
+    clc
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    lda #>$a
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
+    // [50] memcpy_to_vram::vdest#1 = (void*)main::vram_sprite_attr#2 -- pvoz1=pvoz2 
+    lda.z vram_sprite_attr
+    sta.z memcpy_to_vram.vdest
+    lda.z vram_sprite_attr+1
+    sta.z memcpy_to_vram.vdest+1
+    // [51] call memcpy_to_vram 
+    // [54] phi from main::@2 to memcpy_to_vram [phi:main::@2->memcpy_to_vram]
+    // [54] phi memcpy_to_vram::num#3 = SIZEOF_STRUCT_VERA_SPRITE [phi:main::@2->memcpy_to_vram#0] -- vwuz1=vbuc1 
+    lda #<SIZEOF_STRUCT_VERA_SPRITE
+    sta.z memcpy_to_vram.num
+    lda #>SIZEOF_STRUCT_VERA_SPRITE
+    sta.z memcpy_to_vram.num+1
+    // [54] phi memcpy_to_vram::src#3 = (void*)&SPRITE_ATTR [phi:main::@2->memcpy_to_vram#1] -- pvoz1=pvoc1 
+    lda #<SPRITE_ATTR
+    sta.z memcpy_to_vram.src
+    lda #>SPRITE_ATTR
+    sta.z memcpy_to_vram.src+1
+    // [54] phi memcpy_to_vram::vbank#3 = (byte)>VERA_SPRITE_ATTR [phi:main::@2->memcpy_to_vram#2] -- vbuxx=vbuc1 
+    ldx #VERA_SPRITE_ATTR>>$10
+    // [54] phi memcpy_to_vram::vdest#3 = memcpy_to_vram::vdest#1 [phi:main::@2->memcpy_to_vram#3] -- register_copy 
+    jsr memcpy_to_vram
+    // main::@5
+    // vram_sprite_attr += sizeof(SPRITE_ATTR)
+    // [52] main::vram_sprite_attr#1 = main::vram_sprite_attr#2 + SIZEOF_STRUCT_VERA_SPRITE -- pbuz1=pbuz1_plus_vbuc1 
+    lda #SIZEOF_STRUCT_VERA_SPRITE
+    clc
+    adc.z vram_sprite_attr
+    sta.z vram_sprite_attr
+    bcc !+
+    inc.z vram_sprite_attr+1
+  !:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    // [53] main::s#1 = ++ main::s#2 -- vbuz1=_inc_vbuz1 
+    inc.z s
+    // [39] phi from main::@5 to main::@1 [phi:main::@5->main::@1]
+    // [39] phi main::vram_sprite_attr#2 = main::vram_sprite_attr#1 [phi:main::@5->main::@1#0] -- register_copy 
+    // [39] phi main::s#2 = main::s#1 [phi:main::@5->main::@1#1] -- register_copy 
+    jmp __b1
 }
   // memcpy_to_vram
 // Copy block of memory (from RAM to VRAM)
@@ -1532,41 +2307,41 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
-// memcpy_to_vram(byte register(X) vbank, void* zp(2) vdest, void* zp(4) src, word zp(6) num)
+// memcpy_to_vram(byte register(X) vbank, void* zp($c) vdest, void* zp($e) src, word zp($10) num)
 memcpy_to_vram: {
-    .label end = 6
-    .label s = 4
-    .label vdest = 2
-    .label src = 4
-    .label num = 6
+    .label end = $10
+    .label s = $e
+    .label vdest = $c
+    .label src = $e
+    .label num = $10
     // *VERA_CTRL &= ~VERA_ADDRSEL
-    // [34] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [55] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Select DATA0
     lda #VERA_ADDRSEL^$ff
     and VERA_CTRL
     sta VERA_CTRL
     // <vdest
-    // [35] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3 -- vbuaa=_lo_pvoz1 
+    // [56] memcpy_to_vram::$0 = < memcpy_to_vram::vdest#3 -- vbuaa=_lo_pvoz1 
     lda.z vdest
     // *VERA_ADDRX_L = <vdest
-    // [36] *VERA_ADDRX_L = memcpy_to_vram::$0 -- _deref_pbuc1=vbuaa 
+    // [57] *VERA_ADDRX_L = memcpy_to_vram::$0 -- _deref_pbuc1=vbuaa 
     // Set address
     sta VERA_ADDRX_L
     // >vdest
-    // [37] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#3 -- vbuaa=_hi_pvoz1 
+    // [58] memcpy_to_vram::$1 = > memcpy_to_vram::vdest#3 -- vbuaa=_hi_pvoz1 
     lda.z vdest+1
     // *VERA_ADDRX_M = >vdest
-    // [38] *VERA_ADDRX_M = memcpy_to_vram::$1 -- _deref_pbuc1=vbuaa 
+    // [59] *VERA_ADDRX_M = memcpy_to_vram::$1 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_M
     // VERA_INC_1 | vbank
-    // [39] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 -- vbuaa=vbuc1_bor_vbuxx 
+    // [60] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#3 -- vbuaa=vbuc1_bor_vbuxx 
     txa
     ora #VERA_INC_1
     // *VERA_ADDRX_H = VERA_INC_1 | vbank
-    // [40] *VERA_ADDRX_H = memcpy_to_vram::$2 -- _deref_pbuc1=vbuaa 
+    // [61] *VERA_ADDRX_H = memcpy_to_vram::$2 -- _deref_pbuc1=vbuaa 
     sta VERA_ADDRX_H
     // end = (char*)src+num
-    // [41] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 -- pbuz1=pbuz2_plus_vwuz1 
+    // [62] memcpy_to_vram::end#0 = (byte*)memcpy_to_vram::src#3 + memcpy_to_vram::num#3 -- pbuz1=pbuz2_plus_vwuz1 
     lda.z end
     clc
     adc.z src
@@ -1574,13 +2349,13 @@ memcpy_to_vram: {
     lda.z end+1
     adc.z src+1
     sta.z end+1
-    // [42] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3
-    // [43] phi from memcpy_to_vram memcpy_to_vram::@2 to memcpy_to_vram::@1 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1]
-    // [43] phi memcpy_to_vram::s#2 = memcpy_to_vram::s#4 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1#0] -- register_copy 
+    // [63] memcpy_to_vram::s#4 = (byte*)memcpy_to_vram::src#3
+    // [64] phi from memcpy_to_vram memcpy_to_vram::@2 to memcpy_to_vram::@1 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1]
+    // [64] phi memcpy_to_vram::s#2 = memcpy_to_vram::s#4 [phi:memcpy_to_vram/memcpy_to_vram::@2->memcpy_to_vram::@1#0] -- register_copy 
     // memcpy_to_vram::@1
   __b1:
     // for(char *s = src; s!=end; s++)
-    // [44] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [65] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z s+1
     cmp.z end+1
     bne __b2
@@ -1589,17 +2364,17 @@ memcpy_to_vram: {
     bne __b2
     // memcpy_to_vram::@return
     // }
-    // [45] return 
+    // [66] return 
     rts
     // memcpy_to_vram::@2
   __b2:
     // *VERA_DATA0 = *s
-    // [46] *VERA_DATA0 = *memcpy_to_vram::s#2 -- _deref_pbuc1=_deref_pbuz1 
+    // [67] *VERA_DATA0 = *memcpy_to_vram::s#2 -- _deref_pbuc1=_deref_pbuz1 
     ldy #0
     lda (s),y
     sta VERA_DATA0
     // for(char *s = src; s!=end; s++)
-    // [47] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2 -- pbuz1=_inc_pbuz1 
+    // [68] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+
     inc.z s+1

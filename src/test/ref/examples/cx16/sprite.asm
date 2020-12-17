@@ -1,5 +1,5 @@
 // Example program for the Commander X16
-// Displays a sprite
+// Displays some sprites - exceeding the per-line limits of the CX16
 .cpu _65c02
   // Commodore 64 PRG executable file
 .file [name="sprite.prg", type="prg", segments="Program"]
@@ -71,9 +71,9 @@
   // $0314	(RAM) IRQ vector - The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   // X sine index
-  .label sin_idx_x = 8
+  .label sin_idx_x = $12
   // Y sine index
-  .label sin_idx_y = $a
+  .label sin_idx_y = $14
 .segment Code
 __start: {
     // sin_idx_x = 119
@@ -91,10 +91,15 @@ __start: {
 }
 // VSYNC Interrupt Routine
 irq_vsync: {
-    .label __5 = $c
-    .label __6 = $e
-    .label __7 = $c
-    .label __8 = $e
+    .const vram_sprite_attr_bank = VERA_SPRITE_ATTR>>$10
+    .label __11 = $16
+    .label __12 = $18
+    .label i_x = 3
+    .label i_y = 5
+    .label vram_sprite_pos = 7
+    .label s = 2
+    .label __13 = $16
+    .label __14 = $18
     // if(++sin_idx_x==241)
     inc.z sin_idx_x
     bne !+
@@ -129,47 +134,84 @@ irq_vsync: {
     lda #>$fb-1
     sta.z sin_idx_y+1
   __b2:
-    // SPRITE_ATTR.X = SINX[sin_idx_x]
+    // i_x = sin_idx_x
     lda.z sin_idx_x
-    asl
-    sta.z __5
+    sta.z i_x
     lda.z sin_idx_x+1
+    sta.z i_x+1
+    // i_y = sin_idx_y
+    lda.z sin_idx_y
+    sta.z i_y
+    lda.z sin_idx_y+1
+    sta.z i_y+1
+    lda #<VERA_SPRITE_ATTR+2&$ffff
+    sta.z vram_sprite_pos
+    lda #>VERA_SPRITE_ATTR+2&$ffff
+    sta.z vram_sprite_pos+1
+    lda #0
+    sta.z s
+  __b5:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    lda.z s
+    cmp #$80
+    bcc __b6
+    // *VERA_ISR = VERA_VSYNC
+    // Black border
+    //*VERA_CTRL &= ~VERA_DCSEL;
+    //*VERA_DC_BORDER = 0; 
+    // Reset the VSYNC interrupt
+    lda #VERA_VSYNC
+    sta VERA_ISR
+    // asm
+    // Exit CX16 KERNAL IRQ
+    jmp $e034
+    // }
+  __b6:
+    // SPRITE_ATTR.X = SINX[i_x]
+    lda.z i_x
+    asl
+    sta.z __11
+    lda.z i_x+1
     rol
-    sta.z __5+1
+    sta.z __11+1
     clc
-    lda.z __7
+    lda.z __13
     adc #<SINX
-    sta.z __7
-    lda.z __7+1
+    sta.z __13
+    lda.z __13+1
     adc #>SINX
-    sta.z __7+1
+    sta.z __13+1
     ldy #0
-    lda (__7),y
+    lda (__13),y
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
     iny
-    lda (__7),y
+    lda (__13),y
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
-    // SPRITE_ATTR.Y = SINY[sin_idx_y]
-    lda.z sin_idx_y
+    // SPRITE_ATTR.Y = SINY[i_y]
+    lda.z i_y
     asl
-    sta.z __6
-    lda.z sin_idx_y+1
+    sta.z __12
+    lda.z i_y+1
     rol
-    sta.z __6+1
+    sta.z __12+1
     clc
-    lda.z __8
+    lda.z __14
     adc #<SINY
-    sta.z __8
-    lda.z __8+1
+    sta.z __14
+    lda.z __14+1
     adc #>SINY
-    sta.z __8+1
+    sta.z __14+1
     ldy #0
-    lda (__8),y
+    lda (__14),y
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
     iny
-    lda (__8),y
+    lda (__14),y
     sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR+2, &SPRITE_ATTR+2, 4)
+    // memcpy_to_vram(vram_sprite_attr_bank, vram_sprite_pos, &SPRITE_ATTR+2, 4)
+    lda.z vram_sprite_pos
+    sta.z memcpy_to_vram.vdest
+    lda.z vram_sprite_pos+1
+    sta.z memcpy_to_vram.vdest+1
   // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
     lda #<4
     sta.z memcpy_to_vram.num
@@ -179,22 +221,72 @@ irq_vsync: {
     sta.z memcpy_to_vram.src
     lda #>SPRITE_ATTR+2
     sta.z memcpy_to_vram.src+1
-    ldx #VERA_SPRITE_ATTR>>$10
-    lda #<VERA_SPRITE_ATTR+2&$ffff
-    sta.z memcpy_to_vram.vdest
-    lda #>VERA_SPRITE_ATTR+2&$ffff
-    sta.z memcpy_to_vram.vdest+1
+    ldx #vram_sprite_attr_bank
     jsr memcpy_to_vram
-    // *VERA_ISR = VERA_VSYNC
-    // Reset the VSYNC interrupt
-    lda #VERA_VSYNC
-    sta VERA_ISR
-    // asm
-    // Exit CX16 KERNAL IRQ
-    jmp $e034
-    // }
+    // vram_sprite_pos += sizeof(SPRITE_ATTR)
+    lda #SIZEOF_STRUCT_VERA_SPRITE
+    clc
+    adc.z vram_sprite_pos
+    sta.z vram_sprite_pos
+    bcc !+
+    inc.z vram_sprite_pos+1
+  !:
+    // i_x += 3
+    lda #3
+    clc
+    adc.z i_x
+    sta.z i_x
+    bcc !+
+    inc.z i_x+1
+  !:
+    // if(i_x>=241)
+    lda.z i_x+1
+    bne !+
+    lda.z i_x
+    cmp #$f1
+    bcc __b8
+  !:
+    // i_x -= 241
+    sec
+    lda.z i_x
+    sbc #$f1
+    sta.z i_x
+    lda.z i_x+1
+    sbc #0
+    sta.z i_x+1
+  __b8:
+    // i_y += 5
+    lda #5
+    clc
+    adc.z i_y
+    sta.z i_y
+    bcc !+
+    inc.z i_y+1
+  !:
+    // if(i_y>=251)
+    lda.z i_y+1
+    bne !+
+    lda.z i_y
+    cmp #$fb
+    bcc __b9
+  !:
+    // i_y -= 251
+    sec
+    lda.z i_y
+    sbc #$fb
+    sta.z i_y
+    lda.z i_y+1
+    sbc #0
+    sta.z i_y+1
+  __b9:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    inc.z s
+    jmp __b5
 }
 main: {
+    // Copy 8* sprite attributes to VRAM    
+    .label vram_sprite_attr = $a
+    .label s = 9
     // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, sizeof(SPRITE_PIXELS))
   // Copy sprite data to VRAM
     lda #<$40*$40*SIZEOF_BYTE
@@ -211,23 +303,24 @@ main: {
     lda #>SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
-    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, <VERA_SPRITE_ATTR, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
-  // Copy sprite attributes to VRAM
-    lda #<SIZEOF_STRUCT_VERA_SPRITE
-    sta.z memcpy_to_vram.num
-    lda #>SIZEOF_STRUCT_VERA_SPRITE
-    sta.z memcpy_to_vram.num+1
-    lda #<SPRITE_ATTR
-    sta.z memcpy_to_vram.src
-    lda #>SPRITE_ATTR
-    sta.z memcpy_to_vram.src+1
-    ldx #VERA_SPRITE_ATTR>>$10
     lda #<VERA_SPRITE_ATTR&$ffff
-    sta.z memcpy_to_vram.vdest
+    sta.z vram_sprite_attr
     lda #>VERA_SPRITE_ATTR&$ffff
-    sta.z memcpy_to_vram.vdest+1
-    jsr memcpy_to_vram
+    sta.z vram_sprite_attr+1
+    lda #0
+    sta.z s
+  __b1:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    lda.z s
+    cmp #$80
+    bcc __b2
     // *VERA_CTRL &= ~VERA_DCSEL
+    // Makea border
+    //*VERA_CTRL |= VERA_DCSEL;
+    //*VERA_DC_HSTART = 16/4;
+    //*VERA_DC_HSTOP = 624/4;
+    //*VERA_DC_VSTART = 16/2;
+    //*VERA_DC_VSTOP = 464/2;    
     // Enable sprites
     lda #VERA_DCSEL^$ff
     and VERA_CTRL
@@ -250,6 +343,49 @@ main: {
     cli
     // }
     rts
+  __b2:
+    // SPRITE_ATTR.X += 10
+    lda #<$a
+    clc
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X
+    lda #>$a
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_X+1
+    // SPRITE_ATTR.Y += 10
+    lda #<$a
+    clc
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y
+    lda #>$a
+    adc SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    sta SPRITE_ATTR+OFFSET_STRUCT_VERA_SPRITE_Y+1
+    // memcpy_to_vram((char)>VERA_SPRITE_ATTR, vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR))
+    lda.z vram_sprite_attr
+    sta.z memcpy_to_vram.vdest
+    lda.z vram_sprite_attr+1
+    sta.z memcpy_to_vram.vdest+1
+    lda #<SIZEOF_STRUCT_VERA_SPRITE
+    sta.z memcpy_to_vram.num
+    lda #>SIZEOF_STRUCT_VERA_SPRITE
+    sta.z memcpy_to_vram.num+1
+    lda #<SPRITE_ATTR
+    sta.z memcpy_to_vram.src
+    lda #>SPRITE_ATTR
+    sta.z memcpy_to_vram.src+1
+    ldx #VERA_SPRITE_ATTR>>$10
+    jsr memcpy_to_vram
+    // vram_sprite_attr += sizeof(SPRITE_ATTR)
+    lda #SIZEOF_STRUCT_VERA_SPRITE
+    clc
+    adc.z vram_sprite_attr
+    sta.z vram_sprite_attr
+    bcc !+
+    inc.z vram_sprite_attr+1
+  !:
+    // for(char s=0;s<NUM_SPRITES;s++)
+    inc.z s
+    jmp __b1
 }
 // Copy block of memory (from RAM to VRAM)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
@@ -257,13 +393,13 @@ main: {
 // - vdest: The destination address in VRAM
 // - src: The source address in RAM
 // - num: The number of bytes to copy
-// memcpy_to_vram(byte register(X) vbank, void* zp(2) vdest, void* zp(4) src, word zp(6) num)
+// memcpy_to_vram(byte register(X) vbank, void* zp($c) vdest, void* zp($e) src, word zp($10) num)
 memcpy_to_vram: {
-    .label end = 6
-    .label s = 4
-    .label vdest = 2
-    .label src = 4
-    .label num = 6
+    .label end = $10
+    .label s = $e
+    .label vdest = $c
+    .label src = $e
+    .label num = $10
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
     lda #VERA_ADDRSEL^$ff

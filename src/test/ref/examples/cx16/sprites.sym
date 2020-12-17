@@ -7,10 +7,9 @@ const nomodify byte SINX_LEN = $f1
 const word* SINY[SINY_LEN]  = kickasm {{ .fillword 256, 208+208*sin(i*2*PI/SINY_LEN)
  }}
 const nomodify byte SINY_LEN = $fb
-const byte SIZEOF_BYTE = 1
 const byte SIZEOF_STRUCT_VERA_SPRITE = 8
 struct VERA_SPRITE SPRITE_ATTR loadstore mem[8] = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
-const byte* SPRITE_PIXELS[$40*$40]  = kickasm {{ .var pic = LoadPicture("tut.png")
+const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tut.png")
     // palette: rgb->idx
     .var palette = Hashtable()
     // RGB value for each palette index
@@ -30,14 +29,14 @@ const byte* SPRITE_PIXELS[$40*$40]  = kickasm {{ .var pic = LoadPicture("tut.png
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes=
+    // Output sprite palette (offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
         .var green = floor(rgb/256) & 255
         .var blue = rgb & 255
         // bits 4-8: green, bits 0-3 blue
-        .byte (green/16)>>4 | blue/16
+        .byte green&$f0  | blue/16
         // bits bits 0-3 red
         .byte red/16
     }

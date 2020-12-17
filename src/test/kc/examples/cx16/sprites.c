@@ -8,7 +8,7 @@
 #define NUM_SPRITES 32
 
 // A 64*64 8bpp TUT sprite 
-align(0x1200) char SPRITE_PIXELS[64*64] = kickasm(resource "tut.png") {{
+align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
 	.var pic = LoadPicture("tut.png")
     // palette: rgb->idx
     .var palette = Hashtable()
@@ -29,14 +29,14 @@ align(0x1200) char SPRITE_PIXELS[64*64] = kickasm(resource "tut.png") {{
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes=
+    // Output sprite palette (offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
         .var green = floor(rgb/256) & 255
         .var blue = rgb & 255
         // bits 4-8: green, bits 0-3 blue
-        .byte (green/16)>>4 | blue/16
+        .byte green&$f0  | blue/16
         // bits bits 0-3 red
         .byte red/16
     }
@@ -51,7 +51,7 @@ struct VERA_SPRITE SPRITE_ATTR = { <(SPRITE_PIXELS_VRAM/32)|VERA_SPRITE_8BPP, 32
 
 void main() {
     // Copy sprite data to VRAM
-    memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, sizeof(SPRITE_PIXELS));
+    memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64);
     // Copy sprite palette to VRAM
     memcpy_to_vram((char)>VERA_PALETTE, <VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200);
     // Copy 8* sprite attributes to VRAM    
@@ -104,8 +104,8 @@ void irq_vsync() {
         // Copy sprite positions to VRAM (the 4 relevant bytes in VERA_SPRITE_ATTR)
         memcpy_to_vram(vram_sprite_attr_bank, vram_sprite_pos, &SPRITE_ATTR+2, 4);
         vram_sprite_pos += sizeof(SPRITE_ATTR);
-        i_x += 9; if(i_x>=SINX_LEN) i_x -= SINX_LEN;
-        i_y += 5; if(i_y>=SINY_LEN) i_y -= SINY_LEN;
+        i_x += 25; if(i_x>=SINX_LEN) i_x -= SINX_LEN;
+        i_y += 19; if(i_y>=SINY_LEN) i_y -= SINY_LEN;
     }
 
     // Reset the VSYNC interrupt

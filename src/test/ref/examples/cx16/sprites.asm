@@ -36,7 +36,6 @@
   .const OFFSET_STRUCT_VERA_SPRITE_X = 2
   .const OFFSET_STRUCT_VERA_SPRITE_Y = 4
   .const VERA_SPRITES_ENABLE = $40
-  .const SIZEOF_BYTE = 1
   // $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
   // $9F21 VRAM Address (15:8)
@@ -238,8 +237,8 @@ irq_vsync: {
     bcc !+
     inc.z vram_sprite_pos+1
   !:
-    // i_x += 9
-    lda #9
+    // i_x += 25
+    lda #$19
     clc
     adc.z i_x
     sta.z i_x
@@ -262,8 +261,8 @@ irq_vsync: {
     sbc #0
     sta.z i_x+1
   __b8:
-    // i_y += 5
-    lda #5
+    // i_y += 19
+    lda #$13
     clc
     adc.z i_y
     sta.z i_y
@@ -294,11 +293,11 @@ main: {
     // Copy 8* sprite attributes to VRAM    
     .label vram_sprite_attr = $a
     .label s = 9
-    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, sizeof(SPRITE_PIXELS))
+    // memcpy_to_vram((char)>SPRITE_PIXELS_VRAM, <SPRITE_PIXELS_VRAM, SPRITE_PIXELS, 64*64)
   // Copy sprite data to VRAM
-    lda #<$40*$40*SIZEOF_BYTE
+    lda #<$40*$40
     sta.z memcpy_to_vram.num
-    lda #>$40*$40*SIZEOF_BYTE
+    lda #>$40*$40
     sta.z memcpy_to_vram.num+1
     lda #<SPRITE_PIXELS
     sta.z memcpy_to_vram.src
@@ -468,7 +467,7 @@ memcpy_to_vram: {
 }
 .segment Data
   // A 64*64 8bpp TUT sprite 
-  .align $1200
+  .align $1000
 SPRITE_PIXELS:
 .var pic = LoadPicture("tut.png")
     // palette: rgb->idx
@@ -490,14 +489,14 @@ SPRITE_PIXELS:
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes=
+    // Output sprite palette (offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
         .var green = floor(rgb/256) & 255
         .var blue = rgb & 255
         // bits 4-8: green, bits 0-3 blue
-        .byte (green/16)>>4 | blue/16
+        .byte green&$f0  | blue/16
         // bits bits 0-3 red
         .byte red/16
     }

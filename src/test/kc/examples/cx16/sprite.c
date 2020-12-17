@@ -32,7 +32,7 @@ void main() {
         memcpy_to_vram((char)>VERA_SPRITE_ATTR, vram_sprite_attr, &SPRITE_ATTR, sizeof(SPRITE_ATTR));
         vram_sprite_attr += sizeof(SPRITE_ATTR);
     }   
-    // Makea border
+    // Make a border
     //*VERA_CTRL |= VERA_DCSEL;
     //*VERA_DC_HSTART = 16/4;
     //*VERA_DC_HSTOP = 624/4;

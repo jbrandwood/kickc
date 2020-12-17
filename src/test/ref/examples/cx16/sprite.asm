@@ -315,7 +315,7 @@ main: {
     cmp #$80
     bcc __b2
     // *VERA_CTRL &= ~VERA_DCSEL
-    // Makea border
+    // Make a border
     //*VERA_CTRL |= VERA_DCSEL;
     //*VERA_DC_HSTART = 16/4;
     //*VERA_DC_HSTOP = 624/4;

@@ -1,8 +1,8 @@
 // Example program for the Commander X16
-// Displays some sprites - exceeding the per-line limits of the CX16
+// Displays 32 64*64 TUT sprites
 .cpu _65c02
   // Commodore 64 PRG executable file
-.file [name="sprite.prg", type="prg", segments="Program"]
+.file [name="sprites.prg", type="prg", segments="Program"]
 .segmentdef Program [segments="Basic, Code, Data"]
 .segmentdef Basic [start=$0801]
 .segmentdef Code [start=$80d]
@@ -16,12 +16,22 @@
   .const VERA_DCSEL = 2
   .const VERA_ADDRSEL = 1
   .const VERA_VSYNC = 1
-  // Sprite Attributes address in VERA VRAM
+  // VERA Palette address in VRAM  $1FA00 - $1FBFF
+  // 256 entries of 2 bytes
+  // byte 0 bits 4-7: Green
+  // byte 0 bits 0-3: Blue
+  // byte 1 bits 0-3: Red
+  .const VERA_PALETTE = $1fa00
+  // Sprite Attributes address in VERA VRAM $1FC00 - $1FFFF
   .const VERA_SPRITE_ATTR = $1fc00
   // 8BPP sprite mode (add to VERA_SPRITE.ADDR to enable)
   .const VERA_SPRITE_8BPP = $8000
   // Address to use for sprite pixels in VRAM
   .const SPRITE_PIXELS_VRAM = $8000
+  // X sine [0;640-64]
+  .const SINX_LEN = $f1
+  // Y sine [0;480-64]
+  .const SINY_LEN = $fb
   .const SIZEOF_STRUCT_VERA_SPRITE = 8
   .const OFFSET_STRUCT_VERA_SPRITE_X = 2
   .const OFFSET_STRUCT_VERA_SPRITE_Y = 4
@@ -100,16 +110,16 @@ irq_vsync: {
     .label s = 2
     .label __13 = $16
     .label __14 = $18
-    // if(++sin_idx_x==241)
+    // if(++sin_idx_x==SINX_LEN)
     inc.z sin_idx_x
     bne !+
     inc.z sin_idx_x+1
   !:
     lda.z sin_idx_x+1
-    cmp #>$f1
+    cmp #>SINX_LEN
     bne __b1
     lda.z sin_idx_x
-    cmp #<$f1
+    cmp #<SINX_LEN
     bne __b1
     // sin_idx_x = 0
     lda #<0
@@ -128,10 +138,10 @@ irq_vsync: {
     lda.z sin_idx_y
     cmp #<$ffff
     bne __b2
-    // sin_idx_y = 251-1
-    lda #<$fb-1
+    // sin_idx_y = SINY_LEN-1
+    lda #<SINY_LEN-1
     sta.z sin_idx_y
-    lda #>$fb-1
+    lda #>SINY_LEN-1
     sta.z sin_idx_y+1
   __b2:
     // i_x = sin_idx_x
@@ -153,12 +163,9 @@ irq_vsync: {
   __b5:
     // for(char s=0;s<NUM_SPRITES;s++)
     lda.z s
-    cmp #$80
+    cmp #$20
     bcc __b6
     // *VERA_ISR = VERA_VSYNC
-    // Black border
-    //*VERA_CTRL &= ~VERA_DCSEL;
-    //*VERA_DC_BORDER = 0; 
     // Reset the VSYNC interrupt
     lda #VERA_VSYNC
     sta VERA_ISR
@@ -231,25 +238,25 @@ irq_vsync: {
     bcc !+
     inc.z vram_sprite_pos+1
   !:
-    // i_x += 3
-    lda #3
+    // i_x += 9
+    lda #9
     clc
     adc.z i_x
     sta.z i_x
     bcc !+
     inc.z i_x+1
   !:
-    // if(i_x>=241)
+    // if(i_x>=SINX_LEN)
     lda.z i_x+1
     bne !+
     lda.z i_x
-    cmp #$f1
+    cmp #SINX_LEN
     bcc __b8
   !:
-    // i_x -= 241
+    // i_x -= SINX_LEN
     sec
     lda.z i_x
-    sbc #$f1
+    sbc #SINX_LEN
     sta.z i_x
     lda.z i_x+1
     sbc #0
@@ -263,17 +270,17 @@ irq_vsync: {
     bcc !+
     inc.z i_y+1
   !:
-    // if(i_y>=251)
+    // if(i_y>=SINY_LEN)
     lda.z i_y+1
     bne !+
     lda.z i_y
-    cmp #$fb
+    cmp #SINY_LEN
     bcc __b9
   !:
-    // i_y -= 251
+    // i_y -= SINY_LEN
     sec
     lda.z i_y
-    sbc #$fb
+    sbc #SINY_LEN
     sta.z i_y
     lda.z i_y+1
     sbc #0
@@ -303,6 +310,22 @@ main: {
     lda #>SPRITE_PIXELS_VRAM&$ffff
     sta.z memcpy_to_vram.vdest+1
     jsr memcpy_to_vram
+    // memcpy_to_vram((char)>VERA_PALETTE, <VERA_PALETTE, SPRITE_PIXELS+64*64, 0x200)
+  // Copy sprite palette to VRAM
+    lda #<$200
+    sta.z memcpy_to_vram.num
+    lda #>$200
+    sta.z memcpy_to_vram.num+1
+    lda #<SPRITE_PIXELS+$40*$40
+    sta.z memcpy_to_vram.src
+    lda #>SPRITE_PIXELS+$40*$40
+    sta.z memcpy_to_vram.src+1
+    ldx #VERA_PALETTE>>$10
+    lda #<VERA_PALETTE&$ffff
+    sta.z memcpy_to_vram.vdest
+    lda #>VERA_PALETTE&$ffff
+    sta.z memcpy_to_vram.vdest+1
+    jsr memcpy_to_vram
     lda #<VERA_SPRITE_ATTR&$ffff
     sta.z vram_sprite_attr
     lda #>VERA_SPRITE_ATTR&$ffff
@@ -312,15 +335,9 @@ main: {
   __b1:
     // for(char s=0;s<NUM_SPRITES;s++)
     lda.z s
-    cmp #$80
+    cmp #$20
     bcc __b2
     // *VERA_CTRL &= ~VERA_DCSEL
-    // Make a border
-    //*VERA_CTRL |= VERA_DCSEL;
-    //*VERA_DC_HSTART = 16/4;
-    //*VERA_DC_HSTOP = 624/4;
-    //*VERA_DC_VSTART = 16/2;
-    //*VERA_DC_VSTOP = 464/2;    
     // Enable sprites
     lda #VERA_DCSEL^$ff
     and VERA_CTRL
@@ -450,23 +467,49 @@ memcpy_to_vram: {
     jmp __b1
 }
 .segment Data
-  // A 64*64 8bpp sprite 
-  .align $100
+  // A 64*64 8bpp TUT sprite 
+  .align $1200
 SPRITE_PIXELS:
-.var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
-	.for (var x=0;x<64; x++)
-    	.for (var y=0; y<64; y++)
-            .byte (pic.getPixel(x,y)==0) ? 0 : 1
+.var pic = LoadPicture("tut.png")
+    // palette: rgb->idx
+    .var palette = Hashtable()
+    // RGB value for each palette index
+    .var palList = List()
+    // Next palette index
+    .var nxt_idx = 0;
+    .for (var y=0; y<64; y++) {
+    	.for (var x=0;x<64; x++) {
+            .var rgb = pic.getPixel(x,y);
+            .var idx = palette.get(rgb)
+            .if(idx==null) {
+                .eval idx = nxt_idx++;
+                .eval palette.put(rgb,idx);
+                .eval palList.add(rgb)
+            }
+            // Output pixel index
+            .byte idx
+        }
+    }
+    // Output sprite palette (offset 64*64 bytes=
+    .for(var i=0;i<256;i++) {
+        .var rgb = palList.get(i)
+        .var red = floor(rgb / [256*256])
+        .var green = floor(rgb/256) & 255
+        .var blue = rgb & 255
+        // bits 4-8: green, bits 0-3 blue
+        .byte (green/16)>>4 | blue/16
+        // bits bits 0-3 red
+        .byte red/16
+    }
 
-  // X sine [0;640-64]
+
   .align $100
 SINX:
-.fillword 256, 288+288*sin(i*2*PI/241)
+.fillword 256, 288+288*sin(i*2*PI/SINX_LEN)
 
-  // Y sine [0;480-64]
   .align $100
 SINY:
-.fillword 256, 208+208*sin(i*2*PI/251)
+.fillword 256, 208+208*sin(i*2*PI/SINY_LEN)
 
   // Sprite attributes: 8bpp, in front, 64x64, address SPRITE_PIXELS_VRAM
   SPRITE_ATTR: .word (SPRITE_PIXELS_VRAM/$20&$ffff)|VERA_SPRITE_8BPP, $140-$20, $f0-$20

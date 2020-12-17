@@ -165,7 +165,14 @@ char * const VERA_SPI_DATA = 0x9f3e;
 // Bit 0:   Select
 char * const VERA_SPI_CTRL = 0x9f3f;
 
-// Sprite Attributes address in VERA VRAM
+// VERA Palette address in VRAM  $1FA00 - $1FBFF
+// 256 entries of 2 bytes
+// byte 0 bits 4-7: Green
+// byte 0 bits 0-3: Blue
+// byte 1 bits 0-3: Red
+const unsigned long VERA_PALETTE = 0x1fa00;
+
+// Sprite Attributes address in VERA VRAM $1FC00 - $1FFFF
 const unsigned long VERA_SPRITE_ATTR = 0x1fc00;
 
 // The VERA structure of a sprite (8 bytes)

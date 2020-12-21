@@ -147,7 +147,7 @@ export char TILES[] = kickasm(resource "lazydata.chr") {{
 // Sprite Buffer (in GAME RAM)
 // Will be transferred to the PPU via DMA during vblank
 #pragma data_seg(GameRam)
-struct SpriteData align(0x100) SPRITE_BUFFER[0x100];
+struct SpriteData __align(0x100) SPRITE_BUFFER[0x100];
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)

@@ -8,7 +8,7 @@
 #define NUM_SPRITES 32
 
 // A 64*64 8bpp TUT sprite and palette
-align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
+__align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
 	.var pic = LoadPicture("tut.png")
     // palette: rgb->idx
     .var palette = Hashtable()
@@ -76,13 +76,13 @@ void main() {
 
 // X sine [0;640-64]
 const char SINX_LEN = 241;
-align(0x100) unsigned int SINX[SINX_LEN] = kickasm {{
+__align(0x100) unsigned int SINX[SINX_LEN] = kickasm {{
     .fillword 256, 288+288*sin(i*2*PI/SINX_LEN)
 }};
 
 // Y sine [0;480-64]
 const char SINY_LEN = 251;
-align(0x100) unsigned int SINY[SINY_LEN] = kickasm {{
+__align(0x100) unsigned int SINY[SINY_LEN] = kickasm {{
     .fillword 256, 208+208*sin(i*2*PI/SINY_LEN)
 }};
 

@@ -65,7 +65,7 @@ TYPEDEF: 'typedef' ;
 CONST: 'const' ;
 EXTERN: 'extern' ;
 EXPORT: 'export' ;
-ALIGN: 'align' ;
+ALIGN: '__align' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;
 STATIC: 'static' ;

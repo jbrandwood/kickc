@@ -13,7 +13,7 @@ __address(0x2000) char LOGO[6*40*8]  = kickasm(resource "logo.png") {{
 
 const unsigned int XSIN_SIZE = 512;
 
-signed int align($100) xsin[XSIN_SIZE];
+signed int __align($100) xsin[XSIN_SIZE];
 
 void main() {
     asm { sei }

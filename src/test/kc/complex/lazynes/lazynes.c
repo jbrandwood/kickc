@@ -52,7 +52,7 @@ void main() {
 // Sprite Buffer (in GAME RAM)
 // Will be transferred to the PPU via DMA during vblank
 #pragma data_seg(GameRam)
-struct SpriteData align(0x100) SPRITE_BUFFER[0x40];
+struct SpriteData __align(0x100) SPRITE_BUFFER[0x40];
 
 // Data (in PRG ROM)
 #pragma data_seg(Data)

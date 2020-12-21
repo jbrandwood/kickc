@@ -21,7 +21,7 @@ const char PROTO_BOB[3*3*8] = kickasm(resource "smiley.png") {{
 // Sine and Cosine tables
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-signed char align(0x40) SIN[0x140] = kickasm {{
+signed char __align(0x40) SIN[0x140] = kickasm {{
     .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 }};
@@ -29,11 +29,11 @@ signed char align(0x40) SIN[0x140] = kickasm {{
 signed char* COS = SIN+$40; // sin(x) = cos(x+PI/2)
 
 // Vogel Sunflower polar coordinates
-align(0x100) const char VOGEL_THETA[] = kickasm {{
+__align(0x100) const char VOGEL_THETA[] = kickasm {{
     .const PHI = (1+sqrt(5))/2
     .fill 100, round(mod(256*i/(PHI*PHI),256))
 }};
-align(0x100) const char VOGEL_R[] = kickasm {{ .fill 100, round(sqrt(i)*15) }};
+__align(0x100) const char VOGEL_R[] = kickasm {{ .fill 100, round(sqrt(i)*15) }};
 
 // The BASIC screen
 char* const SCREEN_BASIC = 0x0400;

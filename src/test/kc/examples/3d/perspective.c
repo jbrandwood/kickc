@@ -97,9 +97,9 @@ void perspective(signed char x, signed char y, signed char z) {
 // - http://codebase64.org/doku.php?id=magazines:chacking16
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-char align($100) mulf_sqr1[512];
+char __align($100) mulf_sqr1[512];
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-char align($100) mulf_sqr2[512];
+char __align($100) mulf_sqr2[512];
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 void mulf_init() {
@@ -121,7 +121,7 @@ void mulf_init() {
 }
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed char align(0x100) PERSP_Z[0x100] = kickasm {{
+signed char __align(0x100) PERSP_Z[0x100] = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 5.0	

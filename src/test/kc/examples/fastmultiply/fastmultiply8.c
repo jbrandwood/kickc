@@ -71,7 +71,7 @@ signed char fmul8(signed char a, signed char b) {
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-char align(0x100) mulf_sqr1[0x200] = kickasm {{
+char __align(0x100) mulf_sqr1[0x200] = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -81,7 +81,7 @@ char align(0x100) mulf_sqr1[0x200] = kickasm {{
 
 
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-char align(0x100) mulf_sqr2[0x200] = kickasm {{
+char __align(0x100) mulf_sqr2[0x200] = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }

@@ -4,14 +4,14 @@
 // Location of screen & sprites
 char* SCREEN = 0x0400;
 
-char align(0x40) SPRITE[0x40] = kickasm(resource "balloon.png") {{
+char __align(0x40) SPRITE[0x40] = kickasm(resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
 }};
 
-char align(0x100) YSIN[0x100] = kickasm {{
+char __align(0x100) YSIN[0x100] = kickasm {{
     .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 }};
 

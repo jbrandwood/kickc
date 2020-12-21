@@ -6,13 +6,13 @@
 
 // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
 // <f(x) = <(( x * x )/4)
-char align($100) mulf_sqr1_lo[512];
+char __align($100) mulf_sqr1_lo[512];
 // >f(x) = >(( x * x )/4)
-char align($100) mulf_sqr1_hi[512];
+char __align($100) mulf_sqr1_hi[512];
 // <g(x) =  <((( x - 255) * ( x - 255 ))/4)
-char align($100) mulf_sqr2_lo[512];
+char __align($100) mulf_sqr2_lo[512];
 // >g(x) = >((( x - 255) * ( x - 255 ))/4)
-char align($100) mulf_sqr2_hi[512];
+char __align($100) mulf_sqr2_hi[512];
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/4)
 void mulf_init() {

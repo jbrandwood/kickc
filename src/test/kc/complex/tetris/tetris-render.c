@@ -38,8 +38,8 @@ char PIECES_COLORS_2[] = {
 
 // Pointers to the screen address for rendering each playfield line
 // The lines for screen 1 is aligned with 0x80 and screen 2 with 0x40 - so XOR'ing with 0x40 gives screen 2 lines.
-align(0x80) char* screen_lines_1[PLAYFIELD_LINES];
-align(0x40) char* screen_lines_2[PLAYFIELD_LINES];
+__align(0x80) char* screen_lines_1[PLAYFIELD_LINES];
+__align(0x40) char* screen_lines_2[PLAYFIELD_LINES];
 
 // Initialize rendering
 void render_init() {

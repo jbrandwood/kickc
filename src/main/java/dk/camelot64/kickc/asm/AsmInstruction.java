@@ -4,9 +4,6 @@ import dk.camelot64.cpufamily6502.CpuAddressingMode;
 import dk.camelot64.cpufamily6502.CpuOpcode;
 import dk.camelot64.kickc.model.InternalError;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /** A specific assembler instruction line (opcode, addressing mode and specific parameter value) */
 public class AsmInstruction extends AsmLine {
 
@@ -18,9 +15,6 @@ public class AsmInstruction extends AsmLine {
 
    /** The second ASM opcode parameter. Null if not used. Only used for addressing mode Zeropage Test Relative  {@link CpuAddressingMode#REZ} - eg. BBR0 $12,label */
    private String operand2;
-
-   /** If true the instruction will not be optimized away. */
-   private boolean dontOptimize;
 
    public AsmInstruction(CpuOpcode cpuOpcode, String operand1, String operand2) {
       this.cpuOpcode = cpuOpcode;
@@ -70,14 +64,6 @@ public class AsmInstruction extends AsmLine {
    @Override
    public String toString() {
       return getAsm();
-   }
-
-   public boolean isDontOptimize() {
-      return dontOptimize;
-   }
-
-   public void setDontOptimize(boolean dontOptimize) {
-      this.dontOptimize = dontOptimize;
    }
 
    /***

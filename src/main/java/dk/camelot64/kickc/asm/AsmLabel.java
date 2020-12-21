@@ -5,8 +5,6 @@ public class AsmLabel extends AsmLine {
 
    private String label;
 
-   private boolean dontOptimize;
-
    public AsmLabel(String label) {
       this.label = label;
    }
@@ -32,14 +30,6 @@ public class AsmLabel extends AsmLine {
    @Override
    public String getAsm() {
       return label + ":";
-   }
-
-   public boolean isDontOptimize() {
-      return dontOptimize;
-   }
-
-   public void setDontOptimize(boolean dontOptimize) {
-      this.dontOptimize = dontOptimize;
    }
 
    @Override

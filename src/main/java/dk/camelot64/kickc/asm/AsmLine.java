@@ -36,4 +36,11 @@ public abstract class AsmLine {
       return tags;
    }
 
+   /**
+    * Has the ASM line been marked as <i>don't optimize</i>?
+    * @return true if the ASM should not be optimized
+    */
+   public boolean isNoOptimize() {
+      return getTags().has("nooptimize");
+   }
 }

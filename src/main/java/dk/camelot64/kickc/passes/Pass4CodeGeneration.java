@@ -1060,10 +1060,6 @@ public class Pass4CodeGeneration {
       } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
          throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure.toString() + "\n" + e.getMessage());
       }
-      // Mark labels as don't optimize
-      for(AsmLine asmLine : asm.getCurrentChunk().getLines()) {
-         if(asmLine instanceof AsmLabel) ((AsmLabel) asmLine).setDontOptimize(true);
-      }
    }
 
    private void addKickAsm(AsmProgram asm, StatementKickAsm statementKasm) {

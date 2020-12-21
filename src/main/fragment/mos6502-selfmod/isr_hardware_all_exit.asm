@@ -1,4 +1,4 @@
-rega: @clob_a lda #0 @clob_a
-regx: @clob_x ldx #0 @clob_x
-regy: @clob_y ldy #0 @clob_y
+rega: @clob_a @nooptimize lda #0 @clob_a @nooptimize
+regx: @clob_x @nooptimize ldx #0 @clob_x @nooptimize
+regy: @clob_y @nooptimize ldy #0 @clob_y @nooptimize
 rti

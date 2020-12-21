@@ -1,4 +1,0 @@
-pla
-tay
-pla
-rti

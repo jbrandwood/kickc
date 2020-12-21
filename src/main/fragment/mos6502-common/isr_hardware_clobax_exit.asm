@@ -1,4 +1,0 @@
-pla
-tax
-pla
-rti

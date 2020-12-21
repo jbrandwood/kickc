@@ -1,3 +1,0 @@
-pha
-tya
-pha

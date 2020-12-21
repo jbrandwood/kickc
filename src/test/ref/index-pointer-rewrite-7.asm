@@ -1,10 +1,16 @@
 // Test array index pointer rewriting
 // 16bit array with 16bit index
 // Fibonacci calculation uses adjacent indices inside the loop
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="index-pointer-rewrite-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
+.segment Code
 main: {
     .label __1 = 4
     .label __2 = 6
@@ -111,4 +117,5 @@ main: {
   !:
     jmp __b1
 }
+.segment Data
   fibs: .fill 2*$19, 0

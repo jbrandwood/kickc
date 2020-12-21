@@ -4,9 +4,14 @@
 // See https://github.com/cc65/cc65/blob/master/include/conio.h
 //
 // Currently C64/PLUS4/VIC20 platforms are supported
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="tod-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_MIN = 2
@@ -32,6 +37,7 @@
   .label conio_line_text = 8
   // The current color cursor line start
   .label conio_line_color = $a
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -525,6 +531,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The buffer used by tod_str()
   tod_buffer: .text "00:00:00:00"
   .byte 0

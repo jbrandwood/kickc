@@ -3,9 +3,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-sprites.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The offset of the sprite pointers from the screen start address
@@ -69,6 +74,7 @@
   // Counting the 10 IRQs
   .label irq_cnt = $a
   .label sin_idx = 4
+.segment Code
 __start: {
     .const __init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
     // render_screen_showing = 0
@@ -404,6 +410,7 @@ loop: {
     inc.z sin_idx
     jmp __b2
 }
+.segment Data
 SIN:
 .var AMPL = 200-21
     .for(var i=0; i<256; i++) {

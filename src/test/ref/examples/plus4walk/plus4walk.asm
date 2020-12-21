@@ -15,9 +15,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-.segment Code
-
-
   .const OFFSET_STRUCT_MOS7360_TED_BG_COLOR = $15
   .const OFFSET_STRUCT_MOS7360_TED_BORDER_COLOR = $19
   .const OFFSET_STRUCT_MOS7360_TED_RASTER_LO = $1d

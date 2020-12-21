@@ -1,8 +1,14 @@
 // Test of simple enum - struct with enum
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="enum-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const RED = 0
+.segment Code
 main: {
     .const button_size = $18
     .label SCREEN = $400

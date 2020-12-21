@@ -2,12 +2,18 @@
 // SCREEN_1 and SCREEN_2 are both allocated to ZP: 4
 // Problem is that outside main() scope statements have zero call-paths and then isStatementAllocationOverlapping() never checks liveranges
 // CallPath code must be rewritten to use @begin as the outermost call instead of main()
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="liverange-problem-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label MEM = 2
   .label SCREEN_1 = 4
   .label SCREEN_2 = 6
+.segment Code
 __start: {
     // malloc()
     lda #<$400

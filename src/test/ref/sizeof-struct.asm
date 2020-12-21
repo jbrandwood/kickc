@@ -1,10 +1,16 @@
 // Tests the sizeof() operator on structs
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sizeof-struct.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_POINT = 2
   .const SIZEOF_STRUCT_CIRCLE = 3
   .label SCREEN = $400
+.segment Code
 main: {
     // Struct Arrays
     .const NUM_POINTS = 4

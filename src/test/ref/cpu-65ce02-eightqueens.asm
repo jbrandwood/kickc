@@ -4,9 +4,14 @@
 //
 // This is an iterative solution.
 .cpu _65ce02
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cpu-65ce02-eightqueens.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
@@ -25,6 +30,7 @@
   .label conio_line_color = $1a
   // The number of found solutions
   .label count = 3
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -105,6 +111,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text " - n queens problem using backtracking -"
     .byte 0
     s1: .text @"\nnumber of queens:"
@@ -112,6 +119,7 @@ main: {
     s2: .text @"\n\nsolutions: "
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -778,6 +786,7 @@ print: {
     // for(char i=1;i<=QUEENS;++i)
     inc.z i
     jmp __b1
+  .segment Data
     s: .text @"\n#"
     .byte 0
     s1: .text @":\n "
@@ -787,6 +796,7 @@ print: {
     s4: .text "-"
     .byte 0
 }
+.segment Code
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
@@ -1347,6 +1357,7 @@ uctoa_append: {
     taz
     jmp __b1
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of hexadecimal digits

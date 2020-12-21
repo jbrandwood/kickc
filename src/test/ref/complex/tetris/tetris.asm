@@ -1,9 +1,14 @@
 // Tetris Game for the Commodore 64
 // The tetris game tries to match NES tetris gameplay pretty closely
 // Source: https://meatfighter.com/nintendotetrisai/
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="tetris.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The offset of the sprite pointers from the screen start address
@@ -165,6 +170,7 @@
   .label current_piece_gfx_1 = 7
   // The char of the current piece
   .label current_piece_char_1 = 9
+.segment Code
 __start: {
     .const __init1_toSpritePtr1_return = $ff&PLAYFIELD_SPRITES/$40
     // render_screen_showing = 0
@@ -2031,6 +2037,7 @@ play_increase_level: {
     // }
     rts
 }
+.segment Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)

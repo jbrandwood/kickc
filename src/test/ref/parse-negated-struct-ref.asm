@@ -1,8 +1,14 @@
 // Test parsing a negated struct reference - which causes problems with the ASMREL labels !a++
 // https://gitlab.com/camelot/kickc/issues/266
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="parse-negated-struct-ref.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     .label a = aa
@@ -20,4 +26,5 @@ main: {
     // }
     rts
 }
+.segment Data
   aa: .byte 1

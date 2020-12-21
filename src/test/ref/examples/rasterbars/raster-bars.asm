@@ -1,14 +1,20 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="raster-bars.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
+.segment Code
 main: {
     // asm
     sei
@@ -88,4 +94,5 @@ raster: {
     // }
     rts
 }
+.segment Data
   rastercols: .byte $b, 0, $b, $b, $c, $b, $c, $c, $f, $c, $f, $f, 1, $f, 1, 1, $f, 1, $f, $f, $c, $f, $c, $c, $b, $c, $b, $b, 0, $b, 0, $ff

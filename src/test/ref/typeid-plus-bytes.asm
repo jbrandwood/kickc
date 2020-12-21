@@ -1,11 +1,17 @@
 // Test that plus creates the expected type for all legal combinations of bytes (signed/unsigned - constant/variable)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="typeid-plus-bytes.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
   .label SCREEN = $400
   .label SSCREEN = $400
+.segment Code
 main: {
     // testUnsigned()
     jsr testUnsigned

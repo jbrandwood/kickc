@@ -1,10 +1,16 @@
 // Test address-of an array element
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="address-of-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
   .label SCREEN = $400
   .label idx = 3
+.segment Code
 main: {
     .label i = 2
     // print(VALS)
@@ -61,4 +67,5 @@ print: {
     // }
     rts
 }
+.segment Data
   VALS: .word 1, 2, 3, 4

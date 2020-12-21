@@ -1,7 +1,13 @@
 // Test rewriting of constant comparisons
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="comparison-rewriting.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     .label sc = 2
@@ -109,6 +115,7 @@ main: {
     // for( byte i=0; header[i]!=0; i++)
     inx
     jmp __b2
+  .segment Data
     header: .text "  <  <= == >= >"
     .byte 0
 }

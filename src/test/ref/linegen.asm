@@ -3,15 +3,21 @@
 // Simple binary division implementation
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="linegen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .label print_screen = $400
   // Remainder after unsigned 16-bit division
   .label rem16u = $18
   .label print_char_cursor = $f
   .label print_line_cursor = $b
+.segment Code
 main: {
     .label __28 = $11
     .label i = 2
@@ -210,6 +216,7 @@ main: {
     // for(byte i=0; i<20; i++)
     inc.z i
     jmp __b1
+  .segment Data
     lintab1: .fill 2*$14, 0
     lintab2: .fill 2*$14, 0
     lintab3: .fill 2*$14, 0
@@ -218,6 +225,7 @@ main: {
     str1: .text " "
     .byte 0
 }
+.segment Code
 // Generate word linear table
 // lintab - the table to generate into
 // length - the number of points in a total sine wavelength (the size of the table)
@@ -533,4 +541,5 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

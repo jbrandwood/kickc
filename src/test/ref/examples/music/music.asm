@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="music.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   // The VIC-II MOS 6567/6569
@@ -13,6 +18,7 @@
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
+.segment Code
 // Play the music 
 main: {
     // (*musicInit)()
@@ -33,6 +39,7 @@ main: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     jmp __b1
 }
+.segment Data
 .pc = $1000 "MUSIC"
 // SID tune at an absolute address
 MUSIC:

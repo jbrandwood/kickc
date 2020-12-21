@@ -1,9 +1,15 @@
 // 8 bit converted md5 calculator
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="atarixl-md5b.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label line = 9
   .label idx = $b
+.segment Code
 __start: {
     // line = 0x0400
     lda #<$400
@@ -231,5 +237,6 @@ print: {
     // }
     rts
 }
+.segment Data
   HEX: .text "0123456789abcdef"
   .byte 0

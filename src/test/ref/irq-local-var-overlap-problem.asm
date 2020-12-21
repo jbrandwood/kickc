@@ -1,7 +1,12 @@
 // Illustrates a problem where local variables inside an IRQ are assigned the same zeropage as a variable outside the IRQ
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-local-var-overlap-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const IRQ_RASTER = 1
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
@@ -12,6 +17,7 @@
   .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
 irq: {
     .label k = 4
     .label j = 3

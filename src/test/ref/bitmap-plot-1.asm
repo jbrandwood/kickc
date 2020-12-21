@@ -3,9 +3,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-plot-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .const VIC_BMM = $20
@@ -51,6 +56,7 @@
   .label frame_cnt = $16
   // Remainder after unsigned 16-bit division
   .label rem16u = $2c
+.segment Code
 __start: {
     // frame_cnt = 1
     lda #1
@@ -1080,6 +1086,7 @@ mulu16_sel: {
     // }
     rts
 }
+.segment Data
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0

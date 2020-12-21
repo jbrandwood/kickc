@@ -1,9 +1,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="signed-words.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const WHITE = 1
   .const g = -5
   .label SPRITES_XPOS = $d000
@@ -25,6 +30,7 @@
   .label xpos = 8
   .label ypos = $a
   .label xvel = 4
+.segment Code
 main: {
     // init()
     jsr init

@@ -1,9 +1,15 @@
 // Test a procedure with calling convention stack
 // Illustrates live ranges for main::val and printline::i
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 __start: {
     jsr main
     rts

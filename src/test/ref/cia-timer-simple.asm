@@ -1,7 +1,12 @@
 // Setup and run a simple CIA-timer
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cia-timer-simple.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
@@ -13,6 +18,7 @@
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
+.segment Code
 main: {
     // clock_start()
     // Reset & start the CIA#2 timer A+B
@@ -171,4 +177,5 @@ print_char_at: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

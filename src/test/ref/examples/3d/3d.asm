@@ -5,9 +5,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="3d.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
@@ -37,6 +42,7 @@
   .label print_screen = $400
   .label sx = 2
   .label sy = 3
+.segment Code
 main: {
     // asm
     sei
@@ -384,6 +390,7 @@ debug_print_init: {
   !__b1:
     // }
     rts
+  .segment Data
     str: .text "sx"
     .byte 0
     str1: .text "sy"
@@ -409,6 +416,7 @@ debug_print_init: {
     str11: .text "yp"
     .byte 0
 }
+.segment Code
 anim: {
     .label i = 4
     lda #0
@@ -1218,6 +1226,7 @@ print_uchar_at: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // Positions to rotate
   xs: .byte -$34, -$34, -$34, 0, 0, $34, $34, $34

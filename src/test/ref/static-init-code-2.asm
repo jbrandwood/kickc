@@ -1,11 +1,17 @@
 // Tests static initialization code
 // No initializer code should be needed (since all values are constant)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="static-init-code-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const c1 = 'o'
   .const c2 = 'k'
   .label SCREEN = $400
+.segment Code
 main: {
     // SCREEN[0] = c1
     lda #c1

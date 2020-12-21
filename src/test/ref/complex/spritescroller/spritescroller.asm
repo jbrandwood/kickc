@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="spritescroller.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers
@@ -62,6 +67,7 @@
   .label y_sin_idx = 9
   // X-movement index
   .label x_movement_idx = $a
+.segment Code
 __start: {
     // PLEX_SCREEN_PTR = 0x400+0x3f8
     lda #<$400+$3f8
@@ -827,6 +833,7 @@ plexSort: {
     // }
     rts
 }
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.

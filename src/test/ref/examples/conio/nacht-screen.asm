@@ -1,9 +1,14 @@
 // Show a nice screen using conio.h
 // From CC65 sample "Eine kleine Nachtmusik" by Ullrich von Bassewitz
 // https://github.com/cc65/cc65/blob/master/samples/nachtm.c
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nacht-screen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // The horizontal line character
   .const CH_HLINE = $40
@@ -44,6 +49,7 @@
   .label conio_scroll_enable = $14
   .label XSize = $15
   .label YSize = $16
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -317,6 +323,7 @@ MakeNiceScreen: {
     // for (I = 0, T = Text; I < sizeof (Text) / sizeof (TextDesc); ++I)
     inc.z I
     jmp __b1
+  .segment Data
     Text: .byte 2
     .text "Wolfgang Amadeus Mozart"
     .byte 0
@@ -366,6 +373,7 @@ MakeNiceScreen: {
     .byte 0
     .fill $f, 0
 }
+.segment Code
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2

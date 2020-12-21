@@ -1,7 +1,12 @@
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-color.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const DTV_FEATURE_ENABLE = 1
   .const DTV_BORDER_OFF = 2
   .const DTV_HIGHCOLOR = 4
@@ -14,6 +19,7 @@
   .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
+.segment Code
 main: {
     // asm
     sei
@@ -79,5 +85,6 @@ main: {
     cpx #$10
     bne __b4
     jmp __b1
+  .segment Data
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }

@@ -1,7 +1,12 @@
 // Show a few simple splines using the splines library
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="truetype-splines.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -22,6 +27,7 @@
   .label BITMAP_SCREEN = $5c00
   .label BITMAP_GRAPHICS = $6000
   .label COS = SIN+$40
+.segment Code
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3^(>BITMAP_SCREEN)/$40
     .const toD0181_return = (>(BITMAP_SCREEN&$3fff)*4)|(>BITMAP_GRAPHICS)/4&$f
@@ -1527,6 +1533,7 @@ mulf16u: {
     // }
     rts
 }
+.segment Data
   // Array filled with spline segment points by splinePlot_8()
   SPLINE_8SEG: .fill 4*9, 0
   // Tables for the plotter - initialized by calling bitmap_init();

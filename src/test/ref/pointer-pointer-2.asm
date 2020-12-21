@@ -1,8 +1,14 @@
 // Tests pointer to pointer in a more complex setup
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-pointer-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label textid = 2
+.segment Code
 main: {
     .label text = 5
     .label screen = 3
@@ -73,6 +79,7 @@ nexttext: {
     sta.z textp+1
     rts
 }
+.segment Data
   text1: .text "camelot "
   .byte 0
   text2: .text "rex "

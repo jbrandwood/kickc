@@ -1,6 +1,11 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-plotter.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const BMM = $20
   .const DEN = $10
   .const RSEL = 8
@@ -12,6 +17,7 @@
   .label BG_COLOR = $d020
   .label FGCOL = $d021
   .label SCREEN = $400
+.segment Code
 main: {
     // *BG_COLOR = 0
     lda #0
@@ -224,6 +230,7 @@ plot: {
     // }
     rts
 }
+.segment Data
   plots_x: .byte $3c, $50, $6e, $50, $3c, $28, $a, $28
   plots_y: .byte $a, $28, $3c, $50, $6e, $50, $3c, $28
   plot_xlo: .fill $100, 0

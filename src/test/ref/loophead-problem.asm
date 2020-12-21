@@ -2,10 +2,16 @@
 // The result is a NullPointerException
 // The cause is that the Unroller does not handle the variable opcode correctly.
 // The Unroller gets the verwions for opcode wrong because it misses the fact that it is modified inside call to popup_selector()
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loophead-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 // Offending unroll variable
 main: {
     // screen[40] = opcode

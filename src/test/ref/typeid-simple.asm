@@ -1,7 +1,12 @@
 // Test typeid() of the different types
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="typeid-simple.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const TYPEID_VOID = 0
   .const TYPEID_BYTE = 1
   .const TYPEID_SIGNED_BYTE = 2
@@ -19,6 +24,7 @@
   .const TYPEID_POINTER_BOOL = $17
   .const TYPEID_POINTER_PROCEDURE = $1f
   .const TYPEID_POINTER_POINTER_BYTE = $21
+.segment Code
 main: {
     .label SCREEN = $400
     // SCREEN[idx++] = typeid(void)

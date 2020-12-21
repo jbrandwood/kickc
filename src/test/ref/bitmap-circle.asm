@@ -1,9 +1,14 @@
 // Plots a circle on a bitmap using Bresenham's Circle algorithm
 // Coded by Richard-William Loerakker
 // Original Source https://bcaorganizer.blogspot.com/p/c-program-for_21.html?fbclid=IwAR0iL8pYcCqhCPa6LmtQ9qej-YonYVepY2cBegYRIWO0l8RPeOnTVniMAac
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -13,6 +18,7 @@
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
 main: {
     // fill(BITMAP,40*25*8,0)
     ldx #0
@@ -425,4 +431,5 @@ plot: {
     // }
     rts
 }
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

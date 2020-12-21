@@ -1,7 +1,13 @@
 // Test all types of pointers
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="ptrtest.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // lvalue()
     jsr lvalue

@@ -1,12 +1,18 @@
 // The screen
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="voronoi.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const FILL = $e6
   // The total number of voronoi points
   .const numpoints = 6
   .label SCREEN = $400
   .label COLORS = $d800
+.segment Code
 main: {
     // initscreen()
     jsr initscreen
@@ -266,6 +272,7 @@ findcol: {
     tay
     jmp __b5
 }
+.segment Data
   // Points to create the Voronoi from
   XPOS: .byte 5, $f, 6, $22, $15, $1f
   YPOS: .byte 5, 8, $e, 2, $11, $16

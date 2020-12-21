@@ -101,9 +101,6 @@ public class Pass4CodeGeneration {
          linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(startAddress));
       asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
 
-      // If the link script contains ".segment" then generate segments!
-      useSegments = linkScriptBody.contains(".segment");
-
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
       addConstantsAndLabels(asm, currentScope);
@@ -176,8 +173,6 @@ public class Pass4CodeGeneration {
       program.setAsm(asm);
    }
 
-   // Should the generated program use segments?
-   private boolean useSegments = false;
    // Name of the current data segment
    private String currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
    // Name of the current code segment
@@ -192,7 +187,7 @@ public class Pass4CodeGeneration {
     * @param asm The ASM program (where a .segment line is added if needed)
     */
    private void setCurrentSegment(String segmentName, AsmProgram asm) {
-      if(useSegments && !currentSegmentName.equals(segmentName)) {
+      if(!currentSegmentName.equals(segmentName)) {
          asm.addLine(new AsmSegment(segmentName));
          currentSegmentName = segmentName;
       }

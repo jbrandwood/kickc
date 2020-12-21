@@ -1,8 +1,13 @@
 // Tests printf implementation
 // Format a string
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // Color Ram
   .label COLORRAM = $d800
@@ -17,6 +22,7 @@
   .label conio_line_text = $f
   // The current color cursor line start
   .label conio_line_color = $11
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -97,11 +103,13 @@ main: {
     jsr printf_string
     // }
     rts
+  .segment Data
     str: .text "cml"
     .byte 0
     str1: .text "rules"
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {

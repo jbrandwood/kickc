@@ -1,7 +1,13 @@
 // Tests a simple word array
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="word-array-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     .label w = 3
@@ -41,6 +47,7 @@ main: {
     bne __b1
     // }
     rts
+  .segment Data
     // Clever word array that represents C64 numbers 0-7
     words: .word $3031, $3233, $3435, $3637
 }

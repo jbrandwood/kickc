@@ -1,10 +1,16 @@
 // Failing number type resolving in ternary operator
 // Currently fails in the ternary operator with number-issues if integer literal is not specified!
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="number-ternary-fail-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
+.segment Code
 main: {
     .label width = $12*2+3
     .label height = 6*2+3

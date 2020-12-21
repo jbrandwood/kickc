@@ -1,14 +1,20 @@
 // Display  MEDUSA PETSCII by Buzz_clik
 // https://csdb.dk/release/?id=178673
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="medusa.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The colors of the C64
   .const BLACK = 0
   .label BG_COLOR = $d021
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
+.segment Code
 main: {
     // *BG_COLOR = BLACK
     lda #BLACK
@@ -83,6 +89,7 @@ memcpy: {
   !:
     jmp __b1
 }
+.segment Data
 MEDUSA_SCREEN:
 .var fileScreen = LoadBinary("medusas.prg", BF_C64FILE)
     .fill fileScreen.getSize(), fileScreen.get(i)

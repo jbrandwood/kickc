@@ -1,8 +1,14 @@
 // TEst inlining a slightly complex print function (containing a loop)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-function-print.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 main: {
     .label print2_at = screen+2*$28
     ldx #0
@@ -41,6 +47,7 @@ main: {
     // for(byte i=0; msg[i]; i++)
     iny
     jmp print1___b1
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }

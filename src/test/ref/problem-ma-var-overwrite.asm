@@ -1,8 +1,14 @@
 // Demonstrates that a local __ma variable overwrites a parameter§
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="problem-ma-var-overwrite.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label h1 = 2
+.segment Code
 __start: {
     // h1
     lda #<0

@@ -1,7 +1,12 @@
 // Functions for performing input and output.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="helloworld.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // Color Ram
   .label COLORRAM = $d800
@@ -16,6 +21,7 @@
   .label conio_line_text = 8
   // The current color cursor line start
   .label conio_line_color = $a
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -58,9 +64,11 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text @"hello world!\n"
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {

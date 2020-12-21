@@ -1,8 +1,13 @@
 // Tests the speed of printf()
 // Functions for performing input and output.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-speed.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
@@ -30,6 +35,7 @@
   .label conio_line_text = $a
   // The current color cursor line start
   .label conio_line_color = $c
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -141,11 +147,13 @@ main: {
     inc.z i+1
   !:
     jmp __b1
+  .segment Data
     s: .text "time: "
     .byte 0
     s1: .text "qwe "
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -746,6 +754,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

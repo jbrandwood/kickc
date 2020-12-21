@@ -1,7 +1,13 @@
 // Example of inline kickasm data
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-data.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label screen = 2
     .label cols = 4
@@ -46,6 +52,7 @@ main: {
     // }
     rts
 }
+.segment Data
 .pc = $1000 "sintab"
 sintab:
 .fill 25, 20 + 20*sin(toRadians(i*360/25))

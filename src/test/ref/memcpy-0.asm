@@ -1,7 +1,12 @@
 // Test memcpy - copy charset and screen using memcpy() from stdlib string
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="memcpy-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
   // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
@@ -14,6 +19,7 @@
   .label CHARSET = $2000
   .label SCREEN = $400
   .label SCREEN_COPY = $2400
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN_COPY&$3fff)*4)|(>CHARSET)/4&$f
     // *D018 = toD018(SCREEN_COPY, CHARSET)

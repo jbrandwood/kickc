@@ -1,9 +1,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="showlogo.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_MCM = $10
   .const VIC_CSEL = 8
   // The colors of the C64
@@ -21,6 +26,7 @@
   // Color Ram
   .label COLS = $d800
   .label SCREEN = $400
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // VICII->BORDER_COLOR = WHITE
@@ -106,6 +112,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
 .pc = $2000 "LOGO"
 LOGO:
 .var logoPic = LoadPicture("logo.png", List().add($444444, $808080, $000000, $ffffff))

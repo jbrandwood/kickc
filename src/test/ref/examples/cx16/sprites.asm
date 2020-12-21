@@ -9,9 +9,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-.segment Code
-
-
   .const VERA_INC_1 = $10
   .const VERA_DCSEL = 2
   .const VERA_ADDRSEL = 1

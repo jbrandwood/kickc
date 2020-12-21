@@ -1,10 +1,16 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable struct value - containing a fixed size array
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="declared-memory-var-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_FOO_THING2 = 1
   .const OFFSET_STRUCT_FOO_THING3 = 2
+.segment Code
 main: {
     .label SCREEN = $400
     .label barp = bar
@@ -29,6 +35,7 @@ main: {
     // }
     rts
 }
+.segment Data
   bar: .byte 'a', 'b'
   .text "qwe"
   .byte 0

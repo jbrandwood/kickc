@@ -1,8 +1,14 @@
 // Test word pointer compound assignment
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="word-pointer-compound.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
+.segment Code
 main: {
     .label SCREEN = $400
     ldx #0
@@ -48,5 +54,6 @@ main: {
     sta SCREEN+5
     // }
     rts
+  .segment Data
     words: .word $3031, $3233, $3435
 }

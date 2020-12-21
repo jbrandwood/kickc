@@ -1,7 +1,12 @@
 // A minimal working raster IRQ
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-kernel.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const BLACK = 0
@@ -13,6 +18,7 @@
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
 // Interrupt Routine
 irq: {
     // *BG_COLOR = WHITE

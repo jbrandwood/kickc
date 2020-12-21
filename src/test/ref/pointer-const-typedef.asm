@@ -1,7 +1,12 @@
 // Test pointer to const and const pointer combined with typedef
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-const-typedef.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Const pointer
   .label cp0 = $400
   .label cp1 = $400
@@ -15,6 +20,7 @@
   .label pc1 = $400
   .label pc2 = $400
   .label SCREEN = $400
+.segment Code
 main: {
     // SCREEN[idx++] = *pc0
     lda pc0

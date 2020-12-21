@@ -1,9 +1,15 @@
 // Test using an ASM mnemonic as a C symbol names
 // Works if the C-lexer and the ASM-lexer are separated properly
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="asm-mnemonic-names.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label lda = $400
+.segment Code
 main: {
     .label jmp = 1
     // *lda = jmp

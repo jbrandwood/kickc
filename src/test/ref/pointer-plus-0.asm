@@ -1,7 +1,13 @@
 // Tests pointer plus 0 elimination
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-plus-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     .label __0 = 2
@@ -35,6 +41,7 @@ first: {
     .label return = 2
     rts
 }
+.segment Data
   msg1: .text "hello world!"
   .byte 0
   msg2: .text "goodbye sky?"

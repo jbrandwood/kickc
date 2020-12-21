@@ -1,13 +1,19 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-lowhigh.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = $10
   .label print_char_cursor = $e
   .label print_char_cursor_1 = $10
   .label print_line_cursor_1 = 6
+.segment Code
 main: {
     .label __3 = 8
     .label __6 = $e
@@ -322,4 +328,5 @@ memset: {
   !:
     jmp __b1
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

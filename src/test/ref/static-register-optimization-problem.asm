@@ -1,8 +1,14 @@
 // https://gitlab.com/camelot/kickc/issues/336
 // ASM Static Register Value analysis erronously believes >-1 == 0
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="static-register-optimization-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label screen = $400
     .label lasti = 4

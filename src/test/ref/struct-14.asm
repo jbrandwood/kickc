@@ -1,9 +1,15 @@
 // Minimal struct with C-Standard behavior - declaration, instantiation and usage
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-14.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+.segment Code
 main: {
     // points[0].x = 2
     lda #2
@@ -20,4 +26,5 @@ main: {
     // }
     rts
 }
+.segment Data
   points: .fill 2*1, 0

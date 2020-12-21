@@ -5,13 +5,19 @@
 // MOS 6560/6561 VIDEO INTERFACE CHIP
 // Used in VIC 20
 // http://archive.6502.org/datasheets/mos_6560_6561_vic.pdf
-.pc = $1001 "Basic"
+  // Commodore VIC 20 executable PRG file
+.file [name="vic20-raster.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
   .const OFFSET_STRUCT_MOS6561_VIC_RASTER = 4
   .const OFFSET_STRUCT_MOS6561_VIC_BORDER_BACKGROUND_COLOR = $f
   // The MOS 6560/6561 VIC Video Interface Chip
   .label VIC = $9000
+.segment Code
 main: {
     // asm
     sei

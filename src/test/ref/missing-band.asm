@@ -1,9 +1,15 @@
 // Demonstrates missing fragment
 // https://gitlab.com/camelot/kickc/-/issues/293
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="missing-band.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label a = 2
     // foo(1)
@@ -26,4 +32,5 @@ foo: {
     // }
     rts
 }
+.segment Data
   bar: .byte 9, 1, 2, 3, 4, 5, 6, 7, 8, 9

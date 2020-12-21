@@ -1,9 +1,14 @@
 // Test the pseudorandom number generator in stdlib.h
 // Source http://www.retroprogramming.com/2017/07/xorshift-pseudorandom-numbers-in-z80.html
 // Information https://en.wikipedia.org/wiki/Xorshift
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="rand-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const WHITE = 1
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
@@ -25,6 +30,7 @@
   .label conio_textcolor = $1e
   // The random state variable
   .label rand_state = $a
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -183,11 +189,13 @@ main: {
     jsr printf_ulong
     // }
     rts
+  .segment Data
     s: .text "generating unique randoms..."
     .byte 0
     s1: .text "found "
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) x, byte register(A) y)
 gotoxy: {
@@ -1173,6 +1181,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

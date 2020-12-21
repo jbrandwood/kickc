@@ -3,9 +3,14 @@
 // Sources
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-blittermin.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const DTV_FEATURE_ENABLE = 1
   // Bit[0] Force Start Strobe when set
   .const DTV_BLIT_FORCE_START = 1
@@ -76,6 +81,7 @@
   .label SCREEN = $400
   // Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e
+.segment Code
 main: {
     // *DTV_FEATURE = DTV_FEATURE_ENABLE
     lda #DTV_FEATURE_ENABLE
@@ -189,5 +195,6 @@ main: {
     // }
     rts
 }
+.segment Data
   SRCA: .byte 'c', 'a', 'm', 'e', 'l', 'o', 't', '!', ' '
   SRCB: .byte $80

@@ -11,8 +11,6 @@
 .word __start // NMI
 .word __start // RESET
 .word __start // IRQ
-.segment Code
-
   // The number of CPU cycles per scanline
   .const CYCLES_PER_SCANLINE = $4c
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_COLUP0 = 6

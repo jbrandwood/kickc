@@ -1,8 +1,14 @@
 // Illustrates a problem with post-incrementing a pointer used in a loop comparison
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="post-increment-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label msg = 2
     lda #<MESSAGE
@@ -56,6 +62,7 @@ main: {
     inx
     jmp __b3
 }
+.segment Data
   MESSAGE: .text "camelot"
   .byte 0
   .fill $c, 0

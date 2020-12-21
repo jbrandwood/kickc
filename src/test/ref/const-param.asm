@@ -1,7 +1,13 @@
 // Test that the compiler optimizes when the same parameter value is passed into a function in all calls
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-param.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label reverse = $80
     .label screen = $400

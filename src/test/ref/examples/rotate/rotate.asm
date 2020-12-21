@@ -1,7 +1,12 @@
 // 2D rotattion of 8 sprites 
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="rotate.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
   // Timer B Control - Timer counts (00:system cycles, 01: CNT pulses, 10: timer A underflow, 11: time A underflow while CNT is high)
@@ -28,6 +33,7 @@
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
   .label COS = SIN+$40
+.segment Code
 // sin(x) = cos(x+PI/2)
 main: {
     // asm
@@ -607,6 +613,7 @@ print_char_at: {
     // }
     rts
 }
+.segment Data
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)
   .align $100

@@ -1,8 +1,13 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve-kc.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const COUNT = $4000
   .const SQRT_COUNT = $80
   .label print_screen = $400
@@ -11,6 +16,7 @@
   .label Ticks = 8
   .label Ticks_1 = $a
   .label print_char_cursor = 4
+.segment Code
 __start: {
     // last_time
     lda #<0
@@ -244,6 +250,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   .align $100
   Sieve: .fill COUNT, 0

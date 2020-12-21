@@ -1,9 +1,15 @@
 // Test __varcall calling convention
 // Larger type parameter & return value
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="varcall-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label BGCOL = $d020
+.segment Code
 // plus(signed word zp(2) a, signed word zp(4) b)
 plus: {
     .label return = 2

@@ -1,10 +1,16 @@
 // Typedef const/volatile type
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="typedef-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const c = 'c'
   .label SCREEN = $400
   .label v = 2
+.segment Code
 __start: {
     // v = 'v'
     lda #'v'

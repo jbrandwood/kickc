@@ -3,9 +3,14 @@
 // Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgenscale8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
   // PI in u[4.12] format
@@ -15,6 +20,7 @@
   .label print_screen = $400
   .label print_char_cursor = $10
   .label print_line_cursor = $a
+.segment Code
 main: {
     .label tabsize = $14
     // print_cls()
@@ -23,8 +29,10 @@ main: {
     jsr sin8u_table
     // }
     rts
+  .segment Data
     sintab: .fill $14, 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -226,6 +234,7 @@ sin8u_table: {
     inc.z i+1
   !:
     jmp __b1
+  .segment Data
     str: .text "step:"
     .byte 0
     str1: .text " min:"
@@ -245,6 +254,7 @@ sin8u_table: {
     str8: .text " trans: "
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -751,4 +761,5 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

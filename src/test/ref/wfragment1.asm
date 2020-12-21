@@ -1,8 +1,14 @@
 // Adding a missing word-fragment for Travis Fisher
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="wfragment1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const MAX_OBJECTS = $10
+.segment Code
 main: {
     ldy #0
   __b1:
@@ -29,4 +35,5 @@ move_enemy: {
     // }
     rts
 }
+.segment Data
   OBJ_WORLD_X: .fill 2*MAX_OBJECTS, 0

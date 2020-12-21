@@ -1,10 +1,16 @@
 // Demonstrates problem with conditions using negated struct references
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-20.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_SETTING = 2
   .const OFFSET_STRUCT_SETTING_ID = 1
   .label SCREEN = $400
+.segment Code
 main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
     .label setting = 2
@@ -48,4 +54,5 @@ main: {
   !:
     jmp __b1
 }
+.segment Data
   settings: .byte 0, 'a', 1, 'b', 0, 'c'

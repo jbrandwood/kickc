@@ -1,8 +1,14 @@
 // Test a problem with converting casted constant numbers to fixed type constant integers
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-int-cast-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     ldx #$79
   __b1:

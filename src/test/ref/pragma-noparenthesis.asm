@@ -7,9 +7,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-.segment Code
-
-
   .label SCREEN = $400
 .segment Code
 __start: {

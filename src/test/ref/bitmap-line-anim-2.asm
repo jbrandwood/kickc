@@ -1,8 +1,13 @@
 // Shows that bitmap2.kc line() does not have the same problem as bitmap-draw.kc
 // See bitmap-line-anim-1.kc
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-line-anim-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -15,6 +20,7 @@
   .label SCREEN = $400
   .label BITMAP = $2000
   .label next = 2
+.segment Code
 main: {
     // *BORDER_COLOR = 0
     lda #0
@@ -502,6 +508,7 @@ bitmap_plot: {
     // }
     rts
 }
+.segment Data
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0

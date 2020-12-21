@@ -1,8 +1,14 @@
 // Tests of strip() function from https://news.ycombinator.com/item?id=12080871
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strip.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 6
+.segment Code
 main: {
     // strip(msg1, ' ')
     ldx #' '
@@ -107,6 +113,7 @@ print: {
     // }
     rts
 }
+.segment Data
   msg1: .text "hello world!"
   .byte 0
   msg2: .text "goodbye blue sky!"

@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="chargen-analysis.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const KEY_F7 = 3
   .const KEY_F1 = 4
   .const KEY_F3 = 5
@@ -68,6 +73,7 @@
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
+.segment Code
 main: {
     .label sc = 2
     .label i = 4
@@ -252,6 +258,7 @@ main: {
     inc.z sc+1
   !:
     jmp __b1
+  .segment Data
     str: .text "f1"
     .byte 0
     str1: .text "f3"
@@ -261,6 +268,7 @@ main: {
     str3: .text "f7"
     .byte 0
 }
+.segment Code
 // Print a string at a specific screen position
 // print_str_at(byte* zp(8) str, byte* zp($c) at)
 print_str_at: {
@@ -454,6 +462,7 @@ keyboard_matrix_read: {
     // }
     rts
 }
+.segment Data
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f

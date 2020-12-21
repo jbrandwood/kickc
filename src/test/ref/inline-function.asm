@@ -1,14 +1,20 @@
 // Test inline function
 // Splits screen so upper half is lower case and lower half lower case
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-function.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label RASTER = $d012
   .label D018 = $d018
   .label BG_COLOR = $d021
   .label screen = $400
   .label charset1 = $1000
   .label charset2 = $1800
+.segment Code
 main: {
     .const toD0181_return = screen/$40|charset1/$400
     .const toD0182_return = screen/$40|charset2/$400

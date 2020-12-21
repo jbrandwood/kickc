@@ -1,10 +1,16 @@
 // Demonstrates problems with local labels overwriting global labels
 // This should produce "abca" - but produces "abcc" because the local variable containing "c" overrides the global variable containing "a"
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="global-label-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Screen pointer and index
   .label SCREEN = $400
+.segment Code
 main: {
     // print("a")
     ldx #0
@@ -23,9 +29,11 @@ main: {
     jsr print1
     // }
     rts
+  .segment Data
     msg1: .text "b"
     .byte 0
 }
+.segment Code
 // print(byte* zp(2) msg)
 print: {
     .label msg = 2
@@ -65,6 +73,7 @@ print1: {
     jsr print
     // }
     rts
+  .segment Data
     msg: .text "c"
     .byte 0
 }

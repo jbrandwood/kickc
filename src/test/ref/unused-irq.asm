@@ -1,9 +1,15 @@
 // Unused interrupts pointing to each other but never used from main loop - should be optimized away
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="unused-irq.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label HARDWARE_IRQ = $fffe
+.segment Code
 // Unused Interrupt Routine
 irq2: {
     // *HARDWARE_IRQ = &irq1

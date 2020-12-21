@@ -1,7 +1,12 @@
 // Plasma based on the distance/angle to the screen center
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="plasma-center.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The colors of the C64
@@ -41,6 +46,7 @@
   // Offsets for the sines
   .label sin_offset_x = 6
   .label sin_offset_y = $13
+.segment Code
 __start: {
     // malloc(1000)
     lda #<$3e8
@@ -513,8 +519,10 @@ make_plasma_charset: {
     // for (char ii = 0; ii < 8; ++ii)
     inx
     jmp __b5
+  .segment Data
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(4) str, byte register(X) c)
 memset: {
@@ -1094,6 +1102,7 @@ bsearch16u: {
     tax
     jmp __b3
 }
+.segment Data
   // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)

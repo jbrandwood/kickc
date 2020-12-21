@@ -1,11 +1,17 @@
 // Adding a missing word-fragment for Travis Fisher
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="travis1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const READY_FRAMES = 5
   .label print_screen = $400
   .label print_char_cursor = 5
   .label print_line_cursor = 7
+.segment Code
 main: {
     .label i = 2
     lda #0
@@ -51,9 +57,11 @@ main: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     jmp __b1
+  .segment Data
     str: .text "ready!"
     .byte 0
 }
+.segment Code
 game_ready: {
     // if (action_count == 0)
     cpx #0
@@ -76,9 +84,11 @@ game_ready: {
   !:
     // }
     rts
+  .segment Data
     str: .text "ready"
     .byte 0
 }
+.segment Code
 // Print a zero-terminated string followed by a newline
 // print_str_ln(byte* zp(3) str)
 print_str_ln: {

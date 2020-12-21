@@ -1,16 +1,21 @@
 // Test reading keyboard port on the TED of the Plus/4
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
-.pc = $1001 "Basic"
+  // Commodore 16 / Plus/4 executable PRG file
+.file [name="plus4-keyboard-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
-
   // Keyboard latch
   .label KEYBOARD_INPUT = $ff08
   // Keyboard scan
   .label KEYBOARD_SCAN = $fd30
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+.segment Code
 main: {
     .label row = 3
     .label y = 2

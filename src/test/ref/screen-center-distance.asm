@@ -1,7 +1,12 @@
 // Calculate the distance to the center of the screen - and show it using font-hex
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="screen-center-distance.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
@@ -26,6 +31,7 @@
   // Squares for each char value SQUARES[i] = i*i
   // Initialized by init_squares()
   .label SQUARES = malloc.return
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(BASE_SCREEN&$3fff)*4)|(>BASE_CHARSET)/4&$f
@@ -648,6 +654,7 @@ print_char_at: {
     // }
     rts
 }
+.segment Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
   print_hextab: .text "0123456789abcdef"

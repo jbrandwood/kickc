@@ -1,7 +1,13 @@
 // Test that memory alignment of arrays work
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="mem-alignment.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -26,6 +32,7 @@ main: {
     bne __b2
     // }
     rts
+  .segment Data
     .align $100
     cs: .fill $100, 0
 }

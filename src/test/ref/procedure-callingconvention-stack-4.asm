@@ -1,11 +1,17 @@
 // Test a procedure with calling convention stack
 // A slightly more complex call
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label i = 3
+.segment Code
 __start: {
     // i = 0
     lda #0

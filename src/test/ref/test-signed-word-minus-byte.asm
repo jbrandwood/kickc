@@ -1,10 +1,16 @@
 // Tests subtracting bytes from signed words
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-signed-word-minus-byte.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = 7
   .label print_char_cursor = 5
+.segment Code
 main: {
     .label w2 = $b
     .label w1 = 2
@@ -215,4 +221,5 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

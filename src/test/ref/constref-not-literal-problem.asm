@@ -1,8 +1,14 @@
 // Demonstrates a problem where constant references are not literal
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="constref-not-literal-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label B = $8000
+.segment Code
 main: {
     // copy(B, A)
     jsr copy
@@ -31,5 +37,6 @@ copy: {
     // }
     rts
 }
+.segment Data
   A: .text "qwe"
   .byte 0

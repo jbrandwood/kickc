@@ -1,9 +1,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -13,6 +18,7 @@
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
 main: {
     .label i = 2
     // fill(BITMAP,40*25*8,0)
@@ -493,4 +499,5 @@ plot: {
     // }
     rts
 }
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

@@ -1279,9 +1279,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-basic.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
@@ -1289,6 +1294,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 5
+.segment Code
   // main
 main: {
     .label f_2pi = $e2e5
@@ -1482,9 +1488,11 @@ main: {
     // [6] phi print_char_cursor#34 = print_char_cursor#53 [phi:main::@15->main::@1#1] -- register_copy 
     // [6] phi main::i#10 = main::i#1 [phi:main::@15->main::@1#2] -- register_copy 
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
+.segment Code
   // setFAC
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
@@ -1804,6 +1812,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -2025,9 +2034,14 @@ Score: 4961
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-basic.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
@@ -2035,6 +2049,7 @@ Score: 4961
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 5
+.segment Code
   // main
 main: {
     .label f_2pi = $e2e5
@@ -2192,9 +2207,11 @@ main: {
     // [6] phi print_char_cursor#34 = print_char_cursor#53 [phi:main::@15->main::@1#1] -- register_copy 
     // [6] phi main::i#10 = main::i#1 [phi:main::@15->main::@1#2] -- register_copy 
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
+.segment Code
   // setFAC
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
@@ -2505,5 +2522,6 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

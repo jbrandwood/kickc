@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="vogel-bobs.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const KEY_SPACE = $3c
   // The number of different X-shifts
   .const BOB_SHIFTS_X = 4
@@ -42,6 +47,7 @@
   // Pointer to the next clean-up to add
   // Prepare for next clean-up
   .label renderBobCleanupNext = $10
+.segment Code
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const vicSelectGfxBank2_toDd001_return = 3
@@ -917,9 +923,11 @@ progress_inc: {
     sta (progress_cursor),y
     // }
     rts
+  .segment Data
     // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
+.segment Code
 // Prepare for fast multiply with an unsigned char to a unsigned int result
 // mulf8u_prepare(byte register(A) a)
 mulf8u_prepare: {
@@ -1016,6 +1024,7 @@ mulf8u_prepared: {
     // }
     rts
 }
+.segment Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)

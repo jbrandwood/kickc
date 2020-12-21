@@ -1,7 +1,12 @@
 // Tests the sizeof() operator on types
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sizeof-types.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_BYTE = 1
   .const SIZEOF_SIGNED_BYTE = 1
   .const SIZEOF_BOOL = 1
@@ -11,6 +16,7 @@
   .const SIZEOF_DWORD = 4
   .const SIZEOF_SIGNED_DWORD = 4
   .label SCREEN = $400
+.segment Code
 main: {
     // SCREEN[idx++] = '0'+sizeof(void)
     lda #'0'

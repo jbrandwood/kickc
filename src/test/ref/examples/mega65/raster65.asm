@@ -14,9 +14,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-.segment Code
-
-
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers

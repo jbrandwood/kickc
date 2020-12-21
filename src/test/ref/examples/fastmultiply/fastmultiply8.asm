@@ -5,14 +5,20 @@
 // See the following for information about the method
 // - http://codebase64.org/doku.php?id=base:seriously_fast_multiplication 
 // - http://codebase64.org/doku.php?id=magazines:chacking16
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="fastmultiply8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Pointers to a, b and c=a*b
   .label ap = $fd
   .label bp = $fe
   .label cp = $ff
   .label print_screen = $400
+.segment Code
 main: {
     .label at = 3
     .label k = 2
@@ -300,6 +306,7 @@ memset: {
   !:
     jmp __b1
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   vals: .byte -$5f, -$40, -$20, -$10, 0, $10, $20, $40, $5f
   // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).

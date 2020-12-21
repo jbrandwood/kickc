@@ -1,9 +1,15 @@
 // Test a bit of array code from the NES forum
 // https://forums.nesdev.com/viewtopic.php?f=2&t=18735
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nes-array.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
+.segment Code
 main: {
     .label SCREEN = $400
     .label y1 = 4
@@ -71,4 +77,5 @@ foo: {
     // }
     rts
 }
+.segment Data
   wow: .word $cafe, $babe, $1234, $5678

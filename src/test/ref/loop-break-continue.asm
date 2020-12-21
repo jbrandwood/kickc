@@ -1,8 +1,14 @@
 // Illustrates both break & continue statements in a loop
 // Prints a message ending at NUL skipping all spaces
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loop-break-continue.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label screen = 2
     lda #<$400
@@ -38,6 +44,7 @@ main: {
     cpx #0
     beq __breturn
     jmp __b1
+  .segment Data
     str: .text "hello brave new world"
     .byte 0
 }

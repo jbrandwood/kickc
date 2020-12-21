@@ -36,8 +36,6 @@
 .byte   $01           // 1x 8KB VROM (CHR)
 .byte   %00000001     // Mapper nibble 0000 == No mapping (a simple 16KB PRG + 8KB CHR game)
                       // Mirroring nibble 0001 == Vertical mirroring only
-.segment Code
-
   .const OFFSET_STRUCT_SPRITEDATA_TILE = 1
   .const OFFSET_STRUCT_SPRITEDATA_ATTRIBUTES = 2
   .const OFFSET_STRUCT_SPRITEDATA_X = 3

@@ -1,13 +1,19 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="multiply-16bit-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_char_cursor = $11
   .label print_line_cursor = 8
   .label print_char_cursor_1 = 8
   .label print_line_cursor_1 = 6
+.segment Code
 main: {
     .label i = 2
     .label __5 = $b
@@ -449,6 +455,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

@@ -1,9 +1,15 @@
 // Test declaring a variable as at a hard-coded address
 // Incrementing a load/store variable will result in cause two *SIZEOF's
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="address-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .const ch = $102
     .label i = 2

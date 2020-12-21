@@ -341,9 +341,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-idx-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -365,6 +370,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -488,6 +494,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 
@@ -519,7 +526,7 @@ Skipping double jump to $ea81 in bcs __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [49] bcs $ea81 to bcc
+Fixing long branch [55] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
 const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
@@ -560,9 +567,14 @@ Score: 631
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-idx-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -584,6 +596,7 @@ Score: 631
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -711,6 +724,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 

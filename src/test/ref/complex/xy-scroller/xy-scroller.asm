@@ -1,8 +1,13 @@
 // A full-screen x/y-scroller
 // World space is a 16-bit signed coordinate system [-32768, 32767] x [-32768, 32767]
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="xy-scroller.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
@@ -35,6 +40,7 @@
   .label x_pos_coarse = $16
   .label y_pos_fine = $1b
   .label y_pos_coarse = $18
+.segment Code
 main: {
     .const toD0181_return = (>(MAIN_SCREEN0&$3fff)*4)|(>MAIN_CHARSET)/4&$f
     .const toD0182_return = (>(MAIN_SCREEN1&$3fff)*4)|(>MAIN_CHARSET)/4&$f
@@ -742,6 +748,7 @@ petscii_ptr: {
     // }
     rts
 }
+.segment Data
 // Sine table [-399,399]
 SINTAB:
 .fillword SINSIZE, 399*sin(i*2*PI/SINSIZE)

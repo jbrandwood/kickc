@@ -1,12 +1,18 @@
 // Test that the multiplication of a idx*sizeof(element) is reused inside loops
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="index-sizeof-reuse.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_ENTITY_X_VEL = 1
   .const OFFSET_STRUCT_ENTITY_SYMBOL = 2
   .label VIC_RASTER = $d012
   .label VIC_BG_COLOR = $d020
   .label SCREEN = $400
+.segment Code
 main: {
     // Initialize velocities
     .label v = 2
@@ -131,4 +137,5 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   entities: .fill 3*$19, 0

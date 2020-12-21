@@ -1,8 +1,14 @@
 // Illustrates a problem where volatiles with initializers are initialized outside the main()-routine
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="init-volatiles.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label x = 2
+.segment Code
 __start: {
     // x = 12
     lda #$c

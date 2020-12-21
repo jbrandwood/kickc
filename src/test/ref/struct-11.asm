@@ -1,9 +1,15 @@
 // Example of a struct containing an array
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_PERSON_NAME = 1
   .label SCREEN = $400
+.segment Code
 main: {
     // print_person(jesper)
     ldx jesper
@@ -63,6 +69,7 @@ print_person: {
     iny
     jmp __b1
 }
+.segment Data
   DIGIT: .text "0123456789"
   .byte 0
   jesper: .byte 4

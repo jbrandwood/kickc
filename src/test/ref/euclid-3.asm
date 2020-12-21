@@ -3,12 +3,18 @@
  * See https://en.wikipedia.org/wiki/Euclidean_algorithm
  * Based on facebook post from
  */
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="euclid-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = 6
   .label print_char_cursor = 4
+.segment Code
 main: {
     // print_cls()
     jsr print_cls
@@ -236,4 +242,5 @@ print_ln: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

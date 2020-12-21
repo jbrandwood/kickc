@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hyperscreen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .const VIC_RSEL = 8
@@ -33,6 +38,7 @@
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label GHOST_BYTE = $3fff
+.segment Code
 // Interrupt Routine 2
 irq_bottom_2: {
     pha

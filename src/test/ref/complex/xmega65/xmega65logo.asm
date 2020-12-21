@@ -1,12 +1,18 @@
 // Import an XMega65 8bit-per-color logo
 // Fill the palette values into
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="xmega65logo.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Create pointers to the palette RGBs in the logo (assumes dimensions are 128x128)
   .label LOGO256_RED = LOGO256+$80*$80
   .label LOGO256_GREEN = LOGO256_RED+$100
   .label LOGO256_BLUE = LOGO256_GREEN+$100
+.segment Code
 main: {
     .label SCREEN = $400
     ldx #0
@@ -27,6 +33,7 @@ main: {
     // }
     rts
 }
+.segment Data
 // Import a 128x128 8bit-per-color logo using inline KickAsm
 LOGO256:
 #import "xmega65graphics.asm"

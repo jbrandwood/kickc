@@ -1,9 +1,15 @@
 // Call returns wrong value
 // Reported by Clay Cowgill as an NPE (which has been fixed - but this return-value problem has popped up instead)
 // Caused by constant loop head unroll
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loophead-problem-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label screen = $400
     // scan_for_lowest()
@@ -67,4 +73,5 @@ scan_for_lowest: {
     iny
     jmp __b1
 }
+.segment Data
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79

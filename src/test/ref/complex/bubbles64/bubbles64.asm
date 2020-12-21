@@ -1,9 +1,14 @@
 // bubbles64 - Q&D C64 port of the bubbles demo from vbcc6502's NES exmaples
 // Coded by Lazycow
 // Source https://www.lemon64.com/forum/viewtopic.php?t=75283&start=15
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bubbles64.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const lfMC = $10
   .const rfDrop = $fe
   .const maxSprites = $20
@@ -12,6 +17,7 @@
   .const sprOff = $40
   .const maxDrawObjects = $18
   .const F = 3
+.segment Code
 //
 //
 main: {
@@ -708,6 +714,7 @@ AddSprite: {
     sta cmRF,x
     rts
 }
+.segment Data
   lcSprMapTab: .fill maxSprImages, 0
   lcSprColTab: .fill maxC64Images, 0
   cmIT: .fill maxSprites+1, 0

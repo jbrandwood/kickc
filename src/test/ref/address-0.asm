@@ -1,10 +1,16 @@
 // Test that address vars are turned into load/store and located at hardcoded addresses
 // Hard-coded zero-page address - global variable
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="address-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label i = 2
+.segment Code
 __start: {
     // i = 3
     lda #3

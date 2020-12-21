@@ -1,7 +1,7 @@
 package dk.camelot64.kickc.asm;
 
 /** A labelled zero-filled data directive. */
-public class AsmDataZeroFill implements AsmLine {
+public class AsmDataZeroFill extends AsmLine {
 
    private String label;
    /** The calculation of the total number of bytes in ASM-format */
@@ -10,8 +10,6 @@ public class AsmDataZeroFill implements AsmLine {
    private AsmDataNumeric.Type type;
    /** The number of elements*/
    private int numElements;
-
-   private int index;
 
    public AsmDataZeroFill(String label, AsmDataNumeric.Type type, String totalByteSizeAsm, int numElements) {
       this.label = label;
@@ -44,16 +42,6 @@ public class AsmDataZeroFill implements AsmLine {
       asm.append(totalByteSizeAsm);
       asm.append(", 0");
       return asm.toString();
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
 }

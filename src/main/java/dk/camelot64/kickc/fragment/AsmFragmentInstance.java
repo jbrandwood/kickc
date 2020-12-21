@@ -200,14 +200,24 @@ public class AsmFragmentInstance {
 
       @Override
       public Object visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-         asmProgram.addLine(new AsmLabel(ctx.ASM_NAME().getText()));
+         final AsmLabel labelLine = new AsmLabel(ctx.ASM_NAME().getText());
+         if(ctx.ASM_TAG()!=null) {
+            final String tagName = ctx.ASM_TAG().getText().substring(1);
+            labelLine.getTags().add(tagName);
+         }
+         asmProgram.addLine(labelLine);
          return null;
       }
 
       @Override
       public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
          String label = ctx.ASM_MULTI_NAME().getText();
-         asmProgram.addLine(new AsmLabel(label));
+         final AsmLabel labelLine = new AsmLabel(label);
+         if(ctx.ASM_TAG()!=null) {
+            final String tagName = ctx.ASM_TAG().getText().substring(1);
+            labelLine.getTags().add(tagName);
+         }
+         asmProgram.addLine(labelLine);
          return null;
       }
 
@@ -229,6 +239,10 @@ public class AsmFragmentInstance {
             instruction = createAsmInstruction(ctx, null, null, CpuAddressingMode.NON);
          } else {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
+         }
+         if(ctx.ASM_TAG()!=null) {
+            final String tagName = ctx.ASM_TAG().getText().substring(1);
+            instruction.getTags().add(tagName);
          }
          if(instruction != null) {
             asmProgram.addLine(instruction);

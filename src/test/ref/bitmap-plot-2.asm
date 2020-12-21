@@ -67,7 +67,7 @@ __start: {
 }
 // Interrupt Routine counting frames
 irq: {
-    pha
+    sta rega+1
     // *BG_COLOR = WHITE
     lda #WHITE
     sta BG_COLOR
@@ -86,7 +86,8 @@ irq: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // }
-    pla
+  rega:
+    lda #0
     rti
 }
 main: {

@@ -41,11 +41,12 @@
 .segment Code
 // Interrupt Routine
 irq: {
-    pha
+    sta rega+1
     // do_irq()
     jsr do_irq
     // }
-    pla
+  rega:
+    lda #0
     rti
 }
 main: {

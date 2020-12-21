@@ -5215,7 +5215,7 @@ __start: {
   // irqBottom
 // Raster Interrupt at the bottom of the screen
 irqBottom: {
-    // interrupt(isr_hardware_all_entry) -- isr_hardware_all_entry 
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
     stx regx+1
     sty regy+1
@@ -5248,7 +5248,7 @@ irqBottom: {
     // irqBottom::@return
   __breturn:
     // [15] return 
-    // interrupt(isr_hardware_all_exit) -- isr_hardware_all_exit 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
     lda #0
   regx:
@@ -5260,8 +5260,9 @@ irqBottom: {
   // irqTop
 // Raster Interrupt at the top of the screen
 irqTop: {
-    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
+    jmp __b1
     // irqTop::@1
   __b1:
     // [17] *RASTER = RASTER_IRQ_MIDDLE -- _deref_pbuc1=vbuc2 
@@ -5281,8 +5282,9 @@ irqTop: {
     // irqTop::@return
   __breturn:
     // [20] return 
-    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
-    pla
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // malloc
@@ -7072,6 +7074,7 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __b2
 Removing instruction jmp __breturn
+Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b9
@@ -7189,6 +7192,7 @@ Removing instruction __b1_from___b3:
 Removing instruction __b1_from_irqBottom:
 Removing instruction processChars_from___b1:
 Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction __b3_from___b3:
 Removing instruction __b4_from___b3:
 Removing instruction __b10_from___b4:
@@ -7236,7 +7240,6 @@ Removing instruction __breturn:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __b1:
-Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b9:
 Removing instruction __b1_from___b9:
@@ -7306,23 +7309,23 @@ Removing instruction jmp __b6
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction ldy #OFFSET_STRUCT_PROCESSINGSPRITE_STATUS
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [498] bne __b1 to beq
-Fixing long branch [1072] bne __b2 to beq
-Fixing long branch [1199] beq __b12 to bne
-Fixing long branch [303] beq __b2 to bne
-Fixing long branch [363] bne __b4 to beq
-Fixing long branch [396] bcc __b6 to bcs
-Fixing long branch [403] bcc __b6 to bcs
-Fixing long branch [410] bcc __b6 to bcs
-Fixing long branch [417] bcc __b6 to bcs
-Fixing long branch [425] bcc __b6 to bcs
-Fixing long branch [432] bcc __b6 to bcs
-Fixing long branch [440] bcc __b6 to bcs
-Fixing long branch [738] beq __b11 to bne
-Fixing long branch [870] bne __b3 to beq
-Fixing long branch [876] beq __b8 to bne
-Fixing long branch [1118] bpl __b1 to bmi
-Fixing long branch [1130] bpl __b4 to bmi
+Fixing long branch [499] bne __b1 to beq
+Fixing long branch [1073] bne __b2 to beq
+Fixing long branch [1200] beq __b12 to bne
+Fixing long branch [304] beq __b2 to bne
+Fixing long branch [364] bne __b4 to beq
+Fixing long branch [397] bcc __b6 to bcs
+Fixing long branch [404] bcc __b6 to bcs
+Fixing long branch [411] bcc __b6 to bcs
+Fixing long branch [418] bcc __b6 to bcs
+Fixing long branch [426] bcc __b6 to bcs
+Fixing long branch [433] bcc __b6 to bcs
+Fixing long branch [441] bcc __b6 to bcs
+Fixing long branch [739] beq __b11 to bne
+Fixing long branch [871] bne __b3 to beq
+Fixing long branch [877] beq __b8 to bne
+Fixing long branch [1119] bpl __b1 to bmi
+Fixing long branch [1131] bpl __b4 to bmi
 
 FINAL SYMBOL TABLE
 const struct ProcessingSprite $0 = { x: 0, y: 0, vx: 0, vy: 0, id: 0, ptr: 0, col: 0, status: STATUS_FREE, screenPtr: (byte*) 0 }
@@ -7767,7 +7770,7 @@ reg byte a [ atan2_16::$22 ]
 
 
 FINAL ASSEMBLER
-Score: 1110964
+Score: 1110954
 
   // File Comments
 // Clears start screen throwing around the letters (by turning them into sprites)
@@ -7909,7 +7912,7 @@ __start: {
   // irqBottom
 // Raster Interrupt at the bottom of the screen
 irqBottom: {
-    // interrupt(isr_hardware_all_entry) -- isr_hardware_all_entry 
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
     stx regx+1
     sty regy+1
@@ -7939,7 +7942,7 @@ irqBottom: {
     // irqBottom::@return
     // }
     // [15] return 
-    // interrupt(isr_hardware_all_exit) -- isr_hardware_all_exit 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
     lda #0
   regx:
@@ -7951,8 +7954,8 @@ irqBottom: {
   // irqTop
 // Raster Interrupt at the top of the screen
 irqTop: {
-    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // irqTop::@1
     // *RASTER = RASTER_IRQ_MIDDLE
     // [17] *RASTER = RASTER_IRQ_MIDDLE -- _deref_pbuc1=vbuc2 
@@ -7973,8 +7976,9 @@ irqTop: {
     // irqTop::@return
     // }
     // [20] return 
-    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
-    pla
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // malloc

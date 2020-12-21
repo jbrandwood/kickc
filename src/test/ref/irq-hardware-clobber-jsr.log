@@ -245,16 +245,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // irq
 // Interrupt Routine
 irq: {
-    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // [1] call do_irq 
     jsr do_irq
     jmp __breturn
     // irq::@return
   __breturn:
     // [2] return 
-    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
-    pla
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // main
@@ -325,6 +326,7 @@ Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __breturn:
+Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -353,7 +355,7 @@ void main()
 
 
 FINAL ASSEMBLER
-Score: 306
+Score: 296
 
   // File Comments
 // A minimal working raster hardware IRQ with clobber-based register savings
@@ -402,16 +404,17 @@ Score: 306
   // irq
 // Interrupt Routine
 irq: {
-    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // do_irq()
     // [1] call do_irq 
     jsr do_irq
     // irq::@return
     // }
     // [2] return 
-    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
-    pla
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // main

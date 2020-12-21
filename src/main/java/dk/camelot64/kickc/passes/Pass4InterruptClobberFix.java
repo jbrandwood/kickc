@@ -13,6 +13,7 @@ import dk.camelot64.kickc.model.values.ScopeRef;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 
 /*** Ensure that all interrupt procedures with CLOBBER type only saves the necessary registers. */
 public class Pass4InterruptClobberFix extends Pass2Base {
@@ -51,11 +52,11 @@ public class Pass4InterruptClobberFix extends Pass2Base {
             if(interruptEntry == null || interruptExit == null) {
                throw new RuntimeException("Cannot find interrupt entry/exit for interrupt " + procedure.getFullName());
             }
-            String clobberedRegisters = getClobberedRegisterNames(procClobber);
+            String clobberedRegisterNames = getClobberedRegisterNames(procClobber);
             // Update the interrupt entry ASM with the proper clobber fragment
-            updateClobberFragment(interruptEntry, clobberedRegisters);
+            pruneFragmentClobber(interruptEntry, clobberedRegisterNames);
             // Update the interrupt exit ASM with the proper clobber fragment
-            updateClobberFragment(interruptExit, clobberedRegisters);
+            pruneFragmentClobber(interruptExit, clobberedRegisterNames);
          }
       }
 
@@ -113,52 +114,26 @@ public class Pass4InterruptClobberFix extends Pass2Base {
    }
 
    /**
-    * Replace the current code with the proper version handling only the clobbered registers
+    * Prune the interrupt entry/exit fragment removing code handling non-clobbered registers
     *
     * @param interruptAsmChunk The AsmFragment representing an interrupt entry/exit
-    * @param clobberedRegisters The clobbered registers
+    * @param nonClobberedRegisters The non-clobbered registers
     */
-   private void updateClobberFragment(AsmChunk interruptAsmChunk, String clobberedRegisters) {
-      // find the clobber fragment sub-name
-      String clobberName = "clob" + clobberedRegisters;
-      if(clobberedRegisters.equals(""))
-         clobberName = "none";
-      String allRegisters = "axy" + (getProgram().getTargetCpu().getCpu65xx().hasRegisterZ() ? "z" : "");
-      if(clobberedRegisters.equals(allRegisters))
-         clobberName = "all";
-
-      // Find the interrupt type name (including "isr_" and "_entry"/"_exit"
-      String interruptType = interruptAsmChunk.getSource();
-      interruptType = interruptType.substring(("interrupt(".length()), interruptType.length() - 1);
-
-      // Find the correct clobber name based on the clobbered registers
-      final String interruptSignatureFinal = interruptType.replace("clobber", clobberName);
-      AsmFragmentInstanceSpecBuilder interruptFragment = AsmFragmentInstanceSpecBuilder.interrupt(interruptSignatureFinal, getProgram());
-      String interruptFragmentName = interruptFragment.getAsmFragmentInstanceSpec().getSignature();
-
-      // Generate the fragment
-      final AsmFragmentTemplateSynthesizer cpuSynthesizer = getProgram().getAsmFragmentMasterSynthesizer().getSynthesizer(getProgram().getTargetCpu());
-      final AsmFragmentInstance fragmentInstance = cpuSynthesizer.getFragmentInstance(interruptFragment.getAsmFragmentInstanceSpec(), getProgram().getLog());
-      interruptAsmChunk.setFragment(fragmentInstance.getFragmentName());
-      final AsmProgram asmLines = new AsmProgram(getProgram().getTargetCpu());
-      asmLines.startChunk(getProgram().getScope().getRef(), interruptAsmChunk.getStatementIdx(), interruptAsmChunk.getSource());
-      fragmentInstance.generate(asmLines);
-
-      // Replace the chunk lines with the generated lines
-      final List<AsmLine> interruptAsmChunkLines = interruptAsmChunk.getLines();
-      int line_idx = interruptAsmChunkLines.get(0).getIndex();
-      boolean hasScopeEnd = interruptAsmChunkLines.get(interruptAsmChunkLines.size() - 1) instanceof AsmScopeEnd;
-      interruptAsmChunkLines.clear();
-      interruptAsmChunk.setSource("interrupt(" + interruptFragmentName+ ")");
-      for(AsmChunk chunk : asmLines.getChunks()) {
-         for(AsmLine line : chunk.getLines()) {
-            interruptAsmChunk.addLine(line);
-            line.setIndex(line_idx++);
-            if(line instanceof AsmLabel) ((AsmLabel) line).setDontOptimize(true);
-         }
+   private void pruneFragmentClobber(AsmChunk interruptAsmChunk, String clobberedRegisters) {
+      final ListIterator<AsmLine> asmLineListIterator = interruptAsmChunk.getLines().listIterator();
+      while(asmLineListIterator.hasNext()) {
+         AsmLine asmLine = asmLineListIterator.next();
+         if(asmLine.getTags().has("clob_a") && !clobberedRegisters.contains("a"))
+            asmLineListIterator.remove();
+         if(asmLine.getTags().has("clob_x") && !clobberedRegisters.contains("x"))
+            asmLineListIterator.remove();
+         if(asmLine.getTags().has("clob_y") && !clobberedRegisters.contains("y"))
+            asmLineListIterator.remove();
+         if(asmLine.getTags().has("clob_z") && !clobberedRegisters.contains("z"))
+            asmLineListIterator.remove();
+         if(asmLine.getTags().has("clob_none") && clobberedRegisters.equals(""))
+            asmLineListIterator.remove();
       }
-      if(hasScopeEnd)
-         interruptAsmChunkLines.add(new AsmScopeEnd());
    }
 
 }

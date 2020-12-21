@@ -145,7 +145,7 @@ irqBottom: {
 }
 // Raster Interrupt at the top of the screen
 irqTop: {
-    pha
+    sta rega+1
     // *RASTER = RASTER_IRQ_MIDDLE
     // Trigger IRQ at the middle of the screen
     lda #RASTER_IRQ_MIDDLE
@@ -160,7 +160,8 @@ irqTop: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // }
-    pla
+  rega:
+    lda #0
     rti
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.

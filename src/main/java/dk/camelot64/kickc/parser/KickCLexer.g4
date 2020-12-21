@@ -212,6 +212,9 @@ ASM_NAME : ASM_NAME_START ASM_NAME_CHAR* ;
 fragment ASM_NAME_START : [a-zA-Z_];
 fragment ASM_NAME_CHAR : [a-zA-Z0-9_];
 
+// Tags
+ASM_TAG : '@' ASM_NAME;
+
 // White space on hidden channel 1
 ASM_WS : [ \t\r\n\u00a0]+ -> channel(1);
 // Comments on hidden channel 2

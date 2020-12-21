@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * A numeric data directive with an optional label.
  */
-public class AsmDataNumeric implements AsmLine {
+public class AsmDataNumeric extends AsmLine {
 
    /** Label - may be null. */
    private String label;
@@ -13,8 +13,6 @@ public class AsmDataNumeric implements AsmLine {
    private Type type;
    /** The data elements. */
    private List<String> values;
-
-   private int index;
 
    public AsmDataNumeric(String label, Type type, List<String> values) {
       this.label = label;
@@ -51,16 +49,6 @@ public class AsmDataNumeric implements AsmLine {
          asm.append(value);
       }
       return asm.toString();
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
    public enum Type {

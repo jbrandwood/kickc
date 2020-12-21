@@ -279,16 +279,16 @@ asmLine
     ;
 
 asmLabel
-    : ASM_NAME ASM_COLON  #asmLabelName
-    | ASM_MULTI_NAME ASM_COLON #asmLabelMulti
+    : ASM_NAME ASM_COLON ASM_TAG? #asmLabelName
+    | ASM_MULTI_NAME ASM_COLON ASM_TAG? #asmLabelMulti
     ;
 
 asmInstruction
-    : ASM_MNEMONIC (asmParamMode)?
+    : ASM_MNEMONIC (asmParamMode)? ASM_TAG?
     ;
 
 asmBytes
-    : ASM_BYTE asmExpr ( ASM_COMMA asmExpr)*
+    : ASM_BYTE asmExpr ( ASM_COMMA asmExpr)* ASM_TAG?
     ;
 
 asmParamMode

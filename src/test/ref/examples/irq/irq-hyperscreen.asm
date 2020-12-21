@@ -41,7 +41,7 @@
 .segment Code
 // Interrupt Routine 2
 irq_bottom_2: {
-    pha
+    sta rega+1
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -67,12 +67,13 @@ irq_bottom_2: {
     lda #RED
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    pla
+  rega:
+    lda #0
     rti
 }
 // Interrupt Routine 1
 irq_bottom_1: {
-    pha
+    sta rega+1
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -98,7 +99,8 @@ irq_bottom_1: {
     lda #RED
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    pla
+  rega:
+    lda #0
     rti
 }
 main: {

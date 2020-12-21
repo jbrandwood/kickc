@@ -1720,8 +1720,8 @@ __start: {
   // irq
 // Interrupt Routine counting frames
 irq: {
-    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // [5] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BG_COLOR
@@ -1748,8 +1748,9 @@ irq: {
     // irq::@return
   __breturn:
     // [10] return 
-    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
-    pla
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // main
@@ -2266,6 +2267,7 @@ Replacing label __b3_from___b4 with __b3
 Replacing label __b2_from___b3 with __b2
 Removing instruction __b1_from___init1:
 Removing instruction main_from___b1:
+Removing instruction __breturn:
 Removing instruction __b8_from_main:
 Removing instruction bitmap_clear_from___b8:
 Removing instruction toD0181_from___b9:
@@ -2291,7 +2293,6 @@ Removing instruction __init1:
 Removing instruction __b1:
 Removing instruction __breturn:
 Removing instruction __b2:
-Removing instruction __breturn:
 Removing instruction bitmap_init_from_main:
 Removing instruction __b8:
 Removing instruction __b9:
@@ -2442,7 +2443,7 @@ reg byte x [ bitmap_plot::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 3232
+Score: 3222
 
   // File Comments
 // Tests the simple bitmap plotter - and counts plots per frame in an IRQ
@@ -2516,8 +2517,8 @@ __start: {
   // irq
 // Interrupt Routine counting frames
 irq: {
-    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // *BG_COLOR = WHITE
     // [5] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -2545,8 +2546,9 @@ irq: {
     // irq::@return
     // }
     // [10] return 
-    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
-    pla
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // main

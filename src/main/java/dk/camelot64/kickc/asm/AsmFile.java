@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.asm;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Define a KickAss output file */
-public class AsmFile implements AsmLine {
+public class AsmFile extends AsmLine {
 
    private final String name;
    private final Map<String,String> parameters;
-   private int index;
 
    public AsmFile(String name, Map<String, String> parameters) {
       this.name = name;
@@ -48,13 +48,4 @@ public class AsmFile implements AsmLine {
       return asm.toString();
    }
 
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
 }

@@ -30,7 +30,7 @@
 .segment Code
 // Interrupt Routine
 irq: {
-    pha
+    sta rega+1
     // *BG_COLOR = WHITE
     lda #WHITE
     sta BG_COLOR
@@ -42,7 +42,8 @@ irq: {
     lda #IRQ_RASTER
     sta IRQ_STATUS
     // }
-    pla
+  rega:
+    lda #0
     rti
 }
 // RAM in $A000, $E000 CHAR ROM in $D000

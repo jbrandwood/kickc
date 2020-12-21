@@ -1,11 +1,10 @@
 package dk.camelot64.kickc.asm;
 
 /** Set the program counter */
-public class AsmSetPc implements AsmLine {
+public class AsmSetPc extends AsmLine {
 
    private final String name;
    private final String address;
-   private int index;
 
    public AsmSetPc(String name, String address) {
       this.name = name;
@@ -27,13 +26,4 @@ public class AsmSetPc implements AsmLine {
       return ".pc = " + address + " \"" + name + "\"";
    }
 
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
 }

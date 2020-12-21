@@ -30,7 +30,7 @@ void main() {
 }
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank() {
+__interrupt void vblank() {
 
    // Read controller 1
     char joy = readJoy1();

@@ -129,7 +129,7 @@ int main(void)
 }
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank() {
+__interrupt(hardware_clobber) void vblank() {
     // Set scroll
     PPU->PPUSCROLL = 0;
     PPU->PPUSCROLL = scroll_y;

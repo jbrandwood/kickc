@@ -156,7 +156,7 @@ public class AsmFragmentInstanceSpec {
          SymbolType nextVariationValue = variationIterator.next();
          // Find the next name
          String variationConstName = "c" + variationCurrentName.substring(variationCurrentName.length() - 1);
-         String variationNextName = AsmFragmentInstanceSpecFactory.getTypePrefix(nextVariationValue) + variationConstName;
+         String variationNextName = AsmFragmentInstanceSpecBuilder.getTypePrefix(nextVariationValue) + variationConstName;
          // Update bindings
          Value constValue = bindings.get(variationCurrentName);
          bindings.remove(variationCurrentName);

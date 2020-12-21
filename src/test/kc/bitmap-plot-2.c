@@ -66,7 +66,7 @@ void init_irq() {
 }
 
 // Interrupt Routine counting frames
-interrupt(hardware_clobber) void irq() {
+__interrupt(hardware_clobber) void irq() {
     *BG_COLOR = WHITE;
     if(frame_cnt) frame_cnt++;
     *BG_COLOR = BLACK;

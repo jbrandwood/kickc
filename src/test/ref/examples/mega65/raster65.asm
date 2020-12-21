@@ -121,10 +121,9 @@ irq: {
     .label sin_bar = 3
     .label barcnt = 2
     pha
-    txa
-    pha
-    tya
-    pha
+    phx
+    phy
+    phz
     // VICIV->RASLINE0 |= 0x80
     // force NTSC every frame (hehe)
     lda #$80
@@ -235,10 +234,9 @@ irq: {
     sta DEFAULT_SCREEN+SCROLL_ROW*$28+$27
   __breturn:
     // }
-    pla
-    tay
-    pla
-    tax
+    plz
+    ply
+    plx
     pla
     rti
   __b36:

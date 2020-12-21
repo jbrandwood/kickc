@@ -156,14 +156,8 @@ irq_line: {
     // Reset the LINE interrupt
     lda #VERA_LINE
     sta VERA_ISR
-    // asm
-    // Exit CX16 KERNAL IRQ
-    ply
-    plx
-    pla
-    rti
     // }
-    rts
+    jmp $e049
   __b14:
     // bar = BARS + SIN[idx]
     ldy.z idx

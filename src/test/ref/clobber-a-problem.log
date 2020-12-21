@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(HARDWARE_CLOBBER) void irq()
+Resolved forward reference irq to __interrupt(hardware_clobber) void irq()
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -11,7 +11,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   *BORDER_COLOR = DARK_GREY
   irq_raster_next = irq_raster_next + $15
@@ -56,7 +56,7 @@ const byte DARK_GREY = $b
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 const byte* RASTER = (byte*)$d012
 void __start()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 number~ irq::$0
 bool~ irq::$1
 bool~ irq::$2
@@ -127,7 +127,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   [5] *BORDER_COLOR = DARK_GREY
   [6] irq_raster_next = irq_raster_next + $15
@@ -158,7 +158,7 @@ main::@return: scope:[main]  from main
 
 VARIABLE REGISTER WEIGHTS
 void __start()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 byte~ irq::$0 4.0
 byte irq::raster_next
 byte irq::raster_next#0 2.6666666666666665
@@ -195,17 +195,14 @@ Uplift Scope [] 4: zp[1]:3 [ irq_raster_next ]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [irq] best 252 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
-Uplifting [] best 252 combination zp[1]:3 [ irq_raster_next ] 
-Uplifting [main] best 252 combination 
-Uplifting [__start] best 252 combination 
+Uplifting [irq] best 360 combination reg byte x [ irq::raster_next#2 irq::raster_next#0 irq::raster_next#1 ] reg byte a [ irq::$0 ] 
+Uplifting [] best 360 combination zp[1]:3 [ irq_raster_next ] 
+Uplifting [main] best 360 combination 
+Uplifting [__start] best 360 combination 
 Attempting to uplift remaining variables inzp[1]:3 [ irq_raster_next ]
-Uplifting [] best 252 combination zp[1]:3 [ irq_raster_next ] 
+Uplifting [] best 360 combination zp[1]:3 [ irq_raster_next ] 
 Allocated (was zp[1]:3) zp[1]:2 [ irq_raster_next ]
 Interrupt procedure irq clobbers AXcnzP
-Removing interrupt register storage sty regy+1 in 12 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in 26 [14] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in 26 [14] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -243,7 +240,7 @@ __start: {
 }
   // irq
 irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
+    // interrupt(isr_hardware_clobax_entry) -- isr_hardware_clobax_entry 
     sta rega+1
     stx regx+1
     // [5] *BORDER_COLOR = DARK_GREY -- _deref_pbuc1=vbuc2 
@@ -282,11 +279,12 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [14] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [14] return 
+    // interrupt(isr_hardware_clobax_exit) -- isr_hardware_clobax_exit 
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
     rti
 }
   // main
@@ -335,7 +333,7 @@ const byte DARK_GREY = $b
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 const byte* RASTER = (byte*) 53266
 void __start()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 byte~ irq::$0 reg byte a 4.0
 byte irq::raster_next
 byte irq::raster_next#0 reg byte x 2.6666666666666665
@@ -350,7 +348,7 @@ reg byte a [ irq::$0 ]
 
 
 FINAL ASSEMBLER
-Score: 159
+Score: 249
 
   // File Comments
   // Upstart
@@ -381,7 +379,7 @@ __start: {
 }
   // irq
 irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
+    // interrupt(isr_hardware_clobax_entry) -- isr_hardware_clobax_entry 
     sta rega+1
     stx regx+1
     // *BORDER_COLOR = DARK_GREY
@@ -421,11 +419,12 @@ irq: {
     sta BORDER_COLOR
     // irq::@return
     // }
-    // [14] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [14] return 
+    // interrupt(isr_hardware_clobax_exit) -- isr_hardware_clobax_exit 
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
     rti
 }
   // main

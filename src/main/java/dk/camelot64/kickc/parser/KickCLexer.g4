@@ -69,7 +69,7 @@ ALIGN: 'align' ;
 INLINE: 'inline' ;
 VOLATILE: 'volatile' ;
 STATIC: 'static' ;
-INTERRUPT: 'interrupt' ;
+INTERRUPT: '__interrupt' ;
 REGISTER: 'register' ;
 LOCAL_RESERVE: '__zp_reserve' ;
 ADDRESS: '__address' ;

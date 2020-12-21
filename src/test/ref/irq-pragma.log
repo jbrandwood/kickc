@@ -1,0 +1,223 @@
+Resolved forward reference irq to __interrupt(rom_sys_c64) void irq()
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  asm { sei  }
+  *KERNEL_IRQ = &irq
+  asm { cli  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+__interrupt(rom_sys_c64) void irq()
+irq: scope:[irq]  from
+  *BG_COLOR = 1
+  *BG_COLOR = 0
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* BG_COLOR = (byte*)$d021
+const nomodify void()** KERNEL_IRQ = (void()**)$314
+void __start()
+__interrupt(rom_sys_c64) void irq()
+void main()
+
+Adding number conversion cast (unumber) 1 in *BG_COLOR = 1
+Adding number conversion cast (unumber) 0 in *BG_COLOR = 0
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *BG_COLOR = (unumber)1
+Inlining cast *BG_COLOR = (unumber)0
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (void()**) 788
+Simplifying constant pointer cast (byte*) 53281
+Simplifying constant integer cast 1
+Simplifying constant integer cast 0
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+__interrupt(rom_sys_c64) void irq()
+irq: scope:[irq]  from
+  [0] *BG_COLOR = 1
+  [1] *BG_COLOR = 0
+  to:irq::@return
+irq::@return: scope:[irq]  from irq
+  [2] return 
+  to:@return
+
+void main()
+main: scope:[main]  from
+  asm { sei  }
+  [4] *KERNEL_IRQ = &irq
+  asm { cli  }
+  to:main::@return
+main::@return: scope:[main]  from main
+  [6] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+__interrupt(rom_sys_c64) void irq()
+void main()
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *BG_COLOR = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [1] *BG_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [irq] 
+Uplift Scope [] 
+
+Uplifting [main] best 70 combination 
+Uplifting [irq] best 70 combination 
+Uplifting [] best 70 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// A minimal working IRQ with #pragma defining the type
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The vector used when the KERNAL serves IRQ interrupts
+  .label KERNEL_IRQ = $314
+  .label BG_COLOR = $d021
+  // irq
+// The Interrupt Handler
+irq: {
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
+    // [0] *BG_COLOR = 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta BG_COLOR
+    // [1] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BG_COLOR
+    jmp __breturn
+    // irq::@return
+  __breturn:
+    // [2] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
+    jmp $ea31
+}
+  // main
+// Setup the IRQ routine
+main: {
+    // asm { sei  }
+    sei
+    // [4] *KERNEL_IRQ = &irq -- _deref_qprc1=pprc2 
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+    // asm { cli  }
+    cli
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* BG_COLOR = (byte*) 53281
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+__interrupt(rom_sys_c64) void irq()
+void main()
+
+
+
+FINAL ASSEMBLER
+Score: 64
+
+  // File Comments
+// A minimal working IRQ with #pragma defining the type
+  // Upstart
+.pc = $801 "Basic"
+:BasicUpstart(main)
+.pc = $80d "Program"
+  // Global Constants & labels
+  // The vector used when the KERNAL serves IRQ interrupts
+  .label KERNEL_IRQ = $314
+  .label BG_COLOR = $d021
+  // irq
+// The Interrupt Handler
+irq: {
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
+    // *BG_COLOR = 1
+    // [0] *BG_COLOR = 1 -- _deref_pbuc1=vbuc2 
+    lda #1
+    sta BG_COLOR
+    // *BG_COLOR = 0
+    // [1] *BG_COLOR = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta BG_COLOR
+    // irq::@return
+    // }
+    // [2] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
+    jmp $ea31
+}
+  // main
+// Setup the IRQ routine
+main: {
+    // asm
+    // asm { sei  }
+    sei
+    // *KERNEL_IRQ = &irq
+    // [4] *KERNEL_IRQ = &irq -- _deref_qprc1=pprc2 
+    lda #<irq
+    sta KERNEL_IRQ
+    lda #>irq
+    sta KERNEL_IRQ+1
+    // asm
+    // asm { cli  }
+    cli
+    // main::@return
+    // }
+    // [6] return 
+    rts
+}
+  // File Data
+

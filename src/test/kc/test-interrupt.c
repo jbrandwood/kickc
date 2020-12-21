@@ -9,7 +9,7 @@ void main() {
     }
 }
 
-interrupt(kernel_min) void irq() {
+__interrupt void irq() {
     (*BG_COLOR)++;
     asm {
         lda $dc0d

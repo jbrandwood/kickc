@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(HARDWARE_CLOBBER) void irq()
+Resolved forward reference irq to __interrupt(hardware_clobber) void irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -25,7 +25,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   call do_irq 
   to:irq::@1
@@ -75,7 +75,7 @@ const nomodify byte* VIC_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
 void do_irq()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 void main()
 
 Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
@@ -123,7 +123,7 @@ Adding NOP phi() at start of irq
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   [0] phi()
   [1] call do_irq 
@@ -161,7 +161,7 @@ do_irq::@return: scope:[do_irq]  from do_irq
 
 VARIABLE REGISTER WEIGHTS
 void do_irq()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -188,20 +188,14 @@ Uplift Scope [irq]
 Uplift Scope [do_irq] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 317 combination 
-Uplifting [MOS6569_VICII] best 317 combination 
-Uplifting [MOS6581_SID] best 317 combination 
-Uplifting [main] best 317 combination 
-Uplifting [irq] best 317 combination 
-Uplifting [do_irq] best 317 combination 
-Uplifting [] best 317 combination 
+Uplifting [MOS6526_CIA] best 425 combination 
+Uplifting [MOS6569_VICII] best 425 combination 
+Uplifting [MOS6581_SID] best 425 combination 
+Uplifting [main] best 425 combination 
+Uplifting [irq] best 425 combination 
+Uplifting [do_irq] best 425 combination 
+Uplifting [] best 425 combination 
 Interrupt procedure irq clobbers AnzPS
-Removing interrupt register storage stx regx+1 in 4 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage sty regy+1 in 4 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regx: in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldx #00 in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -245,16 +239,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
-    sta rega+1
+    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
+    pha
     // [1] call do_irq 
     jsr do_irq
     jmp __breturn
     // irq::@return
   __breturn:
-    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
-  rega:
-    lda #00
+    // [2] return 
+    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
+    pla
     rti
 }
   // main
@@ -325,7 +319,6 @@ Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction __breturn:
-Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
@@ -348,13 +341,13 @@ const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* VIC_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
 void do_irq()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 224
+Score: 306
 
   // File Comments
 // A minimal working raster hardware IRQ with clobber-based register savings
@@ -397,16 +390,16 @@ Score: 224
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
-    sta rega+1
+    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
+    pha
     // do_irq()
     // [1] call do_irq 
     jsr do_irq
     // irq::@return
     // }
-    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
-  rega:
-    lda #00
+    // [2] return 
+    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
+    pla
     rti
 }
   // main

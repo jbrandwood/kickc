@@ -1,5 +1,5 @@
-Resolved forward reference irq_bottom_1 to interrupt(HARDWARE_STACK) void irq_bottom_1()
-Resolved forward reference irq_bottom_2 to interrupt(HARDWARE_STACK) void irq_bottom_2()
+Resolved forward reference irq_bottom_1 to __interrupt(hardware_clobber) void irq_bottom_1()
+Resolved forward reference irq_bottom_2 to __interrupt(hardware_clobber) void irq_bottom_2()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -23,7 +23,7 @@ main::@return: scope:[main]  from
   return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $ff^VIC_RSEL
@@ -36,7 +36,7 @@ irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VIC_RSEL
@@ -80,8 +80,8 @@ const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
 const nomodify byte VIC_RSEL = 8
 const nomodify byte WHITE = 1
 void __start()
-interrupt(HARDWARE_STACK) void irq_bottom_1()
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_2()
 void main()
 
 Adding number conversion cast (unumber) 0 in *GHOST_BYTE = 0
@@ -134,7 +134,7 @@ Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
   [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   [1] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VIC_RSEL
@@ -147,7 +147,7 @@ irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   [6] return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
   [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $ff^VIC_RSEL
@@ -179,8 +179,8 @@ main::@1: scope:[main]  from main main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(HARDWARE_STACK) void irq_bottom_1()
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_2()
 void main()
 
 Initial phi equivalence classes
@@ -218,13 +218,15 @@ Uplift Scope [irq_bottom_1]
 Uplift Scope [irq_bottom_2] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 524 combination 
-Uplifting [MOS6569_VICII] best 524 combination 
-Uplifting [MOS6581_SID] best 524 combination 
-Uplifting [main] best 524 combination 
-Uplifting [irq_bottom_1] best 524 combination 
-Uplifting [irq_bottom_2] best 524 combination 
-Uplifting [] best 524 combination 
+Uplifting [MOS6526_CIA] best 700 combination 
+Uplifting [MOS6569_VICII] best 700 combination 
+Uplifting [MOS6581_SID] best 700 combination 
+Uplifting [main] best 700 combination 
+Uplifting [irq_bottom_1] best 700 combination 
+Uplifting [irq_bottom_2] best 700 combination 
+Uplifting [] best 700 combination 
+Interrupt procedure irq_bottom_1 clobbers AnzP
+Interrupt procedure irq_bottom_2 clobbers AnzP
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -268,11 +270,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
+    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
     pha
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -301,22 +299,15 @@ irq_bottom_2: {
     jmp __breturn
     // irq_bottom_2::@return
   __breturn:
-    // [6] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
+    // [6] return 
+    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
     pla
     rti
 }
   // irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
+    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
     pha
     // [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -345,11 +336,8 @@ irq_bottom_1: {
     jmp __breturn
     // irq_bottom_1::@return
   __breturn:
-    // [13] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
+    // [13] return 
+    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
     pla
     rti
 }
@@ -434,14 +422,14 @@ const nomodify byte RED = 2
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
 const nomodify byte VIC_RSEL = 8
 const nomodify byte WHITE = 1
-interrupt(HARDWARE_STACK) void irq_bottom_1()
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_2()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 488
+Score: 444
 
   // File Comments
 // A raster IRQ that opens the top/bottom border.
@@ -484,11 +472,7 @@ Score: 488
   // irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
+    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
     pha
     // VICII->BORDER_COLOR = WHITE
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
@@ -522,22 +506,15 @@ irq_bottom_2: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_bottom_2::@return
     // }
-    // [6] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
+    // [6] return 
+    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
     pla
     rti
 }
   // irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
+    // interrupt(isr_hardware_cloba_entry) -- isr_hardware_cloba_entry 
     pha
     // VICII->BORDER_COLOR = WHITE
     // [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
@@ -571,11 +548,8 @@ irq_bottom_1: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_bottom_1::@return
     // }
-    // [13] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
+    // [13] return 
+    // interrupt(isr_hardware_cloba_exit) -- isr_hardware_cloba_exit 
     pla
     rti
 }

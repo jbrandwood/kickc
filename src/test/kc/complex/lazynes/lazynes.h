@@ -13,7 +13,7 @@ typedef unsigned short uword;
 // RESET Called when the NES is reset, including when it is turned on.
 void main();
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank();
+__interrupt(hardware_clobber) void vblank();
 
    // Wait for next vblank
   // flags: 0, lfBlank or lfSplit (see below)

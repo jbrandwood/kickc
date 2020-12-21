@@ -16,52 +16,107 @@ import dk.camelot64.kickc.model.types.*;
 import dk.camelot64.kickc.model.values.*;
 
 import java.lang.InternalError;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * A fragment specification generated from a {@link Statement} used to load/synthesize an {@link AsmFragmentInstance} for creating ASM code for the statement
  */
-public class AsmFragmentInstanceSpecFactory {
+public class AsmFragmentInstanceSpecBuilder {
 
    /**
     * The symbol table.
     */
-   private Program program;
+   private final Program program;
 
    /**
     * Binding of named values in the fragment to values (constants, variables, ...) .
     */
-   private Map<String, Value> bindings;
+   private final Map<String, Value> bindings;
 
    /**
     * The created ASM fragment instance specification
     */
-   private AsmFragmentInstanceSpec asmFragmentInstanceSpec;
+   private final AsmFragmentInstanceSpec asmFragmentInstanceSpec;
 
    /** Indexing for zeropages/constants/labels */
-   private int nextZpIdx = 1;
    private int nextMemIdx = 1;
    private int nextConstIdx = 1;
    private int nextLabelIdx = 1;
 
-   public Map<String, Value> getBindings() {
-      return bindings;
+   /**
+    * Create a fragment instance spec factory for an interrupt routine (entry or exit)
+    *
+    * @param interruptTypeComplete The interrupt routine handler name - including "isr_" and "_entry"/_exit"
+    * @param program The program
+    * @return the fragment instance spec factory
+    */
+   public static AsmFragmentInstanceSpecBuilder interrupt(String interruptTypeComplete, Program program) {
+      Map<String, Value> bindings = new HashMap<>();
+      String signature = interruptTypeComplete;
+      ScopeRef codeScope = program.getScope().getRef();
+      final AsmFragmentInstanceSpec fragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec);
    }
 
-   public AsmFragmentInstanceSpecFactory(
+   /**
+    * Create a fragment instance spec factory for an interrupt routine entry
+    *
+    * @param interruptType The interrupt routine handle name
+    * @param program The program
+    * @return the fragment instance spec factory
+    */
+   public static AsmFragmentInstanceSpecBuilder interruptEntry(String interruptType, Program program) {
+      Map<String, Value> bindings = new HashMap<>();
+      String signature = "isr_" + interruptType + "_entry";
+      ScopeRef codeScope = program.getScope().getRef();
+      final AsmFragmentInstanceSpec fragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec);
+   }
+
+   /**
+    * Create a fragment instance spec factory for an interrupt routine exit
+    *
+    * @param interruptType The interrupt routine handle name
+    * @param program The program
+    * @return the fragment instance spec factory
+    */
+   public static AsmFragmentInstanceSpecBuilder interruptExit(String interruptType, Program program) {
+      Map<String, Value> bindings = new HashMap<>();
+      String signature = "isr_" + interruptType + "_exit";
+      ScopeRef codeScope = program.getScope().getRef();
+      final AsmFragmentInstanceSpec fragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+      return new AsmFragmentInstanceSpecBuilder(program, bindings, fragmentInstanceSpec);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(Program program, Map<String, Value> bindings, AsmFragmentInstanceSpec asmFragmentInstanceSpec) {
+      this.program = program;
+      this.bindings = bindings;
+      this.asmFragmentInstanceSpec = asmFragmentInstanceSpec;
+   }
+
+
+   public static AsmFragmentInstanceSpecBuilder conditionalJump(StatementConditionalJump conditionalJump, ControlFlowBlock block, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(conditionalJump, block, program);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(
          StatementConditionalJump conditionalJump,
          ControlFlowBlock block,
-         Program program,
-         ControlFlowGraph graph) {
+         Program program) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
       ScopeRef codeScope = program.getStatementInfos().getBlock(conditionalJump).getScope();
-      String signature = conditionalJumpSignature(conditionalJump, block, graph);
+      String signature = conditionalJumpSignature(conditionalJump, block, program.getGraph());
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
-   public AsmFragmentInstanceSpecFactory(StatementExprSideEffect exprSideEffect, Program program) {
+   public static AsmFragmentInstanceSpecBuilder exprSideEffect(StatementExprSideEffect exprSideEffect, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(exprSideEffect, program);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(StatementExprSideEffect exprSideEffect, Program program) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
       ScopeRef codeScope = program.getStatementInfos().getBlock(exprSideEffect).getScope();
@@ -69,7 +124,11 @@ public class AsmFragmentInstanceSpecFactory {
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
-   public AsmFragmentInstanceSpecFactory(StatementAssignment assignment, Program program) {
+   public static AsmFragmentInstanceSpecBuilder assignment(StatementAssignment assignment, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(assignment, program);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(StatementAssignment assignment, Program program) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
       ScopeRef codeScope = program.getStatementInfos().getBlock(assignment).getScope();
@@ -81,19 +140,31 @@ public class AsmFragmentInstanceSpecFactory {
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
    }
 
-   public AsmFragmentInstanceSpecFactory(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
+   public static AsmFragmentInstanceSpecBuilder assignment(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
+      return new AsmFragmentInstanceSpecBuilder(lValue, rValue, program, codeScopeRef);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(LValue lValue, RValue rValue, Program program, ScopeRef codeScopeRef) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
       String signature = assignmentSignature(lValue, null, null, rValue);
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScopeRef);
    }
 
-   public AsmFragmentInstanceSpecFactory(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
+   public static AsmFragmentInstanceSpecBuilder assignmentAlu(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
+      return new AsmFragmentInstanceSpecBuilder(assignment, assignmentAlu, program);
+   }
+
+   private AsmFragmentInstanceSpecBuilder(StatementAssignment assignment, StatementAssignment assignmentAlu, Program program) {
       this.program = program;
       this.bindings = new LinkedHashMap<>();
       ScopeRef codeScope = program.getStatementInfos().getBlock(assignment).getScope();
       String signature = assignmentWithAluSignature(assignment, assignmentAlu);
       this.asmFragmentInstanceSpec = new AsmFragmentInstanceSpec(program, signature, bindings, codeScope);
+   }
+
+   public Map<String, Value> getBindings() {
+      return bindings;
    }
 
    /**
@@ -495,7 +566,7 @@ public class AsmFragmentInstanceSpecFactory {
       if(Registers.RegisterType.ZP_MEM.equals(register.getType())) {
          // Examine if the ZP register is already bound
          Registers.RegisterZpMem registerZp = (Registers.RegisterZpMem) register;
-         String zpNameIdx = null;
+         String memNameIdx = null;
          for(String boundName : bindings.keySet()) {
             Value boundValue = bindings.get(boundName);
             if(boundValue instanceof Variable && ((Variable) boundValue).isVariable()) {
@@ -505,17 +576,17 @@ public class AsmFragmentInstanceSpecFactory {
                   Registers.RegisterZpMem boundRegisterZp = (Registers.RegisterZpMem) boundRegister;
                   if(registerZp.getZp() == boundRegisterZp.getZp()) {
                      // Found other register with same ZP address!
-                     zpNameIdx = boundName.substring(boundName.length() - 1);
+                     memNameIdx = boundName.substring(boundName.length() - 1);
                      break;
                   }
                }
             }
          }
          // If not create a new one
-         if(zpNameIdx == null) {
-            zpNameIdx = Integer.toString(nextZpIdx++);
+         if(memNameIdx == null) {
+            memNameIdx = Integer.toString(nextMemIdx++);
          }
-         return "z" + zpNameIdx;
+         return "z" + memNameIdx;
       } else if(Registers.RegisterType.MAIN_MEM.equals(register.getType())) {
          String memNameIdx = null;
          for(String boundName : bindings.keySet()) {
@@ -532,7 +603,7 @@ public class AsmFragmentInstanceSpecFactory {
             }
          }
          if(memNameIdx == null) {
-            memNameIdx = Integer.toString(nextZpIdx++);
+            memNameIdx = Integer.toString(nextMemIdx++);
          }
          return "m" + memNameIdx;
       } else if(Registers.RegisterType.REG_A.equals(register.getType())) {
@@ -563,6 +634,5 @@ public class AsmFragmentInstanceSpecFactory {
       // Otherwise use a new index
       return "c" + nextConstIdx++;
    }
-
 
 }

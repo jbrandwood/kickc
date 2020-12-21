@@ -466,7 +466,7 @@ memcpy_to_vram: {
     jmp __b1
 }
 .segment Data
-  // A 64*64 8bpp TUT sprite 
+  // A 64*64 8bpp TUT sprite and palette
   .align $1000
 SPRITE_PIXELS:
 .var pic = LoadPicture("tut.png")
@@ -476,8 +476,10 @@ SPRITE_PIXELS:
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -485,11 +487,12 @@ SPRITE_PIXELS:
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -500,7 +503,6 @@ SPRITE_PIXELS:
         // bits bits 0-3 red
         .byte red/16
     }
-
 
   .align $100
 SINX:

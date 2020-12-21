@@ -7,7 +7,7 @@
 
 #define NUM_SPRITES 32
 
-// A 64*64 8bpp TUT sprite 
+// A 64*64 8bpp TUT sprite and palette
 align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
 	.var pic = LoadPicture("tut.png")
     // palette: rgb->idx
@@ -16,8 +16,10 @@ align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -25,11 +27,12 @@ align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -40,7 +43,6 @@ align(0x1000) char SPRITE_PIXELS[64*64+0x200] = kickasm(resource "tut.png") {{
         // bits bits 0-3 red
         .byte red/16
     }
-
 }};
 
 // Address to use for sprite pixels in VRAM
@@ -90,7 +92,7 @@ volatile unsigned int sin_idx_x = 119;
 volatile unsigned int sin_idx_y = 79;
 
 // VSYNC Interrupt Routine
-void irq_vsync() {
+__interrupt(rom_sys_cx16) void irq_vsync() {
     // Move the sprite around
     if(++sin_idx_x==SINX_LEN) sin_idx_x = 0;
     if(--sin_idx_y==0xffff) sin_idx_y = SINY_LEN-1;

@@ -42,9 +42,9 @@ irq: {
     sta BORDER_COLOR
     // }
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
     rti
 }
 main: {

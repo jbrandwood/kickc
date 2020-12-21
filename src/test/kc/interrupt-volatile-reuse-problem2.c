@@ -19,7 +19,7 @@ void main() {
     }
 }
 
-interrupt void irq() {
+__interrupt void irq() {
     // Acknowledge the IRQ
     *IRQ_STATUS = 1;
     asm { lda $dc0d }

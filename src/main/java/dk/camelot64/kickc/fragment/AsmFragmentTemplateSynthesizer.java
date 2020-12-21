@@ -111,8 +111,8 @@ public class AsmFragmentTemplateSynthesizer {
          double minScore = Double.MAX_VALUE;
          for(AsmFragmentTemplate candidateTemplate : candidates) {
             double score = candidateTemplate.getCycles();
+            if(candidateTemplate.getClobber().isClobberZ()) score += 0.25;
             if(candidateTemplate.getClobber().isClobberA()) score += 0.5;
-            if(candidateTemplate.getClobber().isClobberZ()) score += 1.0;
             if(candidateTemplate.getClobber().isClobberY()) score += 1.0;
             if(candidateTemplate.getClobber().isClobberX()) score += 1.5;
             if(score < minScore) {
@@ -531,7 +531,6 @@ public class AsmFragmentTemplateSynthesizer {
          } else {
             CharStream fragmentCharStream = CharStreams.fromStream(fragmentStream);
             body = fixNewlines(fragmentCharStream.toString());
-
          }
          return new AsmFragmentTemplate(signature, body, targetCpu, false);
       } catch(IOException e) {

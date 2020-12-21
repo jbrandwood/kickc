@@ -84,7 +84,7 @@ public class KickCParser extends Parser {
 			"'--'", "'&'", "'~'", "'^'", "'|'", null, null, "'=='", "'!='", null, 
 			"'<='", "'>='", null, "'&&'", "'||'", "'='", null, "'typedef'", "'const'", 
 			"'extern'", "'export'", "'align'", "'inline'", "'volatile'", "'static'", 
-			"'interrupt'", "'register'", "'__zp_reserve'", "'__address'", "'__zp'", 
+			"'__interrupt'", "'register'", "'__zp_reserve'", "'__address'", "'__zp'", 
 			"'__mem'", "'__ssa'", "'__ma'", "'__intrinsic'", null, "'if'", "'else'", 
 			"'while'", "'do'", "'for'", "'switch'", "'return'", "'break'", "'continue'", 
 			"'asm'", "'default'", "'case'", "'struct'", "'enum'", "'sizeof'", "'typeid'", 

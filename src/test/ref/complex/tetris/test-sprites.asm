@@ -177,9 +177,9 @@ sprites_irq: {
     sta IRQ_STATUS
     // }
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
     rti
   __b4:
     // irq_cnt = 0

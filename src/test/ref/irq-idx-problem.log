@@ -1,4 +1,4 @@
-Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN) void table_driven_irq()
+Resolved forward reference table_driven_irq to __interrupt(rom_min_c64) void table_driven_irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
@@ -19,7 +19,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@4
@@ -99,7 +99,7 @@ const nomodify byte VIC_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 bool~ table_driven_irq::$0
 bool~ table_driven_irq::$1
 bool~ table_driven_irq::$2
@@ -214,7 +214,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   [5] phi()
   to:table_driven_irq::@1
@@ -265,7 +265,7 @@ VARIABLE REGISTER WEIGHTS
 void __start()
 volatile byte irq_idx loadstore 6.0
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 byte table_driven_irq::idx
 byte table_driven_irq::idx#0 11.0
 byte table_driven_irq::val
@@ -324,15 +324,15 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [table_driven_irq] best 768 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
-Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
-Uplifting [MOS6526_CIA] best 768 combination 
-Uplifting [MOS6569_VICII] best 768 combination 
-Uplifting [MOS6581_SID] best 768 combination 
-Uplifting [main] best 768 combination 
-Uplifting [__start] best 768 combination 
+Uplifting [table_driven_irq] best 795 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
+Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
+Uplifting [MOS6526_CIA] best 795 combination 
+Uplifting [MOS6569_VICII] best 795 combination 
+Uplifting [MOS6581_SID] best 795 combination 
+Uplifting [main] best 795 combination 
+Uplifting [__start] best 795 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_idx ]
-Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
+Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -388,7 +388,7 @@ __start: {
 }
   // table_driven_irq
 table_driven_irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     jmp __b1
     // table_driven_irq::@1
   __b1:
@@ -431,7 +431,8 @@ table_driven_irq: {
     jmp __breturn
     // table_driven_irq::@return
   __breturn:
-    // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // table_driven_irq::@3
   __b3:
@@ -539,7 +540,7 @@ const nomodify byte VIC_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore zp[1]:2 6.0
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 byte table_driven_irq::idx
 byte table_driven_irq::idx#0 reg byte a 11.0
 byte table_driven_irq::val
@@ -551,7 +552,7 @@ reg byte x [ table_driven_irq::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 604
+Score: 631
 
   // File Comments
 // Test interrupt routine using a variable between calls (irq_idx)
@@ -600,7 +601,7 @@ __start: {
 }
   // table_driven_irq
 table_driven_irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // table_driven_irq::@1
   __b1:
     // idx = IRQ_CHANGE_IDX[irq_idx]
@@ -645,7 +646,8 @@ table_driven_irq: {
     sta.z irq_idx
     // table_driven_irq::@return
     // }
-    // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // table_driven_irq::@3
   __b3:

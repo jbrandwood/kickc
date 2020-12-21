@@ -6,7 +6,7 @@ void main() {
     SCREEN[0]++;
 }
 
-interrupt byte irq() {
+__interrupt byte irq() {
     SCREEN[1]++;
     return 2;
 }

@@ -1,7 +1,7 @@
 // Example program for the Commander X16
 // Displays raster bars in the border
 
-#pragma target(cx16) 
+#pragma target(cx16)
 #include <cx16.h>
 #include <6502.h>
 #include <string.h>
@@ -42,7 +42,7 @@ volatile char cnt = 2;
 volatile char sin_idx = 100;
 
 // LINE Interrupt Routine
-void irq_line() {
+__interrupt void irq_line() {
     // Update the border
     *VERA_CTRL |= VERA_DCSEL;
     *VERA_DC_HSTART = hstart;
@@ -84,15 +84,4 @@ void irq_line() {
 
     // Reset the LINE interrupt
     *VERA_ISR = VERA_LINE;
-    // Exit CX16 KERNAL IRQ
-    asm {
-        // soft exit (keep kernal running)
-        // jmp $e034 
-        // hard exit (no kernal activity)
-        ply
-        plx
-        pla
-        rti        
-    }
-
 }

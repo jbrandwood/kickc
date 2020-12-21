@@ -12,7 +12,7 @@ void main() {
 
 volatile byte irq_raster_next = 0;
 
-interrupt(hardware_clobber) void irq() {
+__interrupt(hardware_clobber) void irq() {
     *BORDER_COLOR = DARK_GREY;
  	irq_raster_next += 21;
     // Setup next interrupt

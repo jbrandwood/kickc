@@ -31,7 +31,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt void irq() {
+__interrupt void irq() {
     *BG_COLOR = WHITE;
     *BG_COLOR = BLACK;
     // Acknowledge the IRQ

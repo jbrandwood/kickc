@@ -39,11 +39,11 @@ irq: {
     sta IRQ_STATUS
     // }
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 // RAM in $A000, $E000 CHAR ROM in $D000

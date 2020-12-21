@@ -136,7 +136,7 @@ void plex_move() {
 volatile bool frame_done = false;
 
 // Show sprites from the multiplexer, rescheduling the IRQ as many times as needed
-interrupt(kernel_min) void plex_irq() {
+__interrupt void plex_irq() {
     asm { sei }
     //*BORDER_COLOR = WHITE;
     // Show sprites until finding one that should not be shown until a few raster lines later

@@ -1,4 +1,4 @@
-Resolved forward reference irq2 to interrupt(KERNEL_MIN) void irq2()
+Resolved forward reference irq2 to __interrupt(rom_min_c64) void irq2()
 
 CONTROL FLOW GRAPH SSA
 
@@ -10,7 +10,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq1()
+__interrupt(rom_min_c64) void irq1()
 irq1: scope:[irq1]  from
   *HARDWARE_IRQ = &irq2
   to:irq1::@return
@@ -18,7 +18,7 @@ irq1::@return: scope:[irq1]  from irq1
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq2()
+__interrupt(rom_min_c64) void irq2()
 irq2: scope:[irq2]  from
   *HARDWARE_IRQ = &irq1
   to:irq2::@return
@@ -40,8 +40,8 @@ SYMBOL TABLE SSA
 const nomodify void()** HARDWARE_IRQ = (void()**)$fffe
 const nomodify byte* SCREEN = (byte*)$400
 void __start()
-interrupt(KERNEL_MIN) void irq1()
-interrupt(KERNEL_MIN) void irq2()
+__interrupt(rom_min_c64) void irq1()
+__interrupt(rom_min_c64) void irq2()
 void main()
 
 Simplifying constant pointer cast (byte*) 1024
@@ -59,7 +59,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_MIN) void irq2()
+__interrupt(rom_min_c64) void irq2()
 irq2: scope:[irq2]  from
   [0] *HARDWARE_IRQ = &irq1
   to:irq2::@return
@@ -67,7 +67,7 @@ irq2::@return: scope:[irq2]  from irq2
   [1] return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq1()
+__interrupt(rom_min_c64) void irq1()
 irq1: scope:[irq1]  from
   [2] *HARDWARE_IRQ = &irq2
   to:irq1::@return
@@ -85,8 +85,8 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_MIN) void irq1()
-interrupt(KERNEL_MIN) void irq2()
+__interrupt(rom_min_c64) void irq1()
+__interrupt(rom_min_c64) void irq2()
 void main()
 
 Initial phi equivalence classes
@@ -102,10 +102,10 @@ Uplift Scope [irq1]
 Uplift Scope [irq2] 
 Uplift Scope [] 
 
-Uplifting [main] best 51 combination 
-Uplifting [irq1] best 51 combination 
-Uplifting [irq2] best 51 combination 
-Uplifting [] best 51 combination 
+Uplifting [main] best 105 combination 
+Uplifting [irq1] best 105 combination 
+Uplifting [irq2] best 105 combination 
+Uplifting [] best 105 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -120,7 +120,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // irq2
 // Unused Interrupt Routine
 irq2: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // [0] *HARDWARE_IRQ = &irq1 -- _deref_qprc1=pprc2 
     lda #<irq1
     sta HARDWARE_IRQ
@@ -129,13 +129,14 @@ irq2: {
     jmp __breturn
     // irq2::@return
   __breturn:
-    // [1] return  - exit interrupt(KERNEL_MIN)
+    // [1] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // irq1
 // Unused Interrupt Routine
 irq1: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // [2] *HARDWARE_IRQ = &irq2 -- _deref_qprc1=pprc2 
     lda #<irq2
     sta HARDWARE_IRQ
@@ -144,7 +145,8 @@ irq1: {
     jmp __breturn
     // irq1::@return
   __breturn:
-    // [3] return  - exit interrupt(KERNEL_MIN)
+    // [3] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main
@@ -173,14 +175,14 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 FINAL SYMBOL TABLE
 const nomodify void()** HARDWARE_IRQ = (void()**) 65534
 const nomodify byte* SCREEN = (byte*) 1024
-interrupt(KERNEL_MIN) void irq1()
-interrupt(KERNEL_MIN) void irq2()
+__interrupt(rom_min_c64) void irq1()
+__interrupt(rom_min_c64) void irq2()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 42
+Score: 96
 
   // File Comments
 // Unused interrupts pointing to each other but never used from main loop - should be optimized away
@@ -194,7 +196,7 @@ Score: 42
   // irq2
 // Unused Interrupt Routine
 irq2: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // *HARDWARE_IRQ = &irq1
     // [0] *HARDWARE_IRQ = &irq1 -- _deref_qprc1=pprc2 
     lda #<irq1
@@ -203,13 +205,14 @@ irq2: {
     sta HARDWARE_IRQ+1
     // irq2::@return
     // }
-    // [1] return  - exit interrupt(KERNEL_MIN)
+    // [1] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // irq1
 // Unused Interrupt Routine
 irq1: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // *HARDWARE_IRQ = &irq2
     // [2] *HARDWARE_IRQ = &irq2 -- _deref_qprc1=pprc2 
     lda #<irq2
@@ -218,7 +221,8 @@ irq1: {
     sta HARDWARE_IRQ+1
     // irq1::@return
     // }
-    // [3] return  - exit interrupt(KERNEL_MIN)
+    // [3] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main

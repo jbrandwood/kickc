@@ -8,6 +8,7 @@
 // https://wiki.nesdev.com/w/index.php/PPU_registers
 // http://nesdev.com/2C02%20technical%20reference.TXT
 // Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
+.cpu _6502
   // Nintendo Entertainment System (NES) ROM (Mapper 0 NROM, Vertical Mirroring)
 // https://sadistech.com/nesromtool/romdoc.html
 // https://forums.nesdev.com/viewtopic.php?f=2&t=9896
@@ -93,10 +94,6 @@ __start: {
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 vblank: {
     pha
-    txa
-    pha
-    tya
-    pha
     // PPU->PPUSCROLL = 0
     // Set scroll
     lda #0
@@ -113,10 +110,6 @@ vblank: {
     // vblank_hit++;
     inc.z vblank_hit
     // }
-    pla
-    tay
-    pla
-    tax
     pla
     rti
 }

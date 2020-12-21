@@ -28,7 +28,7 @@ byte IRQ_CHANGE_VAL[] = { $0b, $0b,             $63, $00, $00,             $80, 
 
 volatile byte irq_idx = 0;
 
-interrupt(kernel_min) void table_driven_irq() {
+__interrupt void table_driven_irq() {
     do {
         byte idx = IRQ_CHANGE_IDX[irq_idx];
         byte val = IRQ_CHANGE_VAL[irq_idx];

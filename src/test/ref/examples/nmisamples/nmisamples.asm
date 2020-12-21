@@ -34,7 +34,6 @@ __start: {
 }
 nmi2: {
     sta rega+1
-    stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -74,16 +73,13 @@ nmi2: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 nmi: {
     sta rega+1
-    stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -104,11 +100,9 @@ nmi: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 main: {

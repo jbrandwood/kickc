@@ -46,7 +46,7 @@ volatile char x_scroll;
 volatile char y_scroll;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank() {
+__interrupt void vblank() {
    // Read controller 1
     char joy = readJoy1();
     if(joy&JOY_DOWN) {

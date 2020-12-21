@@ -91,7 +91,7 @@ volatile char scroll_y;
 char * volatile vram_update_list;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank() {
+__interrupt(hardware_clobber) void vblank() {
     // Transfer any queued data to the PPU
     lnListTransfer();
     // DMA transfer the entire sprite buffer to the PPU

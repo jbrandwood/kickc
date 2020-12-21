@@ -22,7 +22,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt(hardware_clobber) void irq() {
+__interrupt(hardware_clobber) void irq() {
     do_irq();
 }
 

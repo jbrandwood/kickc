@@ -51,7 +51,7 @@ void init() {
 
 volatile bool framedone = true;
 
-interrupt(kernel_min) void plex_irq() {
+__interrupt void plex_irq() {
     asm { sei }
     *BORDER_COLOR = WHITE;
     char rasterY;

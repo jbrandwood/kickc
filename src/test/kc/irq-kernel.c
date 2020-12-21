@@ -31,7 +31,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt(kernel_keyboard) void irq() {
+__interrupt(rom_sys_c64) void irq() {
     *BG_COLOR = WHITE;
     *BG_COLOR = BLACK;
     // Acknowledge the IRQ

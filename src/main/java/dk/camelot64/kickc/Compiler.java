@@ -176,7 +176,10 @@ public class Compiler {
          if(encoding==null)
             encoding = StringEncoding.SCREENCODE_MIXED;
 
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding);
+         // Find default interrupt type
+         String interruptType = program.getTargetPlatform().getInterruptType();
+
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding, interruptType);
          pass0GenerateStatementSequence.generate();
 
          pass1GenerateSSA();

@@ -16,8 +16,10 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -25,11 +27,12 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -40,7 +43,6 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
         // bits bits 0-3 red
         .byte red/16
     }
-
  }}
 const nomodify dword SPRITE_PIXELS_VRAM = $8000
 const nomodify byte VERA_ADDRSEL = 1
@@ -60,7 +62,7 @@ const nomodify word VERA_SPRITE_8BPP = $8000
 const nomodify dword VERA_SPRITE_ATTR = $1fc00
 const nomodify byte VERA_VSYNC = 1
 void __start()
-void irq_vsync()
+__interrupt(rom_sys_cx16) void irq_vsync()
 word~ irq_vsync::$11 zp[2]:22 22.0
 word~ irq_vsync::$12 zp[2]:24 22.0
 word*~ irq_vsync::$13 zp[2]:22 22.0

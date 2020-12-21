@@ -125,7 +125,7 @@ void setup_irq() {
 }
 
 // Interrupt Routine 1: Just above last text line.
-interrupt(kernel_min) void irq_bottom_1() {
+__interrupt void irq_bottom_1() {
     // Change border color
     VICII->BORDER_COLOR = DARK_GREY;
     // Show the cycle counter
@@ -138,7 +138,7 @@ interrupt(kernel_min) void irq_bottom_1() {
 }
 
 // Interrupt Routine 2
-interrupt(kernel_keyboard) void irq_bottom_2() {
+__interrupt(rom_sys_c64) void irq_bottom_2() {
     // Change border color
     VICII->BORDER_COLOR = BLACK;
     // Show the current canvas (unless a key is being pressed)

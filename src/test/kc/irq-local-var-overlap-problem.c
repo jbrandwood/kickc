@@ -35,7 +35,7 @@ void main() {
     }
 }
 
-interrupt(kernel_min) void irq() {
+__interrupt void irq() {
     (*BG_COLOR)++;
     for( byte i: 0..10 )
         for( byte j: 0..10 )

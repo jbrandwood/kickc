@@ -3853,6 +3853,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testIrqUnknownType() throws IOException, URISyntaxException {
+      assertError("irq-unknown-type.c", "Interrupt type not supported unknown", false);
+   }
+
+   @Test
+   public void testIrqPragma() throws IOException, URISyntaxException {
+      compileAndCompare("irq-pragma.c");
+   }
+
+   @Test
    public void testIrqHyperscreen() throws IOException, URISyntaxException {
       compileAndCompare("examples/irq/irq-hyperscreen.c");
    }

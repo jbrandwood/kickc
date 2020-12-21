@@ -35,12 +35,11 @@
   .label HARDWARE_IRQ = $fffe
 // Interrupt Routine
 irq: {
-    sta rega+1
+    pha
     // do_irq()
     jsr do_irq
     // }
-  rega:
-    lda #00
+    pla
     rti
 }
 main: {

@@ -17,7 +17,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt(kernel_keyboard) void irq() {
+__interrupt(rom_sys_c64) void irq() {
     PLEX_SCREEN_PTR1[idx]++;
     PLEX_SCREEN_PTR2[idx]++;
     idx++;

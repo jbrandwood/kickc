@@ -1,4 +1,4 @@
-Resolved forward reference irq_vsync to void irq_vsync()
+Resolved forward reference irq_vsync to __interrupt(rom_sys_cx16) void irq_vsync()
 Setting struct to load/store in variable affected by address-of main::$6 = call memcpy_to_vram (byte)>VERA_SPRITE_ATTR main::vram_sprite_attr &SPRITE_ATTR main::$5 
 Setting struct to load/store in variable affected by address-of irq_vsync::$5 = call memcpy_to_vram irq_vsync::vram_sprite_attr_bank irq_vsync::vram_sprite_pos &SPRITE_ATTR+2 4 
 Resolving sizeof() main::$5 = sizeof  SPRITE_ATTR
@@ -106,7 +106,7 @@ main::@return: scope:[main]  from main::CLI1
   return 
   to:@return
 
-void irq_vsync()
+__interrupt(rom_sys_cx16) void irq_vsync()
 irq_vsync: scope:[irq_vsync]  from
   sin_idx_x = ++ sin_idx_x
   irq_vsync::$0 = sin_idx_x == SINX_LEN
@@ -241,8 +241,10 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -250,11 +252,12 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -265,7 +268,6 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
         // bits bits 0-3 red
         .byte red/16
     }
-
  }}
 const nomodify dword SPRITE_PIXELS_VRAM = $8000
 const nomodify byte VERA_ADDRSEL = 1
@@ -285,7 +287,7 @@ const nomodify word VERA_SPRITE_8BPP = $8000
 const nomodify dword VERA_SPRITE_ATTR = $1fc00
 const nomodify byte VERA_VSYNC = 1
 void __start()
-void irq_vsync()
+__interrupt(rom_sys_cx16) void irq_vsync()
 bool~ irq_vsync::$0
 bool~ irq_vsync::$1
 bool~ irq_vsync::$10
@@ -653,7 +655,7 @@ __start::@return: scope:[__start]  from __start::@1
   [5] return 
   to:@return
 
-void irq_vsync()
+__interrupt(rom_sys_cx16) void irq_vsync()
 irq_vsync: scope:[irq_vsync]  from
   [6] sin_idx_x = ++ sin_idx_x
   [7] if(sin_idx_x!=SINX_LEN) goto irq_vsync::@1
@@ -791,7 +793,7 @@ memcpy_to_vram::@2: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
 VARIABLE REGISTER WEIGHTS
 struct VERA_SPRITE SPRITE_ATTR loadstore = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
 void __start()
-void irq_vsync()
+__interrupt(rom_sys_cx16) void irq_vsync()
 word~ irq_vsync::$11 22.0
 word~ irq_vsync::$12 22.0
 word*~ irq_vsync::$13 22.0
@@ -1026,18 +1028,18 @@ Uplift Scope [VERA_SPRITE]
 Uplift Scope [MOS6522_VIA] 
 Uplift Scope [__start] 
 
-Uplifting [memcpy_to_vram] best 9460 combination zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] zp[2]:36 [ memcpy_to_vram::end#0 ] reg byte a [ memcpy_to_vram::$0 ] reg byte a [ memcpy_to_vram::$1 ] reg byte a [ memcpy_to_vram::$2 ] zp[2]:12 [ memcpy_to_vram::vdest#4 memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 ] reg byte x [ memcpy_to_vram::vbank#4 ] zp[2]:17 [ memcpy_to_vram::num#4 ] zp[2]:15 [ memcpy_to_vram::src#4 ] 
+Uplifting [memcpy_to_vram] best 9484 combination zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] zp[2]:36 [ memcpy_to_vram::end#0 ] reg byte a [ memcpy_to_vram::$0 ] reg byte a [ memcpy_to_vram::$1 ] reg byte a [ memcpy_to_vram::$2 ] zp[2]:12 [ memcpy_to_vram::vdest#4 memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 ] reg byte x [ memcpy_to_vram::vbank#4 ] zp[2]:17 [ memcpy_to_vram::num#4 ] zp[2]:15 [ memcpy_to_vram::src#4 ] 
 Limited combination testing to 100 combinations of 192 possible.
-Uplifting [main] best 9460 combination zp[1]:9 [ main::s#2 main::s#1 ] zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ] 
-Uplifting [irq_vsync] best 9460 combination zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ] zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ] zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] zp[2]:25 [ irq_vsync::$11 ] zp[2]:27 [ irq_vsync::$13 ] zp[2]:29 [ irq_vsync::$12 ] zp[2]:31 [ irq_vsync::$14 ] zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ] 
-Uplifting [] best 9460 combination zp[2]:21 [ sin_idx_x ] zp[2]:23 [ sin_idx_y ] mem[8] [ SPRITE_ATTR ] 
-Uplifting [VERA_SPRITE] best 9460 combination 
-Uplifting [MOS6522_VIA] best 9460 combination 
-Uplifting [__start] best 9460 combination 
+Uplifting [main] best 9484 combination zp[1]:9 [ main::s#2 main::s#1 ] zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ] 
+Uplifting [irq_vsync] best 9484 combination zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ] zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ] zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] zp[2]:25 [ irq_vsync::$11 ] zp[2]:27 [ irq_vsync::$13 ] zp[2]:29 [ irq_vsync::$12 ] zp[2]:31 [ irq_vsync::$14 ] zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ] 
+Uplifting [] best 9484 combination zp[2]:21 [ sin_idx_x ] zp[2]:23 [ sin_idx_y ] mem[8] [ SPRITE_ATTR ] 
+Uplifting [VERA_SPRITE] best 9484 combination 
+Uplifting [MOS6522_VIA] best 9484 combination 
+Uplifting [__start] best 9484 combination 
 Attempting to uplift remaining variables inzp[1]:9 [ main::s#2 main::s#1 ]
-Uplifting [main] best 9460 combination zp[1]:9 [ main::s#2 main::s#1 ] 
+Uplifting [main] best 9484 combination zp[1]:9 [ main::s#2 main::s#1 ] 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
-Uplifting [irq_vsync] best 9460 combination zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] 
+Uplifting [irq_vsync] best 9484 combination zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ] 
 Coalescing zero page register [ zp[2]:15 [ memcpy_to_vram::src#4 ] ] with [ zp[2]:19 [ memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:17 [ memcpy_to_vram::num#4 ] ] with [ zp[2]:36 [ memcpy_to_vram::end#0 ] ] - score: 1
 Coalescing zero page register [ zp[2]:25 [ irq_vsync::$11 ] ] with [ zp[2]:27 [ irq_vsync::$13 ] ] - score: 1
@@ -1181,6 +1183,7 @@ irq_vsync: {
     .label s = 2
     .label __13 = $16
     .label __14 = $18
+    // interrupt(isr_rom_sys_cx16_entry) -- isr_rom_sys_cx16_entry 
     // [6] sin_idx_x = ++ sin_idx_x -- vwuz1=_inc_vwuz1 
     inc.z sin_idx_x
     bne !+
@@ -1271,7 +1274,8 @@ irq_vsync: {
     // irq_vsync::@return
   __breturn:
     // [18] return 
-    rts
+    // interrupt(isr_rom_sys_cx16_exit) -- isr_rom_sys_cx16_exit 
+    jmp $e034
     // irq_vsync::@6
   __b6:
     // [19] irq_vsync::$11 = irq_vsync::i_x#3 << 1 -- vwuz1=vwuz2_rol_1 
@@ -1672,7 +1676,7 @@ memcpy_to_vram: {
 }
   // File Data
 .segment Data
-  // A 64*64 8bpp TUT sprite 
+  // A 64*64 8bpp TUT sprite and palette
   .align $1000
 SPRITE_PIXELS:
 .var pic = LoadPicture("tut.png")
@@ -1682,8 +1686,10 @@ SPRITE_PIXELS:
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -1691,11 +1697,12 @@ SPRITE_PIXELS:
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -1706,7 +1713,6 @@ SPRITE_PIXELS:
         // bits bits 0-3 red
         .byte red/16
     }
-
 
   .align $100
 SINX:
@@ -1789,7 +1795,7 @@ Removing instruction __b6:
 Removing instruction __b1_from___b6:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Removing unreachable instruction rts
+Removing unreachable instruction jmp $e034
 Succesful ASM optimization Pass5UnreachableCodeElimination
 
 FINAL SYMBOL TABLE
@@ -1811,8 +1817,10 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -1820,11 +1828,12 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -1835,7 +1844,6 @@ const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tu
         // bits bits 0-3 red
         .byte red/16
     }
-
  }}
 const nomodify dword SPRITE_PIXELS_VRAM = $8000
 const nomodify byte VERA_ADDRSEL = 1
@@ -1855,7 +1863,7 @@ const nomodify word VERA_SPRITE_8BPP = $8000
 const nomodify dword VERA_SPRITE_ATTR = $1fc00
 const nomodify byte VERA_VSYNC = 1
 void __start()
-void irq_vsync()
+__interrupt(rom_sys_cx16) void irq_vsync()
 word~ irq_vsync::$11 zp[2]:22 22.0
 word~ irq_vsync::$12 zp[2]:24 22.0
 word*~ irq_vsync::$13 zp[2]:22 22.0
@@ -2057,6 +2065,7 @@ irq_vsync: {
     .label s = 2
     .label __13 = $16
     .label __14 = $18
+    // interrupt(isr_rom_sys_cx16_entry) -- isr_rom_sys_cx16_entry 
     // if(++sin_idx_x==SINX_LEN)
     // [6] sin_idx_x = ++ sin_idx_x -- vwuz1=_inc_vwuz1 
     inc.z sin_idx_x
@@ -2144,6 +2153,7 @@ irq_vsync: {
     // irq_vsync::@return
     // }
     // [18] return 
+    // interrupt(isr_rom_sys_cx16_exit) -- isr_rom_sys_cx16_exit 
     // irq_vsync::@6
   __b6:
     // SPRITE_ATTR.X = SINX[i_x]
@@ -2542,7 +2552,7 @@ memcpy_to_vram: {
 }
   // File Data
 .segment Data
-  // A 64*64 8bpp TUT sprite 
+  // A 64*64 8bpp TUT sprite and palette
   .align $1000
 SPRITE_PIXELS:
 .var pic = LoadPicture("tut.png")
@@ -2552,8 +2562,10 @@ SPRITE_PIXELS:
     .var palList = List()
     // Next palette index
     .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
     .for (var y=0; y<64; y++) {
     	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
             .var rgb = pic.getPixel(x,y);
             .var idx = palette.get(rgb)
             .if(idx==null) {
@@ -2561,11 +2573,12 @@ SPRITE_PIXELS:
                 .eval palette.put(rgb,idx);
                 .eval palList.add(rgb)
             }
-            // Output pixel index
+            // Output pixel as palette index
             .byte idx
         }
     }
-    // Output sprite palette (offset 64*64 bytes)
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
     .for(var i=0;i<256;i++) {
         .var rgb = palList.get(i)
         .var red = floor(rgb / [256*256])
@@ -2576,7 +2589,6 @@ SPRITE_PIXELS:
         // bits bits 0-3 red
         .byte red/16
     }
-
 
   .align $100
 SINX:

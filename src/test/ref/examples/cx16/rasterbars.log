@@ -1,4 +1,4 @@
-Resolved forward reference irq_line to void irq_line()
+Resolved forward reference irq_line to __interrupt(rom_min_cx16) void irq_line()
 Inlined call call SEI 
 Inlined call call CLI 
 Inlined call call __init 
@@ -69,7 +69,7 @@ main::@return: scope:[main]  from
   return 
   to:@return
 
-void irq_line()
+__interrupt(rom_min_cx16) void irq_line()
 irq_line: scope:[irq_line]  from
   *VERA_CTRL = *VERA_CTRL | VERA_DCSEL
   *VERA_DC_HSTART = hstart
@@ -167,7 +167,6 @@ irq_line::@14: scope:[irq_line]  from irq_line::@13
   to:irq_line::@16
 irq_line::@15: scope:[irq_line]  from irq_line::@13
   *VERA_ISR = VERA_LINE
-  asm { ply plx pla rti  }
   to:irq_line::@return
 irq_line::@16: scope:[irq_line]  from irq_line::@14 irq_line::@17
   irq_line::b#4 = phi( irq_line::@14/irq_line::b#5, irq_line::@17/irq_line::b#6 )
@@ -237,7 +236,7 @@ void __start()
 volatile byte cnt loadstore
 volatile byte hstart loadstore
 volatile byte hstop loadstore
-void irq_line()
+__interrupt(rom_min_cx16) void irq_line()
 bool~ irq_line::$0
 bool~ irq_line::$1
 byte*~ irq_line::$10
@@ -440,10 +439,10 @@ Simple Condition irq_line::$5 [36] if(irq_line::i#2<$18) goto irq_line::@6
 Simple Condition irq_line::$6 [42] if(irq_line::i1#2<$17) goto irq_line::@9
 Simple Condition irq_line::$8 [56] if(hstart>(byte)$140/4) goto irq_line::@1
 Simple Condition irq_line::$9 [63] if(irq_line::b#2<8) goto irq_line::@14
-Simple Condition irq_line::$12 [71] if(irq_line::i2#2<irq_line::$11) goto irq_line::@17
+Simple Condition irq_line::$12 [70] if(irq_line::i2#2<irq_line::$11) goto irq_line::@17
 Successful SSA optimization Pass2ConditionalJumpSimplification
 Constant right-side identified [46] memset::num#0 = sizeof  BARS
-Constant right-side identified [69] irq_line::$11 = sizeof  BAR
+Constant right-side identified [68] irq_line::$11 = sizeof  BAR
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant irq_line::l#0 = 0
 Constant irq_line::i#0 = 0
@@ -460,8 +459,8 @@ Constant memset::dst#0 = (byte*)memset::str#0
 Constant memset::return#2 = memset::str#0
 Successful SSA optimization Pass2ConstantIdentification
 Rewriting conditional comparison [56] if(hstart>(byte)$140/4) goto irq_line::@1
-Simplifying constant evaluating to zero (byte)0/4 in [77] hstart = (byte)0/4
-Simplifying constant evaluating to zero (byte)0/2 in [79] vstart = (byte)0/2
+Simplifying constant evaluating to zero (byte)0/4 in [76] hstart = (byte)0/4
+Simplifying constant evaluating to zero (byte)0/2 in [78] vstart = (byte)0/2
 Successful SSA optimization PassNSimplifyConstantZero
 Eliminating unused constant memset::return#2
 Successful SSA optimization PassNEliminateUnusedVars
@@ -534,13 +533,13 @@ Calls in [irq_line] to memset:28
 
 Created 7 initial phi equivalence classes
 Coalesced [31] irq_line::idx#8 = irq_line::idx#0
-Coalesced [42] irq_line::b#7 = irq_line::b#1
-Coalesced [43] irq_line::idx#7 = irq_line::idx#1
-Coalesced [46] irq_line::i2#4 = irq_line::i2#1
-Coalesced [55] irq_line::l#10 = irq_line::l#1
-Coalesced [57] irq_line::i1#4 = irq_line::i1#1
-Coalesced [59] irq_line::i#4 = irq_line::i#1
-Coalesced [75] memset::dst#4 = memset::dst#1
+Coalesced [41] irq_line::b#7 = irq_line::b#1
+Coalesced [42] irq_line::idx#7 = irq_line::idx#1
+Coalesced [45] irq_line::i2#4 = irq_line::i2#1
+Coalesced [54] irq_line::l#10 = irq_line::l#1
+Coalesced [56] irq_line::i1#4 = irq_line::i1#1
+Coalesced [58] irq_line::i#4 = irq_line::i#1
+Coalesced [74] memset::dst#4 = memset::dst#1
 Coalesced down to 7 phi equivalence classes
 Culled Empty Block label __start::@2
 Culled Empty Block label memset::@2
@@ -576,7 +575,7 @@ __start::@return: scope:[__start]  from __start::@1
   [9] return 
   to:@return
 
-void irq_line()
+__interrupt(rom_min_cx16) void irq_line()
 irq_line: scope:[irq_line]  from
   [10] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL
   [11] *VERA_DC_HSTART = hstart
@@ -618,84 +617,83 @@ irq_line::@13: scope:[irq_line]  from irq_line::@18 irq_line::@19
   to:irq_line::@15
 irq_line::@15: scope:[irq_line]  from irq_line::@13
   [32] *VERA_ISR = VERA_LINE
-  asm { ply plx pla rti  }
   to:irq_line::@return
 irq_line::@return: scope:[irq_line]  from irq_line::@15
-  [34] return 
+  [33] return 
   to:@return
 irq_line::@14: scope:[irq_line]  from irq_line::@13
-  [35] irq_line::bar#0 = BARS + SIN[irq_line::idx#2]
+  [34] irq_line::bar#0 = BARS + SIN[irq_line::idx#2]
   to:irq_line::@16
 irq_line::@16: scope:[irq_line]  from irq_line::@14 irq_line::@17
-  [36] irq_line::i2#2 = phi( irq_line::@14/0, irq_line::@17/irq_line::i2#1 )
-  [37] if(irq_line::i2#2<$20*SIZEOF_BYTE) goto irq_line::@17
+  [35] irq_line::i2#2 = phi( irq_line::@14/0, irq_line::@17/irq_line::i2#1 )
+  [36] if(irq_line::i2#2<$20*SIZEOF_BYTE) goto irq_line::@17
   to:irq_line::@18
 irq_line::@18: scope:[irq_line]  from irq_line::@16
-  [38] irq_line::idx#1 = irq_line::idx#2 + $d
-  [39] irq_line::b#1 = ++ irq_line::b#2
+  [37] irq_line::idx#1 = irq_line::idx#2 + $d
+  [38] irq_line::b#1 = ++ irq_line::b#2
   to:irq_line::@13
 irq_line::@17: scope:[irq_line]  from irq_line::@16
-  [40] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2]
-  [41] irq_line::i2#1 = ++ irq_line::i2#2
+  [39] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2]
+  [40] irq_line::i2#1 = ++ irq_line::i2#2
   to:irq_line::@16
 irq_line::@3: scope:[irq_line]  from irq_line::@2
-  [42] *VERA_DC_BORDER = BARS[irq_line::l#2]
+  [41] *VERA_DC_BORDER = BARS[irq_line::l#2]
   to:irq_line::@5
 irq_line::@5: scope:[irq_line]  from irq_line::@3 irq_line::@6
-  [43] irq_line::i#2 = phi( irq_line::@3/0, irq_line::@6/irq_line::i#1 )
-  [44] if(irq_line::i#2<$18) goto irq_line::@6
+  [42] irq_line::i#2 = phi( irq_line::@3/0, irq_line::@6/irq_line::i#1 )
+  [43] if(irq_line::i#2<$18) goto irq_line::@6
   to:irq_line::@7
 irq_line::@7: scope:[irq_line]  from irq_line::@5
-  [45] *VERA_DC_BORDER = 0
+  [44] *VERA_DC_BORDER = 0
   to:irq_line::@8
 irq_line::@8: scope:[irq_line]  from irq_line::@7 irq_line::@9
-  [46] irq_line::i1#2 = phi( irq_line::@7/0, irq_line::@9/irq_line::i1#1 )
-  [47] if(irq_line::i1#2<$17) goto irq_line::@9
+  [45] irq_line::i1#2 = phi( irq_line::@7/0, irq_line::@9/irq_line::i1#1 )
+  [46] if(irq_line::i1#2<$17) goto irq_line::@9
   to:irq_line::@10
 irq_line::@10: scope:[irq_line]  from irq_line::@8
   asm { nop nop  }
-  [49] irq_line::l#1 = ++ irq_line::l#2
+  [48] irq_line::l#1 = ++ irq_line::l#2
   to:irq_line::@2
 irq_line::@9: scope:[irq_line]  from irq_line::@8
-  [50] irq_line::i1#1 = ++ irq_line::i1#2
+  [49] irq_line::i1#1 = ++ irq_line::i1#2
   to:irq_line::@8
 irq_line::@6: scope:[irq_line]  from irq_line::@5
-  [51] irq_line::i#1 = ++ irq_line::i#2
+  [50] irq_line::i#1 = ++ irq_line::i#2
   to:irq_line::@5
 
 void main()
 main: scope:[main]  from __start::@1
-  [52] phi()
+  [51] phi()
   to:main::SEI1
 main::SEI1: scope:[main]  from main
   asm { sei  }
   to:main::@2
 main::@2: scope:[main]  from main::SEI1
-  [54] *KERNEL_IRQ = &irq_line
-  [55] *VERA_IEN = VERA_LINE
-  [56] *VERA_IRQLINE_L = 5
+  [53] *KERNEL_IRQ = &irq_line
+  [54] *VERA_IEN = VERA_LINE
+  [55] *VERA_IRQLINE_L = 5
   to:main::CLI1
 main::CLI1: scope:[main]  from main::@2
   asm { cli  }
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::CLI1
-  [58] phi()
+  [57] phi()
   to:main::@1
 
 void* memset(void* memset::str , byte memset::c , word memset::num)
 memset: scope:[memset]  from irq_line::@1
-  [59] phi()
+  [58] phi()
   to:memset::@1
 memset::@1: scope:[memset]  from memset memset::@2
-  [60] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
-  [61] if(memset::dst#2!=memset::end#0) goto memset::@2
+  [59] memset::dst#2 = phi( memset/(byte*)memset::str#0, memset::@2/memset::dst#1 )
+  [60] if(memset::dst#2!=memset::end#0) goto memset::@2
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@1
-  [62] return 
+  [61] return 
   to:@return
 memset::@2: scope:[memset]  from memset::@1
-  [63] *memset::dst#2 = memset::c#0
-  [64] memset::dst#1 = ++ memset::dst#2
+  [62] *memset::dst#2 = memset::c#0
+  [63] memset::dst#1 = ++ memset::dst#2
   to:memset::@1
 
 
@@ -704,7 +702,7 @@ void __start()
 volatile byte cnt loadstore 0.5263157894736842
 volatile byte hstart loadstore 0.4545454545454546
 volatile byte hstop loadstore 0.34782608695652173
-void irq_line()
+__interrupt(rom_min_cx16) void irq_line()
 byte irq_line::b
 byte irq_line::b#1 22.0
 byte irq_line::b#2 4.125
@@ -801,21 +799,20 @@ Statement [19] if(cnt!=0) goto irq_line::@1 [ hstart hstop vstart vstop sin_idx 
 Statement [20] cnt = 2 [ hstart hstop vstart vstop sin_idx ] (  [ hstart hstop vstart vstop sin_idx ] { }  ) always clobbers reg byte a 
 Statement [21] if(hstart>=(byte)$140/4+1) goto irq_line::@1 [ hstart hstop vstart vstop sin_idx ] (  [ hstart hstop vstart vstop sin_idx ] { }  ) always clobbers reg byte a 
 Statement [32] *VERA_ISR = VERA_LINE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { ply plx pla rti  } always clobbers reg byte a reg byte x reg byte y 
-Statement [35] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] { }  ) always clobbers reg byte a 
+Statement [34] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ irq_line::b#2 irq_line::b#1 ]
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ]
-Statement [38] irq_line::idx#1 = irq_line::idx#2 + $d [ irq_line::b#2 irq_line::idx#1 ] (  [ irq_line::b#2 irq_line::idx#1 ] { }  ) always clobbers reg byte a 
-Statement [40] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] { }  ) always clobbers reg byte a 
+Statement [37] irq_line::idx#1 = irq_line::idx#2 + $d [ irq_line::b#2 irq_line::idx#1 ] (  [ irq_line::b#2 irq_line::idx#1 ] { }  ) always clobbers reg byte a 
+Statement [39] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:5 [ irq_line::i2#2 irq_line::i2#1 ]
-Statement [42] *VERA_DC_BORDER = BARS[irq_line::l#2] [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
+Statement [41] *VERA_DC_BORDER = BARS[irq_line::l#2] [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ irq_line::l#2 irq_line::l#1 ]
-Statement [45] *VERA_DC_BORDER = 0 [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
-Statement [54] *KERNEL_IRQ = &irq_line [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
-Statement [55] *VERA_IEN = VERA_LINE [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
-Statement [56] *VERA_IRQLINE_L = 5 [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
-Statement [61] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [63] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [44] *VERA_DC_BORDER = 0 [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
+Statement [53] *KERNEL_IRQ = &irq_line [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
+Statement [54] *VERA_IEN = VERA_LINE [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
+Statement [55] *VERA_IRQLINE_L = 5 [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
+Statement [60] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [62] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Statement [1] hstart = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] hstop = (byte)$280/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] vstart = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -832,17 +829,16 @@ Statement [19] if(cnt!=0) goto irq_line::@1 [ hstart hstop vstart vstop sin_idx 
 Statement [20] cnt = 2 [ hstart hstop vstart vstop sin_idx ] (  [ hstart hstop vstart vstop sin_idx ] { }  ) always clobbers reg byte a 
 Statement [21] if(hstart>=(byte)$140/4+1) goto irq_line::@1 [ hstart hstop vstart vstop sin_idx ] (  [ hstart hstop vstart vstop sin_idx ] { }  ) always clobbers reg byte a 
 Statement [32] *VERA_ISR = VERA_LINE [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { ply plx pla rti  } always clobbers reg byte a reg byte x reg byte y 
-Statement [35] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] { }  ) always clobbers reg byte a 
-Statement [38] irq_line::idx#1 = irq_line::idx#2 + $d [ irq_line::b#2 irq_line::idx#1 ] (  [ irq_line::b#2 irq_line::idx#1 ] { }  ) always clobbers reg byte a 
-Statement [40] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] { }  ) always clobbers reg byte a 
-Statement [42] *VERA_DC_BORDER = BARS[irq_line::l#2] [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
-Statement [45] *VERA_DC_BORDER = 0 [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
-Statement [54] *KERNEL_IRQ = &irq_line [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
-Statement [55] *VERA_IEN = VERA_LINE [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
-Statement [56] *VERA_IRQLINE_L = 5 [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
-Statement [61] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a 
-Statement [63] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [34] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 ] { }  ) always clobbers reg byte a 
+Statement [37] irq_line::idx#1 = irq_line::idx#2 + $d [ irq_line::b#2 irq_line::idx#1 ] (  [ irq_line::b#2 irq_line::idx#1 ] { }  ) always clobbers reg byte a 
+Statement [39] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] (  [ irq_line::b#2 irq_line::idx#2 irq_line::bar#0 irq_line::i2#2 ] { }  ) always clobbers reg byte a 
+Statement [41] *VERA_DC_BORDER = BARS[irq_line::l#2] [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
+Statement [44] *VERA_DC_BORDER = 0 [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] (  [ hstart hstop vstart vstop cnt sin_idx irq_line::l#2 ] { }  ) always clobbers reg byte a 
+Statement [53] *KERNEL_IRQ = &irq_line [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
+Statement [54] *VERA_IEN = VERA_LINE [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
+Statement [55] *VERA_IRQLINE_L = 5 [ ] ( main:8 [ ] { }  ) always clobbers reg byte a 
+Statement [60] if(memset::dst#2!=memset::end#0) goto memset::@2 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a 
+Statement [62] *memset::dst#2 = memset::c#0 [ memset::dst#2 ] ( memset:27 [ sin_idx memset::dst#2 ] { }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ irq_line::l#2 irq_line::l#1 ] : zp[1]:2 , reg byte x , reg byte y , 
 Potential registers zp[1]:3 [ irq_line::b#2 irq_line::b#1 ] : zp[1]:3 , reg byte x , reg byte y , 
 Potential registers zp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ] : zp[1]:4 , reg byte x , reg byte y , 
@@ -867,30 +863,30 @@ Uplift Scope [MOS6522_VIA]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [irq_line] best 8197 combination reg byte y [ irq_line::i2#2 irq_line::i2#1 ] reg byte a [ irq_line::i#2 irq_line::i#1 ] reg byte a [ irq_line::i1#2 irq_line::i1#1 ] reg byte x [ irq_line::b#2 irq_line::b#1 ] zp[1]:2 [ irq_line::l#2 irq_line::l#1 ] zp[2]:16 [ irq_line::bar#0 ] zp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ] 
+Uplifting [irq_line] best 8203 combination reg byte y [ irq_line::i2#2 irq_line::i2#1 ] reg byte a [ irq_line::i#2 irq_line::i#1 ] reg byte a [ irq_line::i1#2 irq_line::i1#1 ] reg byte x [ irq_line::b#2 irq_line::b#1 ] zp[1]:2 [ irq_line::l#2 irq_line::l#1 ] zp[2]:16 [ irq_line::bar#0 ] zp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ] 
 Limited combination testing to 100 combinations of 1296 possible.
-Uplifting [memset] best 8197 combination zp[2]:8 [ memset::dst#2 memset::dst#1 ] 
-Uplifting [] best 8197 combination zp[1]:14 [ cnt ] zp[1]:10 [ hstart ] zp[1]:11 [ hstop ] zp[1]:12 [ vstart ] zp[1]:13 [ vstop ] zp[1]:15 [ sin_idx ] 
-Uplifting [VERA_SPRITE] best 8197 combination 
-Uplifting [MOS6522_VIA] best 8197 combination 
-Uplifting [main] best 8197 combination 
-Uplifting [__start] best 8197 combination 
+Uplifting [memset] best 8203 combination zp[2]:8 [ memset::dst#2 memset::dst#1 ] 
+Uplifting [] best 8203 combination zp[1]:14 [ cnt ] zp[1]:10 [ hstart ] zp[1]:11 [ hstop ] zp[1]:12 [ vstart ] zp[1]:13 [ vstop ] zp[1]:15 [ sin_idx ] 
+Uplifting [VERA_SPRITE] best 8203 combination 
+Uplifting [MOS6522_VIA] best 8203 combination 
+Uplifting [main] best 8203 combination 
+Uplifting [__start] best 8203 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_line::l#2 irq_line::l#1 ]
-Uplifting [irq_line] best 8077 combination reg byte x [ irq_line::l#2 irq_line::l#1 ] 
+Uplifting [irq_line] best 8083 combination reg byte x [ irq_line::l#2 irq_line::l#1 ] 
 Attempting to uplift remaining variables inzp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ]
-Uplifting [irq_line] best 8077 combination zp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ] 
+Uplifting [irq_line] best 8083 combination zp[1]:4 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ] 
 Attempting to uplift remaining variables inzp[1]:14 [ cnt ]
-Uplifting [] best 8077 combination zp[1]:14 [ cnt ] 
+Uplifting [] best 8083 combination zp[1]:14 [ cnt ] 
 Attempting to uplift remaining variables inzp[1]:10 [ hstart ]
-Uplifting [] best 8077 combination zp[1]:10 [ hstart ] 
+Uplifting [] best 8083 combination zp[1]:10 [ hstart ] 
 Attempting to uplift remaining variables inzp[1]:11 [ hstop ]
-Uplifting [] best 8077 combination zp[1]:11 [ hstop ] 
+Uplifting [] best 8083 combination zp[1]:11 [ hstop ] 
 Attempting to uplift remaining variables inzp[1]:12 [ vstart ]
-Uplifting [] best 8077 combination zp[1]:12 [ vstart ] 
+Uplifting [] best 8083 combination zp[1]:12 [ vstart ] 
 Attempting to uplift remaining variables inzp[1]:13 [ vstop ]
-Uplifting [] best 8077 combination zp[1]:13 [ vstop ] 
+Uplifting [] best 8083 combination zp[1]:13 [ vstop ] 
 Attempting to uplift remaining variables inzp[1]:15 [ sin_idx ]
-Uplifting [] best 8077 combination zp[1]:15 [ sin_idx ] 
+Uplifting [] best 8083 combination zp[1]:15 [ sin_idx ] 
 Coalescing zero page register [ zp[2]:16 [ irq_line::bar#0 ] ] with [ zp[2]:8 [ memset::dst#2 memset::dst#1 ] ]
 Allocated (was zp[1]:4) zp[1]:2 [ irq_line::idx#2 irq_line::idx#1 irq_line::idx#0 ]
 Allocated (was zp[1]:10) zp[1]:3 [ hstart ]
@@ -1002,7 +998,7 @@ __start: {
     // __start::@1
   __b1:
     // [8] call main 
-    // [52] phi from __start::@1 to main [phi:__start::@1->main]
+    // [51] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -1016,6 +1012,7 @@ __start: {
 irq_line: {
     .label idx = 2
     .label bar = 9
+    // interrupt(isr_rom_min_cx16_entry) -- isr_rom_min_cx16_entry 
     // [10] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Update the border
     lda #VERA_DCSEL
@@ -1087,7 +1084,7 @@ irq_line: {
   __b1:
     // [27] call memset 
   // Animate the bars
-    // [59] phi from irq_line::@1 to memset [phi:irq_line::@1->memset]
+    // [58] phi from irq_line::@1 to memset [phi:irq_line::@1->memset]
   memset_from___b1:
     jsr memset
     jmp __b19
@@ -1116,20 +1113,15 @@ irq_line: {
     // Reset the LINE interrupt
     lda #VERA_LINE
     sta VERA_ISR
-    // asm { ply plx pla rti  }
-    // Exit CX16 KERNAL IRQ
-    ply
-    plx
-    pla
-    rti
     jmp __breturn
     // irq_line::@return
   __breturn:
-    // [34] return 
-    rts
+    // [33] return 
+    // interrupt(isr_rom_min_cx16_exit) -- isr_rom_min_cx16_exit 
+    jmp $e049
     // irq_line::@14
   __b14:
-    // [35] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] -- pbuz1=pbuc1_plus_pbuc2_derefidx_vbuz2 
+    // [34] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] -- pbuz1=pbuc1_plus_pbuc2_derefidx_vbuz2 
     ldy.z idx
     lda SIN,y
     clc
@@ -1138,25 +1130,25 @@ irq_line: {
     lda #>BARS
     adc #0
     sta.z bar+1
-    // [36] phi from irq_line::@14 to irq_line::@16 [phi:irq_line::@14->irq_line::@16]
+    // [35] phi from irq_line::@14 to irq_line::@16 [phi:irq_line::@14->irq_line::@16]
   __b16_from___b14:
-    // [36] phi irq_line::i2#2 = 0 [phi:irq_line::@14->irq_line::@16#0] -- vbuyy=vbuc1 
+    // [35] phi irq_line::i2#2 = 0 [phi:irq_line::@14->irq_line::@16#0] -- vbuyy=vbuc1 
     ldy #0
     jmp __b16
     // irq_line::@16
   __b16:
-    // [37] if(irq_line::i2#2<$20*SIZEOF_BYTE) goto irq_line::@17 -- vbuyy_lt_vbuc1_then_la1 
+    // [36] if(irq_line::i2#2<$20*SIZEOF_BYTE) goto irq_line::@17 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$20*SIZEOF_BYTE
     bcc __b17
     jmp __b18
     // irq_line::@18
   __b18:
-    // [38] irq_line::idx#1 = irq_line::idx#2 + $d -- vbuz1=vbuz1_plus_vbuc1 
+    // [37] irq_line::idx#1 = irq_line::idx#2 + $d -- vbuz1=vbuz1_plus_vbuc1 
     lda #$d
     clc
     adc.z idx
     sta.z idx
-    // [39] irq_line::b#1 = ++ irq_line::b#2 -- vbuxx=_inc_vbuxx 
+    // [38] irq_line::b#1 = ++ irq_line::b#2 -- vbuxx=_inc_vbuxx 
     inx
     // [30] phi from irq_line::@18 to irq_line::@13 [phi:irq_line::@18->irq_line::@13]
   __b13_from___b18:
@@ -1165,45 +1157,45 @@ irq_line: {
     jmp __b13
     // irq_line::@17
   __b17:
-    // [40] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuyy 
+    // [39] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuyy 
     lda BAR,y
     sta (bar),y
-    // [41] irq_line::i2#1 = ++ irq_line::i2#2 -- vbuyy=_inc_vbuyy 
+    // [40] irq_line::i2#1 = ++ irq_line::i2#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [36] phi from irq_line::@17 to irq_line::@16 [phi:irq_line::@17->irq_line::@16]
+    // [35] phi from irq_line::@17 to irq_line::@16 [phi:irq_line::@17->irq_line::@16]
   __b16_from___b17:
-    // [36] phi irq_line::i2#2 = irq_line::i2#1 [phi:irq_line::@17->irq_line::@16#0] -- register_copy 
+    // [35] phi irq_line::i2#2 = irq_line::i2#1 [phi:irq_line::@17->irq_line::@16#0] -- register_copy 
     jmp __b16
     // irq_line::@3
   __b3:
-    // [42] *VERA_DC_BORDER = BARS[irq_line::l#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [41] *VERA_DC_BORDER = BARS[irq_line::l#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda BARS,x
     sta VERA_DC_BORDER
-    // [43] phi from irq_line::@3 to irq_line::@5 [phi:irq_line::@3->irq_line::@5]
+    // [42] phi from irq_line::@3 to irq_line::@5 [phi:irq_line::@3->irq_line::@5]
   __b5_from___b3:
-    // [43] phi irq_line::i#2 = 0 [phi:irq_line::@3->irq_line::@5#0] -- vbuaa=vbuc1 
+    // [42] phi irq_line::i#2 = 0 [phi:irq_line::@3->irq_line::@5#0] -- vbuaa=vbuc1 
     lda #0
     jmp __b5
     // irq_line::@5
   __b5:
-    // [44] if(irq_line::i#2<$18) goto irq_line::@6 -- vbuaa_lt_vbuc1_then_la1 
+    // [43] if(irq_line::i#2<$18) goto irq_line::@6 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$18
     bcc __b6
     jmp __b7
     // irq_line::@7
   __b7:
-    // [45] *VERA_DC_BORDER = 0 -- _deref_pbuc1=vbuc2 
+    // [44] *VERA_DC_BORDER = 0 -- _deref_pbuc1=vbuc2 
     // Wait exactly long enought to go to the next raster line
     lda #0
     sta VERA_DC_BORDER
-    // [46] phi from irq_line::@7 to irq_line::@8 [phi:irq_line::@7->irq_line::@8]
+    // [45] phi from irq_line::@7 to irq_line::@8 [phi:irq_line::@7->irq_line::@8]
   __b8_from___b7:
-    // [46] phi irq_line::i1#2 = 0 [phi:irq_line::@7->irq_line::@8#0] -- vbuaa=vbuc1 
+    // [45] phi irq_line::i1#2 = 0 [phi:irq_line::@7->irq_line::@8#0] -- vbuaa=vbuc1 
     lda #0
     jmp __b8
     // irq_line::@8
   __b8:
-    // [47] if(irq_line::i1#2<$17) goto irq_line::@9 -- vbuaa_lt_vbuc1_then_la1 
+    // [46] if(irq_line::i1#2<$17) goto irq_line::@9 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$17
     bcc __b9
     jmp __b10
@@ -1213,7 +1205,7 @@ irq_line: {
     // Wait exactly long enought to go to the next raster line
     nop
     nop
-    // [49] irq_line::l#1 = ++ irq_line::l#2 -- vbuxx=_inc_vbuxx 
+    // [48] irq_line::l#1 = ++ irq_line::l#2 -- vbuxx=_inc_vbuxx 
     inx
     // [16] phi from irq_line::@10 to irq_line::@2 [phi:irq_line::@10->irq_line::@2]
   __b2_from___b10:
@@ -1221,19 +1213,19 @@ irq_line: {
     jmp __b2
     // irq_line::@9
   __b9:
-    // [50] irq_line::i1#1 = ++ irq_line::i1#2 -- vbuaa=_inc_vbuaa 
+    // [49] irq_line::i1#1 = ++ irq_line::i1#2 -- vbuaa=_inc_vbuaa 
     inc
-    // [46] phi from irq_line::@9 to irq_line::@8 [phi:irq_line::@9->irq_line::@8]
+    // [45] phi from irq_line::@9 to irq_line::@8 [phi:irq_line::@9->irq_line::@8]
   __b8_from___b9:
-    // [46] phi irq_line::i1#2 = irq_line::i1#1 [phi:irq_line::@9->irq_line::@8#0] -- register_copy 
+    // [45] phi irq_line::i1#2 = irq_line::i1#1 [phi:irq_line::@9->irq_line::@8#0] -- register_copy 
     jmp __b8
     // irq_line::@6
   __b6:
-    // [51] irq_line::i#1 = ++ irq_line::i#2 -- vbuaa=_inc_vbuaa 
+    // [50] irq_line::i#1 = ++ irq_line::i#2 -- vbuaa=_inc_vbuaa 
     inc
-    // [43] phi from irq_line::@6 to irq_line::@5 [phi:irq_line::@6->irq_line::@5]
+    // [42] phi from irq_line::@6 to irq_line::@5 [phi:irq_line::@6->irq_line::@5]
   __b5_from___b6:
-    // [43] phi irq_line::i#2 = irq_line::i#1 [phi:irq_line::@6->irq_line::@5#0] -- register_copy 
+    // [42] phi irq_line::i#2 = irq_line::i#1 [phi:irq_line::@6->irq_line::@5#0] -- register_copy 
     jmp __b5
 }
   // main
@@ -1246,15 +1238,15 @@ main: {
     jmp __b2
     // main::@2
   __b2:
-    // [54] *KERNEL_IRQ = &irq_line -- _deref_qprc1=pprc2 
+    // [53] *KERNEL_IRQ = &irq_line -- _deref_qprc1=pprc2 
     lda #<irq_line
     sta KERNEL_IRQ
     lda #>irq_line
     sta KERNEL_IRQ+1
-    // [55] *VERA_IEN = VERA_LINE -- _deref_pbuc1=vbuc2 
+    // [54] *VERA_IEN = VERA_LINE -- _deref_pbuc1=vbuc2 
     lda #VERA_LINE
     sta VERA_IEN
-    // [56] *VERA_IRQLINE_L = 5 -- _deref_pbuc1=vbuc2 
+    // [55] *VERA_IRQLINE_L = 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta VERA_IRQLINE_L
     jmp CLI1
@@ -1262,7 +1254,7 @@ main: {
   CLI1:
     // asm { cli  }
     cli
-    // [58] phi from main::@1 main::CLI1 to main::@1 [phi:main::@1/main::CLI1->main::@1]
+    // [57] phi from main::@1 main::CLI1 to main::@1 [phi:main::@1/main::CLI1->main::@1]
   __b1_from___b1:
   __b1_from_CLI1:
     jmp __b1
@@ -1278,9 +1270,9 @@ memset: {
     .label str = BARS
     .label end = str+num
     .label dst = 9
-    // [60] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [59] phi from memset to memset::@1 [phi:memset->memset::@1]
   __b1_from_memset:
-    // [60] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [59] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1288,7 +1280,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [61] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [60] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -1298,22 +1290,22 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [62] return 
+    // [61] return 
     rts
     // memset::@2
   __b2:
-    // [63] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [62] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
-    // [64] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [63] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [60] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [59] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
   __b1_from___b2:
-    // [60] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [59] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -1419,7 +1411,7 @@ void __start()
 volatile byte cnt loadstore zp[1]:7 0.5263157894736842
 volatile byte hstart loadstore zp[1]:3 0.4545454545454546
 volatile byte hstop loadstore zp[1]:4 0.34782608695652173
-void irq_line()
+__interrupt(rom_min_cx16) void irq_line()
 byte irq_line::b
 byte irq_line::b#1 reg byte x 22.0
 byte irq_line::b#2 reg byte x 4.125
@@ -1475,7 +1467,7 @@ zp[2]:9 [ irq_line::bar#0 memset::dst#2 memset::dst#1 ]
 
 
 FINAL ASSEMBLER
-Score: 5780
+Score: 5786
 
   // File Comments
 // Example program for the Commander X16
@@ -1578,7 +1570,7 @@ __start: {
     // [7] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [8] call main 
-    // [52] phi from __start::@1 to main [phi:__start::@1->main]
+    // [51] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [9] return 
@@ -1589,6 +1581,7 @@ __start: {
 irq_line: {
     .label idx = 2
     .label bar = 9
+    // interrupt(isr_rom_min_cx16_entry) -- isr_rom_min_cx16_entry 
     // *VERA_CTRL |= VERA_DCSEL
     // [10] *VERA_CTRL = *VERA_CTRL | VERA_DCSEL -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Update the border
@@ -1663,7 +1656,7 @@ irq_line: {
     // memset(BARS, 0, sizeof(BARS))
     // [27] call memset 
   // Animate the bars
-    // [59] phi from irq_line::@1 to memset [phi:irq_line::@1->memset]
+    // [58] phi from irq_line::@1 to memset [phi:irq_line::@1->memset]
     jsr memset
     // irq_line::@19
     // idx = sin_idx--
@@ -1688,21 +1681,15 @@ irq_line: {
     // Reset the LINE interrupt
     lda #VERA_LINE
     sta VERA_ISR
-    // asm
-    // asm { ply plx pla rti  }
-    // Exit CX16 KERNAL IRQ
-    ply
-    plx
-    pla
-    rti
     // irq_line::@return
     // }
-    // [34] return 
-    rts
+    // [33] return 
+    // interrupt(isr_rom_min_cx16_exit) -- isr_rom_min_cx16_exit 
+    jmp $e049
     // irq_line::@14
   __b14:
     // bar = BARS + SIN[idx]
-    // [35] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] -- pbuz1=pbuc1_plus_pbuc2_derefidx_vbuz2 
+    // [34] irq_line::bar#0 = BARS + SIN[irq_line::idx#2] -- pbuz1=pbuc1_plus_pbuc2_derefidx_vbuz2 
     ldy.z idx
     lda SIN,y
     clc
@@ -1711,24 +1698,24 @@ irq_line: {
     lda #>BARS
     adc #0
     sta.z bar+1
-    // [36] phi from irq_line::@14 to irq_line::@16 [phi:irq_line::@14->irq_line::@16]
-    // [36] phi irq_line::i2#2 = 0 [phi:irq_line::@14->irq_line::@16#0] -- vbuyy=vbuc1 
+    // [35] phi from irq_line::@14 to irq_line::@16 [phi:irq_line::@14->irq_line::@16]
+    // [35] phi irq_line::i2#2 = 0 [phi:irq_line::@14->irq_line::@16#0] -- vbuyy=vbuc1 
     ldy #0
     // irq_line::@16
   __b16:
     // for(char i=0;i<sizeof(BAR);i++)
-    // [37] if(irq_line::i2#2<$20*SIZEOF_BYTE) goto irq_line::@17 -- vbuyy_lt_vbuc1_then_la1 
+    // [36] if(irq_line::i2#2<$20*SIZEOF_BYTE) goto irq_line::@17 -- vbuyy_lt_vbuc1_then_la1 
     cpy #$20*SIZEOF_BYTE
     bcc __b17
     // irq_line::@18
     // idx += 13
-    // [38] irq_line::idx#1 = irq_line::idx#2 + $d -- vbuz1=vbuz1_plus_vbuc1 
+    // [37] irq_line::idx#1 = irq_line::idx#2 + $d -- vbuz1=vbuz1_plus_vbuc1 
     lda #$d
     clc
     adc.z idx
     sta.z idx
     // for(char b=0;b<8;b++)
-    // [39] irq_line::b#1 = ++ irq_line::b#2 -- vbuxx=_inc_vbuxx 
+    // [38] irq_line::b#1 = ++ irq_line::b#2 -- vbuxx=_inc_vbuxx 
     inx
     // [30] phi from irq_line::@18 to irq_line::@13 [phi:irq_line::@18->irq_line::@13]
     // [30] phi irq_line::idx#2 = irq_line::idx#1 [phi:irq_line::@18->irq_line::@13#0] -- register_copy 
@@ -1737,42 +1724,42 @@ irq_line: {
     // irq_line::@17
   __b17:
     // bar[i] = BAR[i]
-    // [40] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuyy 
+    // [39] irq_line::bar#0[irq_line::i2#2] = BAR[irq_line::i2#2] -- pbuz1_derefidx_vbuyy=pbuc1_derefidx_vbuyy 
     lda BAR,y
     sta (bar),y
     // for(char i=0;i<sizeof(BAR);i++)
-    // [41] irq_line::i2#1 = ++ irq_line::i2#2 -- vbuyy=_inc_vbuyy 
+    // [40] irq_line::i2#1 = ++ irq_line::i2#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [36] phi from irq_line::@17 to irq_line::@16 [phi:irq_line::@17->irq_line::@16]
-    // [36] phi irq_line::i2#2 = irq_line::i2#1 [phi:irq_line::@17->irq_line::@16#0] -- register_copy 
+    // [35] phi from irq_line::@17 to irq_line::@16 [phi:irq_line::@17->irq_line::@16]
+    // [35] phi irq_line::i2#2 = irq_line::i2#1 [phi:irq_line::@17->irq_line::@16#0] -- register_copy 
     jmp __b16
     // irq_line::@3
   __b3:
     // *VERA_DC_BORDER = BARS[l]
-    // [42] *VERA_DC_BORDER = BARS[irq_line::l#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
+    // [41] *VERA_DC_BORDER = BARS[irq_line::l#2] -- _deref_pbuc1=pbuc2_derefidx_vbuxx 
     lda BARS,x
     sta VERA_DC_BORDER
-    // [43] phi from irq_line::@3 to irq_line::@5 [phi:irq_line::@3->irq_line::@5]
-    // [43] phi irq_line::i#2 = 0 [phi:irq_line::@3->irq_line::@5#0] -- vbuaa=vbuc1 
+    // [42] phi from irq_line::@3 to irq_line::@5 [phi:irq_line::@3->irq_line::@5]
+    // [42] phi irq_line::i#2 = 0 [phi:irq_line::@3->irq_line::@5#0] -- vbuaa=vbuc1 
     lda #0
     // irq_line::@5
   __b5:
     // for(char i=0;i<24;i++)
-    // [44] if(irq_line::i#2<$18) goto irq_line::@6 -- vbuaa_lt_vbuc1_then_la1 
+    // [43] if(irq_line::i#2<$18) goto irq_line::@6 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$18
     bcc __b6
     // irq_line::@7
     // *VERA_DC_BORDER = 0
-    // [45] *VERA_DC_BORDER = 0 -- _deref_pbuc1=vbuc2 
+    // [44] *VERA_DC_BORDER = 0 -- _deref_pbuc1=vbuc2 
     // Wait exactly long enought to go to the next raster line
     lda #0
     sta VERA_DC_BORDER
-    // [46] phi from irq_line::@7 to irq_line::@8 [phi:irq_line::@7->irq_line::@8]
-    // [46] phi irq_line::i1#2 = 0 [phi:irq_line::@7->irq_line::@8#0] -- vbuaa=vbuc1 
+    // [45] phi from irq_line::@7 to irq_line::@8 [phi:irq_line::@7->irq_line::@8]
+    // [45] phi irq_line::i1#2 = 0 [phi:irq_line::@7->irq_line::@8#0] -- vbuaa=vbuc1 
     // irq_line::@8
   __b8:
     // for(char i=0;i<23;i++)
-    // [47] if(irq_line::i1#2<$17) goto irq_line::@9 -- vbuaa_lt_vbuc1_then_la1 
+    // [46] if(irq_line::i1#2<$17) goto irq_line::@9 -- vbuaa_lt_vbuc1_then_la1 
     cmp #$17
     bcc __b9
     // irq_line::@10
@@ -1782,7 +1769,7 @@ irq_line: {
     nop
     nop
     // for(char l=0;l!=230;l++)
-    // [49] irq_line::l#1 = ++ irq_line::l#2 -- vbuxx=_inc_vbuxx 
+    // [48] irq_line::l#1 = ++ irq_line::l#2 -- vbuxx=_inc_vbuxx 
     inx
     // [16] phi from irq_line::@10 to irq_line::@2 [phi:irq_line::@10->irq_line::@2]
     // [16] phi irq_line::l#2 = irq_line::l#1 [phi:irq_line::@10->irq_line::@2#0] -- register_copy 
@@ -1790,18 +1777,18 @@ irq_line: {
     // irq_line::@9
   __b9:
     // for(char i=0;i<23;i++)
-    // [50] irq_line::i1#1 = ++ irq_line::i1#2 -- vbuaa=_inc_vbuaa 
+    // [49] irq_line::i1#1 = ++ irq_line::i1#2 -- vbuaa=_inc_vbuaa 
     inc
-    // [46] phi from irq_line::@9 to irq_line::@8 [phi:irq_line::@9->irq_line::@8]
-    // [46] phi irq_line::i1#2 = irq_line::i1#1 [phi:irq_line::@9->irq_line::@8#0] -- register_copy 
+    // [45] phi from irq_line::@9 to irq_line::@8 [phi:irq_line::@9->irq_line::@8]
+    // [45] phi irq_line::i1#2 = irq_line::i1#1 [phi:irq_line::@9->irq_line::@8#0] -- register_copy 
     jmp __b8
     // irq_line::@6
   __b6:
     // for(char i=0;i<24;i++)
-    // [51] irq_line::i#1 = ++ irq_line::i#2 -- vbuaa=_inc_vbuaa 
+    // [50] irq_line::i#1 = ++ irq_line::i#2 -- vbuaa=_inc_vbuaa 
     inc
-    // [43] phi from irq_line::@6 to irq_line::@5 [phi:irq_line::@6->irq_line::@5]
-    // [43] phi irq_line::i#2 = irq_line::i#1 [phi:irq_line::@6->irq_line::@5#0] -- register_copy 
+    // [42] phi from irq_line::@6 to irq_line::@5 [phi:irq_line::@6->irq_line::@5]
+    // [42] phi irq_line::i#2 = irq_line::i#1 [phi:irq_line::@6->irq_line::@5#0] -- register_copy 
     jmp __b5
 }
   // main
@@ -1812,24 +1799,24 @@ main: {
     sei
     // main::@2
     // *KERNEL_IRQ = &irq_line
-    // [54] *KERNEL_IRQ = &irq_line -- _deref_qprc1=pprc2 
+    // [53] *KERNEL_IRQ = &irq_line -- _deref_qprc1=pprc2 
     lda #<irq_line
     sta KERNEL_IRQ
     lda #>irq_line
     sta KERNEL_IRQ+1
     // *VERA_IEN = VERA_LINE
-    // [55] *VERA_IEN = VERA_LINE -- _deref_pbuc1=vbuc2 
+    // [54] *VERA_IEN = VERA_LINE -- _deref_pbuc1=vbuc2 
     lda #VERA_LINE
     sta VERA_IEN
     // *VERA_IRQLINE_L = 5
-    // [56] *VERA_IRQLINE_L = 5 -- _deref_pbuc1=vbuc2 
+    // [55] *VERA_IRQLINE_L = 5 -- _deref_pbuc1=vbuc2 
     lda #5
     sta VERA_IRQLINE_L
     // main::CLI1
     // asm
     // asm { cli  }
     cli
-    // [58] phi from main::@1 main::CLI1 to main::@1 [phi:main::@1/main::CLI1->main::@1]
+    // [57] phi from main::@1 main::CLI1 to main::@1 [phi:main::@1/main::CLI1->main::@1]
     // main::@1
   __b1:
     jmp __b1
@@ -1842,8 +1829,8 @@ memset: {
     .label str = BARS
     .label end = str+num
     .label dst = 9
-    // [60] phi from memset to memset::@1 [phi:memset->memset::@1]
-    // [60] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
+    // [59] phi from memset to memset::@1 [phi:memset->memset::@1]
+    // [59] phi memset::dst#2 = (byte*)memset::str#0 [phi:memset->memset::@1#0] -- pbuz1=pbuc1 
     lda #<str
     sta.z dst
     lda #>str
@@ -1851,7 +1838,7 @@ memset: {
     // memset::@1
   __b1:
     // for(char* dst = str; dst!=end; dst++)
-    // [61] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
+    // [60] if(memset::dst#2!=memset::end#0) goto memset::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z dst+1
     cmp #>end
     bne __b2
@@ -1860,23 +1847,23 @@ memset: {
     bne __b2
     // memset::@return
     // }
-    // [62] return 
+    // [61] return 
     rts
     // memset::@2
   __b2:
     // *dst = c
-    // [63] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
+    // [62] *memset::dst#2 = memset::c#0 -- _deref_pbuz1=vbuc1 
     lda #c
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [64] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [63] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inc.z dst
     bne !+
     inc.z dst+1
   !:
-    // [60] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
-    // [60] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
+    // [59] phi from memset::@2 to memset::@1 [phi:memset::@2->memset::@1]
+    // [59] phi memset::dst#2 = memset::dst#1 [phi:memset::@2->memset::@1#0] -- register_copy 
     jmp __b1
 }
   // File Data

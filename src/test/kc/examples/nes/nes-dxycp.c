@@ -31,7 +31,7 @@ volatile char x_sin_idx = 73;
 volatile char x_sin_idx_2 = 82;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank() {
+__interrupt void vblank() {
     // Set scroll
     PPU->PPUSCROLL = 0;
     PPU->PPUSCROLL = 0;    

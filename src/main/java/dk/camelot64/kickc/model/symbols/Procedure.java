@@ -23,7 +23,7 @@ public class Procedure extends Scope {
    /** True if the procedure is declared intrinsic. */
    private boolean declaredIntrinsic;
    /** The type of interrupt that the procedure serves. Null for all procedures not serving an interrupt. */
-   private InterruptType interruptType;
+   private String interruptType;
    /** Comments preceding the procedure in the source code. */
    private List<Comment> comments;
    /** Reserved zeropage addresses. */
@@ -176,11 +176,11 @@ public class Procedure extends Scope {
       this.declaredInline = declaredInline;
    }
 
-   public InterruptType getInterruptType() {
+   public String getInterruptType() {
       return interruptType;
    }
 
-   public void setInterruptType(InterruptType interruptType) {
+   public void setInterruptType(String interruptType) {
       this.interruptType = interruptType;
    }
 
@@ -218,26 +218,6 @@ public class Procedure extends Scope {
       isConstructor = constructor;
    }
 
-   /** The different types of supported interrupts. */
-   public enum InterruptType {
-      /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea31. */
-      KERNEL_KEYBOARD,
-      /** Interrupt served by the kernel called through $0314-5. Will exit through the kernel using $ea81. */
-      KERNEL_MIN,
-      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save NO registers. */
-      HARDWARE_NONE,
-      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save ALL registers. */
-      HARDWARE_ALL,
-      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save ALL registers using the stack. */
-      HARDWARE_STACK,
-      /** Interrupt served directly from hardware through $fffe-f. Will exit through RTI and will save necessary registers based on clobber. */
-      HARDWARE_CLOBBER;
-
-      /** The default interrupt type if none is explicitly declared (KERNEL_MIN). */
-      public static InterruptType DEFAULT = InterruptType.KERNEL_MIN;
-
-   }
-
    @Override
    public String toString() {
       return toString(null);
@@ -256,7 +236,7 @@ public class Procedure extends Scope {
          res.append(getCallingConvention().getName()).append(" ");
       }
       if(interruptType != null) {
-         res.append("interrupt(").append(interruptType).append(") ");
+         res.append("__interrupt(").append(interruptType).append(") ");
       }
       res.append(returnType.getTypeName()).append(" ").append(getFullName()).append("(");
       boolean first = true;
@@ -287,7 +267,7 @@ public class Procedure extends Scope {
       return declaredInline == procedure.declaredInline &&
             Objects.equals(returnType, procedure.returnType) &&
             Objects.equals(parameterNames, procedure.parameterNames) &&
-            interruptType == procedure.interruptType &&
+            Objects.equals(interruptType, procedure.interruptType) &&
             Objects.equals(comments, procedure.comments) &&
             Objects.equals(reservedZps, procedure.reservedZps) &&
             Objects.equals(codeSegment, procedure.codeSegment) &&

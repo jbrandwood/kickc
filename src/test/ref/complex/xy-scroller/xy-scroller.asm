@@ -1,8 +1,13 @@
 // A full-screen x/y-scroller
 // World space is a 16-bit signed coordinate system [-32768, 32767] x [-32768, 32767]
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="xy-scroller.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
@@ -35,6 +40,7 @@
   .label x_pos_coarse = $16
   .label y_pos_fine = $1b
   .label y_pos_coarse = $18
+.segment Code
 main: {
     .const toD0181_return = (>(MAIN_SCREEN0&$3fff)*4)|(>MAIN_CHARSET)/4&$f
     .const toD0182_return = (>(MAIN_SCREEN1&$3fff)*4)|(>MAIN_CHARSET)/4&$f
@@ -142,8 +148,8 @@ main: {
     jmp __b19
   !__b19:
     // screen_buffer?MAIN_SCREEN1:MAIN_SCREEN0
-    lda #0
-    cmp.z screen_buffer
+    lda.z screen_buffer
+    cmp #0
     bne __b3
     lda #<MAIN_SCREEN0
     sta.z __13
@@ -171,8 +177,8 @@ main: {
     adc.z screen_active+1
     sta.z screen_active+1
     // screen_buffer?MAIN_SCREEN0:MAIN_SCREEN1
-    lda #0
-    cmp.z screen_buffer
+    lda.z screen_buffer
+    cmp #0
     bne __b5
     lda #<MAIN_SCREEN1
     sta.z screen_hidden
@@ -189,8 +195,8 @@ main: {
     // screencpy(screen_hidden, screen_active)
     jsr screencpy
     // if(y_movement)
-    lda #0
-    cmp.z y_movement
+    lda.z y_movement
+    cmp #0
     beq __b7
     // if(y_movement==-1)
     lda #-1
@@ -230,8 +236,8 @@ main: {
   !__b11:
   __b7:
     // if(x_movement)
-    lda #0
-    cmp.z x_movement
+    lda.z x_movement
+    cmp #0
     beq __b12
     // if(x_movement==-1)
     lda #-1
@@ -311,8 +317,8 @@ main: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     // if(screen_buffer)
     // Display current screen
-    lda #0
-    cmp.z screen_buffer
+    lda.z screen_buffer
+    cmp #0
     bne __b30
     // VICII->MEMORY = toD018(MAIN_SCREEN0, MAIN_CHARSET)
     lda #toD0183_return
@@ -742,6 +748,7 @@ petscii_ptr: {
     // }
     rts
 }
+.segment Data
 // Sine table [-399,399]
 SINTAB:
 .fillword SINSIZE, 399*sin(i*2*PI/SINSIZE)

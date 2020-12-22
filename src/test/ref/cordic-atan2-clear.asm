@@ -1,15 +1,21 @@
 // Find atan2(x, y) using the CORDIC method
 // See http://bsvi.ru/uploads/CORDIC--_10EBA/cordic.pdf
 // Creates a font where each char contains the number of the char (00-ff)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cordic-atan2-clear.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   .label RASTER = $d012
   .label D018 = $d018
   .label CHARSET = $2000
   .label SCREEN = $2800
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>CHARSET)/4&$f
     // Clear the screen by modifying the charset
@@ -321,8 +327,7 @@ atan2_16: {
   __b10:
     // if(yi==0)
     lda.z yi+1
-    bne __b11
-    lda.z yi
+    ora.z yi
     bne __b11
   __b12:
     // angle /=2
@@ -488,6 +493,7 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
+.segment Data
   // Bit patterns for symbols 0-f (3x5 pixels) used in font hex
   FONT_HEX_PROTO: .byte 2, 5, 5, 5, 2, 6, 2, 2, 2, 7, 6, 1, 2, 4, 7, 6, 1, 2, 1, 6, 5, 5, 7, 1, 1, 7, 4, 6, 1, 6, 3, 4, 6, 5, 2, 7, 1, 1, 1, 1, 2, 5, 2, 5, 2, 2, 5, 3, 1, 1, 2, 5, 7, 5, 5, 6, 5, 6, 5, 6, 2, 5, 4, 5, 2, 6, 5, 5, 5, 6, 7, 4, 6, 4, 7, 7, 4, 6, 4, 4
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...

@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(HARDWARE_CLOBBER) void irq()
+Resolved forward reference irq to __interrupt(hardware_clobber) void irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -25,7 +25,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   call do_irq 
   to:irq::@1
@@ -75,7 +75,7 @@ const nomodify byte* VIC_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
 void do_irq()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 void main()
 
 Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
@@ -96,8 +96,8 @@ Simplifying constant pointer cast (void()**) 65534
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $80
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 if() condition always true - replacing block destination [9] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -123,7 +123,7 @@ Adding NOP phi() at start of irq
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 irq: scope:[irq]  from
   [0] phi()
   [1] call do_irq 
@@ -161,7 +161,7 @@ do_irq::@return: scope:[do_irq]  from do_irq
 
 VARIABLE REGISTER WEIGHTS
 void do_irq()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -188,20 +188,14 @@ Uplift Scope [irq]
 Uplift Scope [do_irq] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 317 combination 
-Uplifting [MOS6569_VICII] best 317 combination 
-Uplifting [MOS6581_SID] best 317 combination 
-Uplifting [main] best 317 combination 
-Uplifting [irq] best 317 combination 
-Uplifting [do_irq] best 317 combination 
-Uplifting [] best 317 combination 
+Uplifting [MOS6526_CIA] best 425 combination 
+Uplifting [MOS6569_VICII] best 425 combination 
+Uplifting [MOS6581_SID] best 425 combination 
+Uplifting [main] best 425 combination 
+Uplifting [irq] best 425 combination 
+Uplifting [do_irq] best 425 combination 
+Uplifting [] best 425 combination 
 Interrupt procedure irq clobbers AnzPS
-Removing interrupt register storage stx regx+1 in 4 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage sty regy+1 in 4 entry interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regx: in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldx #00 in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage regy: in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
-Removing interrupt register storage ldy #00 in 7 [2] return  - exit interrupt(HARDWARE_CLOBBER)
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -210,9 +204,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware-clobber-jsr.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -242,19 +241,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
     // [1] call do_irq 
     jsr do_irq
     jmp __breturn
     // irq::@return
   __breturn:
-    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [2] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
+    lda #0
     rti
 }
   // main
@@ -348,13 +349,13 @@ const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* VIC_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
 void do_irq()
-interrupt(HARDWARE_CLOBBER) void irq()
+__interrupt(hardware_clobber) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 224
+Score: 296
 
   // File Comments
 // A minimal working raster hardware IRQ with clobber-based register savings
@@ -362,9 +363,14 @@ Score: 224
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware-clobber-jsr.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -394,19 +400,21 @@ Score: 224
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_CLOBBER)
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
     // do_irq()
     // [1] call do_irq 
     jsr do_irq
     // irq::@return
     // }
-    // [2] return  - exit interrupt(HARDWARE_CLOBBER)
+    // [2] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
+    lda #0
     rti
 }
   // main

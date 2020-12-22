@@ -564,34 +564,34 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $140
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $16
-Finalized unsigned number type 3
-Finalized unsigned number type $3fff
-Finalized unsigned number type $40
-Finalized unsigned number type $3fff
-Finalized unsigned number type $400
-Finalized signed number type $b4
-Finalized signed number type $a0
-Finalized signed number type $64
-Finalized signed number type 5
-Finalized signed number type 1
-Finalized signed number type 3
-Finalized signed number type 0
-Finalized signed number type 2
-Finalized signed number type 6
-Finalized signed number type 1
-Finalized signed number type 2
-Finalized signed number type $a
-Finalized signed number type 0
-Finalized signed number type $13f
-Finalized signed number type 0
-Finalized signed number type $c7
-Finalized signed number type $fff8
-Finalized unsigned number type 7
-Finalized signed number type 3
-Finalized signed number type $140
-Finalized signed number type 7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $16
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (word) $400
+Finalized signed number type (signed word) $b4
+Finalized signed number type (signed word) $a0
+Finalized signed number type (signed byte) $64
+Finalized signed number type (signed byte) 5
+Finalized signed number type (signed byte) 1
+Finalized signed number type (signed byte) 3
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 2
+Finalized signed number type (signed byte) 6
+Finalized signed number type (signed byte) 1
+Finalized signed number type (signed byte) 2
+Finalized signed number type (signed byte) $a
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed word) $13f
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed word) $c7
+Finalized signed number type (signed dword) $fff8
+Finalized unsigned number type (byte) 7
+Finalized signed number type (signed byte) 3
+Finalized signed number type (signed word) $140
+Finalized signed number type (signed byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to signed word in circle::$1 = 3 - circle::$0
 Inferred type updated to signed word in circle::$11 = circle::$10 + 6
@@ -699,7 +699,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $c7+(snumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type 1
+Finalized signed number type (signed byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift and addition[58] plot::$12 = plot::$11 * $140
 Inlining constant with var siblings main::i#0
@@ -721,6 +721,12 @@ Constant inlined fill::size#0 = (signed word)$28*$19*8
 Successful SSA optimization Pass2ConstantInlining
 Alias plot::$12 = plot::$17 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@4
 Adding NOP phi() at start of main::@3
@@ -1268,9 +1274,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -1281,6 +1292,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
   // main
 main: {
     .label i = 2
@@ -1922,6 +1934,7 @@ plot: {
     rts
 }
   // File Data
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1
 
 ASSEMBLER OPTIMIZATIONS
@@ -1997,11 +2010,11 @@ Removing instruction __b3:
 Removing instruction __b2:
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [146] bmi __b3 to bpl
-Fixing long branch [343] bmi __breturn to bpl
-Fixing long branch [353] bmi __breturn to bpl
-Fixing long branch [357] bmi __breturn to bpl
-Fixing long branch [367] bpl __breturn to bmi
+Fixing long branch [152] bmi __b3 to bpl
+Fixing long branch [349] bmi __breturn to bpl
+Fixing long branch [359] bmi __breturn to bpl
+Fixing long branch [363] bmi __breturn to bpl
+Fixing long branch [373] bpl __breturn to bmi
 
 FINAL SYMBOL TABLE
 const nomodify byte* BITMAP = (byte*) 8192
@@ -2114,9 +2127,14 @@ Score: 51752
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -2127,6 +2145,7 @@ Score: 51752
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
   // main
 main: {
     .label i = 2
@@ -2761,5 +2780,6 @@ plot: {
     rts
 }
   // File Data
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1
 

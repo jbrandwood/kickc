@@ -1,11 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 /** The beginning of a named scope (typically a procedure) */
-public class AsmScopeBegin implements AsmLine {
+public class AsmScopeBegin extends AsmLine {
 
    private String label;
-
-   private int index;
 
    public AsmScopeBegin(String label) {
       this.label = label;
@@ -28,16 +26,6 @@ public class AsmScopeBegin implements AsmLine {
    @Override
    public String getAsm() {
       return label + ":" + " {";
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
    @Override

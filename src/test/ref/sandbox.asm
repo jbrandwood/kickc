@@ -1,15 +1,21 @@
 // Simple binary division implementation
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sandbox.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label zp1 = $61
   // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
   .label zp2 = $62
   .label TIMEHI = $a1
   .label TIMELO = $a2
   .label VICBANK = $d018
+.segment Code
 main: {
     .label __3 = 6
     .label __10 = 6
@@ -174,11 +180,13 @@ main: {
     // for (*zp2 = 0; *zp2 < 200; ++*zp2)
     inc zp2
     jmp __b4
+  .segment Data
     str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm"
     .byte 0
     str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm"
     .byte 0
 }
+.segment Code
 // myprintf(byte* zp($15) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
 myprintf: {
     .label str = $15
@@ -492,8 +500,10 @@ myprintf: {
     // dst[bLen++] = b;
     inc.z bLen
     jmp __b32
+  .segment Data
     buf6: .fill 6, 0
 }
+.segment Code
 Print: {
     // asm
     // can this assembly be placed in a separate file and call it from the C code here?
@@ -858,5 +868,6 @@ append: {
     sta.z value+1
     jmp __b1
 }
+.segment Data
   // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
   strTemp: .fill $64, 0

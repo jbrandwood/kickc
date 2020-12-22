@@ -21,7 +21,7 @@ const char PROTO_BOB[3*3*8] = kickasm(resource "smiley.png") {{
 // Sine and Cosine tables
 // Angles: $00=0, $80=PI,$100=2*PI
 // Sine/Cosine: signed fixed [-$7f,$7f]
-signed char align(0x40) SIN[0x140] = kickasm {{
+signed char __align(0x40) SIN[0x140] = kickasm {{
     .for(var i=0;i<$140;i++)
         .byte >round($7fff*sin(i*2*PI/256))
 }};

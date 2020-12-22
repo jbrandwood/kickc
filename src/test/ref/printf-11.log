@@ -200,11 +200,11 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type 4
-Finalized unsigned number type $f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in printf_uint::$3 = printf_uint::$2 & $f
 Inferred type updated to byte in printf_uint::$7 = printf_uint::$6 & $f
@@ -299,6 +299,11 @@ Consolidated array index constant in *(printf_hextab+>main::pct&$f)
 Consolidated array index constant in *(printf_hextab+<main::pct>>4)
 Consolidated array index constant in *(printf_hextab+<main::pct&$f)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@3
@@ -453,11 +458,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests printf function call rewriting
 // A simple number - with the printf-sub funtions in the same file.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 4
+.segment Code
   // main
 main: {
     .label pct = $156
@@ -502,11 +513,13 @@ main: {
   __breturn:
     // [6] return 
     rts
+  .segment Data
     str: .text "Commodore is "
     .byte 0
     str1: .text " cool"
     .byte 0
 }
+.segment Code
   // cputs
 // cputs(byte* zp(2) str)
 cputs: {
@@ -519,7 +532,7 @@ cputs: {
     jmp __b1
     // cputs::@1
   __b1:
-    // [9] if(0!=*cputs::str#3) goto cputs::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*cputs::str#3) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -595,6 +608,7 @@ printf_uint: {
     rts
 }
   // File Data
+.segment Data
   printf_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -666,11 +680,17 @@ Score: 697
 // Tests printf function call rewriting
 // A simple number - with the printf-sub funtions in the same file.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 4
+.segment Code
   // main
 main: {
     .label pct = $156
@@ -709,11 +729,13 @@ main: {
     // }
     // [6] return 
     rts
+  .segment Data
     str: .text "Commodore is "
     .byte 0
     str1: .text " cool"
     .byte 0
 }
+.segment Code
   // cputs
 // cputs(byte* zp(2) str)
 cputs: {
@@ -724,7 +746,7 @@ cputs: {
     // cputs::@1
   __b1:
     // while(*str)
-    // [9] if(0!=*cputs::str#3) goto cputs::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*cputs::str#3) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -807,5 +829,6 @@ printf_uint: {
     rts
 }
   // File Data
+.segment Data
   printf_hextab: .text "0123456789abcdef"
 

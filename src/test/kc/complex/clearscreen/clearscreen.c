@@ -305,7 +305,7 @@ void setupRasterIrq(unsigned int raster, void()* irqRoutine) {
 const char RASTER_IRQ_TOP = 0x30;
 
 // Raster Interrupt at the top of the screen
-interrupt(hardware_all) void irqTop() {
+__interrupt(hardware_clobber) void irqTop() {
     if(DEBUG) {
         for( char i: 0..4) {}
         *BORDER_COLOR = WHITE;
@@ -325,7 +325,7 @@ interrupt(hardware_all) void irqTop() {
 const char RASTER_IRQ_MIDDLE = 0xff;
 
 // Raster Interrupt at the bottom of the screen
-interrupt(hardware_all) void irqBottom() {
+__interrupt(hardware_clobber) void irqBottom() {
     if(DEBUG) {
         for( char i: 0..4) {}
         *BORDER_COLOR = WHITE;

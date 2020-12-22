@@ -637,23 +637,23 @@ Simplifying constant integer cast $77
 Simplifying constant integer cast $bb
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type $80
-Finalized unsigned number type 2
-Finalized unsigned number type $a9
-Finalized unsigned number type $45
-Finalized unsigned number type $9b
-Finalized unsigned number type $37
-Finalized unsigned number type $c7
-Finalized unsigned number type 3
-Finalized unsigned number type $5b
-Finalized unsigned number type $1a
-Finalized unsigned number type $77
-Finalized unsigned number type $bb
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $a9
+Finalized unsigned number type (byte) $45
+Finalized unsigned number type (byte) $9b
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $c7
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $5b
+Finalized unsigned number type (byte) $1a
+Finalized unsigned number type (byte) $77
+Finalized unsigned number type (byte) $bb
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#4 & $f
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
@@ -827,6 +827,11 @@ Constant inlined print_euclid::b#1 = $45
 Constant inlined print_euclid::a#2 = $9b
 Constant inlined memset::dst#0 = (byte*)memset::str#0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -1253,13 +1258,19 @@ ASSEMBLER BEFORE OPTIMIZATION
  * Based on facebook post from
  */
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="euclid-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = 6
   .label print_char_cursor = 4
+.segment Code
   // main
 main: {
     // [1] call print_cls 
@@ -1679,6 +1690,7 @@ print_ln: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -1855,13 +1867,19 @@ Score: 1607
  * Based on facebook post from
  */
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="euclid-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = 6
   .label print_char_cursor = 4
+.segment Code
   // main
 main: {
     // print_cls()
@@ -2245,5 +2263,6 @@ print_ln: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

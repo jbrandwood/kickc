@@ -50,7 +50,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt(hardware_all) void irq() {
+__interrupt(hardware_all) void irq() {
     *BG_COLOR = WHITE;
     *BG_COLOR = BLACK;
     // Acknowledge the IRQ

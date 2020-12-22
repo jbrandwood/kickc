@@ -5,9 +5,14 @@
 // Cleanup and porting to CC65 by Ullrich von Bassewitz.
 // Ported to KickC by Jesper Gravgaard.
 // Original source https://github.com/cc65/cc65/blob/master/samples/plasma.c
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="plasma-unroll.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The colors of the C64
@@ -34,6 +39,7 @@
   .label c1B = $e
   .label c2A = $11
   .label c2B = 2
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .label col = 5
@@ -204,8 +210,10 @@ makecharset: {
     // for (unsigned char ii = 0; ii < 8; ++ii)
     inx
     jmp __b5
+  .segment Data
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
+.segment Code
 // Render plasma to the passed screen
 doplasma: {
     .label c1a = 9
@@ -452,9 +460,11 @@ doplasma: {
     inc.z i
     ldx.z yval
     jmp __b1
+  .segment Data
     xbuf: .fill $28, 0
     ybuf: .fill $19, 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -510,6 +520,7 @@ memset: {
   !:
     jmp __b1
 }
+.segment Data
   .align $100
 SINTABLE:
 .for(var i=0;i<$100;i++)

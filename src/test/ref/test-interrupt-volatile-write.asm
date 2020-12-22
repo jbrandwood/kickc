@@ -1,11 +1,17 @@
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-interrupt-volatile-write.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
+.segment Code
 __start: {
     // col = 0
     lda #0

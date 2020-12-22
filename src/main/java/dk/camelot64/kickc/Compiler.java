@@ -176,13 +176,17 @@ public class Compiler {
          if(encoding==null)
             encoding = StringEncoding.SCREENCODE_MIXED;
 
-         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding);
+         // Find default interrupt type
+         String interruptType = program.getTargetPlatform().getInterruptType();
+
+         Pass0GenerateStatementSequence pass0GenerateStatementSequence = new Pass0GenerateStatementSequence(cParser, cFileContext, program, callingConvention, encoding, interruptType);
          pass0GenerateStatementSequence.generate();
 
          pass1GenerateSSA();
          pass2Optimize();
          pass2UnrollLoops();
          pass2InlineConstants();
+         pass2FinalizeAllNumbers();
 
          //getLog().append("\nCONTROL FLOW GRAPH PASS 2");
          //getLog().append(program.getGraph().toString(program));
@@ -251,6 +255,8 @@ public class Compiler {
       new Pass1AssertNoLValueIntermediate(program).execute();
       new PassNAddTypeConversionAssignment(program, true).execute();
       new Pass1AssertProcedureCallParameters(program).execute();
+      new Pass1ModifiedVarsAnalysis(program).execute();
+      new Pass1CallStackVarPrepare(program).execute();
 
       if(getLog().isVerbosePass1CreateSsa()) {
          getLog().append("CONTROL FLOW GRAPH BEFORE SIZEOF FIX");
@@ -262,7 +268,7 @@ public class Compiler {
 
       new PassNAssertTypeMatch(program).check();
 
-      new Pass1PrepareUnwindStruct(program).execute();
+      new Pass1UnwindStructPrepare(program).execute();
       new Pass1UnwindStructVariables(program).execute();
       new Pass1UnwindStructValues(program).execute();
 
@@ -310,10 +316,18 @@ public class Compiler {
       }
 
       new Pass1CallVoidReturns(program).execute();
+      new Pass1CallStackVarConvert(program).execute();
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE CALLS");
+         getLog().append(program.getGraph().toString(program));
+      }
       new Pass1CallStack(program).execute();
+      new Pass1CallVar(program).execute();
       new Pass1CallPhiParameters(program).execute();
-      //getLog().append("PROCEDURE PARAMETERS");
-      //getLog().append(program.getGraph().toString(program));
+      if(getLog().isVerbosePass1CreateSsa()) {
+         getLog().append("PROCEDURE PARAMETERS");
+         getLog().append(program.getGraph().toString(program));
+      }
       new PassNUnwindLValueLists(program).execute();
       new Pass1GenerateSingleStaticAssignmentForm(program).execute();
       new Pass1CallPhiReturn(program).execute();
@@ -355,7 +369,7 @@ public class Compiler {
       optimizations.add(new PassNAddNumberTypeConversions(program));
       optimizations.add(new Pass2InlineCast(program));
       optimizations.add(new PassNCastSimplification(program));
-      optimizations.add(new PassNFinalizeNumberTypeConversions(program));
+      optimizations.add(new PassNFinalizeNumberTypeConversions(program, false));
       optimizations.add(new PassNTypeInference(program));
       optimizations.add(new PassNAddTypeConversionAssignment(program, false));
       optimizations.add(new PassNTypeIdSimplification(program));
@@ -492,6 +506,16 @@ public class Compiler {
       constantOptimizations.addAll(getPass2Optimizations());
       pass2Execute(constantOptimizations);
 
+   }
+
+   private void pass2FinalizeAllNumbers() {
+      if(getLog().isVerboseSizeInfo()) {
+         getLog().append(program.getSizeInfo());
+      }
+      List<PassStep> constantOptimizations = new ArrayList<>();
+      constantOptimizations.add(new PassNFinalizeNumberTypeConversions(program, true));
+      constantOptimizations.addAll(getPass2Optimizations());
+      pass2Execute(constantOptimizations);
    }
 
    /**

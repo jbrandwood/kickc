@@ -1,9 +1,15 @@
 // Test adding a signed word to a pointer
 // Fragment pbuz1=pbuc1_plus_vwsz1.asm supplied by Richard-William Loerakker
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-plus-signed-word.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400+$28*$a
+.segment Code
 main: {
     .label sc = 4
     .label i = 2

@@ -78,9 +78,9 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast -1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type -1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) -1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = main::i#2 & 1
 Inversing boolean not [5] main::$1 = 0 == main::$0 from [4] main::$4 = 0 != main::$0
@@ -108,7 +108,7 @@ Adding number conversion cast (unumber) 8 in [8] if(main::i#1!=8) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [5] main::$3 = main::i#2 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -214,11 +214,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Problem with assigning negative word constant (vwuz1=vbuc1)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="problem-negative-word-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     .label w = 2
@@ -241,7 +247,7 @@ main: {
     // [3] main::$0 = main::i#2 & 1 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #1
-    // [4] if(0==main::$0) goto main::@3 -- vbuc1_eq_vbuaa_then_la1 
+    // [4] if(0==main::$0) goto main::@3 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b3_from___b1
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
@@ -332,11 +338,17 @@ Score: 576
   // File Comments
 // Problem with assigning negative word constant (vwuz1=vbuc1)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="problem-negative-word-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     .label w = 2
@@ -358,7 +370,7 @@ main: {
     txa
     and #1
     // if(i&1)
-    // [4] if(0==main::$0) goto main::@3 -- vbuc1_eq_vbuaa_then_la1 
+    // [4] if(0==main::$0) goto main::@3 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b2
     // [6] phi from main::@1 to main::@2 [phi:main::@1->main::@2]

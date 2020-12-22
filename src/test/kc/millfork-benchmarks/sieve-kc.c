@@ -4,7 +4,7 @@
 const unsigned int COUNT = 16384;
 const char SQRT_COUNT = 128;
 
-align(0x0100) char Sieve[COUNT];
+__align(0x0100) char Sieve[COUNT];
 
 void round(void) {
     register char* S;

@@ -385,7 +385,7 @@ void rotate_matrix(signed char x, signed char y, signed char z) {
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-char align(0x100) mulf_sqr1[0x200] = kickasm {{
+char __align(0x100) mulf_sqr1[0x200] = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((i*i)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((i-256)*(i-256))/256) }
@@ -394,7 +394,7 @@ char align(0x100) mulf_sqr1[0x200] = kickasm {{
 }};
 
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-char align(0x100) mulf_sqr2[0x200] = kickasm {{
+char __align(0x100) mulf_sqr2[0x200] = kickasm {{
     .for(var i=0;i<$200;i++) {
     	.if(i<=159) { .byte round((-i-1)*(-i-1)/256) }
     	.if(i>159 && i<=351 ) { .byte round(((255-i)*(255-i))/256) }
@@ -413,9 +413,9 @@ char align(0x100) mulf_sqr2[0x200] = kickasm {{
 // - http://codebase64.org/doku.php?id=magazines:chacking16
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).
 // f(x) = >(( x * x ))
-byte align($100) mulf_sqr1[512];
+byte __align($100) mulf_sqr1[512];
 // g(x) =  >((( 1 - x ) * ( 1 - x )))
-byte align($100) mulf_sqr2[512];
+byte __align($100) mulf_sqr2[512];
 
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 void mulf_init() {
@@ -446,7 +446,7 @@ __address(0x3000) char SPRITE[] = kickasm(resource "balloon.png") {{
 }};
 
 // Perspective multiplication table containing (d/(z0-z)[z] for each z-value   
-signed char align(0x100) PERSP_Z[0x100] = kickasm {{
+signed char __align(0x100) PERSP_Z[0x100] = kickasm {{
     {
     .var d = 256.0	
     .var z0 = 6.0	
@@ -464,7 +464,7 @@ signed char align(0x100) PERSP_Z[0x100] = kickasm {{
 // Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$20;20]
-signed char align(0x40) SINH[0x140] = kickasm {{
+signed char __align(0x40) SINH[0x140] = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -478,7 +478,7 @@ signed char align(0x40) SINH[0x140] = kickasm {{
 signed char* COSH = SINH+$40; // sin(x) = cos(x+PI/2)
 
 // Quarter Sine/Cosine: signed fixed [-$10,$10]
-signed char align(0x40) SINQ[0x140] = kickasm {{
+signed char __align(0x40) SINQ[0x140] = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -494,7 +494,7 @@ signed char* COSQ = SINQ+$40; // sin(x) = cos(x+PI/2)
 // 16 bit Sine and Cosine Tables   
 // Angles: $00=0, $80=PI,$100=2*PI
 // Half Sine/Cosine: signed fixed [-$1f,$1f]
-char align(0x40) SINH_LO[0x140] = kickasm {{
+char __align(0x40) SINH_LO[0x140] = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -507,7 +507,7 @@ char align(0x40) SINH_LO[0x140] = kickasm {{
 }};
 char* COSH_LO = SINH_LO+$40; // sin(x) = cos(x+PI/2)
 
-char align(0x40) SINH_HI[0x140] = kickasm {{
+char __align(0x40) SINH_HI[0x140] = kickasm {{
     {
     .var min = -$2000
     .var max = $2000
@@ -521,7 +521,7 @@ char align(0x40) SINH_HI[0x140] = kickasm {{
 char* COSH_HI = SINH_HI+$40; // sin(x) = cos(x+PI/2)
 
 // Quarter Sine/Cosine: signed fixed [-$0f,$0f]
-char align(0x40) SINQ_LO[0x140] = kickasm {{
+char __align(0x40) SINQ_LO[0x140] = kickasm {{
     {
     .var min = -$1000
     .var max = $1000
@@ -534,7 +534,7 @@ char align(0x40) SINQ_LO[0x140] = kickasm {{
 }};
 char* COSQ_LO = SINQ_LO+$40; // sin(x) = cos(x+PI/2)
 
-char align(0x40) SINQ_HI[0x140] = kickasm {{
+char __align(0x40) SINQ_HI[0x140] = kickasm {{
     {
     .var min = -$1000
     .var max = $1000

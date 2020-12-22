@@ -4,9 +4,14 @@
 // Sources
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-gfxexplorer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -179,6 +184,7 @@
   .label form_cursor_count = $11
   // Current selected field in the form
   .label form_field_idx = 2
+.segment Code
 main: {
     // asm
     sei
@@ -1140,9 +1146,11 @@ gfx_init_vic_bitmap: {
     // for(byte l=0; l<lines_cnt;l++)
     inc.z l
     jmp __b1
+  .segment Data
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
+.segment Code
 // Initialize 8BPP Chunky Bitmap (contains 8bpp pixels)
 gfx_init_plane_8bppchunky: {
     .label __5 = $23
@@ -1459,8 +1467,10 @@ gfx_init_plane_horisontal2: {
     jsr dtvSetCpuBankSegment1
     // }
     rts
+  .segment Data
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+.segment Code
 // Initialize Plane with Vertical Stripes every 2 pixels
 gfx_init_plane_vertical2: {
     // gfx_init_plane_fill(PLANE_VERTICAL2, %00011011)
@@ -1736,6 +1746,7 @@ render_preset_name: {
     jsr print_str_at
     // }
     rts
+  .segment Data
     name_1: .text "Standard Charset              "
     .byte 0
     name_2: .text "Extended Color Charset        "
@@ -1759,6 +1770,7 @@ render_preset_name: {
     name_11: .text "8bpp Pixel Cell               "
     .byte 0
 }
+.segment Code
 // Reads keyboard and allows the user to navigate and change the fields of the form
 // Returns 0 if space is not pressed, non-0 if space is pressed
 form_control: {
@@ -3169,6 +3181,7 @@ bitmap_plot: {
     // }
     rts
 }
+.segment Data
   // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   print_hextab: .text "0123456789abcdef"

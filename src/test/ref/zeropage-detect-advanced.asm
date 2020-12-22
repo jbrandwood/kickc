@@ -1,8 +1,14 @@
 // Illustrates a problem where absolute addressing is used for zeropage-access
 // This is caused by the compiler believing the pointer is into memory" (not knowing the upper part is 0x00 )
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="zeropage-detect-advanced.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label c = t
     .label t = 2

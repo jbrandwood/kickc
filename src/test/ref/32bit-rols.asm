@@ -1,8 +1,13 @@
 // Tests different rotate left commands
 // Functions for performing input and output.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="32bit-rols.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_BYTE = 1
@@ -20,6 +25,7 @@
   .label conio_line_text = $15
   // The current color cursor line start
   .label conio_line_color = $17
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -150,8 +156,10 @@ main: {
     lda #1
     sax.z i
     jmp __b2
+  .segment Data
     vals: .dword $deadbeef, $facefeed
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -1059,9 +1067,11 @@ rol_fixed: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text @"rol fixed\n"
     .byte 0
 }
+.segment Code
 // Return true if there's a key waiting, return false if not
 kbhit: {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
@@ -1838,9 +1848,11 @@ ror_fixed: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text @"ror fixed\n"
     .byte 0
 }
+.segment Code
 // rol_var(dword zp($1a) val)
 rol_var: {
     .label val = $1a
@@ -1902,9 +1914,11 @@ rol_var: {
     // for(char i=0;i<sizeof(rols);i++)
     inc.z i
     jmp __b1
+  .segment Data
     s: .text @"rol var\n"
     .byte 0
 }
+.segment Code
 // ror_var(dword zp($1a) val)
 ror_var: {
     .label val = $1a
@@ -1966,9 +1980,11 @@ ror_var: {
     // for(char i=0;i<sizeof(rols);i++)
     inc.z i
     jmp __b1
+  .segment Data
     s: .text @"ror var\n"
     .byte 0
 }
+.segment Code
 // Output a NUL-terminated string at the current cursor position
 // cputs(byte* zp($c) s)
 cputs: {
@@ -2193,8 +2209,8 @@ printf_number_buffer: {
     // There is a minimum length - work out the padding
     ldy.z __19
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b10
     // len++;
     iny
@@ -2213,10 +2229,11 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b7
     jmp __b2
   __b7:
@@ -2228,18 +2245,18 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b9
     jmp __b4
   __b9:
@@ -2393,8 +2410,8 @@ uctoa: {
     lda RADIX_DECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5
@@ -2777,6 +2794,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

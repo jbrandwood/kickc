@@ -18,11 +18,11 @@ char SPRITE_0 = toSpritePtr(SPRITES);
 
 char FONT[0x0800];
 
-char align(0x100) YSIN[0x100] = kickasm {{
+char __align(0x100) YSIN[0x100] = kickasm {{
     .fill $100, round(142+89.5*sin(toRadians(360*i/256)))
 }};
 
-char align(0x100) XMOVEMENT[0x200] = kickasm {{
+char __align(0x100) XMOVEMENT[0x200] = kickasm {{
     //.lohifill $100, round(344-i*344/$100-86*sin(toRadians(360*i/$100)))
     //.lohifill $100, round(344-i*344/$100-129*sin(toRadians(360*i/$100)))
     .lohifill $100, round(344-i*344/$100 -86*sin(toRadians(360*i/$100)) -43*sin(toRadians(360*i/$80)))
@@ -136,7 +136,7 @@ void plex_move() {
 volatile bool frame_done = false;
 
 // Show sprites from the multiplexer, rescheduling the IRQ as many times as needed
-interrupt(kernel_min) void plex_irq() {
+__interrupt void plex_irq() {
     asm { sei }
     //*BORDER_COLOR = WHITE;
     // Show sprites until finding one that should not be shown until a few raster lines later

@@ -4,9 +4,14 @@
 // Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen16.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
   // PI in u[4.28] format
@@ -18,6 +23,7 @@
   // Remainder after unsigned 16-bit division
   .label rem16u = $12
   .label print_char_cursor = $22
+.segment Code
 main: {
     .label wavelength = $78
     .label sw = $a
@@ -80,12 +86,14 @@ main: {
     inc.z st1+1
   !:
     jmp __b1
+  .segment Data
     sintab1: .fill 2*$78, 0
     str: .text "   "
     .byte 0
     str1: .text " "
     .byte 0
 }
+.segment Code
 // Generate signed (large) unsigned int sine table - on the full -$7fff - $7fff range
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
@@ -699,8 +707,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts
@@ -736,4 +743,5 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

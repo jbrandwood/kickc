@@ -46,7 +46,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
@@ -119,10 +119,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Local constant strings are placed at the start of the method. This means the generated ASM jumps / calls straignt into the constant string
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="local-string.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label screen = $400
@@ -133,7 +139,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(0!=main::msg[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=main::msg[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg,x
     cmp #0
     bne __b2
@@ -153,6 +159,7 @@ main: {
   __b1_from___b2:
     // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
+  .segment Data
     msg: .text "message 2 "
     .byte 0
 }
@@ -184,10 +191,16 @@ Score: 261
   // File Comments
 // Local constant strings are placed at the start of the method. This means the generated ASM jumps / calls straignt into the constant string
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="local-string.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label screen = $400
@@ -197,7 +210,7 @@ main: {
     // main::@1
   __b1:
     // while(msg[i])
-    // [2] if(0!=main::msg[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=main::msg[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg,x
     cmp #0
     bne __b2
@@ -217,6 +230,7 @@ main: {
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [1] phi main::i#2 = main::i#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
+  .segment Data
     msg: .text "message 2 "
     .byte 0
 }

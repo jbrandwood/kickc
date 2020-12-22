@@ -1,7 +1,12 @@
 // Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-keyboard.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const KEY_3 = 8
   .const KEY_W = 9
   .const KEY_A = $a
@@ -58,6 +63,7 @@
   .label RASTER = $d012
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
+.segment Code
 main: {
     .label sc = 2
     .label screen = 5
@@ -270,6 +276,7 @@ keyboard_key_pressed: {
     // }
     rts
 }
+.segment Data
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f

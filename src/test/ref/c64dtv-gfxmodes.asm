@@ -4,9 +4,14 @@
 // Sources
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-gfxmodes.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_ECM = $40
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -100,6 +105,7 @@
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .label print_char_cursor = 2
   .label print_line_cursor = $11
+.segment Code
 main: {
     // asm
     sei
@@ -980,9 +986,11 @@ mode_stdbitmap: {
     // for(byte l=0; l<lines_cnt;l++)
     inc.z l
     jmp __b7
+  .segment Data
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
+.segment Code
 // High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
 // Resolution: 320x200
 // Normal VIC Adressing:
@@ -1579,8 +1587,10 @@ mode_sixsfred2: {
     jsr mode_ctrl
     // }
     rts
+  .segment Data
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+.segment Code
 // Two Plane Bitmap - generated from the two DTV linear graphics plane counters
 // Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
 // Resolution: 320x200
@@ -1980,8 +1990,10 @@ mode_sixsfred: {
     jsr mode_ctrl
     // }
     rts
+  .segment Data
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+.segment Code
 //8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
 //Pixel Cell Adressing
 //CharData[8]: (PlaneA[21:0])
@@ -2971,6 +2983,7 @@ bitmap_plot: {
     // }
     rts
 }
+.segment Data
   // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

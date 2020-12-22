@@ -4,9 +4,14 @@
 // - Line-drawing polygon edges (fill-ready lines)
 // - Up-to-down EOR filling 
 // - Double buffering
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="polygon.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // Timer Control - Start/stop timer (0:stop, 1: start)
@@ -60,6 +65,7 @@
   // Flag signalling that the canvas on screen needs to be updated.
   // Set to 1 by the renderer when a new canvas is ready for showing, and to 0 by the raster when the canvas is shown on screen.
   .label canvas_show_flag = $14
+.segment Code
 __start: {
     .const __init1_toD0181_return = (>(SCREEN&$3fff)*4)|(>CANVAS2)/4&$f
     // canvas_show_memory = toD018(SCREEN, CANVAS2)
@@ -302,8 +308,8 @@ main: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
   __b9:
     // while(canvas_show_flag)
-    lda #0
-    cmp.z canvas_show_flag
+    lda.z canvas_show_flag
+    cmp #0
     bne __b9
     // VICII->BORDER_COLOR = BLACK
     lda #BLACK
@@ -901,6 +907,7 @@ sgn_u8: {
     // }
     rts
 }
+.segment Data
   // SIN/COS tables
   .align $100
 SINTAB:

@@ -126,7 +126,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values do10::fn#2 do10::fn#3
 Identical Phi Values print::msg#2 print::msg#3
@@ -147,7 +147,7 @@ Adding number conversion cast (unumber) $a in if(do10::i#1!=$a) goto do10::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $a
+Finalized unsigned number type (byte) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings do10::i#0
 Inlining constant with var siblings do10::fn#0
@@ -361,12 +361,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests calling into different function pointers which call a common sub-method
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 7
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -406,9 +412,11 @@ world: {
   __breturn:
     // [7] return 
     rts
+  .segment Data
     msg: .text "world "
     .byte 0
 }
+.segment Code
   // hello
 hello: {
     // [9] call print 
@@ -425,9 +433,11 @@ hello: {
   __breturn:
     // [10] return 
     rts
+  .segment Data
     msg: .text "hello "
     .byte 0
 }
+.segment Code
   // main
 main: {
     // [12] call do10 
@@ -482,7 +492,7 @@ print: {
     inc.z idx
     // [20] print::i#1 = ++ print::i#2 -- vbuyy=_inc_vbuyy 
     iny
-    // [21] if(0!=print::msg#3[print::i#1]) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    // [21] if(0!=print::msg#3[print::i#1]) goto print::@1 -- 0_neq_pbuz1_derefidx_vbuyy_then_la1 
     lda (msg),y
     cmp #0
     bne __b1_from___b1
@@ -603,12 +613,18 @@ Score: 676
   // File Comments
 // Tests calling into different function pointers which call a common sub-method
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 7
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -640,9 +656,11 @@ world: {
     // }
     // [7] return 
     rts
+  .segment Data
     msg: .text "world "
     .byte 0
 }
+.segment Code
   // hello
 hello: {
     // print("hello ")
@@ -658,9 +676,11 @@ hello: {
     // }
     // [10] return 
     rts
+  .segment Data
     msg: .text "hello "
     .byte 0
 }
+.segment Code
   // main
 main: {
     // do10(&hello)
@@ -710,7 +730,7 @@ print: {
     // [20] print::i#1 = ++ print::i#2 -- vbuyy=_inc_vbuyy 
     iny
     // while(msg[i])
-    // [21] if(0!=print::msg#3[print::i#1]) goto print::@1 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    // [21] if(0!=print::msg#3[print::i#1]) goto print::@1 -- 0_neq_pbuz1_derefidx_vbuyy_then_la1 
     lda (msg),y
     cmp #0
     bne __b1

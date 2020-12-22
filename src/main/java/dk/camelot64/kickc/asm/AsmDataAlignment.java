@@ -1,10 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 /** Data alignment directive. */
-public class AsmDataAlignment implements AsmLine {
+public class AsmDataAlignment extends AsmLine {
 
    private String alignment;
-   private int index;
 
    public AsmDataAlignment(String alignment) {
       this.alignment = alignment;
@@ -26,16 +25,6 @@ public class AsmDataAlignment implements AsmLine {
       asm.append(".align ");
       asm.append(alignment);
       return asm.toString();
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
 }

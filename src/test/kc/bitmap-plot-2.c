@@ -10,7 +10,7 @@ byte* SCREEN = 0x0400;
 
 byte plots_per_frame[0x100];
 
-align(0x100) signed word SINE[512];
+__align(0x100) signed word SINE[512];
 
 void main() {
     sin16s_gen2(SINE, 512, -0x1001, 0x1001);
@@ -66,7 +66,7 @@ void init_irq() {
 }
 
 // Interrupt Routine counting frames
-interrupt(hardware_clobber) void irq() {
+__interrupt(hardware_clobber) void irq() {
     *BG_COLOR = WHITE;
     if(frame_cnt) frame_cnt++;
     *BG_COLOR = BLACK;

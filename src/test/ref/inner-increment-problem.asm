@@ -1,7 +1,13 @@
 // Inner increment is not being done properly (screen++)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inner-increment-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // Count the number of the different chars on the screen
     .label screen = 2
@@ -41,4 +47,5 @@ main: {
     // }
     rts
 }
+.segment Data
   CHAR_COUNTS: .fill 2*$100, 0

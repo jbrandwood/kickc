@@ -37,7 +37,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Condition not simple main::$0 [4] if(main::$0) goto main::@1
 Introduced intermediate condition variable main::$1 = main::i
@@ -103,11 +103,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test memory model
 // Demonstrates problem where post-increase on __ma memory variables is performed to early
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="varmodel-ma_mem-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [0] main::i = 0 -- vbum1=vbuc1 
@@ -132,6 +138,7 @@ main: {
   __breturn:
     // [5] return 
     rts
+  .segment Data
     i: .byte 0
 }
   // File Data
@@ -161,11 +168,17 @@ Score: 247
 // Test memory model
 // Demonstrates problem where post-increase on __ma memory variables is performed to early
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="varmodel-ma_mem-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // i=0
@@ -192,6 +205,7 @@ main: {
     // }
     // [5] return 
     rts
+  .segment Data
     i: .byte 0
 }
   // File Data

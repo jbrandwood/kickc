@@ -1,11 +1,17 @@
 // Test pointer to const and const pointer
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Const pointer
   .label SCREEN = $400
   // Const pointer to const
   .label BASIC = $a004
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -38,6 +44,7 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   // Pointer to const
   MSG: .text "hello world!"
   .byte 0

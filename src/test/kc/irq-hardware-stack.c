@@ -1,5 +1,7 @@
 // A minimal working raster IRQ
 
+#pragma cpu(rom6502x)
+
 void()** const  KERNEL_IRQ = $0314;
 void()** const  HARDWARE_IRQ = $fffe;
 byte* const RASTER = $d012;
@@ -50,7 +52,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt(hardware_stack) void irq() {
+__interrupt(hardware_all) void irq() {
     *BG_COLOR = WHITE;
     *BG_COLOR = BLACK;
     // Acknowledge the IRQ

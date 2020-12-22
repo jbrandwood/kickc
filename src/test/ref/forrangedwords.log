@@ -72,10 +72,10 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 3
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$2 [8] if(main::w#1!=rangelast(0,$ffff)) goto main::@1
 Simple Condition main::$5 [17] if(main::sw#1!=rangelast(-$7fff,$7ffe)) goto main::@3
@@ -100,8 +100,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast $7fff
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized signed number type $7fff
+Finalized unsigned number type (byte) 0
+Finalized signed number type (signed word) $7fff
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::w#0
 Inlining constant with var siblings main::sw#0
@@ -204,17 +204,23 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [main] 25.3: zp[2]:2 [ main::w#2 main::w#1 ] 25.3: zp[2]:4 [ main::sw#2 main::sw#1 ] 22: zp[1]:6 [ main::$0 ] 22: zp[1]:7 [ main::$1 ] 22: zp[1]:8 [ main::$3 ] 22: zp[1]:9 [ main::$4 ] 
 Uplift Scope [] 
 
-Uplifting [main] best 1146 combination zp[2]:2 [ main::w#2 main::w#1 ] zp[2]:4 [ main::sw#2 main::sw#1 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$3 ] reg byte a [ main::$4 ] 
+Uplifting [main] best 1121 combination zp[2]:2 [ main::w#2 main::w#1 ] zp[2]:4 [ main::sw#2 main::sw#1 ] reg byte a [ main::$0 ] reg byte a [ main::$1 ] reg byte a [ main::$3 ] reg byte a [ main::$4 ] 
 Limited combination testing to 100 combinations of 256 possible.
-Uplifting [] best 1146 combination 
+Uplifting [] best 1121 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="forrangedwords.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -249,8 +255,7 @@ main: {
   !:
     // [7] if(main::w#1!=0) goto main::@1 -- vwuz1_neq_0_then_la1 
     lda.z w
-    bne __b1_from___b1
-    lda.z w+1
+    ora.z w+1
     bne __b1_from___b1
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
   __b2_from___b1:
@@ -302,7 +307,6 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Replacing label __b1_from___b1 with __b1
-Replacing label __b1_from___b1 with __b1
 Replacing label __b2_from___b2 with __b2
 Replacing label __b2_from___b2 with __b2
 Removing instruction __b1_from___b1:
@@ -339,14 +343,20 @@ reg byte a [ main::$4 ]
 
 
 FINAL ASSEMBLER
-Score: 976
+Score: 951
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="forrangedwords.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -381,8 +391,7 @@ main: {
   !:
     // [7] if(main::w#1!=0) goto main::@1 -- vwuz1_neq_0_then_la1 
     lda.z w
-    bne __b1
-    lda.z w+1
+    ora.z w+1
     bne __b1
     // [8] phi from main::@1 to main::@2 [phi:main::@1->main::@2]
     // [8] phi main::sw#2 = -$7fff [phi:main::@1->main::@2#0] -- vwsz1=vwsc1 

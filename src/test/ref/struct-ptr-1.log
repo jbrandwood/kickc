@@ -83,8 +83,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 4
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$4 = main::i#2 + 4
 Identified duplicate assignment right side [5] main::$2 = main::i#2 * SIZEOF_POINT
@@ -127,8 +127,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::$2 = main::$0 
 Alias main::$8 = main::$6 
@@ -143,6 +143,9 @@ Constant inlined main::i1#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_POINT
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@4(between main::@1 and main::@1)
 Added new block during phi lifting main::@5(between main::@3 and main::@3)
 Adding NOP phi() at start of main
@@ -255,11 +258,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Minimal struct - array of struct - near pointer math indexing
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFS_Y = 1
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -327,6 +336,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   points: .fill 2*4, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -375,11 +385,17 @@ Score: 666
   // File Comments
 // Minimal struct - array of struct - near pointer math indexing
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFS_Y = 1
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -447,5 +463,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   points: .fill 2*4, 0
 

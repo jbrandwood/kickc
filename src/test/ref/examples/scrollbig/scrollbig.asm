@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="scrollbig.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const OFFSET_STRUCT_MOS6569_VICII_CONTROL2 = $16
@@ -19,6 +24,7 @@
   // Scroll the next bit from the current char onto the screen - trigger next char if needed
   .label current_chargen = 3
   .label nxt = 7
+.segment Code
 main: {
     // fillscreen(SCREEN, $20)
     jsr fillscreen
@@ -245,5 +251,6 @@ scroll_hard: {
     inx
     jmp __b1
 }
+.segment Data
   TEXT: .text "-= this is rex of camelot testing a scroller created in kickc. kickc is an optimizing c-compiler for 6502 assembler. =-     "
   .byte 0

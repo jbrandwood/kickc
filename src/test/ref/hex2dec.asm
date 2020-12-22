@@ -1,10 +1,16 @@
 // Testing hex to decimal conversion
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="hex2dec.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label control = $d011
   .label raster = $d012
   .label BORDER_COLOR = $d020
+.segment Code
 main: {
     .label __1 = 6
     .label time_start = 7
@@ -116,9 +122,11 @@ main: {
     // for( byte i=0; msg[i]!=0; i++ )
     inx
     jmp __b3
+  .segment Data
     msg: .text "raster lines"
     .byte 0
 }
+.segment Code
 cls: {
     .label screen = $400
     .label sc = 2
@@ -310,6 +318,7 @@ utoa16n: {
     // }
     rts
 }
+.segment Data
   // Digits used for utoa()
   DIGITS: .text "0123456789abcdef"
   .byte 0

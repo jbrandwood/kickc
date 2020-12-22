@@ -58,6 +58,9 @@ public class ProgramValueIterator {
       if(variable.isArray()) {
          execute(new ProgramValue.ProgramValueArraySize(variable), programValueHandler, null, null, null);
       }
+      if(variable.getMemoryAddress() != null) {
+         execute(new ProgramValue.ProgramValueMemoryAddress(variable), programValueHandler, null, null, null);
+      }
    }
 
    /**

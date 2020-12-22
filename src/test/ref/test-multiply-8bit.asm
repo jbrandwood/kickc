@@ -1,11 +1,17 @@
 // Test the fast multiplication library
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-multiply-8bit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label BG_COLOR = $d021
   .label print_screen = $400
   .label print_char_cursor = $e
   .label print_line_cursor = 8
+.segment Code
 main: {
     // *BG_COLOR = 5
     lda #5
@@ -325,6 +331,7 @@ mulf_tables_cmp: {
     inc.z kc_sqr+1
   !:
     jmp __b1
+  .segment Data
     str: .text "multiply tables match!"
     .byte 0
     str1: .text "multiply table mismatch at "
@@ -332,6 +339,7 @@ mulf_tables_cmp: {
     str2: .text " / "
     .byte 0
 }
+.segment Code
 // Perform all possible byte multiplications (slow and fast) and compare the results
 mul8u_compare: {
     .label ms = 2
@@ -414,9 +422,11 @@ mul8u_compare: {
     // print_ln()
     jsr print_ln
     rts
+  .segment Data
     str: .text "multiply results match!"
     .byte 0
 }
+.segment Code
 // Perform all possible signed byte multiplications (slow and fast) and compare the results
 mul8s_compare: {
     .label ms = 2
@@ -508,9 +518,11 @@ mul8s_compare: {
     // for(signed byte b = -128; b!=-128; b++)
     inc.z b
     jmp __b3
+  .segment Data
     str: .text "signed multiply results match!"
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -758,9 +770,11 @@ mul8u_error: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "multiply mismatch "
     .byte 0
 }
+.segment Code
 // Slow multiplication of signed bytes
 // Perform a signed multiplication by repeated addition/subtraction
 // muls8s(signed byte zp(4) a, signed byte register(X) b)
@@ -948,9 +962,11 @@ mul8s_error: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "signed multiply mismatch "
     .byte 0
 }
+.segment Code
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
@@ -1125,6 +1141,7 @@ print_sint: {
     sta.z w+1
     jmp __b2
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)

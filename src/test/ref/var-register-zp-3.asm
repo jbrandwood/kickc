@@ -1,8 +1,14 @@
 // Test declaring a variable as register on a specific ZP address
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="var-register-zp-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 main: {
     // print2(screen, "hello")
     lda #<screen
@@ -26,11 +32,13 @@ main: {
     jsr print2
     // }
     rts
+  .segment Data
     msg: .text "hello"
     .byte 0
     msg1: .text "world"
     .byte 0
 }
+.segment Code
 // print2(byte* zp($fa) at, byte* zp($fc) msg)
 print2: {
     .label at = $fa

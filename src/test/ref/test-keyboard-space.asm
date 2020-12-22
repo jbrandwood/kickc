@@ -16,9 +16,14 @@
 // |6.  | #%10111111 (191/$bf) |   /   ($2f)|   ^   ($1e)|   =   ($3d)|RGHT-SH($  )|  HOME ($  )|   ;   ($3b)|   *   ($2a)|   £   ($1c)|
 // |7.  | #%01111111 (127/$7f) | STOP  ($  )|   q   ($11)|COMMODR($  )| SPACE ($20)|   2   ($32)|CONTROL($  )|  <-   ($1f)|   1   ($31)|
 // +----+----------------------+------------+------------+------------+------------+------------+------------+------------+------------+
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-keyboard-space.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const KEY_SPACE = $3c
   .const GREEN = 5
   .const BLUE = 6
@@ -29,6 +34,7 @@
   .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
+.segment Code
 main: {
     // keyboard_init()
     jsr keyboard_init
@@ -95,6 +101,7 @@ keyboard_matrix_read: {
     // }
     rts
 }
+.segment Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)

@@ -81,8 +81,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings main::j#0
@@ -91,6 +91,11 @@ Constant inlined main::i#0 = 0
 Constant inlined main::i1#0 = 0
 Constant inlined main::j#0 = $ff
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@4(between main::@1 and main::@1)
 Added new block during phi lifting main::@5(between main::@3 and main::@3)
 Adding NOP phi() at start of main
@@ -176,10 +181,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test that memory alignment of arrays work
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="mem-alignment.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -230,6 +241,7 @@ main: {
   __breturn:
     // [10] return 
     rts
+  .segment Data
     .align $100
     cs: .fill $100, 0
 }
@@ -280,10 +292,16 @@ Score: 381
   // File Comments
 // Test that memory alignment of arrays work
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="mem-alignment.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -330,6 +348,7 @@ main: {
     // }
     // [10] return 
     rts
+  .segment Data
     .align $100
     cs: .fill $100, 0
 }

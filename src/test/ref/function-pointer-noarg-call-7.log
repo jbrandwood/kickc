@@ -90,7 +90,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values do10::fn#2 do10::fn#0
 Identical Phi Values do10::fn#1 do10::fn#2
@@ -114,7 +114,7 @@ Adding number conversion cast (unumber) $a in if(do10::i#1!=$a) goto do10::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $a
+Finalized unsigned number type (byte) $a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings do10::i#0
 Inlining constant with var siblings hello::i#0
@@ -269,12 +269,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests calling into a function pointer with local variables
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 3
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -319,7 +325,7 @@ hello: {
     inc.z idx
     // [9] hello::i#1 = ++ hello::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [10] if(0!=msg[hello::i#1]) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [10] if(0!=msg[hello::i#1]) goto hello::@1 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg,x
     cmp #0
     bne __b1_from___b1
@@ -371,6 +377,7 @@ do10: {
     rts
 }
   // File Data
+.segment Data
   msg: .text "hello "
   .byte 0
 
@@ -432,12 +439,18 @@ Score: 581
   // File Comments
 // Tests calling into a function pointer with local variables
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-7.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 3
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -474,7 +487,7 @@ hello: {
     // [9] hello::i#1 = ++ hello::i#2 -- vbuxx=_inc_vbuxx 
     inx
     // while(msg[i])
-    // [10] if(0!=msg[hello::i#1]) goto hello::@1 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [10] if(0!=msg[hello::i#1]) goto hello::@1 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg,x
     cmp #0
     bne __b1
@@ -521,6 +534,7 @@ do10: {
     rts
 }
   // File Data
+.segment Data
   msg: .text "hello "
   .byte 0
 

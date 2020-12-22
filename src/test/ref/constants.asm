@@ -1,14 +1,20 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="constants.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const GREEN = 5
   .const RED = 2
   .label BG_COLOR = $d021
   .label print_screen = $400
   .label print_char_cursor = 5
   .label print_line_cursor = 7
+.segment Code
 main: {
     // print_cls()
     jsr print_cls
@@ -79,13 +85,15 @@ test_bytes: {
     jsr assert_byte
     // }
     rts
+  .segment Data
     msg2: .text "0+2-4=254"
     .byte 0
 }
+.segment Code
 // Test different signed byte constants
 test_sbytes: {
     .const bb = 0
-    .const bf = $ff&-$7f-$7f
+    .const bf = -$7f-$7f
     .const bc = 2
     .const bd = bc-4
     .const be = -bd
@@ -136,6 +144,7 @@ test_sbytes: {
     jsr assert_sbyte
     // }
     rts
+  .segment Data
     msg2: .text "0+2-4=-2"
     .byte 0
     msg3: .text "-(0+2-4)=2"
@@ -143,6 +152,7 @@ test_sbytes: {
     msg4: .text "-127-127=2"
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -318,6 +328,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   msg: .text "0=0"
   .byte 0
   msg1: .text "0+2=2"

@@ -186,12 +186,12 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 5
-Finalized unsigned number type 5
-Finalized unsigned number type 5
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Alias strncat::dst#0 = strncat::destination#3 
@@ -242,8 +242,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition strncat::$2 [16] if(0!=strncat::num#4) goto strncat::@6
 Simple Condition strncat::$3 [22] if(0!=*strncat::dst#5) goto strncat::@4
@@ -271,6 +271,9 @@ Successful SSA optimization Pass2ConstantInlining
 Identical Phi Values strncat::dst#0 build
 Identical Phi Values strncat::num#7 5
 Successful SSA optimization Pass2IdenticalPhiElimination
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting strncat::@7(between strncat::@1 and strncat::@3)
 Fixing phi predecessor for strncat::num#4 to new block ( strncat::@1 -> strncat::@7 ) during phi lifting.
 Adding NOP phi() at start of main
@@ -419,9 +422,9 @@ Uplift Scope [strncat] 692: zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst
 Uplift Scope [main] 40.33: zp[1]:2 [ main::i#2 main::i#1 ] 
 Uplift Scope [] 
 
-Uplifting [strncat] best 1979 combination zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] zp[2]:7 [ strncat::num#4 strncat::num#3 ] 
-Uplifting [main] best 1859 combination reg byte x [ main::i#2 main::i#1 ] 
-Uplifting [] best 1859 combination 
+Uplifting [strncat] best 1904 combination zp[2]:5 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ] zp[2]:3 [ strncat::source#4 strncat::source#7 strncat::source#3 ] zp[2]:7 [ strncat::num#4 strncat::num#3 ] 
+Uplifting [main] best 1784 combination reg byte x [ main::i#2 main::i#1 ] 
+Uplifting [] best 1784 combination 
 Allocated (was zp[2]:3) zp[2]:2 [ strncat::source#4 strncat::source#7 strncat::source#3 ]
 Allocated (was zp[2]:5) zp[2]:4 [ strncat::dst#5 strncat::dst#3 strncat::dst#1 strncat::dst#2 ]
 Allocated (was zp[2]:7) zp[2]:6 [ strncat::num#4 strncat::num#3 ]
@@ -430,11 +433,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test strncat() implementation
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strncat-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] call strncat 
@@ -481,7 +490,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [7] if(0!=build[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if(0!=build[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda build,x
     cmp #0
     bne __b2
@@ -521,7 +530,7 @@ strncat: {
   // Skip the existing string at dest
     // strncat::@1
   __b1:
-    // [13] if(0!=*strncat::dst#3) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [13] if(0!=*strncat::dst#3) goto strncat::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -549,18 +558,14 @@ strncat: {
     bne !+
     inc.z source+1
   !:
-    // [17] if(0==strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
-    lda #0
-    cmp.z num
-    bne !+
-    lda.z num+1
-    bne !+
-    jmp __b5
-  !:
+    // [17] if(0==strncat::num#4) goto strncat::@5 -- 0_eq_vwuz1_then_la1 
+    lda.z num
+    ora.z num+1
+    beq __b5
     jmp __b6
     // strncat::@6
   __b6:
-    // [18] if(0!=*strncat::dst#5) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [18] if(0!=*strncat::dst#5) goto strncat::@4 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -610,6 +615,7 @@ strncat: {
     jmp __b1
 }
   // File Data
+.segment Data
   hello: .text "hello"
   .byte 0
   space: .text " "
@@ -685,16 +691,22 @@ zp[2]:6 [ strncat::num#4 strncat::num#3 ]
 
 
 FINAL ASSEMBLER
-Score: 1650
+Score: 1575
 
   // File Comments
 // Test strncat() implementation
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strncat-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // strncat(build, hello, 5)
@@ -734,7 +746,7 @@ main: {
     // main::@1
   __b1:
     // while(build[i])
-    // [7] if(0!=build[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if(0!=build[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda build,x
     cmp #0
     bne __b2
@@ -773,7 +785,7 @@ strncat: {
     // strncat::@1
   __b1:
     // while (*dst)
-    // [13] if(0!=*strncat::dst#3) goto strncat::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [13] if(0!=*strncat::dst#3) goto strncat::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -800,16 +812,12 @@ strncat: {
     bne !+
     inc.z source+1
   !:
-    // [17] if(0==strncat::num#4) goto strncat::@5 -- vbuc1_eq_vwuz1_then_la1 
-    lda #0
-    cmp.z num
-    bne !+
-    lda.z num+1
-    bne !+
-    jmp __b5
-  !:
+    // [17] if(0==strncat::num#4) goto strncat::@5 -- 0_eq_vwuz1_then_la1 
+    lda.z num
+    ora.z num+1
+    beq __b5
     // strncat::@6
-    // [18] if(0!=*strncat::dst#5) goto strncat::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [18] if(0!=*strncat::dst#5) goto strncat::@4 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (dst),y
     cmp #0
@@ -859,6 +867,7 @@ strncat: {
     jmp __b1
 }
   // File Data
+.segment Data
   hello: .text "hello"
   .byte 0
   space: .text " "

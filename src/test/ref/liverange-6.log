@@ -125,7 +125,7 @@ Adding number conversion cast (unumber) $c in [4] if(main::i#1!=$c) goto main::@
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $c
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $c
+Finalized unsigned number type (byte) $c
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings idx#14
@@ -216,11 +216,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test effective live range and register allocation
 // out::c should be a hardware register, main::i should be a hardware register, global idx should be a hardware register
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="liverange-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -269,6 +275,7 @@ out: {
     rts
 }
   // File Data
+.segment Data
   msg: .text "hello world!"
   .byte 0
 
@@ -315,11 +322,17 @@ Score: 229
 // Test effective live range and register allocation
 // out::c should be a hardware register, main::i should be a hardware register, global idx should be a hardware register
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="liverange-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -364,6 +377,7 @@ out: {
     rts
 }
   // File Data
+.segment Data
   msg: .text "hello world!"
   .byte 0
 

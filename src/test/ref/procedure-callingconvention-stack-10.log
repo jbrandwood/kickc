@@ -1,9 +1,9 @@
+Converting variable modified inside __stackcall procedure main() to load/store idx
 Inlined call call __init 
 Eliminating unused variable with no statement main::$1
-Converting PHI-variable modified inside __stackcall procedure main() to load/store idx
-Calling convention STACK_CALL adding prepare/execute/finalize for { main::$1_x, main::$1_y } = call get main::i 
-Calling convention STACK_CALL adding prepare/execute/finalize for call print main::p_x main::p_y 
-Calling convention STACK_CALL adding prepare/execute/finalize for call main 
+Calling convention __stackcall adding prepare/execute/finalize for { main::$1_x, main::$1_y } = call get main::i 
+Calling convention __stackcall adding prepare/execute/finalize for call print main::p_x main::p_y 
+Calling convention __stackcall adding prepare/execute/finalize for call main 
 Calling convention STACK_CALL replacing param(get::i) with stackidx(byte,get::OFFSET_STACK_I)
 Calling convention STACK_CALL replacing param(print::p_x) with stackidx(byte,print::OFFSET_STACK_P_X)
 Calling convention STACK_CALL replacing param(print::p_y) with stackidx(byte,print::OFFSET_STACK_P_Y)
@@ -143,8 +143,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 5
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 5
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in get::$0 = get::i#0 / 2
 Alias main::i#2 = main::i#3 
@@ -170,6 +170,9 @@ Successful SSA optimization Pass2MultiplyToShiftRewriting
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of main
@@ -382,14 +385,20 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack
 // Returning and passing struct values
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 3
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -592,14 +601,20 @@ Score: 828
 // Test a procedure with calling convention stack
 // Returning and passing struct values
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label idx = 3
+.segment Code
   // __start
 __start: {
     // __start::__init1

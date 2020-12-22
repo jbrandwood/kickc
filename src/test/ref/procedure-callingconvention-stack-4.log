@@ -1,6 +1,6 @@
+Converting variable modified inside __stackcall procedure plus() to load/store i
 Inlined call call __init 
-Converting PHI-variable modified inside __stackcall procedure plus() to load/store i
-Calling convention STACK_CALL adding prepare/execute/finalize for main::$1 = call plus '0' main::v 
+Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call plus '0' main::v 
 Calling convention STACK_CALL replacing param(plus::a) with stackidx(byte,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param(plus::b) with stackidx(byte,plus::OFFSET_STACK_B)
 Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return
@@ -100,7 +100,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = main::a#2 + 1
 Alias main::v#0 = main::$0 
@@ -117,11 +117,13 @@ Adding number conversion cast (unumber) 2 in if(main::a#1!=2) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::a#0
 Constant inlined main::a#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -300,13 +302,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack
 // A slightly more complex call
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label i = 3
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -473,13 +481,19 @@ Score: 656
 // Test a procedure with calling convention stack
 // A slightly more complex call
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label i = 3
+.segment Code
   // __start
 __start: {
     // __start::__init1

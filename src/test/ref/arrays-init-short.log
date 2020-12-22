@@ -70,9 +70,9 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Alias main::i1#2 = main::i1#3 
@@ -93,6 +93,9 @@ Inlining constant with var siblings main::i1#0
 Constant inlined main::i#0 = 0
 Constant inlined main::i1#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
 CALL GRAPH
@@ -175,11 +178,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test a short array initializer - the rest should be zero-filled
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="arrays-init-short.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -189,7 +198,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(0!=msg1[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=msg1[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg1,x
     cmp #0
     bne __b2
@@ -200,7 +209,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [4] if(0!=msg2[main::i1#2]) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [4] if(0!=msg2[main::i1#2]) goto main::@4 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg2,x
     cmp #0
     bne __b4
@@ -233,6 +242,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   msg1: .text "camelot"
   .byte 0
   .fill 8, 0
@@ -273,11 +283,17 @@ Score: 516
   // File Comments
 // Test a short array initializer - the rest should be zero-filled
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="arrays-init-short.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -286,7 +302,7 @@ main: {
     // main::@1
   __b1:
     // for(char i=0;msg1[i];i++)
-    // [2] if(0!=msg1[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=msg1[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg1,x
     cmp #0
     bne __b2
@@ -296,7 +312,7 @@ main: {
     // main::@3
   __b3:
     // for(char i=0;msg2[i];i++)
-    // [4] if(0!=msg2[main::i1#2]) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [4] if(0!=msg2[main::i1#2]) goto main::@4 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda msg2,x
     cmp #0
     bne __b4
@@ -330,6 +346,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   msg1: .text "camelot"
   .byte 0
   .fill 8, 0

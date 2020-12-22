@@ -1,8 +1,14 @@
 // Example of inline ASM where a JMP is erronously culled during compilation
 // https://gitlab.com/camelot/kickc/issues/302
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="asm-culling-jmp.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // asm
     jmp qwe

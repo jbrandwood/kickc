@@ -29,4 +29,8 @@ public class ParamValue implements RValue {
       return "param("+parameter.toString(program)+")";
    }
 
+   @Override
+   public String toString() {
+      return toString(null);
+   }
 }

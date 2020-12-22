@@ -55,17 +55,19 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast $64
 Simplifying constant integer cast $64
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $40
-Finalized unsigned number type $3f8
-Finalized unsigned number type 1
-Finalized unsigned number type $64
-Finalized unsigned number type $64
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $3f8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) $64
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (word) $c00
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -107,14 +109,20 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Example of inline kickasm resource data
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-resource.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label SPRITES_ENABLE = $d015
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
+.segment Code
   // main
 main: {
     // [0] *(SCREEN+$3f8) = (byte)(word)SPRITE/$40 -- _deref_pbuc1=vbuc2 
@@ -136,6 +144,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 .pc = $c00 "SPRITE"
 SPRITE:
 .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
@@ -172,14 +181,20 @@ Score: 28
   // File Comments
 // Example of inline kickasm resource data
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-resource.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label SPRITES_ENABLE = $d015
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
+.segment Code
   // main
 main: {
     // *(SCREEN+0x3f8) = (char)((unsigned int)SPRITE/$40)
@@ -203,6 +218,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 .pc = $c00 "SPRITE"
 SPRITE:
 .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))

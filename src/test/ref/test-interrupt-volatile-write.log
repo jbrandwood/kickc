@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(KERNEL_MIN) void irq()
+Resolved forward reference irq to __interrupt(rom_min_c64) void irq()
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -22,7 +22,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
   *BG_COLOR = col
@@ -59,7 +59,7 @@ const nomodify byte* BG_COLOR = (byte*)$d020
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 void __start()
 volatile byte col loadstore
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 bool~ irq::$0
 void main()
 bool~ main::$0
@@ -79,10 +79,10 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $a
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [3] main::$1 = col <= $a from [2] main::$0 = col > $a
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -100,7 +100,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $a+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -135,7 +135,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
   [6] *BG_COLOR = col
@@ -166,7 +166,7 @@ main::@2: scope:[main]  from main::@1
 VARIABLE REGISTER WEIGHTS
 void __start()
 volatile byte col loadstore 139.5
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -191,25 +191,31 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [__start] 
 
-Uplifting [] best 1243 combination zp[1]:2 [ col ] 
-Uplifting [main] best 1243 combination 
-Uplifting [irq] best 1243 combination 
-Uplifting [__start] best 1243 combination 
+Uplifting [] best 1270 combination zp[1]:2 [ col ] 
+Uplifting [main] best 1270 combination 
+Uplifting [irq] best 1270 combination 
+Uplifting [__start] best 1270 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ col ]
-Uplifting [] best 1243 combination zp[1]:2 [ col ] 
+Uplifting [] best 1270 combination zp[1]:2 [ col ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-interrupt-volatile-write.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -233,7 +239,7 @@ __start: {
 }
   // irq
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // asm { lda$dc0d  }
     lda $dc0d
     // [6] *BG_COLOR = col -- _deref_pbuc1=vbuz1 
@@ -254,7 +260,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [9] return  - exit interrupt(KERNEL_MIN)
+    // [9] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // irq::@1
   __b1:
@@ -315,26 +322,32 @@ const nomodify byte* BG_COLOR = (byte*) 53280
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 void __start()
 volatile byte col loadstore zp[1]:2 139.5
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 zp[1]:2 [ col ]
 
 
 FINAL ASSEMBLER
-Score: 895
+Score: 922
 
   // File Comments
 // Tests that volatile variables can be both read & written inside & outside interrupts
 // Currently fails because the modification is optimized away
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-interrupt-volatile-write.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -352,7 +365,7 @@ __start: {
 }
   // irq
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // asm
     // asm { lda$dc0d  }
     lda $dc0d
@@ -373,7 +386,8 @@ irq: {
     sta.z col
     // irq::@return
     // }
-    // [9] return  - exit interrupt(KERNEL_MIN)
+    // [9] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // irq::@1
   __b1:

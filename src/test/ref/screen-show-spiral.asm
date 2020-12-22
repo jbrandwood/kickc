@@ -1,7 +1,12 @@
 // Fill screen using a spiral based on distance-to-center / angle-to-center
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="screen-show-spiral.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
@@ -22,6 +27,7 @@
   .label SCREEN_DIST = $1b
   // Screen containing angle to center
   .label SCREEN_ANGLE = $1d
+.segment Code
 __start: {
     // malloc(1000)
     lda #<$3e8
@@ -606,8 +612,7 @@ atan2_16: {
   __b10:
     // if(yi==0)
     lda.z yi+1
-    bne __b11
-    lda.z yi
+    ora.z yi
     bne __b11
   __b12:
     // angle /=2
@@ -835,8 +840,7 @@ bsearch16u: {
     sbc (pivot),y
     sta.z result+1
     // if (result == 0)
-    bne __b6
-    lda.z result
+    ora.z result
     bne __b6
     lda.z pivot
     sta.z return
@@ -868,6 +872,7 @@ bsearch16u: {
     tax
     jmp __b3
 }
+.segment Data
 // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)

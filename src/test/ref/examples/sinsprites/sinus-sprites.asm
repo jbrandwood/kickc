@@ -1,9 +1,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-sprites.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const sinlen_x = $dd
   .const sinlen_y = $c5
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
@@ -34,6 +39,7 @@
   .label progress_cursor = $a
   .label sin_idx_x = 4
   .label sin_idx_y = 5
+.segment Code
 main: {
     // init()
     jsr init
@@ -339,8 +345,10 @@ gen_sprites: {
     bne __b1
     // }
     rts
+  .segment Data
     cml: .text "camelot"
 }
+.segment Code
 // Initialize the PETSCII progress bar
 // progress_init(byte* zp($a) line)
 progress_init: {
@@ -499,12 +507,14 @@ gen_sintab: {
     // for(char i =0; i<length; i++)
     inc.z i
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
     // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
+.segment Code
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
 // - sprite is a pointer to the position of the sprite to generate
@@ -806,6 +816,7 @@ progress_inc: {
     sta (progress_cursor),y
     // }
     rts
+  .segment Data
     // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }

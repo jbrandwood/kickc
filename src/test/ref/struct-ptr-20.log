@@ -104,7 +104,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [14] main::$4 = 0 == *main::$7 from [13] main::$11 = 0 != *main::$7
 Inversing boolean not [15] main::$5 = 0 != *main::$7 from [14] main::$4 = 0 == *main::$7
@@ -153,7 +153,7 @@ Adding number conversion cast (unumber) 3 in
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 3
+Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [1] main::$6 = main::len#0 * SIZEOF_STRUCT_SETTING
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -260,13 +260,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Demonstrates problem with conditions using negated struct references
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-20.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_SETTING = 2
   .const OFFSET_STRUCT_SETTING_ID = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
@@ -299,7 +305,7 @@ main: {
     rts
     // main::@2
   __b2:
-    // [4] if(0!=*((byte*)main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [4] if(0!=*((byte*)main::setting#2)) goto main::@3 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
@@ -335,6 +341,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   settings: .byte 0, 'a', 1, 'b', 0, 'c'
 
 ASSEMBLER OPTIMIZATIONS
@@ -379,13 +386,19 @@ Score: 771
   // File Comments
 // Demonstrates problem with conditions using negated struct references
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-20.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_SETTING = 2
   .const OFFSET_STRUCT_SETTING_ID = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .const len = 3*SIZEOF_STRUCT_SETTING/SIZEOF_STRUCT_SETTING
@@ -417,7 +430,7 @@ main: {
     // main::@2
   __b2:
     // if (! setting->off)
-    // [4] if(0!=*((byte*)main::setting#2)) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [4] if(0!=*((byte*)main::setting#2)) goto main::@3 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (setting),y
     cmp #0
@@ -450,5 +463,6 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   settings: .byte 0, 'a', 1, 'b', 0, 'c'
 

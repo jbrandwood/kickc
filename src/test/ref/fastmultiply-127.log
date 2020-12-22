@@ -1409,57 +1409,57 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast $200
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized signed number type 0
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $7f
-Finalized unsigned number type $7f
-Finalized unsigned number type $40
-Finalized unsigned number type $40
-Finalized unsigned number type $40
-Finalized unsigned number type $7f
-Finalized unsigned number type $40
-Finalized unsigned number type $c0
-Finalized unsigned number type $ff
-Finalized unsigned number type $7f
-Finalized unsigned number type $c0
-Finalized unsigned number type $c0
-Finalized unsigned number type $ff
-Finalized unsigned number type $ff
-Finalized signed number type 0
-Finalized signed number type 0
-Finalized signed number type $40
-Finalized signed number type $40
-Finalized signed number type $40
-Finalized signed number type $7f
-Finalized signed number type -$40
-Finalized signed number type $40
-Finalized signed number type $40
-Finalized signed number type -$40
-Finalized signed number type -$40
-Finalized signed number type -$40
-Finalized signed number type $7f
-Finalized signed number type $7f
-Finalized signed number type -$7f
-Finalized signed number type $7f
-Finalized signed number type $7f
-Finalized signed number type -$7f
-Finalized signed number type -$7f
-Finalized signed number type -$7f
-Finalized signed number type 0
-Finalized signed number type 0
-Finalized signed number type 2
-Finalized signed number type 0
-Finalized signed number type 0
-Finalized signed number type 2
-Finalized signed number type $200
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) $ff
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) $40
+Finalized signed number type (signed byte) $40
+Finalized signed number type (signed byte) $40
+Finalized signed number type (signed byte) $7f
+Finalized signed number type (signed byte) -$40
+Finalized signed number type (signed byte) $40
+Finalized signed number type (signed byte) $40
+Finalized signed number type (signed byte) -$40
+Finalized signed number type (signed byte) -$40
+Finalized signed number type (signed byte) -$40
+Finalized signed number type (signed byte) $7f
+Finalized signed number type (signed byte) $7f
+Finalized signed number type (signed byte) -$7f
+Finalized signed number type (signed byte) $7f
+Finalized signed number type (signed byte) $7f
+Finalized signed number type (signed byte) -$7f
+Finalized signed number type (signed byte) -$7f
+Finalized signed number type (signed byte) -$7f
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 2
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 2
+Finalized signed number type (signed word) $200
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#6 & $f
 Inferred type updated to signed word in mulf8s127::$9 = mulf8s127::$11 * 2
@@ -1877,6 +1877,15 @@ Constant inlined print_mulf8s127::b#8 = -$7f
 Constant inlined print_mulf8s127::a#9 = -$7f
 Constant inlined print_mulf8s127::b#9 = -$7f
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $200
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting mulf8s127::@9(between mulf8s127::@7 and mulf8s127::@1)
 Added new block during phi lifting mulf8s127::@10(between mulf8s127::@1 and mulf8s127::@2)
@@ -2829,13 +2838,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Uses principles from C=Hacking #16 https://codebase64.org/doku.php?id=magazines:chacking16
 // Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="fastmultiply-127.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = 8
   .label print_line_cursor = 2
+.segment Code
   // main
 main: {
     // [1] call print_cls 
@@ -3172,11 +3187,13 @@ main: {
   __breturn:
     // [46] return 
     rts
+  .segment Data
     str: .text "unsigned"
     .byte 0
     str1: .text "signed"
     .byte 0
 }
+.segment Code
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -3203,7 +3220,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [52] if(0!=*print_str::str#3) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [52] if(0!=*print_str::str#3) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3883,6 +3900,7 @@ print_sint: {
     jmp __b2_from___b4
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // f(x) = ( x * x )/4
@@ -4327,13 +4345,19 @@ Score: 2177
 // Uses principles from C=Hacking #16 https://codebase64.org/doku.php?id=magazines:chacking16
 // Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="fastmultiply-127.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = 8
   .label print_line_cursor = 2
+.segment Code
   // main
 main: {
     // print_cls()
@@ -4599,11 +4623,13 @@ main: {
     // }
     // [46] return 
     rts
+  .segment Data
     str: .text "unsigned"
     .byte 0
     str1: .text "signed"
     .byte 0
 }
+.segment Code
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -4627,7 +4653,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [52] if(0!=*print_str::str#3) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [52] if(0!=*print_str::str#3) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -5245,6 +5271,7 @@ print_sint: {
     jmp __b2
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // f(x) = ( x * x )/4

@@ -1125,15 +1125,15 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast $3e8
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized signed number type 0
-Finalized signed number type 0
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#6 & $f
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
@@ -1466,6 +1466,11 @@ Constant inlined memset::dst#0 = (byte*)memset::str#0
 Constant inlined print_str::str#1 = testChar::str
 Constant inlined print_uint::w#3 = testShort::u
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
@@ -2194,13 +2199,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests the different standard C types
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c-types.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = 2
   .label print_line_cursor = 4
+.segment Code
   // main
 main: {
     // [1] call print_cls 
@@ -2351,9 +2362,11 @@ testChar: {
   __breturn:
     // [28] return 
     rts
+  .segment Data
     str: .text "char: "
     .byte 0
 }
+.segment Code
   // testShort
 testShort: {
     .const u = $578
@@ -2456,9 +2469,11 @@ testShort: {
   __breturn:
     // [43] return 
     rts
+  .segment Data
     str: .text "short: "
     .byte 0
 }
+.segment Code
   // testInt
 testInt: {
     .const u = $578
@@ -2561,9 +2576,11 @@ testInt: {
   __breturn:
     // [58] return 
     rts
+  .segment Data
     str: .text "int: "
     .byte 0
 }
+.segment Code
   // testLong
 testLong: {
     .const u = $222e0
@@ -2678,9 +2695,11 @@ testLong: {
   __breturn:
     // [73] return 
     rts
+  .segment Data
     str: .text "long: "
     .byte 0
 }
+.segment Code
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -2740,7 +2759,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [82] if(0!=*print_str::str#5) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [82] if(0!=*print_str::str#5) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3101,6 +3120,7 @@ print_slong: {
     jmp __b2_from___b4
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -3437,13 +3457,19 @@ Score: 2013
   // File Comments
 // Tests the different standard C types
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c-types.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = 2
   .label print_line_cursor = 4
+.segment Code
   // main
 main: {
     // print_cls()
@@ -3564,9 +3590,11 @@ testChar: {
     // }
     // [28] return 
     rts
+  .segment Data
     str: .text "char: "
     .byte 0
 }
+.segment Code
   // testShort
 testShort: {
     .const u = $578
@@ -3650,9 +3678,11 @@ testShort: {
     // }
     // [43] return 
     rts
+  .segment Data
     str: .text "short: "
     .byte 0
 }
+.segment Code
   // testInt
 testInt: {
     .const u = $578
@@ -3736,9 +3766,11 @@ testInt: {
     // }
     // [58] return 
     rts
+  .segment Data
     str: .text "int: "
     .byte 0
 }
+.segment Code
   // testLong
 testLong: {
     .const u = $222e0
@@ -3834,9 +3866,11 @@ testLong: {
     // }
     // [73] return 
     rts
+  .segment Data
     str: .text "long: "
     .byte 0
 }
+.segment Code
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -3893,7 +3927,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [82] if(0!=*print_str::str#5) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [82] if(0!=*print_str::str#5) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4219,5 +4253,6 @@ print_slong: {
     jmp __b2
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

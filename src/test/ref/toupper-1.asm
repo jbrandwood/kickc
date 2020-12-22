@@ -1,7 +1,12 @@
 // Test toupper()
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="toupper-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   // Color Ram
   .label COLORRAM = $d800
@@ -16,6 +21,7 @@
   .label conio_line_text = 8
   // The current color cursor line start
   .label conio_line_color = $a
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0

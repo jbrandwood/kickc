@@ -73,10 +73,9 @@
 // Raster IRQ routine
 irq: {
     pha
-    txa
-    pha
-    tya
-    pha
+    phx
+    phy
+    phz
     // VICII->IRQ_STATUS = IRQ_RASTER
     // Acknowledge the IRQ
     lda #IRQ_RASTER
@@ -108,10 +107,9 @@ irq: {
     // (VICII->BORDER_COLOR)--;
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    pla
-    tay
-    pla
-    tax
+    plz
+    ply
+    plx
     pla
     rti
 }

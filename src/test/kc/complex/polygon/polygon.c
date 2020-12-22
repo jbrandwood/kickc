@@ -33,7 +33,7 @@ char volatile canvas_show_memory = toD018(SCREEN, CANVAS2);
 char volatile canvas_show_flag = 0;
 
 // SIN/COS tables
-char align(0x100) SINTAB[0x140] = kickasm {{
+char __align(0x100) SINTAB[0x140] = kickasm {{
     .fill $200, round(63 + 63*sin(i*2*PI/$100))
 }};
 char* COSTAB = SINTAB+0x40;
@@ -125,7 +125,7 @@ void setup_irq() {
 }
 
 // Interrupt Routine 1: Just above last text line.
-interrupt(kernel_min) void irq_bottom_1() {
+__interrupt void irq_bottom_1() {
     // Change border color
     VICII->BORDER_COLOR = DARK_GREY;
     // Show the cycle counter
@@ -138,7 +138,7 @@ interrupt(kernel_min) void irq_bottom_1() {
 }
 
 // Interrupt Routine 2
-interrupt(kernel_keyboard) void irq_bottom_2() {
+__interrupt(rom_sys_c64) void irq_bottom_2() {
     // Change border color
     VICII->BORDER_COLOR = BLACK;
     // Show the current canvas (unless a key is being pressed)

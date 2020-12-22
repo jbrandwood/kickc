@@ -49,7 +49,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [3] main::$0 = 0 == *main::$2 from [2] main::$4 = 0 != *main::$2
 Inversing boolean not [4] main::$1 = 0 != *main::$2 from [3] main::$0 = 0 == *main::$2
@@ -127,17 +127,23 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test parsing a negated struct reference - which causes problems with the ASMREL labels !a++
 // https://gitlab.com/camelot/kickc/issues/266
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="parse-negated-struct-ref.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label SCREEN = $400
     .label a = aa
-    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
-    lda #0
-    cmp a
+    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- 0_neq__deref_pbuc1_then_la1 
+    lda a
+    cmp #0
     bne __b1
     jmp __b2
     // main::@2
@@ -159,6 +165,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   aa: .byte 1
 
 ASSEMBLER OPTIMIZATIONS
@@ -190,18 +197,24 @@ Score: 23
 // Test parsing a negated struct reference - which causes problems with the ASMREL labels !a++
 // https://gitlab.com/camelot/kickc/issues/266
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="parse-negated-struct-ref.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label SCREEN = $400
     .label a = aa
     // if(!a->b)
-    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- vbuc1_neq__deref_pbuc2_then_la1 
-    lda #0
-    cmp a
+    // [0] if(0!=*((byte*)main::a)) goto main::@1 -- 0_neq__deref_pbuc1_then_la1 
+    lda a
+    cmp #0
     bne !a+
     // main::@2
     // *SCREEN = 'a'
@@ -220,5 +233,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   aa: .byte 1
 

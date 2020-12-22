@@ -11,8 +11,6 @@
 .word main // NMI
 .word main // RESET
 .word main // IRQ
-.segment Code
-
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_PF0 = $d
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_PF1 = $e
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_PF2 = $f
@@ -71,13 +69,14 @@ main: {
   // Wait for the timer to run out
   __b3:
     // while(RIOT->INTIM)
-    lda #0
-    cmp RIOT+OFFSET_STRUCT_MOS6532_RIOT_INTIM
+    lda RIOT+OFFSET_STRUCT_MOS6532_RIOT_INTIM
+    cmp #0
     bne __b4
     // TIA->VBLANK = 0
     // Screen - display logic
     // Update the registers in TIA (the video chip) in order to generate what the player sees.
     // For now we're just going to output 192 colored scanlines lines so we have something to see.
+    lda #0
     sta TIA+OFFSET_STRUCT_ATARI_TIA_WRITE_VBLANK
     // c = SINTABLE[idx++]
     // D1=1, turns off Vertical Blank signal (image output on)
@@ -108,8 +107,8 @@ main: {
   // Wait for the timer to run out
   __b9:
     // while(RIOT->INTIM)
-    lda #0
-    cmp RIOT+OFFSET_STRUCT_MOS6532_RIOT_INTIM
+    lda RIOT+OFFSET_STRUCT_MOS6532_RIOT_INTIM
+    cmp #0
     bne __b10
     jmp __b2
   __b10:

@@ -684,14 +684,14 @@ Simplifying constant integer cast $1111
 Simplifying constant integer cast $1111
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type $12345690
-Finalized unsigned number type $1111
-Finalized unsigned number type $1111
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (dword) $12345690
+Finalized unsigned number type (word) $1111
+Finalized unsigned number type (word) $1111
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#7 & $f
 Inferred type updated to word in main::$4 = main::$3 + $1111
@@ -856,6 +856,11 @@ Constant inlined print_char::ch#7 = ' '
 Constant inlined main::dw#0 = $12345678
 Constant inlined print_char::ch#6 = ' '
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@3
@@ -1389,15 +1394,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-lowhigh.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = $10
   .label print_char_cursor = $e
   .label print_char_cursor_1 = $10
   .label print_line_cursor_1 = 6
+.segment Code
   // main
 main: {
     .label __3 = 8
@@ -1935,6 +1946,7 @@ memset: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -2134,15 +2146,21 @@ Score: 8692
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-lowhigh.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = $10
   .label print_char_cursor = $e
   .label print_char_cursor_1 = $10
   .label print_line_cursor_1 = 6
+.segment Code
   // main
 main: {
     .label __3 = 8
@@ -2642,5 +2660,6 @@ memset: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

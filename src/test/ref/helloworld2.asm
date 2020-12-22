@@ -1,7 +1,13 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="helloworld2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 main: {
     // print2(screen, hello)
     lda #<screen
@@ -17,9 +23,11 @@ main: {
     jsr print2
     // }
     rts
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }
+.segment Code
 // print2(byte* zp(2) at)
 print2: {
     .label at = 2

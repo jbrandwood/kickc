@@ -1,11 +1,17 @@
 // Illustrates problem where volatiles reuse the same ZP addresses for multiple overlapping volatiles
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="interrupt-volatile-reuse-problem1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
   .label col1 = 2
   .label col2 = 3
+.segment Code
 __start: {
     // col1 = 0
     lda #0

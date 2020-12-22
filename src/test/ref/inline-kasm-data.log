@@ -67,9 +67,9 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast 1
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $28
-Finalized unsigned number type 1
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [11] if(main::i#1!=rangelast(0,$18)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -88,7 +88,7 @@ Adding number conversion cast (unumber) $19 in [7] if(main::i#1!=$19) goto main:
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $19
+Finalized unsigned number type (byte) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::screen#0
 Inlining constant with var siblings main::cols#0
@@ -97,6 +97,8 @@ Constant inlined main::screen#0 = (byte*) 1024
 Constant inlined main::i#0 = 0
 Constant inlined main::cols#0 = (byte*) 55296
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $1000
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -189,10 +191,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Example of inline kickasm data
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-data.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label screen = 2
@@ -256,6 +264,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 .pc = $1000 "sintab"
 sintab:
 .fill 25, 20 + 20*sin(toRadians(i*360/25))
@@ -302,10 +311,16 @@ Score: 846
   // File Comments
 // Example of inline kickasm data
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-data.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label screen = 2
@@ -370,6 +385,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 .pc = $1000 "sintab"
 sintab:
 .fill 25, 20 + 20*sin(toRadians(i*360/25))

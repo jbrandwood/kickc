@@ -7,7 +7,7 @@
 byte* BITMAP = 0x2000;
 byte* SCREEN = 0x0400;
 
-byte align(0x100) SINTAB[0x180] = kickasm {{ .fill $180, 99.5+99.5*sin(i*2*PI/256) }};
+byte __align(0x100) SINTAB[0x180] = kickasm {{ .fill $180, 99.5+99.5*sin(i*2*PI/256) }};
 byte* COSTAB = SINTAB+0x40;
 
 void main() {

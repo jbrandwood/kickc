@@ -1,12 +1,18 @@
 // Complex C-struct - copying a sub-struct with 2-byte members from C-standard layout to Unwound layout
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-38.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const MOVE_TO = 0
   .const SPLINE_TO = 1
   .const OFFSET_STRUCT_SEGMENT_TO = 1
   .const OFFSET_STRUCT_SPLINEVECTOR16_Y = 2
   .label SCREEN = $400
+.segment Code
 main: {
     .label to_x = 3
     .label to_y = 5
@@ -59,6 +65,7 @@ main: {
     // }
     rts
 }
+.segment Data
   // True type letter c
   letter_c: .byte MOVE_TO
   .word 'a', 'b', 0, 0

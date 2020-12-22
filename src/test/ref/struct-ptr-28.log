@@ -158,7 +158,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#11 
 Alias idx#1 = idx#12 idx#13 idx#2 
@@ -212,6 +212,9 @@ Constant inlined print_person::person#0 = &main::jesper
 Constant inlined print_person::i#0 = 0
 Constant inlined print_person::person#1 = &main::henriette
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main::@2
 CALL GRAPH
 Calls in [main] to print_person:1 print_person:4 
@@ -373,13 +376,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // It works on the surface - but illustrates the problem with structs containing arrays treating them like pointers.
 // https://gitlab.com/camelot/kickc/issues/314
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-28.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label jesper = 8
@@ -463,7 +472,7 @@ print_person: {
     lda #0
     adc.z person+1
     sta.z __1+1
-    // [12] if(0!=print_person::$1[print_person::i#2]) goto print_person::@2 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    // [12] if(0!=print_person::$1[print_person::i#2]) goto print_person::@2 -- 0_neq_pbuz1_derefidx_vbuyy_then_la1 
     lda (__1),y
     cmp #0
     bne __b2
@@ -504,6 +513,7 @@ print_person: {
     jmp __b1
 }
   // File Data
+.segment Data
   DIGIT: .text "0123456789"
   .byte 0
   __0: .byte 4
@@ -577,13 +587,19 @@ Score: 772
 // It works on the surface - but illustrates the problem with structs containing arrays treating them like pointers.
 // https://gitlab.com/camelot/kickc/issues/314
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-28.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_PERSON = $11
   .const OFFSET_STRUCT_PERSON_NAME = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label jesper = 8
@@ -669,7 +685,7 @@ print_person: {
     lda #0
     adc.z person+1
     sta.z __1+1
-    // [12] if(0!=print_person::$1[print_person::i#2]) goto print_person::@2 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    // [12] if(0!=print_person::$1[print_person::i#2]) goto print_person::@2 -- 0_neq_pbuz1_derefidx_vbuyy_then_la1 
     lda (__1),y
     cmp #0
     bne __b2
@@ -711,6 +727,7 @@ print_person: {
     jmp __b1
 }
   // File Data
+.segment Data
   DIGIT: .text "0123456789"
   .byte 0
   __0: .byte 4

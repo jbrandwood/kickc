@@ -6,7 +6,7 @@
 char* const SCREEN = 0x0400;
 char* const FONT_ORIGINAL = 0x2000;
 char* const FONT_COMPRESSED = 0x2800;
-char align(0x100) FONT_COMPRESSED_MAP[0x100];
+char __align(0x100) FONT_COMPRESSED_MAP[0x100];
 
 void main() {
     // Create 2x2 font from CHARGEN

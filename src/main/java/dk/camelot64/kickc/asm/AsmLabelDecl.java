@@ -1,10 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 /** A label declaration .label lbl = val */
-public class AsmLabelDecl implements AsmLine {
+public class AsmLabelDecl extends AsmLine {
    private final String name;
    private final String value;
-   private int index;
 
 
    public AsmLabelDecl(String name, String value) {
@@ -27,13 +26,5 @@ public class AsmLabelDecl implements AsmLine {
       return ".label " + name + " = " + value;
    }
 
-   @Override
-   public int getIndex() {
-      return index;
-   }
 
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
 }

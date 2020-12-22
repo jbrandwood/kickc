@@ -1,10 +1,16 @@
 // Program where loop-head optimization produces wrong return value
 // Reported by Richard-William Loerakker
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loophead-problem-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
+.segment Code
 main: {
     .label result = 2
     .label kaputt = $a
@@ -58,8 +64,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts

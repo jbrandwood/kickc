@@ -1,8 +1,14 @@
 // Test memcpy on strings (
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="memcpy-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     // Working memory copy of string
     .label sc = 4
@@ -93,11 +99,13 @@ main: {
     jsr memcpy
     // }
     rts
+  .segment Data
     __5: .text "rules"
     .byte 0
     reigns_1: .text "reigns"
     .byte 0
 }
+.segment Code
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
 // memcpy(void* zp($c) destination, void* zp($a) source, word zp($e) num)
@@ -142,5 +150,6 @@ memcpy: {
   !:
     jmp __b1
 }
+.segment Data
   CAMELOT: .text "camelot"
   .byte 0

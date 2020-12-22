@@ -44,7 +44,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 7
+Finalized unsigned number type (byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [1] if(i<7) goto main::@2
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -126,12 +126,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test that address vars are turned into load/store and located at hardcoded addresses
 // Hard-coded mainmem-page address - global variable
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="address-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label i = $2000
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -213,12 +219,18 @@ Score: 309
 // Test that address vars are turned into load/store and located at hardcoded addresses
 // Hard-coded mainmem-page address - global variable
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="address-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label i = $2000
+.segment Code
   // __start
 __start: {
     // __start::__init1

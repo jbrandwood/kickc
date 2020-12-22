@@ -3,9 +3,14 @@
 // N Queens Problem is a famous puzzle in which n-queens are to be placed on a nxn chess board such that no two queens are in the same row, column or diagonal.
 //
 // This is an iterative solution.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="eightqueens.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
@@ -24,6 +29,7 @@
   .label conio_line_color = $1b
   // The number of found solutions
   .label count = 2
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -110,6 +116,7 @@ main: {
     beq __b1
     // }
     rts
+  .segment Data
     s: .text " - n queens problem using backtracking -"
     .byte 0
     s1: .text @"\nnumber of queens:"
@@ -117,6 +124,7 @@ main: {
     s2: .text @"\n\nsolutions: "
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -553,8 +561,8 @@ printf_number_buffer: {
     // There is a minimum length - work out the padding
     ldy.z __19
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b13
     // len++;
     iny
@@ -573,12 +581,14 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b8
     jmp __b2
   __b8:
@@ -590,18 +600,18 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b10
     jmp __b4
   __b10:
@@ -613,8 +623,8 @@ printf_number_buffer: {
     jsr printf_padding
   __b4:
     // if(format.upper_case)
-    lda #0
-    cmp.z format_upper_case
+    lda.z format_upper_case
+    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -626,12 +636,14 @@ printf_number_buffer: {
     sta.z cputs.s+1
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b12
     rts
   __b12:
@@ -810,6 +822,7 @@ print: {
     // for(char i=1;i<=QUEENS;++i)
     inc.z i
     jmp __b1
+  .segment Data
     s: .text @"\n#"
     .byte 0
     s1: .text @":\n "
@@ -819,6 +832,7 @@ print: {
     s4: .text "-"
     .byte 0
 }
+.segment Code
 // Converts unsigned number value to a string representing it in RADIX format.
 // If the leading digits are zero they are not included in the string.
 // - value : The number to be converted to RADIX
@@ -1275,8 +1289,8 @@ uctoa: {
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5
@@ -1410,6 +1424,7 @@ uctoa_append: {
     tax
     jmp __b1
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of hexadecimal digits

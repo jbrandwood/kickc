@@ -267,12 +267,12 @@ Simplifying constant integer cast $c
 Simplifying constant integer cast $10
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $fe
-Finalized unsigned number type $ff
-Finalized unsigned number type $10
-Finalized unsigned number type $c
-Finalized unsigned number type $10
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) $fe
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $c
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in flip::$0 = flip::dstIdx#3 + $10
 Alias main::c#2 = main::c#3 
@@ -352,12 +352,12 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [28] plot::line#0 = plot::$0 + $c
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -387,6 +387,15 @@ Constant inlined flip::c#0 = $10
 Constant inlined flip::dstIdx#0 = $f
 Constant inlined flip::r#0 = $10
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast 5*$28
+Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting main::@9(between main::@2 and main::@2)
 Added new block during phi lifting main::@10(between main::@4 and main::@2)
 Added new block during phi lifting prepare::@2(between prepare::@1 and prepare::@1)
@@ -532,7 +541,7 @@ plot: scope:[plot]  from main::@5
   to:plot::@1
 plot::@1: scope:[plot]  from plot plot::@4
   [34] plot::y#4 = phi( plot/$10, plot::@4/plot::y#1 )
-  [34] plot::line#5 = phi( plot/SCREEN+(byte)5*$28+$c, plot::@4/plot::line#1 )
+  [34] plot::line#5 = phi( plot/SCREEN+5*$28+$c, plot::@4/plot::line#1 )
   [34] plot::i#4 = phi( plot/0, plot::@4/plot::i#2 )
   to:plot::@2
 plot::@2: scope:[plot]  from plot::@1 plot::@3
@@ -696,12 +705,18 @@ Allocated (was zp[1]:12) zp[1]:5 [ plot::y#4 plot::y#1 flip::r#4 flip::r#1 ]
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="flipper-rex2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] call prepare 
@@ -887,7 +902,7 @@ plot: {
     // [34] phi plot::y#4 = $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [34] phi plot::line#5 = SCREEN+(byte)5*$28+$c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [34] phi plot::line#5 = SCREEN+5*$28+$c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c
@@ -952,6 +967,7 @@ plot: {
     jmp __b2
 }
   // File Data
+.segment Data
   buffer1: .fill $10*$10, 0
   buffer2: .fill $10*$10, 0
 
@@ -1084,12 +1100,18 @@ Score: 85694
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="flipper-rex2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label RASTER = $d012
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // prepare()
@@ -1253,7 +1275,7 @@ plot: {
     // [34] phi plot::y#4 = $10 [phi:plot->plot::@1#0] -- vbuz1=vbuc1 
     lda #$10
     sta.z y
-    // [34] phi plot::line#5 = SCREEN+(byte)5*$28+$c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
+    // [34] phi plot::line#5 = SCREEN+5*$28+$c [phi:plot->plot::@1#1] -- pbuz1=pbuc1 
     lda #<SCREEN+5*$28+$c
     sta.z line
     lda #>SCREEN+5*$28+$c
@@ -1315,6 +1337,7 @@ plot: {
     jmp __b2
 }
   // File Data
+.segment Data
   buffer1: .fill $10*$10, 0
   buffer2: .fill $10*$10, 0
 

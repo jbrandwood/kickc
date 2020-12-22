@@ -64,11 +64,14 @@ Adding number conversion cast (unumber) 4 in [4] if(main::i#1!=4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $400
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -128,12 +131,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
 // The following places the text at the start of the main-function - and JSR's straight into the text - not the code.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inlinearrayproblem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label SCREEN2 = $400+$28
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -163,6 +172,7 @@ main: {
   __breturn:
     // [6] return 
     rts
+  .segment Data
     txt: .text "qwe"
     data: .byte 1, 2, 3
 }
@@ -201,12 +211,18 @@ Score: 281
 // Arrays / strings allocated inline destroy functions (because they are allocated where the call enters.
 // The following places the text at the start of the main-function - and JSR's straight into the text - not the code.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inlinearrayproblem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label SCREEN2 = $400+$28
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -234,6 +250,7 @@ main: {
     // }
     // [6] return 
     rts
+  .segment Data
     txt: .text "qwe"
     data: .byte 1, 2, 3
 }

@@ -3,9 +3,14 @@
 // Implementation of functions found int C stdlib.h / stdlib.c
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="clearscreen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // The number of iterations performed during 16-bit CORDIC atan2 calculation
   .const CORDIC_ITERATIONS_16 = $f
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
@@ -87,6 +92,7 @@
   .label SCREEN_COPY = $e
   // Screen containing bytes representing the distance to the center
   .label SCREEN_DIST = $10
+.segment Code
 __start: {
     // malloc(1000)
     lda #<HEAP_TOP
@@ -130,18 +136,16 @@ irqBottom: {
     sta IRQ_STATUS
     // }
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 // Raster Interrupt at the top of the screen
 irqTop: {
     sta rega+1
-    stx regx+1
-    sty regy+1
     // *RASTER = RASTER_IRQ_MIDDLE
     // Trigger IRQ at the middle of the screen
     lda #RASTER_IRQ_MIDDLE
@@ -157,11 +161,7 @@ irqTop: {
     sta IRQ_STATUS
     // }
   rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
+    lda #0
     rti
 }
 // Allocates a block of size chars of memory, returning a pointer to the beginning of the block.
@@ -1303,8 +1303,7 @@ atan2_16: {
   __b10:
     // if(yi==0)
     lda.z yi+1
-    bne __b11
-    lda.z yi
+    ora.z yi
     bne __b11
   __b12:
     // angle /=2
@@ -1470,6 +1469,7 @@ atan2_16: {
     sta.z yi+1
     jmp __b3
 }
+.segment Data
   // Angles representing ATAN(0.5), ATAN(0.25), ATAN(0.125), ...
 CORDIC_ATAN2_ANGLES_16:
 .for (var i=0; i<CORDIC_ITERATIONS_16; i++)

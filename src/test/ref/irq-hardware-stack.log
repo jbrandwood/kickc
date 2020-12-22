@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(HARDWARE_STACK) void irq()
+Resolved forward reference irq to __interrupt(hardware_all) void irq()
 
 CONTROL FLOW GRAPH SSA
 
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq()
+__interrupt(hardware_all) void irq()
 irq: scope:[irq]  from
   *BG_COLOR = WHITE
   *BG_COLOR = BLACK
@@ -62,7 +62,7 @@ const nomodify byte* RASTER = (byte*)$d012
 const nomodify byte* VIC_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
-interrupt(HARDWARE_STACK) void irq()
+__interrupt(hardware_all) void irq()
 void main()
 
 Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
@@ -83,8 +83,8 @@ Simplifying constant pointer cast (byte*) 1
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $80
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 if() condition always true - replacing block destination [9] if(true) goto main::@2
 Successful SSA optimization Pass2ConstantIfs
@@ -105,7 +105,7 @@ Renumbering block main::@2 to main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(HARDWARE_STACK) void irq()
+__interrupt(hardware_all) void irq()
 irq: scope:[irq]  from
   [0] *BG_COLOR = WHITE
   [1] *BG_COLOR = BLACK
@@ -133,7 +133,7 @@ main::@1: scope:[main]  from main main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(HARDWARE_STACK) void irq()
+__interrupt(hardware_all) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -156,17 +156,23 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 322 combination 
-Uplifting [irq] best 322 combination 
-Uplifting [] best 322 combination 
+Uplifting [main] best 520 combination 
+Uplifting [irq] best 520 combination 
+Uplifting [] best 520 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+.cpu _6502
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware-stack.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -188,10 +194,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_STACK)
+    // interrupt(isr_hardware_all_entry) -- isr_hardware_all_entry 
     pha
     txa
     pha
@@ -210,7 +217,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [3] return  - exit interrupt(HARDWARE_STACK)
+    // [3] return 
+    // interrupt(isr_hardware_all_exit) -- isr_hardware_all_exit 
     pla
     tay
     pla
@@ -287,20 +295,26 @@ const nomodify byte PROCPORT_RAM_IO = $35
 const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* VIC_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
-interrupt(HARDWARE_STACK) void irq()
+__interrupt(hardware_all) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 316
+Score: 514
 
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+.cpu _6502
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware-stack.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -322,10 +336,11 @@ Score: 316
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_STACK)
+    // interrupt(isr_hardware_all_entry) -- isr_hardware_all_entry 
     pha
     txa
     pha
@@ -346,7 +361,8 @@ irq: {
     sta IRQ_STATUS
     // irq::@return
     // }
-    // [3] return  - exit interrupt(HARDWARE_STACK)
+    // [3] return 
+    // interrupt(isr_hardware_all_exit) -- isr_hardware_all_exit 
     pla
     tay
     pla

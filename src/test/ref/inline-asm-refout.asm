@@ -1,7 +1,13 @@
 // Illustrates how inline assembler can reference data from the outside program
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-asm-refout.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     // *(SCREEN+40) = table[0]
@@ -18,4 +24,5 @@ main: {
     // }
     rts
 }
+.segment Data
   table: .text "cml!"

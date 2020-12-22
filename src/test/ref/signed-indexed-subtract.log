@@ -582,15 +582,15 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast $40
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type $80
-Finalized unsigned number type $40
-Finalized unsigned number type $40
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
@@ -721,8 +721,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 9
 Simplifying constant integer cast 9
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 9
-Finalized unsigned number type 9
+Finalized unsigned number type (byte) 9
+Finalized unsigned number type (byte) 9
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -751,6 +751,11 @@ Constant inlined main::j#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_SIGNED_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@10(between main::@6 and main::@1)
 Added new block during phi lifting main::@11(between main::@9 and main::@3)
@@ -1182,13 +1187,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests that signed indexed subtract works as intended
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="signed-indexed-subtract.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 7
+.segment Code
   // main
 main: {
     .label j = 2
@@ -1579,6 +1590,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   words: .word -$6000, -$600, -$60, -6, 0, 6, $60, $600, $6000
 
@@ -1756,13 +1768,19 @@ Score: 5404
   // File Comments
 // Tests that signed indexed subtract works as intended
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="signed-indexed-subtract.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 7
+.segment Code
   // main
 main: {
     .label j = 2
@@ -2119,6 +2137,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   words: .word -$6000, -$600, -$60, -6, 0, 6, $60, $600, $6000
 

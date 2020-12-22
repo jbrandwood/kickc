@@ -2,7 +2,7 @@
 // The tetris pieces
 
 // The T-piece
-align(0x40) char PIECE_T[64] = {
+__align(0x40) char PIECE_T[64] = {
 	0, 0, 0, 0,
 	1, 1, 1, 0,
 	0, 1, 0, 0,
@@ -25,7 +25,7 @@ align(0x40) char PIECE_T[64] = {
 };
 
 // The S-piece
-align(0x40) char PIECE_S[64] = {
+__align(0x40) char PIECE_S[64] = {
 	0, 0, 0, 0,  
 	0, 1, 1, 0,
 	1, 1, 0, 0,
@@ -49,7 +49,7 @@ align(0x40) char PIECE_S[64] = {
 };
 
 // The Z-piece
-align(0x40) char PIECE_Z[64] = {
+__align(0x40) char PIECE_Z[64] = {
 	0, 0, 0, 0,  
 	1, 1, 0, 0,
 	0, 1, 1, 0,
@@ -73,7 +73,7 @@ align(0x40) char PIECE_Z[64] = {
 };
 
 // The L-piece
-align(0x40) char PIECE_L[64] = {
+__align(0x40) char PIECE_L[64] = {
 	0, 0, 0, 0,  
 	1, 1, 1, 0,
 	1, 0, 0, 0,
@@ -97,7 +97,7 @@ align(0x40) char PIECE_L[64] = {
 };
 
 // The J-piece
-align(0x40) char PIECE_J[64] = {
+__align(0x40) char PIECE_J[64] = {
 	0, 0, 0, 0,
 	1, 1, 1, 0,
 	0, 0, 1, 0,
@@ -121,7 +121,7 @@ align(0x40) char PIECE_J[64] = {
 };
 
 // The O-piece
-align(0x40) char PIECE_O[64] = {
+__align(0x40) char PIECE_O[64] = {
 	0, 0, 0, 0,
 	0, 1, 1, 0,
 	0, 1, 1, 0,
@@ -145,7 +145,7 @@ align(0x40) char PIECE_O[64] = {
 };
 
 // The I-piece
-align(0x40) char PIECE_I[64] = {
+__align(0x40) char PIECE_I[64] = {
 	0, 0, 0, 0,  
 	0, 0, 0, 0,
 	1, 1, 1, 1,

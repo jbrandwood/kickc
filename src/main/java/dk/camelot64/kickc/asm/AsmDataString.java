@@ -1,11 +1,10 @@
 package dk.camelot64.kickc.asm;
 
 /** A labelled string data directive. */
-public class AsmDataString implements AsmLine {
+public class AsmDataString extends AsmLine {
 
    private String label;
    private String value;
-   private int index;
 
    public AsmDataString(String label, String value) {
       this.label = label;
@@ -30,16 +29,6 @@ public class AsmDataString implements AsmLine {
       asm.append(".text ");
       asm.append(value);
       return asm.toString();
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
 }

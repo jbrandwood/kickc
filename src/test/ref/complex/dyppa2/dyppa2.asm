@@ -1,13 +1,19 @@
 // Chunky DYPP with arbitrary sine
 // First implemented as dyppa.asm in 2011
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="dyppa2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
+.segment Code
 main: {
     .const toD0181_return = (>(DEFAULT_SCREEN&$3fff)*4)|(>DYPPA_CHARSET)/4&$f
     // VICII->MEMORY = toD018(DEFAULT_SCREEN, DYPPA_CHARSET)
@@ -54,6 +60,7 @@ memset: {
   !:
     jmp __b1
 }
+.segment Data
   // The DYPPA tables mapping the slopes, offsets and pixels to the right character in the charset
   // for(offset:0..7) for(slope:0..f) for(pixels: 0..f) glyph_id(offset,slope,pixels)  
   .align $100

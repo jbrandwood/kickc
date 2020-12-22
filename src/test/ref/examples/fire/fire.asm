@@ -3,9 +3,14 @@
 // Cleanup and porting to CC65 by Ullrich von Bassewitz and Greg King .
 // Ported to KickC by Jesper Gravgaard.
 // Original source https://github.com/cc65/cc65/blob/master/samples/fire.c
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="fire.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // SID Channel Control Register Noise Waveform
   .const SID_CONTROL_NOISE = $80
   // The colors of the C64
@@ -27,6 +32,7 @@
   .label SCREEN2 = $3c00
   .label BUFFER = $4000
   .label CHARSET = $3000
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN1&$3fff)*4)|(>CHARSET)/4&$f
     .const toD0182_return = (>(SCREEN2&$3fff)*4)|(>CHARSET)/4&$f
@@ -288,8 +294,10 @@ makecharset: {
     inc.z font+1
   !:
     jmp __b1
+  .segment Data
     bittab: .byte 1, 2, 4, 8, $10, $20, $40, $80
 }
+.segment Code
 // Animate the fire on the passed screen. Uses BUFFER to store the current values.
 fire: {
     .label screen = $b

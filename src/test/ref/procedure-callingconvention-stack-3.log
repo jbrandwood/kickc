@@ -1,4 +1,4 @@
-Calling convention STACK_CALL adding prepare/execute/finalize for main::$0 = call plus '0' 7 
+Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call plus '0' 7 
 Calling convention STACK_CALL replacing param(plus::a) with stackidx(word,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param(plus::b) with stackidx(word,plus::OFFSET_STACK_B)
 Calling convention STACK_CALL adding stack return stackidx(word,plus::OFFSET_STACK_RETURN) = plus::return
@@ -76,8 +76,8 @@ Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 7
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 7
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$1 = 0 * SIZEOF_WORD
 Alias plus::return#0 = plus::$0 plus::return#1 
@@ -98,6 +98,8 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 Calls in [main] to plus:7 
 
@@ -191,12 +193,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Currently fails because the pushed are done based on the actual value instead of the declared parameter type
 // https://gitlab.com/camelot/kickc/issues/319
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
+.segment Code
   // plus
 // plus(word zp(4) a, word zp(2) b)
 plus: {
@@ -311,12 +319,18 @@ Score: 146
 // Currently fails because the pushed are done based on the actual value instead of the declared parameter type
 // https://gitlab.com/camelot/kickc/issues/319
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
+.segment Code
   // plus
 // plus(word zp(4) a, word zp(2) b)
 plus: {

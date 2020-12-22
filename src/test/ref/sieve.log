@@ -1979,48 +1979,48 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $3e7
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $ffffffff
-Finalized unsigned number type $ffffffff
-Finalized unsigned number type 1
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 5
-Finalized unsigned number type 4
-Finalized unsigned number type 6
-Finalized unsigned number type $10
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type $a
-Finalized unsigned number type 8
-Finalized unsigned number type $b
-Finalized unsigned number type $20
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $3e8
-Finalized unsigned number type $3fff
-Finalized unsigned number type 4
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $64
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 1
-Finalized unsigned number type $514
-Finalized unsigned number type 0
-Finalized unsigned number type $3e7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (dword) $ffffffff
+Finalized unsigned number type (dword) $ffffffff
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $b
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (word) $514
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3e7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to dword in clock::$0 = $ffffffff - *CIA2_TIMER_AB
 Inferred type updated to byte in divr16u::$2 = divr16u::$1 & $80
@@ -2474,9 +2474,9 @@ Simplifying constant integer cast $10
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $10
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values utoa::max_digits#7 utoa::max_digits#1
 Identical Phi Values utoa::digit_values#8 utoa::digit_values#1
@@ -2627,6 +2627,15 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Eliminating unused constant SIZEOF_WORD
 Eliminating unused constant SIZEOF_DWORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $b
+Finalized unsigned number type (byte) $b
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting divr16u::@7(between divr16u::@3 and divr16u::@1)
 Added new block during phi lifting divr16u::@8(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@9(between divr16u::@2 and divr16u::@3)
@@ -4018,9 +4027,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
@@ -4054,6 +4068,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_char_cursor = $a
   .label print_line_cursor = $c
   .label print_char_cursor_1 = $c
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
@@ -4360,7 +4375,7 @@ main: {
     lda.z i_1+1
     adc #>sieve
     sta.z __33+1
-    // [46] if(0!=*main::$33) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [46] if(0!=*main::$33) goto main::@11 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (__33),y
     cmp #0
@@ -4410,7 +4425,7 @@ main: {
     jmp __b8
     // main::@2
   __b2:
-    // [54] if(0!=*main::sieve_i#2) goto main::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [54] if(0!=*main::sieve_i#2) goto main::@4 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (sieve_i),y
     cmp #0
@@ -4491,6 +4506,7 @@ main: {
     adc.z i+1
     sta.z j+1
     jmp __b5_from___b6
+  .segment Data
     str: .text "Sieve benchmark - calculating primes"
     .byte 0
     str1: .text "between 2 and "
@@ -4502,6 +4518,7 @@ main: {
     str4: .text "..."
     .byte 0
 }
+.segment Code
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -4540,7 +4557,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [69] if(0!=*print_str::str#10) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [69] if(0!=*print_str::str#10) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4944,7 +4961,7 @@ utoa: {
     sta.z digit_value
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
-    // [133] if(0!=utoa::started#2) goto utoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [133] if(0!=utoa::started#2) goto utoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     jmp __b7
@@ -5186,7 +5203,7 @@ ultoa: {
     sta.z digit_value+2
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
-    // [172] if(0!=ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [172] if(0!=ultoa::started#2) goto ultoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     jmp __b7
@@ -5392,6 +5409,7 @@ ultoa_append: {
     jmp __b1
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits
@@ -5619,7 +5637,7 @@ Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda.z digit_value+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [108] bcc __b2 to bcs
+Fixing long branch [114] bcc __b2 to bcs
 
 FINAL SYMBOL TABLE
 const nomodify struct MOS6526_CIA* CIA2 = (struct MOS6526_CIA*) 56576
@@ -5896,9 +5914,14 @@ Score: 82322
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
@@ -5932,6 +5955,7 @@ Score: 82322
   .label print_char_cursor = $a
   .label print_line_cursor = $c
   .label print_char_cursor_1 = $c
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
@@ -6202,7 +6226,7 @@ main: {
     lda.z i_1+1
     adc #>sieve
     sta.z __33+1
-    // [46] if(0!=*main::$33) goto main::@11 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [46] if(0!=*main::$33) goto main::@11 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (__33),y
     cmp #0
@@ -6246,7 +6270,7 @@ main: {
     // main::@2
   __b2:
     // if (!*sieve_i)
-    // [54] if(0!=*main::sieve_i#2) goto main::@4 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [54] if(0!=*main::sieve_i#2) goto main::@4 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (sieve_i),y
     cmp #0
@@ -6328,6 +6352,7 @@ main: {
     adc.z i+1
     sta.z j+1
     jmp __b5
+  .segment Data
     str: .text "Sieve benchmark - calculating primes"
     .byte 0
     str1: .text "between 2 and "
@@ -6339,6 +6364,7 @@ main: {
     str4: .text "..."
     .byte 0
 }
+.segment Code
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -6374,7 +6400,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [69] if(0!=*print_str::str#10) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [69] if(0!=*print_str::str#10) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -6771,7 +6797,7 @@ utoa: {
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
     // if (started || value >= digit_value)
-    // [133] if(0!=utoa::started#2) goto utoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [133] if(0!=utoa::started#2) goto utoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     // utoa::@7
@@ -7003,7 +7029,7 @@ ultoa: {
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
     // if (started || value >= digit_value)
-    // [172] if(0!=ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [172] if(0!=ultoa::started#2) goto ultoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     // ultoa::@7
@@ -7201,6 +7227,7 @@ ultoa_append: {
     jmp __b1
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

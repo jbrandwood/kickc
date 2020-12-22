@@ -1,10 +1,16 @@
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a pointer to a memory variable
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="declared-memory-var-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label idx_p = idx
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -23,4 +29,5 @@ main: {
     // }
     rts
 }
+.segment Data
   idx: .byte 0

@@ -1,4 +1,4 @@
-Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN) void table_driven_irq()
+Resolved forward reference table_driven_irq to __interrupt(rom_min_c64) void table_driven_irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
@@ -19,7 +19,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@4
@@ -99,7 +99,7 @@ const nomodify byte VIC_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 bool~ table_driven_irq::$0
 bool~ table_driven_irq::$1
 bool~ table_driven_irq::$2
@@ -145,11 +145,11 @@ Simplifying constant integer cast 8
 Simplifying constant integer cast $3f8
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $7f
-Finalized unsigned number type $60
-Finalized unsigned number type 8
-Finalized unsigned number type $3f8
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $60
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (word) $3f8
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
 Inferred type updated to word in table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
@@ -214,7 +214,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   [5] phi()
   to:table_driven_irq::@1
@@ -265,7 +265,7 @@ VARIABLE REGISTER WEIGHTS
 void __start()
 volatile byte irq_idx loadstore 6.0
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 byte table_driven_irq::idx
 byte table_driven_irq::idx#0 11.0
 byte table_driven_irq::val
@@ -324,15 +324,15 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [table_driven_irq] best 768 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
-Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
-Uplifting [MOS6526_CIA] best 768 combination 
-Uplifting [MOS6569_VICII] best 768 combination 
-Uplifting [MOS6581_SID] best 768 combination 
-Uplifting [main] best 768 combination 
-Uplifting [__start] best 768 combination 
+Uplifting [table_driven_irq] best 795 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
+Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
+Uplifting [MOS6526_CIA] best 795 combination 
+Uplifting [MOS6569_VICII] best 795 combination 
+Uplifting [MOS6581_SID] best 795 combination 
+Uplifting [main] best 795 combination 
+Uplifting [__start] best 795 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_idx ]
-Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
+Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -341,9 +341,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-idx-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -365,6 +370,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -388,7 +394,7 @@ __start: {
 }
   // table_driven_irq
 table_driven_irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     jmp __b1
     // table_driven_irq::@1
   __b1:
@@ -431,7 +437,8 @@ table_driven_irq: {
     jmp __breturn
     // table_driven_irq::@return
   __breturn:
-    // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // table_driven_irq::@3
   __b3:
@@ -487,6 +494,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 
@@ -518,7 +526,7 @@ Skipping double jump to $ea81 in bcs __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [49] bcs $ea81 to bcc
+Fixing long branch [55] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
 const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
@@ -539,7 +547,7 @@ const nomodify byte VIC_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore zp[1]:2 6.0
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 byte table_driven_irq::idx
 byte table_driven_irq::idx#0 reg byte a 11.0
 byte table_driven_irq::val
@@ -551,7 +559,7 @@ reg byte x [ table_driven_irq::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 604
+Score: 631
 
   // File Comments
 // Test interrupt routine using a variable between calls (irq_idx)
@@ -559,9 +567,14 @@ Score: 604
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-idx-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -583,6 +596,7 @@ Score: 604
   .label SCREEN = $400
   .label VIC_BASE = $d000
   .label irq_idx = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -600,7 +614,7 @@ __start: {
 }
   // table_driven_irq
 table_driven_irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // table_driven_irq::@1
   __b1:
     // idx = IRQ_CHANGE_IDX[irq_idx]
@@ -645,7 +659,8 @@ table_driven_irq: {
     sta.z irq_idx
     // table_driven_irq::@return
     // }
-    // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // table_driven_irq::@3
   __b3:
@@ -709,6 +724,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 

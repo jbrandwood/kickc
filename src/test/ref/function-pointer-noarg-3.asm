@@ -1,7 +1,13 @@
 // Tests creating and assigning pointers to non-args no-return functions - plus inline kickasm-based calling
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 fn2: {
     .label BG_COLOR = $d021
     // (*BG_COLOR)++;
@@ -50,6 +56,7 @@ main: {
     sta.z f+1
     jmp __b4
 }
+.segment Data
 // Inline KickAsm function
 ff:
 jmp (main.f)

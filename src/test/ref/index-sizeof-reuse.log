@@ -176,14 +176,14 @@ Simplifying constant integer cast $27
 Simplifying constant integer cast $f
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $19
-Finalized unsigned number type $ff
-Finalized unsigned number type 0
-Finalized unsigned number type $19
-Finalized signed number type 0
-Finalized signed number type $27
-Finalized unsigned number type $f
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $19
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) $27
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Alias main::v#2 = main::v#3 
@@ -252,7 +252,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $27+(snumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized signed number type 1
+Finalized signed number type (signed byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift and addition[3] main::$10 = main::i#2 * SIZEOF_STRUCT_ENTITY
 Rewriting multiplication to use shift and addition[13] main::$13 = main::i1#2 * SIZEOF_STRUCT_ENTITY
@@ -284,6 +284,9 @@ Identified duplicate assignment right side [26] main::$18 = main::$25 + main::i1
 Successful SSA optimization Pass2DuplicateRValueIdentification
 Alias main::$16 = main::$13 main::$18 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $19
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main::@3
 CALL GRAPH
 
@@ -491,15 +494,21 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test that the multiplication of a idx*sizeof(element) is reused inside loops
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="index-sizeof-reuse.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_ENTITY_X_VEL = 1
   .const OFFSET_STRUCT_ENTITY_SYMBOL = 2
   .label VIC_RASTER = $d012
   .label VIC_BG_COLOR = $d020
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // Initialize velocities
@@ -668,6 +677,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   entities: .fill 3*$19, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -732,15 +742,21 @@ Score: 17597
   // File Comments
 // Test that the multiplication of a idx*sizeof(element) is reused inside loops
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="index-sizeof-reuse.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_ENTITY_X_VEL = 1
   .const OFFSET_STRUCT_ENTITY_SYMBOL = 2
   .label VIC_RASTER = $d012
   .label VIC_BG_COLOR = $d020
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // Initialize velocities
@@ -914,5 +930,6 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   entities: .fill 3*$19, 0
 

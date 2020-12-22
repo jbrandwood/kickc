@@ -150,7 +150,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#12 
 Alias idx#1 = idx#13 
@@ -326,12 +326,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Demonstrates problems with local labels overwriting global labels
 // This should produce "abca" - but produces "abcc" because the local variable containing "c" overrides the global variable containing "a"
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="global-label-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Screen pointer and index
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] call print 
@@ -374,9 +380,11 @@ main: {
   __breturn:
     // [6] return 
     rts
+  .segment Data
     msg1: .text "b"
     .byte 0
 }
+.segment Code
   // print
 // print(byte* zp(2) msg)
 print: {
@@ -389,7 +397,7 @@ print: {
     jmp __b1
     // print::@1
   __b1:
-    // [9] if(0!=*print::msg#5) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*print::msg#5) goto print::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -446,6 +454,7 @@ print1: {
   __breturn:
     // [18] return 
     rts
+  .segment Data
     msg: .text "c"
     .byte 0
 }
@@ -510,12 +519,18 @@ Score: 510
 // Demonstrates problems with local labels overwriting global labels
 // This should produce "abca" - but produces "abcc" because the local variable containing "c" overrides the global variable containing "a"
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="global-label-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Screen pointer and index
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // print("a")
@@ -551,9 +566,11 @@ main: {
     // }
     // [6] return 
     rts
+  .segment Data
     msg1: .text "b"
     .byte 0
 }
+.segment Code
   // print
 // print(byte* zp(2) msg)
 print: {
@@ -564,7 +581,7 @@ print: {
     // print::@1
   __b1:
     // while(*msg)
-    // [9] if(0!=*print::msg#5) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*print::msg#5) goto print::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -618,6 +635,7 @@ print1: {
     // }
     // [18] return 
     rts
+  .segment Data
     msg: .text "c"
     .byte 0
 }

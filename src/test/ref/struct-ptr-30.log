@@ -154,7 +154,7 @@ Adding number conversion cast (unumber) 4 in [6] if(main::i#1!=4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift and addition[1] main::$2 = main::i#2 * SIZEOF_STRUCT_POINT
 Inlining constant with var siblings main::i#0
@@ -166,6 +166,8 @@ Alias main::$2 = main::$4
 Successful SSA optimization Pass2AliasElimination
 Eliminating unused constant SIZEOF_STRUCT_POINT
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -324,14 +326,20 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test a struct array initialized with to few members (zero-filled for the rest)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-30.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
   .const SIZEOF_STRUCT_POINT = 3
   .label SCREEN = $400
   .label idx = 3
+.segment Code
   // main
 main: {
     .label i = 2
@@ -418,6 +426,7 @@ print: {
     rts
 }
   // File Data
+.segment Data
   points: .byte 1
   .word $83f
   .byte 3
@@ -489,14 +498,20 @@ Score: 639
   // File Comments
 // Test a struct array initialized with to few members (zero-filled for the rest)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-30.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POINT_Y = 1
   .const SIZEOF_STRUCT_POINT = 3
   .label SCREEN = $400
   .label idx = 3
+.segment Code
   // main
 main: {
     .label i = 2
@@ -586,6 +601,7 @@ print: {
     rts
 }
   // File Data
+.segment Data
   points: .byte 1
   .word $83f
   .byte 3

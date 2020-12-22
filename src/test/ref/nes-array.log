@@ -106,8 +106,8 @@ Simplifying constant pointer cast (signed word*) 1024
 Simplifying constant integer cast 1
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias foo::return#0 = foo::$0 foo::return#4 foo::return#1 
 Alias foo::return#2 = foo::return#5 
@@ -145,6 +145,8 @@ Constant inlined foo::x#0 = 1
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(main::SCREEN#0+SIZEOF_SIGNED_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 Calls in [main] to foo:2 foo:6 
 
@@ -280,11 +282,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a bit of array code from the NES forum
 // https://forums.nesdev.com/viewtopic.php?f=2&t=18735
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nes-array.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -378,6 +386,7 @@ foo: {
     rts
 }
   // File Data
+.segment Data
   wow: .word $cafe, $babe, $1234, $5678
 
 ASSEMBLER OPTIMIZATIONS
@@ -429,11 +438,17 @@ Score: 141
 // Test a bit of array code from the NES forum
 // https://forums.nesdev.com/viewtopic.php?f=2&t=18735
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nes-array.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -528,5 +543,6 @@ foo: {
     rts
 }
   // File Data
+.segment Data
   wow: .word $cafe, $babe, $1234, $5678
 

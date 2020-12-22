@@ -76,9 +76,9 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::msg#1 = main::msg#5 
 Alias main::i#2 = main::i#3 
@@ -99,6 +99,8 @@ Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Constant inlined main::msg#0 = MESSAGE
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $14
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@5(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -205,11 +207,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Illustrates a problem with post-incrementing a pointer used in a loop comparison
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="post-increment-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label msg = 2
@@ -236,7 +244,7 @@ main: {
     bne !+
     inc.z msg+1
   !:
-    // [4] if(0!=main::$0) goto main::@1 -- vbuc1_neq_vbuaa_then_la1 
+    // [4] if(0!=main::$0) goto main::@1 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b1_from___b1
     jmp __b2
@@ -269,7 +277,7 @@ main: {
     jmp __b3
     // main::@3
   __b3:
-    // [10] if(0!=MESSAGE[main::i#2]) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [10] if(0!=MESSAGE[main::i#2]) goto main::@4 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b4
@@ -291,6 +299,7 @@ main: {
     jmp __b3
 }
   // File Data
+.segment Data
   MESSAGE: .text "camelot"
   .byte 0
   .fill $c, 0
@@ -340,11 +349,17 @@ Score: 653
   // File Comments
 // Illustrates a problem with post-incrementing a pointer used in a loop comparison
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="post-increment-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label msg = 2
@@ -368,7 +383,7 @@ main: {
     bne !+
     inc.z msg+1
   !:
-    // [4] if(0!=main::$0) goto main::@1 -- vbuc1_neq_vbuaa_then_la1 
+    // [4] if(0!=main::$0) goto main::@1 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b1
     // main::@2
@@ -402,7 +417,7 @@ main: {
     // main::@3
   __b3:
     // while(MESSAGE[i])
-    // [10] if(0!=MESSAGE[main::i#2]) goto main::@4 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [10] if(0!=MESSAGE[main::i#2]) goto main::@4 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b4
@@ -424,6 +439,7 @@ main: {
     jmp __b3
 }
   // File Data
+.segment Data
   MESSAGE: .text "camelot"
   .byte 0
   .fill $c, 0

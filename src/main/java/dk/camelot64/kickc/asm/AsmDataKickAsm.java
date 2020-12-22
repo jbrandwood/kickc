@@ -1,15 +1,13 @@
 package dk.camelot64.kickc.asm;
 
 /** A labelled data array initialized by kickasm code. */
-public class AsmDataKickAsm implements AsmLine {
+public class AsmDataKickAsm extends AsmLine {
 
    private String label;
 
    private int bytes;
 
    private String kickAsmCode;
-
-   private int index;
 
    public AsmDataKickAsm(String label, int bytes, String kickAsmCode) {
       this.label = label;
@@ -24,7 +22,6 @@ public class AsmDataKickAsm implements AsmLine {
    public void setKickAsmCode(String kickAsmCode) {
       this.kickAsmCode = kickAsmCode;
    }
-
 
    @Override
    public int getLineBytes() {
@@ -51,16 +48,6 @@ public class AsmDataKickAsm implements AsmLine {
     */
    public long getLineCount() {
       return kickAsmCode.chars().filter(x -> x == '\n').count() + 2;
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
 }

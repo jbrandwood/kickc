@@ -1,8 +1,14 @@
 // Test legal definition of multiple local variables with the same name
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cstyle-decl-var-multiple.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 // And a little code using them
 main: {
     .label c1 = 2

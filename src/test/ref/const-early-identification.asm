@@ -1,10 +1,16 @@
 // Tests that constants are identified early
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-early-identification.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label SCREEN = $400
   // Not an early constant (address-of is used)
   .label A = 2
+.segment Code
 __start: {
     // A = 'a'
     lda #'a'

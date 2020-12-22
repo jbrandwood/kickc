@@ -167,10 +167,10 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 2
-Finalized unsigned number type 1
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias screen#0 = screen#10 
 Alias screen#1 = screen#11 screen#12 screen#2 
@@ -359,11 +359,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Inline Strings in assignments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-string-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
+.segment Code
   // main
 main: {
     // [1] call print_msg 
@@ -435,11 +441,13 @@ print_msg: {
   __breturn:
     // [11] return 
     rts
+  .segment Data
     msg_1: .text "Hello "
     .byte 0
     msg_2: .text "World!"
     .byte 0
 }
+.segment Code
   // print
 // print(byte* zp(4) msg)
 print: {
@@ -452,7 +460,7 @@ print: {
     jmp __b1
     // print::@1
   __b1:
-    // [14] if(0!=*print::msg#2) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [14] if(0!=*print::msg#2) goto print::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -542,11 +550,17 @@ Score: 612
   // File Comments
 // Inline Strings in assignments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-string-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
+.segment Code
   // main
 main: {
     // print_msg(1)
@@ -609,11 +623,13 @@ print_msg: {
     // }
     // [11] return 
     rts
+  .segment Data
     msg_1: .text "Hello "
     .byte 0
     msg_2: .text "World!"
     .byte 0
 }
+.segment Code
   // print
 // print(byte* zp(4) msg)
 print: {
@@ -624,7 +640,7 @@ print: {
     // print::@1
   __b1:
     // while(*msg)
-    // [14] if(0!=*print::msg#2) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [14] if(0!=*print::msg#2) goto print::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0

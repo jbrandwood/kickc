@@ -1,11 +1,17 @@
 // Minimal struct with C-Standard behavior - struct with internal int array
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-43.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .const OFFSET_STRUCT_POINT_ID = 5
   .const OFFSET_STRUCT_POINT_POS = 1
   .label SCREEN = $400
+.segment Code
 main: {
     // SCREEN[0] = point1.id
     lda point1+OFFSET_STRUCT_POINT_ID
@@ -25,5 +31,6 @@ main: {
     // }
     rts
 }
+.segment Data
   point1: .byte 4
   .word 1, 2, 3

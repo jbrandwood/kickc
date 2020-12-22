@@ -1,8 +1,14 @@
 // Test strncat() implementation
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strncat-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     // strncat(build, hello, 5)
     lda #<hello
@@ -71,13 +77,9 @@ strncat: {
     bne !+
     inc.z source+1
   !:
-    lda #0
-    cmp.z num
-    bne !+
-    lda.z num+1
-    bne !+
-    jmp __b5
-  !:
+    lda.z num
+    ora.z num+1
+    beq __b5
     ldy #0
     lda (dst),y
     cmp #0
@@ -111,6 +113,7 @@ strncat: {
   !:
     jmp __b1
 }
+.segment Data
   hello: .text "hello"
   .byte 0
   space: .text " "

@@ -47,7 +47,7 @@ abstract class ReferenceHelper {
          String outLine = outLines.get(i);
          if(refLines.size()>i) {
             String refLine = refLines.get(i);
-            if(!outLine.equals(refLine)) {
+            if(!trimTrailing(outLine).equals(trimTrailing(refLine))) {
                writeOutputFile(fileName, extension, outputString);
                System.out.println(
                      "Output does not match reference on line "+i+"\n"+
@@ -67,6 +67,21 @@ abstract class ReferenceHelper {
          }
       }
       return true;
+   }
+
+   /**
+    * Trim trailing whitespace from a string
+    * @param str The string
+    * @return a copy of the string with any trailing whitespace removed.
+    */
+   public String trimTrailing(String str) {
+      int len = str.length();
+      int st = 0;
+      char[] val = str.toCharArray();
+      while ((st < len) && (val[len - 1] <= ' ')) {
+         len--;
+      }
+      return str.substring(st, len);
    }
 
    private List<String> getOutLines(String outputString) throws IOException {

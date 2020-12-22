@@ -1,12 +1,18 @@
 // Tests declaring variables as __ssa / __notssa
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="declared-ssa-var-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label SCREEN1 = $400
   .label SCREEN2 = $400+$28
   .label SCREEN3 = $400+$50
   .label SCREEN4 = $400+$78
   .label idx_nssa_g = 2
+.segment Code
 __start: {
     // idx_nssa_g
     lda #0

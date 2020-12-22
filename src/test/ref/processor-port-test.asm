@@ -1,8 +1,13 @@
 // Test the functionality of the C64 processor port ($00/$01)
 // Tests by setting the value of the processor port - and then printing out values of $00/$01/$a000/$d000/$e000
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="processor-port-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in all three areas 0xA000, 0xD000, 0xE000
@@ -26,6 +31,7 @@
   .label print_screen = $400
   .label print_char_cursor = 8
   .label print_line_cursor = 2
+.segment Code
 main: {
     // asm
     // Avoid interrupts
@@ -240,9 +246,11 @@ main: {
     // (*(SCREEN+999))++;
     inc SCREEN+$3e7
     jmp __b1
+  .segment Data
     str: .text "ddr port ddr2 $00 $01 $a000 $d000 $e000"
     .byte 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -394,6 +402,7 @@ testProcport: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text " "
     .byte 0
     str1: .text "   "
@@ -403,6 +412,7 @@ testProcport: {
     str5: .text "    "
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -473,4 +483,5 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

@@ -600,11 +600,11 @@ Simplifying constant integer cast $4fb
 Simplifying constant integer cast $19
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $4fb
-Finalized unsigned number type $19
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $4fb
+Finalized unsigned number type (byte) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
 Alias print_line_cursor#0 = print_ln::$0 print_line_cursor#8 print_char_cursor#0 print_line_cursor#9 print_char_cursor#17 print_line_cursor#1 print_char_cursor#1 
@@ -686,7 +686,7 @@ Adding number conversion cast (unumber) $1a in [82] if(main::i#1!=$1a) goto main
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $1a
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $1a
+Finalized unsigned number type (byte) $1a
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [39] addMEMtoFAC::prepareMEM1_$0 = < addMEMtoFAC::prepareMEM1_mem#0
 Constant right-side identified [41] addMEMtoFAC::prepareMEM1_$1 = > addMEMtoFAC::prepareMEM1_mem#0
@@ -722,6 +722,11 @@ Constant inlined mulFACbyMEM::mem#1 = main::f_127
 Constant inlined addMEMtoFAC::prepareMEM1_$1 = >addMEMtoFAC::prepareMEM1_mem#0
 Constant inlined setFAC::w#0 = $4fb
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@16(between main::@15 and main::@1)
 Adding NOP phi() at start of main
@@ -1274,9 +1279,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-basic.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
@@ -1284,6 +1294,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 5
+.segment Code
   // main
 main: {
     .label f_2pi = $e2e5
@@ -1477,9 +1488,11 @@ main: {
     // [6] phi print_char_cursor#34 = print_char_cursor#53 [phi:main::@15->main::@1#1] -- register_copy 
     // [6] phi main::i#10 = main::i#1 [phi:main::@15->main::@1#2] -- register_copy 
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
+.segment Code
   // setFAC
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
@@ -1799,6 +1812,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -2020,9 +2034,14 @@ Score: 4961
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-basic.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
@@ -2030,6 +2049,7 @@ Score: 4961
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 5
+.segment Code
   // main
 main: {
     .label f_2pi = $e2e5
@@ -2187,9 +2207,11 @@ main: {
     // [6] phi print_char_cursor#34 = print_char_cursor#53 [phi:main::@15->main::@1#1] -- register_copy 
     // [6] phi main::i#10 = main::i#1 [phi:main::@15->main::@1#2] -- register_copy 
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
+.segment Code
   // setFAC
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
@@ -2500,5 +2522,6 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

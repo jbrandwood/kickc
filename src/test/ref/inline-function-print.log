@@ -139,10 +139,10 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 0
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::print1_msg#0 = main::print1_msg#3 
 Alias main::print1_at#0 = main::print1_at#3 
@@ -195,6 +195,11 @@ Constant inlined main::print1_msg#0 = main::hello
 Constant inlined main::print1_i#0 = 0
 Constant inlined main::print1_j#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $28
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast 2*$28
+Successful SSA optimization PassNCastSimplification
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::print1
 Adding NOP phi() at start of main::@1
@@ -311,11 +316,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // TEst inlining a slightly complex print function (containing a loop)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-function-print.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     .label print2_at = screen+2*$28
@@ -333,9 +344,9 @@ main: {
     jmp print1___b1
     // main::print1_@1
   print1___b1:
-    // [3] if(0!=main::hello[main::print1_i#2]) goto main::print1_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [3] if(0!=main::hello[main::print1_i#2]) goto main::print1_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print1___b2
     // [4] phi from main::print1_@1 to main::print2 [phi:main::print1_@1->main::print2]
   print2_from_print1___b1:
@@ -351,9 +362,9 @@ main: {
     jmp print2___b1
     // main::print2_@1
   print2___b1:
-    // [6] if(0!=main::hello[main::print2_i#2]) goto main::print2_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [6] if(0!=main::hello[main::print2_i#2]) goto main::print2_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print2___b2
     jmp __breturn
     // main::@return
@@ -390,6 +401,7 @@ main: {
     // [2] phi main::print1_j#2 = main::print1_j#1 [phi:main::print1_@2->main::print1_@1#0] -- register_copy 
     // [2] phi main::print1_i#2 = main::print1_i#1 [phi:main::print1_@2->main::print1_@1#1] -- register_copy 
     jmp print1___b1
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }
@@ -413,8 +425,6 @@ Removing instruction __breturn:
 Removing instruction print2___b1_from_print2___b2:
 Removing instruction print1___b1_from_print1___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Replacing instruction ldx #0 with TAX
-Replacing instruction ldy #0 with TAY
 
 FINAL SYMBOL TABLE
 void main()
@@ -428,7 +438,7 @@ byte main::print1_j#1 reg byte x 11.0
 byte main::print1_j#2 reg byte x 11.0
 byte* main::print1_msg
 byte* main::print2_at
-const byte* main::print2_at#0 print2_at = screen+(byte)2*$28
+const byte* main::print2_at#0 print2_at = screen+2*$28
 byte main::print2_i
 byte main::print2_i#1 reg byte y 22.0
 byte main::print2_i#2 reg byte y 11.0
@@ -450,11 +460,17 @@ Score: 636
   // File Comments
 // TEst inlining a slightly complex print function (containing a loop)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-function-print.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     .label print2_at = screen+2*$28
@@ -468,23 +484,23 @@ main: {
     // main::print1_@1
   print1___b1:
     // for(byte i=0; msg[i]; i++)
-    // [3] if(0!=main::hello[main::print1_i#2]) goto main::print1_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [3] if(0!=main::hello[main::print1_i#2]) goto main::print1_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print1___b2
     // [4] phi from main::print1_@1 to main::print2 [phi:main::print1_@1->main::print2]
     // main::print2
     // [5] phi from main::print2 to main::print2_@1 [phi:main::print2->main::print2_@1]
     // [5] phi main::print2_j#2 = 0 [phi:main::print2->main::print2_@1#0] -- vbuxx=vbuc1 
-    tax
+    ldx #0
     // [5] phi main::print2_i#2 = 0 [phi:main::print2->main::print2_@1#1] -- vbuyy=vbuc1 
-    tay
+    ldy #0
     // main::print2_@1
   print2___b1:
     // for(byte i=0; msg[i]; i++)
-    // [6] if(0!=main::hello[main::print2_i#2]) goto main::print2_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [6] if(0!=main::hello[main::print2_i#2]) goto main::print2_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print2___b2
     // main::@return
     // }
@@ -524,6 +540,7 @@ main: {
     // [2] phi main::print1_j#2 = main::print1_j#1 [phi:main::print1_@2->main::print1_@1#0] -- register_copy 
     // [2] phi main::print1_i#2 = main::print1_i#1 [phi:main::print1_@2->main::print1_@1#1] -- register_copy 
     jmp print1___b1
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }

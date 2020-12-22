@@ -1,8 +1,14 @@
 // Tests calling through pointers to non-args no-return functions
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-12.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_POINTER = 2
+.segment Code
 main: {
     .label fn = 2
     .label fn_1 = 4
@@ -51,4 +57,5 @@ myFunc: {
     // }
     rts
 }
+.segment Data
   addrtable: .fill 2*$100, 0

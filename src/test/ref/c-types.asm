@@ -1,10 +1,16 @@
 // Tests the different standard C types
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c-types.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_char_cursor = 2
   .label print_line_cursor = 4
+.segment Code
 main: {
     // print_cls()
     jsr print_cls
@@ -62,9 +68,11 @@ testChar: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "char: "
     .byte 0
 }
+.segment Code
 testShort: {
     .const u = $578
     .const n = -$578
@@ -107,9 +115,11 @@ testShort: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "short: "
     .byte 0
 }
+.segment Code
 testInt: {
     .const u = $578
     .const n = -$578
@@ -152,9 +162,11 @@ testInt: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "int: "
     .byte 0
 }
+.segment Code
 testLong: {
     .const u = $222e0
     .const n = -$222e0
@@ -209,9 +221,11 @@ testLong: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "long: "
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -441,4 +455,5 @@ print_slong: {
     sta.z dw+3
     jmp __b2
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

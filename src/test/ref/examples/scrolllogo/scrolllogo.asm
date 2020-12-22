@@ -1,9 +1,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="scrolllogo.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_MCM = $10
   // The colors of the C64
   .const BLACK = 0
@@ -32,6 +37,7 @@
   // Remainder after unsigned 16-bit division
   .label rem16u = $1a
   .label xsin_idx = 6
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // asm
@@ -877,8 +883,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts
@@ -914,6 +919,7 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
+.segment Data
   .align $100
   xsin: .fill 2*XSIN_SIZE, 0
 .pc = $2000 "LOGO"

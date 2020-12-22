@@ -1,9 +1,15 @@
 // Illustrates problem with negating a constant negative number
 // KickAsm requires parenthesis for double negation to work
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="problem-negate-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     // printneg(-4)
     jsr printneg

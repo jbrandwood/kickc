@@ -17,7 +17,7 @@ entryPoint::@return: scope:[entryPoint]  from entryPoint::@1
   return 
   to:@return
 
-interrupt(HARDWARE_ALL) void nmiHandler()
+__interrupt(hardware_clobber) void nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
   *BG_COLOR = ++ *BG_COLOR
   to:nmiHandler::@return
@@ -56,7 +56,7 @@ byte entryPoint::i#0
 byte entryPoint::i#1
 byte entryPoint::i#2
 void main()
-interrupt(HARDWARE_ALL) void nmiHandler()
+__interrupt(hardware_clobber) void nmiHandler()
 
 Simplifying constant pointer cast (byte*) 49178
 Successful SSA optimization PassNCastSimplification
@@ -75,11 +75,14 @@ Adding number conversion cast (unumber) $32 in [3] if(entryPoint::i#1!=$32) goto
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $32
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $32
+Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings entryPoint::i#0
 Constant inlined entryPoint::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $32
+Finalized unsigned number type (byte) $32
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting entryPoint::@2(between entryPoint::@1 and entryPoint::@1)
 Adding NOP phi() at start of entryPoint
 CALL GRAPH
@@ -100,7 +103,7 @@ main::@return: scope:[main]  from main
   [1] return 
   to:@return
 
-interrupt(HARDWARE_ALL) void nmiHandler()
+__interrupt(hardware_clobber) void nmiHandler()
 nmiHandler: scope:[nmiHandler]  from
   [2] *BG_COLOR = ++ *BG_COLOR
   to:nmiHandler::@return
@@ -129,7 +132,7 @@ byte entryPoint::i
 byte entryPoint::i#1 16.5
 byte entryPoint::i#2 22.0
 void main()
-interrupt(HARDWARE_ALL) void nmiHandler()
+__interrupt(hardware_clobber) void nmiHandler()
 
 Initial phi equivalence classes
 [ entryPoint::i#2 entryPoint::i#1 ]
@@ -150,10 +153,11 @@ Uplift Scope [nmiHandler]
 Uplift Scope [main] 
 Uplift Scope [] 
 
-Uplifting [entryPoint] best 432 combination reg byte x [ entryPoint::i#2 entryPoint::i#1 ] 
-Uplifting [nmiHandler] best 432 combination 
-Uplifting [main] best 432 combination 
-Uplifting [] best 432 combination 
+Uplifting [entryPoint] best 650 combination reg byte x [ entryPoint::i#2 entryPoint::i#1 ] 
+Uplifting [nmiHandler] best 650 combination 
+Uplifting [main] best 650 combination 
+Uplifting [] best 650 combination 
+Interrupt procedure nmiHandler clobbers nzP
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -161,6 +165,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Each function of the kernal is a no-args function
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
   // Upstart
+.cpu _6502
   .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
 .segmentdef AtariTempest [segments="Code, RomData, Vectors"]
 .segmentdef Code [start=$9000, min=$9000, max=$Fff9]
@@ -184,22 +189,14 @@ main: {
 }
   // nmiHandler
 nmiHandler: {
-    // entry interrupt(HARDWARE_ALL)
-    sta rega+1
-    stx regx+1
-    sty regy+1
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     // [2] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     jmp __breturn
     // nmiHandler::@return
   __breturn:
-    // [3] return  - exit interrupt(HARDWARE_ALL)
-  rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
+    // [3] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
     rti
 }
   // entryPoint
@@ -245,9 +242,9 @@ Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
-Removing instruction __breturn:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b1_from_entryPoint:
 Removing instruction __breturn:
@@ -265,19 +262,20 @@ byte entryPoint::i
 byte entryPoint::i#1 reg byte x 16.5
 byte entryPoint::i#2 reg byte x 22.0
 void main()
-interrupt(HARDWARE_ALL) void nmiHandler()
+__interrupt(hardware_clobber) void nmiHandler()
 
 reg byte x [ entryPoint::i#2 entryPoint::i#1 ]
 
 
 FINAL ASSEMBLER
-Score: 336
+Score: 264
 
   // File Comments
 // Atari Tempest ROM Development Template
 // Each function of the kernal is a no-args function
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
   // Upstart
+.cpu _6502
   .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
 .segmentdef AtariTempest [segments="Code, RomData, Vectors"]
 .segmentdef Code [start=$9000, min=$9000, max=$Fff9]
@@ -301,22 +299,14 @@ main: {
 }
   // nmiHandler
 nmiHandler: {
-    // entry interrupt(HARDWARE_ALL)
-    sta rega+1
-    stx regx+1
-    sty regy+1
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     // (*BG_COLOR)++;
     // [2] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // nmiHandler::@return
     // }
-    // [3] return  - exit interrupt(HARDWARE_ALL)
-  rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
+    // [3] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
     rti
 }
   // entryPoint

@@ -92,8 +92,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
 Alias strlen::str#2 = strlen::str#3 
@@ -220,11 +220,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Includes a system library - ignores the local file with the same name
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="includes-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label __0 = 4
@@ -268,7 +274,7 @@ strlen: {
     jmp __b1
     // strlen::@1
   __b1:
-    // [8] if(0!=*strlen::str#2) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if(0!=*strlen::str#2) goto strlen::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -297,6 +303,7 @@ strlen: {
     jmp __b1
 }
   // File Data
+.segment Data
   STR: .text "camelot!"
   .byte 0
 
@@ -341,11 +348,17 @@ Score: 605
   // File Comments
 // Includes a system library - ignores the local file with the same name
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="includes-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label __0 = 4
@@ -386,7 +399,7 @@ strlen: {
     // strlen::@1
   __b1:
     // while(*str)
-    // [8] if(0!=*strlen::str#2) goto strlen::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if(0!=*strlen::str#2) goto strlen::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -415,6 +428,7 @@ strlen: {
     jmp __b1
 }
   // File Data
+.segment Data
   STR: .text "camelot!"
   .byte 0
 

@@ -1,7 +1,13 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="arrays-init.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     // b[0] = 'c'
     lda #'c'
@@ -17,6 +23,7 @@ main: {
     // }
     rts
 }
+.segment Data
   b: .fill 3, 0
   c: .byte 'c', 'm', 'l'
   d: .text "cml"

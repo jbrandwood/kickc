@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(KERNEL_KEYBOARD) void irq()
+Resolved forward reference irq to __interrupt(rom_sys_c64) void irq()
 
 CONTROL FLOW GRAPH SSA
 
@@ -16,7 +16,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 irq: scope:[irq]  from
   *BG_COLOR = WHITE
   *BG_COLOR = BLACK
@@ -49,7 +49,7 @@ const nomodify byte* RASTER = (byte*)$d012
 const nomodify byte* VIC_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 void main()
 
 Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
@@ -67,8 +67,8 @@ Simplifying constant pointer cast (byte*) 56333
 Simplifying constant integer cast $80
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $80
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -82,7 +82,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 irq: scope:[irq]  from
   [0] *BG_COLOR = WHITE
   [1] *BG_COLOR = BLACK
@@ -108,7 +108,7 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -128,17 +128,22 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 77 combination 
-Uplifting [irq] best 77 combination 
-Uplifting [] best 77 combination 
+Uplifting [main] best 104 combination 
+Uplifting [irq] best 104 combination 
+Uplifting [] best 104 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-kernel.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -151,10 +156,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(KERNEL_KEYBOARD)
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // [0] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BG_COLOR
@@ -168,7 +174,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [3] return  - exit interrupt(KERNEL_KEYBOARD)
+    // [3] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
     jmp $ea31
 }
   // main
@@ -227,20 +234,25 @@ const nomodify void()** KERNEL_IRQ = (void()**) 788
 const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* VIC_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 71
+Score: 98
 
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-kernel.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -253,10 +265,11 @@ Score: 71
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(KERNEL_KEYBOARD)
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // *BG_COLOR = WHITE
     // [0] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -272,7 +285,8 @@ irq: {
     sta IRQ_STATUS
     // irq::@return
     // }
-    // [3] return  - exit interrupt(KERNEL_KEYBOARD)
+    // [3] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
     jmp $ea31
 }
   // main

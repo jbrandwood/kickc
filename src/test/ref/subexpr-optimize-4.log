@@ -146,14 +146,14 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 3
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 3
-Finalized unsigned number type 4
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 3
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = main::i#2 & 1
 Inferred type updated to byte in main::$3 = main::i#3 + 3
@@ -200,7 +200,7 @@ Adding number conversion cast (unumber) 3 in [16] if(main::i#1!=3) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 3
+Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::$6 = main::$0 
 Successful SSA optimization Pass2AliasElimination
@@ -351,10 +351,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests optimization of identical sub-expressions
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="subexpr-optimize-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label __6 = 4
@@ -379,9 +385,9 @@ main: {
     // [2] main::$6 = main::i#2 & 1 -- vbuz1=vbuxx_band_vbuc1 
     lda #1
     sax.z __6
-    // [3] if(0!=main::$6) goto main::@2 -- vbuc1_neq_vbuz1_then_la1 
-    lda #0
-    cmp.z __6
+    // [3] if(0!=main::$6) goto main::@2 -- 0_neq_vbuz1_then_la1 
+    lda.z __6
+    cmp #0
     bne __b2
     jmp __b3
     // main::@3
@@ -405,9 +411,9 @@ main: {
     bne !+
     inc.z screen+1
   !:
-    // [8] if(0!=main::$6) goto main::@5 -- vbuc1_neq_vbuz1_then_la1 
-    lda #0
-    cmp.z __6
+    // [8] if(0!=main::$6) goto main::@5 -- 0_neq_vbuz1_then_la1 
+    lda.z __6
+    cmp #0
     bne __b5
     jmp __b6
     // main::@6
@@ -513,10 +519,16 @@ Score: 1101
   // File Comments
 // Tests optimization of identical sub-expressions
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="subexpr-optimize-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label __6 = 4
@@ -539,9 +551,9 @@ main: {
     lda #1
     sax.z __6
     // (i&1)?i+3:i*4
-    // [3] if(0!=main::$6) goto main::@2 -- vbuc1_neq_vbuz1_then_la1 
-    lda #0
-    cmp.z __6
+    // [3] if(0!=main::$6) goto main::@2 -- 0_neq_vbuz1_then_la1 
+    lda.z __6
+    cmp #0
     bne __b2
     // main::@3
     // [4] main::$2 = main::i#2 << 2 -- vbuaa=vbuxx_rol_2 
@@ -563,9 +575,9 @@ main: {
     inc.z screen+1
   !:
     // (i&1)?i+3:i*4
-    // [8] if(0!=main::$6) goto main::@5 -- vbuc1_neq_vbuz1_then_la1 
-    lda #0
-    cmp.z __6
+    // [8] if(0!=main::$6) goto main::@5 -- 0_neq_vbuz1_then_la1 
+    lda.z __6
+    cmp #0
     bne __b5
     // main::@6
     // [9] main::$8 = main::i#2 << 2 -- vbuaa=vbuxx_rol_2 

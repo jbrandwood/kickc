@@ -1787,24 +1787,24 @@ Simplifying constant integer cast $37
 Simplifying constant integer cast $30
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type $ce
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $37
-Finalized unsigned number type $30
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) $ce
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $37
+Finalized unsigned number type (byte) $30
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
 Inferred type updated to byte in main::$1 = $ce - main::a#2
@@ -2216,9 +2216,9 @@ Simplifying constant integer cast $37+(unumber)1
 Simplifying constant integer cast 1
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 5
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -2381,6 +2381,12 @@ Constant inlined main::op5 = main::op4
 Constant inlined main::op2 = main::op
 Constant inlined main::op3 = main::op
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 5
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@69(between main::@68 and main::@1)
 Adding NOP phi() at start of main
@@ -3534,13 +3540,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comparisons.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = 6
   .label print_char_cursor = $a
+.segment Code
   // main
 main: {
     .label b = $c
@@ -4568,6 +4580,7 @@ main: {
     // [2] phi print_char_cursor#100 = print_char_cursor#150 [phi:main::@68->main::@1#2] -- register_copy 
     // [2] phi main::a#10 = main::a#1 [phi:main::@68->main::@1#3] -- register_copy 
     jmp __b1
+  .segment Data
     cs: .byte 7, $c7, $37, $97, $67
     op: .text "< "
     .byte 0
@@ -4580,6 +4593,7 @@ main: {
     op16: .text "=="
     .byte 0
 }
+.segment Code
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -4812,7 +4826,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [199] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [199] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4844,6 +4858,7 @@ print_str: {
     jmp __b1_from___b3
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -5311,13 +5326,19 @@ Score: 15209
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comparisons.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = 6
   .label print_char_cursor = $a
+.segment Code
   // main
 main: {
     .label b = $c
@@ -6211,6 +6232,7 @@ main: {
     // [2] phi print_char_cursor#100 = print_char_cursor#150 [phi:main::@68->main::@1#2] -- register_copy 
     // [2] phi main::a#10 = main::a#1 [phi:main::@68->main::@1#3] -- register_copy 
     jmp __b1
+  .segment Data
     cs: .byte 7, $c7, $37, $97, $67
     op: .text "< "
     .byte 0
@@ -6223,6 +6245,7 @@ main: {
     op16: .text "=="
     .byte 0
 }
+.segment Code
   // print_cls
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
@@ -6437,7 +6460,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [199] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [199] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -6467,5 +6490,6 @@ print_str: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

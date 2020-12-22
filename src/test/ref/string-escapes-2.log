@@ -66,7 +66,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 255
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 main::i#4 
 Successful SSA optimization Pass2AliasElimination
@@ -168,11 +168,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test using some simple supported string escape characters in PETSCII
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label memA = $ff
+.segment Code
   // main
 main: {
     .label i = 2
@@ -184,10 +190,10 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
-    lda #0
+    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuz1_then_la1 
     ldy.z i
-    cmp MESSAGE,y
+    lda MESSAGE,y
+    cmp #0
     bne __b2
     jmp __breturn
     // main::@return
@@ -226,6 +232,7 @@ chrout: {
     rts
 }
   // File Data
+.segment Data
 .encoding "petscii_mixed"
   MESSAGE: .text @"hello\nworld\\"
   .byte 0
@@ -267,11 +274,17 @@ Score: 407
   // File Comments
 // Test using some simple supported string escape characters in PETSCII
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label memA = $ff
+.segment Code
   // main
 main: {
     .label i = 2
@@ -282,10 +295,10 @@ main: {
     // main::@1
   __b1:
     // while(MESSAGE[i])
-    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuz1_then_la1 
-    lda #0
+    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuz1_then_la1 
     ldy.z i
-    cmp MESSAGE,y
+    lda MESSAGE,y
+    cmp #0
     bne __b2
     // main::@return
     // }
@@ -322,6 +335,7 @@ chrout: {
     rts
 }
   // File Data
+.segment Data
 .encoding "petscii_mixed"
   MESSAGE: .text @"hello\nworld\\"
   .byte 0

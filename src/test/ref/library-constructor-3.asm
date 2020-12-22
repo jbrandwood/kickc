@@ -1,10 +1,16 @@
 // Demonstrates Library Constructor Functionality
 // Multiple #pragma constructor_for() constructors
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="library-constructor-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label sym = 2
   .label SCREEN = 3
+.segment Code
 __start: {
     // sym
     lda #0

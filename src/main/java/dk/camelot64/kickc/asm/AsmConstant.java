@@ -1,10 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 /** ASM constant declaration */
-public class AsmConstant implements AsmLine {
+public class AsmConstant extends AsmLine {
    private final String name;
    private final String value;
-   private int index;
 
 
    public AsmConstant(String name, String value) {
@@ -27,13 +26,4 @@ public class AsmConstant implements AsmLine {
       return ".const " + name + " = " + value;
    }
 
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
 }

@@ -9,11 +9,11 @@ void main() {
 void()** const HARDWARE_IRQ = $fffe;
 
 // Unused Interrupt Routine
-interrupt void irq1() {
+__interrupt void irq1() {
     *HARDWARE_IRQ = &irq2;
 }
 
 // Unused Interrupt Routine
-interrupt void irq2() {
+__interrupt void irq2() {
     *HARDWARE_IRQ = &irq1;
 }

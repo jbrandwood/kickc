@@ -19,7 +19,7 @@ void main() {
     }
 }
 
-const char align(0x100) SINTABLE[0x100] = kickasm {{
+const char __align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(2*PI*i/256))
 }};

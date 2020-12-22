@@ -105,8 +105,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $100
 Simplifying constant integer cast $100
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $100
-Finalized unsigned number type $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias LOGO256_GREEN#0 = __start::__init1_$0 LOGO256_GREEN#6 LOGO256_GREEN#5 LOGO256_GREEN#3 LOGO256_GREEN#1 
 Alias LOGO256_BLUE#0 = __start::__init1_$1 LOGO256_BLUE#6 LOGO256_BLUE#5 LOGO256_BLUE#3 LOGO256_BLUE#1 
@@ -133,7 +133,7 @@ Adding number conversion cast (unumber) 0 in if(main::i#1!=0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [7] LOGO256_BLUE#0 = LOGO256_GREEN#0 + $100
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -149,6 +149,13 @@ Successful SSA optimization PassNEliminateEmptyStart
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -213,14 +220,20 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Import an XMega65 8bit-per-color logo
 // Fill the palette values into
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="xmega65logo.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Create pointers to the palette RGBs in the logo (assumes dimensions are 128x128)
   .label LOGO256_RED = LOGO256+$80*$80
   .label LOGO256_GREEN = LOGO256_RED+$100
   .label LOGO256_BLUE = LOGO256_GREEN+$100
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -256,6 +269,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 // Import a 128x128 8bit-per-color logo using inline KickAsm
 LOGO256:
 #import "xmega65graphics.asm"
@@ -320,14 +334,20 @@ Score: 376
 // Import an XMega65 8bit-per-color logo
 // Fill the palette values into
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="xmega65logo.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Create pointers to the palette RGBs in the logo (assumes dimensions are 128x128)
   .label LOGO256_RED = LOGO256+$80*$80
   .label LOGO256_GREEN = LOGO256_RED+$100
   .label LOGO256_BLUE = LOGO256_GREEN+$100
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -362,6 +382,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 // Import a 128x128 8bit-per-color logo using inline KickAsm
 LOGO256:
 #import "xmega65graphics.asm"

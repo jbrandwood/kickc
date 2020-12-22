@@ -137,9 +137,9 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Alias idx#10 = idx#9 idx#17 
@@ -331,11 +331,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests using integer conditions in while() / for() / do..while
 // This should produce 'ba ba@ ba@' at the top of the screen
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="condition-integer-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // while()
@@ -350,7 +356,7 @@ main: {
   // for()
     // main::@1
   __b1:
-    // [2] if(0!=main::i#2) goto main::@2 -- vbuc1_neq_vbuaa_then_la1 
+    // [2] if(0!=main::i#2) goto main::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     jmp __b3
@@ -373,9 +379,9 @@ main: {
     // [6] main::j#1 = -- main::j#2 -- vbuyy=_dec_vbuz1 
     ldy.z j
     dey
-    // [7] if(0!=main::j#2) goto main::@5 -- vbuc1_neq_vbuz1_then_la1 
-    lda #0
-    cmp.z j
+    // [7] if(0!=main::j#2) goto main::@5 -- 0_neq_vbuz1_then_la1 
+    lda.z j
+    cmp #0
     bne __b5
     jmp __b6
     // main::@6
@@ -404,7 +410,7 @@ main: {
     txa
     sec
     sbc #1
-    // [14] if(0!=main::k#2) goto main::@8 -- vbuc1_neq_vbuxx_then_la1 
+    // [14] if(0!=main::k#2) goto main::@8 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b8
     jmp __breturn
@@ -512,11 +518,17 @@ Score: 843
 // Tests using integer conditions in while() / for() / do..while
 // This should produce 'ba ba@ ba@' at the top of the screen
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="condition-integer-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // while()
@@ -530,7 +542,7 @@ main: {
     // main::@1
   __b1:
     // for( byte i=2;i;i--)
-    // [2] if(0!=main::i#2) goto main::@2 -- vbuc1_neq_vbuaa_then_la1 
+    // [2] if(0!=main::i#2) goto main::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     // main::@3
@@ -552,9 +564,9 @@ main: {
     // [6] main::j#1 = -- main::j#2 -- vbuyy=_dec_vbuz1 
     ldy.z j
     dey
-    // [7] if(0!=main::j#2) goto main::@5 -- vbuc1_neq_vbuz1_then_la1 
-    lda #0
-    cmp.z j
+    // [7] if(0!=main::j#2) goto main::@5 -- 0_neq_vbuz1_then_la1 
+    lda.z j
+    cmp #0
     bne __b5
     // main::@6
     // SCREEN[idx++] = ' '
@@ -584,7 +596,7 @@ main: {
     txa
     sec
     sbc #1
-    // [14] if(0!=main::k#2) goto main::@8 -- vbuc1_neq_vbuxx_then_la1 
+    // [14] if(0!=main::k#2) goto main::@8 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b8
     // main::@return

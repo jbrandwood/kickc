@@ -64,6 +64,6 @@ export struct SysCall SYSCALLS[] = {
     { JMP, &syscall2, NOP }
     };
 
-export align(0x100) struct SysCall SYSCALL_RESET[] = {
+export __align(0x100) struct SysCall SYSCALL_RESET[] = {
     { JMP, &main, NOP }
 };

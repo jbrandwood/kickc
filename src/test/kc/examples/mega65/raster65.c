@@ -102,7 +102,7 @@ volatile char greet_zoomx;
 volatile char greet_idx;
 
 // BIG INTERRUPT LOOP
-interrupt(hardware_stack) void irq() {
+__interrupt(hardware_clobber) void irq() {
     // force NTSC every frame (hehe)
     VICIV->RASLINE0 |= 0x80;
     // Acknowledge the IRQ

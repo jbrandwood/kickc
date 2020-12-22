@@ -149,7 +149,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias idx#0 = idx#11 
 Alias idx#1 = idx#12 idx#13 idx#2 
@@ -195,6 +195,11 @@ Constant inlined print_person::person_id#0 = main::jesper_id
 Constant inlined print_person::i#0 = 0
 Constant inlined print_person::person_name#0 = main::jesper_name
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main::@2
 CALL GRAPH
 Calls in [main] to print_person:1 print_person:4 
@@ -336,12 +341,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Example of a struct containing an array
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-34.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
+.segment Code
   // main
 main: {
     .const jesper_id = 4
@@ -394,9 +405,11 @@ main: {
   __breturn:
     // [4] return 
     rts
+  .segment Data
     jesper_name: .fill $10, 0
     henriette_name: .fill $10, 0
 }
+.segment Code
   // print_person
 // print_person(byte register(X) person_id, byte* zp(3) person_name)
 print_person: {
@@ -421,7 +434,7 @@ print_person: {
     jmp __b1
     // print_person::@1
   __b1:
-    // [11] if(0!=print_person::person_name#4[print_person::i#2]) goto print_person::@2 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    // [11] if(0!=print_person::person_name#4[print_person::i#2]) goto print_person::@2 -- 0_neq_pbuz1_derefidx_vbuyy_then_la1 
     lda (person_name),y
     cmp #0
     bne __b2
@@ -455,6 +468,7 @@ print_person: {
     jmp __b1
 }
   // File Data
+.segment Data
   DIGIT: .text "0123456789"
   .byte 0
   __0: .text "jesper"
@@ -522,12 +536,18 @@ Score: 418
   // File Comments
 // Example of a struct containing an array
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-34.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label idx = 2
+.segment Code
   // main
 main: {
     .const jesper_id = 4
@@ -579,9 +599,11 @@ main: {
     // }
     // [4] return 
     rts
+  .segment Data
     jesper_name: .fill $10, 0
     henriette_name: .fill $10, 0
 }
+.segment Code
   // print_person
 // print_person(byte register(X) person_id, byte* zp(3) person_name)
 print_person: {
@@ -609,7 +631,7 @@ print_person: {
     // print_person::@1
   __b1:
     // for(byte i=0; person.name[i]; i++)
-    // [11] if(0!=print_person::person_name#4[print_person::i#2]) goto print_person::@2 -- vbuc1_neq_pbuz1_derefidx_vbuyy_then_la1 
+    // [11] if(0!=print_person::person_name#4[print_person::i#2]) goto print_person::@2 -- 0_neq_pbuz1_derefidx_vbuyy_then_la1 
     lda (person_name),y
     cmp #0
     bne __b2
@@ -644,6 +666,7 @@ print_person: {
     jmp __b1
 }
   // File Data
+.segment Data
   DIGIT: .text "0123456789"
   .byte 0
   __0: .text "jesper"

@@ -92,9 +92,9 @@ Simplifying constant integer cast $7f
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $7f
-Finalized unsigned number type $ff
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in getValue::$0 = getValue::index#1 & $7f
 Inferred type updated to byte in getValue::$3 = getValue::$0 * SIZEOF_WORD
@@ -121,7 +121,7 @@ Adding number conversion cast (unumber) $81 in [8] if(main::idx#1!=$81) goto mai
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $81
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $81
+Finalized unsigned number type (byte) $81
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [5] main::$2 = main::idx#2 * SIZEOF_WORD
 Rewriting multiplication to use shift [11] getValue::$3 = getValue::$0 * SIZEOF_WORD
@@ -131,6 +131,9 @@ Constant inlined main::idx#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) $80
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -280,10 +283,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test KickC performance for 16-bit array lookup function from article "Optimizing C array lookups for the 6502"
 // http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-16bit-lookup.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -358,6 +367,7 @@ getValue: {
     rts
 }
   // File Data
+.segment Data
   arr16: .fill 2*$80, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -414,10 +424,16 @@ Score: 502
 // Test KickC performance for 16-bit array lookup function from article "Optimizing C array lookups for the 6502"
 // http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-16bit-lookup.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -491,5 +507,6 @@ getValue: {
     rts
 }
   // File Data
+.segment Data
   arr16: .fill 2*$80, 0
 

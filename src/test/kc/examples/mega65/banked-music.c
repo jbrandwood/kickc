@@ -61,7 +61,7 @@ void main() {
 }
 
 // Raster IRQ routine
-interrupt(hardware_stack) void irq() {
+__interrupt(hardware_clobber) void irq() {
     // Acknowledge the IRQ
     VICII->IRQ_STATUS = IRQ_RASTER;
     // Color border

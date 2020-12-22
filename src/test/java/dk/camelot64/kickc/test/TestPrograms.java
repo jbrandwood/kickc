@@ -1,7 +1,9 @@
 package dk.camelot64.kickc.test;
 
+import dk.camelot64.kickc.CompileLog;
 import dk.camelot64.kickc.Compiler;
-import dk.camelot64.kickc.*;
+import dk.camelot64.kickc.SourceLoader;
+import dk.camelot64.kickc.TmpDirManager;
 import dk.camelot64.kickc.asm.AsmProgram;
 import dk.camelot64.kickc.model.CompileError;
 import dk.camelot64.kickc.model.Program;
@@ -42,11 +44,79 @@ public class TestPrograms {
    public TestPrograms() {
    }
 
+   @Test
+   public void testLocalVarShadowingProcedure() throws IOException, URISyntaxException {
+      assertError("local-var-shadowing-procedure.c", "Called symbol is not a procedure. main::doit");
+   }
+
+   @Test
+   public void testAdventOfCode04() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-04.c");
+   }
+
+   @Test
+   public void testAdventOfCode03() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-03.c");
+   }
+
+   @Test
+   public void testAdventOfCode02() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-02.c");
+   }
+
+   @Test
+   public void testAdventOfCode01() throws IOException, URISyntaxException {
+      compileAndCompare("adventofcode/2020-01.c");
+   }
+
+   @Test
+   public void testMissingBand() throws IOException, URISyntaxException {
+      compileAndCompare("missing-band.c");
+   }
+
+
    // https://gitlab.com/camelot/kickc/-/issues/564
    //@Test
    //public void testUnknownVarProblem() throws IOException, URISyntaxException {
    //   compileAndCompare("unknown-var-problem.c", log().verboseParse());
    //}
+
+   // TODO: Fix functions returning __ma/__ssa structs
+   //@Test
+   //public void testStructUnwinding3() throws IOException, URISyntaxException {
+   //   compileAndCompare("struct-unwinding-3.c", log().verboseCreateSsa().verboseCreateSsa());
+   //}
+
+   @Test
+   public void testStructUnwinding2() throws IOException, URISyntaxException {
+      compileAndCompare("struct-unwinding-2.c");
+   }
+
+   @Test
+   public void testStructUnwinding1() throws IOException, URISyntaxException {
+      compileAndCompare("struct-unwinding-1.c");
+   }
+
+   // TODO: Fix __varcall returning structs
+   //@Test
+   //public void testVarCall4() throws IOException, URISyntaxException {
+   //   compileAndCompare("varcall-4.c", log().verboseStructUnwind().verboseCreateSsa());
+   //}
+
+   @Test
+   public void testVarCall3() throws IOException, URISyntaxException {
+      compileAndCompare("varcall-3.c");
+   }
+
+   @Test
+   public void testVarCall2() throws IOException, URISyntaxException {
+      compileAndCompare("varcall-2.c");
+   }
+
+   @Test
+   public void testVarCall1() throws IOException, URISyntaxException {
+      compileAndCompare("varcall-1.c");
+   }
 
    @Test
    public void testConstVolatileProblem1() throws IOException, URISyntaxException {
@@ -391,6 +461,21 @@ public class TestPrograms {
    @Test
    public void testNesDemo() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes/nes-demo.c");
+   }
+
+   @Test
+   public void testCx16Sprites() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/sprites.c");
+   }
+
+   @Test
+   public void testCx16Text() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/text.c");
+   }
+
+   @Test
+   public void testCx16Rasterbars() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/rasterbars.c");
    }
 
    //@Test
@@ -1002,6 +1087,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testAddressWithExpressionValue() throws IOException, URISyntaxException {
+      compileAndCompare("address-with-expression-value.c");
+   }
+
+   @Test
    public void testAddress8() throws IOException, URISyntaxException {
       compileAndCompare("address-8.c");
    }
@@ -1313,13 +1403,10 @@ public class TestPrograms {
    }
    */
 
-   /**
-    * Fix number type resolving https://gitlab.com/camelot/kickc/issues/199
-    *
-    * @Test public void testConstBool0() throws IOException, URISyntaxException {
-    * compileAndCompare("const-bool-0.c");
-    * }
-    */
+   @Test
+   public void testConstBool0() throws IOException, URISyntaxException {
+      compileAndCompare("const-bool-0.c");
+   }
 
    @Test
    public void testAsmCullingJmp() throws IOException, URISyntaxException {
@@ -1960,23 +2047,20 @@ public class TestPrograms {
       compileAndCompare("unused-irq.c");
    }
 
-
-/*
-    * TODO: Fix error with number resolving
-
-     @Test public void testNumberTernaryFail2() throws IOException, URISyntaxException {
-     compileAndCompare("number-ternary-fail-2.c");
-     }
-     @Test public void testNumberTernaryFail() throws IOException, URISyntaxException {
-     compileAndCompare("number-ternary-fail.c");
-     }
-
-   @Test public void testNumberTernaryFail3() throws IOException, URISyntaxException {
-      compileAndCompare("number-ternary-fail-3.c");
+   @Test
+   public void testNumberTernaryFail2() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail-2.c");
    }
 
- */
+   @Test
+   public void testNumberTernaryFail() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail.c");
+   }
 
+   @Test
+   public void testNumberTernaryFail3() throws IOException, URISyntaxException {
+      compileAndCompare("number-ternary-fail-3.c");
+   }
 
    @Test
    public void testTextbox() throws IOException, URISyntaxException {
@@ -3094,8 +3178,6 @@ public class TestPrograms {
    }
    */
 
-   // TODO: Fix number type conversion https://gitlab.com/camelot/kickc/issues/199
-   /*
    @Test
    public void testTernary4() throws IOException, URISyntaxException {
       compileAndCompare("ternary-4.c");
@@ -3110,7 +3192,6 @@ public class TestPrograms {
    public void testBoolNotOperator2() throws IOException, URISyntaxException {
       compileAndCompare("bool-not-operator-2.c");
    }
-   */
 
    @Test
    public void testTernary3() throws IOException, URISyntaxException {
@@ -3686,13 +3767,10 @@ public class TestPrograms {
       compileAndCompare("min-fmul-16.c");
    }
 
-   // Fix literal number type conversion (also over the bitwise NOT operator). https://gitlab.com/camelot/kickc/issues/199
-   /*
    @Test
    public void testBitwiseNot1() throws IOException, URISyntaxException {
       compileAndCompare("bitwise-not-1.c");
    }
- */
 
    @Test
    public void testBitwiseNot() throws IOException, URISyntaxException {
@@ -3772,6 +3850,16 @@ public class TestPrograms {
    @Test
    public void testIrqKernelMinimal() throws IOException, URISyntaxException {
       compileAndCompare("irq-kernel-minimal.c");
+   }
+
+   @Test
+   public void testIrqUnknownType() throws IOException, URISyntaxException {
+      assertError("irq-unknown-type.c", "Interrupt type not supported unknown", false);
+   }
+
+   @Test
+   public void testIrqPragma() throws IOException, URISyntaxException {
+      compileAndCompare("irq-pragma.c");
    }
 
    @Test
@@ -4855,6 +4943,11 @@ public class TestPrograms {
       compileAndCompare("condition-type-mismatch.c");
    }
 
+   @Test
+   public void testIssue594() throws IOException, URISyntaxException {
+      compileAndCompare("issue-594-case.c");
+   }
+
    @BeforeAll
    public static void setUp() {
       TmpDirManager.init(new File("").toPath());
@@ -4993,8 +5086,8 @@ public class TestPrograms {
       success &= helper.testOutput(baseFileName, ".cfg", program.getGraph().toString(program));
       success &= helper.testOutput(baseFileName, ".log", program.getLog().toString());
       if(!success) {
-         //System.out.println("\nCOMPILE LOG");
-         //System.out.println(program.getLog().toString());
+         // System.out.println("\nCOMPILE LOG");
+         // System.out.println(program.getLog().toString());
          fail("Output does not match reference!");
       }
       // Save the ASM fragment caches (if there are any changes)

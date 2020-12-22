@@ -128,12 +128,12 @@ Simplifying constant integer cast $64
 Simplifying constant integer cast 0
 Simplifying constant integer cast $40
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type $64
-Finalized unsigned number type 0
-Finalized unsigned number type $64
-Finalized unsigned number type 0
-Finalized unsigned number type $40
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $64
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $40
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero SPRITES_YPOS in [2] SPRITES_YPOS[0] = $64
 Simplifying expression containing zero SPRITES_XPOS in [3] SPRITES_XPOS[0] = $64
@@ -143,6 +143,11 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) $40
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@3
@@ -281,9 +286,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Attempt to store and use a sine on zeropage
 // $00/$11 is carefully chosen to be $ff - which plays well with the processor port
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="zeropage-sinus.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
@@ -291,6 +301,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // asm { sei  }
@@ -418,6 +429,7 @@ restoreZeropage: {
     rts
 }
   // File Data
+.segment Data
   // A 256-byte (co)sine (with $ff in the first two entries)
   .align $100
 SINTABLE:
@@ -484,9 +496,14 @@ Score: 379
 // Attempt to store and use a sine on zeropage
 // $00/$11 is carefully chosen to be $ff - which plays well with the processor port
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="zeropage-sinus.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
@@ -494,6 +511,7 @@ Score: 379
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // asm
@@ -619,6 +637,7 @@ restoreZeropage: {
     rts
 }
   // File Data
+.segment Data
   // A 256-byte (co)sine (with $ff in the first two entries)
   .align $100
 SINTABLE:

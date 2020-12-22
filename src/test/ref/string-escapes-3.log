@@ -111,10 +111,10 @@ Simplifying constant integer cast $50
 Simplifying constant integer cast $28
 Simplifying constant integer cast $3f
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $50
-Finalized unsigned number type $28
-Finalized unsigned number type $3f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $3f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = *main::msg#4 & $3f
 Alias main::cursor#0 = main::line#0 
@@ -252,13 +252,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test using some simple supported string escape \n in both string and char
 // Uses encoding PETSCII mixed
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
 .encoding "petscii_mixed"
   .const CH = '\n'
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label cursor = 6
@@ -284,7 +290,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(0!=*main::msg#2) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [2] if(0!=*main::msg#2) goto main::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -359,6 +365,7 @@ main: {
     jmp __b6_from___b4
 }
   // File Data
+.segment Data
   MESSAGE: .text @"hello\nworld"
   .byte 0
 
@@ -418,13 +425,19 @@ Score: 1297
 // Test using some simple supported string escape \n in both string and char
 // Uses encoding PETSCII mixed
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
 .encoding "petscii_mixed"
   .const CH = '\n'
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label cursor = 6
@@ -449,7 +462,7 @@ main: {
     // main::@1
   __b1:
     // while(*msg)
-    // [2] if(0!=*main::msg#2) goto main::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [2] if(0!=*main::msg#2) goto main::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (msg),y
     cmp #0
@@ -523,6 +536,7 @@ main: {
     jmp __b6
 }
   // File Data
+.segment Data
   MESSAGE: .text @"hello\nworld"
   .byte 0
 

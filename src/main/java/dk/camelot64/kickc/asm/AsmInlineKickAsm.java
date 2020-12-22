@@ -4,11 +4,9 @@ package dk.camelot64.kickc.asm;
  * Inlined KickAssembler code.
  * If no cycles/byte size is specified it defaults to 256/256.
  */
-public class AsmInlineKickAsm implements AsmLine {
+public class AsmInlineKickAsm extends AsmLine {
 
    private String kickAsmCode;
-
-   private int index;
 
    private int bytes;
 
@@ -66,16 +64,6 @@ public class AsmInlineKickAsm implements AsmLine {
    @Override
    public String getAsm() {
       return kickAsmCode;
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
    @Override

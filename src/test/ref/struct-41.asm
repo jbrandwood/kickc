@@ -1,12 +1,18 @@
 // Minimal struct with Unwound behavior - struct containing struct copying
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-41.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_VECTOR_Q = 2
   .const SIZEOF_STRUCT_POINT = 2
   .const SIZEOF_STRUCT_VECTOR = 4
   .label SCREEN = $400
+.segment Code
 main: {
     .const v1_p_x = 2
     .const v1_p_y = 3
@@ -110,4 +116,5 @@ main: {
     // }
     rts
 }
+.segment Data
   __0: .byte 6, 7

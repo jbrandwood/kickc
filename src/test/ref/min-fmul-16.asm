@@ -1,12 +1,18 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="min-fmul-16.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label SCREEN = $400
   .label print_char_cursor = $c
+.segment Code
 main: {
     .label a = $4d2
     .label b = $929
@@ -369,6 +375,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)

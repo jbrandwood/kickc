@@ -1,7 +1,13 @@
 // Demonstrates a problem with inner indexes into arrays where the elemt size>1
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inner-index-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -35,5 +41,6 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   v: .fill 2*5, 0
   x: .fill 2*5, 0

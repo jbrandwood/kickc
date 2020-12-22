@@ -66,8 +66,8 @@ Simplifying constant integer cast $100
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $100
-Finalized unsigned number type 0
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::$0 = main::$6 * $100
 Inferred type updated to word in main::$1 = main::$0 + main::i#2
@@ -101,7 +101,7 @@ Adding number conversion cast (unumber) 0 in [9] if(main::i#1!=0) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [10] main::$9 = words + main::$4
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -115,6 +115,9 @@ Constant inlined main::$9 = words+$ff*SIZEOF_WORD
 Constant inlined main::i#0 = 0
 Constant inlined main::$4 = $ff*SIZEOF_WORD
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -230,11 +233,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests a word-array with 128+ elements
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="word-array-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -316,6 +325,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   words: .fill 2*$100, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -359,11 +369,17 @@ Score: 1092
   // File Comments
 // Tests a word-array with 128+ elements
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="word-array-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -443,5 +459,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   words: .fill 2*$100, 0
 

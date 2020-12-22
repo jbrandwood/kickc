@@ -1,8 +1,13 @@
 // Tests printf function call rewriting
 // Print using different formats
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-13.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const BINARY = 2
   .const OCTAL = 8
   .const DECIMAL = $a
@@ -23,6 +28,7 @@
   .label conio_line_text = $16
   // The current color cursor line start
   .label conio_line_color = $18
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -700,6 +706,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text "3s  '"
     .byte 0
     str: .text "x"
@@ -731,6 +738,7 @@ main: {
     s40: .text "X   '"
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -955,10 +963,11 @@ printf_string: {
     sta.z padding
   __b1:
     // if(!format.justify_left && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b4
     jmp __b2
   __b4:
@@ -972,10 +981,11 @@ printf_string: {
     // cputs(str)
     jsr cputs
     // if(format.justify_left && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b5
     rts
   __b5:
@@ -1294,8 +1304,8 @@ printf_number_buffer: {
     .label padding = $e
     .label format_min_length = $e
     // if(format.min_length)
-    lda #0
-    cmp.z format_min_length
+    lda.z format_min_length
+    cmp #0
     beq __b6
     // strlen(buffer.digits)
     lda #<printf_buffer+OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS
@@ -1308,8 +1318,8 @@ printf_number_buffer: {
     // There is a minimum length - work out the padding
     ldx.z __19
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b13
     // len++;
     inx
@@ -1328,12 +1338,14 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b8
     jmp __b2
   __b8:
@@ -1345,18 +1357,18 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b10
     jmp __b4
   __b10:
@@ -1368,8 +1380,8 @@ printf_number_buffer: {
     jsr printf_padding
   __b4:
     // if(format.upper_case)
-    lda #0
-    cmp.z format_upper_case
+    lda.z format_upper_case
+    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -1381,12 +1393,14 @@ printf_number_buffer: {
     sta.z cputs.s+1
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b12
     rts
   __b12:
@@ -1635,6 +1649,7 @@ toupper: {
     // }
     rts
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of binary digits

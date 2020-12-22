@@ -6,6 +6,6 @@ void main() {
     SCREEN[0]++;
 }
 
-inline interrupt void irq() {
+inline __interrupt void irq() {
     SCREEN[1]++;
 }

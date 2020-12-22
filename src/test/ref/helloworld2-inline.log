@@ -140,11 +140,11 @@ Simplifying constant integer cast $50
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type $50
-Finalized unsigned number type 0
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::print21_msg#0 = main::print21_msg#3 
 Alias main::print21_at#0 = main::print21_at#3 
@@ -312,11 +312,17 @@ Uplifting [] best 732 combination
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="helloworld2-inline.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     .label print22_at = screen+$50
@@ -334,9 +340,9 @@ main: {
     jmp print21___b1
     // main::print21_@1
   print21___b1:
-    // [3] if(0!=main::hello[main::print21_i#2]) goto main::print21_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [3] if(0!=main::hello[main::print21_i#2]) goto main::print21_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print21___b2
     // [4] phi from main::print21_@1 to main::print22 [phi:main::print21_@1->main::print22]
   print22_from_print21___b1:
@@ -352,9 +358,9 @@ main: {
     jmp print22___b1
     // main::print22_@1
   print22___b1:
-    // [6] if(0!=main::hello[main::print22_i#2]) goto main::print22_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [6] if(0!=main::hello[main::print22_i#2]) goto main::print22_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print22___b2
     jmp __breturn
     // main::@return
@@ -391,6 +397,7 @@ main: {
     // [2] phi main::print21_j#2 = main::print21_j#1 [phi:main::print21_@2->main::print21_@1#0] -- register_copy 
     // [2] phi main::print21_i#2 = main::print21_i#1 [phi:main::print21_@2->main::print21_@1#1] -- register_copy 
     jmp print21___b1
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }
@@ -414,8 +421,6 @@ Removing instruction __breturn:
 Removing instruction print22___b1_from_print22___b2:
 Removing instruction print21___b1_from_print21___b2:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Replacing instruction ldx #0 with TAX
-Replacing instruction ldy #0 with TAY
 
 FINAL SYMBOL TABLE
 void main()
@@ -450,11 +455,17 @@ Score: 636
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="helloworld2-inline.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     .label print22_at = screen+$50
@@ -468,23 +479,23 @@ main: {
     // main::print21_@1
   print21___b1:
     // for(byte i=0; msg[i]; i++)
-    // [3] if(0!=main::hello[main::print21_i#2]) goto main::print21_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [3] if(0!=main::hello[main::print21_i#2]) goto main::print21_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print21___b2
     // [4] phi from main::print21_@1 to main::print22 [phi:main::print21_@1->main::print22]
     // main::print22
     // [5] phi from main::print22 to main::print22_@1 [phi:main::print22->main::print22_@1]
     // [5] phi main::print22_j#2 = 0 [phi:main::print22->main::print22_@1#0] -- vbuxx=vbuc1 
-    tax
+    ldx #0
     // [5] phi main::print22_i#2 = 0 [phi:main::print22->main::print22_@1#1] -- vbuyy=vbuc1 
-    tay
+    ldy #0
     // main::print22_@1
   print22___b1:
     // for(byte i=0; msg[i]; i++)
-    // [6] if(0!=main::hello[main::print22_i#2]) goto main::print22_@2 -- vbuc1_neq_pbuc2_derefidx_vbuyy_then_la1 
-    lda #0
-    cmp hello,y
+    // [6] if(0!=main::hello[main::print22_i#2]) goto main::print22_@2 -- 0_neq_pbuc1_derefidx_vbuyy_then_la1 
+    lda hello,y
+    cmp #0
     bne print22___b2
     // main::@return
     // }
@@ -524,6 +535,7 @@ main: {
     // [2] phi main::print21_j#2 = main::print21_j#1 [phi:main::print21_@2->main::print21_@1#0] -- register_copy 
     // [2] phi main::print21_i#2 = main::print21_i#1 [phi:main::print21_@2->main::print21_@1#1] -- register_copy 
     jmp print21___b1
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }

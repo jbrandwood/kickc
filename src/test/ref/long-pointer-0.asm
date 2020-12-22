@@ -1,7 +1,13 @@
 // Tests creating a long (32bit) pointer on zeropage for 45GS02 flat memory access
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="long-pointer-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .const long_ptr_zp = <long_ptr
     .label long_ptr = 2

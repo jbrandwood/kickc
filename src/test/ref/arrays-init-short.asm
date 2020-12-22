@@ -1,8 +1,14 @@
 // Test a short array initializer - the rest should be zero-filled
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="arrays-init-short.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -33,6 +39,7 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   msg1: .text "camelot"
   .byte 0
   .fill 8, 0

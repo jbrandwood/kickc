@@ -43,7 +43,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $29
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $29
+Finalized unsigned number type (byte) $29
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [6] if(main::i#1!=rangelast(0,$18)) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -60,7 +60,7 @@ Adding number conversion cast (unumber) $19 in [4] if(main::i#1!=$19) goto main:
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $19
+Finalized unsigned number type (byte) $19
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
@@ -130,11 +130,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable containing a pointer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="declared-memory-var-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -176,6 +182,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   cursor: .word SCREEN
 
 ASSEMBLER OPTIMIZATIONS
@@ -210,11 +217,17 @@ Score: 536
 // Test declaring a variable as "memory", meaning it will be stored in memory and accessed through an implicit pointer (using load/store)
 // Test a memory variable containing a pointer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="declared-memory-var-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -254,5 +267,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   cursor: .word SCREEN
 

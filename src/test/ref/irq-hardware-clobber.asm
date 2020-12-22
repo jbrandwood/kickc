@@ -1,7 +1,12 @@
 // A minimal working raster hardware IRQ with clobber-based register savings
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware-clobber.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const BLACK = 0
@@ -22,6 +27,7 @@
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+.segment Code
 // Interrupt Routine
 irq: {
     sta rega+1
@@ -37,7 +43,7 @@ irq: {
     sta IRQ_STATUS
     // }
   rega:
-    lda #00
+    lda #0
     rti
 }
 // RAM in $A000, $E000 CHAR ROM in $D000

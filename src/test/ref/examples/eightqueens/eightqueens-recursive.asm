@@ -3,9 +3,14 @@
 // N Queens Problem is a famous puzzle in which n-queens are to be placed on a nxn chess board such that no two queens are in the same row, column or diagonal.  
 //
 // This is a recursive solution
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="eightqueens-recursive.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
@@ -36,6 +41,7 @@
   .label conio_line_color = $10
   // The number of found solutions
   .label count = $12
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -101,8 +107,8 @@ queen: {
     jsr legal
     // legal(r,column)
     // if(legal(r,column))
-    lda #0
-    cmp.z __1
+    lda.z __1
+    cmp #0
     beq __b3
     // board[r]=column
     //no conflicts so place queen
@@ -241,6 +247,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text " - n queens problem using backtracking -"
     .byte 0
     s1: .text @"\nnumber of queens:"
@@ -252,6 +259,7 @@ main: {
     s4: .text @".\n"
     .byte 0
 }
+.segment Code
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
@@ -414,6 +422,7 @@ print: {
     // for(char i=1;i<=QUEENS;++i)
     inc.z i
     jmp __b1
+  .segment Data
     s: .text @"\n#"
     .byte 0
     s1: .text @":\n "
@@ -425,6 +434,7 @@ print: {
     s4: .text "-"
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte zp(2) y)
 gotoxy: {
@@ -595,8 +605,8 @@ cputs: {
     bne !+
     inc.z s+1
   !:
-    lda #0
-    cmp.z c
+    lda.z c
+    cmp #0
     bne __b2
     // }
     rts
@@ -998,8 +1008,8 @@ utoa: {
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     lda.z digit_value+1
     cmp.z value+1
@@ -1040,8 +1050,8 @@ printf_number_buffer: {
     .label format_justify_left = $19
     .label format_upper_case = $24
     // if(format.min_length)
-    lda #0
-    cmp.z format_min_length
+    lda.z format_min_length
+    cmp #0
     beq __b6
     // strlen(buffer.digits)
     jsr strlen
@@ -1051,8 +1061,8 @@ printf_number_buffer: {
     lda.z __19
     sta.z len
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b13
     // len++;
     inc.z len
@@ -1070,12 +1080,14 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b8
     jmp __b2
   __b8:
@@ -1087,19 +1099,19 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     sta.z cputc.c
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b10
     jmp __b4
   __b10:
@@ -1111,8 +1123,8 @@ printf_number_buffer: {
     jsr printf_padding
   __b4:
     // if(format.upper_case)
-    lda #0
-    cmp.z format_upper_case
+    lda.z format_upper_case
+    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -1124,12 +1136,14 @@ printf_number_buffer: {
     sta.z cputs.s+1
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b12
     rts
   __b12:
@@ -1203,8 +1217,8 @@ ultoa: {
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     lda.z value+3
     cmp.z digit_value+3
@@ -1286,8 +1300,8 @@ uctoa: {
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     lda.z value
     cmp.z digit_value
@@ -1742,6 +1756,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of hexadecimal digits

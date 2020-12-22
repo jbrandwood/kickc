@@ -3,9 +3,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-plot-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -15,6 +20,7 @@
   .label BITMAP = $2000
   .label SCREEN = $400
   .label COSTAB = SINTAB+$40
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
     .label __13 = 6
@@ -222,16 +228,13 @@ bitmap_line: {
     // dy = abs_u16(y2-y1)
     // if(dx==0 && dy==0)
     lda.z dx
-    bne __b1
-    lda.z dx+1
+    ora.z dx+1
     bne __b1
     lda.z dy
-    bne !+
-    lda.z dy+1
+    ora.z dy+1
     bne !__b4+
     jmp __b4
   !__b4:
-  !:
   __b1:
     // sgn_u16(x2-x1)
     lda.z x2
@@ -531,6 +534,7 @@ bitmap_plot: {
     // }
     rts
 }
+.segment Data
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0

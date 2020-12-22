@@ -33,7 +33,7 @@ void main() {
 
 volatile bool framedone = false;
 
-interrupt(kernel_min) void irq() {
+__interrupt void irq() {
     (*BG_COLOR)++;
     *IRQ_STATUS = IRQ_RASTER;
     if (*RASTER>50) {

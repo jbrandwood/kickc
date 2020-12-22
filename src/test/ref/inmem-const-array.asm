@@ -1,9 +1,15 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inmem-const-array.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const WHITE = 1
   .const RED = 2
   .const GREEN = 5
+.segment Code
 main: {
     .label screen = $400
     .label cols = $d800
@@ -28,5 +34,6 @@ main: {
     bne __b1
     // }
     rts
+  .segment Data
     colseq: .byte WHITE, RED, GREEN
 }

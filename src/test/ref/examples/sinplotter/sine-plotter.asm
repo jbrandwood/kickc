@@ -1,7 +1,12 @@
 // Generate a big sine and plot it on a bitmap
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sine-plotter.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_BMM = $20
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -36,6 +41,7 @@
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
   .label rem16u = $12
+.segment Code
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -924,8 +930,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts
@@ -961,6 +966,7 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
+.segment Data
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0

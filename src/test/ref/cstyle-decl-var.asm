@@ -1,9 +1,15 @@
 // Test declarations of variables without definition
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cstyle-decl-var.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The actual declarations
   .label SCREEN = $400
+.segment Code
 // And a little code using them
 main: {
     // SCREEN[idx++] = 'c'

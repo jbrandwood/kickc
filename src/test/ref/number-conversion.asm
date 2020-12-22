@@ -1,8 +1,13 @@
 // Tests conversion of numbers to correct int types
 // See https://gitlab.com/camelot/kickc/issues/181
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="number-conversion.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const TYPEID_SIGNED_BYTE = 2
   .const TYPEID_SIGNED_WORD = 4
   .const TYPEID_SIGNED_DWORD = 6
@@ -13,6 +18,7 @@
   .const GREEN = 5
   .label SCREEN = $400
   .label COLS = $d800
+.segment Code
 main: {
     // assertType(typeid(12sb+12), typeid(signed byte))
     ldx #0

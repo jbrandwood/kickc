@@ -33,8 +33,8 @@ Simplifying constant integer cast $ff
 Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $ff
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused procedure __start
 Removing unused procedure block __start
@@ -77,12 +77,18 @@ Uplifting [] best 15 combination
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="minus-precedence-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const matrixSize = 8
   .const matrixSizeMask = $ff-(matrixSize-1)
+.segment Code
   // main
 main: {
     // [0] *((byte*) 1024) = matrixSizeMask -- _deref_pbuc1=vbuc2 
@@ -114,12 +120,18 @@ Score: 12
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="minus-precedence-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const matrixSize = 8
   .const matrixSizeMask = $ff-(matrixSize-1)
+.segment Code
   // main
 main: {
     // *((unsigned char *)0x400) = matrixSizeMask

@@ -197,14 +197,14 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $3e8
 Simplifying constant integer cast $3e7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $3fff
-Finalized unsigned number type 4
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type 0
-Finalized unsigned number type $3e8
-Finalized unsigned number type $3e7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (word) $3e7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::toD0181_$0 = main::toD0181_$7 & $3fff
 Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
@@ -301,6 +301,10 @@ Constant inlined main::toD0181_$5 = >(word)DYPPA_CHARSET/4&$f
 Constant inlined main::toD0181_$4 = >(word)DYPPA_CHARSET/4
 Constant inlined main::toD0181_$3 = >(word)DYPPA_CHARSET
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $800
+Finalized unsigned number type (word) $2000
+Finalized unsigned number type (word) $800
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toD0181
 Adding NOP phi() at start of main::toD0181_@return
@@ -415,15 +419,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Chunky DYPP with arbitrary sine
 // First implemented as dyppa.asm in 2011
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="dyppa2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(DEFAULT_SCREEN&$3fff)*4)|(>DYPPA_CHARSET)/4&$f
@@ -498,6 +508,7 @@ memset: {
     jmp __b1
 }
   // File Data
+.segment Data
   // The DYPPA tables mapping the slopes, offsets and pixels to the right character in the charset
   // for(offset:0..7) for(slope:0..f) for(pixels: 0..f) glyph_id(offset,slope,pixels)  
   .align $100
@@ -569,15 +580,21 @@ Score: 617
 // Chunky DYPP with arbitrary sine
 // First implemented as dyppa.asm in 2011
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="dyppa2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $400
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(DEFAULT_SCREEN&$3fff)*4)|(>DYPPA_CHARSET)/4&$f
@@ -647,6 +664,7 @@ memset: {
     jmp __b1
 }
   // File Data
+.segment Data
   // The DYPPA tables mapping the slopes, offsets and pixels to the right character in the charset
   // for(offset:0..7) for(slope:0..f) for(pixels: 0..f) glyph_id(offset,slope,pixels)  
   .align $100

@@ -1,10 +1,16 @@
 // Minimal struct -  array of 3-byte structs (required *3)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_POINT_Z = 2
+.segment Code
 main: {
     .label SCREEN = $400
     .label __0 = 3
@@ -58,4 +64,5 @@ main: {
     // }
     rts
 }
+.segment Data
   points: .fill 3*4, 0

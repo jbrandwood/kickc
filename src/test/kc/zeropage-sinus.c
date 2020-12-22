@@ -4,18 +4,18 @@
 #include <c64.h>
 
 // A 256-byte (co)sine (with $ff in the first two entries)
-const unsigned char align(0x100) SINTABLE[0x100] = kickasm {{
+const unsigned char __align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
 }};
 
 // Storage for saving/restoring zeropage
-const unsigned char align(0x100) ZP_STORAGE[0x100];
+const unsigned char __align(0x100) ZP_STORAGE[0x100];
 
 char* const SCREEN = 0x0400;
 
 // A single sprite to animate
-const align(0x40) char SPRITE[0x40] = kickasm {{ .fill $40,$ff }};
+const __align(0x40) char SPRITE[0x40] = kickasm {{ .fill $40,$ff }};
 
 void main() {
     // Stop interrupts

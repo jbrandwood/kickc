@@ -474,17 +474,17 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $3e7
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 1
-Finalized unsigned number type $4c7
-Finalized unsigned number type 0
-Finalized unsigned number type $3e7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (word) $4c7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3e7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
 Inferred type updated to word in main::$5 = main::i#6 * 2
@@ -624,6 +624,11 @@ Constant inlined memset::num#0 = COUNT
 Constant inlined main::i#1 = 2
 Constant inlined main::sieve_i#0 = sieve+2
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@17(between main::@9 and main::@10)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@14
@@ -983,9 +988,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve-min.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const COUNT = $4000
   /* Up to what number? */
@@ -995,6 +1005,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label sieve = $1000
   .label print_screen = $400
   .label print_char_cursor = $a
+.segment Code
   // main
 main: {
     .label i = $a
@@ -1070,7 +1081,7 @@ main: {
     lda.z i_1+1
     adc #>sieve
     sta.z __16+1
-    // [8] if(0!=*main::$16) goto main::@9 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if(0!=*main::$16) goto main::@9 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (__16),y
     cmp #0
@@ -1112,7 +1123,7 @@ main: {
     jmp __b7
     // main::@2
   __b2:
-    // [15] if(0!=*main::sieve_i#2) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [15] if(0!=*main::sieve_i#2) goto main::@3 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (sieve_i),y
     cmp #0
@@ -1328,6 +1339,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -1463,9 +1475,14 @@ Score: 9717
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve-min.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const COUNT = $4000
   /* Up to what number? */
@@ -1475,6 +1492,7 @@ Score: 9717
   .label sieve = $1000
   .label print_screen = $400
   .label print_char_cursor = $a
+.segment Code
   // main
 main: {
     .label i = $a
@@ -1549,7 +1567,7 @@ main: {
     lda.z i_1+1
     adc #>sieve
     sta.z __16+1
-    // [8] if(0!=*main::$16) goto main::@9 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [8] if(0!=*main::$16) goto main::@9 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (__16),y
     cmp #0
@@ -1585,7 +1603,7 @@ main: {
     // main::@2
   __b2:
     // if (!*sieve_i)
-    // [15] if(0!=*main::sieve_i#2) goto main::@3 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [15] if(0!=*main::sieve_i#2) goto main::@3 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (sieve_i),y
     cmp #0
@@ -1798,5 +1816,6 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

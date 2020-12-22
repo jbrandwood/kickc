@@ -10,7 +10,7 @@ char* BITMAP = $2000;
 
 const unsigned int SIN_SIZE = 512;
 
-signed int align($100) sin[512];
+signed int __align($100) sin[512];
 
 signed int sin2[512] = kickasm {{
     .for(var i=0; i<512; i++) {

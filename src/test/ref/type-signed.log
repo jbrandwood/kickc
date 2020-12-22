@@ -409,12 +409,12 @@ Simplifying constant integer cast -7
 Simplifying constant integer cast $141
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $28
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized signed number type -7
-Finalized unsigned number type $141
+Finalized unsigned number type (byte) $28
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized signed number type (signed byte) -7
+Finalized unsigned number type (word) $141
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
 Alias print_line_cursor#0 = print_ln::$0 print_line_cursor#8 print_char_cursor#0 print_line_cursor#9 print_char_cursor#23 print_line_cursor#1 print_char_cursor#1 
@@ -499,7 +499,7 @@ Adding number conversion cast (unumber) 6 in [40] if(main::i#1!=6) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 6
+Finalized unsigned number type (byte) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings print_char::ch#0
 Inlining constant with var siblings print_char::ch#1
@@ -514,6 +514,11 @@ Constant inlined print_char::ch#1 = ' '
 Constant inlined print_char::ch#0 = '-'
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@6(between main::@5 and main::@1)
 Adding NOP phi() at start of main
@@ -833,13 +838,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests the special "signed" / "unsigned" without a simple type name
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="type-signed.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = $b
   .label print_char_cursor = 9
+.segment Code
   // main
 main: {
     .label a = 2
@@ -1143,6 +1154,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -1275,13 +1287,19 @@ Score: 5263
   // File Comments
 // Tests the special "signed" / "unsigned" without a simple type name
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="type-signed.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_line_cursor = $b
   .label print_char_cursor = 9
+.segment Code
   // main
 main: {
     .label a = 2
@@ -1561,5 +1579,6 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

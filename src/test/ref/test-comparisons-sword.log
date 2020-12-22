@@ -1112,15 +1112,15 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type 3
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
@@ -1349,9 +1349,9 @@ Simplifying constant integer cast 6
 Simplifying constant integer cast 3
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 6
-Finalized unsigned number type 3
-Finalized unsigned number type 3
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -1420,6 +1420,11 @@ Inlining constant with var siblings compare::ops#3
 Inlining constant with var siblings compare::ops#4
 Inlining constant with var siblings compare::ops#5
 Inlining constant with var siblings compare::ops#6
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@12(between main::@7 and main::@1)
 Added new block during phi lifting main::@13(between main::@6 and main::@2)
@@ -2147,9 +2152,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test signed word comparisons
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comparisons-sword.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const LT = 0
   .const LE = 1
@@ -2164,6 +2174,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_screen = $400
   .label print_line_cursor = 7
   .label print_char_cursor = $d
+.segment Code
   // main
 main: {
     .label w1 = $f
@@ -2687,6 +2698,7 @@ compare: {
     lda #>ops_6
     sta.z ops+1
     jmp __b6
+  .segment Data
     ops_1: .text "!="
     .byte 0
     ops_2: .text "=="
@@ -2700,6 +2712,7 @@ compare: {
     ops_6: .text "< "
     .byte 0
 }
+.segment Code
   // print_ln
 // Print a newline
 print_ln: {
@@ -2851,7 +2864,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [87] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [87] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -2969,6 +2982,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   swords: .word -$6fed, $12, $7fed
 
@@ -3141,9 +3155,9 @@ Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #3
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [104] beq __b1 to bne
-Fixing long branch [108] beq __b2 to bne
-Fixing long branch [112] beq __b3 to bne
+Fixing long branch [110] beq __b1 to bne
+Fixing long branch [114] beq __b2 to bne
+Fixing long branch [118] beq __b3 to bne
 
 FINAL SYMBOL TABLE
 const nomodify byte EQ = 4
@@ -3294,9 +3308,14 @@ Score: 793661
   // File Comments
 // Test signed word comparisons
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comparisons-sword.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const LT = 0
   .const LE = 1
@@ -3311,6 +3330,7 @@ Score: 793661
   .label print_screen = $400
   .label print_line_cursor = 7
   .label print_char_cursor = $d
+.segment Code
   // main
 main: {
     .label w1 = $f
@@ -3770,6 +3790,7 @@ compare: {
     lda #>ops_6
     sta.z ops+1
     jmp __b6
+  .segment Data
     ops_1: .text "!="
     .byte 0
     ops_2: .text "=="
@@ -3783,6 +3804,7 @@ compare: {
     ops_6: .text "< "
     .byte 0
 }
+.segment Code
   // print_ln
 // Print a newline
 print_ln: {
@@ -3921,7 +3943,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [87] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [87] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4034,6 +4056,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   swords: .word -$6fed, $12, $7fed
 

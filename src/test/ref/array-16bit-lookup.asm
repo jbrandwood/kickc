@@ -1,8 +1,14 @@
 // Test KickC performance for 16-bit array lookup function from article "Optimizing C array lookups for the 6502"
 // http://8bitworkshop.com/blog/compilers/2019/03/17/cc65-optimization.html
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-16bit-lookup.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     .label __0 = 4
@@ -50,4 +56,5 @@ getValue: {
     // }
     rts
 }
+.segment Data
   arr16: .fill 2*$80, 0

@@ -1,10 +1,16 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="constantmin.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const STAR = $51
   .const RED = 2
   .label SCREEN = $400
   .label VIC = $d000
+.segment Code
 main: {
     // *SCREEN = STAR
     lda #STAR

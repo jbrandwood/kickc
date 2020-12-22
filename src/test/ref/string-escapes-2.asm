@@ -1,17 +1,23 @@
 // Test using some simple supported string escape characters in PETSCII
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label memA = $ff
+.segment Code
 main: {
     .label i = 2
     lda #0
     sta.z i
   __b1:
     // while(MESSAGE[i])
-    lda #0
     ldy.z i
-    cmp MESSAGE,y
+    lda MESSAGE,y
+    cmp #0
     bne __b2
     // }
     rts
@@ -33,6 +39,7 @@ chrout: {
     // }
     rts
 }
+.segment Data
 .encoding "petscii_mixed"
   MESSAGE: .text @"hello\nworld\\"
   .byte 0

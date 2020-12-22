@@ -4,6 +4,7 @@
 
 #pragma link("ataritempest.ld")
 #pragma extension("bin")
+#pragma cpu(ROM6502X)
 
 char* const BG_COLOR = 0xc01a;
 
@@ -17,7 +18,7 @@ void entryPoint() {
         SCREEN[i] = MESSAGE[i];
 }
 
-void interrupt(HARDWARE_ALL) nmiHandler() {
+void __interrupt(hardware_clobber) nmiHandler() {
     (*BG_COLOR)++;
 }
 

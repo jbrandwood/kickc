@@ -74,7 +74,7 @@ Simplifying constant pointer cast (byte*) 53280
 Simplifying constant pointer cast (byte*) 53281
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = main::i#1 & 1
 Inferred type updated to byte in main::$2 = main::$0 * SIZEOF_POINTER
@@ -98,6 +98,8 @@ Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_POINTER
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
 
@@ -200,10 +202,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests calling into arrays of pointers to non-args no-return functions
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label i = 2
@@ -264,6 +272,7 @@ fn1: {
     rts
 }
   // File Data
+.segment Data
   fns: .word fn1, fn2
 
 ASSEMBLER OPTIMIZATIONS
@@ -308,10 +317,16 @@ Score: 504
   // File Comments
 // Tests calling into arrays of pointers to non-args no-return functions
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label i = 2
@@ -371,5 +386,6 @@ fn1: {
     rts
 }
   // File Data
+.segment Data
   fns: .word fn1, fn2
 

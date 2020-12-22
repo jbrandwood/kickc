@@ -153,7 +153,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias cputs::str#4 = cputs::str#5 
 Alias screen#1 = screen#11 screen#21 screen#12 
@@ -324,11 +324,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests printf function call rewriting
 // A simple string - with the printf-sub cuntions in the same file.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
+.segment Code
   // main
 main: {
     // [1] call cputs 
@@ -374,6 +380,7 @@ main: {
   __breturn:
     // [6] return 
     rts
+  .segment Data
     name: .text "Jesper"
     .byte 0
     str: .text "Hello, I am "
@@ -381,6 +388,7 @@ main: {
     str1: .text ". who are you?"
     .byte 0
 }
+.segment Code
   // cputs
 // cputs(byte* zp(4) str)
 cputs: {
@@ -393,7 +401,7 @@ cputs: {
     jmp __b1
     // cputs::@1
   __b1:
-    // [9] if(0!=*cputs::str#4) goto cputs::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*cputs::str#4) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -502,11 +510,17 @@ Score: 617
 // Tests printf function call rewriting
 // A simple string - with the printf-sub cuntions in the same file.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
+.segment Code
   // main
 main: {
     // printf("Hello, I am %s. who are you?", name)
@@ -545,6 +559,7 @@ main: {
     // }
     // [6] return 
     rts
+  .segment Data
     name: .text "Jesper"
     .byte 0
     str: .text "Hello, I am "
@@ -552,6 +567,7 @@ main: {
     str1: .text ". who are you?"
     .byte 0
 }
+.segment Code
   // cputs
 // cputs(byte* zp(4) str)
 cputs: {
@@ -562,7 +578,7 @@ cputs: {
     // cputs::@1
   __b1:
     // while(*str)
-    // [9] if(0!=*cputs::str#4) goto cputs::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*cputs::str#4) goto cputs::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0

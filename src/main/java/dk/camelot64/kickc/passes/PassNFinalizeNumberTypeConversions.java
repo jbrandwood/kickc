@@ -18,8 +18,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
 
-   public PassNFinalizeNumberTypeConversions(Program program) {
+   /** True if NUMBERS should also be finalized to the smallest fixed integer type that can hold it. */
+   private boolean finalizeAllNumbers;
+
+   public PassNFinalizeNumberTypeConversions(Program program, boolean finalizeAllNumbers) {
       super(program);
+      this.finalizeAllNumbers = finalizeAllNumbers;
    }
 
    @Override
@@ -31,12 +35,22 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
             if(SymbolType.UNUMBER.equals(constantInteger.getType())) {
                SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
-               getLog().append("Finalized unsigned number type "+programValue.get().toString(getProgram()));
+               getLog().append("Finalized unsigned number type (" + integerType + ") " + programValue.get().toString(getProgram()));
                modified.set(true);
-            } else  if(SymbolType.SNUMBER.equals(constantInteger.getType())) {
+            } else if(SymbolType.SNUMBER.equals(constantInteger.getType())) {
                SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getScope());
                programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
-               getLog().append("Finalized signed number type "+programValue.get().toString(getProgram()));
+               getLog().append("Finalized signed number type (" + integerType + ") " + programValue.get().toString(getProgram()));
+               modified.set(true);
+            } else if(finalizeAllNumbers && SymbolType.NUMBER.equals(constantInteger.getType()) && constantInteger.getValue() >= 0) {
+               SymbolType integerType = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantInteger, getScope());
+               programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
+               getLog().append("Finalized unsigned number type (" + integerType + ") " + programValue.get().toString(getProgram()));
+               modified.set(true);
+            } else if(finalizeAllNumbers && SymbolType.NUMBER.equals(constantInteger.getType()) && constantInteger.getValue() <= 0) {
+               SymbolType integerType = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantInteger, getScope());
+               programValue.set(new ConstantInteger(constantInteger.getValue(), integerType));
+               getLog().append("Finalized signed number type (" + integerType + ") " + programValue.get().toString(getProgram()));
                modified.set(true);
             }
          } else if(programValue.get() instanceof ConstantCastValue) {
@@ -53,7 +67,7 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                } else {
                   ConstantLiteral constantLiteral = constantCastValue.getValue().calculateLiteral(getProgram().getScope());
                   SymbolType smallestUnsigned = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantLiteral, getScope());
-                  if(smallestUnsigned!=null) {
+                  if(smallestUnsigned != null) {
                      constantCastValue.setToType(smallestUnsigned);
                   }
                }
@@ -68,7 +82,7 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                } else {
                   ConstantLiteral constantLiteral = constantCastValue.getValue().calculateLiteral(getProgram().getScope());
                   SymbolType smallestSigned = SymbolTypeConversion.getSmallestSignedFixedIntegerType(constantLiteral, getScope());
-                  if(smallestSigned!=null) {
+                  if(smallestSigned != null) {
                      constantCastValue.setToType(smallestSigned);
                   }
                }

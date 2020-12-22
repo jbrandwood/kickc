@@ -133,10 +133,10 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 3
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 3
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [22] scan_for_lowest::$2 = ball_y[scan_for_lowest::$3] >= scan_for_lowest::height#2 from [21] scan_for_lowest::$1 = ball_y[scan_for_lowest::$3] < scan_for_lowest::height#2
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -187,6 +187,8 @@ Eliminating unused constant SIZEOF_SIGNED_WORD
 Successful SSA optimization PassNEliminateUnusedVars
 Alias scan_for_lowest::$4 = scan_for_lowest::$3 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) 8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting scan_for_lowest::@6(between scan_for_lowest::@2 and scan_for_lowest::@4)
 Adding NOP phi() at start of main
 Adding NOP phi() at start of scan_for_lowest
@@ -359,10 +361,16 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Reported by Clay Cowgill as an NPE (which has been fixed - but this return-value problem has popped up instead)
 // Caused by constant loop head unroll
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loophead-problem-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label screen = $400
@@ -465,6 +473,7 @@ scan_for_lowest: {
     jmp __b1
 }
   // File Data
+.segment Data
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79
 
 ASSEMBLER OPTIMIZATIONS
@@ -532,10 +541,16 @@ Score: 770
 // Reported by Clay Cowgill as an NPE (which has been fixed - but this return-value problem has popped up instead)
 // Caused by constant loop head unroll
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loophead-problem-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .label screen = $400
@@ -638,5 +653,6 @@ scan_for_lowest: {
     jmp __b1
 }
   // File Data
+.segment Data
   ball_y: .word $32, $64, -$c8, $c, -$64, $4b, 0, -$79
 

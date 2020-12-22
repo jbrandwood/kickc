@@ -1,8 +1,14 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="importing.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const RED = 2
   .label BG_COLOR = $d021
+.segment Code
 main: {
     .label screen = $400
     // *screen = 1

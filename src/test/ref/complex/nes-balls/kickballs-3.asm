@@ -1,3 +1,4 @@
+.cpu _6502
   // Nintendo Entertainment System (NES) ROM (Mapper 0 NROM, Vertical Mirroring)
 // https://sadistech.com/nesromtool/romdoc.html
 // https://forums.nesdev.com/viewtopic.php?f=2&t=9896
@@ -25,8 +26,6 @@
 .byte   $01           // 1x 8KB VROM (CHR)
 .byte   %00000001     // Mapper nibble 0000 == No mapping (a simple 16KB PRG + 8KB CHR game)
                       // Mirroring nibble 0001 == Vertical mirroring only
-.segment Code
-
   .const OFFSET_STRUCT_RICOH_2A03_DMC_FREQ = $10
   .const OFFSET_STRUCT_RICOH_2C02_PPUMASK = 1
   .const OFFSET_STRUCT_RICOH_2C02_PPUSTATUS = 2
@@ -83,10 +82,6 @@ __start: {
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
 vblank: {
     pha
-    txa
-    pha
-    tya
-    pha
     // PPU->PPUSCROLL = 0
     // Set scroll
     lda #0
@@ -103,10 +98,6 @@ vblank: {
     // vblank_hit++;
     inc.z vblank_hit
     // }
-    pla
-    tay
-    pla
-    tax
     pla
     rti
 }
@@ -352,11 +343,12 @@ main: {
     sta $2001
   __b13:
     // while (!vblank_hit)
-    lda #0
-    cmp.z vblank_hit
+    lda.z vblank_hit
+    cmp #0
     beq __b13
     // vblank_hit = 0
     // wait for vblank
+    lda #0
     sta.z vblank_hit
     // poke(0x2001) = 0x18
     lda #$18

@@ -78,7 +78,7 @@ Adding number conversion cast (unumber) $1f in
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $1f
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $1f
+Finalized unsigned number type (byte) $1f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [2] main::$3 = main::c#2 * SIZEOF_POINTER
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -87,6 +87,8 @@ Constant inlined main::$1 = $1f*SIZEOF_POINTER/SIZEOF_POINTER
 Constant inlined main::c#0 = 0
 Constant inlined main::$0 = $1f*SIZEOF_POINTER
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $1f
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
 
@@ -151,11 +153,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Demonstrates wrong padding for non-byte arrays.
 // https://gitlab.com/camelot/kickc/-/issues/497
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-16bit-init.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_POINTER = 2
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -192,6 +200,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   levelRowOff: .word 1, 2, 3
   .fill 2*$1c, 0
 
@@ -224,11 +233,17 @@ Score: 321
 // Demonstrates wrong padding for non-byte arrays.
 // https://gitlab.com/camelot/kickc/-/issues/497
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-16bit-init.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_POINTER = 2
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -264,6 +279,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   levelRowOff: .word 1, 2, 3
   .fill 2*$1c, 0
 

@@ -39,6 +39,24 @@ public class StructVariableMemberUnwinding {
       return structVariables.get(ref);
    }
 
+   /**
+    * Look through all unwound variables and find the master struct variable that was unwound.
+    * @param unwoundMemberRef Variable reference of unwound member
+    * @return The master variable reference. null if the passed member is not unwound.
+    */
+   public SymbolVariableRef getUnwindingMaster(SymbolVariableRef unwoundMemberRef) {
+      for(SymbolVariableRef masterVar : structVariables.keySet()) {
+         final VariableUnwinding masterVarUnwinding = getVariableUnwinding(masterVar);
+         for(String memberName : masterVarUnwinding.getMemberNames()) {
+            final SymbolVariableRef memberUnwound = masterVarUnwinding.getMemberUnwound(memberName);
+            if(memberUnwound.equals(unwoundMemberRef))
+               return masterVar;
+         }
+
+      }
+      return null;
+   }
+
    /** Information about how a single struct variable was unwound. */
    public static class VariableUnwinding {
 

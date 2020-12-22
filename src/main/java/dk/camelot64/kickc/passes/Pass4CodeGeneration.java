@@ -32,14 +32,14 @@ public class Pass4CodeGeneration {
    boolean warnFragmentMissing;
 
    /** The program being generated. */
-   private Program program;
+   private final Program program;
 
    /**
     * Keeps track of the phi transitions into blocks during code generation.
     * Used to ensure that duplicate transitions are only code generated once.
     * Maps to-blocks to the transition information for the block
     */
-   private Map<PhiTransitions.PhiTransition, Boolean> transitionsGenerated = new LinkedHashMap<>();
+   private final Map<PhiTransitions.PhiTransition, Boolean> transitionsGenerated = new LinkedHashMap<>();
 
    /**
     * Determines if a phi-transition has already been code-generated
@@ -97,12 +97,9 @@ public class Pass4CodeGeneration {
       String entryName = program.getStartProcedure().getFullName();
       linkScriptBody = linkScriptBody.replace("%E", entryName);
       Number startAddress = program.getTargetPlatform().getStartAddress();
-      if(startAddress!=null)
+      if(startAddress != null)
          linkScriptBody = linkScriptBody.replace("%P", AsmFormat.getAsmNumber(startAddress));
       asm.addLine(new AsmInlineKickAsm(linkScriptBody, 0L, 0L));
-
-      // If the link script contains ".segment" then generate segments!
-      useSegments = linkScriptBody.contains(".segment");
 
       // Generate global ZP labels
       asm.startChunk(currentScope, null, "Global Constants & labels");
@@ -176,12 +173,10 @@ public class Pass4CodeGeneration {
       program.setAsm(asm);
    }
 
-   // Should the generated program use segments?
-   private boolean useSegments = false;
    // Name of the current data segment
    private String currentCodeSegmentName = Scope.SEGMENT_CODE_DEFAULT;
    // Name of the current code segment
-   private String currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
+   private final String currentDataSegmentName = Scope.SEGMENT_DATA_DEFAULT;
    // Name of the current active segment
    private String currentSegmentName = "";
 
@@ -192,7 +187,7 @@ public class Pass4CodeGeneration {
     * @param asm The ASM program (where a .segment line is added if needed)
     */
    private void setCurrentSegment(String segmentName, AsmProgram asm) {
-      if(useSegments && !currentSegmentName.equals(segmentName)) {
+      if(!currentSegmentName.equals(segmentName)) {
          asm.addLine(new AsmSegment(segmentName));
          currentSegmentName = segmentName;
       }
@@ -500,7 +495,7 @@ public class Pass4CodeGeneration {
             // Set segment
             setCurrentSegment(constantVar.getDataSegment(), asm);
             // Set absolute address
-            asm.addLine(new AsmSetPc(asmName, AsmFormat.getAsmNumber(constantVar.getMemoryAddress())));
+            asm.addLine(new AsmSetPc(asmName, AsmFormat.getAsmConstant(program, constantVar.getMemoryAddress(), 99, scopeRef)));
             // Add any comments
             generateComments(asm, constantVar.getComments());
             // Add any alignment
@@ -751,13 +746,13 @@ public class Pass4CodeGeneration {
             }
          }
       } else if(value instanceof ConstantString) {
-               ConstantString stringValue = (ConstantString) value;
-               // Ensure encoding is good
-               String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
-               dataChunk.addDataString(asmConstant, getEncoding(stringValue));
-               if(stringValue.isZeroTerminated()) {
-                  dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
-               }
+         ConstantString stringValue = (ConstantString) value;
+         // Ensure encoding is good
+         String asmConstant = AsmFormat.getAsmConstant(program, stringValue, 99, scopeRef);
+         dataChunk.addDataString(asmConstant, getEncoding(stringValue));
+         if(stringValue.isZeroTerminated()) {
+            dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, "0", null);
+         }
       } else if(SymbolType.BYTE.equals(valueType) || SymbolType.SBYTE.equals(valueType)) {
          dataChunk.addDataNumeric(AsmDataNumeric.Type.BYTE, AsmFormat.getAsmConstant(program, value, 99, scopeRef), getEncoding(value));
       } else if(SymbolType.WORD.equals(valueType) || SymbolType.SWORD.equals(valueType)) {
@@ -838,9 +833,9 @@ public class Pass4CodeGeneration {
             throw new AsmFragmentInstance.AluNotApplicableException();
          }
          StatementAssignment assignment = (StatementAssignment) statement;
-         AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, assignmentAlu, program);
-         ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-         generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+         AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.assignmentAlu(assignment, assignmentAlu, program);
+         ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+         generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
          aluState.clear();
          return;
       }
@@ -855,8 +850,7 @@ public class Pass4CodeGeneration {
                Registers.Register lValRegister = program.getSymbolInfos().getVariable(lValueRef).getAllocation();
                if(lValRegister.getType().equals(Registers.RegisterType.REG_ALU)) {
                   //asm.addComment(statement + "  //  ALU");
-                  StatementAssignment assignmentAlu = assignment;
-                  aluState.setAluAssignment(assignmentAlu);
+                  aluState.setAluAssignment(assignment);
                   isAlu = true;
                }
             }
@@ -864,15 +858,15 @@ public class Pass4CodeGeneration {
                if(assignment.getOperator() == null && assignment.getrValue1() == null && isRegisterCopy(lValue, assignment.getrValue2())) {
                   //asm.addComment(lValue.toString(program) + " = " + assignment.getrValue2().toString(program) + "  // register copy " + getRegister(lValue));
                } else {
-                  AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(assignment, program);
-                  ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-                  generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+                  AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.assignment(assignment, program);
+                  ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+                  generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
                }
             }
          } else if(statement instanceof StatementConditionalJump) {
-            AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementConditionalJump) statement, block, program, getGraph());
-            ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-            generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+            AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.conditionalJump((StatementConditionalJump) statement, block, program);
+            ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+            generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
          } else if(statement instanceof StatementCall) {
             StatementCall call = (StatementCall) statement;
             Procedure procedure = getScope().getProcedure(call.getProcedure());
@@ -895,9 +889,9 @@ public class Pass4CodeGeneration {
             asm.getCurrentChunk().setFragment("jsr");
             asm.addInstruction("jsr", CpuAddressingMode.ABS, call.getProcedure().getFullName(), false);
          } else if(statement instanceof StatementExprSideEffect) {
-            AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory((StatementExprSideEffect) statement, program);
-            ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-            generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+            AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.exprSideEffect((StatementExprSideEffect) statement, program);
+            ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+            generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
          } else if(statement instanceof StatementReturn) {
             Procedure procedure = null;
             ScopeRef scope = block.getScope();
@@ -907,7 +901,7 @@ public class Pass4CodeGeneration {
             if(procedure == null || procedure.getInterruptType() == null) {
                asm.addInstruction("rts", CpuAddressingMode.NON, null, false);
             } else {
-               generateInterruptExit(asm, statement, procedure.getInterruptType());
+               generateInterruptExit(asm, procedure);
             }
          } else if(statement instanceof StatementAsm) {
             StatementAsm statementAsm = (StatementAsm) statement;
@@ -1025,30 +1019,21 @@ public class Pass4CodeGeneration {
     * @param procedure The interrupt procedure
     */
    private void generateInterruptEntry(AsmProgram asm, Procedure procedure) {
-      Procedure.InterruptType interruptType = procedure.getInterruptType();
-      asm.startChunk(procedure.getRef(), null, "entry interrupt(" + interruptType.name() + ")");
-      if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
-         // No entry ASM needed
-      } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
-         // No entry ASM needed
-      } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
-         asm.addInstruction("sta", CpuAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
-         asm.addInstruction("stx", CpuAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
-         asm.addInstruction("sty", CpuAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
-      } else if(Procedure.InterruptType.HARDWARE_STACK.equals(interruptType)) {
-         asm.addInstruction("pha", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("txa", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pha", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("tya", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pha", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-      } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
-         // No entry ASM needed
-      } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
-         asm.addInstruction("sta", CpuAddressingMode.ABS, "rega+1", false).setDontOptimize(true);
-         asm.addInstruction("stx", CpuAddressingMode.ABS, "regx+1", false).setDontOptimize(true);
-         asm.addInstruction("sty", CpuAddressingMode.ABS, "regy+1", false).setDontOptimize(true);
+      final String interruptType = procedure.getInterruptType().toLowerCase();
+      AsmFragmentInstanceSpecBuilder entryFragment;
+      String entryName;
+      if(interruptType.contains("clobber")) {
+         entryFragment = AsmFragmentInstanceSpecBuilder.interruptEntry(interruptType.replace("clobber", "all"), program);
+         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature().replace("all", "clobber");
       } else {
-         throw new RuntimeException("Interrupt Type not supported " + interruptType.name());
+         entryFragment = AsmFragmentInstanceSpecBuilder.interruptEntry(interruptType, program);
+         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature();
+      }
+      try {
+         asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName+ ")");
+         generateAsm(asm, entryFragment.getAsmFragmentInstanceSpec());
+      } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
+         throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure.toString() + "\n" + e.getMessage());
       }
    }
 
@@ -1056,42 +1041,24 @@ public class Pass4CodeGeneration {
     * Generate exit-code for ending an interrupt procedure based on the interrupt type
     *
     * @param asm The assembler to generate code into
-    * @param statement The return statement
-    * @param interruptType The type of interrupt to generate
+    * @param procedure The procedure
     */
-   private void generateInterruptExit(AsmProgram asm, Statement statement, Procedure.InterruptType interruptType) {
-      asm.getCurrentChunk().setSource(asm.getCurrentChunk().getSource() + " - exit interrupt(" + interruptType.name() + ")");
-      if(Procedure.InterruptType.KERNEL_MIN.equals(interruptType)) {
-         asm.addInstruction("jmp", CpuAddressingMode.ABS, "$ea81", false);
-      } else if(Procedure.InterruptType.KERNEL_KEYBOARD.equals(interruptType)) {
-         asm.addInstruction("jmp", CpuAddressingMode.ABS, "$ea31", false);
-      } else if(Procedure.InterruptType.HARDWARE_ALL.equals(interruptType)) {
-         asm.addLabel("rega").setDontOptimize(true);
-         asm.addInstruction("lda", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regx").setDontOptimize(true);
-         asm.addInstruction("ldx", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regy").setDontOptimize(true);
-         asm.addInstruction("ldy", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
-      } else if(Procedure.InterruptType.HARDWARE_STACK.equals(interruptType)) {
-         asm.addInstruction("pla", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("tay", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pla", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("tax", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("pla", CpuAddressingMode.NON, null, false).setDontOptimize(true);
-         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
-      } else if(Procedure.InterruptType.HARDWARE_NONE.equals(interruptType)) {
-         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
-      } else if(Procedure.InterruptType.HARDWARE_CLOBBER.equals(interruptType)) {
-         asm.addLabel("rega").setDontOptimize(true);
-         asm.addInstruction("lda", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regx").setDontOptimize(true);
-         asm.addInstruction("ldx", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addLabel("regy").setDontOptimize(true);
-         asm.addInstruction("ldy", CpuAddressingMode.IMM, "00", false).setDontOptimize(true);
-         asm.addInstruction("rti", CpuAddressingMode.NON, null, false);
+   private void generateInterruptExit(AsmProgram asm, Procedure procedure) {
+      final String interruptType = procedure.getInterruptType().toLowerCase();
+      AsmFragmentInstanceSpecBuilder entryFragment;
+      String entryName;
+      if(interruptType.contains("clobber")) {
+         entryFragment = AsmFragmentInstanceSpecBuilder.interruptExit(interruptType.replace("clobber", "all"), program);
+         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature().replace("all", "clobber");
       } else {
-         throw new RuntimeException("Interrupt Type not supported " + statement);
+         entryFragment = AsmFragmentInstanceSpecBuilder.interruptExit(interruptType, program);
+         entryName = entryFragment.getAsmFragmentInstanceSpec().getSignature();
+      }
+      asm.startChunk(procedure.getRef(), null, "interrupt(" + entryName + ")");
+      try {
+         generateAsm(asm, entryFragment.getAsmFragmentInstanceSpec());
+      } catch(AsmFragmentTemplateSynthesizer.UnknownFragmentException e) {
+         throw new CompileError("Interrupt type not supported " + procedure.getInterruptType() + " int " + procedure.toString() + "\n" + e.getMessage());
       }
    }
 
@@ -1168,9 +1135,9 @@ public class Pass4CodeGeneration {
             if(isRegisterCopy(lValue, rValue)) {
                asm.getCurrentChunk().setFragment("register_copy");
             } else {
-               AsmFragmentInstanceSpecFactory asmFragmentInstanceSpecFactory = new AsmFragmentInstanceSpecFactory(lValue, rValue, program, scope);
-               ensureEncoding(asm, asmFragmentInstanceSpecFactory);
-               generateAsm(asm, asmFragmentInstanceSpecFactory.getAsmFragmentInstanceSpec());
+               AsmFragmentInstanceSpecBuilder asmFragmentInstanceSpecBuilder = AsmFragmentInstanceSpecBuilder.assignment(lValue, rValue, program, scope);
+               ensureEncoding(asm, asmFragmentInstanceSpecBuilder);
+               generateAsm(asm, asmFragmentInstanceSpecBuilder.getAsmFragmentInstanceSpec());
             }
          }
          transitionSetGenerated(transition);
@@ -1186,7 +1153,7 @@ public class Pass4CodeGeneration {
     * @param asm The ASM program (where any .encoding directive will be emitted)
     * @param asmFragmentInstance The ASM fragment to be emitted
     */
-   private static void ensureEncoding(AsmProgram asm, AsmFragmentInstanceSpecFactory asmFragmentInstance) {
+   private static void ensureEncoding(AsmProgram asm, AsmFragmentInstanceSpecBuilder asmFragmentInstance) {
       asm.ensureEncoding(getEncoding(asmFragmentInstance));
    }
 
@@ -1222,7 +1189,7 @@ public class Pass4CodeGeneration {
     * @param asmFragmentInstance The asm fragment instance to examine
     * @return Any encoding found inside the constant
     */
-   private static Set<StringEncoding> getEncoding(AsmFragmentInstanceSpecFactory asmFragmentInstance) {
+   private static Set<StringEncoding> getEncoding(AsmFragmentInstanceSpecBuilder asmFragmentInstance) {
       LinkedHashSet<StringEncoding> encodings = new LinkedHashSet<>();
       Map<String, Value> bindings = asmFragmentInstance.getBindings();
       for(Value boundValue : bindings.values()) {

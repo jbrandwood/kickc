@@ -1,11 +1,17 @@
 // Example of inline kickasm resource data
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-kasm-resource.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label SPRITES_ENABLE = $d015
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
+.segment Code
 main: {
     // *(SCREEN+0x3f8) = (char)((unsigned int)SPRITE/$40)
     lda #$ff&SPRITE/$40
@@ -21,6 +27,7 @@ main: {
     // }
     rts
 }
+.segment Data
 .pc = $c00 "SPRITE"
 SPRITE:
 .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))

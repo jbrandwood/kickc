@@ -171,12 +171,12 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $ff
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $ff
-Finalized unsigned number type 0
-Finalized unsigned number type 7
-Finalized unsigned number type 3
-Finalized unsigned number type $ff
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in keyboard_key_pressed::$0 = keyboard_key_pressed::key#1 & 7
 Alias keyboard_matrix_read::return#0 = keyboard_matrix_read::row_pressed_bits#0 keyboard_matrix_read::$0 keyboard_matrix_read::return#3 keyboard_matrix_read::return#1 
@@ -223,6 +223,9 @@ Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(keyboard_matrix_row_bitmask+keyboard_key_pressed::rowidx#0)
 Consolidated array index constant in *(keyboard_matrix_col_bitmask+keyboard_key_pressed::colidx#0)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@6
 Adding NOP phi() at start of main::@1
@@ -398,9 +401,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // |7.  | #%01111111 (127/$7f) | STOP  ($  )|   q   ($11)|COMMODR($  )| SPACE ($20)|   2   ($32)|CONTROL($  )|  <-   ($1f)|   1   ($31)|
 // +----+----------------------+------------+------------+------------+------------+------------+------------+------------+------------+
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-keyboard-space.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const KEY_SPACE = $3c
   .const GREEN = 5
@@ -412,6 +420,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
+.segment Code
   // main
 main: {
     // [1] call keyboard_init 
@@ -514,6 +523,7 @@ keyboard_matrix_read: {
     rts
 }
   // File Data
+.segment Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
@@ -604,9 +614,14 @@ Score: 1141
 // |7.  | #%01111111 (127/$7f) | STOP  ($  )|   q   ($11)|COMMODR($  )| SPACE ($20)|   2   ($32)|CONTROL($  )|  <-   ($1f)|   1   ($31)|
 // +----+----------------------+------------+------------+------------+------------+------------+------------+------------+------------+
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-keyboard-space.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const KEY_SPACE = $3c
   .const GREEN = 5
@@ -618,6 +633,7 @@ Score: 1141
   .label BG_COLOR = $d021
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
+.segment Code
   // main
 main: {
     // keyboard_init()
@@ -719,6 +735,7 @@ keyboard_matrix_read: {
     rts
 }
   // File Data
+.segment Data
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
   // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)

@@ -55,8 +55,8 @@ Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant integer cast 3
 Simplifying constant integer cast $fd
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 3
-Finalized unsigned number type $fd
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $fd
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$1 [2] if(*((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_RASTER)!=$fd) goto main::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -71,6 +71,8 @@ Removing unused procedure block __start::@1
 Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (word) $1000
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -122,9 +124,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="music.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
@@ -134,6 +141,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
+.segment Code
   // main
 // Play the music 
 main: {
@@ -161,6 +169,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
 .pc = $1000 "MUSIC"
 // SID tune at an absolute address
 MUSIC:
@@ -197,9 +206,14 @@ Score: 1066
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="music.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
@@ -209,6 +223,7 @@ Score: 1066
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
+.segment Code
   // main
 // Play the music 
 main: {
@@ -238,6 +253,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
 .pc = $1000 "MUSIC"
 // SID tune at an absolute address
 MUSIC:

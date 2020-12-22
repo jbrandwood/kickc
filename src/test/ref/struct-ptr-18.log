@@ -126,8 +126,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$2 = 0 * SIZEOF_STRUCT_POINT
 Inferred type updated to byte in main::$3 = 1 * SIZEOF_STRUCT_POINT
@@ -175,7 +175,7 @@ Adding number conversion cast (unumber) 2 in [8] if(main::i#1!=2) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [3] main::$4 = main::i#2 * SIZEOF_STRUCT_POINT
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -187,6 +187,9 @@ Constant inlined idx#15 = 0
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(points+1*SIZEOF_STRUCT_POINT)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
 CALL GRAPH
 Calls in [main] to print:6 
@@ -307,13 +310,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Demonstrates problem with passing struct array element as parameter to call
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-18.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label i = 2
@@ -394,6 +403,7 @@ print: {
     rts
 }
   // File Data
+.segment Data
   points: .fill 2*2, 0
   __0: .byte 1, 2
   __1: .byte 3, 4
@@ -453,13 +463,19 @@ Score: 528
   // File Comments
 // Demonstrates problem with passing struct array element as parameter to call
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-18.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label i = 2
@@ -540,6 +556,7 @@ print: {
     rts
 }
   // File Data
+.segment Data
   points: .fill 2*2, 0
   __0: .byte 1, 2
   __1: .byte 3, 4

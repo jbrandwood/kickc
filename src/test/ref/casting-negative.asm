@@ -1,8 +1,13 @@
 // Demonstrates problem with Casting of negative signed values
 // https://gitlab.com/camelot/kickc/-/issues/496
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="casting-negative.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
@@ -19,6 +24,7 @@
   .label conio_line_text = $c
   // The current color cursor line start
   .label conio_line_color = $e
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -242,9 +248,11 @@ test_casting: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text @"\n"
     .byte 0
 }
+.segment Code
 // Print a signed integer using a specific format
 // printf_sint(signed word zp(3) value)
 printf_sint: {
@@ -638,6 +646,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

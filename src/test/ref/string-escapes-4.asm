@@ -1,12 +1,18 @@
 // Test using some simple supported string escape
 // Uses \xnn to add chars by hex-code
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
 .encoding "screencode_upper"
   .const CH = '\$de'
   .label SCREEN1 = $400
   .label SCREEN2 = $428
+.segment Code
 main: {
     // *((char*)0xd018) = 0x17
     // Show mixed chars on screen
@@ -42,6 +48,7 @@ chrout: {
     // }
     rts
 }
+.segment Data
 .encoding "petscii_mixed"
   MSG1: .text "cAmElot"
   .byte 0

@@ -30,7 +30,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simplifying expression containing zero main::screen in [0] main::screen[0] = main::b
 Successful SSA optimization PassNSimplifyExpressionWithZero
@@ -39,6 +39,14 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $e
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $16
+Finalized unsigned number type (byte) 3
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast 6*$e/3+$16%3
+Successful SSA optimization PassNCastSimplification
 CALL GRAPH
 
 Created 0 initial phi equivalence classes
@@ -74,10 +82,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test a constant with multiplication and division
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-mult-div.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .const b = 6*$e/3+mod($16,3)
@@ -101,7 +115,7 @@ Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 void main()
-const byte main::b = (byte)6*$e/3+$16%3
+const byte main::b = 6*$e/3+$16%3
 const byte* main::screen = (byte*) 1024
 
 
@@ -112,10 +126,16 @@ Score: 12
   // File Comments
 // Test a constant with multiplication and division
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-mult-div.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     .const b = 6*$e/3+mod($16,3)

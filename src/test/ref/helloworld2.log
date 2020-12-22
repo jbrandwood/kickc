@@ -102,9 +102,9 @@ Simplifying constant integer cast $50
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $50
-Finalized unsigned number type 0
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias print2::at#1 = main::$1 
 Alias print2::msg#2 = print2::msg#3 
@@ -243,11 +243,17 @@ Uplifting [] best 435 combination
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="helloworld2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     // [1] call print2 
@@ -278,9 +284,11 @@ main: {
   __breturn:
     // [4] return 
     rts
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }
+.segment Code
   // print2
 // print2(byte* zp(2) at)
 print2: {
@@ -294,7 +302,7 @@ print2: {
     jmp __b1
     // print2::@1
   __b1:
-    // [7] if(0!=main::hello[print2::i#2]) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if(0!=main::hello[print2::i#2]) goto print2::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda main.hello,x
     cmp #0
     bne __b2
@@ -363,11 +371,17 @@ Score: 369
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="helloworld2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = $400
+.segment Code
   // main
 main: {
     // print2(screen, hello)
@@ -394,9 +408,11 @@ main: {
     // }
     // [4] return 
     rts
+  .segment Data
     hello: .text "hello world!"
     .byte 0
 }
+.segment Code
   // print2
 // print2(byte* zp(2) at)
 print2: {
@@ -409,7 +425,7 @@ print2: {
     // print2::@1
   __b1:
     // for(byte i=0; msg[i]; i++)
-    // [7] if(0!=main::hello[print2::i#2]) goto print2::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [7] if(0!=main::hello[print2::i#2]) goto print2::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda main.hello,x
     cmp #0
     bne __b2

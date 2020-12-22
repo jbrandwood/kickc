@@ -1,8 +1,13 @@
 // Tests printf function call rewriting
 // Print a char using %u
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-14.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
@@ -19,6 +24,7 @@
   .label conio_line_text = $a
   // The current color cursor line start
   .label conio_line_color = $c
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -273,8 +279,8 @@ uctoa: {
     lda RADIX_DECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5
@@ -567,6 +573,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

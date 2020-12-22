@@ -1,14 +1,14 @@
 package dk.camelot64.kickc.asm;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /** Define a KickAss segment */
-public class AsmSegmentDef implements AsmLine {
+public class AsmSegmentDef extends AsmLine {
 
    private final String name;
    private final Map<String,String> parameters;
-   private int index;
 
    public AsmSegmentDef(String name, Map<String, String> parameters) {
       this.name = name;
@@ -49,13 +49,4 @@ public class AsmSegmentDef implements AsmLine {
       return asm.toString();
    }
 
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
 }

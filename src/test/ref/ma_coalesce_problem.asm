@@ -1,9 +1,15 @@
 // Demonstrates problem with __ma coalescing
 // c1a is erroneously zp-coalesced with c1A
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="ma_coalesce_problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
   __b1:
     // c1a = c1A
@@ -35,6 +41,7 @@ main: {
     // for (char i = 0; i < 40; ++i)
     inc i
     jmp __b2
+  .segment Data
     c1a: .byte 0
     i: .byte 0
 }

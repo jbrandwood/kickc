@@ -1,12 +1,18 @@
 // Test compound assignment operators
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="assignment-compound.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const GREEN = 5
   .const RED = 2
   .label screen1 = $400
   .label cols = $d800
   .label screen2 = screen1+$28
+.segment Code
 main: {
     // test(i++, a)
   //3
@@ -101,4 +107,5 @@ test: {
     sta cols,x
     rts
 }
+.segment Data
   ref: .byte 3, 4, 3, $12, 9, 1, 4, 2, 4, 5, 1, 0

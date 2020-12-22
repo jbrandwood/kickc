@@ -1,11 +1,17 @@
 // Test the fast multiplication library
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-multiply-16bit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label BG_COLOR = $d021
   .label print_screen = $400
   .label print_char_cursor = $16
   .label print_line_cursor = $10
+.segment Code
 main: {
     // *BG_COLOR = 5
     lda #5
@@ -301,9 +307,11 @@ mul16u_compare: {
     // print_ln()
     jsr print_ln
     rts
+  .segment Data
     str1: .text "word multiply results match!"
     .byte 0
 }
+.segment Code
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
     .label a = 4
@@ -432,9 +440,11 @@ mul16s_compare: {
     // print_ln()
     jsr print_ln
     rts
+  .segment Data
     str1: .text "signed word multiply results match!"
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -503,10 +513,8 @@ muls16u: {
     .label b = $1a
     // if(a!=0)
     lda.z a
-    bne !+
-    lda.z a+1
+    ora.z a+1
     beq __b4
-  !:
     lda #<0
     sta.z m
     sta.z m+1
@@ -583,8 +591,7 @@ mul16u: {
   __b1:
     // while(a!=0)
     lda.z a
-    bne __b2
-    lda.z a+1
+    ora.z a+1
     bne __b2
     // }
     rts
@@ -820,9 +827,11 @@ mul16u_error: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "multiply mismatch "
     .byte 0
 }
+.segment Code
 // Print a newline
 print_ln: {
   __b1:
@@ -1185,9 +1194,11 @@ mul16s_error: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "signed word multiply mismatch "
     .byte 0
 }
+.segment Code
 // Print a single char
 // print_char(byte register(A) ch)
 print_char: {
@@ -1325,6 +1336,7 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)

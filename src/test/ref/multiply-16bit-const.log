@@ -762,21 +762,21 @@ Simplifying constant integer cast $22b
 Simplifying constant integer cast $14d
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $a
-Finalized unsigned number type 8
-Finalized unsigned number type $b
-Finalized unsigned number type $20
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $3e8
-Finalized unsigned number type $d02
-Finalized unsigned number type $22b
-Finalized unsigned number type $14d
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $b
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (word) $d02
+Finalized unsigned number type (word) $22b
+Finalized unsigned number type (word) $14d
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in ultoa::$4 = ultoa::max_digits#5 - 1
 Inferred type updated to dword in main::$2 = main::i#3 * $22b
@@ -963,7 +963,7 @@ Adding number conversion cast (unumber) 0 in [14] ultoa::$12 = 0 != ultoa::start
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values ultoa::max_digits#7 ultoa::max_digits#1
 Identical Phi Values ultoa::digit_values#8 ultoa::digit_values#1
@@ -1015,6 +1015,13 @@ Alias print_ulong_decimal::w#0 = main::$12
 Successful SSA optimization Pass2AliasElimination
 Eliminating unused constant SIZEOF_DWORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $b
+Finalized unsigned number type (byte) $b
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting ultoa::@17(between ultoa::@16 and ultoa::@13)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Adding NOP phi() at start of main
@@ -1607,15 +1614,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="multiply-16bit-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = $11
   .label print_line_cursor = 8
   .label print_char_cursor_1 = 8
   .label print_line_cursor_1 = 6
+.segment Code
   // main
 main: {
     .label i = 2
@@ -2018,7 +2031,7 @@ ultoa: {
     sta.z digit_value+2
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
-    // [48] if(0!=ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [48] if(0!=ultoa::started#2) goto ultoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     jmp __b7
@@ -2106,7 +2119,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [61] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [61] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -2232,6 +2245,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits
@@ -2431,15 +2445,21 @@ Score: 115473
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="multiply-16bit-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = $11
   .label print_line_cursor = 8
   .label print_char_cursor_1 = 8
   .label print_line_cursor_1 = 6
+.segment Code
   // main
 main: {
     .label i = 2
@@ -2828,7 +2848,7 @@ ultoa: {
     lda RADIX_DECIMAL_VALUES_LONG+3,y
     sta.z digit_value+3
     // if (started || value >= digit_value)
-    // [48] if(0!=ultoa::started#2) goto ultoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [48] if(0!=ultoa::started#2) goto ultoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     // ultoa::@7
@@ -2911,7 +2931,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [61] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [61] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3034,6 +3054,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

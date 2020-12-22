@@ -77,9 +77,9 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [5] main::$1 = 0 == main::$0 from [4] main::$2 = 0 != main::$0
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -97,6 +97,9 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (byte) $1d
+Finalized unsigned number type (byte) $1d
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -195,10 +198,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
 // http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
   // Upstart
-.pc = $1001 "Basic"
+  // Commodore 16 / Plus/4 executable PRG file
+.file [name="plus4-kbhit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
-
   // Global Constants & labels
   .const OFFSET_STRUCT_MOS7360_TED_KEYBOARD_INPUT = 8
   // Keyboard Port PIO (P0-P7)
@@ -206,6 +213,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label KEYBOARD_PORT = $fd30
   // The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
+.segment Code
   // main
 main: {
     // [1] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
@@ -221,7 +229,7 @@ main: {
     // main::@2
   __b2:
     // [4] main::$0 = kbhit::return#0
-    // [5] if(0==main::$0) goto main::@1 -- vbuc1_eq_vbuaa_then_la1 
+    // [5] if(0==main::$0) goto main::@1 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b1_from___b2
     jmp __breturn
@@ -300,10 +308,14 @@ Score: 129
 // https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
 // http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
   // Upstart
-.pc = $1001 "Basic"
+  // Commodore 16 / Plus/4 executable PRG file
+.file [name="plus4-kbhit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
-
   // Global Constants & labels
   .const OFFSET_STRUCT_MOS7360_TED_KEYBOARD_INPUT = 8
   // Keyboard Port PIO (P0-P7)
@@ -311,6 +323,7 @@ Score: 129
   .label KEYBOARD_PORT = $fd30
   // The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
+.segment Code
   // main
 main: {
     // [1] phi from main main::@2 to main::@1 [phi:main/main::@2->main::@1]
@@ -323,7 +336,7 @@ main: {
     // main::@2
     // [4] main::$0 = kbhit::return#0
     // while(!kbhit())
-    // [5] if(0==main::$0) goto main::@1 -- vbuc1_eq_vbuaa_then_la1 
+    // [5] if(0==main::$0) goto main::@1 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b1
     // main::@return

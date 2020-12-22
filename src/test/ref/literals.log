@@ -65,10 +65,10 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 4
 Simplifying constant integer cast 9
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 4
-Finalized unsigned number type 9
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 9
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$0 = 4 + main::i#2
 Inferred type updated to byte in main::$1 = 9 + main::i#2
@@ -91,7 +91,7 @@ Adding number conversion cast (unumber) 4 in [8] if(main::i#1!=4) goto main::@1
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
@@ -162,13 +162,19 @@ Uplifting [] best 383 combination
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="literals.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const ch = 'a'
   .const num = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [0] *SCREEN = ch -- _deref_pbuc1=vbuc2 
@@ -206,6 +212,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   str: .text "bcde"
   .byte 0
   nums: .byte 2, 3, 4, 5
@@ -242,13 +249,19 @@ Score: 293
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="literals.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const ch = 'a'
   .const num = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // SCREEN[0] = ch
@@ -286,6 +299,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   str: .text "bcde"
   .byte 0
   nums: .byte 2, 3, 4, 5

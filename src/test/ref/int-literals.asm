@@ -1,7 +1,12 @@
 // Tests different integer literal types
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="int-literals.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const RED = 2
   .const GREEN = 5
   .const TYPEID_BYTE = 1
@@ -13,6 +18,7 @@
   .label SCREEN = $400
   .label COLS = $d800
   .label idx = 4
+.segment Code
 main: {
     .label s = 2
     lda #<SCREEN

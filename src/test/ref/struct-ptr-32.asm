@@ -1,10 +1,16 @@
 // Example of a struct containing an array
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-32.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_PERSON = $10
   .const OFFSET_STRUCT_PERSON_NAME = 1
   .const OFFSET_STRUCT_PERSON_AGE = $e
+.segment Code
 main: {
     .label SCREEN = $400
     .label person = persons+SIZEOF_STRUCT_PERSON
@@ -39,4 +45,5 @@ main: {
     // }
     rts
 }
+.segment Data
   persons: .fill $10*2, 0

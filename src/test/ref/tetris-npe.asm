@@ -1,10 +1,16 @@
 // NullPointerException using current_movedown_rate in the main loop
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="tetris-npe.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const RATE = $32
   .label RASTER = $d012
   .label SCREEN = $400
+.segment Code
 main: {
     ldx #0
     ldy #RATE

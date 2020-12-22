@@ -1,11 +1,17 @@
 // Minimal struct with C-Standard behavior - struct containing struct with initializer
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-18.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_VECTOR = 4
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_VECTOR_Q = 2
   .label SCREEN = $400
+.segment Code
 main: {
     .label v = 2
     // v = { {2, 3}, {4, 5} }
@@ -30,4 +36,5 @@ main: {
     // }
     rts
 }
+.segment Data
   __0: .byte 2, 3, 4, 5

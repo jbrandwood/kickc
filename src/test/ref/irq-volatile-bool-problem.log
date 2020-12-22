@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(KERNEL_MIN) void irq()
+Resolved forward reference irq to __interrupt(rom_min_c64) void irq()
 Resolved forward reference framedone to framedone
 Inlined call call __init 
 
@@ -28,7 +28,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   *BG_COLOR = ++ *BG_COLOR
   *IRQ_STATUS = IRQ_RASTER
@@ -70,7 +70,7 @@ const nomodify void()** KERNEL_IRQ = (void()**)$314
 const nomodify byte* RASTER = (byte*)$d012
 const nomodify byte* VIC_CONTROL = (byte*)$d011
 void __start()
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 bool~ irq::$1
 bool~ irq::$2
 void main()
@@ -96,10 +96,10 @@ Simplifying constant integer cast $fd
 Simplifying constant integer cast $14
 Simplifying constant integer cast $32
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $7f
-Finalized unsigned number type $fd
-Finalized unsigned number type $14
-Finalized unsigned number type $32
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $fd
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) $32
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [9] main::$1 = *RASTER >= $14 from [8] main::$0 = *RASTER < $14
 Inversing boolean not [15] irq::$2 = *RASTER <= $32 from [14] irq::$1 = *RASTER > $32
@@ -125,7 +125,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $32+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of irq::@2
 Adding NOP phi() at start of main::@1
@@ -142,7 +142,7 @@ Adding NOP phi() at start of main::@2
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   [0] *BG_COLOR = ++ *BG_COLOR
   [1] *IRQ_STATUS = IRQ_RASTER
@@ -177,7 +177,7 @@ main::@2: scope:[main]  from main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -197,18 +197,23 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 1022 combination 
-Uplifting [irq] best 1022 combination 
-Uplifting [] best 1022 combination 
+Uplifting [main] best 1049 combination 
+Uplifting [irq] best 1049 combination 
+Uplifting [] best 1049 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-volatile-bool-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -219,9 +224,10 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
   // irq
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // [0] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
     // [1] *IRQ_STATUS = IRQ_RASTER -- _deref_pbuc1=vbuc2 
@@ -244,7 +250,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [5] return  - exit interrupt(KERNEL_MIN)
+    // [5] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main
@@ -320,21 +327,26 @@ const nomodify byte* IRQ_STATUS = (byte*) 53273
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* VIC_CONTROL = (byte*) 53265
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 951
+Score: 978
 
   // File Comments
 // Illustrates a problem where a volatile bool modified at the end of an IRQ is not stored properly
 // because it is assigned to the A register
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-volatile-bool-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -345,9 +357,10 @@ Score: 951
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
   // irq
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // (*BG_COLOR)++;
     // [0] *BG_COLOR = ++ *BG_COLOR -- _deref_pbuc1=_inc__deref_pbuc1 
     inc BG_COLOR
@@ -367,7 +380,8 @@ irq: {
     dec BG_COLOR
     // irq::@return
     // }
-    // [5] return  - exit interrupt(KERNEL_MIN)
+    // [5] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main

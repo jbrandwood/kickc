@@ -64,7 +64,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::c#1 = main::$0 main::c#2 
 Alias main::i#2 = main::i#3 
@@ -162,11 +162,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Illustrates a problem with post-incrementing inside the while loop condition
 // https://gitlab.com/camelot/kickc/-/issues/486
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="post-increment-problem-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label s = 2
@@ -190,7 +196,7 @@ main: {
     bne !+
     inc.z s+1
   !:
-    // [4] if(0!=main::c#1) goto main::@2 -- vbuc1_neq_vbuaa_then_la1 
+    // [4] if(0!=main::c#1) goto main::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     jmp __breturn
@@ -211,6 +217,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   MESSAGE: .text "hello world!"
   .byte 0
 
@@ -248,11 +255,17 @@ Score: 471
 // Illustrates a problem with post-incrementing inside the while loop condition
 // https://gitlab.com/camelot/kickc/-/issues/486
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="post-increment-problem-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label s = 2
@@ -275,7 +288,7 @@ main: {
     bne !+
     inc.z s+1
   !:
-    // [4] if(0!=main::c#1) goto main::@2 -- vbuc1_neq_vbuaa_then_la1 
+    // [4] if(0!=main::c#1) goto main::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     // main::@return
@@ -296,6 +309,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   MESSAGE: .text "hello world!"
   .byte 0
 

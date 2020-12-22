@@ -835,25 +835,25 @@ Simplifying constant integer cast $100
 Simplifying constant integer cast 2
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized signed number type $39
-Finalized signed number type -$47
-Finalized signed number type $36
-Finalized unsigned number type $100
-Finalized unsigned number type $100
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type $100
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type $100
-Finalized signed number type 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized signed number type (signed byte) $39
+Finalized signed number type (signed byte) -$47
+Finalized signed number type (signed byte) $36
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (word) $100
+Finalized signed number type (signed byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#4 & $f
 Inferred type updated to byte in mulf_init::$3 = mulf_init::i#2 + 1
@@ -1028,7 +1028,7 @@ Adding number conversion cast (unumber) $81 in [87] if(mulf_init::i#1!=$81) goto
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $81
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $81
+Finalized unsigned number type (byte) $81
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias mulf_init::$2 = mulf_init::$1 
 Alias mulf_init::$6 = mulf_init::$5 
@@ -1082,6 +1082,16 @@ Consolidated array index constant in assignment (mulf_sqr2+$100+1)[mulf_init::$4
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias mulf_init::i#2 = mulf_init::$3 mulf_init::$4 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $200
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting mulf_init::@2(between mulf_init::@1 and mulf_init::@1)
 Adding NOP phi() at start of main::@2
@@ -1651,9 +1661,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="perspective.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // The rotated point - updated by calling rotate()
   .label xr = $f0
@@ -1665,6 +1680,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_screen = $400
   .label print_char_cursor = 6
   .label print_line_cursor = 4
+.segment Code
   // main
 main: {
     // asm { sei  }
@@ -1981,6 +1997,7 @@ do_perspective: {
   __breturn:
     // [55] return 
     rts
+  .segment Data
     str: .text "("
     .byte 0
     str1: .text ","
@@ -1990,6 +2007,7 @@ do_perspective: {
     str5: .text ")"
     .byte 0
 }
+.segment Code
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -2049,7 +2067,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [64] if(0!=*print_str::str#7) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [64] if(0!=*print_str::str#7) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -2279,6 +2297,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // Multiplication tables for seriously fast multiplication. 
   // This version is optimized for speed over accuracy
@@ -2577,9 +2596,14 @@ Score: 3091
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="perspective.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // The rotated point - updated by calling rotate()
   .label xr = $f0
@@ -2591,6 +2615,7 @@ Score: 3091
   .label print_screen = $400
   .label print_char_cursor = 6
   .label print_line_cursor = 4
+.segment Code
   // main
 main: {
     // asm
@@ -2870,6 +2895,7 @@ do_perspective: {
     // }
     // [55] return 
     rts
+  .segment Data
     str: .text "("
     .byte 0
     str1: .text ","
@@ -2879,6 +2905,7 @@ do_perspective: {
     str5: .text ")"
     .byte 0
 }
+.segment Code
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -2935,7 +2962,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [64] if(0!=*print_str::str#7) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [64] if(0!=*print_str::str#7) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3153,6 +3180,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // Multiplication tables for seriously fast multiplication. 
   // This version is optimized for speed over accuracy

@@ -831,43 +831,43 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast $20
 Simplifying constant integer cast $37
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 7
-Finalized unsigned number type 3
-Finalized unsigned number type $3e8
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type $a
-Finalized unsigned number type 1
-Finalized unsigned number type $14
-Finalized unsigned number type 1
-Finalized unsigned number type $1e
-Finalized unsigned number type $20
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 0
-Finalized unsigned number type 3
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type $3f
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 8
-Finalized unsigned number type 0
-Finalized unsigned number type $32
-Finalized unsigned number type $29
-Finalized unsigned number type $a
-Finalized unsigned number type $800
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type $20
-Finalized unsigned number type $37
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $1e
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $3f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $32
+Finalized unsigned number type (byte) $29
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (word) $800
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) $37
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in keyboard_key_pressed::$0 = keyboard_key_pressed::key#6 & 7
 Inferred type updated to word in plot_chargen::$0 = plot_chargen::$15 * 8
@@ -1045,10 +1045,10 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast 8
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
-Finalized unsigned number type $40
-Finalized unsigned number type 8
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [19] print_str_at::at#1 = main::$2 + $a
 Constant right-side identified [21] print_str_at::at#2 = main::$5 + $14
@@ -1130,6 +1130,9 @@ Constant inlined plot_chargen::x#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Alias plot_chargen::$5 = plot_chargen::$18 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@37(between main::@28 and main::@4)
 Added new block during phi lifting main::@38(between main::@29 and main::@7)
 Added new block during phi lifting main::@39(between main::@30 and main::@8)
@@ -1930,9 +1933,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="chargen-analysis.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const KEY_F7 = 3
   .const KEY_F1 = 4
@@ -1997,6 +2005,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label sc = 2
@@ -2398,6 +2407,7 @@ main: {
   __b1_from___b2:
     // [1] phi main::sc#2 = main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
+  .segment Data
     str: .text "f1"
     .byte 0
     str1: .text "f3"
@@ -2407,6 +2417,7 @@ main: {
     str3: .text "f7"
     .byte 0
 }
+.segment Code
   // print_str_at
 // Print a string at a specific screen position
 // print_str_at(byte* zp(8) str, byte* zp($c) at)
@@ -2421,7 +2432,7 @@ print_str_at: {
     jmp __b1
     // print_str_at::@1
   __b1:
-    // [69] if(0!=*print_str_at::str#5) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [69] if(0!=*print_str_at::str#5) goto print_str_at::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -2693,6 +2704,7 @@ keyboard_matrix_read: {
     rts
 }
   // File Data
+.segment Data
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f
@@ -2853,8 +2865,8 @@ Removing instruction jmp __b12
 Removing instruction jmp __b3
 Removing instruction jmp __b4
 Succesful ASM optimization Pass5NextJumpElimination
-Fixing long branch [86] bcc __b2 to bcs
 Fixing long branch [92] bcc __b2 to bcs
+Fixing long branch [98] bcc __b2 to bcs
 
 FINAL SYMBOL TABLE
 const nomodify byte* CHARGEN = (byte*) 53248
@@ -3084,9 +3096,14 @@ Score: 558979
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="chargen-analysis.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const KEY_F7 = 3
   .const KEY_F1 = 4
@@ -3151,6 +3168,7 @@ Score: 558979
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label sc = 2
@@ -3495,6 +3513,7 @@ main: {
     // [1] phi from main::@2 to main::@1 [phi:main::@2->main::@1]
     // [1] phi main::sc#2 = main::sc#1 [phi:main::@2->main::@1#0] -- register_copy 
     jmp __b1
+  .segment Data
     str: .text "f1"
     .byte 0
     str1: .text "f3"
@@ -3504,6 +3523,7 @@ main: {
     str3: .text "f7"
     .byte 0
 }
+.segment Code
   // print_str_at
 // Print a string at a specific screen position
 // print_str_at(byte* zp(8) str, byte* zp($c) at)
@@ -3516,7 +3536,7 @@ print_str_at: {
     // print_str_at::@1
   __b1:
     // while(*str)
-    // [69] if(0!=*print_str_at::str#5) goto print_str_at::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [69] if(0!=*print_str_at::str#5) goto print_str_at::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3786,6 +3806,7 @@ keyboard_matrix_read: {
     rts
 }
   // File Data
+.segment Data
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f

@@ -4,9 +4,14 @@
 // Sources
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-8bppcharstretch.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const VIC_ECM = $40
   .const VIC_DEN = $10
   .const VIC_RSEL = 8
@@ -61,6 +66,7 @@
   .label SCREEN = $7c00
   // Plane with all pixels
   .label CHARSET8 = $8000
+.segment Code
 main: {
     // asm
     sei

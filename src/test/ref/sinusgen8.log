@@ -1161,34 +1161,34 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast $3e8
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 3
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized signed number type 0
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized signed number type (signed byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in divr16u::$2 = divr16u::$1 & $80
 Inferred type updated to word in divr16u::$5 = divr16u::rem#6 | 1
@@ -1425,8 +1425,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $10
 Simplifying constant integer cast $c0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $10
-Finalized unsigned number type $c0
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $c0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [96] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -1483,6 +1483,13 @@ Constant inlined memset::dst#0 = (byte*)memset::str#0
 Constant inlined print_str::str#1 = main::str
 Constant inlined sin8s_gen::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) $c0
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting divr16u::@7(between divr16u::@3 and divr16u::@1)
 Added new block during phi lifting divr16u::@8(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@9(between divr16u::@2 and divr16u::@3)
@@ -2506,9 +2513,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
@@ -2519,6 +2531,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const wavelength = $c0
   .label print_screen = $400
   .label print_char_cursor = 8
+.segment Code
   // main
 main: {
     .label i = 2
@@ -2585,9 +2598,11 @@ main: {
   __breturn:
     // [12] return 
     rts
+  .segment Data
     str: .text "  "
     .byte 0
 }
+.segment Code
   // sin8s_gen
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -2771,7 +2786,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [43] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [43] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3389,6 +3404,7 @@ mul8u: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))
@@ -3806,9 +3822,14 @@ Score: 14264
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
@@ -3819,6 +3840,7 @@ Score: 14264
   .const wavelength = $c0
   .label print_screen = $400
   .label print_char_cursor = 8
+.segment Code
   // main
 main: {
     .label i = 2
@@ -3875,9 +3897,11 @@ main: {
     // }
     // [12] return 
     rts
+  .segment Data
     str: .text "  "
     .byte 0
 }
+.segment Code
   // sin8s_gen
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -4048,7 +4072,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [43] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [43] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4642,6 +4666,7 @@ mul8u: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))

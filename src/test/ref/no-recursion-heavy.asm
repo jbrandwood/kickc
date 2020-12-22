@@ -1,10 +1,16 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="no-recursion-heavy.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label ba = 2
   .label bb = 3
   .label bb_1 = 4
   .label bc = 5
+.segment Code
 main: {
     lda #0
     sta.z ba

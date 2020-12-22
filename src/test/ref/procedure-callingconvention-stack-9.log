@@ -1,11 +1,11 @@
+Converting variable modified inside __stackcall procedure main() to load/store val
 Inlined call call __init 
-Converting PHI-variable modified inside __stackcall procedure main() to load/store val
-Calling convention STACK_CALL adding prepare/execute/finalize for call pval 
-Calling convention STACK_CALL adding prepare/execute/finalize for call printother 
-Calling convention STACK_CALL adding prepare/execute/finalize for call ival 
-Calling convention STACK_CALL adding prepare/execute/finalize for call printval 
-Calling convention STACK_CALL adding prepare/execute/finalize for call incval 
-Calling convention STACK_CALL adding prepare/execute/finalize for call main 
+Calling convention __stackcall adding prepare/execute/finalize for call pval 
+Calling convention __stackcall adding prepare/execute/finalize for call printother 
+Calling convention __stackcall adding prepare/execute/finalize for call ival 
+Calling convention __stackcall adding prepare/execute/finalize for call printval 
+Calling convention __stackcall adding prepare/execute/finalize for call incval 
+Calling convention __stackcall adding prepare/execute/finalize for call main 
 
 CONTROL FLOW GRAPH SSA
 
@@ -114,8 +114,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$3 [7] if(main::i#1!=rangelast(0,5)) goto main::@1
 Simple Condition printother::$1 [22] if(printother::i#1!=rangelast(0,5)) goto printother::@1
@@ -135,8 +135,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 6
 Simplifying constant integer cast 6
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 6
-Finalized unsigned number type 6
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 6
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Inlining constant with var siblings printother::i#0
@@ -321,12 +321,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack
 // Illustrates live range problem with function variable printother::i and global variable val
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-9.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label val = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -511,12 +517,18 @@ Score: 497
 // Test a procedure with calling convention stack
 // Illustrates live range problem with function variable printother::i and global variable val
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-9.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label val = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1

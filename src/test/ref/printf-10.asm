@@ -1,9 +1,15 @@
 // Tests printf function call rewriting
 // A simple string - with the printf-sub cuntions in the same file.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-10.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 2
+.segment Code
 main: {
     // printf("Hello, I am %s. who are you?", name)
     lda #<$400
@@ -25,6 +31,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     name: .text "Jesper"
     .byte 0
     str: .text "Hello, I am "
@@ -32,6 +39,7 @@ main: {
     str1: .text ". who are you?"
     .byte 0
 }
+.segment Code
 // cputs(byte* zp(4) str)
 cputs: {
     .label str = 4

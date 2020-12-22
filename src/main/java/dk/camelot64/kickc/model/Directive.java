@@ -1,128 +1,164 @@
 package dk.camelot64.kickc.model;
 
 import dk.camelot64.kickc.model.symbols.Procedure;
+import dk.camelot64.kickc.model.values.ConstantValue;
 
 import java.util.List;
 
 /** A declaration directive. */
-public interface Directive {
+public class Directive {
+   
+   private String name;
+
+   public Directive(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
+   }
 
    /** Variable declared const */
-   class Const implements Directive {
+   public static class Const extends Directive {
+      public Const() { super("const"); }
    }
 
    /** Variable declared volatile */
-   class Volatile implements Directive {
+   public static class Volatile extends Directive {
+      public Volatile() { super("volatile"); }
    }
 
    /** Variable declared register. */
-   class Register implements Directive {
+   public static class Register extends Directive {
+      public Register() { super("register"); }
    }
 
    /** Variable declared static. */
-   class Static implements Directive {
+   public static class Static extends Directive {
+      public Static() { super("static"); }
    }
 
    /** Function declared inline. */
-   class Inline implements Directive {
+   static public class Inline extends Directive {
+      public Inline() { super("inline"); }
    }
 
    /** Function declared intrinsic. */
-   class Intrinsic implements Directive {
+   public static class Intrinsic extends Directive {
+      public Intrinsic() { super("intrinsic"); }
    }
 
    /** Variable declared as extern. */
-   class Extern implements Directive {
+   public static class Extern extends Directive {
+      public Extern() { super("extern"); }
    }
 
    /** Variable declared as export. */
-   class Export implements Directive {
+   public static class Export extends Directive {
+      public Export() { super("export"); }
    }
 
    /** Variable declared as pointer to volatile ( volatile * )  */
-   class ToVolatile implements Directive {
+   public static class ToVolatile extends Directive {
+      public ToVolatile() { super("volatile*"); }
    }
 
    /** Variable declared as pointer to const ( const * )  */
-   class ToConst implements Directive {
+   public static class ToConst extends Directive {
+      public ToConst() { super("const*"); }
    }
 
    /** Variable __ssa */
-   class FormSsa implements Directive {
+   public static class FormSsa extends Directive {
+      public FormSsa() { super("__ssa"); }
+
    }
 
    /** Variable __ma */
-   class FormMa implements Directive {
+   public static class FormMa extends Directive {
+      public FormMa() { super("__ma"); }
    }
 
    /** Variable __zp */
-   class MemZp implements Directive {
+   public static class MemZp extends Directive {
+      public MemZp() { super("__zp"); }
    }
 
    /** Variable __mem */
-   class MemMain implements Directive {
+   public static class MemMain extends Directive {
+      public MemMain() { super("__mem"); }
    }
 
    /** Function with specific declared calling convention. */
-   class CallingConvention implements Directive {
+   public static class CallingConvention extends Directive {
 
       public Procedure.CallingConvention callingConvention;
 
       public CallingConvention(Procedure.CallingConvention callingConvention) {
+         super(callingConvention.getName());
          this.callingConvention = callingConvention;
       }
 
    }
 
    /** Function declared interrupt. */
-   class Interrupt implements Directive {
-      public Procedure.InterruptType interruptType;
+   public static class Interrupt extends Directive {
+      public String interruptType;
 
-      public Interrupt(Procedure.InterruptType interruptType) {
+      public Interrupt(String interruptType) {
+         super(interruptType);
          this.interruptType = interruptType;
       }
    }
 
    /** Variable memory alignment. */
-   class Align implements Directive {
+   public static class Align extends Directive {
 
       int alignment;
 
       public Align(int alignment) {
+         super("__align");
          this.alignment = alignment;
       }
 
    }
 
    /** Variable hardcoded register directive. */
-   class NamedRegister implements Directive {
+   public static class NamedRegister extends Directive {
 
       /** Name of register to use for the variable (if named) */
       public String name;
 
       public NamedRegister(String name) {
+         super("__register");
          this.name = name;
       }
 
    }
 
    /** Variable hardcoded __address() directive */
-   class Address implements Directive {
+   public static class Address extends Directive {
+
+      /** Expression for calculating the address. */
+      public ConstantValue addressValue;
 
       /** Optional hard-coded address to use for storing the variable. */
-      public Long address;
+      public Long addressLiteral;
 
-      public Address(Long address) {
-         this.address = address;
+      public Address(ConstantValue addressValue, Long addressLiteral) {
+         super("__address");
+         this.addressValue = addressValue;
+         this.addressLiteral = addressLiteral;
       }
 
    }
 
    /** Reservation of zero-page addresses */
-   class ReserveZp implements Directive {
+   public static class ReserveZp extends Directive {
       public List<Integer> reservedZp;
 
       public ReserveZp(List<Integer> reservedZp) {
+         super("__reserve_zp");
          this.reservedZp = reservedZp;
       }
    }

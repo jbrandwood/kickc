@@ -101,7 +101,11 @@ public class Pass1CallPhiParameters {
          for(int i = 0; i < parameterDefs.size(); i++) {
             Variable parameterDecl = parameterDefs.get(i);
             RValue parameterValue = parameterValues.get(i);
-            stmtIt.add(new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, true, call.getSource(), Comment.NO_COMMENTS));
+            final StatementAssignment assignment = new StatementAssignment((LValue) parameterDecl.getRef(), parameterValue, true, call.getSource(), Comment.NO_COMMENTS);
+            stmtIt.add(assignment);
+            if(parameterDecl.isStruct()) {
+               Pass1UnwindStructValues.unwindAssignment(assignment, stmtIt, block, program);
+            }
          }
          stmtIt.next();
       }

@@ -1,11 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 /** An assembler comment */
-public class AsmComment implements AsmLine {
+public class AsmComment extends AsmLine {
 
    private String comment;
-
-   private int index;
 
    private boolean isBlock;
 
@@ -39,16 +37,6 @@ public class AsmComment implements AsmLine {
    }
 
    @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
-
-   @Override
    public String toString() {
       return getAsm();
    }
@@ -61,6 +49,5 @@ public class AsmComment implements AsmLine {
    public long getLineCount() {
       return comment.chars().filter(x -> x == '\n').count() + 1;
    }
-
 
 }

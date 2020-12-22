@@ -1,8 +1,13 @@
 // Tests printf function call rewriting
 // Test parameter field syntax %2$d
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-16.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER = $c
@@ -19,6 +24,7 @@
   .label conio_line_text = $b
   // The current color cursor line start
   .label conio_line_color = $d
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -271,6 +277,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text "d "
     .byte 0
     s1: .text "d:     "
@@ -288,6 +295,7 @@ main: {
     s12: .text "2$d "
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -826,6 +834,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

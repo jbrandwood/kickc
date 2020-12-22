@@ -1,7 +1,12 @@
 // Tests casting pointer types to other pointer types
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-cast.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .const SIZEOF_SIGNED_WORD = 2
   .const ub = $29
@@ -12,6 +17,7 @@
   .label sb_screen = $428
   .label uw_screen = $450
   .label sw_screen = $478
+.segment Code
 main: {
     // *((byte*)ub_screen) = ub
     lda #ub

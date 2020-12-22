@@ -514,29 +514,29 @@ Simplifying constant integer cast 3
 Simplifying constant integer cast $140
 Simplifying constant integer cast 7
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $16
-Finalized unsigned number type 3
-Finalized unsigned number type $3fff
-Finalized unsigned number type $40
-Finalized unsigned number type $3fff
-Finalized unsigned number type $400
-Finalized signed number type $64
-Finalized signed number type $64
-Finalized signed number type $32
-Finalized signed number type 1
-Finalized signed number type 3
-Finalized signed number type 0
-Finalized signed number type 2
-Finalized signed number type 6
-Finalized signed number type 1
-Finalized signed number type 2
-Finalized signed number type $a
-Finalized signed number type $fff8
-Finalized unsigned number type 7
-Finalized signed number type 3
-Finalized signed number type $140
-Finalized signed number type 7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $16
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (word) $400
+Finalized signed number type (signed byte) $64
+Finalized signed number type (signed byte) $64
+Finalized signed number type (signed byte) $32
+Finalized signed number type (signed byte) 1
+Finalized signed number type (signed byte) 3
+Finalized signed number type (signed byte) 0
+Finalized signed number type (signed byte) 2
+Finalized signed number type (signed byte) 6
+Finalized signed number type (signed byte) 1
+Finalized signed number type (signed byte) 2
+Finalized signed number type (signed byte) $a
+Finalized signed number type (signed dword) $fff8
+Finalized unsigned number type (byte) 7
+Finalized signed number type (signed byte) 3
+Finalized signed number type (signed word) $140
+Finalized signed number type (signed byte) 7
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to signed word in circle::$1 = 3 - circle::$0
 Inferred type updated to signed word in circle::$11 = circle::$10 + 6
@@ -652,6 +652,12 @@ Constant inlined circle::p#0 = 3-circle::r#0<<1
 Successful SSA optimization Pass2ConstantInlining
 Alias plot::$4 = plot::$9 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@2
 Adding NOP phi() at start of main::@4
@@ -1144,9 +1150,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Coded by Richard-William Loerakker
 // Original Source https://bcaorganizer.blogspot.com/p/c-program-for_21.html?fbclid=IwAR0iL8pYcCqhCPa6LmtQ9qej-YonYVepY2cBegYRIWO0l8RPeOnTVniMAac
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -1157,6 +1168,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
   // main
 main: {
     // [1] call fill 
@@ -1713,6 +1725,7 @@ plot: {
     rts
 }
   // File Data
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1
 
 ASSEMBLER OPTIMIZATIONS
@@ -1777,7 +1790,7 @@ Removing instruction __b13:
 Removing instruction __b1_from___b13:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [112] bmi __b3 to bpl
+Fixing long branch [118] bmi __b3 to bpl
 
 FINAL SYMBOL TABLE
 const nomodify byte* BITMAP = (byte*) 8192
@@ -1884,9 +1897,14 @@ Score: 6073
 // Coded by Richard-William Loerakker
 // Original Source https://bcaorganizer.blogspot.com/p/c-program-for_21.html?fbclid=IwAR0iL8pYcCqhCPa6LmtQ9qej-YonYVepY2cBegYRIWO0l8RPeOnTVniMAac
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const VIC_BMM = $20
   .const VIC_DEN = $10
@@ -1897,6 +1915,7 @@ Score: 6073
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
   // main
 main: {
     // fill(BITMAP,40*25*8,0)
@@ -2444,5 +2463,6 @@ plot: {
     rts
 }
   // File Data
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1
 

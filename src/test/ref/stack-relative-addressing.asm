@@ -1,11 +1,17 @@
 // Test stack-relative addressing (for passing parameters through the stack)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="stack-relative-addressing.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   /** The hardware stack. The offset 3 is to skip the return address and the fact that the pointer is to the next free position. */
   .label STACK = $103
   /** The screen. */
   .label SCREEN = $400
+.segment Code
 main: {
     // asm
     // Push a few values to the stack

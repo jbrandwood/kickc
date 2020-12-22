@@ -1,9 +1,15 @@
 // Tests using integer conditions in ternary operator
 // This should produce '++0++' at the top of the screen
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="condition-integer-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     ldx #0
     ldy #-2

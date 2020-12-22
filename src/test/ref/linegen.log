@@ -1219,38 +1219,38 @@ Simplifying constant integer cast lin16u_gen::min#4
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $3e8
-Finalized unsigned number type $22d
-Finalized unsigned number type $7461
-Finalized unsigned number type $14
-Finalized unsigned number type $79cb
-Finalized unsigned number type $f781
-Finalized unsigned number type $14
-Finalized unsigned number type 0
-Finalized unsigned number type $6488
-Finalized unsigned number type $14
-Finalized unsigned number type $22d
-Finalized unsigned number type $79cb
-Finalized unsigned number type 0
-Finalized unsigned number type $14
-Finalized unsigned number type $7461
-Finalized unsigned number type $f781
-Finalized unsigned number type $6488
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (word) $22d
+Finalized unsigned number type (word) $7461
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (word) $79cb
+Finalized unsigned number type (word) $f781
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $6488
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (word) $22d
+Finalized unsigned number type (word) $79cb
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (word) $7461
+Finalized unsigned number type (word) $f781
+Finalized unsigned number type (word) $6488
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in divr16u::$2 = divr16u::$1 & $80
 Inferred type updated to word in divr16u::$5 = divr16u::rem#7 | 1
@@ -1510,7 +1510,7 @@ Adding number conversion cast (unumber) $10 in [13] if(divr16u::i#1!=$10) goto d
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $10
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $10
+Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [18] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -1617,6 +1617,17 @@ Alias main::$28 = main::$27 main::$29
 Successful SSA optimization Pass2AliasElimination
 Identical Phi Values divr16u::divisor#6 $14-1
 Successful SSA optimization Pass2IdenticalPhiElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) $14
+Finalized unsigned number type (byte) $14
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting divr16u::@7(between divr16u::@3 and divr16u::@1)
 Added new block during phi lifting divr16u::@8(between divr16u::@1 and divr16u::@2)
 Added new block during phi lifting divr16u::@9(between divr16u::@2 and divr16u::@3)
@@ -2429,9 +2440,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="linegen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   .label print_screen = $400
@@ -2439,6 +2455,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label rem16u = $18
   .label print_char_cursor = $f
   .label print_line_cursor = $b
+.segment Code
   // main
 main: {
     .label __28 = $11
@@ -2866,6 +2883,7 @@ main: {
   __b1_from___b21:
     // [22] phi main::i#10 = main::i#1 [phi:main::@21->main::@1#0] -- register_copy 
     jmp __b1
+  .segment Data
     lintab1: .fill 2*$14, 0
     lintab2: .fill 2*$14, 0
     lintab3: .fill 2*$14, 0
@@ -2874,6 +2892,7 @@ main: {
     str1: .text " "
     .byte 0
 }
+.segment Code
   // lin16u_gen
 // Generate word linear table
 // lintab - the table to generate into
@@ -3050,7 +3069,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [83] if(0!=*print_str::str#10) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [83] if(0!=*print_str::str#10) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3357,6 +3376,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -3705,9 +3725,14 @@ Score: 11679
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="linegen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   .label print_screen = $400
@@ -3715,6 +3740,7 @@ Score: 11679
   .label rem16u = $18
   .label print_char_cursor = $f
   .label print_line_cursor = $b
+.segment Code
   // main
 main: {
     .label __28 = $11
@@ -4069,6 +4095,7 @@ main: {
     // [22] phi from main::@21 to main::@1 [phi:main::@21->main::@1]
     // [22] phi main::i#10 = main::i#1 [phi:main::@21->main::@1#0] -- register_copy 
     jmp __b1
+  .segment Data
     lintab1: .fill 2*$14, 0
     lintab2: .fill 2*$14, 0
     lintab3: .fill 2*$14, 0
@@ -4077,6 +4104,7 @@ main: {
     str1: .text " "
     .byte 0
 }
+.segment Code
   // lin16u_gen
 // Generate word linear table
 // lintab - the table to generate into
@@ -4251,7 +4279,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [83] if(0!=*print_str::str#10) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [83] if(0!=*print_str::str#10) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4544,5 +4572,6 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

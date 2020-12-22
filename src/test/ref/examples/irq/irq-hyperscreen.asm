@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hyperscreen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .const VIC_RSEL = 8
@@ -33,13 +38,10 @@
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label GHOST_BYTE = $3fff
+.segment Code
 // Interrupt Routine 2
 irq_bottom_2: {
-    pha
-    txa
-    pha
-    tya
-    pha
+    sta rega+1
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -65,20 +67,13 @@ irq_bottom_2: {
     lda #RED
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    pla
-    tay
-    pla
-    tax
-    pla
+  rega:
+    lda #0
     rti
 }
 // Interrupt Routine 1
 irq_bottom_1: {
-    pha
-    txa
-    pha
-    tya
-    pha
+    sta rega+1
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -104,11 +99,8 @@ irq_bottom_1: {
     lda #RED
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
-    pla
-    tay
-    pla
-    tax
-    pla
+  rega:
+    lda #0
     rti
 }
 main: {

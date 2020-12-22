@@ -1,9 +1,15 @@
 // Classic for() does not allow assignment as increment, eg. for(byte i=0;i<40;i=i+2) {}
 // The following should give a program rendering a char on every second char of the first line - but results in a syntax error
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="forincrementassign.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     lda #0
   __b1:

@@ -662,37 +662,37 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $19
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $19
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $19
-Finalized unsigned number type $28
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type 0
-Finalized unsigned number type $19
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type $28
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $19
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $28
 Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
@@ -820,7 +820,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $19+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -906,6 +906,28 @@ Identical Phi Values memset::num#2 $28
 Successful SSA optimization Pass2IdenticalPhiElimination
 if() condition always false - eliminating [9] if($28<=0) goto memset::@1
 Successful SSA optimization Pass2ConstantIfs
+Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
+Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $b
+Finalized unsigned number type (byte) $b
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $19
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast $19-1
+Successful SSA optimization PassNCastSimplification
+Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
+Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Added new block during phi lifting gotoxy::@5(between gotoxy and gotoxy::@1)
@@ -1030,7 +1052,7 @@ conio_c64_init::@2: scope:[conio_c64_init]  from conio_c64_init
   [11] phi()
   to:conio_c64_init::@1
 conio_c64_init::@1: scope:[conio_c64_init]  from conio_c64_init conio_c64_init::@2
-  [12] conio_c64_init::line#2 = phi( conio_c64_init::@2/conio_c64_init::line#0, conio_c64_init/(byte)$19-1 )
+  [12] conio_c64_init::line#2 = phi( conio_c64_init::@2/conio_c64_init::line#0, conio_c64_init/$19-1 )
   [13] gotoxy::y#2 = conio_c64_init::line#2
   [14] call gotoxy 
   to:conio_c64_init::@return
@@ -1592,9 +1614,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests printf function call rewriting
 // A few strings with newlines
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-15.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
   // Color Ram
@@ -1610,6 +1637,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label conio_line_text = $a
   // The current color cursor line start
   .label conio_line_color = $c
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -1660,7 +1688,7 @@ conio_c64_init: {
     bcc __b2_from_conio_c64_init
     // [12] phi from conio_c64_init to conio_c64_init::@1 [phi:conio_c64_init->conio_c64_init::@1]
   __b1_from_conio_c64_init:
-    // [12] phi conio_c64_init::line#2 = (byte)$19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuxx=vbuc1 
+    // [12] phi conio_c64_init::line#2 = $19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuxx=vbuc1 
     ldx #$19-1
     jmp __b1
     // [11] phi from conio_c64_init to conio_c64_init::@2 [phi:conio_c64_init->conio_c64_init::@2]
@@ -1722,11 +1750,13 @@ main: {
   __breturn:
     // [22] return 
     rts
+  .segment Data
     s: .text @"Lone 1\n"
     .byte 0
     s1: .text @"Lone 2\n"
     .byte 0
 }
+.segment Code
   // gotoxy
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
@@ -1947,7 +1977,7 @@ cputs: {
     bne !+
     inc.z s+1
   !:
-    // [57] if(0!=cputs::c#1) goto cputs::@2 -- vbuc1_neq_vbuaa_then_la1 
+    // [57] if(0!=cputs::c#1) goto cputs::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     jmp __breturn
@@ -2492,9 +2522,14 @@ Score: 14471
 // Tests printf function call rewriting
 // A few strings with newlines
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-15.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const LIGHT_BLUE = $e
   // Color Ram
@@ -2510,6 +2545,7 @@ Score: 14471
   .label conio_line_text = $a
   // The current color cursor line start
   .label conio_line_color = $c
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -2557,7 +2593,7 @@ conio_c64_init: {
     cpx #$19
     bcc __b1
     // [12] phi from conio_c64_init to conio_c64_init::@1 [phi:conio_c64_init->conio_c64_init::@1]
-    // [12] phi conio_c64_init::line#2 = (byte)$19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuxx=vbuc1 
+    // [12] phi conio_c64_init::line#2 = $19-1 [phi:conio_c64_init->conio_c64_init::@1#0] -- vbuxx=vbuc1 
     ldx #$19-1
     // [11] phi from conio_c64_init to conio_c64_init::@2 [phi:conio_c64_init->conio_c64_init::@2]
     // conio_c64_init::@2
@@ -2606,11 +2642,13 @@ main: {
     // }
     // [22] return 
     rts
+  .segment Data
     s: .text @"Lone 1\n"
     .byte 0
     s1: .text @"Lone 2\n"
     .byte 0
 }
+.segment Code
   // gotoxy
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
@@ -2829,7 +2867,7 @@ cputs: {
     bne !+
     inc.z s+1
   !:
-    // [57] if(0!=cputs::c#1) goto cputs::@2 -- vbuc1_neq_vbuaa_then_la1 
+    // [57] if(0!=cputs::c#1) goto cputs::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     // cputs::@return

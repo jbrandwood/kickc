@@ -1,17 +1,25 @@
 // Test casting the address of an inline string to a dword.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-string-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 main: {
     .label dw = msg
     // output(dw)
     jsr output
     // }
     rts
+  .segment Data
     msg: .text "camelot"
     .byte 0
 }
+.segment Code
 output: {
     // *screen = dw
     lda #<main.dw

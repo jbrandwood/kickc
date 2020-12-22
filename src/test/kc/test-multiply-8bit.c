@@ -45,13 +45,13 @@ signed word muls8s(signed byte a, signed byte b) {
 
 // ASM based multiplication tables
 // <(( x * x )/4)
-byte align($100) mula_sqr1_lo[512];
+byte __align($100) mula_sqr1_lo[512];
 // >(( x * x )/4)
-byte align($100) mula_sqr1_hi[512];
+byte __align($100) mula_sqr1_hi[512];
 // <((( x - 255) * ( x - 255 ))/4)
-byte align($100) mula_sqr2_lo[512];
+byte __align($100) mula_sqr2_lo[512];
 // >((( x - 255) * ( x - 255 ))/4)
-byte align($100) mula_sqr2_hi[512];
+byte __align($100) mula_sqr2_hi[512];
 // Initialize the multiplication tables using ASM code from
 // http://codebase64.org/doku.php?id=base:seriously_fast_multiplication
 void mulf_init_asm() {

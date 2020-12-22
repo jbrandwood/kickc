@@ -1,7 +1,13 @@
 // Tests comma-separated declarations with different array-ness
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="comma-decl-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .const b = 0
     .const d = 0
@@ -17,5 +23,6 @@ main: {
     sta SCREEN+2
     // }
     rts
+  .segment Data
     c: .fill 3, 0
 }

@@ -1,8 +1,14 @@
 // Tests that inline ASM clobbering is taken into account when assigning registers
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-asm-clobber.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label l = 2
     ldx #0

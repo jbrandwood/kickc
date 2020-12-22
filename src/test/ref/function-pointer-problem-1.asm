@@ -1,9 +1,15 @@
 // The following casuses an exception in pass 2
 // https://gitlab.com/camelot/kickc/-/issues/561
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-problem-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label r = $8000
+.segment Code
 fn1: {
     // *r = 1
     lda #1

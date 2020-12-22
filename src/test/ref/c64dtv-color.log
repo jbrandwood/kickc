@@ -95,8 +95,8 @@ Simplifying constant pointer cast (byte*) 53760
 Simplifying constant integer cast $40
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $40
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [5] if(*RASTER!=$40) goto main::@2
 Simple Condition main::$2 [13] if(main::r#1!=rangelast($31,$ff)) goto main::@4
@@ -126,14 +126,16 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast $10
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $10
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $10
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inlining constant with var siblings main::r#0
 Inlining constant with var siblings main::c#0
 Constant inlined main::r#0 = $31
 Constant inlined main::c#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@7(between main::@4 and main::@4)
 Added new block during phi lifting main::@8(between main::@6 and main::@6)
 Adding NOP phi() at start of main::@1
@@ -232,9 +234,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-color.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const DTV_FEATURE_ENABLE = 1
   .const DTV_BORDER_OFF = 2
@@ -248,6 +255,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
+.segment Code
   // main
 main: {
     // asm { sei  }
@@ -339,6 +347,7 @@ main: {
     cpx #$10
     bne __b4_from___b4
     jmp __b1
+  .segment Data
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
   // File Data
@@ -391,9 +400,14 @@ Score: 10174
   // File Comments
 // Test C64DTV v2 256-colors and the 16-color redefinable palette
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-color.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const DTV_FEATURE_ENABLE = 1
   .const DTV_BORDER_OFF = 2
@@ -407,6 +421,7 @@ Score: 10174
   .label DTV_CONTROL = $d03c
   // Defines colors for the 16 first colors ($00-$0f)
   .label DTV_PALETTE = $d200
+.segment Code
   // main
 main: {
     // asm
@@ -498,6 +513,7 @@ main: {
     cpx #$10
     bne __b4
     jmp __b1
+  .segment Data
     palette: .byte 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, $a, $b, $c, $d, $e, $f
 }
   // File Data

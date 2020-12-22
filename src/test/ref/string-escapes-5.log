@@ -57,8 +57,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias main::i#2 = main::i#3 
 Successful SSA optimization Pass2AliasElimination
@@ -141,12 +141,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test using some simple supported string escape
 // Uses \xnn to add chars by hex-code that do not exist with the encoding.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const CH = '\$ff'
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -156,7 +162,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b2
@@ -184,6 +190,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   MESSAGE: .text @"q\$ffw\$60e\$ddr"
   .byte 0
 
@@ -217,12 +224,18 @@ Score: 267
 // Test using some simple supported string escape
 // Uses \xnn to add chars by hex-code that do not exist with the encoding.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const CH = '\$ff'
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -231,7 +244,7 @@ main: {
     // main::@1
   __b1:
     // while(MESSAGE[i])
-    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=MESSAGE[main::i#2]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda MESSAGE,x
     cmp #0
     bne __b2
@@ -258,6 +271,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   MESSAGE: .text @"q\$ffw\$60e\$ddr"
   .byte 0
 

@@ -70,6 +70,12 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Inlining constant with var siblings main::i#0
 Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast $28*6+1
+Successful SSA optimization PassNCastSimplification
 Added new block during phi lifting main::@3(between main::@2 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -93,7 +99,7 @@ main::@1: scope:[main]  from main main::@2
 main::@2: scope:[main]  from main::@1
   [3] SCREEN[main::i#2] = 'a'
   [4] main::i#1 = ++ main::i#2
-  [5] if(main::i#1!=(byte)$28*6+1) goto main::@1
+  [5] if(main::i#1!=$28*6+1) goto main::@1
   to:main::@return
 main::@return: scope:[main]  from main::@1 main::@2
   [6] return 
@@ -130,11 +136,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests break statement in a simple loop
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loop-break.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -160,7 +172,7 @@ main: {
     sta SCREEN,x
     // [4] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] if(main::i#1!=(byte)$28*6+1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [5] if(main::i#1!=$28*6+1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28*6+1
     bne __b1_from___b2
     jmp __breturn
@@ -201,11 +213,17 @@ Score: 251
   // File Comments
 // Tests break statement in a simple loop
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loop-break.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -228,7 +246,7 @@ main: {
     // for( byte i: 0..40*6)
     // [4] main::i#1 = ++ main::i#2 -- vbuxx=_inc_vbuxx 
     inx
-    // [5] if(main::i#1!=(byte)$28*6+1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
+    // [5] if(main::i#1!=$28*6+1) goto main::@1 -- vbuxx_neq_vbuc1_then_la1 
     cpx #$28*6+1
     bne __b1
     // main::@return

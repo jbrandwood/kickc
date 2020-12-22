@@ -1,5 +1,5 @@
-Resolved forward reference nmi to interrupt(HARDWARE_ALL) void nmi()
-Resolved forward reference nmi2 to interrupt(HARDWARE_ALL) void nmi2()
+Resolved forward reference nmi to __interrupt(hardware_clobber) void nmi()
+Resolved forward reference nmi2 to __interrupt(hardware_clobber) void nmi2()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
@@ -20,7 +20,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(HARDWARE_ALL) void nmi()
+__interrupt(hardware_clobber) void nmi()
 nmi: scope:[nmi]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
@@ -33,7 +33,7 @@ nmi::@return: scope:[nmi]  from nmi
   return 
   to:@return
 
-interrupt(HARDWARE_ALL) void nmi2()
+__interrupt(hardware_clobber) void nmi2()
 nmi2: scope:[nmi2]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
@@ -87,9 +87,9 @@ const nomodify struct MOS6581_SID* SID = (struct MOS6581_SID*)$d400
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
 void __start()
 void main()
-interrupt(HARDWARE_ALL) void nmi()
+__interrupt(hardware_clobber) void nmi()
 number~ nmi::$1
-interrupt(HARDWARE_ALL) void nmi2()
+__interrupt(hardware_clobber) void nmi2()
 byte~ nmi2::$1
 byte~ nmi2::$2
 bool~ nmi2::$3
@@ -120,12 +120,12 @@ Simplifying constant integer cast $f
 Simplifying constant integer cast 4
 Simplifying constant integer cast $6100
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $88
-Finalized unsigned number type $81
-Finalized unsigned number type 1
-Finalized unsigned number type $f
-Finalized unsigned number type 4
-Finalized unsigned number type $6100
+Finalized unsigned number type (byte) $88
+Finalized unsigned number type (byte) $81
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (word) $6100
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in nmi::$1 = *sample & $f
 Inversing boolean not [23] nmi2::$4 = nmi2::$2 != >SAMPLE+$6100 from [22] nmi2::$3 = nmi2::$2 == >SAMPLE+$6100
@@ -161,7 +161,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(HARDWARE_ALL) void nmi2()
+__interrupt(hardware_clobber) void nmi2()
 nmi2: scope:[nmi2]  from
   [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
@@ -182,7 +182,7 @@ nmi2::@return: scope:[nmi2]  from nmi2::@1
   [15] return 
   to:@return
 
-interrupt(HARDWARE_ALL) void nmi()
+__interrupt(hardware_clobber) void nmi()
 nmi: scope:[nmi]  from
   [16] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   asm { ldaCIA2_INTERRUPT  }
@@ -214,9 +214,9 @@ main::@return: scope:[main]  from main
 VARIABLE REGISTER WEIGHTS
 void __start()
 void main()
-interrupt(HARDWARE_ALL) void nmi()
+__interrupt(hardware_clobber) void nmi()
 byte~ nmi::$1 4.0
-interrupt(HARDWARE_ALL) void nmi2()
+__interrupt(hardware_clobber) void nmi2()
 byte~ nmi2::$1 4.0
 byte~ nmi2::$2 4.0
 volatile byte* sample loadstore 1.9999999999999996
@@ -267,14 +267,16 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [nmi2] best 540 combination reg byte a [ nmi2::$1 ] reg byte a [ nmi2::$2 ] 
-Uplifting [nmi] best 534 combination reg byte a [ nmi::$1 ] 
-Uplifting [] best 534 combination zp[2]:2 [ sample ] 
-Uplifting [MOS6526_CIA] best 534 combination 
-Uplifting [MOS6569_VICII] best 534 combination 
-Uplifting [MOS6581_SID] best 534 combination 
-Uplifting [main] best 534 combination 
-Uplifting [__start] best 534 combination 
+Uplifting [nmi2] best 756 combination reg byte a [ nmi2::$1 ] reg byte a [ nmi2::$2 ] 
+Uplifting [nmi] best 750 combination reg byte a [ nmi::$1 ] 
+Uplifting [] best 750 combination zp[2]:2 [ sample ] 
+Uplifting [MOS6526_CIA] best 750 combination 
+Uplifting [MOS6569_VICII] best 750 combination 
+Uplifting [MOS6581_SID] best 750 combination 
+Uplifting [main] best 750 combination 
+Uplifting [__start] best 750 combination 
+Interrupt procedure nmi clobbers AYnzP
+Interrupt procedure nmi2 clobbers AYcnzP
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -282,9 +284,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Code by Scan of Desire (Richard-William Loerakker)
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nmisamples.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -305,6 +312,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -330,9 +338,8 @@ __start: {
 }
   // nmi2
 nmi2: {
-    // entry interrupt(HARDWARE_ALL)
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
-    stx regx+1
     sty regy+1
     // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -378,20 +385,18 @@ nmi2: {
     jmp __breturn
     // nmi2::@return
   __breturn:
-    // [15] return  - exit interrupt(HARDWARE_ALL)
+    // [15] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
   // nmi
 nmi: {
-    // entry interrupt(HARDWARE_ALL)
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
-    stx regx+1
     sty regy+1
     // [16] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -413,13 +418,12 @@ nmi: {
     jmp __breturn
     // nmi::@return
   __breturn:
-    // [22] return  - exit interrupt(HARDWARE_ALL)
+    // [22] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
   // main
@@ -466,6 +470,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 SAMPLE:
 .import binary "moments_sample.bin" 
 
@@ -506,9 +511,9 @@ const nomodify struct MOS6581_SID* SID = (struct MOS6581_SID*) 54272
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
 void __start()
 void main()
-interrupt(HARDWARE_ALL) void nmi()
+__interrupt(hardware_clobber) void nmi()
 byte~ nmi::$1 reg byte a 4.0
-interrupt(HARDWARE_ALL) void nmi2()
+__interrupt(hardware_clobber) void nmi2()
 byte~ nmi2::$1 reg byte a 4.0
 byte~ nmi2::$2 reg byte a 4.0
 volatile byte* sample loadstore zp[2]:2 1.9999999999999996
@@ -520,16 +525,21 @@ reg byte a [ nmi::$1 ]
 
 
 FINAL ASSEMBLER
-Score: 483
+Score: 579
 
   // File Comments
 // NMI Sample Player using the SID volume register
 // Code by Scan of Desire (Richard-William Loerakker)
 // Sample from ART OF NOISE: MOMENTS IN LOVE
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nmisamples.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -550,6 +560,7 @@ Score: 483
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -569,9 +580,8 @@ __start: {
 }
   // nmi2
 nmi2: {
-    // entry interrupt(HARDWARE_ALL)
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
-    stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
     // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
@@ -623,20 +633,18 @@ nmi2: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // nmi2::@return
     // }
-    // [15] return  - exit interrupt(HARDWARE_ALL)
+    // [15] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
   // nmi
 nmi: {
-    // entry interrupt(HARDWARE_ALL)
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
     sta rega+1
-    stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
     // [16] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
@@ -663,13 +671,12 @@ nmi: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // nmi::@return
     // }
-    // [22] return  - exit interrupt(HARDWARE_ALL)
+    // [22] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
   // main
@@ -722,6 +729,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 SAMPLE:
 .import binary "moments_sample.bin" 
 

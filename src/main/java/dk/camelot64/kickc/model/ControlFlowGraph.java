@@ -151,7 +151,7 @@ public class ControlFlowGraph implements Serializable {
    public List<ControlFlowBlock> getEntryPointBlocks(Program program) {
       List<ControlFlowBlock> entryPointBlocks = new ArrayList<>();
       for(Procedure procedure : program.getScope().getAllProcedures(true)) {
-         if(ProcedureUtils.isEntrypoint(procedure.getRef(), program) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention())) {
+         if(ProcedureUtils.isEntrypoint(procedure.getRef(), program) || Procedure.CallingConvention.STACK_CALL.equals(procedure.getCallingConvention()) || Procedure.CallingConvention.VAR_CALL.equals(procedure.getCallingConvention())) {
             // Address-of is used on the procedure
             Label procedureLabel = procedure.getLabel();
             ControlFlowBlock procedureBlock = getBlock(procedureLabel.getRef());

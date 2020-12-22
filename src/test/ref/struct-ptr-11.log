@@ -92,8 +92,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 4
 Simplifying constant integer cast 4
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 4
-Finalized unsigned number type 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift and addition[2] main::$3 = main::i#2 * SIZEOF_STRUCT_POINT
 Rewriting multiplication to use shift and addition[9] main::$4 = main::i1#2 * SIZEOF_STRUCT_POINT
@@ -105,6 +105,9 @@ Successful SSA optimization Pass2ConstantInlining
 Alias main::$3 = main::$6 
 Alias main::$4 = main::$8 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@4(between main::@1 and main::@1)
 Added new block during phi lifting main::@5(between main::@3 and main::@3)
 Adding NOP phi() at start of main
@@ -245,13 +248,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Minimal struct -  array of 3-byte structs (required *3)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_POINT_Z = 2
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -336,6 +345,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   points: .fill 3*4, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -390,13 +400,19 @@ Score: 1036
   // File Comments
 // Minimal struct -  array of 3-byte structs (required *3)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 3
   .const OFFSET_STRUCT_POINT_Y = 1
   .const OFFSET_STRUCT_POINT_Z = 2
+.segment Code
   // main
 main: {
     .label SCREEN = $400
@@ -477,5 +493,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   points: .fill 3*4, 0
 

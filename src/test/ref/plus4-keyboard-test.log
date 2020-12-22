@@ -258,18 +258,18 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $400
-Finalized unsigned number type 8
-Finalized unsigned number type 1
-Finalized unsigned number type $ff
-Finalized unsigned number type 0
-Finalized unsigned number type $ff
-Finalized unsigned number type 8
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $400
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$2 = 1 << main::y#3
 Inferred type updated to byte in main::$3 = $ff ^ main::$2
@@ -552,10 +552,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
   // Upstart
-.pc = $1001 "Basic"
+  // Commodore 16 / Plus/4 executable PRG file
+.file [name="plus4-keyboard-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
-
   // Global Constants & labels
   // Keyboard latch
   .label KEYBOARD_INPUT = $ff08
@@ -563,6 +567,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label KEYBOARD_SCAN = $fd30
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+.segment Code
   // main
 main: {
     .label row = 3
@@ -649,7 +654,7 @@ main: {
     // [13] main::$6 = main::key_bit#2 & $80 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #$80
-    // [14] if(0==main::$6) goto main::@6 -- vbuc1_eq_vbuaa_then_la1 
+    // [14] if(0==main::$6) goto main::@6 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b6
     jmp __b7
@@ -798,10 +803,14 @@ Score: 7354
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
   // Upstart
-.pc = $1001 "Basic"
+  // Commodore 16 / Plus/4 executable PRG file
+.file [name="plus4-keyboard-test.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
-
   // Global Constants & labels
   // Keyboard latch
   .label KEYBOARD_INPUT = $ff08
@@ -809,6 +818,7 @@ Score: 7354
   .label KEYBOARD_SCAN = $fd30
   // Default address of screen character matrix
   .label DEFAULT_SCREEN = $c00
+.segment Code
   // main
 main: {
     .label row = 3
@@ -900,7 +910,7 @@ main: {
     txa
     and #$80
     // if(key_bit&0x80)
-    // [14] if(0==main::$6) goto main::@6 -- vbuc1_eq_vbuaa_then_la1 
+    // [14] if(0==main::$6) goto main::@6 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b6
     // main::@7

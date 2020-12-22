@@ -225,10 +225,10 @@ Simplifying constant integer cast 8
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 8
-Finalized unsigned number type 0
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias x#11 = x#6 x#8 x#2 
 Alias idx#1 = idx#14 idx#10 idx#6 
@@ -308,6 +308,9 @@ Constant inlined line#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_STRUCT_POS
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) $40
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 CALL GRAPH
 
@@ -454,9 +457,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Example of structs that can be optimized by going planar
 // https://cc65.github.io/mailarchive/2010-09/8593.html?fbclid=IwAR1IF_cTdyWcFeKU93VfL2Un1EuLjkGh7O7dQ4EVj4kpJzJAj01dbmEFQt8
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-pos-fill.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POS_Y = 1
   .const XSPACE = $14
@@ -465,6 +473,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label idx = 4
   .label y = 5
   .label line = 2
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -553,6 +562,7 @@ main: {
     jmp __b3
 }
   // File Data
+.segment Data
   p: .fill 2*$40, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -614,9 +624,14 @@ Score: 5181
 // Example of structs that can be optimized by going planar
 // https://cc65.github.io/mailarchive/2010-09/8593.html?fbclid=IwAR1IF_cTdyWcFeKU93VfL2Un1EuLjkGh7O7dQ4EVj4kpJzJAj01dbmEFQt8
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-pos-fill.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const OFFSET_STRUCT_POS_Y = 1
   .const XSPACE = $14
@@ -625,6 +640,7 @@ Score: 5181
   .label idx = 4
   .label y = 5
   .label line = 2
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -711,5 +727,6 @@ main: {
     jmp __b3
 }
   // File Data
+.segment Data
   p: .fill 2*$40, 0
 

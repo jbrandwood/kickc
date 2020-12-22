@@ -1,7 +1,12 @@
 // Test signed word comparisons
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comparisons-sword.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const LT = 0
   .const LE = 1
   .const GT = 2
@@ -15,6 +20,7 @@
   .label print_screen = $400
   .label print_line_cursor = 7
   .label print_char_cursor = $d
+.segment Code
 main: {
     .label w1 = $f
     .label w2 = $11
@@ -286,6 +292,7 @@ compare: {
     lda #>ops_6
     sta.z ops+1
     jmp __b6
+  .segment Data
     ops_1: .text "!="
     .byte 0
     ops_2: .text "=="
@@ -299,6 +306,7 @@ compare: {
     ops_6: .text "< "
     .byte 0
 }
+.segment Code
 // Print a newline
 print_ln: {
   __b1:
@@ -458,5 +466,6 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   swords: .word -$6fed, $12, $7fed

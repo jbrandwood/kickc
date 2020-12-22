@@ -1,4 +1,4 @@
-Calling convention STACK_CALL adding prepare/execute/finalize for main::$0 = call plus '0' 7 
+Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call plus '0' 7 
 Calling convention STACK_CALL replacing param(plus::a) with stackidx(byte,plus::OFFSET_STACK_A)
 Calling convention STACK_CALL replacing param(plus::b) with stackidx(byte,plus::OFFSET_STACK_B)
 Calling convention STACK_CALL adding stack return stackidx(byte,plus::OFFSET_STACK_RETURN) = plus::return
@@ -72,8 +72,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 7
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 7
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias plus::return#0 = plus::$0 plus::return#1 
 Successful SSA optimization Pass2AliasElimination
@@ -84,6 +84,8 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (byte) 1
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 CALL GRAPH
 Calls in [main] to plus:7 
 
@@ -181,12 +183,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test a procedure with calling convention stack
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
+.segment Code
   // plus
 // plus(byte zp(2) a, byte register(A) b)
 plus: {
@@ -273,12 +281,18 @@ Score: 67
   // File Comments
 // Test a procedure with calling convention stack
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const STACK_BASE = $103
   .label SCREEN = $400
+.segment Code
   // plus
 // plus(byte zp(2) a, byte register(A) b)
 plus: {

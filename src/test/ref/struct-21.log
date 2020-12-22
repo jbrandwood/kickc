@@ -49,8 +49,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing C-classic struct-unwound assignment [1] main::point1 = struct-unwound {*(&main::point1)}
 Constant right-side identified [2] main::$2 = (byte*)main::ptr
@@ -127,13 +127,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Minimal struct with C-Standard behavior - address-of
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-21.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label ptr = point1
@@ -158,6 +164,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   __0: .byte 2, 3
 
 ASSEMBLER OPTIMIZATIONS
@@ -184,13 +191,19 @@ Score: 37
   // File Comments
 // Minimal struct with C-Standard behavior - address-of
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-21.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label ptr = point1
@@ -217,5 +230,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   __0: .byte 2, 3
 

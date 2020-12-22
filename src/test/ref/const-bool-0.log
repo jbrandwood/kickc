@@ -1,0 +1,160 @@
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  main::bError#0 = 7
+  main::bError#1 = main::bError#0 & ~$10|$20|$40
+  *main::screen = main::bError#1
+  to:main::@return
+main::@return: scope:[main]  from main
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+void __start()
+void main()
+byte main::bError
+byte main::bError#0
+byte main::bError#1
+const nomodify byte* main::screen = (byte*)$400
+
+Adding number conversion cast (unumber) ~$10|$20|$40 in main::bError#1 = main::bError#0 & ~$10|$20|$40
+Successful SSA optimization PassNAddNumberTypeConversions
+Simplifying constant pointer cast (byte*) 1024
+Successful SSA optimization PassNCastSimplification
+Constant main::bError#0 = 7
+Successful SSA optimization Pass2ConstantIdentification
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [0] main::bError#1 = main::bError#0 & (byte)~$10|$20|$40
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::bError#1 = main::bError#0&(byte)~$10|$20|$40
+Successful SSA optimization Pass2ConstantIdentification
+Inlining constant with different constant siblings main::bError#0
+Inlining constant with different constant siblings main::bError#1
+Constant inlined main::bError#0 = 7
+Constant inlined main::bError#1 = 7&(byte)~$10|$20|$40
+Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) $40
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Simplifying constant integer cast ~$10|$20|$40
+Successful SSA optimization PassNCastSimplification
+CALL GRAPH
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] *main::screen = 7&~$10|$20|$40
+  to:main::@return
+main::@return: scope:[main]  from main
+  [1] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+void main()
+byte main::bError
+
+Initial phi equivalence classes
+Complete equivalence classes
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] *main::screen = 7&~$10|$20|$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [main] 
+Uplift Scope [] 
+
+Uplifting [main] best 15 combination 
+Uplifting [] best 15 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests a complex constant binary
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="const-bool-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label screen = $400
+    // [0] *main::screen = 7&~$10|$20|$40 -- _deref_pbuc1=vbuc2 
+    lda #7&(($10|$20|$40)^$ff)
+    sta screen
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [1] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+void main()
+byte main::bError
+const nomodify byte* main::screen = (byte*) 1024
+
+
+
+FINAL ASSEMBLER
+Score: 12
+
+  // File Comments
+// Tests a complex constant binary
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="const-bool-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+.segment Code
+  // main
+main: {
+    .label screen = $400
+    // *screen = bError
+    // [0] *main::screen = 7&~$10|$20|$40 -- _deref_pbuc1=vbuc2 
+    lda #7&(($10|$20|$40)^$ff)
+    sta screen
+    // main::@return
+    // }
+    // [1] return 
+    rts
+}
+  // File Data
+

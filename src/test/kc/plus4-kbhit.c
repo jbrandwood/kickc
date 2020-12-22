@@ -1,5 +1,5 @@
 // Test implementation of kbhit() for Plus/4
-#pragma target(plus4basic)
+#pragma target(plus4)
 #include <plus4.h>
 
 void main() {

@@ -1,7 +1,7 @@
+Converting variable modified inside __stackcall procedure main() to load/store val
 Inlined call call __init 
-Converting PHI-variable modified inside __stackcall procedure main() to load/store val
-Calling convention STACK_CALL adding prepare/execute/finalize for call printline 
-Calling convention STACK_CALL adding prepare/execute/finalize for call main 
+Calling convention __stackcall adding prepare/execute/finalize for call printline 
+Calling convention __stackcall adding prepare/execute/finalize for call main 
 
 CONTROL FLOW GRAPH SSA
 
@@ -66,8 +66,8 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant integer cast $50
 Simplifying constant integer cast $28
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $50
-Finalized unsigned number type $28
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) $28
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias printline::i#2 = printline::i#3 
 Successful SSA optimization Pass2AliasElimination
@@ -187,12 +187,18 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack
 // Illustrates live ranges for printline::i and global variable val
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label val = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -301,12 +307,18 @@ Score: 232
 // Test a procedure with calling convention stack
 // Illustrates live ranges for printline::i and global variable val
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label val = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1

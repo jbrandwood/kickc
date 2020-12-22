@@ -97,7 +97,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant pointer cast (word*) 1024
 Simplifying constant integer cast 2
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 2
+Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias screen_idx#0 = screen_idx#8 
 Alias screen_idx#1 = screen_idx#9 screen_idx#10 screen_idx#2 
@@ -223,12 +223,18 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="deref-to-derefidx-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
+.segment Code
   // main
 main: {
     // [1] call print 
@@ -288,6 +294,7 @@ print: {
     rts
 }
   // File Data
+.segment Data
   msg1: .byte 'a', 'b', 'c', 'd'
   msg2: .byte '1', '2', '3', '4'
 
@@ -329,12 +336,18 @@ Score: 86
   // File Comments
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="deref-to-derefidx-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
   .label screen_idx = 4
+.segment Code
   // main
 main: {
     // print(msg1)
@@ -391,6 +404,7 @@ print: {
     rts
 }
   // File Data
+.segment Data
   msg1: .byte 'a', 'b', 'c', 'd'
   msg2: .byte '1', '2', '3', '4'
 

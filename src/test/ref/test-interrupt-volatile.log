@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(KERNEL_MIN) void irq()
+Resolved forward reference irq to __interrupt(rom_min_c64) void irq()
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -17,7 +17,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
   *BG_COLOR = col
@@ -46,7 +46,7 @@ const nomodify byte* BG_COLOR = (byte*)$d020
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 void __start()
 volatile byte col loadstore
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 Simplifying constant pointer cast (void()**) 788
@@ -88,7 +88,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   asm { lda$dc0d  }
   [6] *BG_COLOR = col
@@ -109,7 +109,7 @@ main::@1: scope:[main]  from main main::@1
 VARIABLE REGISTER WEIGHTS
 void __start()
 volatile byte col loadstore 41.2
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -130,23 +130,29 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [__start] 
 
-Uplifting [] best 165 combination zp[1]:2 [ col ] 
-Uplifting [main] best 165 combination 
-Uplifting [irq] best 165 combination 
-Uplifting [__start] best 165 combination 
+Uplifting [] best 192 combination zp[1]:2 [ col ] 
+Uplifting [main] best 192 combination 
+Uplifting [irq] best 192 combination 
+Uplifting [__start] best 192 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ col ]
-Uplifting [] best 165 combination zp[1]:2 [ col ] 
+Uplifting [] best 192 combination zp[1]:2 [ col ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-interrupt-volatile.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -170,7 +176,7 @@ __start: {
 }
   // irq
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // asm { lda$dc0d  }
     lda $dc0d
     // [6] *BG_COLOR = col -- _deref_pbuc1=vbuz1 
@@ -179,7 +185,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [7] return  - exit interrupt(KERNEL_MIN)
+    // [7] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main
@@ -218,24 +225,30 @@ const nomodify byte* BG_COLOR = (byte*) 53280
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 void __start()
 volatile byte col loadstore zp[1]:2 41.2
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 zp[1]:2 [ col ]
 
 
 FINAL ASSEMBLER
-Score: 123
+Score: 150
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-interrupt-volatile.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -253,7 +266,7 @@ __start: {
 }
   // irq
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // asm
     // asm { lda$dc0d  }
     lda $dc0d
@@ -263,7 +276,8 @@ irq: {
     sta BG_COLOR
     // irq::@return
     // }
-    // [7] return  - exit interrupt(KERNEL_MIN)
+    // [7] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main

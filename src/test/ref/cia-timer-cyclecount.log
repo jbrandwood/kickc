@@ -256,13 +256,13 @@ Simplifying constant integer cast 4
 Simplifying constant integer cast $f
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $ffffffff
-Finalized unsigned number type $ffffffff
-Finalized unsigned number type 2
-Finalized unsigned number type 4
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type 1
+Finalized unsigned number type (dword) $ffffffff
+Finalized unsigned number type (dword) $ffffffff
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to dword in clock::$0 = $ffffffff - *CIA2_TIMER_AB
 Inferred type updated to byte in print_uchar_at::$2 = print_uchar_at::b#3 & $f
@@ -324,6 +324,11 @@ Constant inlined print_ulong_at::at#0 = SCREEN
 Constant inlined print_uint_at::at#1 = SCREEN+4
 Constant inlined print_uint_at::at#0 = SCREEN
 Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of main::@2
@@ -642,9 +647,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Counting cycles using a CIA timer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cia-timer-cyclecount.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
@@ -660,6 +670,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label __1 = 9
@@ -920,6 +931,7 @@ print_char_at: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -1030,9 +1042,14 @@ Score: 869
   // File Comments
 // Counting cycles using a CIA timer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cia-timer-cyclecount.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Timer Control - Start/stop timer (0:stop, 1: start)
   .const CIA_TIMER_CONTROL_START = 1
@@ -1048,6 +1065,7 @@ Score: 869
   // CIA#2 timer A&B as one single 32-bit value
   .label CIA2_TIMER_AB = $dd04
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     .label __1 = 9
@@ -1303,5 +1321,6 @@ print_char_at: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

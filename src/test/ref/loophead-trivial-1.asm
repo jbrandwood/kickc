@@ -1,10 +1,16 @@
 // Test a trivial loop head constant
 // For trivially constant loop heads for(;;) loops can be written to run body before comparison
 // The simplest possible for-loop with a constant loop head.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loophead-trivial-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     ldx #0
   __b1:

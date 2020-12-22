@@ -1002,41 +1002,41 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $3fff
-Finalized unsigned number type 4
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type $400
-Finalized unsigned number type $3e7
-Finalized unsigned number type $50
-Finalized unsigned number type 2
-Finalized unsigned number type 0
-Finalized unsigned number type $40
-Finalized unsigned number type 1
-Finalized unsigned number type $80
-Finalized unsigned number type $28
-Finalized unsigned number type $c0
-Finalized unsigned number type $29
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 2
-Finalized unsigned number type 8
-Finalized unsigned number type 0
-Finalized unsigned number type 8
-Finalized unsigned number type 8
-Finalized unsigned number type $ff
-Finalized unsigned number type 8
-Finalized unsigned number type 8
-Finalized unsigned number type $ff
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $3fff
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (word) $400
+Finalized unsigned number type (word) $3e7
+Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) $29
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::toD0181_$0 = main::toD0181_$7 & $3fff
 Inferred type updated to word in main::toD0181_$1 = main::toD0181_$0 * 4
@@ -1308,14 +1308,14 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 8
-Finalized unsigned number type 8
-Finalized unsigned number type 8
-Finalized unsigned number type 8
-Finalized unsigned number type $40
-Finalized unsigned number type 0
-Finalized unsigned number type 8
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Constant right-side identified [12] main::toD0181_$0 = main::toD0181_$7 & $3fff
@@ -1408,6 +1408,15 @@ Consolidated array index constant in assignment (FONT_COMPRESSED_MAP+$c0)[show::
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias show::$0 = show::$10 
 Successful SSA optimization Pass2AliasElimination
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $c0
+Finalized unsigned number type (byte) 8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@11(between main::@3 and main::@1)
 Added new block during phi lifting main::@12(between main::@10 and main::@2)
 Added new block during phi lifting font_2x2::@11(between font_2x2::@10 and font_2x2::@1)
@@ -2310,9 +2319,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Creates a 2x2 font from the system CHARGEN font and compress it by identifying identical chars
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="font-2x2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
@@ -2326,6 +2340,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label FONT_ORIGINAL = $2000
   .label FONT_COMPRESSED = $2800
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>FONT_COMPRESSED)/4&$f
@@ -2535,7 +2550,7 @@ font_2x2: {
     // [29] font_2x2::$1 = font_2x2::glyph_bits#2 & $80 -- vbuaa=vbuz1_band_vbuc1 
     lda #$80
     and.z glyph_bits
-    // [30] if(0!=font_2x2::$1) goto font_2x2::@4 -- vbuc1_neq_vbuaa_then_la1 
+    // [30] if(0!=font_2x2::$1) goto font_2x2::@4 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b4_from___b3
     // [32] phi from font_2x2::@3 to font_2x2::@5 [phi:font_2x2::@3->font_2x2::@5]
@@ -3019,7 +3034,7 @@ font_find: {
     jmp __b4
     // font_find::@4
   __b4:
-    // [116] if(0==font_find::found#2) goto font_find::@5 -- vbuc1_eq_vbuaa_then_la1 
+    // [116] if(0==font_find::found#2) goto font_find::@5 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b5
     // [109] phi from font_find::@4 to font_find::@return [phi:font_find::@4->font_find::@return]
@@ -3045,6 +3060,7 @@ font_find: {
     jmp __b1
 }
   // File Data
+.segment Data
   .align $100
   FONT_COMPRESSED_MAP: .fill $100, 0
 
@@ -3172,7 +3188,7 @@ Removing instruction lda #8
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [185] bne __b1 to beq
+Fixing long branch [191] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 const nomodify byte* CHARGEN = (byte*) 53248
@@ -3373,9 +3389,14 @@ Score: 122846
   // File Comments
 // Creates a 2x2 font from the system CHARGEN font and compress it by identifying identical chars
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="font-2x2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
@@ -3389,6 +3410,7 @@ Score: 122846
   .label SCREEN = $400
   .label FONT_ORIGINAL = $2000
   .label FONT_COMPRESSED = $2800
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>FONT_COMPRESSED)/4&$f
@@ -3576,7 +3598,7 @@ font_2x2: {
     lda #$80
     and.z glyph_bits
     // (glyph_bits&0x80)?1uc:0uc
-    // [30] if(0!=font_2x2::$1) goto font_2x2::@4 -- vbuc1_neq_vbuaa_then_la1 
+    // [30] if(0!=font_2x2::$1) goto font_2x2::@4 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b4
     // [32] phi from font_2x2::@3 to font_2x2::@5 [phi:font_2x2::@3->font_2x2::@5]
@@ -4063,7 +4085,7 @@ font_find: {
     // font_find::@4
   __b4:
     // if(found)
-    // [116] if(0==font_find::found#2) goto font_find::@5 -- vbuc1_eq_vbuaa_then_la1 
+    // [116] if(0==font_find::found#2) goto font_find::@5 -- 0_eq_vbuaa_then_la1 
     cmp #0
     beq __b5
     // [109] phi from font_find::@4 to font_find::@return [phi:font_find::@4->font_find::@return]
@@ -4089,6 +4111,7 @@ font_find: {
     jmp __b1
 }
   // File Data
+.segment Data
   .align $100
   FONT_COMPRESSED_MAP: .fill $100, 0
 

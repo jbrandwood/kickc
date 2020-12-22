@@ -8,7 +8,7 @@ void main() {
     *KERNEL_IRQ = &irq;
 }
 
-interrupt void irq() {
+__interrupt void irq() {
     SCREEN[40] = col1++;
     SCREEN[41] = col2++;
 }

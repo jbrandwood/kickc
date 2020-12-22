@@ -59,9 +59,9 @@ Simplifying constant integer cast $28
 Simplifying constant integer cast 4
 Simplifying constant integer cast 3
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type 3
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 3
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition main::$0 [4] if(main::i<$28) goto main::@4
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -74,6 +74,8 @@ Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 CALL GRAPH
@@ -156,11 +158,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Demonstrates problem with __ma coalescing
 // c1a is erroneously zp-coalesced with c1A
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="ma_coalesce_problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     jmp __b1
@@ -201,6 +209,7 @@ main: {
     // [7] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
     jmp __b2
+  .segment Data
     c1a: .byte 0
     i: .byte 0
 }
@@ -243,11 +252,17 @@ Score: 4770
 // Demonstrates problem with __ma coalescing
 // c1a is erroneously zp-coalesced with c1A
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="ma_coalesce_problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label SCREEN = $400
+.segment Code
   // main
 main: {
     // main::@1
@@ -291,6 +306,7 @@ main: {
     // [7] main::i = ++ main::i -- vbum1=_inc_vbum1 
     inc i
     jmp __b2
+  .segment Data
     c1a: .byte 0
     i: .byte 0
 }

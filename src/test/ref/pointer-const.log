@@ -85,10 +85,10 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $28
 Simplifying constant integer cast $3f
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $3f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) $3f
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$1 = $28 + main::i#7
 Inferred type updated to byte in main::$2 = BASIC[main::i#7] & $3f
@@ -204,14 +204,20 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test pointer to const and const pointer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Const pointer
   .label SCREEN = $400
   // Const pointer to const
   .label BASIC = $a004
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -221,7 +227,7 @@ main: {
     jmp __b1
     // main::@1
   __b1:
-    // [2] if(0!=MSG[main::i#4]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=MSG[main::i#4]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda MSG,x
     cmp #0
     bne __b2
@@ -267,6 +273,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   // Pointer to const
   MSG: .text "hello world!"
   .byte 0
@@ -306,14 +313,20 @@ Score: 536
   // File Comments
 // Test pointer to const and const pointer
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-const.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Const pointer
   .label SCREEN = $400
   // Const pointer to const
   .label BASIC = $a004
+.segment Code
   // main
 main: {
     // [1] phi from main to main::@1 [phi:main->main::@1]
@@ -322,7 +335,7 @@ main: {
     // main::@1
   __b1:
     // while(MSG[i])
-    // [2] if(0!=MSG[main::i#4]) goto main::@2 -- vbuc1_neq_pbuc2_derefidx_vbuxx_then_la1 
+    // [2] if(0!=MSG[main::i#4]) goto main::@2 -- 0_neq_pbuc1_derefidx_vbuxx_then_la1 
     lda MSG,x
     cmp #0
     bne __b2
@@ -369,6 +382,7 @@ main: {
     jmp __b1
 }
   // File Data
+.segment Data
   // Pointer to const
   MSG: .text "hello world!"
   .byte 0

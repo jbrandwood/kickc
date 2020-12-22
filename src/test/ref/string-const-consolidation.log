@@ -118,7 +118,7 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias screen#0 = screen#9 
 Alias screen#1 = screen#10 
@@ -256,11 +256,17 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Tests that identical strings are consolidated
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-const-consolidation.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
+.segment Code
   // main
 main: {
     // [1] call print 
@@ -313,7 +319,7 @@ print: {
     jmp __b1
     // print::@1
   __b1:
-    // [9] if(0!=*print::string#4) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*print::string#4) goto print::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (string),y
     cmp #0
@@ -347,6 +353,7 @@ print: {
     jmp __b1
 }
   // File Data
+.segment Data
   rex1: .text "rex"
   .byte 0
 
@@ -395,11 +402,17 @@ Score: 675
   // File Comments
 // Tests that identical strings are consolidated
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-const-consolidation.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 2
+.segment Code
   // main
 main: {
     // print(rex1)
@@ -444,7 +457,7 @@ print: {
     // print::@1
   __b1:
     // while(*string)
-    // [9] if(0!=*print::string#4) goto print::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [9] if(0!=*print::string#4) goto print::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (string),y
     cmp #0
@@ -477,6 +490,7 @@ print: {
     jmp __b1
 }
   // File Data
+.segment Data
   rex1: .text "rex"
   .byte 0
 

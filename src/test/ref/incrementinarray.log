@@ -371,12 +371,12 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 1
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type $3e8
-Finalized unsigned number type 1
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inversing boolean not [2] memset::$1 = memset::num#1 <= 0 from [1] memset::$0 = memset::num#1 > 0
 Successful SSA optimization Pass2UnaryNotSimplification
@@ -469,7 +469,7 @@ Adding number conversion cast (unumber) $b in [27] if(main::i#1!=$b) goto main::
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $b
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $b
+Finalized unsigned number type (byte) $b
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [0] memset::end#0 = memset::$4 + memset::num#0
 Successful SSA optimization Pass2ConstantRValueConsolidation
@@ -486,6 +486,11 @@ Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(txt+1)
 Consolidated array index constant in *(txt+1)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting main::@5(between main::@4 and main::@1)
 Adding NOP phi() at start of main
@@ -736,13 +741,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="incrementinarray.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = 2
   .label print_line_cursor = 4
+.segment Code
   // main
 main: {
     // [1] call print_cls 
@@ -837,7 +848,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [16] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [16] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -966,6 +977,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   txt: .text "camelot"
   .byte 0
 
@@ -1069,13 +1081,19 @@ Score: 9880
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="incrementinarray.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label print_screen = $400
   .label print_char_cursor = 2
   .label print_line_cursor = 4
+.segment Code
   // main
 main: {
     // print_cls()
@@ -1161,7 +1179,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [16] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [16] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -1286,6 +1304,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   txt: .text "camelot"
   .byte 0
 

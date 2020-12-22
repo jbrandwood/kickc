@@ -64,7 +64,7 @@ Adding number conversion cast (unumber) $3e8 in [5] if(main::i#1!=$3e8) goto mai
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast $3e8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $3e8
+Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Rewriting multiplication to use shift [1] main::$3 = *main::screen#2 * SIZEOF_WORD
 Successful SSA optimization Pass2MultiplyToShiftRewriting
@@ -75,6 +75,9 @@ Constant inlined main::i#0 = 0
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $100
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting main::@2(between main::@1 and main::@1)
 Adding NOP phi() at start of main
 CALL GRAPH
@@ -145,10 +148,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Inner increment is not being done properly (screen++)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inner-increment-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     // Count the number of the different chars on the screen
@@ -208,6 +217,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   CHAR_COUNTS: .fill 2*$100, 0
 
 ASSEMBLER OPTIMIZATIONS
@@ -248,10 +258,16 @@ Score: 866
   // File Comments
 // Inner increment is not being done properly (screen++)
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inner-increment-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
+.segment Code
   // main
 main: {
     // Count the number of the different chars on the screen
@@ -307,5 +323,6 @@ main: {
     rts
 }
   // File Data
+.segment Data
   CHAR_COUNTS: .fill 2*$100, 0
 

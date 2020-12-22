@@ -1644,8 +1644,8 @@ uctoa: {
     lda RADIX_HEXADECIMAL_VALUES_CHAR,y
     sta.z digit_value
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b5
     cpx.z digit_value
     bcs __b5
@@ -1688,8 +1688,8 @@ printf_number_buffer: {
     // There is a minimum length - work out the padding
     ldx.z __19
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b10
     // len++;
     inx
@@ -1707,10 +1707,11 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b7
     jmp __b2
   __b7:
@@ -1722,19 +1723,19 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     sta.z cputc.c
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b9
     jmp __b4
   __b9:

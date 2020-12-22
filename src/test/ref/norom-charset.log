@@ -228,16 +228,16 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast 2
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 8
-Finalized unsigned number type 4
-Finalized unsigned number type 8
-Finalized unsigned number type $40
-Finalized unsigned number type $400
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $400
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::$1 = main::$8 / $40
 Inferred type updated to word in main::$2 = main::$9 / $400
@@ -309,8 +309,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 3
 Simplifying constant integer cast 5
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 3
-Finalized unsigned number type 5
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 5
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Constant right-side identified [8] main::$1 = main::$8 / $40
 Constant right-side identified [9] main::$2 = main::$9 / $400
@@ -546,13 +546,19 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="norom-charset.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
+.segment Code
   // main
 main: {
     .label charset = 3
@@ -711,6 +717,7 @@ gen_char3: {
     rts
 }
   // File Data
+.segment Data
   // Stores chars as 15 bits (in 2 bytes) specifying the 3x5
   // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
   charset_spec_row: .word $f7da, $f7de, $f24e, $d6de
@@ -803,13 +810,19 @@ Score: 45574
   // File Comments
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="norom-charset.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label VIC_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
+.segment Code
   // main
 main: {
     .label charset = 3
@@ -957,6 +970,7 @@ gen_char3: {
     rts
 }
   // File Data
+.segment Data
   // Stores chars as 15 bits (in 2 bytes) specifying the 3x5
   // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
   charset_spec_row: .word $f7da, $f7de, $f24e, $d6de

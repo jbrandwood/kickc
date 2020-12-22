@@ -81,7 +81,7 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 1064
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Simple Condition str_cpy::$1 [7] if(0!=str_cpy::$0) goto str_cpy::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
@@ -201,12 +201,18 @@ Uplifting [] best 655 combination
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strcpy-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label dst1 = $400
   .label dst2 = $428
+.segment Code
   // main
 main: {
     // [1] call str_cpy 
@@ -247,11 +253,13 @@ main: {
   __breturn:
     // [4] return 
     rts
+  .segment Data
     src: .text "hello"
     .byte 0
     src1: .text "world"
     .byte 0
 }
+.segment Code
   // str_cpy
 // str_cpy(byte* zp(4) dst, byte* zp(2) src)
 str_cpy: {
@@ -283,7 +291,7 @@ str_cpy: {
     bne !+
     inc.z src+1
   !:
-    // [11] if(0!=str_cpy::$0) goto str_cpy::@1 -- vbuc1_neq_vbuaa_then_la1 
+    // [11] if(0!=str_cpy::$0) goto str_cpy::@1 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b1_from___b1
     jmp __breturn
@@ -342,12 +350,18 @@ Score: 549
 
   // File Comments
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strcpy-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label dst1 = $400
   .label dst2 = $428
+.segment Code
   // main
 main: {
     // str_cpy(dst1, "hello")
@@ -384,11 +398,13 @@ main: {
     // }
     // [4] return 
     rts
+  .segment Data
     src: .text "hello"
     .byte 0
     src1: .text "world"
     .byte 0
 }
+.segment Code
   // str_cpy
 // str_cpy(byte* zp(4) dst, byte* zp(2) src)
 str_cpy: {
@@ -417,7 +433,7 @@ str_cpy: {
     bne !+
     inc.z src+1
   !:
-    // [11] if(0!=str_cpy::$0) goto str_cpy::@1 -- vbuc1_neq_vbuaa_then_la1 
+    // [11] if(0!=str_cpy::$0) goto str_cpy::@1 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b1
     // str_cpy::@return

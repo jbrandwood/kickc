@@ -1,8 +1,14 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loop-problem2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label BORDER_COLOR = $d020
   .label SCREEN = $400
+.segment Code
 main: {
     // print_cls()
     jsr print_cls

@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(KERNEL_KEYBOARD) void irq()
+Resolved forward reference irq to __interrupt(rom_sys_c64) void irq()
 Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
@@ -14,7 +14,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 irq: scope:[irq]  from
   PLEX_SCREEN_PTR1#6 = phi( )
   PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx]
@@ -62,7 +62,7 @@ byte* PLEX_SCREEN_PTR1#9
 const byte* PLEX_SCREEN_PTR2 = (byte*)$500
 void __start()
 volatile byte idx loadstore
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 void main()
 
 Inlining cast PLEX_SCREEN_PTR1#0 = (byte*)$400
@@ -113,7 +113,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 irq: scope:[irq]  from
   [5] PLEX_SCREEN_PTR1#6 = phi( )
   [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx]
@@ -138,7 +138,7 @@ byte* PLEX_SCREEN_PTR1
 byte* PLEX_SCREEN_PTR1#6 4.0
 void __start()
 volatile byte idx loadstore 4.666666666666666
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -163,12 +163,12 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [__start] 
 
-Uplifting [] best 113 combination zp[1]:4 [ idx ] zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] 
-Uplifting [main] best 113 combination 
-Uplifting [irq] best 113 combination 
-Uplifting [__start] best 113 combination 
+Uplifting [] best 140 combination zp[1]:4 [ idx ] zp[2]:2 [ PLEX_SCREEN_PTR1#6 ] 
+Uplifting [main] best 140 combination 
+Uplifting [irq] best 140 combination 
+Uplifting [__start] best 140 combination 
 Attempting to uplift remaining variables inzp[1]:4 [ idx ]
-Uplifting [] best 113 combination zp[1]:4 [ idx ] 
+Uplifting [] best 140 combination zp[1]:4 [ idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -178,15 +178,21 @@ ASSEMBLER BEFORE OPTIMIZATION
 // All assignments for PLEX_SCREEN_PTR1 are optimized away because it is only used in the IRQ.
 // A potential fix is https://gitlab.com/camelot/kickc/-/issues/430
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-volatile-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label IRQ = $314
   .label PLEX_SCREEN_PTR2 = $500
   .label idx = 4
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR1 = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -211,7 +217,7 @@ __start: {
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(KERNEL_KEYBOARD)
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx] -- pbuz1_derefidx_vbuz2=_inc_pbuz1_derefidx_vbuz2 
     ldy.z idx
     lda (PLEX_SCREEN_PTR1),y
@@ -226,7 +232,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [9] return  - exit interrupt(KERNEL_KEYBOARD)
+    // [9] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
     jmp $ea31
 }
   // main
@@ -267,7 +274,7 @@ byte* PLEX_SCREEN_PTR1#6 PLEX_SCREEN_PTR1 zp[2]:2 4.0
 const byte* PLEX_SCREEN_PTR2 = (byte*) 1280
 void __start()
 volatile byte idx loadstore zp[1]:4 4.666666666666666
-interrupt(KERNEL_KEYBOARD) void irq()
+__interrupt(rom_sys_c64) void irq()
 void main()
 
 zp[2]:2 [ PLEX_SCREEN_PTR1#6 ]
@@ -275,7 +282,7 @@ zp[1]:4 [ idx ]
 
 
 FINAL ASSEMBLER
-Score: 71
+Score: 98
 
   // File Comments
 // Demonstrates problem where a pointer with constant value is never assigned - because it is only used in an IRQ
@@ -284,15 +291,21 @@ Score: 71
 // All assignments for PLEX_SCREEN_PTR1 are optimized away because it is only used in the IRQ.
 // A potential fix is https://gitlab.com/camelot/kickc/-/issues/430
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="const-volatile-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label IRQ = $314
   .label PLEX_SCREEN_PTR2 = $500
   .label idx = 4
   // The address of the sprite pointers on the current screen (screen+0x3f8).
   .label PLEX_SCREEN_PTR1 = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -311,7 +324,7 @@ __start: {
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(KERNEL_KEYBOARD)
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // PLEX_SCREEN_PTR1[idx]++;
     // [6] PLEX_SCREEN_PTR1#6[idx] = ++ PLEX_SCREEN_PTR1#6[idx] -- pbuz1_derefidx_vbuz2=_inc_pbuz1_derefidx_vbuz2 
     ldy.z idx
@@ -328,7 +341,8 @@ irq: {
     inc.z idx
     // irq::@return
     // }
-    // [9] return  - exit interrupt(KERNEL_KEYBOARD)
+    // [9] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
     jmp $ea31
 }
   // main

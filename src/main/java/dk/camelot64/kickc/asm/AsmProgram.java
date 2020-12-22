@@ -118,7 +118,7 @@ public class AsmProgram {
 
    public AsmInstruction addInstruction(String mnemonic, CpuAddressingMode addressingMode, String operand1, boolean isOperandZp) {
       CpuOpcode cpuOpcode = targetCpu.getCpu65xx().getOpcode(mnemonic, addressingMode, isOperandZp);
-      AsmInstruction asmInstruction = new AsmInstruction(cpuOpcode, operand1);
+      AsmInstruction asmInstruction = new AsmInstruction(cpuOpcode, operand1, null);
       addLine(asmInstruction);
       return asmInstruction;
    }

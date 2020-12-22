@@ -992,27 +992,27 @@ Simplifying constant integer cast 6
 Simplifying constant integer cast 0
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 5
-Finalized unsigned number type 4
-Finalized unsigned number type 6
-Finalized unsigned number type $10
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type $28
-Finalized unsigned number type 4
-Finalized unsigned number type $f
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $20
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type $100
-Finalized unsigned number type 0
-Finalized unsigned number type 6
-Finalized signed number type 0
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $28
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $20
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 6
+Finalized signed number type (signed byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in utoa::$4 = utoa::max_digits#5 - 1
 Inferred type updated to byte in print_uchar::$2 = print_uchar::b#3 & $f
@@ -1230,7 +1230,7 @@ Adding number conversion cast (unumber) 0 in utoa::$12 = 0 != utoa::started#2
 Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values utoa::max_digits#7 utoa::max_digits#1
 Identical Phi Values utoa::digit_values#8 utoa::digit_values#1
@@ -1283,6 +1283,13 @@ Constant inlined sum::p#1 = rom
 Successful SSA optimization Pass2ConstantInlining
 Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 6
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting utoa::@17(between utoa::@16 and utoa::@13)
 Added new block during phi lifting print_ln::@3(between print_ln::@1 and print_ln::@1)
 Added new block during phi lifting sum::@6(between sum::@4 and sum::@4)
@@ -2041,9 +2048,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="romsum-kc.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label rom = $e000
   .label print_screen = $400
@@ -2052,6 +2064,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label print_line_cursor = 2
   .label Ticks = $b
   .label Ticks_1 = $d
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -2279,7 +2292,7 @@ sum: {
   !:
     // [39] sum::i#2 = ++ sum::i#3 -- vbuyy=_inc_vbuyy 
     iny
-    // [40] if(0!=sum::i#2) goto sum::@2 -- vbuc1_neq_vbuyy_then_la1 
+    // [40] if(0!=sum::i#2) goto sum::@2 -- 0_neq_vbuyy_then_la1 
     cpy #0
     bne __b2_from___b2
     jmp __b3
@@ -2458,7 +2471,7 @@ utoa: {
     sta.z digit_value
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
-    // [68] if(0!=utoa::started#2) goto utoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [68] if(0!=utoa::started#2) goto utoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     jmp __b7
@@ -2533,7 +2546,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [81] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [81] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -2689,6 +2702,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits
@@ -2966,9 +2980,14 @@ Score: 99336
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="romsum-kc.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .label rom = $e000
   .label print_screen = $400
@@ -2977,6 +2996,7 @@ Score: 99336
   .label print_line_cursor = 2
   .label Ticks = $b
   .label Ticks_1 = $d
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -3182,7 +3202,7 @@ sum: {
     // [39] sum::i#2 = ++ sum::i#3 -- vbuyy=_inc_vbuyy 
     iny
     // while (i)
-    // [40] if(0!=sum::i#2) goto sum::@2 -- vbuc1_neq_vbuyy_then_la1 
+    // [40] if(0!=sum::i#2) goto sum::@2 -- 0_neq_vbuyy_then_la1 
     cpy #0
     bne __b2
     // sum::@3
@@ -3352,7 +3372,7 @@ utoa: {
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
     // if (started || value >= digit_value)
-    // [68] if(0!=utoa::started#2) goto utoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [68] if(0!=utoa::started#2) goto utoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     // utoa::@7
@@ -3421,7 +3441,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [81] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [81] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3572,6 +3592,7 @@ print_char: {
     rts
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

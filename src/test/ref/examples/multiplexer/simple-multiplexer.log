@@ -602,39 +602,39 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type $3f8
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 2
-Finalized unsigned number type 1
-Finalized unsigned number type $ff
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type $15
-Finalized unsigned number type 1
-Finalized unsigned number type 7
-Finalized unsigned number type 0
-Finalized unsigned number type $ff
-Finalized unsigned number type 1
-Finalized unsigned number type 7
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 3
-Finalized unsigned number type $40
-Finalized unsigned number type 9
-Finalized unsigned number type 1
-Finalized unsigned number type $ff
-Finalized unsigned number type $ff
-Finalized unsigned number type 8
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
+Finalized unsigned number type (word) $3f8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) $15
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 7
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 9
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in plexSort::$1 = plexSort::m#2 + 1
 Inferred type updated to byte in plexSort::$4 = plexSort::s#3 + 1
@@ -760,13 +760,13 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast PLEX_COUNT-1+(unumber)1
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 8
-Finalized unsigned number type 1
-Finalized unsigned number type 8
-Finalized unsigned number type 1
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Alias candidate removed (volatile)PLEX_SCREEN_PTR = plexInit::plexSetScreen1_$0 
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
@@ -824,6 +824,17 @@ Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$6 
 Eliminating unused constant SIZEOF_WORD
 Successful SSA optimization PassNEliminateUnusedVars
+Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
+Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$6 
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (word) $100
+Finalized unsigned number type (word) $2000
+Finalized unsigned number type (word) $400
+Finalized unsigned number type (word) $3f8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
+Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$6 
 Alias candidate removed (volatile)plex_free_next = plexShowSprite::plexFreeAdd1_$2 
 Alias candidate removed (volatile)plex_sprite_idx = plexShowSprite::$6 
 Added new block during phi lifting plexInit::@3(between plexInit::@1 and plexInit::@1)
@@ -1599,9 +1610,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="simple-multiplexer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
@@ -1633,6 +1649,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label plex_sprite_msb = $a
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -2188,6 +2205,7 @@ plexShowSprite: {
     jmp __b2
 }
   // File Data
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
@@ -2489,9 +2507,14 @@ Score: 58109
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="simple-multiplexer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const VIC_RST8 = $80
   .const VIC_DEN = $10
@@ -2523,6 +2546,7 @@ Score: 58109
   .label plex_sprite_msb = $a
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -3055,6 +3079,7 @@ plexShowSprite: {
     jmp __b2
 }
   // File Data
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.

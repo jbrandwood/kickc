@@ -1,6 +1,12 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="forrangedwords.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label SCREEN = $400
     .label w = 2
@@ -23,8 +29,7 @@ main: {
     inc.z w+1
   !:
     lda.z w
-    bne __b1
-    lda.z w+1
+    ora.z w+1
     bne __b1
     lda #<-$7fff
     sta.z sw

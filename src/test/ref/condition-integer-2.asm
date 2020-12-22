@@ -1,9 +1,15 @@
 // Tests using integer conditions in while() / for() / do..while
 // This should produce 'ba ba@ ba@' at the top of the screen
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="condition-integer-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     // while()
     .label j = 2
@@ -25,8 +31,8 @@ main: {
     // while( j-- )
     ldy.z j
     dey
-    lda #0
-    cmp.z j
+    lda.z j
+    cmp #0
     bne __b5
     // SCREEN[idx++] = ' '
     lda #' '

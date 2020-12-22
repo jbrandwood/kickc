@@ -1,8 +1,13 @@
 // Tests printf implementation
 // Format a number
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const BINARY = 2
   .const OCTAL = 8
   .const DECIMAL = $a
@@ -23,6 +28,7 @@
   .label conio_line_text = $11
   // The current color cursor line start
   .label conio_line_color = $13
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -444,8 +450,8 @@ uctoa: {
     lda (digit_values),y
     tay
     // if (started || value >= digit_value)
-    lda #0
-    cmp.z started
+    lda.z started
+    cmp #0
     bne __b10
     sty.z $ff
     cpx.z $ff
@@ -489,8 +495,8 @@ printf_number_buffer: {
     // There is a minimum length - work out the padding
     ldy.z __19
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b13
     // len++;
     iny
@@ -509,12 +515,14 @@ printf_number_buffer: {
     sta.z padding
   __b1:
     // if(!format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     bne __b2
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __b2
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b8
     jmp __b2
   __b8:
@@ -526,18 +534,18 @@ printf_number_buffer: {
     jsr printf_padding
   __b2:
     // if(buffer.sign)
-    lda #0
-    cmp.z buffer_sign
+    lda.z buffer_sign
+    cmp #0
     beq __b3
     // cputc(buffer.sign)
-    lda.z buffer_sign
     jsr cputc
   __b3:
     // if(format.zero_padding && padding)
-    lda #0
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     beq __b4
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b10
     jmp __b4
   __b10:
@@ -549,8 +557,8 @@ printf_number_buffer: {
     jsr printf_padding
   __b4:
     // if(format.upper_case)
-    lda #0
-    cmp.z format_upper_case
+    lda.z format_upper_case
+    cmp #0
     beq __b5
     // strupr(buffer.digits)
     jsr strupr
@@ -558,12 +566,14 @@ printf_number_buffer: {
     // cputs(buffer.digits)
     jsr cputs
     // if(format.justify_left && !format.zero_padding && padding)
-    lda #0
-    cmp.z format_justify_left
+    lda.z format_justify_left
+    cmp #0
     beq __breturn
-    cmp.z format_zero_padding
+    lda.z format_zero_padding
+    cmp #0
     bne __breturn
-    cmp.z padding
+    lda.z padding
+    cmp #0
     bne __b12
     rts
   __b12:
@@ -1036,6 +1046,7 @@ toupper: {
     // }
     rts
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of binary digits

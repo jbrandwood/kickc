@@ -56,7 +56,7 @@ void sprites_irq_init() {
 // Raster Interrupt Routine - sets up the sprites covering the playfield
 // Repeats 10 timers every 2 lines from line IRQ_RASTER_FIRST
 // Utilizes duplicated gfx in the sprites to allow for some leeway in updating the sprite pointers
-interrupt(hardware_clobber) void sprites_irq() {
+__interrupt(hardware_clobber) void sprites_irq() {
     //(*BG_COLOR)++;
     // Clear decimal flag (because it is used by the score algorithm)
     asm { cld }

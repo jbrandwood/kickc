@@ -1,17 +1,25 @@
 // Test adding integer index to a pointer that is a literal string
 // https://gitlab.com/camelot/kickc/issues/315
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-pointer-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label process_name = $400
+.segment Code
 main: {
     // set_process_name("keyboard")
     jsr set_process_name
     // }
     rts
+  .segment Data
     name: .text "keyboard"
     .byte 0
 }
+.segment Code
 set_process_name: {
     .label j = 2
     .label __1 = 4

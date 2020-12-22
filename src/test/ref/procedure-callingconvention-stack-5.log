@@ -1,7 +1,7 @@
+Converting variable modified inside __stackcall procedure next() to load/store current
 Inlined call call __init 
-Converting PHI-variable modified inside __stackcall procedure next() to load/store current
-Calling convention STACK_CALL adding prepare/execute/finalize for main::$0 = call next 
-Calling convention STACK_CALL adding prepare/execute/finalize for main::$1 = call next 
+Calling convention __stackcall adding prepare/execute/finalize for main::$0 = call next 
+Calling convention __stackcall adding prepare/execute/finalize for main::$1 = call next 
 Calling convention STACK_CALL adding stack return stackidx(signed word,next::OFFSET_STACK_RETURN) = next::return
 Calling convention STACK_CALL adding stack pull main::$0 = stackpull(signed word)
 Calling convention STACK_CALL adding stack pull main::$1 = stackpull(signed word)
@@ -77,8 +77,8 @@ Simplifying constant pointer cast (signed word*) 1024
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$2 = 0 * SIZEOF_SIGNED_WORD
 Inferred type updated to byte in main::$3 = 1 * SIZEOF_SIGNED_WORD
@@ -100,6 +100,9 @@ Constant inlined main::$3 = 1*SIZEOF_SIGNED_WORD
 Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(SCREEN+1*SIZEOF_SIGNED_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@2
@@ -213,14 +216,20 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test a procedure with calling convention stack
 // Return value larger than parameter
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -353,14 +362,20 @@ Score: 156
 // Test a procedure with calling convention stack
 // Return value larger than parameter
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
+.segment Code
   // __start
 __start: {
     // __start::__init1

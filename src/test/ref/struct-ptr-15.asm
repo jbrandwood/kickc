@@ -1,10 +1,16 @@
 // Minimal struct -  using pointers to nested structs
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-15.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_CIRCLE = 3
   .const OFFSET_STRUCT_CIRCLE_CENTER = 1
   .const OFFSET_STRUCT_POINT_Y = 1
+.segment Code
 main: {
     .label SCREEN = $400
     .label __28 = 6
@@ -78,4 +84,5 @@ main: {
     // }
     rts
 }
+.segment Data
   circles: .fill 3*2, 0

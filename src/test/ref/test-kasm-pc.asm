@@ -1,7 +1,13 @@
 // Test inline KickAssembler code with PC location specification
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-kasm-pc.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label BORDER_COLOR = $d020
     ldx #0
@@ -13,6 +19,7 @@ main: {
     inx
     jmp __b2
 }
+.segment Data
 .pc = $2000 "TABLE"
 TABLE:
 .byte 1, 2, 3

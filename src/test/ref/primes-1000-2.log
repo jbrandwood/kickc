@@ -1214,40 +1214,40 @@ Simplifying constant integer cast 2
 Simplifying constant integer cast $3e8
 Simplifying constant pointer cast (byte*) 1024
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 5
-Finalized unsigned number type 4
-Finalized unsigned number type 6
-Finalized unsigned number type $10
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type $80
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 1
-Finalized unsigned number type 0
-Finalized unsigned number type 1
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 3
-Finalized unsigned number type 3
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type 0
-Finalized unsigned number type 2
-Finalized unsigned number type 2
-Finalized unsigned number type $3e8
+Finalized unsigned number type (byte) 5
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $80
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 3
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (word) $3e8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in utoa::$4 = utoa::max_digits#5 - 1
 Inferred type updated to byte in mul8u::$1 = mul8u::a#3 & 1
@@ -1534,8 +1534,8 @@ Successful SSA optimization PassNAddNumberTypeConversions
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type 8
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 8
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Identical Phi Values utoa::max_digits#7 utoa::max_digits#1
 Identical Phi Values utoa::digit_values#8 utoa::digit_values#1
@@ -1603,6 +1603,15 @@ Successful SSA optimization Pass2ConstantInlining
 Consolidated array index constant in *(PRIMES+1*SIZEOF_WORD)
 Consolidated array index constant in *(PRIMES+2*SIZEOF_WORD)
 Successful SSA optimization Pass2ConstantAdditionElimination
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 8
+Finalized unsigned number type (byte) $a
+Finalized unsigned number type (byte) $10
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (byte) 6
+Finalized unsigned number type (word) $3e8
+Finalized unsigned number type (word) $3e8
+Successful SSA optimization PassNFinalizeNumberTypeConversions
 Added new block during phi lifting utoa::@17(between utoa::@16 and utoa::@13)
 Added new block during phi lifting mul8u::@6(between mul8u::@2 and mul8u::@4)
 Added new block during phi lifting divr8u::@7(between divr8u::@3 and divr8u::@1)
@@ -2497,9 +2506,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // From A Comparison of Language Speed, The Transactor, March 1987, Volume 7, Issue 5
 // http://csbruce.com/cbm/transactor/pdfs/trans_v7_i05.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="primes-1000-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   .label print_screen = $400
@@ -2512,6 +2526,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label test_idx = $c
   // The index of the last prime we put into the PRIME[] table
   .label prime_idx = 3
+.segment Code
   // main
 main: {
     .label __0 = 7
@@ -3045,7 +3060,7 @@ utoa: {
     sta.z digit_value
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
-    // [88] if(0!=utoa::started#2) goto utoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [88] if(0!=utoa::started#2) goto utoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     jmp __b7
@@ -3120,7 +3135,7 @@ print_str: {
     jmp __b1
     // print_str::@1
   __b1:
-    // [101] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [101] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -3217,6 +3232,7 @@ utoa_append: {
     jmp __b1
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits
@@ -3355,8 +3371,8 @@ Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #<0
 Removing instruction lda.z digit_value+1
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Fixing long branch [120] bcc __b1 to bcs
 Fixing long branch [126] bcc __b1 to bcs
+Fixing long branch [132] bcc __b1 to bcs
 
 FINAL SYMBOL TABLE
 const byte* DIGITS[]  = "0123456789abcdef"z
@@ -3547,9 +3563,14 @@ Score: 139372
 // From A Comparison of Language Speed, The Transactor, March 1987, Volume 7, Issue 5
 // http://csbruce.com/cbm/transactor/pdfs/trans_v7_i05.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="primes-1000-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const SIZEOF_WORD = 2
   .label print_screen = $400
@@ -3562,6 +3583,7 @@ Score: 139372
   .label test_idx = $c
   // The index of the last prime we put into the PRIME[] table
   .label prime_idx = 3
+.segment Code
   // main
 main: {
     .label __0 = 7
@@ -4069,7 +4091,7 @@ utoa: {
     lda RADIX_DECIMAL_VALUES+1,y
     sta.z digit_value+1
     // if (started || value >= digit_value)
-    // [88] if(0!=utoa::started#2) goto utoa::@5 -- vbuc1_neq_vbuxx_then_la1 
+    // [88] if(0!=utoa::started#2) goto utoa::@5 -- 0_neq_vbuxx_then_la1 
     cpx #0
     bne __b5
     // utoa::@7
@@ -4138,7 +4160,7 @@ print_str: {
     // print_str::@1
   __b1:
     // while(*str)
-    // [101] if(0!=*print_str::str#2) goto print_str::@2 -- vbuc1_neq__deref_pbuz1_then_la1 
+    // [101] if(0!=*print_str::str#2) goto print_str::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -4230,6 +4252,7 @@ utoa_append: {
     jmp __b1
 }
   // File Data
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

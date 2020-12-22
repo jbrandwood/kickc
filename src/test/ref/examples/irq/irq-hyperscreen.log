@@ -1,5 +1,5 @@
-Resolved forward reference irq_bottom_1 to interrupt(HARDWARE_STACK) void irq_bottom_1()
-Resolved forward reference irq_bottom_2 to interrupt(HARDWARE_STACK) void irq_bottom_2()
+Resolved forward reference irq_bottom_1 to __interrupt(hardware_clobber) void irq_bottom_1()
+Resolved forward reference irq_bottom_2 to __interrupt(hardware_clobber) void irq_bottom_2()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 
 CONTROL FLOW GRAPH SSA
@@ -23,7 +23,7 @@ main::@return: scope:[main]  from
   return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $ff^VIC_RSEL
@@ -36,7 +36,7 @@ irq_bottom_1::@return: scope:[irq_bottom_1]  from irq_bottom_1
   return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VIC_RSEL
@@ -80,8 +80,8 @@ const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
 const nomodify byte VIC_RSEL = 8
 const nomodify byte WHITE = 1
 void __start()
-interrupt(HARDWARE_STACK) void irq_bottom_1()
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_2()
 void main()
 
 Adding number conversion cast (unumber) 0 in *GHOST_BYTE = 0
@@ -111,12 +111,12 @@ Simplifying constant integer cast $ff
 Simplifying constant integer cast $fd
 Simplifying constant integer cast $fa
 Successful SSA optimization PassNCastSimplification
-Finalized unsigned number type 0
-Finalized unsigned number type $7f
-Finalized unsigned number type $fa
-Finalized unsigned number type $ff
-Finalized unsigned number type $fd
-Finalized unsigned number type $fa
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $7f
+Finalized unsigned number type (byte) $fa
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) $fd
+Finalized unsigned number type (byte) $fa
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Removing unused block main::@return
 Successful SSA optimization Pass2EliminateUnusedBlocks
@@ -134,7 +134,7 @@ Adding NOP phi() at start of main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_2()
 irq_bottom_2: scope:[irq_bottom_2]  from
   [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   [1] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) | VIC_RSEL
@@ -147,7 +147,7 @@ irq_bottom_2::@return: scope:[irq_bottom_2]  from irq_bottom_2
   [6] return 
   to:@return
 
-interrupt(HARDWARE_STACK) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_1()
 irq_bottom_1: scope:[irq_bottom_1]  from
   [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE
   [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) = *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1) & $ff^VIC_RSEL
@@ -179,8 +179,8 @@ main::@1: scope:[main]  from main main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(HARDWARE_STACK) void irq_bottom_1()
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_2()
 void main()
 
 Initial phi equivalence classes
@@ -218,13 +218,15 @@ Uplift Scope [irq_bottom_1]
 Uplift Scope [irq_bottom_2] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 524 combination 
-Uplifting [MOS6569_VICII] best 524 combination 
-Uplifting [MOS6581_SID] best 524 combination 
-Uplifting [main] best 524 combination 
-Uplifting [irq_bottom_1] best 524 combination 
-Uplifting [irq_bottom_2] best 524 combination 
-Uplifting [] best 524 combination 
+Uplifting [MOS6526_CIA] best 700 combination 
+Uplifting [MOS6569_VICII] best 700 combination 
+Uplifting [MOS6581_SID] best 700 combination 
+Uplifting [main] best 700 combination 
+Uplifting [irq_bottom_1] best 700 combination 
+Uplifting [irq_bottom_2] best 700 combination 
+Uplifting [] best 700 combination 
+Interrupt procedure irq_bottom_1 clobbers AnzP
+Interrupt procedure irq_bottom_2 clobbers AnzP
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -233,9 +235,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hyperscreen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -265,15 +272,12 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label GHOST_BYTE = $3fff
+.segment Code
   // irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -301,23 +305,17 @@ irq_bottom_2: {
     jmp __breturn
     // irq_bottom_2::@return
   __breturn:
-    // [6] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
+    // [6] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -345,12 +343,10 @@ irq_bottom_1: {
     jmp __breturn
     // irq_bottom_1::@return
   __breturn:
-    // [13] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
+    // [13] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // main
@@ -407,12 +403,11 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Succesful ASM optimization Pass5NextJumpElimination
 Replacing label __b1_from___b1 with __b1
+Removing instruction __breturn:
+Removing instruction __breturn:
 Removing instruction __b1_from_main:
 Removing instruction __b1_from___b1:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction __breturn:
-Removing instruction __breturn:
-Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
 const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
@@ -434,14 +429,14 @@ const nomodify byte RED = 2
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
 const nomodify byte VIC_RSEL = 8
 const nomodify byte WHITE = 1
-interrupt(HARDWARE_STACK) void irq_bottom_1()
-interrupt(HARDWARE_STACK) void irq_bottom_2()
+__interrupt(hardware_clobber) void irq_bottom_1()
+__interrupt(hardware_clobber) void irq_bottom_2()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 488
+Score: 424
 
   // File Comments
 // A raster IRQ that opens the top/bottom border.
@@ -449,9 +444,14 @@ Score: 488
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hyperscreen.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -481,15 +481,12 @@ Score: 488
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
   .label GHOST_BYTE = $3fff
+.segment Code
   // irq_bottom_2
 // Interrupt Routine 2
 irq_bottom_2: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // VICII->BORDER_COLOR = WHITE
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -522,23 +519,17 @@ irq_bottom_2: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_bottom_2::@return
     // }
-    // [6] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
+    // [6] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // irq_bottom_1
 // Interrupt Routine 1
 irq_bottom_1: {
-    // entry interrupt(HARDWARE_STACK)
-    pha
-    txa
-    pha
-    tya
-    pha
+    // interrupt(isr_hardware_clobber_entry) -- isr_hardware_all_entry 
+    sta rega+1
     // VICII->BORDER_COLOR = WHITE
     // [7] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -571,12 +562,10 @@ irq_bottom_1: {
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_bottom_1::@return
     // }
-    // [13] return  - exit interrupt(HARDWARE_STACK)
-    pla
-    tay
-    pla
-    tax
-    pla
+    // [13] return 
+    // interrupt(isr_hardware_clobber_exit) -- isr_hardware_all_exit 
+  rega:
+    lda #0
     rti
 }
   // main

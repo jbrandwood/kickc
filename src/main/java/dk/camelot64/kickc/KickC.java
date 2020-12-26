@@ -480,7 +480,7 @@ public class KickC implements Callable<Integer> {
             String emuOptions = "";
             if(emulator.equals("C64Debugger")) {
                Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
-               emuOptions = "-symbols " + viceSymbolsPath + " -wait 2500" + " ";
+               emuOptions = "-symbols " + viceSymbolsPath + " -autojmp -prg ";
             }
             // The program names used by VICE emulators
             List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");

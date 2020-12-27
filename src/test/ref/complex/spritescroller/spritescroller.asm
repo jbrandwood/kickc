@@ -289,10 +289,10 @@ plexShowSprite: {
     // SPRITES_YPOS[plex_sprite_idx2] = ypos
     ldy.z plex_sprite_idx2
     sta SPRITES_YPOS,y
-    // ypos+21
+    // ypos+22
     clc
-    adc #$15
-    // PLEX_FREE_YPOS[plex_free_next] =  ypos+21
+    adc #$16
+    // PLEX_FREE_YPOS[plex_free_next] =  ypos+22
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
     // plex_free_next+1

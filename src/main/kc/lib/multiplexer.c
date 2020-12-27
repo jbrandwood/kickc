@@ -136,6 +136,6 @@ inline char plexFreeNextYpos() {
 
 // Update the data structure to reflect that a sprite has been shown. This sprite will be free again after 21 lines.
 inline void plexFreeAdd(char ypos) {
-    PLEX_FREE_YPOS[plex_free_next] =  ypos+21;
+    PLEX_FREE_YPOS[plex_free_next] =  ypos+22;
     plex_free_next = (plex_free_next+1)&7;
 }

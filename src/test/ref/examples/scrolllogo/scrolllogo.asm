@@ -9,7 +9,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const VIC_MCM = $10
+  .const VICII_MCM = $10
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
@@ -56,8 +56,8 @@ main: {
     // *D018 = toD018(SCREEN, LOGO)
     lda #toD0181_return
     sta D018
-    // *D016 = VIC_MCM
-    lda #VIC_MCM
+    // *D016 = VICII_MCM
+    lda #VICII_MCM
     sta D016
     // memset(SCREEN, BLACK, 1000)
     ldx #BLACK
@@ -595,9 +595,9 @@ render_logo: {
     // (char)xpos&7
     lda.z xpos
     and #7
-    // VIC_MCM|((char)xpos&7)
-    ora #VIC_MCM
-    // *D016 = VIC_MCM|((char)xpos&7)
+    // VICII_MCM|((char)xpos&7)
+    ora #VICII_MCM
+    // *D016 = VICII_MCM|((char)xpos&7)
     sta D016
     // xpos/8
     lda.z xpos+1

@@ -12,7 +12,7 @@
 :BasicUpstart(main)
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .const VIC_RSEL = 8
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -45,9 +45,9 @@ irq_bottom_2: {
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // VICII->CONTROL1 |= VIC_RSEL
+    // VICII->CONTROL1 |= VICII_RSEL
     // Set screen height back to 25 lines (preparing for the next screen)
-    lda #VIC_RSEL
+    lda #VICII_RSEL
     ora VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_STATUS = IRQ_RASTER
@@ -77,9 +77,9 @@ irq_bottom_1: {
     // VICII->BORDER_COLOR = WHITE
     lda #WHITE
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // VICII->CONTROL1 &= ($ff^VIC_RSEL)
+    // VICII->CONTROL1 &= ($ff^VICII_RSEL)
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
-    lda #$ff^VIC_RSEL
+    lda #$ff^VICII_RSEL
     and VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
     // VICII->IRQ_STATUS = IRQ_RASTER

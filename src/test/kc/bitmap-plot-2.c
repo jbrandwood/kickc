@@ -16,7 +16,7 @@ void main() {
     sin16s_gen2(SINE, 512, -0x1001, 0x1001);
     bitmap_init(BITMAP, SCREEN);
     bitmap_clear(BLACK, WHITE);
-    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *D018 = toD018(SCREEN, BITMAP);
     init_irq();
     word idx_x = 0;
@@ -56,7 +56,7 @@ void init_irq() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
-    *VIC_CONTROL |=$80;
+    *VICII_CONTROL |=$80;
     *RASTER = $00;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

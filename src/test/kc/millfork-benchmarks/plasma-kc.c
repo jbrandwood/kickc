@@ -122,23 +122,23 @@ int main (void)
     tmp = block & 0xFC;
     tmp |= (char)((((unsigned int)SCREEN1) >> 14) ^ 0x03);
     CIA2->PORT_A = tmp;
-    v = *VIC_MEMORY;
+    v = *VICII_MEMORY;
 
     /* Run the demo until a key was hit */
     while (count) {
         /* Build page 1, then make it visible */
         doplasma ((char*)SCREEN1);
-        *VIC_MEMORY = PAGE1;
+        *VICII_MEMORY = PAGE1;
 
         /* Build page 2, then make it visible */
         doplasma ((char*)SCREEN2);
-        *VIC_MEMORY = PAGE2;
+        *VICII_MEMORY = PAGE2;
 
         /* Count frames */
         --count;
     }
 
-    *VIC_MEMORY = v;
+    *VICII_MEMORY = v;
     CIA2->PORT_A = block;
 
     /* Reset screen colors */

@@ -12,8 +12,8 @@
 :BasicUpstart(__start)
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -29,7 +29,7 @@
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D011 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -227,8 +227,8 @@ plexShowSprite: {
 init: {
     // Set the x-positions & pointers
     .label xp = 2
-    // *D011 = VIC_DEN | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_DEN | VICII_RSEL | 3
+    lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // plexInit(SCREEN)
   // Initialize the multiplexer
@@ -291,10 +291,10 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
-    // *VIC_CONTROL &= 0x7f
+    // *VICII_CONTROL &= 0x7f
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = 0x0
     lda #0
     sta RASTER

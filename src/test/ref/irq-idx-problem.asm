@@ -14,11 +14,11 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  .const VIC_SIZE = $30
+  .const VICII_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -28,7 +28,7 @@
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
-  .label VIC_BASE = $d000
+  .label VICII_BASE = $d000
   .label irq_idx = 2
 .segment Code
 __start: {
@@ -47,11 +47,11 @@ table_driven_irq: {
     ldx IRQ_CHANGE_VAL,y
     // irq_idx++;
     inc.z irq_idx
-    // if (idx < VIC_SIZE)
-    cmp #VIC_SIZE
+    // if (idx < VICII_SIZE)
+    cmp #VICII_SIZE
     bcc __b2
-    // if (idx < VIC_SIZE + 8)
-    cmp #VIC_SIZE+8
+    // if (idx < VICII_SIZE + 8)
+    cmp #VICII_SIZE+8
     bcc __b3
     // *IRQ_STATUS = IRQ_RASTER
     lda #IRQ_RASTER
@@ -71,16 +71,16 @@ table_driven_irq: {
     // }
     jmp $ea81
   __b3:
-    // SCREEN[idx + $3f8 - VIC_SIZE] = val
+    // SCREEN[idx + $3f8 - VICII_SIZE] = val
     tay
     txa
-    sta SCREEN+-VIC_SIZE+$3f8,y
+    sta SCREEN+-VICII_SIZE+$3f8,y
     jmp __b1
   __b2:
-    // VIC_BASE[idx] = val
+    // VICII_BASE[idx] = val
     tay
     txa
-    sta VIC_BASE,y
+    sta VICII_BASE,y
     jmp __b1
 }
 main: {
@@ -90,11 +90,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=$7f
+    // *VICII_CONTROL &=$7f
     // Set raster line to $60
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $60
     lda #$60
     sta RASTER

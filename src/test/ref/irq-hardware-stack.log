@@ -8,7 +8,7 @@ main: scope:[main]  from __start
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
   *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  *VIC_CONTROL = *VIC_CONTROL | $80
+  *VICII_CONTROL = *VICII_CONTROL | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
   *HARDWARE_IRQ = &irq
@@ -59,13 +59,13 @@ const nomodify byte* PROCPORT_DDR = (byte*)0
 const nomodify byte PROCPORT_DDR_MEMORY_MASK = 7
 const nomodify byte PROCPORT_RAM_IO = $35
 const nomodify byte* RASTER = (byte*)$d012
-const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
 __interrupt(hardware_all) void irq()
 void main()
 
-Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)0
@@ -121,7 +121,7 @@ main: scope:[main]  from
   [5] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [6] *PROCPORT = PROCPORT_RAM_IO
   [7] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  [8] *VIC_CONTROL = *VIC_CONTROL | $80
+  [8] *VICII_CONTROL = *VICII_CONTROL | $80
   [9] *RASTER = 0
   [10] *IRQ_ENABLE = IRQ_RASTER
   [11] *HARDWARE_IRQ = &irq
@@ -146,7 +146,7 @@ Statement [3] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x re
 Statement [5] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] *PROCPORT = PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [8] *VIC_CONTROL = *VIC_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *RASTER = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -184,7 +184,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PROCPORT_RAM_IO = $35
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -242,11 +242,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [8] *VIC_CONTROL = *VIC_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [8] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // [9] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -293,7 +293,7 @@ const nomodify byte* PROCPORT_DDR = (byte*) 0
 const nomodify byte PROCPORT_DDR_MEMORY_MASK = 7
 const nomodify byte PROCPORT_RAM_IO = $35
 const nomodify byte* RASTER = (byte*) 53266
-const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
 __interrupt(hardware_all) void irq()
 void main()
@@ -326,7 +326,7 @@ Score: 514
   .const PROCPORT_RAM_IO = $35
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -390,12 +390,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VIC_CONTROL |=$80
-    // [8] *VIC_CONTROL = *VIC_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL |=$80
+    // [8] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     // [9] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0

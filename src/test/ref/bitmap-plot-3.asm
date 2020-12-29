@@ -11,9 +11,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   .const WHITE = 1
   .label D011 = $d011
   .label D018 = $d018
@@ -31,8 +31,8 @@ main: {
     jsr bitmap_init
     // bitmap_clear(BLACK, WHITE)
     jsr bitmap_clear
-    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
     // *D018 = toD018(SCREEN, BITMAP)
     lda #toD0181_return

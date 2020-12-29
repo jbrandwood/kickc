@@ -12,12 +12,12 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const VIC_ECM = $40
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
-  .const VIC_MCM = $10
-  .const VIC_CSEL = 8
+  .const VICII_ECM = $40
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
+  .const VICII_MCM = $10
+  .const VICII_CSEL = 8
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -81,9 +81,9 @@
   .const OFFSET_STRUCT_MOS6569_VICII_MEMORY = $18
   // Number of form fields
   .const form_fields_cnt = $24
-  .label VIC_CONTROL = $d011
-  .label VIC_CONTROL2 = $d016
-  .label VIC_MEMORY = $d018
+  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL2 = $d016
+  .label VICII_MEMORY = $d018
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -126,15 +126,15 @@
   // Memory address of VIC Graphics is GraphicsBank*$10000
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   // VIC Screens
-  .label VIC_SCREEN0 = $4000
-  .label VIC_SCREEN1 = $4400
-  .label VIC_SCREEN2 = $4800
-  .label VIC_SCREEN3 = $4c00
-  .label VIC_SCREEN4 = $5000
+  .label VICII_SCREEN0 = $4000
+  .label VICII_SCREEN1 = $4400
+  .label VICII_SCREEN2 = $4800
+  .label VICII_SCREEN3 = $4c00
+  .label VICII_SCREEN4 = $5000
   // VIC Charset from ROM
-  .label VIC_CHARSET_ROM = $5800
+  .label VICII_CHARSET_ROM = $5800
   // VIC Bitmap
-  .label VIC_BITMAP = $6000
+  .label VICII_BITMAP = $6000
   // Screen containing the FORM
   .label FORM_SCREEN = $400
   // Charset used for the FORM
@@ -162,18 +162,18 @@
   .label form_b_step_lo = form_fields_val+$15
   .label form_b_mod_hi = form_fields_val+$16
   .label form_b_mod_lo = form_fields_val+$17
-  .label form_vic_screen = form_fields_val+$18
-  .label form_vic_gfx = form_fields_val+$19
-  .label form_vic_cols = form_fields_val+$1a
+  .label form_VICII_screen = form_fields_val+$18
+  .label form_VICII_gfx = form_fields_val+$19
+  .label form_VICII_cols = form_fields_val+$1a
   .label form_dtv_palet = form_fields_val+$1b
-  .label form_vic_bg0_hi = form_fields_val+$1c
-  .label form_vic_bg0_lo = form_fields_val+$1d
-  .label form_vic_bg1_hi = form_fields_val+$1e
-  .label form_vic_bg1_lo = form_fields_val+$1f
-  .label form_vic_bg2_hi = form_fields_val+$20
-  .label form_vic_bg2_lo = form_fields_val+$21
-  .label form_vic_bg3_hi = form_fields_val+$22
-  .label form_vic_bg3_lo = form_fields_val+$23
+  .label form_VICII_bg0_hi = form_fields_val+$1c
+  .label form_VICII_bg0_lo = form_fields_val+$1d
+  .label form_VICII_bg1_hi = form_fields_val+$1e
+  .label form_VICII_bg1_lo = form_fields_val+$1f
+  .label form_VICII_bg2_hi = form_fields_val+$20
+  .label form_VICII_bg2_lo = form_fields_val+$21
+  .label form_VICII_bg3_hi = form_fields_val+$22
+  .label form_VICII_bg3_lo = form_fields_val+$23
   .label print_char_cursor = $1a
   .label print_line_cursor = 7
   .label print_screen = 7
@@ -245,8 +245,8 @@ gfx_init: {
     jsr gfx_init_screen4
     // gfx_init_charset()
     jsr gfx_init_charset
-    // gfx_init_vic_bitmap()
-    jsr gfx_init_vic_bitmap
+    // gfx_init_VICII_bitmap()
+    jsr gfx_init_VICII_bitmap
     // gfx_init_plane_8bppchunky()
     jsr gfx_init_plane_8bppchunky
     // gfx_init_plane_charset8()
@@ -330,12 +330,12 @@ form_mode: {
     // DTV Graphics Mode
     lda #0
     sta DTV_CONTROL
-    // VICII->CONTROL1 = VIC_DEN|VIC_RSEL|3
+    // VICII->CONTROL1 = VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
+    lda #VICII_DEN|VICII_RSEL|3
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL1
-    // VICII->CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
+    // VICII->CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_CONTROL2
     // VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400))
     // VIC Memory Pointers
@@ -421,7 +421,7 @@ gfx_mode: {
     .label __83 = 7
     .label plane_a = 9
     .label plane_b = 9
-    .label vic_colors = 3
+    .label VICII_colors = 3
     .label col = 5
     .label cy = $e
     // if(*form_ctrl_line!=0)
@@ -484,33 +484,33 @@ gfx_mode: {
     lda form_ctrl_ecm
     cmp #0
     beq __b11
-    ldx #VIC_DEN|VIC_RSEL|3|VIC_ECM
+    ldx #VICII_DEN|VICII_RSEL|3|VICII_ECM
     jmp __b7
   __b11:
-    ldx #VIC_DEN|VIC_RSEL|3
+    ldx #VICII_DEN|VICII_RSEL|3
   __b7:
     // if(*form_ctrl_bmm!=0)
     lda form_ctrl_bmm
     cmp #0
     beq __b8
-    // vic_control = vic_control | VIC_BMM
+    // VICII_control = VICII_control | VICII_BMM
     txa
-    ora #VIC_BMM
+    ora #VICII_BMM
     tax
   __b8:
-    // *VIC_CONTROL = vic_control
-    stx VIC_CONTROL
+    // *VICII_CONTROL = VICII_control
+    stx VICII_CONTROL
     // if(*form_ctrl_mcm!=0)
     lda form_ctrl_mcm
     cmp #0
     beq __b12
-    lda #VIC_CSEL|VIC_MCM
+    lda #VICII_CSEL|VICII_MCM
     jmp __b9
   __b12:
-    lda #VIC_CSEL
+    lda #VICII_CSEL
   __b9:
-    // *VIC_CONTROL2 = vic_control2
-    sta VIC_CONTROL2
+    // *VICII_CONTROL2 = VICII_control2
+    sta VICII_CONTROL2
     // *form_a_start_hi*$10
     lda form_a_start_hi
     asl
@@ -667,22 +667,22 @@ gfx_mode: {
     // VIC Graphics Bank
     lda #3
     sta CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR
-    // CIA2->PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000)
+    // CIA2->PORT_A = %00000011 ^ (byte)((word)VICII_SCREEN0/$4000)
     // Set VIC Bank bits to output - all others to input
-    lda #3^VIC_SCREEN0/$4000
+    lda #3^VICII_SCREEN0/$4000
     sta CIA2
-    // get_vic_screen(*form_vic_screen)
-    lda form_vic_screen
-    jsr get_vic_screen
-    // get_vic_screen(*form_vic_screen)
-    // (word)get_vic_screen(*form_vic_screen)&$3fff
+    // get_VICII_screen(*form_VICII_screen)
+    lda form_VICII_screen
+    jsr get_VICII_screen
+    // get_VICII_screen(*form_VICII_screen)
+    // (word)get_VICII_screen(*form_VICII_screen)&$3fff
     lda.z __47
     and #<$3fff
     sta.z __47
     lda.z __47+1
     and #>$3fff
     sta.z __47+1
-    // ((word)get_vic_screen(*form_vic_screen)&$3fff)/$40
+    // ((word)get_VICII_screen(*form_VICII_screen)&$3fff)/$40
     lda.z __48
     asl
     sta.z $ff
@@ -695,33 +695,33 @@ gfx_mode: {
     asl.z $ff
     rol.z __48
     rol.z __48+1
-    // get_vic_charset(*form_vic_gfx)
-    lda form_vic_gfx
-    jsr get_vic_charset
-    // (word)get_vic_charset(*form_vic_gfx)&$3fff
+    // get_VICII_charset(*form_VICII_gfx)
+    lda form_VICII_gfx
+    jsr get_VICII_charset
+    // (word)get_VICII_charset(*form_VICII_gfx)&$3fff
     lda.z __50
     and #<$3fff
     sta.z __50
     lda.z __50+1
     and #>$3fff
     sta.z __50+1
-    // >((word)get_vic_charset(*form_vic_gfx)&$3fff)
-    // (>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4
+    // >((word)get_VICII_charset(*form_VICII_gfx)&$3fff)
+    // (>((word)get_VICII_charset(*form_VICII_gfx)&$3fff))/4
     lsr
     lsr
     sta.z __52
-    // (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4)
+    // (byte)(((word)get_VICII_screen(*form_VICII_screen)&$3fff)/$40)  |   ((>((word)get_VICII_charset(*form_VICII_gfx)&$3fff))/4)
     lda.z __48
     ora.z __52
-    // *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4)
+    // *VICII_MEMORY = (byte)(((word)get_VICII_screen(*form_VICII_screen)&$3fff)/$40)  |   ((>((word)get_VICII_charset(*form_VICII_gfx)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
-    sta VIC_MEMORY
-    // get_vic_screen(*form_vic_cols)
-    lda form_vic_cols
-    jsr get_vic_screen
-    // get_vic_screen(*form_vic_cols)
-    // vic_colors = get_vic_screen(*form_vic_cols)
+    sta VICII_MEMORY
+    // get_VICII_screen(*form_VICII_cols)
+    lda form_VICII_cols
+    jsr get_VICII_screen
+    // get_VICII_screen(*form_VICII_cols)
+    // VICII_colors = get_VICII_screen(*form_VICII_cols)
     lda #0
     sta.z cy
     lda #<COLS
@@ -731,18 +731,18 @@ gfx_mode: {
   __b19:
     ldx #0
   __b20:
-    // *col++ = *vic_colors++
+    // *col++ = *VICII_colors++
     ldy #0
-    lda (vic_colors),y
+    lda (VICII_colors),y
     sta (col),y
-    // *col++ = *vic_colors++;
+    // *col++ = *VICII_colors++;
     inc.z col
     bne !+
     inc.z col+1
   !:
-    inc.z vic_colors
+    inc.z VICII_colors
     bne !+
-    inc.z vic_colors+1
+    inc.z VICII_colors+1
   !:
     // for(byte cx: 0..39)
     inx
@@ -757,45 +757,45 @@ gfx_mode: {
     // Background colors
     lda #0
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // *form_vic_bg0_hi*$10
-    lda form_vic_bg0_hi
+    // *form_VICII_bg0_hi*$10
+    lda form_VICII_bg0_hi
     asl
     asl
     asl
     asl
-    // *form_vic_bg0_hi*$10|*form_vic_bg0_lo
-    ora form_vic_bg0_lo
-    // VICII->BG_COLOR = *form_vic_bg0_hi*$10|*form_vic_bg0_lo
+    // *form_VICII_bg0_hi*$10|*form_VICII_bg0_lo
+    ora form_VICII_bg0_lo
+    // VICII->BG_COLOR = *form_VICII_bg0_hi*$10|*form_VICII_bg0_lo
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // *form_vic_bg1_hi*$10
-    lda form_vic_bg1_hi
+    // *form_VICII_bg1_hi*$10
+    lda form_VICII_bg1_hi
     asl
     asl
     asl
     asl
-    // *form_vic_bg1_hi*$10|*form_vic_bg1_lo
-    ora form_vic_bg1_lo
-    // VICII->BG_COLOR1 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo
+    // *form_VICII_bg1_hi*$10|*form_VICII_bg1_lo
+    ora form_VICII_bg1_lo
+    // VICII->BG_COLOR1 = *form_VICII_bg1_hi*$10|*form_VICII_bg1_lo
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR1
-    // *form_vic_bg2_hi*$10
-    lda form_vic_bg2_hi
+    // *form_VICII_bg2_hi*$10
+    lda form_VICII_bg2_hi
     asl
     asl
     asl
     asl
-    // *form_vic_bg2_hi*$10|*form_vic_bg2_lo
-    ora form_vic_bg2_lo
-    // VICII->BG_COLOR2 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo
+    // *form_VICII_bg2_hi*$10|*form_VICII_bg2_lo
+    ora form_VICII_bg2_lo
+    // VICII->BG_COLOR2 = *form_VICII_bg2_hi*$10|*form_VICII_bg2_lo
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR2
-    // *form_vic_bg3_hi*$10
-    lda form_vic_bg3_hi
+    // *form_VICII_bg3_hi*$10
+    lda form_VICII_bg3_hi
     asl
     asl
     asl
     asl
-    // *form_vic_bg3_hi*$10|*form_vic_bg3_lo
-    ora form_vic_bg3_lo
-    // VICII->BG_COLOR3 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo
+    // *form_VICII_bg3_hi*$10|*form_VICII_bg3_lo
+    ora form_VICII_bg3_lo
+    // VICII->BG_COLOR3 = *form_VICII_bg3_hi*$10|*form_VICII_bg3_lo
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR3
     // if(*form_dtv_palet==0)
     // DTV Palette
@@ -847,9 +847,9 @@ gfx_init_screen0: {
     .label __1 = $10
     .label ch = 3
     .label cy = $11
-    lda #<VIC_SCREEN0
+    lda #<VICII_SCREEN0
     sta.z ch
-    lda #>VIC_SCREEN0
+    lda #>VICII_SCREEN0
     sta.z ch+1
     lda #0
     sta.z cy
@@ -894,9 +894,9 @@ gfx_init_screen0: {
 gfx_init_screen1: {
     .label ch = 5
     .label cy = 2
-    lda #<VIC_SCREEN1
+    lda #<VICII_SCREEN1
     sta.z ch
-    lda #>VIC_SCREEN1
+    lda #>VICII_SCREEN1
     sta.z ch+1
     lda #0
     sta.z cy
@@ -934,9 +934,9 @@ gfx_init_screen2: {
     .label col2 = $11
     .label ch = 3
     .label cy = $e
-    lda #<VIC_SCREEN2
+    lda #<VICII_SCREEN2
     sta.z ch
-    lda #>VIC_SCREEN2
+    lda #>VICII_SCREEN2
     sta.z ch+1
     lda #0
     sta.z cy
@@ -989,9 +989,9 @@ gfx_init_screen3: {
     .label __1 = $12
     .label ch = 3
     .label cy = $e
-    lda #<VIC_SCREEN3
+    lda #<VICII_SCREEN3
     sta.z ch
-    lda #>VIC_SCREEN3
+    lda #>VICII_SCREEN3
     sta.z ch+1
     lda #0
     sta.z cy
@@ -1038,9 +1038,9 @@ gfx_init_screen4: {
     .label cy = $11
     lda #0
     sta.z cy
-    lda #<VIC_SCREEN4
+    lda #<VICII_SCREEN4
     sta.z ch
-    lda #>VIC_SCREEN4
+    lda #>VICII_SCREEN4
     sta.z ch+1
   __b1:
     ldx #0
@@ -1075,9 +1075,9 @@ gfx_init_charset: {
     sta PROCPORT
     lda #0
     sta.z c
-    lda #<VIC_CHARSET_ROM
+    lda #<VICII_CHARSET_ROM
     sta.z charset
-    lda #>VIC_CHARSET_ROM
+    lda #>VICII_CHARSET_ROM
     sta.z charset+1
     lda #<CHARGEN
     sta.z chargen
@@ -1115,10 +1115,10 @@ gfx_init_charset: {
     rts
 }
 // Initialize VIC bitmap
-gfx_init_vic_bitmap: {
+gfx_init_VICII_bitmap: {
     .const lines_cnt = 9
     .label l = 2
-    // bitmap_init(VIC_BITMAP)
+    // bitmap_init(VICII_BITMAP)
   // Draw some lines on the bitmap
     jsr bitmap_init
     // bitmap_clear()
@@ -2099,13 +2099,13 @@ get_plane: {
     sta.z return+3
     rts
   __b1:
-    lda #<VIC_SCREEN0
+    lda #<VICII_SCREEN0
     sta.z return
-    lda #>VIC_SCREEN0
+    lda #>VICII_SCREEN0
     sta.z return+1
-    lda #<VIC_SCREEN0>>$10
+    lda #<VICII_SCREEN0>>$10
     sta.z return+2
-    lda #>VIC_SCREEN0>>$10
+    lda #>VICII_SCREEN0>>$10
     sta.z return+3
     rts
   __b2:
@@ -2149,53 +2149,53 @@ get_plane: {
     sta.z return+3
     rts
   __b6:
-    lda #<VIC_SCREEN1
+    lda #<VICII_SCREEN1
     sta.z return
-    lda #>VIC_SCREEN1
+    lda #>VICII_SCREEN1
     sta.z return+1
-    lda #<VIC_SCREEN1>>$10
+    lda #<VICII_SCREEN1>>$10
     sta.z return+2
-    lda #>VIC_SCREEN1>>$10
+    lda #>VICII_SCREEN1>>$10
     sta.z return+3
     rts
   __b7:
-    lda #<VIC_SCREEN2
+    lda #<VICII_SCREEN2
     sta.z return
-    lda #>VIC_SCREEN2
+    lda #>VICII_SCREEN2
     sta.z return+1
-    lda #<VIC_SCREEN2>>$10
+    lda #<VICII_SCREEN2>>$10
     sta.z return+2
-    lda #>VIC_SCREEN2>>$10
+    lda #>VICII_SCREEN2>>$10
     sta.z return+3
     rts
   __b8:
-    lda #<VIC_SCREEN3
+    lda #<VICII_SCREEN3
     sta.z return
-    lda #>VIC_SCREEN3
+    lda #>VICII_SCREEN3
     sta.z return+1
-    lda #<VIC_SCREEN3>>$10
+    lda #<VICII_SCREEN3>>$10
     sta.z return+2
-    lda #>VIC_SCREEN3>>$10
+    lda #>VICII_SCREEN3>>$10
     sta.z return+3
     rts
   __b9:
-    lda #<VIC_BITMAP
+    lda #<VICII_BITMAP
     sta.z return
-    lda #>VIC_BITMAP
+    lda #>VICII_BITMAP
     sta.z return+1
-    lda #<VIC_BITMAP>>$10
+    lda #<VICII_BITMAP>>$10
     sta.z return+2
-    lda #>VIC_BITMAP>>$10
+    lda #>VICII_BITMAP>>$10
     sta.z return+3
     rts
   __b10:
-    lda #<VIC_CHARSET_ROM
+    lda #<VICII_CHARSET_ROM
     sta.z return
-    lda #>VIC_CHARSET_ROM
+    lda #>VICII_CHARSET_ROM
     sta.z return+1
-    lda #<VIC_CHARSET_ROM>>$10
+    lda #<VICII_CHARSET_ROM>>$10
     sta.z return+2
-    lda #>VIC_CHARSET_ROM>>$10
+    lda #>VICII_CHARSET_ROM>>$10
     sta.z return+3
     rts
   __b11:
@@ -2231,8 +2231,8 @@ get_plane: {
     rts
 }
 // Get the VIC screen address from the screen index
-// get_vic_screen(byte register(A) idx)
-get_vic_screen: {
+// get_VICII_screen(byte register(A) idx)
+get_VICII_screen: {
     .label return = 3
     // if(idx==0)
     cmp #0
@@ -2249,40 +2249,40 @@ get_vic_screen: {
     // if(idx==4)
     cmp #4
     bne __b1
-    lda #<VIC_SCREEN4
+    lda #<VICII_SCREEN4
     sta.z return
-    lda #>VIC_SCREEN4
+    lda #>VICII_SCREEN4
     sta.z return+1
     rts
   __b1:
-    lda #<VIC_SCREEN0
+    lda #<VICII_SCREEN0
     sta.z return
-    lda #>VIC_SCREEN0
+    lda #>VICII_SCREEN0
     sta.z return+1
     rts
   __b2:
-    lda #<VIC_SCREEN1
+    lda #<VICII_SCREEN1
     sta.z return
-    lda #>VIC_SCREEN1
+    lda #>VICII_SCREEN1
     sta.z return+1
     rts
   __b3:
-    lda #<VIC_SCREEN2
+    lda #<VICII_SCREEN2
     sta.z return
-    lda #>VIC_SCREEN2
+    lda #>VICII_SCREEN2
     sta.z return+1
     rts
   __b4:
-    lda #<VIC_SCREEN3
+    lda #<VICII_SCREEN3
     sta.z return
-    lda #>VIC_SCREEN3
+    lda #>VICII_SCREEN3
     sta.z return+1
     // }
     rts
 }
 // Get the VIC charset/bitmap address from the index
-// get_vic_charset(byte register(A) idx)
-get_vic_charset: {
+// get_VICII_charset(byte register(A) idx)
+get_VICII_charset: {
     .label return = 7
     // if(idx==0)
     cmp #0
@@ -2290,15 +2290,15 @@ get_vic_charset: {
     // if(idx==1)
     cmp #1
     bne __b1
-    lda #<VIC_BITMAP
+    lda #<VICII_BITMAP
     sta.z return
-    lda #>VIC_BITMAP
+    lda #>VICII_BITMAP
     sta.z return+1
     rts
   __b1:
-    lda #<VIC_CHARSET_ROM
+    lda #<VICII_CHARSET_ROM
     sta.z return
-    lda #>VIC_CHARSET_ROM
+    lda #>VICII_CHARSET_ROM
     sta.z return+1
     // }
     rts
@@ -2474,7 +2474,7 @@ bitmap_init: {
     // bitmap_plot_xlo[x] = x&$f8
     sta bitmap_plot_xlo,x
     // bitmap_plot_xhi[x] = >bitmap
-    lda #>VIC_BITMAP
+    lda #>VICII_BITMAP
     sta bitmap_plot_xhi,x
     // bitmap_plot_bit[x] = bits
     tya

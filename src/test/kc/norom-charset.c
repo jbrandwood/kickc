@@ -1,5 +1,5 @@
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
-byte* VIC_MEMORY = $d018;
+byte* VICII_MEMORY = $d018;
 byte* SCREEN = $400;
 byte* CHARSET = $3000;
 
@@ -13,7 +13,7 @@ void main() {
         gen_char3(charset, charset_spec_row[c]);
         charset = charset+8;
     }
-    *VIC_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400));
+    *VICII_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400));
 }
 
 // Generate one 5x3 character from a 16-bit char spec

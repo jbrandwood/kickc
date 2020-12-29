@@ -11,8 +11,8 @@ void main() {
     fill(SCREEN,40*25,$16);
 
     *BORDER_COLOR = BLUE;
-    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
-    *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
+    *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
+    *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400));
 
     for (int i = 1; i < 180; i += 5) {
         circle(160,100,i);

@@ -28,7 +28,7 @@
   .const CH_RTEE = $73
   .const COLOR_GRAY3 = $f
   .const COLOR_BLACK = 0
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   // Color Ram
   .label COLORRAM = $d800
   // Default address of screen character matrix
@@ -100,9 +100,9 @@ conio_c64_init: {
     rts
 }
 main: {
-    // *VIC_MEMORY = 0x17
+    // *VICII_MEMORY = 0x17
     lda #$17
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // screensize(&XSize, &YSize)
     jsr screensize
     // MakeNiceScreen()

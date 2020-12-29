@@ -45,7 +45,7 @@ __align(0x40) char* screen_lines_2[PLAYFIELD_LINES];
 void render_init() {
 	vicSelectGfxBank(PLAYFIELD_CHARSET);
 	// Enable Extended Background Color Mode
-	*D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3;
+	*D011 = VICII_ECM | VICII_DEN | VICII_RSEL | 3;
 	*BORDER_COLOR = BLACK;
 	*BG_COLOR = BLACK;
 	*BG_COLOR1 = PIECES_COLORS_1[0];

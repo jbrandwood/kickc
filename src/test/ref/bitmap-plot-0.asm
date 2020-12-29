@@ -13,9 +13,9 @@
 :BasicUpstart(__start)
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -28,7 +28,7 @@
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
   .label BG_COLOR = $d021
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
@@ -90,8 +90,8 @@ main: {
     jsr bitmap_init
     // bitmap_clear(BLACK, WHITE)
     jsr bitmap_clear
-    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
     // *D018 = toD018(SCREEN, BITMAP)
     lda #toD0181_return
@@ -268,11 +268,11 @@ init_irq: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL |=$80
+    // *VICII_CONTROL |=$80
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     lda #0
     sta RASTER

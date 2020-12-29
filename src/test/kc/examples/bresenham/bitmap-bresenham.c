@@ -11,8 +11,8 @@ char lines_cnt = 8;
 void main() {
     VICII->BORDER_COLOR = 0;
     VICII->BG_COLOR = 0;
-    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
-    *VIC_MEMORY =  (char)((((unsigned int)SCREEN&$3fff)/$40)|(((unsigned int)BITMAP&$3fff)/$400));
+    *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
+    *VICII_MEMORY =  (char)((((unsigned int)SCREEN&$3fff)/$40)|(((unsigned int)BITMAP&$3fff)/$400));
     bitmap_init(BITMAP);
     bitmap_clear();
     init_screen();

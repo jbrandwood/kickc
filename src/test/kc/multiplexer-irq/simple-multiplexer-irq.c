@@ -23,7 +23,7 @@ void main() {
 
 // Initialize the program
 void init() {
-    *D011 = VIC_DEN | VIC_RSEL | 3;
+    *D011 = VICII_DEN | VICII_RSEL | 3;
     // Initialize the multiplexer
     plexInit(SCREEN);
     // Set the x-positions & pointers
@@ -44,7 +44,7 @@ void init() {
     *IRQ_ENABLE = IRQ_RASTER;
     *IRQ_STATUS = IRQ_RASTER;
     *KERNEL_IRQ = &plex_irq;
-    *VIC_CONTROL &= 0x7f;
+    *VICII_CONTROL &= 0x7f;
     *RASTER = 0x0;
     asm { cli }
 }

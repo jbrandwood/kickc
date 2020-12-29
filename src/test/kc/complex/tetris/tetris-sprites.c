@@ -43,7 +43,7 @@ void sprites_irq_init() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line
-    *VIC_CONTROL &=0x7f;
+    *VICII_CONTROL &=0x7f;
     *RASTER = IRQ_RASTER_FIRST;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

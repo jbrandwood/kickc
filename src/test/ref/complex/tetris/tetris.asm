@@ -13,9 +13,9 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   // The offset of the sprite pointers from the screen start address
   .const SPRITE_PTRS = $3f8
-  .const VIC_ECM = $40
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_ECM = $40
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   // SID Channel Control Register Noise Waveform
@@ -84,7 +84,7 @@
   .label BG_COLOR1 = $d022
   .label BG_COLOR2 = $d023
   .label BG_COLOR3 = $d024
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D011 = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
@@ -476,9 +476,9 @@ render_init: {
     // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2
-    // *D011 = VIC_ECM | VIC_DEN | VIC_RSEL | 3
+    // *D011 = VICII_ECM | VICII_DEN | VICII_RSEL | 3
     // Enable Extended Background Color Mode
-    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
+    lda #VICII_ECM|VICII_DEN|VICII_RSEL|3
     sta D011
     // *BORDER_COLOR = BLACK
     lda #BLACK
@@ -612,11 +612,11 @@ sprites_irq_init: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=0x7f
+    // *VICII_CONTROL &=0x7f
     // Set raster line
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = IRQ_RASTER_FIRST
     lda #IRQ_RASTER_FIRST
     sta RASTER

@@ -39,7 +39,7 @@ void main() {
 
 // Initialize the program
 void init() {
-    *D011 = VIC_DEN | VIC_RSEL | 3;
+    *D011 = VICII_DEN | VICII_RSEL | 3;
     // Initialize the multiplexer
     plexInit(SCREEN);
     // Set the sprite pointers & initial positions
@@ -88,7 +88,7 @@ void loop() {
         angle += 3;
         *BORDER_COLOR = BLACK;
         // Sort the sprites by y-position
-        while((*D011&VIC_RST8)!=0) {}
+        while((*D011&VICII_RST8)!=0) {}
         // Show the sprites
         for( char i: 0..PLEX_COUNT-1) {
             *BORDER_COLOR = BLACK;

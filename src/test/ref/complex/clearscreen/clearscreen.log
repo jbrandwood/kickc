@@ -921,12 +921,12 @@ setupRasterIrq: scope:[setupRasterIrq]  from main::@11
 setupRasterIrq::@1: scope:[setupRasterIrq]  from setupRasterIrq
   setupRasterIrq::irqRoutine#2 = phi( setupRasterIrq/setupRasterIrq::irqRoutine#4 )
   setupRasterIrq::raster#3 = phi( setupRasterIrq/setupRasterIrq::raster#1 )
-  *VIC_CONTROL = *VIC_CONTROL & $7f
+  *VICII_CONTROL = *VICII_CONTROL & $7f
   to:setupRasterIrq::@2
 setupRasterIrq::@3: scope:[setupRasterIrq]  from setupRasterIrq
   setupRasterIrq::irqRoutine#3 = phi( setupRasterIrq/setupRasterIrq::irqRoutine#4 )
   setupRasterIrq::raster#4 = phi( setupRasterIrq/setupRasterIrq::raster#1 )
-  *VIC_CONTROL = *VIC_CONTROL | $80
+  *VICII_CONTROL = *VICII_CONTROL | $80
   to:setupRasterIrq::@2
 setupRasterIrq::@2: scope:[setupRasterIrq]  from setupRasterIrq::@1 setupRasterIrq::@3
   setupRasterIrq::irqRoutine#1 = phi( setupRasterIrq::@1/setupRasterIrq::irqRoutine#2, setupRasterIrq::@3/setupRasterIrq::irqRoutine#3 )
@@ -1179,7 +1179,7 @@ const nomodify word SPRITE_PTRS = $3f8
 const byte STATUS_FREE = 0
 const byte STATUS_NEW = 1
 const byte STATUS_PROCESSING = 2
-const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL = (byte*)$d011
 const to_nomodify word* VXSIN[$28]  = kickasm {{ .for(var i=0; i<40; i++) {
       .word -sin(toRadians([i*360]/40))*4
     }
@@ -1999,8 +1999,8 @@ Adding number conversion cast (unumber) 0 in *SPRITES_MC = 0
 Adding number conversion cast (unumber) 0 in *SPRITES_EXPAND_X = 0
 Adding number conversion cast (unumber) 0 in *SPRITES_EXPAND_Y = 0
 Adding number conversion cast (unumber) $100 in setupRasterIrq::$0 = setupRasterIrq::raster#1 < $100
-Adding number conversion cast (unumber) $7f in *VIC_CONTROL = *VIC_CONTROL & $7f
-Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
 Adding number conversion cast (unumber) $3e8 in malloc::size#0 = $3e8
 Adding number conversion cast (unumber) $3e8 in malloc::size#1 = $3e8
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -3350,7 +3350,7 @@ setupRasterIrq: scope:[setupRasterIrq]  from main::@10
   [156] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
   to:setupRasterIrq::@1
 setupRasterIrq::@1: scope:[setupRasterIrq]  from setupRasterIrq
-  [157] *VIC_CONTROL = *VIC_CONTROL & $7f
+  [157] *VICII_CONTROL = *VICII_CONTROL & $7f
   to:setupRasterIrq::@2
 setupRasterIrq::@2: scope:[setupRasterIrq]  from setupRasterIrq::@1
   [158] *RASTER = <RASTER_IRQ_TOP
@@ -4409,7 +4409,7 @@ Statement [151] *initSprites::sp#2 = 0 [ initSprites::sp#2 ] ( main:7::initSprit
 Statement [154] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [155] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [156] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
-Statement [157] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
+Statement [157] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [158] *RASTER = <RASTER_IRQ_TOP [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [159] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [160] *HARDWARE_IRQ = setupRasterIrq::irqRoutine#0 [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
@@ -4616,7 +4616,7 @@ Statement [151] *initSprites::sp#2 = 0 [ initSprites::sp#2 ] ( main:7::initSprit
 Statement [154] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [155] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [156] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
-Statement [157] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
+Statement [157] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [158] *RASTER = <RASTER_IRQ_TOP [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [159] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
 Statement [160] *HARDWARE_IRQ = setupRasterIrq::irqRoutine#0 [ ] ( main:7::setupRasterIrq:42 [ SCREEN_COPY#0 SCREEN_DIST#0 ] { }  ) always clobbers reg byte a 
@@ -5132,7 +5132,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -6104,10 +6104,10 @@ setupRasterIrq: {
     jmp __b1
     // setupRasterIrq::@1
   __b1:
-    // [157] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [157] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     jmp __b2
     // setupRasterIrq::@2
   __b2:
@@ -7390,7 +7390,7 @@ const nomodify word SPRITE_PTRS = $3f8
 const byte STATUS_FREE = 0
 const byte STATUS_NEW = 1
 const byte STATUS_PROCESSING = 2
-const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL = (byte*) 53265
 const to_nomodify word* VXSIN[$28]  = kickasm {{ .for(var i=0; i<40; i++) {
       .word -sin(toRadians([i*360]/40))*4
     }
@@ -7840,7 +7840,7 @@ Score: 1110954
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -8817,11 +8817,11 @@ setupRasterIrq: {
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
     // setupRasterIrq::@1
-    // *VIC_CONTROL &=0x7f
-    // [157] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL &=0x7f
+    // [157] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // setupRasterIrq::@2
     // *RASTER = <raster
     // [158] *RASTER = <RASTER_IRQ_TOP -- _deref_pbuc1=vbuc2 

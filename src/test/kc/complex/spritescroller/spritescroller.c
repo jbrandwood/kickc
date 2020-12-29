@@ -71,7 +71,7 @@ void main() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to 0x00
-    *VIC_CONTROL &=0x7f;
+    *VICII_CONTROL &=0x7f;
     *RASTER = 0x28;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;

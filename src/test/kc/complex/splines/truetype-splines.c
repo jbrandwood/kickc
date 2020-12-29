@@ -50,7 +50,7 @@ void main() {
     bitmap_clear(BLACK, WHITE);
     vicSelectGfxBank(BITMAP_SCREEN);
     *D018 = toD018(BITMAP_SCREEN, BITMAP_GRAPHICS);
-    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
 
     char angle = 0;
     while(true) {

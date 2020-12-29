@@ -30,7 +30,7 @@
   .label SPRITES_COLOR = $d027
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -210,11 +210,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=0x7f
+    // *VICII_CONTROL &=0x7f
     // Set raster line to 0x00
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = 0x28
     lda #$28
     sta RASTER

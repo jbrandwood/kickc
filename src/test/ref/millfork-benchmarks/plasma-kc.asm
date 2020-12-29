@@ -10,7 +10,7 @@
 :BasicUpstart(__start)
   .const PAGE1 = SCREEN1>>6&$f0|CHARSET>>$a&$e
   .const PAGE2 = SCREEN2>>6&$f0|CHARSET>>$a&$e
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   // The CIA#2: Serial bus, RS-232, VIC memory bank
   .label CIA2 = $dd00
   .label SCREEN1 = $e000
@@ -49,8 +49,8 @@ main: {
     and.z block
     // CIA2->PORT_A = tmp
     sta CIA2
-    // v = *VIC_MEMORY
-    lda VIC_MEMORY
+    // v = *VICII_MEMORY
+    lda VICII_MEMORY
     sta.z v
     lda #<$1f4
     sta.z count
@@ -62,9 +62,9 @@ main: {
     lda.z count
     ora.z count+1
     bne __b2
-    // *VIC_MEMORY = v
+    // *VICII_MEMORY = v
     lda.z v
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // CIA2->PORT_A = block
     lda.z block
     sta CIA2
@@ -81,9 +81,9 @@ main: {
     lda #>SCREEN1
     sta.z doplasma.scrn+1
     jsr doplasma
-    // *VIC_MEMORY = PAGE1
+    // *VICII_MEMORY = PAGE1
     lda #PAGE1
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // doplasma ((char*)SCREEN2)
   /* Build page 2, then make it visible */
     lda #<SCREEN2
@@ -91,9 +91,9 @@ main: {
     lda #>SCREEN2
     sta.z doplasma.scrn+1
     jsr doplasma
-    // *VIC_MEMORY = PAGE2
+    // *VICII_MEMORY = PAGE2
     lda #PAGE2
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // --count;
     lda.z count
     bne !+

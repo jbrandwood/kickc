@@ -25,7 +25,7 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -63,11 +63,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL |=$80
+    // *VICII_CONTROL |=$80
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     lda #0
     sta RASTER

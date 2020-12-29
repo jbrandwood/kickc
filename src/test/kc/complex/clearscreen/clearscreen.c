@@ -290,9 +290,9 @@ void setupRasterIrq(unsigned int raster, void()* irqRoutine) {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     if(raster<0x100) {
-        *VIC_CONTROL &=0x7f;
+        *VICII_CONTROL &=0x7f;
     } else {
-        *VIC_CONTROL |=0x80;
+        *VICII_CONTROL |=0x80;
     }
     *RASTER = <raster;
     // Enable Raster Interrupt

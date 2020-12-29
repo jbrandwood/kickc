@@ -43,7 +43,7 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@2
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  *VIC_CONTROL = *VIC_CONTROL & $7f
+  *VICII_CONTROL = *VICII_CONTROL & $7f
   *RASTER = IRQ_RASTER_FIRST
   *IRQ_ENABLE = IRQ_RASTER
   *HARDWARE_IRQ = &sprites_irq
@@ -408,7 +408,7 @@ const nomodify byte* SPRITES_MC = (byte*)$d01c
 const nomodify byte* SPRITES_XPOS = (byte*)$d000
 const nomodify byte* SPRITES_YPOS = (byte*)$d001
 const nomodify word SPRITE_PTRS = $3f8
-const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL = (byte*)$d011
 void __start()
 byte~ __start::__init1_$0
 number~ __start::__init1_$1
@@ -599,7 +599,7 @@ Adding number conversion cast (unumber) 2 in sprites_init::$0 = sprites_init::s#
 Adding number conversion cast (unumber) sprites_init::$0 in sprites_init::$0 = sprites_init::s#2 * (unumber)2
 Adding number conversion cast (unumber) $18 in sprites_init::$1 = sprites_init::xpos#2 + $18
 Adding number conversion cast (unumber) sprites_init::$1 in sprites_init::$1 = sprites_init::xpos#2 + (unumber)$18
-Adding number conversion cast (unumber) $7f in *VIC_CONTROL = *VIC_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
 Adding number conversion cast (unumber) 0 in SPRITES_YPOS[0] = sprites_irq::ypos#0
 Adding number conversion cast (unumber) 2 in SPRITES_YPOS[2] = sprites_irq::ypos#0
 Adding number conversion cast (unumber) 4 in SPRITES_YPOS[4] = sprites_irq::ypos#0
@@ -1277,7 +1277,7 @@ sprites_irq_init: scope:[sprites_irq_init]  from main::@2
   [90] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [91] *PROCPORT = PROCPORT_RAM_IO
   [92] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [93] *VIC_CONTROL = *VIC_CONTROL & $7f
+  [93] *VICII_CONTROL = *VICII_CONTROL & $7f
   [94] *RASTER = IRQ_RASTER_FIRST
   [95] *IRQ_ENABLE = IRQ_RASTER
   [96] *HARDWARE_IRQ = &sprites_irq
@@ -1511,7 +1511,7 @@ Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a
 Statement [90] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [91] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [92] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
-Statement [93] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
+Statement [93] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [94] *RASTER = IRQ_RASTER_FIRST [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [95] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [96] *HARDWARE_IRQ = &sprites_irq [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
@@ -1568,7 +1568,7 @@ Statement asm { ldaCIA1_INTERRUPT  } always clobbers reg byte a
 Statement [90] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [91] *PROCPORT = PROCPORT_RAM_IO [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [92] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
-Statement [93] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
+Statement [93] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [94] *RASTER = IRQ_RASTER_FIRST [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [95] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
 Statement [96] *HARDWARE_IRQ = &sprites_irq [ ] ( main:8::sprites_irq_init:71 [ ] { }  ) always clobbers reg byte a 
@@ -1710,7 +1710,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -2165,11 +2165,11 @@ sprites_irq_init: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [93] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [93] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // [94] *RASTER = IRQ_RASTER_FIRST -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER_FIRST
     sta RASTER
@@ -2445,7 +2445,7 @@ const nomodify byte* SPRITES_MC = (byte*) 53276
 const nomodify byte* SPRITES_XPOS = (byte*) 53248
 const nomodify byte* SPRITES_YPOS = (byte*) 53249
 const nomodify word SPRITE_PTRS = $3f8
-const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL = (byte*) 53265
 void __start()
 byte __start::__init1_toSpritePtr1_return
 const byte __start::__init1_toSpritePtr1_return#0 __init1_toSpritePtr1_return = (byte)(word)PLAYFIELD_SPRITES/$40
@@ -2587,7 +2587,7 @@ Score: 6632
   .label SPRITES_MC = $d01c
   .label SPRITES_EXPAND_X = $d01d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D018 = $d018
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -3048,12 +3048,12 @@ sprites_irq_init: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=0x7f
-    // [93] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL &=0x7f
+    // [93] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = IRQ_RASTER_FIRST
     // [94] *RASTER = IRQ_RASTER_FIRST -- _deref_pbuc1=vbuc2 
     lda #IRQ_RASTER_FIRST

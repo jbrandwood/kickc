@@ -14,8 +14,8 @@ void main() {
     *DTV_FEATURE = DTV_FEATURE_ENABLE;
     // 8BPP Pixel Cell Mode
     *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_COLORRAM_OFF | DTV_CHUNKY | DTV_BADLINE_OFF;
-    *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3;
-    *VIC_CONTROL2 = VIC_MCM | VIC_CSEL;
+    *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
+    *VICII_CONTROL2 = VICII_MCM | VICII_CSEL;
     // Plane B: CHUNKY
     *DTV_PLANEB_START_LO = < CHUNKY;
     *DTV_PLANEB_START_MI = > CHUNKY;
@@ -27,7 +27,7 @@ void main() {
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
     CIA2->PORT_A = %00000011 ^ (byte)((word)CHUNKY/$4000); // Set VIC Bank
     // VIC memory
-    *VIC_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4);
+    *VICII_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4);
 
     // DTV Palette - Grey Tones
     for(byte j : 0..$f) {
@@ -50,14 +50,14 @@ void main() {
             bne stabilize
         }
 
-        *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3;
+        *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3;
         *BORDER_COLOR = 0;
         byte rst = $42;
         while(*RASTER!=rst) {}
         asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         do {
             rst = *RASTER;
-            *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7);
+            *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7);
             *BORDER_COLOR = rst*$10;
             asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop }
         } while (rst!=$f2);

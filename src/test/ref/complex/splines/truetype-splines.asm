@@ -7,9 +7,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   .const WHITE = 1
   .const MOVE_TO = 0
   .const SPLINE_TO = 1
@@ -47,8 +47,8 @@ main: {
     // *D018 = toD018(BITMAP_SCREEN, BITMAP_GRAPHICS)
     lda #toD0181_return
     sta D018
-    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
     lda #0
     sta.z angle

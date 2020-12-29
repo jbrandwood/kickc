@@ -10,9 +10,9 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-  .const VIC_RST8 = $80
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_RST8 = $80
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
@@ -83,8 +83,8 @@ main: {
 // Initialize the program
 init: {
     .label i = 2
-    // *D011 = VIC_DEN | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_DEN | VICII_RSEL | 3
+    lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // plexInit(SCREEN)
   // Initialize the multiplexer
@@ -262,10 +262,10 @@ loop: {
     sta BORDER_COLOR
   // Sort the sprites by y-position
   __b6:
-    // *D011&VIC_RST8
-    lda #VIC_RST8
+    // *D011&VICII_RST8
+    lda #VICII_RST8
     and D011
-    // while((*D011&VIC_RST8)!=0)
+    // while((*D011&VICII_RST8)!=0)
     cmp #0
     bne __b6
     lda #0

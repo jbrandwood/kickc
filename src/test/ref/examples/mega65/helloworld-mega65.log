@@ -6,6 +6,7 @@ Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Fixing struct type SIZE_OF struct F018_DMAGIC to 17
 Fixing struct type SIZE_OF struct printf_buffer_number to 12
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
+Inlined call call SEI 
 Inlined call call __init 
 Eliminating unused variable with no statement printf_buffer
 Eliminating unused variable with no statement main::$0
@@ -91,6 +92,31 @@ memset::@4: scope:[memset]  from memset::@3
 memset::@return: scope:[memset]  from memset::@1
   memset::return#4 = phi( memset::@1/memset::return#0 )
   memset::return#1 = memset::return#4
+  return 
+  to:@return
+
+void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+memoryRemap: scope:[memoryRemap]  from conio_mega65_init::@3
+  memoryRemap::upperPageOffset#1 = phi( conio_mega65_init::@3/memoryRemap::upperPageOffset#0 )
+  memoryRemap::remapBlocks#1 = phi( conio_mega65_init::@3/memoryRemap::remapBlocks#0 )
+  memoryRemap::lowerPageOffset#1 = phi( conio_mega65_init::@3/memoryRemap::lowerPageOffset#0 )
+  memoryRemap::$0 = < memoryRemap::lowerPageOffset#1
+  *memoryRemap::aVal = memoryRemap::$0
+  memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
+  memoryRemap::$2 = > memoryRemap::lowerPageOffset#1
+  memoryRemap::$3 = memoryRemap::$2 & $f
+  memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
+  *memoryRemap::xVal = memoryRemap::$4
+  memoryRemap::$5 = < memoryRemap::upperPageOffset#1
+  *memoryRemap::yVal = memoryRemap::$5
+  memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
+  memoryRemap::$7 = > memoryRemap::upperPageOffset#1
+  memoryRemap::$8 = memoryRemap::$7 & $f
+  memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
+  *memoryRemap::zVal = memoryRemap::$9
+  asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap::@return
+memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
   return 
   to:@return
 
@@ -260,29 +286,38 @@ cputs::@return: scope:[cputs]  from cputs::@1
 
 void conio_mega65_init()
 conio_mega65_init: scope:[conio_mega65_init]  from __start::__init1
+  to:conio_mega65_init::SEI1
+conio_mega65_init::SEI1: scope:[conio_mega65_init]  from conio_mega65_init
   asm { sei  }
-  asm { lda#0 tax tay taz map eom  }
+  to:conio_mega65_init::@3
+conio_mega65_init::@3: scope:[conio_mega65_init]  from conio_mega65_init::SEI1
+  memoryRemap::remapBlocks#0 = 0
+  memoryRemap::lowerPageOffset#0 = 0
+  memoryRemap::upperPageOffset#0 = 0
+  call memoryRemap 
+  to:conio_mega65_init::@4
+conio_mega65_init::@4: scope:[conio_mega65_init]  from conio_mega65_init::@3
   *IO_KEY = $47
   *IO_KEY = $53
   *IO_BANK = *IO_BANK | CRAM2K
-  conio_mega65_init::$0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
-  conio_mega65_init::line#0 = conio_mega65_init::$0
-  conio_mega65_init::$1 = conio_mega65_init::line#0 >= $19
-  conio_mega65_init::$2 = ! conio_mega65_init::$1
-  if(conio_mega65_init::$2) goto conio_mega65_init::@1
+  conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
+  conio_mega65_init::line#0 = conio_mega65_init::$2
+  conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
+  conio_mega65_init::$4 = ! conio_mega65_init::$3
+  if(conio_mega65_init::$4) goto conio_mega65_init::@1
   to:conio_mega65_init::@2
-conio_mega65_init::@1: scope:[conio_mega65_init]  from conio_mega65_init conio_mega65_init::@2
-  conio_mega65_init::line#2 = phi( conio_mega65_init/conio_mega65_init::line#0, conio_mega65_init::@2/conio_mega65_init::line#1 )
+conio_mega65_init::@1: scope:[conio_mega65_init]  from conio_mega65_init::@2 conio_mega65_init::@4
+  conio_mega65_init::line#2 = phi( conio_mega65_init::@2/conio_mega65_init::line#1, conio_mega65_init::@4/conio_mega65_init::line#0 )
   gotoxy::x#2 = 0
   gotoxy::y#2 = conio_mega65_init::line#2
   call gotoxy 
-  to:conio_mega65_init::@3
-conio_mega65_init::@3: scope:[conio_mega65_init]  from conio_mega65_init::@1
+  to:conio_mega65_init::@5
+conio_mega65_init::@5: scope:[conio_mega65_init]  from conio_mega65_init::@1
   to:conio_mega65_init::@return
-conio_mega65_init::@2: scope:[conio_mega65_init]  from conio_mega65_init
+conio_mega65_init::@2: scope:[conio_mega65_init]  from conio_mega65_init::@4
   conio_mega65_init::line#1 = $19-1
   to:conio_mega65_init::@1
-conio_mega65_init::@return: scope:[conio_mega65_init]  from conio_mega65_init::@3
+conio_mega65_init::@return: scope:[conio_mega65_init]  from conio_mega65_init::@5
   return 
   to:@return
 
@@ -340,9 +375,9 @@ byte conio_cursor_y loadstore
 byte* conio_line_color loadstore
 byte* conio_line_text loadstore
 void conio_mega65_init()
-number~ conio_mega65_init::$0
-bool~ conio_mega65_init::$1
-bool~ conio_mega65_init::$2
+number~ conio_mega65_init::$2
+bool~ conio_mega65_init::$3
+bool~ conio_mega65_init::$4
 const nomodify byte* conio_mega65_init::BASIC_CURSOR_LINE = (byte*)$eb
 byte conio_mega65_init::line
 byte conio_mega65_init::line#0
@@ -445,6 +480,30 @@ byte* memcpy::src_end
 byte* memcpy::src_end#0
 byte* memcpy::src_end#1
 byte* memcpy::src_end#2
+void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+byte~ memoryRemap::$0
+byte~ memoryRemap::$1
+byte~ memoryRemap::$2
+number~ memoryRemap::$3
+number~ memoryRemap::$4
+byte~ memoryRemap::$5
+number~ memoryRemap::$6
+byte~ memoryRemap::$7
+number~ memoryRemap::$8
+number~ memoryRemap::$9
+const byte* memoryRemap::aVal = (byte*)$fc
+word memoryRemap::lowerPageOffset
+word memoryRemap::lowerPageOffset#0
+word memoryRemap::lowerPageOffset#1
+byte memoryRemap::remapBlocks
+byte memoryRemap::remapBlocks#0
+byte memoryRemap::remapBlocks#1
+word memoryRemap::upperPageOffset
+word memoryRemap::upperPageOffset#0
+word memoryRemap::upperPageOffset#1
+const byte* memoryRemap::xVal = (byte*)$fd
+const byte* memoryRemap::yVal = (byte*)$fe
+const byte* memoryRemap::zVal = (byte*)$ff
 void* memset(void* memset::str , byte memset::c , word memset::num)
 bool~ memset::$0
 bool~ memset::$1
@@ -488,6 +547,15 @@ void* memset::str#5
 void* memset::str#6
 
 Adding number conversion cast (unumber) 0 in memset::$0 = memset::num#2 > 0
+Adding number conversion cast (unumber) 4 in memoryRemap::$1 = memoryRemap::remapBlocks#1 << 4
+Adding number conversion cast (unumber) $f in memoryRemap::$3 = memoryRemap::$2 & $f
+Adding number conversion cast (unumber) memoryRemap::$3 in memoryRemap::$3 = memoryRemap::$2 & (unumber)$f
+Adding number conversion cast (unumber) memoryRemap::$4 in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
+Adding number conversion cast (unumber) $f0 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
+Adding number conversion cast (unumber) memoryRemap::$6 in memoryRemap::$6 = memoryRemap::remapBlocks#1 & (unumber)$f0
+Adding number conversion cast (unumber) $f in memoryRemap::$8 = memoryRemap::$7 & $f
+Adding number conversion cast (unumber) memoryRemap::$8 in memoryRemap::$8 = memoryRemap::$7 & (unumber)$f
+Adding number conversion cast (unumber) memoryRemap::$9 in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
 Adding number conversion cast (unumber) $19 in gotoxy::$0 = gotoxy::y#3 > $19
 Adding number conversion cast (unumber) $50 in gotoxy::$2 = gotoxy::x#3 >= $50
 Adding number conversion cast (unumber) 0 in gotoxy::y#0 = 0
@@ -515,11 +583,14 @@ Adding number conversion cast (unumber) $50 in conio_line_color = conio_line_col
 Adding number conversion cast (unumber) 0 in gotoxy::x#1 = 0
 Adding number conversion cast (unumber) 0 in gotoxy::y#1 = 0
 Adding number conversion cast (unumber) 0 in cputs::$2 = 0 != cputs::$0
+Adding number conversion cast (unumber) 0 in memoryRemap::remapBlocks#0 = 0
+Adding number conversion cast (unumber) 0 in memoryRemap::lowerPageOffset#0 = 0
+Adding number conversion cast (unumber) 0 in memoryRemap::upperPageOffset#0 = 0
 Adding number conversion cast (unumber) $47 in *IO_KEY = $47
 Adding number conversion cast (unumber) $53 in *IO_KEY = $53
-Adding number conversion cast (unumber) 1 in conio_mega65_init::$0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
-Adding number conversion cast (unumber) conio_mega65_init::$0 in conio_mega65_init::$0 = *conio_mega65_init::BASIC_CURSOR_LINE + (unumber)1
-Adding number conversion cast (unumber) $19 in conio_mega65_init::$1 = conio_mega65_init::line#0 >= $19
+Adding number conversion cast (unumber) 1 in conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
+Adding number conversion cast (unumber) conio_mega65_init::$2 in conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + (unumber)1
+Adding number conversion cast (unumber) $19 in conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
 Adding number conversion cast (unumber) 0 in gotoxy::x#2 = 0
 Adding number conversion cast (unumber) $19-1 in conio_mega65_init::line#1 = $19-1
 Successful SSA optimization PassNAddNumberTypeConversions
@@ -535,17 +606,28 @@ Inlining cast memset::num#0 = (unumber)$50
 Inlining cast memset::num#1 = (unumber)$50
 Inlining cast gotoxy::x#1 = (unumber)0
 Inlining cast gotoxy::y#1 = (unumber)0
+Inlining cast memoryRemap::remapBlocks#0 = (unumber)0
+Inlining cast memoryRemap::lowerPageOffset#0 = (unumber)0
+Inlining cast memoryRemap::upperPageOffset#0 = (unumber)0
 Inlining cast *IO_KEY = (unumber)$47
 Inlining cast *IO_KEY = (unumber)$53
 Inlining cast gotoxy::x#2 = (unumber)0
 Inlining cast conio_mega65_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 252
+Simplifying constant pointer cast (byte*) 253
+Simplifying constant pointer cast (byte*) 254
+Simplifying constant pointer cast (byte*) 255
 Simplifying constant pointer cast (byte*) 53295
 Simplifying constant pointer cast (byte*) 53296
 Simplifying constant pointer cast (byte*) 55296
 Simplifying constant pointer cast (byte*) 2048
 Simplifying constant pointer cast (byte*) 235
 Simplifying constant integer cast 0
+Simplifying constant integer cast 4
+Simplifying constant integer cast $f
+Simplifying constant integer cast $f0
+Simplifying constant integer cast $f
 Simplifying constant integer cast $19
 Simplifying constant integer cast $50
 Simplifying constant integer cast 0
@@ -565,6 +647,9 @@ Simplifying constant integer cast $50
 Simplifying constant integer cast $50
 Simplifying constant integer cast $50
 Simplifying constant integer cast $50
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
@@ -575,6 +660,10 @@ Simplifying constant integer cast $19
 Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 4
+Finalized unsigned number type (byte) $f
+Finalized unsigned number type (byte) $f0
+Finalized unsigned number type (byte) $f
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) $50
 Finalized unsigned number type (byte) 0
@@ -594,6 +683,9 @@ Finalized unsigned number type (byte) $50
 Finalized unsigned number type (byte) $50
 Finalized unsigned number type (byte) $50
 Finalized unsigned number type (byte) $50
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
@@ -603,14 +695,19 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) $19
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to byte in memoryRemap::$3 = memoryRemap::$2 & $f
+Inferred type updated to byte in memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
+Inferred type updated to byte in memoryRemap::$6 = memoryRemap::remapBlocks#1 & $f0
+Inferred type updated to byte in memoryRemap::$8 = memoryRemap::$7 & $f
+Inferred type updated to byte in memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
 Inferred type updated to word in gotoxy::$4 = gotoxy::$7 * $50
-Inferred type updated to byte in conio_mega65_init::$0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
+Inferred type updated to byte in conio_mega65_init::$2 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
 Inversing boolean not [20] memset::$1 = memset::num#2 <= 0 from [19] memset::$0 = memset::num#2 > 0
-Inversing boolean not [40] gotoxy::$1 = gotoxy::y#3 <= $19 from [39] gotoxy::$0 = gotoxy::y#3 > $19
-Inversing boolean not [44] gotoxy::$3 = gotoxy::x#3 < $50 from [43] gotoxy::$2 = gotoxy::x#3 >= $50
-Inversing boolean not [70] cputc::$2 = conio_cursor_x != $50 from [69] cputc::$1 = conio_cursor_x == $50
-Inversing boolean not [81] cscroll::$1 = conio_cursor_y != $19 from [80] cscroll::$0 = conio_cursor_y == $19
-Inversing boolean not [133] conio_mega65_init::$2 = conio_mega65_init::line#0 < $19 from [132] conio_mega65_init::$1 = conio_mega65_init::line#0 >= $19
+Inversing boolean not [57] gotoxy::$1 = gotoxy::y#3 <= $19 from [56] gotoxy::$0 = gotoxy::y#3 > $19
+Inversing boolean not [61] gotoxy::$3 = gotoxy::x#3 < $50 from [60] gotoxy::$2 = gotoxy::x#3 >= $50
+Inversing boolean not [87] cputc::$2 = conio_cursor_x != $50 from [86] cputc::$1 = conio_cursor_x == $50
+Inversing boolean not [98] cscroll::$1 = conio_cursor_y != $19 from [97] cscroll::$0 = conio_cursor_y == $19
+Inversing boolean not [153] conio_mega65_init::$4 = conio_mega65_init::line#0 < $19 from [152] conio_mega65_init::$3 = conio_mega65_init::line#0 >= $19
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -634,7 +731,7 @@ Alias gotoxy::y#5 = gotoxy::y#6
 Alias cputc::c#1 = cputc::c#2 
 Alias cputs::c#1 = cputs::$0 cputs::c#2 
 Alias cputs::s#0 = cputs::s#5 cputs::s#4 
-Alias conio_mega65_init::line#0 = conio_mega65_init::$0 
+Alias conio_mega65_init::line#0 = conio_mega65_init::$2 
 Successful SSA optimization Pass2AliasElimination
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
@@ -648,6 +745,9 @@ Identical Phi Values memcpy::destination#3 memcpy::destination#2
 Identical Phi Values memset::end#1 memset::end#0
 Identical Phi Values memset::str#5 memset::str#3
 Identical Phi Values memset::c#2 memset::c#4
+Identical Phi Values memoryRemap::lowerPageOffset#1 memoryRemap::lowerPageOffset#0
+Identical Phi Values memoryRemap::remapBlocks#1 memoryRemap::remapBlocks#0
+Identical Phi Values memoryRemap::upperPageOffset#1 memoryRemap::upperPageOffset#0
 Identical Phi Values cputc::c#1 cputc::c#0
 Identical Phi Values cputs::s#3 cputs::s#1
 Successful SSA optimization Pass2IdenticalPhiElimination
@@ -656,19 +756,19 @@ Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition memcpy::$1 [7] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
 Simple Condition memset::$1 [14] if(memset::num#2<=0) goto memset::@1
 Simple Condition memset::$3 [21] if(memset::dst#2!=memset::end#0) goto memset::@4
-Simple Condition gotoxy::$1 [27] if(gotoxy::y#3<=$19) goto gotoxy::@1
-Simple Condition gotoxy::$3 [30] if(gotoxy::x#3<$50) goto gotoxy::@2
-Simple Condition cputc::$0 [45] if(cputc::c#0=='
+Simple Condition gotoxy::$1 [44] if(gotoxy::y#3<=$19) goto gotoxy::@1
+Simple Condition gotoxy::$3 [47] if(gotoxy::x#3<$50) goto gotoxy::@2
+Simple Condition cputc::$0 [62] if(cputc::c#0=='
 ') goto cputc::@1
-Simple Condition cputc::$2 [51] if(conio_cursor_x!=$50) goto cputc::@return
-Simple Condition cscroll::$1 [61] if(conio_cursor_y!=$19) goto cscroll::@return
-Simple Condition cscroll::$7 [63] if(0!=conio_scroll_enable) goto cscroll::@3
-Simple Condition cputs::$2 [97] if(0!=cputs::c#1) goto cputs::@2
-Simple Condition conio_mega65_init::$2 [108] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@1
+Simple Condition cputc::$2 [68] if(conio_cursor_x!=$50) goto cputc::@return
+Simple Condition cscroll::$1 [78] if(conio_cursor_y!=$19) goto cscroll::@return
+Simple Condition cscroll::$7 [80] if(0!=conio_scroll_enable) goto cscroll::@3
+Simple Condition cputs::$2 [114] if(0!=cputs::c#1) goto cputs::@2
+Simple Condition conio_mega65_init::$4 [128] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@1
 Successful SSA optimization Pass2ConditionalJumpSimplification
-Constant right-side identified [66] memcpy::num#0 = (unumber)$19*$50-$50
-Constant right-side identified [71] memcpy::num#1 = (unumber)$19*$50-$50
-Constant right-side identified [113] conio_mega65_init::line#1 = (unumber)$19-1
+Constant right-side identified [83] memcpy::num#0 = (unumber)$19*$50-$50
+Constant right-side identified [88] memcpy::num#1 = (unumber)$19*$50-$50
+Constant right-side identified [133] conio_mega65_init::line#1 = (unumber)$19-1
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant gotoxy::y#0 = 0
 Constant gotoxy::x#0 = 0
@@ -686,6 +786,9 @@ Constant memset::num#1 = $50
 Constant gotoxy::x#1 = 0
 Constant gotoxy::y#1 = 0
 Constant cputs::c#0 = 0
+Constant memoryRemap::remapBlocks#0 = 0
+Constant memoryRemap::lowerPageOffset#0 = 0
+Constant memoryRemap::upperPageOffset#0 = 0
 Constant gotoxy::x#2 = 0
 Constant conio_mega65_init::line#1 = (unumber)$19-1
 Constant cputs::s#1 = main::s
@@ -694,13 +797,13 @@ Constant conio_scroll_enable = 1
 Successful SSA optimization Pass2ConstantIdentification
 Constant memset::c#1 = conio_textcolor
 Successful SSA optimization Pass2ConstantIdentification
-if() condition always true - replacing block destination [63] if(0!=conio_scroll_enable) goto cscroll::@3
+if() condition always true - replacing block destination [80] if(0!=conio_scroll_enable) goto cscroll::@3
 Successful SSA optimization Pass2ConstantIfs
-Rewriting conditional comparison [27] if(gotoxy::y#3<=$19) goto gotoxy::@1
-Eliminating unused variable memcpy::return#2 and assignment [51] memcpy::return#2 = memcpy::destination#2
-Eliminating unused variable memcpy::return#3 and assignment [53] memcpy::return#3 = memcpy::destination#2
-Eliminating unused variable memset::return#2 and assignment [55] memset::return#2 = memset::str#3
-Eliminating unused variable memset::return#3 and assignment [57] memset::return#3 = memset::str#3
+Rewriting conditional comparison [44] if(gotoxy::y#3<=$19) goto gotoxy::@1
+Eliminating unused variable memcpy::return#2 and assignment [67] memcpy::return#2 = memcpy::destination#2
+Eliminating unused variable memcpy::return#3 and assignment [69] memcpy::return#3 = memcpy::destination#2
+Eliminating unused variable memset::return#2 and assignment [71] memset::return#2 = memset::str#3
+Eliminating unused variable memset::return#3 and assignment [73] memset::return#3 = memset::str#3
 Eliminating unused constant cputs::c#0
 Eliminating unused constant conio_scroll_enable
 Successful SSA optimization PassNEliminateUnusedVars
@@ -722,8 +825,37 @@ Alias candidate removed (volatile)conio_line_color = gotoxy::$6
 Identical Phi Values gotoxy::y#3 gotoxy::y#2
 Identical Phi Values gotoxy::x#3 gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
-if() condition always true - replacing block destination [24] if(gotoxy::x#2<$50) goto gotoxy::@2
+Constant right-side identified [21] memoryRemap::$0 = < memoryRemap::lowerPageOffset#0
+Constant right-side identified [23] memoryRemap::$1 = memoryRemap::remapBlocks#0 << 4
+Constant right-side identified [24] memoryRemap::$2 = > memoryRemap::lowerPageOffset#0
+Constant right-side identified [28] memoryRemap::$5 = < memoryRemap::upperPageOffset#0
+Constant right-side identified [30] memoryRemap::$6 = memoryRemap::remapBlocks#0 & $f0
+Constant right-side identified [31] memoryRemap::$7 = > memoryRemap::upperPageOffset#0
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant memoryRemap::$0 = <memoryRemap::lowerPageOffset#0
+Constant memoryRemap::$1 = memoryRemap::remapBlocks#0<<4
+Constant memoryRemap::$2 = >memoryRemap::lowerPageOffset#0
+Constant memoryRemap::$5 = <memoryRemap::upperPageOffset#0
+Constant memoryRemap::$6 = memoryRemap::remapBlocks#0&$f0
+Constant memoryRemap::$7 = >memoryRemap::upperPageOffset#0
+Successful SSA optimization Pass2ConstantIdentification
+if() condition always true - replacing block destination [40] if(gotoxy::x#2<$50) goto gotoxy::@2
 Successful SSA optimization Pass2ConstantIfs
+Simplifying constant evaluating to zero <memoryRemap::lowerPageOffset#0 in 
+Simplifying constant evaluating to zero memoryRemap::remapBlocks#0<<4 in 
+Simplifying constant evaluating to zero >memoryRemap::lowerPageOffset#0 in 
+Simplifying constant evaluating to zero <memoryRemap::upperPageOffset#0 in 
+Simplifying constant evaluating to zero memoryRemap::remapBlocks#0&$f0 in 
+Simplifying constant evaluating to zero >memoryRemap::upperPageOffset#0 in 
+Successful SSA optimization PassNSimplifyConstantZero
+Simplifying expression containing zero memoryRemap::$3 in [26] memoryRemap::$4 = memoryRemap::$1 | memoryRemap::$3
+Simplifying expression containing zero memoryRemap::$8 in [33] memoryRemap::$9 = memoryRemap::$6 | memoryRemap::$8
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Eliminating unused constant memoryRemap::remapBlocks#0
+Eliminating unused constant memoryRemap::lowerPageOffset#0
+Eliminating unused constant memoryRemap::upperPageOffset#0
+Eliminating unused constant memoryRemap::$1
+Eliminating unused constant memoryRemap::$6
 Eliminating unused constant gotoxy::x#1
 Eliminating unused constant gotoxy::y#1
 Successful SSA optimization PassNEliminateUnusedVars
@@ -732,8 +864,24 @@ Removing unused block gotoxy::@4
 Successful SSA optimization Pass2EliminateUnusedBlocks
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
+Alias memoryRemap::$4 = memoryRemap::$3 
+Alias memoryRemap::$9 = memoryRemap::$8 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
+Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Identical Phi Values gotoxy::x#4 gotoxy::x#2
 Successful SSA optimization Pass2IdenticalPhiElimination
+Constant right-side identified [22] memoryRemap::$4 = memoryRemap::$2 & $f
+Constant right-side identified [25] memoryRemap::$9 = memoryRemap::$7 & $f
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant memoryRemap::$4 = memoryRemap::$2&$f
+Constant memoryRemap::$9 = memoryRemap::$7&$f
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying constant evaluating to zero memoryRemap::$2&$f in 
+Simplifying constant evaluating to zero memoryRemap::$7&$f in 
+Successful SSA optimization PassNSimplifyConstantZero
+Eliminating unused constant memoryRemap::$2
+Eliminating unused constant memoryRemap::$7
 Eliminating unused constant gotoxy::x#0
 Successful SSA optimization PassNEliminateUnusedVars
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
@@ -744,7 +892,7 @@ Inlining Noop Cast [3] memcpy::$2 = (byte*)memcpy::source#2 keeping memcpy::sour
 Inlining Noop Cast [13] memset::$4 = (byte*)memset::str#3 keeping memset::str#3
 Inlining Noop Cast [15] memset::dst#0 = (byte*)memset::str#3 keeping memset::str#3
 Successful SSA optimization Pass2NopCastInlining
-Rewriting multiplication to use shift and addition[26] gotoxy::line_offset#0 = gotoxy::$7 * $50
+Rewriting multiplication to use shift and addition[32] gotoxy::line_offset#0 = gotoxy::$7 * $50
 Inlining constant with var siblings memcpy::destination#0
 Inlining constant with var siblings memcpy::source#0
 Inlining constant with var siblings memcpy::num#0
@@ -774,10 +922,14 @@ Constant inlined conio_mega65_init::line#1 = (byte)$19-1
 Constant inlined memcpy::num#1 = (word)$19*$50-$50
 Constant inlined memcpy::num#0 = (word)$19*$50-$50
 Constant inlined memcpy::source#1 = (void*)COLORRAM+$50
+Constant inlined memoryRemap::$0 = 0
 Constant inlined gotoxy::y#0 = 0
 Constant inlined CONIO_SCREEN_TEXT = DEFAULT_SCREEN
+Constant inlined memoryRemap::$4 = 0
+Constant inlined memoryRemap::$5 = 0
 Constant inlined memset::c#0 = ' '
 Constant inlined memset::c#1 = LIGHT_BLUE
+Constant inlined memoryRemap::$9 = 0
 Constant inlined CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE
 Successful SSA optimization Pass2ConstantInlining
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
@@ -818,13 +970,15 @@ Alias candidate removed (volatile)conio_line_color = gotoxy::$6
 Alias candidate removed (volatile)conio_line_text = gotoxy::$5 
 Alias candidate removed (volatile)conio_line_color = gotoxy::$6 
 Added new block during phi lifting gotoxy::@5(between gotoxy and gotoxy::@1)
-Added new block during phi lifting conio_mega65_init::@4(between conio_mega65_init and conio_mega65_init::@1)
+Added new block during phi lifting conio_mega65_init::@6(between conio_mega65_init::@4 and conio_mega65_init::@1)
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@2
 Adding NOP phi() at start of __start::@1
 Adding NOP phi() at start of __start::@3
-Adding NOP phi() at start of conio_mega65_init::@2
+Adding NOP phi() at start of conio_mega65_init
 Adding NOP phi() at start of conio_mega65_init::@3
+Adding NOP phi() at start of conio_mega65_init::@2
+Adding NOP phi() at start of conio_mega65_init::@5
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@1
 Adding NOP phi() at start of gotoxy::@3
@@ -843,25 +997,25 @@ Adding NOP phi() at start of memcpy::@3
 Adding NOP phi() at start of memset::@1
 CALL GRAPH
 Calls in [__start] to conio_mega65_init:5 main:8 
-Calls in [conio_mega65_init] to gotoxy:21 
-Calls in [main] to cputs:26 
-Calls in [cputs] to cputc:51 
-Calls in [cputc] to cputln:59 cputln:63 
-Calls in [cputln] to cscroll:69 
-Calls in [cscroll] to memcpy:75 memcpy:77 memset:79 memset:81 
+Calls in [conio_mega65_init] to memoryRemap:14 gotoxy:23 
+Calls in [main] to cputs:28 
+Calls in [cputs] to cputc:59 
+Calls in [cputc] to cputln:67 cputln:71 
+Calls in [cputln] to cscroll:77 
+Calls in [cscroll] to memcpy:83 memcpy:85 memset:87 memset:89 
 
 Created 10 initial phi equivalence classes
-Coalesced [24] conio_mega65_init::line#3 = conio_mega65_init::line#0
-Coalesced [43] gotoxy::y#7 = gotoxy::y#2
-Coalesced [52] cputs::s#6 = cputs::s#0
-Coalesced [97] memcpy::src#5 = memcpy::src#1
-Coalesced [98] memcpy::dst#5 = memcpy::dst#1
-Coalesced [108] memset::dst#5 = memset::dst#1
+Coalesced [26] conio_mega65_init::line#3 = conio_mega65_init::line#0
+Coalesced [51] gotoxy::y#7 = gotoxy::y#2
+Coalesced [60] cputs::s#6 = cputs::s#0
+Coalesced [105] memcpy::src#5 = memcpy::src#1
+Coalesced [106] memcpy::dst#5 = memcpy::dst#1
+Coalesced [116] memset::dst#5 = memset::dst#1
 Coalesced down to 10 phi equivalence classes
 Culled Empty Block label __start::@2
 Culled Empty Block label __start::@3
 Culled Empty Block label conio_mega65_init::@2
-Culled Empty Block label conio_mega65_init::@3
+Culled Empty Block label conio_mega65_init::@5
 Culled Empty Block label main::@1
 Culled Empty Block label gotoxy::@3
 Culled Empty Block label cputs::@3
@@ -880,10 +1034,14 @@ Renumbering block cscroll::@4 to cscroll::@2
 Renumbering block cscroll::@5 to cscroll::@3
 Renumbering block cscroll::@6 to cscroll::@4
 Renumbering block cscroll::@7 to cscroll::@5
-Renumbering block conio_mega65_init::@4 to conio_mega65_init::@2
+Renumbering block conio_mega65_init::@3 to conio_mega65_init::@2
+Renumbering block conio_mega65_init::@4 to conio_mega65_init::@3
+Renumbering block conio_mega65_init::@6 to conio_mega65_init::@4
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
+Adding NOP phi() at start of conio_mega65_init
 Adding NOP phi() at start of conio_mega65_init::@2
+Adding NOP phi() at start of conio_mega65_init::@4
 Adding NOP phi() at start of main
 Adding NOP phi() at start of gotoxy::@3
 Adding NOP phi() at start of cputs
@@ -917,184 +1075,204 @@ __start::@return: scope:[__start]  from __start::@1
 
 void conio_mega65_init()
 conio_mega65_init: scope:[conio_mega65_init]  from __start::__init1
+  [9] phi()
+  to:conio_mega65_init::SEI1
+conio_mega65_init::SEI1: scope:[conio_mega65_init]  from conio_mega65_init
   asm { sei  }
-  asm { lda#0 tax tay taz map eom  }
-  [11] *IO_KEY = $47
-  [12] *IO_KEY = $53
-  [13] *IO_BANK = *IO_BANK | CRAM2K
-  [14] conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
-  [15] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@2
+  to:conio_mega65_init::@2
+conio_mega65_init::@2: scope:[conio_mega65_init]  from conio_mega65_init::SEI1
+  [11] phi()
+  [12] call memoryRemap 
+  to:conio_mega65_init::@3
+conio_mega65_init::@3: scope:[conio_mega65_init]  from conio_mega65_init::@2
+  [13] *IO_KEY = $47
+  [14] *IO_KEY = $53
+  [15] *IO_BANK = *IO_BANK | CRAM2K
+  [16] conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1
+  [17] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@4
   to:conio_mega65_init::@1
-conio_mega65_init::@2: scope:[conio_mega65_init]  from conio_mega65_init
-  [16] phi()
+conio_mega65_init::@4: scope:[conio_mega65_init]  from conio_mega65_init::@3
+  [18] phi()
   to:conio_mega65_init::@1
-conio_mega65_init::@1: scope:[conio_mega65_init]  from conio_mega65_init conio_mega65_init::@2
-  [17] conio_mega65_init::line#2 = phi( conio_mega65_init::@2/conio_mega65_init::line#0, conio_mega65_init/$19-1 )
-  [18] gotoxy::y#2 = conio_mega65_init::line#2
-  [19] call gotoxy 
+conio_mega65_init::@1: scope:[conio_mega65_init]  from conio_mega65_init::@3 conio_mega65_init::@4
+  [19] conio_mega65_init::line#2 = phi( conio_mega65_init::@3/$19-1, conio_mega65_init::@4/conio_mega65_init::line#0 )
+  [20] gotoxy::y#2 = conio_mega65_init::line#2
+  [21] call gotoxy 
   to:conio_mega65_init::@return
 conio_mega65_init::@return: scope:[conio_mega65_init]  from conio_mega65_init::@1
-  [20] return 
+  [22] return 
   to:@return
 
 void main()
 main: scope:[main]  from __start::@1
-  [21] phi()
-  [22] call cputs 
+  [23] phi()
+  [24] call cputs 
   to:main::@return
 main::@return: scope:[main]  from main
-  [23] return 
+  [25] return 
+  to:@return
+
+void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+memoryRemap: scope:[memoryRemap]  from conio_mega65_init::@2
+  [26] *memoryRemap::aVal = 0
+  [27] *memoryRemap::xVal = 0
+  [28] *memoryRemap::yVal = 0
+  [29] *memoryRemap::zVal = 0
+  asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+  to:memoryRemap::@return
+memoryRemap::@return: scope:[memoryRemap]  from memoryRemap
+  [31] return 
   to:@return
 
 void gotoxy(byte gotoxy::x , byte gotoxy::y)
 gotoxy: scope:[gotoxy]  from conio_mega65_init::@1
-  [24] if(gotoxy::y#2<$19+1) goto gotoxy::@3
+  [32] if(gotoxy::y#2<$19+1) goto gotoxy::@3
   to:gotoxy::@1
 gotoxy::@3: scope:[gotoxy]  from gotoxy
-  [25] phi()
+  [33] phi()
   to:gotoxy::@1
 gotoxy::@1: scope:[gotoxy]  from gotoxy gotoxy::@3
-  [26] gotoxy::y#4 = phi( gotoxy::@3/gotoxy::y#2, gotoxy/0 )
+  [34] gotoxy::y#4 = phi( gotoxy::@3/gotoxy::y#2, gotoxy/0 )
   to:gotoxy::@2
 gotoxy::@2: scope:[gotoxy]  from gotoxy::@1
-  [27] conio_cursor_x = gotoxy::x#2
-  [28] conio_cursor_y = gotoxy::y#4
-  [29] gotoxy::$7 = (word)gotoxy::y#4
-  [30] gotoxy::$8 = gotoxy::$7 << 2
-  [31] gotoxy::$9 = gotoxy::$8 + gotoxy::$7
-  [32] gotoxy::line_offset#0 = gotoxy::$9 << 4
-  [33] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0
-  [34] conio_line_text = gotoxy::$5
-  [35] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0
-  [36] conio_line_color = gotoxy::$6
+  [35] conio_cursor_x = gotoxy::x#2
+  [36] conio_cursor_y = gotoxy::y#4
+  [37] gotoxy::$7 = (word)gotoxy::y#4
+  [38] gotoxy::$8 = gotoxy::$7 << 2
+  [39] gotoxy::$9 = gotoxy::$8 + gotoxy::$7
+  [40] gotoxy::line_offset#0 = gotoxy::$9 << 4
+  [41] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0
+  [42] conio_line_text = gotoxy::$5
+  [43] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0
+  [44] conio_line_color = gotoxy::$6
   to:gotoxy::@return
 gotoxy::@return: scope:[gotoxy]  from gotoxy::@2
-  [37] return 
+  [45] return 
   to:@return
 
 void cputs(to_nomodify byte* cputs::s)
 cputs: scope:[cputs]  from main
-  [38] phi()
+  [46] phi()
   to:cputs::@1
 cputs::@1: scope:[cputs]  from cputs cputs::@2
-  [39] cputs::s#2 = phi( cputs/main::s, cputs::@2/cputs::s#0 )
-  [40] cputs::c#1 = *cputs::s#2
-  [41] cputs::s#0 = ++ cputs::s#2
-  [42] if(0!=cputs::c#1) goto cputs::@2
+  [47] cputs::s#2 = phi( cputs/main::s, cputs::@2/cputs::s#0 )
+  [48] cputs::c#1 = *cputs::s#2
+  [49] cputs::s#0 = ++ cputs::s#2
+  [50] if(0!=cputs::c#1) goto cputs::@2
   to:cputs::@return
 cputs::@return: scope:[cputs]  from cputs::@1
-  [43] return 
+  [51] return 
   to:@return
 cputs::@2: scope:[cputs]  from cputs::@1
-  [44] cputc::c#0 = cputs::c#1
-  [45] call cputc 
+  [52] cputc::c#0 = cputs::c#1
+  [53] call cputc 
   to:cputs::@1
 
 void cputc(byte cputc::c)
 cputc: scope:[cputc]  from cputs::@2
-  [46] if(cputc::c#0=='
+  [54] if(cputc::c#0=='
 ') goto cputc::@1
   to:cputc::@2
 cputc::@2: scope:[cputc]  from cputc
-  [47] conio_line_text[conio_cursor_x] = cputc::c#0
-  [48] conio_line_color[conio_cursor_x] = LIGHT_BLUE
-  [49] conio_cursor_x = ++ conio_cursor_x
-  [50] if(conio_cursor_x!=$50) goto cputc::@return
+  [55] conio_line_text[conio_cursor_x] = cputc::c#0
+  [56] conio_line_color[conio_cursor_x] = LIGHT_BLUE
+  [57] conio_cursor_x = ++ conio_cursor_x
+  [58] if(conio_cursor_x!=$50) goto cputc::@return
   to:cputc::@3
 cputc::@3: scope:[cputc]  from cputc::@2
-  [51] phi()
-  [52] call cputln 
+  [59] phi()
+  [60] call cputln 
   to:cputc::@return
 cputc::@return: scope:[cputc]  from cputc::@1 cputc::@2 cputc::@3
-  [53] return 
+  [61] return 
   to:@return
 cputc::@1: scope:[cputc]  from cputc
-  [54] phi()
-  [55] call cputln 
+  [62] phi()
+  [63] call cputln 
   to:cputc::@return
 
 void cputln()
 cputln: scope:[cputln]  from cputc::@1 cputc::@3
-  [56] conio_line_text = conio_line_text + $50
-  [57] conio_line_color = conio_line_color + $50
-  [58] conio_cursor_x = 0
-  [59] conio_cursor_y = ++ conio_cursor_y
-  [60] call cscroll 
+  [64] conio_line_text = conio_line_text + $50
+  [65] conio_line_color = conio_line_color + $50
+  [66] conio_cursor_x = 0
+  [67] conio_cursor_y = ++ conio_cursor_y
+  [68] call cscroll 
   to:cputln::@return
 cputln::@return: scope:[cputln]  from cputln
-  [61] return 
+  [69] return 
   to:@return
 
 void cscroll()
 cscroll: scope:[cscroll]  from cputln
-  [62] if(conio_cursor_y!=$19) goto cscroll::@return
+  [70] if(conio_cursor_y!=$19) goto cscroll::@return
   to:cscroll::@1
 cscroll::@1: scope:[cscroll]  from cscroll
-  [63] phi()
-  [64] call memcpy 
+  [71] phi()
+  [72] call memcpy 
   to:cscroll::@2
 cscroll::@2: scope:[cscroll]  from cscroll::@1
-  [65] phi()
-  [66] call memcpy 
+  [73] phi()
+  [74] call memcpy 
   to:cscroll::@3
 cscroll::@3: scope:[cscroll]  from cscroll::@2
-  [67] phi()
-  [68] call memset 
+  [75] phi()
+  [76] call memset 
   to:cscroll::@4
 cscroll::@4: scope:[cscroll]  from cscroll::@3
-  [69] phi()
-  [70] call memset 
+  [77] phi()
+  [78] call memset 
   to:cscroll::@5
 cscroll::@5: scope:[cscroll]  from cscroll::@4
-  [71] conio_line_text = conio_line_text - $50
-  [72] conio_line_color = conio_line_color - $50
-  [73] conio_cursor_y = -- conio_cursor_y
+  [79] conio_line_text = conio_line_text - $50
+  [80] conio_line_color = conio_line_color - $50
+  [81] conio_cursor_y = -- conio_cursor_y
   to:cscroll::@return
 cscroll::@return: scope:[cscroll]  from cscroll cscroll::@5
-  [74] return 
+  [82] return 
   to:@return
 
 void* memcpy(void* memcpy::destination , void* memcpy::source , word memcpy::num)
 memcpy: scope:[memcpy]  from cscroll::@1 cscroll::@2
-  [75] memcpy::destination#2 = phi( cscroll::@1/(void*)DEFAULT_SCREEN, cscroll::@2/(void*)COLORRAM )
-  [75] memcpy::source#2 = phi( cscroll::@1/(void*)DEFAULT_SCREEN+$50, cscroll::@2/(void*)COLORRAM+$50 )
-  [76] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50
-  [77] memcpy::src#4 = (byte*)memcpy::source#2
-  [78] memcpy::dst#4 = (byte*)memcpy::destination#2
+  [83] memcpy::destination#2 = phi( cscroll::@1/(void*)DEFAULT_SCREEN, cscroll::@2/(void*)COLORRAM )
+  [83] memcpy::source#2 = phi( cscroll::@1/(void*)DEFAULT_SCREEN+$50, cscroll::@2/(void*)COLORRAM+$50 )
+  [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50
+  [85] memcpy::src#4 = (byte*)memcpy::source#2
+  [86] memcpy::dst#4 = (byte*)memcpy::destination#2
   to:memcpy::@1
 memcpy::@1: scope:[memcpy]  from memcpy memcpy::@2
-  [79] memcpy::dst#2 = phi( memcpy/memcpy::dst#4, memcpy::@2/memcpy::dst#1 )
-  [79] memcpy::src#2 = phi( memcpy/memcpy::src#4, memcpy::@2/memcpy::src#1 )
-  [80] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
+  [87] memcpy::dst#2 = phi( memcpy/memcpy::dst#4, memcpy::@2/memcpy::dst#1 )
+  [87] memcpy::src#2 = phi( memcpy/memcpy::src#4, memcpy::@2/memcpy::src#1 )
+  [88] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2
   to:memcpy::@return
 memcpy::@return: scope:[memcpy]  from memcpy::@1
-  [81] return 
+  [89] return 
   to:@return
 memcpy::@2: scope:[memcpy]  from memcpy::@1
-  [82] *memcpy::dst#2 = *memcpy::src#2
-  [83] memcpy::dst#1 = ++ memcpy::dst#2
-  [84] memcpy::src#1 = ++ memcpy::src#2
+  [90] *memcpy::dst#2 = *memcpy::src#2
+  [91] memcpy::dst#1 = ++ memcpy::dst#2
+  [92] memcpy::src#1 = ++ memcpy::src#2
   to:memcpy::@1
 
 void* memset(void* memset::str , byte memset::c , word memset::num)
 memset: scope:[memset]  from cscroll::@3 cscroll::@4
-  [85] memset::c#4 = phi( cscroll::@3/' ', cscroll::@4/LIGHT_BLUE )
-  [85] memset::str#3 = phi( cscroll::@3/(void*)DEFAULT_SCREEN+(word)$19*$50-$50, cscroll::@4/(void*)COLORRAM+(word)$19*$50-$50 )
+  [93] memset::c#4 = phi( cscroll::@3/' ', cscroll::@4/LIGHT_BLUE )
+  [93] memset::str#3 = phi( cscroll::@3/(void*)DEFAULT_SCREEN+(word)$19*$50-$50, cscroll::@4/(void*)COLORRAM+(word)$19*$50-$50 )
   to:memset::@1
 memset::@1: scope:[memset]  from memset
-  [86] memset::end#0 = (byte*)memset::str#3 + $50
-  [87] memset::dst#4 = (byte*)memset::str#3
+  [94] memset::end#0 = (byte*)memset::str#3 + $50
+  [95] memset::dst#4 = (byte*)memset::str#3
   to:memset::@2
 memset::@2: scope:[memset]  from memset::@1 memset::@3
-  [88] memset::dst#2 = phi( memset::@1/memset::dst#4, memset::@3/memset::dst#1 )
-  [89] if(memset::dst#2!=memset::end#0) goto memset::@3
+  [96] memset::dst#2 = phi( memset::@1/memset::dst#4, memset::@3/memset::dst#1 )
+  [97] if(memset::dst#2!=memset::end#0) goto memset::@3
   to:memset::@return
 memset::@return: scope:[memset]  from memset::@2
-  [90] return 
+  [98] return 
   to:@return
 memset::@3: scope:[memset]  from memset::@2
-  [91] *memset::dst#2 = memset::c#4
-  [92] memset::dst#1 = ++ memset::dst#2
+  [99] *memset::dst#2 = memset::c#4
+  [100] memset::dst#1 = ++ memset::dst#2
   to:memset::@2
 
 
@@ -1149,6 +1327,10 @@ byte* memcpy::src#2 1.00250000125E9
 byte* memcpy::src#4 1.0000001E7
 byte* memcpy::src_end
 byte* memcpy::src_end#0 1.2625000025E8
+void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+word memoryRemap::lowerPageOffset
+byte memoryRemap::remapBlocks
+word memoryRemap::upperPageOffset
 void* memset(void* memset::str , byte memset::c , word memset::num)
 byte memset::c
 byte memset::c#4 1.42857143E8
@@ -1242,77 +1424,85 @@ Statement [1] conio_cursor_x = 0 [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [2] conio_cursor_y = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] conio_line_text = DEFAULT_SCREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] conio_line_color = COLORRAM [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { lda#0 tax tay taz map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [11] *IO_KEY = $47 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *IO_KEY = $53 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [27] conio_cursor_x = gotoxy::x#2 [ conio_cursor_x gotoxy::y#4 ] ( gotoxy:19 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [13] *IO_KEY = $47 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *IO_KEY = $53 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [15] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [26] *memoryRemap::aVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [27] *memoryRemap::xVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *memoryRemap::yVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [29] *memoryRemap::zVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [35] conio_cursor_x = gotoxy::x#2 [ conio_cursor_x gotoxy::y#4 ] ( gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:3 [ gotoxy::y#4 gotoxy::y#2 ]
-Statement [29] gotoxy::$7 = (word)gotoxy::y#4 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [30] gotoxy::$8 = gotoxy::$7 << 2 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [31] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [32] gotoxy::line_offset#0 = gotoxy::$9 << 4 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [33] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [34] conio_line_text = gotoxy::$5 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [35] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [36] conio_line_color = gotoxy::$6 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [40] cputs::c#1 = *cputs::s#2 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] ( main:7::cputs:22 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [47] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte z 
-Statement [48] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte z 
-Statement [50] if(conio_cursor_x!=$50) goto cputc::@return [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [56] conio_line_text = conio_line_text + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [57] conio_line_color = conio_line_color + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [58] conio_cursor_x = 0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [62] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [71] conio_line_text = conio_line_text - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [72] conio_line_color = conio_line_color - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [76] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [77] memcpy::src#4 = (byte*)memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [78] memcpy::dst#4 = (byte*)memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [80] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [82] *memcpy::dst#2 = *memcpy::src#2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [86] memset::end#0 = (byte*)memset::str#3 + $50 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [37] gotoxy::$7 = (word)gotoxy::y#4 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [38] gotoxy::$8 = gotoxy::$7 << 2 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [39] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [40] gotoxy::line_offset#0 = gotoxy::$9 << 4 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [41] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [42] conio_line_text = gotoxy::$5 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [43] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [44] conio_line_color = gotoxy::$6 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [48] cputs::c#1 = *cputs::s#2 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] ( main:7::cputs:24 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [55] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte z 
+Statement [56] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte z 
+Statement [58] if(conio_cursor_x!=$50) goto cputc::@return [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [64] conio_line_text = conio_line_text + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [65] conio_line_color = conio_line_color + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [66] conio_cursor_x = 0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [70] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [79] conio_line_text = conio_line_text - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [80] conio_line_color = conio_line_color - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [85] memcpy::src#4 = (byte*)memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [86] memcpy::dst#4 = (byte*)memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [88] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [90] *memcpy::dst#2 = *memcpy::src#2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
+Statement [94] memset::end#0 = (byte*)memset::str#3 + $50 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:16 [ memset::c#4 ]
-Statement [87] memset::dst#4 = (byte*)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [89] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [91] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
+Statement [95] memset::dst#4 = (byte*)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [97] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [99] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
 Removing always clobbered register reg byte y as potential for zp[1]:16 [ memset::c#4 ]
 Statement [1] conio_cursor_x = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] conio_cursor_y = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] conio_line_text = DEFAULT_SCREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] conio_line_color = COLORRAM [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { lda#0 tax tay taz map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
-Statement [11] *IO_KEY = $47 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [12] *IO_KEY = $53 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [13] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
-Statement [27] conio_cursor_x = gotoxy::x#2 [ conio_cursor_x gotoxy::y#4 ] ( gotoxy:19 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [29] gotoxy::$7 = (word)gotoxy::y#4 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [30] gotoxy::$8 = gotoxy::$7 << 2 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [31] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [32] gotoxy::line_offset#0 = gotoxy::$9 << 4 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [33] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [34] conio_line_text = gotoxy::$5 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [35] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [36] conio_line_color = gotoxy::$6 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:19 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
-Statement [40] cputs::c#1 = *cputs::s#2 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] ( main:7::cputs:22 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] { }  ) always clobbers reg byte a reg byte y 
-Statement [47] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte z 
-Statement [48] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte z 
-Statement [50] if(conio_cursor_x!=$50) goto cputc::@return [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [56] conio_line_text = conio_line_text + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [57] conio_line_color = conio_line_color + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [58] conio_cursor_x = 0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [62] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [71] conio_line_text = conio_line_text - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [72] conio_line_color = conio_line_color - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [76] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [77] memcpy::src#4 = (byte*)memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [78] memcpy::dst#4 = (byte*)memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [80] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [82] *memcpy::dst#2 = *memcpy::src#2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:64 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memcpy:66 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
-Statement [86] memset::end#0 = (byte*)memset::str#3 + $50 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [87] memset::dst#4 = (byte*)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [89] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
-Statement [91] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:52::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:22::cputc:45::cputln:55::cscroll:60::memset:70 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
+Statement [13] *IO_KEY = $47 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [14] *IO_KEY = $53 [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [15] *IO_BANK = *IO_BANK | CRAM2K [ ] (  [ ] { }  conio_mega65_init:5 [ ] { }  ) always clobbers reg byte a 
+Statement [26] *memoryRemap::aVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [27] *memoryRemap::xVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [28] *memoryRemap::yVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement [29] *memoryRemap::zVal = 0 [ ] ( memoryRemap:12 [ ] { }  conio_mega65_init:5::memoryRemap:12 [ ] { }  ) always clobbers reg byte a 
+Statement asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  } always clobbers reg byte a reg byte x reg byte y reg byte z 
+Statement [35] conio_cursor_x = gotoxy::x#2 [ conio_cursor_x gotoxy::y#4 ] ( gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x gotoxy::y#4 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [37] gotoxy::$7 = (word)gotoxy::y#4 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [38] gotoxy::$8 = gotoxy::$7 << 2 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$7 gotoxy::$8 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [39] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::$9 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [40] gotoxy::line_offset#0 = gotoxy::$9 << 4 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [41] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y gotoxy::line_offset#0 gotoxy::$5 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [42] conio_line_text = gotoxy::$5 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::line_offset#0 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [43] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text gotoxy::$6 ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [44] conio_line_color = gotoxy::$6 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  conio_mega65_init:5::gotoxy:21 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { gotoxy::y#2 = conio_mega65_init::line#2 } }  ) always clobbers reg byte a 
+Statement [48] cputs::c#1 = *cputs::s#2 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] ( main:7::cputs:24 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color cputs::s#2 cputs::c#1 ] { }  ) always clobbers reg byte a reg byte y 
+Statement [55] conio_line_text[conio_cursor_x] = cputc::c#0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte z 
+Statement [56] conio_line_color[conio_cursor_x] = LIGHT_BLUE [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte z 
+Statement [58] if(conio_cursor_x!=$50) goto cputc::@return [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [64] conio_line_text = conio_line_text + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [65] conio_line_color = conio_line_color + $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63 [ cputs::s#0 conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [66] conio_cursor_x = 0 [ conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [70] if(conio_cursor_y!=$19) goto cscroll::@return [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [79] conio_line_text = conio_line_text - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [80] conio_line_color = conio_line_color - $50 [ conio_cursor_y conio_line_text conio_line_color ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 [ memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::source#2 memcpy::destination#2 memcpy::src_end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [85] memcpy::src#4 = (byte*)memcpy::source#2 [ memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::destination#2 memcpy::src_end#0 memcpy::src#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [86] memcpy::dst#4 = (byte*)memcpy::destination#2 [ memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#4 memcpy::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [88] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [90] *memcpy::dst#2 = *memcpy::src#2 [ memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:72 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memcpy:74 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memcpy::src_end#0 memcpy::src#2 memcpy::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
+Statement [94] memset::end#0 = (byte*)memset::str#3 + $50 [ memset::str#3 memset::c#4 memset::end#0 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::str#3 memset::c#4 memset::end#0 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [95] memset::dst#4 = (byte*)memset::str#3 [ memset::c#4 memset::end#0 memset::dst#4 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#4 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [97] if(memset::dst#2!=memset::end#0) goto memset::@3 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a 
+Statement [99] *memset::dst#2 = memset::c#4 [ memset::c#4 memset::end#0 memset::dst#2 ] ( main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:76 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:60::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  main:7::cputs:24::cputc:53::cputln:63::cscroll:68::memset:78 [ cputs::s#0 conio_cursor_x conio_cursor_y conio_line_text conio_line_color memset::c#4 memset::end#0 memset::dst#2 ] { { cputc::c#0 = cputs::c#1 } }  ) always clobbers reg byte a reg byte y 
 Potential registers zp[1]:2 [ conio_mega65_init::line#2 conio_mega65_init::line#0 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[1]:3 [ gotoxy::y#4 gotoxy::y#2 ] : zp[1]:3 , reg byte x , reg byte y , reg byte z , 
 Potential registers zp[2]:4 [ cputs::s#2 cputs::s#0 ] : zp[2]:4 , 
@@ -1352,6 +1542,7 @@ Uplift Scope [MOS6569_VICII]
 Uplift Scope [MOS6581_SID] 
 Uplift Scope [MOS4569_VICIII] 
 Uplift Scope [MEGA65_VICIV] 
+Uplift Scope [memoryRemap] 
 Uplift Scope [F018_DMAGIC] 
 Uplift Scope [DMA_LIST_F018A] 
 Uplift Scope [DMA_LIST_F018B] 
@@ -1363,33 +1554,34 @@ Uplift Scope [printf_format_string]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [memcpy] best 10728 combination zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:39 [ memcpy::src_end#0 ] zp[2]:6 [ memcpy::source#2 ] zp[2]:8 [ memcpy::destination#2 ] 
-Uplifting [memset] best 10522 combination zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:41 [ memset::end#0 ] reg byte z [ memset::c#4 ] zp[2]:14 [ memset::str#3 ] 
-Uplifting [] best 10522 combination zp[1]:20 [ conio_cursor_y ] zp[2]:23 [ conio_line_color ] zp[2]:21 [ conio_line_text ] zp[1]:19 [ conio_cursor_x ] 
-Uplifting [cputc] best 10486 combination reg byte a [ cputc::c#0 ] 
-Uplifting [cputs] best 10396 combination zp[2]:4 [ cputs::s#2 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
-Uplifting [gotoxy] best 10383 combination zp[2]:27 [ gotoxy::$8 ] zp[2]:29 [ gotoxy::$9 ] zp[2]:33 [ gotoxy::$5 ] zp[2]:35 [ gotoxy::$6 ] zp[2]:25 [ gotoxy::$7 ] reg byte x [ gotoxy::y#4 gotoxy::y#2 ] zp[2]:31 [ gotoxy::line_offset#0 ] 
-Uplifting [conio_mega65_init] best 10371 combination reg byte x [ conio_mega65_init::line#2 conio_mega65_init::line#0 ] 
-Uplifting [RADIX] best 10371 combination 
-Uplifting [MOS6526_CIA] best 10371 combination 
-Uplifting [MOS6569_VICII] best 10371 combination 
-Uplifting [MOS6581_SID] best 10371 combination 
-Uplifting [MOS4569_VICIII] best 10371 combination 
-Uplifting [MEGA65_VICIV] best 10371 combination 
-Uplifting [F018_DMAGIC] best 10371 combination 
-Uplifting [DMA_LIST_F018A] best 10371 combination 
-Uplifting [DMA_LIST_F018B] best 10371 combination 
-Uplifting [cputln] best 10371 combination 
-Uplifting [cscroll] best 10371 combination 
-Uplifting [printf_format_number] best 10371 combination 
-Uplifting [printf_buffer_number] best 10371 combination 
-Uplifting [printf_format_string] best 10371 combination 
-Uplifting [main] best 10371 combination 
-Uplifting [__start] best 10371 combination 
+Uplifting [memcpy] best 10812 combination zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] zp[2]:39 [ memcpy::src_end#0 ] zp[2]:6 [ memcpy::source#2 ] zp[2]:8 [ memcpy::destination#2 ] 
+Uplifting [memset] best 10606 combination zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] zp[2]:41 [ memset::end#0 ] reg byte z [ memset::c#4 ] zp[2]:14 [ memset::str#3 ] 
+Uplifting [] best 10606 combination zp[1]:20 [ conio_cursor_y ] zp[2]:23 [ conio_line_color ] zp[2]:21 [ conio_line_text ] zp[1]:19 [ conio_cursor_x ] 
+Uplifting [cputc] best 10570 combination reg byte a [ cputc::c#0 ] 
+Uplifting [cputs] best 10480 combination zp[2]:4 [ cputs::s#2 cputs::s#0 ] reg byte a [ cputs::c#1 ] 
+Uplifting [gotoxy] best 10467 combination zp[2]:27 [ gotoxy::$8 ] zp[2]:29 [ gotoxy::$9 ] zp[2]:33 [ gotoxy::$5 ] zp[2]:35 [ gotoxy::$6 ] zp[2]:25 [ gotoxy::$7 ] reg byte x [ gotoxy::y#4 gotoxy::y#2 ] zp[2]:31 [ gotoxy::line_offset#0 ] 
+Uplifting [conio_mega65_init] best 10455 combination reg byte x [ conio_mega65_init::line#2 conio_mega65_init::line#0 ] 
+Uplifting [RADIX] best 10455 combination 
+Uplifting [MOS6526_CIA] best 10455 combination 
+Uplifting [MOS6569_VICII] best 10455 combination 
+Uplifting [MOS6581_SID] best 10455 combination 
+Uplifting [MOS4569_VICIII] best 10455 combination 
+Uplifting [MEGA65_VICIV] best 10455 combination 
+Uplifting [memoryRemap] best 10455 combination 
+Uplifting [F018_DMAGIC] best 10455 combination 
+Uplifting [DMA_LIST_F018A] best 10455 combination 
+Uplifting [DMA_LIST_F018B] best 10455 combination 
+Uplifting [cputln] best 10455 combination 
+Uplifting [cscroll] best 10455 combination 
+Uplifting [printf_format_number] best 10455 combination 
+Uplifting [printf_buffer_number] best 10455 combination 
+Uplifting [printf_format_string] best 10455 combination 
+Uplifting [main] best 10455 combination 
+Uplifting [__start] best 10455 combination 
 Attempting to uplift remaining variables inzp[1]:20 [ conio_cursor_y ]
-Uplifting [] best 10371 combination zp[1]:20 [ conio_cursor_y ] 
+Uplifting [] best 10455 combination zp[1]:20 [ conio_cursor_y ] 
 Attempting to uplift remaining variables inzp[1]:19 [ conio_cursor_x ]
-Uplifting [] best 10371 combination zp[1]:19 [ conio_cursor_x ] 
+Uplifting [] best 10455 combination zp[1]:19 [ conio_cursor_x ] 
 Coalescing zero page register [ zp[2]:6 [ memcpy::source#2 ] ] with [ zp[2]:10 [ memcpy::src#2 memcpy::src#4 memcpy::src#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:8 [ memcpy::destination#2 ] ] with [ zp[2]:12 [ memcpy::dst#2 memcpy::dst#4 memcpy::dst#1 ] ] - score: 1
 Coalescing zero page register [ zp[2]:14 [ memset::str#3 ] ] with [ zp[2]:17 [ memset::dst#2 memset::dst#4 memset::dst#1 ] ] - score: 1
@@ -1471,6 +1663,8 @@ __start: {
     lda #>COLORRAM
     sta.z conio_line_color+1
     // [5] call conio_mega65_init 
+    // [9] phi from __start::__init1 to conio_mega65_init [phi:__start::__init1->conio_mega65_init]
+  conio_mega65_init_from___init1:
     jsr conio_mega65_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
   __b1_from___init1:
@@ -1478,7 +1672,7 @@ __start: {
     // __start::@1
   __b1:
     // [7] call main 
-    // [21] phi from __start::@1 to main [phi:__start::@1->main]
+    // [23] phi from __start::@1 to main [phi:__start::@1->main]
   main_from___b1:
     jsr main
     jmp __breturn
@@ -1492,76 +1686,136 @@ __start: {
 conio_mega65_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $eb
+    jmp SEI1
+    // conio_mega65_init::SEI1
+  SEI1:
     // asm { sei  }
-    // Disable BASIC/KERNAL interrupts
     sei
-    // asm { lda#0 tax tay taz map eom  }
+    // [11] phi from conio_mega65_init::SEI1 to conio_mega65_init::@2 [phi:conio_mega65_init::SEI1->conio_mega65_init::@2]
+  __b2_from_SEI1:
+    jmp __b2
+    // conio_mega65_init::@2
+  __b2:
+    // [12] call memoryRemap 
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
-    lda #0
-    tax
-    tay
-    taz
-    map
-    eom
-    // [11] *IO_KEY = $47 -- _deref_pbuc1=vbuc2 
+    jsr memoryRemap
+    jmp __b3
+    // conio_mega65_init::@3
+  __b3:
+    // [13] *IO_KEY = $47 -- _deref_pbuc1=vbuc2 
     // Enable the VIC 4
     lda #$47
     sta IO_KEY
-    // [12] *IO_KEY = $53 -- _deref_pbuc1=vbuc2 
+    // [14] *IO_KEY = $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta IO_KEY
-    // [13] *IO_BANK = *IO_BANK | CRAM2K -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [15] *IO_BANK = *IO_BANK | CRAM2K -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Enable 2K Color RAM
     lda #CRAM2K
     ora IO_BANK
     sta IO_BANK
-    // [14] conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1 -- vbuxx=_deref_pbuc1_plus_1 
+    // [16] conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1 -- vbuxx=_deref_pbuc1_plus_1 
     ldx BASIC_CURSOR_LINE
     inx
-    // [15] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [17] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@4 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$19
-    bcc __b2_from_conio_mega65_init
-    // [17] phi from conio_mega65_init to conio_mega65_init::@1 [phi:conio_mega65_init->conio_mega65_init::@1]
-  __b1_from_conio_mega65_init:
-    // [17] phi conio_mega65_init::line#2 = $19-1 [phi:conio_mega65_init->conio_mega65_init::@1#0] -- vbuxx=vbuc1 
+    bcc __b4_from___b3
+    // [19] phi from conio_mega65_init::@3 to conio_mega65_init::@1 [phi:conio_mega65_init::@3->conio_mega65_init::@1]
+  __b1_from___b3:
+    // [19] phi conio_mega65_init::line#2 = $19-1 [phi:conio_mega65_init::@3->conio_mega65_init::@1#0] -- vbuxx=vbuc1 
     ldx #$19-1
     jmp __b1
-    // [16] phi from conio_mega65_init to conio_mega65_init::@2 [phi:conio_mega65_init->conio_mega65_init::@2]
-  __b2_from_conio_mega65_init:
-    jmp __b2
-    // conio_mega65_init::@2
-  __b2:
-    // [17] phi from conio_mega65_init::@2 to conio_mega65_init::@1 [phi:conio_mega65_init::@2->conio_mega65_init::@1]
-  __b1_from___b2:
-    // [17] phi conio_mega65_init::line#2 = conio_mega65_init::line#0 [phi:conio_mega65_init::@2->conio_mega65_init::@1#0] -- register_copy 
+    // [18] phi from conio_mega65_init::@3 to conio_mega65_init::@4 [phi:conio_mega65_init::@3->conio_mega65_init::@4]
+  __b4_from___b3:
+    jmp __b4
+    // conio_mega65_init::@4
+  __b4:
+    // [19] phi from conio_mega65_init::@4 to conio_mega65_init::@1 [phi:conio_mega65_init::@4->conio_mega65_init::@1]
+  __b1_from___b4:
+    // [19] phi conio_mega65_init::line#2 = conio_mega65_init::line#0 [phi:conio_mega65_init::@4->conio_mega65_init::@1#0] -- register_copy 
     jmp __b1
     // conio_mega65_init::@1
   __b1:
-    // [18] gotoxy::y#2 = conio_mega65_init::line#2
-    // [19] call gotoxy 
+    // [20] gotoxy::y#2 = conio_mega65_init::line#2
+    // [21] call gotoxy 
     jsr gotoxy
     jmp __breturn
     // conio_mega65_init::@return
   __breturn:
-    // [20] return 
+    // [22] return 
     rts
 }
   // main
 main: {
-    // [22] call cputs 
-    // [38] phi from main to cputs [phi:main->cputs]
+    // [24] call cputs 
+    // [46] phi from main to cputs [phi:main->cputs]
   cputs_from_main:
     jsr cputs
     jmp __breturn
     // main::@return
   __breturn:
-    // [23] return 
+    // [25] return 
     rts
   .segment Data
     s: .text "hello world!"
     .byte 0
 }
 .segment Code
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    // [26] *memoryRemap::aVal = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta aVal
+    // [27] *memoryRemap::xVal = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta xVal
+    // [28] *memoryRemap::yVal = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta yVal
+    // [29] *memoryRemap::zVal = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta zVal
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    jmp __breturn
+    // memoryRemap::@return
+  __breturn:
+    // [31] return 
+    rts
+}
   // gotoxy
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
@@ -1573,39 +1827,39 @@ gotoxy: {
     .label line_offset = $c
     .label __8 = $e
     .label __9 = $c
-    // [24] if(gotoxy::y#2<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
+    // [32] if(gotoxy::y#2<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$19+1
     bcc __b3_from_gotoxy
-    // [26] phi from gotoxy to gotoxy::@1 [phi:gotoxy->gotoxy::@1]
+    // [34] phi from gotoxy to gotoxy::@1 [phi:gotoxy->gotoxy::@1]
   __b1_from_gotoxy:
-    // [26] phi gotoxy::y#4 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuxx=vbuc1 
+    // [34] phi gotoxy::y#4 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuxx=vbuc1 
     ldx #0
     jmp __b1
-    // [25] phi from gotoxy to gotoxy::@3 [phi:gotoxy->gotoxy::@3]
+    // [33] phi from gotoxy to gotoxy::@3 [phi:gotoxy->gotoxy::@3]
   __b3_from_gotoxy:
     jmp __b3
     // gotoxy::@3
   __b3:
-    // [26] phi from gotoxy::@3 to gotoxy::@1 [phi:gotoxy::@3->gotoxy::@1]
+    // [34] phi from gotoxy::@3 to gotoxy::@1 [phi:gotoxy::@3->gotoxy::@1]
   __b1_from___b3:
-    // [26] phi gotoxy::y#4 = gotoxy::y#2 [phi:gotoxy::@3->gotoxy::@1#0] -- register_copy 
+    // [34] phi gotoxy::y#4 = gotoxy::y#2 [phi:gotoxy::@3->gotoxy::@1#0] -- register_copy 
     jmp __b1
     // gotoxy::@1
   __b1:
     jmp __b2
     // gotoxy::@2
   __b2:
-    // [27] conio_cursor_x = gotoxy::x#2 -- vbuz1=vbuc1 
+    // [35] conio_cursor_x = gotoxy::x#2 -- vbuz1=vbuc1 
     lda #x
     sta.z conio_cursor_x
-    // [28] conio_cursor_y = gotoxy::y#4 -- vbuz1=vbuxx 
+    // [36] conio_cursor_y = gotoxy::y#4 -- vbuz1=vbuxx 
     stx.z conio_cursor_y
-    // [29] gotoxy::$7 = (word)gotoxy::y#4 -- vwuz1=_word_vbuxx 
+    // [37] gotoxy::$7 = (word)gotoxy::y#4 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
     sta.z __7+1
-    // [30] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
+    // [38] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl
     sta.z __8
@@ -1614,7 +1868,7 @@ gotoxy: {
     sta.z __8+1
     asl.z __8
     rol.z __8+1
-    // [31] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 -- vwuz1=vwuz2_plus_vwuz1 
+    // [39] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __9
     clc
     adc.z __8
@@ -1622,12 +1876,12 @@ gotoxy: {
     lda.z __9+1
     adc.z __8+1
     sta.z __9+1
-    // [32] gotoxy::line_offset#0 = gotoxy::$9 << 4 -- vwuz1=vwuz1_rol_4 
+    // [40] gotoxy::line_offset#0 = gotoxy::$9 << 4 -- vwuz1=vwuz1_rol_4 
     asw line_offset
     asw line_offset
     asw line_offset
     asw line_offset
-    // [33] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz2 
+    // [41] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz2 
     clc
     lda.z line_offset
     adc #<DEFAULT_SCREEN
@@ -1635,12 +1889,12 @@ gotoxy: {
     lda.z line_offset+1
     adc #>DEFAULT_SCREEN
     sta.z __5+1
-    // [34] conio_line_text = gotoxy::$5 -- pbuz1=pbuz2 
+    // [42] conio_line_text = gotoxy::$5 -- pbuz1=pbuz2 
     lda.z __5
     sta.z conio_line_text
     lda.z __5+1
     sta.z conio_line_text+1
-    // [35] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz1 
+    // [43] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __6
     adc #<COLORRAM
@@ -1648,7 +1902,7 @@ gotoxy: {
     lda.z __6+1
     adc #>COLORRAM
     sta.z __6+1
-    // [36] conio_line_color = gotoxy::$6 -- pbuz1=pbuz2 
+    // [44] conio_line_color = gotoxy::$6 -- pbuz1=pbuz2 
     lda.z __6
     sta.z conio_line_color
     lda.z __6+1
@@ -1656,7 +1910,7 @@ gotoxy: {
     jmp __breturn
     // gotoxy::@return
   __breturn:
-    // [37] return 
+    // [45] return 
     rts
 }
   // cputs
@@ -1664,9 +1918,9 @@ gotoxy: {
 // cputs(byte* zp(2) s)
 cputs: {
     .label s = 2
-    // [39] phi from cputs to cputs::@1 [phi:cputs->cputs::@1]
+    // [47] phi from cputs to cputs::@1 [phi:cputs->cputs::@1]
   __b1_from_cputs:
-    // [39] phi cputs::s#2 = main::s [phi:cputs->cputs::@1#0] -- pbuz1=pbuc1 
+    // [47] phi cputs::s#2 = main::s [phi:cputs->cputs::@1#0] -- pbuz1=pbuc1 
     lda #<main.s
     sta.z s
     lda #>main.s
@@ -1674,27 +1928,27 @@ cputs: {
     jmp __b1
     // cputs::@1
   __b1:
-    // [40] cputs::c#1 = *cputs::s#2 -- vbuaa=_deref_pbuz1 
+    // [48] cputs::c#1 = *cputs::s#2 -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (s),y
-    // [41] cputs::s#0 = ++ cputs::s#2 -- pbuz1=_inc_pbuz1 
+    // [49] cputs::s#0 = ++ cputs::s#2 -- pbuz1=_inc_pbuz1 
     inw.z s
-    // [42] if(0!=cputs::c#1) goto cputs::@2 -- 0_neq_vbuaa_then_la1 
+    // [50] if(0!=cputs::c#1) goto cputs::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     jmp __breturn
     // cputs::@return
   __breturn:
-    // [43] return 
+    // [51] return 
     rts
     // cputs::@2
   __b2:
-    // [44] cputc::c#0 = cputs::c#1
-    // [45] call cputc 
+    // [52] cputc::c#0 = cputs::c#1
+    // [53] call cputc 
     jsr cputc
-    // [39] phi from cputs::@2 to cputs::@1 [phi:cputs::@2->cputs::@1]
+    // [47] phi from cputs::@2 to cputs::@1 [phi:cputs::@2->cputs::@1]
   __b1_from___b2:
-    // [39] phi cputs::s#2 = cputs::s#0 [phi:cputs::@2->cputs::@1#0] -- register_copy 
+    // [47] phi cputs::s#2 = cputs::s#0 [phi:cputs::@2->cputs::@1#0] -- register_copy 
     jmp __b1
 }
   // cputc
@@ -1702,50 +1956,50 @@ cputs: {
 // Moves the cursor forward. Scrolls the entire screen if needed
 // cputc(byte register(A) c)
 cputc: {
-    // [46] if(cputc::c#0==' ') goto cputc::@1 -- vbuaa_eq_vbuc1_then_la1 
+    // [54] if(cputc::c#0==' ') goto cputc::@1 -- vbuaa_eq_vbuc1_then_la1 
     cmp #'\n'
     beq __b1_from_cputc
     jmp __b2
     // cputc::@2
   __b2:
-    // [47] conio_line_text[conio_cursor_x] = cputc::c#0 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [55] conio_line_text[conio_cursor_x] = cputc::c#0 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldz conio_cursor_x
     sta.z (conio_line_text),z
-    // [48] conio_line_color[conio_cursor_x] = LIGHT_BLUE -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [56] conio_line_color[conio_cursor_x] = LIGHT_BLUE -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #LIGHT_BLUE
     ldz conio_cursor_x
     sta.z (conio_line_color),z
-    // [49] conio_cursor_x = ++ conio_cursor_x -- vbuz1=_inc_vbuz1 
+    // [57] conio_cursor_x = ++ conio_cursor_x -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_x
-    // [50] if(conio_cursor_x!=$50) goto cputc::@return -- vbuz1_neq_vbuc1_then_la1 
+    // [58] if(conio_cursor_x!=$50) goto cputc::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$50
     cmp.z conio_cursor_x
     bne __breturn
-    // [51] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
+    // [59] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
   __b3_from___b2:
     jmp __b3
     // cputc::@3
   __b3:
-    // [52] call cputln 
+    // [60] call cputln 
     jsr cputln
     jmp __breturn
     // cputc::@return
   __breturn:
-    // [53] return 
+    // [61] return 
     rts
-    // [54] phi from cputc to cputc::@1 [phi:cputc->cputc::@1]
+    // [62] phi from cputc to cputc::@1 [phi:cputc->cputc::@1]
   __b1_from_cputc:
     jmp __b1
     // cputc::@1
   __b1:
-    // [55] call cputln 
+    // [63] call cputln 
     jsr cputln
     jmp __breturn
 }
   // cputln
 // Print a newline
 cputln: {
-    // [56] conio_line_text = conio_line_text + $50 -- pbuz1=pbuz1_plus_vbuc1 
+    // [64] conio_line_text = conio_line_text + $50 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$50
     clc
     adc.z conio_line_text
@@ -1753,7 +2007,7 @@ cputln: {
     bcc !+
     inc.z conio_line_text+1
   !:
-    // [57] conio_line_color = conio_line_color + $50 -- pbuz1=pbuz1_plus_vbuc1 
+    // [65] conio_line_color = conio_line_color + $50 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$50
     clc
     adc.z conio_line_color
@@ -1761,91 +2015,91 @@ cputln: {
     bcc !+
     inc.z conio_line_color+1
   !:
-    // [58] conio_cursor_x = 0 -- vbuz1=vbuc1 
+    // [66] conio_cursor_x = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z conio_cursor_x
-    // [59] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
+    // [67] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
-    // [60] call cscroll 
+    // [68] call cscroll 
     jsr cscroll
     jmp __breturn
     // cputln::@return
   __breturn:
-    // [61] return 
+    // [69] return 
     rts
 }
   // cscroll
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
-    // [62] if(conio_cursor_y!=$19) goto cscroll::@return -- vbuz1_neq_vbuc1_then_la1 
+    // [70] if(conio_cursor_y!=$19) goto cscroll::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z conio_cursor_y
     bne __breturn
-    // [63] phi from cscroll to cscroll::@1 [phi:cscroll->cscroll::@1]
+    // [71] phi from cscroll to cscroll::@1 [phi:cscroll->cscroll::@1]
   __b1_from_cscroll:
     jmp __b1
     // cscroll::@1
   __b1:
-    // [64] call memcpy 
-    // [75] phi from cscroll::@1 to memcpy [phi:cscroll::@1->memcpy]
+    // [72] call memcpy 
+    // [83] phi from cscroll::@1 to memcpy [phi:cscroll::@1->memcpy]
   memcpy_from___b1:
-    // [75] phi memcpy::destination#2 = (void*)DEFAULT_SCREEN [phi:cscroll::@1->memcpy#0] -- pvoz1=pvoc1 
+    // [83] phi memcpy::destination#2 = (void*)DEFAULT_SCREEN [phi:cscroll::@1->memcpy#0] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [75] phi memcpy::source#2 = (void*)DEFAULT_SCREEN+$50 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void*)DEFAULT_SCREEN+$50 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN+$50
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$50
     sta.z memcpy.source+1
     jsr memcpy
-    // [65] phi from cscroll::@1 to cscroll::@2 [phi:cscroll::@1->cscroll::@2]
+    // [73] phi from cscroll::@1 to cscroll::@2 [phi:cscroll::@1->cscroll::@2]
   __b2_from___b1:
     jmp __b2
     // cscroll::@2
   __b2:
-    // [66] call memcpy 
-    // [75] phi from cscroll::@2 to memcpy [phi:cscroll::@2->memcpy]
+    // [74] call memcpy 
+    // [83] phi from cscroll::@2 to memcpy [phi:cscroll::@2->memcpy]
   memcpy_from___b2:
-    // [75] phi memcpy::destination#2 = (void*)COLORRAM [phi:cscroll::@2->memcpy#0] -- pvoz1=pvoc1 
+    // [83] phi memcpy::destination#2 = (void*)COLORRAM [phi:cscroll::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLORRAM
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [75] phi memcpy::source#2 = (void*)COLORRAM+$50 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void*)COLORRAM+$50 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<COLORRAM+$50
     sta.z memcpy.source
     lda #>COLORRAM+$50
     sta.z memcpy.source+1
     jsr memcpy
-    // [67] phi from cscroll::@2 to cscroll::@3 [phi:cscroll::@2->cscroll::@3]
+    // [75] phi from cscroll::@2 to cscroll::@3 [phi:cscroll::@2->cscroll::@3]
   __b3_from___b2:
     jmp __b3
     // cscroll::@3
   __b3:
-    // [68] call memset 
-    // [85] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
+    // [76] call memset 
+    // [93] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
   memset_from___b3:
-    // [85] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuzz=vbuc1 
+    // [93] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuzz=vbuc1 
     ldz #' '
-    // [85] phi memset::str#3 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN+$19*$50-$50
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$50-$50
     sta.z memset.str+1
     jsr memset
-    // [69] phi from cscroll::@3 to cscroll::@4 [phi:cscroll::@3->cscroll::@4]
+    // [77] phi from cscroll::@3 to cscroll::@4 [phi:cscroll::@3->cscroll::@4]
   __b4_from___b3:
     jmp __b4
     // cscroll::@4
   __b4:
-    // [70] call memset 
-    // [85] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
+    // [78] call memset 
+    // [93] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
   memset_from___b4:
-    // [85] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuzz=vbuc1 
+    // [93] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuzz=vbuc1 
     ldz #LIGHT_BLUE
-    // [85] phi memset::str#3 = (void*)COLORRAM+(word)$19*$50-$50 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void*)COLORRAM+(word)$19*$50-$50 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLORRAM+$19*$50-$50
     sta.z memset.str
     lda #>COLORRAM+$19*$50-$50
@@ -1854,7 +2108,7 @@ cscroll: {
     jmp __b5
     // cscroll::@5
   __b5:
-    // [71] conio_line_text = conio_line_text - $50 -- pbuz1=pbuz1_minus_vbuc1 
+    // [79] conio_line_text = conio_line_text - $50 -- pbuz1=pbuz1_minus_vbuc1 
     sec
     lda.z conio_line_text
     sbc #$50
@@ -1862,7 +2116,7 @@ cscroll: {
     lda.z conio_line_text+1
     sbc #0
     sta.z conio_line_text+1
-    // [72] conio_line_color = conio_line_color - $50 -- pbuz1=pbuz1_minus_vbuc1 
+    // [80] conio_line_color = conio_line_color - $50 -- pbuz1=pbuz1_minus_vbuc1 
     sec
     lda.z conio_line_color
     sbc #$50
@@ -1870,12 +2124,12 @@ cscroll: {
     lda.z conio_line_color+1
     sbc #0
     sta.z conio_line_color+1
-    // [73] conio_cursor_y = -- conio_cursor_y -- vbuz1=_dec_vbuz1 
+    // [81] conio_cursor_y = -- conio_cursor_y -- vbuz1=_dec_vbuz1 
     dec.z conio_cursor_y
     jmp __breturn
     // cscroll::@return
   __breturn:
-    // [74] return 
+    // [82] return 
     rts
 }
   // memcpy
@@ -1888,7 +2142,7 @@ memcpy: {
     .label src = 4
     .label source = 4
     .label destination = $14
-    // [76] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 -- pbuz1=pbuz2_plus_vwuc1 
+    // [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z source
     adc #<$19*$50-$50
@@ -1896,17 +2150,17 @@ memcpy: {
     lda.z source+1
     adc #>$19*$50-$50
     sta.z src_end+1
-    // [77] memcpy::src#4 = (byte*)memcpy::source#2
-    // [78] memcpy::dst#4 = (byte*)memcpy::destination#2
-    // [79] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+    // [85] memcpy::src#4 = (byte*)memcpy::source#2
+    // [86] memcpy::dst#4 = (byte*)memcpy::destination#2
+    // [87] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
   __b1_from_memcpy:
   __b1_from___b2:
-    // [79] phi memcpy::dst#2 = memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [79] phi memcpy::src#2 = memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [87] phi memcpy::dst#2 = memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [87] phi memcpy::src#2 = memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     jmp __b1
     // memcpy::@1
   __b1:
-    // [80] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [88] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
     bne __b2
@@ -1916,18 +2170,18 @@ memcpy: {
     jmp __breturn
     // memcpy::@return
   __breturn:
-    // [81] return 
+    // [89] return 
     rts
     // memcpy::@2
   __b2:
-    // [82] *memcpy::dst#2 = *memcpy::src#2 -- _deref_pbuz1=_deref_pbuz2 
+    // [90] *memcpy::dst#2 = *memcpy::src#2 -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     ldy #0
     sta (dst),y
-    // [83] memcpy::dst#1 = ++ memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [91] memcpy::dst#1 = ++ memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [84] memcpy::src#1 = ++ memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [92] memcpy::src#1 = ++ memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inw.z src
     jmp __b1_from___b2
 }
@@ -1941,7 +2195,7 @@ memset: {
     jmp __b1
     // memset::@1
   __b1:
-    // [86] memset::end#0 = (byte*)memset::str#3 + $50 -- pbuz1=pbuz2_plus_vbuc1 
+    // [94] memset::end#0 = (byte*)memset::str#3 + $50 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$50
     clc
     adc.z str
@@ -1949,15 +2203,15 @@ memset: {
     lda #0
     adc.z str+1
     sta.z end+1
-    // [87] memset::dst#4 = (byte*)memset::str#3
-    // [88] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [95] memset::dst#4 = (byte*)memset::str#3
+    // [96] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
   __b2_from___b1:
   __b2_from___b3:
-    // [88] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [96] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     jmp __b2
     // memset::@2
   __b2:
-    // [89] if(memset::dst#2!=memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [97] if(memset::dst#2!=memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -1967,15 +2221,15 @@ memset: {
     jmp __breturn
     // memset::@return
   __breturn:
-    // [90] return 
+    // [98] return 
     rts
     // memset::@3
   __b3:
-    // [91] *memset::dst#2 = memset::c#4 -- _deref_pbuz1=vbuzz 
+    // [99] *memset::dst#2 = memset::c#4 -- _deref_pbuz1=vbuzz 
     tza
     ldy #0
     sta (dst),y
-    // [92] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [100] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
     jmp __b2_from___b3
 }
@@ -1985,8 +2239,12 @@ ASSEMBLER OPTIMIZATIONS
 Removing instruction jmp __init1
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
+Removing instruction jmp SEI1
 Removing instruction jmp __b2
+Removing instruction jmp __b3
+Removing instruction jmp __b4
 Removing instruction jmp __b1
+Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __breturn
 Removing instruction jmp __b3
@@ -2013,9 +2271,12 @@ Removing instruction jmp __b2
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
 Removing instruction lda #0
+Removing instruction lda #0
+Removing instruction lda #0
+Removing instruction lda #0
 Removing instruction ldy #0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
-Replacing label __b2_from_conio_mega65_init with __b1
+Replacing label __b4_from___b3 with __b1
 Replacing label __b3_from_gotoxy with __b2
 Replacing label __b1 with __b2
 Replacing label __b1_from_cputc with __b1
@@ -2023,9 +2284,10 @@ Replacing label __b1_from___b2 with __b1
 Replacing label __b2_from___b3 with __b2
 Removing instruction __b1_from___init1:
 Removing instruction main_from___b1:
-Removing instruction __b2_from_conio_mega65_init:
-Removing instruction __b2:
-Removing instruction __b1_from___b2:
+Removing instruction __b2_from_SEI1:
+Removing instruction __b4_from___b3:
+Removing instruction __b4:
+Removing instruction __b1_from___b4:
 Removing instruction __b3_from_gotoxy:
 Removing instruction __b3:
 Removing instruction __b1_from___b3:
@@ -2046,11 +2308,16 @@ Removing instruction __b2_from___b1:
 Removing instruction __b2_from___b3:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __init1:
+Removing instruction conio_mega65_init_from___init1:
 Removing instruction __b1:
 Removing instruction __breturn:
-Removing instruction __b1_from_conio_mega65_init:
+Removing instruction SEI1:
+Removing instruction __b2:
+Removing instruction __b3:
+Removing instruction __b1_from___b3:
 Removing instruction __breturn:
 Removing instruction cputs_from_main:
+Removing instruction __breturn:
 Removing instruction __breturn:
 Removing instruction __b1_from_gotoxy:
 Removing instruction __breturn:
@@ -2139,6 +2406,14 @@ byte* memcpy::src#2 src zp[2]:4 1.00250000125E9
 byte* memcpy::src#4 src zp[2]:4 1.0000001E7
 byte* memcpy::src_end
 byte* memcpy::src_end#0 src_end zp[2]:18 1.2625000025E8
+void memoryRemap(byte memoryRemap::remapBlocks , word memoryRemap::lowerPageOffset , word memoryRemap::upperPageOffset)
+const byte* memoryRemap::aVal = (byte*) 252
+word memoryRemap::lowerPageOffset
+byte memoryRemap::remapBlocks
+word memoryRemap::upperPageOffset
+const byte* memoryRemap::xVal = (byte*) 253
+const byte* memoryRemap::yVal = (byte*) 254
+const byte* memoryRemap::zVal = (byte*) 255
 void* memset(void* memset::str , byte memset::c , word memset::num)
 byte memset::c
 byte memset::c#4 reg byte z 1.42857143E8
@@ -2172,7 +2447,7 @@ zp[2]:20 [ memset::end#0 memcpy::destination#2 memcpy::dst#2 memcpy::dst#4 memcp
 
 
 FINAL ASSEMBLER
-Score: 8702
+Score: 8741
 
   // File Comments
 // Hello World for MEGA 65 - using stdio.h and conio.h
@@ -2236,11 +2511,12 @@ __start: {
     sta.z conio_line_color+1
     // #pragma constructor_for(conio_mega65_init, cputc, clrscr, cscroll)
     // [5] call conio_mega65_init 
+    // [9] phi from __start::__init1 to conio_mega65_init [phi:__start::__init1->conio_mega65_init]
     jsr conio_mega65_init
     // [6] phi from __start::__init1 to __start::@1 [phi:__start::__init1->__start::@1]
     // __start::@1
     // [7] call main 
-    // [21] phi from __start::@1 to main [phi:__start::@1->main]
+    // [23] phi from __start::@1 to main [phi:__start::@1->main]
     jsr main
     // __start::@return
     // [8] return 
@@ -2251,74 +2527,129 @@ __start: {
 conio_mega65_init: {
     // Position cursor at current line
     .label BASIC_CURSOR_LINE = $eb
+    // conio_mega65_init::SEI1
     // asm
     // asm { sei  }
-    // Disable BASIC/KERNAL interrupts
     sei
-    // asm { lda#0 tax tay taz map eom  }
+    // [11] phi from conio_mega65_init::SEI1 to conio_mega65_init::@2 [phi:conio_mega65_init::SEI1->conio_mega65_init::@2]
+    // conio_mega65_init::@2
+    // memoryRemap(0,0,0)
+    // [12] call memoryRemap 
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
-    lda #0
-    tax
-    tay
-    taz
-    map
-    eom
+    jsr memoryRemap
+    // conio_mega65_init::@3
     // *IO_KEY = 0x47
-    // [11] *IO_KEY = $47 -- _deref_pbuc1=vbuc2 
+    // [13] *IO_KEY = $47 -- _deref_pbuc1=vbuc2 
     // Enable the VIC 4
     lda #$47
     sta IO_KEY
     // *IO_KEY = 0x53
-    // [12] *IO_KEY = $53 -- _deref_pbuc1=vbuc2 
+    // [14] *IO_KEY = $53 -- _deref_pbuc1=vbuc2 
     lda #$53
     sta IO_KEY
     // *IO_BANK |= CRAM2K
-    // [13] *IO_BANK = *IO_BANK | CRAM2K -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [15] *IO_BANK = *IO_BANK | CRAM2K -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Enable 2K Color RAM
     lda #CRAM2K
     ora IO_BANK
     sta IO_BANK
     // line = *BASIC_CURSOR_LINE+1
-    // [14] conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1 -- vbuxx=_deref_pbuc1_plus_1 
+    // [16] conio_mega65_init::line#0 = *conio_mega65_init::BASIC_CURSOR_LINE + 1 -- vbuxx=_deref_pbuc1_plus_1 
     ldx BASIC_CURSOR_LINE
     inx
     // if(line>=CONIO_HEIGHT)
-    // [15] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@2 -- vbuxx_lt_vbuc1_then_la1 
+    // [17] if(conio_mega65_init::line#0<$19) goto conio_mega65_init::@4 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$19
     bcc __b1
-    // [17] phi from conio_mega65_init to conio_mega65_init::@1 [phi:conio_mega65_init->conio_mega65_init::@1]
-    // [17] phi conio_mega65_init::line#2 = $19-1 [phi:conio_mega65_init->conio_mega65_init::@1#0] -- vbuxx=vbuc1 
+    // [19] phi from conio_mega65_init::@3 to conio_mega65_init::@1 [phi:conio_mega65_init::@3->conio_mega65_init::@1]
+    // [19] phi conio_mega65_init::line#2 = $19-1 [phi:conio_mega65_init::@3->conio_mega65_init::@1#0] -- vbuxx=vbuc1 
     ldx #$19-1
-    // [16] phi from conio_mega65_init to conio_mega65_init::@2 [phi:conio_mega65_init->conio_mega65_init::@2]
-    // conio_mega65_init::@2
-    // [17] phi from conio_mega65_init::@2 to conio_mega65_init::@1 [phi:conio_mega65_init::@2->conio_mega65_init::@1]
-    // [17] phi conio_mega65_init::line#2 = conio_mega65_init::line#0 [phi:conio_mega65_init::@2->conio_mega65_init::@1#0] -- register_copy 
+    // [18] phi from conio_mega65_init::@3 to conio_mega65_init::@4 [phi:conio_mega65_init::@3->conio_mega65_init::@4]
+    // conio_mega65_init::@4
+    // [19] phi from conio_mega65_init::@4 to conio_mega65_init::@1 [phi:conio_mega65_init::@4->conio_mega65_init::@1]
+    // [19] phi conio_mega65_init::line#2 = conio_mega65_init::line#0 [phi:conio_mega65_init::@4->conio_mega65_init::@1#0] -- register_copy 
     // conio_mega65_init::@1
   __b1:
     // gotoxy(0, line)
-    // [18] gotoxy::y#2 = conio_mega65_init::line#2
-    // [19] call gotoxy 
+    // [20] gotoxy::y#2 = conio_mega65_init::line#2
+    // [21] call gotoxy 
     jsr gotoxy
     // conio_mega65_init::@return
     // }
-    // [20] return 
+    // [22] return 
     rts
 }
   // main
 main: {
     // printf("hello world!")
-    // [22] call cputs 
-    // [38] phi from main to cputs [phi:main->cputs]
+    // [24] call cputs 
+    // [46] phi from main to cputs [phi:main->cputs]
     jsr cputs
     // main::@return
     // }
-    // [23] return 
+    // [25] return 
     rts
   .segment Data
     s: .text "hello world!"
     .byte 0
 }
 .segment Code
+  // memoryRemap
+// Remap some of the eight 8K memory blocks in the 64K address space of the 6502 to point somewhere else in the first 1MB memory space of the MEGA65.
+// After the remapping the CPU will access the mapped memory whenever it uses instructions that access a remapped block.
+// See section 2.3.4 in http://www.zimmers.net/cbmpics/cbm/c65/c65manual.txt for a description of the CPU memory remapper of the C65.
+// remapBlocks: Indicates which 8K blocks of the 6502 address space to remap. Each bit represents one 8K block
+// - bit 0  Memory block $0000-$1fff. Use constant MEMORYBLOCK_0000.
+// - bit 1  Memory block $2000-$3fff. Use constant MEMORYBLOCK_2000.
+// - bit 2  Memory block $4000-$5fff. Use constant MEMORYBLOCK_4000.
+// - bit 3  Memory block $6000-$7fff. Use constant MEMORYBLOCK_6000.
+// - bit 4  Memory block $8000-$9fff. Use constant MEMORYBLOCK_8000.
+// - bit 5  Memory block $a000-$bfff. Use constant MEMORYBLOCK_A000.
+// - bit 6  Memory block $c000-$dfff. Use constant MEMORYBLOCK_C000.
+// - bit 7  Memory block $e000-$ffff. Use constant MEMORYBLOCK_E000.
+// lowerPageOffset: Offset that will be added to any remapped blocks in the lower 32K of memory (block 0-3).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 0 ($0000-$1fff) is remapped it will point to lowerPageOffset*$100.
+// - If block 1 ($2000-$3fff) is remapped it will point to lowerPageOffset*$100 + $2000.
+// - If block 2 ($4000-$5fff) is remapped it will point to lowerPageOffset*$100 + $4000.
+// - If block 3 ($6000-$7fff) is remapped it will point to lowerPageOffset*$100 + $6000.
+// upperPageOffset: Offset that will be added to any remapped blocks in the upper 32K of memory (block 4-7).
+// The offset is a page offset (meaning it is multiplied by 0x100). Only the lower 12bits of the passed value is used.
+// - If block 4 ($8000-$9fff) is remapped it will point to upperPageOffset*$100 + $8000
+// - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
+// - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
+// - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
+memoryRemap: {
+    .label aVal = $fc
+    .label xVal = $fd
+    .label yVal = $fe
+    .label zVal = $ff
+    // *aVal = <lowerPageOffset
+    // [26] *memoryRemap::aVal = 0 -- _deref_pbuc1=vbuc2 
+    lda #0
+    sta aVal
+    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // [27] *memoryRemap::xVal = 0 -- _deref_pbuc1=vbuc2 
+    sta xVal
+    // *yVal = <upperPageOffset
+    // [28] *memoryRemap::yVal = 0 -- _deref_pbuc1=vbuc2 
+    sta yVal
+    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // [29] *memoryRemap::zVal = 0 -- _deref_pbuc1=vbuc2 
+    sta zVal
+    // asm
+    // asm { ldaaVal ldxxVal ldyyVal ldzzVal map eom  }
+    lda aVal
+    ldx xVal
+    ldy yVal
+    ldz zVal
+    map
+    eom
+    // memoryRemap::@return
+    // }
+    // [31] return 
+    rts
+}
   // gotoxy
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
@@ -2331,34 +2662,34 @@ gotoxy: {
     .label __8 = $e
     .label __9 = $c
     // if(y>CONIO_HEIGHT)
-    // [24] if(gotoxy::y#2<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
+    // [32] if(gotoxy::y#2<$19+1) goto gotoxy::@3 -- vbuxx_lt_vbuc1_then_la1 
     cpx #$19+1
     bcc __b2
-    // [26] phi from gotoxy to gotoxy::@1 [phi:gotoxy->gotoxy::@1]
-    // [26] phi gotoxy::y#4 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuxx=vbuc1 
+    // [34] phi from gotoxy to gotoxy::@1 [phi:gotoxy->gotoxy::@1]
+    // [34] phi gotoxy::y#4 = 0 [phi:gotoxy->gotoxy::@1#0] -- vbuxx=vbuc1 
     ldx #0
-    // [25] phi from gotoxy to gotoxy::@3 [phi:gotoxy->gotoxy::@3]
+    // [33] phi from gotoxy to gotoxy::@3 [phi:gotoxy->gotoxy::@3]
     // gotoxy::@3
-    // [26] phi from gotoxy::@3 to gotoxy::@1 [phi:gotoxy::@3->gotoxy::@1]
-    // [26] phi gotoxy::y#4 = gotoxy::y#2 [phi:gotoxy::@3->gotoxy::@1#0] -- register_copy 
+    // [34] phi from gotoxy::@3 to gotoxy::@1 [phi:gotoxy::@3->gotoxy::@1]
+    // [34] phi gotoxy::y#4 = gotoxy::y#2 [phi:gotoxy::@3->gotoxy::@1#0] -- register_copy 
     // gotoxy::@1
     // gotoxy::@2
   __b2:
     // conio_cursor_x = x
-    // [27] conio_cursor_x = gotoxy::x#2 -- vbuz1=vbuc1 
+    // [35] conio_cursor_x = gotoxy::x#2 -- vbuz1=vbuc1 
     lda #x
     sta.z conio_cursor_x
     // conio_cursor_y = y
-    // [28] conio_cursor_y = gotoxy::y#4 -- vbuz1=vbuxx 
+    // [36] conio_cursor_y = gotoxy::y#4 -- vbuz1=vbuxx 
     stx.z conio_cursor_y
     // (unsigned int)y*CONIO_WIDTH
-    // [29] gotoxy::$7 = (word)gotoxy::y#4 -- vwuz1=_word_vbuxx 
+    // [37] gotoxy::$7 = (word)gotoxy::y#4 -- vwuz1=_word_vbuxx 
     txa
     sta.z __7
     lda #0
     sta.z __7+1
     // line_offset = (unsigned int)y*CONIO_WIDTH
-    // [30] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
+    // [38] gotoxy::$8 = gotoxy::$7 << 2 -- vwuz1=vwuz2_rol_2 
     lda.z __7
     asl
     sta.z __8
@@ -2367,7 +2698,7 @@ gotoxy: {
     sta.z __8+1
     asl.z __8
     rol.z __8+1
-    // [31] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 -- vwuz1=vwuz2_plus_vwuz1 
+    // [39] gotoxy::$9 = gotoxy::$8 + gotoxy::$7 -- vwuz1=vwuz2_plus_vwuz1 
     lda.z __9
     clc
     adc.z __8
@@ -2375,13 +2706,13 @@ gotoxy: {
     lda.z __9+1
     adc.z __8+1
     sta.z __9+1
-    // [32] gotoxy::line_offset#0 = gotoxy::$9 << 4 -- vwuz1=vwuz1_rol_4 
+    // [40] gotoxy::line_offset#0 = gotoxy::$9 << 4 -- vwuz1=vwuz1_rol_4 
     asw line_offset
     asw line_offset
     asw line_offset
     asw line_offset
     // CONIO_SCREEN_TEXT + line_offset
-    // [33] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz2 
+    // [41] gotoxy::$5 = DEFAULT_SCREEN + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz2 
     clc
     lda.z line_offset
     adc #<DEFAULT_SCREEN
@@ -2390,13 +2721,13 @@ gotoxy: {
     adc #>DEFAULT_SCREEN
     sta.z __5+1
     // conio_line_text = CONIO_SCREEN_TEXT + line_offset
-    // [34] conio_line_text = gotoxy::$5 -- pbuz1=pbuz2 
+    // [42] conio_line_text = gotoxy::$5 -- pbuz1=pbuz2 
     lda.z __5
     sta.z conio_line_text
     lda.z __5+1
     sta.z conio_line_text+1
     // CONIO_SCREEN_COLORS + line_offset
-    // [35] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz1 
+    // [43] gotoxy::$6 = COLORRAM + gotoxy::line_offset#0 -- pbuz1=pbuc1_plus_vwuz1 
     clc
     lda.z __6
     adc #<COLORRAM
@@ -2405,14 +2736,14 @@ gotoxy: {
     adc #>COLORRAM
     sta.z __6+1
     // conio_line_color = CONIO_SCREEN_COLORS + line_offset
-    // [36] conio_line_color = gotoxy::$6 -- pbuz1=pbuz2 
+    // [44] conio_line_color = gotoxy::$6 -- pbuz1=pbuz2 
     lda.z __6
     sta.z conio_line_color
     lda.z __6+1
     sta.z conio_line_color+1
     // gotoxy::@return
     // }
-    // [37] return 
+    // [45] return 
     rts
 }
   // cputs
@@ -2420,8 +2751,8 @@ gotoxy: {
 // cputs(byte* zp(2) s)
 cputs: {
     .label s = 2
-    // [39] phi from cputs to cputs::@1 [phi:cputs->cputs::@1]
-    // [39] phi cputs::s#2 = main::s [phi:cputs->cputs::@1#0] -- pbuz1=pbuc1 
+    // [47] phi from cputs to cputs::@1 [phi:cputs->cputs::@1]
+    // [47] phi cputs::s#2 = main::s [phi:cputs->cputs::@1#0] -- pbuz1=pbuc1 
     lda #<main.s
     sta.z s
     lda #>main.s
@@ -2429,26 +2760,26 @@ cputs: {
     // cputs::@1
   __b1:
     // while(c=*s++)
-    // [40] cputs::c#1 = *cputs::s#2 -- vbuaa=_deref_pbuz1 
+    // [48] cputs::c#1 = *cputs::s#2 -- vbuaa=_deref_pbuz1 
     ldy #0
     lda (s),y
-    // [41] cputs::s#0 = ++ cputs::s#2 -- pbuz1=_inc_pbuz1 
+    // [49] cputs::s#0 = ++ cputs::s#2 -- pbuz1=_inc_pbuz1 
     inw.z s
-    // [42] if(0!=cputs::c#1) goto cputs::@2 -- 0_neq_vbuaa_then_la1 
+    // [50] if(0!=cputs::c#1) goto cputs::@2 -- 0_neq_vbuaa_then_la1 
     cmp #0
     bne __b2
     // cputs::@return
     // }
-    // [43] return 
+    // [51] return 
     rts
     // cputs::@2
   __b2:
     // cputc(c)
-    // [44] cputc::c#0 = cputs::c#1
-    // [45] call cputc 
+    // [52] cputc::c#0 = cputs::c#1
+    // [53] call cputc 
     jsr cputc
-    // [39] phi from cputs::@2 to cputs::@1 [phi:cputs::@2->cputs::@1]
-    // [39] phi cputs::s#2 = cputs::s#0 [phi:cputs::@2->cputs::@1#0] -- register_copy 
+    // [47] phi from cputs::@2 to cputs::@1 [phi:cputs::@2->cputs::@1]
+    // [47] phi cputs::s#2 = cputs::s#0 [phi:cputs::@2->cputs::@1#0] -- register_copy 
     jmp __b1
 }
   // cputc
@@ -2457,41 +2788,41 @@ cputs: {
 // cputc(byte register(A) c)
 cputc: {
     // if(c=='\n')
-    // [46] if(cputc::c#0==' ') goto cputc::@1 -- vbuaa_eq_vbuc1_then_la1 
+    // [54] if(cputc::c#0==' ') goto cputc::@1 -- vbuaa_eq_vbuc1_then_la1 
     cmp #'\n'
     beq __b1
     // cputc::@2
     // conio_line_text[conio_cursor_x] = c
-    // [47] conio_line_text[conio_cursor_x] = cputc::c#0 -- pbuz1_derefidx_vbuz2=vbuaa 
+    // [55] conio_line_text[conio_cursor_x] = cputc::c#0 -- pbuz1_derefidx_vbuz2=vbuaa 
     ldz conio_cursor_x
     sta.z (conio_line_text),z
     // conio_line_color[conio_cursor_x] = conio_textcolor
-    // [48] conio_line_color[conio_cursor_x] = LIGHT_BLUE -- pbuz1_derefidx_vbuz2=vbuc1 
+    // [56] conio_line_color[conio_cursor_x] = LIGHT_BLUE -- pbuz1_derefidx_vbuz2=vbuc1 
     lda #LIGHT_BLUE
     ldz conio_cursor_x
     sta.z (conio_line_color),z
     // if(++conio_cursor_x==CONIO_WIDTH)
-    // [49] conio_cursor_x = ++ conio_cursor_x -- vbuz1=_inc_vbuz1 
+    // [57] conio_cursor_x = ++ conio_cursor_x -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_x
-    // [50] if(conio_cursor_x!=$50) goto cputc::@return -- vbuz1_neq_vbuc1_then_la1 
+    // [58] if(conio_cursor_x!=$50) goto cputc::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$50
     cmp.z conio_cursor_x
     bne __breturn
-    // [51] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
+    // [59] phi from cputc::@2 to cputc::@3 [phi:cputc::@2->cputc::@3]
     // cputc::@3
     // cputln()
-    // [52] call cputln 
+    // [60] call cputln 
     jsr cputln
     // cputc::@return
   __breturn:
     // }
-    // [53] return 
+    // [61] return 
     rts
-    // [54] phi from cputc to cputc::@1 [phi:cputc->cputc::@1]
+    // [62] phi from cputc to cputc::@1 [phi:cputc->cputc::@1]
     // cputc::@1
   __b1:
     // cputln()
-    // [55] call cputln 
+    // [63] call cputln 
     jsr cputln
     rts
 }
@@ -2499,7 +2830,7 @@ cputc: {
 // Print a newline
 cputln: {
     // conio_line_text +=  CONIO_WIDTH
-    // [56] conio_line_text = conio_line_text + $50 -- pbuz1=pbuz1_plus_vbuc1 
+    // [64] conio_line_text = conio_line_text + $50 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$50
     clc
     adc.z conio_line_text
@@ -2508,7 +2839,7 @@ cputln: {
     inc.z conio_line_text+1
   !:
     // conio_line_color += CONIO_WIDTH
-    // [57] conio_line_color = conio_line_color + $50 -- pbuz1=pbuz1_plus_vbuc1 
+    // [65] conio_line_color = conio_line_color + $50 -- pbuz1=pbuz1_plus_vbuc1 
     lda #$50
     clc
     adc.z conio_line_color
@@ -2517,81 +2848,81 @@ cputln: {
     inc.z conio_line_color+1
   !:
     // conio_cursor_x = 0
-    // [58] conio_cursor_x = 0 -- vbuz1=vbuc1 
+    // [66] conio_cursor_x = 0 -- vbuz1=vbuc1 
     lda #0
     sta.z conio_cursor_x
     // conio_cursor_y++;
-    // [59] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
+    // [67] conio_cursor_y = ++ conio_cursor_y -- vbuz1=_inc_vbuz1 
     inc.z conio_cursor_y
     // cscroll()
-    // [60] call cscroll 
+    // [68] call cscroll 
     jsr cscroll
     // cputln::@return
     // }
-    // [61] return 
+    // [69] return 
     rts
 }
   // cscroll
 // Scroll the entire screen if the cursor is beyond the last line
 cscroll: {
     // if(conio_cursor_y==CONIO_HEIGHT)
-    // [62] if(conio_cursor_y!=$19) goto cscroll::@return -- vbuz1_neq_vbuc1_then_la1 
+    // [70] if(conio_cursor_y!=$19) goto cscroll::@return -- vbuz1_neq_vbuc1_then_la1 
     lda #$19
     cmp.z conio_cursor_y
     bne __breturn
-    // [63] phi from cscroll to cscroll::@1 [phi:cscroll->cscroll::@1]
+    // [71] phi from cscroll to cscroll::@1 [phi:cscroll->cscroll::@1]
     // cscroll::@1
     // memcpy(CONIO_SCREEN_TEXT, CONIO_SCREEN_TEXT+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    // [64] call memcpy 
-    // [75] phi from cscroll::@1 to memcpy [phi:cscroll::@1->memcpy]
-    // [75] phi memcpy::destination#2 = (void*)DEFAULT_SCREEN [phi:cscroll::@1->memcpy#0] -- pvoz1=pvoc1 
+    // [72] call memcpy 
+    // [83] phi from cscroll::@1 to memcpy [phi:cscroll::@1->memcpy]
+    // [83] phi memcpy::destination#2 = (void*)DEFAULT_SCREEN [phi:cscroll::@1->memcpy#0] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN
     sta.z memcpy.destination
     lda #>DEFAULT_SCREEN
     sta.z memcpy.destination+1
-    // [75] phi memcpy::source#2 = (void*)DEFAULT_SCREEN+$50 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void*)DEFAULT_SCREEN+$50 [phi:cscroll::@1->memcpy#1] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN+$50
     sta.z memcpy.source
     lda #>DEFAULT_SCREEN+$50
     sta.z memcpy.source+1
     jsr memcpy
-    // [65] phi from cscroll::@1 to cscroll::@2 [phi:cscroll::@1->cscroll::@2]
+    // [73] phi from cscroll::@1 to cscroll::@2 [phi:cscroll::@1->cscroll::@2]
     // cscroll::@2
     // memcpy(CONIO_SCREEN_COLORS, CONIO_SCREEN_COLORS+CONIO_WIDTH, CONIO_BYTES-CONIO_WIDTH)
-    // [66] call memcpy 
-    // [75] phi from cscroll::@2 to memcpy [phi:cscroll::@2->memcpy]
-    // [75] phi memcpy::destination#2 = (void*)COLORRAM [phi:cscroll::@2->memcpy#0] -- pvoz1=pvoc1 
+    // [74] call memcpy 
+    // [83] phi from cscroll::@2 to memcpy [phi:cscroll::@2->memcpy]
+    // [83] phi memcpy::destination#2 = (void*)COLORRAM [phi:cscroll::@2->memcpy#0] -- pvoz1=pvoc1 
     lda #<COLORRAM
     sta.z memcpy.destination
     lda #>COLORRAM
     sta.z memcpy.destination+1
-    // [75] phi memcpy::source#2 = (void*)COLORRAM+$50 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
+    // [83] phi memcpy::source#2 = (void*)COLORRAM+$50 [phi:cscroll::@2->memcpy#1] -- pvoz1=pvoc1 
     lda #<COLORRAM+$50
     sta.z memcpy.source
     lda #>COLORRAM+$50
     sta.z memcpy.source+1
     jsr memcpy
-    // [67] phi from cscroll::@2 to cscroll::@3 [phi:cscroll::@2->cscroll::@3]
+    // [75] phi from cscroll::@2 to cscroll::@3 [phi:cscroll::@2->cscroll::@3]
     // cscroll::@3
     // memset(CONIO_SCREEN_TEXT+CONIO_BYTES-CONIO_WIDTH, ' ', CONIO_WIDTH)
-    // [68] call memset 
-    // [85] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
-    // [85] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuzz=vbuc1 
+    // [76] call memset 
+    // [93] phi from cscroll::@3 to memset [phi:cscroll::@3->memset]
+    // [93] phi memset::c#4 = ' ' [phi:cscroll::@3->memset#0] -- vbuzz=vbuc1 
     ldz #' '
-    // [85] phi memset::str#3 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void*)DEFAULT_SCREEN+(word)$19*$50-$50 [phi:cscroll::@3->memset#1] -- pvoz1=pvoc1 
     lda #<DEFAULT_SCREEN+$19*$50-$50
     sta.z memset.str
     lda #>DEFAULT_SCREEN+$19*$50-$50
     sta.z memset.str+1
     jsr memset
-    // [69] phi from cscroll::@3 to cscroll::@4 [phi:cscroll::@3->cscroll::@4]
+    // [77] phi from cscroll::@3 to cscroll::@4 [phi:cscroll::@3->cscroll::@4]
     // cscroll::@4
     // memset(CONIO_SCREEN_COLORS+CONIO_BYTES-CONIO_WIDTH, conio_textcolor, CONIO_WIDTH)
-    // [70] call memset 
-    // [85] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
-    // [85] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuzz=vbuc1 
+    // [78] call memset 
+    // [93] phi from cscroll::@4 to memset [phi:cscroll::@4->memset]
+    // [93] phi memset::c#4 = LIGHT_BLUE [phi:cscroll::@4->memset#0] -- vbuzz=vbuc1 
     ldz #LIGHT_BLUE
-    // [85] phi memset::str#3 = (void*)COLORRAM+(word)$19*$50-$50 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
+    // [93] phi memset::str#3 = (void*)COLORRAM+(word)$19*$50-$50 [phi:cscroll::@4->memset#1] -- pvoz1=pvoc1 
     lda #<COLORRAM+$19*$50-$50
     sta.z memset.str
     lda #>COLORRAM+$19*$50-$50
@@ -2599,7 +2930,7 @@ cscroll: {
     jsr memset
     // cscroll::@5
     // conio_line_text -= CONIO_WIDTH
-    // [71] conio_line_text = conio_line_text - $50 -- pbuz1=pbuz1_minus_vbuc1 
+    // [79] conio_line_text = conio_line_text - $50 -- pbuz1=pbuz1_minus_vbuc1 
     sec
     lda.z conio_line_text
     sbc #$50
@@ -2608,7 +2939,7 @@ cscroll: {
     sbc #0
     sta.z conio_line_text+1
     // conio_line_color -= CONIO_WIDTH
-    // [72] conio_line_color = conio_line_color - $50 -- pbuz1=pbuz1_minus_vbuc1 
+    // [80] conio_line_color = conio_line_color - $50 -- pbuz1=pbuz1_minus_vbuc1 
     sec
     lda.z conio_line_color
     sbc #$50
@@ -2617,12 +2948,12 @@ cscroll: {
     sbc #0
     sta.z conio_line_color+1
     // conio_cursor_y--;
-    // [73] conio_cursor_y = -- conio_cursor_y -- vbuz1=_dec_vbuz1 
+    // [81] conio_cursor_y = -- conio_cursor_y -- vbuz1=_dec_vbuz1 
     dec.z conio_cursor_y
     // cscroll::@return
   __breturn:
     // }
-    // [74] return 
+    // [82] return 
     rts
 }
   // memcpy
@@ -2636,7 +2967,7 @@ memcpy: {
     .label source = 4
     .label destination = $14
     // src_end = (char*)source+num
-    // [76] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 -- pbuz1=pbuz2_plus_vwuc1 
+    // [84] memcpy::src_end#0 = (byte*)memcpy::source#2 + (word)$19*$50-$50 -- pbuz1=pbuz2_plus_vwuc1 
     clc
     lda.z source
     adc #<$19*$50-$50
@@ -2644,15 +2975,15 @@ memcpy: {
     lda.z source+1
     adc #>$19*$50-$50
     sta.z src_end+1
-    // [77] memcpy::src#4 = (byte*)memcpy::source#2
-    // [78] memcpy::dst#4 = (byte*)memcpy::destination#2
-    // [79] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
-    // [79] phi memcpy::dst#2 = memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
-    // [79] phi memcpy::src#2 = memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
+    // [85] memcpy::src#4 = (byte*)memcpy::source#2
+    // [86] memcpy::dst#4 = (byte*)memcpy::destination#2
+    // [87] phi from memcpy memcpy::@2 to memcpy::@1 [phi:memcpy/memcpy::@2->memcpy::@1]
+    // [87] phi memcpy::dst#2 = memcpy::dst#4 [phi:memcpy/memcpy::@2->memcpy::@1#0] -- register_copy 
+    // [87] phi memcpy::src#2 = memcpy::src#4 [phi:memcpy/memcpy::@2->memcpy::@1#1] -- register_copy 
     // memcpy::@1
   __b1:
     // while(src!=src_end)
-    // [80] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
+    // [88] if(memcpy::src#2!=memcpy::src_end#0) goto memcpy::@2 -- pbuz1_neq_pbuz2_then_la1 
     lda.z src+1
     cmp.z src_end+1
     bne __b2
@@ -2661,19 +2992,19 @@ memcpy: {
     bne __b2
     // memcpy::@return
     // }
-    // [81] return 
+    // [89] return 
     rts
     // memcpy::@2
   __b2:
     // *dst++ = *src++
-    // [82] *memcpy::dst#2 = *memcpy::src#2 -- _deref_pbuz1=_deref_pbuz2 
+    // [90] *memcpy::dst#2 = *memcpy::src#2 -- _deref_pbuz1=_deref_pbuz2 
     ldy #0
     lda (src),y
     sta (dst),y
     // *dst++ = *src++;
-    // [83] memcpy::dst#1 = ++ memcpy::dst#2 -- pbuz1=_inc_pbuz1 
+    // [91] memcpy::dst#1 = ++ memcpy::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
-    // [84] memcpy::src#1 = ++ memcpy::src#2 -- pbuz1=_inc_pbuz1 
+    // [92] memcpy::src#1 = ++ memcpy::src#2 -- pbuz1=_inc_pbuz1 
     inw.z src
     jmp __b1
 }
@@ -2686,7 +3017,7 @@ memset: {
     .label str = 4
     // memset::@1
     // end = (char*)str + num
-    // [86] memset::end#0 = (byte*)memset::str#3 + $50 -- pbuz1=pbuz2_plus_vbuc1 
+    // [94] memset::end#0 = (byte*)memset::str#3 + $50 -- pbuz1=pbuz2_plus_vbuc1 
     lda #$50
     clc
     adc.z str
@@ -2694,13 +3025,13 @@ memset: {
     lda #0
     adc.z str+1
     sta.z end+1
-    // [87] memset::dst#4 = (byte*)memset::str#3
-    // [88] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
-    // [88] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
+    // [95] memset::dst#4 = (byte*)memset::str#3
+    // [96] phi from memset::@1 memset::@3 to memset::@2 [phi:memset::@1/memset::@3->memset::@2]
+    // [96] phi memset::dst#2 = memset::dst#4 [phi:memset::@1/memset::@3->memset::@2#0] -- register_copy 
     // memset::@2
   __b2:
     // for(char* dst = str; dst!=end; dst++)
-    // [89] if(memset::dst#2!=memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
+    // [97] if(memset::dst#2!=memset::end#0) goto memset::@3 -- pbuz1_neq_pbuz2_then_la1 
     lda.z dst+1
     cmp.z end+1
     bne __b3
@@ -2709,17 +3040,17 @@ memset: {
     bne __b3
     // memset::@return
     // }
-    // [90] return 
+    // [98] return 
     rts
     // memset::@3
   __b3:
     // *dst = c
-    // [91] *memset::dst#2 = memset::c#4 -- _deref_pbuz1=vbuzz 
+    // [99] *memset::dst#2 = memset::c#4 -- _deref_pbuz1=vbuzz 
     tza
     ldy #0
     sta (dst),y
     // for(char* dst = str; dst!=end; dst++)
-    // [92] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
+    // [100] memset::dst#1 = ++ memset::dst#2 -- pbuz1=_inc_pbuz1 
     inw.z dst
     jmp __b2
 }

@@ -1,5 +1,5 @@
 // DYPP (Different Y Pixel Position) LOGO created using DMA
-// Graphics mode is 320x200 full-colour super extended attribute mode text-mode
+// Graphics mode is 45x25 full-colour super extended attribute mode text-mode
 // Character layout is column-wise giving linear addressing of the graphics (one byte per pixel)
 .cpu _45gs02
   // MEGA65 platform PRG executable starting in MEGA65 mode.

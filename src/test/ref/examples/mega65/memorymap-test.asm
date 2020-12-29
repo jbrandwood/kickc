@@ -68,13 +68,13 @@ main: {
     lda BLOCK_8000+1
     sta BLOCK_4000+5
     ldx #0
-  // copy the resulting values onto the screen
+  // copy the resulting values onto the screen - it should show '-*-*-*'
   __b1:
     // for(char i=0;i<6;i++)
     cpx #6
     bcc __b2
     // memoryRemap256M(MEMORYBLOCK_4000, 0xff800-0x00040, 0)
-  // Remap [$4000-$5fff] to both point to [$ff80000-$ff81fff] COLORAM! (notice usage of page offsets)
+  // Remap [$4000-$5fff] to point to [$ff80000-$ff81fff] COLORRAM! (notice usage of page offsets)
     ldz #MEMORYBLOCK_4000
     lda #<$ff800-$40
     sta.z memoryRemap256M.lowerPageOffset

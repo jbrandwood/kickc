@@ -3389,6 +3389,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCrunchingExomizer() throws IOException, URISyntaxException {
+      compileAndCompare("examples/crunching/test-exomizer.c");
+   }
+
+   @Test
+   public void testCrunchingByteboozer() throws IOException, URISyntaxException {
+      compileAndCompare("examples/crunching/test-byteboozer.c");
+   }
+
+   @Test
    public void testMusic() throws IOException, URISyntaxException {
       compileAndCompare("examples/music/music.c");
    }

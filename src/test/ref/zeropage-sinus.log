@@ -8,7 +8,7 @@ main: scope:[main]  from __start
   *SPRITES_ENABLE = 1
   SPRITES_YPOS[0] = $64
   SPRITES_XPOS[0] = $64
-  *(SCREEN+SPRITE_PTRS) = (byte)SPRITE/$40
+  *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40
   call saveZeropage 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -89,6 +89,7 @@ __start::@return: scope:[__start]  from __start::@1
   to:@return
 
 SYMBOL TABLE SSA
+const nomodify word OFFSET_SPRITE_PTRS = $3f8
 const nomodify byte* SCREEN = (byte*)$400
 const to_nomodify byte* SINTABLE[$100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
@@ -97,7 +98,6 @@ const to_nomodify byte* SPRITE[$40]  = kickasm {{ .fill $40,$ff  }}
 const nomodify byte* SPRITES_ENABLE = (byte*)$d015
 const nomodify byte* SPRITES_XPOS = (byte*)$d000
 const nomodify byte* SPRITES_YPOS = (byte*)$d001
-const nomodify word SPRITE_PTRS = $3f8
 const to_nomodify byte* ZP_STORAGE[$100]  = { fill( $100, 0) }
 void __start()
 void animSprite()
@@ -111,7 +111,7 @@ Adding number conversion cast (unumber) $64 in SPRITES_YPOS[0] = $64
 Adding number conversion cast (unumber) 0 in SPRITES_YPOS[0] = ((unumber)) $64
 Adding number conversion cast (unumber) $64 in SPRITES_XPOS[0] = $64
 Adding number conversion cast (unumber) 0 in SPRITES_XPOS[0] = ((unumber)) $64
-Adding number conversion cast (unumber) $40 in *(SCREEN+SPRITE_PTRS) = (byte)SPRITE/$40
+Adding number conversion cast (unumber) $40 in *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *SPRITES_ENABLE = (unumber)1
 Inlining cast SPRITES_YPOS[(unumber)0] = (unumber)$64
@@ -170,7 +170,7 @@ main: scope:[main]  from
   [1] *SPRITES_ENABLE = 1
   [2] *SPRITES_YPOS = $64
   [3] *SPRITES_XPOS = $64
-  [4] *(SCREEN+SPRITE_PTRS) = (byte)SPRITE/$40
+  [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40
   [5] call saveZeropage 
   to:main::@1
 main::@1: scope:[main]  from main
@@ -255,7 +255,7 @@ REGISTER UPLIFT POTENTIAL REGISTERS
 Statement [1] *SPRITES_ENABLE = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *SPRITES_YPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [3] *SPRITES_XPOS = $64 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [4] *(SCREEN+SPRITE_PTRS) = (byte)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldx#0 !: lda$00,x staZP_STORAGE,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: ldaSINTABLE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
 Statement asm { ldx#0 !: ldaZP_STORAGE,x sta$00,x inx bne!-  } always clobbers reg byte a reg byte x 
@@ -296,7 +296,7 @@ ASSEMBLER BEFORE OPTIMIZATION
 :BasicUpstart(main)
   // Global Constants & labels
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
@@ -317,9 +317,9 @@ main: {
     // [3] *SPRITES_XPOS = $64 -- _deref_pbuc1=vbuc2 
     lda #$64
     sta SPRITES_XPOS
-    // [4] *(SCREEN+SPRITE_PTRS) = (byte)SPRITE/$40 -- _deref_pbuc1=vbuc2 
+    // [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
-    sta SCREEN+SPRITE_PTRS
+    sta SCREEN+OFFSET_SPRITE_PTRS
     // [5] call saveZeropage 
     jsr saveZeropage
     // [6] phi from main to main::@1 [phi:main->main::@1]
@@ -471,6 +471,7 @@ Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
 
 FINAL SYMBOL TABLE
+const nomodify word OFFSET_SPRITE_PTRS = $3f8
 const nomodify byte* SCREEN = (byte*) 1024
 const to_nomodify byte* SINTABLE[$100]  = kickasm {{ .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*cos(toRadians(360*i/256)))
@@ -479,7 +480,6 @@ const to_nomodify byte* SPRITE[$40]  = kickasm {{ .fill $40,$ff  }}
 const nomodify byte* SPRITES_ENABLE = (byte*) 53269
 const nomodify byte* SPRITES_XPOS = (byte*) 53248
 const nomodify byte* SPRITES_YPOS = (byte*) 53249
-const nomodify word SPRITE_PTRS = $3f8
 const to_nomodify byte* ZP_STORAGE[$100]  = { fill( $100, 0) }
 void animSprite()
 void main()
@@ -506,7 +506,7 @@ Score: 379
 :BasicUpstart(main)
   // Global Constants & labels
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
@@ -530,10 +530,10 @@ main: {
     // SPRITES_XPOS[0] = 100
     // [3] *SPRITES_XPOS = $64 -- _deref_pbuc1=vbuc2 
     sta SPRITES_XPOS
-    // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
-    // [4] *(SCREEN+SPRITE_PTRS) = (byte)SPRITE/$40 -- _deref_pbuc1=vbuc2 
+    // *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)(SPRITE/0x40)
+    // [4] *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)SPRITE/$40 -- _deref_pbuc1=vbuc2 
     lda #$ff&SPRITE/$40
-    sta SCREEN+SPRITE_PTRS
+    sta SCREEN+OFFSET_SPRITE_PTRS
     // saveZeropage()
     // [5] call saveZeropage 
     jsr saveZeropage

@@ -142,7 +142,7 @@ const char BORDER_YPOS_TOP=50;
 const char BORDER_YPOS_BOTTOM=250;
 
 // The offset of the sprite pointers from the screen start address
-const unsigned int SPRITE_PTRS = $3f8;
+const unsigned int OFFSET_SPRITE_PTRS = 0x3f8;
 
 char * const SPRITES_XPOS = $d000;
 char * const SPRITES_YPOS = $d001;

@@ -24,7 +24,7 @@ void main() {
     *SPRITES_ENABLE = 1;
     SPRITES_YPOS[0] = 100;
     SPRITES_XPOS[0] = 100;
-    *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40);
+    *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)(SPRITE/0x40);
 
     saveZeropage();
     sinZeropage();

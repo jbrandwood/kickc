@@ -13,7 +13,7 @@
   .const JMP = $4c
   .const NOP = $ea
   .label RASTER = $d012
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   .label SCREEN = $400
   .label BG_COLOR = $d021
   .label COLS = $d800
@@ -36,10 +36,10 @@ main: {
     // Print message
     .label sc = 4
     .label msg = 2
-    // *VIC_MEMORY = 0x14
+    // *VICII_MEMORY = 0x14
     // Initialize screen memory
     lda #$14
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // memset(SCREEN, ' ', 40*25)
   // Init screen/colors
     ldx #' '

@@ -6,9 +6,9 @@ char* const PLAYFIELD_SCREEN_1 = 0x0400;
 // Address of the second screen
 char* const PLAYFIELD_SCREEN_2 = 0x2c00;
 // Screen Sprite pointers on screen 1
-char* const PLAYFIELD_SPRITE_PTRS_1 = (PLAYFIELD_SCREEN_1+SPRITE_PTRS);
+char* const PLAYFIELD_SPRITE_PTRS_1 = (PLAYFIELD_SCREEN_1+OFFSET_SPRITE_PTRS);
 // Screen Sprite pointers on screen 2
-char* const PLAYFIELD_SPRITE_PTRS_2 = (PLAYFIELD_SCREEN_2+SPRITE_PTRS);
+char* const PLAYFIELD_SPRITE_PTRS_2 = (PLAYFIELD_SCREEN_2+OFFSET_SPRITE_PTRS);
 
 // Sprites covering the playfield
 __address(0x3000) char PLAYFIELD_SPRITES[30*64] = kickasm(resource "playfield-sprites.png") {{

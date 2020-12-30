@@ -7,7 +7,7 @@ char * const SPRITES = 0x3000;
 char * const SCREEN =  0x0400;
 
 // Address of sprite pointers on screen
-char * const SCREEN_SPRITES = SCREEN + SPRITE_PTRS;
+char * const SCREEN_SPRITES = SCREEN + OFFSET_SPRITE_PTRS;
 
 // Sprite pointer for sprite 0
 char SPRITE_0 = toSpritePtr(SPRITES);

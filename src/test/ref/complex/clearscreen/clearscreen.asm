@@ -21,7 +21,7 @@
   .const BORDER_YPOS_TOP = $32
   .const BORDER_YPOS_BOTTOM = $fa
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
@@ -369,7 +369,7 @@ processChars: {
     tay
     pla
     sta SPRITES_COLOR,y
-    // *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr
+    // *(SCREEN+OFFSET_SPRITE_PTRS+processing->id) = processing->ptr
     // Set sprite pointer
     ldy #OFFSET_STRUCT_PROCESSINGSPRITE_PTR
     lda (processing),y
@@ -378,7 +378,7 @@ processChars: {
     lda (processing),y
     tay
     pla
-    sta SCREEN+SPRITE_PTRS,y
+    sta SCREEN+OFFSET_SPRITE_PTRS,y
     // processing->status = STATUS_PROCESSING
     // Set status
     lda #STATUS_PROCESSING

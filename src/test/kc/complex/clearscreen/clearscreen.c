@@ -183,7 +183,7 @@ void processChars() {
                 // Set the sprite color
                 SPRITES_COLOR[processing->id] = processing->col;
                 // Set sprite pointer
-                *(SCREEN+SPRITE_PTRS+processing->id) = processing->ptr;
+                *(SCREEN+OFFSET_SPRITE_PTRS+processing->id) = processing->ptr;
                 // Set status
                 processing->status = STATUS_PROCESSING;
             }

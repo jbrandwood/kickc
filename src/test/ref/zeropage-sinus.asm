@@ -9,7 +9,7 @@
 .segment Basic
 :BasicUpstart(main)
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
@@ -28,9 +28,9 @@ main: {
     sta SPRITES_YPOS
     // SPRITES_XPOS[0] = 100
     sta SPRITES_XPOS
-    // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
+    // *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)(SPRITE/0x40)
     lda #$ff&SPRITE/$40
-    sta SCREEN+SPRITE_PTRS
+    sta SCREEN+OFFSET_SPRITE_PTRS
     // saveZeropage()
     jsr saveZeropage
     // sinZeropage()

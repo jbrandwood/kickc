@@ -12,7 +12,7 @@
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -39,11 +39,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VIC_CONTROL &=$7f
+    // *VICII_CONTROL &=$7f
     // Set raster line to $0fd
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $fd
     lda #$fd
     sta RASTER

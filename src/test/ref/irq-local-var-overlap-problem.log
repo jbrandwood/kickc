@@ -6,7 +6,7 @@ void main()
 main: scope:[main]  from __start
   asm { sei  }
   *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  *VIC_CONTROL = *VIC_CONTROL & $7f
+  *VICII_CONTROL = *VICII_CONTROL & $7f
   *RASTER = $fd
   *IRQ_ENABLE = IRQ_RASTER
   *KERNEL_IRQ = &irq
@@ -215,7 +215,7 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*)$d019
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 const nomodify byte* RASTER = (byte*)$d012
-const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL = (byte*)$d011
 void __start()
 __interrupt(rom_min_c64) void irq()
 byte~ irq::$2
@@ -320,7 +320,7 @@ byte sub_main::k#0
 byte sub_main::k#1
 byte sub_main::k#2
 
-Adding number conversion cast (unumber) $7f in *VIC_CONTROL = *VIC_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
 Adding number conversion cast (unumber) $fd in *RASTER = $fd
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)$fd
@@ -588,7 +588,7 @@ void main()
 main: scope:[main]  from
   asm { sei  }
   [18] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  [19] *VIC_CONTROL = *VIC_CONTROL & $7f
+  [19] *VICII_CONTROL = *VICII_CONTROL & $7f
   [20] *RASTER = $fd
   [21] *IRQ_ENABLE = IRQ_RASTER
   [22] *KERNEL_IRQ = &irq
@@ -804,7 +804,7 @@ Removing always clobbered register reg byte a as potential for zp[1]:4 [ irq::k#
 Statement [5] irq::$3 = irq::$2 + irq::k#2 [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] (  [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] { }  ) always clobbers reg byte a 
 Statement [14] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [18] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [19] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [19] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [20] *RASTER = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [21] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [22] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -827,7 +827,7 @@ Statement [4] irq::$2 = irq::i#7 + irq::j#4 [ irq::i#7 irq::j#4 irq::k#2 irq::$2
 Statement [5] irq::$3 = irq::$2 + irq::k#2 [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] (  [ irq::i#7 irq::j#4 irq::k#2 irq::$3 ] { }  ) always clobbers reg byte a 
 Statement [14] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [18] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [19] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [19] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [20] *RASTER = $fd [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [21] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [22] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -909,7 +909,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -1026,11 +1026,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [19] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [19] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // [20] *RASTER = $fd -- _deref_pbuc1=vbuc2 
     lda #$fd
     sta RASTER
@@ -1402,7 +1402,7 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*) 53273
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 const nomodify byte* RASTER = (byte*) 53266
-const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL = (byte*) 53265
 __interrupt(rom_min_c64) void irq()
 byte~ irq::$2 reg byte a 2002.0
 byte~ irq::$3 reg byte a 2002.0
@@ -1493,7 +1493,7 @@ Score: 314173671
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -1598,12 +1598,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VIC_CONTROL &=$7f
-    // [19] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL &=$7f
+    // [19] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $0fd
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $fd
     // [20] *RASTER = $fd -- _deref_pbuc1=vbuc2 
     lda #$fd

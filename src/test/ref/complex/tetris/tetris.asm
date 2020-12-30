@@ -12,7 +12,7 @@
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   .const VICII_ECM = $40
   .const VICII_DEN = $10
   .const VICII_RSEL = 8
@@ -112,9 +112,9 @@
   // Address of the second screen
   .label PLAYFIELD_SCREEN_2 = $2c00
   // Screen Sprite pointers on screen 1
-  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_1 = PLAYFIELD_SCREEN_1+OFFSET_SPRITE_PTRS
   // Screen Sprite pointers on screen 2
-  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+SPRITE_PTRS
+  .label PLAYFIELD_SPRITE_PTRS_2 = PLAYFIELD_SCREEN_2+OFFSET_SPRITE_PTRS
   // The screen currently being showed to the user. 0x00 for screen 1 / 0x20 for screen 2.
   .label render_screen_showing = $24
   // Current score in BCD-format

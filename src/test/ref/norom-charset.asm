@@ -7,7 +7,7 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
 .segment Code
@@ -25,9 +25,9 @@ main: {
     lda #4
     cmp.z c
     bne __b2
-    // *VIC_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
+    // *VICII_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
     lda #SCREEN/$40|CHARSET/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // }
     rts
   __b2:

@@ -218,7 +218,7 @@ main: {
     jsr gfx_mode
     jmp __b2
 }
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#1 Data Direction Registers
 keyboard_init: {
     // CIA1->PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode

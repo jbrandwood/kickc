@@ -3662,10 +3662,10 @@ public class TestPrograms {
       compileAndCompare("runtime-unused-procedure.c");
    }
 
-   @Test
-   public void testCml2020() throws IOException, URISyntaxException {
-      compileAndCompare("complex/cml2020/demo.c", log());
-   }
+   //@Test
+   //public void testCml2020() throws IOException, URISyntaxException {
+   //   compileAndCompare("complex/cml2020/demo.c", log());
+   //}
 
    //@Test
    //public void testRobozzle64() throws IOException, URISyntaxException {

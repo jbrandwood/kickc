@@ -219,7 +219,7 @@ main: {
     .byte 0
 }
 .segment Code
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#1 Data Direction Registers
 keyboard_init: {
     // CIA1->PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode

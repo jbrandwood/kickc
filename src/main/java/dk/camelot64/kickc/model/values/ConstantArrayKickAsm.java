@@ -64,7 +64,7 @@ public class ConstantArrayKickAsm implements ConstantArray {
 
    @Override
    public ConstantLiteral calculateLiteral(ProgramScope scope) {
-      throw ConstantNotLiteral.EXCEPTION;
+      throw ConstantNotLiteral.getException();
    }
 
    @Override

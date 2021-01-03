@@ -60,12 +60,12 @@ public class ConstantSymbolPointer implements ConstantValue {
                int zp = ((Registers.RegisterZpMem) allocation).getZp();
                return new ConstantInteger((long) zp, SymbolType.BYTE);
             } else if(allocation != null && Registers.RegisterType.MAIN_MEM.equals(allocation.getType())) {
-               throw ConstantNotLiteral.EXCEPTION;
+               throw ConstantNotLiteral.getException();
             }
          }
       }
       // We cannot calculate a literal value
-      throw ConstantNotLiteral.EXCEPTION;
+      throw ConstantNotLiteral.getException();
    }
 
    @Override

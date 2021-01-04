@@ -9,7 +9,7 @@
 #pragma code_seg(CodePart2)
 #pragma data_seg(DataPart2)
 
-#include "../clib/vsp.h"
+#include "vsp.h"
 #define PLEX_SPRITE_PTRS 0xe3f8
 #include "multiplex-bucket.h"
 

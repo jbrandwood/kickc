@@ -195,7 +195,7 @@ irq_line: {
     cmp #$18
     bcc __b6
     // *VERA_DC_BORDER = 0
-    // Wait exactly long enought to go to the next raster line
+    // Wait exactly long enough to go to the next raster line
     lda #0
     sta VERA_DC_BORDER
   __b8:
@@ -203,7 +203,7 @@ irq_line: {
     cmp #$17
     bcc __b9
     // asm
-    // Wait exactly long enought to go to the next raster line
+    // Wait exactly long enough to go to the next raster line
     nop
     nop
     // for(char l=0;l!=230;l++)

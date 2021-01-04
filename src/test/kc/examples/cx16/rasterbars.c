@@ -54,9 +54,9 @@ void irq_line() {
     *VERA_CTRL &= ~VERA_DCSEL;
     for(char l=0;l!=230;l++) {
         *VERA_DC_BORDER = BARS[l];
-        for(char i=0;i<24;i++) ; // Wait exactly long enought to go to the next raster line
+        for(char i=0;i<24;i++) ; // Wait exactly long enough to go to the next raster line
         *VERA_DC_BORDER = 0; 
-        for(char i=0;i<23;i++) ; // Wait exactly long enought to go to the next raster line
+        for(char i=0;i<23;i++) ; // Wait exactly long enough to go to the next raster line
         asm { nop nop }
     }
 

@@ -34,8 +34,7 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num ) {
     *VERA_ADDRX_M = >vdest;
     *VERA_ADDRX_H = VERA_INC_1 | vbank;
     // Transfer the data
-    char *s = src;
     char *end = (char*)src+num;
-    for(; s!=end; s++)
+    for(char *s = src; s!=end; s++)
         *VERA_DATA0 = *s;
 }

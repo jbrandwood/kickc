@@ -2,9 +2,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware-clobber-jsr.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers
@@ -20,7 +25,7 @@
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
   .label BG_COLOR = $d021
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -33,6 +38,7 @@
   .label CIA1 = $dc00
   // The vector used when the HARDWARE serves IRQ interrupts
   .label HARDWARE_IRQ = $fffe
+.segment Code
 // Interrupt Routine
 irq: {
     sta rega+1
@@ -40,7 +46,7 @@ irq: {
     jsr do_irq
     // }
   rega:
-    lda #00
+    lda #0
     rti
 }
 main: {
@@ -57,11 +63,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL |=$80
+    // *VICII_CONTROL |=$80
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     lda #0
     sta RASTER

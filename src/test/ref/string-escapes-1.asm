@@ -1,7 +1,13 @@
 // Test using some simple supported string escape \n in both string and char
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-escapes-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label cursor = 6
     .label msg = 2
@@ -65,5 +71,6 @@ main: {
     sta.z line+1
     jmp __b5
 }
+.segment Data
   MESSAGE: .text @"hello\nworld"
   .byte 0

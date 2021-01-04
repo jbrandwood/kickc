@@ -1,10 +1,16 @@
 // Example of a struct containing an array
 // Works because the struct is only handled as a value
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-12.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label idx = 2
+.segment Code
 main: {
     .const jesper_id = 4
     .const henriette_id = 7
@@ -40,9 +46,11 @@ main: {
     jsr print_person
     // }
     rts
+  .segment Data
     jesper_name: .fill $40, 0
     henriette_name: .fill $40, 0
 }
+.segment Code
 // print_person(byte register(X) person_id, byte* zp(3) person_name)
 print_person: {
     .label person_name = 3
@@ -82,6 +90,7 @@ print_person: {
     iny
     jmp __b1
 }
+.segment Data
   DIGIT: .text "0123456789"
   .byte 0
   __0: .text "jesper"

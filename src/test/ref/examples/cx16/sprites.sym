@@ -1,0 +1,136 @@
+const nomodify void()** KERNEL_IRQ = (void()**) 788
+const byte OFFSET_STRUCT_VERA_SPRITE_X = 2
+const byte OFFSET_STRUCT_VERA_SPRITE_Y = 4
+const word* SINX[SINX_LEN]  = kickasm {{ .fillword 256, 288+288*sin(i*2*PI/SINX_LEN)
+ }}
+const nomodify byte SINX_LEN = $f1
+const word* SINY[SINY_LEN]  = kickasm {{ .fillword 256, 208+208*sin(i*2*PI/SINY_LEN)
+ }}
+const nomodify byte SINY_LEN = $fb
+const byte SIZEOF_STRUCT_VERA_SPRITE = 8
+struct VERA_SPRITE SPRITE_ATTR loadstore mem[8] = { ADDR: <SPRITE_PIXELS_VRAM/$20|VERA_SPRITE_8BPP, X: $140-$20, Y: (word)$f0-$20, CTRL1: $c, CTRL2: $f0 }
+const byte* SPRITE_PIXELS[$40*$40+$200]  = kickasm {{ .var pic = LoadPicture("tut.png")
+    // palette: rgb->idx
+    .var palette = Hashtable()
+    // RGB value for each palette index
+    .var palList = List()
+    // Next palette index
+    .var nxt_idx = 0;
+    // Extract palette while outputting pixels as palete index values
+    .for (var y=0; y<64; y++) {
+    	.for (var x=0;x<64; x++) {
+            // Find palette index (add if not known)
+            .var rgb = pic.getPixel(x,y);
+            .var idx = palette.get(rgb)
+            .if(idx==null) {
+                .eval idx = nxt_idx++;
+                .eval palette.put(rgb,idx);
+                .eval palList.add(rgb)
+            }
+            // Output pixel as palette index
+            .byte idx
+        }
+    }
+    .if(nxt_idx>256) .error "Image has too many colours "+nxt_idx
+    // Output sprite palette (at offset 64*64 bytes)
+    .for(var i=0;i<256;i++) {
+        .var rgb = palList.get(i)
+        .var red = floor(rgb / [256*256])
+        .var green = floor(rgb/256) & 255
+        .var blue = rgb & 255
+        // bits 4-8: green, bits 0-3 blue
+        .byte green&$f0  | blue/16
+        // bits bits 0-3 red
+        .byte red/16
+    }
+ }}
+const nomodify dword SPRITE_PIXELS_VRAM = $8000
+const nomodify byte VERA_ADDRSEL = 1
+const nomodify byte* VERA_ADDRX_H = (byte*) 40738
+const nomodify byte* VERA_ADDRX_L = (byte*) 40736
+const nomodify byte* VERA_ADDRX_M = (byte*) 40737
+const nomodify byte* VERA_CTRL = (byte*) 40741
+const nomodify byte* VERA_DATA0 = (byte*) 40739
+const nomodify byte VERA_DCSEL = 2
+const nomodify byte* VERA_DC_VIDEO = (byte*) 40745
+const nomodify byte* VERA_IEN = (byte*) 40742
+const nomodify byte VERA_INC_1 = $10
+const nomodify byte* VERA_ISR = (byte*) 40743
+const nomodify dword VERA_PALETTE = $1fa00
+const byte VERA_SPRITES_ENABLE = $40
+const nomodify word VERA_SPRITE_8BPP = $8000
+const nomodify dword VERA_SPRITE_ATTR = $1fc00
+const nomodify byte VERA_VSYNC = 1
+void __start()
+__interrupt(rom_sys_cx16) void irq_vsync()
+word~ irq_vsync::$11 zp[2]:22 22.0
+word~ irq_vsync::$12 zp[2]:24 22.0
+word*~ irq_vsync::$13 zp[2]:22 22.0
+word*~ irq_vsync::$14 zp[2]:24 22.0
+word irq_vsync::i_x
+word irq_vsync::i_x#0 i_x zp[2]:3 2.0
+word irq_vsync::i_x#1 i_x zp[2]:3 22.0
+word irq_vsync::i_x#2 i_x zp[2]:3 22.0
+word irq_vsync::i_x#3 i_x zp[2]:3 3.1818181818181817
+word irq_vsync::i_x#7 i_x zp[2]:3 5.5
+word irq_vsync::i_y
+word irq_vsync::i_y#0 i_y zp[2]:5 4.0
+word irq_vsync::i_y#1 i_y zp[2]:5 22.0
+word irq_vsync::i_y#2 i_y zp[2]:5 22.0
+word irq_vsync::i_y#3 i_y zp[2]:5 2.333333333333333
+word irq_vsync::i_y#9 i_y zp[2]:5 16.5
+byte irq_vsync::s
+byte irq_vsync::s#1 s zp[1]:2 22.0
+byte irq_vsync::s#2 s zp[1]:2 1.736842105263158
+const nomodify byte irq_vsync::vram_sprite_attr_bank = (byte)>VERA_SPRITE_ATTR
+byte* irq_vsync::vram_sprite_pos
+byte* irq_vsync::vram_sprite_pos#1 vram_sprite_pos zp[2]:7 2.2
+byte* irq_vsync::vram_sprite_pos#2 vram_sprite_pos zp[2]:7 2.2
+void main()
+byte main::s
+byte main::s#1 s zp[1]:9 202.0
+byte main::s#2 s zp[1]:9 43.285714285714285
+byte* main::vram_sprite_attr
+byte* main::vram_sprite_attr#1 vram_sprite_attr zp[2]:10 101.0
+byte* main::vram_sprite_attr#2 vram_sprite_attr zp[2]:10 33.666666666666664
+void memcpy_to_vram(byte memcpy_to_vram::vbank , void* memcpy_to_vram::vdest , void* memcpy_to_vram::src , word memcpy_to_vram::num)
+byte~ memcpy_to_vram::$0 reg byte a 2002.0
+byte~ memcpy_to_vram::$1 reg byte a 2002.0
+byte~ memcpy_to_vram::$2 reg byte a 2002.0
+byte* memcpy_to_vram::end
+byte* memcpy_to_vram::end#0 end zp[2]:16 16833.666666666664
+word memcpy_to_vram::num
+word memcpy_to_vram::num#4 num zp[2]:16 125.125
+byte* memcpy_to_vram::s
+byte* memcpy_to_vram::s#1 s zp[2]:14 200002.0
+byte* memcpy_to_vram::s#2 s zp[2]:14 133668.3333333333
+byte* memcpy_to_vram::s#4 s zp[2]:14 2002.0
+void* memcpy_to_vram::src
+void* memcpy_to_vram::src#4 src zp[2]:14
+byte memcpy_to_vram::vbank
+byte memcpy_to_vram::vbank#4 reg byte x 166.83333333333334
+void* memcpy_to_vram::vdest
+void* memcpy_to_vram::vdest#2 vdest zp[2]:12 202.0
+void* memcpy_to_vram::vdest#3 vdest zp[2]:12 22.0
+void* memcpy_to_vram::vdest#4 vdest zp[2]:12 528.5
+volatile word sin_idx_x loadstore zp[2]:18 1.9999999999999998
+volatile word sin_idx_y loadstore zp[2]:20 1.714285714285714
+
+zp[1]:2 [ irq_vsync::s#2 irq_vsync::s#1 ]
+zp[2]:3 [ irq_vsync::i_x#3 irq_vsync::i_x#0 irq_vsync::i_x#7 irq_vsync::i_x#2 irq_vsync::i_x#1 ]
+zp[2]:5 [ irq_vsync::i_y#3 irq_vsync::i_y#0 irq_vsync::i_y#9 irq_vsync::i_y#2 irq_vsync::i_y#1 ]
+zp[2]:7 [ irq_vsync::vram_sprite_pos#2 irq_vsync::vram_sprite_pos#1 ]
+zp[1]:9 [ main::s#2 main::s#1 ]
+zp[2]:10 [ main::vram_sprite_attr#2 main::vram_sprite_attr#1 ]
+zp[2]:12 [ memcpy_to_vram::vdest#4 memcpy_to_vram::vdest#3 memcpy_to_vram::vdest#2 ]
+reg byte x [ memcpy_to_vram::vbank#4 ]
+zp[2]:14 [ memcpy_to_vram::src#4 memcpy_to_vram::s#2 memcpy_to_vram::s#4 memcpy_to_vram::s#1 ]
+zp[2]:16 [ memcpy_to_vram::num#4 memcpy_to_vram::end#0 ]
+zp[2]:18 [ sin_idx_x ]
+zp[2]:20 [ sin_idx_y ]
+zp[2]:22 [ irq_vsync::$11 irq_vsync::$13 ]
+zp[2]:24 [ irq_vsync::$12 irq_vsync::$14 ]
+reg byte a [ memcpy_to_vram::$0 ]
+reg byte a [ memcpy_to_vram::$1 ]
+reg byte a [ memcpy_to_vram::$2 ]
+mem[8] [ SPRITE_ATTR ]

@@ -1,10 +1,16 @@
 // Generate a charset based on a 5x3 pattern stored in 2 bytes
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="norom-charset.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
+.segment Code
 main: {
     .label charset = 3
     .label c = 2
@@ -19,9 +25,9 @@ main: {
     lda #4
     cmp.z c
     bne __b2
-    // *VIC_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
+    // *VICII_MEMORY = (byte)(((word)SCREEN/$40)|((word)CHARSET/$400))
     lda #SCREEN/$40|CHARSET/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // }
     rts
   __b2:
@@ -94,6 +100,7 @@ gen_char3: {
     // }
     rts
 }
+.segment Data
   // Stores chars as 15 bits (in 2 bytes) specifying the 3x5
   // The 5x3 char is stored as 5x 3-bit rows followed by a zero. %aaabbbcc cdddeee0
   charset_spec_row: .word $f7da, $f7de, $f24e, $d6de

@@ -18,7 +18,7 @@ import java.util.Map;
 public class TargetPlatform {
 
    /** The name of the default target platform. */
-   public static String DEFAULT_NAME = "c64basic";
+   public static String DEFAULT_NAME = "c64";
 
    /** The platform name. */
    private String name;
@@ -49,6 +49,9 @@ public class TargetPlatform {
 
    /** Configuration for the variable builder. */
    private VariableBuilderConfig variableBuilderConfig;
+   
+   /** Default interrupt type. */
+   private String interruptType = "hardware_all";
 
    public TargetPlatform(String name) {
       this.name = name;
@@ -151,4 +154,11 @@ public class TargetPlatform {
       this.encoding = encoding;
    }
 
+   public void setInterruptType(String interruptType) {
+      this.interruptType = interruptType;
+   }
+
+   public String getInterruptType() {
+      return interruptType;
+   }
 }

@@ -1,9 +1,15 @@
 // Use an uninitialized variable - should use the default value (0)!
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="useuninitialized.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const b = 3
   .const s = 1
+.segment Code
 main: {
     .label screen = $400
     // *screen = b

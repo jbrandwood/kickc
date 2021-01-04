@@ -10,7 +10,7 @@ char* BITMAP = $2000;
 
 const unsigned int SIN_SIZE = 512;
 
-signed int align($100) sin[512];
+signed int __align($100) sin[512];
 
 signed int sin2[512] = kickasm {{
     .for(var i=0; i<512; i++) {
@@ -23,9 +23,9 @@ void main() {
     // Disable kernal & basic
     *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK;
     *PROCPORT = PROCPORT_RAM_IO;
-    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
     vicSelectGfxBank(SCREEN);
-    *D016 = VIC_CSEL;
+    *D016 = VICII_CSEL;
     *D018 = toD018(SCREEN, BITMAP);
 
     bitmap_init(BITMAP, SCREEN);

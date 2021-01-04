@@ -1,8 +1,14 @@
 // Fill screen using an word-based index
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="fillscreen-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label i = 2
     .label __1 = 4

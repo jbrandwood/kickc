@@ -7,4 +7,3 @@
 .word %E // NMI
 .word %E // RESET
 .word %E // IRQ
-.segment Code

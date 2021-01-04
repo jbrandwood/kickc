@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testComplexNew30YearsLowResolution() throws IOException, URISyntaxException {
+      compileAndCompare("complex/new_30_years_low_resolution/new_30_years_low_resolution.c");
+   }
+
+   @Test
    public void testLocalVarShadowingProcedure() throws IOException, URISyntaxException {
       assertError("local-var-shadowing-procedure.c", "Called symbol is not a procedure. main::doit");
    }
@@ -434,21 +439,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testbubbles64() throws IOException, URISyntaxException {
-      compileAndCompare("complex/bubbles64/bubbles64.c");
-   }
-
-   @Test
-   public void testNesBalls() throws IOException, URISyntaxException {
-      compileAndCompare("complex/nes-balls/kickballs-2.c");
-   }
-
-   @Test
-   public void testNesBalls3() throws IOException, URISyntaxException {
-      compileAndCompare("complex/nes-balls/kickballs-3.c");
-   }
-
-   @Test
    public void testNesDxycp() throws IOException, URISyntaxException {
       compileAndCompare("examples/nes/nes-dxycp.c");
    }
@@ -464,6 +454,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCx16Sprites() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/sprites.c");
+   }
+
+   @Test
    public void testCx16Text() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/text.c");
    }
@@ -472,11 +467,6 @@ public class TestPrograms {
    public void testCx16Rasterbars() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/rasterbars.c");
    }
-
-   //@Test
-   //public void testMega65Wator() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/m65wator/main.c");
-   //}
 
    @Test
    public void testMega65BankedMusic() throws IOException, URISyntaxException {
@@ -611,16 +601,6 @@ public class TestPrograms {
    @Test
    public void testStructPointerInts() throws IOException, URISyntaxException {
       compileAndCompare("struct-pointer-ints.c");
-   }
-
-   @Test
-   public void testXyScroller() throws IOException, URISyntaxException {
-      compileAndCompare("complex/xy-scroller/xy-scroller.c");
-   }
-
-   @Test
-   public void testPolygon() throws IOException, URISyntaxException {
-      compileAndCompare("complex/polygon/polygon.c");
    }
 
    @Test
@@ -1186,25 +1166,6 @@ public class TestPrograms {
       assertError("constant-prepost.c", "Constant value contains a pre/post-modifier");
    }
 
-   @Test
-   public void testSpriteScroller() throws IOException, URISyntaxException {
-      compileAndCompare("complex/spritescroller/spritescroller.c");
-   }
-
-   @Test
-   public void testGridBobs() throws IOException, URISyntaxException {
-      compileAndCompare("complex/prebob/grid-bobs.c");
-   }
-
-   @Test
-   public void testVogelBobs() throws IOException, URISyntaxException {
-      compileAndCompare("complex/prebob/vogel-bobs.c");
-   }
-
-   @Test
-   public void testVogelSprites() throws IOException, URISyntaxException {
-      compileAndCompare("complex/prebob/vogel-sprites.c");
-   }
 
    @Test
    public void testUnaryPlus() throws IOException, URISyntaxException {
@@ -1368,22 +1329,6 @@ public class TestPrograms {
       compileAndCompare("string-pointer-problem.c");
    }
 
-/*
-   @Test
-   public void testMaze() throws IOException, URISyntaxException {
-      compileAndCompare("complex/maze/maze.c", log().verboseSSAOptimize());
-   }
-
-   @Test
-   public void testOs52() throws IOException, URISyntaxException {
-         compileAndCompare("complex/unit5/os5.2.c");
-   }
-
-   @Test
-   public void testOs51() throws IOException, URISyntaxException {
-      compileAndCompare("complex/unit5/os5.1.c");
-   }
-*/
 
    @Test
    public void testZpCode() throws IOException, URISyntaxException {
@@ -1617,11 +1562,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testDyppa2() throws IOException, URISyntaxException {
-      compileAndCompare("complex/dyppa2/dyppa2.c");
-   }
-
-   @Test
    public void testAtariTempest() throws IOException, URISyntaxException {
       compileAndCompare("complex/ataritempest/ataritempest.c");
    }
@@ -1739,11 +1679,6 @@ public class TestPrograms {
    @Test
    public void testFastMultiply127() throws IOException, URISyntaxException {
       compileAndCompare("fastmultiply-127.c");
-   }
-
-   @Test
-   public void testTrueTypeSplines() throws IOException, URISyntaxException {
-      compileAndCompare("complex/splines/truetype-splines.c");
    }
 
    @Test
@@ -2024,16 +1959,6 @@ public class TestPrograms {
    @Test
    public void testTypedef0() throws IOException, URISyntaxException {
       compileAndCompare("typedef-0.c");
-   }
-
-   @Test
-   public void testMedusa() throws IOException, URISyntaxException {
-      compileAndCompare("complex/medusa/medusa.c");
-   }
-
-   @Test
-   public void testClearscreen() throws IOException, URISyntaxException {
-      compileAndCompare("complex/clearscreen/clearscreen.c");
    }
 
    // TODO: Optimize unused IRQ's away (and other unused funtions that reference each other circularly)
@@ -3384,6 +3309,16 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCrunchingExomizer() throws IOException, URISyntaxException {
+      compileAndCompare("examples/crunching/test-exomizer.c");
+   }
+
+   @Test
+   public void testCrunchingByteboozer() throws IOException, URISyntaxException {
+      compileAndCompare("examples/crunching/test-byteboozer.c");
+   }
+
+   @Test
    public void testMusic() throws IOException, URISyntaxException {
       compileAndCompare("examples/music/music.c");
    }
@@ -3647,35 +3582,6 @@ public class TestPrograms {
       compileAndCompare("runtime-unused-procedure.c");
    }
 
-   //@Test
-   //public void testRobozzle64() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/robozzle_c64/robozzle64.c", log().verboseSSAOptimize().verboseLoopUnroll());
-   //}
-
-   //@Test
-   //public void testTravisGame() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/travis/game.c");
-   //}
-
-   //@Test
-   //public void testBcmod() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/bcmod/bcmod5h.c", log());
-   //}
-
-   //@Test
-   //public void testBcmod5hb() throws IOException, URISyntaxException {
-   //   compileAndCompare("complex/bcmod/bcmod5hb.c", log());
-   //}
-
-   @Test
-   public void testTetrisSprites() throws IOException, URISyntaxException {
-      compileAndCompare("complex/tetris/test-sprites.c");
-   }
-
-   @Test
-   public void testTetris() throws IOException, URISyntaxException {
-      compileAndCompare("complex/tetris/tetris.c");
-   }
 
    @Test
    public void testConsolidateConstantProblem() throws IOException, URISyntaxException {
@@ -3845,6 +3751,16 @@ public class TestPrograms {
    @Test
    public void testIrqKernelMinimal() throws IOException, URISyntaxException {
       compileAndCompare("irq-kernel-minimal.c");
+   }
+
+   @Test
+   public void testIrqUnknownType() throws IOException, URISyntaxException {
+      assertError("irq-unknown-type.c", "Interrupt type not supported unknown", false);
+   }
+
+   @Test
+   public void testIrqPragma() throws IOException, URISyntaxException {
+      compileAndCompare("irq-pragma.c");
    }
 
    @Test

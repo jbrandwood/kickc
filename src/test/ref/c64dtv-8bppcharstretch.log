@@ -23,8 +23,8 @@ main: scope:[main]  from __start::@1
 main::@7: scope:[main]  from main
   *DTV_FEATURE = DTV_FEATURE_ENABLE
   *DTV_CONTROL = DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
-  *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3
-  *VIC_CONTROL2 = VIC_MCM|VIC_CSEL
+  *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3
+  *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
   *DTV_PLANEA_START_LO = <SCREEN
   *DTV_PLANEA_START_MI = >SCREEN
   *DTV_PLANEA_START_HI = 0
@@ -39,7 +39,7 @@ main::@7: scope:[main]  from main
   *DTV_PLANEB_MODULO_HI = 0
   *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = 3
   *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = 3^(byte)(word)SCREEN/$4000
-  *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
+  *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
   main::j#0 = 0
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@7
@@ -54,7 +54,7 @@ main::@2: scope:[main]  from main::@1 main::@6
   to:main::@return
 main::@3: scope:[main]  from main::@2
   asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
-  *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3
+  *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3
   *BORDER_COLOR = 0
   main::rst#0 = $42
   to:main::@4
@@ -69,8 +69,8 @@ main::@5: scope:[main]  from main::@4
 main::@6: scope:[main]  from main::@5 main::@6
   main::rst#1 = *RASTER
   main::$3 = main::rst#1 & 7
-  main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3
-  *VIC_CONTROL = main::$4
+  main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3
+  *VICII_CONTROL = main::$4
   main::$5 = main::rst#1 * $10
   *BORDER_COLOR = main::$5
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
@@ -281,14 +281,14 @@ const nomodify byte PROCPORT_RAM_CHARROM = 1
 const nomodify byte PROCPORT_RAM_IO = 5
 const nomodify byte* RASTER = (byte*)$d012
 const nomodify byte* SCREEN = (byte*)$7c00
-const nomodify byte* VIC_CONTROL = (byte*)$d011
-const nomodify byte* VIC_CONTROL2 = (byte*)$d016
-const nomodify byte VIC_CSEL = 8
-const nomodify byte VIC_DEN = $10
-const nomodify byte VIC_ECM = $40
-const nomodify byte VIC_MCM = $10
-const nomodify byte* VIC_MEMORY = (byte*)$d018
-const nomodify byte VIC_RSEL = 8
+const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL2 = (byte*)$d016
+const nomodify byte VICII_CSEL = 8
+const nomodify byte VICII_DEN = $10
+const nomodify byte VICII_ECM = $40
+const nomodify byte VICII_MCM = $10
+const nomodify byte* VICII_MEMORY = (byte*)$d018
+const nomodify byte VICII_RSEL = 8
 void __start()
 void dtvSetCpuBankSegment1(byte dtvSetCpuBankSegment1::cpuBankIdx)
 const byte* dtvSetCpuBankSegment1::cpuBank = (byte*)$ff
@@ -412,8 +412,8 @@ byte main::rst#0
 byte main::rst#1
 byte main::rst#2
 
-Adding number conversion cast (unumber) VIC_DEN|VIC_ECM|VIC_RSEL|3 in *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3
-Adding number conversion cast (unumber) 3 in *VIC_CONTROL = ((unumber)) VIC_DEN|VIC_ECM|VIC_RSEL|3
+Adding number conversion cast (unumber) VICII_DEN|VICII_ECM|VICII_RSEL|3 in *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3
+Adding number conversion cast (unumber) 3 in *VICII_CONTROL = ((unumber)) VICII_DEN|VICII_ECM|VICII_RSEL|3
 Adding number conversion cast (unumber) 0 in *DTV_PLANEA_START_HI = 0
 Adding number conversion cast (unumber) 1 in *DTV_PLANEA_STEP = 1
 Adding number conversion cast (unumber) 0 in *DTV_PLANEA_MODULO_LO = 0
@@ -426,16 +426,16 @@ Adding number conversion cast (unumber) 3 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526
 Adding number conversion cast (unumber) 3^(byte)(word)SCREEN/$4000 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = 3^(byte)(word)SCREEN/$4000
 Adding number conversion cast (unumber) 3 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = ((unumber)) 3^(byte)(word)SCREEN/$4000
 Adding number conversion cast (unumber) $4000 in *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = ((unumber)) (unumber)3^(byte)(word)SCREEN/$4000
-Adding number conversion cast (unumber) (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 in *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
-Adding number conversion cast (unumber) >(word)SCREEN&$3fff/4 in *VIC_MEMORY = ((unumber)) (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
-Adding number conversion cast (unumber) $3fff in *VIC_MEMORY = ((unumber)) (byte)(word)SCREEN&$3fff/$40|(unumber)>(word)SCREEN&$3fff/4
-Adding number conversion cast (unumber) $3fff in *VIC_MEMORY = ((unumber)) (byte)(word)SCREEN&(unumber)$3fff/$40|(unumber)>(word)SCREEN&$3fff/4
-Adding number conversion cast (unumber) VIC_DEN|VIC_ECM|VIC_RSEL|3 in *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3
-Adding number conversion cast (unumber) 3 in *VIC_CONTROL = ((unumber)) VIC_DEN|VIC_ECM|VIC_RSEL|3
+Adding number conversion cast (unumber) (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 in *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
+Adding number conversion cast (unumber) >(word)SCREEN&$3fff/4 in *VICII_MEMORY = ((unumber)) (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
+Adding number conversion cast (unumber) $3fff in *VICII_MEMORY = ((unumber)) (byte)(word)SCREEN&$3fff/$40|(unumber)>(word)SCREEN&$3fff/4
+Adding number conversion cast (unumber) $3fff in *VICII_MEMORY = ((unumber)) (byte)(word)SCREEN&(unumber)$3fff/$40|(unumber)>(word)SCREEN&$3fff/4
+Adding number conversion cast (unumber) VICII_DEN|VICII_ECM|VICII_RSEL|3 in *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3
+Adding number conversion cast (unumber) 3 in *VICII_CONTROL = ((unumber)) VICII_DEN|VICII_ECM|VICII_RSEL|3
 Adding number conversion cast (unumber) 0 in *BORDER_COLOR = 0
 Adding number conversion cast (unumber) 7 in main::$3 = main::rst#1 & 7
 Adding number conversion cast (unumber) main::$3 in main::$3 = main::rst#1 & (unumber)7
-Adding number conversion cast (unumber) main::$4 in main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3
+Adding number conversion cast (unumber) main::$4 in main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3
 Adding number conversion cast (unumber) $10 in main::$5 = main::rst#1 * $10
 Adding number conversion cast (unumber) main::$5 in main::$5 = main::rst#1 * (unumber)$10
 Adding number conversion cast (unumber) $f2 in main::$6 = main::rst#1 != $f2
@@ -455,11 +455,11 @@ Adding number conversion cast (unumber) 0 in gfx_init_plane_charset8::$3 = gfx_i
 Adding number conversion cast (unumber) 2 in gfx_init_plane_charset8::$5 = gfx_init_plane_charset8::bits#3 * 2
 Adding number conversion cast (unumber) gfx_init_plane_charset8::$5 in gfx_init_plane_charset8::$5 = gfx_init_plane_charset8::bits#3 * (unumber)2
 Successful SSA optimization PassNAddNumberTypeConversions
-Adding number conversion cast (unumber) $40 in *VIC_MEMORY = ((unumber)) (byte)(word)SCREEN&(unumber)$3fff/$40|(unumber)>(word)SCREEN&(unumber)$3fff/4
-Adding number conversion cast (unumber) 4 in *VIC_MEMORY = ((unumber)) (byte)(word)SCREEN&(unumber)$3fff/(unumber)$40|(unumber)>(word)SCREEN&(unumber)$3fff/4
+Adding number conversion cast (unumber) $40 in *VICII_MEMORY = ((unumber)) (byte)(word)SCREEN&(unumber)$3fff/$40|(unumber)>(word)SCREEN&(unumber)$3fff/4
+Adding number conversion cast (unumber) 4 in *VICII_MEMORY = ((unumber)) (byte)(word)SCREEN&(unumber)$3fff/(unumber)$40|(unumber)>(word)SCREEN&(unumber)$3fff/4
 Adding number conversion cast (unumber) $4000 in gfx_init_plane_charset8::gfxa#0 = (byte*)$4000+(word)CHARSET8&(unumber)$3fff
 Successful SSA optimization PassNAddNumberTypeConversions
-Inlining cast *VIC_CONTROL = (unumber)VIC_DEN|VIC_ECM|VIC_RSEL|(unumber)3
+Inlining cast *VICII_CONTROL = (unumber)VICII_DEN|VICII_ECM|VICII_RSEL|(unumber)3
 Inlining cast *DTV_PLANEA_START_HI = (unumber)0
 Inlining cast *DTV_PLANEA_STEP = (unumber)1
 Inlining cast *DTV_PLANEA_MODULO_LO = (unumber)0
@@ -470,8 +470,8 @@ Inlining cast *DTV_PLANEB_MODULO_LO = (unumber)0
 Inlining cast *DTV_PLANEB_MODULO_HI = (unumber)0
 Inlining cast *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = (unumber)3
 Inlining cast *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A) = (unumber)(unumber)3^(byte)(word)SCREEN/(unumber)$4000
-Inlining cast *VIC_MEMORY = (unumber)(byte)(word)SCREEN&(unumber)$3fff/(unumber)$40|(unumber)>(word)SCREEN&(unumber)$3fff/(unumber)4
-Inlining cast *VIC_CONTROL = (unumber)VIC_DEN|VIC_ECM|VIC_RSEL|(unumber)3
+Inlining cast *VICII_MEMORY = (unumber)(byte)(word)SCREEN&(unumber)$3fff/(unumber)$40|(unumber)>(word)SCREEN&(unumber)$3fff/(unumber)4
+Inlining cast *VICII_CONTROL = (unumber)VICII_DEN|VICII_ECM|VICII_RSEL|(unumber)3
 Inlining cast *BORDER_COLOR = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53266
@@ -501,7 +501,7 @@ Simplifying constant pointer cast (byte*) 53320
 Simplifying constant pointer cast (byte*) 255
 Simplifying constant pointer cast (byte*) 31744
 Simplifying constant pointer cast (byte*) 32768
-Simplifying constant integer cast VIC_DEN|VIC_ECM|VIC_RSEL|(unumber)3
+Simplifying constant integer cast VICII_DEN|VICII_ECM|VICII_RSEL|(unumber)3
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
@@ -521,7 +521,7 @@ Simplifying constant integer cast $40
 Simplifying constant integer cast >(word)SCREEN&(unumber)$3fff/(unumber)4
 Simplifying constant integer cast $3fff
 Simplifying constant integer cast 4
-Simplifying constant integer cast VIC_DEN|VIC_ECM|VIC_RSEL|(unumber)3
+Simplifying constant integer cast VICII_DEN|VICII_ECM|VICII_RSEL|(unumber)3
 Simplifying constant integer cast 3
 Simplifying constant integer cast 0
 Simplifying constant integer cast 7
@@ -571,7 +571,7 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in main::$3 = main::rst#1 & 7
-Inferred type updated to byte in main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3
+Inferred type updated to byte in main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3
 Inferred type updated to byte in main::$5 = main::rst#1 * $10
 Inferred type updated to byte in gfx_init_screen0::$0 = gfx_init_screen0::cy#2 & $f
 Inferred type updated to byte in gfx_init_screen0::$1 = gfx_init_screen0::$0 * $10
@@ -807,8 +807,8 @@ main: scope:[main]  from
 main::@6: scope:[main]  from main
   [4] *DTV_FEATURE = DTV_FEATURE_ENABLE
   [5] *DTV_CONTROL = DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
-  [6] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3
-  [7] *VIC_CONTROL2 = VIC_MCM|VIC_CSEL
+  [6] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3
+  [7] *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
   [8] *DTV_PLANEA_START_LO = 0
   [9] *DTV_PLANEA_START_MI = >SCREEN
   [10] *DTV_PLANEA_START_HI = 0
@@ -823,7 +823,7 @@ main::@6: scope:[main]  from main
   [19] *DTV_PLANEB_MODULO_HI = 0
   [20] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = 3
   [21] *((byte*)CIA2) = 3^(byte)(word)SCREEN/$4000
-  [22] *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
+  [22] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4
   to:main::@1
 main::@1: scope:[main]  from main::@1 main::@6
   [23] main::j#2 = phi( main::@1/main::j#1, main::@6/0 )
@@ -833,7 +833,7 @@ main::@1: scope:[main]  from main::@1 main::@6
   to:main::@2
 main::@2: scope:[main]  from main::@1 main::@5
   asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  }
-  [28] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3
+  [28] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3
   [29] *BORDER_COLOR = 0
   to:main::@3
 main::@3: scope:[main]  from main::@2 main::@3
@@ -845,8 +845,8 @@ main::@4: scope:[main]  from main::@3
 main::@5: scope:[main]  from main::@4 main::@5
   [32] main::rst#1 = *RASTER
   [33] main::$3 = main::rst#1 & 7
-  [34] main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3
-  [35] *VIC_CONTROL = main::$4
+  [34] main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3
+  [35] *VICII_CONTROL = main::$4
   [36] main::$5 = main::rst#1 << 4
   [37] *BORDER_COLOR = main::$5
   asm { nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop  }
@@ -1099,8 +1099,8 @@ Statement [1] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always 
 Statement [2] *PROCPORT = PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] *DTV_FEATURE = DTV_FEATURE_ENABLE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *DTV_CONTROL = DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [7] *VIC_CONTROL2 = VIC_MCM|VIC_CSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *VICII_CONTROL2 = VICII_MCM|VICII_CSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *DTV_PLANEA_START_LO = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *DTV_PLANEA_START_MI = >SCREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *DTV_PLANEA_START_HI = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1115,12 +1115,12 @@ Statement [18] *DTV_PLANEB_MODULO_LO = 0 [ ] (  [ ] { }  ) always clobbers reg b
 Statement [19] *DTV_PLANEB_MODULO_HI = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [20] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [21] *((byte*)CIA2) = 3^(byte)(word)SCREEN/$4000 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [22] *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [22] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  } always clobbers reg byte x 
-Statement [28] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [28] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [29] *BORDER_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [30] if(*RASTER!=$42) goto main::@3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [34] main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3 [ main::rst#1 main::$4 ] (  [ main::rst#1 main::$4 ] { }  ) always clobbers reg byte a 
+Statement [34] main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3 [ main::rst#1 main::$4 ] (  [ main::rst#1 main::$4 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:18 [ main::rst#1 ]
 Statement [36] main::$5 = main::rst#1 << 4 [ main::rst#1 main::$5 ] (  [ main::rst#1 main::$5 ] { }  ) always clobbers reg byte a 
 Statement [49] gfx_init_screen0::$1 = gfx_init_screen0::$0 << 4 [ gfx_init_screen0::cy#4 gfx_init_screen0::cx#2 gfx_init_screen0::ch#2 gfx_init_screen0::$1 ] ( gfx_init:3::gfx_init_screen0:41 [ gfx_init_screen0::cy#4 gfx_init_screen0::cx#2 gfx_init_screen0::ch#2 gfx_init_screen0::$1 ] { }  ) always clobbers reg byte a 
@@ -1148,8 +1148,8 @@ Statement [1] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always 
 Statement [2] *PROCPORT = PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [4] *DTV_FEATURE = DTV_FEATURE_ENABLE [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *DTV_CONTROL = DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [7] *VIC_CONTROL2 = VIC_MCM|VIC_CSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [7] *VICII_CONTROL2 = VICII_MCM|VICII_CSEL [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *DTV_PLANEA_START_LO = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *DTV_PLANEA_START_MI = >SCREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *DTV_PLANEA_START_HI = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -1164,13 +1164,13 @@ Statement [18] *DTV_PLANEB_MODULO_LO = 0 [ ] (  [ ] { }  ) always clobbers reg b
 Statement [19] *DTV_PLANEB_MODULO_HI = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [20] *((byte*)CIA2+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = 3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [21] *((byte*)CIA2) = 3^(byte)(word)SCREEN/$4000 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [22] *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [22] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement asm { ldx#$ff rff: cpxRASTER bnerff stabilize: nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop nop cpxRASTER beqeat+0 eat: inx cpx#$08 bnestabilize  } always clobbers reg byte x 
-Statement [28] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [28] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [29] *BORDER_COLOR = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [30] if(*RASTER!=$42) goto main::@3 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [33] main::$3 = main::rst#1 & 7 [ main::rst#1 main::$3 ] (  [ main::rst#1 main::$3 ] { }  ) always clobbers reg byte a 
-Statement [34] main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3 [ main::rst#1 main::$4 ] (  [ main::rst#1 main::$4 ] { }  ) always clobbers reg byte a 
+Statement [34] main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3 [ main::rst#1 main::$4 ] (  [ main::rst#1 main::$4 ] { }  ) always clobbers reg byte a 
 Statement [36] main::$5 = main::rst#1 << 4 [ main::rst#1 main::$5 ] (  [ main::rst#1 main::$5 ] { }  ) always clobbers reg byte a 
 Statement [48] gfx_init_screen0::$0 = gfx_init_screen0::cy#4 & $f [ gfx_init_screen0::cy#4 gfx_init_screen0::cx#2 gfx_init_screen0::ch#2 gfx_init_screen0::$0 ] ( gfx_init:3::gfx_init_screen0:41 [ gfx_init_screen0::cy#4 gfx_init_screen0::cx#2 gfx_init_screen0::ch#2 gfx_init_screen0::$0 ] { }  ) always clobbers reg byte a 
 Statement [49] gfx_init_screen0::$1 = gfx_init_screen0::$0 << 4 [ gfx_init_screen0::cy#4 gfx_init_screen0::cx#2 gfx_init_screen0::ch#2 gfx_init_screen0::$1 ] ( gfx_init:3::gfx_init_screen0:41 [ gfx_init_screen0::cy#4 gfx_init_screen0::cx#2 gfx_init_screen0::ch#2 gfx_init_screen0::$1 ] { }  ) always clobbers reg byte a 
@@ -1260,15 +1260,20 @@ ASSEMBLER BEFORE OPTIMIZATION
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-8bppcharstretch.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
-  .const VIC_ECM = $40
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
-  .const VIC_MCM = $10
-  .const VIC_CSEL = 8
+  .const VICII_ECM = $40
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
+  .const VICII_MCM = $10
+  .const VICII_CSEL = 8
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -1283,9 +1288,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
-  .label VIC_CONTROL2 = $d016
-  .label VIC_MEMORY = $d018
+  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL2 = $d016
+  .label VICII_MEMORY = $d018
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -1318,6 +1323,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $7c00
   // Plane with all pixels
   .label CHARSET8 = $8000
+.segment Code
   // main
 main: {
     // asm { sei  }
@@ -1345,12 +1351,12 @@ main: {
     // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    // [6] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 -- _deref_pbuc1=vbuc2 
-    lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
-    sta VIC_CONTROL
-    // [7] *VIC_CONTROL2 = VIC_MCM|VIC_CSEL -- _deref_pbuc1=vbuc2 
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    // [6] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
+    lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
+    sta VICII_CONTROL
+    // [7] *VICII_CONTROL2 = VICII_MCM|VICII_CSEL -- _deref_pbuc1=vbuc2 
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // [8] *DTV_PLANEA_START_LO = 0 -- _deref_pbuc1=vbuc2 
     // Plane A: SCREEN
     lda #0
@@ -1397,11 +1403,11 @@ main: {
     // Set VIC Bank bits to output - all others to input
     lda #3^SCREEN/$4000
     sta CIA2
-    // [22] *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 -- _deref_pbuc1=vbuc2 
+    // [22] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 -- _deref_pbuc1=vbuc2 
     // Set VIC Bank
     // VIC memory
     lda #(SCREEN&$3fff)/$40|(>(SCREEN&$3fff))/4
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // [23] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
   __b1_from___b6:
     // [23] phi main::j#2 = 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
@@ -1463,9 +1469,9 @@ main: {
     inx
     cpx #8
     bne stabilize
-    // [28] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 -- _deref_pbuc1=vbuc2 
-    lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
-    sta VIC_CONTROL
+    // [28] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
+    lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
+    sta VICII_CONTROL
     // [29] *BORDER_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta BORDER_COLOR
@@ -1506,10 +1512,10 @@ main: {
     // [33] main::$3 = main::rst#1 & 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-    // [34] main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3 -- vbuaa=vbuc1_bor_vbuaa 
-    ora #VIC_DEN|VIC_ECM|VIC_RSEL
-    // [35] *VIC_CONTROL = main::$4 -- _deref_pbuc1=vbuaa 
-    sta VIC_CONTROL
+    // [34] main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3 -- vbuaa=vbuc1_bor_vbuaa 
+    ora #VICII_DEN|VICII_ECM|VICII_RSEL
+    // [35] *VICII_CONTROL = main::$4 -- _deref_pbuc1=vbuaa 
+    sta VICII_CONTROL
     // [36] main::$5 = main::rst#1 << 4 -- vbuaa=vbuxx_rol_4 
     txa
     asl
@@ -1948,14 +1954,14 @@ const nomodify byte PROCPORT_RAM_CHARROM = 1
 const nomodify byte PROCPORT_RAM_IO = 5
 const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* SCREEN = (byte*) 31744
-const nomodify byte* VIC_CONTROL = (byte*) 53265
-const nomodify byte* VIC_CONTROL2 = (byte*) 53270
-const nomodify byte VIC_CSEL = 8
-const nomodify byte VIC_DEN = $10
-const nomodify byte VIC_ECM = $40
-const nomodify byte VIC_MCM = $10
-const nomodify byte* VIC_MEMORY = (byte*) 53272
-const nomodify byte VIC_RSEL = 8
+const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL2 = (byte*) 53270
+const nomodify byte VICII_CSEL = 8
+const nomodify byte VICII_DEN = $10
+const nomodify byte VICII_ECM = $40
+const nomodify byte VICII_MCM = $10
+const nomodify byte* VICII_MEMORY = (byte*) 53272
+const nomodify byte VICII_RSEL = 8
 void dtvSetCpuBankSegment1(byte dtvSetCpuBankSegment1::cpuBankIdx)
 const byte* dtvSetCpuBankSegment1::cpuBank = (byte*) 255
 byte dtvSetCpuBankSegment1::cpuBankIdx
@@ -2052,15 +2058,20 @@ Score: 75375
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-8bppcharstretch.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
-  .const VIC_ECM = $40
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
-  .const VIC_MCM = $10
-  .const VIC_CSEL = 8
+  .const VICII_ECM = $40
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
+  .const VICII_MCM = $10
+  .const VICII_CSEL = 8
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -2075,9 +2086,9 @@ Score: 75375
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
-  .label VIC_CONTROL2 = $d016
-  .label VIC_MEMORY = $d018
+  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL2 = $d016
+  .label VICII_MEMORY = $d018
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -2110,6 +2121,7 @@ Score: 75375
   .label SCREEN = $7c00
   // Plane with all pixels
   .label CHARSET8 = $8000
+.segment Code
   // main
 main: {
     // asm
@@ -2140,14 +2152,14 @@ main: {
     // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
-    // [6] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 -- _deref_pbuc1=vbuc2 
-    lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_MCM | VIC_CSEL
-    // [7] *VIC_CONTROL2 = VIC_MCM|VIC_CSEL -- _deref_pbuc1=vbuc2 
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3
+    // [6] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
+    lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
+    // [7] *VICII_CONTROL2 = VICII_MCM|VICII_CSEL -- _deref_pbuc1=vbuc2 
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEA_START_LO = < SCREEN
     // [8] *DTV_PLANEA_START_LO = 0 -- _deref_pbuc1=vbuc2 
     // Plane A: SCREEN
@@ -2203,12 +2215,12 @@ main: {
     // Set VIC Bank bits to output - all others to input
     lda #3^SCREEN/$4000
     sta CIA2
-    // *VIC_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4)
-    // [22] *VIC_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 -- _deref_pbuc1=vbuc2 
+    // *VICII_MEMORY = (byte)((((word)SCREEN)&$3fff)/$40)  |   ((>(((word)SCREEN)&$3fff))/4)
+    // [22] *VICII_MEMORY = (byte)(word)SCREEN&$3fff/$40|>(word)SCREEN&$3fff/4 -- _deref_pbuc1=vbuc2 
     // Set VIC Bank
     // VIC memory
     lda #(SCREEN&$3fff)/$40|(>(SCREEN&$3fff))/4
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // [23] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
     // [23] phi main::j#2 = 0 [phi:main::@6->main::@1#0] -- vbuxx=vbuc1 
     ldx #0
@@ -2268,10 +2280,10 @@ main: {
     inx
     cpx #8
     bne stabilize
-    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
-    // [28] *VIC_CONTROL = VIC_DEN|VIC_ECM|VIC_RSEL|3 -- _deref_pbuc1=vbuc2 
-    lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
-    sta VIC_CONTROL
+    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3
+    // [28] *VICII_CONTROL = VICII_DEN|VICII_ECM|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
+    lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
+    sta VICII_CONTROL
     // *BORDER_COLOR = 0
     // [29] *BORDER_COLOR = 0 -- _deref_pbuc1=vbuc2 
     lda #0
@@ -2313,12 +2325,12 @@ main: {
     // [33] main::$3 = main::rst#1 & 7 -- vbuaa=vbuxx_band_vbuc1 
     txa
     and #7
-    // VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
-    // [34] main::$4 = VIC_DEN|VIC_ECM|VIC_RSEL | main::$3 -- vbuaa=vbuc1_bor_vbuaa 
-    ora #VIC_DEN|VIC_ECM|VIC_RSEL
-    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
-    // [35] *VIC_CONTROL = main::$4 -- _deref_pbuc1=vbuaa 
-    sta VIC_CONTROL
+    // VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
+    // [34] main::$4 = VICII_DEN|VICII_ECM|VICII_RSEL | main::$3 -- vbuaa=vbuc1_bor_vbuaa 
+    ora #VICII_DEN|VICII_ECM|VICII_RSEL
+    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
+    // [35] *VICII_CONTROL = main::$4 -- _deref_pbuc1=vbuaa 
+    sta VICII_CONTROL
     // rst*$10
     // [36] main::$5 = main::rst#1 << 4 -- vbuaa=vbuxx_rol_4 
     txa

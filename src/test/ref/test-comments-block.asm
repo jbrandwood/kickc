@@ -1,13 +1,19 @@
 /* Tests that block comments are compiled correctly
  * Has a bunch of comments that will be moved into the generated ASM
  */
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comments-block.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // One of the bytes used for addition
   .const a = 'a'
   // The C64 screen
   .label SCREEN = $400
+.segment Code
 /* The program entry point */
 main: {
     ldx #0

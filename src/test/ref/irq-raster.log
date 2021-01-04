@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(KERNEL_MIN) void irq()
+Resolved forward reference irq to __interrupt(rom_min_c64) void irq()
 
 CONTROL FLOW GRAPH SSA
 
@@ -6,7 +6,7 @@ void main()
 main: scope:[main]  from __start
   asm { sei  }
   *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  *VIC_CONTROL = *VIC_CONTROL | $80
+  *VICII_CONTROL = *VICII_CONTROL | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
   *KERNEL_IRQ = &irq
@@ -16,7 +16,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   *BG_COLOR = WHITE
   *BG_COLOR = BLACK
@@ -46,13 +46,13 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*)$d019
 const nomodify void()** KERNEL_IRQ = (void()**)$314
 const nomodify byte* RASTER = (byte*)$d012
-const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
-Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)0
@@ -82,7 +82,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 irq: scope:[irq]  from
   [0] *BG_COLOR = WHITE
   [1] *BG_COLOR = BLACK
@@ -96,7 +96,7 @@ void main()
 main: scope:[main]  from
   asm { sei  }
   [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  [6] *VIC_CONTROL = *VIC_CONTROL | $80
+  [6] *VICII_CONTROL = *VICII_CONTROL | $80
   [7] *RASTER = 0
   [8] *IRQ_ENABLE = IRQ_RASTER
   [9] *KERNEL_IRQ = &irq
@@ -108,7 +108,7 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -118,7 +118,7 @@ Statement [0] *BG_COLOR = WHITE [ ] (  [ ] { }  ) always clobbers reg byte a
 Statement [1] *BG_COLOR = BLACK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [2] *IRQ_STATUS = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [5] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [6] *VIC_CONTROL = *VIC_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [6] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *RASTER = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [8] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *KERNEL_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -128,17 +128,22 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 77 combination 
-Uplifting [irq] best 77 combination 
-Uplifting [] best 77 combination 
+Uplifting [main] best 104 combination 
+Uplifting [irq] best 104 combination 
+Uplifting [] best 104 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-raster.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -146,15 +151,16 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // [0] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
     sta BG_COLOR
@@ -168,7 +174,8 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [3] return  - exit interrupt(KERNEL_MIN)
+    // [3] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main
@@ -179,11 +186,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [6] *VIC_CONTROL = *VIC_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [6] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // [7] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -225,22 +232,27 @@ const nomodify byte IRQ_RASTER = 1
 const nomodify byte* IRQ_STATUS = (byte*) 53273
 const nomodify void()** KERNEL_IRQ = (void()**) 788
 const nomodify byte* RASTER = (byte*) 53266
-const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
-interrupt(KERNEL_MIN) void irq()
+__interrupt(rom_min_c64) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 71
+Score: 98
 
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-raster.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -248,15 +260,16 @@ Score: 71
   .const CIA_INTERRUPT_CLEAR = $7f
   .label KERNEL_IRQ = $314
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
   .label CIA1_INTERRUPT = $dc0d
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // *BG_COLOR = WHITE
     // [0] *BG_COLOR = WHITE -- _deref_pbuc1=vbuc2 
     lda #WHITE
@@ -272,7 +285,8 @@ irq: {
     sta IRQ_STATUS
     // irq::@return
     // }
-    // [3] return  - exit interrupt(KERNEL_MIN)
+    // [3] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
 }
   // main
@@ -285,12 +299,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VIC_CONTROL |=$80
-    // [6] *VIC_CONTROL = *VIC_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL |=$80
+    // [6] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     // [7] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0

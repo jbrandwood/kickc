@@ -1,7 +1,12 @@
 // Creates a 2x2 font from the system CHARGEN font and compress it by identifying identical chars
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="font-2x2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
   // BASIC in 0xA000, I/O in 0xD000, KERNEL in 0xE000
@@ -14,6 +19,7 @@
   .label SCREEN = $400
   .label FONT_ORIGINAL = $2000
   .label FONT_COMPRESSED = $2800
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>FONT_COMPRESSED)/4&$f
     .label c = 3
@@ -477,5 +483,6 @@ font_find: {
     inx
     jmp __b1
 }
+.segment Data
   .align $100
   FONT_COMPRESSED_MAP: .fill $100, 0

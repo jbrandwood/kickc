@@ -1,11 +1,17 @@
 // Experiments with malloc() - a word array
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="malloc-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   .label WORDS = malloc.return
+.segment Code
 __start: {
     // malloc(0x200)
     jsr malloc

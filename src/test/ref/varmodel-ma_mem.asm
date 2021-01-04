@@ -1,7 +1,13 @@
 // Test memory model multiple-assignment/main memory for all variables (here  local variables)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="varmodel-ma_mem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // screen = 0x0400
     // A local pointer 
@@ -34,6 +40,7 @@ main: {
     bne __b1
     // }
     rts
+  .segment Data
     screen: .word 0
     i: .byte 0
 }

@@ -1,10 +1,16 @@
 // Tests calling into a function pointer with local variables
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="function-pointer-noarg-call-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label msg = 3
   .label idx = 5
+.segment Code
 __start: {
     // msg
     lda #<0
@@ -65,6 +71,7 @@ do10: {
     // }
     rts
 }
+.segment Data
   msg1: .text "hello "
   .byte 0
   msg2: .text "world "

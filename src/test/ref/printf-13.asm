@@ -1,8 +1,13 @@
 // Tests printf function call rewriting
 // Print using different formats
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-13.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const BINARY = 2
   .const OCTAL = 8
   .const DECIMAL = $a
@@ -23,6 +28,7 @@
   .label conio_line_text = $16
   // The current color cursor line start
   .label conio_line_color = $18
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -700,6 +706,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text "3s  '"
     .byte 0
     str: .text "x"
@@ -731,6 +738,7 @@ main: {
     s40: .text "X   '"
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte register(X) y)
 gotoxy: {
@@ -1641,6 +1649,7 @@ toupper: {
     // }
     rts
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of binary digits

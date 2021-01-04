@@ -4,14 +4,19 @@
 // Sources
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-8bppchunkystretch.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .const VIC_ECM = $40
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
-  .const VIC_MCM = $10
-  .const VIC_CSEL = 8
+  .const VICII_ECM = $40
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
+  .const VICII_MCM = $10
+  .const VICII_CSEL = 8
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -25,9 +30,9 @@
   .const OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR = 2
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
-  .label VIC_CONTROL2 = $d016
-  .label VIC_MEMORY = $d018
+  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL2 = $d016
+  .label VICII_MEMORY = $d018
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -49,6 +54,7 @@
   .label DTV_PLANEB_MODULO_HI = $d048
   // Plane with all pixels
   .label CHUNKY = $8000
+.segment Code
 main: {
     // asm
     sei
@@ -70,12 +76,12 @@ main: {
     // 8BPP Pixel Cell Mode
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_COLORRAM_OFF|DTV_CHUNKY|DTV_BADLINE_OFF
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_MCM | VIC_CSEL
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3
+    lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEB_START_LO = < CHUNKY
     // Plane B: CHUNKY
     lda #0
@@ -102,11 +108,11 @@ main: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHUNKY/$4000
     sta CIA2
-    // *VIC_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4)
+    // *VICII_MEMORY = (byte)((((word)CHUNKY)&$3fff)/$40)  |   ((>(((word)CHUNKY)&$3fff))/4)
     // Set VIC Bank
     // VIC memory
     lda #0
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     tax
   // DTV Palette - Grey Tones
   __b1:
@@ -156,9 +162,9 @@ main: {
     inx
     cpx #8
     bne stabilize
-    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_ECM|VIC_RSEL|3
-    sta VIC_CONTROL
+    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | 3
+    lda #VICII_DEN|VICII_ECM|VICII_RSEL|3
+    sta VICII_CONTROL
     // *BORDER_COLOR = 0
     lda #0
     sta BORDER_COLOR
@@ -192,10 +198,10 @@ main: {
     // rst&7
     txa
     and #7
-    // VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
-    ora #VIC_DEN|VIC_ECM|VIC_RSEL
-    // *VIC_CONTROL = VIC_DEN | VIC_ECM | VIC_RSEL | (rst&7)
-    sta VIC_CONTROL
+    // VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
+    ora #VICII_DEN|VICII_ECM|VICII_RSEL
+    // *VICII_CONTROL = VICII_DEN | VICII_ECM | VICII_RSEL | (rst&7)
+    sta VICII_CONTROL
     // rst*$10
     txa
     asl

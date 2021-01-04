@@ -1,8 +1,14 @@
 // Tests that identical strings are consolidated
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-const-consolidation-noroot.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 2
+.segment Code
 main: {
     // print(rex1)
     lda #<$400
@@ -16,9 +22,11 @@ main: {
     jsr print
     // }
     rts
+  .segment Data
     rex1: .text "rex"
     .byte 0
 }
+.segment Code
 // print(byte* zp(4) string)
 print: {
     .label string = 4

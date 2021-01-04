@@ -1,10 +1,16 @@
 // Tests the special "signed" / "unsigned" without a simple type name
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="type-signed.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = $b
   .label print_char_cursor = 9
+.segment Code
 main: {
     .label a = 2
     .label b = 4
@@ -177,4 +183,5 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

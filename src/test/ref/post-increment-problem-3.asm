@@ -1,8 +1,14 @@
 // Illustrates a problem with post-incrementing inside the while loop condition
 // https://gitlab.com/camelot/kickc/-/issues/486
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="post-increment-problem-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // n = *(ptr++)
     lda mmap
@@ -20,4 +26,5 @@ main: {
     txa
     jmp __b1
 }
+.segment Data
   mmap: .byte 2, $5c, $1a, 3, $60, $1a, 7

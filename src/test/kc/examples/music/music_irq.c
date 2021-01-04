@@ -28,7 +28,7 @@ void main() {
 }
 
 // Raster IRQ Routine playing music
-interrupt(kernel_keyboard) void irq_play() {
+__interrupt(rom_sys_c64) void irq_play() {
     (VICII->BORDER_COLOR)++;
     // Play SID
     (*musicPlay)();

@@ -1,10 +1,16 @@
 // Typedef pointer to const/volatile type and instantiate it
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="typedef-6.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label cp = $a003
   .label vp = $a004
+.segment Code
 main: {
     // SCREEN[0] = *cp
     lda cp

@@ -3660,9 +3660,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-sprites.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const sinlen_x = $dd
   .const sinlen_y = $c5
@@ -3694,6 +3699,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label progress_cursor = $a
   .label sin_idx_x = 4
   .label sin_idx_y = 5
+.segment Code
   // main
 main: {
     // [1] call init 
@@ -4227,8 +4233,10 @@ gen_sprites: {
   __breturn:
     // [91] return 
     rts
+  .segment Data
     cml: .text "camelot"
 }
+.segment Code
   // progress_init
 // Initialize the PETSCII progress bar
 // progress_init(byte* zp($a) line)
@@ -4553,12 +4561,14 @@ gen_sintab: {
     // [118] phi progress_idx#13 = progress_idx#11 [phi:gen_sintab::@22->gen_sintab::@1#1] -- register_copy 
     // [118] phi gen_sintab::i#10 = gen_sintab::i#1 [phi:gen_sintab::@22->gen_sintab::@1#2] -- register_copy 
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
     // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
+.segment Code
   // gen_chargen_sprite
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
@@ -5039,6 +5049,7 @@ progress_inc: {
   __breturn:
     // [225] return 
     rts
+  .segment Data
     // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }
@@ -5586,9 +5597,14 @@ Score: 769690
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-sprites.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const sinlen_x = $dd
   .const sinlen_y = $c5
@@ -5620,6 +5636,7 @@ Score: 769690
   .label progress_cursor = $a
   .label sin_idx_x = 4
   .label sin_idx_y = 5
+.segment Code
   // main
 main: {
     // init()
@@ -6113,8 +6130,10 @@ gen_sprites: {
     // }
     // [91] return 
     rts
+  .segment Data
     cml: .text "camelot"
 }
+.segment Code
   // progress_init
 // Initialize the PETSCII progress bar
 // progress_init(byte* zp($a) line)
@@ -6386,12 +6405,14 @@ gen_sintab: {
     // [118] phi progress_idx#13 = progress_idx#11 [phi:gen_sintab::@22->gen_sintab::@1#1] -- register_copy 
     // [118] phi gen_sintab::i#10 = gen_sintab::i#1 [phi:gen_sintab::@22->gen_sintab::@1#2] -- register_copy 
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     // i * 2 * PI
     f_min: .byte 0, 0, 0, 0, 0
     // amplitude/2 + min
     f_amp: .byte 0, 0, 0, 0, 0
 }
+.segment Code
   // gen_chargen_sprite
 // Generate a sprite from a C64 CHARGEN character (by making each pixel 3x3 pixels large)
 // - c is the character to generate
@@ -6854,6 +6875,7 @@ progress_inc: {
     // }
     // [225] return 
     rts
+  .segment Data
     // Progress characters
     progress_chars: .byte $20, $65, $74, $75, $61, $f6, $e7, $ea, $e0
 }

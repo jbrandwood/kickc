@@ -1,10 +1,16 @@
 // Test the 65CE02 CPU
 // A program that uses 65CE02 instructions
 .cpu _65ce02
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cpu-65ce02-b.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     ldz #0
   __b1:

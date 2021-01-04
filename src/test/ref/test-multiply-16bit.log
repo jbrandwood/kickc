@@ -5431,14 +5431,20 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test the fast multiplication library
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-multiply-16bit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label BG_COLOR = $d021
   .label print_screen = $400
   .label print_char_cursor = $16
   .label print_line_cursor = $10
+.segment Code
   // main
 main: {
     // [0] *BG_COLOR = 5 -- _deref_pbuc1=vbuc2 
@@ -5962,9 +5968,11 @@ mul16u_compare: {
     // [193] phi print_line_cursor#45 = print_line_cursor#0 [phi:mul16u_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     jmp __breturn
+  .segment Data
     str1: .text "word multiply results match!"
     .byte 0
 }
+.segment Code
   // mul16s_compare
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
@@ -6214,9 +6222,11 @@ mul16s_compare: {
     // [193] phi print_line_cursor#45 = print_line_cursor#0 [phi:mul16s_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     jmp __breturn
+  .segment Data
     str1: .text "signed word multiply results match!"
     .byte 0
 }
+.segment Code
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -6783,9 +6793,11 @@ mul16u_error: {
   __breturn:
     // [192] return 
     rts
+  .segment Data
     str: .text "multiply mismatch "
     .byte 0
 }
+.segment Code
   // print_ln
 // Print a newline
 print_ln: {
@@ -7355,9 +7367,11 @@ mul16s_error: {
   __breturn:
     // [266] return 
     rts
+  .segment Data
     str: .text "signed word multiply mismatch "
     .byte 0
 }
+.segment Code
   // print_char
 // Print a single char
 // print_char(byte register(A) ch)
@@ -7621,6 +7635,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)
@@ -8048,8 +8063,8 @@ Replacing jump to rts with rts in jmp __b1
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction __b1:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [231] bne __b1 to beq
-Fixing long branch [346] bne __b1 to beq
+Fixing long branch [237] bne __b1 to beq
+Fixing long branch [354] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 const byte* BG_COLOR = (byte*) 53281
@@ -8402,14 +8417,20 @@ Score: 464677
   // File Comments
 // Test the fast multiplication library
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-multiply-16bit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label BG_COLOR = $d021
   .label print_screen = $400
   .label print_char_cursor = $16
   .label print_line_cursor = $10
+.segment Code
   // main
 main: {
     // *BG_COLOR = 5
@@ -8894,9 +8915,11 @@ mul16u_compare: {
     // [193] phi print_line_cursor#45 = print_line_cursor#0 [phi:mul16u_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     rts
+  .segment Data
     str1: .text "word multiply results match!"
     .byte 0
 }
+.segment Code
   // mul16s_compare
 // Perform many possible word multiplications (slow and fast) and compare the results
 mul16s_compare: {
@@ -9123,9 +9146,11 @@ mul16s_compare: {
     // [193] phi print_line_cursor#45 = print_line_cursor#0 [phi:mul16s_compare::@14->print_ln#1] -- register_copy 
     jsr print_ln
     rts
+  .segment Data
     str1: .text "signed word multiply results match!"
     .byte 0
 }
+.segment Code
   // memset
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
@@ -9654,9 +9679,11 @@ mul16u_error: {
     // }
     // [192] return 
     rts
+  .segment Data
     str: .text "multiply mismatch "
     .byte 0
 }
+.segment Code
   // print_ln
 // Print a newline
 print_ln: {
@@ -10180,9 +10207,11 @@ mul16s_error: {
     // }
     // [266] return 
     rts
+  .segment Data
     str: .text "signed word multiply mismatch "
     .byte 0
 }
+.segment Code
   // print_char
 // Print a single char
 // print_char(byte register(A) ch)
@@ -10422,6 +10451,7 @@ print_uchar: {
     rts
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // <f(x) = <(( x * x )/4)

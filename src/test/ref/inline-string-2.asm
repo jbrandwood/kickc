@@ -1,8 +1,14 @@
 // Inline Strings in assignments
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-string-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 2
+.segment Code
 main: {
     // print_msg(1)
     lda #<$400
@@ -38,11 +44,13 @@ print_msg: {
     jsr print
     // }
     rts
+  .segment Data
     msg_1: .text "Hello "
     .byte 0
     msg_2: .text "World!"
     .byte 0
 }
+.segment Code
 // print(byte* zp(4) msg)
 print: {
     .label msg = 4

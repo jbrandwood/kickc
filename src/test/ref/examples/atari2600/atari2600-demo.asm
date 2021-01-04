@@ -11,8 +11,6 @@
 .word main // NMI
 .word main // RESET
 .word main // IRQ
-.segment Code
-
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_PF0 = $d
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_PF1 = $e
   .const OFFSET_STRUCT_ATARI_TIA_WRITE_PF2 = $f

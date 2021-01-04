@@ -1,8 +1,14 @@
 // Minimal struct with MemberUnwind behavior - array member and local initializer
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-30.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .const point1_x = 2
     // point1 = { 2, "jg" }
@@ -23,6 +29,7 @@ main: {
     sta SCREEN+2
     // }
     rts
+  .segment Data
     point1_initials: .fill 3, 0
 }
   __0: .text "jg"

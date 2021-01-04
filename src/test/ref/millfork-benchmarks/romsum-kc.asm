@@ -1,8 +1,13 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="romsum-kc.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label rom = $e000
   .label print_screen = $400
   .label last_time = 9
@@ -10,6 +15,7 @@
   .label print_line_cursor = 2
   .label Ticks = $b
   .label Ticks_1 = $d
+.segment Code
 __start: {
     // last_time
     lda #<0
@@ -382,6 +388,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

@@ -3,9 +3,14 @@
 // N Queens Problem is a famous puzzle in which n-queens are to be placed on a nxn chess board such that no two queens are in the same row, column or diagonal.  
 //
 // This is a recursive solution
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="eightqueens-recursive.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const LIGHT_BLUE = $e
   .const OFFSET_STRUCT_PRINTF_BUFFER_NUMBER_DIGITS = 1
   .const OFFSET_STRUCT_TIME_OF_DAY_SEC = 1
@@ -36,6 +41,7 @@
   .label conio_line_color = $10
   // The number of found solutions
   .label count = $12
+.segment Code
 __start: {
     // conio_cursor_x = 0
     lda #0
@@ -241,6 +247,7 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     s: .text " - n queens problem using backtracking -"
     .byte 0
     s1: .text @"\nnumber of queens:"
@@ -252,6 +259,7 @@ main: {
     s4: .text @".\n"
     .byte 0
 }
+.segment Code
 // Checks is a placement of the queen on the board is legal.
 // Checks the passed (row, column) against all queens placed on the board on lower rows.
 // If no conflict for desired position returns 1 otherwise returns 0
@@ -414,6 +422,7 @@ print: {
     // for(char i=1;i<=QUEENS;++i)
     inc.z i
     jmp __b1
+  .segment Data
     s: .text @"\n#"
     .byte 0
     s1: .text @":\n "
@@ -425,6 +434,7 @@ print: {
     s4: .text "-"
     .byte 0
 }
+.segment Code
 // Set the cursor to the specified position
 // gotoxy(byte zp(2) y)
 gotoxy: {
@@ -1746,6 +1756,7 @@ memset: {
   !:
     jmp __b2
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of hexadecimal digits

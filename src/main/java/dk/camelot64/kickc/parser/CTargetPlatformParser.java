@@ -34,6 +34,11 @@ public class CTargetPlatformParser {
          final JsonObject platformJson = jsonReader.readObject();
          TargetPlatform targetPlatform = new TargetPlatform(platformName);
          {
+            final String interruptType = platformJson.getString("interrupt", null);
+            if(interruptType != null)
+               targetPlatform.setInterruptType(interruptType);
+         }
+         {
             final String cpuName = platformJson.getString("cpu", null);
             if(cpuName != null)
                targetPlatform.setCpu(TargetCpu.getTargetCpu(cpuName, false));

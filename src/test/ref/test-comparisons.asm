@@ -1,11 +1,17 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-comparisons.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = 6
   .label print_char_cursor = $a
+.segment Code
 main: {
     .label b = $c
     .label a = 2
@@ -473,6 +479,7 @@ main: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     jmp __b1
+  .segment Data
     cs: .byte 7, $c7, $37, $97, $67
     op: .text "< "
     .byte 0
@@ -485,6 +492,7 @@ main: {
     op16: .text "=="
     .byte 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -634,4 +642,5 @@ print_str: {
   !:
     jmp __b1
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

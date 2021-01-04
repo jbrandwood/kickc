@@ -9,9 +9,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-.segment Code
-
-
   .const VERA_INC_1 = $10
   .const VERA_ADDRSEL = 1
   .const SIZEOF_BYTE = 1
@@ -93,7 +90,6 @@ memcpy_to_vram: {
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
     .label end = src+num
-    // Transfer the data
     .label s = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // Select DATA0
@@ -115,7 +111,7 @@ memcpy_to_vram: {
     lda #>src
     sta.z s+1
   __b1:
-    // for(; s!=end; s++)
+    // for(char *s = src; s!=end; s++)
     lda.z s+1
     cmp #>end
     bne __b2
@@ -129,7 +125,7 @@ memcpy_to_vram: {
     ldy #0
     lda (s),y
     sta VERA_DATA0
-    // for(; s!=end; s++)
+    // for(char *s = src; s!=end; s++)
     inc.z s
     bne !+
     inc.z s+1

@@ -17,9 +17,14 @@
 //    };
 //    typedef struct fileentry ENTRY;
 //    ENTRY files[MAX_FILES];
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="semi-struct-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const KEY_SPACE = $3c
   // The size of a file ENTRY
   .const SIZEOF_ENTRY = $12
@@ -34,6 +39,7 @@
   .label print_char_cursor = $a
   .label print_line_cursor = $10
   .label print_line_cursor_1 = 4
+.segment Code
 // Initialize 2 file entries and print them
 main: {
     .const fileEntry1_idx = 1
@@ -204,6 +210,7 @@ main: {
     jsr print_cls
     // }
     rts
+  .segment Data
     str: .text "** entry 1 **"
     .byte 0
     str1: .text "- press space -"
@@ -211,7 +218,8 @@ main: {
     str2: .text "** entry 2 **"
     .byte 0
 }
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+.segment Code
+// Initialize keyboard reading by setting CIA#1 Data Direction Registers
 keyboard_init: {
     // CIA1->PORT_A_DDR = $ff
     // Keyboard Matrix Columns Write Mode
@@ -765,6 +773,7 @@ printEntry: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "bufdisk   "
     .byte 0
     str1: .text "bufedit   "
@@ -792,6 +801,7 @@ printEntry: {
     str12: .text "tlo         "
     .byte 0
 }
+.segment Code
 // Determines whether a specific key is currently pressed by accessing the matrix directly
 // The key is a keyboard code defined from the keyboard matrix by %00rrrccc, where rrr is the row ID (0-7) and ccc is the column ID (0-7)
 // All keys exist as as KEY_XXX constants.
@@ -904,6 +914,7 @@ keyboard_matrix_read: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)
   keyboard_matrix_row_bitmask: .byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f

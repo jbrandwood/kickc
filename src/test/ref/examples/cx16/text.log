@@ -1,3 +1,4 @@
+Inlined call call __init 
 
 CONTROL FLOW GRAPH SSA
 
@@ -32,10 +33,10 @@ memcpy_to_vram: scope:[memcpy_to_vram]  from main::@3
   *VERA_ADDRX_M = memcpy_to_vram::$1
   memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#1
   *VERA_ADDRX_H = memcpy_to_vram::$2
-  memcpy_to_vram::s#0 = ((byte*)) memcpy_to_vram::src#1
   memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#1
   memcpy_to_vram::$3 = memcpy_to_vram::$5 + memcpy_to_vram::num#1
   memcpy_to_vram::end#0 = memcpy_to_vram::$3
+  memcpy_to_vram::s#0 = ((byte*)) memcpy_to_vram::src#1
   to:memcpy_to_vram::@1
 memcpy_to_vram::@1: scope:[memcpy_to_vram]  from memcpy_to_vram memcpy_to_vram::@2
   memcpy_to_vram::end#1 = phi( memcpy_to_vram/memcpy_to_vram::end#0, memcpy_to_vram::@2/memcpy_to_vram::end#2 )
@@ -54,7 +55,7 @@ memcpy_to_vram::@return: scope:[memcpy_to_vram]  from memcpy_to_vram::@1
   to:@return
 
 void main()
-main: scope:[main]  from __start
+main: scope:[main]  from __start::@1
   main::vaddr#0 = DEFAULT_SCREEN
   main::i#0 = 0
   to:main::@1
@@ -103,11 +104,15 @@ main::@return: scope:[main]  from main::@6
 
 void __start()
 __start: scope:[__start]  from
-  call main 
+  to:__start::__init1
+__start::__init1: scope:[__start]  from __start
   to:__start::@1
-__start::@1: scope:[__start]  from __start
+__start::@1: scope:[__start]  from __start::__init1
+  call main 
+  to:__start::@2
+__start::@2: scope:[__start]  from __start::@1
   to:__start::@return
-__start::@return: scope:[__start]  from __start::@1
+__start::@return: scope:[__start]  from __start::@2
   return 
   to:@return
 
@@ -249,8 +254,8 @@ Constant memcpy_to_vram::vbank#0 = 0
 Constant memcpy_to_vram::vdest#0 = (void*)DEFAULT_SCREEN+$100
 Constant memcpy_to_vram::src#0 = (void*)main::MSG2
 Successful SSA optimization Pass2ConstantIdentification
-Constant memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#0
 Constant memcpy_to_vram::$5 = (byte*)memcpy_to_vram::src#0
+Constant memcpy_to_vram::s#0 = (byte*)memcpy_to_vram::src#0
 Successful SSA optimization Pass2ConstantIdentification
 Simplifying expression containing zero vpoke::vbank#2 in [6] vpoke::$2 = VERA_INC_0 | vpoke::vbank#2
 Simplifying expression containing zero VERA_INC_1 in [16] memcpy_to_vram::$2 = VERA_INC_1 | memcpy_to_vram::vbank#0
@@ -260,7 +265,9 @@ Eliminating unused constant memcpy_to_vram::vbank#0
 Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
+Removing unused procedure block __start::__init1
 Removing unused procedure block __start::@1
+Removing unused procedure block __start::@2
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
 Resolving string sizeof() sizeof main::MSG2
@@ -488,12 +495,14 @@ REGISTER UPLIFT SCOPES
 Uplift Scope [vpoke] 202: zp[1]:12 [ vpoke::$0 ] 202: zp[1]:13 [ vpoke::$1 ] 89: zp[2]:7 [ vpoke::vaddr#2 vpoke::vaddr#0 vpoke::vaddr#1 ] 38: zp[1]:9 [ vpoke::data#2 vpoke::data#0 ] 
 Uplift Scope [memcpy_to_vram] 336.67: zp[2]:5 [ memcpy_to_vram::s#2 memcpy_to_vram::s#1 ] 
 Uplift Scope [main] 26.89: zp[1]:2 [ main::i#2 main::i#1 ] 17.6: zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] 11: zp[2]:10 [ main::vaddr#1 ] 
+Uplift Scope [VERA_SPRITE] 
 Uplift Scope [MOS6522_VIA] 
 Uplift Scope [] 
 
 Uplifting [vpoke] best 1750 combination reg byte a [ vpoke::$0 ] reg byte a [ vpoke::$1 ] zp[2]:7 [ vpoke::vaddr#2 vpoke::vaddr#0 vpoke::vaddr#1 ] reg byte x [ vpoke::data#2 vpoke::data#0 ] 
 Uplifting [memcpy_to_vram] best 1750 combination zp[2]:5 [ memcpy_to_vram::s#2 memcpy_to_vram::s#1 ] 
 Uplifting [main] best 1630 combination reg byte y [ main::i#2 main::i#1 ] zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] zp[2]:10 [ main::vaddr#1 ] 
+Uplifting [VERA_SPRITE] best 1630 combination 
 Uplifting [MOS6522_VIA] best 1630 combination 
 Uplifting [] best 1630 combination 
 Coalescing zero page register [ zp[2]:3 [ main::vaddr#3 main::vaddr#2 ] ] with [ zp[2]:10 [ main::vaddr#1 ] ] - score: 2
@@ -515,9 +524,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-.segment Code
-
-
   // Global Constants & labels
   .const VERA_INC_1 = $10
   .const VERA_ADDRSEL = 1
@@ -638,7 +644,6 @@ memcpy_to_vram: {
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
     .label end = src+num
-    // Transfer the data
     .label s = 4
     // [14] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Select DATA0
@@ -825,9 +830,6 @@ Score: 1175
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-.segment Code
-
-
   // Global Constants & labels
   .const VERA_INC_1 = $10
   .const VERA_ADDRSEL = 1
@@ -942,7 +944,6 @@ memcpy_to_vram: {
     .label vdest = DEFAULT_SCREEN+$100
     .label src = main.MSG2
     .label end = src+num
-    // Transfer the data
     .label s = 4
     // *VERA_CTRL &= ~VERA_ADDRSEL
     // [14] *VERA_CTRL = *VERA_CTRL & ~VERA_ADDRSEL -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
@@ -971,7 +972,7 @@ memcpy_to_vram: {
     sta.z s+1
     // memcpy_to_vram::@1
   __b1:
-    // for(; s!=end; s++)
+    // for(char *s = src; s!=end; s++)
     // [19] if(memcpy_to_vram::s#2!=memcpy_to_vram::end#0) goto memcpy_to_vram::@2 -- pbuz1_neq_pbuc1_then_la1 
     lda.z s+1
     cmp #>end
@@ -990,7 +991,7 @@ memcpy_to_vram: {
     ldy #0
     lda (s),y
     sta VERA_DATA0
-    // for(; s!=end; s++)
+    // for(char *s = src; s!=end; s++)
     // [22] memcpy_to_vram::s#1 = ++ memcpy_to_vram::s#2 -- pbuz1=_inc_pbuz1 
     inc.z s
     bne !+

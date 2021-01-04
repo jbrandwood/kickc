@@ -8,7 +8,7 @@ void main() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $60
-    *VIC_CONTROL &=$7f;
+    *VICII_CONTROL &=$7f;
     *RASTER = $60;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;
@@ -19,8 +19,8 @@ void main() {
     asm { cli }
 }
 
-byte * const VIC_BASE = $D000;
-const byte VIC_SIZE = 48;
+byte * const VICII_BASE = $D000;
+const byte VICII_SIZE = 48;
 const byte IRQ_CHANGE_NEXT = $7f;
 
 byte IRQ_CHANGE_IDX[] = { $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT };
@@ -28,15 +28,15 @@ byte IRQ_CHANGE_VAL[] = { $0b, $0b,             $63, $00, $00,             $80, 
 
 volatile byte irq_idx = 0;
 
-interrupt(kernel_min) void table_driven_irq() {
+__interrupt void table_driven_irq() {
     do {
         byte idx = IRQ_CHANGE_IDX[irq_idx];
         byte val = IRQ_CHANGE_VAL[irq_idx];
         irq_idx++;
-        if (idx < VIC_SIZE) {
-            VIC_BASE[idx] = val;
-        } else if (idx < VIC_SIZE + 8) {
-            SCREEN[idx + $3f8 - VIC_SIZE] = val;
+        if (idx < VICII_SIZE) {
+            VICII_BASE[idx] = val;
+        } else if (idx < VICII_SIZE + 8) {
+            SCREEN[idx + $3f8 - VICII_SIZE] = val;
         } else {
             *IRQ_STATUS = IRQ_RASTER;
             *RASTER = val;

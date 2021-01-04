@@ -15,7 +15,7 @@ void main() {
     VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY;
     VICII->BG_COLOR2 = BLACK;
     *D018 = toD018(SCREEN, LOGO);
-    *D016 = VIC_MCM | VIC_CSEL;
+    *D016 = VICII_MCM | VICII_CSEL;
     memset(SCREEN, BLACK, 40*25);
     memset(COLS, WHITE|8, 40*25);
     for(char ch: 0..239) {

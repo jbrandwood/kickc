@@ -11,7 +11,7 @@ byte plots_per_frame[0x100];
 void main() {
     bitmap_init(BITMAP, SCREEN);
     bitmap_clear(BLACK, WHITE);
-    *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3;
+    *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3;
     *D018 = toD018(SCREEN, BITMAP);
     init_irq();
     word x = 0;
@@ -40,7 +40,7 @@ void init_irq() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
-    *VIC_CONTROL |=$80;
+    *VICII_CONTROL |=$80;
     *RASTER = $00;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;
@@ -50,7 +50,7 @@ void init_irq() {
 }
 
 // Interrupt Routine counting frames
-interrupt(hardware_clobber) void irq() {
+__interrupt(hardware_clobber) void irq() {
     *BG_COLOR = WHITE;
     if(frame_cnt) frame_cnt++;
     *BG_COLOR = BLACK;

@@ -1,10 +1,16 @@
 // Test array index pointer rewriting
 // struct array with 8bit index
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="index-pointer-rewrite-8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_BALL_VEL = 1
   .const OFFSET_STRUCT_BALL_SYM = 2
+.segment Code
 main: {
     ldy #0
   __b1:
@@ -37,4 +43,5 @@ main: {
     iny
     jmp __b1
 }
+.segment Data
   balls: .fill 3*$19, 0

@@ -1045,9 +1045,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-keyboard.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const KEY_3 = 8
   .const KEY_W = 9
@@ -1105,6 +1110,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label RASTER = $d012
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
+.segment Code
   // main
 main: {
     .label sc = 2
@@ -1353,7 +1359,7 @@ main: {
     jmp __b1
 }
   // keyboard_init
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#1 Data Direction Registers
 keyboard_init: {
     // [45] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = $ff -- _deref_pbuc1=vbuc2 
     // Keyboard Matrix Columns Write Mode
@@ -1441,6 +1447,7 @@ keyboard_key_pressed: {
     rts
 }
   // File Data
+.segment Data
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f
@@ -1518,8 +1525,8 @@ Removing instruction jmp __b5
 Removing instruction jmp __b6
 Removing instruction jmp __b12
 Succesful ASM optimization Pass5NextJumpElimination
-Fixing long branch [75] bcc __b2 to bcs
 Fixing long branch [81] bcc __b2 to bcs
+Fixing long branch [87] bcc __b2 to bcs
 
 FINAL SYMBOL TABLE
 const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
@@ -1671,9 +1678,14 @@ Score: 57707
   // File Comments
 // Test keyboard input - in the keyboard matrix and mapping screen codes to key codes
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-keyboard.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const KEY_3 = 8
   .const KEY_W = 9
@@ -1731,6 +1743,7 @@ Score: 57707
   .label RASTER = $d012
   // The CIA#1: keyboard matrix, joystick #1/#2
   .label CIA1 = $dc00
+.segment Code
   // main
 main: {
     .label sc = 2
@@ -1966,7 +1979,7 @@ main: {
     jmp __b1
 }
   // keyboard_init
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#1 Data Direction Registers
 keyboard_init: {
     // CIA1->PORT_A_DDR = $ff
     // [45] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_PORT_A_DDR) = $ff -- _deref_pbuc1=vbuc2 
@@ -2057,6 +2070,7 @@ keyboard_key_pressed: {
     rts
 }
   // File Data
+.segment Data
   // Keycodes for each screen code character from $00-$3f.
   // Chars that do not have an unmodified keycode return $3f (representing RUN/STOP).
   keyboard_char_keycodes: .byte KEY_AT, KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I, KEY_J, KEY_K, KEY_L, KEY_M, KEY_N, KEY_O, KEY_P, KEY_Q, KEY_R, KEY_S, KEY_T, KEY_U, KEY_V, KEY_W, KEY_X, KEY_Y, KEY_Z, $3f, KEY_POUND, $3f, KEY_ARROW_UP, KEY_ARROW_LEFT, KEY_SPACE, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, $3f, KEY_ASTERISK, KEY_PLUS, KEY_COMMA, KEY_MINUS, KEY_DOT, KEY_SLASH, KEY_0, KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9, KEY_COLON, KEY_SEMICOLON, $3f, KEY_EQUALS, $3f, $3f

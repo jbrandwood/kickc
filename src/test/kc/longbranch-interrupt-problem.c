@@ -13,7 +13,7 @@ void main() {
     }
 }
 
-interrupt(kernel_min) void irq() {
+__interrupt void irq() {
     asm {
         lda $dc0d
     }

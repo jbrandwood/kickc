@@ -1,8 +1,14 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="strcpy-0.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label dst1 = $400
   .label dst2 = $428
+.segment Code
 main: {
     // str_cpy(dst1, "hello")
     lda #<dst1
@@ -26,11 +32,13 @@ main: {
     jsr str_cpy
     // }
     rts
+  .segment Data
     src: .text "hello"
     .byte 0
     src1: .text "world"
     .byte 0
 }
+.segment Code
 // str_cpy(byte* zp(4) dst, byte* zp(2) src)
 str_cpy: {
     .label dst = 4

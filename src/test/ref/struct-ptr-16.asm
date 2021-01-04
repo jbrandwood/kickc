@@ -1,12 +1,18 @@
 // Demonstrates problem with returning a dereferenced pointer to a struct
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-16.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
   .label p0 = $a000
   .label p1 = $b000
   .label p2 = $e000
+.segment Code
 main: {
     .label __1_x = 2
     .label __1_y = 3

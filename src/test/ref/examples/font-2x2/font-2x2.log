@@ -2319,9 +2319,14 @@ ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // Creates a 2x2 font from the system CHARGEN font and compress it by identifying identical chars
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="font-2x2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
@@ -2335,6 +2340,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SCREEN = $400
   .label FONT_ORIGINAL = $2000
   .label FONT_COMPRESSED = $2800
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>FONT_COMPRESSED)/4&$f
@@ -3054,6 +3060,7 @@ font_find: {
     jmp __b1
 }
   // File Data
+.segment Data
   .align $100
   FONT_COMPRESSED_MAP: .fill $100, 0
 
@@ -3181,7 +3188,7 @@ Removing instruction lda #8
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [185] bne __b1 to beq
+Fixing long branch [191] bne __b1 to beq
 
 FINAL SYMBOL TABLE
 const nomodify byte* CHARGEN = (byte*) 53248
@@ -3382,9 +3389,14 @@ Score: 122846
   // File Comments
 // Creates a 2x2 font from the system CHARGEN font and compress it by identifying identical chars
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="font-2x2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // RAM in 0xA000, 0xE000 CHAR ROM in 0xD000
   .const PROCPORT_RAM_CHARROM = 1
@@ -3398,6 +3410,7 @@ Score: 122846
   .label SCREEN = $400
   .label FONT_ORIGINAL = $2000
   .label FONT_COMPRESSED = $2800
+.segment Code
   // main
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>FONT_COMPRESSED)/4&$f
@@ -4098,6 +4111,7 @@ font_find: {
     jmp __b1
 }
   // File Data
+.segment Data
   .align $100
   FONT_COMPRESSED_MAP: .fill $100, 0
 

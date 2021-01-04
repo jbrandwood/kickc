@@ -4,15 +4,20 @@
 // Sources
 // (J) https://www.c64-wiki.com/wiki/C64DTV_Programming_Guide
 // (H) http://dtvhacking.cbm8bit.com/dtv_wiki/images/d/d9/Dtv_registers_full.txt
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-gfxmodes.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .const VIC_ECM = $40
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
-  .const VIC_MCM = $10
-  .const VIC_CSEL = 8
+  .const VICII_ECM = $40
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
+  .const VICII_MCM = $10
+  .const VICII_CSEL = 8
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -58,9 +63,9 @@
   .label BG_COLOR1 = $d022
   .label BG_COLOR2 = $d023
   .label BG_COLOR3 = $d024
-  .label VIC_CONTROL = $d011
-  .label VIC_CONTROL2 = $d016
-  .label VIC_MEMORY = $d018
+  .label VICII_CONTROL = $d011
+  .label VICII_CONTROL2 = $d016
+  .label VICII_MEMORY = $d018
   // Processor port data direction register
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
@@ -100,6 +105,7 @@
   .label DTV_GRAPHICS_VIC_BANK = $d03d
   .label print_char_cursor = 2
   .label print_line_cursor = $11
+.segment Code
 main: {
     // asm
     sei
@@ -147,18 +153,18 @@ menu: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - default
   __b1:
@@ -463,18 +469,18 @@ mode_stdchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - default
   __b1:
@@ -598,18 +604,18 @@ mode_ecmchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|VICII_ECM|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|VICII_ECM|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - default
   __b1:
@@ -743,18 +749,18 @@ mode_mcchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL|VIC_MCM
-    lda #VIC_CSEL|VIC_MCM
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL|VICII_MCM
+    lda #VICII_CSEL|VICII_MCM
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - default
   __b1:
@@ -873,18 +879,18 @@ mode_stdbitmap: {
     // Set VIC Bank bits to output - all others to input
     lda #3^BITMAP/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_BMM|VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
     // VIC Memory Pointers
     lda #(BITMAP&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - default
   __b1:
@@ -980,9 +986,11 @@ mode_stdbitmap: {
     // for(byte l=0; l<lines_cnt;l++)
     inc.z l
     jmp __b7
+  .segment Data
     lines_x: .byte 0, $ff, $ff, 0, 0, $80, $ff, $80, 0, $80
     lines_y: .byte 0, 0, $c7, $c7, 0, 0, $64, $c7, $64, 0
 }
+.segment Code
 // High Color Standard Character Mode (LINEAR/CHUNK/COLDIS/ECM/MCM/BMM = 0, HICOL = 1)
 // Resolution: 320x200
 // Normal VIC Adressing:
@@ -1022,18 +1030,18 @@ mode_hicolstdchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
   __b1:
@@ -1152,18 +1160,18 @@ mode_hicolecmchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|VIC_ECM|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|VICII_ECM|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|VIC_ECM|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|VICII_ECM|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
   __b1:
@@ -1293,18 +1301,18 @@ mode_hicolmcchar: {
     // Set VIC Bank bits to output - all others to input
     lda #3^CHARSET/$4000
     sta CIA2
-    // *VIC_CONTROL = VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_DEN|VICII_RSEL|3
     // Set VIC Bank
     // VIC Graphics Mode
-    lda #VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL|VIC_MCM
-    lda #VIC_CSEL|VIC_MCM
-    sta VIC_CONTROL2
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
+    lda #VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL|VICII_MCM
+    lda #VICII_CSEL|VICII_MCM
+    sta VICII_CONTROL2
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)CHARSET&$3fff)/$400))
     // VIC Memory Pointers
     lda #(CHARSET&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     ldx #0
   // DTV Palette - Grey Tones
   __b1:
@@ -1410,13 +1418,13 @@ mode_sixsfred2: {
     // *DTV_CONTROL = DTV_LINEAR
     lda #DTV_LINEAR
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
-    lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_MCM|VIC_CSEL
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    lda #VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEA_START_LO = <PLANEA
     // Linear Graphics Plane A Counter
     lda #0
@@ -1579,8 +1587,10 @@ mode_sixsfred2: {
     jsr mode_ctrl
     // }
     rts
+  .segment Data
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+.segment Code
 // Two Plane Bitmap - generated from the two DTV linear graphics plane counters
 // Two Plane Bitmap Mode (CHUNK/COLDIS/MCM = 0, ECM/BMM/HICOL/LINEAR = 1)
 // Resolution: 320x200
@@ -1608,13 +1618,13 @@ mode_twoplanebitmap: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
-    lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_CSEL
-    lda #VIC_CSEL
-    sta VIC_CONTROL2
+    lda #VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_CSEL
+    lda #VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEA_START_LO = <PLANEA
     // Linear Graphics Plane A Counter
     lda #0
@@ -1819,13 +1829,13 @@ mode_sixsfred: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR
     lda #DTV_HIGHCOLOR|DTV_LINEAR
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
-    lda #VIC_ECM|VIC_BMM|VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_MCM|VIC_CSEL
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    lda #VICII_ECM|VICII_BMM|VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEA_START_LO = <PLANEA
     // Linear Graphics Plane A Counter
     lda #0
@@ -1980,8 +1990,10 @@ mode_sixsfred: {
     jsr mode_ctrl
     // }
     rts
+  .segment Data
     row_bitmask: .byte 0, $55, $aa, $ff
 }
+.segment Code
 //8bpp Pixel Cell Mode (BMM/COLDIS = 0, ECM/MCM/HICOL/LINEAR/CHUNK = 1)
 //Pixel Cell Adressing
 //CharData[8]: (PlaneA[21:0])
@@ -2010,13 +2022,13 @@ mode_8bpppixelcell: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_ECM|VIC_DEN|VIC_RSEL|3
+    // *VICII_CONTROL = VICII_ECM|VICII_DEN|VICII_RSEL|3
     // VIC Graphics Mode
-    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_MCM|VIC_CSEL
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    lda #VICII_ECM|VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_MCM|VICII_CSEL
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEA_START_LO = <PLANEA
     // Linear Graphics Plane A Counter
     lda #0
@@ -2195,13 +2207,13 @@ mode_8bppchunkybmm: {
     // *DTV_CONTROL = DTV_HIGHCOLOR | DTV_LINEAR | DTV_CHUNKY | DTV_COLORRAM_OFF
     lda #DTV_HIGHCOLOR|DTV_LINEAR|DTV_CHUNKY|DTV_COLORRAM_OFF
     sta DTV_CONTROL
-    // *VIC_CONTROL = VIC_ECM | VIC_DEN | VIC_RSEL | 3
+    // *VICII_CONTROL = VICII_ECM | VICII_DEN | VICII_RSEL | 3
     // VIC Graphics Mode
-    lda #VIC_ECM|VIC_DEN|VIC_RSEL|3
-    sta VIC_CONTROL
-    // *VIC_CONTROL2 = VIC_MCM | VIC_CSEL
-    lda #VIC_MCM|VIC_CSEL
-    sta VIC_CONTROL2
+    lda #VICII_ECM|VICII_DEN|VICII_RSEL|3
+    sta VICII_CONTROL
+    // *VICII_CONTROL2 = VICII_MCM | VICII_CSEL
+    lda #VICII_MCM|VICII_CSEL
+    sta VICII_CONTROL2
     // *DTV_PLANEB_START_LO = < < PLANEB
     // Linear Graphics Plane B Counter
     lda #0
@@ -2971,6 +2983,7 @@ bitmap_plot: {
     // }
     rts
 }
+.segment Data
   // Default vallues for the palette
   DTV_PALETTE_DEFAULT: .byte 0, $f, $36, $be, $58, $db, $86, $ff, $29, $26, $3b, 5, 7, $df, $9a, $a
   // Keyboard row bitmask as expected by CIA#1 Port A when reading a specific keyboard matrix row (rows are numbered 0-7)

@@ -43,6 +43,7 @@ public class CParser {
    public static final String PRAGMA_CALLING = "calling";
    public static final String PRAGMA_ZP_RESERVE = "zp_reserve";
    public static final String PRAGMA_CONSTRUCTOR_FOR = "constructor_for";
+   public static final String PRAGMA_INTERRUPT = "interrupt";
 
    /** The Program. */
    private Program program;

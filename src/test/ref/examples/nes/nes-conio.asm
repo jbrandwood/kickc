@@ -8,6 +8,7 @@
 // https://wiki.nesdev.com/w/index.php/PPU_registers
 // http://nesdev.com/2C02%20technical%20reference.TXT
 // Based on: https://github.com/gregkrsak/first_nes written by Greg M. Krsak, 2018. 
+.cpu _6502
   // Nintendo Entertainment System (NES) ROM (Mapper 0 NROM, Vertical Mirroring)
 // https://sadistech.com/nesromtool/romdoc.html
 // https://forums.nesdev.com/viewtopic.php?f=2&t=9896
@@ -35,8 +36,6 @@
 .byte   $01           // 1x 8KB VROM (CHR)
 .byte   %00000001     // Mapper nibble 0000 == No mapping (a simple 16KB PRG + 8KB CHR game)
                       // Mirroring nibble 0001 == Vertical mirroring only
-.segment Code
-
   // Standard Controller Right Button
   .const JOY_RIGHT = 1
   // Standard Controller Left Button

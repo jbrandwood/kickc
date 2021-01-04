@@ -1,7 +1,12 @@
 // Fill a box on the screen using the blitter
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="c64dtv-blitter-box.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const DTV_FEATURE_ENABLE = 1
   // Bit[0] Force Start Strobe when set
   .const DTV_BLIT_FORCE_START = 1
@@ -71,6 +76,7 @@
   .label SCREEN = $400
   // Controls the ALU operation
   .label DTV_BLITTER_ALU = $d33e
+.segment Code
 main: {
     // *DTV_FEATURE = DTV_FEATURE_ENABLE
     lda #DTV_FEATURE_ENABLE
@@ -179,6 +185,7 @@ main: {
     // }
     rts
 }
+.segment Data
   SRCA: .text "camelot rules!"
   .byte 0
   SRCB: .byte $80

@@ -2,12 +2,17 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="simple-multiplexer.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
-  .const VIC_RST8 = $80
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_RST8 = $80
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // The colors of the C64
   .const BLACK = 0
   .const GREEN = 5
@@ -35,6 +40,7 @@
   .label plex_sprite_msb = $a
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
+.segment Code
 __start: {
     // PLEX_SCREEN_PTR = 0x400+0x3f8
     lda #<$400+$3f8
@@ -69,8 +75,8 @@ main: {
 init: {
     // Set the x-positions & pointers
     .label xp = 2
-    // *D011 = VIC_DEN | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_DEN | VICII_RSEL | 3
+    lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // plexInit(SCREEN)
   // Initialize the multiplexer
@@ -158,10 +164,10 @@ loop: {
     lda #BLACK
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
   __b6:
-    // *D011&VIC_RST8
-    lda #VIC_RST8
+    // *D011&VICII_RST8
+    lda #VICII_RST8
     and D011
-    // while((*D011&VIC_RST8)!=0)
+    // while((*D011&VICII_RST8)!=0)
     cmp #0
     bne __b6
     lda #0
@@ -305,10 +311,10 @@ plexShowSprite: {
     // SPRITES_YPOS[plex_sprite_idx2] = ypos
     ldy.z plex_sprite_idx2
     sta SPRITES_YPOS,y
-    // ypos+21
+    // ypos+22
     clc
-    adc #$15
-    // PLEX_FREE_YPOS[plex_free_next] =  ypos+21
+    adc #$16
+    // PLEX_FREE_YPOS[plex_free_next] =  ypos+22
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
     // plex_free_next+1
@@ -376,6 +382,7 @@ plexShowSprite: {
     sta SPRITES_XMSB
     jmp __b2
 }
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.

@@ -1,18 +1,18 @@
 // Example program for the Commander X16
 // Displays raster bars in the border
 
-#pragma target(cx16) 
+#pragma target(cx16)
 #include <cx16.h>
 #include <6502.h>
 #include <string.h>
 
-align(0x100) char SIN[256] = kickasm {{
+__align(0x100) char SIN[256] = kickasm {{
     .fill 256, 99+99*sin(i*2*PI/256)
 }};
 
-align(0x100) char BARS[230];
+__align(0x100) char BARS[230];
 
-align(0x100) char BAR[32] = { 
+__align(0x100) char BAR[32] = {
     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
     0x1f, 0x1e, 0x1d, 0x1c, 0x1b, 0x1a, 0x19, 0x18, 0x17, 0x16, 0x15, 0x14, 0x13, 0x12, 0x11, 0x10,
 };
@@ -42,7 +42,7 @@ volatile char cnt = 2;
 volatile char sin_idx = 100;
 
 // LINE Interrupt Routine
-void irq_line() {
+__interrupt void irq_line() {
     // Update the border
     *VERA_CTRL |= VERA_DCSEL;
     *VERA_DC_HSTART = hstart;
@@ -84,15 +84,4 @@ void irq_line() {
 
     // Reset the LINE interrupt
     *VERA_ISR = VERA_LINE;
-    // Exit CX16 KERNAL IRQ
-    asm {
-        // soft exit (keep kernal running)
-        // jmp $e034 
-        // hard exit (no kernal activity)
-        ply
-        plx
-        pla
-        rti        
-    }
-
 }

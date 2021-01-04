@@ -17,7 +17,7 @@
 .segment Code
   .const KRILL_OK = 0
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   .const GREEN = 5
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
@@ -27,7 +27,7 @@
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
-  .label SPRITES_PTR = SCREEN+SPRITE_PTRS
+  .label SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
 .segment Code
 main: {
     .const toSpritePtr1_return = $ff&SPRITE/$40

@@ -5,9 +5,14 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="perspective.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The rotated point - updated by calling rotate()
   .label xr = $f0
   .label yr = $f1
@@ -18,6 +23,7 @@
   .label print_screen = $400
   .label print_char_cursor = 6
   .label print_line_cursor = 4
+.segment Code
 main: {
     // asm
     sei
@@ -179,6 +185,7 @@ do_perspective: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "("
     .byte 0
     str1: .text ","
@@ -188,6 +195,7 @@ do_perspective: {
     str5: .text ")"
     .byte 0
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -369,6 +377,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // Multiplication tables for seriously fast multiplication. 
   // This version is optimized for speed over accuracy

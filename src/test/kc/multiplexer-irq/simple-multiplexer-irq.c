@@ -4,14 +4,14 @@
 // Location of screen & sprites
 char* SCREEN = 0x0400;
 
-char align(0x40) SPRITE[0x40] = kickasm(resource "balloon.png") {{
+char __align(0x40) SPRITE[0x40] = kickasm(resource "balloon.png") {{
     .var pic = LoadPicture("balloon.png", List().add($000000, $ffffff))
     .for (var y=0; y<21; y++)
         .for (var x=0;x<3; x++)
             .byte pic.getSinglecolorByte(x,y)
 }};
 
-char align(0x100) YSIN[0x100] = kickasm {{
+char __align(0x100) YSIN[0x100] = kickasm {{
     .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
 }};
 
@@ -23,7 +23,7 @@ void main() {
 
 // Initialize the program
 void init() {
-    *D011 = VIC_DEN | VIC_RSEL | 3;
+    *D011 = VICII_DEN | VICII_RSEL | 3;
     // Initialize the multiplexer
     plexInit(SCREEN);
     // Set the x-positions & pointers
@@ -44,14 +44,14 @@ void init() {
     *IRQ_ENABLE = IRQ_RASTER;
     *IRQ_STATUS = IRQ_RASTER;
     *KERNEL_IRQ = &plex_irq;
-    *VIC_CONTROL &= 0x7f;
+    *VICII_CONTROL &= 0x7f;
     *RASTER = 0x0;
     asm { cli }
 }
 
 volatile bool framedone = true;
 
-interrupt(kernel_min) void plex_irq() {
+__interrupt void plex_irq() {
     asm { sei }
     *BORDER_COLOR = WHITE;
     char rasterY;

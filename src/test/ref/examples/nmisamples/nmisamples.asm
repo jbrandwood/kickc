@@ -1,9 +1,14 @@
 // NMI Sample Player using the SID volume register
 // Code by Scan of Desire (Richard-William Loerakker)
 // Sample from ART OF NOISE: MOMENTS IN LOVE
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="nmisamples.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   .const SAMPLE_SIZE = $6100
@@ -23,6 +28,7 @@
   // The vector used when the KERNAL serves NMI interrupts
   .label KERNEL_NMI = $318
   .label sample = 2
+.segment Code
 __start: {
     // sample = SAMPLE
     lda #<SAMPLE
@@ -34,7 +40,6 @@ __start: {
 }
 nmi2: {
     sta rega+1
-    stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -74,16 +79,13 @@ nmi2: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 nmi: {
     sta rega+1
-    stx regx+1
     sty regy+1
     // (VICII->BORDER_COLOR)++;
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -104,11 +106,9 @@ nmi: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // }
   rega:
-    lda #00
-  regx:
-    ldx #00
+    lda #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 main: {
@@ -149,5 +149,6 @@ main: {
     // }
     rts
 }
+.segment Data
 SAMPLE:
 .import binary "moments_sample.bin" 

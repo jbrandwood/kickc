@@ -1,8 +1,13 @@
 // Example of structs that can be optimized by going planar
 // https://cc65.github.io/mailarchive/2010-09/8593.html?fbclid=IwAR1IF_cTdyWcFeKU93VfL2Un1EuLjkGh7O7dQ4EVj4kpJzJAj01dbmEFQt8
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-pos-fill.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_POS_Y = 1
   .const XSPACE = $14
   .const YSPACE = $14
@@ -10,6 +15,7 @@
   .label idx = 4
   .label y = 5
   .label line = 2
+.segment Code
 main: {
     lda #0
     sta.z y
@@ -58,4 +64,5 @@ main: {
     iny
     jmp __b3
 }
+.segment Data
   p: .fill 2*$40, 0

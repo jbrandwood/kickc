@@ -1,10 +1,16 @@
 // Multiple calls with different (constant?) parameters should yield different values at runtime
 // Currently the same constant parameter is passed on every call.
 // Reason: Multiple versioned parameter constants x0#0, x0#1 are only output as a single constant in the ASM .const x0 = 0
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="callconstparam.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 3
+.segment Code
 main: {
     // line(1,2)
     lda #<$400

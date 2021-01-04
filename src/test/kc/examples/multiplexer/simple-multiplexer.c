@@ -5,7 +5,7 @@
 // Location of screen & sprites
 char* SCREEN = $400;
 
-char align(0x100) YSIN[0x100] = kickasm {{
+char __align(0x100) YSIN[0x100] = kickasm {{
     .var min = 50
     .var max = 250-21
     .var ampl = max-min;
@@ -28,7 +28,7 @@ void main() {
 
 // Initialize the program
 void init() {
-    *D011 = VIC_DEN | VIC_RSEL | 3;
+    *D011 = VICII_DEN | VICII_RSEL | 3;
     // Initialize the multiplexer
     plexInit(SCREEN);
     // Set the x-positions & pointers
@@ -63,7 +63,7 @@ void loop() {
         (VICII->BORDER_COLOR)++;
         plexSort();
         VICII->BORDER_COLOR = BLACK;
-        while((*D011&VIC_RST8)!=0) {}
+        while((*D011&VICII_RST8)!=0) {}
         // Show the sprites
         for( char ss: 0..PLEX_COUNT-1) {
             VICII->BORDER_COLOR = BLACK;

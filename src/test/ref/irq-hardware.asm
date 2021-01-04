@@ -1,7 +1,12 @@
 // A minimal working raster IRQ
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const IRQ_RASTER = 1
   .const WHITE = 1
   .const BLACK = 0
@@ -12,7 +17,7 @@
   .const PROCPORT_RAM_IO = $35
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -22,6 +27,7 @@
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+.segment Code
 // Interrupt Routine
 irq: {
     sta rega+1
@@ -39,11 +45,11 @@ irq: {
     sta IRQ_STATUS
     // }
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
 // RAM in $A000, $E000 CHAR ROM in $D000
@@ -61,11 +67,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VIC_CONTROL |=$80
+    // *VICII_CONTROL |=$80
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     lda #0
     sta RASTER

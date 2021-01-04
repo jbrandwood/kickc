@@ -1,13 +1,19 @@
 // Complex C-struct - copying a sub-struct with 2-byte members from C-standard layout to C-standard layout (expecting a memcpy)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-39.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const MOVE_TO = 0
   .const SPLINE_TO = 1
   .const OFFSET_STRUCT_SEGMENT_TO = 1
   .const SIZEOF_STRUCT_VECTOR = 4
   .const OFFSET_STRUCT_VECTOR_Y = 2
   .label SCREEN = $400
+.segment Code
 main: {
     .label to = 4
     .label j = 3
@@ -62,6 +68,7 @@ main: {
     // }
     rts
 }
+.segment Data
   // True type letter c
   letter_c: .byte MOVE_TO
   .word 'a', 'b', 0, 0

@@ -1,10 +1,16 @@
 // Tests rolling sprite MSB by variable amount
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="roll-sprite-msb.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_XMSB = $d010
+.segment Code
 main: {
     .label xpos = 2
     lda #<$c8

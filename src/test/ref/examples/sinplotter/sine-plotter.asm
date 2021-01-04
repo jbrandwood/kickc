@@ -1,11 +1,16 @@
 // Generate a big sine and plot it on a bitmap
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sine-plotter.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
-  .const VIC_CSEL = 8
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
+  .const VICII_CSEL = 8
   // Mask for PROCESSOR_PORT_DDR which allows only memory configuration to be written
   .const PROCPORT_DDR_MEMORY_MASK = 7
   // RAM in 0xA000, 0xE000 I/O in 0xD000
@@ -36,6 +41,7 @@
   .label BITMAP = $2000
   // Remainder after unsigned 16-bit division
   .label rem16u = $12
+.segment Code
 main: {
     .const vicSelectGfxBank1_toDd001_return = 3
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>BITMAP)/4&$f
@@ -49,8 +55,8 @@ main: {
     // *PROCPORT = PROCPORT_RAM_IO
     lda #PROCPORT_RAM_IO
     sta PROCPORT
-    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
     // CIA2->PORT_A_DDR = %00000011
     lda #3
@@ -58,8 +64,8 @@ main: {
     // CIA2->PORT_A = toDd00(gfx)
     lda #vicSelectGfxBank1_toDd001_return
     sta CIA2
-    // *D016 = VIC_CSEL
-    lda #VIC_CSEL
+    // *D016 = VICII_CSEL
+    lda #VICII_CSEL
     sta D016
     // *D018 = toD018(SCREEN, BITMAP)
     lda #toD0181_return
@@ -960,6 +966,7 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
+.segment Data
   // Tables for the plotter - initialized by calling bitmap_init();
   bitmap_plot_ylo: .fill $100, 0
   bitmap_plot_yhi: .fill $100, 0

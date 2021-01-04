@@ -106,7 +106,7 @@ public class Pass2ConstantIfs extends Pass2SsaOptimization {
     * Examine the intervals of the conditions to see if they
     *
     * @param conditional The conditional
-    * @return The literal value of the condition
+    * @return The literal value of the condition. Null if not literal.
     */
    private ConstantLiteral findConditionLiteralInterval(StatementConditionalJump conditional) {
       if(conditional.getrValue1() != null && conditional.getrValue2() != null) {

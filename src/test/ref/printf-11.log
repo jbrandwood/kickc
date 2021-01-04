@@ -458,11 +458,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Tests printf function call rewriting
 // A simple number - with the printf-sub funtions in the same file.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 4
+.segment Code
   // main
 main: {
     .label pct = $156
@@ -507,11 +513,13 @@ main: {
   __breturn:
     // [6] return 
     rts
+  .segment Data
     str: .text "Commodore is "
     .byte 0
     str1: .text " cool"
     .byte 0
 }
+.segment Code
   // cputs
 // cputs(byte* zp(2) str)
 cputs: {
@@ -600,6 +608,7 @@ printf_uint: {
     rts
 }
   // File Data
+.segment Data
   printf_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -671,11 +680,17 @@ Score: 697
 // Tests printf function call rewriting
 // A simple number - with the printf-sub funtions in the same file.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label screen = 4
+.segment Code
   // main
 main: {
     .label pct = $156
@@ -714,11 +729,13 @@ main: {
     // }
     // [6] return 
     rts
+  .segment Data
     str: .text "Commodore is "
     .byte 0
     str1: .text " cool"
     .byte 0
 }
+.segment Code
   // cputs
 // cputs(byte* zp(2) str)
 cputs: {
@@ -812,5 +829,6 @@ printf_uint: {
     rts
 }
   // File Data
+.segment Data
   printf_hextab: .text "0123456789abcdef"
 

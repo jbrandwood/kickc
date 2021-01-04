@@ -1,4 +1,4 @@
-Resolved forward reference irq to interrupt(HARDWARE_ALL) void irq()
+Resolved forward reference irq to __interrupt(hardware_all) void irq()
 
 CONTROL FLOW GRAPH SSA
 
@@ -8,7 +8,7 @@ main: scope:[main]  from __start
   *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   *PROCPORT = PROCPORT_RAM_IO
   *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  *VIC_CONTROL = *VIC_CONTROL | $80
+  *VICII_CONTROL = *VICII_CONTROL | $80
   *RASTER = 0
   *IRQ_ENABLE = IRQ_RASTER
   *HARDWARE_IRQ = &irq
@@ -24,7 +24,7 @@ main::@return: scope:[main]  from main::@1
   return 
   to:@return
 
-interrupt(HARDWARE_ALL) void irq()
+__interrupt(hardware_all) void irq()
 irq: scope:[irq]  from
   *BG_COLOR = WHITE
   *BG_COLOR = BLACK
@@ -59,13 +59,13 @@ const nomodify byte* PROCPORT_DDR = (byte*)0
 const nomodify byte PROCPORT_DDR_MEMORY_MASK = 7
 const nomodify byte PROCPORT_RAM_IO = $35
 const nomodify byte* RASTER = (byte*)$d012
-const nomodify byte* VIC_CONTROL = (byte*)$d011
+const nomodify byte* VICII_CONTROL = (byte*)$d011
 const nomodify byte WHITE = 1
 void __start()
-interrupt(HARDWARE_ALL) void irq()
+__interrupt(hardware_all) void irq()
 void main()
 
-Adding number conversion cast (unumber) $80 in *VIC_CONTROL = *VIC_CONTROL | $80
+Adding number conversion cast (unumber) $80 in *VICII_CONTROL = *VICII_CONTROL | $80
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)0
@@ -105,7 +105,7 @@ Renumbering block main::@2 to main::@1
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(HARDWARE_ALL) void irq()
+__interrupt(hardware_all) void irq()
 irq: scope:[irq]  from
   [0] *BG_COLOR = WHITE
   [1] *BG_COLOR = BLACK
@@ -121,7 +121,7 @@ main: scope:[main]  from
   [5] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK
   [6] *PROCPORT = PROCPORT_RAM_IO
   [7] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR
-  [8] *VIC_CONTROL = *VIC_CONTROL | $80
+  [8] *VICII_CONTROL = *VICII_CONTROL | $80
   [9] *RASTER = 0
   [10] *IRQ_ENABLE = IRQ_RASTER
   [11] *HARDWARE_IRQ = &irq
@@ -133,7 +133,7 @@ main::@1: scope:[main]  from main main::@1
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(HARDWARE_ALL) void irq()
+__interrupt(hardware_all) void irq()
 void main()
 
 Initial phi equivalence classes
@@ -146,7 +146,7 @@ Statement [3] return  [ ] (  [ ] { }  ) always clobbers reg byte a reg byte x re
 Statement [5] *PROCPORT_DDR = PROCPORT_DDR_MEMORY_MASK [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [6] *PROCPORT = PROCPORT_RAM_IO [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [7] *CIA1_INTERRUPT = CIA_INTERRUPT_CLEAR [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [8] *VIC_CONTROL = *VIC_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [8] *VICII_CONTROL = *VICII_CONTROL | $80 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [9] *RASTER = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *IRQ_ENABLE = IRQ_RASTER [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *HARDWARE_IRQ = &irq [ ] (  [ ] { }  ) always clobbers reg byte a 
@@ -156,17 +156,22 @@ Uplift Scope [main]
 Uplift Scope [irq] 
 Uplift Scope [] 
 
-Uplifting [main] best 302 combination 
-Uplifting [irq] best 302 combination 
-Uplifting [] best 302 combination 
+Uplifting [main] best 410 combination 
+Uplifting [irq] best 410 combination 
+Uplifting [] best 410 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -178,7 +183,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const PROCPORT_RAM_IO = $35
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -188,10 +193,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_ALL)
+    // interrupt(isr_hardware_all_entry) -- isr_hardware_all_entry 
     sta rega+1
     stx regx+1
     sty regy+1
@@ -208,13 +214,14 @@ irq: {
     jmp __breturn
     // irq::@return
   __breturn:
-    // [3] return  - exit interrupt(HARDWARE_ALL)
+    // [3] return 
+    // interrupt(isr_hardware_all_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
   // main
@@ -233,11 +240,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // [8] *VIC_CONTROL = *VIC_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // [8] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // [9] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -284,22 +291,27 @@ const nomodify byte* PROCPORT_DDR = (byte*) 0
 const nomodify byte PROCPORT_DDR_MEMORY_MASK = 7
 const nomodify byte PROCPORT_RAM_IO = $35
 const nomodify byte* RASTER = (byte*) 53266
-const nomodify byte* VIC_CONTROL = (byte*) 53265
+const nomodify byte* VICII_CONTROL = (byte*) 53265
 const nomodify byte WHITE = 1
-interrupt(HARDWARE_ALL) void irq()
+__interrupt(hardware_all) void irq()
 void main()
 
 
 
 FINAL ASSEMBLER
-Score: 296
+Score: 404
 
   // File Comments
 // A minimal working raster IRQ
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-hardware.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -311,7 +323,7 @@ Score: 296
   .const PROCPORT_RAM_IO = $35
   .label HARDWARE_IRQ = $fffe
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label IRQ_STATUS = $d019
   .label IRQ_ENABLE = $d01a
   .label BG_COLOR = $d020
@@ -321,10 +333,11 @@ Score: 296
   .label PROCPORT_DDR = 0
   // Processor Port Register controlling RAM/ROM configuration and the datasette
   .label PROCPORT = 1
+.segment Code
   // irq
 // Interrupt Routine
 irq: {
-    // entry interrupt(HARDWARE_ALL)
+    // interrupt(isr_hardware_all_entry) -- isr_hardware_all_entry 
     sta rega+1
     stx regx+1
     sty regy+1
@@ -343,13 +356,14 @@ irq: {
     sta IRQ_STATUS
     // irq::@return
     // }
-    // [3] return  - exit interrupt(HARDWARE_ALL)
+    // [3] return 
+    // interrupt(isr_hardware_all_exit) -- isr_hardware_all_exit 
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
   regy:
-    ldy #00
+    ldy #0
     rti
 }
   // main
@@ -372,12 +386,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1_INTERRUPT
-    // *VIC_CONTROL |=$80
-    // [8] *VIC_CONTROL = *VIC_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
+    // *VICII_CONTROL |=$80
+    // [8] *VICII_CONTROL = *VICII_CONTROL | $80 -- _deref_pbuc1=_deref_pbuc1_bor_vbuc2 
     // Set raster line to $100
     lda #$80
-    ora VIC_CONTROL
-    sta VIC_CONTROL
+    ora VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $00
     // [9] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0

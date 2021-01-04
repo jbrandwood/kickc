@@ -1,6 +1,12 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="true-inline-words.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // constant byte array
     .const b = 4
@@ -29,5 +35,6 @@ main: {
     lda #5
     sta BG_COLOR
     rts
+  .segment Data
     bs: .byte 'c', 'm'
 }

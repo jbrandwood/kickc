@@ -7,7 +7,7 @@ char* const CHARSET = 0xE800;
 const char PAGE1 = ((((unsigned int)SCREEN1) >> 6) & 0xF0) | (((unsigned int)CHARSET >> 10) & 0x0E);
 const char PAGE2 = ((((unsigned int)SCREEN2) >> 6) & 0xF0) | (((unsigned int)CHARSET >> 10) & 0x0E);
 
-const char align($100) sinetable[0x100] = {
+const char __align($100) sinetable[0x100] = {
     0x80, 0x7d, 0x7a, 0x77, 0x74, 0x70, 0x6d, 0x6a,
     0x67, 0x64, 0x61, 0x5e, 0x5b, 0x58, 0x55, 0x52,
     0x4f, 0x4d, 0x4a, 0x47, 0x44, 0x41, 0x3f, 0x3c,
@@ -122,23 +122,23 @@ int main (void)
     tmp = block & 0xFC;
     tmp |= (char)((((unsigned int)SCREEN1) >> 14) ^ 0x03);
     CIA2->PORT_A = tmp;
-    v = *VIC_MEMORY;
+    v = *VICII_MEMORY;
 
     /* Run the demo until a key was hit */
     while (count) {
         /* Build page 1, then make it visible */
         doplasma ((char*)SCREEN1);
-        *VIC_MEMORY = PAGE1;
+        *VICII_MEMORY = PAGE1;
 
         /* Build page 2, then make it visible */
         doplasma ((char*)SCREEN2);
-        *VIC_MEMORY = PAGE2;
+        *VICII_MEMORY = PAGE2;
 
         /* Count frames */
         --count;
     }
 
-    *VIC_MEMORY = v;
+    *VICII_MEMORY = v;
     CIA2->PORT_A = block;
 
     /* Reset screen colors */

@@ -1,11 +1,17 @@
 // Experiments with malloc()
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="memory-heap.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Top of the heap used by malloc()
   .label HEAP_TOP = $a000
   // Head of the heap. Moved backward each malloc()
   .label heap_head = 2
+.segment Code
 main: {
     .label screen = $400
     .label buf1 = 4

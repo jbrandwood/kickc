@@ -1,9 +1,15 @@
 // Demonstrates wrong padding for non-byte arrays.
 // https://gitlab.com/camelot/kickc/-/issues/497
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-16bit-init.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_POINTER = 2
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -25,5 +31,6 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   levelRowOff: .word 1, 2, 3
   .fill 2*$1c, 0

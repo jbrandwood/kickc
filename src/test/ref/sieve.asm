@@ -1,8 +1,13 @@
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Clock cycles per frame (on a C64 PAL)
   .const CLOCKS_PER_FRAME = $4cc8
   // Frames per second (on a C64 PAL)
@@ -35,6 +40,7 @@
   .label print_char_cursor = $a
   .label print_line_cursor = $c
   .label print_char_cursor_1 = $c
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>toD0181_gfx)/4&$f
     .label toD0181_gfx = $1800
@@ -288,6 +294,7 @@ main: {
     adc.z i+1
     sta.z j+1
     jmp __b5
+  .segment Data
     str: .text "Sieve benchmark - calculating primes"
     .byte 0
     str1: .text "between 2 and "
@@ -299,6 +306,7 @@ main: {
     str4: .text "..."
     .byte 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -891,6 +899,7 @@ ultoa_append: {
     sta.z value+3
     jmp __b1
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

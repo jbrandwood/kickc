@@ -13,7 +13,7 @@ __address(0x2000) char LOGO[6*40*8]  = kickasm(resource "logo.png") {{
 
 const unsigned int XSIN_SIZE = 512;
 
-signed int align($100) xsin[XSIN_SIZE];
+signed int __align($100) xsin[XSIN_SIZE];
 
 void main() {
     asm { sei }
@@ -21,7 +21,7 @@ void main() {
     VICII->BG_COLOR = VICII->BG_COLOR1 = DARK_GREY;
     VICII->BG_COLOR2 = BLACK;
     *D018 = toD018(SCREEN, LOGO);
-    *D016 = VIC_MCM;
+    *D016 = VICII_MCM;
     memset(SCREEN, BLACK, 1000);
     memset(COLS, WHITE|8, 1000);
     for(char ch: 0..239) {
@@ -50,7 +50,7 @@ void loop() {
 void render_logo(signed int xpos) {
     char logo_idx;
     char screen_idx;
-    *D016 = VIC_MCM|((char)xpos&7);
+    *D016 = VICII_MCM|((char)xpos&7);
     signed char x_char = (signed char)(xpos/8);
     char line = 0;
     if(xpos<0) {

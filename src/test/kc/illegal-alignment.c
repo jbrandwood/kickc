@@ -1,3 +1,3 @@
 
-byte align($100) b;
+byte __align($100) b;
 

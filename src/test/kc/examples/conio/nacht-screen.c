@@ -12,7 +12,7 @@ const char COLOR_BLACK = 0x00;
 static unsigned char XSize, YSize;
 
 void main() {
-    *VIC_MEMORY = 0x17;
+    *VICII_MEMORY = 0x17;
     screensize(&XSize, &YSize);
     MakeNiceScreen();
     while(!kbhit()) {}

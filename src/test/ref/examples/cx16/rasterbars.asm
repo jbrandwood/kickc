@@ -9,9 +9,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(__start)
-.segment Code
-
-
   .const VERA_DCSEL = 2
   .const VERA_LINE = 2
   .const SIZEOF_BYTE = 1
@@ -156,14 +153,8 @@ irq_line: {
     // Reset the LINE interrupt
     lda #VERA_LINE
     sta VERA_ISR
-    // asm
-    // Exit CX16 KERNAL IRQ
-    ply
-    plx
-    pla
-    rti
     // }
-    rts
+    jmp $e049
   __b14:
     // bar = BARS + SIN[idx]
     ldy.z idx

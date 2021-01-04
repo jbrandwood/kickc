@@ -34,27 +34,26 @@ import java.util.stream.Collectors;
 public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Object> {
 
    /** The C parser keeping track of C-files and lexers */
-   private CParser cParser;
+   private final CParser cParser;
    /** The source ANTLR parse tree of the source file. */
-   private KickCParser.FileContext fileCtx;
+   private final KickCParser.FileContext fileCtx;
    /** The program containing all compile structures. */
-   private Program program;
+   private final Program program;
    /** Used to build the scopes of the source file. */
-   private Stack<Scope> scopeStack;
-   /** The memory area used by default for variables. */
-   private Variable.MemoryArea defaultMemoryArea;
+   private final Stack<Scope> scopeStack;
    /** All #pragma constructor_for() statements. Collected during parsing and handled by {@link #generate()} before returning. */
-   private List<KickCParser.PragmaContext> pragmaConstructorFors;
+   private final List<KickCParser.PragmaContext> pragmaConstructorFors;
 
-   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding) {
+
+   public Pass0GenerateStatementSequence(CParser cParser, KickCParser.FileContext fileCtx, Program program, Procedure.CallingConvention initialCallingConvention, StringEncoding defaultEncoding, String defaultInterruptType) {
       this.cParser = cParser;
       this.fileCtx = fileCtx;
       this.program = program;
       this.scopeStack = new Stack<>();
-      this.defaultMemoryArea = Variable.MemoryArea.ZEROPAGE_MEMORY;
       this.currentCallingConvention = initialCallingConvention;
       this.currentEncoding = defaultEncoding;
       this.pragmaConstructorFors = new ArrayList();
+      this.currentInterruptType = defaultInterruptType;
       scopeStack.push(program.getScope());
    }
 
@@ -250,6 +249,9 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          case CParser.PRAGMA_CALLING:
             currentCallingConvention = pragmaParamCallingConvention(pragmaParamSingle(ctx));
             break;
+         case CParser.PRAGMA_INTERRUPT:
+            this.currentInterruptType = pragmaParamName(pragmaParamSingle(ctx));
+            break;
          case CParser.PRAGMA_ZP_RESERVE:
             List<Integer> reservedZps = pragmaParamRanges(ctx.pragmaParam());
             program.addReservedZps(reservedZps);
@@ -372,11 +374,14 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    /** The current calling convention for procedures. */
    private Procedure.CallingConvention currentCallingConvention;
 
-   /** The current code segment - if null the default segment is used. */
+   /** The current code segment. */
    private String currentCodeSegment = Scope.SEGMENT_CODE_DEFAULT;
 
-   /** The current data segment - if null the default segment is used. */
+   /** The current data segment. */
    private String currentDataSegment = Scope.SEGMENT_DATA_DEFAULT;
+
+   /** The current default interrupt type. */
+   private String currentInterruptType;
 
    @Override
    public Object visitDeclFunction(KickCParser.DeclFunctionContext ctx) {
@@ -1215,13 +1220,11 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    public Object visitDirectiveInterrupt(KickCParser.DirectiveInterruptContext ctx) {
       String interruptType;
       if(ctx.getChildCount() > 1) {
-         interruptType = ctx.getChild(2).getText().toUpperCase(Locale.ENGLISH);
+         interruptType = ctx.getChild(2).getText().toLowerCase(Locale.ENGLISH);
       } else {
-         // The default interrupt type
-         interruptType = Procedure.InterruptType.DEFAULT.name();
+         interruptType = currentInterruptType;
       }
-      Procedure.InterruptType type = Procedure.InterruptType.valueOf(interruptType);
-      return new Directive.Interrupt(type);
+      return new Directive.Interrupt(interruptType);
    }
 
    @Override
@@ -1435,7 +1438,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    }
 
    /** The loops being generated. */
-   private Stack<Loop> loopStack = new Stack<>();
+   private final Stack<Loop> loopStack = new Stack<>();
 
    @Override
    public Void visitStmtWhile(KickCParser.StmtWhileContext ctx) {

@@ -5,7 +5,7 @@
 
 char* const SCREEN = 0x0400;
 char* const SPRITE = 0x2000;
-char* const SPRITES = SCREEN+SPRITE_PTRS;
+char* const SPRITES = SCREEN+OFFSET_SPRITE_PTRS;
 
 void* const GENERATOR = 0x0900;
 

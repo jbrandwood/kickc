@@ -13,9 +13,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-.segment Code
-
-
   .const RED = 2
   // Default address of screen color matrix
   .label DEFAULT_COLORRAM = $9600

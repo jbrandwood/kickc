@@ -1,9 +1,7 @@
 package dk.camelot64.kickc.asm;
 
 /** The end of a scope */
-public class AsmScopeEnd implements AsmLine {
-
-   private int index;
+public class AsmScopeEnd extends AsmLine {
 
    public AsmScopeEnd() {
    }
@@ -21,16 +19,6 @@ public class AsmScopeEnd implements AsmLine {
    @Override
    public String getAsm() {
       return "}";
-   }
-
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
    }
 
    @Override

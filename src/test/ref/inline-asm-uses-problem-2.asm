@@ -1,8 +1,14 @@
 // Demonstrates problem with inline ASM usages - and early-detect constants
 // zp2 should be forced to live at address $fc - but is identified to be constant by Pass1EarlyConstantIdentification
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-asm-uses-problem-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label zp2 = $fc
     // zp2 = 0x0400

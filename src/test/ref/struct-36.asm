@@ -1,9 +1,15 @@
 // Minimal struct with C-Standard behavior - global main-mem struct should be initialized in data, not code
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-36.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_POINT_INITIALS = 1
   .label SCREEN = $400
+.segment Code
 main: {
     // SCREEN[0] = point1.x
     lda point1
@@ -17,6 +23,7 @@ main: {
     // }
     rts
 }
+.segment Data
   point1: .byte 2
   .text "jg"
   .byte 0

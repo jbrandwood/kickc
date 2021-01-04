@@ -32,7 +32,7 @@ public class Pass5UnnecesaryLoadElimination extends Pass5AsmOptimization {
             AsmLine line = lineIt.next();
             if(line instanceof AsmInstruction) {
                AsmInstruction instruction = (AsmInstruction) line;
-               if(instruction.isDontOptimize()) {
+               if(instruction.isNoOptimize()) {
                   continue;
                }
                CpuOpcode cpuOpcode = instruction.getCpuOpcode();

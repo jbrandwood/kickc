@@ -1,10 +1,16 @@
 // Test the 45GS02 CPU
 // A program that uses 45GS02 instructions
 .cpu _45gs02
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cpu-45gs02.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label sum = 3
     .label addend = 7

@@ -3,12 +3,18 @@
 // In this model 255 binary represents 1.0 - meaning that 255*255 = 255
 // Uses principles from C=Hacking #16 https://codebase64.org/doku.php?id=magazines:chacking16
 // Utilizes the fact that a*b = ((a+b)/2)^2 - ((a-b)/2)^2
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="fastmultiply-127.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_char_cursor = 8
   .label print_line_cursor = 2
+.segment Code
 main: {
     // print_cls()
     jsr print_cls
@@ -137,11 +143,13 @@ main: {
     jsr print_mulf8s127
     // }
     rts
+  .segment Data
     str: .text "unsigned"
     .byte 0
     str1: .text "signed"
     .byte 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -520,6 +528,7 @@ print_sint: {
     sta.z w+1
     jmp __b2
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // mulf_sqr tables will contain f(x)=int(x*x/4) and g(x) = f(x-255).
   // f(x) = ( x * x )/4

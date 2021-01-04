@@ -1,5 +1,5 @@
 // Test the #define for the plus4 target platform
-#pragma target(plus4basic)
+#pragma target(plus4)
 
 char * const SCREEN = 0x0c00;
 

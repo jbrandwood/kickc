@@ -1,5 +1,5 @@
 // VIC 20 Raster bars
-#pragma target(vic20basic)
+#pragma target(vic20)
 #include <vic20.h>
 
 void main() {

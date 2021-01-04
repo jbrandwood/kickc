@@ -6,5 +6,3 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(%E)
-.segment Code
-

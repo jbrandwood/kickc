@@ -1,14 +1,20 @@
 // Attempt to store and use a sine on zeropage
 // $00/$11 is carefully chosen to be $ff - which plays well with the processor port
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="zeropage-sinus.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The offset of the sprite pointers from the screen start address
-  .const SPRITE_PTRS = $3f8
+  .const OFFSET_SPRITE_PTRS = $3f8
   .label SPRITES_XPOS = $d000
   .label SPRITES_YPOS = $d001
   .label SPRITES_ENABLE = $d015
   .label SCREEN = $400
+.segment Code
 main: {
     // asm
     // Stop interrupts
@@ -22,9 +28,9 @@ main: {
     sta SPRITES_YPOS
     // SPRITES_XPOS[0] = 100
     sta SPRITES_XPOS
-    // *(SCREEN+SPRITE_PTRS) = (byte)(SPRITE/0x40)
+    // *(SCREEN+OFFSET_SPRITE_PTRS) = (byte)(SPRITE/0x40)
     lda #$ff&SPRITE/$40
-    sta SCREEN+SPRITE_PTRS
+    sta SCREEN+OFFSET_SPRITE_PTRS
     // saveZeropage()
     jsr saveZeropage
     // sinZeropage()
@@ -99,6 +105,7 @@ restoreZeropage: {
     // }
     rts
 }
+.segment Data
   // A 256-byte (co)sine (with $ff in the first two entries)
   .align $100
 SINTABLE:

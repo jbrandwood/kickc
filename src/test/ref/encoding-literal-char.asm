@@ -1,7 +1,12 @@
 // Tests encoding of literal chars
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="encoding-literal-char.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
 .encoding "petscii_mixed"
   .const cpm = 'A'
 .encoding "petscii_upper"
@@ -11,6 +16,7 @@
 .encoding "screencode_upper"
   .const csu = 'A'
   .label screen = $400
+.segment Code
 main: {
     // screen[idx++] = cpm
     lda #cpm
@@ -39,6 +45,7 @@ main: {
     // }
     rts
 }
+.segment Data
 .encoding "petscii_mixed"
   spm: .text "A"
   .byte 0

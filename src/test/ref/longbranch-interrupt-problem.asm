@@ -1,10 +1,16 @@
 // Tests that long branch fixing works with interrupt exits (to $ea81)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="longbranch-interrupt-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label KERNEL_IRQ = $314
   .label BG_COLOR = $d020
   .label col = 2
+.segment Code
 __start: {
     // col = 0
     lda #0

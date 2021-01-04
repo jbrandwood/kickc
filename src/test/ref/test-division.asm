@@ -1,7 +1,12 @@
 // Test the binary division library
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="test-division.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = 4
   .label print_char_cursor = $c
@@ -9,6 +14,7 @@
   .label rem16u = $a
   // Remainder after signed 16 bit division
   .label rem16s = $a
+.segment Code
 main: {
     // print_cls()
     jsr print_cls
@@ -105,9 +111,11 @@ test_8u: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     jmp __b1
+  .segment Data
     dividends: .byte $ff, $ff, $ff, $ff, $ff, $ff
     divisors: .byte 5, 7, $b, $d, $11, $13
 }
+.segment Code
 test_16u: {
     .label dividend = 6
     .label divisor = 8
@@ -188,9 +196,11 @@ test_16u: {
     bne __b1
     // }
     rts
+  .segment Data
     dividends: .word $ffff, $ffff, $ffff, $ffff, $ffff, $ffff
     divisors: .word 5, 7, $b, $d, $11, $13
 }
+.segment Code
 test_8s: {
     .label dividend = 3
     .label divisor = $12
@@ -257,9 +267,11 @@ test_8s: {
     bne __b1
     // }
     rts
+  .segment Data
     dividends: .byte $7f, -$7f, -$7f, $7f, $7f, $7f
     divisors: .byte 5, 7, -$b, -$d, $11, $13
 }
+.segment Code
 test_16s: {
     .label dividend = 6
     .label divisor = $14
@@ -336,9 +348,11 @@ test_16s: {
     bne __b1
     // }
     rts
+  .segment Data
     dividends: .word $7fff, $7fff, -$7fff, -$7fff, $7fff, -$7fff
     divisors: .word 5, -7, $b, -$d, -$11, $13
 }
+.segment Code
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 memset: {
     .const c = ' '
@@ -851,6 +865,7 @@ divr16s: {
     ldy #1
     jmp __b2
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   str: .text " / "
   .byte 0

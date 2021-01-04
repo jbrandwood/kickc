@@ -1,7 +1,13 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="consolidate-constant-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 main: {
     // *(screen+40*j+39) = 0
     lda #0

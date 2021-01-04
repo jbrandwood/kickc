@@ -1,8 +1,14 @@
 // Test inlining a slightly complex print function (containing an if)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-function-if.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = $400
+.segment Code
 main: {
     .const toUpper1_ch = 'c'
     .const toUpper2_ch = 'm'

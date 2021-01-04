@@ -1,9 +1,15 @@
 // Tests using integer conditions in && and || operator
 // This should produce '01010101', '00110011', '00010001', '01110111' at the top of the screen
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="condition-integer-4.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label __4 = 2
     .label __5 = 3

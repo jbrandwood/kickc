@@ -1,4 +1,4 @@
-Resolved forward reference irq_play to interrupt(KERNEL_KEYBOARD) void irq_play()
+Resolved forward reference irq_play to __interrupt(rom_sys_c64) void irq_play()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
@@ -19,7 +19,7 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_KEYBOARD) void irq_play()
+__interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   call *musicPlay 
@@ -60,7 +60,7 @@ const byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
 const byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
 void __start()
-interrupt(KERNEL_KEYBOARD) void irq_play()
+__interrupt(rom_sys_c64) void irq_play()
 void main()
 const void()* musicInit = (void()*)MUSIC
 const void()* musicPlay = (void()*)MUSIC+3
@@ -98,7 +98,7 @@ Coalesced down to 0 phi equivalence classes
 
 FINAL CONTROL FLOW GRAPH
 
-interrupt(KERNEL_KEYBOARD) void irq_play()
+__interrupt(rom_sys_c64) void irq_play()
 irq_play: scope:[irq_play]  from
   [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR)
   [1] call *musicPlay 
@@ -126,7 +126,7 @@ main::@return: scope:[main]  from main
 
 
 VARIABLE REGISTER WEIGHTS
-interrupt(KERNEL_KEYBOARD) void irq_play()
+__interrupt(rom_sys_c64) void irq_play()
 void main()
 
 Initial phi equivalence classes
@@ -149,12 +149,12 @@ Uplift Scope [main]
 Uplift Scope [irq_play] 
 Uplift Scope [] 
 
-Uplifting [MOS6526_CIA] best 89 combination 
-Uplifting [MOS6569_VICII] best 89 combination 
-Uplifting [MOS6581_SID] best 89 combination 
-Uplifting [main] best 89 combination 
-Uplifting [irq_play] best 89 combination 
-Uplifting [] best 89 combination 
+Uplifting [MOS6526_CIA] best 116 combination 
+Uplifting [MOS6569_VICII] best 116 combination 
+Uplifting [MOS6581_SID] best 116 combination 
+Uplifting [main] best 116 combination 
+Uplifting [irq_play] best 116 combination 
+Uplifting [] best 116 combination 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -163,9 +163,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="music_irq.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -187,10 +192,11 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
+.segment Code
   // irq_play
 // Raster IRQ Routine playing music
 irq_play: {
-    // entry interrupt(KERNEL_KEYBOARD)
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // [1] call *musicPlay 
@@ -205,7 +211,8 @@ irq_play: {
     jmp __breturn
     // irq_play::@return
   __breturn:
-    // [4] return  - exit interrupt(KERNEL_KEYBOARD)
+    // [4] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
     jmp $ea31
 }
   // main
@@ -246,6 +253,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 .pc = $1000 "MUSIC"
 // SID tune at an absolute address
 MUSIC:
@@ -276,7 +284,7 @@ const byte OFFSET_STRUCT_MOS6569_VICII_IRQ_ENABLE = $1a
 const byte OFFSET_STRUCT_MOS6569_VICII_IRQ_STATUS = $19
 const byte OFFSET_STRUCT_MOS6569_VICII_RASTER = $12
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
-interrupt(KERNEL_KEYBOARD) void irq_play()
+__interrupt(rom_sys_c64) void irq_play()
 void main()
 const void()* musicInit = (void()*)MUSIC
 const void()* musicPlay = (void()*)MUSIC+3
@@ -284,7 +292,7 @@ const void()* musicPlay = (void()*)MUSIC+3
 
 
 FINAL ASSEMBLER
-Score: 83
+Score: 110
 
   // File Comments
 // A simple SID music player using RASTER IRQ
@@ -292,9 +300,14 @@ Score: 83
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="music_irq.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
@@ -316,10 +329,11 @@ Score: 83
   .label musicInit = MUSIC
   // Pointer to the music play routine
   .label musicPlay = MUSIC+3
+.segment Code
   // irq_play
 // Raster IRQ Routine playing music
 irq_play: {
-    // entry interrupt(KERNEL_KEYBOARD)
+    // interrupt(isr_rom_sys_c64_entry) -- isr_rom_sys_c64_entry 
     // (VICII->BORDER_COLOR)++;
     // [0] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = ++ *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) -- _deref_pbuc1=_inc__deref_pbuc1 
     inc VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
@@ -337,7 +351,8 @@ irq_play: {
     dec VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // irq_play::@return
     // }
-    // [4] return  - exit interrupt(KERNEL_KEYBOARD)
+    // [4] return 
+    // interrupt(isr_rom_sys_c64_exit) -- isr_rom_sys_c64_exit 
     jmp $ea31
 }
   // main
@@ -385,6 +400,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
 .pc = $1000 "MUSIC"
 // SID tune at an absolute address
 MUSIC:

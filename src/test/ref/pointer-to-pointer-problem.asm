@@ -1,9 +1,15 @@
 // Demonstrates problem with pointer to pointer
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-to-pointer-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label p1 = 0
   .label p2 = 0
+.segment Code
 main: {
     // **p1 = **p2
     ldy p2

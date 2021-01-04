@@ -4592,9 +4592,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sandbox.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label zp1 = $61
   // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
@@ -4602,6 +4607,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label TIMEHI = $a1
   .label TIMELO = $a2
   .label VICBANK = $d018
+.segment Code
   // main
 main: {
     .label __3 = 6
@@ -4867,11 +4873,13 @@ main: {
     // [49] *zp2 = ++ *zp2 -- _deref_pbuc1=_inc__deref_pbuc1 
     inc zp2
     jmp __b4_from___b12
+  .segment Data
     str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm"
     .byte 0
     str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm"
     .byte 0
 }
+.segment Code
   // myprintf
 // myprintf(byte* zp($15) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
 myprintf: {
@@ -5435,8 +5443,10 @@ myprintf: {
     // [129] myprintf::bLen#7 = ++ myprintf::bLen#10 -- vbuz1=_inc_vbuz1 
     inc.z bLen
     jmp __b32_from___b37
+  .segment Data
     buf6: .fill 6, 0
 }
+.segment Code
   // Print
 Print: {
     // asm { ldy#0 loop: ldastrTemp,y beqdone jsr$FFD2 iny jmploop done:  }
@@ -5979,6 +5989,7 @@ append: {
     jmp __b1_from___b2
 }
   // File Data
+.segment Data
   // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
   strTemp: .fill $64, 0
 
@@ -6249,13 +6260,13 @@ Removing instruction __b29:
 Succesful ASM optimization Pass5RedundantLabelElimination
 Removing instruction __b24:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [295] bcs __b3 to bcc
-Fixing long branch [188] beq __b4 to bne
-Fixing long branch [205] bcc __b28 to bcs
-Fixing long branch [208] beq __b28 to bne
-Fixing long branch [219] beq __b8 to bne
-Fixing long branch [516] bne __b5 to beq
-Fixing long branch [521] bcs __b5 to bcc
+Fixing long branch [303] bcs __b3 to bcc
+Fixing long branch [196] beq __b4 to bne
+Fixing long branch [213] bcc __b28 to bcs
+Fixing long branch [216] beq __b28 to bne
+Fixing long branch [227] beq __b8 to bne
+Fixing long branch [526] bne __b5 to beq
+Fixing long branch [531] bcs __b5 to bcc
 
 FINAL SYMBOL TABLE
 void Print()
@@ -6510,9 +6521,14 @@ Score: 361442
 // Follows the C99 standard by truncating toward zero on negative results.
 // See http://www.open-std.org/jtc1/sc22/wg14/www/docs/n1124.pdf section 6.5.5
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sandbox.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label zp1 = $61
   // #define zp1 *(byte *)0x61 -- allows "zp1" vs "*zp1" below -- not supported --  https://gitlab.com/camelot/kickc/issues/169
@@ -6520,6 +6536,7 @@ Score: 361442
   .label TIMEHI = $a1
   .label TIMELO = $a2
   .label VICBANK = $d018
+.segment Code
   // main
 main: {
     .label __3 = 6
@@ -6775,11 +6792,13 @@ main: {
     // [49] *zp2 = ++ *zp2 -- _deref_pbuc1=_inc__deref_pbuc1 
     inc zp2
     jmp __b4
+  .segment Data
     str: .text "200 DIV16U: %5d,%4d IN %04d FRAMESm"
     .byte 0
     str1: .text "200 DIV10 : %5d,%4d IN %04d FRAMESm"
     .byte 0
 }
+.segment Code
   // myprintf
 // myprintf(byte* zp($15) str, word zp(2) w1, word zp(4) w2, word zp(6) w3)
 myprintf: {
@@ -7308,8 +7327,10 @@ myprintf: {
     // [129] myprintf::bLen#7 = ++ myprintf::bLen#10 -- vbuz1=_inc_vbuz1 
     inc.z bLen
     jmp __b32
+  .segment Data
     buf6: .fill 6, 0
 }
+.segment Code
   // Print
 Print: {
     // asm
@@ -7842,6 +7863,7 @@ append: {
     jmp __b1
 }
   // File Data
+.segment Data
   // "char buf16[16]" is the normal way -- not supported -- https://gitlab.com/camelot/kickc/issues/162
   strTemp: .fill $64, 0
 

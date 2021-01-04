@@ -9,7 +9,7 @@
 
 
 char* const RASTER = 0xd012;
-char* const VIC_MEMORY = 0xd018;
+char* const VICII_MEMORY = 0xd018;
 char* const SCREEN = 0x0400;
 char* const BG_COLOR = 0xd021;
 char* const COLS = 0xd800;
@@ -20,7 +20,7 @@ char MESSAGE[] = "hello world!";
 
 void main() {
     // Initialize screen memory
-    *VIC_MEMORY = 0x14;
+    *VICII_MEMORY = 0x14;
     // Init screen/colors
     memset(SCREEN, ' ', 40*25);
     memset(COLS, WHITE, 40*25);
@@ -64,6 +64,6 @@ export struct SysCall SYSCALLS[] = {
     { JMP, &syscall2, NOP }
     };
 
-export align(0x100) struct SysCall SYSCALL_RESET[] = {
+export __align(0x100) struct SysCall SYSCALL_RESET[] = {
     { JMP, &main, NOP }
 };

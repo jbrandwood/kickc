@@ -1,9 +1,14 @@
 // Calculates the 1000 first primes
 // From A Comparison of Language Speed, The Transactor, March 1987, Volume 7, Issue 5
 // http://csbruce.com/cbm/transactor/pdfs/trans_v7_i05.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="primes-1000-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_WORD = 2
   .label print_screen = $400
   .label print_char_cursor = $f
@@ -15,6 +20,7 @@
   .label test_idx = $c
   // The index of the last prime we put into the PRIME[] table
   .label prime_idx = 3
+.segment Code
 main: {
     .label __0 = 7
     .label __14 = $11
@@ -439,6 +445,7 @@ utoa_append: {
     sta.z value+1
     jmp __b1
 }
+.segment Data
   // The digits used for numbers
   DIGITS: .text "0123456789abcdef"
   // Values of decimal digits

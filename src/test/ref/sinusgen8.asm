@@ -3,9 +3,14 @@
 // Generates sine using the series sin(x) = x - x^/3! + x^-5! - x^7/7! ...
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
   // PI in u[4.12] format
@@ -15,6 +20,7 @@
   .const wavelength = $c0
   .label print_screen = $400
   .label print_char_cursor = 8
+.segment Code
 main: {
     .label i = 2
     // sin8s_gen(sintab2, wavelength)
@@ -45,9 +51,11 @@ main: {
     bne __b1
     // }
     rts
+  .segment Data
     str: .text "  "
     .byte 0
 }
+.segment Code
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
 // wavelength - the number of sine points in a total sine wavelength (the size of the table)
@@ -540,6 +548,7 @@ mul8u: {
     rol.z mb+1
     jmp __b1
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))

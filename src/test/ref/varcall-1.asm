@@ -1,9 +1,15 @@
 // Test __varcall calling convention
 // Parameter passing
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="varcall-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label BGCOL = $d021
+.segment Code
 // setbg(byte zp(2) col)
 setbg: {
     .label col = 2

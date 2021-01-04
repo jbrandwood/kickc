@@ -1,10 +1,16 @@
 // Minimal struct with C-Standard behavior - call parameter (not supported yet)
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-22.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SIZEOF_STRUCT_POINT = 2
   .const OFFSET_STRUCT_POINT_Y = 1
   .label SCREEN = $400
+.segment Code
 main: {
     .label point1 = 2
     .label point2 = 4
@@ -42,5 +48,6 @@ print: {
     // }
     rts
 }
+.segment Data
   __0: .byte 2, 3
   __1: .byte 4, 5

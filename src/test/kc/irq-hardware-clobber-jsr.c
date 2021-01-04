@@ -9,7 +9,7 @@ void main() {
     // Disable CIA 1 Timer IRQ
     CIA1->INTERRUPT = CIA_INTERRUPT_CLEAR;
     // Set raster line to $100
-    *VIC_CONTROL |=$80;
+    *VICII_CONTROL |=$80;
     *RASTER = $00;
     // Enable Raster Interrupt
     *IRQ_ENABLE = IRQ_RASTER;
@@ -22,7 +22,7 @@ void main() {
 }
 
 // Interrupt Routine
-interrupt(hardware_clobber) void irq() {
+__interrupt(hardware_clobber) void irq() {
     do_irq();
 }
 

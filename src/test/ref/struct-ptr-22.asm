@@ -1,11 +1,17 @@
 // Demonstrates problem with missing parenthesis in double-dereferencing
 // https://gitlab.com/camelot/kickc/issues/270
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="struct-ptr-22.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_char_cursor = 4
   .label print_line_cursor = 6
+.segment Code
 main: {
     .label __13 = 6
     // file->bufEdit = 0x4000
@@ -69,11 +75,13 @@ main: {
     jsr print_ln
     // }
     rts
+  .segment Data
     str: .text "$0000="
     .byte 0
     str1: .text "$4004="
     .byte 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -198,5 +206,6 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   files: .fill 2*$a, 0

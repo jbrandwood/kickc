@@ -1,4 +1,4 @@
-Resolved forward reference plex_irq to interrupt(KERNEL_MIN) void plex_irq()
+Resolved forward reference plex_irq to __interrupt(rom_min_c64) void plex_irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call plexSetScreen plexInit::screen 
 Inlined call call plexFreePrepare 
@@ -110,7 +110,7 @@ plexShowSprite: scope:[plexShowSprite]  from plex_irq::@3
 plexShowSprite::plexFreeAdd1: scope:[plexShowSprite]  from plexShowSprite
   plexShowSprite::plex_sprite_idx2#2 = phi( plexShowSprite/plexShowSprite::plex_sprite_idx2#0 )
   plexShowSprite::plexFreeAdd1_ypos#1 = phi( plexShowSprite/plexShowSprite::plexFreeAdd1_ypos#0 )
-  plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $15
+  plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $16
   PLEX_FREE_YPOS[plex_free_next] = plexShowSprite::plexFreeAdd1_$0
   plexShowSprite::plexFreeAdd1_$1 = plex_free_next + 1
   plexShowSprite::plexFreeAdd1_$2 = plexShowSprite::plexFreeAdd1_$1 & 7
@@ -168,7 +168,7 @@ main::@return: scope:[main]  from main::@2
 
 void init()
 init: scope:[init]  from main
-  *D011 = VIC_DEN|VIC_RSEL|3
+  *D011 = VICII_DEN|VICII_RSEL|3
   plexInit::screen#0 = SCREEN
   call plexInit 
   to:init::@5
@@ -204,7 +204,7 @@ init::@4: scope:[init]  from init::@3
   *IRQ_ENABLE = IRQ_RASTER
   *IRQ_STATUS = IRQ_RASTER
   *KERNEL_IRQ = &plex_irq
-  *VIC_CONTROL = *VIC_CONTROL & $7f
+  *VICII_CONTROL = *VICII_CONTROL & $7f
   *RASTER = 0
   asm { cli  }
   to:init::@return
@@ -212,7 +212,7 @@ init::@return: scope:[init]  from init::@4
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void plex_irq()
+__interrupt(rom_min_c64) void plex_irq()
 plex_irq: scope:[plex_irq]  from
   asm { sei  }
   *BORDER_COLOR = WHITE
@@ -358,9 +358,9 @@ const nomodify byte* SPRITES_ENABLE = (byte*)$d015
 const nomodify byte* SPRITES_XMSB = (byte*)$d010
 const nomodify byte* SPRITES_XPOS = (byte*)$d000
 const nomodify byte* SPRITES_YPOS = (byte*)$d001
-const nomodify byte* VIC_CONTROL = (byte*)$d011
-const nomodify byte VIC_DEN = $10
-const nomodify byte VIC_RSEL = 8
+const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte VICII_DEN = $10
+const nomodify byte VICII_RSEL = 8
 const nomodify byte WHITE = 1
 const byte* YSIN[$100]  = kickasm {{ .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
  }}
@@ -480,7 +480,7 @@ byte plexSort::s#2
 byte plexSort::s#3
 byte plexSort::s#4
 volatile byte plex_free_next loadstore
-interrupt(KERNEL_MIN) void plex_irq()
+__interrupt(rom_min_c64) void plex_irq()
 bool~ plex_irq::$0
 byte~ plex_irq::$2
 bool~ plex_irq::$3
@@ -516,8 +516,8 @@ Adding number conversion cast (unumber) 0 in PLEX_FREE_YPOS[plexSort::plexFreePr
 Adding number conversion cast (unumber) 0 in plex_free_next = 0
 Adding number conversion cast (unumber) 2 in plexShowSprite::$0 = plex_sprite_idx * 2
 Adding number conversion cast (unumber) plexShowSprite::$0 in plexShowSprite::$0 = plex_sprite_idx * (unumber)2
-Adding number conversion cast (unumber) $15 in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $15
-Adding number conversion cast (unumber) plexShowSprite::plexFreeAdd1_$0 in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + (unumber)$15
+Adding number conversion cast (unumber) $16 in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $16
+Adding number conversion cast (unumber) plexShowSprite::plexFreeAdd1_$0 in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + (unumber)$16
 Adding number conversion cast (unumber) 1 in plexShowSprite::plexFreeAdd1_$1 = plex_free_next + 1
 Adding number conversion cast (unumber) plexShowSprite::plexFreeAdd1_$1 in plexShowSprite::plexFreeAdd1_$1 = plex_free_next + (unumber)1
 Adding number conversion cast (unumber) 7 in plexShowSprite::plexFreeAdd1_$2 = plexShowSprite::plexFreeAdd1_$1 & 7
@@ -532,13 +532,13 @@ Adding number conversion cast (unumber) plexShowSprite::$6 in plexShowSprite::$6
 Adding number conversion cast (unumber) 1 in plex_sprite_msb = plex_sprite_msb << 1
 Adding number conversion cast (unumber) 0 in plexShowSprite::$7 = plex_sprite_msb == 0
 Adding number conversion cast (unumber) 1 in plex_sprite_msb = 1
-Adding number conversion cast (unumber) VIC_DEN|VIC_RSEL|3 in *D011 = VIC_DEN|VIC_RSEL|3
-Adding number conversion cast (unumber) 3 in *D011 = ((unumber)) VIC_DEN|VIC_RSEL|3
+Adding number conversion cast (unumber) VICII_DEN|VICII_RSEL|3 in *D011 = VICII_DEN|VICII_RSEL|3
+Adding number conversion cast (unumber) 3 in *D011 = ((unumber)) VICII_DEN|VICII_RSEL|3
 Adding number conversion cast (unumber) $40 in PLEX_PTR[init::sx#2] = (byte)SPRITE/$40
 Adding number conversion cast (unumber) 9 in init::xp#1 = init::xp#2 + 9
 Adding number conversion cast (unumber) 1 in init::sx#1 = init::sx#2 + rangenext(0,PLEX_COUNT-1)
 Adding number conversion cast (unumber) $ff in *SPRITES_ENABLE = $ff
-Adding number conversion cast (unumber) $7f in *VIC_CONTROL = *VIC_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
 Adding number conversion cast (unumber) 0 in *RASTER = 0
 Adding number conversion cast (unumber) 2 in plex_irq::$4 = *RASTER + 2
 Adding number conversion cast (unumber) plex_irq::$4 in plex_irq::$4 = *RASTER + (unumber)2
@@ -554,7 +554,7 @@ Inlining cast plex_sprite_msb = (unumber)1
 Inlining cast PLEX_FREE_YPOS[plexSort::plexFreePrepare1_s#2] = (unumber)0
 Inlining cast plex_free_next = (unumber)0
 Inlining cast plex_sprite_msb = (unumber)1
-Inlining cast *D011 = (unumber)VIC_DEN|VIC_RSEL|(unumber)3
+Inlining cast *D011 = (unumber)VICII_DEN|VICII_RSEL|(unumber)3
 Inlining cast *SPRITES_ENABLE = (unumber)$ff
 Inlining cast *RASTER = (unumber)0
 Inlining cast *RASTER = (unumber)0
@@ -586,7 +586,7 @@ Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
-Simplifying constant integer cast $15
+Simplifying constant integer cast $16
 Simplifying constant integer cast 1
 Simplifying constant integer cast 7
 Simplifying constant integer cast 0
@@ -596,7 +596,7 @@ Simplifying constant integer cast 7
 Simplifying constant integer cast 1
 Simplifying constant integer cast 0
 Simplifying constant integer cast 1
-Simplifying constant integer cast VIC_DEN|VIC_RSEL|(unumber)3
+Simplifying constant integer cast VICII_DEN|VICII_RSEL|(unumber)3
 Simplifying constant integer cast 3
 Simplifying constant integer cast $40
 Simplifying constant integer cast 9
@@ -623,7 +623,7 @@ Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
-Finalized unsigned number type (byte) $15
+Finalized unsigned number type (byte) $16
 Finalized unsigned number type (byte) 1
 Finalized unsigned number type (byte) 7
 Finalized unsigned number type (byte) 0
@@ -650,7 +650,7 @@ Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to byte in plexSort::$1 = plexSort::m#2 + 1
 Inferred type updated to byte in plexSort::$4 = plexSort::s#3 + 1
 Inferred type updated to byte in plexShowSprite::$0 = plex_sprite_idx * 2
-Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $15
+Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#1 + $16
 Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$1 = plex_free_next + 1
 Inferred type updated to byte in plexShowSprite::plexFreeAdd1_$2 = plexShowSprite::plexFreeAdd1_$1 & 7
 Inferred type updated to byte in plexShowSprite::$9 = $ff ^ plex_sprite_msb
@@ -921,7 +921,7 @@ __start::@return: scope:[__start]  from __start::@1
   [9] return 
   to:@return
 
-interrupt(KERNEL_MIN) void plex_irq()
+__interrupt(rom_min_c64) void plex_irq()
 plex_irq: scope:[plex_irq]  from
   asm { sei  }
   [11] *BORDER_COLOR = WHITE
@@ -979,7 +979,7 @@ plexShowSprite: scope:[plexShowSprite]  from plex_irq::@3
   [33] SPRITES_YPOS[plexShowSprite::plex_sprite_idx2#0] = plexShowSprite::plexFreeAdd1_ypos#0
   to:plexShowSprite::plexFreeAdd1
 plexShowSprite::plexFreeAdd1: scope:[plexShowSprite]  from plexShowSprite
-  [34] plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#0 + $15
+  [34] plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#0 + $16
   [35] PLEX_FREE_YPOS[plex_free_next] = plexShowSprite::plexFreeAdd1_$0
   [36] plexShowSprite::plexFreeAdd1_$1 = plex_free_next + 1
   [37] plexShowSprite::plexFreeAdd1_$2 = plexShowSprite::plexFreeAdd1_$1 & 7
@@ -1018,7 +1018,7 @@ plexShowSprite::@1: scope:[plexShowSprite]  from plexShowSprite::@5
 
 void init()
 init: scope:[init]  from main
-  [57] *D011 = VIC_DEN|VIC_RSEL|3
+  [57] *D011 = VICII_DEN|VICII_RSEL|3
   [58] call plexInit 
   to:init::@1
 init::@1: scope:[init]  from init init::@1
@@ -1046,7 +1046,7 @@ init::@4: scope:[init]  from init::@3
   [73] *IRQ_ENABLE = IRQ_RASTER
   [74] *IRQ_STATUS = IRQ_RASTER
   [75] *KERNEL_IRQ = &plex_irq
-  [76] *VIC_CONTROL = *VIC_CONTROL & $7f
+  [76] *VICII_CONTROL = *VICII_CONTROL & $7f
   [77] *RASTER = 0
   asm { cli  }
   to:init::@return
@@ -1222,7 +1222,7 @@ byte plexSort::s#2 2000002.0
 byte plexSort::s#3 2.05000025E7
 byte plexSort::s#6 2000002.0
 volatile byte plex_free_next loadstore 322.40625
-interrupt(KERNEL_MIN) void plex_irq()
+__interrupt(rom_min_c64) void plex_irq()
 byte~ plex_irq::$4 11.0
 byte plex_irq::plexFreeNextYpos1_return
 byte plex_irq::plexFreeNextYpos1_return#0 4.0
@@ -1371,7 +1371,7 @@ Statement [47] *SPRITES_XMSB = *SPRITES_XMSB & plexShowSprite::$9 [ PLEX_SCREEN_
 Statement [53] if(plex_sprite_msb!=0) goto plexShowSprite::@return [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [54] plex_sprite_msb = 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [56] *SPRITES_XMSB = *SPRITES_XMSB | plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
-Statement [57] *D011 = VIC_DEN|VIC_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [57] *D011 = VICII_DEN|VICII_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [60] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:2 [ init::sx#2 init::sx#1 ]
 Statement [61] init::$3 = init::sx#2 << 1 [ init::sx#2 init::xp#2 init::$3 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 init::$3 ] { }  ) always clobbers reg byte a 
@@ -1384,7 +1384,7 @@ Statement [72] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUP
 Statement [73] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [74] *IRQ_STATUS = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [75] *KERNEL_IRQ = &plex_irq [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
-Statement [76] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [76] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [77] *RASTER = 0 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [82] if(framedone) goto loop::@3 [ framedone loop::sin_idx#6 ] ( main:8::loop:29 [ framedone loop::sin_idx#6 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:6 [ loop::sin_idx#6 loop::sin_idx#1 ]
@@ -1439,7 +1439,7 @@ Statement [47] *SPRITES_XMSB = *SPRITES_XMSB & plexShowSprite::$9 [ PLEX_SCREEN_
 Statement [53] if(plex_sprite_msb!=0) goto plexShowSprite::@return [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [54] plex_sprite_msb = 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [56] *SPRITES_XMSB = *SPRITES_XMSB | plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
-Statement [57] *D011 = VIC_DEN|VIC_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [57] *D011 = VICII_DEN|VICII_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [60] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [61] init::$3 = init::sx#2 << 1 [ init::sx#2 init::xp#2 init::$3 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 init::$3 ] { }  ) always clobbers reg byte a 
 Statement [62] PLEX_XPOS[init::$3] = init::xp#2 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
@@ -1450,7 +1450,7 @@ Statement [72] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUP
 Statement [73] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [74] *IRQ_STATUS = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [75] *KERNEL_IRQ = &plex_irq [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
-Statement [76] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [76] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [77] *RASTER = 0 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [82] if(framedone) goto loop::@3 [ framedone loop::sin_idx#6 ] ( main:8::loop:29 [ framedone loop::sin_idx#6 ] { }  ) always clobbers reg byte a 
 Statement [83] *BORDER_COLOR = RED [ loop::sin_idx#6 ] ( main:8::loop:29 [ loop::sin_idx#6 ] { }  ) always clobbers reg byte a 
@@ -1497,7 +1497,7 @@ Statement [47] *SPRITES_XMSB = *SPRITES_XMSB & plexShowSprite::$9 [ PLEX_SCREEN_
 Statement [53] if(plex_sprite_msb!=0) goto plexShowSprite::@return [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [54] plex_sprite_msb = 1 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
 Statement [56] *SPRITES_XMSB = *SPRITES_XMSB | plex_sprite_msb [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] ( plexShowSprite:13 [ PLEX_SCREEN_PTR plex_show_idx plex_sprite_idx plex_sprite_msb plex_free_next ] { }  ) always clobbers reg byte a 
-Statement [57] *D011 = VIC_DEN|VIC_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [57] *D011 = VICII_DEN|VICII_RSEL|3 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [60] PLEX_PTR[init::sx#2] = (byte)SPRITE/$40 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
 Statement [61] init::$3 = init::sx#2 << 1 [ init::sx#2 init::xp#2 init::$3 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 init::$3 ] { }  ) always clobbers reg byte a 
 Statement [62] PLEX_XPOS[init::$3] = init::xp#2 [ init::sx#2 init::xp#2 ] ( main:8::init:27 [ framedone init::sx#2 init::xp#2 ] { }  ) always clobbers reg byte a 
@@ -1508,7 +1508,7 @@ Statement [72] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUP
 Statement [73] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [74] *IRQ_STATUS = IRQ_RASTER [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [75] *KERNEL_IRQ = &plex_irq [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
-Statement [76] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
+Statement [76] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [77] *RASTER = 0 [ ] ( main:8::init:27 [ framedone ] { }  ) always clobbers reg byte a 
 Statement [82] if(framedone) goto loop::@3 [ framedone loop::sin_idx#6 ] ( main:8::loop:29 [ framedone loop::sin_idx#6 ] { }  ) always clobbers reg byte a 
 Statement [83] *BORDER_COLOR = RED [ loop::sin_idx#6 ] ( main:8::loop:29 [ loop::sin_idx#6 ] { }  ) always clobbers reg byte a 
@@ -1575,66 +1575,66 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [plexSort] best 60293 combination reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] zp[1]:37 [ plexSort::s#2 ] zp[1]:10 [ plexSort::m#2 plexSort::m#1 ] zp[1]:36 [ plexSort::nxt_y#0 ] zp[1]:35 [ plexSort::nxt_idx#0 ] 
+Uplifting [plexSort] best 60320 combination reg byte x [ plexSort::s#3 plexSort::s#1 plexSort::s#6 ] reg byte x [ plexSort::plexFreePrepare1_s#2 plexSort::plexFreePrepare1_s#1 ] zp[1]:37 [ plexSort::s#2 ] zp[1]:10 [ plexSort::m#2 plexSort::m#1 ] zp[1]:36 [ plexSort::nxt_y#0 ] zp[1]:35 [ plexSort::nxt_idx#0 ] 
 Limited combination testing to 10 combinations of 972 possible.
-Uplifting [loop] best 58363 combination reg byte y [ loop::sy#2 loop::sy#1 ] reg byte x [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ] zp[1]:6 [ loop::sin_idx#6 loop::sin_idx#1 ] 
+Uplifting [loop] best 58390 combination reg byte y [ loop::sy#2 loop::sy#1 ] reg byte x [ loop::y_idx#2 loop::y_idx#3 loop::y_idx#1 ] zp[1]:6 [ loop::sin_idx#6 loop::sin_idx#1 ] 
 Limited combination testing to 10 combinations of 27 possible.
-Uplifting [plexInit] best 58243 combination reg byte x [ plexInit::i#2 plexInit::i#1 ] 
-Uplifting [init] best 57993 combination reg byte x [ init::ss#2 init::ss#1 ] reg byte x [ init::sx#2 init::sx#1 ] zp[1]:34 [ init::$3 ] zp[2]:3 [ init::xp#2 init::xp#1 ] 
+Uplifting [plexInit] best 58270 combination reg byte x [ plexInit::i#2 plexInit::i#1 ] 
+Uplifting [init] best 58020 combination reg byte x [ init::ss#2 init::ss#1 ] reg byte x [ init::sx#2 init::sx#1 ] zp[1]:34 [ init::$3 ] zp[2]:3 [ init::xp#2 init::xp#1 ] 
 Limited combination testing to 10 combinations of 36 possible.
-Uplifting [] best 57993 combination zp[1]:19 [ framedone ] zp[1]:16 [ plex_sprite_idx ] zp[1]:18 [ plex_free_next ] zp[1]:17 [ plex_sprite_msb ] zp[1]:15 [ plex_show_idx ] zp[2]:13 [ PLEX_SCREEN_PTR ] 
-Uplifting [plexShowSprite] best 57983 combination reg byte a [ plexShowSprite::plexFreeAdd1_$0 ] reg byte x [ plexShowSprite::plexFreeAdd1_$1 ] zp[1]:26 [ plexShowSprite::plexFreeAdd1_$2 ] zp[1]:27 [ plexShowSprite::xpos_idx#0 ] zp[1]:29 [ plexShowSprite::$2 ] zp[1]:30 [ plexShowSprite::$3 ] zp[1]:31 [ plexShowSprite::$9 ] zp[1]:32 [ plexShowSprite::$5 ] zp[1]:33 [ plexShowSprite::$6 ] zp[1]:23 [ plexShowSprite::plexFreeAdd1_ypos#0 ] zp[1]:28 [ plexShowSprite::$11 ] zp[1]:22 [ plexShowSprite::plex_sprite_idx2#0 ] 
+Uplifting [] best 58020 combination zp[1]:19 [ framedone ] zp[1]:16 [ plex_sprite_idx ] zp[1]:18 [ plex_free_next ] zp[1]:17 [ plex_sprite_msb ] zp[1]:15 [ plex_show_idx ] zp[2]:13 [ PLEX_SCREEN_PTR ] 
+Uplifting [plexShowSprite] best 58010 combination reg byte a [ plexShowSprite::plexFreeAdd1_$0 ] reg byte x [ plexShowSprite::plexFreeAdd1_$1 ] zp[1]:26 [ plexShowSprite::plexFreeAdd1_$2 ] zp[1]:27 [ plexShowSprite::xpos_idx#0 ] zp[1]:29 [ plexShowSprite::$2 ] zp[1]:30 [ plexShowSprite::$3 ] zp[1]:31 [ plexShowSprite::$9 ] zp[1]:32 [ plexShowSprite::$5 ] zp[1]:33 [ plexShowSprite::$6 ] zp[1]:23 [ plexShowSprite::plexFreeAdd1_ypos#0 ] zp[1]:28 [ plexShowSprite::$11 ] zp[1]:22 [ plexShowSprite::plex_sprite_idx2#0 ] 
 Limited combination testing to 10 combinations of 1572864 possible.
-Uplifting [plex_irq] best 57920 combination zp[1]:21 [ plex_irq::$4 ] reg byte x [ plex_irq::plexFreeNextYpos1_return#0 ] 
-Uplifting [MOS6526_CIA] best 57920 combination 
-Uplifting [MOS6569_VICII] best 57920 combination 
-Uplifting [MOS6581_SID] best 57920 combination 
-Uplifting [main] best 57920 combination 
-Uplifting [__start] best 57920 combination 
+Uplifting [plex_irq] best 57947 combination zp[1]:21 [ plex_irq::$4 ] reg byte x [ plex_irq::plexFreeNextYpos1_return#0 ] 
+Uplifting [MOS6526_CIA] best 57947 combination 
+Uplifting [MOS6569_VICII] best 57947 combination 
+Uplifting [MOS6581_SID] best 57947 combination 
+Uplifting [main] best 57947 combination 
+Uplifting [__start] best 57947 combination 
 Attempting to uplift remaining variables inzp[1]:37 [ plexSort::s#2 ]
-Uplifting [plexSort] best 57320 combination reg byte x [ plexSort::s#2 ] 
+Uplifting [plexSort] best 57347 combination reg byte x [ plexSort::s#2 ] 
 Attempting to uplift remaining variables inzp[1]:10 [ plexSort::m#2 plexSort::m#1 ]
-Uplifting [plexSort] best 57320 combination zp[1]:10 [ plexSort::m#2 plexSort::m#1 ] 
+Uplifting [plexSort] best 57347 combination zp[1]:10 [ plexSort::m#2 plexSort::m#1 ] 
 Attempting to uplift remaining variables inzp[1]:36 [ plexSort::nxt_y#0 ]
-Uplifting [plexSort] best 57320 combination zp[1]:36 [ plexSort::nxt_y#0 ] 
+Uplifting [plexSort] best 57347 combination zp[1]:36 [ plexSort::nxt_y#0 ] 
 Attempting to uplift remaining variables inzp[1]:35 [ plexSort::nxt_idx#0 ]
-Uplifting [plexSort] best 57320 combination zp[1]:35 [ plexSort::nxt_idx#0 ] 
+Uplifting [plexSort] best 57347 combination zp[1]:35 [ plexSort::nxt_idx#0 ] 
 Attempting to uplift remaining variables inzp[1]:34 [ init::$3 ]
-Uplifting [init] best 57280 combination reg byte a [ init::$3 ] 
+Uplifting [init] best 57307 combination reg byte a [ init::$3 ] 
 Attempting to uplift remaining variables inzp[1]:19 [ framedone ]
-Uplifting [] best 57280 combination zp[1]:19 [ framedone ] 
+Uplifting [] best 57307 combination zp[1]:19 [ framedone ] 
 Attempting to uplift remaining variables inzp[1]:6 [ loop::sin_idx#6 loop::sin_idx#1 ]
-Uplifting [loop] best 57280 combination zp[1]:6 [ loop::sin_idx#6 loop::sin_idx#1 ] 
+Uplifting [loop] best 57307 combination zp[1]:6 [ loop::sin_idx#6 loop::sin_idx#1 ] 
 Attempting to uplift remaining variables inzp[1]:16 [ plex_sprite_idx ]
-Uplifting [] best 57280 combination zp[1]:16 [ plex_sprite_idx ] 
+Uplifting [] best 57307 combination zp[1]:16 [ plex_sprite_idx ] 
 Attempting to uplift remaining variables inzp[1]:18 [ plex_free_next ]
-Uplifting [] best 57280 combination zp[1]:18 [ plex_free_next ] 
+Uplifting [] best 57307 combination zp[1]:18 [ plex_free_next ] 
 Attempting to uplift remaining variables inzp[1]:17 [ plex_sprite_msb ]
-Uplifting [] best 57280 combination zp[1]:17 [ plex_sprite_msb ] 
+Uplifting [] best 57307 combination zp[1]:17 [ plex_sprite_msb ] 
 Attempting to uplift remaining variables inzp[1]:15 [ plex_show_idx ]
-Uplifting [] best 57280 combination zp[1]:15 [ plex_show_idx ] 
+Uplifting [] best 57307 combination zp[1]:15 [ plex_show_idx ] 
 Attempting to uplift remaining variables inzp[1]:26 [ plexShowSprite::plexFreeAdd1_$2 ]
-Uplifting [plexShowSprite] best 57276 combination reg byte a [ plexShowSprite::plexFreeAdd1_$2 ] 
+Uplifting [plexShowSprite] best 57303 combination reg byte a [ plexShowSprite::plexFreeAdd1_$2 ] 
 Attempting to uplift remaining variables inzp[1]:27 [ plexShowSprite::xpos_idx#0 ]
-Uplifting [plexShowSprite] best 57270 combination reg byte a [ plexShowSprite::xpos_idx#0 ] 
+Uplifting [plexShowSprite] best 57297 combination reg byte a [ plexShowSprite::xpos_idx#0 ] 
 Attempting to uplift remaining variables inzp[1]:29 [ plexShowSprite::$2 ]
-Uplifting [plexShowSprite] best 57264 combination reg byte a [ plexShowSprite::$2 ] 
+Uplifting [plexShowSprite] best 57291 combination reg byte a [ plexShowSprite::$2 ] 
 Attempting to uplift remaining variables inzp[1]:30 [ plexShowSprite::$3 ]
-Uplifting [plexShowSprite] best 57258 combination reg byte a [ plexShowSprite::$3 ] 
+Uplifting [plexShowSprite] best 57285 combination reg byte a [ plexShowSprite::$3 ] 
 Attempting to uplift remaining variables inzp[1]:31 [ plexShowSprite::$9 ]
-Uplifting [plexShowSprite] best 57252 combination reg byte a [ plexShowSprite::$9 ] 
+Uplifting [plexShowSprite] best 57279 combination reg byte a [ plexShowSprite::$9 ] 
 Attempting to uplift remaining variables inzp[1]:32 [ plexShowSprite::$5 ]
-Uplifting [plexShowSprite] best 57246 combination reg byte x [ plexShowSprite::$5 ] 
+Uplifting [plexShowSprite] best 57273 combination reg byte x [ plexShowSprite::$5 ] 
 Attempting to uplift remaining variables inzp[1]:33 [ plexShowSprite::$6 ]
-Uplifting [plexShowSprite] best 57242 combination reg byte a [ plexShowSprite::$6 ] 
+Uplifting [plexShowSprite] best 57269 combination reg byte a [ plexShowSprite::$6 ] 
 Attempting to uplift remaining variables inzp[1]:23 [ plexShowSprite::plexFreeAdd1_ypos#0 ]
-Uplifting [plexShowSprite] best 57233 combination reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ] 
+Uplifting [plexShowSprite] best 57260 combination reg byte a [ plexShowSprite::plexFreeAdd1_ypos#0 ] 
 Attempting to uplift remaining variables inzp[1]:28 [ plexShowSprite::$11 ]
-Uplifting [plexShowSprite] best 57226 combination reg byte x [ plexShowSprite::$11 ] 
+Uplifting [plexShowSprite] best 57253 combination reg byte x [ plexShowSprite::$11 ] 
 Attempting to uplift remaining variables inzp[1]:22 [ plexShowSprite::plex_sprite_idx2#0 ]
-Uplifting [plexShowSprite] best 57226 combination zp[1]:22 [ plexShowSprite::plex_sprite_idx2#0 ] 
+Uplifting [plexShowSprite] best 57253 combination zp[1]:22 [ plexShowSprite::plex_sprite_idx2#0 ] 
 Attempting to uplift remaining variables inzp[1]:21 [ plex_irq::$4 ]
-Uplifting [plex_irq] best 57226 combination zp[1]:21 [ plex_irq::$4 ] 
+Uplifting [plex_irq] best 57253 combination zp[1]:21 [ plex_irq::$4 ] 
 Allocated (was zp[2]:3) zp[2]:2 [ init::xp#2 init::xp#1 ]
 Allocated (was zp[1]:6) zp[1]:4 [ loop::sin_idx#6 loop::sin_idx#1 ]
 Allocated (was zp[1]:10) zp[1]:5 [ plexSort::m#2 plexSort::m#1 ]
@@ -1656,14 +1656,19 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="simple-multiplexer-irq.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -1679,7 +1684,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D011 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -1702,6 +1707,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
   .label framedone = $c
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -1743,7 +1749,7 @@ __start: {
   // plex_irq
 plex_irq: {
     .label __4 = $d
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // asm { sei  }
     sei
     // [11] *BORDER_COLOR = WHITE -- _deref_pbuc1=vbuc2 
@@ -1811,7 +1817,8 @@ plex_irq: {
     jmp __breturn
     // plex_irq::@return
   __breturn:
-    // [24] return  - exit interrupt(KERNEL_MIN)
+    // [24] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // plex_irq::@1
   __b1:
@@ -1859,9 +1866,9 @@ plexShowSprite: {
     jmp plexFreeAdd1
     // plexShowSprite::plexFreeAdd1
   plexFreeAdd1:
-    // [34] plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#0 + $15 -- vbuaa=vbuaa_plus_vbuc1 
+    // [34] plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#0 + $16 -- vbuaa=vbuaa_plus_vbuc1 
     clc
-    adc #$15
+    adc #$16
     // [35] PLEX_FREE_YPOS[plex_free_next] = plexShowSprite::plexFreeAdd1_$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
@@ -1950,8 +1957,8 @@ plexShowSprite: {
 init: {
     // Set the x-positions & pointers
     .label xp = 2
-    // [57] *D011 = VIC_DEN|VIC_RSEL|3 -- _deref_pbuc1=vbuc2 
-    lda #VIC_DEN|VIC_RSEL|3
+    // [57] *D011 = VICII_DEN|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
+    lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // [58] call plexInit 
   // Initialize the multiplexer
@@ -2046,10 +2053,10 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
-    // [76] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [76] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // [77] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
     sta RASTER
@@ -2309,6 +2316,7 @@ plexSort: {
     rts
 }
   // File Data
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.
@@ -2487,9 +2495,9 @@ const nomodify byte* SPRITES_ENABLE = (byte*) 53269
 const nomodify byte* SPRITES_XMSB = (byte*) 53264
 const nomodify byte* SPRITES_XPOS = (byte*) 53248
 const nomodify byte* SPRITES_YPOS = (byte*) 53249
-const nomodify byte* VIC_CONTROL = (byte*) 53265
-const nomodify byte VIC_DEN = $10
-const nomodify byte VIC_RSEL = 8
+const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte VICII_DEN = $10
+const nomodify byte VICII_RSEL = 8
 const nomodify byte WHITE = 1
 const byte* YSIN[$100]  = kickasm {{ .fill $100, round(139.5+89.5*sin(toRadians(360*i/256)))
  }}
@@ -2558,7 +2566,7 @@ byte plexSort::s#2 reg byte x 2000002.0
 byte plexSort::s#3 reg byte x 2.05000025E7
 byte plexSort::s#6 reg byte x 2000002.0
 volatile byte plex_free_next loadstore zp[1]:11 322.40625
-interrupt(KERNEL_MIN) void plex_irq()
+__interrupt(rom_min_c64) void plex_irq()
 byte~ plex_irq::$4 zp[1]:13 11.0
 byte plex_irq::plexFreeNextYpos1_return
 byte plex_irq::plexFreeNextYpos1_return#0 reg byte x 4.0
@@ -2604,7 +2612,7 @@ reg byte x [ plexSort::s#2 ]
 
 
 FINAL ASSEMBLER
-Score: 43627
+Score: 43654
 
   // File Comments
 // A simple usage of the flexible sprite multiplexer routine
@@ -2612,14 +2620,19 @@ Score: 43627
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="simple-multiplexer-irq.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -2635,7 +2648,7 @@ Score: 43627
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D011 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -2658,6 +2671,7 @@ Score: 43627
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
   .label framedone = $c
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -2697,7 +2711,7 @@ __start: {
   // plex_irq
 plex_irq: {
     .label __4 = $d
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // asm
     // asm { sei  }
     sei
@@ -2763,7 +2777,8 @@ plex_irq: {
     cli
     // plex_irq::@return
     // }
-    // [24] return  - exit interrupt(KERNEL_MIN)
+    // [24] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // plex_irq::@1
   __b1:
@@ -2811,11 +2826,11 @@ plexShowSprite: {
     ldy.z plex_sprite_idx2
     sta SPRITES_YPOS,y
     // plexShowSprite::plexFreeAdd1
-    // ypos+21
-    // [34] plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#0 + $15 -- vbuaa=vbuaa_plus_vbuc1 
+    // ypos+22
+    // [34] plexShowSprite::plexFreeAdd1_$0 = plexShowSprite::plexFreeAdd1_ypos#0 + $16 -- vbuaa=vbuaa_plus_vbuc1 
     clc
-    adc #$15
-    // PLEX_FREE_YPOS[plex_free_next] =  ypos+21
+    adc #$16
+    // PLEX_FREE_YPOS[plex_free_next] =  ypos+22
     // [35] PLEX_FREE_YPOS[plex_free_next] = plexShowSprite::plexFreeAdd1_$0 -- pbuc1_derefidx_vbuz1=vbuaa 
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
@@ -2916,9 +2931,9 @@ plexShowSprite: {
 init: {
     // Set the x-positions & pointers
     .label xp = 2
-    // *D011 = VIC_DEN | VIC_RSEL | 3
-    // [57] *D011 = VIC_DEN|VIC_RSEL|3 -- _deref_pbuc1=vbuc2 
-    lda #VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_DEN | VICII_RSEL | 3
+    // [57] *D011 = VICII_DEN|VICII_RSEL|3 -- _deref_pbuc1=vbuc2 
+    lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // plexInit(SCREEN)
     // [58] call plexInit 
@@ -3012,11 +3027,11 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
-    // *VIC_CONTROL &= 0x7f
-    // [76] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL &= 0x7f
+    // [76] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = 0x0
     // [77] *RASTER = 0 -- _deref_pbuc1=vbuc2 
     lda #0
@@ -3255,6 +3270,7 @@ plexSort: {
     rts
 }
   // File Data
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.

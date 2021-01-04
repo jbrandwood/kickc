@@ -1,18 +1,24 @@
 // Plots a circle on a bitmap using Bresenham's Circle algorithm
 // Coded by Richard-William Loerakker
 // Original Source https://bcaorganizer.blogspot.com/p/c-program-for_21.html?fbclid=IwAR0iL8pYcCqhCPa6LmtQ9qej-YonYVepY2cBegYRIWO0l8RPeOnTVniMAac
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-circle.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   .const BLUE = 6
   .label BORDER_COLOR = $d020
   .label D011 = $d011
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
 main: {
     // fill(BITMAP,40*25*8,0)
     ldx #0
@@ -39,12 +45,12 @@ main: {
     // *BORDER_COLOR = BLUE
     lda #BLUE
     sta BORDER_COLOR
-    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
-    // *VIC_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
+    // *VICII_MEMORY =  (byte)((((word)SCREEN&$3fff)/$40)|(((word)BITMAP&$3fff)/$400))
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // circle(100,100,50)
     jsr circle
   __b1:
@@ -425,4 +431,5 @@ plot: {
     // }
     rts
 }
+.segment Data
   bitmask: .byte $80, $40, $20, $10, 8, 4, 2, 1

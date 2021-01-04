@@ -1,9 +1,15 @@
 // Tests printf function call rewriting
 // A simple number - with the printf-sub funtions in the same file.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printf-11.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 4
+.segment Code
 main: {
     .label pct = $156
     // printf("Commodore is %x cool", pct)
@@ -26,11 +32,13 @@ main: {
     jsr cputs
     // }
     rts
+  .segment Data
     str: .text "Commodore is "
     .byte 0
     str1: .text " cool"
     .byte 0
 }
+.segment Code
 // cputs(byte* zp(2) str)
 cputs: {
     .label str = 2
@@ -100,4 +108,5 @@ printf_uint: {
     // }
     rts
 }
+.segment Data
   printf_hextab: .text "0123456789abcdef"

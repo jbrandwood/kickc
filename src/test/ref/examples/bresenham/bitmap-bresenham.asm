@@ -1,33 +1,39 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="bitmap-bresenham.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .const VIC_BMM = $20
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_BMM = $20
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
   .const OFFSET_STRUCT_MOS6569_VICII_BG_COLOR = $21
   .const lines_cnt = 8
   .label D011 = $d011
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
   .label SCREEN = $400
   .label BITMAP = $2000
+.segment Code
 main: {
     // VICII->BORDER_COLOR = 0
     lda #0
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // VICII->BG_COLOR = 0
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BG_COLOR
-    // *D011 = VIC_BMM|VIC_DEN|VIC_RSEL|3
-    lda #VIC_BMM|VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_BMM|VICII_DEN|VICII_RSEL|3
+    lda #VICII_BMM|VICII_DEN|VICII_RSEL|3
     sta D011
-    // *VIC_MEMORY =  (char)((((unsigned int)SCREEN&$3fff)/$40)|(((unsigned int)BITMAP&$3fff)/$400))
+    // *VICII_MEMORY =  (char)((((unsigned int)SCREEN&$3fff)/$40)|(((unsigned int)BITMAP&$3fff)/$400))
     lda #(SCREEN&$3fff)/$40|(BITMAP&$3fff)/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     // bitmap_init(BITMAP)
     jsr bitmap_init
     // bitmap_clear()
@@ -527,6 +533,7 @@ bitmap_plot: {
     // }
     rts
 }
+.segment Data
   // Tables for the plotter - initialized by calling bitmap_draw_init();
   bitmap_plot_xlo: .fill $100, 0
   bitmap_plot_xhi: .fill $100, 0

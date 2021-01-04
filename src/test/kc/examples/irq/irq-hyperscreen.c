@@ -24,10 +24,10 @@ void main() {
 }
 
 // Interrupt Routine 1
-interrupt(hardware_stack) void irq_bottom_1() {
+__interrupt(hardware_clobber) void irq_bottom_1() {
     VICII->BORDER_COLOR = WHITE;
     // Set screen height to 24 lines - this is done after the border should have started drawing - so it wont start
-    VICII->CONTROL1 &= ($ff^VIC_RSEL);
+    VICII->CONTROL1 &= ($ff^VICII_RSEL);
     // Acknowledge the IRQ
     VICII->IRQ_STATUS = IRQ_RASTER;
     // Trigger IRQ 2 at line $fd
@@ -37,10 +37,10 @@ interrupt(hardware_stack) void irq_bottom_1() {
 }
 
 // Interrupt Routine 2
-interrupt(hardware_stack) void irq_bottom_2() {
+__interrupt(hardware_clobber) void irq_bottom_2() {
     VICII->BORDER_COLOR = WHITE;
     // Set screen height back to 25 lines (preparing for the next screen)
-    VICII->CONTROL1 |= VIC_RSEL;
+    VICII->CONTROL1 |= VICII_RSEL;
     // Acknowledge the IRQ
     VICII->IRQ_STATUS = IRQ_RASTER;
     // Trigger IRQ 1 at line $fa

@@ -1,10 +1,15 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="scrolllogo.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
-  .const VIC_MCM = $10
+  .const VICII_MCM = $10
   // The colors of the C64
   .const BLACK = 0
   .const WHITE = 1
@@ -32,6 +37,7 @@
   // Remainder after unsigned 16-bit division
   .label rem16u = $1a
   .label xsin_idx = 6
+.segment Code
 main: {
     .const toD0181_return = (>(SCREEN&$3fff)*4)|(>LOGO)/4&$f
     // asm
@@ -50,8 +56,8 @@ main: {
     // *D018 = toD018(SCREEN, LOGO)
     lda #toD0181_return
     sta D018
-    // *D016 = VIC_MCM
-    lda #VIC_MCM
+    // *D016 = VICII_MCM
+    lda #VICII_MCM
     sta D016
     // memset(SCREEN, BLACK, 1000)
     ldx #BLACK
@@ -589,9 +595,9 @@ render_logo: {
     // (char)xpos&7
     lda.z xpos
     and #7
-    // VIC_MCM|((char)xpos&7)
-    ora #VIC_MCM
-    // *D016 = VIC_MCM|((char)xpos&7)
+    // VICII_MCM|((char)xpos&7)
+    ora #VICII_MCM
+    // *D016 = VICII_MCM|((char)xpos&7)
     sta D016
     // xpos/8
     lda.z xpos+1
@@ -913,6 +919,7 @@ mul16u: {
     rol.z mb+3
     jmp __b1
 }
+.segment Data
   .align $100
   xsin: .fill 2*XSIN_SIZE, 0
 .pc = $2000 "LOGO"

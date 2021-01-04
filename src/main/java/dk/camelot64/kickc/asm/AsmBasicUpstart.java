@@ -1,10 +1,9 @@
 package dk.camelot64.kickc.asm;
 
 /** Set the program counter */
-public class AsmBasicUpstart implements AsmLine {
+public class AsmBasicUpstart extends AsmLine {
 
    private String label;
-   private int index;
 
    public AsmBasicUpstart(String label) {
       this.label = label;
@@ -33,13 +32,4 @@ public class AsmBasicUpstart implements AsmLine {
       return ":BasicUpstart(" + label + ")";
    }
 
-   @Override
-   public int getIndex() {
-      return index;
-   }
-
-   @Override
-   public void setIndex(int index) {
-      this.index = index;
-   }
 }

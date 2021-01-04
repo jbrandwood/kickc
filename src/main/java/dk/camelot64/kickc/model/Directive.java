@@ -103,10 +103,10 @@ public class Directive {
 
    /** Function declared interrupt. */
    public static class Interrupt extends Directive {
-      public Procedure.InterruptType interruptType;
+      public String interruptType;
 
-      public Interrupt(Procedure.InterruptType interruptType) {
-         super(interruptType.name());
+      public Interrupt(String interruptType) {
+         super(interruptType);
          this.interruptType = interruptType;
       }
    }

@@ -1,9 +1,15 @@
 // Tests that constant offset indexing into arrays is handled correctly
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="double-indexing-arrays.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label COLS = $d800
+.segment Code
 main: {
     ldx #0
   __b1:
@@ -49,6 +55,7 @@ main: {
     // }
     rts
 }
+.segment Data
   MAPDATA: .fill $3e8, 0
   COLORMAP1: .fill $100, 0
   COLORMAP2: .fill $100, 0

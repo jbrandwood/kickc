@@ -1,8 +1,14 @@
 // Inline Strings in method calls are automatically converted to local constant variables byte st[] = "..."; - generating an ASM .text).
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="inline-string.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label screen = 2
+.segment Code
 main: {
     // print(msg1)
     lda #<$400
@@ -28,11 +34,13 @@ main: {
     jsr print
     // }
     rts
+  .segment Data
     msg2: .text "message 2 "
     .byte 0
     msg: .text "message 3 "
     .byte 0
 }
+.segment Code
 // print(byte* zp(4) msg)
 print: {
     .label msg = 4
@@ -60,5 +68,6 @@ print: {
   !:
     jmp __b1
 }
+.segment Data
   msg1: .text "message 1 "
   .byte 0

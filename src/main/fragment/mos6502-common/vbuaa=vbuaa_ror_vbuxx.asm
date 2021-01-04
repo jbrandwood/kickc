@@ -1,7 +1,7 @@
 cpx #0
 beq !e+
 !:
-ror
+lsr
 dex
 bne !-
 !e:

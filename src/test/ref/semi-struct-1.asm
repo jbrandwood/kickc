@@ -5,9 +5,14 @@
 //    byte ypos; // The y-position
 // };
 // Point points[NUM_POINTS];
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="semi-struct-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // The size of a point
   .const SIZEOF_POINT = 2
   // The number of points
@@ -15,6 +20,7 @@
   .label print_screen = $400
   .label print_line_cursor = 7
   .label print_char_cursor = 5
+.segment Code
 // Initialize some points and print them
 main: {
     // init_points()
@@ -119,9 +125,11 @@ print_points: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     jmp __b1
+  .segment Data
     str: .text " "
     .byte 0
 }
+.segment Code
 // Clear the screen. Also resets current line/char cursor.
 print_cls: {
     // memset(print_screen, ' ', 1000)
@@ -250,6 +258,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   // All points
   points: .fill NUM_POINTS*SIZEOF_POINT, 0

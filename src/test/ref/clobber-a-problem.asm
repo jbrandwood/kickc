@@ -1,12 +1,18 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="clobber-a-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const DARK_GREY = $b
   .const BLACK = 0
   .label KERNEL_IRQ = $314
   .label BORDER_COLOR = $d020
   .label RASTER = $d012
   .label irq_raster_next = 2
+.segment Code
 __start: {
     // irq_raster_next = 0
     lda #0
@@ -42,9 +48,9 @@ irq: {
     sta BORDER_COLOR
     // }
   rega:
-    lda #00
+    lda #0
   regx:
-    ldx #00
+    ldx #0
     rti
 }
 main: {

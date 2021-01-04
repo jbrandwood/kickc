@@ -1,11 +1,17 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="printmsg.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_char_cursor = 4
   .label print_line_cursor = 6
+.segment Code
 main: {
     // print_str(msg)
     lda #<print_screen
@@ -111,6 +117,7 @@ print_char: {
     // }
     rts
 }
+.segment Data
   msg: .text "hello world! "
   .byte 0
   msg2: .text "hello c64! "

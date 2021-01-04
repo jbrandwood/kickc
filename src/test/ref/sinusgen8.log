@@ -2513,9 +2513,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
@@ -2526,6 +2531,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   .const wavelength = $c0
   .label print_screen = $400
   .label print_char_cursor = 8
+.segment Code
   // main
 main: {
     .label i = 2
@@ -2592,9 +2598,11 @@ main: {
   __breturn:
     // [12] return 
     rts
+  .segment Data
     str: .text "  "
     .byte 0
 }
+.segment Code
   // sin8s_gen
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -3396,6 +3404,7 @@ mul8u: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))
@@ -3813,9 +3822,14 @@ Score: 14264
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // PI*2 in u[4.12] format
   .const PI2_u4f12 = $6488
@@ -3826,6 +3840,7 @@ Score: 14264
   .const wavelength = $c0
   .label print_screen = $400
   .label print_char_cursor = 8
+.segment Code
   // main
 main: {
     .label i = 2
@@ -3882,9 +3897,11 @@ main: {
     // }
     // [12] return 
     rts
+  .segment Data
     str: .text "  "
     .byte 0
 }
+.segment Code
   // sin8s_gen
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -4649,6 +4666,7 @@ mul8u: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
   sintab2: .fill $c0, 0
   // .fill $c0, round(127.5*sin(i*2*PI/$c0))

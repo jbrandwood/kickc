@@ -1,6 +1,7 @@
 // Atari Tempest ROM Development Template
 // Each function of the kernal is a no-args function
 // The functions are placed in the SYSCALLS table surrounded by JMP and NOP
+.cpu _6502
   .file [name="ataritempest.bin", type="bin", segments="AtariTempest"]
 .segmentdef AtariTempest [segments="Code, RomData, Vectors"]
 .segmentdef Code [start=$9000, min=$9000, max=$Fff9]
@@ -18,18 +19,9 @@ main: {
     rts
 }
 nmiHandler: {
-    sta rega+1
-    stx regx+1
-    sty regy+1
     // (*BG_COLOR)++;
     inc BG_COLOR
     // }
-  rega:
-    lda #00
-  regx:
-    ldx #00
-  regy:
-    ldy #00
     rti
 }
 entryPoint: {

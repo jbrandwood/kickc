@@ -14,10 +14,10 @@ import kickass.nonasm.c64.CharToPetsciiConverter;
 import picocli.CommandLine;
 
 import java.io.*;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -405,12 +405,19 @@ public class KickC implements Callable<Integer> {
          if(!CFileDir.toAbsolutePath().equals(outputDir.toAbsolutePath())) {
             for(Path resourcePath : program.getAsmResourceFiles()) {
                Path outResourcePath = outputDir.resolve(resourcePath.getFileName().toString());
-               System.out.println("Copying resource " + outResourcePath);
-               try {
-                  Files.copy(resourcePath, outResourcePath);
-               } catch(FileAlreadyExistsException e) {
-                  // Ignore this
+               if(Files.exists(outResourcePath)) {
+                  FileTime resModified = Files.getLastModifiedTime(resourcePath);
+                  FileTime outModified = Files.getLastModifiedTime(outResourcePath);
+                  if(outModified.toMillis()>resModified.toMillis()) {
+                     // Outfile is newer - move on to next file
+                     System.out.println("Resource already copied " + outResourcePath);
+                     continue;
+                  }
+                  // Resource is newer than existing file - delete it
+                  Files.delete(outResourcePath);
                }
+               System.out.println("Copying resource " + outResourcePath);
+               Files.copy(resourcePath, outResourcePath);
             }
          }
 
@@ -480,7 +487,7 @@ public class KickC implements Callable<Integer> {
             String emuOptions = "";
             if(emulator.equals("C64Debugger")) {
                Path viceSymbolsPath = outputDir.resolve(outputFileNameBase + ".vs");
-               emuOptions = "-symbols " + viceSymbolsPath + " -wait 2500" + " ";
+               emuOptions = "-symbols " + viceSymbolsPath + " -autojmp -prg ";
             }
             // The program names used by VICE emulators
             List<String> viceEmus = Arrays.asList("x64", "x64sc", "x128", "x64dtv", "xcbm2", "xcbm5x0", "xpet", "xplus4", "xscpu64", "xvic");

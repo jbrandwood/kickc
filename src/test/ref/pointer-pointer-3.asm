@@ -1,10 +1,16 @@
 // Tests pointer to pointer in a more complex setup
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="pointer-pointer-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label screen1 = $400
   .label screen2 = $400+$28
   .label screen = 4
+.segment Code
 __start: {
     // screen = $400
     lda #<$400

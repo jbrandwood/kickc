@@ -1,8 +1,14 @@
 // Illustrates symbolic array lengths
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="array-length-symbolic-min.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const SZ = $f
+.segment Code
 // Fills the array item by item with $is, where i is the item# and s is the sub#
 main: {
     ldx #0
@@ -17,4 +23,5 @@ main: {
     // }
     rts
 }
+.segment Data
   items: .fill SZ, 0

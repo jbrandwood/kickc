@@ -1,9 +1,15 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="literals.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const ch = 'a'
   .const num = 1
   .label SCREEN = $400
+.segment Code
 main: {
     // SCREEN[0] = ch
     lda #ch
@@ -26,6 +32,7 @@ main: {
     // }
     rts
 }
+.segment Data
   str: .text "bcde"
   .byte 0
   nums: .byte 2, 3, 4, 5

@@ -32,7 +32,7 @@ void main() {
     asm { cli }
 }
 
-interrupt(hardware_all) void nmi() {
+__interrupt(hardware_clobber) void nmi() {
     (VICII->BORDER_COLOR)++;
     asm { lda CIA2_INTERRUPT }
     SID->VOLUME_FILTER_MODE = *sample & $0f;
@@ -40,7 +40,7 @@ interrupt(hardware_all) void nmi() {
     (VICII->BORDER_COLOR)--;
 }
 
-interrupt(hardware_all) void nmi2() {
+__interrupt(hardware_clobber) void nmi2() {
     (VICII->BORDER_COLOR)++;
     asm { lda CIA2_INTERRUPT }
     SID->VOLUME_FILTER_MODE = *sample >> 4;

@@ -142,7 +142,7 @@ const char BORDER_YPOS_TOP=50;
 const char BORDER_YPOS_BOTTOM=250;
 
 // The offset of the sprite pointers from the screen start address
-const unsigned int SPRITE_PTRS = $3f8;
+const unsigned int OFFSET_SPRITE_PTRS = 0x3f8;
 
 char * const SPRITES_XPOS = $d000;
 char * const SPRITES_YPOS = $d001;
@@ -164,20 +164,20 @@ char*  const BG_COLOR3 = $d024;
 char*  const SPRITES_MC1 = $d025;
 char*  const SPRITES_MC2 = $d026;
 
-char*  const VIC_CONTROL = $d011;
+char*  const VICII_CONTROL = $d011;
 char*  const D011 = $d011;
-const char VIC_RST8 = %10000000;
-const char VIC_ECM =  %01000000;
-const char VIC_BMM =  %00100000;
-const char VIC_DEN =  %00010000;
-const char VIC_RSEL = %00001000;
+const char VICII_RST8 = %10000000;
+const char VICII_ECM =  %01000000;
+const char VICII_BMM =  %00100000;
+const char VICII_DEN =  %00010000;
+const char VICII_RSEL = %00001000;
 
-char*  const VIC_CONTROL2 = $d016;
+char*  const VICII_CONTROL2 = $d016;
 char*  const D016 = $d016;
-const char VIC_MCM =  %00010000;
-const char VIC_CSEL = %00001000;
+const char VICII_MCM =  %00010000;
+const char VICII_CSEL = %00001000;
 
-char*  const VIC_MEMORY = $d018;
+char*  const VICII_MEMORY = $d018;
 char*  const D018 = $d018;
 
 // VIC II IRQ Status Register

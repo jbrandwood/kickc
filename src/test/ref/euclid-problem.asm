@@ -1,9 +1,15 @@
 // Demonstrates a problem where wrong alive ranges result in clobbering an alive variable
 // The compiler does not realize that A is alive in the statement b=b-a - and thus can clobber it.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="euclid-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     .label a = 2
     ldx #2

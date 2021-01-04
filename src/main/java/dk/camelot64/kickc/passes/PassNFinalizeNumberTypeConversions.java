@@ -1,5 +1,6 @@
 package dk.camelot64.kickc.passes;
 
+import dk.camelot64.kickc.model.ConstantNotLiteral;
 import dk.camelot64.kickc.model.InternalError;
 import dk.camelot64.kickc.model.Program;
 import dk.camelot64.kickc.model.iterator.ProgramValueIterator;
@@ -65,7 +66,12 @@ public class PassNFinalizeNumberTypeConversions extends Pass2SsaOptimization {
                   else
                      throw new InternalError("Cannot cast declared type!" + constant.toString());
                } else {
-                  ConstantLiteral constantLiteral = constantCastValue.getValue().calculateLiteral(getProgram().getScope());
+                  ConstantLiteral constantLiteral;
+                  try {
+                     constantLiteral = constantCastValue.getValue().calculateLiteral(getProgram().getScope());
+                  } catch (ConstantNotLiteral e) {
+                     throw new InternalError("Cannot cast declared type!" + constantCastValue.toString());
+                  }
                   SymbolType smallestUnsigned = SymbolTypeConversion.getSmallestUnsignedFixedIntegerType(constantLiteral, getScope());
                   if(smallestUnsigned != null) {
                      constantCastValue.setToType(smallestUnsigned);

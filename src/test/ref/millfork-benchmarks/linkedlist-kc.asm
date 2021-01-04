@@ -1,8 +1,13 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="linkedlist-kc.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_NODE_VALUE = 2
   .label print_screen = $400
   .label last_time = $a
@@ -12,6 +17,7 @@
   .label print_char_cursor = 6
   .label free_ = 4
   .label root = 2
+.segment Code
 __start: {
     // last_time
     lda #<0
@@ -276,5 +282,6 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   heap: .fill 4*$fa0, 0

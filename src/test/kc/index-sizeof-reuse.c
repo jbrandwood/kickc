@@ -10,8 +10,8 @@ struct Entity {
 
 struct Entity entities[NUM_ENTITIES];
 
-char * const VIC_RASTER = 0xd012;
-char * const VIC_BG_COLOR = 0xd020;
+char * const VICII_RASTER = 0xd012;
+char * const VICII_BG_COLOR = 0xd020;
 char * const SCREEN = 0x0400;
 
 void main() {
@@ -29,8 +29,8 @@ void main() {
 
     while(1) {
         // Wait for raster refresh
-        while(*VIC_RASTER!=0xff) ;
-        *VIC_BG_COLOR = 0;
+        while(*VICII_RASTER!=0xff) ;
+        *VICII_BG_COLOR = 0;
         // Move the entities
         char * line = SCREEN;
         for(char i=0;i<NUM_ENTITIES;i++) {
@@ -48,7 +48,7 @@ void main() {
             // Next line
             line +=40;            
         }
-        *VIC_BG_COLOR = 15;
+        *VICII_BG_COLOR = 15;
     }
 
 

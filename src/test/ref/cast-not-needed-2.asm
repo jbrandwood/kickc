@@ -1,7 +1,13 @@
 // Tests a cast that is not needed
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="cast-not-needed-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     .label getScreen1_return = 2
     .label spritePtr1_return = 2
@@ -25,4 +31,5 @@ main: {
     // }
     rts
 }
+.segment Data
   screens: .word $400, $1400

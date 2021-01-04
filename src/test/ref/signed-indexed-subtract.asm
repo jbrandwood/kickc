@@ -1,10 +1,16 @@
 // Tests that signed indexed subtract works as intended
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="signed-indexed-subtract.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 7
+.segment Code
 main: {
     .label j = 2
     ldy #0
@@ -221,5 +227,6 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"
   words: .word -$6000, -$600, -$60, -6, 0, 6, $60, $600, $6000

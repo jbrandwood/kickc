@@ -1,12 +1,18 @@
 // Test a procedure with calling convention stack
 // Return value larger than parameter
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="procedure-callingconvention-stack-5.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .const SIZEOF_SIGNED_WORD = 2
   .const STACK_BASE = $103
   .label SCREEN = $400
   .label current = 4
+.segment Code
 __start: {
     // current = 48
     lda #<$30

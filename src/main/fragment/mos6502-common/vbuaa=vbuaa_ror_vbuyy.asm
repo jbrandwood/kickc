@@ -1,6 +1,7 @@
+cpy #0
 beq !e+
 !:
-ror
-dex
+lsr
+dey
 bne !-
 !e:

@@ -1,11 +1,17 @@
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="halfscii.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label CHARGEN = $d000
   .label PROCPORT = 1
   .label D018 = $d018
   .label CHARSET4 = $2800
+.segment Code
 main: {
     .label __1 = 8
     .label __11 = 9
@@ -197,4 +203,5 @@ main: {
     // }
     rts
 }
+.segment Data
   bits_count: .byte 0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4

@@ -4110,9 +4110,14 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8b.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
@@ -4131,6 +4136,7 @@ ASSEMBLER BEFORE OPTIMIZATION
   // Remainder after unsigned 16-bit division
   .label rem16u = $19
   .label print_char_cursor = $f
+.segment Code
   // main
 main: {
     .label wavelength = $c0
@@ -4242,11 +4248,13 @@ main: {
   __breturn:
     // [20] return 
     rts
+  .segment Data
     sintabb: .fill $c0, 0
     sintabw: .fill 2*$c0, 0
     str: .text "  "
     .byte 0
 }
+.segment Code
   // sin8s_gen
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -5669,6 +5677,7 @@ mul16u: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 
 ASSEMBLER OPTIMIZATIONS
@@ -6299,9 +6308,14 @@ Score: 27770
 // Uses the approximation sin(x) = x - x^/6 + x^/128
 // Optimization possibility: Use symmetries when generating sine tables. wavelength%2==0 -> mirror symmetry over PI, wavelength%4==0 -> mirror symmetry over PI/2.
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinusgen8b.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   // PI*2 in u[4.28] format
   .const PI2_u4f28 = $6487ed51
@@ -6320,6 +6334,7 @@ Score: 27770
   // Remainder after unsigned 16-bit division
   .label rem16u = $19
   .label print_char_cursor = $f
+.segment Code
   // main
 main: {
     .label wavelength = $c0
@@ -6422,11 +6437,13 @@ main: {
     // }
     // [20] return 
     rts
+  .segment Data
     sintabb: .fill $c0, 0
     sintabw: .fill 2*$c0, 0
     str: .text "  "
     .byte 0
 }
+.segment Code
   // sin8s_gen
 // Generate signed char sine table - on the full -$7f - $7f range
 // sintab - the table to generate into
@@ -7798,5 +7815,6 @@ mul16u: {
     jmp __b1
 }
   // File Data
+.segment Data
   print_hextab: .text "0123456789abcdef"
 

@@ -1,4 +1,4 @@
-//KICKC FRAGMENT CACHE 140bf2a915 140bf2c716
+//KICKC FRAGMENT CACHE 1278e49654 1278e4b47f
 //FRAGMENT _deref_pbuc1=vbuc2
 lda #{c2}
 sta {c1}
@@ -62,6 +62,11 @@ ldz {z1}
 //FRAGMENT vbuz1=vbuc1
 lda #{c1}
 sta {z1}
+//FRAGMENT isr_hardware_all_entry
+pha @clob_a
+phx @clob_x
+phy @clob_y
+phz @clob_z
 //FRAGMENT vbuz1=_inc_vbuz1
 inc {z1}
 //FRAGMENT vbuz1=vbuz2
@@ -99,6 +104,12 @@ sta {z1}
 //FRAGMENT _deref_pbuc1=vbuz1
 lda {z1}
 sta {c1}
+//FRAGMENT isr_hardware_all_exit
+plz @clob_z
+ply @clob_y
+plx @clob_x
+pla @clob_a
+rti
 //FRAGMENT pbuc1_derefidx_vbuz1=pbuc2_derefidx_vbuz1
 ldy {z1}
 lda {c2},y
@@ -1235,12 +1246,12 @@ cmp #0
 bne {la1}
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuz3
 lda {z3}
-ldy {z2}
-sta ({z1}),y
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuc1
 lda #{c1}
-ldy {z2}
-sta ({z1}),y
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT pbuz1=pbuz1_plus_vbuc1
 lda #{c1}
 clc
@@ -1319,16 +1330,16 @@ bne {la1}
 //FRAGMENT vbuz1=vbuaa
 sta {z1}
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuaa
-ldy {z2}
-sta ({z1}),y
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuxx
 txa
 ldz {z2}
 sta ({z1}),z
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuyy
 tya
-ldy {z2}
-sta ({z1}),y
+ldz {z2}
+sta ({z1}),z
 //FRAGMENT pbuz1_derefidx_vbuz2=vbuzz
 tza
 ldz {z2}

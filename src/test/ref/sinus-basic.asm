@@ -1,14 +1,20 @@
 // Print a number of zero-terminated strings, each followed by a newline.
 // The sequence of lines is terminated by another zero.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sinus-basic.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Zeropage addresses used to hold lo/hi-bytes of addresses of float numbers in MEM
   .label memLo = $fe
   .label memHi = $ff
   .label print_screen = $400
   .label print_line_cursor = 3
   .label print_char_cursor = 5
+.segment Code
 main: {
     .label f_2pi = $e2e5
     .label i = 2
@@ -92,9 +98,11 @@ main: {
     lda.z print_line_cursor+1
     sta.z print_char_cursor+1
     jmp __b1
+  .segment Data
     f_i: .byte 0, 0, 0, 0, 0
     f_127: .byte 0, 0, 0, 0, 0
 }
+.segment Code
 // FAC = unsigned int
 // Set the FAC (floating point accumulator) to the integer value of a 16bit unsigned int
 // setFAC(word zp(7) w)
@@ -302,4 +310,5 @@ print_char: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

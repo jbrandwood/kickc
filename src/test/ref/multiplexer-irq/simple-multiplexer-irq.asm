@@ -2,13 +2,18 @@
 // Commodore 64 Registers and Constants
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="simple-multiplexer-irq.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
-  .const VIC_DEN = $10
-  .const VIC_RSEL = 8
+  .const VICII_DEN = $10
+  .const VICII_RSEL = 8
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
   .const WHITE = 1
@@ -24,7 +29,7 @@
   .label SPRITES_ENABLE = $d015
   .label RASTER = $d012
   .label BORDER_COLOR = $d020
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   .label D011 = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
@@ -47,6 +52,7 @@
   // The index of the sprite that is free next. Since sprites are used round-robin this moves forward each time a sprite is shown.
   .label plex_free_next = $b
   .label framedone = $c
+.segment Code
 __start: {
     // PLEX_SCREEN_PTR = 0x400+0x3f8
     lda #<$400+$3f8
@@ -146,10 +152,10 @@ plexShowSprite: {
     // SPRITES_YPOS[plex_sprite_idx2] = ypos
     ldy.z plex_sprite_idx2
     sta SPRITES_YPOS,y
-    // ypos+21
+    // ypos+22
     clc
-    adc #$15
-    // PLEX_FREE_YPOS[plex_free_next] =  ypos+21
+    adc #$16
+    // PLEX_FREE_YPOS[plex_free_next] =  ypos+22
     ldy.z plex_free_next
     sta PLEX_FREE_YPOS,y
     // plex_free_next+1
@@ -221,8 +227,8 @@ plexShowSprite: {
 init: {
     // Set the x-positions & pointers
     .label xp = 2
-    // *D011 = VIC_DEN | VIC_RSEL | 3
-    lda #VIC_DEN|VIC_RSEL|3
+    // *D011 = VICII_DEN | VICII_RSEL | 3
+    lda #VICII_DEN|VICII_RSEL|3
     sta D011
     // plexInit(SCREEN)
   // Initialize the multiplexer
@@ -285,10 +291,10 @@ init: {
     sta KERNEL_IRQ
     lda #>plex_irq
     sta KERNEL_IRQ+1
-    // *VIC_CONTROL &= 0x7f
+    // *VICII_CONTROL &= 0x7f
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = 0x0
     lda #0
     sta RASTER
@@ -436,6 +442,7 @@ plexSort: {
     // }
     rts
 }
+.segment Data
   // The x-positions of the multiplexer sprites (0x000-0x1ff)
   PLEX_XPOS: .fill 2*PLEX_COUNT, 0
   // The y-positions of the multiplexer sprites.

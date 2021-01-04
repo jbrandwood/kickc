@@ -1,4 +1,4 @@
-Resolved forward reference table_driven_irq to interrupt(KERNEL_MIN) void table_driven_irq()
+Resolved forward reference table_driven_irq to __interrupt(rom_min_c64) void table_driven_irq()
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call call __init 
 
@@ -8,7 +8,7 @@ void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
   *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  *VIC_CONTROL = *VIC_CONTROL & $7f
+  *VICII_CONTROL = *VICII_CONTROL & $7f
   *RASTER = $60
   *IRQ_ENABLE = IRQ_RASTER
   *IRQ_STATUS = IRQ_RASTER
@@ -19,32 +19,32 @@ main::@return: scope:[main]  from main
   return 
   to:@return
 
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   to:table_driven_irq::@1
 table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driven_irq::@4
   table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx]
   table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx]
   irq_idx = ++ irq_idx
-  table_driven_irq::$0 = table_driven_irq::idx#0 < VIC_SIZE
+  table_driven_irq::$0 = table_driven_irq::idx#0 < VICII_SIZE
   if(table_driven_irq::$0) goto table_driven_irq::@2
   to:table_driven_irq::@5
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
   table_driven_irq::idx#1 = phi( table_driven_irq::@1/table_driven_irq::idx#0 )
   table_driven_irq::val#1 = phi( table_driven_irq::@1/table_driven_irq::val#0 )
-  VIC_BASE[table_driven_irq::idx#1] = table_driven_irq::val#1
+  VICII_BASE[table_driven_irq::idx#1] = table_driven_irq::val#1
   to:table_driven_irq::@4
 table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@1
   table_driven_irq::val#4 = phi( table_driven_irq::@1/table_driven_irq::val#0 )
   table_driven_irq::idx#2 = phi( table_driven_irq::@1/table_driven_irq::idx#0 )
-  table_driven_irq::$1 = table_driven_irq::idx#2 < VIC_SIZE+8
+  table_driven_irq::$1 = table_driven_irq::idx#2 < VICII_SIZE+8
   if(table_driven_irq::$1) goto table_driven_irq::@3
   to:table_driven_irq::@6
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@5
   table_driven_irq::val#2 = phi( table_driven_irq::@5/table_driven_irq::val#4 )
   table_driven_irq::idx#3 = phi( table_driven_irq::@5/table_driven_irq::idx#2 )
   table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
-  table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
+  table_driven_irq::$5 = table_driven_irq::$4 - VICII_SIZE
   SCREEN[table_driven_irq::$5] = table_driven_irq::val#2
   to:table_driven_irq::@4
 table_driven_irq::@6: scope:[table_driven_irq]  from table_driven_irq::@5
@@ -93,13 +93,13 @@ const nomodify void()** KERNEL_IRQ = (void()**)$314
 const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 const nomodify byte* RASTER = (byte*)$d012
 const nomodify byte* SCREEN = (byte*)$400
-const nomodify byte* VIC_BASE = (byte*)$d000
-const nomodify byte* VIC_CONTROL = (byte*)$d011
-const nomodify byte VIC_SIZE = $30
+const nomodify byte* VICII_BASE = (byte*)$d000
+const nomodify byte* VICII_CONTROL = (byte*)$d011
+const nomodify byte VICII_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 bool~ table_driven_irq::$0
 bool~ table_driven_irq::$1
 bool~ table_driven_irq::$2
@@ -118,13 +118,13 @@ byte table_driven_irq::val#2
 byte table_driven_irq::val#3
 byte table_driven_irq::val#4
 
-Adding number conversion cast (unumber) $7f in *VIC_CONTROL = *VIC_CONTROL & $7f
+Adding number conversion cast (unumber) $7f in *VICII_CONTROL = *VICII_CONTROL & $7f
 Adding number conversion cast (unumber) $60 in *RASTER = $60
-Adding number conversion cast (unumber) VIC_SIZE+8 in table_driven_irq::$1 = table_driven_irq::idx#2 < VIC_SIZE+8
-Adding number conversion cast (unumber) 8 in table_driven_irq::$1 = table_driven_irq::idx#2 < (unumber)VIC_SIZE+8
+Adding number conversion cast (unumber) VICII_SIZE+8 in table_driven_irq::$1 = table_driven_irq::idx#2 < VICII_SIZE+8
+Adding number conversion cast (unumber) 8 in table_driven_irq::$1 = table_driven_irq::idx#2 < (unumber)VICII_SIZE+8
 Adding number conversion cast (unumber) $3f8 in table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
 Adding number conversion cast (unumber) table_driven_irq::$4 in table_driven_irq::$4 = table_driven_irq::idx#3 + (unumber)$3f8
-Adding number conversion cast (unumber) table_driven_irq::$5 in table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
+Adding number conversion cast (unumber) table_driven_irq::$5 in table_driven_irq::$5 = table_driven_irq::$4 - VICII_SIZE
 Adding number conversion cast (unumber) 0 in irq_idx = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast *RASTER = (unumber)$60
@@ -140,7 +140,7 @@ Simplifying constant pointer cast (byte*) 1024
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant integer cast $7f
 Simplifying constant integer cast $60
-Simplifying constant integer cast VIC_SIZE+(unumber)8
+Simplifying constant integer cast VICII_SIZE+(unumber)8
 Simplifying constant integer cast 8
 Simplifying constant integer cast $3f8
 Simplifying constant integer cast 0
@@ -152,14 +152,14 @@ Finalized unsigned number type (word) $3f8
 Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in table_driven_irq::$4 = table_driven_irq::idx#3 + $3f8
-Inferred type updated to word in table_driven_irq::$5 = table_driven_irq::$4 - VIC_SIZE
+Inferred type updated to word in table_driven_irq::$5 = table_driven_irq::$4 - VICII_SIZE
 Inversing boolean not [27] table_driven_irq::$3 = table_driven_irq::val#3 >= *RASTER from [26] table_driven_irq::$2 = table_driven_irq::val#3 < *RASTER
 Successful SSA optimization Pass2UnaryNotSimplification
 Alias table_driven_irq::val#0 = table_driven_irq::val#1 table_driven_irq::val#4 table_driven_irq::val#2 table_driven_irq::val#3 
 Alias table_driven_irq::idx#0 = table_driven_irq::idx#1 table_driven_irq::idx#2 table_driven_irq::idx#3 
 Successful SSA optimization Pass2AliasElimination
-Simple Condition table_driven_irq::$0 [13] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2
-Simple Condition table_driven_irq::$1 [16] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3
+Simple Condition table_driven_irq::$0 [13] if(table_driven_irq::idx#0<VICII_SIZE) goto table_driven_irq::@2
+Simple Condition table_driven_irq::$1 [16] if(table_driven_irq::idx#0<VICII_SIZE+8) goto table_driven_irq::@3
 Simple Condition table_driven_irq::$3 [23] if(table_driven_irq::val#0>=*RASTER) goto table_driven_irq::@return
 Successful SSA optimization Pass2ConditionalJumpSimplification
 if() condition always true - replacing block destination [26] if(true) goto table_driven_irq::@1
@@ -174,9 +174,9 @@ Consolidated constant in assignment table_driven_irq::$6
 Successful SSA optimization Pass2ConstantAdditionElimination
 Alias table_driven_irq::idx#0 = table_driven_irq::$5 
 Successful SSA optimization Pass2AliasElimination
-Converting *(pointer+n) to pointer[n] [16] *table_driven_irq::$6 = table_driven_irq::val#0  -- (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0]
+Converting *(pointer+n) to pointer[n] [16] *table_driven_irq::$6 = table_driven_irq::val#0  -- (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0]
 Successful SSA optimization Pass2InlineDerefIdx
-Eliminating unused variable table_driven_irq::$6 and assignment [15] table_driven_irq::$6 = SCREEN+-VIC_SIZE+$3f8 + table_driven_irq::idx#0
+Eliminating unused variable table_driven_irq::$6 and assignment [15] table_driven_irq::$6 = SCREEN+-VICII_SIZE+$3f8 + table_driven_irq::idx#0
 Successful SSA optimization PassNEliminateUnusedVars
 Adding NOP phi() at start of __start
 Adding NOP phi() at start of __start::@1
@@ -214,7 +214,7 @@ __start::@return: scope:[__start]  from __start::@1
   [4] return 
   to:@return
 
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 table_driven_irq: scope:[table_driven_irq]  from
   [5] phi()
   to:table_driven_irq::@1
@@ -222,10 +222,10 @@ table_driven_irq::@1: scope:[table_driven_irq]  from table_driven_irq table_driv
   [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx]
   [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx]
   [8] irq_idx = ++ irq_idx
-  [9] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2
+  [9] if(table_driven_irq::idx#0<VICII_SIZE) goto table_driven_irq::@2
   to:table_driven_irq::@4
 table_driven_irq::@4: scope:[table_driven_irq]  from table_driven_irq::@1
-  [10] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3
+  [10] if(table_driven_irq::idx#0<VICII_SIZE+8) goto table_driven_irq::@3
   to:table_driven_irq::@5
 table_driven_irq::@5: scope:[table_driven_irq]  from table_driven_irq::@4
   [11] *IRQ_STATUS = IRQ_RASTER
@@ -239,17 +239,17 @@ table_driven_irq::@return: scope:[table_driven_irq]  from table_driven_irq::@5 t
   [15] return 
   to:@return
 table_driven_irq::@3: scope:[table_driven_irq]  from table_driven_irq::@4
-  [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0
+  [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0
   to:table_driven_irq::@1
 table_driven_irq::@2: scope:[table_driven_irq]  from table_driven_irq::@1
-  [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0
+  [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0
   to:table_driven_irq::@1
 
 void main()
 main: scope:[main]  from __start::@1
   asm { sei  }
   [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR
-  [20] *VIC_CONTROL = *VIC_CONTROL & $7f
+  [20] *VICII_CONTROL = *VICII_CONTROL & $7f
   [21] *RASTER = $60
   [22] *IRQ_ENABLE = IRQ_RASTER
   [23] *IRQ_STATUS = IRQ_RASTER
@@ -265,7 +265,7 @@ VARIABLE REGISTER WEIGHTS
 void __start()
 volatile byte irq_idx loadstore 6.0
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 byte table_driven_irq::idx
 byte table_driven_irq::idx#0 11.0
 byte table_driven_irq::val
@@ -290,10 +290,10 @@ Removing always clobbered register reg byte y as potential for zp[1]:3 [ table_d
 Statement [11] *IRQ_STATUS = IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] { }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:4 [ table_driven_irq::val#0 ]
 Statement [14] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
-Statement [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
 Statement [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *RASTER = $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [22] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [23] *IRQ_STATUS = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
@@ -303,10 +303,10 @@ Statement [6] table_driven_irq::idx#0 = IRQ_CHANGE_IDX[irq_idx] [ irq_idx table_
 Statement [7] table_driven_irq::val#0 = IRQ_CHANGE_VAL[irq_idx] [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] (  [ irq_idx table_driven_irq::idx#0 table_driven_irq::val#0 ] { }  ) always clobbers reg byte y 
 Statement [11] *IRQ_STATUS = IRQ_RASTER [ table_driven_irq::val#0 ] (  [ table_driven_irq::val#0 ] { }  ) always clobbers reg byte a 
 Statement [14] irq_idx = 0 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
-Statement [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
+Statement [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 [ irq_idx ] (  [ irq_idx ] { }  ) always clobbers reg byte a 
 Statement [19] *((byte*)CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT) = CIA_INTERRUPT_CLEAR [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
-Statement [20] *VIC_CONTROL = *VIC_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
+Statement [20] *VICII_CONTROL = *VICII_CONTROL & $7f [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [21] *RASTER = $60 [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [22] *IRQ_ENABLE = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
 Statement [23] *IRQ_STATUS = IRQ_RASTER [ ] ( main:3 [ ] { }  ) always clobbers reg byte a 
@@ -324,15 +324,15 @@ Uplift Scope [MOS6581_SID]
 Uplift Scope [main] 
 Uplift Scope [__start] 
 
-Uplifting [table_driven_irq] best 768 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
-Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
-Uplifting [MOS6526_CIA] best 768 combination 
-Uplifting [MOS6569_VICII] best 768 combination 
-Uplifting [MOS6581_SID] best 768 combination 
-Uplifting [main] best 768 combination 
-Uplifting [__start] best 768 combination 
+Uplifting [table_driven_irq] best 795 combination reg byte a [ table_driven_irq::idx#0 ] reg byte x [ table_driven_irq::val#0 ] 
+Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
+Uplifting [MOS6526_CIA] best 795 combination 
+Uplifting [MOS6569_VICII] best 795 combination 
+Uplifting [MOS6581_SID] best 795 combination 
+Uplifting [main] best 795 combination 
+Uplifting [__start] best 795 combination 
 Attempting to uplift remaining variables inzp[1]:2 [ irq_idx ]
-Uplifting [] best 768 combination zp[1]:2 [ irq_idx ] 
+Uplifting [] best 795 combination zp[1]:2 [ irq_idx ] 
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -341,19 +341,24 @@ ASSEMBLER BEFORE OPTIMIZATION
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-idx-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  .const VIC_SIZE = $30
+  .const VICII_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -363,8 +368,9 @@ ASSEMBLER BEFORE OPTIMIZATION
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
-  .label VIC_BASE = $d000
+  .label VICII_BASE = $d000
   .label irq_idx = 2
+.segment Code
   // __start
 __start: {
     jmp __init1
@@ -388,7 +394,7 @@ __start: {
 }
   // table_driven_irq
 table_driven_irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     jmp __b1
     // table_driven_irq::@1
   __b1:
@@ -400,14 +406,14 @@ table_driven_irq: {
     ldx IRQ_CHANGE_VAL,y
     // [8] irq_idx = ++ irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
-    // [9] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
-    cmp #VIC_SIZE
+    // [9] if(table_driven_irq::idx#0<VICII_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #VICII_SIZE
     bcc __b2
     jmp __b4
     // table_driven_irq::@4
   __b4:
-    // [10] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
-    cmp #VIC_SIZE+8
+    // [10] if(table_driven_irq::idx#0<VICII_SIZE+8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #VICII_SIZE+8
     bcc __b3
     jmp __b5
     // table_driven_irq::@5
@@ -431,21 +437,22 @@ table_driven_irq: {
     jmp __breturn
     // table_driven_irq::@return
   __breturn:
-    // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // table_driven_irq::@3
   __b3:
-    // [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
-    sta SCREEN+-VIC_SIZE+$3f8,y
+    sta SCREEN+-VICII_SIZE+$3f8,y
     jmp __b1
     // table_driven_irq::@2
   __b2:
-    // [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
-    sta VIC_BASE,y
+    sta VICII_BASE,y
     jmp __b1
 }
   // main
@@ -456,11 +463,11 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // [20] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // [20] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $60
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // [21] *RASTER = $60 -- _deref_pbuc1=vbuc2 
     lda #$60
     sta RASTER
@@ -487,6 +494,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 
@@ -518,7 +526,7 @@ Skipping double jump to $ea81 in bcs __breturn
 Succesful ASM optimization Pass5DoubleJumpElimination
 Removing instruction __breturn:
 Succesful ASM optimization Pass5UnusedLabelElimination
-Fixing long branch [49] bcs $ea81 to bcc
+Fixing long branch [55] bcs $ea81 to bcc
 
 FINAL SYMBOL TABLE
 const nomodify struct MOS6526_CIA* CIA1 = (struct MOS6526_CIA*) 56320
@@ -533,13 +541,13 @@ const nomodify void()** KERNEL_IRQ = (void()**) 788
 const byte OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
 const nomodify byte* RASTER = (byte*) 53266
 const nomodify byte* SCREEN = (byte*) 1024
-const nomodify byte* VIC_BASE = (byte*) 53248
-const nomodify byte* VIC_CONTROL = (byte*) 53265
-const nomodify byte VIC_SIZE = $30
+const nomodify byte* VICII_BASE = (byte*) 53248
+const nomodify byte* VICII_CONTROL = (byte*) 53265
+const nomodify byte VICII_SIZE = $30
 void __start()
 volatile byte irq_idx loadstore zp[1]:2 6.0
 void main()
-interrupt(KERNEL_MIN) void table_driven_irq()
+__interrupt(rom_min_c64) void table_driven_irq()
 byte table_driven_irq::idx
 byte table_driven_irq::idx#0 reg byte a 11.0
 byte table_driven_irq::val
@@ -551,7 +559,7 @@ reg byte x [ table_driven_irq::val#0 ]
 
 
 FINAL ASSEMBLER
-Score: 604
+Score: 631
 
   // File Comments
 // Test interrupt routine using a variable between calls (irq_idx)
@@ -559,19 +567,24 @@ Score: 604
 // The MOS 6526 Complex Interface Adapter (CIA)
 // http://archive.6502.org/datasheets/mos_6526_cia_recreated.pdf
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="irq-idx-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   // Global Constants & labels
   // Value that disables all CIA interrupts when stored to the CIA Interrupt registers
   .const CIA_INTERRUPT_CLEAR = $7f
   // Bits for the VICII IRQ Status/Enable Registers
   .const IRQ_RASTER = 1
-  .const VIC_SIZE = $30
+  .const VICII_SIZE = $30
   .const IRQ_CHANGE_NEXT = $7f
   .const OFFSET_STRUCT_MOS6526_CIA_INTERRUPT = $d
   .label RASTER = $d012
-  .label VIC_CONTROL = $d011
+  .label VICII_CONTROL = $d011
   // VIC II IRQ Status Register
   .label IRQ_STATUS = $d019
   // VIC II IRQ Enable Register
@@ -581,8 +594,9 @@ Score: 604
   // The vector used when the KERNAL serves IRQ interrupts
   .label KERNEL_IRQ = $314
   .label SCREEN = $400
-  .label VIC_BASE = $d000
+  .label VICII_BASE = $d000
   .label irq_idx = 2
+.segment Code
   // __start
 __start: {
     // __start::__init1
@@ -600,7 +614,7 @@ __start: {
 }
   // table_driven_irq
 table_driven_irq: {
-    // entry interrupt(KERNEL_MIN)
+    // interrupt(isr_rom_min_c64_entry) -- isr_rom_min_c64_entry 
     // table_driven_irq::@1
   __b1:
     // idx = IRQ_CHANGE_IDX[irq_idx]
@@ -613,14 +627,14 @@ table_driven_irq: {
     // irq_idx++;
     // [8] irq_idx = ++ irq_idx -- vbuz1=_inc_vbuz1 
     inc.z irq_idx
-    // if (idx < VIC_SIZE)
-    // [9] if(table_driven_irq::idx#0<VIC_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
-    cmp #VIC_SIZE
+    // if (idx < VICII_SIZE)
+    // [9] if(table_driven_irq::idx#0<VICII_SIZE) goto table_driven_irq::@2 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #VICII_SIZE
     bcc __b2
     // table_driven_irq::@4
-    // if (idx < VIC_SIZE + 8)
-    // [10] if(table_driven_irq::idx#0<VIC_SIZE+8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
-    cmp #VIC_SIZE+8
+    // if (idx < VICII_SIZE + 8)
+    // [10] if(table_driven_irq::idx#0<VICII_SIZE+8) goto table_driven_irq::@3 -- vbuaa_lt_vbuc1_then_la1 
+    cmp #VICII_SIZE+8
     bcc __b3
     // table_driven_irq::@5
     // *IRQ_STATUS = IRQ_RASTER
@@ -645,23 +659,24 @@ table_driven_irq: {
     sta.z irq_idx
     // table_driven_irq::@return
     // }
-    // [15] return  - exit interrupt(KERNEL_MIN)
+    // [15] return 
+    // interrupt(isr_rom_min_c64_exit) -- isr_rom_min_c64_exit 
     jmp $ea81
     // table_driven_irq::@3
   __b3:
-    // SCREEN[idx + $3f8 - VIC_SIZE] = val
-    // [16] (SCREEN+-VIC_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // SCREEN[idx + $3f8 - VICII_SIZE] = val
+    // [16] (SCREEN+-VICII_SIZE+$3f8)[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
-    sta SCREEN+-VIC_SIZE+$3f8,y
+    sta SCREEN+-VICII_SIZE+$3f8,y
     jmp __b1
     // table_driven_irq::@2
   __b2:
-    // VIC_BASE[idx] = val
-    // [17] VIC_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
+    // VICII_BASE[idx] = val
+    // [17] VICII_BASE[table_driven_irq::idx#0] = table_driven_irq::val#0 -- pbuc1_derefidx_vbuaa=vbuxx 
     tay
     txa
-    sta VIC_BASE,y
+    sta VICII_BASE,y
     jmp __b1
 }
   // main
@@ -674,12 +689,12 @@ main: {
     // Disable CIA 1 Timer IRQ
     lda #CIA_INTERRUPT_CLEAR
     sta CIA1+OFFSET_STRUCT_MOS6526_CIA_INTERRUPT
-    // *VIC_CONTROL &=$7f
-    // [20] *VIC_CONTROL = *VIC_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
+    // *VICII_CONTROL &=$7f
+    // [20] *VICII_CONTROL = *VICII_CONTROL & $7f -- _deref_pbuc1=_deref_pbuc1_band_vbuc2 
     // Set raster line to $60
     lda #$7f
-    and VIC_CONTROL
-    sta VIC_CONTROL
+    and VICII_CONTROL
+    sta VICII_CONTROL
     // *RASTER = $60
     // [21] *RASTER = $60 -- _deref_pbuc1=vbuc2 
     lda #$60
@@ -709,6 +724,7 @@ main: {
     rts
 }
   // File Data
+.segment Data
   IRQ_CHANGE_IDX: .byte $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT, $20, $21, IRQ_CHANGE_NEXT
   IRQ_CHANGE_VAL: .byte $b, $b, $63, 0, 0, $80, 7, 7, $83, 0, 0, $60
 

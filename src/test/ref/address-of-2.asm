@@ -1,8 +1,14 @@
 // Test address-of by assigning the affected variable in multiple ways
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="address-of-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label val = 2
+.segment Code
 __start: {
     // val = 0
     lda #0

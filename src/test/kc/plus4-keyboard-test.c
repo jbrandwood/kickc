@@ -1,5 +1,5 @@
 // Test reading keyboard port on the TED of the Plus/4
-#pragma target(plus4basic)
+#pragma target(plus4)
 
 #include <string.h>
 

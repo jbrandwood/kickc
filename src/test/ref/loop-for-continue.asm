@@ -1,8 +1,14 @@
 // Tests continue statement in a simple for()-loop
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="loop-for-continue.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
+.segment Code
 main: {
     ldy #0
     ldx #0
@@ -28,5 +34,6 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   MESSAGE: .text "hello brave new world!"
   .byte 0

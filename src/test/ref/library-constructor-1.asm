@@ -1,10 +1,16 @@
 // Demonstrates Library Constructor Functionality
 // #pragma constructor_for() declares named constructors for other symbols
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="library-constructor-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(__start)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label my_value = 2
+.segment Code
 __start: {
     // my_value
     lda #0

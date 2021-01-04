@@ -14,8 +14,10 @@ import dk.camelot64.kickc.model.types.SymbolType;
 import dk.camelot64.kickc.model.values.*;
 import dk.camelot64.kickc.parser.KickCParser;
 import dk.camelot64.kickc.parser.KickCParserBaseVisitor;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /** ASM Code Fragment with register/variable bindings that can be used for generating ASM code for a specific statement . */
@@ -198,16 +200,24 @@ public class AsmFragmentInstance {
          this.visit(context);
       }
 
+      private static AsmLine addTags(AsmLine asmLine, List<TerminalNode> asmTags) {
+         if(asmTags != null)
+            for(TerminalNode asmTag : asmTags) {
+               final String tagName = asmTag.getText().substring(1);
+               asmLine.getTags().add(tagName);
+            }
+         return asmLine;
+      }
+
       @Override
       public Object visitAsmLabelName(KickCParser.AsmLabelNameContext ctx) {
-         asmProgram.addLine(new AsmLabel(ctx.ASM_NAME().getText()));
+         asmProgram.addLine(addTags(new AsmLabel(ctx.ASM_NAME().getText()), ctx.ASM_TAG()));
          return null;
       }
 
       @Override
       public Object visitAsmLabelMulti(KickCParser.AsmLabelMultiContext ctx) {
-         String label = ctx.ASM_MULTI_NAME().getText();
-         asmProgram.addLine(new AsmLabel(label));
+         asmProgram.addLine(addTags(new AsmLabel(ctx.ASM_MULTI_NAME().getText()), ctx.ASM_TAG()));
          return null;
       }
 
@@ -217,7 +227,7 @@ public class AsmFragmentInstance {
          for(int i = 1; i < ctx.getChildCount(); i = i + 2) {
             values.add(ctx.getChild(i).getText());
          }
-         asmProgram.addLine(new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values));
+         asmProgram.addLine(addTags(new AsmDataNumeric(null, AsmDataNumeric.Type.BYTE, values), ctx.ASM_TAG()));
          return null;
       }
 
@@ -231,7 +241,7 @@ public class AsmFragmentInstance {
             instruction = (AsmInstruction) this.visit(paramModeCtx);
          }
          if(instruction != null) {
-            asmProgram.addLine(instruction);
+            asmProgram.addLine(addTags(instruction, ctx.ASM_TAG()));
          } else {
             throw new RuntimeException("Error parsing ASM fragment line " + name + ".asm\n - Line: " + ctx.getText());
          }
@@ -338,7 +348,7 @@ public class AsmFragmentInstance {
          String operand1 = param1 == null ? null : param1.getParam();
          String operand2 = param2 == null ? null : param2.getParam();
          if(cpuOpcode == null) {
-            throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2) +" by CPU "+this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
+            throw new InternalError("Error in " + name + ".asm line " + instructionCtx.getStart().getLine() + " - Instruction type not supported  " + addressingMode.getAsm(mnemonic, operand1, operand2) + " by CPU " + this.fragmentInstance.fragmentTemplate.getTargetCpu().getName());
          }
          return new AsmInstruction(cpuOpcode, operand1, operand2);
       }

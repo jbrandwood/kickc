@@ -1,7 +1,13 @@
 // java.lang.NullPointerException during Pass2TypeInference.java
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="typeinference-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x/2) and g(x) = f(1-x) 
 main: {
     ldy #0
@@ -21,4 +27,5 @@ main: {
     // }
     rts
 }
+.segment Data
   table: .fill $100, 0

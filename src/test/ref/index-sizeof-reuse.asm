@@ -1,12 +1,18 @@
 // Test that the multiplication of a idx*sizeof(element) is reused inside loops
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="index-sizeof-reuse.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const OFFSET_STRUCT_ENTITY_X_VEL = 1
   .const OFFSET_STRUCT_ENTITY_SYMBOL = 2
-  .label VIC_RASTER = $d012
-  .label VIC_BG_COLOR = $d020
+  .label VICII_RASTER = $d012
+  .label VICII_BG_COLOR = $d020
   .label SCREEN = $400
+.segment Code
 main: {
     // Initialize velocities
     .label v = 2
@@ -24,13 +30,13 @@ main: {
     bcc __b2
   // Wait for raster refresh
   __b3:
-    // while(*VIC_RASTER!=0xff)
+    // while(*VICII_RASTER!=0xff)
     lda #$ff
-    cmp VIC_RASTER
+    cmp VICII_RASTER
     bne __b3
-    // *VIC_BG_COLOR = 0
+    // *VICII_BG_COLOR = 0
     lda #0
-    sta VIC_BG_COLOR
+    sta VICII_BG_COLOR
     lda #<SCREEN
     sta.z line
     lda #>SCREEN
@@ -42,9 +48,9 @@ main: {
     lda.z i1
     cmp #$19
     bcc __b6
-    // *VIC_BG_COLOR = 15
+    // *VICII_BG_COLOR = 15
     lda #$f
-    sta VIC_BG_COLOR
+    sta VICII_BG_COLOR
     jmp __b3
   __b6:
     // line[entities[i].x_pos] = ' '
@@ -131,4 +137,5 @@ main: {
     inx
     jmp __b1
 }
+.segment Data
   entities: .fill 3*$19, 0

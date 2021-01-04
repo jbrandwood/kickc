@@ -23,7 +23,7 @@ export char SPRITE[] = kickasm(resource "sprite.png") {{
 char* const LOAD_SPRITE = 0x3000;
 
 char* const SCREEN = 0x0400;
-char* const SPRITES_PTR = SCREEN+SPRITE_PTRS;
+char* const SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS;
 
 void main() {
     // Load sprite file into memory

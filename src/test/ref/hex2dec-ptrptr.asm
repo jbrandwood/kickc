@@ -1,7 +1,13 @@
 // Testing binary to hex conversion using pointer to pointer
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="hex2dec-ptrptr.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // cls()
     jsr cls
@@ -156,6 +162,7 @@ utoa16n: {
     // }
     rts
 }
+.segment Data
   // Digits used for utoa()
   DIGITS: .text "0123456789abcdef"
   .byte 0

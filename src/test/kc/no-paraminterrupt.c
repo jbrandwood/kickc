@@ -6,6 +6,6 @@ void main() {
     SCREEN[0]++;
 }
 
-interrupt void irq(byte b) {
+__interrupt void irq(byte b) {
     SCREEN[1]++;
 }

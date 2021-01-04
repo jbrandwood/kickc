@@ -1,7 +1,7 @@
 .pc = $801 "Basic"
 :BasicUpstart(main)
 .pc = $80d "Program"
-  .label VIC_MEMORY = $d018
+  .label VICII_MEMORY = $d018
   .label SCREEN = $400
   .label CHARSET = $3000
 main: {
@@ -47,7 +47,7 @@ sr2:rol charset_spec_row_hi
     dec c
     bne b2
     lda #SCREEN/$40|CHARSET/$400
-    sta VIC_MEMORY
+    sta VICII_MEMORY
     rts
 }
 

@@ -20,7 +20,7 @@ void main() {
 
 
 // The Interrupt Handler
-interrupt(kernel_keyboard) void irq() {
+__interrupt(rom_sys_c64) void irq() {
     *BG_COLOR = WHITE;
     *BG_COLOR = BLACK;
 }

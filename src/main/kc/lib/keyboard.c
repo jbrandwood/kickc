@@ -38,7 +38,7 @@ char keyboard_matrix_row_bitmask[8] = { %11111110, %11111101, %11111011, %111101
 // Keyboard matrix column bitmasks for a specific keybooard matrix column when reading the keyboard. (columns are numbered 0-7)
 char keyboard_matrix_col_bitmask[8] = { %00000001, %00000010, %00000100, %00001000, %00010000, %00100000, %01000000, %10000000 };
 
-// Initialize keyboard reading by setting CIA#$ Data Direction Registers
+// Initialize keyboard reading by setting CIA#1 Data Direction Registers
 void keyboard_init() {
     // Keyboard Matrix Columns Write Mode
     CIA1->PORT_A_DDR = $ff;

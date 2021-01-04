@@ -185,11 +185,17 @@ ASSEMBLER BEFORE OPTIMIZATION
 // Test adding integer index to a pointer that is a literal string
 // https://gitlab.com/camelot/kickc/issues/315
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-pointer-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label process_name = $400
+.segment Code
   // main
 main: {
     // [1] call set_process_name 
@@ -201,9 +207,11 @@ main: {
   __breturn:
     // [2] return 
     rts
+  .segment Data
     name: .text "keyboard"
     .byte 0
 }
+.segment Code
   // set_process_name
 set_process_name: {
     .label j = 2
@@ -308,11 +316,17 @@ Score: 948
 // Test adding integer index to a pointer that is a literal string
 // https://gitlab.com/camelot/kickc/issues/315
   // Upstart
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="string-pointer-problem.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   // Global Constants & labels
   .label process_name = $400
+.segment Code
   // main
 main: {
     // set_process_name("keyboard")
@@ -323,9 +337,11 @@ main: {
     // }
     // [2] return 
     rts
+  .segment Data
     name: .text "keyboard"
     .byte 0
 }
+.segment Code
   // set_process_name
 set_process_name: {
     .label j = 2

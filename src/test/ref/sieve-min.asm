@@ -1,8 +1,13 @@
 // C standard library string.h
 // Functions to manipulate C strings and arrays.
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="sieve-min.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .const COUNT = $4000
   /* Up to what number? */
   .const SQRT_COUNT = $80
@@ -11,6 +16,7 @@
   .label sieve = $1000
   .label print_screen = $400
   .label print_char_cursor = $a
+.segment Code
 main: {
     .label i = $a
     .label sieve_i = 2
@@ -232,4 +238,5 @@ print_uchar: {
     // }
     rts
 }
+.segment Data
   print_hextab: .text "0123456789abcdef"

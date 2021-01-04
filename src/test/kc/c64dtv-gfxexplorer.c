@@ -22,15 +22,15 @@ void main() {
 }
 
 // VIC Screens
-byte* const VIC_SCREEN0 = $4000;
-byte* const VIC_SCREEN1 = $4400;
-byte* const VIC_SCREEN2 = $4800;
-byte* const VIC_SCREEN3 = $4c00;
-byte* const VIC_SCREEN4 = $5000;
+byte* const VICII_SCREEN0 = $4000;
+byte* const VICII_SCREEN1 = $4400;
+byte* const VICII_SCREEN2 = $4800;
+byte* const VICII_SCREEN3 = $4c00;
+byte* const VICII_SCREEN4 = $5000;
 // VIC Charset from ROM
-byte* const VIC_CHARSET_ROM = $5800;
+byte* const VICII_CHARSET_ROM = $5800;
 // VIC Bitmap
-byte* const VIC_BITMAP = $6000;
+byte* const VICII_BITMAP = $6000;
 
 // 8BPP Chunky Bitmap (contains 8bpp pixels)
 const dword PLANE_8BPP_CHUNKY = $20000;
@@ -52,17 +52,17 @@ const dword PLANE_CHARSET8 = $3c000;
 // Get plane address from a plane index (from the form)
 dword get_plane(byte idx) {
     if(idx==0) {
-        return (dword)VIC_SCREEN0;
+        return (dword)VICII_SCREEN0;
     } else if(idx==1) {
-        return (dword)VIC_SCREEN1;
+        return (dword)VICII_SCREEN1;
     } else if(idx==2) {
-        return (dword)VIC_SCREEN2;
+        return (dword)VICII_SCREEN2;
     } else if(idx==3) {
-        return (dword)VIC_SCREEN3;
+        return (dword)VICII_SCREEN3;
     } else if(idx==4) {
-        return (dword)VIC_BITMAP;
+        return (dword)VICII_BITMAP;
     } else if(idx==5) {
-        return (dword)VIC_CHARSET_ROM;
+        return (dword)VICII_CHARSET_ROM;
     } else if(idx==6) {
         return (dword)PLANE_8BPP_CHUNKY;
     } else if(idx==7) {
@@ -80,33 +80,33 @@ dword get_plane(byte idx) {
     } else if(idx==13) {
         return (dword)PLANE_FULL;
     }
-    return (dword)VIC_SCREEN0;
+    return (dword)VICII_SCREEN0;
 }
 
 // Get the VIC screen address from the screen index
-byte* get_vic_screen(byte idx) {
+byte* get_VICII_screen(byte idx) {
     if(idx==0) {
-        return VIC_SCREEN0;
+        return VICII_SCREEN0;
     } else if(idx==1) {
-        return VIC_SCREEN1;
+        return VICII_SCREEN1;
     } else if(idx==2) {
-        return VIC_SCREEN2;
+        return VICII_SCREEN2;
     } else if(idx==3) {
-        return VIC_SCREEN3;
+        return VICII_SCREEN3;
     } else if(idx==4) {
-        return VIC_SCREEN4;
+        return VICII_SCREEN4;
     }
-    return VIC_SCREEN0;
+    return VICII_SCREEN0;
 }
 
 // Get the VIC charset/bitmap address from the index
-byte* get_vic_charset(byte idx) {
+byte* get_VICII_charset(byte idx) {
     if(idx==0) {
-        return VIC_CHARSET_ROM;
+        return VICII_CHARSET_ROM;
     } else if(idx==1) {
-        return VIC_BITMAP;
+        return VICII_BITMAP;
     }
-    return VIC_CHARSET_ROM;
+    return VICII_CHARSET_ROM;
 }
 
 // Screen containing the FORM
@@ -278,18 +278,18 @@ byte* const form_b_step_hi  = form_fields_val+20;
 byte* const form_b_step_lo  = form_fields_val+21;
 byte* const form_b_mod_hi   = form_fields_val+22;
 byte* const form_b_mod_lo   = form_fields_val+23;
-byte* const form_vic_screen = form_fields_val+24;
-byte* const form_vic_gfx    = form_fields_val+25;
-byte* const form_vic_cols   = form_fields_val+26;
+byte* const form_VICII_screen = form_fields_val+24;
+byte* const form_VICII_gfx    = form_fields_val+25;
+byte* const form_VICII_cols   = form_fields_val+26;
 byte* const form_dtv_palet  = form_fields_val+27;
-byte* const form_vic_bg0_hi = form_fields_val+28;
-byte* const form_vic_bg0_lo = form_fields_val+29;
-byte* const form_vic_bg1_hi = form_fields_val+30;
-byte* const form_vic_bg1_lo = form_fields_val+31;
-byte* const form_vic_bg2_hi = form_fields_val+32;
-byte* const form_vic_bg2_lo = form_fields_val+33;
-byte* const form_vic_bg3_hi = form_fields_val+34;
-byte* const form_vic_bg3_lo = form_fields_val+35;
+byte* const form_VICII_bg0_hi = form_fields_val+28;
+byte* const form_VICII_bg0_lo = form_fields_val+29;
+byte* const form_VICII_bg1_hi = form_fields_val+30;
+byte* const form_VICII_bg1_lo = form_fields_val+31;
+byte* const form_VICII_bg2_hi = form_fields_val+32;
+byte* const form_VICII_bg2_lo = form_fields_val+33;
+byte* const form_VICII_bg3_hi = form_fields_val+34;
+byte* const form_VICII_bg3_lo = form_fields_val+35;
 
 // Change graphics mode to show the selected graphics mode
 void gfx_mode() {
@@ -317,19 +317,19 @@ void gfx_mode() {
     *DTV_CONTROL = dtv_control;
 
     // VIC Graphics Mode
-    byte vic_control = VIC_DEN | VIC_RSEL | 3;
+    byte VICII_control = VICII_DEN | VICII_RSEL | 3;
     if(*form_ctrl_ecm!=0) {
-        vic_control = vic_control | VIC_ECM;
+        VICII_control = VICII_control | VICII_ECM;
     }
     if(*form_ctrl_bmm!=0) {
-        vic_control = vic_control | VIC_BMM;
+        VICII_control = VICII_control | VICII_BMM;
     }
-    *VIC_CONTROL = vic_control;
-    byte vic_control2 = VIC_CSEL;
+    *VICII_CONTROL = VICII_control;
+    byte VICII_control2 = VICII_CSEL;
     if(*form_ctrl_mcm!=0) {
-        vic_control2 = vic_control2 | VIC_MCM;
+        VICII_control2 = VICII_control2 | VICII_MCM;
     }
-    *VIC_CONTROL2 = vic_control2;
+    *VICII_CONTROL2 = VICII_control2;
 
     // Linear Graphics Plane A Counter
     byte plane_a_offs = *form_a_start_hi*$10|*form_a_start_lo;
@@ -353,25 +353,25 @@ void gfx_mode() {
 
     // VIC Graphics Bank
     CIA2->PORT_A_DDR = %00000011; // Set VIC Bank bits to output - all others to input
-    CIA2->PORT_A = %00000011 ^ (byte)((word)VIC_SCREEN0/$4000); // Set VIC Bank
+    CIA2->PORT_A = %00000011 ^ (byte)((word)VICII_SCREEN0/$4000); // Set VIC Bank
     // VIC memory
-    *VIC_MEMORY = (byte)(((word)get_vic_screen(*form_vic_screen)&$3fff)/$40)  |   ((>((word)get_vic_charset(*form_vic_gfx)&$3fff))/4);
+    *VICII_MEMORY = (byte)(((word)get_VICII_screen(*form_VICII_screen)&$3fff)/$40)  |   ((>((word)get_VICII_charset(*form_VICII_gfx)&$3fff))/4);
 
     // VIC Colors
-    byte* vic_colors = get_vic_screen(*form_vic_cols);
+    byte* VICII_colors = get_VICII_screen(*form_VICII_cols);
     byte* col=COLS;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
-            *col++ = *vic_colors++;
+            *col++ = *VICII_colors++;
         }
     }
 
     // Background colors
     VICII->BORDER_COLOR = 0;
-    VICII->BG_COLOR = *form_vic_bg0_hi*$10|*form_vic_bg0_lo;
-    VICII->BG_COLOR1 = *form_vic_bg1_hi*$10|*form_vic_bg1_lo;
-    VICII->BG_COLOR2 = *form_vic_bg2_hi*$10|*form_vic_bg2_lo;
-    VICII->BG_COLOR3 = *form_vic_bg3_hi*$10|*form_vic_bg3_lo;
+    VICII->BG_COLOR = *form_VICII_bg0_hi*$10|*form_VICII_bg0_lo;
+    VICII->BG_COLOR1 = *form_VICII_bg1_hi*$10|*form_VICII_bg1_lo;
+    VICII->BG_COLOR2 = *form_VICII_bg2_hi*$10|*form_VICII_bg2_lo;
+    VICII->BG_COLOR3 = *form_VICII_bg3_hi*$10|*form_VICII_bg3_lo;
 
     // DTV Palette
     if(*form_dtv_palet==0) {
@@ -407,7 +407,7 @@ void gfx_init() {
     gfx_init_screen3();
     gfx_init_screen4();
     gfx_init_charset();
-    gfx_init_vic_bitmap();
+    gfx_init_VICII_bitmap();
     gfx_init_plane_8bppchunky();
     gfx_init_plane_charset8();
     gfx_init_plane_horisontal();
@@ -421,7 +421,7 @@ void gfx_init() {
 void gfx_init_charset() {
     *PROCPORT = $32;
     byte* chargen = CHARGEN;
-    byte* charset = VIC_CHARSET_ROM;
+    byte* charset = VICII_CHARSET_ROM;
     for(byte c: 0..$ff) {
         for( byte l: 0..7) {
             *charset++ = *chargen++;
@@ -432,7 +432,7 @@ void gfx_init_charset() {
 
 // Initialize VIC screen 0 ( value is %yyyyxxxx where yyyy is ypos and xxxx is xpos)
 void gfx_init_screen0() {
-    byte* ch=VIC_SCREEN0;
+    byte* ch=VICII_SCREEN0;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = (cy&$f)*$10|(cx&$f);
@@ -442,7 +442,7 @@ void gfx_init_screen0() {
 
 // Initialize VIC screen 1 ( value is %0000cccc where cccc is (x+y mod $f))
 void gfx_init_screen1() {
-    byte* ch=VIC_SCREEN1;
+    byte* ch=VICII_SCREEN1;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = (cx+cy)&$f;
@@ -452,7 +452,7 @@ void gfx_init_screen1() {
 
 // Initialize VIC screen 2 ( value is %ccccrrrr where cccc is (x+y mod $f) and rrrr is %1111-%cccc)
 void gfx_init_screen2() {
-    byte* ch=VIC_SCREEN2;
+    byte* ch=VICII_SCREEN2;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             byte col = (cx+cy)&$f;
@@ -464,7 +464,7 @@ void gfx_init_screen2() {
 
 // Initialize VIC screen 3 ( value is %00xx00yy where xx is xpos and yy is ypos
 void gfx_init_screen3() {
-    byte* ch=VIC_SCREEN3;
+    byte* ch=VICII_SCREEN3;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = (cx&3)*$10|(cy&3);
@@ -474,7 +474,7 @@ void gfx_init_screen3() {
 
 // Initialize VIC screen 4 - all chars are 00
 void gfx_init_screen4() {
-    byte* ch=VIC_SCREEN4;
+    byte* ch=VICII_SCREEN4;
     for(byte cy: 0..24 ) {
         for(byte cx: 0..39) {
             *ch++ = 0;
@@ -483,9 +483,9 @@ void gfx_init_screen4() {
 }
 
 // Initialize VIC bitmap
-void gfx_init_vic_bitmap() {
+void gfx_init_VICII_bitmap() {
     // Draw some lines on the bitmap
-    bitmap_init(VIC_BITMAP);
+    bitmap_init(VICII_BITMAP);
     bitmap_clear();
     byte lines_x[] = { $00, $ff, $ff, $00, $00, $80, $ff, $80, $00, $80 };
     byte lines_y[] = { $00, $00, $c7, $c7, $00, $00, $64, $c7, $64, $00 };
@@ -649,8 +649,8 @@ void form_mode() {
     // DTV Graphics Mode
     *DTV_CONTROL = 0;
     // VIC Graphics Mode
-    VICII->CONTROL1 = VIC_DEN|VIC_RSEL|3;
-    VICII->CONTROL2 = VIC_CSEL;
+    VICII->CONTROL1 = VICII_DEN|VICII_RSEL|3;
+    VICII->CONTROL2 = VICII_CSEL;
     // VIC Memory Pointers
     VICII->MEMORY =  (byte)((((word)FORM_SCREEN&$3fff)/$40)|(((word)FORM_CHARSET&$3fff)/$400));
     // DTV Plane A to FORM_SCREEN also

@@ -1,6 +1,7 @@
 // MEGA65 conio.h implementation
 #include <conio.h>
 #include <mega65.h>
+#include <6502.h>
 
 // The screen width
 #ifdef __MEGA65_C64__
@@ -27,18 +28,9 @@ const char CONIO_TEXTCOLOR_DEFAULT = LIGHT_BLUE;
 // Enable 2K Color ROM
 void conio_mega65_init() {
     // Disable BASIC/KERNAL interrupts
-    asm {
-        sei
-    }
+    SEI();
     // Map memory to BANK 0 : 0x00XXXX - giving access to I/O
-    asm {
-        lda #0
-        tax
-        tay
-        taz
-        map
-        eom
-    }
+    memoryRemap(0,0,0);
     // Enable the VIC 4
     *IO_KEY = 0x47;
     *IO_KEY = 0x53;

@@ -12,7 +12,7 @@
 unsigned char* const SCREEN1 = $2800;
 unsigned char* const CHARSET = $2000;
 
-const unsigned char align(0x100) SINTABLE[0x100] = kickasm {{
+const unsigned char __align(0x100) SINTABLE[0x100] = kickasm {{
     .for(var i=0;i<$100;i++)
         .byte round(127.5+127.5*sin(toRadians(360*i/256)))
 }};

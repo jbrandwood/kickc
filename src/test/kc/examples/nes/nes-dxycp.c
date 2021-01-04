@@ -31,7 +31,7 @@ volatile char x_sin_idx = 73;
 volatile char x_sin_idx_2 = 82;
 
 // NMI Called when the PPU refreshes the screen (also known as the V-Blank period)
-interrupt(hardware_stack) void vblank() {
+__interrupt void vblank() {
     // Set scroll
     PPU->PPUSCROLL = 0;
     PPU->PPUSCROLL = 0;    
@@ -110,7 +110,7 @@ export char TILES[] = kickasm(resource "characters.901225-01.bin") {{
 // Sprite Buffer (in GAME RAM)
 // Will be transferred to the PPU via DMA during vblank
 #pragma data_seg(GameRam)
-struct SpriteData align(0x100) SPRITE_BUFFER[0x100];
+struct SpriteData __align(0x100) SPRITE_BUFFER[0x100];
 
 // Interrupt Vectors (in PRG ROM)
 #pragma data_seg(Vectors)

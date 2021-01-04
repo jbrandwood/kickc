@@ -26,7 +26,7 @@ public class OperatorCastPtr extends OperatorCast {
       } else if(value instanceof ConstantPointer) {
          return new ConstantPointer(((ConstantPointer) value).getLocation(), pointerType.getElementType());
       }  else if(value instanceof ConstantString){
-         throw ConstantNotLiteral.EXCEPTION;
+         throw ConstantNotLiteral.getException();
       }
       throw new InternalError("Calculation not implemented " + getOperator() + " " + value);
    }

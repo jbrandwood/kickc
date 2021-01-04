@@ -1,9 +1,15 @@
 // Tests optimizing derefs of *(ptr+b) to ptr[b - even when a noop-cast is needed
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="deref-to-derefidx-2.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
   .label SCREEN = $400
   .label screen_idx = 4
+.segment Code
 main: {
     // print(msg1)
     lda #0
@@ -40,5 +46,6 @@ print: {
     // }
     rts
 }
+.segment Data
   msg1: .byte 'a', 'b', 'c', 'd'
   msg2: .byte '1', '2', '3', '4'

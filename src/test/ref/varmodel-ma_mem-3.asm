@@ -1,7 +1,13 @@
 // Test two different memory models
-.pc = $801 "Basic"
+  // Commodore 64 PRG executable file
+.file [name="varmodel-ma_mem-3.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $80d "Program"
+.segment Code
 main: {
     // model_ma_mem()
     jsr model_ma_mem
@@ -42,9 +48,11 @@ model_ma_mem: {
     bne __b1
     // }
     rts
+  .segment Data
     screen: .word 0
     i: .byte 0
 }
+.segment Code
 model_ssa_zp: {
     // A local pointer
     .label screen = 2

@@ -7,16 +7,21 @@
 // The MOS 7360/8360 TED chip used for graphics and sound in Plus/4 and Commodore 16
 // https://www.karlstechnology.com/commodore/TED7360-datasheet.pdf
 // http://mclauchlan.site.net.au/scott/C=Hacking/C-Hacking12/gfx.html
-.pc = $1001 "Basic"
+  // Commodore 16 / Plus/4 executable PRG file
+.file [name="plus4-kbhit.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$1001]
+.segmentdef Code [start=$100d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
 :BasicUpstart(main)
-.pc = $100d "Program"
-
   .const OFFSET_STRUCT_MOS7360_TED_KEYBOARD_INPUT = 8
   // Keyboard Port PIO (P0-P7)
   // The input latch is part of the TED.
   .label KEYBOARD_PORT = $fd30
   // The TED chip controlling video and sound on the Plus/4 and Commodore 16
   .label TED = $ff00
+.segment Code
 main: {
   __b1:
     // kbhit()

@@ -45,6 +45,11 @@ public class TestPrograms {
    }
 
    @Test
+   public void testProblemArraySizeDecl() throws IOException, URISyntaxException {
+      assertError("problem-arraysize-decl.c", "BAR is not constant or is not defined");
+   }
+
+   @Test
    public void testComplexNew30YearsLowResolution() throws IOException, URISyntaxException {
       compileAndCompare("complex/new_30_years_low_resolution/new_30_years_low_resolution.c");
    }

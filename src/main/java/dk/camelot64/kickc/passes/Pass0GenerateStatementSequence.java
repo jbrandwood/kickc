@@ -981,6 +981,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
       if(ctx.expr() != null) {
          varDeclPush();
          RValue sizeVal = (RValue) visit(ctx.expr());
+         if (!(sizeVal instanceof ConstantValue))
+            throw new CompileError(sizeVal.toString() + " is not constant or is not defined", new StatementSource(ctx));
          varDeclPop();
          arraySpec = new ArraySpec((ConstantValue) sizeVal);
       } else {

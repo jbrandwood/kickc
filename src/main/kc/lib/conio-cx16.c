@@ -73,17 +73,17 @@ __ma unsigned byte conio_cursor_x = 0;
 // The current cursor y-position
 __ma unsigned byte conio_cursor_y = 0;
 // The current text cursor line start
-__ma char *conio_line_text = CONIO_SCREEN_TEXT;
+__ma unsigned byte *conio_line_text = CONIO_SCREEN_TEXT;
 // The current color cursor line start
-__ma char *conio_line_color = CONIO_SCREEN_COLORS;
+__ma unsigned byte *conio_line_color = CONIO_SCREEN_COLORS;
 // The current text color
-__ma char conio_textcolor = CONIO_TEXTCOLOR_DEFAULT;
-__ma char conio_backcolor = CONIO_BACKCOLOR_DEFAULT; // only for text 16 color mode;
+__ma unsigned byte conio_textcolor = CONIO_TEXTCOLOR_DEFAULT;
+__ma unsigned byte conio_backcolor = CONIO_BACKCOLOR_DEFAULT; // only for text 16 color mode;
 // Is a cursor whown when waiting for input (0: no, other: yes)
-__ma char conio_display_cursor = 0;
+__ma unsigned byte conio_display_cursor = 0;
 // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
 // If disabled the cursor just moves back to (0,0) instead
-__ma char conio_scroll_enable = 1;
+__ma unsigned byte conio_scroll_enable = 1;
 // Variable holding the screen width;
 __ma unsigned byte conio_screen_width = 0;
 // Variable holding the screen height;
@@ -123,18 +123,18 @@ void clrscr(void) {
 }
 
 // Set the cursor to the specified position
-void gotoxy(unsigned char x, unsigned char y) {
+void gotoxy(unsigned byte x, unsigned byte y) {
     if(y>CONIO_HEIGHT) y = 0;
     if(x>=CONIO_WIDTH) x = 0;
     conio_cursor_x = x;
     conio_cursor_y = y;
-    unsigned int line_offset = (unsigned int)y*256;
+    unsigned int line_offset = (unsigned int)y << 8;
     conio_line_text = CONIO_SCREEN_TEXT + line_offset;
     conio_line_color = CONIO_SCREEN_COLORS + line_offset;
 }
 
 // Return the current screen size.
-void screensize(unsigned char* x, unsigned char* y) {
+void screensize(unsigned byte* x, unsigned byte* y) {
     // VERA returns in VERA_DC_HSCALE the value of 128 when 80 columns is used in text mode,
     // and the value of 64 when 40 columns is used in text mode.
     // Basically, 40 columns mode in the VERA is a double scan mode.
@@ -143,27 +143,27 @@ void screensize(unsigned char* x, unsigned char* y) {
     char hscale = (*VERA_DC_HSCALE) >> 7;
     *x = 40 << hscale;
     char vscale = (*VERA_DC_VSCALE) >> 7;
-    *y = 40 << vscale;
+    *y = 30 << vscale;
     //printf("%u, %u\n", *x, *y);
 }
 
 // Return the current screen size X width.
-inline char screensizex() {
+inline unsigned byte screensizex() {
     return conio_screen_width;
 }
 
 // Return the current screen size Y height.
-inline char screensizey() {
+inline unsigned byte screensizey() {
     return conio_screen_height;
 }
 
 // Return the X position of the cursor
-inline unsigned char wherex(void) {
+inline unsigned byte wherex(void) {
     return conio_cursor_x;
 }
 
 // Return the Y position of the cursor
-inline unsigned char wherey(void) {
+inline unsigned byte wherey(void) {
     return conio_cursor_y;
 }
 
@@ -243,7 +243,7 @@ void insertup() {
 
 // Scroll the entire screen if the cursor is beyond the last line
 void cscroll() {
-    if(conio_cursor_y==CONIO_HEIGHT) {
+    if(conio_cursor_y>=CONIO_HEIGHT) {
         if(conio_scroll_enable) {
             insertup();
             gotoxy( 0, CONIO_HEIGHT-1);
@@ -263,27 +263,27 @@ void cputs(const char* s) {
 
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"
-void cputcxy(unsigned char x, unsigned char y, char c) {
+void cputcxy(unsigned byte x, unsigned byte y, char c) {
     gotoxy(x, y);
     cputc(c);
 }
 
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-void cputsxy(unsigned char x, unsigned char y, const char* s) {
+void cputsxy(unsigned byte x, unsigned byte y, const char* s) {
     gotoxy(x, y);
     cputs(s);
 }
 
 // Set the color for text output. The old color setting is returned.
-unsigned char textcolor(unsigned char color) {
+unsigned byte textcolor(unsigned byte color) {
     char old = conio_textcolor;
     conio_textcolor = color;
     return old;
 }
 
 // Set the color for back output. The old color setting is returned.
-unsigned char backcolor(unsigned char color) {
+unsigned byte backcolor(unsigned byte color) {
     char old = conio_backcolor;
     conio_backcolor = color;
     return old;
@@ -292,7 +292,7 @@ unsigned char backcolor(unsigned char color) {
 // If onoff is 1, a cursor is displayed when waiting for keyboard input.
 // If onoff is 0, the cursor is hidden when waiting for keyboard input.
 // The function returns the old cursor setting.
-unsigned char cursor(unsigned char onoff) {
+unsigned byte cursor(unsigned byte onoff) {
     char old = conio_display_cursor;
     conio_display_cursor = onoff;
     return old;
@@ -301,7 +301,7 @@ unsigned char cursor(unsigned char onoff) {
 // If onoff is 1, scrolling is enabled when outputting past the end of the screen
 // If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
-unsigned char scroll(unsigned char onoff) {
+unsigned byte scroll(unsigned byte onoff) {
     char old = conio_scroll_enable;
     conio_scroll_enable = onoff;
     return old;

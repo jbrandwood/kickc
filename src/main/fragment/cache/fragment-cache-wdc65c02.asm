@@ -1439,3 +1439,61 @@ lda {z1}
 sta {z1}+1
 lda #0
 sta {z1}
+//FRAGMENT vbuz1=vbuz2_minus_2
+lda {z2}
+sec
+sbc #2
+sta {z1}
+//FRAGMENT vbuxx=vbuz1_minus_2
+ldx {z1}
+dex
+dex
+//FRAGMENT vbuyy=vbuz1_minus_2
+ldy {z1}
+dey
+dey
+//FRAGMENT vbuz1_lt_vbuaa_then_la1
+cmp {z1}
+beq !+
+bcs {la1}
+!:
+//FRAGMENT vbuz1_lt_vbuxx_then_la1
+cpx {z1}
+beq !+
+bcs {la1}
+!:
+//FRAGMENT vbuz1_lt_vbuyy_then_la1
+cpy {z1}
+beq !+
+bcs {la1}
+!:
+//FRAGMENT vbuaa=vbuz1_minus_2
+lda {z1}
+sec
+sbc #2
+//FRAGMENT vbuz1=vbuz2_minus_vbuc1
+lda {z2}
+sec
+sbc #{c1}
+sta {z1}
+//FRAGMENT vbuaa=vbuz1_minus_vbuc1
+lda {z1}
+sec
+sbc #{c1}
+//FRAGMENT vbuxx=vbuz1_minus_vbuc1
+lda {z1}
+sec
+sbc #{c1}
+tax
+//FRAGMENT vbuyy=vbuz1_minus_vbuc1
+lda {z1}
+sec
+sbc #{c1}
+tay
+//FRAGMENT vbuxx=_dec_vbuxx
+dex
+//FRAGMENT vbuyy_gt_0_then_la1
+cpy #0
+bne {la1}
+//FRAGMENT vbuyy=_dec_vbuyy
+dey

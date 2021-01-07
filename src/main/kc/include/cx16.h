@@ -62,6 +62,16 @@ char vpeek(char vbank, char* vaddr);
 // - num: The number of bytes to copy
 void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
 
+// Copy block of memory from VRAM to VRAM
+// Copies the values from the location pointed by vget to the location pointed by vput.
+// The method uses the VERA access ports 0 and 1 to copy data from and to in VRAM.
+// - num: How much bytes to be copied.
+// - bget:  64K VRAM bank number to copy from (0/1).
+// - vget: pointer to the location to copy from. Note that the address is a 16 bit value!
+// - iget: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
+// - bput:  64K VRAM bank number to copy to (0/1).
+// - vput: pointer to the location to copy to. Note that the address is a 16 bit value!
+// - iput: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
 void vram_to_vram(unsigned int num, char bget, void *vget, char iget, char bput, void *vput, char iput );
 
 // Color Ram

@@ -61,3 +61,26 @@ char vpeek(char vbank, char* vaddr);
 // - src: The source address in RAM
 // - num: The number of bytes to copy
 void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
+
+void vram_to_vram(unsigned int num, char bget, void *vget, char iget, char bput, void *vput, char iput );
+
+// Color Ram
+char * const COLORRAM = 0xd800;
+
+// The colors of the C64
+const char BLACK = 0x0;
+const char WHITE = 0x1;
+const char RED = 0x2;
+const char CYAN = 0x3;
+const char PURPLE = 0x4;
+const char GREEN = 0x5;
+const char BLUE = 0x6;
+const char YELLOW = 0x7;
+const char ORANGE = 0x8;
+const char BROWN = 0x9;
+const char PINK = 0xa;
+const char DARK_GREY= 0xb;
+const char GREY = 0xc;
+const char LIGHT_GREEN = 0xd;
+const char LIGHT_BLUE = 0xe;
+const char LIGHT_GREY = 0xf;

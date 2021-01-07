@@ -54,3 +54,30 @@ void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num ) {
     for(char *s = src; s!=end; s++)
         *VERA_DATA0 = *s;
 }
+
+// Copy block of memory (from RAM to VRAM)
+// Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination in VRAM.
+// - vbank: Which 64K VRAM bank to put data into (0/1)
+// - vdest: The destination address in VRAM
+// - src: The source address in RAM
+// - num: The number of bytes to copy
+void vram_to_vram(unsigned int num, char bget, void *vget, char iget, char bput, void *vput, char iput ) {
+    // Select DATA0
+    *VERA_CTRL &= ~VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <vget;
+    *VERA_ADDRX_M = >vget;
+    *VERA_ADDRX_H = iget | bget;
+
+    // Select DATA1
+    *VERA_CTRL |= VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <vput;
+    *VERA_ADDRX_M = >vput;
+    *VERA_ADDRX_H = iput | bput;
+
+    // Transfer the data
+    for(unsigned int i=0; i<num; i++) {
+        *VERA_DATA1 = *VERA_DATA0;
+        }
+}

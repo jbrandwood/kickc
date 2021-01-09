@@ -82,14 +82,14 @@ char * const VERA_IRQLINE_L = 0x9f28;
 // Bit 2: Chroma Disable    Setting 'Chroma Disable' disables output of chroma in NTSC composite mode and will give a better picture on a monochrome display. (Setting this bit will also disable the chroma output on the S-video output.)
 // Bit 0-1: Output Mode     0: Video disabled, 1: VGA output, 2: NTSC composite, 3: RGB interlaced, composite sync (via VGA connector)
 char * const VERA_DC_VIDEO = 0x9f29;
-char VERA_SPRITES_ENABLE = 0x40;
-char VERA_LAYER1_ENABLE = 0x20;
-char VERA_LAYER0_ENABLE = 0x10;
-char VERA_CROMA_DISABLE = 0x04;
-char VERA_OUTPUT_DISABLE = 0x00;
-char VERA_OUTPUT_VGA = 0x01;
-char VERA_OUTPUT_NTSC = 0x02;
-char VERA_OUTPUT_RGB = 0x03;
+const char VERA_SPRITES_ENABLE = 0x40;
+const char VERA_LAYER1_ENABLE = 0x20;
+const char VERA_LAYER0_ENABLE = 0x10;
+const char VERA_CROMA_DISABLE = 0x04;
+const char VERA_OUTPUT_DISABLE = 0x00;
+const char VERA_OUTPUT_VGA = 0x01;
+const char VERA_OUTPUT_NTSC = 0x02;
+const char VERA_OUTPUT_RGB = 0x03;
 // $9F2A	DC_HSCALE (DCSEL=0)	Active Display H-Scale
 char * const VERA_DC_HSCALE = 0x9f2a;
 // $9F2B	DC_VSCALE (DCSEL=0)	Active Display V-Scale
@@ -132,7 +132,7 @@ char const VERA_L0_CONFIG_HEIGHT_256 = 0xC0;
 char const VERA_L0_CONFIG_HEIGHT_MASK = 0xC0;
 unsigned int const VERA_L0_CONFIG_HEIGHT[4] = { 32, 64, 128, 256 };
 // $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
-char * const VERA_L0_MAPBASE = 0x9f2e;
+unsigned byte * const VERA_L0_MAPBASE = 0x9f2e;
 // $9F2F	L0_TILEBASE	    Layer 0 Tile Base
 // Bit 2-7: Tile Base Address (16:11)
 // Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)

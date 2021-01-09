@@ -6,10 +6,22 @@
 #define CONIO_WIDTH conio_screen_width
 // The screen height
 #define CONIO_HEIGHT conio_screen_height
-// The text screen address
-char * const CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
+// The text screen base address, which is a 16:0 bit value in VERA VRAM.
+// That is 128KB addressable space, thus 17 bits in total.
+// CONIO_SCREEN_TEXT contains bits 15:0 of the address.
+// CONIO_SCREEN_BANK contains bit 16, the the 64K memory bank in VERA VRAM (the upper 17th bit).
+// !!! note that these values are not const for the cx16!
+// This conio implements the two layers of VERA, which can be layer 0 or layer 1.
+// Configuring conio to output to a different layer, will change these fields to the address base
+// configured using VERA_L0_MAPBASE = 0x9f2e or VERA_L1_MAPBASE = 0x9f35.
+// Using the function setscreenlayer(layer) will re-calculate using CONIO_SCREEN_TEXT and CONIO_SCREEN_BASE
+// based on the values of VERA_L0_MAPBASE or VERA_L1_MAPBASE, mapping the base address of the selected layer.
+// The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
+// mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
+char* CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
+byte CONIO_SCREEN_BANK = 0; // Default screen of the CX16 emulator uses memory bank 0 for text.
 // The color screen address
-char * const CONIO_SCREEN_COLORS = COLORRAM;
+char* const CONIO_SCREEN_COLORS = COLORRAM;
 // The default text color
 const char CONIO_TEXTCOLOR_DEFAULT = WHITE;
 // The default back color
@@ -23,13 +35,16 @@ void conio_x16_init() {
     // Position cursor at current line
     char * const BASIC_CURSOR_LINE = 0xD6;
     char line = *BASIC_CURSOR_LINE;
-    screensize( &conio_screen_width, &conio_screen_height );
+    screensize(&conio_screen_width, &conio_screen_height);
+    screenlayer(1);
+    setscreenlayermapbase(0,0x00);
+    setscreenlayermapbase(1,0x00);
     if(line>=CONIO_HEIGHT) line=CONIO_HEIGHT-1;
     gotoxy(0, line);
 }
 
 // Return true if there's a key waiting, return false if not
-unsigned char kbhit (void) {
+unsigned char kbhit(void) {
     // CIA#1 Port A: keyboard matrix columns and joystick #2
     char* const CIA1_PORT_A = 0xdc00;
     // CIA#1 Port B: keyboard matrix rows and joystick #1.
@@ -88,11 +103,14 @@ __ma unsigned byte conio_scroll_enable = 1;
 __ma unsigned byte conio_screen_width = 0;
 // Variable holding the screen height;
 __ma unsigned byte conio_screen_height = 0;
+// Variable holding the screen layer on the VERA card with which conio interacts;
+__ma unsigned byte conio_screen_layer = 1;
+//
+__ma unsigned byte* conio_screen_layer_mapbase[2] = {VERA_L0_MAPBASE, VERA_L1_MAPBASE};
 
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void) {
     char* line_text = CONIO_SCREEN_TEXT;
-    char* line_cols = CONIO_SCREEN_COLORS;
     unsigned int conio_width = VERA_L1_CONFIG_WIDTH[ ( (*VERA_L1_CONFIG) & VERA_L1_CONFIG_WIDTH_MASK ) >> 4 ];
     unsigned int conio_height = VERA_L1_CONFIG_HEIGHT[ ( (*VERA_L1_CONFIG) & VERA_L1_CONFIG_HEIGHT_MASK ) >> 6 ];
     char color = ( conio_backcolor << 4 ) | conio_textcolor;
@@ -103,7 +121,7 @@ void clrscr(void) {
         // Set address
         *VERA_ADDRX_L = <ch;
         *VERA_ADDRX_M = >ch;
-        *VERA_ADDRX_H = VERA_INC_1;
+        *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1;
         for( char c=0;c<conio_width; c++ ) {
             // Set data
             *VERA_DATA0 = ' ';
@@ -114,12 +132,10 @@ void clrscr(void) {
             //line_cols[c] = conio_textcolor;
         }
         line_text += 256;
-        line_cols += 256;
     }
     conio_cursor_x = 0;
     conio_cursor_y = 0;
     conio_line_text = CONIO_SCREEN_TEXT;
-    conio_line_color = CONIO_SCREEN_COLORS;
 }
 
 // Set the cursor to the specified position
@@ -130,15 +146,77 @@ void gotoxy(unsigned byte x, unsigned byte y) {
     conio_cursor_y = y;
     unsigned int line_offset = (unsigned int)y << 8;
     conio_line_text = CONIO_SCREEN_TEXT + line_offset;
-    conio_line_color = CONIO_SCREEN_COLORS + line_offset;
 }
+
+// Set the layer with which the conio will interact.
+// - layer: value of 0 or 1.
+void screenlayer(unsigned byte layer) {
+    if(layer > 1)
+        layer = 1;
+    conio_screen_layer = layer;
+    unsigned byte* addr = conio_screen_layer_mapbase[layer];
+    unsigned int addr_i = *addr << 1;
+    CONIO_SCREEN_BANK = >addr_i;
+    CONIO_SCREEN_TEXT = addr_i << 8;
+}
+
+// Set the base of the map layer with which the conio will interact.
+// - layer: Value of 0 or 1.
+// - mapbase: Specifies the base address of the tile map.
+//   Note that the register only specifies bits 16:9 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
+void setscreenlayermapbase(unsigned byte layer, unsigned byte mapbase) {
+    if(layer > 1)
+        layer = 1;
+    unsigned byte* addr = conio_screen_layer_mapbase[layer];
+    *addr = mapbase;
+}
+
+// Get the base of the map layer with which the conio will interact.
+// - layer: Value of 0 or 1.
+// - return: Returns the base address of the tile map.
+//   Note that the register is a byte, specifying only bits 16:9 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
+unsigned byte getscreenlayermapbase(unsigned byte layer) {
+    if(layer > 1)
+        layer = 1;
+    unsigned byte* mapbase = conio_screen_layer_mapbase[layer];
+    return *mapbase;
+}
+
+
+// Enable the layer to be displayed on the screen.
+// - layer: 0 or 1.
+void screenlayerenable(unsigned byte layer) {
+    unsigned char enable[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
+    layer &= $1;
+    *VERA_DC_VIDEO |= enable[layer];
+}
+
+// Disable the layer to be displayed on the screen.
+// - layer: 0 or 1.
+void screenlayerdisable(unsigned byte layer) {
+    const unsigned byte disable[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
+    layer &= $1;
+    *VERA_DC_VIDEO &= ~disable[layer];
+}
+
+
+// Is the layer displayed on the screen?
+// - returns: 1 if layer is displayed on the screen, 0 if not.
+unsigned byte screenlayerenabled(unsigned byte layer) {
+    const unsigned byte enabled[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
+    layer &= $1;
+    return *VERA_DC_VIDEO & enabled[layer];
+}
+
 
 // Return the current screen size.
 void screensize(unsigned byte* x, unsigned byte* y) {
     // VERA returns in VERA_DC_HSCALE the value of 128 when 80 columns is used in text mode,
     // and the value of 64 when 40 columns is used in text mode.
     // Basically, 40 columns mode in the VERA is a double scan mode.
-    // Same for the VERA_DC_VSCALE mode.
+    // Same for the VERA_DC_VSCALE mode, but then the subdivision is 60 or 30 rows.
     // I still need to test the other modes, but this will suffice for now for the pure text modes.
     char hscale = (*VERA_DC_HSCALE) >> 7;
     *x = 40 << hscale;
@@ -171,16 +249,18 @@ inline unsigned byte wherey(void) {
 // Moves the cursor forward. Scrolls the entire screen if needed
 void cputc(char c) {
     char color = ( conio_backcolor << 4 ) | conio_textcolor;
+    unsigned byte* conio_addr = CONIO_SCREEN_TEXT;
+    conio_addr += conio_cursor_y*256;
+    conio_addr += conio_cursor_x << 1;
     if(c=='\n') {
         cputln();
     } else {
         // Select DATA0
         *VERA_CTRL &= ~VERA_ADDRSEL;
         // Set address
-        char lx = conio_cursor_x << 1;
-        *VERA_ADDRX_L = <(conio_line_text+lx);
-        *VERA_ADDRX_M = >(conio_line_text+lx);
-        *VERA_ADDRX_H = VERA_INC_1;
+        *VERA_ADDRX_L = <conio_addr;
+        *VERA_ADDRX_M = >conio_addr;
+        *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1;
         *VERA_DATA0 = c;
         *VERA_DATA0 = color;
 

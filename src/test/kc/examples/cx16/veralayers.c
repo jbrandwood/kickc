@@ -6,7 +6,6 @@ void main() {
     backcolor(BLACK);
     clrscr();
 
-
     screenlayer(1);
 
     gotoxy(0,16);
@@ -15,13 +14,13 @@ void main() {
     printf("this program demonstrates the layer functionality in text mode.\n");
 
     // Here we use the screensizex and screensizey functions to show the width and height of the text screen.
-    printf("vera card width = %u; height = %u\n", screensizex(), screensizey());
+    printf("\nvera card width = %u; height = %u\n", screensizex(), screensizey());
 
     // This is the content of the main controller registers of the VERA of layer 1.
     // Layer 1 is the default layer that is activated in the CX16 at startup.
     // It displays the characters in 1BPP 16x16 color mode!
-    printf("vera dc video = %x\n", *VERA_DC_VIDEO);
-    printf("vera layer 1 config = %x\n", *VERA_L1_CONFIG);
+    printf("\nvera dc video = %x\n", *VERA_DC_VIDEO);
+    printf("\nvera layer 1 config = %x\n", *VERA_L1_CONFIG);
     printf("vera layer 1 enabled = %x\n", screenlayerenabled(1));
     printf("vera layer 1 mapbase = %x, tilebase = %x\n", getscreenlayermapbase(1), *VERA_L1_TILEBASE);
     printf("vera layer 1 vscroll high = %x, low = %x\n", *VERA_L1_HSCROLL_H, *VERA_L1_HSCROLL_L);
@@ -45,8 +44,8 @@ void main() {
     *VERA_L0_CONFIG = *VERA_L1_CONFIG;
     *VERA_L0_TILEBASE = *VERA_L1_TILEBASE;
 
-    printf("vera dc video = %x\n", *VERA_DC_VIDEO);
-    printf("vera layer 0 config = %x\n", *VERA_L0_CONFIG);
+
+    printf("\nvera layer 0 config = %x\n", *VERA_L0_CONFIG);
     printf("vera layer 0 enabled = %x\n", screenlayerenabled(0));
     printf("vera layer 0 mapbase = %x, tilebase = %x\n", getscreenlayermapbase(0), *VERA_L0_TILEBASE);
     printf("vera layer 0 vscroll high = %x, low = %x\n", *VERA_L0_HSCROLL_H, *VERA_L0_HSCROLL_L);
@@ -73,7 +72,6 @@ void main() {
     printf("press a key to show layer 0 and show the text!");
     while(!kbhit());
     clearline();
-
 
     // Now we activate layer 0.
     screenlayerenable(0);

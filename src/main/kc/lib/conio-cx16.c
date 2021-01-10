@@ -45,12 +45,46 @@ void conio_x16_init() {
 
 // Return true if there's a key waiting, return false if not
 unsigned char kbhit(void) {
-    // CIA#1 Port A: keyboard matrix columns and joystick #2
-    char* const CIA1_PORT_A = 0xdc00;
-    // CIA#1 Port B: keyboard matrix rows and joystick #1.
-    char* const CIA1_PORT_B = 0xdc01;
-    *CIA1_PORT_A = 0;
-    return ~*CIA1_PORT_B;
+
+    char ch = 0;
+    char* chptr = &ch;
+
+    char* IN_DEV = $028A;        // Current input device number
+    char* GETIN  = $FFE4;        // CBM GETIN API
+
+    kickasm(uses chptr, uses IN_DEV, uses GETIN) {{
+
+        jsr _kbhit
+        bne L3
+
+        jmp continue1
+
+        .var via1 = $9f60                  //VIA#1
+        .var d1pra = via1+1
+
+    _kbhit:
+        ldy     d1pra       // The count of keys pressed is stored in RAM bank 0.
+        stz     d1pra       // Set d1pra to zero to access RAM bank 0.
+        lda     $A00A       // Get number of characters from this address in the ROM of the CX16 (ROM 38).
+        sty     d1pra       // Set d1pra to previous value.
+        rts
+
+    L3:
+        ldy     IN_DEV          // Save current input device
+        stz     IN_DEV          // Keyboard
+        phy
+        jsr     GETIN           // Read char, and return in .A
+        ply
+        sta     chptr           // Store the character read in ch
+        sty     IN_DEV          // Restore input device
+        ldx     #>$0000
+        rts
+
+    continue1:
+        nop
+     }}
+
+    return ch;
 }
 
 // Set the color for the background. The old color setting is returned.
@@ -283,10 +317,12 @@ void cputln() {
 
 void clearline() {
     // Select DATA0
+    unsigned byte* conio_addr = CONIO_SCREEN_TEXT;
+    conio_addr += conio_cursor_y*256;
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <conio_line_text;
-    *VERA_ADDRX_M = >conio_line_text;
+    *VERA_ADDRX_L = <conio_addr;
+    *VERA_ADDRX_M = >conio_addr;
     *VERA_ADDRX_H = VERA_INC_1;
     char color = ( conio_backcolor << 4 ) | conio_textcolor;
     for( unsigned int c=0;c<CONIO_WIDTH; c++ ) {
@@ -294,6 +330,7 @@ void clearline() {
         *VERA_DATA0 = ' ';
         *VERA_DATA0 = color;
     }
+    conio_cursor_x = 0;
 }
 
 // Insert a new line, and scroll the lower part of the screen down.

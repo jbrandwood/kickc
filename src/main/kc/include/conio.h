@@ -43,10 +43,10 @@ void cputs(const char* s);
 void cputsxy(unsigned byte x, unsigned byte y, const char* s);
 
 // Set the color for text output. The old color setting is returned.
-unsigned byte textcolor(unsigned byte color);
+char textcolor(char color);
 
 // Set the color for the background. The old color setting is returned.
-unsigned byte bgcolor(unsigned byte color);
+char bgcolor(char color);
 
 // Set the color for the border. The old color setting is returned.
 unsigned byte bordercolor(unsigned byte color);

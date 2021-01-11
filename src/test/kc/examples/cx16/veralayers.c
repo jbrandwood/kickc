@@ -3,8 +3,14 @@
 void main() {
 
     textcolor(WHITE);
-    backcolor(BLACK);
+    bgcolor(BLACK);
     clrscr();
+
+    // Wait for a keypress and after clear the line!
+    textcolor(YELLOW);
+    printf("press a key");
+    while(!kbhit());
+    clearline();
 
     screenlayer(1);
 
@@ -19,11 +25,15 @@ void main() {
     // This is the content of the main controller registers of the VERA of layer 1.
     // Layer 1 is the default layer that is activated in the CX16 at startup.
     // It displays the characters in 1BPP 16x16 color mode!
-    printf("\nvera dc video = %x\n", *VERA_DC_VIDEO);
-    printf("\nvera layer 1 config = %x\n", *VERA_L1_CONFIG);
-    printf("vera layer 1 enabled = %x\n", screenlayerenabled(1));
-    printf("vera layer 1 mapbase = %x, tilebase = %x\n", getscreenlayermapbase(1), *VERA_L1_TILEBASE);
-    printf("vera layer 1 vscroll high = %x, low = %x\n", *VERA_L1_HSCROLL_H, *VERA_L1_HSCROLL_L);
+    unsigned byte dcvideo = *VERA_DC_VIDEO;
+    printf("\nvera dc video = %x\n", dcvideo);
+    unsigned byte config = vera_get_layer_config(1);
+    printf("\nvera layer 1 config = %x\n", config);
+    unsigned byte layershown = vera_is_layer_shown(1);
+    printf("vera layer 1 shown = %c\n", layershown);
+    unsigned byte mapbase = vera_get_layer_mapbase(1);
+    unsigned byte tilebase = vera_get_layer_tilebase(1);
+    printf("vera layer 1 mapbase = %hhx, tilebase = %hhx\n", mapbase, tilebase);
 
     // Wait for a keypress and after clear the line!
     textcolor(YELLOW);
@@ -40,21 +50,25 @@ void main() {
     // But first, we also print the layer 0 VERA configuration.
     // This statement sets the base of the display layer 1 at VRAM address 0x0200
 
-    setscreenlayermapbase(0,0x20); // Set the map base to address 0x04000
-    *VERA_L0_CONFIG = *VERA_L1_CONFIG;
-    *VERA_L0_TILEBASE = *VERA_L1_TILEBASE;
+    vera_set_layer_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
+    vera_set_layer_config(0, vera_get_layer_config(1));
+    vera_set_layer_tilebase(0, vera_get_layer_tilebase(1));
 
-
-    printf("\nvera layer 0 config = %x\n", *VERA_L0_CONFIG);
-    printf("vera layer 0 enabled = %x\n", screenlayerenabled(0));
-    printf("vera layer 0 mapbase = %x, tilebase = %x\n", getscreenlayermapbase(0), *VERA_L0_TILEBASE);
-    printf("vera layer 0 vscroll high = %x, low = %x\n", *VERA_L0_HSCROLL_H, *VERA_L0_HSCROLL_L);
+    textcolor(WHITE);
+    config = vera_get_layer_config(0);
+    printf("\nvera layer 0 config = %x\n", vera_get_layer_config(0));
+    layershown = vera_is_layer_shown(0);
+    printf("vera layer 0 shown = %x\n", layershown);
+    mapbase = vera_get_layer_mapbase(0);
+    tilebase = vera_get_layer_tilebase(0);
+    printf("vera layer 0 mapbase = %x, tilebase = %x\n", mapbase, tilebase);
 
     // Now we print the layer 0 text on the layer 0!
     screenlayer(0); // We set conio to output to layer 0 instead of layer 1!
-    clrscr(); // We clear the screen of layer 0!
     textcolor(BLUE);
-    backcolor(WHITE);
+    bgcolor(BLACK);
+    clrscr(); // We clear the screen of layer 0!
+    bgcolor(WHITE);
     gotoxy(19,4);
     printf("                                        ");
     gotoxy(19,5);
@@ -68,26 +82,39 @@ void main() {
 
     // Wait for a keypress and after clear the line!
     textcolor(YELLOW);
-    backcolor(BLACK);
+    bgcolor(BLACK);
     printf("press a key to show layer 0 and show the text!");
     while(!kbhit());
     clearline();
 
     // Now we activate layer 0.
-    screenlayerenable(0);
+    vera_show_layer(0);
+    textcolor(WHITE);
+    bgcolor(BLACK);
+    printf("vera layer 0 shown = %x. ", vera_is_layer_shown(0));
 
     // Wait for a keypress and after clear the line!
     textcolor(YELLOW);
-    backcolor(BLACK);
+    bgcolor(BLACK);
     printf("press a key to hide layer 0 and hide the text again");
     while(!kbhit());
     clearline();
 
-    screenlayerdisable(0);
+    vera_hide_layer(0);
+    textcolor(WHITE);
+    bgcolor(BLACK);
+    printf("vera layer 0 shown = %x. ", vera_is_layer_shown(0));
+
+  // Wait for a keypress and after clear the line!
+    textcolor(YELLOW);
+    bgcolor(BLACK);
+    printf("press a key to finish");
+    while(!kbhit());
+    clearline();
 
     clrscr();
     textcolor(RED);
-    backcolor(WHITE);
+    bgcolor(WHITE);
     gotoxy(19,10);
     printf("                                     ");
     gotoxy(19,11);

@@ -9,14 +9,16 @@
 // --- VERA function encapsulation ---
 
 // --- VERA layer management ---
-__ma unsigned byte* vera_layer_config[2] = {VERA_L0_CONFIG, VERA_L1_CONFIG};
-__ma unsigned byte vera_layer_enable[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
+__ma byte* vera_layer_config[2] = {VERA_L0_CONFIG, VERA_L1_CONFIG};
+__ma byte vera_layer_enable[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
 
-__ma unsigned byte* vera_layer_mapbase[2] = {VERA_L0_MAPBASE, VERA_L1_MAPBASE};
-__ma unsigned byte* vera_layer_tilebase[2] = {VERA_L0_TILEBASE, VERA_L1_TILEBASE};
+__ma byte* vera_layer_mapbase[2] = {VERA_L0_MAPBASE, VERA_L1_MAPBASE};
+__ma byte* vera_layer_tilebase[2] = {VERA_L0_TILEBASE, VERA_L1_TILEBASE};
 
-__ma unsigned byte vera_layer_textcolor[2] = {WHITE, WHITE};
-__ma unsigned byte vera_layer_backcolor[2] = {BLUE, BLUE};
+__ma byte vera_layer_textcolor[2] = {WHITE, WHITE};
+__ma byte vera_layer_backcolor[2] = {BLUE, BLUE};
+
+
 
 // --- VERA addressing ---
 
@@ -62,18 +64,75 @@ char vera_get_layer_config(char layer) {
     return *config;
 }
 
+// Set the map width or height of the layer.
+// - layer: Value of 0 or 1.
+inline void vera_set_layer_map_width_32(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK; 
+    *addr |= VERA_LAYER_CONFIG_WIDTH_32;
+}
+inline void vera_set_layer_map_width_64(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    //*addr &= (~VERA_LAYER_CONFIG_WIDTH_MASK) | VERA_LAYER_CONFIG_WIDTH_64;
+    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK; 
+    *addr |= VERA_LAYER_CONFIG_WIDTH_64;
+}
+inline void vera_set_layer_map_width_128(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK; 
+    *addr |= VERA_LAYER_CONFIG_WIDTH_128;
+}
+inline void vera_set_layer_map_width_256(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK; 
+    *addr |= VERA_LAYER_CONFIG_WIDTH_256;
+}
+inline void vera_set_layer_map_height_32(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK; 
+    *addr |= VERA_LAYER_CONFIG_HEIGHT_32;
+}
+inline void vera_set_layer_map_height_64(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK; 
+    *addr |= VERA_LAYER_CONFIG_HEIGHT_64;
+}
+inline void vera_set_layer_map_height_128(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK; 
+    *addr |= VERA_LAYER_CONFIG_HEIGHT_128;
+}
+inline void vera_set_layer_map_height_256(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK; 
+    *addr |= VERA_LAYER_CONFIG_HEIGHT_256;
+}
+
+// Get the map width or height of the layer.
+// - layer: Value of 0 or 1.
+word vera_get_layer_map_width(unsigned byte layer) {
+    byte* config = vera_layer_config[layer];
+    byte mask = (byte)VERA_LAYER_CONFIG_WIDTH_MASK;
+    return VERA_CONFIG_WIDTH[ (*config & mask) >> 4];
+}
+
+word vera_get_layer_map_height(unsigned byte layer) {
+    byte* config = vera_layer_config[layer];
+    byte mask = VERA_LAYER_CONFIG_HEIGHT_MASK;
+    return VERA_CONFIG_HEIGHT[ (*config & mask) >> 6];
+}
+
+
 // Enable the layer to be displayed on the screen.
 // - layer: 0 or 1.
-void vera_show_layer(char layer) {
-    layer &= $1;
+inline void vera_show_layer(char layer) {
     *VERA_DC_VIDEO |= vera_layer_enable[layer];
 }
 
 
 // Disable the layer to be displayed on the screen.
 // - layer: 0 or 1.
-void vera_hide_layer(char layer) {
-    layer &= $1;
+inline void vera_hide_layer(char layer) {
     *VERA_DC_VIDEO &= ~vera_layer_enable[layer];
 }
 

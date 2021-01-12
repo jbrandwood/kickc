@@ -86,8 +86,6 @@ void main() {
     gotoxy(19,6);
     printf("                                        ");
 
-    gotoxy(0,40);
-
     screenlayer(1); // Now we ask conio again to output to layer 1!
 
     // Wait for a keypress and after clear the line!

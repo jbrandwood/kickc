@@ -109,16 +109,16 @@ unsigned char bordercolor(unsigned char color) {
 #define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
 
 // The current cursor x-position
-__ma unsigned byte conio_cursor_x = 0;
+__ma unsigned byte conio_cursor_x[2] = {0,0};
 // The current cursor y-position
-__ma unsigned byte conio_cursor_y = 0;
+__ma unsigned byte conio_cursor_y[2] = {0,0};
 // The current text cursor line start
-__ma unsigned byte *conio_line_text = CONIO_SCREEN_TEXT;
+__ma unsigned word conio_line_text[2] = {0x0000,0x0000};
 // Is a cursor whown when waiting for input (0: no, other: yes)
 __ma unsigned byte conio_display_cursor = 0;
 // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
 // If disabled the cursor just moves back to (0,0) instead
-__ma unsigned byte conio_scroll_enable = 1;
+__ma unsigned byte conio_scroll_enable[2] = {1,1};
 // Variable holding the screen width;
 __ma unsigned byte conio_screen_width = 0;
 // Variable holding the screen height;
@@ -126,11 +126,15 @@ __ma unsigned byte conio_screen_height = 0;
 // Variable holding the screen layer on the VERA card with which conio interacts;
 __ma unsigned byte conio_screen_layer = 1;
 
+// Variables holding the current map width and map height of the layer.
+__ma word conio_width = 0;
+__ma word conio_height = 0;
+__ma byte conio_skip = 0;
+
 // clears the screen and moves the cursor to the upper left-hand corner of the screen.
 void clrscr(void) {
     char* line_text = CONIO_SCREEN_TEXT;
-    unsigned int conio_width = VERA_L1_CONFIG_WIDTH[ ( (*VERA_L1_CONFIG) & VERA_L1_CONFIG_WIDTH_MASK ) >> 4 ];
-    unsigned int conio_height = VERA_L1_CONFIG_HEIGHT[ ( (*VERA_L1_CONFIG) & VERA_L1_CONFIG_HEIGHT_MASK ) >> 6 ];
+    word skip = (word)((word)1<<conio_skip);
     char color = ( vera_get_layer_backcolor(conio_screen_layer) << 4 ) | vera_get_layer_textcolor(conio_screen_layer);
     for( char l=0;l<conio_height; l++ ) {
         char *ch = line_text;
@@ -141,29 +145,24 @@ void clrscr(void) {
         *VERA_ADDRX_M = >ch;
         *VERA_ADDRX_H = CONIO_SCREEN_BANK | VERA_INC_1;
         for( char c=0;c<conio_width; c++ ) {
-            // Set data
             *VERA_DATA0 = ' ';
             *VERA_DATA0 = color;
-            //vpoke(0,ch++,' ');
-            //vpoke(0,ch++,0x61);
-            //line_text[c] = ' ';
-            //line_cols[c] = conio_textcolor;
         }
-        line_text += 256;
+        line_text += skip;
     }
-    conio_cursor_x = 0;
-    conio_cursor_y = 0;
-    conio_line_text = CONIO_SCREEN_TEXT;
+    conio_cursor_x[conio_screen_layer] = 0;
+    conio_cursor_y[conio_screen_layer] = 0;
+    conio_line_text[conio_screen_layer] = 0;
 }
 
 // Set the cursor to the specified position
 void gotoxy(unsigned byte x, unsigned byte y) {
     if(y>CONIO_HEIGHT) y = 0;
     if(x>=CONIO_WIDTH) x = 0;
-    conio_cursor_x = x;
-    conio_cursor_y = y;
-    unsigned int line_offset = (unsigned int)y << 8;
-    conio_line_text = CONIO_SCREEN_TEXT + line_offset;
+    conio_cursor_x[conio_screen_layer] = x;
+    conio_cursor_y[conio_screen_layer] = y;
+    unsigned int line_offset = (unsigned int)y << conio_skip;
+    conio_line_text[conio_screen_layer] = line_offset;
 }
 
 // Return the current screen size.
@@ -192,21 +191,21 @@ inline unsigned byte screensizey() {
 
 // Return the X position of the cursor
 inline unsigned byte wherex(void) {
-    return conio_cursor_x;
+    return conio_cursor_x[conio_screen_layer];
 }
 
 // Return the Y position of the cursor
 inline unsigned byte wherey(void) {
-    return conio_cursor_y;
+    return conio_cursor_y[conio_screen_layer];
 }
 
 // Output one character at the current cursor position
 // Moves the cursor forward. Scrolls the entire screen if needed
 void cputc(char c) {
     char color = vera_get_layer_color( conio_screen_layer);
-    char* conio_addr = CONIO_SCREEN_TEXT;
-    conio_addr += conio_cursor_y*256;
-    conio_addr += conio_cursor_x << 1;
+    char* conio_addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer];
+
+    conio_addr += conio_cursor_x[conio_screen_layer] << 1;
     if(c=='\n') {
         cputln();
     } else {
@@ -219,30 +218,36 @@ void cputc(char c) {
         *VERA_DATA0 = c;
         *VERA_DATA0 = color;
 
-        //conio_line_text[conio_cursor_x] = c;
-        //conio_line_color[conio_cursor_x] = conio_textcolor;
-        if(++conio_cursor_x==CONIO_WIDTH)
-            cputln();
+        conio_cursor_x[conio_screen_layer]++;
+        byte scroll_enable = conio_scroll_enable[conio_screen_layer];
+        if(scroll_enable) {
+            if(conio_cursor_x[conio_screen_layer] == CONIO_WIDTH)
+                cputln();
+        } else {
+            if((unsigned int)conio_cursor_x[conio_screen_layer] == conio_width)
+                cputln();
+        }
     }
 }
 
 // Print a newline
 void cputln() {
-    //conio_line_text +=  CONIO_WIDTH;
-    conio_line_text += 256;
-    conio_cursor_x = 0;
-    conio_cursor_y++;
+    // TODO: This needs to be optimized! other variations don't compile because of sections not available!
+    word temp = conio_line_text[conio_screen_layer];
+    temp += (word)((word)1<<conio_skip);
+    conio_line_text[conio_screen_layer] = temp;
+    conio_cursor_x[conio_screen_layer] = 0;
+    conio_cursor_y[conio_screen_layer]++;
     cscroll();
 }
 
 void clearline() {
     // Select DATA0
-    unsigned byte* conio_addr = CONIO_SCREEN_TEXT;
-    conio_addr += conio_cursor_y*256;
     *VERA_CTRL &= ~VERA_ADDRSEL;
     // Set address
-    *VERA_ADDRX_L = <conio_addr;
-    *VERA_ADDRX_M = >conio_addr;
+    byte* addr = CONIO_SCREEN_TEXT + conio_line_text[conio_screen_layer];
+    *VERA_ADDRX_L = <addr;
+    *VERA_ADDRX_M = >addr;
     *VERA_ADDRX_H = VERA_INC_1;
     char color = vera_get_layer_color( conio_screen_layer);
     for( unsigned int c=0;c<CONIO_WIDTH; c++ ) {
@@ -250,42 +255,44 @@ void clearline() {
         *VERA_DATA0 = ' ';
         *VERA_DATA0 = color;
     }
-    conio_cursor_x = 0;
+    conio_cursor_x[conio_screen_layer] = 0;
 }
 
 // Insert a new line, and scroll the lower part of the screen down.
 void insertdown() {
-    unsigned byte cy = CONIO_HEIGHT - conio_cursor_y;
+    unsigned byte cy = CONIO_HEIGHT - conio_cursor_y[conio_screen_layer];
     cy -= 1;
     unsigned byte width = CONIO_WIDTH * 2;
     for(unsigned byte i=cy; i>0; i--) {
-        unsigned int line = (conio_cursor_y + i - 1) << 8;
+        unsigned int line = (conio_cursor_y[conio_screen_layer] + i - 1) << conio_skip;
         unsigned char* start = CONIO_SCREEN_TEXT + line;
-        vram_to_vram(width, 0, start, VERA_INC_1, 0, start+256, VERA_INC_1);
+        vram_to_vram(width, 0, start, VERA_INC_1, 0, start+((word)1<<conio_skip), VERA_INC_1);
     }
     clearline();
 }
 
 // Insert a new line, and scroll the upper part of the screen up.
 void insertup() {
-    unsigned byte cy = conio_cursor_y;
+    unsigned byte cy = conio_cursor_y[conio_screen_layer];
     unsigned byte width = CONIO_WIDTH * 2;
     for(unsigned byte i=1; i<=cy; i++) {
-        unsigned int line = (i-1) << 8;
+        unsigned int line = (i-1) << conio_skip;
         unsigned char* start = CONIO_SCREEN_TEXT + line;
-        vram_to_vram(width, 0, start+256, VERA_INC_1, 0, start, VERA_INC_1);
+        vram_to_vram(width, 0, start+((word)1<<conio_skip), VERA_INC_1, 0, start, VERA_INC_1);
     }
     clearline();
 }
 
 // Scroll the entire screen if the cursor is beyond the last line
 void cscroll() {
-    if(conio_cursor_y>=CONIO_HEIGHT) {
-        if(conio_scroll_enable) {
+    if(conio_cursor_y[conio_screen_layer]>=CONIO_HEIGHT) {
+        if(conio_scroll_enable[conio_screen_layer]) {
             insertup();
             gotoxy( 0, CONIO_HEIGHT-1);
         } else {
-            gotoxy(0,0);
+            if(conio_cursor_y[conio_screen_layer]>=conio_height) {
+               //gotoxy(0,0);
+            }
         }
     }
 }
@@ -325,8 +332,8 @@ unsigned byte cursor(unsigned byte onoff) {
 // If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
 unsigned byte scroll(unsigned byte onoff) {
-    char old = conio_scroll_enable;
-    conio_scroll_enable = onoff;
+    char old = conio_scroll_enable[conio_screen_layer];
+    conio_scroll_enable[conio_screen_layer] = onoff;
     return old;
 }
 
@@ -343,6 +350,9 @@ void screenlayer(unsigned byte layer) {
     unsigned int addr_i = addr << 1;
     CONIO_SCREEN_BANK = >addr_i;
     CONIO_SCREEN_TEXT = addr_i << 8;
+    conio_width = vera_get_layer_map_width(conio_screen_layer);
+    conio_skip = (byte)(conio_width >> 4);
+    conio_height = vera_get_layer_map_height(conio_screen_layer);
 }
 
 

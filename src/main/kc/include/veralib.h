@@ -17,6 +17,20 @@ void vera_set_layer_config(unsigned byte layer, unsigned byte config);
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 unsigned byte vera_get_layer_config(unsigned byte layer);
 
+// Set the map width or height of the layer.
+// - layer: Value of 0 or 1.
+inline void vera_set_layer_map_width_32(unsigned byte layer);
+inline void vera_set_layer_map_width_64(unsigned byte layer);
+inline void vera_set_layer_map_width_128(unsigned byte layer);
+inline void vera_set_layer_map_width_256(unsigned byte layer);
+inline void vera_set_layer_map_height_32(unsigned byte layer);
+inline void vera_set_layer_map_height_64(unsigned byte layer);
+inline void vera_set_layer_map_height_128(unsigned byte layer);
+inline void vera_set_layer_map_height_256(unsigned byte layer);
+
+
+
+
 // Enable the layer to be displayed on the screen.
 // - layer: 0 or 1.
 void vera_show_layer(unsigned byte layer);

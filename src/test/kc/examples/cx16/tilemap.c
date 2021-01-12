@@ -7,6 +7,7 @@
 // The CS16 starts in tile map mode, 1BPP in 16 color mode, and uses 8x8 tiles.
 // The map base is address 0x00000 in VERA VRAM, the tile map is address 0x1F000.
 
+#include <veralib.h>
 #include <printf.h>
 
 void main() {

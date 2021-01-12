@@ -8,6 +8,7 @@
 // The map base is address 0x00000 in VERA VRAM, the tile map is address 0x1F000.
 
 #include <printf.h>
+#include <veralib.h>
 
 void main() {
 

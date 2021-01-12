@@ -94,6 +94,36 @@ __ma unsigned byte* vera_layer_tilebase[2] = {VERA_L0_TILEBASE, VERA_L1_TILEBASE
 __ma unsigned byte vera_layer_textcolor[2] = {WHITE, WHITE};
 __ma unsigned byte vera_layer_backcolor[2] = {BLUE, BLUE};
 
+// --- VERA addressing ---
+
+void vera_vram_address0(dword bankaddr, byte incr) {
+    word* word_l = &(<bankaddr);
+    word* word_h = &(>bankaddr);
+    //printf("\nword_l = %x", *word_l);
+    //printf("\nword_h = %x", *word_h);
+    //printf("\n<word_l = %x", <(*word_l));
+    //printf("\n>word_l = %x", >(*word_l));
+    //printf("\n<word_h = %x", <(*word_h));
+    //printf("\n>word_h = %x", >(*word_h));
+    // Select DATA0
+    *VERA_CTRL &= ~VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <(*word_l);
+    *VERA_ADDRX_M = >(*word_l);
+    *VERA_ADDRX_H = <(*word_h) | incr;
+}
+
+void vera_vram_address1(dword bankaddr, byte incr) {
+    word* word_l = &(<bankaddr);
+    word* word_h = &(>bankaddr);
+    // Select DATA1
+    *VERA_CTRL |= VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <(*word_l);
+    *VERA_ADDRX_M = >(*word_l);
+    *VERA_ADDRX_H = <(*word_h) | incr;
+}
+
 // --- VERA layer management ---
 
 // Set the configuration of the layer.
@@ -179,6 +209,21 @@ unsigned byte vera_get_layer_tilebase(unsigned byte layer) {
     layer &= $1;
     unsigned byte* tilebase = vera_layer_tilebase[layer];
     return *tilebase;
+}
+
+// Get the tile base address of the tiles for the layer.
+// - layer: Value of 0 or 1.
+// - return: Specifies the base address of the tile map, which is calculated as an unsigned long int.
+//   Note that the register only specifies bits 16:11 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+dword vera_get_layer_tilebase_address(byte layer) {
+    layer &= $1;
+    byte tilebase = *vera_layer_tilebase[layer];
+    dword address = tilebase;
+    address &= $FC;
+    address <<= 8;
+    address <<= 1;
+    return address;
 }
 
 // --- VERA color management ---

@@ -4878,3 +4878,34 @@ sta {z1}
 lda {z2}+1
 adc {c1}+1,y
 sta {z1}+1
+//FRAGMENT _deref_(_deref_qbuc1)=vbuz1
+lda {z1}
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT _deref_(_deref_qbuc1)=vbuaa
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT _deref_(_deref_qbuc1)=vbuxx
+txa
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y
+//FRAGMENT _deref_(_deref_qbuc1)=vbuyy
+tya
+ldy {c1}
+sty $fe
+ldy {c1}+1
+sty $ff
+ldy #0
+sta ($fe),y

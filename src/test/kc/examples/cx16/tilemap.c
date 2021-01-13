@@ -14,17 +14,72 @@
 void main() {
 
     textcolor(WHITE);
-    bgcolor(GREEN);
-    scroll(0); // Scrolling on conio is deactivated, so conio will output beyond the borders of the visible screen.
+    bgcolor(BLACK);
     clrscr();
 
-    dword tilebase = vera_get_layer_tilebase_address(1);
+    // Now we set the tile map width and height.
+    vera_set_layer_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
+    vera_set_layer_config(0, vera_get_layer_config(1));
+    vera_set_layer_tilebase(0, vera_get_layer_tilebase(1));
+    vera_set_layer_map_width_128(0);
+    vera_set_layer_map_height_128(0);
+    dword tilebase = vera_get_layer_tilebase_address(0);
+
+    screenlayer(0);
+    scroll(0); // Scrolling on conio is deactivated, so conio will output beyond the borders of the visible screen.
+    textcolor(WHITE);
+    bgcolor(GREEN);
+
+    draw_characters(tilebase);
+
+    // Enable VSYNC IRQ (also set line bit 8 to 0)
+    SEI();
+    *KERNEL_IRQ = &irq_vsync;
+    *VERA_IEN = VERA_VSYNC;
+    CLI();
+
+    vera_show_layer(0);
+    while(!kbhit());
+
+    vera_hide_layer(0);
+    textcolor(GREY);
+    bgcolor(GREEN);
+    draw_characters(tilebase);
+    vera_show_layer(0);
+
+    screenlayer(1);
+
+    textcolor(WHITE);
+    bgcolor(BLACK);
+    printf("\n\nthis demo displays the design of the standard x16 commander\n");
+    printf("character set on the vera layer 0. it's the character set i grew up with :-).\n");
+    printf("\nthe smooth scrolling is implemented by manipulating the scrolling \n");
+    printf("registers of layer 0. at each raster line interrupt, \n");
+    printf("the x and y scrolling registers are manipulated. the cx16 terminal \n");
+    printf("works on layer 1. when layer 0 is enabled with the scrolling, \n");
+    printf("it gives a nice background effect. this technique can be used to implement\n");
+    printf("smooth scrolling backgrounds using tile layouts in games or demos.\n");
+
+    textcolor(YELLOW);
+    printf("\npress a key to continue ...");
+
+    while(!kbhit());
+
+    screenlayer(0);
+    vera_hide_layer(0);
+    textcolor(DARK_GREY);
+    bgcolor(BLACK);
+    draw_characters(tilebase);
+    vera_show_layer(0);
+
+    screenlayer(1);
+    gotoxy(0,20);
+
+}
+
+void draw_characters(dword tilebase) {
     dword tilecolumn = tilebase;
     dword tilerow = tilebase;
-
-    // Now we set the tile map width and height.
-    vera_set_layer_map_width_128(1);
-    vera_set_layer_map_height_128(1);
     clrscr();
 
     for(byte y:0..15) {
@@ -47,15 +102,6 @@ void main() {
         }
         tilebase += 8*16;
     }
-
-    // Enable VSYNC IRQ (also set line bit 8 to 0)
-    SEI();
-    *KERNEL_IRQ = &irq_vsync;
-    *VERA_IEN = VERA_VSYNC;
-    CLI();
-
-
-
 }
 
 // X sine index
@@ -93,11 +139,8 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
         scroll_y = 0;
    }
 
-
-    *VERA_L1_HSCROLL_L = <scroll_x;
-    *VERA_L1_HSCROLL_H = >scroll_x;
-    *VERA_L1_VSCROLL_L = <scroll_y;
-    *VERA_L1_VSCROLL_H = >scroll_y;
+    vera_set_layer_horizontal_scroll(0,(word)scroll_x);
+    vera_set_layer_vertical_scroll(0,(word)scroll_y);
 
     // Reset the VSYNC interrupt
     *VERA_ISR = VERA_VSYNC;

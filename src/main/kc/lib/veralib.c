@@ -14,10 +14,13 @@ __ma byte vera_layer_enable[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
 
 __ma byte* vera_layer_mapbase[2] = {VERA_L0_MAPBASE, VERA_L1_MAPBASE};
 __ma byte* vera_layer_tilebase[2] = {VERA_L0_TILEBASE, VERA_L1_TILEBASE};
+__ma byte* vera_layer_vscroll_l[2] = {VERA_L0_VSCROLL_L, VERA_L1_VSCROLL_L};
+__ma byte* vera_layer_vscroll_h[2] = {VERA_L0_VSCROLL_H, VERA_L1_VSCROLL_H};
+__ma byte* vera_layer_hscroll_l[2] = {VERA_L0_HSCROLL_L, VERA_L1_HSCROLL_L};
+__ma byte* vera_layer_hscroll_h[2] = {VERA_L0_HSCROLL_H, VERA_L1_HSCROLL_H};
 
 __ma byte vera_layer_textcolor[2] = {WHITE, WHITE};
 __ma byte vera_layer_backcolor[2] = {BLUE, BLUE};
-
 
 
 // --- VERA addressing ---
@@ -257,4 +260,21 @@ unsigned byte vera_get_layer_backcolor(unsigned byte layer) {
 unsigned byte vera_get_layer_color(unsigned byte layer) {
     layer &= $1;
     return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
+}
+
+
+// Scroll the horizontal (X) axis of the layer visible area over the layer tile map area.
+// - layer: Value of 0 or 1.
+// - scroll: A value between 0 and 4096.
+inline void vera_set_layer_horizontal_scroll(byte layer, word scroll) {
+    *vera_layer_hscroll_l[layer] = <scroll;
+    *vera_layer_hscroll_h[layer] = >scroll;
+}
+
+// Scroll the vertical (Y) axis of the layer visible area over the layer tile map area.
+// - layer: Value of 0 or 1.
+// - scroll: A value between 0 and 4096.
+inline void vera_set_layer_vertical_scroll(byte layer, word scroll) {
+    *vera_layer_vscroll_l[layer] = <scroll;
+    *vera_layer_vscroll_h[layer] = >scroll;
 }

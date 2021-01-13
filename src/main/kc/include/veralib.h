@@ -106,3 +106,13 @@ unsigned byte vera_get_layer_backcolor(unsigned byte layer);
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
 unsigned byte vera_get_layer_color(unsigned byte layer);
+
+// Scroll the horizontal (X) axis of the layer visible area over the layer tile map area.
+// - layer: Value of 0 or 1.
+// - scroll: A value between 0 and 4096.
+inline void vera_set_layer_horizontal_scroll(byte layer, word scroll);
+
+// Scroll the vertical (Y) axis of the layer visible area over the layer tile map area.
+// - layer: Value of 0 or 1.
+// - scroll: A value between 0 and 4096.
+inline void vera_set_layer_vertical_scroll(byte layer, word scroll);

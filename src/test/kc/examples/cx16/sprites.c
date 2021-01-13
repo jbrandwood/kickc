@@ -92,7 +92,7 @@ volatile unsigned int sin_idx_x = 119;
 volatile unsigned int sin_idx_y = 79;
 
 // VSYNC Interrupt Routine
-__interrupt void irq_vsync() {
+__interrupt(rom_sys_cx16) void irq_vsync() {
     // Move the sprite around
     if(++sin_idx_x==SINX_LEN) sin_idx_x = 0;
     if(--sin_idx_y==0xffff) sin_idx_y = SINY_LEN-1;

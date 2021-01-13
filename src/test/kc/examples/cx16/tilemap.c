@@ -114,8 +114,7 @@ volatile int delta_y = 0;
 volatile int speed = 2;
 
 // VSYNC Interrupt Routine
-__interrupt void irq_vsync() {
-
+__interrupt(rom_sys_cx16) void irq_vsync() {
 
     scroll_x += delta_x;
     scroll_y += delta_y;

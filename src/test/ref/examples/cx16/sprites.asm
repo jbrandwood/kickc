@@ -13,6 +13,7 @@
   .const VERA_DCSEL = 2
   .const VERA_ADDRSEL = 1
   .const VERA_VSYNC = 1
+  .const VERA_SPRITES_ENABLE = $40
   // VERA Palette address in VRAM  $1FA00 - $1FBFF
   // 256 entries of 2 bytes
   // byte 0 bits 4-7: Green
@@ -32,7 +33,6 @@
   .const SIZEOF_STRUCT_VERA_SPRITE = 8
   .const OFFSET_STRUCT_VERA_SPRITE_X = 2
   .const OFFSET_STRUCT_VERA_SPRITE_Y = 4
-  .const VERA_SPRITES_ENABLE = $40
   // $9F20 VRAM Address (7:0)
   .label VERA_ADDRX_L = $9f20
   // $9F21 VRAM Address (15:8)
@@ -165,10 +165,8 @@ irq_vsync: {
     // Reset the VSYNC interrupt
     lda #VERA_VSYNC
     sta VERA_ISR
-    // asm
-    // Exit CX16 KERNAL IRQ
-    jmp $e034
     // }
+    jmp $e034
   __b6:
     // SPRITE_ATTR.X = SINX[i_x]
     lda.z i_x

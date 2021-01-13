@@ -125,6 +125,37 @@ word vera_get_layer_map_height(unsigned byte layer) {
     return VERA_CONFIG_HEIGHT[ (*config & mask) >> 6];
 }
 
+// Set the color depth of the layer in terms of bit per pixel (BPP) of the tile base.
+// - layer: Value of 0 or 1.
+inline void vera_set_layer_color_depth_1BPP(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
+    *addr |= VERA_LAYER_COLOR_DEPTH_1BPP;
+}
+inline void vera_set_layer_color_depth_2BPP(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
+    *addr |= VERA_LAYER_COLOR_DEPTH_2BPP;
+}
+inline void vera_set_layer_color_depth_4BPP(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
+    *addr |= VERA_LAYER_COLOR_DEPTH_4BPP;
+}
+inline void vera_set_layer_color_depth_8BPP(unsigned byte layer) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
+    *addr |= VERA_LAYER_COLOR_DEPTH_8BPP;
+}
+
+// Get the map width or height of the layer.
+// - layer: Value of 0 or 1.
+// - return: 1, 2, 4 or 8.
+word vera_get_layer_color_depth(unsigned byte layer) {
+    byte* config = vera_layer_config[layer];
+    byte mask = (byte)VERA_LAYER_COLOR_DEPTH_MASK;
+    return VERA_LAYER_COLOR_DEPTH[(*config & mask)];
+}
 
 // Enable the layer to be displayed on the screen.
 // - layer: 0 or 1.

@@ -124,30 +124,34 @@ char * const VERA_DC_VSTART = 0x9f2b;
 char * const VERA_DC_VSTOP = 0x9f2c;
 
 // Configuration work tables
-unsigned int const VERA_CONFIG_WIDTH[4] = { 32, 64, 128, 256 };
-unsigned int const VERA_CONFIG_HEIGHT[4] = { 32, 64, 128, 256 };
 
 // Bit 4-5. Map Width	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
-char const VERA_LAYER_CONFIG_WIDTH_32 = 0x00;
-char const VERA_LAYER_CONFIG_WIDTH_64 = 0x10;
-char const VERA_LAYER_CONFIG_WIDTH_128 = 0x20;
-char const VERA_LAYER_CONFIG_WIDTH_256 = 0x30;
-char const VERA_LAYER_CONFIG_WIDTH_MASK = 0x30;
+byte const VERA_LAYER_CONFIG_WIDTH_32 = 0x00;
+byte const VERA_LAYER_CONFIG_WIDTH_64 = 0x10;
+byte const VERA_LAYER_CONFIG_WIDTH_128 = 0x20;
+byte const VERA_LAYER_CONFIG_WIDTH_256 = 0x30;
+byte const VERA_LAYER_CONFIG_WIDTH_MASK = 0x30;
+word const VERA_CONFIG_WIDTH[4] = {32, 64, 128, 256};
 
 // Bit 6-7: Map Height	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
-char const VERA_LAYER_CONFIG_HEIGHT_32 = 0x00;
-char const VERA_LAYER_CONFIG_HEIGHT_64 = 0x40;
-char const VERA_LAYER_CONFIG_HEIGHT_128 = 0x80;
-char const VERA_LAYER_CONFIG_HEIGHT_256 = 0xC0;
-char const VERA_LAYER_CONFIG_HEIGHT_MASK = 0xC0;
+byte const VERA_LAYER_CONFIG_HEIGHT_32 = 0x00;
+byte const VERA_LAYER_CONFIG_HEIGHT_64 = 0x40;
+byte const VERA_LAYER_CONFIG_HEIGHT_128 = 0x80;
+byte const VERA_LAYER_CONFIG_HEIGHT_256 = 0xC0;
+byte const VERA_LAYER_CONFIG_HEIGHT_MASK = 0xC0;
+word const VERA_CONFIG_HEIGHT[4] = {32, 64, 128, 256};
+
+// Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
+byte const VERA_LAYER_COLOR_DEPTH_1BPP = 0x00;
+byte const VERA_LAYER_COLOR_DEPTH_2BPP = 0x01;
+byte const VERA_LAYER_COLOR_DEPTH_4BPP = 0x02;
+byte const VERA_LAYER_COLOR_DEPTH_8BPP = 0x03;
+byte const VERA_LAYER_COLOR_DEPTH_MASK = 0x03;
+byte const VERA_LAYER_COLOR_DEPTH[4] = {1, 2, 4, 8};
+
 
 // $9F2D	L0_CONFIG   Layer 0 Configuration
 char * const VERA_L0_CONFIG = 0x9f2d;
-// Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
-char const VERA_L0_CONFIG_COLOR_1BPP = 0x00;
-char const VERA_L0_CONFIG_COLOR_2BPP = 0x01;
-char const VERA_L0_CONFIG_COLOR_4BPP = 0x02;
-char const VERA_L0_CONFIG_COLOR_8BPP = 0x03;
 // Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
 char const VERA_L0_CONFIG_MODE_TILE = 0x00;
 char const VERA_L0_CONFIG_MODE_BITMAP = 0x04;
@@ -171,11 +175,6 @@ char * const VERA_L0_VSCROLL_L = 0x9f32;
 char * const VERA_L0_VSCROLL_H = 0x9f33;
 // $9F34	L1_CONFIG   Layer 1 Configuration
 char * const VERA_L1_CONFIG = 0x9f34;
-// Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
-char const VERA_L1_CONFIG_COLOR_1BPP = 0x00;
-char const VERA_L1_CONFIG_COLOR_2BPP = 0x01;
-char const VERA_L1_CONFIG_COLOR_4BPP = 0x02;
-char const VERA_L1_CONFIG_COLOR_8BPP = 0x03;
 // Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
 char const VERA_L1_CONFIG_MODE_TILE = 0x00;
 char const VERA_L1_CONFIG_MODE_BITMAP = 0x04;

@@ -1,6 +1,24 @@
 // Commander X16 VERA (Versatile Embedded Retro Adapter) Video and Audio Processor
 // https://github.com/commanderx16/x16-docs/blob/master/VERA%20Programmer's%20Reference.md
 
+// The colors of the CX16
+const char BLACK = 0x0;
+const char WHITE = 0x1;
+const char RED = 0x2;
+const char CYAN = 0x3;
+const char PURPLE = 0x4;
+const char GREEN = 0x5;
+const char BLUE = 0x6;
+const char YELLOW = 0x7;
+const char ORANGE = 0x8;
+const char BROWN = 0x9;
+const char PINK = 0xa;
+const char DARK_GREY = 0xb;
+const char GREY = 0xc;
+const char LIGHT_GREEN = 0xd;
+const char LIGHT_BLUE = 0xe;
+const char LIGHT_GREY = 0xf;
+
 // To access the VRAM (which is 128kB in size) an indirection mechanism is used.
 // First the address to be accessed needs to be set (ADDRx_L/ADDRx_M/ADDRx_H) and
 // then the data on that VRAM address can be read from or written to via the DATA0/1 register.
@@ -36,6 +54,22 @@ const char VERA_INC_80 = 0xc0;
 const char VERA_INC_160 = 0xd0;
 const char VERA_INC_320 = 0xe0;
 const char VERA_INC_640 = 0xf0;
+const char VERA_DECR_0 = 0x08;
+const char VERA_DECR_1 = 0x18;
+const char VERA_DECR_2 = 0x28;
+const char VERA_DECR_4 = 0x38;
+const char VERA_DECR_8 = 0x48;
+const char VERA_DECR_16 = 0x58;
+const char VERA_DECR_32 = 0x68;
+const char VERA_DECR_64 = 0x78;
+const char VERA_DECR_128 = 0x88;
+const char VERA_DECR_256 = 0x98;
+const char VERA_DECR_512 = 0xa8;
+const char VERA_DECR_40 = 0xb8;
+const char VERA_DECR_80 = 0xc8;
+const char VERA_DECR_160 = 0xd8;
+const char VERA_DECR_320 = 0xe8;
+const char VERA_DECR_640 = 0xf8;
 // $9F23	DATA0	VRAM Data port 0
 char * const VERA_DATA0 = 0x9f23;
 // $9F24	DATA1	VRAM Data port 1
@@ -81,14 +115,14 @@ char * const VERA_IRQLINE_L = 0x9f28;
 // Bit 2: Chroma Disable    Setting 'Chroma Disable' disables output of chroma in NTSC composite mode and will give a better picture on a monochrome display. (Setting this bit will also disable the chroma output on the S-video output.)
 // Bit 0-1: Output Mode     0: Video disabled, 1: VGA output, 2: NTSC composite, 3: RGB interlaced, composite sync (via VGA connector)
 char * const VERA_DC_VIDEO = 0x9f29;
-char VERA_SPRITES_ENABLE = 0x40;
-char VERA_LAYER1_ENABLE = 0x20;
-char VERA_LAYER0_ENABLE = 0x10;
-char VERA_CROMA_DISABLE = 0x04;
-char VERA_OUTPUT_DISABLE = 0x00;
-char VERA_OUTPUT_VGA = 0x01;
-char VERA_OUTPUT_NTSC = 0x02;
-char VERA_OUTPUT_RGB = 0x03;
+const char VERA_SPRITES_ENABLE = 0x40;
+const char VERA_LAYER1_ENABLE = 0x20;
+const char VERA_LAYER0_ENABLE = 0x10;
+const char VERA_CROMA_DISABLE = 0x04;
+const char VERA_OUTPUT_DISABLE = 0x00;
+const char VERA_OUTPUT_VGA = 0x01;
+const char VERA_OUTPUT_NTSC = 0x02;
+const char VERA_OUTPUT_RGB = 0x03;
 // $9F2A	DC_HSCALE (DCSEL=0)	Active Display H-Scale
 char * const VERA_DC_HSCALE = 0x9f2a;
 // $9F2B	DC_VSCALE (DCSEL=0)	Active Display V-Scale
@@ -110,6 +144,29 @@ char * const VERA_DC_VSTOP = 0x9f2c;
 // Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
 // Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
 char * const VERA_L0_CONFIG = 0x9f2d;
+// Layer Configuration Bit 6-7: Map Height	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
+char const VERA_CONFIG_HEIGHT_32 = 0x00;
+char const VERA_CONFIG_HEIGHT_64 = 0x40;
+char const VERA_CONFIG_HEIGHT_128 = 0x80;
+char const VERA_CONFIG_HEIGHT_256 = 0xC0;
+char const VERA_CONFIG_HEIGHT_MASK = 0xC0;
+// Layer Configuration Bit 4-5. Map Width	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
+char const VERA_CONFIG_WIDTH_32 = 0x00;
+char const VERA_CONFIG_WIDTH_64 = 0x10;
+char const VERA_CONFIG_WIDTH_128 = 0x20;
+char const VERA_CONFIG_WIDTH_256 = 0x30;
+char const VERA_CONFIG_WIDTH_MASK = 0x30;
+// Layer Configuration Bit 3: T256C	        (0: tiles use a 16-color foreground and background color, 1: tiles use a 256-color foreground color) (only relevant in 1bpp modes)
+char const VERA_CONFIG_16C = 0x00;
+char const VERA_CONFIG_256C = 0x08;
+// Layer Configuration Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
+char const VERA_CONFIG_MODE_TILE = 0x00;
+char const VERA_CONFIG_MODE_BITMAP = 0x04;
+// Layer Configuration Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
+char const VERA_CONFIG_COLOR_1BPP = 0x00;
+char const VERA_CONFIG_COLOR_2BPP = 0x01;
+char const VERA_CONFIG_COLOR_4BPP = 0x02;
+char const VERA_CONFIG_COLOR_8BPP = 0x03;
 // $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
 char * const VERA_L0_MAPBASE = 0x9f2e;
 // $9F2F	L0_TILEBASE	    Layer 0 Tile Base
@@ -125,7 +182,6 @@ char * const VERA_L0_HSCROLL_H = 0x9f31;
 char * const VERA_L0_VSCROLL_L = 0x9f32;
 // $9F33	L0_VSCROLL_H    Layer 0 V-Scroll (11:8)
 char * const VERA_L0_VSCROLL_H = 0x9f33;
-// $9F34	L1_CONFIG   Layer 1 Configuration
 // Bit 6-7: Map Height	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
 // Bit 4-5. Map Width	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
 // Bit 3: T256C	        (0: tiles use a 16-color foreground and background color, 1: tiles use a 256-color foreground color) (only relevant in 1bpp modes)

@@ -1,7 +1,9 @@
 // Commander X16
 // https://www.commanderx16.com/forum/index.php?/about-faq/
 // https://github.com/commanderx16/x16-docs/blob/master/Commander%20X16%20Programmer's%20Reference%20Guide.md
-
+#ifndef __CX16__
+#error "Target platform must be cx16"
+#endif
 #include <cx16-vera.h>
 #include <mos6522.h>
 
@@ -61,3 +63,16 @@ char vpeek(char vbank, char* vaddr);
 // - src: The source address in RAM
 // - num: The number of bytes to copy
 void memcpy_to_vram(char vbank, void* vdest, void* src, unsigned int num );
+
+// Copy block of memory (from VRAM to VRAM)
+// Copies the values from the location pointed by src to the location pointed by dest.
+// The method uses the VERA access ports 0 and 1 to copy data from and to in VRAM.
+// - src_bank:  64K VRAM bank number to copy from (0/1).
+// - src: pointer to the location to copy from. Note that the address is a 16 bit value!
+// - src_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
+// - dest_bank:  64K VRAM bank number to copy to (0/1).
+// - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
+// - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
+// - num: The number of bytes to copy
+void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_bank, void *src, char src_increment, unsigned int num );
+

@@ -17,6 +17,8 @@
 #include "conio-nes.c"
 #elif defined(__ATARIXL__)
 #include "conio-atarixl.c"
+#elif defined(__CX16__)
+#include "conio-cx16.c"
 #else
 #error "Target platform does not support conio.h"
 #endif

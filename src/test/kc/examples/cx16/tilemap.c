@@ -144,9 +144,4 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
 
     // Reset the VSYNC interrupt
     *VERA_ISR = VERA_VSYNC;
-    // Exit CX16 KERNAL IRQ
-    asm {
-        // soft exit (keep kernal running)
-        jmp $e034
-    }
 }

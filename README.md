@@ -1,4 +1,4 @@
-# KickC - Optimizing C-compiler for 6502  
+# KickC - Optimizing C-compiler for 6502 platforms  
 
 KickC is a C-compiler for 6502-based platforms creating optimized and readable assembler code.
 

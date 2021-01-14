@@ -19,7 +19,7 @@
 // The function setscreenlayermapbase(layer,mapbase) allows to configure bit 16:9 of the
 // mapbase address of the time map in VRAM of the selected layer VERA_L0_MAPBASE or VERA_L1_MAPBASE.
 char* CONIO_SCREEN_TEXT = DEFAULT_SCREEN;
-byte CONIO_SCREEN_BANK = 0; // Default screen of the CX16 emulator uses memory bank 0 for text.
+char CONIO_SCREEN_BANK = 0; // Default screen of the CX16 emulator uses memory bank 0 for text.
 // The default text color
 const char CONIO_TEXTCOLOR_DEFAULT = WHITE;
 // The default back color
@@ -47,10 +47,10 @@ void conio_x16_init() {
 unsigned char kbhit(void) {
 
     char ch = 0;
-    char* chptr = &ch;
+    char* const chptr = &ch;
 
-    char* IN_DEV = $028A;        // Current input device number
-    char* GETIN  = $FFE4;        // CBM GETIN API
+    char* const IN_DEV = $028A;        // Current input device number
+    char* const GETIN  = $FFE4;        // CBM GETIN API
 
     kickasm(uses chptr, uses IN_DEV, uses GETIN) {{
 
@@ -87,15 +87,6 @@ unsigned char kbhit(void) {
     return ch;
 }
 
-// Set the color for the border. The old color setting is returned.
-unsigned char bordercolor(unsigned char color) {
-    // The border color register address
-    char * const CONIO_BORDERCOLOR = 0xd020;
-    char old = *CONIO_BORDERCOLOR;
-    *CONIO_BORDERCOLOR = color;
-    return old;
-}
-
 // This requires the following constants to be defined
 // - CONIO_WIDTH - The screen width
 // - CONIO_HEIGHT - The screen height
@@ -109,16 +100,16 @@ unsigned char bordercolor(unsigned char color) {
 #define CONIO_BYTES CONIO_HEIGHT*CONIO_WIDTH
 
 // The current cursor x-position
-__ma unsigned byte conio_cursor_x[2] = {0,0};
+unsigned byte conio_cursor_x[2] = {0,0};
 // The current cursor y-position
-__ma unsigned byte conio_cursor_y[2] = {0,0};
+unsigned byte conio_cursor_y[2] = {0,0};
 // The current text cursor line start
-__ma unsigned word conio_line_text[2] = {0x0000,0x0000};
+unsigned word conio_line_text[2] = {0x0000,0x0000};
 // Is a cursor whown when waiting for input (0: no, other: yes)
 __ma unsigned byte conio_display_cursor = 0;
 // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
 // If disabled the cursor just moves back to (0,0) instead
-__ma unsigned byte conio_scroll_enable[2] = {1,1};
+unsigned byte conio_scroll_enable[2] = {1,1};
 // Variable holding the screen width;
 __ma unsigned byte conio_screen_width = 0;
 // Variable holding the screen height;
@@ -266,7 +257,7 @@ void insertdown() {
     for(unsigned byte i=cy; i>0; i--) {
         unsigned int line = (conio_cursor_y[conio_screen_layer] + i - 1) << conio_skip;
         unsigned char* start = CONIO_SCREEN_TEXT + line;
-        vram_to_vram(width, 0, start, VERA_INC_1, 0, start+((word)1<<conio_skip), VERA_INC_1);
+        memcpy_in_vram(0, start+((word)1<<conio_skip), VERA_INC_1, 0, start, VERA_INC_1, width);
     }
     clearline();
 }
@@ -278,7 +269,7 @@ void insertup() {
     for(unsigned byte i=1; i<=cy; i++) {
         unsigned int line = (i-1) << conio_skip;
         unsigned char* start = CONIO_SCREEN_TEXT + line;
-        vram_to_vram(width, 0, start+((word)1<<conio_skip), VERA_INC_1, 0, start, VERA_INC_1);
+        memcpy_in_vram(0, start, VERA_INC_1,  0, start+((word)1<<conio_skip), VERA_INC_1, width);
     }
     clearline();
 }
@@ -372,4 +363,11 @@ inline char bgcolor(char color) {
     return vera_set_layer_backcolor(conio_screen_layer, color);
 }
 
+// Set the color for the border. The old color setting is returned.
+char bordercolor(unsigned char color) {
+    // The border color register address
+    char old = *VERA_DC_BORDER;
+    *VERA_DC_BORDER = color;
+    return old;
+}
 

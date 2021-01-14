@@ -8,22 +8,22 @@
 void clrscr(void);
 
 // Set the cursor to the specified position
-void gotoxy(unsigned byte x, unsigned byte y);
+void gotoxy(unsigned char x, unsigned char y);
 
 // Return the X position of the cursor
-unsigned byte wherex(void);
+unsigned char wherex(void);
 
 // Return the Y position of the cursor
-unsigned byte wherey(void);
+unsigned char wherey(void);
 
 // Return the current screen size.
-void screensize(unsigned byte* x, unsigned byte* y);
+void screensize(unsigned char* x, unsigned char* y);
 
 // Return the current screen size X width.
-unsigned byte screensizex();
+char screensizex();
 
 // Return the current screen size Y height.
-unsigned byte screensizey();
+char screensizey();
 
 // Output one character at the current cursor position. Scroll the screen if needed.
 void cputc(char c);
@@ -33,33 +33,33 @@ void cputln();
 
 // Move cursor and output one character
 // Same as "gotoxy (x, y); cputc (c);"
-void cputcxy(unsigned byte x, unsigned byte y, char c);
+void cputcxy(unsigned char x, unsigned char y, char c);
 
 // Output a NUL-terminated string at the current cursor position
 void cputs(const char* s);
 
 // Move cursor and output a NUL-terminated string
 // Same as "gotoxy (x, y); puts (s);"
-void cputsxy(unsigned byte x, unsigned byte y, const char* s);
+void cputsxy(unsigned char x, unsigned char y, const char* s);
 
 // Set the color for text output. The old color setting is returned.
-char textcolor(char color);
+unsigned char textcolor(unsigned char color);
 
 // Set the color for the background. The old color setting is returned.
-char bgcolor(char color);
+unsigned char bgcolor(unsigned char color);
 
 // Set the color for the border. The old color setting is returned.
-unsigned byte bordercolor(unsigned byte color);
+unsigned char bordercolor(unsigned char color);
 
 // Return true if there's a key waiting, return false if not
-unsigned byte kbhit (void);
+unsigned char kbhit (void);
 
 // If onoff is 1, a cursor is displayed when waiting for keyboard input.
 // If onoff is 0, the cursor is hidden when waiting for keyboard input.
 // The function returns the old cursor setting.
-unsigned byte cursor(unsigned byte onoff);
+unsigned char cursor(unsigned char onoff);
 
 // If onoff is 1, scrolling is enabled when outputting past the end of the screen
 // If onoff is 0, scrolling is disabled and the cursor instead moves to (0,0)
 // The function returns the old scroll setting.
-unsigned byte scroll(unsigned byte onoff);
+unsigned char scroll(unsigned char onoff);

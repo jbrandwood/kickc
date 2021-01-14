@@ -1,6 +1,10 @@
 // Atari 8-bit 400/800/XL/XE Registers and Constants
 // https://en.wikipedia.org/wiki/Atari_8-bit_family
 
+#ifndef __ATARIXL__
+#error "Target platform must be atarixl"
+#endif
+
 #include <atari-antic.h>
 #include <atari-gtia.h>
 #include <atari-pokey.h>

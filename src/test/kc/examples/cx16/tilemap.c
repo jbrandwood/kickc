@@ -7,8 +7,10 @@
 // The CX16 starts in tile map mode, 1BPP in 16 color mode, and uses 8x8 tiles.
 // The map base is address 0x00000 in VERA VRAM, the tile map is address 0x0F800.
 
+#pragma target(cx16)
+#include <conio.h>
 #include <veralib.h>
-#include <printf.h>
+#include <stdio.h>
 #include <6502.h>
 
 void main() {
@@ -113,7 +115,6 @@ volatile int speed = 2;
 
 // VSYNC Interrupt Routine
 __interrupt(rom_sys_cx16) void irq_vsync() {
-
 
     scroll_x += delta_x;
     scroll_y += delta_y;

@@ -459,6 +459,17 @@ public class TestPrograms {
    }
 
    @Test
+   public void testCx16VeraLayers() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/veralayers.c");
+   }
+
+   @Test
+   public void testCx16TileMap() throws IOException, URISyntaxException {
+      compileAndCompare("examples/cx16/tilemap.c");
+   }
+
+
+   @Test
    public void testCx16Sprites() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/sprites.c");
    }

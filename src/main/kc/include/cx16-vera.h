@@ -38,7 +38,6 @@ char * const VERA_ADDRX_M = 0x9f21;
 // Bit 3: DECR Setting the DECR bit, will decrement instead of increment by the value set by the 'Address Increment' field.
 // Bit 0: VRAM Address (16)
 char * const VERA_ADDRX_H = 0x9f22;
-const char VERA_DECR = 0x08;
 const char VERA_INC_0 = 0x00;
 const char VERA_INC_1 = 0x10;
 const char VERA_INC_2 = 0x20;
@@ -55,6 +54,22 @@ const char VERA_INC_80 = 0xc0;
 const char VERA_INC_160 = 0xd0;
 const char VERA_INC_320 = 0xe0;
 const char VERA_INC_640 = 0xf0;
+const char VERA_DECR_0 = 0x08;
+const char VERA_DECR_1 = 0x18;
+const char VERA_DECR_2 = 0x28;
+const char VERA_DECR_4 = 0x38;
+const char VERA_DECR_8 = 0x48;
+const char VERA_DECR_16 = 0x58;
+const char VERA_DECR_32 = 0x68;
+const char VERA_DECR_64 = 0x78;
+const char VERA_DECR_128 = 0x88;
+const char VERA_DECR_256 = 0x98;
+const char VERA_DECR_512 = 0xa8;
+const char VERA_DECR_40 = 0xb8;
+const char VERA_DECR_80 = 0xc8;
+const char VERA_DECR_160 = 0xd8;
+const char VERA_DECR_320 = 0xe8;
+const char VERA_DECR_640 = 0xf8;
 // $9F23	DATA0	VRAM Data port 0
 char * const VERA_DATA0 = 0x9f23;
 // $9F24	DATA1	VRAM Data port 1
@@ -131,7 +146,7 @@ byte const VERA_LAYER_CONFIG_WIDTH_64 = 0x10;
 byte const VERA_LAYER_CONFIG_WIDTH_128 = 0x20;
 byte const VERA_LAYER_CONFIG_WIDTH_256 = 0x30;
 byte const VERA_LAYER_CONFIG_WIDTH_MASK = 0x30;
-word const VERA_CONFIG_WIDTH[4] = {32, 64, 128, 256};
+word const VERA_LAYER_CONFIG_WIDTH[4] = {32, 64, 128, 256};
 
 // Bit 6-7: Map Height	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
 byte const VERA_LAYER_CONFIG_HEIGHT_32 = 0x00;
@@ -139,7 +154,7 @@ byte const VERA_LAYER_CONFIG_HEIGHT_64 = 0x40;
 byte const VERA_LAYER_CONFIG_HEIGHT_128 = 0x80;
 byte const VERA_LAYER_CONFIG_HEIGHT_256 = 0xC0;
 byte const VERA_LAYER_CONFIG_HEIGHT_MASK = 0xC0;
-word const VERA_CONFIG_HEIGHT[4] = {32, 64, 128, 256};
+word const VERA_LAYER_CONFIG_HEIGHT[4] = {32, 64, 128, 256};
 
 // Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
 byte const VERA_LAYER_COLOR_DEPTH_1BPP = 0x00;
@@ -159,7 +174,7 @@ char const VERA_L0_CONFIG_MODE_BITMAP = 0x04;
 char const VERA_L0_CONFIG_16C = 0x00;
 char const VERA_L0_CONFIG_256C = 0x08;
 // $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
-unsigned byte * const VERA_L0_MAPBASE = 0x9f2e;
+char * const VERA_L0_MAPBASE = 0x9f2e;
 // $9F2F	L0_TILEBASE	    Layer 0 Tile Base
 // Bit 2-7: Tile Base Address (16:11)
 // Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)
@@ -249,4 +264,3 @@ struct VERA_SPRITE {
 };
 // 8BPP sprite mode (add to VERA_SPRITE.ADDR to enable)
 const unsigned int VERA_SPRITE_8BPP = 0x8000;
-

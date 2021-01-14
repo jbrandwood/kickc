@@ -7,7 +7,9 @@
 // The CX16 starts in tile map mode, 1BPP in 16 color mode, and uses 8x8 tiles.
 // The map base is address 0x00000 in VERA VRAM, the tile map is address 0x0F800.
 
-#include <printf.h>
+#pragma target(cx16)
+#include <conio.h>
+#include <stdio.h>
 #include <veralib.h>
 
 void main() {

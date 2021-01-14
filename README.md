@@ -14,7 +14,7 @@ The KickC-compiler includes all necessary linker and header files to makes it ea
 - MEGA65
 - Commander X16
 
-KickC uses the very versatile Kick Assembler (http://theweb.dk/KickAssembler). The KickC Compiler produces assembler code for the MOS Technology 6502 processor family. Specifically the compiler supports 6502, 65C02, 65CE02 and 45GS02 CPUs.
+KickC uses the very versatile [Kick Assembler](http://theweb.dk/KickAssembler). The KickC Compiler produces assembler code for the MOS Technology 6502 processor family. Specifically the compiler supports 6502, 65C02, 65CE02 and 45GS02 CPUs.
 
 ## Resources
 

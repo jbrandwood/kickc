@@ -141,20 +141,20 @@ char * const VERA_DC_VSTOP = 0x9f2c;
 // Configuration work tables
 
 // Bit 4-5. Map Width	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
-byte const VERA_LAYER_CONFIG_WIDTH_32 = 0x00;
-byte const VERA_LAYER_CONFIG_WIDTH_64 = 0x10;
-byte const VERA_LAYER_CONFIG_WIDTH_128 = 0x20;
-byte const VERA_LAYER_CONFIG_WIDTH_256 = 0x30;
-byte const VERA_LAYER_CONFIG_WIDTH_MASK = 0x30;
-word const VERA_LAYER_CONFIG_WIDTH[4] = {32, 64, 128, 256};
+byte const VERA_LAYER_WIDTH_32 = 0x00;
+byte const VERA_LAYER_WIDTH_64 = 0x10;
+byte const VERA_LAYER_WIDTH_128 = 0x20;
+byte const VERA_LAYER_WIDTH_256 = 0x30;
+byte const VERA_LAYER_WIDTH_MASK = 0x30;
+word const VERA_LAYER_WIDTH[4] = {32, 64, 128, 256};
 
 // Bit 6-7: Map Height	(0:32 tiles, 1:64 tiles, 2:128 tiles, 3:256 tiles)
-byte const VERA_LAYER_CONFIG_HEIGHT_32 = 0x00;
-byte const VERA_LAYER_CONFIG_HEIGHT_64 = 0x40;
-byte const VERA_LAYER_CONFIG_HEIGHT_128 = 0x80;
-byte const VERA_LAYER_CONFIG_HEIGHT_256 = 0xC0;
-byte const VERA_LAYER_CONFIG_HEIGHT_MASK = 0xC0;
-word const VERA_LAYER_CONFIG_HEIGHT[4] = {32, 64, 128, 256};
+byte const VERA_LAYER_HEIGHT_32 = 0x00;
+byte const VERA_LAYER_HEIGHT_64 = 0x40;
+byte const VERA_LAYER_HEIGHT_128 = 0x80;
+byte const VERA_LAYER_HEIGHT_256 = 0xC0;
+byte const VERA_LAYER_HEIGHT_MASK = 0xC0;
+word const VERA_LAYER_HEIGHT[4] = {32, 64, 128, 256};
 
 // Bit 0-1: Color Depth (0: 1 bpp, 1: 2 bpp, 2: 4 bpp, 3: 8 bpp)
 byte const VERA_LAYER_COLOR_DEPTH_1BPP = 0x00;
@@ -178,6 +178,13 @@ char * const VERA_L0_MAPBASE = 0x9f2e;
 // $9F2F	L0_TILEBASE	    Layer 0 Tile Base
 // Bit 2-7: Tile Base Address (16:11)
 // Bit 1:   Tile Height (0:8 pixels, 1:16 pixels)
+byte const VERA_TILEBASE_WIDTH_8 = 0x00;
+byte const VERA_TILEBASE_WIDTH_16 = 0x01;
+byte const VERA_TILEBASE_WIDTH_MASK = 0x01;
+byte const VERA_TILEBASE_HEIGHT_8 = 0x00;
+byte const VERA_TILEBASE_HEIGHT_16 = 0x02;
+byte const VERA_TILEBASE_HEIGHT_MASK = 0x02;
+byte const VERA_TILEBASE_MASK = 0xfC;
 // Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
 char * const VERA_L0_TILEBASE = 0x9f2f;
 // $9F30	L0_HSCROLL_L	Layer 0 H-Scroll (7:0)

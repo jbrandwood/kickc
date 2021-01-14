@@ -9,6 +9,21 @@
 // --- VERA function encapsulation ---
 
 // --- VERA layer management ---
+
+word  vera_mapbase_word[2] = {0,0};
+byte  vera_mapbase_bank[2] = {0,0};
+dword vera_mapbase_dword[2] = {0,0};
+
+word  vera_tilebase_word[2] = {0,0};
+byte  vera_tilebase_bank[2] = {0,0};
+dword vera_tilebase_dword[2] = {0,0};
+
+byte vera_row_shift[2] = {0,0};
+
+const byte vera_layer_hflip[2] = {0,0x04};
+const byte vera_layer_vflip[2] = {0,0x08};
+
+
 byte* vera_layer_config[2] = {VERA_L0_CONFIG, VERA_L1_CONFIG};
 byte vera_layer_enable[2] = { VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE };
 
@@ -46,6 +61,19 @@ void vera_vram_address1(dword bankaddr, byte incr) {
     *VERA_ADDRX_H = <(*word_h) | incr;
 }
 
+// Get the map base address of the tiles for the layer.
+// - layer: Value of 0 or 1.
+// - return: Specifies the map base address of the layer, which is returned as a dword.
+//   Note that the register only specifies bits 16:9 of the 17 total bit-address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes!
+dword vera_get_layer_mapbase_address(byte layer) {
+    layer &= $1;
+    byte mapbase = *vera_layer_mapbase[layer];
+    dword address = mapbase;
+    address <<= 8;
+    address <<= 1;
+    return address;
+}
 // --- VERA layer management ---
 
 // Set the configuration of the layer.
@@ -70,58 +98,58 @@ char vera_get_layer_config(char layer) {
 // - layer: Value of 0 or 1.
 inline void vera_set_layer_map_width_32(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK;
-    *addr |= VERA_LAYER_CONFIG_WIDTH_32;
+    *addr &= ~VERA_LAYER_WIDTH_MASK;
+    *addr |= VERA_LAYER_WIDTH_32;
 }
 inline void vera_set_layer_map_width_64(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
     //*addr &= (~VERA_CONFIG_WIDTH_MASK) | VERA_CONFIG_WIDTH_64;
-    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK;
-    *addr |= VERA_LAYER_CONFIG_WIDTH_64;
+    *addr &= ~VERA_LAYER_WIDTH_MASK;
+    *addr |= VERA_LAYER_WIDTH_64;
 }
 inline void vera_set_layer_map_width_128(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK;
-    *addr |= VERA_LAYER_CONFIG_WIDTH_128;
+    *addr &= ~VERA_LAYER_WIDTH_MASK;
+    *addr |= VERA_LAYER_WIDTH_128;
 }
 inline void vera_set_layer_map_width_256(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_WIDTH_MASK;
-    *addr |= VERA_LAYER_CONFIG_WIDTH_256;
+    *addr &= ~VERA_LAYER_WIDTH_MASK;
+    *addr |= VERA_LAYER_WIDTH_256;
 }
 inline void vera_set_layer_map_height_32(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK;
-    *addr |= VERA_LAYER_CONFIG_HEIGHT_32;
+    *addr &= ~VERA_LAYER_HEIGHT_MASK;
+    *addr |= VERA_LAYER_HEIGHT_32;
 }
 inline void vera_set_layer_map_height_64(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK;
-    *addr |= VERA_LAYER_CONFIG_HEIGHT_64;
+    *addr &= ~VERA_LAYER_HEIGHT_MASK;
+    *addr |= VERA_LAYER_HEIGHT_64;
 }
 inline void vera_set_layer_map_height_128(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK;
-    *addr |= VERA_LAYER_CONFIG_HEIGHT_128;
+    *addr &= ~VERA_LAYER_HEIGHT_MASK;
+    *addr |= VERA_LAYER_HEIGHT_128;
 }
 inline void vera_set_layer_map_height_256(unsigned byte layer) {
     byte* addr = vera_layer_config[layer];
-    *addr &= ~VERA_LAYER_CONFIG_HEIGHT_MASK;
-    *addr |= VERA_LAYER_CONFIG_HEIGHT_256;
+    *addr &= ~VERA_LAYER_HEIGHT_MASK;
+    *addr |= VERA_LAYER_HEIGHT_256;
 }
 
 // Get the map width or height of the layer.
 // - layer: Value of 0 or 1.
 word vera_get_layer_map_width(unsigned byte layer) {
     byte* config = vera_layer_config[layer];
-    byte mask = (byte)VERA_LAYER_CONFIG_WIDTH_MASK;
-    return VERA_LAYER_CONFIG_WIDTH[ (*config & mask) >> 4];
+    byte mask = (byte)VERA_LAYER_WIDTH_MASK;
+    return VERA_LAYER_WIDTH[ (*config & mask) >> 4];
 }
 
 word vera_get_layer_map_height(unsigned byte layer) {
     byte* config = vera_layer_config[layer];
-    byte mask = VERA_LAYER_CONFIG_HEIGHT_MASK;
-    return VERA_LAYER_CONFIG_HEIGHT[ (*config & mask) >> 6];
+    byte mask = VERA_LAYER_HEIGHT_MASK;
+    return VERA_LAYER_HEIGHT[ (*config & mask) >> 6];
 }
 
 // Set the color depth of the layer in terms of bit per pixel (BPP) of the tile base.
@@ -308,3 +336,129 @@ inline void vera_set_layer_vertical_scroll(byte layer, word scroll) {
     *vera_layer_vscroll_l[layer] = <scroll;
     *vera_layer_vscroll_h[layer] = >scroll;
 }
+
+
+void vera_mode_tile(byte layer, dword mapbase_dw, dword tilebase_dw, word mapwidth, word mapheight, byte tilewidth, byte tileheight, byte color_depth ) {
+    // config
+    byte config = 0x00;
+    switch(color_depth) {
+        case 1:
+            config |= VERA_LAYER_COLOR_DEPTH_1BPP;
+            break;
+        case 2:
+            config |= VERA_LAYER_COLOR_DEPTH_2BPP;
+            break;
+        case 4:
+            config |= VERA_LAYER_COLOR_DEPTH_4BPP;
+            break;
+        case 8:
+            config |= VERA_LAYER_COLOR_DEPTH_8BPP;
+            break;
+    }
+
+    switch(mapwidth) {
+        case 32:
+            config |= VERA_LAYER_WIDTH_32;
+            vera_row_shift[layer] = 6;
+            break;
+        case 64:
+            config |= VERA_LAYER_WIDTH_64;
+            vera_row_shift[layer] = 7;
+            break;
+        case 128:
+            config |= VERA_LAYER_WIDTH_128;
+            vera_row_shift[layer] = 8;
+            break;
+        case 256:
+            config |= VERA_LAYER_WIDTH_256;
+            vera_row_shift[layer] = 9;
+            break;
+    }
+    switch(mapheight) {
+        case 32:
+            config |= VERA_LAYER_HEIGHT_32;
+            break;
+        case 64:
+            config |= VERA_LAYER_HEIGHT_64;
+            break;
+        case 128:
+            config |= VERA_LAYER_HEIGHT_128;
+            break;
+        case 256:
+            config |= VERA_LAYER_HEIGHT_256;
+            break;
+    }
+    vera_set_layer_config(layer, config);
+
+    // mapbase
+    vera_mapbase_word[layer] = <mapbase_dw;
+    vera_mapbase_bank[layer] = (byte)>mapbase_dw;
+    vera_mapbase_dword[layer] = mapbase_dw;
+
+    mapbase_dw = mapbase_dw >> 1;
+    byte mapbase = (byte)<(mapbase_dw >> 8);
+    vera_set_layer_mapbase(layer,mapbase);
+
+
+    //printf("%lx\n",mapbase_dw);
+
+     // tilebase
+    vera_tilebase_word[layer] = <tilebase_dw;
+    vera_tilebase_bank[layer] = (byte)>tilebase_dw;
+    vera_tilebase_dword[layer] = tilebase_dw;
+
+    //printf("tilebase word = %x\n",vera_tilebase_word[layer]);
+    //printf("tilebase bank = %x\n",vera_tilebase_bank[layer]);
+    //printf("tilebase dword = %lx\n",vera_tilebase_dword[layer]);
+
+    tilebase_dw = tilebase_dw >> 1;
+    byte tilebase = (byte)<(tilebase_dw >> 8);
+    tilebase &= VERA_TILEBASE_MASK;
+    switch(tilewidth) {
+        case 8:
+            tilebase |= VERA_TILEBASE_WIDTH_8;
+            break;
+        case 16:
+            tilebase |= VERA_TILEBASE_WIDTH_16;
+            break;
+    }
+    switch(tileheight) {
+        case 8:
+            tilebase |= VERA_TILEBASE_HEIGHT_8;
+            break;
+        case 16:
+            tilebase |= VERA_TILEBASE_HEIGHT_16;
+            break;
+    }
+    //printf("tilebase = %x\n",tilebase);
+    vera_set_layer_tilebase(layer,tilebase);
+}
+
+// --- TILE FUNCTIONS ---
+
+void vera_tile_area(byte layer, word tileindex, byte x, byte y, byte w, byte h, byte hflip, byte vflip, byte offset) {
+
+    dword mapbase = vera_mapbase_dword[layer];
+    byte shift = vera_row_shift[layer];
+    word rowskip = (word)1 << shift;
+    hflip = vera_layer_hflip[hflip];
+    vflip = vera_layer_vflip[vflip];
+    offset = offset << 4;
+    byte index_l = <tileindex;
+    byte index_h = >tileindex;
+    index_h |= hflip;
+    index_h |= vflip;
+    index_h |= offset;
+    mapbase += ((word)y << shift);
+    mapbase += (x << 1);
+    for(byte r=0; r<h; r++) {
+        vera_vram_address0(mapbase,VERA_INC_1);
+        for(byte c=0; c<w; c++) {
+            *VERA_DATA0 = index_l;
+            *VERA_DATA0 = index_h;
+        }
+        mapbase += rowskip;
+    }
+
+}
+

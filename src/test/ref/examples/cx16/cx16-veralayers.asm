@@ -1470,8 +1470,8 @@ vera_set_layer_tilebase: {
 // - layer: Value of 0 or 1.
 // vera_get_layer_map_width(byte register(A) layer)
 vera_get_layer_map_width: {
-    .label return = $1a
     .label config = $23
+    .label return = $1a
     // config = vera_layer_config[layer]
     asl
     tay
@@ -1500,8 +1500,8 @@ vera_get_layer_map_width: {
 }
 // vera_get_layer_map_height(byte register(A) layer)
 vera_get_layer_map_height: {
-    .label return = $16
     .label config = $23
+    .label return = $16
     // config = vera_layer_config[layer]
     asl
     tay
@@ -1563,7 +1563,7 @@ vera_get_layer_textcolor: {
 // - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-// vera_get_layer_color(byte register(A) layer)
+// vera_get_layer_color(byte register(X) layer)
 vera_get_layer_color: {
     // layer &= $1
     and #1
@@ -2009,6 +2009,15 @@ memcpy_in_vram: {
     jmp __b1
 }
 .segment Data
+  // --- VERA layer management ---
+  vera_layer_config: .word VERA_L0_CONFIG, VERA_L1_CONFIG
+  vera_layer_enable: .byte VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE
+  vera_layer_mapbase: .word VERA_L0_MAPBASE, VERA_L1_MAPBASE
+  vera_layer_tilebase: .word VERA_L0_TILEBASE, VERA_L1_TILEBASE
+  vera_layer_textcolor: .byte WHITE, WHITE
+  vera_layer_backcolor: .byte BLUE, BLUE
+  VERA_CONFIG_WIDTH: .word $20, $40, $80, $100
+  VERA_CONFIG_HEIGHT: .word $20, $40, $80, $100
   // The number of bytes on the screen
   // The current cursor x-position
   conio_cursor_x: .byte 0, 0
@@ -2029,14 +2038,5 @@ memcpy_in_vram: {
   RADIX_DECIMAL_VALUES_CHAR: .byte $64, $a
   // Values of hexadecimal digits
   RADIX_HEXADECIMAL_VALUES_CHAR: .byte $10
-  // --- VERA layer management ---
-  vera_layer_config: .word VERA_L0_CONFIG, VERA_L1_CONFIG
-  vera_layer_enable: .byte VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE
-  vera_layer_mapbase: .word VERA_L0_MAPBASE, VERA_L1_MAPBASE
-  vera_layer_tilebase: .word VERA_L0_TILEBASE, VERA_L1_TILEBASE
-  vera_layer_textcolor: .byte WHITE, WHITE
-  vera_layer_backcolor: .byte BLUE, BLUE
-  VERA_CONFIG_WIDTH: .word $20, $40, $80, $100
-  VERA_CONFIG_HEIGHT: .word $20, $40, $80, $100
   // Buffer used for stringified number being printed
   printf_buffer: .fill SIZEOF_STRUCT_PRINTF_BUFFER_NUMBER, 0

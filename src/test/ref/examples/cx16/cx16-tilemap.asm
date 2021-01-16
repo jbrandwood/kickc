@@ -1362,8 +1362,8 @@ vera_get_layer_mapbase: {
 // - layer: Value of 0 or 1.
 // vera_get_layer_map_width(byte register(A) layer)
 vera_get_layer_map_width: {
-    .label return = $3e
     .label config = $43
+    .label return = $3e
     // config = vera_layer_config[layer]
     asl
     tay
@@ -1392,8 +1392,8 @@ vera_get_layer_map_width: {
 }
 // vera_get_layer_map_height(byte register(A) layer)
 vera_get_layer_map_height: {
-    .label return = $3a
     .label config = $43
+    .label return = $3a
     // config = vera_layer_config[layer]
     asl
     tay
@@ -1597,7 +1597,7 @@ cputc: {
 // - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-// vera_get_layer_color(byte register(A) layer)
+// vera_get_layer_color(byte register(X) layer)
 vera_get_layer_color: {
     // layer &= $1
     and #1
@@ -1925,16 +1925,6 @@ memcpy_in_vram: {
     jmp __b1
 }
 .segment Data
-  // The number of bytes on the screen
-  // The current cursor x-position
-  conio_cursor_x: .byte 0, 0
-  // The current cursor y-position
-  conio_cursor_y: .byte 0, 0
-  // The current text cursor line start
-  conio_line_text: .word 0, 0
-  // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
-  // If disabled the cursor just moves back to (0,0) instead
-  conio_scroll_enable: .byte 1, 1
   // --- VERA layer management ---
   vera_layer_config: .word VERA_L0_CONFIG, VERA_L1_CONFIG
   vera_layer_enable: .byte VERA_LAYER0_ENABLE, VERA_LAYER1_ENABLE
@@ -1948,3 +1938,13 @@ memcpy_in_vram: {
   vera_layer_backcolor: .byte BLUE, BLUE
   VERA_CONFIG_WIDTH: .word $20, $40, $80, $100
   VERA_CONFIG_HEIGHT: .word $20, $40, $80, $100
+  // The number of bytes on the screen
+  // The current cursor x-position
+  conio_cursor_x: .byte 0, 0
+  // The current cursor y-position
+  conio_cursor_y: .byte 0, 0
+  // The current text cursor line start
+  conio_line_text: .word 0, 0
+  // Is scrolling enabled when outputting beyond the end of the screen (1: yes, 0: no).
+  // If disabled the cursor just moves back to (0,0) instead
+  conio_scroll_enable: .byte 1, 1

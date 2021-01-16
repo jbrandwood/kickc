@@ -468,7 +468,6 @@ public class TestPrograms {
       compileAndCompare("examples/cx16/cx16-tilemap.c");
    }
 
-
    @Test
    public void testCx16Sprites() throws IOException, URISyntaxException {
       compileAndCompare("examples/cx16/cx16-sprites.c");

@@ -1,6 +1,7 @@
 // CX16 conio.h implementation
 #include <conio.h>
 #include <cx16.h>
+#include <veralib.h>
 
 // The screen width
 #define CONIO_WIDTH conio_screen_width

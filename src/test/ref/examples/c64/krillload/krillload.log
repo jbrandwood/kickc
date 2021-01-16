@@ -1,0 +1,883 @@
+Loading link script "krillload.ld"
+Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
+Inlined call main::$6 = call toSpritePtr SPRITE 
+
+CONTROL FLOW GRAPH SSA
+
+byte krill_install()
+krill_install: scope:[krill_install]  from main
+  asm { jsrKRILL_INSTALL stastatus  }
+  krill_install::return#0 = *krill_install::status
+  to:krill_install::@return
+krill_install::@return: scope:[krill_install]  from krill_install
+  krill_install::return#3 = phi( krill_install/krill_install::return#0 )
+  krill_install::return#1 = krill_install::return#3
+  return 
+  to:@return
+
+byte krill_loadraw(byte* krill_loadraw::filename)
+krill_loadraw: scope:[krill_loadraw]  from main::@1
+  krill_loadraw::filename#1 = phi( main::@1/krill_loadraw::filename#0 )
+  *krill_loadraw::fname = krill_loadraw::filename#1
+  asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+  krill_loadraw::return#0 = *krill_loadraw::status
+  to:krill_loadraw::@return
+krill_loadraw::@return: scope:[krill_loadraw]  from krill_loadraw
+  krill_loadraw::return#3 = phi( krill_loadraw/krill_loadraw::return#0 )
+  krill_loadraw::return#1 = krill_loadraw::return#3
+  return 
+  to:@return
+
+void main()
+main: scope:[main]  from __start
+  call krill_install 
+  krill_install::return#2 = krill_install::return#1
+  to:main::@6
+main::@6: scope:[main]  from main
+  krill_install::return#4 = phi( main/krill_install::return#2 )
+  main::$0 = krill_install::return#4
+  main::status#0 = main::$0
+  main::$1 = main::status#0 != KRILL_OK
+  main::$2 = ! main::$1
+  if(main::$2) goto main::@1
+  to:main::@3
+main::@1: scope:[main]  from main::@6
+  krill_loadraw::filename#0 = main::filename
+  call krill_loadraw 
+  krill_loadraw::return#2 = krill_loadraw::return#1
+  to:main::@7
+main::@7: scope:[main]  from main::@1
+  krill_loadraw::return#4 = phi( main::@1/krill_loadraw::return#2 )
+  main::$3 = krill_loadraw::return#4
+  main::status#1 = main::$3
+  main::$4 = main::status#1 != KRILL_OK
+  main::$5 = ! main::$4
+  if(main::$5) goto main::@2
+  to:main::@4
+main::@3: scope:[main]  from main::@6
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+  to:main::@return
+main::@return: scope:[main]  from main::@3 main::@4 main::@5
+  return 
+  to:@return
+main::@2: scope:[main]  from main::@7
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
+  main::toSpritePtr1_sprite#0 = SPRITE
+  to:main::toSpritePtr1
+main::toSpritePtr1: scope:[main]  from main::@2
+  main::toSpritePtr1_sprite#1 = phi( main::@2/main::toSpritePtr1_sprite#0 )
+  main::toSpritePtr1_$1 = (word)main::toSpritePtr1_sprite#1
+  main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
+  main::toSpritePtr1_return#0 = (byte)main::toSpritePtr1_$0
+  to:main::toSpritePtr1_@return
+main::toSpritePtr1_@return: scope:[main]  from main::toSpritePtr1
+  main::toSpritePtr1_return#2 = phi( main::toSpritePtr1/main::toSpritePtr1_return#0 )
+  main::toSpritePtr1_return#1 = main::toSpritePtr1_return#2
+  to:main::@5
+main::@5: scope:[main]  from main::toSpritePtr1_@return
+  main::toSpritePtr1_return#3 = phi( main::toSpritePtr1_@return/main::toSpritePtr1_return#1 )
+  main::$6 = main::toSpritePtr1_return#3
+  SPRITES_PTR[0] = main::$6
+  SPRITES_COLOR[0] = GREEN
+  SPRITES_XPOS[0] = $15
+  SPRITES_YPOS[0] = $33
+  to:main::@return
+main::@4: scope:[main]  from main::@7
+  *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+  to:main::@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte GREEN = 5
+const byte* KRILL_INSTALL[]  = kickasm {{ .import c64 "install-c64.prg"
+ }}
+const byte* KRILL_LOADER[]  = kickasm {{ .import c64 "loader-c64.prg"
+ }}
+const byte KRILL_OK = 0
+const byte KrillStatus::KRILL_DEVICE_INCOMPATIBLE = $fb
+const byte KrillStatus::KRILL_DEVICE_NOT_PRESENT = $fe
+const byte KrillStatus::KRILL_FILE_NOT_FOUND = $ff
+const byte KrillStatus::KRILL_GENERIC_KERNAL_ERROR = $fd
+const byte KrillStatus::KRILL_OK = 0
+const byte KrillStatus::KRILL_TOO_MANY_DEVICES = $fc
+const nomodify word OFFSET_SPRITE_PTRS = $3f8
+const byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+const nomodify byte* SCREEN = (byte*)$400
+const byte* SPRITE[$40]  = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+ }}
+const nomodify byte* SPRITES_COLOR = (byte*)$d027
+const nomodify byte* SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
+const nomodify byte* SPRITES_XPOS = (byte*)$d000
+const nomodify byte* SPRITES_YPOS = (byte*)$d001
+const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
+void __start()
+byte krill_install()
+byte krill_install::return
+byte krill_install::return#0
+byte krill_install::return#1
+byte krill_install::return#2
+byte krill_install::return#3
+byte krill_install::return#4
+const nomodify byte* krill_install::status = (byte*)$ff
+byte krill_loadraw(byte* krill_loadraw::filename)
+byte* krill_loadraw::filename
+byte* krill_loadraw::filename#0
+byte* krill_loadraw::filename#1
+const nomodify byte** krill_loadraw::fname = (byte**)$fe
+byte krill_loadraw::return
+byte krill_loadraw::return#0
+byte krill_loadraw::return#1
+byte krill_loadraw::return#2
+byte krill_loadraw::return#3
+byte krill_loadraw::return#4
+const nomodify byte* krill_loadraw::status = (byte*)$ff
+void main()
+byte~ main::$0
+bool~ main::$1
+bool~ main::$2
+byte~ main::$3
+bool~ main::$4
+bool~ main::$5
+byte~ main::$6
+const byte* main::filename[7]  = "sprite"pm
+byte main::status
+byte main::status#0
+byte main::status#1
+number~ main::toSpritePtr1_$0
+word~ main::toSpritePtr1_$1
+byte main::toSpritePtr1_return
+byte main::toSpritePtr1_return#0
+byte main::toSpritePtr1_return#1
+byte main::toSpritePtr1_return#2
+byte main::toSpritePtr1_return#3
+byte* main::toSpritePtr1_sprite
+byte* main::toSpritePtr1_sprite#0
+byte* main::toSpritePtr1_sprite#1
+
+Adding number conversion cast (unumber) 2 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+Adding number conversion cast (unumber) 1 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
+Adding number conversion cast (unumber) $40 in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
+Adding number conversion cast (unumber) main::toSpritePtr1_$0 in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / (unumber)$40
+Adding number conversion cast (unumber) 0 in SPRITES_PTR[0] = main::$6
+Adding number conversion cast (unumber) 0 in SPRITES_COLOR[0] = GREEN
+Adding number conversion cast (unumber) $15 in SPRITES_XPOS[0] = $15
+Adding number conversion cast (unumber) 0 in SPRITES_XPOS[0] = ((unumber)) $15
+Adding number conversion cast (unumber) $33 in SPRITES_YPOS[0] = $33
+Adding number conversion cast (unumber) 0 in SPRITES_YPOS[0] = ((unumber)) $33
+Adding number conversion cast (unumber) 2 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = (unumber)2
+Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = (unumber)1
+Inlining cast SPRITES_XPOS[(unumber)0] = (unumber)$15
+Inlining cast SPRITES_YPOS[(unumber)0] = (unumber)$33
+Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = (unumber)2
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (byte*) 255
+Simplifying constant pointer cast (byte**) 254
+Simplifying constant pointer cast (byte*) 53248
+Simplifying constant pointer cast (byte*) 53249
+Simplifying constant pointer cast (byte*) 53287
+Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
+Simplifying constant pointer cast (byte*) 1024
+Simplifying constant integer cast 2
+Simplifying constant integer cast 1
+Simplifying constant integer cast $40
+Simplifying constant integer cast 0
+Simplifying constant integer cast 0
+Simplifying constant integer cast $15
+Simplifying constant integer cast 0
+Simplifying constant integer cast $33
+Simplifying constant integer cast 0
+Simplifying constant integer cast 2
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 1
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $15
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $33
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) 2
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Inferred type updated to word in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
+Inversing boolean not [18] main::$2 = main::status#0 == KRILL_OK from [17] main::$1 = main::status#0 != KRILL_OK
+Inversing boolean not [27] main::$5 = main::status#1 == KRILL_OK from [26] main::$4 = main::status#1 != KRILL_OK
+Successful SSA optimization Pass2UnaryNotSimplification
+Alias krill_install::return#0 = krill_install::return#3 krill_install::return#1 
+Alias krill_loadraw::return#0 = krill_loadraw::return#3 krill_loadraw::return#1 
+Alias krill_install::return#2 = krill_install::return#4 
+Alias main::status#0 = main::$0 
+Alias krill_loadraw::return#2 = krill_loadraw::return#4 
+Alias main::status#1 = main::$3 
+Alias main::toSpritePtr1_sprite#0 = main::toSpritePtr1_sprite#1 
+Alias main::toSpritePtr1_return#0 = main::toSpritePtr1_return#2 main::toSpritePtr1_return#1 main::toSpritePtr1_return#3 main::$6 
+Successful SSA optimization Pass2AliasElimination
+Identical Phi Values krill_loadraw::filename#1 krill_loadraw::filename#0
+Successful SSA optimization Pass2IdenticalPhiElimination
+Simple Condition main::$2 [12] if(main::status#0==KRILL_OK) goto main::@1
+Simple Condition main::$5 [18] if(main::status#1==KRILL_OK) goto main::@2
+Successful SSA optimization Pass2ConditionalJumpSimplification
+Constant krill_loadraw::filename#0 = main::filename
+Constant main::toSpritePtr1_sprite#0 = SPRITE
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::toSpritePtr1_$1 = (word)main::toSpritePtr1_sprite#0
+Successful SSA optimization Pass2ConstantIdentification
+Simplifying expression containing zero SPRITES_PTR in [26] SPRITES_PTR[0] = main::toSpritePtr1_return#0
+Simplifying expression containing zero SPRITES_COLOR in [27] SPRITES_COLOR[0] = GREEN
+Simplifying expression containing zero SPRITES_XPOS in [28] SPRITES_XPOS[0] = $15
+Simplifying expression containing zero SPRITES_YPOS in [29] SPRITES_YPOS[0] = $33
+Successful SSA optimization PassNSimplifyExpressionWithZero
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Constant right-side identified [18] main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
+Successful SSA optimization Pass2ConstantRValueConsolidation
+Constant main::toSpritePtr1_$0 = main::toSpritePtr1_$1/$40
+Successful SSA optimization Pass2ConstantIdentification
+Constant main::toSpritePtr1_return#0 = (byte)main::toSpritePtr1_$0
+Successful SSA optimization Pass2ConstantIdentification
+Constant inlined main::toSpritePtr1_sprite#0 = SPRITE
+Constant inlined main::toSpritePtr1_$1 = (word)SPRITE
+Constant inlined krill_loadraw::filename#0 = main::filename
+Constant inlined main::toSpritePtr1_$0 = (word)SPRITE/$40
+Successful SSA optimization Pass2ConstantInlining
+Finalized unsigned number type (word) $3000
+Finalized unsigned number type (word) $3400
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $fb
+Finalized unsigned number type (byte) $fc
+Finalized unsigned number type (byte) $fd
+Finalized unsigned number type (byte) $fe
+Finalized unsigned number type (byte) $ff
+Finalized unsigned number type (byte) 0
+Finalized unsigned number type (byte) $40
+Finalized unsigned number type (word) $2040
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::toSpritePtr1
+Adding NOP phi() at start of main::toSpritePtr1_@return
+CALL GRAPH
+Calls in [main] to krill_install:1 krill_loadraw:8 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+Culled Empty Block label main::toSpritePtr1_@return
+Adding NOP phi() at start of main
+Adding NOP phi() at start of main::@1
+Adding NOP phi() at start of main::toSpritePtr1
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] phi()
+  [1] call krill_install 
+  [2] krill_install::return#2 = krill_install::return#0
+  to:main::@6
+main::@6: scope:[main]  from main
+  [3] main::status#0 = krill_install::return#2
+  [4] if(main::status#0==KRILL_OK) goto main::@1
+  to:main::@3
+main::@3: scope:[main]  from main::@6
+  [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+  to:main::@return
+main::@return: scope:[main]  from main::@3 main::@4 main::@5
+  [6] return 
+  to:@return
+main::@1: scope:[main]  from main::@6
+  [7] phi()
+  [8] call krill_loadraw 
+  [9] krill_loadraw::return#2 = krill_loadraw::return#0
+  to:main::@7
+main::@7: scope:[main]  from main::@1
+  [10] main::status#1 = krill_loadraw::return#2
+  [11] if(main::status#1==KRILL_OK) goto main::@2
+  to:main::@4
+main::@4: scope:[main]  from main::@7
+  [12] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+  to:main::@return
+main::@2: scope:[main]  from main::@7
+  [13] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1
+  to:main::toSpritePtr1
+main::toSpritePtr1: scope:[main]  from main::@2
+  [14] phi()
+  to:main::@5
+main::@5: scope:[main]  from main::toSpritePtr1
+  [15] *SPRITES_PTR = main::toSpritePtr1_return#0
+  [16] *SPRITES_COLOR = GREEN
+  [17] *SPRITES_XPOS = $15
+  [18] *SPRITES_YPOS = $33
+  to:main::@return
+
+byte krill_install()
+krill_install: scope:[krill_install]  from main
+  asm { jsrKRILL_INSTALL stastatus  }
+  [20] krill_install::return#0 = *krill_install::status
+  to:krill_install::@return
+krill_install::@return: scope:[krill_install]  from krill_install
+  [21] return 
+  to:@return
+
+byte krill_loadraw(byte* krill_loadraw::filename)
+krill_loadraw: scope:[krill_loadraw]  from main::@1
+  [22] *krill_loadraw::fname = main::filename
+  asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+  [24] krill_loadraw::return#0 = *krill_loadraw::status
+  to:krill_loadraw::@return
+krill_loadraw::@return: scope:[krill_loadraw]  from krill_loadraw
+  [25] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+byte krill_install()
+byte krill_install::return
+byte krill_install::return#0 4.333333333333333
+byte krill_install::return#2 4.0
+byte krill_loadraw(byte* krill_loadraw::filename)
+byte* krill_loadraw::filename
+byte krill_loadraw::return
+byte krill_loadraw::return#0 4.333333333333333
+byte krill_loadraw::return#2 4.0
+void main()
+byte main::status
+byte main::status#0 4.0
+byte main::status#1 4.0
+byte main::toSpritePtr1_return
+byte* main::toSpritePtr1_sprite
+
+Initial phi equivalence classes
+Added variable krill_install::return#2 to live range equivalence class [ krill_install::return#2 ]
+Added variable main::status#0 to live range equivalence class [ main::status#0 ]
+Added variable krill_loadraw::return#2 to live range equivalence class [ krill_loadraw::return#2 ]
+Added variable main::status#1 to live range equivalence class [ main::status#1 ]
+Added variable krill_install::return#0 to live range equivalence class [ krill_install::return#0 ]
+Added variable krill_loadraw::return#0 to live range equivalence class [ krill_loadraw::return#0 ]
+Complete equivalence classes
+[ krill_install::return#2 ]
+[ main::status#0 ]
+[ krill_loadraw::return#2 ]
+[ main::status#1 ]
+[ krill_install::return#0 ]
+[ krill_loadraw::return#0 ]
+Allocated zp[1]:2 [ krill_install::return#2 ]
+Allocated zp[1]:3 [ main::status#0 ]
+Allocated zp[1]:4 [ krill_loadraw::return#2 ]
+Allocated zp[1]:5 [ main::status#1 ]
+Allocated zp[1]:6 [ krill_install::return#0 ]
+Allocated zp[1]:7 [ krill_loadraw::return#0 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [12] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [13] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [15] *SPRITES_PTR = main::toSpritePtr1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [16] *SPRITES_COLOR = GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [17] *SPRITES_XPOS = $15 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement [18] *SPRITES_YPOS = $33 [ ] (  [ ] { }  ) always clobbers reg byte a 
+Statement asm { jsrKRILL_INSTALL stastatus  } always clobbers reg byte a reg byte x reg byte y 
+Statement [22] *krill_loadraw::fname = main::filename [ ] ( krill_loadraw:8 [ ] { { krill_loadraw::return#0 = krill_loadraw::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  } always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp[1]:2 [ krill_install::return#2 ] : zp[1]:2 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:3 [ main::status#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ krill_loadraw::return#2 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ main::status#1 ] : zp[1]:5 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:6 [ krill_install::return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ krill_loadraw::return#0 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [krill_install] 4.33: zp[1]:6 [ krill_install::return#0 ] 4: zp[1]:2 [ krill_install::return#2 ] 
+Uplift Scope [krill_loadraw] 4.33: zp[1]:7 [ krill_loadraw::return#0 ] 4: zp[1]:4 [ krill_loadraw::return#2 ] 
+Uplift Scope [main] 4: zp[1]:3 [ main::status#0 ] 4: zp[1]:5 [ main::status#1 ] 
+Uplift Scope [KrillStatus] 
+Uplift Scope [MOS6526_CIA] 
+Uplift Scope [MOS6569_VICII] 
+Uplift Scope [MOS6581_SID] 
+Uplift Scope [] 
+
+Uplifting [krill_install] best 215 combination reg byte a [ krill_install::return#0 ] reg byte a [ krill_install::return#2 ] 
+Uplifting [krill_loadraw] best 203 combination reg byte a [ krill_loadraw::return#0 ] reg byte a [ krill_loadraw::return#2 ] 
+Uplifting [main] best 191 combination reg byte a [ main::status#0 ] reg byte a [ main::status#1 ] 
+Uplifting [KrillStatus] best 191 combination 
+Uplifting [MOS6526_CIA] best 191 combination 
+Uplifting [MOS6569_VICII] best 191 combination 
+Uplifting [MOS6581_SID] best 191 combination 
+Uplifting [] best 191 combination 
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Tests Krill Loader
+// Load a file to memory using the Krill loader
+// The krillload.ld link file creates a D64 disk image containing the executable and the sprite.
+// To execute the program succesfully you must mount the D64 disk image and execute the krillload.PRG program
+  // Upstart
+  // Create a D64 disk containing the program and a sprite file
+.disk [filename="krillload.d64", name="DISK", id=1] {
+        [name="KRILLLOAD", type="prg", segments="Program"],
+        [name="SPRITE", type="prg", segments="Sprite"]
+}
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$080d]
+.segmentdef Data [startAfter="Code"]
+.segmentdef Sprite
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+  // Global Constants & labels
+  .const KRILL_OK = 0
+  // The offset of the sprite pointers from the screen start address
+  .const OFFSET_SPRITE_PTRS = $3f8
+  .const GREEN = 5
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_COLOR = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
+.segment Code
+  // main
+main: {
+    .const toSpritePtr1_return = $ff&SPRITE/$40
+    // [1] call krill_install 
+    jsr krill_install
+    // [2] krill_install::return#2 = krill_install::return#0
+    jmp __b6
+    // main::@6
+  __b6:
+    // [3] main::status#0 = krill_install::return#2
+    // [4] if(main::status#0==KRILL_OK) goto main::@1 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #KRILL_OK
+    beq __b1_from___b6
+    jmp __b3
+    // main::@3
+  __b3:
+    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [6] return 
+    rts
+    // [7] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+  __b1_from___b6:
+    jmp __b1
+    // main::@1
+  __b1:
+    // [8] call krill_loadraw 
+    jsr krill_loadraw
+    // [9] krill_loadraw::return#2 = krill_loadraw::return#0
+    jmp __b7
+    // main::@7
+  __b7:
+    // [10] main::status#1 = krill_loadraw::return#2
+    // [11] if(main::status#1==KRILL_OK) goto main::@2 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #KRILL_OK
+    beq __b2
+    jmp __b4
+    // main::@4
+  __b4:
+    // [12] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    jmp __breturn
+    // main::@2
+  __b2:
+    // [13] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 -- _deref_pbuc1=vbuc2 
+    // Show the loaded sprite on screen
+    lda #1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
+    // [14] phi from main::@2 to main::toSpritePtr1 [phi:main::@2->main::toSpritePtr1]
+  toSpritePtr1_from___b2:
+    jmp toSpritePtr1
+    // main::toSpritePtr1
+  toSpritePtr1:
+    jmp __b5
+    // main::@5
+  __b5:
+    // [15] *SPRITES_PTR = main::toSpritePtr1_return#0 -- _deref_pbuc1=vbuc2 
+    lda #toSpritePtr1_return
+    sta SPRITES_PTR
+    // [16] *SPRITES_COLOR = GREEN -- _deref_pbuc1=vbuc2 
+    lda #GREEN
+    sta SPRITES_COLOR
+    // [17] *SPRITES_XPOS = $15 -- _deref_pbuc1=vbuc2 
+    lda #$15
+    sta SPRITES_XPOS
+    // [18] *SPRITES_YPOS = $33 -- _deref_pbuc1=vbuc2 
+    lda #$33
+    sta SPRITES_YPOS
+    jmp __breturn
+  .segment Data
+  .encoding "petscii_mixed"
+    filename: .text "sprite"
+    .byte 0
+}
+.segment Code
+  // krill_install
+// Install drive-side code portion(s) must be installed in the active drive.
+// Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
+// The drive-side portion remains resident in the drive. After successful
+// installation, the install routine is not needed any more and may be overwritten.
+// The KERNAL ROM may be disabled and zeropage variables clobbered.
+// Returns the status of the installation
+krill_install: {
+    .label status = $ff
+    // asm { jsrKRILL_INSTALL stastatus  }
+    jsr KRILL_INSTALL
+    sta status
+    // [20] krill_install::return#0 = *krill_install::status -- vbuaa=_deref_pbuc1 
+    lda status
+    jmp __breturn
+    // krill_install::@return
+  __breturn:
+    // [21] return 
+    rts
+}
+  // krill_loadraw
+// Load a file from the active drive without decompression.
+// While loading using filenames with wildcards ("?" and "*") is not possible,
+// subsequent files following the previously-loaded file can be loaded via a
+// zero-length filename
+// - filename - The name of the file to load (zero-terminated in petscii encoding)
+// Returns the status of the load
+krill_loadraw: {
+    .label status = $ff
+    .label fname = $fe
+    // [22] *krill_loadraw::fname = main::filename -- _deref_qbuc1=pbuc2 
+    lda #<main.filename
+    sta fname
+    lda #>main.filename
+    sta fname+1
+    // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+    ldx fname
+    ldy fname+1
+    jsr KRILL_LOADER
+    sta status
+    // [24] krill_loadraw::return#0 = *krill_loadraw::status -- vbuaa=_deref_pbuc1 
+    lda status
+    jmp __breturn
+    // krill_loadraw::@return
+  __breturn:
+    // [25] return 
+    rts
+}
+  // File Data
+.segment Data
+.pc = $3000 "KRILL_LOADER"
+// The Krill loader routine that can load files.
+KRILL_LOADER:
+.import c64 "loader-c64.prg"
+
+.pc = $3400 "KRILL_INSTALL"
+// The Krill Install routine that can install the drive-side code
+KRILL_INSTALL:
+.import c64 "install-c64.prg"
+
+.segment Sprite
+.pc = $2040 "SPRITE"
+// The sprite data
+SPRITE:
+.var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b6
+Removing instruction jmp __b3
+Removing instruction jmp __breturn
+Removing instruction jmp __b1
+Removing instruction jmp __b7
+Removing instruction jmp __b4
+Removing instruction jmp toSpritePtr1
+Removing instruction jmp __b5
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction lda status
+Replacing instruction ldy fname+1 with TAY
+Removing instruction lda status
+Succesful ASM optimization Pass5UnnecesaryLoadElimination
+Replacing label __b1_from___b6 with __b1
+Removing instruction __b1_from___b6:
+Removing instruction toSpritePtr1_from___b2:
+Removing instruction toSpritePtr1:
+Succesful ASM optimization Pass5RedundantLabelElimination
+Removing instruction __b6:
+Removing instruction __b3:
+Removing instruction __b7:
+Removing instruction __b4:
+Removing instruction __b5:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+Replacing jump to rts with rts in jmp __breturn
+Replacing jump to rts with rts in jmp __breturn
+Succesful ASM optimization Pass5DoubleJumpElimination
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte GREEN = 5
+const byte* KRILL_INSTALL[]  = kickasm {{ .import c64 "install-c64.prg"
+ }}
+const byte* KRILL_LOADER[]  = kickasm {{ .import c64 "loader-c64.prg"
+ }}
+const byte KRILL_OK = 0
+const byte KrillStatus::KRILL_DEVICE_INCOMPATIBLE = $fb
+const byte KrillStatus::KRILL_DEVICE_NOT_PRESENT = $fe
+const byte KrillStatus::KRILL_FILE_NOT_FOUND = $ff
+const byte KrillStatus::KRILL_GENERIC_KERNAL_ERROR = $fd
+const byte KrillStatus::KRILL_OK = 0
+const byte KrillStatus::KRILL_TOO_MANY_DEVICES = $fc
+const nomodify word OFFSET_SPRITE_PTRS = $3f8
+const byte OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+const byte OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+const nomodify byte* SCREEN = (byte*) 1024
+const byte* SPRITE[$40]  = kickasm {{ .var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+ }}
+const nomodify byte* SPRITES_COLOR = (byte*) 53287
+const nomodify byte* SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
+const nomodify byte* SPRITES_XPOS = (byte*) 53248
+const nomodify byte* SPRITES_YPOS = (byte*) 53249
+const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
+byte krill_install()
+byte krill_install::return
+byte krill_install::return#0 reg byte a 4.333333333333333
+byte krill_install::return#2 reg byte a 4.0
+const nomodify byte* krill_install::status = (byte*) 255
+byte krill_loadraw(byte* krill_loadraw::filename)
+byte* krill_loadraw::filename
+const nomodify byte** krill_loadraw::fname = (byte**) 254
+byte krill_loadraw::return
+byte krill_loadraw::return#0 reg byte a 4.333333333333333
+byte krill_loadraw::return#2 reg byte a 4.0
+const nomodify byte* krill_loadraw::status = (byte*) 255
+void main()
+const byte* main::filename[7]  = "sprite"pm
+byte main::status
+byte main::status#0 reg byte a 4.0
+byte main::status#1 reg byte a 4.0
+byte main::toSpritePtr1_return
+const byte main::toSpritePtr1_return#0 toSpritePtr1_return = (byte)(word)SPRITE/$40
+byte* main::toSpritePtr1_sprite
+
+reg byte a [ krill_install::return#2 ]
+reg byte a [ main::status#0 ]
+reg byte a [ krill_loadraw::return#2 ]
+reg byte a [ main::status#1 ]
+reg byte a [ krill_install::return#0 ]
+reg byte a [ krill_loadraw::return#0 ]
+
+
+FINAL ASSEMBLER
+Score: 130
+
+  // File Comments
+// Tests Krill Loader
+// Load a file to memory using the Krill loader
+// The krillload.ld link file creates a D64 disk image containing the executable and the sprite.
+// To execute the program succesfully you must mount the D64 disk image and execute the krillload.PRG program
+  // Upstart
+  // Create a D64 disk containing the program and a sprite file
+.disk [filename="krillload.d64", name="DISK", id=1] {
+        [name="KRILLLOAD", type="prg", segments="Program"],
+        [name="SPRITE", type="prg", segments="Sprite"]
+}
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$080d]
+.segmentdef Data [startAfter="Code"]
+.segmentdef Sprite
+.segment Basic
+:BasicUpstart(main)
+.segment Code
+  // Global Constants & labels
+  .const KRILL_OK = 0
+  // The offset of the sprite pointers from the screen start address
+  .const OFFSET_SPRITE_PTRS = $3f8
+  .const GREEN = 5
+  .const OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR = $20
+  .const OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE = $15
+  .label SPRITES_XPOS = $d000
+  .label SPRITES_YPOS = $d001
+  .label SPRITES_COLOR = $d027
+  // The VIC-II MOS 6567/6569
+  .label VICII = $d000
+  .label SCREEN = $400
+  .label SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
+.segment Code
+  // main
+main: {
+    .const toSpritePtr1_return = $ff&SPRITE/$40
+    // krill_install()
+    // [1] call krill_install 
+    jsr krill_install
+    // [2] krill_install::return#2 = krill_install::return#0
+    // main::@6
+    // status = krill_install()
+    // [3] main::status#0 = krill_install::return#2
+    // if(status!=KRILL_OK)
+    // [4] if(main::status#0==KRILL_OK) goto main::@1 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #KRILL_OK
+    beq __b1
+    // main::@3
+    // VICII->BORDER_COLOR = 0x02
+    // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    // main::@return
+    // }
+    // [6] return 
+    rts
+    // [7] phi from main::@6 to main::@1 [phi:main::@6->main::@1]
+    // main::@1
+  __b1:
+    // krill_loadraw("sprite")
+    // [8] call krill_loadraw 
+    jsr krill_loadraw
+    // [9] krill_loadraw::return#2 = krill_loadraw::return#0
+    // main::@7
+    // status = krill_loadraw("sprite")
+    // [10] main::status#1 = krill_loadraw::return#2
+    // if(status!=KRILL_OK)
+    // [11] if(main::status#1==KRILL_OK) goto main::@2 -- vbuaa_eq_vbuc1_then_la1 
+    cmp #KRILL_OK
+    beq __b2
+    // main::@4
+    // VICII->BORDER_COLOR = 0x02
+    // [12] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
+    lda #2
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
+    rts
+    // main::@2
+  __b2:
+    // VICII->SPRITES_ENABLE = %00000001
+    // [13] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 -- _deref_pbuc1=vbuc2 
+    // Show the loaded sprite on screen
+    lda #1
+    sta VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE
+    // [14] phi from main::@2 to main::toSpritePtr1 [phi:main::@2->main::toSpritePtr1]
+    // main::toSpritePtr1
+    // main::@5
+    // SPRITES_PTR[0] = toSpritePtr(SPRITE)
+    // [15] *SPRITES_PTR = main::toSpritePtr1_return#0 -- _deref_pbuc1=vbuc2 
+    lda #toSpritePtr1_return
+    sta SPRITES_PTR
+    // SPRITES_COLOR[0] = GREEN
+    // [16] *SPRITES_COLOR = GREEN -- _deref_pbuc1=vbuc2 
+    lda #GREEN
+    sta SPRITES_COLOR
+    // SPRITES_XPOS[0] = 0x15
+    // [17] *SPRITES_XPOS = $15 -- _deref_pbuc1=vbuc2 
+    lda #$15
+    sta SPRITES_XPOS
+    // SPRITES_YPOS[0] = 0x33
+    // [18] *SPRITES_YPOS = $33 -- _deref_pbuc1=vbuc2 
+    lda #$33
+    sta SPRITES_YPOS
+    rts
+  .segment Data
+  .encoding "petscii_mixed"
+    filename: .text "sprite"
+    .byte 0
+}
+.segment Code
+  // krill_install
+// Install drive-side code portion(s) must be installed in the active drive.
+// Before the loader can operate, its drive-side code portion(s) must be installed in the drive(s).
+// The drive-side portion remains resident in the drive. After successful
+// installation, the install routine is not needed any more and may be overwritten.
+// The KERNAL ROM may be disabled and zeropage variables clobbered.
+// Returns the status of the installation
+krill_install: {
+    .label status = $ff
+    // asm
+    // asm { jsrKRILL_INSTALL stastatus  }
+    jsr KRILL_INSTALL
+    sta status
+    // return *status;
+    // [20] krill_install::return#0 = *krill_install::status -- vbuaa=_deref_pbuc1 
+    // krill_install::@return
+    // }
+    // [21] return 
+    rts
+}
+  // krill_loadraw
+// Load a file from the active drive without decompression.
+// While loading using filenames with wildcards ("?" and "*") is not possible,
+// subsequent files following the previously-loaded file can be loaded via a
+// zero-length filename
+// - filename - The name of the file to load (zero-terminated in petscii encoding)
+// Returns the status of the load
+krill_loadraw: {
+    .label status = $ff
+    .label fname = $fe
+    // *fname = filename
+    // [22] *krill_loadraw::fname = main::filename -- _deref_qbuc1=pbuc2 
+    lda #<main.filename
+    sta fname
+    lda #>main.filename
+    sta fname+1
+    // asm
+    // asm { ldxfname ldyfname+1 jsrKRILL_LOADER stastatus  }
+    ldx fname
+    tay
+    jsr KRILL_LOADER
+    sta status
+    // return *status;
+    // [24] krill_loadraw::return#0 = *krill_loadraw::status -- vbuaa=_deref_pbuc1 
+    // krill_loadraw::@return
+    // }
+    // [25] return 
+    rts
+}
+  // File Data
+.segment Data
+.pc = $3000 "KRILL_LOADER"
+// The Krill loader routine that can load files.
+KRILL_LOADER:
+.import c64 "loader-c64.prg"
+
+.pc = $3400 "KRILL_INSTALL"
+// The Krill Install routine that can install the drive-side code
+KRILL_INSTALL:
+.import c64 "install-c64.prg"
+
+.segment Sprite
+.pc = $2040 "SPRITE"
+// The sprite data
+SPRITE:
+.var pic = LoadPicture("sprite.png", List().add($000000, $ffffff))
+    .for (var y=0; y<21; y++)
+        .for (var x=0;x<3; x++)
+            .byte pic.getSinglecolorByte(x,y)
+
+

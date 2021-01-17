@@ -438,7 +438,7 @@ void vera_layer_mode_tile(byte layer, dword mapbase_address, dword dw_tilebase, 
     vera_mapbase_address[layer] = mapbase_address;
 
     mapbase_address = mapbase_address >> 1;
-    byte mapbase = (byte)<(mapbase_address >> 8);
+    byte mapbase = >(<mapbase_address);
     vera_layer_set_mapbase(layer,mapbase);
 
 
@@ -454,7 +454,7 @@ void vera_layer_mode_tile(byte layer, dword mapbase_address, dword dw_tilebase, 
     //printf("tilebase dword = %lx\n",vera_tilebase_address[layer]);
 
     dw_tilebase = dw_tilebase >> 1;
-    byte tilebase = (byte)<(dw_tilebase >> 8);
+    byte tilebase = >(<dw_tilebase);
     tilebase &= VERA_LAYER_TILEBASE_MASK;
     switch(tilewidth) {
         case 8:

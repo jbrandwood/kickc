@@ -47,18 +47,16 @@ void main() {
 char loadFileToMemory( char device, char* filename, char* address) {
     setnam(filename);
     setlfs(device);
-    return load(address, false);
+    return load(address, 0);
 }
 
 // Basic ERROR function
 // ERROR. Show error.
 void error(char err) {
-    char* const errCode = 0xff;
-    *errCode = err;
     asm {
         // Basic SHOWERR function
         // Input: X = Error Code
-        ldx errCode
+        ldx err
         jsr $a437
     }
 }
@@ -66,57 +64,50 @@ void error(char err) {
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
 void setnam(char* filename) {
-    char* const filename_len = 0xfd;
-    char** const filename_ptr = 0xfe;
-    *filename_len = (char)strlen(filename);
-    *filename_ptr = filename;
+    char filename_len = (char)strlen(filename);
     asm {
         // Kernal SETNAM function
         // SETNAM. Set file name parameters.
         // Input: A = File name length; X/Y = Pointer to file name.
         lda filename_len
-        ldx filename_ptr
-        ldy filename_ptr+1
+        ldx filename
+        ldy filename+1
         jsr $ffbd
     }
 }
 
 // SETLFS. Set file parameters.
 void setlfs(char device) {
-    char* const deviceNum = 0xff;
-    *deviceNum = device;
     asm {
         // SETLFS. Set file parameters.
         // Input: A = Logical number; X = Device number; Y = Secondary address.
-        ldx deviceNum
+        ldx device
         lda #1
         ldy #0
         jsr $ffba
     }
 }
 
-//LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// - verify: 0 = Load, 1-255 = Verify
+//
 // Returns a status, 0xff: Success other: Kernal Error Code
-char load(char* address, bool verify) {
-    char* loadOrVerify = 0xfd;
-    char** loadAddress = 0xfe;
-    char* status = 0xfd;
-    *loadOrVerify = (char)verify;
-    *loadAddress = address;
+char load(char* address, char verify) {
+    char status;
     asm {
         //LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
         // Input: A: 0 = Load, 1-255 = Verify; X/Y = Load address (if secondary address = 0).
         // Output: Carry: 0 = No errors, 1 = Error; A = KERNAL error code (if Carry = 1); X/Y = Address of last byte loaded/verified (if Carry = 0).
-        ldx loadAddress
-        ldy loadAddress+1
-        lda loadOrVerify
+        ldx address
+        ldy address+1
+        lda verify
         jsr $ffd5
         bcs error
         lda #$ff
         error:
         sta status
     }
-    return *status;
+    return status;
 }
 
 

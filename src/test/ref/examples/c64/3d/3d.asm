@@ -12,7 +12,7 @@
 .segmentdef Code [start=$80d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
-:BasicUpstart(main)
+:BasicUpstart(__start)
   .const GREEN = 5
   .const LIGHT_BLUE = $e
   .const LIGHT_GREY = $f
@@ -25,40 +25,63 @@
   .label SPRITES_COLOR = $d027
   // The VIC-II MOS 6567/6569
   .label VICII = $d000
-  // The rotated point - updated by calling rotate_matrix()
-  .label xr = $f0
-  .label yr = $f1
-  .label zr = $f2
-  // The rotated point with perspective
-  .label pp = $f3
-  .label xp = $f4
-  .label yp = $f5
-  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
-  .label psp1 = $f6
-  .label psp2 = $f8
   .label SCREEN = $400
   .label COSH = SINH+$40
   .label COSQ = SINQ+$40
   .label print_screen = $400
+  // The rotated point - updated by calling rotate_matrix()
+  .label xr = 5
+  .label yr = 6
+  .label zr = 7
+  // The rotated point with perspective
+  .label pp = 8
+  .label xp = 9
+  .label yp = $a
+  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
+  .label psp1 = $b
+  .label psp2 = $d
   .label sx = 2
   .label sy = 3
 .segment Code
+__start: {
+    // xr
+    lda #0
+    sta.z xr
+    // yr
+    sta.z yr
+    // zr
+    sta.z zr
+    // pp
+    sta.z pp
+    // xp
+    sta.z xp
+    // yp
+    sta.z yp
+    // psp1
+    sta.z psp1
+    sta.z psp1+1
+    // psp2
+    sta.z psp2
+    sta.z psp2+1
+    jsr main
+    rts
+}
 main: {
     // asm
     sei
     // sprites_init()
     jsr sprites_init
-    // *psp1 = (unsigned int)mulf_sqr1
+    // psp1 = (unsigned int)mulf_sqr1
     //mulf_init();
     lda #<mulf_sqr1
-    sta psp1
+    sta.z psp1
     lda #>mulf_sqr1
-    sta psp1+1
-    // *psp2 = (unsigned int)mulf_sqr2
+    sta.z psp1+1
+    // psp2 = (unsigned int)mulf_sqr2
     lda #<mulf_sqr2
-    sta psp2
+    sta.z psp2
     lda #>mulf_sqr2
-    sta psp2+1
+    sta.z psp2+1
     // debug_print_init()
     jsr debug_print_init
     // anim()
@@ -93,15 +116,15 @@ debug_print_init: {
     .label COLS = $d800
     .label at_line = SCREEN+$10*$28
     .label at_cols = COLS+$10*$28
-    .label __41 = 5
-    .label __44 = 7
-    .label __47 = 9
-    .label __50 = $b
-    .label __53 = $d
-    .label __56 = $f
-    .label __59 = $11
-    .label __62 = $13
-    .label __65 = $15
+    .label __41 = $f
+    .label __44 = $11
+    .label __47 = $13
+    .label __50 = $15
+    .label __53 = $17
+    .label __56 = $19
+    .label __59 = $1b
+    .label __62 = $1d
+    .label __65 = $1f
     .label c = 2
     .label i = 3
     // print_cls()
@@ -458,40 +481,40 @@ anim: {
     lda zs,y
     sta.z rotate_matrix.z
     jsr rotate_matrix
-    // xrs[i] = *xr
-    lda xr
+    // xrs[i] = xr
+    lda.z xr
     ldy.z i
     sta xrs,y
-    // yrs[i] = *yr
-    lda yr
+    // yrs[i] = yr
+    lda.z yr
     sta yrs,y
-    // zrs[i] = *zr
-    lda zr
+    // zrs[i] = zr
+    lda.z zr
     sta zrs,y
-    // pps[i] = *pp
-    lda pp
+    // pps[i] = pp
+    lda.z pp
     sta pps,y
-    // xps[i] = *xp
-    lda xp
+    // xps[i] = xp
+    lda.z xp
     sta xps,y
-    // yps[i] = *yp
-    lda yp
+    // yps[i] = yp
+    lda.z yp
     sta yps,y
     // i2 = i*2
     tya
     asl
     tax
-    // $80+(char)((*xp))
-    lda #$80
+    // $80+(char)(xp)
+    lda.z xp
     clc
-    adc xp
-    // SPRITES_XPOS[i2] = $80+(char)((*xp))
+    adc #$80
+    // SPRITES_XPOS[i2] = $80+(char)(xp)
     sta SPRITES_XPOS,x
-    // $80+(char)((*yp))
-    lda #$80
+    // $80+(char)(yp)
+    lda.z yp
     clc
-    adc yp
-    // SPRITES_YPOS[i2] = $80+(char)((*yp))
+    adc #$80
+    // SPRITES_YPOS[i2] = $80+(char)(yp)
     sta SPRITES_YPOS,x
     // for(char i: 0..7)
     inc.z i
@@ -524,10 +547,10 @@ print_cls: {
     rts
 }
 // Print a string at a specific screen position
-// print_str_at(byte* zp(5) str, byte* zp(7) at)
+// print_str_at(byte* zp($f) str, byte* zp($11) at)
 print_str_at: {
-    .label at = 7
-    .label str = 5
+    .label at = $11
+    .label str = $f
   __b1:
     // while(*str)
     ldy #0
@@ -553,10 +576,10 @@ print_str_at: {
     jmp __b1
 }
 // Print a signed char as hex at a specific screen position
-// print_schar_at(signed byte zp($18) b, byte* zp(5) at)
+// print_schar_at(signed byte zp($22) b, byte* zp($f) at)
 print_schar_at: {
-    .label b = $18
-    .label at = 5
+    .label b = $22
+    .label at = $f
     // if(b<0)
     lda.z b
     bmi __b1
@@ -590,15 +613,15 @@ print_schar_at: {
 // calculate_matrix(signed byte register(X) sx, signed byte zp(3) sy)
 calculate_matrix: {
     .label sy = 3
-    .label t1 = $17
-    .label t2 = $18
-    .label t3 = $19
-    .label t4 = $1a
-    .label t5 = $1b
-    .label t6 = $1c
-    .label t7 = $1d
-    .label t8 = $1e
-    .label t9 = $1f
+    .label t1 = $21
+    .label t2 = $22
+    .label t3 = $23
+    .label t4 = $24
+    .label t5 = $25
+    .label t6 = $26
+    .label t7 = $27
+    .label t8 = $28
+    .label t9 = $29
     // t1 = sy-sz
     lda.z sy
     sta.z t1
@@ -825,18 +848,18 @@ store_matrix: {
 // The rotation matrix is prepared by calling prepare_matrix() 
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
-// rotate_matrix(signed byte register(X) x, signed byte zp($18) y, signed byte zp($19) z)
+// rotate_matrix(signed byte register(X) x, signed byte zp($22) y, signed byte zp($23) z)
 rotate_matrix: {
-    .label y = $18
-    .label z = $19
-    // *xr = x
-    stx xr
-    // *yr = y
+    .label y = $22
+    .label z = $23
+    // xr = x
+    stx.z xr
+    // yr = y
     lda.z y
-    sta yr
-    // *zr = z
+    sta.z yr
+    // zr = z
     lda.z z
-    sta zr
+    sta.z zr
     // asm
     tax
   C1:
@@ -952,8 +975,8 @@ debug_print: {
     .const print_schar_pos12_row = 6
     .const print_schar_pos12_col = $25
     .label at_line = SCREEN+$13*$28
-    .label c = $19
-    .label i = $17
+    .label c = $23
+    .label i = $21
     // print_schar_pos(sx, 0, 37)
     lda.z sx
     // print_schar_at(sb, print_screen+row*40+col)
@@ -1158,7 +1181,7 @@ memset: {
     .const num = $3e8
     .label str = print_screen
     .label end = str+num
-    .label dst = 7
+    .label dst = $11
     lda #<str
     sta.z dst
     lda #>str
@@ -1186,9 +1209,9 @@ memset: {
     jmp __b1
 }
 // Print a single char
-// print_char_at(byte register(X) ch, byte* zp(5) at)
+// print_char_at(byte register(X) ch, byte* zp($f) at)
 print_char_at: {
-    .label at = 5
+    .label at = $f
     // *(at) = ch
     txa
     ldy #0
@@ -1197,10 +1220,10 @@ print_char_at: {
     rts
 }
 // Print a char as HEX at a specific position
-// print_uchar_at(byte zp($18) b, byte* zp(5) at)
+// print_uchar_at(byte zp($22) b, byte* zp($f) at)
 print_uchar_at: {
-    .label b = $18
-    .label at = 5
+    .label b = $22
+    .label at = $f
     // b>>4
     lda.z b
     lsr

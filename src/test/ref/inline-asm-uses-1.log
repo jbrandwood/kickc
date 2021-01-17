@@ -1,0 +1,345 @@
+Setting inferred volatile on symbol affected by address-of: fgetc::channel in asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+Setting inferred volatile on symbol affected by address-of: fgetc::ret in asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+
+CONTROL FLOW GRAPH SSA
+
+void main()
+main: scope:[main]  from __start
+  fgetc::channel = 7
+  call fgetc 
+  fgetc::return#0 = fgetc::return#2
+  to:main::@1
+main::@1: scope:[main]  from main
+  fgetc::return#3 = phi( main/fgetc::return#0 )
+  main::$0 = fgetc::return#3
+  main::x#0 = main::$0
+  *main::SCREEN = main::x#0
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  return 
+  to:@return
+
+byte fgetc(volatile byte fgetc::channel)
+fgetc: scope:[fgetc]  from main
+  fgetc::ret = 0
+  asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+  fgetc::return#1 = fgetc::ret
+  to:fgetc::@return
+fgetc::@return: scope:[fgetc]  from fgetc
+  fgetc::return#4 = phi( fgetc/fgetc::return#1 )
+  fgetc::return#2 = fgetc::return#4
+  return 
+  to:@return
+
+void __start()
+__start: scope:[__start]  from
+  call main 
+  to:__start::@1
+__start::@1: scope:[__start]  from __start
+  to:__start::@return
+__start::@return: scope:[__start]  from __start::@1
+  return 
+  to:@return
+
+SYMBOL TABLE SSA
+const nomodify byte* CHKIN = (byte*)$1000
+const nomodify byte* CLRCHN = (byte*)$1006
+const nomodify byte* GETIN = (byte*)$1003
+void __start()
+byte fgetc(volatile byte fgetc::channel)
+volatile byte fgetc::channel loadstore
+volatile byte fgetc::ret loadstore
+byte fgetc::return
+byte fgetc::return#0
+byte fgetc::return#1
+byte fgetc::return#2
+byte fgetc::return#3
+byte fgetc::return#4
+void main()
+byte~ main::$0
+const nomodify byte* main::SCREEN = (byte*)$1009
+byte main::x
+byte main::x#0
+
+Adding number conversion cast (unumber) 7 in fgetc::channel = 7
+Successful SSA optimization PassNAddNumberTypeConversions
+Inlining cast fgetc::channel = (unumber)7
+Successful SSA optimization Pass2InlineCast
+Simplifying constant pointer cast (byte*) 4105
+Simplifying constant pointer cast (byte*) 4096
+Simplifying constant pointer cast (byte*) 4099
+Simplifying constant pointer cast (byte*) 4102
+Simplifying constant integer cast 7
+Successful SSA optimization PassNCastSimplification
+Finalized unsigned number type (byte) 7
+Successful SSA optimization PassNFinalizeNumberTypeConversions
+Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#4 fgetc::return#2 
+Alias fgetc::return#0 = fgetc::return#3 
+Alias main::x#0 = main::$0 
+Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#4 fgetc::return#2 
+Identical Phi Values fgetc::return#4 fgetc::return#1
+Successful SSA optimization Pass2IdenticalPhiElimination
+Removing unused procedure __start
+Removing unused procedure block __start
+Removing unused procedure block __start::@1
+Removing unused procedure block __start::@return
+Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#2 
+Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#2 
+Alias candidate removed (volatile)fgetc::return#1 = fgetc::ret fgetc::return#2 
+CALL GRAPH
+Calls in [main] to fgetc:1 
+
+Created 0 initial phi equivalence classes
+Coalesced down to 0 phi equivalence classes
+
+FINAL CONTROL FLOW GRAPH
+
+void main()
+main: scope:[main]  from
+  [0] fgetc::channel = 7
+  [1] call fgetc 
+  [2] fgetc::return#0 = fgetc::return#2
+  to:main::@1
+main::@1: scope:[main]  from main
+  [3] main::x#0 = fgetc::return#0
+  [4] *main::SCREEN = main::x#0
+  to:main::@return
+main::@return: scope:[main]  from main::@1
+  [5] return 
+  to:@return
+
+byte fgetc(volatile byte fgetc::channel)
+fgetc: scope:[fgetc]  from main
+  [6] fgetc::ret = 0
+  asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+  [8] fgetc::return#1 = fgetc::ret
+  to:fgetc::@return
+fgetc::@return: scope:[fgetc]  from fgetc
+  [9] fgetc::return#2 = fgetc::return#1
+  [10] return 
+  to:@return
+
+
+VARIABLE REGISTER WEIGHTS
+byte fgetc(volatile byte fgetc::channel)
+volatile byte fgetc::channel loadstore 1.0
+volatile byte fgetc::ret loadstore 11.0
+byte fgetc::return
+byte fgetc::return#0 4.0
+byte fgetc::return#1 22.0
+byte fgetc::return#2 4.333333333333333
+void main()
+byte main::x
+byte main::x#0 4.0
+
+Initial phi equivalence classes
+Added variable fgetc::channel to live range equivalence class [ fgetc::channel ]
+Added variable fgetc::return#0 to live range equivalence class [ fgetc::return#0 ]
+Added variable main::x#0 to live range equivalence class [ main::x#0 ]
+Added variable fgetc::ret to live range equivalence class [ fgetc::ret ]
+Added variable fgetc::return#1 to live range equivalence class [ fgetc::return#1 ]
+Added variable fgetc::return#2 to live range equivalence class [ fgetc::return#2 ]
+Complete equivalence classes
+[ fgetc::channel ]
+[ fgetc::return#0 ]
+[ main::x#0 ]
+[ fgetc::ret ]
+[ fgetc::return#1 ]
+[ fgetc::return#2 ]
+Allocated zp[1]:2 [ fgetc::channel ]
+Allocated zp[1]:3 [ fgetc::return#0 ]
+Allocated zp[1]:4 [ main::x#0 ]
+Allocated zp[1]:5 [ fgetc::ret ]
+Allocated zp[1]:6 [ fgetc::return#1 ]
+Allocated zp[1]:7 [ fgetc::return#2 ]
+REGISTER UPLIFT POTENTIAL REGISTERS
+Statement [0] fgetc::channel = 7 [ fgetc::channel ] (  [ fgetc::channel ] { { fgetc::return#0 = fgetc::return#2 } }  ) always clobbers reg byte a 
+Statement [6] fgetc::ret = 0 [ fgetc::channel fgetc::ret ] ( fgetc:1 [ fgetc::channel fgetc::ret ] { { fgetc::return#0 = fgetc::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  } always clobbers reg byte a reg byte x reg byte y 
+Potential registers zp[1]:2 [ fgetc::channel ] : zp[1]:2 , 
+Potential registers zp[1]:3 [ fgetc::return#0 ] : zp[1]:3 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:4 [ main::x#0 ] : zp[1]:4 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:5 [ fgetc::ret ] : zp[1]:5 , 
+Potential registers zp[1]:6 [ fgetc::return#1 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:7 [ fgetc::return#2 ] : zp[1]:7 , reg byte a , reg byte x , reg byte y , 
+
+REGISTER UPLIFT SCOPES
+Uplift Scope [fgetc] 22: zp[1]:6 [ fgetc::return#1 ] 11: zp[1]:5 [ fgetc::ret ] 4.33: zp[1]:7 [ fgetc::return#2 ] 4: zp[1]:3 [ fgetc::return#0 ] 1: zp[1]:2 [ fgetc::channel ] 
+Uplift Scope [main] 4: zp[1]:4 [ main::x#0 ] 
+Uplift Scope [] 
+
+Uplifting [fgetc] best 76 combination reg byte a [ fgetc::return#1 ] zp[1]:5 [ fgetc::ret ] reg byte a [ fgetc::return#2 ] reg byte a [ fgetc::return#0 ] zp[1]:2 [ fgetc::channel ] 
+Uplifting [main] best 70 combination reg byte a [ main::x#0 ] 
+Uplifting [] best 70 combination 
+Attempting to uplift remaining variables inzp[1]:5 [ fgetc::ret ]
+Uplifting [fgetc] best 70 combination zp[1]:5 [ fgetc::ret ] 
+Attempting to uplift remaining variables inzp[1]:2 [ fgetc::channel ]
+Uplifting [fgetc] best 70 combination zp[1]:2 [ fgetc::channel ] 
+Allocated (was zp[1]:5) zp[1]:3 [ fgetc::ret ]
+
+ASSEMBLER BEFORE OPTIMIZATION
+  // File Comments
+// Demonstrates inline ASM using a variable (res)
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="inline-asm-uses-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label CHKIN = $1000
+  .label GETIN = $1003
+  .label CLRCHN = $1006
+.segment Code
+  // main
+main: {
+    .label SCREEN = $1009
+    // [0] fgetc::channel = 7 -- vbuz1=vbuc1 
+    lda #7
+    sta.z fgetc.channel
+    // [1] call fgetc 
+    jsr fgetc
+    // [2] fgetc::return#0 = fgetc::return#2
+    jmp __b1
+    // main::@1
+  __b1:
+    // [3] main::x#0 = fgetc::return#0
+    // [4] *main::SCREEN = main::x#0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    jmp __breturn
+    // main::@return
+  __breturn:
+    // [5] return 
+    rts
+}
+  // fgetc
+// fgetc(byte zp(2) channel)
+fgetc: {
+    .label channel = 2
+    .label ret = 3
+    // [6] fgetc::ret = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z ret
+    // asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+    ldx channel
+    jsr CHKIN
+    jsr GETIN
+    sta ret
+    jsr CLRCHN
+    // [8] fgetc::return#1 = fgetc::ret -- vbuaa=vbuz1 
+    lda.z ret
+    jmp __breturn
+    // fgetc::@return
+  __breturn:
+    // [9] fgetc::return#2 = fgetc::return#1
+    // [10] return 
+    rts
+}
+  // File Data
+
+ASSEMBLER OPTIMIZATIONS
+Removing instruction jmp __b1
+Removing instruction jmp __breturn
+Removing instruction jmp __breturn
+Succesful ASM optimization Pass5NextJumpElimination
+Removing instruction __b1:
+Removing instruction __breturn:
+Removing instruction __breturn:
+Succesful ASM optimization Pass5UnusedLabelElimination
+
+FINAL SYMBOL TABLE
+const nomodify byte* CHKIN = (byte*) 4096
+const nomodify byte* CLRCHN = (byte*) 4102
+const nomodify byte* GETIN = (byte*) 4099
+byte fgetc(volatile byte fgetc::channel)
+volatile byte fgetc::channel loadstore zp[1]:2 1.0
+volatile byte fgetc::ret loadstore zp[1]:3 11.0
+byte fgetc::return
+byte fgetc::return#0 reg byte a 4.0
+byte fgetc::return#1 reg byte a 22.0
+byte fgetc::return#2 reg byte a 4.333333333333333
+void main()
+const nomodify byte* main::SCREEN = (byte*) 4105
+byte main::x
+byte main::x#0 reg byte a 4.0
+
+zp[1]:2 [ fgetc::channel ]
+reg byte a [ fgetc::return#0 ]
+reg byte a [ main::x#0 ]
+zp[1]:3 [ fgetc::ret ]
+reg byte a [ fgetc::return#1 ]
+reg byte a [ fgetc::return#2 ]
+
+
+FINAL ASSEMBLER
+Score: 61
+
+  // File Comments
+// Demonstrates inline ASM using a variable (res)
+  // Upstart
+  // Commodore 64 PRG executable file
+.file [name="inline-asm-uses-1.prg", type="prg", segments="Program"]
+.segmentdef Program [segments="Basic, Code, Data"]
+.segmentdef Basic [start=$0801]
+.segmentdef Code [start=$80d]
+.segmentdef Data [startAfter="Code"]
+.segment Basic
+:BasicUpstart(main)
+  // Global Constants & labels
+  .label CHKIN = $1000
+  .label GETIN = $1003
+  .label CLRCHN = $1006
+.segment Code
+  // main
+main: {
+    .label SCREEN = $1009
+    // fgetc(7)
+    // [0] fgetc::channel = 7 -- vbuz1=vbuc1 
+    lda #7
+    sta.z fgetc.channel
+    // [1] call fgetc 
+    jsr fgetc
+    // [2] fgetc::return#0 = fgetc::return#2
+    // main::@1
+    // x = fgetc(7)
+    // [3] main::x#0 = fgetc::return#0
+    // *SCREEN = x
+    // [4] *main::SCREEN = main::x#0 -- _deref_pbuc1=vbuaa 
+    sta SCREEN
+    // main::@return
+    // }
+    // [5] return 
+    rts
+}
+  // fgetc
+// fgetc(byte zp(2) channel)
+fgetc: {
+    .label channel = 2
+    .label ret = 3
+    // ret
+    // [6] fgetc::ret = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z ret
+    // asm
+    // asm { ldxchannel jsrCHKIN jsrGETIN staret jsrCLRCHN  }
+    ldx channel
+    jsr CHKIN
+    jsr GETIN
+    sta ret
+    jsr CLRCHN
+    // return ret;
+    // [8] fgetc::return#1 = fgetc::ret -- vbuaa=vbuz1 
+    lda.z ret
+    // fgetc::@return
+    // }
+    // [9] fgetc::return#2 = fgetc::return#1
+    // [10] return 
+    rts
+}
+  // File Data
+

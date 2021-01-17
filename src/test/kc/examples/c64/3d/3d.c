@@ -6,18 +6,18 @@
 #include <print.h>
 
 // The rotated point - updated by calling rotate_matrix()
-signed char* xr = $f0;
-signed char* yr = $f1;
-signed char* zr = $f2;
+signed char xr;
+signed char yr;
+signed char zr;
 
 // The rotated point with perspective
-signed char* pp = $f3;
-signed char* xp = $f4;
-signed char* yp = $f5;
+signed char pp;
+signed char xp;
+signed char yp;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2  
-unsigned int* psp1 = $f6;
-unsigned int* psp2 = $f8;
+unsigned int psp1;
+unsigned int psp2;
 
 char* SCREEN = $400;
 
@@ -25,8 +25,8 @@ void main() {
 	asm { sei }
 	sprites_init();
 	//mulf_init();
-	*psp1 = (unsigned int)mulf_sqr1;
-	*psp2 = (unsigned int)mulf_sqr2;
+	psp1 = (unsigned int)mulf_sqr1;
+	psp2 = (unsigned int)mulf_sqr2;
 
 	debug_print_init();
 
@@ -65,15 +65,15 @@ void anim() {
         for(char i: 0..7) {
             (VICII->BORDER_COLOR)++;
             rotate_matrix(xs[i], ys[i], zs[i]);
-            xrs[i] = *xr;
-            yrs[i] = *yr;
-            zrs[i] = *zr;
-            pps[i] = *pp;
-            xps[i] = *xp;
-            yps[i] = *yp;
+            xrs[i] = xr;
+            yrs[i] = yr;
+            zrs[i] = zr;
+            pps[i] = pp;
+            xps[i] = xp;
+            yps[i] = yp;
             char i2 = i*2;
-       	    SPRITES_XPOS[i2] = $80+(char)((*xp));
-       	    SPRITES_YPOS[i2] = $80+(char)((*yp));
+       	    SPRITES_XPOS[i2] = $80+(char)(xp);
+       	    SPRITES_YPOS[i2] = $80+(char)(yp);
     	}
         VICII->BORDER_COLOR = LIGHT_GREY;
         debug_print();
@@ -295,9 +295,9 @@ void store_matrix() {
 // The passed points must be in the interval [-$3f;$3f].
 // Implemented in assembler to utilize seriously fast multiplication 
 void rotate_matrix(signed char x, signed char y, signed char z) {
-	*xr = x;
-	*yr = y;
-	*zr = z;
+	xr = x;
+	yr = y;
+	zr = z;
 	asm {
 			ldx zr //z
 			// C*z 

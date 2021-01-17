@@ -1,4 +1,11 @@
 Loading link script "kernalload.ld"
+Setting inferred volatile on symbol affected by address-of: error::err in asm { ldxerr jsr$a437  }
+Setting inferred volatile on symbol affected by address-of: setnam::filename_len in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
+Setting inferred volatile on symbol affected by address-of: setnam::filename in asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
+Setting inferred volatile on symbol affected by address-of: setlfs::device in asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
+Setting inferred volatile on symbol affected by address-of: load::address in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
+Setting inferred volatile on symbol affected by address-of: load::verify in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
+Setting inferred volatile on symbol affected by address-of: load::status in asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
 Inlined call vicSelectGfxBank::$0 = call toDd00 vicSelectGfxBank::gfx 
 Inlined call main::$3 = call toSpritePtr LOAD_SPRITE 
 
@@ -72,7 +79,7 @@ main::@3: scope:[main]  from main::toSpritePtr1_@return
 main::@2: scope:[main]  from main::@4
   main::status#1 = phi( main::@4/main::status#0 )
   *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
-  error::err#0 = main::status#1
+  error::err = main::status#1
   call error 
   to:main::@5
 main::@5: scope:[main]  from main::@2
@@ -86,19 +93,19 @@ loadFileToMemory: scope:[loadFileToMemory]  from main
   loadFileToMemory::address#3 = phi( main/loadFileToMemory::address#0 )
   loadFileToMemory::device#2 = phi( main/loadFileToMemory::device#0 )
   loadFileToMemory::filename#1 = phi( main/loadFileToMemory::filename#0 )
-  setnam::filename#0 = loadFileToMemory::filename#1
+  setnam::filename = loadFileToMemory::filename#1
   call setnam 
   to:loadFileToMemory::@1
 loadFileToMemory::@1: scope:[loadFileToMemory]  from loadFileToMemory
   loadFileToMemory::address#2 = phi( loadFileToMemory/loadFileToMemory::address#3 )
   loadFileToMemory::device#1 = phi( loadFileToMemory/loadFileToMemory::device#2 )
-  setlfs::device#0 = loadFileToMemory::device#1
+  setlfs::device = loadFileToMemory::device#1
   call setlfs 
   to:loadFileToMemory::@2
 loadFileToMemory::@2: scope:[loadFileToMemory]  from loadFileToMemory::@1
   loadFileToMemory::address#1 = phi( loadFileToMemory::@1/loadFileToMemory::address#2 )
-  load::address#0 = loadFileToMemory::address#1
-  load::verify#0 = false
+  load::address = loadFileToMemory::address#1
+  load::verify = 0
   call load 
   load::return#0 = load::return#2
   to:loadFileToMemory::@3
@@ -113,53 +120,43 @@ loadFileToMemory::@return: scope:[loadFileToMemory]  from loadFileToMemory::@3
   return 
   to:@return
 
-void error(byte error::err)
+void error(volatile byte error::err)
 error: scope:[error]  from main::@2
-  error::err#1 = phi( main::@2/error::err#0 )
-  *error::errCode = error::err#1
-  asm { ldxerrCode jsr$a437  }
+  asm { ldxerr jsr$a437  }
   to:error::@return
 error::@return: scope:[error]  from error
   return 
   to:@return
 
-void setnam(byte* setnam::filename)
+void setnam(volatile byte* setnam::filename)
 setnam: scope:[setnam]  from loadFileToMemory
-  setnam::filename#1 = phi( loadFileToMemory/setnam::filename#0 )
-  strlen::str#1 = setnam::filename#1
+  strlen::str#1 = setnam::filename
   call strlen 
   strlen::return#2 = strlen::return#1
   to:setnam::@1
 setnam::@1: scope:[setnam]  from setnam
-  setnam::filename#2 = phi( setnam/setnam::filename#1 )
   strlen::return#4 = phi( setnam/strlen::return#2 )
   setnam::$0 = strlen::return#4
-  *setnam::filename_len = (byte)setnam::$0
-  *setnam::filename_ptr = setnam::filename#2
-  asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  }
+  setnam::filename_len = (byte)setnam::$0
+  asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
   to:setnam::@return
 setnam::@return: scope:[setnam]  from setnam::@1
   return 
   to:@return
 
-void setlfs(byte setlfs::device)
+void setlfs(volatile byte setlfs::device)
 setlfs: scope:[setlfs]  from loadFileToMemory::@1
-  setlfs::device#1 = phi( loadFileToMemory::@1/setlfs::device#0 )
-  *setlfs::deviceNum = setlfs::device#1
-  asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  }
+  asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
   to:setlfs::@return
 setlfs::@return: scope:[setlfs]  from setlfs
   return 
   to:@return
 
-byte load(byte* load::address , bool load::verify)
+byte load(volatile byte* load::address , volatile byte load::verify)
 load: scope:[load]  from loadFileToMemory::@2
-  load::address#1 = phi( loadFileToMemory::@2/load::address#0 )
-  load::verify#1 = phi( loadFileToMemory::@2/load::verify#0 )
-  *load::loadOrVerify = (byte)load::verify#1
-  *load::loadAddress = load::address#1
-  asm { ldxloadAddress ldyloadAddress+1 ldaloadOrVerify jsr$ffd5 bcserror lda#$ff error: stastatus  }
-  load::return#1 = *load::status
+  load::status = 0
+  asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
+  load::return#1 = load::status
   to:load::@return
 load::@return: scope:[load]  from load
   load::return#4 = phi( load/load::return#1 )
@@ -195,27 +192,18 @@ const nomodify byte* SPRITES_XPOS = (byte*)$d000
 const nomodify byte* SPRITES_YPOS = (byte*)$d001
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*)$d000
 void __start()
-void error(byte error::err)
-byte error::err
-byte error::err#0
-byte error::err#1
-const nomodify byte* error::errCode = (byte*)$ff
-byte load(byte* load::address , bool load::verify)
-byte* load::address
-byte* load::address#0
-byte* load::address#1
-const byte** load::loadAddress = (byte**)$fe
-const byte* load::loadOrVerify = (byte*)$fd
+void error(volatile byte error::err)
+volatile byte error::err loadstore
+byte load(volatile byte* load::address , volatile byte load::verify)
+volatile byte* load::address loadstore
 byte load::return
 byte load::return#0
 byte load::return#1
 byte load::return#2
 byte load::return#3
 byte load::return#4
-const byte* load::status = (byte*)$fd
-bool load::verify
-bool load::verify#0
-bool load::verify#1
+volatile byte load::status loadstore
+volatile byte load::verify loadstore
 byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
 byte~ loadFileToMemory::$2
 byte* loadFileToMemory::address
@@ -255,19 +243,12 @@ byte main::toSpritePtr1_return#3
 byte* main::toSpritePtr1_sprite
 byte* main::toSpritePtr1_sprite#0
 byte* main::toSpritePtr1_sprite#1
-void setlfs(byte setlfs::device)
-byte setlfs::device
-byte setlfs::device#0
-byte setlfs::device#1
-const nomodify byte* setlfs::deviceNum = (byte*)$ff
-void setnam(byte* setnam::filename)
+void setlfs(volatile byte setlfs::device)
+volatile byte setlfs::device loadstore
+void setnam(volatile byte* setnam::filename)
 word~ setnam::$0
-byte* setnam::filename
-byte* setnam::filename#0
-byte* setnam::filename#1
-byte* setnam::filename#2
-const nomodify byte* setnam::filename_len = (byte*)$fd
-const nomodify byte** setnam::filename_ptr = (byte**)$fe
+volatile byte* setnam::filename loadstore
+volatile byte setnam::filename_len loadstore
 word strlen(byte* strlen::str)
 bool~ strlen::$0
 word strlen::len
@@ -302,12 +283,14 @@ Adding number conversion cast (unumber) 0 in SPRITES_XPOS[0] = ((unumber)) $15
 Adding number conversion cast (unumber) $33 in SPRITES_YPOS[0] = $33
 Adding number conversion cast (unumber) 0 in SPRITES_YPOS[0] = ((unumber)) $33
 Adding number conversion cast (unumber) 2 in *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
+Adding number conversion cast (unumber) 0 in load::verify = 0
 Successful SSA optimization PassNAddNumberTypeConversions
 Inlining cast loadFileToMemory::device#0 = (unumber)8
 Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = (unumber)1
 Inlining cast SPRITES_XPOS[(unumber)0] = (unumber)$15
 Inlining cast SPRITES_YPOS[(unumber)0] = (unumber)$33
 Inlining cast *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = (unumber)2
+Inlining cast load::verify = (unumber)0
 Successful SSA optimization Pass2InlineCast
 Simplifying constant pointer cast (byte*) 53248
 Simplifying constant pointer cast (byte*) 53249
@@ -315,13 +298,6 @@ Simplifying constant pointer cast (byte*) 53287
 Simplifying constant pointer cast (struct MOS6569_VICII*) 53248
 Simplifying constant pointer cast (byte*) 12288
 Simplifying constant pointer cast (byte*) 1024
-Simplifying constant pointer cast (byte*) 255
-Simplifying constant pointer cast (byte*) 253
-Simplifying constant pointer cast (byte**) 254
-Simplifying constant pointer cast (byte*) 255
-Simplifying constant pointer cast (byte*) 253
-Simplifying constant pointer cast (byte**) 254
-Simplifying constant pointer cast (byte*) 253
 Simplifying constant integer cast 0
 Simplifying constant integer cast 8
 Simplifying constant integer cast $ff
@@ -334,6 +310,7 @@ Simplifying constant integer cast 0
 Simplifying constant integer cast $33
 Simplifying constant integer cast 0
 Simplifying constant integer cast 2
+Simplifying constant integer cast 0
 Successful SSA optimization PassNCastSimplification
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 8
@@ -347,10 +324,12 @@ Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) $33
 Finalized unsigned number type (byte) 0
 Finalized unsigned number type (byte) 2
+Finalized unsigned number type (byte) 0
 Successful SSA optimization PassNFinalizeNumberTypeConversions
 Inferred type updated to word in main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
 Inversing boolean not [22] main::$2 = main::status#0 == $ff from [21] main::$1 = main::status#0 != $ff
 Successful SSA optimization Pass2UnaryNotSimplification
+Alias candidate removed (volatile)load::return#1 = load::status load::return#4 load::return#2 
 Alias strlen::len#2 = strlen::len#4 strlen::len#3 strlen::return#0 strlen::return#3 strlen::return#1 
 Alias strlen::str#2 = strlen::str#3 
 Alias loadFileToMemory::return#0 = loadFileToMemory::return#3 
@@ -362,18 +341,13 @@ Alias loadFileToMemory::address#1 = loadFileToMemory::address#2 loadFileToMemory
 Alias load::return#0 = load::return#3 
 Alias loadFileToMemory::return#1 = loadFileToMemory::$2 loadFileToMemory::return#4 loadFileToMemory::return#2 
 Alias strlen::return#2 = strlen::return#4 
-Alias setnam::filename#1 = setnam::filename#2 
-Alias load::return#1 = load::return#4 load::return#2 
 Successful SSA optimization Pass2AliasElimination
+Alias candidate removed (volatile)load::return#1 = load::status load::return#4 load::return#2 
 Identical Phi Values strlen::str#4 strlen::str#1
 Identical Phi Values loadFileToMemory::filename#1 loadFileToMemory::filename#0
 Identical Phi Values loadFileToMemory::device#1 loadFileToMemory::device#0
 Identical Phi Values loadFileToMemory::address#1 loadFileToMemory::address#0
-Identical Phi Values error::err#1 error::err#0
-Identical Phi Values setnam::filename#1 setnam::filename#0
-Identical Phi Values setlfs::device#1 setlfs::device#0
-Identical Phi Values load::verify#1 load::verify#0
-Identical Phi Values load::address#1 load::address#0
+Identical Phi Values load::return#4 load::return#1
 Successful SSA optimization Pass2IdenticalPhiElimination
 Simple Condition strlen::$0 [4] if(0!=*strlen::str#2) goto strlen::@2
 Simple Condition main::$2 [15] if(main::status#0==$ff) goto main::@1
@@ -383,78 +357,58 @@ Constant loadFileToMemory::device#0 = 8
 Constant loadFileToMemory::filename#0 = main::filename
 Constant loadFileToMemory::address#0 = LOAD_SPRITE
 Constant main::toSpritePtr1_sprite#0 = LOAD_SPRITE
-Constant load::verify#0 = false
 Successful SSA optimization Pass2ConstantIdentification
 Constant main::toSpritePtr1_$1 = (word)main::toSpritePtr1_sprite#0
-Constant setnam::filename#0 = loadFileToMemory::filename#0
-Constant setlfs::device#0 = loadFileToMemory::device#0
-Constant load::address#0 = loadFileToMemory::address#0
 Successful SSA optimization Pass2ConstantIdentification
-Constant strlen::str#1 = setnam::filename#0
-Successful SSA optimization Pass2ConstantIdentification
-Constant value identified (byte)load::verify#0 in [58] *load::loadOrVerify = (byte)load::verify#0
-Successful SSA optimization Pass2ConstantValues
-Simplifying constant evaluating to zero (byte)load::verify#0 in [58] *load::loadOrVerify = (byte)load::verify#0
-Successful SSA optimization PassNSimplifyConstantZero
 Simplifying expression containing zero SPRITES_PTR in [21] SPRITES_PTR[0] = main::toSpritePtr1_return#0
 Simplifying expression containing zero SPRITES_COLOR in [22] SPRITES_COLOR[0] = GREEN
 Simplifying expression containing zero SPRITES_XPOS in [23] SPRITES_XPOS[0] = $15
 Simplifying expression containing zero SPRITES_YPOS in [24] SPRITES_YPOS[0] = $33
 Successful SSA optimization PassNSimplifyExpressionWithZero
-Eliminating unused constant load::verify#0
-Successful SSA optimization PassNEliminateUnusedVars
 Removing unused procedure __start
 Removing unused procedure block __start
 Removing unused procedure block __start::@1
 Removing unused procedure block __start::@return
 Successful SSA optimization PassNEliminateEmptyStart
+Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
 Constant right-side identified [10] main::toSpritePtr1_$0 = main::toSpritePtr1_$1 / $40
 Successful SSA optimization Pass2ConstantRValueConsolidation
 Constant main::toSpritePtr1_$0 = main::toSpritePtr1_$1/$40
 Successful SSA optimization Pass2ConstantIdentification
 Constant main::toSpritePtr1_return#0 = (byte)main::toSpritePtr1_$0
 Successful SSA optimization Pass2ConstantIdentification
+Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
 Inlining constant with var siblings strlen::len#0
-Inlining constant with var siblings strlen::str#1
 Constant inlined main::toSpritePtr1_sprite#0 = LOAD_SPRITE
-Constant inlined load::address#0 = LOAD_SPRITE
-Constant inlined setnam::filename#0 = main::filename
-Constant inlined main::toSpritePtr1_$0 = (word)LOAD_SPRITE/$40
-Constant inlined strlen::str#1 = main::filename
 Constant inlined loadFileToMemory::address#0 = LOAD_SPRITE
-Constant inlined setlfs::device#0 = loadFileToMemory::device#0
 Constant inlined main::toSpritePtr1_$1 = (word)LOAD_SPRITE
 Constant inlined strlen::len#0 = 0
+Constant inlined main::toSpritePtr1_$0 = (word)LOAD_SPRITE/$40
 Constant inlined loadFileToMemory::filename#0 = main::filename
 Successful SSA optimization Pass2ConstantInlining
+Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
+Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
+Alias candidate removed (volatile)load::return#1 = load::status load::return#2 
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::@5
 Adding NOP phi() at start of main::toSpritePtr1
 Adding NOP phi() at start of main::toSpritePtr1_@return
-Adding NOP phi() at start of loadFileToMemory
-Adding NOP phi() at start of loadFileToMemory::@1
-Adding NOP phi() at start of loadFileToMemory::@2
-Adding NOP phi() at start of setnam
-Adding NOP phi() at start of strlen
 Adding NOP phi() at start of strlen::@3
 CALL GRAPH
 Calls in [main] to loadFileToMemory:1 error:7 
-Calls in [loadFileToMemory] to setnam:18 setlfs:20 load:22 
+Calls in [loadFileToMemory] to setnam:18 setlfs:20 load:23 
 Calls in [setnam] to strlen:30 
 
 Created 2 initial phi equivalence classes
-Coalesced [52] strlen::str#5 = strlen::str#0
-Coalesced [53] strlen::len#5 = strlen::len#1
+Coalesced [43] strlen::str#5 = strlen::str#1
+Coalesced [50] strlen::str#6 = strlen::str#0
+Coalesced [51] strlen::len#5 = strlen::len#1
 Coalesced down to 2 phi equivalence classes
 Culled Empty Block label main::@5
 Culled Empty Block label main::toSpritePtr1_@return
 Culled Empty Block label strlen::@3
 Adding NOP phi() at start of main
 Adding NOP phi() at start of main::toSpritePtr1
-Adding NOP phi() at start of loadFileToMemory
-Adding NOP phi() at start of loadFileToMemory::@1
-Adding NOP phi() at start of loadFileToMemory::@2
-Adding NOP phi() at start of setnam
 Adding NOP phi() at start of strlen
 
 FINAL CONTROL FLOW GRAPH
@@ -471,7 +425,7 @@ main::@4: scope:[main]  from main
   to:main::@2
 main::@2: scope:[main]  from main::@4
   [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2
-  [6] error::err#0 = main::status#0
+  [6] error::err = main::status#0
   [7] call error 
   to:main::@1
 main::@1: scope:[main]  from main::@2 main::@4
@@ -492,98 +446,97 @@ main::@return: scope:[main]  from main::@3
 
 byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
 loadFileToMemory: scope:[loadFileToMemory]  from main
-  [15] phi()
+  [15] setnam::filename = main::filename
   [16] call setnam 
   to:loadFileToMemory::@1
 loadFileToMemory::@1: scope:[loadFileToMemory]  from loadFileToMemory
-  [17] phi()
+  [17] setlfs::device = loadFileToMemory::device#0
   [18] call setlfs 
   to:loadFileToMemory::@2
 loadFileToMemory::@2: scope:[loadFileToMemory]  from loadFileToMemory::@1
-  [19] phi()
-  [20] call load 
-  [21] load::return#0 = load::return#1
+  [19] load::address = LOAD_SPRITE
+  [20] load::verify = 0
+  [21] call load 
+  [22] load::return#0 = load::return#2
   to:loadFileToMemory::@3
 loadFileToMemory::@3: scope:[loadFileToMemory]  from loadFileToMemory::@2
-  [22] loadFileToMemory::return#1 = load::return#0
+  [23] loadFileToMemory::return#1 = load::return#0
   to:loadFileToMemory::@return
 loadFileToMemory::@return: scope:[loadFileToMemory]  from loadFileToMemory::@3
-  [23] return 
+  [24] return 
   to:@return
 
-void error(byte error::err)
+void error(volatile byte error::err)
 error: scope:[error]  from main::@2
-  [24] *error::errCode = error::err#0
-  asm { ldxerrCode jsr$a437  }
+  asm { ldxerr jsr$a437  }
   to:error::@return
 error::@return: scope:[error]  from error
   [26] return 
   to:@return
 
-void setnam(byte* setnam::filename)
+void setnam(volatile byte* setnam::filename)
 setnam: scope:[setnam]  from loadFileToMemory
-  [27] phi()
+  [27] strlen::str#1 = setnam::filename
   [28] call strlen 
   [29] strlen::return#2 = strlen::len#2
   to:setnam::@1
 setnam::@1: scope:[setnam]  from setnam
   [30] setnam::$0 = strlen::return#2
-  [31] *setnam::filename_len = (byte)setnam::$0
-  [32] *setnam::filename_ptr = main::filename
-  asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  }
+  [31] setnam::filename_len = (byte)setnam::$0
+  asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
   to:setnam::@return
 setnam::@return: scope:[setnam]  from setnam::@1
-  [34] return 
+  [33] return 
   to:@return
 
-void setlfs(byte setlfs::device)
+void setlfs(volatile byte setlfs::device)
 setlfs: scope:[setlfs]  from loadFileToMemory::@1
-  [35] *setlfs::deviceNum = loadFileToMemory::device#0
-  asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  }
+  asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
   to:setlfs::@return
 setlfs::@return: scope:[setlfs]  from setlfs
-  [37] return 
+  [35] return 
   to:@return
 
-byte load(byte* load::address , bool load::verify)
+byte load(volatile byte* load::address , volatile byte load::verify)
 load: scope:[load]  from loadFileToMemory::@2
-  [38] *load::loadOrVerify = 0
-  [39] *load::loadAddress = LOAD_SPRITE
-  asm { ldxloadAddress ldyloadAddress+1 ldaloadOrVerify jsr$ffd5 bcserror lda#$ff error: stastatus  }
-  [41] load::return#1 = *load::status
+  [36] load::status = 0
+  asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
+  [38] load::return#1 = load::status
   to:load::@return
 load::@return: scope:[load]  from load
-  [42] return 
+  [39] load::return#2 = load::return#1
+  [40] return 
   to:@return
 
 word strlen(byte* strlen::str)
 strlen: scope:[strlen]  from setnam
-  [43] phi()
+  [41] phi()
   to:strlen::@1
 strlen::@1: scope:[strlen]  from strlen strlen::@2
-  [44] strlen::len#2 = phi( strlen/0, strlen::@2/strlen::len#1 )
-  [44] strlen::str#2 = phi( strlen/main::filename, strlen::@2/strlen::str#0 )
-  [45] if(0!=*strlen::str#2) goto strlen::@2
+  [42] strlen::len#2 = phi( strlen/0, strlen::@2/strlen::len#1 )
+  [42] strlen::str#2 = phi( strlen/strlen::str#1, strlen::@2/strlen::str#0 )
+  [43] if(0!=*strlen::str#2) goto strlen::@2
   to:strlen::@return
 strlen::@return: scope:[strlen]  from strlen::@1
-  [46] return 
+  [44] return 
   to:@return
 strlen::@2: scope:[strlen]  from strlen::@1
-  [47] strlen::len#1 = ++ strlen::len#2
-  [48] strlen::str#0 = ++ strlen::str#2
+  [45] strlen::len#1 = ++ strlen::len#2
+  [46] strlen::str#0 = ++ strlen::str#2
   to:strlen::@1
 
 
 VARIABLE REGISTER WEIGHTS
-void error(byte error::err)
-byte error::err
-byte error::err#0 13.0
-byte load(byte* load::address , bool load::verify)
-byte* load::address
+void error(volatile byte error::err)
+volatile byte error::err loadstore 2.0
+byte load(volatile byte* load::address , volatile byte load::verify)
+volatile byte* load::address loadstore 3.6666666666666665
 byte load::return
 byte load::return#0 22.0
-byte load::return#1 37.33333333333333
-bool load::verify
+byte load::return#1 202.0
+byte load::return#2 37.33333333333333
+volatile byte load::status loadstore 101.0
+volatile byte load::verify loadstore 5.5
 byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
 byte* loadFileToMemory::address
 byte loadFileToMemory::device
@@ -596,11 +549,12 @@ byte main::status
 byte main::status#0 2.0
 byte main::toSpritePtr1_return
 byte* main::toSpritePtr1_sprite
-void setlfs(byte setlfs::device)
-byte setlfs::device
-void setnam(byte* setnam::filename)
+void setlfs(volatile byte setlfs::device)
+volatile byte setlfs::device loadstore 11.0
+void setnam(volatile byte* setnam::filename)
 word~ setnam::$0 101.0
-byte* setnam::filename
+volatile byte* setnam::filename loadstore 18.666666666666664
+volatile byte setnam::filename_len loadstore 101.0
 word strlen(byte* strlen::str)
 word strlen::len
 word strlen::len#1 10001.0
@@ -609,115 +563,165 @@ word strlen::return
 word strlen::return#2 202.0
 byte* strlen::str
 byte* strlen::str#0 20002.0
-byte* strlen::str#2 10001.0
+byte* strlen::str#1 551.0
+byte* strlen::str#2 10334.666666666666
 
 Initial phi equivalence classes
-[ strlen::str#2 strlen::str#0 ]
+[ strlen::str#2 strlen::str#1 strlen::str#0 ]
 [ strlen::len#2 strlen::len#1 ]
 Added variable loadFileToMemory::return#0 to live range equivalence class [ loadFileToMemory::return#0 ]
 Added variable main::status#0 to live range equivalence class [ main::status#0 ]
-Added variable error::err#0 to live range equivalence class [ error::err#0 ]
+Added variable error::err to live range equivalence class [ error::err ]
+Added variable setnam::filename to live range equivalence class [ setnam::filename ]
+Added variable setlfs::device to live range equivalence class [ setlfs::device ]
+Added variable load::address to live range equivalence class [ load::address ]
+Added variable load::verify to live range equivalence class [ load::verify ]
 Added variable load::return#0 to live range equivalence class [ load::return#0 ]
 Added variable loadFileToMemory::return#1 to live range equivalence class [ loadFileToMemory::return#1 ]
 Added variable strlen::return#2 to live range equivalence class [ strlen::return#2 ]
 Added variable setnam::$0 to live range equivalence class [ setnam::$0 ]
+Added variable setnam::filename_len to live range equivalence class [ setnam::filename_len ]
+Added variable load::status to live range equivalence class [ load::status ]
 Added variable load::return#1 to live range equivalence class [ load::return#1 ]
+Added variable load::return#2 to live range equivalence class [ load::return#2 ]
 Complete equivalence classes
-[ strlen::str#2 strlen::str#0 ]
+[ strlen::str#2 strlen::str#1 strlen::str#0 ]
 [ strlen::len#2 strlen::len#1 ]
 [ loadFileToMemory::return#0 ]
 [ main::status#0 ]
-[ error::err#0 ]
+[ error::err ]
+[ setnam::filename ]
+[ setlfs::device ]
+[ load::address ]
+[ load::verify ]
 [ load::return#0 ]
 [ loadFileToMemory::return#1 ]
 [ strlen::return#2 ]
 [ setnam::$0 ]
+[ setnam::filename_len ]
+[ load::status ]
 [ load::return#1 ]
-Allocated zp[2]:2 [ strlen::str#2 strlen::str#0 ]
+[ load::return#2 ]
+Allocated zp[2]:2 [ strlen::str#2 strlen::str#1 strlen::str#0 ]
 Allocated zp[2]:4 [ strlen::len#2 strlen::len#1 ]
 Allocated zp[1]:6 [ loadFileToMemory::return#0 ]
 Allocated zp[1]:7 [ main::status#0 ]
-Allocated zp[1]:8 [ error::err#0 ]
-Allocated zp[1]:9 [ load::return#0 ]
-Allocated zp[1]:10 [ loadFileToMemory::return#1 ]
-Allocated zp[2]:11 [ strlen::return#2 ]
-Allocated zp[2]:13 [ setnam::$0 ]
-Allocated zp[1]:15 [ load::return#1 ]
+Allocated zp[1]:8 [ error::err ]
+Allocated zp[2]:9 [ setnam::filename ]
+Allocated zp[1]:11 [ setlfs::device ]
+Allocated zp[2]:12 [ load::address ]
+Allocated zp[1]:14 [ load::verify ]
+Allocated zp[1]:15 [ load::return#0 ]
+Allocated zp[1]:16 [ loadFileToMemory::return#1 ]
+Allocated zp[2]:17 [ strlen::return#2 ]
+Allocated zp[2]:19 [ setnam::$0 ]
+Allocated zp[1]:21 [ setnam::filename_len ]
+Allocated zp[1]:22 [ load::status ]
+Allocated zp[1]:23 [ load::return#1 ]
+Allocated zp[1]:24 [ load::return#2 ]
 REGISTER UPLIFT POTENTIAL REGISTERS
-Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { error::err#0 = main::status#0 } }  ) always clobbers reg byte a 
+Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { main::status#0 = error::err } }  ) always clobbers reg byte a 
 Removing always clobbered register reg byte a as potential for zp[1]:7 [ main::status#0 ]
 Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *SPRITES_PTR = main::toSpritePtr1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *SPRITES_COLOR = GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] *SPRITES_XPOS = $15 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [13] *SPRITES_YPOS = $33 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { ldxerrCode jsr$a437  } always clobbers reg byte a reg byte x reg byte y 
-Statement [29] strlen::return#2 = strlen::len#2 [ strlen::return#2 ] ( loadFileToMemory:1::setnam:16 [ strlen::return#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
-Statement [30] setnam::$0 = strlen::return#2 [ setnam::$0 ] ( loadFileToMemory:1::setnam:16 [ setnam::$0 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement [31] *setnam::filename_len = (byte)setnam::$0 [ ] ( loadFileToMemory:1::setnam:16 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement [32] *setnam::filename_ptr = main::filename [ ] ( loadFileToMemory:1::setnam:16 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
-Statement [35] *setlfs::deviceNum = loadFileToMemory::device#0 [ ] ( loadFileToMemory:1::setlfs:18 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a reg byte x reg byte y 
-Statement [38] *load::loadOrVerify = 0 [ ] ( loadFileToMemory:1::load:20 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#1 } }  ) always clobbers reg byte a 
-Statement [39] *load::loadAddress = LOAD_SPRITE [ ] ( loadFileToMemory:1::load:20 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#1 } }  ) always clobbers reg byte a 
-Statement asm { ldxloadAddress ldyloadAddress+1 ldaloadOrVerify jsr$ffd5 bcserror lda#$ff error: stastatus  } always clobbers reg byte a reg byte x reg byte y 
-Statement [45] if(0!=*strlen::str#2) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( loadFileToMemory:1::setnam:16::strlen:28 [ strlen::len#2 strlen::str#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
-Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { error::err#0 = main::status#0 } }  ) always clobbers reg byte a 
+Statement [15] setnam::filename = main::filename [ setnam::filename ] ( loadFileToMemory:1 [ setnam::filename ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [17] setlfs::device = loadFileToMemory::device#0 [ setlfs::device ] ( loadFileToMemory:1 [ setlfs::device ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [19] load::address = LOAD_SPRITE [ load::address ] ( loadFileToMemory:1 [ load::address ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
+Statement [20] load::verify = 0 [ load::address load::verify ] ( loadFileToMemory:1 [ load::address load::verify ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxerr jsr$a437  } always clobbers reg byte a reg byte x reg byte y 
+Statement [27] strlen::str#1 = setnam::filename [ setnam::filename strlen::str#1 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::str#1 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
+Statement [29] strlen::return#2 = strlen::len#2 [ setnam::filename strlen::return#2 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::return#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
+Statement [30] setnam::$0 = strlen::return#2 [ setnam::filename setnam::$0 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::$0 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [31] setnam::filename_len = (byte)setnam::$0 [ setnam::filename setnam::filename_len ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::filename_len ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
+Statement asm { ldxdevice lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a reg byte x reg byte y 
+Statement [36] load::status = 0 [ load::address load::verify load::status ] ( loadFileToMemory:1::load:21 [ load::address load::verify load::status ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  } always clobbers reg byte a reg byte x reg byte y 
+Statement [43] if(0!=*strlen::str#2) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( loadFileToMemory:1::setnam:16::strlen:28 [ setnam::filename strlen::len#2 strlen::str#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
+Statement [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 [ main::status#0 ] (  [ main::status#0 ] { { main::status#0 = error::err } }  ) always clobbers reg byte a 
 Statement [8] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_SPRITES_ENABLE) = 1 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [10] *SPRITES_PTR = main::toSpritePtr1_return#0 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [11] *SPRITES_COLOR = GREEN [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [12] *SPRITES_XPOS = $15 [ ] (  [ ] { }  ) always clobbers reg byte a 
 Statement [13] *SPRITES_YPOS = $33 [ ] (  [ ] { }  ) always clobbers reg byte a 
-Statement asm { ldxerrCode jsr$a437  } always clobbers reg byte a reg byte x reg byte y 
-Statement [29] strlen::return#2 = strlen::len#2 [ strlen::return#2 ] ( loadFileToMemory:1::setnam:16 [ strlen::return#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
-Statement [30] setnam::$0 = strlen::return#2 [ setnam::$0 ] ( loadFileToMemory:1::setnam:16 [ setnam::$0 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement [31] *setnam::filename_len = (byte)setnam::$0 [ ] ( loadFileToMemory:1::setnam:16 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement [32] *setnam::filename_ptr = main::filename [ ] ( loadFileToMemory:1::setnam:16 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
-Statement [35] *setlfs::deviceNum = loadFileToMemory::device#0 [ ] ( loadFileToMemory:1::setlfs:18 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
-Statement asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a reg byte x reg byte y 
-Statement [38] *load::loadOrVerify = 0 [ ] ( loadFileToMemory:1::load:20 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#1 } }  ) always clobbers reg byte a 
-Statement [39] *load::loadAddress = LOAD_SPRITE [ ] ( loadFileToMemory:1::load:20 [ ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#1 } }  ) always clobbers reg byte a 
-Statement asm { ldxloadAddress ldyloadAddress+1 ldaloadOrVerify jsr$ffd5 bcserror lda#$ff error: stastatus  } always clobbers reg byte a reg byte x reg byte y 
-Statement [45] if(0!=*strlen::str#2) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( loadFileToMemory:1::setnam:16::strlen:28 [ strlen::len#2 strlen::str#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
-Potential registers zp[2]:2 [ strlen::str#2 strlen::str#0 ] : zp[2]:2 , 
+Statement [15] setnam::filename = main::filename [ setnam::filename ] ( loadFileToMemory:1 [ setnam::filename ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [17] setlfs::device = loadFileToMemory::device#0 [ setlfs::device ] ( loadFileToMemory:1 [ setlfs::device ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [19] load::address = LOAD_SPRITE [ load::address ] ( loadFileToMemory:1 [ load::address ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
+Statement [20] load::verify = 0 [ load::address load::verify ] ( loadFileToMemory:1 [ load::address load::verify ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxerr jsr$a437  } always clobbers reg byte a reg byte x reg byte y 
+Statement [27] strlen::str#1 = setnam::filename [ setnam::filename strlen::str#1 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::str#1 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
+Statement [29] strlen::return#2 = strlen::len#2 [ setnam::filename strlen::return#2 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename strlen::return#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a 
+Statement [30] setnam::$0 = strlen::return#2 [ setnam::filename setnam::$0 ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::$0 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement [31] setnam::filename_len = (byte)setnam::$0 [ setnam::filename setnam::filename_len ] ( loadFileToMemory:1::setnam:16 [ setnam::filename setnam::filename_len ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } }  ) always clobbers reg byte a 
+Statement asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  } always clobbers reg byte a reg byte x reg byte y 
+Statement asm { ldxdevice lda#1 ldy#0 jsr$ffba  } always clobbers reg byte a reg byte x reg byte y 
+Statement [36] load::status = 0 [ load::address load::verify load::status ] ( loadFileToMemory:1::load:21 [ load::address load::verify load::status ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { load::return#0 = load::return#2 } }  ) always clobbers reg byte a 
+Statement asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  } always clobbers reg byte a reg byte x reg byte y 
+Statement [43] if(0!=*strlen::str#2) goto strlen::@2 [ strlen::len#2 strlen::str#2 ] ( loadFileToMemory:1::setnam:16::strlen:28 [ setnam::filename strlen::len#2 strlen::str#2 ] { { loadFileToMemory::return#0 = loadFileToMemory::return#1 } { strlen::str#1 = setnam::filename } { strlen::return#2 = strlen::len#2 } }  ) always clobbers reg byte a reg byte y 
+Potential registers zp[2]:2 [ strlen::str#2 strlen::str#1 strlen::str#0 ] : zp[2]:2 , 
 Potential registers zp[2]:4 [ strlen::len#2 strlen::len#1 ] : zp[2]:4 , 
 Potential registers zp[1]:6 [ loadFileToMemory::return#0 ] : zp[1]:6 , reg byte a , reg byte x , reg byte y , 
 Potential registers zp[1]:7 [ main::status#0 ] : zp[1]:7 , reg byte x , reg byte y , 
-Potential registers zp[1]:8 [ error::err#0 ] : zp[1]:8 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:9 [ load::return#0 ] : zp[1]:9 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[1]:10 [ loadFileToMemory::return#1 ] : zp[1]:10 , reg byte a , reg byte x , reg byte y , 
-Potential registers zp[2]:11 [ strlen::return#2 ] : zp[2]:11 , 
-Potential registers zp[2]:13 [ setnam::$0 ] : zp[2]:13 , 
-Potential registers zp[1]:15 [ load::return#1 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:8 [ error::err ] : zp[1]:8 , 
+Potential registers zp[2]:9 [ setnam::filename ] : zp[2]:9 , 
+Potential registers zp[1]:11 [ setlfs::device ] : zp[1]:11 , 
+Potential registers zp[2]:12 [ load::address ] : zp[2]:12 , 
+Potential registers zp[1]:14 [ load::verify ] : zp[1]:14 , 
+Potential registers zp[1]:15 [ load::return#0 ] : zp[1]:15 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:16 [ loadFileToMemory::return#1 ] : zp[1]:16 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[2]:17 [ strlen::return#2 ] : zp[2]:17 , 
+Potential registers zp[2]:19 [ setnam::$0 ] : zp[2]:19 , 
+Potential registers zp[1]:21 [ setnam::filename_len ] : zp[1]:21 , 
+Potential registers zp[1]:22 [ load::status ] : zp[1]:22 , 
+Potential registers zp[1]:23 [ load::return#1 ] : zp[1]:23 , reg byte a , reg byte x , reg byte y , 
+Potential registers zp[1]:24 [ load::return#2 ] : zp[1]:24 , reg byte a , reg byte x , reg byte y , 
 
 REGISTER UPLIFT SCOPES
-Uplift Scope [strlen] 30,003: zp[2]:2 [ strlen::str#2 strlen::str#0 ] 15,026.75: zp[2]:4 [ strlen::len#2 strlen::len#1 ] 202: zp[2]:11 [ strlen::return#2 ] 
-Uplift Scope [setnam] 101: zp[2]:13 [ setnam::$0 ] 
-Uplift Scope [load] 37.33: zp[1]:15 [ load::return#1 ] 22: zp[1]:9 [ load::return#0 ] 
-Uplift Scope [error] 13: zp[1]:8 [ error::err#0 ] 
-Uplift Scope [loadFileToMemory] 4.33: zp[1]:10 [ loadFileToMemory::return#1 ] 4: zp[1]:6 [ loadFileToMemory::return#0 ] 
+Uplift Scope [strlen] 30,887.67: zp[2]:2 [ strlen::str#2 strlen::str#1 strlen::str#0 ] 15,026.75: zp[2]:4 [ strlen::len#2 strlen::len#1 ] 202: zp[2]:17 [ strlen::return#2 ] 
+Uplift Scope [load] 202: zp[1]:23 [ load::return#1 ] 101: zp[1]:22 [ load::status ] 37.33: zp[1]:24 [ load::return#2 ] 22: zp[1]:15 [ load::return#0 ] 5.5: zp[1]:14 [ load::verify ] 3.67: zp[2]:12 [ load::address ] 
+Uplift Scope [setnam] 101: zp[2]:19 [ setnam::$0 ] 101: zp[1]:21 [ setnam::filename_len ] 18.67: zp[2]:9 [ setnam::filename ] 
+Uplift Scope [setlfs] 11: zp[1]:11 [ setlfs::device ] 
+Uplift Scope [loadFileToMemory] 4.33: zp[1]:16 [ loadFileToMemory::return#1 ] 4: zp[1]:6 [ loadFileToMemory::return#0 ] 
 Uplift Scope [main] 2: zp[1]:7 [ main::status#0 ] 
+Uplift Scope [error] 2: zp[1]:8 [ error::err ] 
 Uplift Scope [MOS6526_CIA] 
 Uplift Scope [MOS6569_VICII] 
 Uplift Scope [MOS6581_SID] 
-Uplift Scope [setlfs] 
 Uplift Scope [] 
 
-Uplifting [strlen] best 1032 combination zp[2]:2 [ strlen::str#2 strlen::str#0 ] zp[2]:4 [ strlen::len#2 strlen::len#1 ] zp[2]:11 [ strlen::return#2 ] 
-Uplifting [setnam] best 1032 combination zp[2]:13 [ setnam::$0 ] 
-Uplifting [load] best 1020 combination reg byte a [ load::return#1 ] reg byte a [ load::return#0 ] 
-Uplifting [error] best 1014 combination reg byte a [ error::err#0 ] 
-Uplifting [loadFileToMemory] best 1002 combination reg byte a [ loadFileToMemory::return#1 ] reg byte a [ loadFileToMemory::return#0 ] 
-Uplifting [main] best 997 combination reg byte x [ main::status#0 ] 
-Uplifting [MOS6526_CIA] best 997 combination 
-Uplifting [MOS6569_VICII] best 997 combination 
-Uplifting [MOS6581_SID] best 997 combination 
-Uplifting [setlfs] best 997 combination 
-Uplifting [] best 997 combination 
-Coalescing zero page register [ zp[2]:4 [ strlen::len#2 strlen::len#1 ] ] with [ zp[2]:11 [ strlen::return#2 ] ] - score: 1
-Coalescing zero page register [ zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 ] ] with [ zp[2]:13 [ setnam::$0 ] ] - score: 1
+Uplifting [strlen] best 940 combination zp[2]:2 [ strlen::str#2 strlen::str#1 strlen::str#0 ] zp[2]:4 [ strlen::len#2 strlen::len#1 ] zp[2]:17 [ strlen::return#2 ] 
+Uplifting [load] best 922 combination reg byte a [ load::return#1 ] zp[1]:22 [ load::status ] reg byte a [ load::return#2 ] reg byte a [ load::return#0 ] zp[1]:14 [ load::verify ] zp[2]:12 [ load::address ] 
+Uplifting [setnam] best 922 combination zp[2]:19 [ setnam::$0 ] zp[1]:21 [ setnam::filename_len ] zp[2]:9 [ setnam::filename ] 
+Uplifting [setlfs] best 922 combination zp[1]:11 [ setlfs::device ] 
+Uplifting [loadFileToMemory] best 910 combination reg byte a [ loadFileToMemory::return#1 ] reg byte a [ loadFileToMemory::return#0 ] 
+Uplifting [main] best 903 combination reg byte x [ main::status#0 ] 
+Uplifting [error] best 903 combination zp[1]:8 [ error::err ] 
+Uplifting [MOS6526_CIA] best 903 combination 
+Uplifting [MOS6569_VICII] best 903 combination 
+Uplifting [MOS6581_SID] best 903 combination 
+Uplifting [] best 903 combination 
+Attempting to uplift remaining variables inzp[1]:21 [ setnam::filename_len ]
+Uplifting [setnam] best 903 combination zp[1]:21 [ setnam::filename_len ] 
+Attempting to uplift remaining variables inzp[1]:22 [ load::status ]
+Uplifting [load] best 903 combination zp[1]:22 [ load::status ] 
+Attempting to uplift remaining variables inzp[1]:11 [ setlfs::device ]
+Uplifting [setlfs] best 903 combination zp[1]:11 [ setlfs::device ] 
+Attempting to uplift remaining variables inzp[1]:14 [ load::verify ]
+Uplifting [load] best 903 combination zp[1]:14 [ load::verify ] 
+Attempting to uplift remaining variables inzp[1]:8 [ error::err ]
+Uplifting [error] best 903 combination zp[1]:8 [ error::err ] 
+Coalescing zero page register [ zp[2]:4 [ strlen::len#2 strlen::len#1 ] ] with [ zp[2]:17 [ strlen::return#2 ] ] - score: 1
+Coalescing zero page register [ zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 ] ] with [ zp[2]:19 [ setnam::$0 ] ] - score: 1
+Allocated (was zp[1]:8) zp[1]:6 [ error::err ]
+Allocated (was zp[2]:9) zp[2]:7 [ setnam::filename ]
+Allocated (was zp[1]:11) zp[1]:9 [ setlfs::device ]
+Allocated (was zp[2]:12) zp[2]:10 [ load::address ]
+Allocated (was zp[1]:14) zp[1]:12 [ load::verify ]
+Allocated (was zp[1]:21) zp[1]:13 [ setnam::filename_len ]
+Allocated (was zp[1]:22) zp[1]:14 [ load::status ]
 
 ASSEMBLER BEFORE OPTIMIZATION
   // File Comments
@@ -758,8 +762,6 @@ ASSEMBLER BEFORE OPTIMIZATION
 main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     // [1] call loadFileToMemory 
-    // [15] phi from main to loadFileToMemory [phi:main->loadFileToMemory]
-  loadFileToMemory_from_main:
     jsr loadFileToMemory
     // [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
     jmp __b4
@@ -776,8 +778,8 @@ main: {
     // [5] *((byte*)VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR) = 2 -- _deref_pbuc1=vbuc2 
     lda #2
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
-    // [6] error::err#0 = main::status#0 -- vbuaa=vbuxx 
-    txa
+    // [6] error::err = main::status#0 -- vbuz1=vbuxx 
+    stx.z error.err
     // [7] call error 
     jsr error
     jmp __b1
@@ -823,46 +825,54 @@ main: {
 // - 0xff: Success
 // - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
 loadFileToMemory: {
-    .label device = 8
+    .const device = 8
+    // [15] setnam::filename = main::filename -- pbuz1=pbuc1 
+    lda #<main.filename
+    sta.z setnam.filename
+    lda #>main.filename
+    sta.z setnam.filename+1
     // [16] call setnam 
-    // [27] phi from loadFileToMemory to setnam [phi:loadFileToMemory->setnam]
-  setnam_from_loadFileToMemory:
     jsr setnam
-    // [17] phi from loadFileToMemory to loadFileToMemory::@1 [phi:loadFileToMemory->loadFileToMemory::@1]
-  __b1_from_loadFileToMemory:
     jmp __b1
     // loadFileToMemory::@1
   __b1:
+    // [17] setlfs::device = loadFileToMemory::device#0 -- vbuz1=vbuc1 
+    lda #device
+    sta.z setlfs.device
     // [18] call setlfs 
     jsr setlfs
-    // [19] phi from loadFileToMemory::@1 to loadFileToMemory::@2 [phi:loadFileToMemory::@1->loadFileToMemory::@2]
-  __b2_from___b1:
     jmp __b2
     // loadFileToMemory::@2
   __b2:
-    // [20] call load 
+    // [19] load::address = LOAD_SPRITE -- pbuz1=pbuc1 
+    lda #<LOAD_SPRITE
+    sta.z load.address
+    lda #>LOAD_SPRITE
+    sta.z load.address+1
+    // [20] load::verify = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z load.verify
+    // [21] call load 
     jsr load
-    // [21] load::return#0 = load::return#1
+    // [22] load::return#0 = load::return#2
     jmp __b3
     // loadFileToMemory::@3
   __b3:
-    // [22] loadFileToMemory::return#1 = load::return#0
+    // [23] loadFileToMemory::return#1 = load::return#0
     jmp __breturn
     // loadFileToMemory::@return
   __breturn:
-    // [23] return 
+    // [24] return 
     rts
 }
   // error
 // Basic ERROR function
 // ERROR. Show error.
-// error(byte register(A) err)
+// error(byte zp(6) err)
 error: {
-    .label errCode = $ff
-    // [24] *error::errCode = error::err#0 -- _deref_pbuc1=vbuaa 
-    sta errCode
-    // asm { ldxerrCode jsr$a437  }
-    ldx errCode
+    .label err = 6
+    // asm { ldxerr jsr$a437  }
+    ldx err
     jsr $a437
     jmp __breturn
     // error::@return
@@ -873,12 +883,18 @@ error: {
   // setnam
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
+// setnam(byte* zp(7) filename)
 setnam: {
-    .label filename_len = $fd
-    .label filename_ptr = $fe
+    .label filename = 7
+    .label filename_len = $d
     .label __0 = 4
+    // [27] strlen::str#1 = setnam::filename -- pbuz1=pbuz2 
+    lda.z filename
+    sta.z strlen.str
+    lda.z filename+1
+    sta.z strlen.str+1
     // [28] call strlen 
-    // [43] phi from setnam to strlen [phi:setnam->strlen]
+    // [41] phi from setnam to strlen [phi:setnam->strlen]
   strlen_from_setnam:
     jsr strlen
     // [29] strlen::return#2 = strlen::len#2
@@ -886,73 +902,65 @@ setnam: {
     // setnam::@1
   __b1:
     // [30] setnam::$0 = strlen::return#2
-    // [31] *setnam::filename_len = (byte)setnam::$0 -- _deref_pbuc1=_byte_vwuz1 
+    // [31] setnam::filename_len = (byte)setnam::$0 -- vbuz1=_byte_vwuz2 
     lda.z __0
-    sta filename_len
-    // [32] *setnam::filename_ptr = main::filename -- _deref_qbuc1=pbuc2 
-    lda #<main.filename
-    sta filename_ptr
-    lda #>main.filename
-    sta filename_ptr+1
-    // asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  }
+    sta.z filename_len
+    // asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
     lda filename_len
-    ldx filename_ptr
-    ldy filename_ptr+1
+    ldx filename
+    ldy filename+1
     jsr $ffbd
     jmp __breturn
     // setnam::@return
   __breturn:
-    // [34] return 
+    // [33] return 
     rts
 }
   // setlfs
 // SETLFS. Set file parameters.
+// setlfs(byte zp(9) device)
 setlfs: {
-    .label deviceNum = $ff
-    // [35] *setlfs::deviceNum = loadFileToMemory::device#0 -- _deref_pbuc1=vbuc2 
-    lda #loadFileToMemory.device
-    sta deviceNum
-    // asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  }
-    ldx deviceNum
+    .label device = 9
+    // asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
+    ldx device
     lda #1
     ldy #0
     jsr $ffba
     jmp __breturn
     // setlfs::@return
   __breturn:
-    // [37] return 
+    // [35] return 
     rts
 }
   // load
-//LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// - verify: 0 = Load, 1-255 = Verify
+//
 // Returns a status, 0xff: Success other: Kernal Error Code
+// load(byte* zp($a) address, byte zp($c) verify)
 load: {
-    .label loadOrVerify = $fd
-    .label loadAddress = $fe
-    .label status = $fd
-    // [38] *load::loadOrVerify = 0 -- _deref_pbuc1=vbuc2 
+    .label address = $a
+    .label verify = $c
+    .label status = $e
+    // [36] load::status = 0 -- vbuz1=vbuc1 
     lda #0
-    sta loadOrVerify
-    // [39] *load::loadAddress = LOAD_SPRITE -- _deref_qbuc1=pbuc2 
-    lda #<LOAD_SPRITE
-    sta loadAddress
-    lda #>LOAD_SPRITE
-    sta loadAddress+1
-    // asm { ldxloadAddress ldyloadAddress+1 ldaloadOrVerify jsr$ffd5 bcserror lda#$ff error: stastatus  }
-    ldx loadAddress
-    ldy loadAddress+1
-    lda loadOrVerify
+    sta.z status
+    // asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
+    ldx address
+    ldy address+1
+    lda verify
     jsr $ffd5
     bcs error
     lda #$ff
   error:
     sta status
-    // [41] load::return#1 = *load::status -- vbuaa=_deref_pbuc1 
-    lda status
+    // [38] load::return#1 = load::status -- vbuaa=vbuz1 
+    lda.z status
     jmp __breturn
     // load::@return
   __breturn:
-    // [42] return 
+    // [39] load::return#2 = load::return#1
+    // [40] return 
     rts
 }
   // strlen
@@ -962,22 +970,18 @@ strlen: {
     .label len = 4
     .label str = 2
     .label return = 4
-    // [44] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
+    // [42] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
   __b1_from_strlen:
-    // [44] phi strlen::len#2 = 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [42] phi strlen::len#2 = 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     lda #>0
     sta.z len+1
-    // [44] phi strlen::str#2 = main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
-    lda #<main.filename
-    sta.z str
-    lda #>main.filename
-    sta.z str+1
+    // [42] phi strlen::str#2 = strlen::str#1 [phi:strlen->strlen::@1#1] -- register_copy 
     jmp __b1
     // strlen::@1
   __b1:
-    // [45] if(0!=*strlen::str#2) goto strlen::@2 -- 0_neq__deref_pbuz1_then_la1 
+    // [43] if(0!=*strlen::str#2) goto strlen::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
@@ -985,24 +989,24 @@ strlen: {
     jmp __breturn
     // strlen::@return
   __breturn:
-    // [46] return 
+    // [44] return 
     rts
     // strlen::@2
   __b2:
-    // [47] strlen::len#1 = ++ strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [45] strlen::len#1 = ++ strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
-    // [48] strlen::str#0 = ++ strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [46] strlen::str#0 = ++ strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
-    // [44] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
+    // [42] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
   __b1_from___b2:
-    // [44] phi strlen::len#2 = strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [44] phi strlen::str#2 = strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [42] phi strlen::len#2 = strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [42] phi strlen::str#2 = strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data
@@ -1033,24 +1037,18 @@ Removing instruction jmp __breturn
 Removing instruction jmp __b1
 Removing instruction jmp __breturn
 Succesful ASM optimization Pass5NextJumpElimination
-Replacing instruction ldx errCode with TAX
-Replacing instruction ldx deviceNum with TAX
-Replacing instruction ldy loadAddress+1 with TAY
-Removing instruction lda status
+Removing instruction lda filename_len
+Removing instruction lda.z status
 Removing instruction lda #>0
 Succesful ASM optimization Pass5UnnecesaryLoadElimination
 Removing instruction toSpritePtr1_from___b1:
 Removing instruction toSpritePtr1:
-Removing instruction __b1_from_loadFileToMemory:
-Removing instruction __b2_from___b1:
 Removing instruction __breturn:
 Succesful ASM optimization Pass5RedundantLabelElimination
-Removing instruction loadFileToMemory_from_main:
 Removing instruction __b4:
 Removing instruction __b2:
 Removing instruction __b3:
 Removing instruction __breturn:
-Removing instruction setnam_from_loadFileToMemory:
 Removing instruction __b1:
 Removing instruction __b2:
 Removing instruction __b3:
@@ -1082,19 +1080,16 @@ const nomodify byte* SPRITES_PTR = SCREEN+OFFSET_SPRITE_PTRS
 const nomodify byte* SPRITES_XPOS = (byte*) 53248
 const nomodify byte* SPRITES_YPOS = (byte*) 53249
 const nomodify struct MOS6569_VICII* VICII = (struct MOS6569_VICII*) 53248
-void error(byte error::err)
-byte error::err
-byte error::err#0 reg byte a 13.0
-const nomodify byte* error::errCode = (byte*) 255
-byte load(byte* load::address , bool load::verify)
-byte* load::address
-const byte** load::loadAddress = (byte**) 254
-const byte* load::loadOrVerify = (byte*) 253
+void error(volatile byte error::err)
+volatile byte error::err loadstore zp[1]:6 2.0
+byte load(volatile byte* load::address , volatile byte load::verify)
+volatile byte* load::address loadstore zp[2]:10 3.6666666666666665
 byte load::return
 byte load::return#0 reg byte a 22.0
-byte load::return#1 reg byte a 37.33333333333333
-const byte* load::status = (byte*) 253
-bool load::verify
+byte load::return#1 reg byte a 202.0
+byte load::return#2 reg byte a 37.33333333333333
+volatile byte load::status loadstore zp[1]:14 101.0
+volatile byte load::verify loadstore zp[1]:12 5.5
 byte loadFileToMemory(byte loadFileToMemory::device , byte* loadFileToMemory::filename , byte* loadFileToMemory::address)
 byte* loadFileToMemory::address
 byte loadFileToMemory::device
@@ -1110,14 +1105,12 @@ byte main::status#0 reg byte x 2.0
 byte main::toSpritePtr1_return
 const byte main::toSpritePtr1_return#0 toSpritePtr1_return = (byte)(word)LOAD_SPRITE/$40
 byte* main::toSpritePtr1_sprite
-void setlfs(byte setlfs::device)
-byte setlfs::device
-const nomodify byte* setlfs::deviceNum = (byte*) 255
-void setnam(byte* setnam::filename)
+void setlfs(volatile byte setlfs::device)
+volatile byte setlfs::device loadstore zp[1]:9 11.0
+void setnam(volatile byte* setnam::filename)
 word~ setnam::$0 zp[2]:4 101.0
-byte* setnam::filename
-const nomodify byte* setnam::filename_len = (byte*) 253
-const nomodify byte** setnam::filename_ptr = (byte**) 254
+volatile byte* setnam::filename loadstore zp[2]:7 18.666666666666664
+volatile byte setnam::filename_len loadstore zp[1]:13 101.0
 word strlen(byte* strlen::str)
 word strlen::len
 word strlen::len#1 len zp[2]:4 10001.0
@@ -1126,20 +1119,28 @@ word strlen::return
 word strlen::return#2 return zp[2]:4 202.0
 byte* strlen::str
 byte* strlen::str#0 str zp[2]:2 20002.0
-byte* strlen::str#2 str zp[2]:2 10001.0
+byte* strlen::str#1 str zp[2]:2 551.0
+byte* strlen::str#2 str zp[2]:2 10334.666666666666
 
-zp[2]:2 [ strlen::str#2 strlen::str#0 ]
+zp[2]:2 [ strlen::str#2 strlen::str#1 strlen::str#0 ]
 zp[2]:4 [ strlen::len#2 strlen::len#1 strlen::return#2 setnam::$0 ]
 reg byte a [ loadFileToMemory::return#0 ]
 reg byte x [ main::status#0 ]
-reg byte a [ error::err#0 ]
+zp[1]:6 [ error::err ]
+zp[2]:7 [ setnam::filename ]
+zp[1]:9 [ setlfs::device ]
+zp[2]:10 [ load::address ]
+zp[1]:12 [ load::verify ]
 reg byte a [ load::return#0 ]
 reg byte a [ loadFileToMemory::return#1 ]
+zp[1]:13 [ setnam::filename_len ]
+zp[1]:14 [ load::status ]
 reg byte a [ load::return#1 ]
+reg byte a [ load::return#2 ]
 
 
 FINAL ASSEMBLER
-Score: 811
+Score: 720
 
   // File Comments
 // Load a file to memory using the C64 KERNAL LOAD functions
@@ -1180,9 +1181,7 @@ main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     // [1] call loadFileToMemory 
-    // [15] phi from main to loadFileToMemory [phi:main->loadFileToMemory]
     jsr loadFileToMemory
-    // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     // [2] loadFileToMemory::return#0 = loadFileToMemory::return#1
     // main::@4
     // status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
@@ -1198,8 +1197,8 @@ main: {
     lda #2
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // error(status)
-    // [6] error::err#0 = main::status#0 -- vbuaa=vbuxx 
-    txa
+    // [6] error::err = main::status#0 -- vbuz1=vbuxx 
+    stx.z error.err
     // [7] call error 
     jsr error
     // main::@1
@@ -1243,41 +1242,51 @@ main: {
 // - 0xff: Success
 // - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
 loadFileToMemory: {
-    .label device = 8
+    .const device = 8
     // setnam(filename)
+    // [15] setnam::filename = main::filename -- pbuz1=pbuc1 
+    lda #<main.filename
+    sta.z setnam.filename
+    lda #>main.filename
+    sta.z setnam.filename+1
     // [16] call setnam 
-    // [27] phi from loadFileToMemory to setnam [phi:loadFileToMemory->setnam]
     jsr setnam
-    // [17] phi from loadFileToMemory to loadFileToMemory::@1 [phi:loadFileToMemory->loadFileToMemory::@1]
     // loadFileToMemory::@1
     // setlfs(device)
+    // [17] setlfs::device = loadFileToMemory::device#0 -- vbuz1=vbuc1 
+    lda #device
+    sta.z setlfs.device
     // [18] call setlfs 
     jsr setlfs
-    // [19] phi from loadFileToMemory::@1 to loadFileToMemory::@2 [phi:loadFileToMemory::@1->loadFileToMemory::@2]
     // loadFileToMemory::@2
-    // load(address, false)
-    // [20] call load 
+    // load(address, 0)
+    // [19] load::address = LOAD_SPRITE -- pbuz1=pbuc1 
+    lda #<LOAD_SPRITE
+    sta.z load.address
+    lda #>LOAD_SPRITE
+    sta.z load.address+1
+    // [20] load::verify = 0 -- vbuz1=vbuc1 
+    lda #0
+    sta.z load.verify
+    // [21] call load 
     jsr load
-    // [21] load::return#0 = load::return#1
+    // [22] load::return#0 = load::return#2
     // loadFileToMemory::@3
-    // [22] loadFileToMemory::return#1 = load::return#0
+    // [23] loadFileToMemory::return#1 = load::return#0
     // loadFileToMemory::@return
     // }
-    // [23] return 
+    // [24] return 
     rts
 }
   // error
 // Basic ERROR function
 // ERROR. Show error.
-// error(byte register(A) err)
+// error(byte zp(6) err)
 error: {
-    .label errCode = $ff
-    // *errCode = err
-    // [24] *error::errCode = error::err#0 -- _deref_pbuc1=vbuaa 
-    sta errCode
+    .label err = 6
     // asm
-    // asm { ldxerrCode jsr$a437  }
-    tax
+    // asm { ldxerr jsr$a437  }
+    ldx err
     jsr $a437
     // error::@return
     // }
@@ -1287,90 +1296,84 @@ error: {
   // setnam
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
+// setnam(byte* zp(7) filename)
 setnam: {
-    .label filename_len = $fd
-    .label filename_ptr = $fe
+    .label filename = 7
+    .label filename_len = $d
     .label __0 = 4
     // strlen(filename)
+    // [27] strlen::str#1 = setnam::filename -- pbuz1=pbuz2 
+    lda.z filename
+    sta.z strlen.str
+    lda.z filename+1
+    sta.z strlen.str+1
     // [28] call strlen 
-    // [43] phi from setnam to strlen [phi:setnam->strlen]
+    // [41] phi from setnam to strlen [phi:setnam->strlen]
     jsr strlen
     // strlen(filename)
     // [29] strlen::return#2 = strlen::len#2
     // setnam::@1
     // [30] setnam::$0 = strlen::return#2
-    // *filename_len = (char)strlen(filename)
-    // [31] *setnam::filename_len = (byte)setnam::$0 -- _deref_pbuc1=_byte_vwuz1 
+    // filename_len = (char)strlen(filename)
+    // [31] setnam::filename_len = (byte)setnam::$0 -- vbuz1=_byte_vwuz2 
     lda.z __0
-    sta filename_len
-    // *filename_ptr = filename
-    // [32] *setnam::filename_ptr = main::filename -- _deref_qbuc1=pbuc2 
-    lda #<main.filename
-    sta filename_ptr
-    lda #>main.filename
-    sta filename_ptr+1
+    sta.z filename_len
     // asm
-    // asm { ldafilename_len ldxfilename_ptr ldyfilename_ptr+1 jsr$ffbd  }
-    lda filename_len
-    ldx filename_ptr
-    ldy filename_ptr+1
+    // asm { ldafilename_len ldxfilename ldyfilename+1 jsr$ffbd  }
+    ldx filename
+    ldy filename+1
     jsr $ffbd
     // setnam::@return
     // }
-    // [34] return 
+    // [33] return 
     rts
 }
   // setlfs
 // SETLFS. Set file parameters.
+// setlfs(byte zp(9) device)
 setlfs: {
-    .label deviceNum = $ff
-    // *deviceNum = device
-    // [35] *setlfs::deviceNum = loadFileToMemory::device#0 -- _deref_pbuc1=vbuc2 
-    lda #loadFileToMemory.device
-    sta deviceNum
+    .label device = 9
     // asm
-    // asm { ldxdeviceNum lda#1 ldy#0 jsr$ffba  }
-    tax
+    // asm { ldxdevice lda#1 ldy#0 jsr$ffba  }
+    ldx device
     lda #1
     ldy #0
     jsr $ffba
     // setlfs::@return
     // }
-    // [37] return 
+    // [35] return 
     rts
 }
   // load
-//LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// - verify: 0 = Load, 1-255 = Verify
+//
 // Returns a status, 0xff: Success other: Kernal Error Code
+// load(byte* zp($a) address, byte zp($c) verify)
 load: {
-    .label loadOrVerify = $fd
-    .label loadAddress = $fe
-    .label status = $fd
-    // *loadOrVerify = (char)verify
-    // [38] *load::loadOrVerify = 0 -- _deref_pbuc1=vbuc2 
+    .label address = $a
+    .label verify = $c
+    .label status = $e
+    // status
+    // [36] load::status = 0 -- vbuz1=vbuc1 
     lda #0
-    sta loadOrVerify
-    // *loadAddress = address
-    // [39] *load::loadAddress = LOAD_SPRITE -- _deref_qbuc1=pbuc2 
-    lda #<LOAD_SPRITE
-    sta loadAddress
-    lda #>LOAD_SPRITE
-    sta loadAddress+1
+    sta.z status
     // asm
-    // asm { ldxloadAddress ldyloadAddress+1 ldaloadOrVerify jsr$ffd5 bcserror lda#$ff error: stastatus  }
-    ldx loadAddress
-    tay
-    lda loadOrVerify
+    // asm { ldxaddress ldyaddress+1 ldaverify jsr$ffd5 bcserror lda#$ff error: stastatus  }
+    ldx address
+    ldy address+1
+    lda verify
     jsr $ffd5
     bcs error
     lda #$ff
   error:
     sta status
-    // return *status;
-    // [41] load::return#1 = *load::status -- vbuaa=_deref_pbuc1 
+    // return status;
+    // [38] load::return#1 = load::status -- vbuaa=vbuz1 
     // load::@return
     // }
-    // [42] return 
+    // [39] load::return#2 = load::return#1
+    // [40] return 
     rts
 }
   // strlen
@@ -1380,45 +1383,41 @@ strlen: {
     .label len = 4
     .label str = 2
     .label return = 4
-    // [44] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
-    // [44] phi strlen::len#2 = 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
+    // [42] phi from strlen to strlen::@1 [phi:strlen->strlen::@1]
+    // [42] phi strlen::len#2 = 0 [phi:strlen->strlen::@1#0] -- vwuz1=vwuc1 
     lda #<0
     sta.z len
     sta.z len+1
-    // [44] phi strlen::str#2 = main::filename [phi:strlen->strlen::@1#1] -- pbuz1=pbuc1 
-    lda #<main.filename
-    sta.z str
-    lda #>main.filename
-    sta.z str+1
+    // [42] phi strlen::str#2 = strlen::str#1 [phi:strlen->strlen::@1#1] -- register_copy 
     // strlen::@1
   __b1:
     // while(*str)
-    // [45] if(0!=*strlen::str#2) goto strlen::@2 -- 0_neq__deref_pbuz1_then_la1 
+    // [43] if(0!=*strlen::str#2) goto strlen::@2 -- 0_neq__deref_pbuz1_then_la1 
     ldy #0
     lda (str),y
     cmp #0
     bne __b2
     // strlen::@return
     // }
-    // [46] return 
+    // [44] return 
     rts
     // strlen::@2
   __b2:
     // len++;
-    // [47] strlen::len#1 = ++ strlen::len#2 -- vwuz1=_inc_vwuz1 
+    // [45] strlen::len#1 = ++ strlen::len#2 -- vwuz1=_inc_vwuz1 
     inc.z len
     bne !+
     inc.z len+1
   !:
     // str++;
-    // [48] strlen::str#0 = ++ strlen::str#2 -- pbuz1=_inc_pbuz1 
+    // [46] strlen::str#0 = ++ strlen::str#2 -- pbuz1=_inc_pbuz1 
     inc.z str
     bne !+
     inc.z str+1
   !:
-    // [44] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
-    // [44] phi strlen::len#2 = strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
-    // [44] phi strlen::str#2 = strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
+    // [42] phi from strlen::@2 to strlen::@1 [phi:strlen::@2->strlen::@1]
+    // [42] phi strlen::len#2 = strlen::len#1 [phi:strlen::@2->strlen::@1#0] -- register_copy 
+    // [42] phi strlen::str#2 = strlen::str#0 [phi:strlen::@2->strlen::@1#1] -- register_copy 
     jmp __b1
 }
   // File Data

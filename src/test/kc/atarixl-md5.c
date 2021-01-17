@@ -67,7 +67,7 @@ void move16Left(uint8_t *p) {
 	*(p + 3) = t;
 }
 
-void rotateLeft(__ma uint8_t *p, __ma uint8_t r) {
+void rotateLeft(uint8_t * const p, uint8_t r) {
 	kickasm(
 		clobbers "AX",
 		uses p,

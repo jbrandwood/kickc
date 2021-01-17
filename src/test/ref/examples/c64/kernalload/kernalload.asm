@@ -33,7 +33,6 @@ main: {
     .const toSpritePtr1_return = LOAD_SPRITE/$40
     // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     jsr loadFileToMemory
-    // loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     // status = loadFileToMemory(8, "SPRITE", LOAD_SPRITE)
     tax
     // if(status!=0xff)
@@ -43,7 +42,7 @@ main: {
     lda #2
     sta VICII+OFFSET_STRUCT_MOS6569_VICII_BORDER_COLOR
     // error(status)
-    txa
+    stx.z error.err
     jsr error
   __b1:
     // VICII->SPRITES_ENABLE = %00000001
@@ -74,92 +73,97 @@ main: {
 // - 0xff: Success
 // - other: Kernal Error Code (https://commodore.ca/manuals/pdfs/commodore_error_messages.pdf)
 loadFileToMemory: {
-    .label device = 8
+    .const device = 8
     // setnam(filename)
+    lda #<main.filename
+    sta.z setnam.filename
+    lda #>main.filename
+    sta.z setnam.filename+1
     jsr setnam
     // setlfs(device)
+    lda #device
+    sta.z setlfs.device
     jsr setlfs
-    // load(address, false)
+    // load(address, 0)
+    lda #<LOAD_SPRITE
+    sta.z load.address
+    lda #>LOAD_SPRITE
+    sta.z load.address+1
+    lda #0
+    sta.z load.verify
     jsr load
     // }
     rts
 }
 // Basic ERROR function
 // ERROR. Show error.
-// error(byte register(A) err)
+// error(byte zp(6) err)
 error: {
-    .label errCode = $ff
-    // *errCode = err
-    sta errCode
+    .label err = 6
     // asm
-    tax
+    ldx err
     jsr $a437
     // }
     rts
 }
 // Kernal SETNAM function
 // SETNAM. Set file name parameters.
+// setnam(byte* zp(7) filename)
 setnam: {
-    .label filename_len = $fd
-    .label filename_ptr = $fe
+    .label filename = 7
+    .label filename_len = $d
     .label __0 = 4
     // strlen(filename)
+    lda.z filename
+    sta.z strlen.str
+    lda.z filename+1
+    sta.z strlen.str+1
     jsr strlen
     // strlen(filename)
-    // *filename_len = (char)strlen(filename)
+    // filename_len = (char)strlen(filename)
     lda.z __0
-    sta filename_len
-    // *filename_ptr = filename
-    lda #<main.filename
-    sta filename_ptr
-    lda #>main.filename
-    sta filename_ptr+1
+    sta.z filename_len
     // asm
-    lda filename_len
-    ldx filename_ptr
-    ldy filename_ptr+1
+    ldx filename
+    ldy filename+1
     jsr $ffbd
     // }
     rts
 }
 // SETLFS. Set file parameters.
+// setlfs(byte zp(9) device)
 setlfs: {
-    .label deviceNum = $ff
-    // *deviceNum = device
-    lda #loadFileToMemory.device
-    sta deviceNum
+    .label device = 9
     // asm
-    tax
+    ldx device
     lda #1
     ldy #0
     jsr $ffba
     // }
     rts
 }
-//LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)
+// - verify: 0 = Load, 1-255 = Verify
+//
 // Returns a status, 0xff: Success other: Kernal Error Code
+// load(byte* zp($a) address, byte zp($c) verify)
 load: {
-    .label loadOrVerify = $fd
-    .label loadAddress = $fe
-    .label status = $fd
-    // *loadOrVerify = (char)verify
+    .label address = $a
+    .label verify = $c
+    .label status = $e
+    // status
     lda #0
-    sta loadOrVerify
-    // *loadAddress = address
-    lda #<LOAD_SPRITE
-    sta loadAddress
-    lda #>LOAD_SPRITE
-    sta loadAddress+1
+    sta.z status
     // asm
-    ldx loadAddress
-    tay
-    lda loadOrVerify
+    ldx address
+    ldy address+1
+    lda verify
     jsr $ffd5
     bcs error
     lda #$ff
   error:
     sta status
-    // return *status;
+    // return status;
     // }
     rts
 }
@@ -172,10 +176,6 @@ strlen: {
     lda #<0
     sta.z len
     sta.z len+1
-    lda #<main.filename
-    sta.z str
-    lda #>main.filename
-    sta.z str+1
   __b1:
     // while(*str)
     ldy #0

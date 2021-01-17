@@ -12,33 +12,50 @@
 .segmentdef Code [start=$80d]
 .segmentdef Data [startAfter="Code"]
 .segment Basic
-:BasicUpstart(main)
-  // The rotated point - updated by calling rotate()
-  .label xr = $f0
-  .label yr = $f1
-  .label zr = $f2
-  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
-  .label psp1 = $f3
-  .label psp2 = $f5
+:BasicUpstart(__start)
   .label print_screen = $400
+  // The rotated point - updated by calling rotate()
+  .label xr = 8
+  .label yr = 9
+  .label zr = $a
+  // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
+  .label psp1 = $b
+  .label psp2 = $d
   .label print_char_cursor = 6
   .label print_line_cursor = 4
 .segment Code
+__start: {
+    // xr
+    lda #0
+    sta.z xr
+    // yr
+    sta.z yr
+    // zr
+    sta.z zr
+    // psp1
+    sta.z psp1
+    sta.z psp1+1
+    // psp2
+    sta.z psp2
+    sta.z psp2+1
+    jsr main
+    rts
+}
 main: {
     // asm
     sei
     // mulf_init()
     jsr mulf_init
-    // *psp1 = (unsigned int)mulf_sqr1
+    // psp1 = (unsigned int)mulf_sqr1
     lda #<mulf_sqr1
-    sta psp1
+    sta.z psp1
     lda #>mulf_sqr1
-    sta psp1+1
-    // *psp2 = (unsigned int)mulf_sqr2
+    sta.z psp1+1
+    // psp2 = (unsigned int)mulf_sqr2
     lda #<mulf_sqr2
-    sta psp2
+    sta.z psp2
     lda #>mulf_sqr2
-    sta psp2+1
+    sta.z psp2+1
     // print_cls()
     jsr print_cls
     // do_perspective($39, -$47, $36)
@@ -48,7 +65,7 @@ main: {
 }
 // Initialize the mulf_sqr multiplication tables with f(x)=int(x*x) and g(x) = f(1-x) 
 mulf_init: {
-    .label val = 8
+    .label val = $f
     .label sqr = 4
     .label add = 2
     lda #<1
@@ -163,18 +180,18 @@ do_perspective: {
     jsr print_str
     // perspective(x, y, z)
     jsr perspective
-    ldx xr
-    // print_uchar((byte)*xr)
-    jsr print_uchar
+    // print_schar(xr)
+    ldx.z xr
+    jsr print_schar
     // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    ldx yr
-    // print_uchar((byte)*yr)
-    jsr print_uchar
+    // print_schar(yr)
+    ldx.z yr
+    jsr print_schar
     // print_str(")")
     lda #<str5
     sta.z print_str.str
@@ -282,15 +299,15 @@ print_schar: {
 // Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 // Implemented in assembler to utilize seriously fast multiplication 
 perspective: {
-    // *xr = x
+    // xr = x
     lda #do_perspective.x
-    sta xr
-    // *yr = y
+    sta.z xr
+    // yr = y
     lda #do_perspective.y
-    sta yr
-    // *zr = z
+    sta.z yr
+    // zr = z
     lda #do_perspective.z
-    sta zr
+    sta.z zr
     // asm
     sta PP+1
   PP:
@@ -310,29 +327,6 @@ perspective: {
     sbc (psp2),y
     adc #$80
     sta xr
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
     // }
     rts
 }
@@ -374,6 +368,29 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
+    // }
+    rts
+}
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
     // }
     rts
 }

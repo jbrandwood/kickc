@@ -6,19 +6,19 @@
 #include <print.h>
 
 // The rotated point - updated by calling rotate()
-signed char* xr = $f0;
-signed char* yr = $f1;
-signed char* zr = $f2;
+signed char xr;
+signed char yr;
+signed char zr;
 
 // Pointers used to multiply perspective (d/z0-z) onto x- & y-coordinates. Points into mulf_sqr1 / mulf_sqr2.  
-unsigned int* psp1 = $f3;
-unsigned int* psp2 = $f5;
+unsigned int psp1;
+unsigned int psp2;
 
 void main() {
 	asm { sei }
 	mulf_init();
-	*psp1 = (unsigned int)mulf_sqr1;
-	*psp2 = (unsigned int)mulf_sqr2;
+	psp1 = (unsigned int)mulf_sqr1;
+	psp2 = (unsigned int)mulf_sqr2;
 	print_cls();
 	do_perspective($39, -$47, $36);
 	/*
@@ -45,9 +45,9 @@ void do_perspective(signed char x, signed char y, signed char z) {
 	print_schar(z);
 	print_str(") -> (");
 	perspective(x, y, z);
-	print_uchar((byte)*xr);
+	print_uchar((char)xr);
 	print_str(",");
-	print_uchar((byte)*yr);
+	print_uchar((char)yr);
 	print_str(")");
 	print_ln();	
 }
@@ -56,9 +56,9 @@ void do_perspective(signed char x, signed char y, signed char z) {
 // Apply perspective to a 3d-point. Result is returned in (*xr,*yr) 
 // Implemented in assembler to utilize seriously fast multiplication 
 void perspective(signed char x, signed char y, signed char z) {
-	*xr = x;
-	*yr = y;
-	*zr = z;
+	xr = x;
+	yr = y;
+	zr = z;
 	asm {
 
 			// Update index in perspective lookup

@@ -47,26 +47,20 @@ void init_screen() {
 
 }
 
-// Pointers to a, b and c=a*b
-signed char* ap = $fd;
-signed char* bp = $fe;
-signed char* cp = $ff;
-
-signed char fmul8(signed char a, signed char b) {
-	*ap = a;
-	*bp = b;
+signed char fmul8(signed char aa, signed char bb) {
+    signed char cc;
 	asm {
-		lda ap
+		lda aa
 		sta A1+1
 		eor #$ff
 		sta A2+1
-		ldx bp
+		ldx bb
 		sec
 		A1:	lda mulf_sqr1,x
 		A2: sbc mulf_sqr2,x
-		sta cp
+		sta cc
 	}
-	return *cp;
+	return cc;
 }
 
 // mulf_sqr tables will contain f(x)=int(x*x) and g(x) = f(1-x).

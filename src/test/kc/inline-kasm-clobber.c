@@ -1,5 +1,5 @@
 // Tests that inline kickasm supports the clobbering directive
-byte* SCREEN = $0400;
+byte* const SCREEN = $0400;
 void main() {
     for(byte k : 0..10) {
         for(byte l: 0..10) {

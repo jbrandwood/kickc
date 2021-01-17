@@ -123,19 +123,23 @@ main: {
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 memoryRemap: {
-    .label aVal = $fc
-    .label xVal = $fd
-    .label yVal = $fe
-    .label zVal = $ff
-    // *aVal = <lowerPageOffset
+    .label aVal = $c
+    .label xVal = $d
+    .label yVal = $e
+    .label zVal = $f
+    // aVal = <lowerPageOffset
+    // lower blocks offset page low
     lda #0
-    sta aVal
-    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
-    sta xVal
-    // *yVal = <upperPageOffset
-    sta yVal
-    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
-    sta zVal
+    sta.z aVal
+    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // lower blocks to map + lower blocks offset high nibble
+    sta.z xVal
+    // yVal = <upperPageOffset
+    // upper blocks offset page
+    sta.z yVal
+    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // upper blocks to map + upper blocks offset page high nibble
+    sta.z zVal
     // asm
     lda aVal
     ldx xVal
@@ -150,12 +154,12 @@ memoryRemap: {
 // gotoxy(byte register(X) y)
 gotoxy: {
     .const x = 0
-    .label __5 = $10
-    .label __6 = $c
-    .label __7 = $c
-    .label line_offset = $c
-    .label __8 = $e
-    .label __9 = $c
+    .label __5 = $14
+    .label __6 = $10
+    .label __7 = $10
+    .label line_offset = $10
+    .label __8 = $12
+    .label __9 = $10
     // if(y>CONIO_HEIGHT)
     cpx #$19+1
     bcc __b2
@@ -363,13 +367,13 @@ cscroll: {
 }
 // Copy block of memory (forwards)
 // Copies the values of num bytes from the location pointed to by source directly to the memory block pointed to by destination.
-// memcpy(void* zp($14) destination, void* zp(4) source)
+// memcpy(void* zp($18) destination, void* zp(4) source)
 memcpy: {
-    .label src_end = $12
-    .label dst = $14
+    .label src_end = $16
+    .label dst = $18
     .label src = 4
     .label source = 4
-    .label destination = $14
+    .label destination = $18
     // src_end = (char*)source+num
     clc
     lda.z source
@@ -401,7 +405,7 @@ memcpy: {
 // Copies the character c (an unsigned char) to the first num characters of the object pointed to by the argument str.
 // memset(void* zp(4) str, byte register(Z) c)
 memset: {
-    .label end = $14
+    .label end = $18
     .label dst = 4
     .label str = 4
     // end = (char*)str + num

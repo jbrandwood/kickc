@@ -1452,11 +1452,6 @@ public class TestPrograms {
    }
 
    @Test
-   public void testLongPointer1() throws IOException, URISyntaxException {
-      compileAndCompare("long-pointer-1.c");
-   }
-
-   @Test
    public void testLongPointer0() throws IOException, URISyntaxException {
       compileAndCompare("long-pointer-0.c");
    }
@@ -1564,6 +1559,11 @@ public class TestPrograms {
    @Test
    public void testCastError() throws IOException, URISyntaxException {
       assertError("cast-error.c", "Type mismatch");
+   }
+
+   @Test
+   public void testInlineAsmUses1() throws IOException, URISyntaxException {
+      compileAndCompare("inline-asm-uses-1.c");
    }
 
    @Test

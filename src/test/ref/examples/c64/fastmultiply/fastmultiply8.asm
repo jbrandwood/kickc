@@ -13,10 +13,6 @@
 .segmentdef Data [startAfter="Code"]
 .segment Basic
 :BasicUpstart(main)
-  // Pointers to a, b and c=a*b
-  .label ap = $fd
-  .label bp = $fe
-  .label cp = $ff
   .label print_screen = $400
 .segment Code
 main: {
@@ -99,9 +95,11 @@ main: {
   !:
     // fmul8(vals[i], vals[j])
     ldy.z i
-    ldx vals,y
+    lda vals,y
+    sta.z fmul8.aa
     ldy.z j
     lda vals,y
+    sta.z fmul8.bb
     jsr fmul8
     // r = fmul8(vals[i], vals[j])
     // print_schar_at(r, at)
@@ -203,25 +201,27 @@ print_schar_at: {
     sta.z b
     jmp __b2
 }
-// fmul8(signed byte register(X) a, signed byte register(A) b)
+// fmul8(signed byte zp($10) aa, signed byte zp($11) bb)
 fmul8: {
-    // *ap = a
-    stx ap
-    // *bp = b
-    sta bp
+    .label aa = $10
+    .label bb = $11
+    .label cc = $12
+    // cc
+    lda #0
+    sta.z cc
     // asm
-    txa
+    lda aa
     sta A1+1
     eor #$ff
     sta A2+1
-    ldx bp
+    ldx bb
     sec
   A1:
     lda mulf_sqr1,x
   A2:
     sbc mulf_sqr2,x
-    sta cp
-    // return *cp;
+    sta cc
+    // return cc;
     // }
     rts
 }

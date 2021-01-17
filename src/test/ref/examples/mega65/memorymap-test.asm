@@ -127,7 +127,7 @@ main: {
 // Ie. the memory that will be pointed to is $100 * the passed page address. Only the lower 12bits of the passed value is used.
 // memoryRemapBlock(byte register(X) blockPage)
 memoryRemapBlock: {
-    .label pageOffset = $b
+    .label pageOffset = $11
     // pageOffset = memoryPage-blockPage
     stx.z $ff
     lda #<$100
@@ -188,20 +188,21 @@ memoryRemapBlock: {
 // - If block 5 ($a000-$bfff) is remapped it will point to upperPageOffset*$100 + $a000.
 // - If block 6 ($c000-$dfff) is remapped it will point to upperPageOffset*$100 + $c000.
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
-// memoryRemap(byte register(Z) remapBlocks, word zp($b) lowerPageOffset, word zp($e) upperPageOffset)
+// memoryRemap(byte register(Z) remapBlocks, word zp($11) lowerPageOffset, word zp($15) upperPageOffset)
 memoryRemap: {
-    .label aVal = $fc
-    .label xVal = $fd
-    .label yVal = $fe
-    .label zVal = $ff
-    .label __1 = $d
-    .label __6 = 6
-    .label lowerPageOffset = $b
-    .label upperPageOffset = $e
+    .label aVal = 6
+    .label xVal = 7
+    .label __1 = $14
+    .label yVal = 8
+    .label zVal = $a
+    .label __6 = 9
+    .label lowerPageOffset = $11
+    .label upperPageOffset = $15
     // <lowerPageOffset
     lda.z lowerPageOffset
-    // *aVal = <lowerPageOffset
-    sta aVal
+    // aVal = <lowerPageOffset
+    // lower blocks offset page low
+    sta.z aVal
     // remapBlocks << 4
     tza
     asl
@@ -215,12 +216,14 @@ memoryRemap: {
     and #$f
     // (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
     ora.z __1
-    // *xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
-    sta xVal
+    // xVal = (remapBlocks << 4)   | (>lowerPageOffset & 0xf)
+    // lower blocks to map + lower blocks offset high nibble
+    sta.z xVal
     // <upperPageOffset
     lda.z upperPageOffset
-    // *yVal = <upperPageOffset
-    sta yVal
+    // yVal = <upperPageOffset
+    // upper blocks offset page
+    sta.z yVal
     // remapBlocks & 0xf0
     tza
     and #$f0
@@ -231,8 +234,9 @@ memoryRemap: {
     and #$f
     // (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
     ora.z __6
-    // *zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
-    sta zVal
+    // zVal = (remapBlocks & 0xf0) | (>upperPageOffset & 0xf)
+    // upper blocks to map + upper blocks offset page high nibble
+    sta.z zVal
     // asm
     lda aVal
     ldx xVal
@@ -270,16 +274,16 @@ memoryRemap: {
 // - If block 7 ($e000-$ffff) is remapped it will point to upperPageOffset*$100 + $e000.
 // memoryRemap256M(byte register(Z) remapBlocks, dword zp(2) lowerPageOffset)
 memoryRemap256M: {
-    .label lMb = $fa
-    .label uMb = $fb
-    .label aVal = $fc
-    .label xVal = $fd
-    .label yVal = $fe
-    .label zVal = $ff
-    .label __0 = 7
-    .label __4 = $b
-    .label __6 = $d
-    .label __7 = $e
+    .label lMb = $f
+    .label __0 = $b
+    .label uMb = $10
+    .label aVal = $13
+    .label __4 = $11
+    .label xVal = $17
+    .label __6 = $14
+    .label __7 = $15
+    .label yVal = $18
+    .label zVal = $19
     .label lowerPageOffset = 2
     // lowerPageOffset>>4
     lda.z lowerPageOffset+3
@@ -308,11 +312,13 @@ memoryRemap256M: {
     ror.z __0
     // >((unsigned int)(lowerPageOffset>>4))
     lda.z __0+1
-    // *lMb = >((unsigned int)(lowerPageOffset>>4))
-    sta lMb
-    // *uMb = >((unsigned int)(upperPageOffset>>4))
+    // lMb = >((unsigned int)(lowerPageOffset>>4))
+    // lower blocks offset megabytes
+    sta.z lMb
+    // uMb = >((unsigned int)(upperPageOffset>>4))
+    // upper blocks offset megabytes
     lda #0
-    sta uMb
+    sta.z uMb
     // <lowerPageOffset
     lda.z lowerPageOffset
     sta.z __4
@@ -320,8 +326,9 @@ memoryRemap256M: {
     sta.z __4+1
     // < <lowerPageOffset
     lda.z __4
-    // *aVal = < <lowerPageOffset
-    sta aVal
+    // aVal = < <lowerPageOffset
+    // lower blocks offset page low
+    sta.z aVal
     // remapBlocks << 4
     tza
     asl
@@ -339,16 +346,20 @@ memoryRemap256M: {
     and #$f
     // (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
     ora.z __6
-    // *xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
-    sta xVal
-    // *yVal = < <upperPageOffset
+    // xVal = (remapBlocks << 4)   | (> <lowerPageOffset & 0xf)
+    // lower blocks to map + lower blocks offset high nibble
+    sta.z xVal
+    // yVal = < <upperPageOffset
+    // upper blocks offset page
     lda #0
-    sta yVal
-    // (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
+    sta.z yVal
+    // remapBlocks & 0xf0
     tza
     and #$f0
-    // *zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
-    sta zVal
+    // (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
+    // zVal = (remapBlocks & 0xf0) | (> <upperPageOffset & 0xf)
+    // upper blocks to map + upper blocks offset page high nibble
+    sta.z zVal
     // asm
     lda lMb
     ldx #$f

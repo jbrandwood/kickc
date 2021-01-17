@@ -9,7 +9,7 @@
 // An explanation is given how this mode is organized, and how the tiles display and coloring works.
 // Pälette offsets are explained also.
 
-#include <conio.h>
+#include <veralib.h>
 #include <printf.h>
 
 void main() {

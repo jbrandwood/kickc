@@ -180,18 +180,18 @@ do_perspective: {
     jsr print_str
     // perspective(x, y, z)
     jsr perspective
-    // print_schar(xr)
+    // print_uchar((char)xr)
     ldx.z xr
-    jsr print_schar
+    jsr print_uchar
     // print_str(",")
     lda #<str1
     sta.z print_str.str
     lda #>str1
     sta.z print_str.str+1
     jsr print_str
-    // print_schar(yr)
+    // print_uchar((char)yr)
     ldx.z yr
-    jsr print_schar
+    jsr print_uchar
     // print_str(")")
     lda #<str5
     sta.z print_str.str
@@ -330,6 +330,29 @@ perspective: {
     // }
     rts
 }
+// Print a char as HEX
+// print_uchar(byte register(X) b)
+print_uchar: {
+    // b>>4
+    txa
+    lsr
+    lsr
+    lsr
+    lsr
+    // print_char(print_hextab[b>>4])
+    tay
+    lda print_hextab,y
+  // Table of hexadecimal digits
+    jsr print_char
+    // b&$f
+    lda #$f
+    axs #0
+    // print_char(print_hextab[b&$f])
+    lda print_hextab,x
+    jsr print_char
+    // }
+    rts
+}
 // Print a newline
 print_ln: {
     lda #<print_screen
@@ -368,29 +391,6 @@ print_char: {
     bne !+
     inc.z print_char_cursor+1
   !:
-    // }
-    rts
-}
-// Print a char as HEX
-// print_uchar(byte register(X) b)
-print_uchar: {
-    // b>>4
-    txa
-    lsr
-    lsr
-    lsr
-    lsr
-    // print_char(print_hextab[b>>4])
-    tay
-    lda print_hextab,y
-  // Table of hexadecimal digits
-    jsr print_char
-    // b&$f
-    lda #$f
-    axs #0
-    // print_char(print_hextab[b&$f])
-    lda print_hextab,x
-    jsr print_char
     // }
     rts
 }

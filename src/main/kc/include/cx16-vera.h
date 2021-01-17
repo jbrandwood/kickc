@@ -184,7 +184,7 @@ byte const VERA_TILEBASE_WIDTH_MASK = 0x01;
 byte const VERA_TILEBASE_HEIGHT_8 = 0x00;
 byte const VERA_TILEBASE_HEIGHT_16 = 0x02;
 byte const VERA_TILEBASE_HEIGHT_MASK = 0x02;
-byte const VERA_TILEBASE_MASK = 0xfC;
+byte const VERA_LAYER_TILEBASE_MASK = 0xfC;
 // Bit 0:	Tile Width (0:8 pixels, 1:16 pixels)
 char * const VERA_L0_TILEBASE = 0x9f2f;
 // $9F30	L0_HSCROLL_L	Layer 0 H-Scroll (7:0)

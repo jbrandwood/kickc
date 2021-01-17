@@ -20,12 +20,12 @@ void main() {
     clrscr();
 
     // Now we set the tile map width and height.
-    // vera_set_layer_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
-    // vera_set_layer_config(0, vera_get_layer_config(1));
-    // vera_set_layer_tilebase(0, vera_get_layer_tilebase(1));
-    // vera_set_layer_map_width_128(0);
-    // vera_set_layer_map_height_128(0);
-    dword tilebase = vera_get_layer_tilebase_address(1);
+    // vera_layer_set_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
+    // vera_layer_set_config(0, vera_layer_get_config(1));
+    // vera_layer_set_tilebase(0, vera_layer_get_tilebase(1));
+    // vera_layer_set_width_128(0);
+    // vera_layer_set_height_128(0);
+    dword tilebase = vera_layer_get_tilebase_address(1);
 
     vera_mode_tile(0, 0x10000, 0xF800, 128, 128, 8, 8, 1);
 
@@ -42,14 +42,14 @@ void main() {
     *VERA_IEN = VERA_VSYNC;
     CLI();
 
-    vera_show_layer(0);
+    vera_layer_show(0);
     while(!kbhit());
 
-    vera_hide_layer(0);
+    vera_layer_hide(0);
     textcolor(GREY);
     bgcolor(GREEN);
     draw_characters(tilebase);
-    vera_show_layer(0);
+    vera_layer_show(0);
 
     screenlayer(1);
 
@@ -70,11 +70,11 @@ void main() {
     while(!kbhit());
 
     screenlayer(0);
-    vera_hide_layer(0);
+    vera_layer_hide(0);
     textcolor(DARK_GREY);
     bgcolor(BLACK);
     draw_characters(tilebase);
-    vera_show_layer(0);
+    vera_layer_show(0);
 
     screenlayer(1);
     gotoxy(0,20);
@@ -142,8 +142,8 @@ __interrupt(rom_sys_cx16) void irq_vsync() {
         scroll_y = 0;
    }
 
-    vera_set_layer_horizontal_scroll(0,(word)scroll_x);
-    vera_set_layer_vertical_scroll(0,(word)scroll_y);
+    vera_layer_set_horizontal_scroll(0,(word)scroll_x);
+    vera_layer_set_vertical_scroll(0,(word)scroll_y);
 
     // Reset the VSYNC interrupt
     *VERA_ISR = VERA_VSYNC;

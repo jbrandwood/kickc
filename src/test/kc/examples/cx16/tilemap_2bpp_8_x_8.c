@@ -56,7 +56,7 @@ void main() {
         row += 4;
     }
 
-    vera_show_layer(0);
+    vera_layer_show(0);
 
     gotoxy(0,40);
     printf("vera in tile mode 8 x 8, color depth 2 bits per pixel.\n");

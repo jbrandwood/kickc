@@ -18,7 +18,6 @@ void main() {
     bgcolor(BLACK);
     clrscr();
 
-    //vera_layer_mode_tile(1, 0x10000, 0x00000, 128, 64, 8, 8, 1);
     vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 16, 16, 2);
     //vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 16, 16, 2);
 

@@ -2511,3 +2511,51 @@ tax
 sty $ff
 ora $ff
 tay
+//FRAGMENT vbuz1=vbuz1_plus_1
+inc {z1}
+//FRAGMENT vwuz1_lt_vwuc1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bcc {la1}
+bne !+
+lda {z1}
+cmp #<{c1}
+bcc {la1}
+!:
+//FRAGMENT vbuz1=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+sta {z1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuz1
+lda {c1}
+and {z1}
+sta {c1}
+//FRAGMENT vbuaa=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+//FRAGMENT vbuxx=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+tax
+//FRAGMENT vbuyy=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+tay
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuaa
+and {c1}
+sta {c1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuxx
+txa
+and {c1}
+sta {c1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuyy
+tya
+and {c1}
+sta {c1}
+//FRAGMENT pbuc1_derefidx_vbuz1=vbuaa
+ldy {z1}
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuxx=vbuaa
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=vbuaa
+sta {c1},y

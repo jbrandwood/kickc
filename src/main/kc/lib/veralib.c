@@ -176,22 +176,22 @@ void vera_layer_set_mapbase(unsigned byte layer, unsigned byte mapbase) {
 
 // Set the base of the map layer with which the conio will interact.
 // - layer: Value of 0 or 1.
-// - dw_mapbase: a dword typed address (4 bytes), that specifies the full address of the map base.
+// - mapbase_address: a dword typed address (4 bytes), that specifies the full address of the map base.
 //   The function does the translation from the dword that contains the 17 bit address,
 //   to the respective mapbase vera register.
 //   Note that the register only specifies bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
-void vera_layer_set_mapbase_address(byte layer, dword dw_mapbase) {
+void vera_layer_set_mapbase_address(byte layer, dword mapbase_address) {
 
-    dw_mapbase = dw_mapbase & 0x1FF00; // Aligned to 2048 bit zones.
-    byte bank_mapbase = (byte)>dw_mapbase;
-    word offset_mapbase = <dw_mapbase;
+    mapbase_address = mapbase_address & 0x1FF00; // Aligned to 2048 bit zones.
+    byte bank_mapbase = (byte)>mapbase_address;
+    word offset_mapbase = <mapbase_address;
 
-    vera_mapbase_address[layer] = dw_mapbase;
+    vera_mapbase_address[layer] = mapbase_address;
     vera_mapbase_offset[layer] = offset_mapbase;
     vera_mapbase_bank[layer] = bank_mapbase;
 
-    byte mapbase = >(<(dw_mapbase>>1));
+    byte mapbase = >(<(mapbase_address>>1));
     vera_layer_set_mapbase(layer,mapbase);
 }
 
@@ -250,23 +250,23 @@ byte vera_layer_get_tilebase(byte layer) {
 
 // Set the base address of the tiles for the layer with which the conio will interact.
 // - layer: Value of 0 or 1.
-// - dw_tilebase: a dword typed address (4 bytes), that specifies the base address of the tile map.
+// - tilebase_address: a dword typed address (4 bytes), that specifies the base address of the tile map.
 //   The function does the translation from the dword that contains the 17 bit address,
 //   to the respective tilebase vera register.
 //   Note that the resulting vera register holds only specifies bits 16:11 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
-void vera_layer_set_tilebase_address(byte layer, dword dw_tilebase) {
+void vera_layer_set_tilebase_address(byte layer, dword tilebase_address) {
 
-    dw_tilebase = dw_tilebase & 0x1FC00; // Aligned to 2048 bit zones.
-    byte bank_tilebase = (byte)>dw_tilebase;
-    word word_tilebase = <dw_tilebase;
+    tilebase_address = tilebase_address & 0x1FC00; // Aligned to 2048 bit zones.
+    byte bank_tilebase = (byte)>tilebase_address;
+    word word_tilebase = <tilebase_address;
 
-    vera_tilebase_address[layer] = dw_tilebase;
+    vera_tilebase_address[layer] = tilebase_address;
     vera_tilebase_offset[layer] = word_tilebase;
     vera_tilebase_bank[layer] = bank_tilebase;
 
     byte* vera_tilebase = vera_layer_tilebase[layer];
-    byte tilebase = >(<(dw_tilebase>>1));
+    byte tilebase = >(<(tilebase_address>>1));
     tilebase &= VERA_LAYER_TILEBASE_MASK; // Ensure that only tilebase is blanked, but keep the rest!
     //printf("tilebase = %x\n",tilebase);
     //while(!kbhit());
@@ -376,7 +376,24 @@ word vera_layer_get_rowskip(byte layer) {
 }
 
 
-void vera_layer_mode_tile(byte layer, dword mapbase_address, dword dw_tilebase, word mapwidth, word mapheight, byte tilewidth, byte tileheight, byte color_depth ) {
+// Set a vera layer in tile mode and configure the:
+// - layer: Value of 0 or 1.
+// - mapbase_address: A dword typed address (4 bytes), that specifies the full address of the map base.
+//   The function does the translation from the dword that contains the 17 bit address,
+//   to the respective mapbase vera register.
+//   Note that the register only specifies bits 16:9 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
+// - tilebase_address: A dword typed address (4 bytes), that specifies the base address of the tile map.
+//   The function does the translation from the dword that contains the 17 bit address,
+//   to the respective tilebase vera register.
+//   Note that the resulting vera register holds only specifies bits 16:11 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+// - mapwidth: The width of the map in number of tiles.
+// - mapheight: The height of the map in number of tiles.
+// - tilewidth: The width of a tile, which can be 8 or 16 pixels.
+// - tileheight: The height of a tile, which can be 8 or 16 pixels.
+// - color_depth: The color depth in bits per pixel (BPP), which can be 1, 2, 4 or 8.
+void vera_layer_mode_tile(byte layer, dword mapbase_address, dword tilebase_address, word mapwidth, word mapheight, byte tilewidth, byte tileheight, byte color_depth ) {
     // config
     byte config = 0x00;
     switch(color_depth) {
@@ -441,20 +458,13 @@ void vera_layer_mode_tile(byte layer, dword mapbase_address, dword dw_tilebase, 
     byte mapbase = >(<mapbase_address);
     vera_layer_set_mapbase(layer,mapbase);
 
+    // tilebase
+    vera_tilebase_offset[layer] = <tilebase_address;
+    vera_tilebase_bank[layer] = (byte)>tilebase_address;
+    vera_tilebase_address[layer] = tilebase_address;
 
-    //printf("%lx\n",dw_mapbase);
-
-     // tilebase
-    vera_tilebase_offset[layer] = <dw_tilebase;
-    vera_tilebase_bank[layer] = (byte)>dw_tilebase;
-    vera_tilebase_address[layer] = dw_tilebase;
-
-    //printf("tilebase word = %x\n",vera_tilebase_offset[layer]);
-    //printf("tilebase bank = %x\n",vera_tilebase_bank[layer]);
-    //printf("tilebase dword = %lx\n",vera_tilebase_address[layer]);
-
-    dw_tilebase = dw_tilebase >> 1;
-    byte tilebase = >(<dw_tilebase);
+    tilebase_address = tilebase_address >> 1;
+    byte tilebase = >(<tilebase_address);
     tilebase &= VERA_LAYER_TILEBASE_MASK;
     switch(tilewidth) {
         case 8:
@@ -472,7 +482,6 @@ void vera_layer_mode_tile(byte layer, dword mapbase_address, dword dw_tilebase, 
             tilebase |= VERA_TILEBASE_HEIGHT_16;
             break;
     }
-    //printf("tilebase = %x\n",tilebase);
     vera_layer_set_tilebase(layer,tilebase);
 }
 

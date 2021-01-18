@@ -40,59 +40,59 @@ void vera_vram_address1(dword bankaddr, byte incr) {
 // Set the configuration of the layer.
 // - layer: Value of 0 or 1.
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
-void vera_layer_set_config(char layer, char config) {
+void vera_layer_set_config(byte layer, byte config) {
     layer &= $1;
-    char* addr = vera_layer_config[layer];
+    byte* addr = vera_layer_config[layer];
     *addr = config;
 }
 
 // Set the configuration of the layer.
 // - layer: Value of 0 or 1.
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
-char vera_layer_get_config(char layer) {
-    char* config = vera_layer_config[layer];
+byte vera_layer_get_config(byte layer) {
+    byte* config = vera_layer_config[layer];
     return *config;
 }
 
 // Set the map width or height of the layer.
 // - layer: Value of 0 or 1.
-inline void vera_layer_set_width_32(unsigned byte layer) {
+inline void vera_layer_set_width_32(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_WIDTH_MASK;
     *addr |= VERA_LAYER_WIDTH_32;
 }
-inline void vera_layer_set_width_64(unsigned byte layer) {
+inline void vera_layer_set_width_64(byte layer) {
     byte* addr = vera_layer_config[layer];
     //*addr &= (~VERA_CONFIG_WIDTH_MASK) | VERA_CONFIG_WIDTH_64;
     *addr &= ~VERA_LAYER_WIDTH_MASK;
     *addr |= VERA_LAYER_WIDTH_64;
 }
-inline void vera_layer_set_width_128(unsigned byte layer) {
+inline void vera_layer_set_width_128(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_WIDTH_MASK;
     *addr |= VERA_LAYER_WIDTH_128;
 }
-inline void vera_layer_set_width_256(unsigned byte layer) {
+inline void vera_layer_set_width_256(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_WIDTH_MASK;
     *addr |= VERA_LAYER_WIDTH_256;
 }
-inline void vera_layer_set_height_32(unsigned byte layer) {
+inline void vera_layer_set_height_32(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_HEIGHT_MASK;
     *addr |= VERA_LAYER_HEIGHT_32;
 }
-inline void vera_layer_set_height_64(unsigned byte layer) {
+inline void vera_layer_set_height_64(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_HEIGHT_MASK;
     *addr |= VERA_LAYER_HEIGHT_64;
 }
-inline void vera_layer_set_height_128(unsigned byte layer) {
+inline void vera_layer_set_height_128(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_HEIGHT_MASK;
     *addr |= VERA_LAYER_HEIGHT_128;
 }
-inline void vera_layer_set_height_256(unsigned byte layer) {
+inline void vera_layer_set_height_256(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_HEIGHT_MASK;
     *addr |= VERA_LAYER_HEIGHT_256;
@@ -100,13 +100,13 @@ inline void vera_layer_set_height_256(unsigned byte layer) {
 
 // Get the map width or height of the layer.
 // - layer: Value of 0 or 1.
-word vera_layer_get_width(unsigned byte layer) {
+word vera_layer_get_width(byte layer) {
     byte* config = vera_layer_config[layer];
     byte mask = (byte)VERA_LAYER_WIDTH_MASK;
     return VERA_LAYER_WIDTH[ (*config & mask) >> 4];
 }
 
-word vera_layer_get_height(unsigned byte layer) {
+word vera_layer_get_height(byte layer) {
     byte* config = vera_layer_config[layer];
     byte mask = VERA_LAYER_HEIGHT_MASK;
     return VERA_LAYER_HEIGHT[ (*config & mask) >> 6];
@@ -114,22 +114,22 @@ word vera_layer_get_height(unsigned byte layer) {
 
 // Set the color depth of the layer in terms of bit per pixel (BPP) of the tile base.
 // - layer: Value of 0 or 1.
-inline void vera_layer_set_color_depth_1BPP(unsigned byte layer) {
+inline void vera_layer_set_color_depth_1BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_1BPP;
 }
-inline void vera_layer_set_color_depth_2BPP(unsigned byte layer) {
+inline void vera_layer_set_color_depth_2BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_2BPP;
 }
-inline void vera_layer_set_color_depth_4BPP(unsigned byte layer) {
+inline void vera_layer_set_color_depth_4BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_4BPP;
 }
-inline void vera_layer_set_color_depth_8BPP(unsigned byte layer) {
+inline void vera_layer_set_color_depth_8BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_8BPP;
@@ -138,7 +138,7 @@ inline void vera_layer_set_color_depth_8BPP(unsigned byte layer) {
 // Get the map width or height of the layer.
 // - layer: Value of 0 or 1.
 // - return: 1, 2, 4 or 8.
-word vera_layer_get_color_depth(unsigned byte layer) {
+word vera_layer_get_color_depth(byte layer) {
     byte* config = vera_layer_config[layer];
     byte mask = (byte)VERA_LAYER_COLOR_DEPTH_MASK;
     return VERA_LAYER_COLOR_DEPTH[(*config & mask)];
@@ -146,21 +146,21 @@ word vera_layer_get_color_depth(unsigned byte layer) {
 
 // Enable the layer to be displayed on the screen.
 // - layer: 0 or 1.
-inline void vera_layer_show(char layer) {
+inline void vera_layer_show(byte layer) {
     *VERA_DC_VIDEO |= vera_layer_enable[layer];
 }
 
 
 // Disable the layer to be displayed on the screen.
 // - layer: 0 or 1.
-inline void vera_layer_hide(char layer) {
+inline void vera_layer_hide(byte layer) {
     *VERA_DC_VIDEO &= ~vera_layer_enable[layer];
 }
 
 
 // Is the layer shown on the screen?
 // - returns: 1 if layer is displayed on the screen, 0 if not.
-char vera_layer_is_visible(char layer) {
+inline byte vera_layer_is_visible(byte layer) {
     return *VERA_DC_VIDEO & vera_layer_enable[layer];
 }
 
@@ -169,8 +169,8 @@ char vera_layer_is_visible(char layer) {
 // - mapbase: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
-void vera_layer_set_mapbase(unsigned byte layer, unsigned byte mapbase) {
-    unsigned byte* addr = vera_layer_mapbase[layer];
+void vera_layer_set_mapbase(byte layer, byte mapbase) {
+    byte* addr = vera_layer_mapbase[layer];
     *addr = mapbase;
 }
 
@@ -223,8 +223,8 @@ word vera_layer_get_mapbase_offset(byte layer) {
 // - return: Returns the base address of the tile map.
 //   Note that the register is a byte, specifying only bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
-unsigned byte vera_layer_get_mapbase(unsigned byte layer) {
-    unsigned byte* mapbase = vera_layer_mapbase[layer];
+byte vera_layer_get_mapbase(byte layer) {
+    byte* mapbase = vera_layer_mapbase[layer];
     return *mapbase;
 }
 
@@ -233,8 +233,8 @@ unsigned byte vera_layer_get_mapbase(unsigned byte layer) {
 // - tilebase: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:11 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
-void vera_layer_set_tilebase(unsigned byte layer, unsigned byte tilebase) {
-    unsigned byte* addr = vera_layer_tilebase[layer];
+void vera_layer_set_tilebase(byte layer, byte tilebase) {
+    byte* addr = vera_layer_tilebase[layer];
     *addr = tilebase;
 }
 
@@ -296,8 +296,8 @@ dword vera_layer_get_tilebase_address(byte layer) {
 // - color: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_set_textcolor(unsigned byte layer, unsigned byte color) {
-    unsigned byte old = vera_layer_textcolor[layer];
+byte vera_layer_set_textcolor(byte layer, byte color) {
+    byte old = vera_layer_textcolor[layer];
     vera_layer_textcolor[layer] = color;
     return old;
 }
@@ -307,7 +307,7 @@ unsigned byte vera_layer_set_textcolor(unsigned byte layer, unsigned byte color)
 // - return: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_get_textcolor(unsigned byte layer) {
+byte vera_layer_get_textcolor(byte layer) {
     layer &= $1;
     return vera_layer_textcolor[layer];
 }
@@ -317,9 +317,9 @@ unsigned byte vera_layer_get_textcolor(unsigned byte layer) {
 // - color: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_set_backcolor(unsigned byte layer, unsigned byte color) {
+byte vera_layer_set_backcolor(byte layer, byte color) {
     layer &= $1;
-    unsigned byte old = vera_layer_backcolor[layer];
+    byte old = vera_layer_backcolor[layer];
     vera_layer_backcolor[layer] = color;
     return old;
 }
@@ -329,7 +329,7 @@ unsigned byte vera_layer_set_backcolor(unsigned byte layer, unsigned byte color)
 // - return: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_get_backcolor(unsigned byte layer) {
+byte vera_layer_get_backcolor(byte layer) {
     layer &= $1;
     return vera_layer_backcolor[layer];
 }
@@ -339,7 +339,7 @@ unsigned byte vera_layer_get_backcolor(unsigned byte layer) {
 // - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_get_color(unsigned byte layer) {
+byte vera_layer_get_color(byte layer) {
     layer &= $1;
     return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
 }

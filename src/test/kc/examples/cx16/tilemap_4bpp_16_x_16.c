@@ -18,7 +18,7 @@ void main() {
     bgcolor(BLACK);
     clrscr();
 
-    vera_mode_tile(0, 0x04000, 0x14000, 128, 128, 16, 16, 4);
+    vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 16, 16, 4);
 
     byte tiles[2048] = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -207,7 +207,7 @@ void main() {
 
     vera_layer_show(0);
 
-    gotoxy(0,46);
+    gotoxy(0,50);
     printf("vera in tile mode 16 x 16, color depth 4 bits per pixel.\n");
 
     printf("in this mode, tiles are 16 pixels wide and 16 pixels tall.\n");

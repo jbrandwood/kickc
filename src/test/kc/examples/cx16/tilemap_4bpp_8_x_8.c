@@ -17,7 +17,7 @@ void main() {
     bgcolor(BLACK);
     clrscr();
 
-    vera_mode_tile(0, 0x04000, 0x14000, 128, 128, 8, 8, 4);
+    vera_layer_mode_tile(0, 0x04000, 0x14000, 128, 128, 8, 8, 4);
 
     byte tiles[512] = {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -55,8 +55,6 @@ void main() {
     };
 
     memcpy_to_vram(1, 0x4000, tiles, 512);
-
-    //vera_tile_area(byte layer, word tileindex, byte x, byte y, byte w, byte h, byte hflip, byte vflip, byte offset)
 
     vera_tile_area(0, 0, 0, 0, 80, 60, 0, 0, 0);
 
@@ -110,7 +108,7 @@ void main() {
 
     vera_layer_show(0);
 
-    gotoxy(0,46);
+    gotoxy(0,50);
     printf("vera in tile mode 8 x 8, color depth 4 bits per pixel.\n");
 
     printf("in this mode, tiles are 8 pixels wide and 8 pixels tall.\n");

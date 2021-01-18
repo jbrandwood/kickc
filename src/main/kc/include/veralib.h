@@ -40,49 +40,49 @@ byte vera_layer_backcolor[2] = {BLUE, BLUE};
 // Set the configuration of the layer.
 // - layer: Value of 0 or 1.
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
-void vera_layer_set_config(unsigned byte layer, unsigned byte config);
+void vera_layer_set_config(byte layer, byte config);
 
 // Set the configuration of the layer.
 // - layer: Value of 0 or 1.
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
-unsigned byte vera_layer_get_config(unsigned byte layer);
+byte vera_layer_get_config(byte layer);
 
 // Set the map width or height of the layer.
 // - layer: Value of 0 or 1.
-inline void vera_layer_set_width_32(unsigned byte layer);
-inline void vera_layer_set_width_64(unsigned byte layer);
-inline void vera_layer_set_width_128(unsigned byte layer);
-inline void vera_layer_set_width_256(unsigned byte layer);
-inline void vera_layer_set_height_32(unsigned byte layer);
-inline void vera_layer_set_height_64(unsigned byte layer);
-inline void vera_layer_set_height_128(unsigned byte layer);
-inline void vera_layer_set_height_256(unsigned byte layer);
+inline void vera_layer_set_width_32(byte layer);
+inline void vera_layer_set_width_64(byte layer);
+inline void vera_layer_set_width_128(byte layer);
+inline void vera_layer_set_width_256(byte layer);
+inline void vera_layer_set_height_32(byte layer);
+inline void vera_layer_set_height_64(byte layer);
+inline void vera_layer_set_height_128(byte layer);
+inline void vera_layer_set_height_256(byte layer);
 
 // Enable the layer to be displayed on the screen.
 // - layer: 0 or 1.
-void vera_layer_show(unsigned byte layer);
+void vera_layer_show(byte layer);
 
 // Disable the layer to be displayed on the screen.
 // - layer: 0 or 1.
-void vera_layer_hide(unsigned byte layer);
+void vera_layer_hide(byte layer);
 
 // Is the layer shown on the screen?
 // - returns: 1 if layer is displayed on the screen, 0 if not.
-unsigned byte vera_layer_is_visible(unsigned byte layer);
+byte vera_layer_is_visible(byte layer);
 
 // Set the base of the map for the layer with which the conio will interact.
 // - layer: Value of 0 or 1.
 // - mapbase: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
-void vera_layer_set_mapbase(unsigned byte layer, unsigned byte mapbase);
+void vera_layer_set_mapbase(byte layer, byte mapbase);
 
 // Get the base of the map for the layer with which the conio will interact.
 // - layer: Value of 0 or 1.
 // - return: Returns the base address of the tile map.
 //   Note that the register is a byte, specifying only bits 16:9 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes!
-unsigned byte vera_layer_get_mapbase(unsigned byte layer);
+byte vera_layer_get_mapbase(byte layer);
 
 // Set the base of the map layer with which the conio will interact.
 // - layer: Value of 0 or 1.
@@ -121,7 +121,7 @@ void vera_layer_set_tilebase_address(byte layer, dword tilebase_address);
 // - return: Specifies the base address of the tile map.
 //   Note that the register only specifies bits 16:11 of the address,
 //   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
-unsigned byte vera_layer_get_tilebase(unsigned byte layer);
+byte vera_layer_get_tilebase(byte layer);
 
 
 // Set the front color for text output. The old front text color setting is returned.
@@ -129,35 +129,35 @@ unsigned byte vera_layer_get_tilebase(unsigned byte layer);
 // - color: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_set_textcolor(unsigned byte layer, unsigned byte color);
+byte vera_layer_set_textcolor(byte layer, byte color);
 
 // Get the front color for text output. The old front text color setting is returned.
 // - layer: Value of 0 or 1.
 // - return: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_get_textcolor(unsigned byte layer);
+byte vera_layer_get_textcolor(byte layer);
 
 // Set the back color for text output. The old back text color setting is returned.
 // - layer: Value of 0 or 1.
 // - color: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_set_backcolor(unsigned byte layer, unsigned byte color);
+byte vera_layer_set_backcolor(byte layer, byte color);
 
 // Get the back color for text output. The old back text color setting is returned.
 // - layer: Value of 0 or 1.
 // - return: a 4 bit value ( decimal between 0 and 15).
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_get_backcolor(unsigned byte layer);
+byte vera_layer_get_backcolor(byte layer);
 
 // Get the text and back color for text output in 16 color mode.
 // - layer: Value of 0 or 1.
 // - return: an 8 bit value with bit 7:4 containing the back color and bit 3:0 containing the front color.
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
-unsigned byte vera_layer_get_color(unsigned byte layer);
+byte vera_layer_get_color(byte layer);
 
 // Scroll the horizontal (X) axis of the layer visible area over the layer tile map area.
 // - layer: Value of 0 or 1.

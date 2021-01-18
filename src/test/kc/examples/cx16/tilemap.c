@@ -19,15 +19,9 @@ void main() {
     bgcolor(BLACK);
     clrscr();
 
-    // Now we set the tile map width and height.
-    // vera_layer_set_mapbase(0,0x80); // Set the map base to address 0x10000 in VERA VRAM!
-    // vera_layer_set_config(0, vera_layer_get_config(1));
-    // vera_layer_set_tilebase(0, vera_layer_get_tilebase(1));
-    // vera_layer_set_width_128(0);
-    // vera_layer_set_height_128(0);
     dword tilebase = vera_layer_get_tilebase_address(1);
 
-    vera_mode_tile(0, 0x10000, 0xF800, 128, 128, 8, 8, 1);
+    vera_layer_mode_tile(0, 0x10000, tilebase, 128, 128, 8, 8, 1);
 
     screenlayer(0);
     scroll(0); // Scrolling on conio is deactivated, so conio will output beyond the borders of the visible screen.

@@ -26,14 +26,7 @@ void bitmap_init(word bitmap_address) {
 
 // Clear all graphics on the bitmap
 void bitmap_clear() {
-    word bitmap_address = bitmap;
-    for( word y: 0..600 ) {
-        for( word x: 0..40 ) {
-            vera_vram_bank_offset(0,(word)bitmap_address,VERA_INC_0);
-            *VERA_DATA0 = 0;
-            bitmap_address++;
-        }
-    }
+    memset_vram(0,bitmap,0,80*60*8);
 }
 
 void bitmap_plot(word x, word y) {

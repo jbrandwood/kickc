@@ -4704,3 +4704,12 @@ tay
 lda {c1}
 ora {c2},y
 tay
+//FRAGMENT vwuz1_lt_vwuc1_then_la1
+lda {z1}+1
+cmp #>{c1}
+bcc {la1}
+bne !+
+lda {z1}
+cmp #<{c1}
+bcc {la1}
+!:

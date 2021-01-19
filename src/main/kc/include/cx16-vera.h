@@ -164,15 +164,14 @@ byte const VERA_LAYER_COLOR_DEPTH_8BPP = 0x03;
 byte const VERA_LAYER_COLOR_DEPTH_MASK = 0x03;
 byte const VERA_LAYER_COLOR_DEPTH[4] = {1, 2, 4, 8};
 
-
 // $9F2D	L0_CONFIG   Layer 0 Configuration
 char * const VERA_L0_CONFIG = 0x9f2d;
 // Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
-char const VERA_L0_CONFIG_MODE_TILE = 0x00;
-char const VERA_L0_CONFIG_MODE_BITMAP = 0x04;
+char const VERA_LAYER_CONFIG_MODE_TILE = 0x00;
+char const VERA_LAYER_CONFIG_MODE_BITMAP = 0x04;
 // Bit 3: T256C	        (0: tiles use a 16-color foreground and background color, 1: tiles use a 256-color foreground color) (only relevant in 1bpp modes)
-char const VERA_L0_CONFIG_16C = 0x00;
-char const VERA_L0_CONFIG_256C = 0x08;
+char const VERA_LAYER_CONFIG_16C = 0x00;
+char const VERA_LAYER_CONFIG_256C = 0x08;
 // $9F2E	L0_MAPBASE	    Layer 0 Map Base Address (16:9)
 char * const VERA_L0_MAPBASE = 0x9f2e;
 // $9F2F	L0_TILEBASE	    Layer 0 Tile Base
@@ -197,12 +196,6 @@ char * const VERA_L0_VSCROLL_L = 0x9f32;
 char * const VERA_L0_VSCROLL_H = 0x9f33;
 // $9F34	L1_CONFIG   Layer 1 Configuration
 char * const VERA_L1_CONFIG = 0x9f34;
-// Bit 2: Bitmap Mode	(0:tile mode, 1: bitmap mode)
-char const VERA_L1_CONFIG_MODE_TILE = 0x00;
-char const VERA_L1_CONFIG_MODE_BITMAP = 0x04;
-// Bit 3: T256C	        (0: tiles use a 16-color foreground and background color, 1: tiles use a 256-color foreground color) (only relevant in 1bpp modes)
-char const VERA_L1_CONFIG_16C = 0x00;
-char const VERA_L1_CONFIG_256C = 0x08;
 // $9F35	L1_MAPBASE	    Layer 1 Map Base Address (16:9)
 char * const VERA_L1_MAPBASE = 0x9f35;
 // $9F36	L1_TILEBASE	    Layer 1 Tile Base

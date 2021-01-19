@@ -2,12 +2,12 @@
 // Currently it can only plot on the first 256 x-positions.
 
 // Initialize the bitmap plotter tables for a specific bitmap
-void bitmap_init(char* bitmap);
+void bitmap_init(word bitmap_address);
 
 // Clear all graphics on the bitmap
 void bitmap_clear();
 
-void bitmap_plot(char x, char y);
+void bitmap_plot(word x, word y);
 
 // Draw a line on the bitmap
-void bitmap_line(char x0, char x1, char y0, char y1);
+void bitmap_line(word x0, word x1, word y0, word y1);

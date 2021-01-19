@@ -71,7 +71,7 @@ void conio_x16_init() {
     // Position cursor at current line
     char * const BASIC_CURSOR_LINE = 0xD6;
     char line = *BASIC_CURSOR_LINE;
-    vera_layer_mode_tile(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,1);
+    vera_layer_mode_text(1,(dword)0x00000,(dword)0x0F800,128,64,8,8,16);
     screensize(&conio_screen_width, &conio_screen_height);
     screenlayer(1);
     vera_layer_set_textcolor(1, WHITE);

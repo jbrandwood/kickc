@@ -13,6 +13,15 @@
 
 // --- VERA addressing ---
 
+void vera_vram_bank_offset(byte bank, word offset, byte incr) {
+    // Select DATA0
+    *VERA_CTRL &= ~VERA_ADDRSEL;
+    // Set address
+    *VERA_ADDRX_L = <(offset);
+    *VERA_ADDRX_M = >(offset);
+    *VERA_ADDRX_H = bank | incr;
+}
+
 void vera_vram_address0(dword bankaddr, byte incr) {
     word* word_l = &(<bankaddr);
     word* word_h = &(>bankaddr);
@@ -35,13 +44,28 @@ void vera_vram_address1(dword bankaddr, byte incr) {
     *VERA_ADDRX_H = <(*word_h) | incr;
 }
 
+// --- VERA active display management ---
+
+void vera_display_set_scale_none() {
+    *VERA_DC_HSCALE = 128;
+    *VERA_DC_VSCALE = 128;
+}
+
+void vera_display_set_scale_double() {
+    *VERA_DC_HSCALE = 64;
+    *VERA_DC_VSCALE = 64;
+}
+
+void vera_display_set_scale_triple() {
+    *VERA_DC_HSCALE = 32;
+    *VERA_DC_VSCALE = 32;
+}
 // --- VERA layer management ---
 
 // Set the configuration of the layer.
 // - layer: Value of 0 or 1.
 // - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 void vera_layer_set_config(byte layer, byte config) {
-    layer &= $1;
     byte* addr = vera_layer_config[layer];
     *addr = config;
 }
@@ -52,6 +76,31 @@ void vera_layer_set_config(byte layer, byte config) {
 byte vera_layer_get_config(byte layer) {
     byte* config = vera_layer_config[layer];
     return *config;
+}
+
+// Set the configuration of the layer.
+// - layer: Value of 0 or 1.
+// - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
+void vera_layer_set_text_color_mode( byte layer, byte color_mode ) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_256C;
+    *addr |= color_mode;
+}
+
+// Set the configuration of the layer to bitmap mode.
+// - layer: Value of 0 or 1.
+void vera_layer_set_bitmap_mode( byte layer ) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_MODE_BITMAP;
+    *addr |= VERA_LAYER_CONFIG_MODE_BITMAP;
+}
+
+// Set the configuration of the layer to tilemap mode.
+// - layer: Value of 0 or 1.
+void vera_layer_set_tilemap_mode( byte layer ) {
+    byte* addr = vera_layer_config[layer];
+    *addr &= ~VERA_LAYER_CONFIG_MODE_BITMAP;
+    *addr |= VERA_LAYER_CONFIG_MODE_TILE;
 }
 
 // Set the map width or height of the layer.
@@ -293,8 +342,8 @@ dword vera_layer_get_tilebase_address(byte layer) {
 
 // Set the front color for text output. The old front text color setting is returned.
 // - layer: Value of 0 or 1.
-// - color: a 4 bit value ( decimal between 0 and 15).
-//   This will only work when the VERA is in 16 color mode!
+// - color: a 4 bit value ( decimal between 0 and 15) when the VERA works in 16x16 color text mode.
+//   An 8 bit value (decimal between 0 and 255) when the VERA works in 256 text mode.
 //   Note that on the VERA, the transparent color has value 0.
 byte vera_layer_set_textcolor(byte layer, byte color) {
     byte old = vera_layer_textcolor[layer];
@@ -308,7 +357,6 @@ byte vera_layer_set_textcolor(byte layer, byte color) {
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
 byte vera_layer_get_textcolor(byte layer) {
-    layer &= $1;
     return vera_layer_textcolor[layer];
 }
 
@@ -318,7 +366,6 @@ byte vera_layer_get_textcolor(byte layer) {
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
 byte vera_layer_set_backcolor(byte layer, byte color) {
-    layer &= $1;
     byte old = vera_layer_backcolor[layer];
     vera_layer_backcolor[layer] = color;
     return old;
@@ -330,7 +377,6 @@ byte vera_layer_set_backcolor(byte layer, byte color) {
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
 byte vera_layer_get_backcolor(byte layer) {
-    layer &= $1;
     return vera_layer_backcolor[layer];
 }
 
@@ -340,8 +386,11 @@ byte vera_layer_get_backcolor(byte layer) {
 //   This will only work when the VERA is in 16 color mode!
 //   Note that on the VERA, the transparent color has value 0.
 byte vera_layer_get_color(byte layer) {
-    layer &= $1;
-    return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
+    byte* addr = vera_layer_config[layer];
+    if( *addr & VERA_LAYER_CONFIG_256C )
+        return (vera_layer_textcolor[layer]);
+    else
+        return ((vera_layer_backcolor[layer] << 4) | vera_layer_textcolor[layer]);
 }
 
 
@@ -374,6 +423,7 @@ byte vera_layer_get_rowshift(byte layer) {
 word vera_layer_get_rowskip(byte layer) {
     return vera_layer_rowskip[layer];
 }
+
 
 
 // Set a vera layer in tile mode and configure the:
@@ -480,6 +530,96 @@ void vera_layer_mode_tile(byte layer, dword mapbase_address, dword tilebase_addr
             break;
         case 16:
             tilebase |= VERA_TILEBASE_HEIGHT_16;
+            break;
+    }
+    vera_layer_set_tilebase(layer,tilebase);
+}
+
+
+// Set a vera layer in text mode and configure the:
+// - layer: Value of 0 or 1.
+// - mapbase_address: A dword typed address (4 bytes), that specifies the full address of the map base.
+//   The function does the translation from the dword that contains the 17 bit address,
+//   to the respective mapbase vera register.
+//   Note that the register only specifies bits 16:9 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
+// - tilebase_address: A dword typed address (4 bytes), that specifies the base address of the tile map.
+//   The function does the translation from the dword that contains the 17 bit address,
+//   to the respective tilebase vera register.
+//   Note that the resulting vera register holds only specifies bits 16:11 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+// - mapwidth: The width of the map in number of tiles.
+// - mapheight: The height of the map in number of tiles.
+// - tilewidth: The width of a tile, which can be 8 or 16 pixels.
+// - tileheight: The height of a tile, which can be 8 or 16 pixels.
+// - color_mode: The color mode, which can be 16 or 256.
+void vera_layer_mode_text(byte layer, dword mapbase_address, dword tilebase_address, word mapwidth, word mapheight, byte tilewidth, byte tileheight, word color_mode ) {
+    vera_layer_mode_tile( layer, mapbase_address, tilebase_address, mapwidth, mapheight, tilewidth, tileheight, 1 );
+    switch(color_mode) {
+        case 16:
+            vera_layer_set_text_color_mode( layer, VERA_LAYER_CONFIG_16C );
+            break;
+        case 256:
+            vera_layer_set_text_color_mode( layer, VERA_LAYER_CONFIG_256C );
+            break;
+    }
+}
+
+// Set a vera layer in bitmap mode and configure the:
+// - layer: Value of 0 or 1.
+// - mapbase_address: A dword typed address (4 bytes), that specifies the full address of the map base.
+//   The function does the translation from the dword that contains the 17 bit address,
+//   to the respective mapbase vera register.
+//   Note that the register only specifies bits 16:9 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 512 bytes.
+// - tilebase_address: A dword typed address (4 bytes), that specifies the base address of the tile map.
+//   The function does the translation from the dword that contains the 17 bit address,
+//   to the respective tilebase vera register.
+//   Note that the resulting vera register holds only specifies bits 16:11 of the address,
+//   so the resulting address in the VERA VRAM is always aligned to a multiple of 2048 bytes!
+// - mapwidth: The width of the map in number of tiles.
+// - mapheight: The height of the map in number of tiles.
+// - tilewidth: The width of a tile, which can be 8 or 16 pixels.
+// - tileheight: The height of a tile, which can be 8 or 16 pixels.
+// - color_mode: The color mode, which can be 16 or 256.
+void vera_layer_mode_bitmap(byte layer, dword bitmap_address, word mapwidth, word color_depth ) {
+
+
+    // config
+    byte config = 0x00;
+    switch(color_depth) {
+        case 1:
+            config |= VERA_LAYER_COLOR_DEPTH_1BPP;
+            break;
+        case 2:
+            config |= VERA_LAYER_COLOR_DEPTH_2BPP;
+            break;
+        case 4:
+            config |= VERA_LAYER_COLOR_DEPTH_4BPP;
+            break;
+        case 8:
+            config |= VERA_LAYER_COLOR_DEPTH_8BPP;
+            break;
+    }
+    config = config | VERA_LAYER_CONFIG_MODE_BITMAP;
+    vera_layer_set_config(layer, config);
+
+    // tilebase
+    vera_tilebase_offset[layer] = <bitmap_address;
+    vera_tilebase_bank[layer] = (byte)>bitmap_address;
+    vera_tilebase_address[layer] = bitmap_address;
+
+    bitmap_address = bitmap_address >> 1;
+    byte tilebase = >(<bitmap_address);
+    tilebase &= VERA_LAYER_TILEBASE_MASK;
+
+    // mapwidth
+    switch(mapwidth) {
+        case 320:
+            tilebase |= VERA_TILEBASE_WIDTH_8;
+            break;
+        case 640:
+            tilebase |= VERA_TILEBASE_WIDTH_16;
             break;
     }
     vera_layer_set_tilebase(layer,tilebase);

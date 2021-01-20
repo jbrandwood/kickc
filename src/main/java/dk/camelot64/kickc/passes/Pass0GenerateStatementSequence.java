@@ -1111,7 +1111,7 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
          throw new CompileError("Variable used before being defined " + initValue.toString(), statementSource);
       }
       if(!(initValue instanceof ConstantValue))
-         throw new CompileError("Initializer is not a constant value " + initValue.toString(), statementSource);
+         throw new CompileError("Initializer is not a constant value.", statementSource);
       return (ConstantValue) initValue;
    }
 

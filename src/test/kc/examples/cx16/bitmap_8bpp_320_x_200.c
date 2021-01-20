@@ -11,6 +11,7 @@
 #include <conio.h>
 #include <printf.h>
 #include <bitmap-draw.h>
+#include <stdlib.h>
 
 char lines_x[] = { 60, 80, 110, 80, 60, 40, 10, 40, 60 };
 char lines_y[] = { 10, 40, 60, 80, 110, 80, 60, 40, 10 };
@@ -23,32 +24,28 @@ void lines() {
 }
 void main() {
 
-    vera_layer_mode_bitmap(0, (dword)0x04000, 640, 1);
-    vera_display_set_scale_none();
+    vera_layer_mode_bitmap(0, (dword)0x04000, 320, 1);
 
     screenlayer(1);
     textcolor(RED);
     bgcolor(BLACK);
     clrscr();
 
-    gotoxy(0,50);
-    printf("vera in bitmap mode, color depth 8 bits per pixel.\n");
+    gotoxy(0,20);
+    printf("vera in bitmap mode,\n");
+    printf("color depth 8 bits per pixel.\n");
 
-    printf("in this mode, it is possible to display graphics in 256 colors.\n\n");
+    printf("in this mode, it is possible to display\n\n");
+    printf("graphics in 256 colors.\n\n");
 
     vera_layer_show(0);
 
-    bitmap_init(0x4000);
+    bitmap_init(0, 0x4000);
     bitmap_clear();
 
-    bitmap_plot( 2, 2);
-    bitmap_plot( 10, 2);
-    bitmap_plot( 10, 10);
-
-    lines();
-
-
-    while(!kbhit());
+    while(!kbhit()) {
+        bitmap_line(rand()&$00FF, rand()&$00FF, rand()&$007F, rand()&$007F);
+    };
 
     screenlayer(1);
     textcolor(WHITE);

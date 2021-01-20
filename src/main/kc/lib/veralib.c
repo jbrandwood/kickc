@@ -60,6 +60,32 @@ void vera_display_set_scale_triple() {
     *VERA_DC_HSCALE = 32;
     *VERA_DC_VSCALE = 32;
 }
+
+byte vera_display_get_hscale() {
+    byte hscale[4] = {0,128,64,32};
+    byte scale = 0;
+    for(byte s:1..3) {
+        if(*VERA_DC_HSCALE==hscale[s]) {
+            scale = s;
+            break;
+        }
+    }
+    return scale;
+}
+
+byte vera_display_get_vscale() {
+    byte vscale[4] = {0,128,64,32};
+    byte scale = 0;
+    for(byte s:1..3) {
+        if(*VERA_DC_VSCALE==vscale[s]) {
+            scale = s;
+            break;
+        }
+    }
+    return scale;
+}
+
+
 // --- VERA layer management ---
 
 // Set the configuration of the layer.
@@ -187,7 +213,7 @@ inline void vera_layer_set_color_depth_8BPP(byte layer) {
 // Get the map width or height of the layer.
 // - layer: Value of 0 or 1.
 // - return: 1, 2, 4 or 8.
-word vera_layer_get_color_depth(byte layer) {
+byte vera_layer_get_color_depth(byte layer) {
     byte* config = vera_layer_config[layer];
     byte mask = (byte)VERA_LAYER_COLOR_DEPTH_MASK;
     return VERA_LAYER_COLOR_DEPTH[(*config & mask)];
@@ -602,7 +628,6 @@ void vera_layer_mode_bitmap(byte layer, dword bitmap_address, word mapwidth, wor
             break;
     }
     config = config | VERA_LAYER_CONFIG_MODE_BITMAP;
-    vera_layer_set_config(layer, config);
 
     // tilebase
     vera_tilebase_offset[layer] = <bitmap_address;
@@ -616,13 +641,17 @@ void vera_layer_mode_bitmap(byte layer, dword bitmap_address, word mapwidth, wor
     // mapwidth
     switch(mapwidth) {
         case 320:
+            vera_display_set_scale_double();
             tilebase |= VERA_TILEBASE_WIDTH_8;
             break;
         case 640:
+            vera_display_set_scale_none();
             tilebase |= VERA_TILEBASE_WIDTH_16;
             break;
     }
+
     vera_layer_set_tilebase(layer,tilebase);
+    vera_layer_set_config(layer, config);
 }
 
 // --- TILE FUNCTIONS ---

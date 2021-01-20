@@ -18,6 +18,7 @@ const char bitmap_plot_bit[256];
 void bitmap_init(char* gfx, char* screen) {
     bitmap_gfx = gfx;
     bitmap_screen = screen;
+
     char bits = $80;
     for(char x : 0..255) {
         bitmap_plot_bit[x] = bits;
@@ -31,7 +32,7 @@ void bitmap_init(char* gfx, char* screen) {
         bitmap_plot_ylo[y] = y&$7 | <yoffs;
         bitmap_plot_yhi[y] = >yoffs;
         if((y&$7)==7) {
-            yoffs = yoffs + 40*8;
+            yoffs = yoffs + 480 >> hscale;
         }
     }
 }

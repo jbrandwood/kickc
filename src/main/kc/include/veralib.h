@@ -35,6 +35,14 @@ byte* vera_layer_hscroll_h[2] = {VERA_L0_HSCROLL_H, VERA_L1_HSCROLL_H};
 byte vera_layer_textcolor[2] = {WHITE, WHITE};
 byte vera_layer_backcolor[2] = {BLUE, BLUE};
 
+// --- VERA active display management ---
+
+void vera_display_set_scale_none();
+void vera_display_set_scale_double();
+void vera_display_set_scale_triple();
+byte vera_display_get_hscale();
+byte vera_display_get_vscale();
+
 // --- VERA LAYERS ---
 
 // Set the configuration of the layer.

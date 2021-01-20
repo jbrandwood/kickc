@@ -5,38 +5,54 @@
 #include <veralib.h>
 
 // Tables for the plotter - initialized by calling bitmap_draw_init();
-const word bitmap_plot_y[640];
-const byte bitmap_plot_bit[8];
+const word bitmap_plot_x[640];
+const word bitmap_plot_y[480];
+const byte bitmap_plot_bit[640];
 
-word bitmap = 0;
+__ma word bitmap_address = 0;
+__ma byte bitmap_layer = 0;
+
 // Initialize the bitmap plotter tables for a specific bitmap
-void bitmap_init(word bitmap_address) {
-    bitmap = bitmap_address;
-    word yoffs = $0;
+void bitmap_init(byte layer, word address) {
+    bitmap_address = address;
+    bitmap_layer = layer;
+    byte color_depth = vera_layer_get_color_depth(bitmap_layer);
+    word vdeltas[4] = {0, 80, 40, 20};
+    byte hscale = vera_display_get_hscale(); // Returns 1 when 640 and 2 when 320.
+
+
     byte bit = $80;
-    for(word x : 0..7) {
+    for(word x : 0..639) {
+        if(color_depth==1) bitmap_plot_x[x] = (x >> 3);
+        if(color_depth==2) bitmap_plot_x[x] = (x >> 2);
+        if(color_depth==4) bitmap_plot_x[x] = (x >> 1);
+        if(color_depth==8) {}
         bitmap_plot_bit[x] = bit;
         bit >>= 1;
+        if(bit==0)
+           bit=$80;
     }
-    for(word y : 0..600) {
+
+    // This sets the right delta to skip a whole line based on the scale, depending on the color depth.
+    word vdelta = vdeltas[hscale];
+    // We start at the bitmap address; The plot_y contains the bitmap address embedded so we know where a line starts.
+    word yoffs = bitmap_address;
+    for(word y : 0..479) {
         bitmap_plot_y[y] = yoffs;
-        yoffs = yoffs + 80;
+        yoffs = yoffs + vdelta;
     }
 }
 
 // Clear all graphics on the bitmap
 void bitmap_clear() {
-    memset_vram(0,bitmap,0,80*60*8);
+    memset_vram(0,bitmap_address,0,80*60*8);
 }
 
 void bitmap_plot(word x, word y) {
     // Needs unsigned int arrays arranged as two underlying char arrays to allow char* plotter_x = plot_x[x]; - and eventually - char* plotter = plot_x[x] + plot_y[y];
-    word plotter_x = x>>3;
-    word plotter_y = bitmap_plot_y[y];
-
-    word plotter = bitmap+plotter_x+plotter_y;
+    word plotter = bitmap_plot_x[x]+bitmap_plot_y[y];
     vera_vram_bank_offset(0,(word)plotter,VERA_INC_0);
-    *VERA_DATA0 = *VERA_DATA0 | bitmap_plot_bit[x&$07];
+    *VERA_DATA0 = *VERA_DATA0 | bitmap_plot_bit[x];
 }
 
 

@@ -2,7 +2,7 @@
 // Currently it can only plot on the first 256 x-positions.
 
 // Initialize the bitmap plotter tables for a specific bitmap
-void bitmap_init(word bitmap_address);
+void bitmap_init(byte layer, word address);
 
 // Clear all graphics on the bitmap
 void bitmap_clear();

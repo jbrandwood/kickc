@@ -84,10 +84,10 @@ public class TestPrograms {
       compileAndCompare("missing-band.c");
    }
 
-   @Test
-   public void testUnknownVarProblem2() throws IOException, URISyntaxException {
-      compileAndCompare("unknown-var-problem-2.c", log().verboseParse());
-   }
+   //@Test
+   //public void testUnknownVarProblem2() throws IOException, URISyntaxException {
+   //   compileAndCompare("unknown-var-problem-2.c", log().verboseParse());
+   //}
 
    // https://gitlab.com/camelot/kickc/-/issues/564
    //@Test

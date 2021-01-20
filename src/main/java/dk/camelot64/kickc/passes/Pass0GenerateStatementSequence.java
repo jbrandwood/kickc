@@ -92,9 +92,8 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
     */
    private Variable addIntermediateVar() {
       Scope currentScope = getCurrentScope();
-      if(ScopeRef.ROOT.equals(currentScope.getRef())) {
-         Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
-         currentScope = initProc;
+      if(currentScope==null || ScopeRef.ROOT.equals(currentScope.getRef())) {
+         currentScope = getInitProc();
       }
       return currentScope.addVariableIntermediate();
    }
@@ -105,21 +104,26 @@ public class Pass0GenerateStatementSequence extends KickCParserBaseVisitor<Objec
    void addStatement(Statement statement) {
       ProcedureCompilation procedureCompilation = getCurrentProcedureCompilation();
       if(procedureCompilation == null) {
-         // Statement outside procedure declaration - put into the _init procedure
-         Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
-         if(initProc == null) {
-            // Create the _init() procedure
-            initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
-            initProc.setDeclaredInline(true);
-            initProc.setParameters(new ArrayList<>());
-            program.getScope().add(initProc);
-            program.createProcedureCompilation(initProc.getRef());
-            program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
-         }
+         Procedure initProc = getInitProc();
          procedureCompilation = program.getProcedureCompilation(initProc.getRef());
       }
       final StatementSequence statementSequence = procedureCompilation.getStatementSequence();
       statementSequence.addStatement(statement);
+   }
+
+   private Procedure getInitProc() {
+      // Statement outside procedure declaration - put into the _init procedure
+      Procedure initProc = program.getScope().getLocalProcedure(SymbolRef.INIT_PROC_NAME);
+      if(initProc == null) {
+         // Create the _init() procedure
+         initProc = new Procedure(SymbolRef.INIT_PROC_NAME, SymbolType.VOID, program.getScope(), Scope.SEGMENT_CODE_DEFAULT, Scope.SEGMENT_DATA_DEFAULT, Procedure.CallingConvention.PHI_CALL);
+         initProc.setDeclaredInline(true);
+         initProc.setParameters(new ArrayList<>());
+         program.getScope().add(initProc);
+         program.createProcedureCompilation(initProc.getRef());
+         program.getProcedureCompilation(initProc.getRef()).getStatementSequence().addStatement(new StatementProcedureBegin(initProc.getRef(), new StatementSource(RuleContext.EMPTY), Comment.NO_COMMENTS));
+      }
+      return initProc;
    }
 
    public void generate() {

@@ -84,6 +84,10 @@ public class TestPrograms {
       compileAndCompare("missing-band.c");
    }
 
+   @Test
+   public void testUnknownVarProblem2() throws IOException, URISyntaxException {
+      compileAndCompare("unknown-var-problem-2.c", log().verboseParse());
+   }
 
    // https://gitlab.com/camelot/kickc/-/issues/564
    //@Test
@@ -441,6 +445,11 @@ public class TestPrograms {
    @Test
    public void testMinusPrecedenceProblem() throws IOException, URISyntaxException {
       compileAndCompare("minus-precedence-problem.c");
+   }
+
+   @Test
+   public void testRom() throws IOException, URISyntaxException {
+      compileAndCompare("examples/rom/rom.c");
    }
 
    @Test

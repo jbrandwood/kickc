@@ -3,11 +3,6 @@
 
 // Author: Sven Van de Velde
 
-// The default layer of the CX16 is layer 1, but the tiles are written on layer 0.
-
-// An explanation is given how this mode is organized, and how the tiles display and coloring works.
-// Pälette offsets are explained also.
-
 #include <veralib.h>
 #include <printf.h>
 

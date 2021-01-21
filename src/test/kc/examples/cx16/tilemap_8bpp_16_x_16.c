@@ -3,11 +3,6 @@
 
 // Author: Sven Van de Velde
 
-// The default layer of the CX16 is layer 1, but the tiles are written on layer 0.
-
-// An explanation is given how this mode is organized, and how the tiles display and coloring works.
-// Pälette offsets are explained also.
-
 #include <conio.h>
 #include <printf.h>
 
@@ -45,20 +40,7 @@ void main() {
     // We also will need to realign for layer 1 the map base from 0x00000 to 0x10000.
     // This is now all easily done with a few statements in the new kickc vera lib ...
 
-    // Copy block of memory (from VRAM to VRAM)
-    // Copies the values from the location pointed by src to the location pointed by dest.
-    // The method uses the VERA access ports 0 and 1 to copy data from and to in VRAM.
-    // - src_bank:  64K VRAM bank number to copy from (0/1).
-    // - src: pointer to the location to copy from. Note that the address is a 16 bit value!
-    // - src_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
-    // - dest_bank:  64K VRAM bank number to copy to (0/1).
-    // - dest: pointer to the location to copy to. Note that the address is a 16 bit value!
-    // - dest_increment: the increment indicator, VERA needs this because addressing increment is automated by VERA at each access.
-    // - num: The number of bytes to copy
-    // void memcpy_in_vram(char dest_bank, void *dest, char dest_increment, char src_bank, void *src, char src_increment, unsigned int num );
     memcpy_in_vram(1, 0xF000, VERA_INC_1, 0, 0xF800, VERA_INC_1, 256*8); // We copy the 128 character set of 8 bytes each.
-
-
     vera_layer_mode_tile(1, 0x10000, 0x1F000, 128, 64, 8, 8, 1);
 
     screenlayer(1);

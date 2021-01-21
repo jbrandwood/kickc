@@ -2,7 +2,7 @@
 // Demonstrates the usage of the VERA tile map modes and layering.
 
 // Author: Sven Van de Velde
-µ
+
 #include <veralib.h>
 #include <printf.h>
 

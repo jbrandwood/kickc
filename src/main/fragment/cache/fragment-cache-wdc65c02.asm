@@ -3189,3 +3189,87 @@ sta {z1}+3
 //FRAGMENT vbuz1=vbuaa_bor_vbuz1
 ora {z1}
 sta {z1}
+//FRAGMENT vbuz1=vbuz1_plus_2
+lda {z1}
+clc
+adc #2
+sta {z1}
+//FRAGMENT vbuxx=vbuxx_plus_2
+inx
+inx
+//FRAGMENT vbuz1=vbuz1_plus_1
+inc {z1}
+//FRAGMENT vduz1=vbuc1
+lda #{c1}
+sta {z1}
+lda #0
+sta {z1}+1
+sta {z1}+2
+sta {z1}+3
+//FRAGMENT pbuc1_derefidx_vbuz1=pbuc1_derefidx_vbuz1_plus_1
+ldy {z1}
+lda {c1},y
+inc
+sta {c1},y
+//FRAGMENT vwuz1=vwuz1_plus_vwuc1
+clc
+lda {z1}
+adc #<{c1}
+sta {z1}
+lda {z1}+1
+adc #>{c1}
+sta {z1}+1
+//FRAGMENT vbuz1=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+sta {z1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuz1
+lda {c1}
+and {z1}
+sta {c1}
+//FRAGMENT pbuc1_derefidx_vbuaa=pbuc1_derefidx_vbuaa_plus_1
+tay
+lda {c1},y
+inc
+sta {c1},y
+//FRAGMENT pbuc1_derefidx_vbuxx=pbuc1_derefidx_vbuxx_plus_1
+lda {c1},x
+inc
+sta {c1},x
+//FRAGMENT pbuc1_derefidx_vbuyy=pbuc1_derefidx_vbuyy_plus_1
+lda {c1},y
+inc
+sta {c1},y
+//FRAGMENT vbuaa=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+//FRAGMENT vbuxx=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+tax
+//FRAGMENT vbuyy=_bnot__deref_pbuc1
+lda {c1}
+eor #$ff
+tay
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuaa
+and {c1}
+sta {c1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuxx
+txa
+and {c1}
+sta {c1}
+//FRAGMENT _deref_pbuc1=_deref_pbuc1_band_vbuyy
+tya
+and {c1}
+sta {c1}
+//FRAGMENT vbuyy_neq_0_then_la1
+cpy #0
+bne {la1}
+//FRAGMENT vwuz1=vwuz1_plus_vbuc1
+lda #{c1}
+clc
+adc {z1}
+sta {z1}
+bcc !+
+inc {z1}+1
+!:

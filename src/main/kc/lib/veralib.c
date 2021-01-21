@@ -205,18 +205,16 @@ inline void vera_layer_set_height_256(byte layer) {
 
 // Get the map width of the layer.
 // - layer: Value of 0 or 1.
-word vera_layer_get_width(byte layer) {
+inline word vera_layer_get_width(byte layer) {
     byte* config = vera_layer_config[layer];
-    byte mask = (byte)VERA_LAYER_WIDTH_MASK;
-    return VERA_LAYER_WIDTH[ (*config & mask) >> 4];
+    return VERA_LAYER_WIDTH[ (*config & VERA_LAYER_WIDTH_MASK) >> 4];
 }
 
 // Get the map height of the layer.
 // - layer: Value of 0 or 1.
-word vera_layer_get_height(byte layer) {
+inline word vera_layer_get_height(byte layer) {
     byte* config = vera_layer_config[layer];
-    byte mask = VERA_LAYER_HEIGHT_MASK;
-    return VERA_LAYER_HEIGHT[ (*config & mask) >> 6];
+    return VERA_LAYER_HEIGHT[ (*config & VERA_LAYER_HEIGHT_MASK) >> 6];
 }
 
 // Set the color depth of the layer in bit per pixel (BPP) to 1.

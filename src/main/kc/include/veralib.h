@@ -91,11 +91,11 @@ inline void vera_layer_set_height_256(byte layer);
 
 // Get the map width of the layer.
 // - layer: Value of 0 or 1.
-word vera_layer_get_width(byte layer);
+inline word vera_layer_get_width(byte layer);
 
 // Get the map height of the layer.
 // - layer: Value of 0 or 1.
-word vera_layer_get_height(byte layer);
+inline word vera_layer_get_height(byte layer);
 
 
 // Set the color depth of the layer in bit per pixel (BPP) to 1.

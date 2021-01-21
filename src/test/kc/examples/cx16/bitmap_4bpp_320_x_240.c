@@ -32,9 +32,9 @@ void main() {
 
     gotoxy(0,25);
     printf("vera in bitmap mode,\n");
-    printf("color depth 8 bits per pixel.\n");
+    printf("color depth 4 bits per pixel.\n");
     printf("in this mode, it is possible to display\n");
-    printf("graphics in 256 colors.\n");
+    printf("graphics in 16 colors.\n");
 
     vera_layer_show(0);
 

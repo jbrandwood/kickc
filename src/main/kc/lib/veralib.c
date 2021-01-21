@@ -127,15 +127,14 @@ void vera_layer_set_config(byte layer, byte config) {
     *addr = config;
 }
 
-// Set the configuration of the layer.
+// Get the configuration of the layer.
 // - layer: Value of 0 or 1.
-// - config: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
+// - return: Specifies the modes which are specified using T256C / 'Bitmap Mode' / 'Color Depth'.
 byte vera_layer_get_config(byte layer) {
     byte* config = vera_layer_config[layer];
     return *config;
 }
-
-// Set the configuration of the layer.
+// Set the configuration of the layer text color mode.
 // - layer: Value of 0 or 1.
 // - color_mode: Specifies the color mode to be VERA_LAYER_CONFIG_16 or VERA_LAYER_CONFIG_256 for text mode.
 void vera_layer_set_text_color_mode( byte layer, byte color_mode ) {
@@ -204,7 +203,7 @@ inline void vera_layer_set_height_256(byte layer) {
     *addr |= VERA_LAYER_HEIGHT_256;
 }
 
-// Get the map width or height of the layer.
+// Get the map width of the layer.
 // - layer: Value of 0 or 1.
 word vera_layer_get_width(byte layer) {
     byte* config = vera_layer_config[layer];
@@ -212,29 +211,40 @@ word vera_layer_get_width(byte layer) {
     return VERA_LAYER_WIDTH[ (*config & mask) >> 4];
 }
 
+// Get the map height of the layer.
+// - layer: Value of 0 or 1.
 word vera_layer_get_height(byte layer) {
     byte* config = vera_layer_config[layer];
     byte mask = VERA_LAYER_HEIGHT_MASK;
     return VERA_LAYER_HEIGHT[ (*config & mask) >> 6];
 }
 
-// Set the color depth of the layer in terms of bit per pixel (BPP) of the tile base.
+// Set the color depth of the layer in bit per pixel (BPP) to 1.
 // - layer: Value of 0 or 1.
 inline void vera_layer_set_color_depth_1BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_1BPP;
 }
+
+// Set the color depth of the layer in bit per pixel (BPP) to 1.
+// - layer: Value of 0 or 1.
 inline void vera_layer_set_color_depth_2BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_2BPP;
 }
+
+// Set the color depth of the layer in bit per pixel (BPP) to 1.
+// - layer: Value of 0 or 1.
 inline void vera_layer_set_color_depth_4BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
     *addr |= VERA_LAYER_COLOR_DEPTH_4BPP;
 }
+
+// Set the color depth of the layer in bit per pixel (BPP) to 1.
+// - layer: Value of 0 or 1.
 inline void vera_layer_set_color_depth_8BPP(byte layer) {
     byte* addr = vera_layer_config[layer];
     *addr &= ~VERA_LAYER_COLOR_DEPTH_MASK;
@@ -244,10 +254,9 @@ inline void vera_layer_set_color_depth_8BPP(byte layer) {
 // Get the color depth of the layer.
 // - layer: Value of 0 or 1.
 // - return: 0 = 1 color, 1 = 2 colors, 2 = 4 colors or 3 = 8 colors.
-byte vera_layer_get_color_depth(byte layer) {
+inline byte vera_layer_get_color_depth(byte layer) {
     byte* config = vera_layer_config[layer];
-    byte mask = (byte)VERA_LAYER_COLOR_DEPTH_MASK;
-    return *config & mask;
+    return (*config & VERA_LAYER_COLOR_DEPTH_MASK);
 }
 
 // Enable the layer to be displayed on the screen.
@@ -262,7 +271,6 @@ inline void vera_layer_show(byte layer) {
 inline void vera_layer_hide(byte layer) {
     *VERA_DC_VIDEO &= ~vera_layer_enable[layer];
 }
-
 
 // Is the layer shown on the screen?
 // - returns: 1 if layer is displayed on the screen, 0 if not.
